@@ -30,6 +30,9 @@ namespace System.IO.Endian.Tests
                 Assert.AreEqual(stream.Length, 56);
 
                 stream.Position = 0;
+                Assert.AreEqual(double.Epsilon, reader.PeekDouble());
+                Assert.AreEqual(0, stream.Position);
+
                 Assert.AreEqual(double.Epsilon, reader.ReadDouble());
                 Assert.AreEqual(double.MinValue, reader.ReadDouble());
                 Assert.AreEqual(double.MaxValue, reader.ReadDouble());
@@ -67,6 +70,9 @@ namespace System.IO.Endian.Tests
                 Assert.AreEqual(stream.Length, 56);
 
                 stream.Position = 0;
+                Assert.AreEqual(BitConverter.ToDouble(BitConverter.GetBytes(double.Epsilon).Reverse().ToArray(), 0), reader.PeekDouble());
+                Assert.AreEqual(0, stream.Position);
+
                 Assert.AreEqual(BitConverter.ToDouble(BitConverter.GetBytes(double.Epsilon).Reverse().ToArray(), 0), reader.ReadDouble());
                 Assert.AreEqual(BitConverter.ToDouble(BitConverter.GetBytes(double.MinValue).Reverse().ToArray(), 0), reader.ReadDouble());
                 Assert.AreEqual(BitConverter.ToDouble(BitConverter.GetBytes(double.MaxValue).Reverse().ToArray(), 0), reader.ReadDouble());

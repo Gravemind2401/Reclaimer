@@ -430,5 +430,274 @@ namespace System.IO
         }
 
         #endregion
+
+        #region Peek
+
+        /// <summary>
+        /// Reads a 4-byte floating point value from the current stream using the current byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public float PeekSingle()
+        {
+            return PeekSingle(ByteOrder);
+        }
+
+        /// <summary>
+        /// Reads an 8-byte floating point value from the current stream using the current byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public double PeekDouble()
+        {
+            return PeekDouble(ByteOrder);
+        }
+
+        /// <summary>
+        /// Reads a decimal value from the current stream using the current byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public decimal PeekDecimal()
+        {
+            return PeekDecimal(ByteOrder);
+        }
+
+        /// <summary>
+        /// Reads a 2-byte signed integer from the current stream using the current byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public short PeekInt16()
+        {
+            return PeekInt16(ByteOrder);
+        }
+
+        /// <summary>
+        /// Reads a 4-byte signed integer from the current stream using the current byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public int PeekInt32()
+        {
+            return PeekInt32(ByteOrder);
+        }
+
+        /// <summary>
+        /// Reads an 8-byte signed integer from the current stream using the current byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public long PeekInt64()
+        {
+            return PeekInt64(ByteOrder);
+        }
+
+        /// <summary>
+        /// Reads a 2-byte unsigned integer from the current stream using the current byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public ushort PeekUInt16()
+        {
+            return PeekUInt16(ByteOrder);
+        }
+
+        /// <summary>
+        /// Reads a 4-byte unsigned integer from the current stream using the current byte order
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public uint PeekUInt32()
+        {
+            return PeekUInt32(ByteOrder);
+        }
+
+        /// <summary>
+        /// Reads an 8-byte unsigned integer from the current stream using the current byte order
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public ulong PeekUInt64()
+        {
+            return PeekUInt64(ByteOrder);
+        }
+
+        #endregion
+
+        #region ByteOrder Peek
+
+        /// <summary>
+        /// Reads a 4-byte floating point value from the current stream using the specified byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public float PeekSingle(ByteOrder byteOrder)
+        {
+            var origin = BaseStream.Position;
+            var value = ReadSingle(byteOrder);
+            BaseStream.Position = origin;
+            return value;
+        }
+
+        /// <summary>
+        /// Reads an 8-byte floating point value from the current stream using the specified byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public double PeekDouble(ByteOrder byteOrder)
+        {
+            var origin = BaseStream.Position;
+            var value = ReadDouble(byteOrder);
+            BaseStream.Position = origin;
+            return value;
+        }
+
+        /// <summary>
+        /// Reads a decimal value from the current stream using the specified byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public decimal PeekDecimal(ByteOrder byteOrder)
+        {
+            var origin = BaseStream.Position;
+            var value = ReadDecimal(byteOrder);
+            BaseStream.Position = origin;
+            return value;
+        }
+
+        /// <summary>
+        /// Reads a 2-byte signed integer from the current stream using the specified byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public short PeekInt16(ByteOrder byteOrder)
+        {
+            var origin = BaseStream.Position;
+            var value = ReadInt16(byteOrder);
+            BaseStream.Position = origin;
+            return value;
+        }
+
+        /// <summary>
+        /// Reads a 4-byte signed integer from the current stream using the specified byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public int PeekInt32(ByteOrder byteOrder)
+        {
+            var origin = BaseStream.Position;
+            var value = ReadInt32(byteOrder);
+            BaseStream.Position = origin;
+            return value;
+        }
+
+        /// <summary>
+        /// Reads an 8-byte signed integer from the current stream using the specified byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public long PeekInt64(ByteOrder byteOrder)
+        {
+            var origin = BaseStream.Position;
+            var value = ReadInt64(byteOrder);
+            BaseStream.Position = origin;
+            return value;
+        }
+
+        /// <summary>
+        /// Reads a 2-byte unsigned integer from the current stream using the specified byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public ushort PeekUInt16(ByteOrder byteOrder)
+        {
+            var origin = BaseStream.Position;
+            var value = ReadUInt16(byteOrder);
+            BaseStream.Position = origin;
+            return value;
+        }
+
+        /// <summary>
+        /// Reads a 4-byte unsigned integer from the current stream using the specified byte order
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public uint PeekUInt32(ByteOrder byteOrder)
+        {
+            var origin = BaseStream.Position;
+            var value = ReadUInt32(byteOrder);
+            BaseStream.Position = origin;
+            return value;
+        }
+
+        /// <summary>
+        /// Reads an 8-byte unsigned integer from the current stream using the specified byte order
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public ulong PeekUInt64(ByteOrder byteOrder)
+        {
+            var origin = BaseStream.Position;
+            var value = ReadUInt64(byteOrder);
+            BaseStream.Position = origin;
+            return value;
+        }
+
+        #endregion
     }
 }

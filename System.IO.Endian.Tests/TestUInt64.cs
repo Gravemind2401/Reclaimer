@@ -26,6 +26,9 @@ namespace System.IO.Endian.Tests
                 Assert.AreEqual(stream.Length, 32);
 
                 stream.Position = 0;
+                Assert.AreEqual(unchecked((ulong)0x0100000000000000), reader.PeekUInt64());
+                Assert.AreEqual(0, stream.Position);
+
                 Assert.AreEqual(unchecked((ulong)0x0100000000000000), reader.ReadUInt64());
                 Assert.AreEqual(unchecked((ulong)0x7F7F7F7F7F7F7F7F), reader.ReadUInt64());
                 Assert.AreEqual(unchecked((ulong)0xFFFFFFFFFFFFFFFF), reader.ReadUInt64());
@@ -57,6 +60,9 @@ namespace System.IO.Endian.Tests
                 Assert.AreEqual(stream.Length, 32);
 
                 stream.Position = 0;
+                Assert.AreEqual(unchecked((ulong)0x0000000000000001), reader.PeekUInt64());
+                Assert.AreEqual(0, stream.Position);
+
                 Assert.AreEqual(unchecked((ulong)0x0000000000000001), reader.ReadUInt64());
                 Assert.AreEqual(unchecked((ulong)0xFFFFFFFFFFFFFFFF), reader.ReadUInt64());
                 Assert.AreEqual(unchecked((ulong)0x00FF00FF00FF00FF), reader.ReadUInt64());

@@ -26,6 +26,9 @@ namespace System.IO.Endian.Tests
                 Assert.AreEqual(stream.Length, 8);
 
                 stream.Position = 0;
+                Assert.AreEqual(unchecked((short)0x0100), reader.PeekInt16());
+                Assert.AreEqual(0, stream.Position);
+
                 Assert.AreEqual(unchecked((short)0x0100), reader.ReadInt16());
                 Assert.AreEqual(unchecked((short)0x7F7F), reader.ReadInt16());
                 Assert.AreEqual(unchecked((short)0xFFFF), reader.ReadInt16());
@@ -57,6 +60,9 @@ namespace System.IO.Endian.Tests
                 Assert.AreEqual(stream.Length, 8);
 
                 stream.Position = 0;
+                Assert.AreEqual(unchecked((short)0x0001), reader.PeekInt16());
+                Assert.AreEqual(0, stream.Position);
+
                 Assert.AreEqual(unchecked((short)0x0001), reader.ReadInt16());
                 Assert.AreEqual(unchecked((short)0xFFFF), reader.ReadInt16());
                 Assert.AreEqual(unchecked((short)0x00FF), reader.ReadInt16());

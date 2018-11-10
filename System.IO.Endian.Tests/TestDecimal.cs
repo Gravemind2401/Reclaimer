@@ -31,6 +31,9 @@ namespace System.IO.Endian.Tests
                 Assert.AreEqual(stream.Length, 64);
 
                 stream.Position = 0;
+                Assert.AreEqual(rands[0], reader.PeekDecimal());
+                Assert.AreEqual(0, stream.Position);
+
                 Assert.AreEqual(rands[0], reader.ReadDecimal());
                 Assert.AreEqual(rands[1], reader.ReadDecimal());
                 Assert.AreEqual(rands[2], reader.ReadDecimal());
