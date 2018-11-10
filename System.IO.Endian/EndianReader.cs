@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
 
 namespace System.IO
 {
+    /// <summary>
+    /// Reads primitive data types from a stream in a specific byte order and encoding.
+    /// </summary>
     public class EndianReader : BinaryReader
     {
+        private readonly Encoding encoding;
+
         public ByteOrder ByteOrder { get; set; }
 
         #region Constructors
@@ -65,6 +69,7 @@ namespace System.IO
         public EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding, bool leaveOpen) : base(input, encoding, leaveOpen)
         {
             ByteOrder = byteOrder;
+            this.encoding = encoding;
         }
 
         #endregion
@@ -76,7 +81,6 @@ namespace System.IO
         /// and advances the current position of the stream by four bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -90,7 +94,6 @@ namespace System.IO
         /// and advances the current position of the stream by eight bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -104,7 +107,6 @@ namespace System.IO
         /// and advances the current position of the stream by sixteen bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -118,7 +120,6 @@ namespace System.IO
         /// and advances the current position of the stream by two bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -132,7 +133,6 @@ namespace System.IO
         /// and advances the current position of the stream by four bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -146,7 +146,6 @@ namespace System.IO
         /// and advances the current position of the stream by eight bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -160,7 +159,6 @@ namespace System.IO
         /// and advances the current position of the stream by two bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -174,7 +172,6 @@ namespace System.IO
         /// and advances the current position of the stream by four bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -188,7 +185,6 @@ namespace System.IO
         /// and advances the current position of the stream by eight bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -206,7 +202,6 @@ namespace System.IO
         /// and advances the current position of the stream by four bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -225,7 +220,6 @@ namespace System.IO
         /// and advances the current position of the stream by eight bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -244,7 +238,6 @@ namespace System.IO
         /// and advances the current position of the stream by sixteen bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -258,7 +251,7 @@ namespace System.IO
             Array.Reverse(bytes);
             for (int i = 0; i < 4; i++)
                 bits[i] = BitConverter.ToInt32(bytes, i * 4);
-            return new Decimal(bits);
+            return new decimal(bits);
         }
 
         /// <summary>
@@ -266,7 +259,6 @@ namespace System.IO
         /// and advances the current position of the stream by two bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -285,7 +277,6 @@ namespace System.IO
         /// and advances the current position of the stream by four bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -304,7 +295,6 @@ namespace System.IO
         /// and advances the current position of the stream by eight bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -323,7 +313,6 @@ namespace System.IO
         /// and advances the current position of the stream by two bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -342,7 +331,6 @@ namespace System.IO
         /// and advances the current position of the stream by four bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -361,7 +349,6 @@ namespace System.IO
         /// and advances the current position of the stream by eight bytes.
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <returns></returns>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -373,6 +360,73 @@ namespace System.IO
             var bytes = base.ReadBytes(8);
             Array.Reverse(bytes);
             return BitConverter.ToUInt64(bytes, 0);
+        }
+
+        #endregion
+
+        #region String Read
+
+        /// <summary>
+        /// Reads a fixed-length string from the current stream, and optionally removes trailing white-space characters.
+        /// </summary>
+        /// <param name="length">The length of the string, in bytes.</param>
+        /// <param name="trim">true to remove trailing white-space characters; otherwise, false.</param>
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public string ReadString(int length, bool trim)
+        {
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), length, "The length parameter must be non-negative.");
+
+            if (length == 0)
+                return string.Empty;
+
+            if (trim) return encoding.GetString(ReadBytes(length)).TrimEnd();
+            else return encoding.GetString(ReadBytes(length));
+        }
+
+        /// <summary>
+        /// Reads a variable-length string from the current stream. 
+        /// The position of the stream is advanced to the position after the next occurence of a null character.
+        /// </summary>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public string ReadNullTerminatedString()
+        {
+            var bytes = new List<byte>();
+
+            byte val;
+            while ((val = ReadByte()) != 0)
+                bytes.Add(val);
+
+            return encoding.GetString(bytes.ToArray());
+        }
+
+        /// <summary>
+        /// Reads a variable-length string from the current stream. 
+        /// The length of the string is determined by the first occurence of a null character.
+        /// <para /> The position of the stream is advanced by the specified number of bytes, regardless of the resulting string length.
+        /// </summary>
+        /// <param name="maxLength">The maximum length of the string, in bytes.</param>
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public string ReadNullTerminatedString(int maxLength)
+        {
+            if (maxLength < 0)
+                throw new ArgumentOutOfRangeException(nameof(maxLength), maxLength, "The maxLength parameter must be non-negative.");
+
+            if (maxLength == 0)
+                return string.Empty;
+
+            var value = encoding.GetString(base.ReadBytes(maxLength));
+
+            if (!value.Contains('\0'))
+                return value;
+
+            return value.Substring(0, value.IndexOf('\0'));
         }
 
         #endregion

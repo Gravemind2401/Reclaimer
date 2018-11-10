@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace System.IO
 {
+    /// <summary>
+    /// Writes primitive data types to a stream in a specific byte order and encoding.
+    /// </summary>
     public class EndianWriter : BinaryWriter
     {
+        private readonly Encoding encoding;
+
         public ByteOrder ByteOrder { get; set; }
 
         #region Constructors
@@ -64,6 +69,7 @@ namespace System.IO
         public EndianWriter(Stream output, ByteOrder byteOrder, Encoding encoding, bool leaveOpen) : base(output, encoding, leaveOpen)
         {
             ByteOrder = byteOrder;
+            this.encoding = encoding;
         }
 
         #endregion
@@ -374,6 +380,71 @@ namespace System.IO
             var bytes = BitConverter.GetBytes(value);
             Array.Reverse(bytes);
             base.Write(bytes);
+        }
+
+        #endregion
+
+        #region String Write
+
+        /// <summary>
+        /// Writes a fixed-length string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
+        /// If the string is shorter than the specified length it will be padded with white-space.
+        /// </summary>
+        /// <param name="value">The string value to write.</param>
+        /// <param name="length">The number of characters to write.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public void Write(string value, int length)
+        {
+            Write(value, length, ' ');
+        }
+
+        /// <summary>
+        /// Writes a fixed-length string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
+        /// If the string is shorter than the specified length it will be padded using the specified character.
+        /// </summary>
+        /// <param name="value">The string value to write.</param>
+        /// <param name="length">The number of characters to write.</param>
+        /// <param name="padding">The character to be used as padding.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public void Write(string value, int length, char padding)
+        {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(nameof(length), length, "The length parameter must be non-negative.");
+
+            if (length == 0) return;
+
+            if (value.Length > length)
+                value = value.Substring(0, length);
+            else while (value.Length < length)
+                    value += padding;
+
+            base.Write(encoding.GetBytes(value));
+        }
+
+        /// <summary>
+        /// Writes a fixed-length or null-terminated string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
+        /// </summary>
+        /// <param name="value">The string value to write.</param>
+        /// <param name="isNullTerminated">true to terminate the string with a null character. false to write a length-prefixed string.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public void Write(string value, bool isNullTerminated)
+        {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
+            if (!isNullTerminated)
+                base.Write(value);
+
+            base.Write(encoding.GetBytes(value + '\0'));
         }
 
         #endregion
