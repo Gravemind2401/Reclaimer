@@ -11,6 +11,7 @@ namespace System.IO
     /// </summary>
     public class EndianReader : BinaryReader
     {
+        private readonly long virtualOrigin;
         private readonly Encoding encoding;
 
         public ByteOrder ByteOrder { get; set; }
@@ -24,7 +25,8 @@ namespace System.IO
         /// <param name="input">The input stream.</param>
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
-        public EndianReader(Stream input) : this(input, BitConverter.IsLittleEndian ? ByteOrder.LittleEndian : ByteOrder.BigEndian, new UTF8Encoding(), false)
+        public EndianReader(Stream input) 
+            : this(input, BitConverter.IsLittleEndian ? ByteOrder.LittleEndian : ByteOrder.BigEndian, new UTF8Encoding(), false, 0)
         {
 
         }
@@ -37,7 +39,8 @@ namespace System.IO
         /// <param name="byteOrder">The byte order of the stream.</param>
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
-        public EndianReader(Stream input, ByteOrder byteOrder) : this(input, byteOrder, new UTF8Encoding(), false)
+        public EndianReader(Stream input, ByteOrder byteOrder) 
+            : this(input, byteOrder, new UTF8Encoding(), false, 0)
         {
 
         }
@@ -51,7 +54,8 @@ namespace System.IO
         /// <param name="encoding">The character encoding to use.</param>
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
-        public EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding) : this(input, byteOrder, encoding, false)
+        public EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding) 
+            : this(input, byteOrder, encoding, false, 0)
         {
 
         }
@@ -66,9 +70,17 @@ namespace System.IO
         /// <param name="leaveOpen">true to leave the stream open after the EndianReader object is disposed; otherwise, false.</param>
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
-        public EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding, bool leaveOpen) : base(input, encoding, leaveOpen)
+        public EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding, bool leaveOpen) 
+            : this(input, byteOrder, encoding, leaveOpen, 0)
+        {
+
+        }
+
+        private EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding, bool leaveOpen, long virtualOrigin) 
+            : base(input, encoding, leaveOpen)
         {
             ByteOrder = byteOrder;
+            this.virtualOrigin = virtualOrigin;
             this.encoding = encoding;
         }
 
@@ -696,6 +708,52 @@ namespace System.IO
             var value = ReadUInt64(byteOrder);
             BaseStream.Position = origin;
             return value;
+        }
+
+        #endregion
+
+        #region Other
+
+        /// <summary>
+        /// Sets the position of the underlying stream relative to a given origin.
+        /// </summary>
+        /// <param name="offset">A byte offest relative to the origin parameter.</param>
+        /// <param name="origin">A value of type SeekOrigin indicating the reference point used to obtain the new position.</param>
+        public void Seek(long offset, SeekOrigin origin)
+        {
+            switch (origin)
+            {
+                case SeekOrigin.Begin:
+                    BaseStream.Position = virtualOrigin + offset;
+                    break;
+                case SeekOrigin.Current:
+                    BaseStream.Position += offset;
+                    break;
+                case SeekOrigin.End:
+                    BaseStream.Position = BaseStream.Length + offset;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Creates an <seealso cref="EndianReader"/> based on the same stream
+        /// with the same byte order and encoding that will treat the current position
+        /// as the beginning of the stream and will not dispose of the underlying stream when it is closed.
+        /// </summary>
+        public EndianReader CreateVirtualReader()
+        {
+            return CreateVirtualReader(BaseStream.Position);
+        }
+
+        /// <summary>
+        /// Creates an <seealso cref="EndianReader"/> based on the same stream 
+        /// with the same byte order and encoding that will treat the specified offset
+        /// as the beginning of the stream and will not dispose of the underlying stream when it is closed.
+        /// </summary>
+        /// <param name="origin">The position in the stream that will be treated as the beginning.</param>
+        public EndianReader CreateVirtualReader(long origin)
+        {
+            return new EndianReader(BaseStream, ByteOrder, encoding, true, origin);
         }
 
         #endregion

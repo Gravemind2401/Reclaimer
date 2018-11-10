@@ -68,6 +68,7 @@
     <Compile Include="TestInt32.cs" />
     <Compile Include="TestInt16.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestVirtualSeek.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\System.IO.Endian\System.IO.Endian.csproj">
