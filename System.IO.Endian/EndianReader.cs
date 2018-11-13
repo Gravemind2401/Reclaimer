@@ -9,7 +9,7 @@ namespace System.IO.Endian
     /// <summary>
     /// Reads primitive data types from a stream in a specific byte order and encoding.
     /// </summary>
-    public class EndianReader : BinaryReader
+    public partial class EndianReader : BinaryReader
     {
         private readonly long virtualOrigin;
         private readonly Encoding encoding;
