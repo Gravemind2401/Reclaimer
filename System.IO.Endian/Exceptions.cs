@@ -8,84 +8,77 @@ using System.Threading.Tasks;
 
 namespace System.IO.Endian
 {
-    internal static class Error
+    internal static class Exceptions
     {
         #region Generic Errors
 
-        /// <exception cref="ArgumentOutOfRangeException"/>
-        internal static void ParamMustBePositive(string paramName, object paramValue)
+        internal static ArgumentOutOfRangeException ParamMustBePositive(string paramName, object paramValue)
         {
-            throw new ArgumentOutOfRangeException(paramName, paramValue, $"The {paramName} value must be greater than zero.");
+            return new ArgumentOutOfRangeException(paramName, paramValue, $"The {paramName} value must be greater than zero.");
         }
 
-        /// <exception cref="ArgumentOutOfRangeException"/>
-        internal static void ParamMustBeNonNegative(string paramName, object paramValue)
+        internal static ArgumentOutOfRangeException ParamMustBeNonNegative(string paramName, object paramValue)
         {
-            throw new ArgumentOutOfRangeException(paramName, paramValue, $"The {paramName} value must be non-negative.");
+            return new ArgumentOutOfRangeException(paramName, paramValue, $"The {paramName} value must be non-negative.");
         }
 
-        /// <exception cref="ArgumentOutOfRangeException"/>
-        internal static void BoundaryOverlapAmbiguous(string minValue, string maxValue)
+        internal static ArgumentOutOfRangeException BoundaryOverlapAmbiguous(string minValue, string maxValue)
         {
-            throw new ArgumentOutOfRangeException($"The {minValue} value cannot be greater than the {maxValue} value.");
+            return new ArgumentOutOfRangeException($"The {minValue} value cannot be greater than the {maxValue} value.");
         }
 
-        /// <exception cref="ArgumentOutOfRangeException"/>
-        internal static void BoundaryOverlapMinimum(string minValue, string maxValue)
+        internal static ArgumentOutOfRangeException BoundaryOverlapMinimum(string minValue, string maxValue)
         {
-            throw new ArgumentOutOfRangeException($"{minValue} cannot be greater than {maxValue}.");
+            return new ArgumentOutOfRangeException($"{minValue} cannot be greater than {maxValue}.");
         }
 
-        /// <exception cref="ArgumentOutOfRangeException"/>
-        internal static void BoundaryOverlapMaximum(string minValue, string maxValue)
+        internal static ArgumentOutOfRangeException BoundaryOverlapMaximum(string minValue, string maxValue)
         {
-            throw new ArgumentOutOfRangeException($"{maxValue} cannot be less than {minValue}.");
+            return new ArgumentOutOfRangeException($"{maxValue} cannot be less than {minValue}.");
         }
 
-        /// <exception cref="ArgumentOutOfRangeException"/>
-        internal static void PropertyMustBeNullOrPositive(string paramName, object paramValue)
+        internal static ArgumentOutOfRangeException PropertyMustBeNullOrPositive(string paramName, object paramValue)
         {
-            throw new ArgumentOutOfRangeException(paramName, paramValue, $"The {paramName} property must either be null or greater than zero.");
+            return new ArgumentOutOfRangeException(paramName, paramValue, $"The {paramName} property must either be null or greater than zero.");
         }
 
         #endregion
 
         #region Specific Errors
 
-        /// <exception cref="MissingMethodException"/>
-        internal static void MissingPrimitiveReadMethod(string typeName)
+        internal static MissingMethodException MissingPrimitiveReadMethod(string typeName)
         {
-            throw new MissingMethodException($"{nameof(EndianReader)} does not have a primitive read function for {typeName} values.");
+            return new MissingMethodException($"{nameof(EndianReader)} does not have a primitive read function for {typeName} values.");
         }
 
-        /// <exception cref="MissingMethodException"/>
-        internal static void MissingPrimitiveWriteMethod(string typeName)
+        internal static MissingMethodException MissingPrimitiveWriteMethod(string typeName)
         {
-            throw new MissingMethodException($"{nameof(EndianWriter)} does not have a primitive write function for {typeName} values.");
+            return new MissingMethodException($"{nameof(EndianWriter)} does not have a primitive write function for {typeName} values.");
         }
 
-        /// <exception cref="AmbiguousMatchException"/>
-        internal static void AttributeVersionOverlap(string memberName, string attrName, double? version)
+        //internal static MissingMethodException CannotConstructType()
+        //{
+        //    return new MissingMethodException()
+        //}
+
+        internal static AmbiguousMatchException AttributeVersionOverlap(string memberName, string attrName, double? version)
         {
-            throw new AmbiguousMatchException($"The type or property '{memberName}' has multiple {attrName}s specified that are a match for version '{version?.ToString() ?? "null"}'.");
+            return new AmbiguousMatchException($"The type or property '{memberName}' has multiple {attrName}s specified that are a match for version '{version?.ToString() ?? "null"}'.");
         }
 
-        /// <exception cref="AmbiguousMatchException"/>
-        internal static void StringTypeOverlap(string propName)
+        internal static AmbiguousMatchException StringTypeOverlap(string propName)
         {
-            throw new AmbiguousMatchException($"The {propName} property has multiple string type specifier attributes applied.");
+            return new AmbiguousMatchException($"The {propName} property has multiple string type specifier attributes applied.");
         }
 
-        /// <exception cref="ArgumentOutOfRangeException"/>
-        internal static void NoVersionSpecified()
+        internal static ArgumentException NoVersionSpecified()
         {
-            throw new ArgumentException($"At least one version boundary must be specified.");
+            return new ArgumentException($"At least one version boundary must be specified.");
         }
 
-        /// <exception cref="ArgumentException"/>
-        internal static void NotValidForPrimitiveTypes([CallerMemberName]string methodName = null)
+        internal static ArgumentException NotValidForPrimitiveTypes([CallerMemberName]string methodName = null)
         {
-            throw new ArgumentException($"{methodName} should not be used on primitive types or strings.");
+            return new ArgumentException($"{methodName} should not be used on primitive types or strings.");
         }
 
         #endregion

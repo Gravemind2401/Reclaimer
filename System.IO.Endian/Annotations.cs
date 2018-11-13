@@ -36,7 +36,7 @@ namespace System.IO.Endian
             set
             {
                 if (value > maxVersion)
-                    Error.BoundaryOverlapMinimum(nameof(MinVersion), nameof(MaxVersion));
+                    throw Exceptions.BoundaryOverlapMinimum(nameof(MinVersion), nameof(MaxVersion));
 
                 minVersion = value;
             }
@@ -51,7 +51,7 @@ namespace System.IO.Endian
             set
             {
                 if (value < minVersion)
-                    Error.BoundaryOverlapMaximum(nameof(MinVersion), nameof(MaxVersion));
+                    throw Exceptions.BoundaryOverlapMaximum(nameof(MinVersion), nameof(MaxVersion));
 
                 maxVersion = value;
             }
@@ -65,7 +65,7 @@ namespace System.IO.Endian
         public ObjectSizeAttribute(long size)
         {
             if (size <= 0)
-                Error.ParamMustBePositive(nameof(size), size);
+                throw Exceptions.ParamMustBePositive(nameof(size), size);
 
             this.size = size;
         }
@@ -95,7 +95,7 @@ namespace System.IO.Endian
             set
             {
                 if (value > maxVersion)
-                    Error.BoundaryOverlapMinimum(nameof(MinVersion), nameof(MaxVersion));
+                    throw Exceptions.BoundaryOverlapMinimum(nameof(MinVersion), nameof(MaxVersion));
 
                 minVersion = value;
             }
@@ -110,7 +110,7 @@ namespace System.IO.Endian
             set
             {
                 if (value < minVersion)
-                    Error.BoundaryOverlapMaximum(nameof(MinVersion), nameof(MaxVersion));
+                    throw Exceptions.BoundaryOverlapMaximum(nameof(MinVersion), nameof(MaxVersion));
 
                 maxVersion = value;
             }
@@ -124,20 +124,11 @@ namespace System.IO.Endian
         public OffsetAttribute(long offset)
         {
             if (offset < 0)
-                Error.ParamMustBeNonNegative(nameof(offset), offset);
+                throw Exceptions.ParamMustBeNonNegative(nameof(offset), offset);
 
             this.offset = offset;
         }
     }
-
-    ///// <summary>
-    ///// Specifies that a property should be ignored when reading or writing its containing type.
-    ///// </summary>
-    //[AttributeUsage(AttributeTargets.Property)]
-    //public class IgnorePropertyAttribute : Attribute
-    //{
-
-    //}
 
     /// <summary>
     /// Specifies that a property holds the version number of the object being read or written.
@@ -179,10 +170,10 @@ namespace System.IO.Endian
         public VersionSpecificAttribute(double? minVersion, double? maxVersion)
         {
             if (!minVersion.HasValue && !maxVersion.HasValue)
-                Error.NoVersionSpecified();
+                throw Exceptions.NoVersionSpecified();
 
             if (minVersion > maxVersion)
-                Error.BoundaryOverlapAmbiguous(nameof(minVersion), nameof(maxVersion));
+                throw Exceptions.BoundaryOverlapAmbiguous(nameof(minVersion), nameof(maxVersion));
 
             this.minVersion = minVersion;
             this.maxVersion = maxVersion;
@@ -213,7 +204,7 @@ namespace System.IO.Endian
             set
             {
                 if (value > maxVersion)
-                    Error.BoundaryOverlapMinimum(nameof(MinVersion), nameof(MaxVersion));
+                    throw Exceptions.BoundaryOverlapMinimum(nameof(MinVersion), nameof(MaxVersion));
 
                 minVersion = value;
             }
@@ -228,7 +219,7 @@ namespace System.IO.Endian
             set
             {
                 if (value < minVersion)
-                    Error.BoundaryOverlapMaximum(nameof(MinVersion), nameof(MaxVersion));
+                    throw Exceptions.BoundaryOverlapMaximum(nameof(MinVersion), nameof(MaxVersion));
 
                 maxVersion = value;
             }
@@ -277,7 +268,7 @@ namespace System.IO.Endian
         public FixedLengthAttribute(int length)
         {
             if (length <= 0)
-                Error.ParamMustBePositive(nameof(length), length);
+                throw Exceptions.ParamMustBePositive(nameof(length), length);
 
             this.length = length;
         }
@@ -300,7 +291,7 @@ namespace System.IO.Endian
             set
             {
                 if (value < 0)
-                    Error.PropertyMustBeNullOrPositive(nameof(Length), length);
+                    throw Exceptions.PropertyMustBeNullOrPositive(nameof(Length), length);
 
                 length = value;
             }

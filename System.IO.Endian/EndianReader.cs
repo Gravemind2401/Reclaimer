@@ -389,7 +389,7 @@ namespace System.IO.Endian
         public string ReadString(int length, bool trim)
         {
             if (length < 0)
-                Error.ParamMustBeNonNegative(nameof(length), length);
+                throw Exceptions.ParamMustBeNonNegative(nameof(length), length);
 
             if (length == 0)
                 return string.Empty;
@@ -428,7 +428,7 @@ namespace System.IO.Endian
         public string ReadNullTerminatedString(int maxLength)
         {
             if (maxLength < 0)
-                Error.ParamMustBeNonNegative(nameof(maxLength), maxLength);
+                throw Exceptions.ParamMustBeNonNegative(nameof(maxLength), maxLength);
 
             if (maxLength == 0)
                 return string.Empty;

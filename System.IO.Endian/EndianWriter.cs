@@ -428,7 +428,7 @@ namespace System.IO.Endian
                 throw new ArgumentNullException(nameof(value));
 
             if (length < 0)
-                Error.ParamMustBeNonNegative(nameof(length), length);
+                throw Exceptions.ParamMustBeNonNegative(nameof(length), length);
 
             if (length == 0) return;
 

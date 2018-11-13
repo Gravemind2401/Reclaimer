@@ -34,7 +34,7 @@ namespace System.IO.Endian
                     //else both or neither are versioned: fall through to the error below
                 }
 
-                Error.AttributeVersionOverlap(member.Name, typeof(T).Name, version);
+                throw Exceptions.AttributeVersionOverlap(member.Name, typeof(T).Name, version);
             }
 
             return matches.FirstOrDefault();

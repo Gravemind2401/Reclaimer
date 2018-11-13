@@ -56,7 +56,7 @@ namespace System.IO.Endian
             if (fixedLen != null)
             {
                 if (lenPrefixed != null)
-                    Error.StringTypeOverlap(prop.Name);
+                    throw Exceptions.StringTypeOverlap(prop.Name);
 
                 value = ReadString(fixedLen.Length, fixedLen.Trim);
             }
@@ -64,7 +64,7 @@ namespace System.IO.Endian
             if (nullTerm != null)
             {
                 if (lenPrefixed != null || fixedLen != null)
-                    Error.StringTypeOverlap(prop.Name);
+                    throw Exceptions.StringTypeOverlap(prop.Name);
 
                 if (nullTerm.Length.HasValue)
                     value = ReadNullTerminatedString(nullTerm.Length.Value);
@@ -77,7 +77,7 @@ namespace System.IO.Endian
         private object ReadComplexInternal(Type type, double? version, bool isProperty)
         {
             if (type.IsPrimitive || type.Equals(typeof(string)))
-                Error.NotValidForPrimitiveTypes();
+                throw Exceptions.NotValidForPrimitiveTypes();
 
             var originalPosition = BaseStream.Position;
 
@@ -116,7 +116,7 @@ namespace System.IO.Endian
                     {
                         var primitiveMethod = GetPrimitiveReadMethod(prop.PropertyType);
                         if (primitiveMethod == null)
-                            Error.MissingPrimitiveReadMethod(prop.PropertyType.Name);
+                            throw Exceptions.MissingPrimitiveReadMethod(prop.PropertyType.Name);
                         prop.SetValue(result, primitiveMethod.Invoke(reader, null));
                     }
                     else if (prop.PropertyType.Equals(typeof(string)))
