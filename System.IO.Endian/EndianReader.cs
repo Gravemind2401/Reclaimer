@@ -205,6 +205,18 @@ namespace System.IO.Endian
             return ReadUInt64(ByteOrder);
         }
 
+        /// <summary>
+        /// Reads a length-prefixed string from the current stream using the current byte order
+        /// and encoding of the <seealso cref="EndianReader"/>.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public override string ReadString()
+        {
+            return ReadString(ByteOrder);
+        }
+
         #endregion
 
         #region ByteOrder Read
@@ -377,6 +389,23 @@ namespace System.IO.Endian
         #endregion
 
         #region String Read
+
+        /// <summary>
+        /// Reads a length-prefixed string from the current stream using the specified byte order
+        /// and the current encoding of the <seealso cref="EndianWriter"/>.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public string ReadString(ByteOrder byteOrder)
+        {
+            var length = ReadInt32(byteOrder);
+
+            if (length == 0)
+                return string.Empty;
+
+            return encoding.GetString(ReadBytes(length));
+        }
 
         /// <summary>
         /// Reads a fixed-length string from the current stream, and optionally removes trailing white-space characters.

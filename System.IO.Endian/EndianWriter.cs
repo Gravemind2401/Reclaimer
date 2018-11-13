@@ -25,7 +25,7 @@ namespace System.IO.Endian
         /// <param name="output">The output stream.</param>
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
-        public EndianWriter(Stream output) 
+        public EndianWriter(Stream output)
             : this(output, BitConverter.IsLittleEndian ? ByteOrder.LittleEndian : ByteOrder.BigEndian, new UTF8Encoding(), false, 0)
         {
 
@@ -39,7 +39,7 @@ namespace System.IO.Endian
         /// <param name="byteOrder">The byte order of the stream.</param>
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
-        public EndianWriter(Stream output, ByteOrder byteOrder) 
+        public EndianWriter(Stream output, ByteOrder byteOrder)
             : this(output, byteOrder, new UTF8Encoding(), false, 0)
         {
 
@@ -54,7 +54,7 @@ namespace System.IO.Endian
         /// <param name="encoding">The character encoding to use.</param>
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
-        public EndianWriter(Stream output, ByteOrder byteOrder, Encoding encoding) 
+        public EndianWriter(Stream output, ByteOrder byteOrder, Encoding encoding)
             : this(output, byteOrder, encoding, false, 0)
         {
 
@@ -70,13 +70,13 @@ namespace System.IO.Endian
         /// <param name="leaveOpen">true to leave the stream open after the EndianWriter object is disposed; otherwise, false.</param>
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
-        public EndianWriter(Stream output, ByteOrder byteOrder, Encoding encoding, bool leaveOpen) 
+        public EndianWriter(Stream output, ByteOrder byteOrder, Encoding encoding, bool leaveOpen)
             : this(output, byteOrder, encoding, leaveOpen, 0)
         {
 
         }
 
-        private EndianWriter(Stream input, ByteOrder byteOrder, Encoding encoding, bool leaveOpen, long virtualOrigin) 
+        private EndianWriter(Stream input, ByteOrder byteOrder, Encoding encoding, bool leaveOpen, long virtualOrigin)
             : base(input, encoding, leaveOpen)
         {
             ByteOrder = byteOrder;
@@ -192,6 +192,19 @@ namespace System.IO.Endian
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
         public override void Write(ulong value)
+        {
+            Write(value, ByteOrder);
+        }
+
+        /// <summary>
+        /// Writes a length-prefixed string to the current stream using the current byte order
+        /// and encoding of the <seealso cref="EndianWriter"/>.
+        /// </summary>
+        /// <param name="value">The string value to write.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public override void Write(string value)
         {
             Write(value, ByteOrder);
         }
@@ -399,6 +412,20 @@ namespace System.IO.Endian
         #region String Write
 
         /// <summary>
+        /// Writes a length-prefixed string to the current stream using the specified byte order
+        /// and the current encoding of the <seealso cref="EndianWriter"/>.
+        /// </summary>
+        /// <param name="value">The string value to write.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public void Write(string value, ByteOrder byteOrder)
+        {
+            Write(encoding.GetByteCount(value), byteOrder);
+            Write(encoding.GetBytes(value));
+        }
+
+        /// <summary>
         /// Writes a fixed-length string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
         /// If the string is shorter than the specified length it will be padded with white-space.
         /// </summary>
@@ -407,9 +434,9 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void Write(string value, int length)
+        public void WriteStringFixedLength(string value, int length)
         {
-            Write(value, length, ' ');
+            WriteStringFixedLength(value, length, ' ');
         }
 
         /// <summary>
@@ -422,7 +449,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void Write(string value, int length, char padding)
+        public void WriteStringFixedLength(string value, int length, char padding)
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
@@ -441,22 +468,19 @@ namespace System.IO.Endian
         }
 
         /// <summary>
-        /// Writes a fixed-length or null-terminated string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
+        /// Writes a length-prefixed or null-terminated string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
         /// </summary>
         /// <param name="value">The string value to write.</param>
         /// <param name="isNullTerminated">true to terminate the string with a null character. false to write a length-prefixed string.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void Write(string value, bool isNullTerminated)
+        public void WriteStringNullTerminated(string value)
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            if (!isNullTerminated)
-                base.Write(value);
-
-            base.Write(encoding.GetBytes(value + '\0'));
+            Write(encoding.GetBytes(value + '\0'));
         }
 
         #endregion

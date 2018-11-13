@@ -62,6 +62,7 @@
     <Compile Include="ComplexRead\Basic.cs" />
     <Compile Include="TestDecimal.cs" />
     <Compile Include="TestDouble.cs" />
+    <Compile Include="TestString.cs" />
     <Compile Include="TestSingle.cs" />
     <Compile Include="TestUInt64.cs" />
     <Compile Include="TestUInt32.cs" />
