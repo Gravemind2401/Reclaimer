@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace System.IO
+namespace System.IO.Endian
 {
     /// <summary>
     /// Reads primitive data types from a stream in a specific byte order and encoding.
@@ -25,7 +25,7 @@ namespace System.IO
         /// <param name="input">The input stream.</param>
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
-        public EndianReader(Stream input) 
+        public EndianReader(Stream input)
             : this(input, BitConverter.IsLittleEndian ? ByteOrder.LittleEndian : ByteOrder.BigEndian, new UTF8Encoding(), false, 0)
         {
 
@@ -39,7 +39,7 @@ namespace System.IO
         /// <param name="byteOrder">The byte order of the stream.</param>
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
-        public EndianReader(Stream input, ByteOrder byteOrder) 
+        public EndianReader(Stream input, ByteOrder byteOrder)
             : this(input, byteOrder, new UTF8Encoding(), false, 0)
         {
 
@@ -54,7 +54,7 @@ namespace System.IO
         /// <param name="encoding">The character encoding to use.</param>
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
-        public EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding) 
+        public EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding)
             : this(input, byteOrder, encoding, false, 0)
         {
 
@@ -70,13 +70,13 @@ namespace System.IO
         /// <param name="leaveOpen">true to leave the stream open after the EndianReader object is disposed; otherwise, false.</param>
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
-        public EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding, bool leaveOpen) 
+        public EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding, bool leaveOpen)
             : this(input, byteOrder, encoding, leaveOpen, 0)
         {
 
         }
 
-        private EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding, bool leaveOpen, long virtualOrigin) 
+        private EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding, bool leaveOpen, long virtualOrigin)
             : base(input, encoding, leaveOpen)
         {
             ByteOrder = byteOrder;
@@ -389,7 +389,7 @@ namespace System.IO
         public string ReadString(int length, bool trim)
         {
             if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length), length, "The length parameter must be non-negative.");
+                Error.ParamMustBeNonNegative(nameof(length), length);
 
             if (length == 0)
                 return string.Empty;
@@ -428,7 +428,7 @@ namespace System.IO
         public string ReadNullTerminatedString(int maxLength)
         {
             if (maxLength < 0)
-                throw new ArgumentOutOfRangeException(nameof(maxLength), maxLength, "The maxLength parameter must be non-negative.");
+                Error.ParamMustBeNonNegative(nameof(maxLength), maxLength);
 
             if (maxLength == 0)
                 return string.Empty;

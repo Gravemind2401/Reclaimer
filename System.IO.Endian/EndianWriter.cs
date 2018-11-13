@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace System.IO
+namespace System.IO.Endian
 {
     /// <summary>
     /// Writes primitive data types to a stream in a specific byte order and encoding.
@@ -428,7 +428,7 @@ namespace System.IO
                 throw new ArgumentNullException(nameof(value));
 
             if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(length), length, "The length parameter must be non-negative.");
+                Error.ParamMustBeNonNegative(nameof(length), length);
 
             if (length == 0) return;
 

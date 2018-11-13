@@ -7,7 +7,7 @@
     <ProjectGuid>{06A312C3-C3EC-447D-B7B7-F50E47A886D5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>System.IO</RootNamespace>
+    <RootNamespace>System.IO.Endian</RootNamespace>
     <AssemblyName>System.IO.Endian</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -44,6 +44,7 @@
     <Compile Include="ByteOrder.cs" />
     <Compile Include="EndianReader.cs" />
     <Compile Include="EndianWriter.cs" />
+    <Compile Include="Exceptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

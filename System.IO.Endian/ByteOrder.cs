@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace System.IO
+namespace System.IO.Endian
 {
     public enum ByteOrder
     {
