@@ -58,6 +58,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="ComplexRead\StringRead.cs" />
     <Compile Include="ComplexRead\ByteOrder.cs" />
     <Compile Include="ComplexRead\Basic.cs" />
     <Compile Include="TestDecimal.cs" />

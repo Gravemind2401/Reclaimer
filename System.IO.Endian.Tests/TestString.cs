@@ -51,6 +51,7 @@ namespace System.IO.Endian.Tests
                 stream.Position = 0;
                 value2 = reader.ReadString(32, false);
                 Assert.AreEqual(32, value2.Length);
+                Assert.IsTrue(value2.StartsWith(value1));
             }
         }
         [DataTestMethod]

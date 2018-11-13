@@ -81,10 +81,8 @@ namespace System.IO.Endian
 
             var originalPosition = BaseStream.Position;
 
-            //ignore any properties we cant construct
-            //(if this is top level, we let Activator.CreateInstance throw a MissingMethodException)
-            if (isProperty && type.GetConstructor(Type.EmptyTypes) == null)
-                return null;
+            if (type.GetConstructor(Type.EmptyTypes) == null)
+                throw Exceptions.TypeNotConstructable(type.Name, isProperty);
 
             var result = Activator.CreateInstance(type);
 
@@ -97,9 +95,8 @@ namespace System.IO.Endian
                 }
 
                 var propInfo = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(p => Utils.CanReadProperty(p, version))
-                    .OrderBy(p => Utils.GetAttributeForVersion<OffsetAttribute>(p, version).Offset)
-                    .ThenBy(p => Marshal.SizeOf(p.PropertyType)); //in case multiple properties have the same offset for some reason
+                    .Where(p => Utils.CheckPropertyForRead(p, version))
+                    .OrderBy(p => Utils.GetAttributeForVersion<OffsetAttribute>(p, version).Offset);
 
                 foreach (var prop in propInfo)
                 {

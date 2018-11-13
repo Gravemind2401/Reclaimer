@@ -56,10 +56,13 @@ namespace System.IO.Endian
             return new MissingMethodException($"{nameof(EndianWriter)} does not have a primitive write function for {typeName} values.");
         }
 
-        //internal static MissingMethodException CannotConstructType()
-        //{
-        //    return new MissingMethodException()
-        //}
+        internal static MissingMethodException TypeNotConstructable(string typeName, bool isProperty)
+        {
+            if (isProperty)
+                return new MissingMethodException($"A property of type '{typeName}' was marked for read/write but '{typeName}' does not have a default constructor.");
+            else
+                return new MissingMethodException($"Cannot create an object of type '{typeName}' because '{typeName}' does not have a default constructor.");
+        }
 
         internal static AmbiguousMatchException AttributeVersionOverlap(string memberName, string attrName, double? version)
         {

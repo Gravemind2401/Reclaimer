@@ -275,7 +275,7 @@ namespace System.IO.Endian
     }
 
     /// <summary>
-    /// Specifies that a string is stored as null-terminated.
+    /// Specifies that a string is stored as null-terminated, optionally using a minimum number of bytes.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class NullTerminatedAttribute : Attribute
@@ -295,6 +295,27 @@ namespace System.IO.Endian
 
                 length = value;
             }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <seealso cref="NullTerminatedAttribute"/> class.
+        /// </summary>
+        public NullTerminatedAttribute()
+        {
+
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <seealso cref="NullTerminatedAttribute"/> class with the specified byte length value.
+        /// </summary>
+        /// <param name="length">The number of bytes used to store the string.</param>
+        /// <exception cref="ArgumentOutOfRangeException"/>
+        public NullTerminatedAttribute(int length)
+        {
+            if (length <= 0)
+                throw Exceptions.ParamMustBePositive(nameof(length), length);
+
+            this.length = length;
         }
     }
 
