@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Annotations.cs" />
     <Compile Include="ByteOrder.cs" />
     <Compile Include="EndianReader.cs" />
     <Compile Include="EndianWriter.cs" />
