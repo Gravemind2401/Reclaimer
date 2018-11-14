@@ -37,7 +37,7 @@ namespace System.IO.Endian
         /// <summary>
         /// Gets a value indicating whether the size has a maximum version requirement.
         /// </summary>
-        public bool HasMaxVersion => minVersion.HasValue;
+        public bool HasMaxVersion => maxVersion.HasValue;
 
         /// <summary>
         /// Gets or sets the inclusive minimum version that the size is applicable to.
@@ -106,7 +106,7 @@ namespace System.IO.Endian
         /// <summary>
         /// Gets a value indicating whether the offset has a maximum version requirement.
         /// </summary>
-        public bool HasMaxVersion => minVersion.HasValue;
+        public bool HasMaxVersion => maxVersion.HasValue;
 
         /// <summary>
         /// Gets or sets the inclusive minimum version that the offset is applicable to.
@@ -179,7 +179,7 @@ namespace System.IO.Endian
         /// <summary>
         /// Gets a value indicating whether the property has a maximum version requirement.
         /// </summary>
-        public bool HasMaxVersion => minVersion.HasValue;
+        public bool HasMaxVersion => maxVersion.HasValue;
 
         /// <summary>
         /// Gets or sets the inclusive minimum version that the property is applicable to.
