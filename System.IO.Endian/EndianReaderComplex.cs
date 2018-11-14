@@ -70,8 +70,8 @@ namespace System.IO.Endian
                 if (lenPrefixed != null || fixedLen != null)
                     throw Exceptions.StringTypeOverlap(prop.Name);
 
-                if (nullTerm.Length.HasValue)
-                    value = ReadNullTerminatedString(nullTerm.Length.Value);
+                if (nullTerm.HasLength)
+                    value = ReadNullTerminatedString(nullTerm.Length);
                 else value = ReadNullTerminatedString();
             }
 

@@ -101,7 +101,7 @@ namespace System.IO.Endian.Tests.ComplexRead
             public string Property4 { get; set; }
 
             [Offset(0x40)]
-            [NullTerminated(64)]
+            [NullTerminated(Length = 64)]
             public string Property5 { get; set; }
 
             [Offset(0x60)]

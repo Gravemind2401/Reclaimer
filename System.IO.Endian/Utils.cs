@@ -19,7 +19,7 @@ namespace System.IO.Endian
                            !(version < o.MinVersion || version >= o.MaxVersion)
 
                            //exclude when read version is not specified but at least one of the bounds is
-                           && !(!version.HasValue && (o.MinVersion.HasValue || o.MaxVersion.HasValue))
+                           && !(!version.HasValue && (o.HasMinVersion || o.HasMaxVersion))
 
                            select o).ToList();
 
@@ -28,7 +28,7 @@ namespace System.IO.Endian
                 //if there is a versioned match and an unversioned match we should use the versioned match
                 if (matches.Count == 2)
                 {
-                    matches = matches.Where(o => o.MinVersion.HasValue || o.MaxVersion.HasValue).ToList();
+                    matches = matches.Where(o => o.HasMinVersion || o.HasMaxVersion).ToList();
                     if (matches.Count == 1)
                         return matches.Single();
                     //else both or neither are versioned: fall through to the error below

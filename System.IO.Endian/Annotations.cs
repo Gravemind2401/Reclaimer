@@ -8,8 +8,10 @@ namespace System.IO.Endian
 {
     internal interface IVersionAttribute
     {
-        double? MinVersion { get; }
-        double? MaxVersion { get; }
+        double MinVersion { get; }
+        double MaxVersion { get; }
+        bool HasMinVersion { get; }
+        bool HasMaxVersion { get; }
     }
 
     /// <summary>
@@ -28,11 +30,21 @@ namespace System.IO.Endian
         public long Size => size;
 
         /// <summary>
+        /// Gets a value indicating whether the size has a minimum version requirement.
+        /// </summary>
+        public bool HasMinVersion => minVersion.HasValue;
+
+        /// <summary>
+        /// Gets a value indicating whether the size has a maximum version requirement.
+        /// </summary>
+        public bool HasMaxVersion => minVersion.HasValue;
+
+        /// <summary>
         /// Gets or sets the inclusive minimum version that the size is applicable to.
         /// </summary>
-        public double? MinVersion
+        public double MinVersion
         {
-            get { return minVersion; }
+            get { return minVersion.GetValueOrDefault(); }
             set
             {
                 if (value > maxVersion)
@@ -45,9 +57,9 @@ namespace System.IO.Endian
         /// <summary>
         /// Gets or sets the exclusive maximum version that the size is applicable to.
         /// </summary>
-        public double? MaxVersion
+        public double MaxVersion
         {
-            get { return maxVersion; }
+            get { return maxVersion.GetValueOrDefault(); }
             set
             {
                 if (value < minVersion)
@@ -87,11 +99,21 @@ namespace System.IO.Endian
         public long Offset => offset;
 
         /// <summary>
+        /// Gets a value indicating whether the offset has a minimum version requirement.
+        /// </summary>
+        public bool HasMinVersion => minVersion.HasValue;
+
+        /// <summary>
+        /// Gets a value indicating whether the offset has a maximum version requirement.
+        /// </summary>
+        public bool HasMaxVersion => minVersion.HasValue;
+
+        /// <summary>
         /// Gets or sets the inclusive minimum version that the offset is applicable to.
         /// </summary>
-        public double? MinVersion
+        public double MinVersion
         {
-            get { return minVersion; }
+            get { return minVersion.GetValueOrDefault(); }
             set
             {
                 if (value > maxVersion)
@@ -104,9 +126,9 @@ namespace System.IO.Endian
         /// <summary>
         /// Gets or sets the exclusive maximum version that the offset is applicable to.
         /// </summary>
-        public double? MaxVersion
+        public double MaxVersion
         {
-            get { return maxVersion; }
+            get { return maxVersion.GetValueOrDefault(); }
             set
             {
                 if (value < minVersion)
@@ -146,37 +168,74 @@ namespace System.IO.Endian
     [AttributeUsage(AttributeTargets.Property)]
     public class VersionSpecificAttribute : Attribute
     {
-        private readonly double? minVersion;
-        private readonly double? maxVersion;
+        private double? minVersion;
+        private double? maxVersion;
 
         /// <summary>
-        /// Gets the inclusive minimum version that the property is applicable to.
+        /// Gets a value indicating whether the property has a minimum version requirement.
         /// </summary>
-        public double? MinVersion => minVersion;
+        public bool HasMinVersion => minVersion.HasValue;
 
         /// <summary>
-        /// Gets the exclusive maximum version that the property is applicable to.
+        /// Gets a value indicating whether the property has a maximum version requirement.
         /// </summary>
-        public double? MaxVersion => maxVersion;
+        public bool HasMaxVersion => minVersion.HasValue;
+
+        /// <summary>
+        /// Gets or sets the inclusive minimum version that the property is applicable to.
+        /// </summary>
+        public double MinVersion
+        {
+            get { return minVersion.GetValueOrDefault(); }
+            set
+            {
+                if (value > maxVersion)
+                    throw Exceptions.BoundaryOverlapMinimum(nameof(MinVersion), nameof(MaxVersion));
+
+                minVersion = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the exclusive maximum version that the property is applicable to.
+        /// </summary>
+        public double MaxVersion
+        {
+            get { return maxVersion.GetValueOrDefault(); }
+            set
+            {
+                if (value < minVersion)
+                    throw Exceptions.BoundaryOverlapMaximum(nameof(MinVersion), nameof(MaxVersion));
+
+                maxVersion = value;
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <seealso cref="VersionSpecificAttribute"/> class with the specified minimum and maximum version values.
-        /// At least one of the values must be non-null.
         /// </summary>
         /// <param name="minVersion">The inclusive minimum version that the property applies to.</param>
         /// <param name="maxVersion">The exclusive maximum version that the property applies to.</param>
-        /// <exception cref="ArgumentException"/>
         /// <exception cref="ArgumentOutOfRangeException"/>
-        public VersionSpecificAttribute(double? minVersion, double? maxVersion)
+        public VersionSpecificAttribute(double minVersion, double maxVersion)
         {
-            if (!minVersion.HasValue && !maxVersion.HasValue)
-                throw Exceptions.NoVersionSpecified();
-
             if (minVersion > maxVersion)
                 throw Exceptions.BoundaryOverlapAmbiguous(nameof(minVersion), nameof(maxVersion));
 
             this.minVersion = minVersion;
             this.maxVersion = maxVersion;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <seealso cref="VersionSpecificAttribute"/> class with the specified version value.
+        /// </summary>
+        /// <param name="version">The version that the property applies to.</param>
+        /// <exception cref="ArgumentException"/>
+        /// <exception cref="ArgumentOutOfRangeException"/>
+        public VersionSpecificAttribute(double version)
+        {
+            minVersion = version;
+            maxVersion = version;
         }
     }
 
@@ -196,11 +255,21 @@ namespace System.IO.Endian
         public ByteOrder ByteOrder => byteOrder;
 
         /// <summary>
+        /// Gets a value indicating whether the byte order has a minimum version requirement.
+        /// </summary>
+        public bool HasMinVersion => minVersion.HasValue;
+
+        /// <summary>
+        /// Gets a value indicating whether the byte order has a maximum version requirement.
+        /// </summary>
+        public bool HasMaxVersion => minVersion.HasValue;
+
+        /// <summary>
         /// Gets or sets the inclusive minimum version that the byte order is applicable to.
         /// </summary>
-        public double? MinVersion
+        public double MinVersion
         {
-            get { return minVersion; }
+            get { return minVersion.GetValueOrDefault(); }
             set
             {
                 if (value > maxVersion)
@@ -213,9 +282,9 @@ namespace System.IO.Endian
         /// <summary>
         /// Gets or sets the exclusive maximum version that the byte order is applicable to.
         /// </summary>
-        public double? MaxVersion
+        public double MaxVersion
         {
-            get { return maxVersion; }
+            get { return maxVersion.GetValueOrDefault(); }
             set
             {
                 if (value < minVersion)
@@ -282,12 +351,14 @@ namespace System.IO.Endian
     {
         private int? length;
 
+        public bool HasLength => length.HasValue;
+
         /// <summary>
         /// Gets or sets the number of bytes used to store the string.
         /// </summary>
-        public int? Length
+        public int Length
         {
-            get { return length; }
+            get { return length.GetValueOrDefault(); }
             set
             {
                 if (value < 0)
@@ -295,27 +366,6 @@ namespace System.IO.Endian
 
                 length = value;
             }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <seealso cref="NullTerminatedAttribute"/> class.
-        /// </summary>
-        public NullTerminatedAttribute()
-        {
-
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <seealso cref="NullTerminatedAttribute"/> class with the specified byte length value.
-        /// </summary>
-        /// <param name="length">The number of bytes used to store the string.</param>
-        /// <exception cref="ArgumentOutOfRangeException"/>
-        public NullTerminatedAttribute(int length)
-        {
-            if (length <= 0)
-                throw Exceptions.ParamMustBePositive(nameof(length), length);
-
-            this.length = length;
         }
     }
 
