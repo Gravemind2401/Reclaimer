@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -44,7 +45,7 @@ namespace System.IO.Endian
             else return primitiveMethod.Invoke(this, null);
         }
 
-        private bool ReadStringProperty(PropertyInfo prop, out string value)
+        private bool ReadStringValue(PropertyInfo prop, out string value)
         {
             var lenPrefixed = (LengthPrefixedAttribute)Attribute.GetCustomAttribute(prop, typeof(LengthPrefixedAttribute));
             var fixedLen = (FixedLengthAttribute)Attribute.GetCustomAttribute(prop, typeof(FixedLengthAttribute));
@@ -83,15 +84,39 @@ namespace System.IO.Endian
             if (type.IsPrimitive || type.Equals(typeof(string)))
                 throw Exceptions.NotValidForPrimitiveTypes();
 
-            var originalPosition = BaseStream.Position;
-
             if (type.GetConstructor(Type.EmptyTypes) == null)
                 throw Exceptions.TypeNotConstructable(type.Name, isProperty);
 
             var result = Activator.CreateInstance(type);
 
+            var originalPosition = BaseStream.Position;
             using (var reader = CreateVirtualReader())
             {
+                if (!version.HasValue)
+                {
+                    var versionProps = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                        .Where(p => Attribute.IsDefined(p, typeof(OffsetAttribute)) && Attribute.IsDefined(p, typeof(VersionNumberAttribute)))
+                        .ToList();
+
+                    if (versionProps.Any())
+                    {
+                        if (versionProps.Count > 1)
+                            throw Exceptions.MultipleVersionsSpecified(type.Name);
+
+                        var vprop = versionProps[0];
+                        var offsets = Attribute.GetCustomAttributes(vprop, typeof(OffsetAttribute)).OfType<OffsetAttribute>().ToList();
+                        if (offsets.Count > 1 || offsets[0].HasMinVersion || offsets[0].HasMaxVersion)
+                            throw Exceptions.InvalidVersionAttribute();
+
+                        reader.ReadPropertyValue(result, vprop, null);
+                        var converter = TypeDescriptor.GetConverter(vprop.PropertyType);
+                        if (converter.CanConvertTo(typeof(double)))
+                            version = (double)converter.ConvertTo(vprop.GetValue(result), typeof(double));
+
+                        reader.Seek(0, SeekOrigin.Begin);
+                    }
+                }
+
                 if (Attribute.IsDefined(type, typeof(ByteOrderAttribute)))
                 {
                     var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(type, version);
@@ -103,39 +128,7 @@ namespace System.IO.Endian
                     .OrderBy(p => Utils.GetAttributeForVersion<OffsetAttribute>(p, version).Offset);
 
                 foreach (var prop in propInfo)
-                {
-                    var originalByteOrder = reader.ByteOrder;
-                    reader.Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
-
-                    if (Attribute.IsDefined(prop, typeof(ByteOrderAttribute)))
-                    {
-                        var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
-                        reader.ByteOrder = attr.ByteOrder;
-                    }
-
-                    if (prop.PropertyType.IsPrimitive)
-                        prop.SetValue(result, reader.ReadPrimitiveValue(prop.PropertyType));
-                    else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-                    {
-                        var innerType = prop.PropertyType.GetGenericArguments()[0];
-                        if (innerType.IsPrimitive)
-                            prop.SetValue(result, reader.ReadPrimitiveValue(innerType));
-                        else prop.SetValue(result, reader.ReadComplexInternal(innerType, version, true));
-                    }
-                    else if (prop.PropertyType.Equals(typeof(string)))
-                    {
-                        string value;
-                        if (reader.ReadStringProperty(prop, out value))
-                            prop.SetValue(result, value);
-                    }
-                    else prop.SetValue(result, reader.ReadComplexInternal(prop.PropertyType, version, true));
-
-                    //if this property is the version number, use its value as the version for all following properties
-                    if (Attribute.IsDefined(prop, typeof(VersionNumberAttribute)))
-                        version = prop.GetValue(result) as double?;
-
-                    reader.ByteOrder = originalByteOrder;
-                }
+                    reader.ReadPropertyValue(result, prop, version);
             }
 
             if (Attribute.IsDefined(type, typeof(ObjectSizeAttribute)))
@@ -145,6 +138,37 @@ namespace System.IO.Endian
             }
 
             return result;
+        }
+
+        private void ReadPropertyValue(object obj, PropertyInfo prop, double? version)
+        {
+            var originalByteOrder = ByteOrder;
+            Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
+
+            if (Attribute.IsDefined(prop, typeof(ByteOrderAttribute)))
+            {
+                var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
+                ByteOrder = attr.ByteOrder;
+            }
+
+            if (prop.PropertyType.IsPrimitive)
+                prop.SetValue(obj, ReadPrimitiveValue(prop.PropertyType));
+            else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            {
+                var innerType = prop.PropertyType.GetGenericArguments()[0];
+                if (innerType.IsPrimitive)
+                    prop.SetValue(obj, ReadPrimitiveValue(innerType));
+                else prop.SetValue(obj, ReadComplexInternal(innerType, version, true));
+            }
+            else if (prop.PropertyType.Equals(typeof(string)))
+            {
+                string value;
+                if (ReadStringValue(prop, out value))
+                    prop.SetValue(obj, value);
+            }
+            else prop.SetValue(obj, ReadComplexInternal(prop.PropertyType, version, true));
+
+            ByteOrder = originalByteOrder;
         }
     }
 }

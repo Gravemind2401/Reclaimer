@@ -74,9 +74,14 @@ namespace System.IO.Endian
             return new AmbiguousMatchException($"The {propName} property has multiple string type specifier attributes applied.");
         }
 
-        internal static ArgumentException NoVersionSpecified()
+        internal static ArgumentException MultipleVersionsSpecified(string typeName)
         {
-            return new ArgumentException($"At least one version boundary must be specified.");
+            return new ArgumentException($"The object of type '{typeName}' could not be read because it has multiple properties with the {nameof(VersionNumberAttribute)} applied.");
+        }
+
+        internal static ArgumentException InvalidVersionAttribute()
+        {
+            return new ArgumentException($"The property with the {nameof(VersionNumberAttribute)} applied must have a single offset supplied and no version restrictions.");
         }
 
         internal static ArgumentException NotValidForPrimitiveTypes([CallerMemberName]string methodName = null)

@@ -13,13 +13,15 @@ namespace System.IO.Endian
         {
             var matches = (from attr in Attribute.GetCustomAttributes(member, typeof(T))
                            let o = (T)attr
+                           let minVersion = o.HasMinVersion ? o.MinVersion : (double?)null
+                           let maxVersion = o.HasMaxVersion ? o.MaxVersion : (double?)null
                            where
 
-                           //exclude when read version is specified and is out of bounds (the expression in brackets will always be false if version is null)
-                           !(version < o.MinVersion || version >= o.MaxVersion)
+                           //exclude when read version is specified and is out of bounds (this expression will always be false if version is null)
+                           !(version != minVersion && (version < minVersion || version >= maxVersion))
 
                            //exclude when read version is not specified but at least one of the bounds is
-                           && !(!version.HasValue && (o.HasMinVersion || o.HasMaxVersion))
+                           && !(!version.HasValue && (minVersion.HasValue || maxVersion.HasValue))
 
                            select o).ToList();
 
@@ -53,8 +55,11 @@ namespace System.IO.Endian
                 if (!version.HasValue)
                     return false; //ignore versioned properties if no read version is specified
 
-                var versionBounds = (VersionSpecificAttribute)Attribute.GetCustomAttribute(property, typeof(VersionSpecificAttribute));
-                if (version < versionBounds.MinVersion || version >= versionBounds.MaxVersion)
+                var bounds = (VersionSpecificAttribute)Attribute.GetCustomAttribute(property, typeof(VersionSpecificAttribute));
+                var minVersion = bounds.HasMinVersion ? bounds.MinVersion : (double?)null;
+                var maxVersion = bounds.HasMaxVersion ? bounds.MaxVersion : (double?)null;
+
+                if (version != minVersion && (version < minVersion || version >= maxVersion))
                     return false; //property not valid for this version
             }
 

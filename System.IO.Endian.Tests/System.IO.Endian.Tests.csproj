@@ -58,6 +58,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="ComplexRead\Versions.cs" />
     <Compile Include="ComplexRead\Nullable.cs" />
     <Compile Include="ComplexRead\StringRead.cs" />
     <Compile Include="ComplexRead\ByteOrder.cs" />
