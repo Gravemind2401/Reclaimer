@@ -30,14 +30,18 @@ namespace System.IO.Endian
             return ReadComplexInternal(type, version, false);
         }
 
-        private MethodInfo GetPrimitiveReadMethod(Type type)
+        private object ReadPrimitiveValue(Type type)
         {
-            return (from m in GetType().GetMethods()
-                    where m.Name.StartsWith("Read")
-                    && m.Name.Length > 4 //exclude "Read()"
-                    && m.ReturnType.Equals(type)
-                    && m.GetParameters().Length == 0
-                    select m).SingleOrDefault();
+            var primitiveMethod = (from m in GetType().GetMethods()
+                                   where m.Name.StartsWith("Read")
+                                   && m.Name.Length > 4 //exclude "Read()"
+                                   && m.ReturnType.Equals(type)
+                                   && m.GetParameters().Length == 0
+                                   select m).SingleOrDefault();
+
+            if (primitiveMethod == null)
+                throw Exceptions.MissingPrimitiveReadMethod(type.Name);
+            else return primitiveMethod.Invoke(this, null);
         }
 
         private bool ReadStringProperty(PropertyInfo prop, out string value)
@@ -102,7 +106,7 @@ namespace System.IO.Endian
                 {
                     var originalByteOrder = reader.ByteOrder;
                     reader.Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
-                                        
+
                     if (Attribute.IsDefined(prop, typeof(ByteOrderAttribute)))
                     {
                         var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
@@ -110,11 +114,13 @@ namespace System.IO.Endian
                     }
 
                     if (prop.PropertyType.IsPrimitive)
+                        prop.SetValue(result, reader.ReadPrimitiveValue(prop.PropertyType));
+                    else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
                     {
-                        var primitiveMethod = GetPrimitiveReadMethod(prop.PropertyType);
-                        if (primitiveMethod == null)
-                            throw Exceptions.MissingPrimitiveReadMethod(prop.PropertyType.Name);
-                        prop.SetValue(result, primitiveMethod.Invoke(reader, null));
+                        var innerType = prop.PropertyType.GetGenericArguments()[0];
+                        if (innerType.IsPrimitive)
+                            prop.SetValue(result, reader.ReadPrimitiveValue(innerType));
+                        else prop.SetValue(result, reader.ReadComplexInternal(innerType, version, true));
                     }
                     else if (prop.PropertyType.Equals(typeof(string)))
                     {
