@@ -217,6 +217,18 @@ namespace System.IO.Endian
             return ReadString(ByteOrder);
         }
 
+        /// <summary>
+        /// Reads a globally unique identifier from the current stream using the current byte order
+        /// and advances the current position of the stream by sixteen bytes.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public Guid ReadGuid()
+        {
+            return ReadGuid(ByteOrder);
+        }
+
         #endregion
 
         #region ByteOrder Read
@@ -384,6 +396,24 @@ namespace System.IO.Endian
             var bytes = base.ReadBytes(8);
             Array.Reverse(bytes);
             return BitConverter.ToUInt64(bytes, 0);
+        }
+
+        /// <summary>
+        /// Reads a globally unique identifier from the current stream using the specified byte order
+        /// and advances the current position of the stream by sixteen bytes.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public Guid ReadGuid(ByteOrder byteOrder)
+        {
+            var a = ReadInt32(byteOrder);
+            var b = ReadInt16(byteOrder);
+            var c = ReadInt16(byteOrder);
+            var d = ReadBytes(8);
+
+            return new Guid(a, b, c, d);
         }
 
         #endregion
@@ -591,6 +621,18 @@ namespace System.IO.Endian
             return PeekUInt64(ByteOrder);
         }
 
+        /// <summary>
+        /// Reads a globally unique identifier from the current stream using the specified byte order
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public Guid PeekGuid()
+        {
+            return PeekGuid(ByteOrder);
+        }
+
         #endregion
 
         #region ByteOrder Peek
@@ -735,6 +777,22 @@ namespace System.IO.Endian
         {
             var origin = BaseStream.Position;
             var value = ReadUInt64(byteOrder);
+            BaseStream.Position = origin;
+            return value;
+        }
+
+        /// <summary>
+        /// Reads a globally unique identifier from the current stream using the specified byte order
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public Guid PeekGuid(ByteOrder byteOrder)
+        {
+            var origin = BaseStream.Position;
+            var value = ReadGuid(byteOrder);
             BaseStream.Position = origin;
             return value;
         }

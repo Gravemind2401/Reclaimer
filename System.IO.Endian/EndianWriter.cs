@@ -209,6 +209,18 @@ namespace System.IO.Endian
             Write(value, ByteOrder);
         }
 
+        /// <summary>
+        /// Writes a globally unique identifier to the current stream using the current byte order
+        /// and advances the current position of the stream by sixteen bytes.
+        /// </summary>
+        /// <param name="value">The string value to write.</param>
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public void Write(Guid value)
+        {
+            Write(value, ByteOrder);
+        }
+
         #endregion
 
         #region ByteOrder Write
@@ -407,6 +419,27 @@ namespace System.IO.Endian
             base.Write(bytes);
         }
 
+        /// <summary>
+        /// Writes a globally unique identifier to the current stream using the specified byte order
+        /// and advances the current position of the stream by sixteen bytes.
+        /// </summary>
+        /// <param name="value">The string value to write.</param>
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public void Write(Guid value, ByteOrder byteOrder)
+        {
+            var bytes = value.ToByteArray();
+            var a = BitConverter.ToInt32(bytes, 0);
+            var b = BitConverter.ToInt16(bytes, 4);
+            var c = BitConverter.ToInt16(bytes, 6);
+            var d = bytes.Skip(8).ToArray();
+
+            Write(a, byteOrder);
+            Write(b, byteOrder);
+            Write(c, byteOrder);
+            Write(d);
+        }
+
         #endregion
 
         #region String Write
@@ -532,3 +565,4 @@ namespace System.IO.Endian
         #endregion
     }
 }
+;

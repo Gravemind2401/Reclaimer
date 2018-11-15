@@ -17,7 +17,7 @@ namespace System.IO.Endian.Tests.ComplexRead
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                var rand = new object[10];
+                var rand = new object[11];
 
                 rand[0] = (sbyte)rng.Next(sbyte.MinValue, sbyte.MaxValue);
                 writer.Seek(0x00, SeekOrigin.Begin);
@@ -58,6 +58,10 @@ namespace System.IO.Endian.Tests.ComplexRead
                 rand[9] = (double)rng.NextDouble();
                 writer.Seek(0x90, SeekOrigin.Begin);
                 writer.Write((double)rand[9]);
+
+                rand[10] = Guid.NewGuid();
+                writer.Seek(0xA0, SeekOrigin.Begin);
+                writer.Write((Guid)rand[10]);
 
                 stream.Position = 0;
                 var obj = reader.ReadComplex<DataClass07>();
@@ -86,7 +90,7 @@ namespace System.IO.Endian.Tests.ComplexRead
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                var rand = new object[10];
+                var rand = new object[11];
 
                 rand[0] = (sbyte)rng.Next(sbyte.MinValue, sbyte.MaxValue);
                 writer.Seek(0x70, SeekOrigin.Begin);
@@ -109,7 +113,7 @@ namespace System.IO.Endian.Tests.ComplexRead
                 writer.Write((byte)rand[4]);
 
                 rand[5] = (ushort)rng.Next(ushort.MinValue, ushort.MaxValue);
-                writer.Seek(0x60, SeekOrigin.Begin);
+                writer.Seek(0xA0, SeekOrigin.Begin);
                 writer.Write((ushort)rand[5]);
 
                 rand[6] = unchecked((uint)rng.Next(int.MinValue, int.MaxValue));
@@ -127,14 +131,18 @@ namespace System.IO.Endian.Tests.ComplexRead
                 rand[9] = (double)rng.NextDouble();
                 writer.Seek(0x50, SeekOrigin.Begin);
                 writer.Write((double)rand[9]);
-                
+
+                rand[10] = Guid.NewGuid();
+                writer.Seek(0x60, SeekOrigin.Begin);
+                writer.Write((Guid)rand[10]);
+
                 stream.Position = 0;
                 var obj = reader.ReadComplex<DataClass08>();
 
                 //the highest offset should always be read last
                 //so if no size is specified the position should end
                 //up at the highest offset + the size of the property
-                Assert.AreEqual(0x91, stream.Position); 
+                Assert.AreEqual(0xA2, stream.Position); 
                 Assert.AreEqual(obj.Property1, rand[0]);
                 Assert.AreEqual(obj.Property2, rand[1]);
                 Assert.AreEqual(obj.Property3, rand[2]);
@@ -180,6 +188,9 @@ namespace System.IO.Endian.Tests.ComplexRead
 
             [Offset(0x90)]
             public double? Property10 { get; set; }
+
+            [Offset(0xA0)]
+            public Guid? Property11 { get; set; }
         }
 
         public class DataClass08
@@ -199,7 +210,7 @@ namespace System.IO.Endian.Tests.ComplexRead
             [Offset(0x90)]
             public byte? Property5 { get; set; }
 
-            [Offset(0x60)]
+            [Offset(0xA0)]
             public ushort? Property6 { get; set; }
 
             [Offset(0x00)]
@@ -213,6 +224,9 @@ namespace System.IO.Endian.Tests.ComplexRead
 
             [Offset(0x50)]
             public double? Property10 { get; set; }
+
+            [Offset(0x60)]
+            public Guid? Property11 { get; set; }
         }
     }
 }

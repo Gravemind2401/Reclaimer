@@ -153,11 +153,15 @@ namespace System.IO.Endian
 
             if (prop.PropertyType.IsPrimitive)
                 prop.SetValue(obj, ReadPrimitiveValue(prop.PropertyType));
+            else if (prop.PropertyType.Equals(typeof(Guid)))
+                prop.SetValue(obj, ReadGuid());
             else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
             {
                 var innerType = prop.PropertyType.GetGenericArguments()[0];
                 if (innerType.IsPrimitive)
                     prop.SetValue(obj, ReadPrimitiveValue(innerType));
+                else if (innerType.Equals(typeof(Guid)))
+                    prop.SetValue(obj, ReadGuid());
                 else prop.SetValue(obj, ReadComplexInternal(innerType, version, true));
             }
             else if (prop.PropertyType.Equals(typeof(string)))

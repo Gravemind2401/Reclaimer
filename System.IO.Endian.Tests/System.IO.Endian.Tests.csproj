@@ -64,6 +64,7 @@
     <Compile Include="ComplexRead\ByteOrder.cs" />
     <Compile Include="ComplexRead\Basic.cs" />
     <Compile Include="TestDecimal.cs" />
+    <Compile Include="TestGuid.cs" />
     <Compile Include="TestDouble.cs" />
     <Compile Include="TestString.cs" />
     <Compile Include="TestSingle.cs" />
