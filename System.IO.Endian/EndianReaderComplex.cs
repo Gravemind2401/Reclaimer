@@ -45,15 +45,15 @@ namespace System.IO.Endian
             else return primitiveMethod.Invoke(this, null);
         }
 
-        private bool ReadStringValue(PropertyInfo prop, out string value)
+        private string ReadStringValue(PropertyInfo prop, double? version)
         {
             var lenPrefixed = (LengthPrefixedAttribute)Attribute.GetCustomAttribute(prop, typeof(LengthPrefixedAttribute));
             var fixedLen = (FixedLengthAttribute)Attribute.GetCustomAttribute(prop, typeof(FixedLengthAttribute));
             var nullTerm = (NullTerminatedAttribute)Attribute.GetCustomAttribute(prop, typeof(NullTerminatedAttribute));
 
-            value = null;
+            string value = null;
             if (lenPrefixed == null && fixedLen == null && nullTerm == null)
-                return false;
+                throw Exceptions.StringTypeUnknown(prop.Name);
 
             if (lenPrefixed != null)
                 value = ReadString();
@@ -76,7 +76,7 @@ namespace System.IO.Endian
                 else value = ReadNullTerminatedString();
             }
 
-            return true;
+            return value;
         }
 
         private object ReadComplexInternal(Type type, double? version, bool isProperty)
@@ -153,6 +153,8 @@ namespace System.IO.Endian
 
             if (prop.PropertyType.IsPrimitive)
                 prop.SetValue(obj, ReadPrimitiveValue(prop.PropertyType));
+            else if (prop.PropertyType.Equals(typeof(string)))
+                prop.SetValue(obj, ReadStringValue(prop, version));
             else if (prop.PropertyType.Equals(typeof(Guid)))
                 prop.SetValue(obj, ReadGuid());
             else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
@@ -163,12 +165,6 @@ namespace System.IO.Endian
                 else if (innerType.Equals(typeof(Guid)))
                     prop.SetValue(obj, ReadGuid());
                 else prop.SetValue(obj, ReadComplexInternal(innerType, version, true));
-            }
-            else if (prop.PropertyType.Equals(typeof(string)))
-            {
-                string value;
-                if (ReadStringValue(prop, out value))
-                    prop.SetValue(obj, value);
             }
             else prop.SetValue(obj, ReadComplexInternal(prop.PropertyType, version, true));
 

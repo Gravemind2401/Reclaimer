@@ -330,7 +330,8 @@ namespace System.IO.Endian
         public char Padding { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <seealso cref="FixedLengthAttribute"/> class with the specified byte length value.
+        /// Initializes a new instance of the <seealso cref="FixedLengthAttribute"/> class with the specified byte length value
+        /// and space (0x20) as the padding character.
         /// </summary>
         /// <param name="length">The number of bytes used to store the string.</param>
         /// <exception cref="ArgumentOutOfRangeException"/>
@@ -340,6 +341,7 @@ namespace System.IO.Endian
                 throw Exceptions.ParamMustBePositive(nameof(length), length);
 
             this.length = length;
+            Padding = ' ';
         }
     }
 

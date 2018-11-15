@@ -71,7 +71,12 @@ namespace System.IO.Endian
 
         internal static AmbiguousMatchException StringTypeOverlap(string propName)
         {
-            return new AmbiguousMatchException($"The {propName} property has multiple string type specifier attributes applied.");
+            return new AmbiguousMatchException($"The '{propName}' string property has multiple string type specifier attributes applied.");
+        }
+
+        internal static AmbiguousMatchException StringTypeUnknown(string propName)
+        {
+            return new AmbiguousMatchException($"The '{propName}' string property was marked for read/write but does not have any string type attributes set.");
         }
 
         internal static ArgumentException MultipleVersionsSpecified(string typeName)
