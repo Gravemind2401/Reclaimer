@@ -9,7 +9,7 @@ namespace System.IO.Endian
     /// <summary>
     /// Writes primitive data types to a stream in a specific byte order and encoding.
     /// </summary>
-    public class EndianWriter : BinaryWriter
+    public partial class EndianWriter : BinaryWriter
     {
         private readonly long virtualOrigin;
         private readonly Encoding encoding;
