@@ -224,7 +224,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public Guid ReadGuid()
+        public virtual Guid ReadGuid()
         {
             return ReadGuid(ByteOrder);
         }
@@ -241,7 +241,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public float ReadSingle(ByteOrder byteOrder)
+        public virtual float ReadSingle(ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
                 return base.ReadSingle();
@@ -259,7 +259,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public double ReadDouble(ByteOrder byteOrder)
+        public virtual double ReadDouble(ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
                 return base.ReadDouble();
@@ -277,7 +277,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public decimal ReadDecimal(ByteOrder byteOrder)
+        public virtual decimal ReadDecimal(ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
                 return base.ReadDecimal();
@@ -298,7 +298,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public short ReadInt16(ByteOrder byteOrder)
+        public virtual short ReadInt16(ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
                 return base.ReadInt16();
@@ -316,7 +316,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public int ReadInt32(ByteOrder byteOrder)
+        public virtual int ReadInt32(ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
                 return base.ReadInt32();
@@ -334,7 +334,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public long ReadInt64(ByteOrder byteOrder)
+        public virtual long ReadInt64(ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
                 return base.ReadInt64();
@@ -352,7 +352,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public ushort ReadUInt16(ByteOrder byteOrder)
+        public virtual ushort ReadUInt16(ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
                 return base.ReadUInt16();
@@ -370,7 +370,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public uint ReadUInt32(ByteOrder byteOrder)
+        public virtual uint ReadUInt32(ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
                 return base.ReadUInt32();
@@ -388,7 +388,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public ulong ReadUInt64(ByteOrder byteOrder)
+        public virtual ulong ReadUInt64(ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
                 return base.ReadUInt64();
@@ -406,7 +406,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public Guid ReadGuid(ByteOrder byteOrder)
+        public virtual Guid ReadGuid(ByteOrder byteOrder)
         {
             var a = ReadInt32(byteOrder);
             var b = ReadInt16(byteOrder);
@@ -427,7 +427,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public string ReadString(ByteOrder byteOrder)
+        public virtual string ReadString(ByteOrder byteOrder)
         {
             var length = ReadInt32(byteOrder);
 
@@ -445,7 +445,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public string ReadString(int length, bool trim)
+        public virtual string ReadString(int length, bool trim)
         {
             if (length < 0)
                 throw Exceptions.ParamMustBeNonNegative(nameof(length), length);
@@ -464,7 +464,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public string ReadNullTerminatedString()
+        public virtual string ReadNullTerminatedString()
         {
             var bytes = new List<byte>();
 
@@ -484,7 +484,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentOutOfRangeException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public string ReadNullTerminatedString(int maxLength)
+        public virtual string ReadNullTerminatedString(int maxLength)
         {
             if (maxLength < 0)
                 throw Exceptions.ParamMustBeNonNegative(nameof(maxLength), maxLength);
@@ -512,7 +512,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public float PeekSingle()
+        public virtual float PeekSingle()
         {
             return PeekSingle(ByteOrder);
         }
@@ -525,7 +525,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public double PeekDouble()
+        public virtual double PeekDouble()
         {
             return PeekDouble(ByteOrder);
         }
@@ -538,7 +538,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public decimal PeekDecimal()
+        public virtual decimal PeekDecimal()
         {
             return PeekDecimal(ByteOrder);
         }
@@ -551,7 +551,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public short PeekInt16()
+        public virtual short PeekInt16()
         {
             return PeekInt16(ByteOrder);
         }
@@ -564,7 +564,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public int PeekInt32()
+        public virtual int PeekInt32()
         {
             return PeekInt32(ByteOrder);
         }
@@ -577,7 +577,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public long PeekInt64()
+        public virtual long PeekInt64()
         {
             return PeekInt64(ByteOrder);
         }
@@ -590,7 +590,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public ushort PeekUInt16()
+        public virtual ushort PeekUInt16()
         {
             return PeekUInt16(ByteOrder);
         }
@@ -603,7 +603,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public uint PeekUInt32()
+        public virtual uint PeekUInt32()
         {
             return PeekUInt32(ByteOrder);
         }
@@ -616,7 +616,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public ulong PeekUInt64()
+        public virtual ulong PeekUInt64()
         {
             return PeekUInt64(ByteOrder);
         }
@@ -628,7 +628,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public Guid PeekGuid()
+        public virtual Guid PeekGuid()
         {
             return PeekGuid(ByteOrder);
         }
@@ -645,7 +645,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public float PeekSingle(ByteOrder byteOrder)
+        public virtual float PeekSingle(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
             var value = ReadSingle(byteOrder);
@@ -661,7 +661,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public double PeekDouble(ByteOrder byteOrder)
+        public virtual double PeekDouble(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
             var value = ReadDouble(byteOrder);
@@ -677,7 +677,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public decimal PeekDecimal(ByteOrder byteOrder)
+        public virtual decimal PeekDecimal(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
             var value = ReadDecimal(byteOrder);
@@ -693,7 +693,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public short PeekInt16(ByteOrder byteOrder)
+        public virtual short PeekInt16(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
             var value = ReadInt16(byteOrder);
@@ -709,7 +709,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public int PeekInt32(ByteOrder byteOrder)
+        public virtual int PeekInt32(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
             var value = ReadInt32(byteOrder);
@@ -725,7 +725,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public long PeekInt64(ByteOrder byteOrder)
+        public virtual long PeekInt64(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
             var value = ReadInt64(byteOrder);
@@ -741,7 +741,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public ushort PeekUInt16(ByteOrder byteOrder)
+        public virtual ushort PeekUInt16(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
             var value = ReadUInt16(byteOrder);
@@ -757,7 +757,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public uint PeekUInt32(ByteOrder byteOrder)
+        public virtual uint PeekUInt32(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
             var value = ReadUInt32(byteOrder);
@@ -773,7 +773,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public ulong PeekUInt64(ByteOrder byteOrder)
+        public virtual ulong PeekUInt64(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
             var value = ReadUInt64(byteOrder);
@@ -789,7 +789,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public Guid PeekGuid(ByteOrder byteOrder)
+        public virtual Guid PeekGuid(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
             var value = ReadGuid(byteOrder);

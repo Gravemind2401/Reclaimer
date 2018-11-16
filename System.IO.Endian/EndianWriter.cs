@@ -216,7 +216,7 @@ namespace System.IO.Endian
         /// <param name="value">The string value to write.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void Write(Guid value)
+        public virtual void Write(Guid value)
         {
             Write(value, ByteOrder);
         }
@@ -233,7 +233,7 @@ namespace System.IO.Endian
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void Write(float value, ByteOrder byteOrder)
+        public virtual void Write(float value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
             {
@@ -254,7 +254,7 @@ namespace System.IO.Endian
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void Write(double value, ByteOrder byteOrder)
+        public virtual void Write(double value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
             {
@@ -275,7 +275,7 @@ namespace System.IO.Endian
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void Write(decimal value, ByteOrder byteOrder)
+        public virtual void Write(decimal value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
             {
@@ -301,7 +301,7 @@ namespace System.IO.Endian
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void Write(short value, ByteOrder byteOrder)
+        public virtual void Write(short value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
             {
@@ -322,7 +322,7 @@ namespace System.IO.Endian
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void Write(int value, ByteOrder byteOrder)
+        public virtual void Write(int value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
             {
@@ -343,7 +343,7 @@ namespace System.IO.Endian
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void Write(long value, ByteOrder byteOrder)
+        public virtual void Write(long value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
             {
@@ -364,7 +364,7 @@ namespace System.IO.Endian
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void Write(ushort value, ByteOrder byteOrder)
+        public virtual void Write(ushort value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
             {
@@ -385,7 +385,7 @@ namespace System.IO.Endian
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void Write(uint value, ByteOrder byteOrder)
+        public virtual void Write(uint value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
             {
@@ -406,7 +406,7 @@ namespace System.IO.Endian
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void Write(ulong value, ByteOrder byteOrder)
+        public virtual void Write(ulong value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
             {
@@ -426,7 +426,7 @@ namespace System.IO.Endian
         /// <param name="value">The string value to write.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void Write(Guid value, ByteOrder byteOrder)
+        public virtual void Write(Guid value, ByteOrder byteOrder)
         {
             var bytes = value.ToByteArray();
             var a = BitConverter.ToInt32(bytes, 0);
@@ -452,7 +452,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void Write(string value, ByteOrder byteOrder)
+        public virtual void Write(string value, ByteOrder byteOrder)
         {
             Write(encoding.GetByteCount(value), byteOrder);
             Write(encoding.GetBytes(value));
@@ -467,7 +467,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void WriteStringFixedLength(string value, int length)
+        public virtual void WriteStringFixedLength(string value, int length)
         {
             WriteStringFixedLength(value, length, ' ');
         }
@@ -482,7 +482,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void WriteStringFixedLength(string value, int length, char padding)
+        public virtual void WriteStringFixedLength(string value, int length, char padding)
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
@@ -508,7 +508,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public void WriteStringNullTerminated(string value)
+        public virtual void WriteStringNullTerminated(string value)
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
@@ -565,4 +565,3 @@ namespace System.IO.Endian
         #endregion
     }
 }
-;
