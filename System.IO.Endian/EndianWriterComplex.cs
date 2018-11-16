@@ -61,9 +61,9 @@ namespace System.IO.Endian
         {
             var value = (string)prop.GetValue(obj);
 
-            var lenPrefixed = (LengthPrefixedAttribute)Attribute.GetCustomAttribute(prop, typeof(LengthPrefixedAttribute));
-            var fixedLen = (FixedLengthAttribute)Attribute.GetCustomAttribute(prop, typeof(FixedLengthAttribute));
-            var nullTerm = (NullTerminatedAttribute)Attribute.GetCustomAttribute(prop, typeof(NullTerminatedAttribute));
+            var lenPrefixed = Utils.GetCustomAttribute<LengthPrefixedAttribute>(prop);
+            var fixedLen = Utils.GetCustomAttribute<FixedLengthAttribute>(prop);
+            var nullTerm = Utils.GetCustomAttribute<NullTerminatedAttribute>(prop);
 
             if (lenPrefixed == null && fixedLen == null && nullTerm == null)
                 throw Exceptions.StringTypeUnknown(prop.Name);
@@ -114,7 +114,7 @@ namespace System.IO.Endian
                             throw Exceptions.MultipleVersionsSpecified(type.Name);
 
                         var vprop = versionProps[0];
-                        var offsets = Attribute.GetCustomAttributes(vprop, typeof(OffsetAttribute)).OfType<OffsetAttribute>().ToList();
+                        var offsets = Utils.GetCustomAttributes<OffsetAttribute>(vprop).ToList();
                         if (offsets.Count > 1 || offsets[0].HasMinVersion || offsets[0].HasMaxVersion)
                             throw Exceptions.InvalidVersionAttribute();
 

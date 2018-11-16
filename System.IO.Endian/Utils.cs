@@ -11,8 +11,7 @@ namespace System.IO.Endian
     {
         internal static T GetAttributeForVersion<T>(MemberInfo member, double? version) where T : Attribute, IVersionAttribute
         {
-            var matches = (from attr in Attribute.GetCustomAttributes(member, typeof(T))
-                           let o = (T)attr
+            var matches = (from o in Utils.GetCustomAttributes<T>(member)
                            let minVersion = o.HasMinVersion ? o.MinVersion : (double?)null
                            let maxVersion = o.HasMaxVersion ? o.MaxVersion : (double?)null
                            where
@@ -55,7 +54,7 @@ namespace System.IO.Endian
                 if (!version.HasValue)
                     return false; //ignore versioned properties if no read version is specified
 
-                var bounds = (VersionSpecificAttribute)Attribute.GetCustomAttribute(property, typeof(VersionSpecificAttribute));
+                var bounds = Utils.GetCustomAttribute<VersionSpecificAttribute>(property);
                 var minVersion = bounds.HasMinVersion ? bounds.MinVersion : (double?)null;
                 var maxVersion = bounds.HasMaxVersion ? bounds.MaxVersion : (double?)null;
 
@@ -64,6 +63,16 @@ namespace System.IO.Endian
             }
 
             return true;
+        }
+
+        internal static T GetCustomAttribute<T>(MemberInfo member) where T : Attribute
+        {
+            return (T)Attribute.GetCustomAttribute(member, typeof(T));
+        }
+
+        internal static IEnumerable<T> GetCustomAttributes<T>(MemberInfo member) where T : Attribute
+        {
+            return Attribute.GetCustomAttributes(member, typeof(T)).OfType<T>();
         }
     }
 }
