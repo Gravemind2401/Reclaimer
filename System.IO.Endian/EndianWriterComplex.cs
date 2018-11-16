@@ -156,15 +156,25 @@ namespace System.IO.Endian
                 ByteOrder = attr.ByteOrder;
             }
 
+            var value = prop.GetValue(obj);
+
+            //in case this was called with a specific version number we should write that number
+            //instead of [VersionNumber] property values to ensure the object can be read back in again
+            if (Attribute.IsDefined(prop, typeof(VersionNumberAttribute)) && version.HasValue)
+            {
+                var converter = TypeDescriptor.GetConverter(typeof(double));
+                if (converter.CanConvertTo(prop.PropertyType))
+                    value = converter.ConvertTo(version.Value, prop.PropertyType);
+            }
+
             if (prop.PropertyType.IsPrimitive)
-                WritePrimitiveValue(prop.GetValue(obj));
+                WritePrimitiveValue(value);
             else if (prop.PropertyType.Equals(typeof(string)))
                 WriteStringValue(obj, prop);
             else if (prop.PropertyType.Equals(typeof(Guid)))
-                Write((Guid)prop.GetValue(obj));
+                Write((Guid)value);
             else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
             {
-                var value = prop.GetValue(obj);
                 var innerType = prop.PropertyType.GetGenericArguments()[0];
                 if (innerType.IsPrimitive)
                     WritePrimitiveValue(value ?? Activator.CreateInstance(innerType));
@@ -178,7 +188,7 @@ namespace System.IO.Endian
                     WriteComplexInternal(value ?? Activator.CreateInstance(innerType), version, true);
                 }
             }
-            else WriteComplexInternal(prop.GetValue(obj), version, true);
+            else WriteComplexInternal(value, version, true);
 
             ByteOrder = originalByteOrder;
         }

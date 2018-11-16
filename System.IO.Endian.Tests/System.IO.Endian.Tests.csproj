@@ -63,8 +63,11 @@
     <Compile Include="ComplexRead\StringRead.cs" />
     <Compile Include="ComplexRead\ByteOrder.cs" />
     <Compile Include="ComplexRead\Basic.cs" />
+    <Compile Include="ComplexWrite\ByteOrder.cs" />
     <Compile Include="ComplexWrite\Nullable.cs" />
     <Compile Include="ComplexWrite\Basic.cs" />
+    <Compile Include="ComplexWrite\StringWrite.cs" />
+    <Compile Include="ComplexWrite\Versions.cs" />
     <Compile Include="TestDecimal.cs" />
     <Compile Include="TestGuid.cs" />
     <Compile Include="TestDouble.cs" />
