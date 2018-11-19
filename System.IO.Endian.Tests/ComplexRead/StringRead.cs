@@ -35,7 +35,7 @@ namespace System.IO.Endian.Tests.ComplexRead
                 writer.Write(value1, ByteOrder.BigEndian);
 
                 stream.Position = 0;
-                var obj = reader.ReadComplex<DataClass05>();
+                var obj = reader.ReadObject<DataClass05>();
 
                 Assert.AreEqual(value1, obj.Property1);
 
@@ -74,7 +74,7 @@ namespace System.IO.Endian.Tests.ComplexRead
                 writer.Write(value3, ByteOrder.BigEndian);
 
                 stream.Position = 0;
-                var obj = reader.ReadComplex<DataClass06>();
+                var obj = reader.ReadObject<DataClass06>();
 
                 Assert.AreEqual(value1, obj.Property1);
                 Assert.AreEqual(value2, obj.Property2);

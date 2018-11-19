@@ -26,7 +26,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                writer.WriteComplex(obj);
+                writer.WriteObject(obj);
 
                 stream.Position = 0;
                 Assert.AreEqual(obj.Property1, reader.ReadInt32());
@@ -39,7 +39,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
 
                 stream.Position = 0;
                 obj.Version = 2;
-                writer.WriteComplex(obj);
+                writer.WriteObject(obj);
 
                 stream.Position = 0;
                 Assert.AreEqual(obj.Property1, reader.ReadInt32());
@@ -54,7 +54,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
 
                 stream.Position = 0;
                 obj.Version = 3;
-                writer.WriteComplex(obj);
+                writer.WriteObject(obj);
 
                 stream.Position = 0;
                 Assert.AreEqual(obj.Property1, reader.ReadInt32());
@@ -69,7 +69,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
 
                 stream.Position = 0;
                 obj.Version = 4;
-                writer.WriteComplex(obj);
+                writer.WriteObject(obj);
 
                 stream.Position = 0;
                 Assert.AreEqual(obj.Property1, reader.ReadInt32());
@@ -100,7 +100,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                writer.WriteComplex(obj, 1);
+                writer.WriteObject(obj, 1);
 
                 stream.Position = 0;
                 Assert.AreEqual(obj.Property1, reader.ReadInt32());
@@ -112,7 +112,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
                 writer.Write(new byte[64]); //set to zeros
 
                 stream.Position = 0;
-                writer.WriteComplex(obj, 2);
+                writer.WriteObject(obj, 2);
 
                 stream.Position = 0;
                 Assert.AreEqual(obj.Property1, reader.ReadInt32());
@@ -126,7 +126,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
                 writer.Write(new byte[64]); //set to zeros
 
                 stream.Position = 0;
-                writer.WriteComplex(obj, 3);
+                writer.WriteObject(obj, 3);
 
                 stream.Position = 0;
                 Assert.AreEqual(obj.Property1, reader.ReadInt32());
@@ -140,7 +140,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
                 writer.Write(new byte[64]); //set to zeros
 
                 stream.Position = 0;
-                writer.WriteComplex(obj, 4);
+                writer.WriteObject(obj, 4);
 
                 stream.Position = 0;
                 Assert.AreEqual(obj.Property1, reader.ReadInt32());

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace System.IO.Endian
 {
     /// <summary>
-    /// Reads primitive data types from a stream in a specific byte order and encoding.
+    /// Reads primitive and complex data types from a stream in a specific byte order and encoding.
     /// </summary>
     public partial class EndianReader : BinaryReader
     {

@@ -22,7 +22,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                writer.WriteComplex(obj);
+                writer.WriteObject(obj);
 
                 reader.Seek(0x00, SeekOrigin.Begin);
                 Assert.AreEqual(obj.Property1, reader.ReadString());
@@ -63,7 +63,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                writer.WriteComplex(obj);
+                writer.WriteObject(obj);
 
                 reader.Seek(0x00, SeekOrigin.Begin);
                 Assert.AreEqual(obj.Property1, reader.ReadString(ByteOrder.BigEndian));

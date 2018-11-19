@@ -37,7 +37,7 @@ namespace System.IO.Endian.Tests.ComplexRead
                 writer.Write((double)rand[4]);
 
                 stream.Position = 0;
-                var obj = (DataClass09)reader.ReadComplex(typeof(DataClass09));
+                var obj = (DataClass09)reader.ReadObject(typeof(DataClass09));
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(1, obj.Version);
@@ -49,7 +49,7 @@ namespace System.IO.Endian.Tests.ComplexRead
                 writer.Write(2);
                 stream.Position = 0;
 
-                obj = (DataClass09)reader.ReadComplex(typeof(DataClass09));
+                obj = (DataClass09)reader.ReadObject(typeof(DataClass09));
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(2, obj.Version);
@@ -61,7 +61,7 @@ namespace System.IO.Endian.Tests.ComplexRead
                 writer.Write(3);
                 stream.Position = 0;
 
-                obj = (DataClass09)reader.ReadComplex(typeof(DataClass09));
+                obj = (DataClass09)reader.ReadObject(typeof(DataClass09));
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(3, obj.Version);
@@ -73,7 +73,7 @@ namespace System.IO.Endian.Tests.ComplexRead
                 writer.Write(4);
                 stream.Position = 0;
 
-                obj = (DataClass09)reader.ReadComplex(typeof(DataClass09));
+                obj = (DataClass09)reader.ReadObject(typeof(DataClass09));
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(4, obj.Version);
@@ -113,7 +113,7 @@ namespace System.IO.Endian.Tests.ComplexRead
                 writer.Write((double)rand[4]);
 
                 stream.Position = 0;
-                var obj = (DataClass10)reader.ReadComplex(typeof(DataClass10), 1);
+                var obj = (DataClass10)reader.ReadObject(typeof(DataClass10), 1);
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(0, obj.Version);
@@ -122,7 +122,7 @@ namespace System.IO.Endian.Tests.ComplexRead
                 Assert.IsNull(obj.Property4);
 
                 stream.Position = 0;
-                obj = (DataClass10)reader.ReadComplex(typeof(DataClass10), 2);
+                obj = (DataClass10)reader.ReadObject(typeof(DataClass10), 2);
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(0, obj.Version);
@@ -131,7 +131,7 @@ namespace System.IO.Endian.Tests.ComplexRead
                 Assert.IsNull(obj.Property4);
 
                 stream.Position = 0;
-                obj = (DataClass10)reader.ReadComplex(typeof(DataClass10), 3);
+                obj = (DataClass10)reader.ReadObject(typeof(DataClass10), 3);
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(0, obj.Version);
@@ -140,7 +140,7 @@ namespace System.IO.Endian.Tests.ComplexRead
                 Assert.IsNull(obj.Property4);
 
                 stream.Position = 0;
-                obj = (DataClass10)reader.ReadComplex(typeof(DataClass10), 4);
+                obj = (DataClass10)reader.ReadObject(typeof(DataClass10), 4);
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(0, obj.Version);

@@ -64,7 +64,7 @@ namespace System.IO.Endian.Tests.ComplexRead
                 writer.Write((Guid)rand[10]);
 
                 stream.Position = 0;
-                var obj = reader.ReadComplex<DataClass07>();
+                var obj = reader.ReadObject<DataClass07>();
 
                 Assert.AreEqual(0xFF, stream.Position);
                 Assert.AreEqual(obj.Property1, rand[0]);
@@ -137,7 +137,7 @@ namespace System.IO.Endian.Tests.ComplexRead
                 writer.Write((Guid)rand[10]);
 
                 stream.Position = 0;
-                var obj = reader.ReadComplex<DataClass08>();
+                var obj = reader.ReadObject<DataClass08>();
 
                 //the highest offset should always be read last
                 //so if no size is specified the position should end

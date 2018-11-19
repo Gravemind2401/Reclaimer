@@ -10,36 +10,140 @@ namespace System.IO.Endian
 {
     public partial class EndianWriter : BinaryWriter
     {
-        public void WriteComplex<T>(T value) where T : new()
+        /// <summary>
+        /// Writes a complex object to the current stream using reflection.
+        /// The type being written must have a public parameterless conustructor.
+        /// Each property to be written must have public get/set methods and
+        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// </summary>
+        /// <typeparam name="T">The type of object to write.</typeparam>
+        /// <param name="value">The object to write.</param>
+        public void WriteObject<T>(T value) where T : new()
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            WriteComplexInternal(value, null, false);
+            WriteObjectInternal(value, null, false);
         }
 
-        public void WriteComplex<T>(T value, double version) where T : new()
+        /// <summary>
+        /// Writes a complex object to the current stream using reflection.
+        /// The type being written must have a public parameterless conustructor.
+        /// Each property to be written must have public get/set methods and
+        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// </summary>
+        /// <typeparam name="T">The type of object to write.</typeparam>
+        /// <param name="value">The object to write.</param>
+        /// <param name="version">
+        /// The version that should be used to store the object.
+        /// This determines which properties will be written, how they will be
+        /// written and at what location in the stream to write them to.
+        /// </param>
+        public void WriteObject<T>(T value, double version) where T : new()
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            WriteComplexInternal(value, version, false);
+            WriteObjectInternal(value, version, false);
         }
 
-        public void WriteComplex(object value)
+        /// <summary>
+        /// Writes a complex object to the current stream using reflection.
+        /// The type being written must have a public parameterless conustructor.
+        /// Each property to be written must have public get/set methods and
+        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// </summary>
+        /// <param name="value">The object to write.</param>
+        public void WriteObject(object value)
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            WriteComplexInternal(value, null, false);
+            WriteObjectInternal(value, null, false);
         }
 
-        public void WriteComplex(object value, double version)
+        /// <summary>
+        /// Writes a complex object to the current stream using reflection.
+        /// The type being written must have a public parameterless conustructor.
+        /// Each property to be written must have public get/set methods and
+        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// </summary>
+        /// <param name="value">The object to write.</param>
+        /// <param name="version">
+        /// The version that should be used to store the object.
+        /// This determines which properties will be written, how they will be
+        /// written and at what location in the stream to write them to.
+        /// </param>
+        public void WriteObject(object value, double version)
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            WriteComplexInternal(value, version, false);
+            WriteObjectInternal(value, version, false);
+        }
+
+        /// <summary>
+        /// Checks if the specified property is writable.
+        /// </summary>
+        /// <param name="property">The property to check.</param>
+        /// <param name="version">The version to use when checking the property.</param>
+        /// <returns></returns>
+        protected virtual bool CanWriteProperty(PropertyInfo property, double? version)
+        {
+            return Utils.CheckPropertyForReadWrite(property, version);
+        }
+
+        /// <summary>
+        /// Writes a property to the current position in the stream using the value of
+        /// the property against the specified instance of the property's containing type.
+        /// </summary>
+        /// <param name="instance">The instance of the type containing the property.</param>
+        /// <param name="property">The property to write.</param>
+        /// <param name="version">The version to use when writing the property.</param>
+        protected virtual void WriteProperty(object instance, PropertyInfo property, double? version)
+        {
+            if (property.GetGetMethod() == null || property.GetSetMethod() == null)
+                throw Exceptions.NonPublicGetSet(property.Name);
+
+            if (Attribute.IsDefined(property, typeof(ByteOrderAttribute)))
+            {
+                var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(property, version);
+                ByteOrder = attr.ByteOrder;
+            }
+
+            var value = property.GetValue(instance);
+
+            //in case this was called with a specific version number we should write that number
+            //instead of [VersionNumber] property values to ensure the object can be read back in again
+            if (Attribute.IsDefined(property, typeof(VersionNumberAttribute)) && version.HasValue)
+            {
+                var converter = TypeDescriptor.GetConverter(typeof(double));
+                if (converter.CanConvertTo(property.PropertyType))
+                    value = converter.ConvertTo(version.Value, property.PropertyType);
+            }
+
+            if (property.PropertyType.IsPrimitive)
+                WritePrimitiveValue(value);
+            else if (property.PropertyType.Equals(typeof(string)))
+                WriteStringValue(instance, property);
+            else if (property.PropertyType.Equals(typeof(Guid)))
+                Write((Guid)value);
+            else if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            {
+                var innerType = property.PropertyType.GetGenericArguments()[0];
+                if (innerType.IsPrimitive)
+                    WritePrimitiveValue(value ?? Activator.CreateInstance(innerType));
+                else if (innerType.Equals(typeof(Guid)))
+                    Write(value == null ? Guid.Empty : (Guid)value);
+                else
+                {
+                    if (innerType.GetConstructor(Type.EmptyTypes) == null)
+                        throw Exceptions.TypeNotConstructable(innerType.Name, true);
+
+                    WriteObjectInternal(value ?? Activator.CreateInstance(innerType), version, true);
+                }
+            }
+            else WriteObjectInternal(value, version, true);
         }
 
         private void WritePrimitiveValue(object value)
@@ -90,7 +194,7 @@ namespace System.IO.Endian
             }
         }
 
-        private void WriteComplexInternal(object value, double? version, bool isProperty)
+        private void WriteObjectInternal(object value, double? version, bool isProperty)
         {
             var type = value.GetType();
             if (type.IsPrimitive || type.Equals(typeof(string)))
@@ -150,57 +254,6 @@ namespace System.IO.Endian
                 var attr = Utils.GetAttributeForVersion<ObjectSizeAttribute>(type, version);
                 BaseStream.Position = originalPosition + attr.Size;
             }
-        }
-
-        protected virtual void WriteProperty(object obj, PropertyInfo prop, double? version)
-        {
-            if (prop.GetGetMethod() == null || prop.GetSetMethod() == null)
-                throw Exceptions.NonPublicGetSet(prop.Name);
-
-            if (Attribute.IsDefined(prop, typeof(ByteOrderAttribute)))
-            {
-                var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
-                ByteOrder = attr.ByteOrder;
-            }
-
-            var value = prop.GetValue(obj);
-
-            //in case this was called with a specific version number we should write that number
-            //instead of [VersionNumber] property values to ensure the object can be read back in again
-            if (Attribute.IsDefined(prop, typeof(VersionNumberAttribute)) && version.HasValue)
-            {
-                var converter = TypeDescriptor.GetConverter(typeof(double));
-                if (converter.CanConvertTo(prop.PropertyType))
-                    value = converter.ConvertTo(version.Value, prop.PropertyType);
-            }
-
-            if (prop.PropertyType.IsPrimitive)
-                WritePrimitiveValue(value);
-            else if (prop.PropertyType.Equals(typeof(string)))
-                WriteStringValue(obj, prop);
-            else if (prop.PropertyType.Equals(typeof(Guid)))
-                Write((Guid)value);
-            else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-            {
-                var innerType = prop.PropertyType.GetGenericArguments()[0];
-                if (innerType.IsPrimitive)
-                    WritePrimitiveValue(value ?? Activator.CreateInstance(innerType));
-                else if (innerType.Equals(typeof(Guid)))
-                    Write(value == null ? Guid.Empty : (Guid)value);
-                else
-                {
-                    if (innerType.GetConstructor(Type.EmptyTypes) == null)
-                        throw Exceptions.TypeNotConstructable(innerType.Name, true);
-
-                    WriteComplexInternal(value ?? Activator.CreateInstance(innerType), version, true);
-                }
-            }
-            else WriteComplexInternal(value, version, true);
-        }
-
-        protected virtual bool CanWriteProperty(PropertyInfo property, double? version)
-        {
-            return Utils.CheckPropertyForReadWrite(property, version);
         }
     }
 }

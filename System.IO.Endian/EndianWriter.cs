@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace System.IO.Endian
 {
     /// <summary>
-    /// Writes primitive data types to a stream in a specific byte order and encoding.
+    /// Writes primitive and complex data types to a stream in a specific byte order and encoding.
     /// </summary>
     public partial class EndianWriter : BinaryWriter
     {

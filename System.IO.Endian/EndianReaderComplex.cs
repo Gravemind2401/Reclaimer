@@ -11,24 +11,108 @@ namespace System.IO.Endian
 {
     public partial class EndianReader : BinaryReader
     {
-        public T ReadComplex<T>() where T : new()
+        /// <summary>
+        /// Reads a complex object from the current stream using reflection.
+        /// The type being read must have a public parameterless conustructor.
+        /// Each property to be read must have public get/set methods and
+        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// </summary>
+        /// <typeparam name="T">The type of object to read.</typeparam>
+        public T ReadObject<T>() where T : new()
         {
-            return (T)ReadComplexInternal(typeof(T), null, false);
+            return (T)ReadObjectInternal(typeof(T), null, false);
         }
 
-        public T ReadComplex<T>(double version) where T : new()
+        /// <summary>
+        /// Reads a complex object from the current stream using reflection.
+        /// The type being read must have a public parameterless conustructor.
+        /// Each property to be read must have public get/set methods and
+        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// </summary>
+        /// <typeparam name="T">The type of object to read.</typeparam>
+        /// <param name="version">
+        /// The version that was used to store the object.
+        /// This determines which properties will be read, how they will be
+        /// read and at what location in the stream to read them from.
+        /// </param>
+        public T ReadObject<T>(double version) where T : new()
         {
-            return (T)ReadComplexInternal(typeof(T), version, false);
+            return (T)ReadObjectInternal(typeof(T), version, false);
         }
 
-        public object ReadComplex(Type type)
+        /// <summary>
+        /// Reads a complex object from the current stream using reflection.
+        /// The type being read must have a public parameterless conustructor.
+        /// Each property to be read must have public get/set methods and
+        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// </summary>
+        /// <param name="type">The type of object to read.</param>
+        public object ReadObject(Type type)
         {
-            return ReadComplexInternal(type, null, false);
+            return ReadObjectInternal(type, null, false);
         }
 
-        public object ReadComplex(Type type, double version)
+        /// <summary>
+        /// Reads a complex object from the current stream using reflection.
+        /// The type being read must have a public parameterless conustructor.
+        /// Each property to be read must have public get/set methods and
+        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// </summary>
+        /// <param name="type">The type of object to read.</param>
+        /// <param name="version">
+        /// The version that was used to store the object.
+        /// This determines which properties will be read, how they will be
+        /// read and at what location in the stream to read them from.
+        /// </param>
+        public object ReadObject(Type type, double version)
         {
-            return ReadComplexInternal(type, version, false);
+            return ReadObjectInternal(type, version, false);
+        }
+
+        /// <summary>
+        /// Checks if the specified property is readable.
+        /// </summary>
+        /// <param name="property">The property to check.</param>
+        /// <param name="version">The version to use when checking the property.</param>
+        protected virtual bool CanReadProperty(PropertyInfo property, double? version)
+        {
+            return Utils.CheckPropertyForReadWrite(property, version);
+        }
+
+        /// <summary>
+        /// Reads a property from the current position in the stream and sets the property value
+        /// against the specified instance of the property's containing type.
+        /// </summary>
+        /// <param name="instance">The instance of the type containing the property.</param>
+        /// <param name="property">The property to read.</param>
+        /// <param name="version">The version to use when reading the property.</param>
+        protected virtual void ReadProperty(object instance, PropertyInfo property, double? version)
+        {
+            if (property.GetGetMethod() == null || property.GetSetMethod() == null)
+                throw Exceptions.NonPublicGetSet(property.Name);
+
+            if (Attribute.IsDefined(property, typeof(ByteOrderAttribute)))
+            {
+                var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(property, version);
+                ByteOrder = attr.ByteOrder;
+            }
+
+            if (property.PropertyType.IsPrimitive)
+                property.SetValue(instance, ReadPrimitiveValue(property.PropertyType));
+            else if (property.PropertyType.Equals(typeof(string)))
+                property.SetValue(instance, ReadStringValue(property, version));
+            else if (property.PropertyType.Equals(typeof(Guid)))
+                property.SetValue(instance, ReadGuid());
+            else if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            {
+                var innerType = property.PropertyType.GetGenericArguments()[0];
+                if (innerType.IsPrimitive)
+                    property.SetValue(instance, ReadPrimitiveValue(innerType));
+                else if (innerType.Equals(typeof(Guid)))
+                    property.SetValue(instance, ReadGuid());
+                else property.SetValue(instance, ReadObjectInternal(innerType, version, true));
+            }
+            else property.SetValue(instance, ReadObjectInternal(property.PropertyType, version, true));
         }
 
         private object ReadPrimitiveValue(Type type)
@@ -79,7 +163,7 @@ namespace System.IO.Endian
             return value;
         }
 
-        private object ReadComplexInternal(Type type, double? version, bool isProperty)
+        private object ReadObjectInternal(Type type, double? version, bool isProperty)
         {
             if (type.IsPrimitive || type.Equals(typeof(string)))
                 throw Exceptions.NotValidForPrimitiveTypes();
@@ -145,40 +229,6 @@ namespace System.IO.Endian
             }
 
             return result;
-        }
-
-        protected virtual void ReadProperty(object obj, PropertyInfo prop, double? version)
-        {
-            if (prop.GetGetMethod() == null || prop.GetSetMethod() == null)
-                throw Exceptions.NonPublicGetSet(prop.Name);
-
-            if (Attribute.IsDefined(prop, typeof(ByteOrderAttribute)))
-            {
-                var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
-                ByteOrder = attr.ByteOrder;
-            }
-
-            if (prop.PropertyType.IsPrimitive)
-                prop.SetValue(obj, ReadPrimitiveValue(prop.PropertyType));
-            else if (prop.PropertyType.Equals(typeof(string)))
-                prop.SetValue(obj, ReadStringValue(prop, version));
-            else if (prop.PropertyType.Equals(typeof(Guid)))
-                prop.SetValue(obj, ReadGuid());
-            else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-            {
-                var innerType = prop.PropertyType.GetGenericArguments()[0];
-                if (innerType.IsPrimitive)
-                    prop.SetValue(obj, ReadPrimitiveValue(innerType));
-                else if (innerType.Equals(typeof(Guid)))
-                    prop.SetValue(obj, ReadGuid());
-                else prop.SetValue(obj, ReadComplexInternal(innerType, version, true));
-            }
-            else prop.SetValue(obj, ReadComplexInternal(prop.PropertyType, version, true));
-        }
-
-        protected virtual bool CanReadProperty(PropertyInfo property, double? version)
-        {
-            return Utils.CheckPropertyForReadWrite(property, version);
         }
     }
 }

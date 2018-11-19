@@ -31,7 +31,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
             using (var reader = new EndianReader(stream, ByteOrder.BigEndian))
             using (var writer = new EndianWriter(stream, order))
             {
-                writer.WriteComplex(obj);
+                writer.WriteObject(obj);
 
                 Assert.AreEqual(0xFF, stream.Position);
 
@@ -91,7 +91,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                writer.WriteComplex(obj);
+                writer.WriteObject(obj);
 
                 //the highest offset should always be read last
                 //so if no size is specified the position should end
