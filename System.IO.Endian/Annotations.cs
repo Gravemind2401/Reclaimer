@@ -17,7 +17,7 @@ namespace System.IO.Endian
     /// <summary>
     /// Specifies the size of an object when it is stored in a stream.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true, Inherited = false)]
     public class ObjectSizeAttribute : Attribute, IVersionAttribute
     {
         private readonly long size;
@@ -86,7 +86,7 @@ namespace System.IO.Endian
     /// <summary>
     /// Specifies the offset of a property in a stream relative to the beginning of its containing type.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
     public class OffsetAttribute : Attribute, IVersionAttribute
     {
         private readonly long offset;
@@ -156,7 +156,7 @@ namespace System.IO.Endian
     /// Specifies that a property holds the version number of the object being read or written.
     /// This attribute is only valid for integer and floating-point typed properties.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, Inherited = false)]
     public class VersionNumberAttribute : Attribute
     {
 
@@ -165,7 +165,7 @@ namespace System.IO.Endian
     /// <summary>
     /// Specifies that a property is only applicable to a given range of versions.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, Inherited = false)]
     public class VersionSpecificAttribute : Attribute
     {
         private double? minVersion;
@@ -242,7 +242,7 @@ namespace System.IO.Endian
     /// <summary>
     /// Specifies that an object is stored using a specific byte order.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
     public class ByteOrderAttribute : Attribute, IVersionAttribute
     {
         private readonly ByteOrder byteOrder;
@@ -250,7 +250,7 @@ namespace System.IO.Endian
         private double? maxVersion;
 
         /// <summary>
-        /// Gets the byte order that used to store the object.
+        /// Gets the byte order used to store the object.
         /// </summary>
         public ByteOrder ByteOrder => byteOrder;
 
@@ -307,7 +307,7 @@ namespace System.IO.Endian
     /// <summary>
     /// Specifies that a string property is stored as fixed-length.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, Inherited = false)]
     public class FixedLengthAttribute : Attribute
     {
         private readonly int length;
@@ -348,7 +348,7 @@ namespace System.IO.Endian
     /// <summary>
     /// Specifies that a string is stored as null-terminated, optionally using a minimum number of bytes.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, Inherited = false)]
     public class NullTerminatedAttribute : Attribute
     {
         private int? length;
@@ -374,7 +374,7 @@ namespace System.IO.Endian
     /// <summary>
     /// Specifies that a string is stored as length-prefixed.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, Inherited = false)]
     public class LengthPrefixedAttribute : Attribute
     {
 
