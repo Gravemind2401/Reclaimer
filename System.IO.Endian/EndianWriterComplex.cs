@@ -146,6 +146,14 @@ namespace System.IO.Endian
             else WriteObjectInternal(value, version, true);
         }
 
+        private void WritePropertyValue(object obj, PropertyInfo prop, double? version)
+        {
+            var originalByteOrder = ByteOrder;
+            Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
+            WriteProperty(obj, prop, version);
+            ByteOrder = originalByteOrder;
+        }
+
         private void WritePrimitiveValue(object value)
         {
             var type = value.GetType();
@@ -239,14 +247,7 @@ namespace System.IO.Endian
                     .OrderBy(p => Utils.GetAttributeForVersion<OffsetAttribute>(p, version).Offset);
 
                 foreach (var prop in propInfo)
-                {
-                    var originalByteOrder = writer.ByteOrder;
-                    writer.Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
-
-                    writer.WriteProperty(value, prop, version);
-
-                    writer.ByteOrder = originalByteOrder;
-                }
+                    writer.WritePropertyValue(value, prop, version);
             }
 
             if (Attribute.IsDefined(type, typeof(ObjectSizeAttribute)))

@@ -115,6 +115,14 @@ namespace System.IO.Endian
             else property.SetValue(instance, ReadObjectInternal(property.PropertyType, version, true));
         }
 
+        private void ReadPropertyValue(object obj, PropertyInfo prop, double? version)
+        {
+            var originalByteOrder = ByteOrder;
+            Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
+            ReadProperty(obj, prop, null);
+            ByteOrder = originalByteOrder;
+        }
+
         private object ReadPrimitiveValue(Type type)
         {
             var primitiveMethod = (from m in GetType().GetMethods()
@@ -192,7 +200,7 @@ namespace System.IO.Endian
                         if (offsets.Count > 1 || offsets[0].HasMinVersion || offsets[0].HasMaxVersion)
                             throw Exceptions.InvalidVersionAttribute();
 
-                        reader.ReadProperty(result, vprop, null);
+                        reader.ReadPropertyValue(result, vprop, null);
                         var converter = TypeDescriptor.GetConverter(vprop.PropertyType);
                         if (converter.CanConvertTo(typeof(double)))
                             version = (double)converter.ConvertTo(vprop.GetValue(result), typeof(double));
@@ -212,14 +220,7 @@ namespace System.IO.Endian
                     .OrderBy(p => Utils.GetAttributeForVersion<OffsetAttribute>(p, version).Offset);
 
                 foreach (var prop in propInfo)
-                {
-                    var originalByteOrder = reader.ByteOrder;
-                    reader.Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
-
-                    reader.ReadProperty(result, prop, version);
-
-                    reader.ByteOrder = originalByteOrder;
-                }
+                    reader.ReadPropertyValue(result, prop, version);
             }
 
             if (Attribute.IsDefined(type, typeof(ObjectSizeAttribute)))
