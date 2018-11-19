@@ -108,7 +108,7 @@ namespace System.IO.Endian
                         if (offsets.Count > 1 || offsets[0].HasMinVersion || offsets[0].HasMaxVersion)
                             throw Exceptions.InvalidVersionAttribute();
 
-                        reader.ReadPropertyValue(result, vprop, null);
+                        reader.ReadProperty(result, vprop, null);
                         var converter = TypeDescriptor.GetConverter(vprop.PropertyType);
                         if (converter.CanConvertTo(typeof(double)))
                             version = (double)converter.ConvertTo(vprop.GetValue(result), typeof(double));
@@ -124,11 +124,18 @@ namespace System.IO.Endian
                 }
 
                 var propInfo = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(p => Utils.CheckPropertyForRead(p, version))
+                    .Where(p => Utils.CheckPropertyForReadWrite(p, version))
                     .OrderBy(p => Utils.GetAttributeForVersion<OffsetAttribute>(p, version).Offset);
 
                 foreach (var prop in propInfo)
-                    reader.ReadPropertyValue(result, prop, version);
+                {
+                    var originalByteOrder = reader.ByteOrder;
+                    reader.Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
+
+                    reader.ReadProperty(result, prop, version);
+
+                    reader.ByteOrder = originalByteOrder;
+                }
             }
 
             if (Attribute.IsDefined(type, typeof(ObjectSizeAttribute)))
@@ -140,10 +147,10 @@ namespace System.IO.Endian
             return result;
         }
 
-        private void ReadPropertyValue(object obj, PropertyInfo prop, double? version)
+        protected virtual void ReadProperty(object obj, PropertyInfo prop, double? version)
         {
-            var originalByteOrder = ByteOrder;
-            Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
+            if (prop.GetGetMethod() == null || prop.GetSetMethod() == null)
+                throw Exceptions.NonPublicGetSet(prop.Name);
 
             if (Attribute.IsDefined(prop, typeof(ByteOrderAttribute)))
             {
@@ -167,8 +174,11 @@ namespace System.IO.Endian
                 else prop.SetValue(obj, ReadComplexInternal(innerType, version, true));
             }
             else prop.SetValue(obj, ReadComplexInternal(prop.PropertyType, version, true));
+        }
 
-            ByteOrder = originalByteOrder;
+        protected virtual bool CanReadProperty(PropertyInfo property, double? version)
+        {
+            return Utils.CheckPropertyForReadWrite(property, version);
         }
     }
 }

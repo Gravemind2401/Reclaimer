@@ -131,11 +131,18 @@ namespace System.IO.Endian
                 }
 
                 var propInfo = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(p => Utils.CheckPropertyForRead(p, version))
+                    .Where(p => Utils.CheckPropertyForReadWrite(p, version))
                     .OrderBy(p => Utils.GetAttributeForVersion<OffsetAttribute>(p, version).Offset);
 
                 foreach (var prop in propInfo)
-                    writer.WritePropertyValue(value, prop, version);
+                {
+                    var originalByteOrder = writer.ByteOrder;
+                    writer.Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
+
+                    writer.WriteProperty(value, prop, version);
+
+                    writer.ByteOrder = originalByteOrder;
+                }
             }
 
             if (Attribute.IsDefined(type, typeof(ObjectSizeAttribute)))
@@ -145,10 +152,10 @@ namespace System.IO.Endian
             }
         }
 
-        private void WritePropertyValue(object obj, PropertyInfo prop, double? version)
+        protected virtual void WriteProperty(object obj, PropertyInfo prop, double? version)
         {
-            var originalByteOrder = ByteOrder;
-            Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
+            if (prop.GetGetMethod() == null || prop.GetSetMethod() == null)
+                throw Exceptions.NonPublicGetSet(prop.Name);
 
             if (Attribute.IsDefined(prop, typeof(ByteOrderAttribute)))
             {
@@ -189,8 +196,11 @@ namespace System.IO.Endian
                 }
             }
             else WriteComplexInternal(value, version, true);
+        }
 
-            ByteOrder = originalByteOrder;
+        protected virtual bool CanWriteProperty(PropertyInfo property, double? version)
+        {
+            return Utils.CheckPropertyForReadWrite(property, version);
         }
     }
 }

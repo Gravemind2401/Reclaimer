@@ -41,13 +41,10 @@ namespace System.IO.Endian
             return matches.FirstOrDefault();
         }
 
-        internal static bool CheckPropertyForRead(PropertyInfo property, double? version)
+        internal static bool CheckPropertyForReadWrite(PropertyInfo property, double? version)
         {
             if (!Attribute.IsDefined(property, typeof(OffsetAttribute)))
                 return false; //ignore properties with no offset assigned
-
-            if (property.GetSetMethod() == null)
-                return false; //no public setter for this property
 
             if (Attribute.IsDefined(property, typeof(VersionSpecificAttribute)))
             {

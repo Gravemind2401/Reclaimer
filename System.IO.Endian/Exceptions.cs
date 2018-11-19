@@ -64,6 +64,11 @@ namespace System.IO.Endian
                 return new MissingMethodException($"Cannot create an object of type '{typeName}' because '{typeName}' does not have a public default constructor.");
         }
 
+        internal static MissingMethodException NonPublicGetSet(string propName)
+        {
+            return new MissingMethodException($"The '{propName}' property was marked for read/write but has no public get and/or set methods.");
+        }
+
         internal static AmbiguousMatchException AttributeVersionOverlap(string memberName, string attrName, double? version)
         {
             return new AmbiguousMatchException($"The type or property '{memberName}' has multiple {attrName}s specified that are a match for version '{version?.ToString() ?? "null"}'.");
