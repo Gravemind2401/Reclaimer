@@ -379,4 +379,70 @@ namespace System.IO.Endian
     {
 
     }
+
+    /// <summary>
+    /// Specifies that a property value should be converted when being read or written.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
+    public class StoreTypeAttribute : Attribute, IVersionAttribute
+    {
+        private readonly Type storeType;
+        private double? minVersion;
+        private double? maxVersion;
+
+        /// <summary>
+        /// Gets the byte order that used to store the object.
+        /// </summary>
+        public Type StoreType => storeType;
+
+        /// <summary>
+        /// Gets a value indicating whether the byte order has a minimum version requirement.
+        /// </summary>
+        public bool HasMinVersion => minVersion.HasValue;
+
+        /// <summary>
+        /// Gets a value indicating whether the byte order has a maximum version requirement.
+        /// </summary>
+        public bool HasMaxVersion => minVersion.HasValue;
+
+        /// <summary>
+        /// Gets or sets the inclusive minimum version that the byte order is applicable to.
+        /// </summary>
+        public double MinVersion
+        {
+            get { return minVersion.GetValueOrDefault(); }
+            set
+            {
+                if (value > maxVersion)
+                    throw Exceptions.BoundaryOverlapMinimum(nameof(MinVersion), nameof(MaxVersion));
+
+                minVersion = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the exclusive maximum version that the store type is applicable to.
+        /// </summary>
+        public double MaxVersion
+        {
+            get { return maxVersion.GetValueOrDefault(); }
+            set
+            {
+                if (value < minVersion)
+                    throw Exceptions.BoundaryOverlapMaximum(nameof(MinVersion), nameof(MaxVersion));
+
+                maxVersion = value;
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <seealso cref="StoreTypeAttribute"/> class 
+        /// with the specified store type value.
+        /// </summary>
+        /// <param name="storeType"></param>
+        public StoreTypeAttribute(Type storeType)
+        {
+            this.storeType = storeType;
+        }
+    }
 }

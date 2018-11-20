@@ -99,6 +99,11 @@ namespace System.IO.Endian
             return new ArgumentException($"{methodName} should not be used on primitive types or strings.");
         }
 
+        internal static ArgumentException PropertyNotConvertable(string propName, string storeType, string propType)
+        {
+            return new ArgumentException($"The property '{propName}' is has a {nameof(StoreTypeAttribute)} value of '{storeType}' but '{storeType}' could not be converted to/from '{propType}'.");
+        }
+
         #endregion
     }
 }

@@ -97,22 +97,41 @@ namespace System.IO.Endian
                 ByteOrder = attr.ByteOrder;
             }
 
-            if (property.PropertyType.IsPrimitive)
-                property.SetValue(instance, ReadPrimitiveValue(property.PropertyType));
-            else if (property.PropertyType.Equals(typeof(string)))
-                property.SetValue(instance, ReadStringValue(property, version));
-            else if (property.PropertyType.Equals(typeof(Guid)))
-                property.SetValue(instance, ReadGuid());
-            else if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            object value = null;
+            var readType = property.PropertyType;
+
+            if (Attribute.IsDefined(property, typeof(StoreTypeAttribute)))
             {
-                var innerType = property.PropertyType.GetGenericArguments()[0];
-                if (innerType.IsPrimitive)
-                    property.SetValue(instance, ReadPrimitiveValue(innerType));
-                else if (innerType.Equals(typeof(Guid)))
-                    property.SetValue(instance, ReadGuid());
-                else property.SetValue(instance, ReadObjectInternal(innerType, version, true));
+                var attr = Utils.GetAttributeForVersion<StoreTypeAttribute>(property, version);
+                readType = attr.StoreType;
             }
-            else property.SetValue(instance, ReadObjectInternal(property.PropertyType, version, true));
+
+            if (readType.IsPrimitive)
+                value = ReadPrimitiveValue(readType);
+            else if (readType.Equals(typeof(string)))
+                value = ReadStringValue(property, version);
+            else if (readType.Equals(typeof(Guid)))
+                value = ReadGuid();
+            else if (readType.IsGenericType && readType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            {
+                var innerType = readType.GetGenericArguments()[0];
+                if (innerType.IsPrimitive)
+                    value = ReadPrimitiveValue(innerType);
+                else if (innerType.Equals(typeof(Guid)))
+                    value = ReadGuid();
+                else value = ReadObjectInternal(innerType, version, true);
+            }
+            else value = ReadObjectInternal(readType, version, true);
+
+            if (readType != property.PropertyType)
+            {
+                var converter = TypeDescriptor.GetConverter(readType);
+                if (converter.CanConvertTo(property.PropertyType))
+                    value = converter.ConvertTo(value, property.PropertyType);
+                else throw Exceptions.PropertyNotConvertable(property.Name, readType.Name, property.PropertyType.Name);
+            }
+
+            property.SetValue(instance, value);
         }
 
         private void ReadPropertyValue(object obj, PropertyInfo prop, double? version)

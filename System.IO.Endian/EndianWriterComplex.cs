@@ -112,25 +112,37 @@ namespace System.IO.Endian
             }
 
             var value = property.GetValue(instance);
+            var writeType = property.PropertyType;
+
+            if (Attribute.IsDefined(property, typeof(StoreTypeAttribute)))
+            {
+                var attr = Utils.GetAttributeForVersion<StoreTypeAttribute>(property, version);
+                writeType = attr.StoreType;
+
+                var converter = TypeDescriptor.GetConverter(property.PropertyType);
+                if (converter.CanConvertTo(writeType))
+                    value = converter.ConvertTo(value, writeType);
+                else throw Exceptions.PropertyNotConvertable(property.Name, writeType.Name, property.PropertyType.Name);
+            }
 
             //in case this was called with a specific version number we should write that number
             //instead of [VersionNumber] property values to ensure the object can be read back in again
             if (Attribute.IsDefined(property, typeof(VersionNumberAttribute)) && version.HasValue)
             {
                 var converter = TypeDescriptor.GetConverter(typeof(double));
-                if (converter.CanConvertTo(property.PropertyType))
-                    value = converter.ConvertTo(version.Value, property.PropertyType);
+                if (converter.CanConvertTo(writeType))
+                    value = converter.ConvertTo(version.Value, writeType);
             }
 
-            if (property.PropertyType.IsPrimitive)
+            if (writeType.IsPrimitive)
                 WritePrimitiveValue(value);
-            else if (property.PropertyType.Equals(typeof(string)))
+            else if (writeType.Equals(typeof(string)))
                 WriteStringValue(instance, property);
-            else if (property.PropertyType.Equals(typeof(Guid)))
+            else if (writeType.Equals(typeof(Guid)))
                 Write((Guid)value);
-            else if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            else if (writeType.IsGenericType && writeType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
             {
-                var innerType = property.PropertyType.GetGenericArguments()[0];
+                var innerType = writeType.GetGenericArguments()[0];
                 if (innerType.IsPrimitive)
                     WritePrimitiveValue(value ?? Activator.CreateInstance(innerType));
                 else if (innerType.Equals(typeof(Guid)))
