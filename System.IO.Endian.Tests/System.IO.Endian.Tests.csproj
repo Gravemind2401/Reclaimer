@@ -58,6 +58,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="ComplexRead\Enums.cs" />
     <Compile Include="ComplexRead\StoreType.cs" />
     <Compile Include="ComplexRead\Versions.cs" />
     <Compile Include="ComplexRead\Nullable.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="ComplexRead\ByteOrder.cs" />
     <Compile Include="ComplexRead\Basic.cs" />
     <Compile Include="ComplexWrite\ByteOrder.cs" />
+    <Compile Include="ComplexWrite\Enums.cs" />
     <Compile Include="ComplexWrite\Nullable.cs" />
     <Compile Include="ComplexWrite\Basic.cs" />
     <Compile Include="ComplexWrite\StoreType.cs" />

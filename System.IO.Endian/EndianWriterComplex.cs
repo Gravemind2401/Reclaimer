@@ -118,12 +118,10 @@ namespace System.IO.Endian
             {
                 var attr = Utils.GetAttributeForVersion<StoreTypeAttribute>(property, version);
                 writeType = attr.StoreType;
-
-                var converter = TypeDescriptor.GetConverter(property.PropertyType);
-                if (converter.CanConvertTo(writeType))
-                    value = converter.ConvertTo(value, writeType);
-                else throw Exceptions.PropertyNotConvertable(property.Name, writeType.Name, property.PropertyType.Name);
             }
+
+            if (writeType.IsEnum)
+                writeType = writeType.GetEnumUnderlyingType();
 
             //in case this was called with a specific version number we should write that number
             //instead of [VersionNumber] property values to ensure the object can be read back in again
@@ -134,27 +132,47 @@ namespace System.IO.Endian
                     value = converter.ConvertTo(version.Value, writeType);
             }
 
+            if (writeType.IsGenericType && writeType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            {
+                var innerType = writeType.GetGenericArguments()[0];
+                if (value == null)
+                {
+                    if (innerType.IsPrimitive)
+                        value = Activator.CreateInstance(innerType);
+                    else if (innerType.Equals(typeof(Guid)))
+                        value = Guid.Empty;
+                    else
+                    {
+                        if (innerType.GetConstructor(Type.EmptyTypes) == null)
+                            throw Exceptions.TypeNotConstructable(innerType.Name, true);
+
+                        value = Activator.CreateInstance(innerType);
+                    }
+                }
+                writeType = innerType;
+            }
+
+            var valType = value.GetType();
+            if (valType.IsEnum)
+            {
+                valType = valType.GetEnumUnderlyingType();
+                value = Convert.ChangeType(value, valType);
+            }
+
+            if (writeType != valType)
+            {
+                var converter = TypeDescriptor.GetConverter(valType);
+                if (converter.CanConvertTo(writeType))
+                    value = converter.ConvertTo(value, writeType);
+                else throw Exceptions.PropertyNotConvertable(property.Name, writeType.Name, valType.Name);
+            }
+
             if (writeType.IsPrimitive)
                 WritePrimitiveValue(value);
             else if (writeType.Equals(typeof(string)))
                 WriteStringValue(instance, property);
             else if (writeType.Equals(typeof(Guid)))
                 Write((Guid)value);
-            else if (writeType.IsGenericType && writeType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-            {
-                var innerType = writeType.GetGenericArguments()[0];
-                if (innerType.IsPrimitive)
-                    WritePrimitiveValue(value ?? Activator.CreateInstance(innerType));
-                else if (innerType.Equals(typeof(Guid)))
-                    Write(value == null ? Guid.Empty : (Guid)value);
-                else
-                {
-                    if (innerType.GetConstructor(Type.EmptyTypes) == null)
-                        throw Exceptions.TypeNotConstructable(innerType.Name, true);
-
-                    WriteObjectInternal(value ?? Activator.CreateInstance(innerType), version, true);
-                }
-            }
             else WriteObjectInternal(value, version, true);
         }
 

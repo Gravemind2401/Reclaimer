@@ -106,6 +106,9 @@ namespace System.IO.Endian
                 readType = attr.StoreType;
             }
 
+            if (readType.IsEnum)
+                readType = readType.GetEnumUnderlyingType();
+
             if (readType.IsPrimitive)
                 value = ReadPrimitiveValue(readType);
             else if (readType.Equals(typeof(string)))
@@ -123,13 +126,17 @@ namespace System.IO.Endian
             }
             else value = ReadObjectInternal(readType, version, true);
 
-            if (readType != property.PropertyType)
+            var propType = property.PropertyType.IsEnum ? property.PropertyType.GetEnumUnderlyingType() : property.PropertyType;
+            if (readType != propType)
             {
                 var converter = TypeDescriptor.GetConverter(readType);
-                if (converter.CanConvertTo(property.PropertyType))
-                    value = converter.ConvertTo(value, property.PropertyType);
-                else throw Exceptions.PropertyNotConvertable(property.Name, readType.Name, property.PropertyType.Name);
+                if (converter.CanConvertTo(propType))
+                    value = converter.ConvertTo(value, propType);
+                else throw Exceptions.PropertyNotConvertable(property.Name, readType.Name, propType.Name);
             }
+
+            if (property.PropertyType.IsEnum)
+                value = Enum.ToObject(property.PropertyType, value);
 
             property.SetValue(instance, value);
         }
