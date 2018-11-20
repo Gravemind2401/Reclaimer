@@ -90,7 +90,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
                 Property8 = (ulong)unchecked((uint)rng.Next(int.MinValue, int.MaxValue)),
                 Property9 = (float)rng.NextDouble(),
                 Property10 = (double)rng.NextDouble(),
-                Property11 = Guid.NewGuid()
+                Property11 = null
             };
 
             using (var stream = new MemoryStream(new byte[500]))
@@ -135,7 +135,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
                 Assert.AreEqual(obj.Property10, reader.ReadDouble());
 
                 reader.Seek(0x60, SeekOrigin.Begin);
-                Assert.AreEqual(obj.Property11, reader.ReadGuid());
+                Assert.AreEqual(Guid.Empty, reader.ReadGuid());
             }
         }
 
