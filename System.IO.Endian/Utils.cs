@@ -49,17 +49,27 @@ namespace System.IO.Endian
             if (!Attribute.IsDefined(property, typeof(OffsetAttribute)))
                 return false; //ignore properties with no offset assigned
 
-            if (Attribute.IsDefined(property, typeof(VersionSpecificAttribute)))
+            if (Attribute.IsDefined(property, typeof(VersionSpecificAttribute))
+                || Attribute.IsDefined(property, typeof(MinVersionAttribute))
+                || Attribute.IsDefined(property, typeof(MaxVersionAttribute)))
             {
                 if (!version.HasValue)
                     return false; //ignore versioned properties if no read version is specified
 
-                var bounds = Utils.GetCustomAttribute<VersionSpecificAttribute>(property);
-                var minVersion = bounds.HasMinVersion ? bounds.MinVersion : (double?)null;
-                var maxVersion = bounds.HasMaxVersion ? bounds.MaxVersion : (double?)null;
+                var single = Utils.GetCustomAttribute<VersionSpecificAttribute>(property);
+                var min = Utils.GetCustomAttribute<MinVersionAttribute>(property);
+                var max = Utils.GetCustomAttribute<MaxVersionAttribute>(property);
 
-                if (version != minVersion && (version < minVersion || version >= maxVersion))
-                    return false; //property not valid for this version
+                //must satisfy any and all version restrictions that are applied
+
+                if (version != (single?.Version ?? version))
+                    return false;
+
+                if (version < min?.MinVersion)
+                    return false;
+
+                if (version >= max?.MaxVersion && version != min?.MinVersion)
+                    return false;
             }
 
             if (Utils.GetAttributeForVersion<OffsetAttribute>(property, version) == null)

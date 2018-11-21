@@ -31,11 +31,6 @@ namespace System.IO.Endian
             return new ArgumentOutOfRangeException(paramName, paramValue, ToCurrent($"The {paramName} value must be non-negative."));
         }
 
-        internal static ArgumentOutOfRangeException BoundaryOverlapAmbiguous(string minValue, string maxValue)
-        {
-            return new ArgumentOutOfRangeException(ToCurrent($"The {minValue} value cannot be greater than the {maxValue} value."));
-        }
-
         internal static ArgumentOutOfRangeException BoundaryOverlapMinimum(string minValue, string maxValue)
         {
             return new ArgumentOutOfRangeException(ToCurrent($"{minValue} cannot be greater than {maxValue}."));

@@ -163,79 +163,71 @@ namespace System.IO.Endian
     }
 
     /// <summary>
-    /// Specifies that a property is only applicable to a given range of versions.
+    /// Specifies that a property is only applicable after a certain version.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, Inherited = false)]
+    public sealed class MinVersionAttribute : Attribute
+    {
+        private readonly double minVersion;
+
+        /// <summary>
+        /// Gets the inclusive minimum version that the property is applicable to.
+        /// </summary>
+        public double MinVersion => minVersion;
+
+        /// <summary>
+        /// Initializes a new instance of the <seealso cref="MinVersionAttribute"/> class with the specified minimum version value.
+        /// </summary>
+        /// <param name="minVersion">The inclusive minimum version that the property is applicable to.</param>
+        public MinVersionAttribute(double minVersion)
+        {
+            this.minVersion = minVersion;
+        }
+    }
+
+    /// <summary>
+    /// Specifies that a property is only applicable until a certain version.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, Inherited = false)]
+    public sealed class MaxVersionAttribute : Attribute
+    {
+        private readonly double maxVersion;
+
+        /// <summary>
+        /// Gets the exclusive maximum version that the property is applicable to.
+        /// </summary>
+        public double MaxVersion => maxVersion;
+
+        /// <summary>
+        /// Initializes a new instance of the <seealso cref="MaxVersionAttribute"/> class with the specified maximum version value.
+        /// </summary>
+        /// <param name="maxVersion">The exclusive maximum version that the property is applicable to.</param>
+        public MaxVersionAttribute(double maxVersion)
+        {
+            this.maxVersion = maxVersion;
+        }
+    }
+
+    /// <summary>
+    /// Specifies that a property is only applicable for a certain version.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = false)]
     public sealed class VersionSpecificAttribute : Attribute
     {
-        private double? minVersion;
-        private double? maxVersion;
+        private readonly double version;
 
         /// <summary>
-        /// Gets a value indicating whether the property has a minimum version requirement.
+        /// Gets the version that the property is applicable to.
         /// </summary>
-        public bool HasMinVersion => minVersion.HasValue;
-
-        /// <summary>
-        /// Gets a value indicating whether the property has a maximum version requirement.
-        /// </summary>
-        public bool HasMaxVersion => maxVersion.HasValue;
-
-        /// <summary>
-        /// Gets or sets the inclusive minimum version that the property is applicable to.
-        /// </summary>
-        public double MinVersion
-        {
-            get { return minVersion.GetValueOrDefault(); }
-            set
-            {
-                if (value > maxVersion)
-                    throw Exceptions.BoundaryOverlapMinimum(nameof(MinVersion), nameof(MaxVersion));
-
-                minVersion = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the exclusive maximum version that the property is applicable to.
-        /// </summary>
-        public double MaxVersion
-        {
-            get { return maxVersion.GetValueOrDefault(); }
-            set
-            {
-                if (value < minVersion)
-                    throw Exceptions.BoundaryOverlapMaximum(nameof(MinVersion), nameof(MaxVersion));
-
-                maxVersion = value;
-            }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <seealso cref="VersionSpecificAttribute"/> class with the specified minimum and maximum version values.
-        /// </summary>
-        /// <param name="minVersion">The inclusive minimum version that the property applies to.</param>
-        /// <param name="maxVersion">The exclusive maximum version that the property applies to.</param>
-        /// <exception cref="ArgumentOutOfRangeException"/>
-        public VersionSpecificAttribute(double minVersion, double maxVersion)
-        {
-            if (minVersion > maxVersion)
-                throw Exceptions.BoundaryOverlapAmbiguous(nameof(minVersion), nameof(maxVersion));
-
-            this.minVersion = minVersion;
-            this.maxVersion = maxVersion;
-        }
+        public double Version => version;
 
         /// <summary>
         /// Initializes a new instance of the <seealso cref="VersionSpecificAttribute"/> class with the specified version value.
         /// </summary>
-        /// <param name="version">The version that the property applies to.</param>
-        /// <exception cref="ArgumentException"/>
-        /// <exception cref="ArgumentOutOfRangeException"/>
+        /// <param name="version">The version that the property is applicable to.</param>
         public VersionSpecificAttribute(double version)
         {
-            minVersion = version;
-            maxVersion = version;
+            this.version = version;
         }
     }
 

@@ -19,7 +19,8 @@ namespace System.IO.Endian.Tests.ComplexWrite
                 Property1 = rng.Next(int.MinValue, int.MaxValue),
                 Property2 = (float)rng.NextDouble(),
                 Property3 = (float)rng.NextDouble(),
-                Property4 = rng.NextDouble()
+                Property4 = rng.NextDouble(),
+                Property5 = rng.NextDouble(),
             };
 
             using (var stream = new MemoryStream())
@@ -78,6 +79,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
                 Assert.AreEqual(obj.Property2, reader.ReadSingle());
                 Assert.AreEqual(0, reader.ReadInt32());
                 Assert.AreEqual(obj.Property4, reader.ReadDouble());
+                Assert.AreEqual(obj.Property5, reader.ReadDouble());
             }
         }
 
@@ -166,12 +168,18 @@ namespace System.IO.Endian.Tests.ComplexWrite
             public float Property2 { get; set; }
 
             [Offset(0x10)]
-            [VersionSpecific(2, 4)]
+            [MinVersion(2)]
+            [MaxVersion(4)]
             public float? Property3 { get; set; }
 
             [Offset(0x14)]
             [VersionSpecific(4)]
             public double? Property4 { get; set; }
+
+            [Offset(0x1C)]
+            [MinVersion(4)]
+            [MaxVersion(4)]
+            public double? Property5 { get; set; }
         }
 
         public class DataClass10
@@ -188,7 +196,8 @@ namespace System.IO.Endian.Tests.ComplexWrite
             public float Property2 { get; set; }
 
             [Offset(0x10)]
-            [VersionSpecific(2, 4)]
+            [MinVersion(2)]
+            [MaxVersion(4)]
             public float? Property3 { get; set; }
 
             [Offset(0x14)]

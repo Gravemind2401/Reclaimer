@@ -17,7 +17,7 @@ namespace System.IO.Endian.Tests.ComplexRead
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                var rand = new object[5];
+                var rand = new object[6];
 
                 rand[0] = rng.Next(int.MinValue, int.MaxValue);
                 writer.Write((int)rand[0]);
@@ -35,6 +35,9 @@ namespace System.IO.Endian.Tests.ComplexRead
 
                 rand[4] = rng.NextDouble();
                 writer.Write((double)rand[4]);
+
+                rand[5] = rng.NextDouble();
+                writer.Write((double)rand[5]);
 
                 stream.Position = 0;
                 var obj = (DataClass09)reader.ReadObject(typeof(DataClass09));
@@ -80,6 +83,7 @@ namespace System.IO.Endian.Tests.ComplexRead
                 Assert.AreEqual(rand[2], obj.Property2);
                 Assert.IsNull(obj.Property3);
                 Assert.AreEqual(rand[4], obj.Property4);
+                Assert.AreEqual(rand[5], obj.Property5);
             }
         }
 
@@ -164,12 +168,18 @@ namespace System.IO.Endian.Tests.ComplexRead
             public float Property2 { get; set; }
 
             [Offset(0x10)]
-            [VersionSpecific(2, 4)]
+            [MinVersion(2)]
+            [MaxVersion(4)]
             public float? Property3 { get; set; }
 
             [Offset(0x14)]
             [VersionSpecific(4)]
             public double? Property4 { get; set; }
+
+            [Offset(0x1C)]
+            [MinVersion(4)]
+            [MaxVersion(4)]
+            public double? Property5 { get; set; }
         }
 
         public class DataClass10
@@ -185,7 +195,8 @@ namespace System.IO.Endian.Tests.ComplexRead
             public float Property2 { get; set; }
 
             [Offset(0x10)]
-            [VersionSpecific(2, 4)]
+            [MinVersion(2)]
+            [MaxVersion(4)]
             public float? Property3 { get; set; }
 
             [Offset(0x14)]
