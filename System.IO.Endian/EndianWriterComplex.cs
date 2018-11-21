@@ -20,6 +20,10 @@ namespace System.IO.Endian
         /// </summary>
         /// <typeparam name="T">The type of object to write.</typeparam>
         /// <param name="value">The object to write.</param>
+        /// <exception cref="AmbiguousMatchException" />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="MissingMethodException" />
         public void WriteObject<T>(T value)
         {
             if (value == null)
@@ -41,6 +45,10 @@ namespace System.IO.Endian
         /// This determines which properties will be written, how they will be
         /// written and at what location in the stream to write them to.
         /// </param>
+        /// <exception cref="AmbiguousMatchException" />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="MissingMethodException" />
         public void WriteObject<T>(T value, double version)
         {
             if (value == null)
@@ -56,6 +64,10 @@ namespace System.IO.Endian
         /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
         /// </summary>
         /// <param name="value">The object to write.</param>
+        /// <exception cref="AmbiguousMatchException" />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="MissingMethodException" />
         public void WriteObject(object value)
         {
             if (value == null)
@@ -76,6 +88,10 @@ namespace System.IO.Endian
         /// This determines which properties will be written, how they will be
         /// written and at what location in the stream to write them to.
         /// </param>
+        /// <exception cref="AmbiguousMatchException" />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="MissingMethodException" />
         public void WriteObject(object value, double version)
         {
             if (value == null)

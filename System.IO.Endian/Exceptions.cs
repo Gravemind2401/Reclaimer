@@ -101,7 +101,12 @@ namespace System.IO.Endian
 
         internal static ArgumentException PropertyNotConvertable(string propName, string storeType, string propType)
         {
-            return new ArgumentException($"The property '{propName}' is has a {nameof(StoreTypeAttribute)} value of '{storeType}' but '{storeType}' could not be converted to/from '{propType}'.");
+            return new ArgumentException($"The property '{propName}' has a {nameof(StoreTypeAttribute)} value of '{storeType}' but '{storeType}' could not be converted to/from '{propType}'.");
+        }
+
+        internal static ArgumentOutOfRangeException OutOfStreamBounds(string paramName, object value)
+        {
+            return new ArgumentOutOfRangeException(paramName, value, $"The {paramName} value is out of bounds. The value must be non-negative and no greater than the length of the underlying stream.");
         }
 
         #endregion

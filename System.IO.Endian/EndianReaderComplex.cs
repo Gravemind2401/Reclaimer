@@ -20,6 +20,9 @@ namespace System.IO.Endian
         /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
         /// </summary>
         /// <typeparam name="T">The type of object to read.</typeparam>
+        /// <exception cref="AmbiguousMatchException" />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="MissingMethodException" />
         public T ReadObject<T>() where T : new()
         {
             return (T)ReadObjectInternal(null, typeof(T), null, false);
@@ -37,6 +40,9 @@ namespace System.IO.Endian
         /// This determines which properties will be read, how they will be
         /// read and at what location in the stream to read them from.
         /// </param>
+        /// <exception cref="AmbiguousMatchException" />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="MissingMethodException" />
         public T ReadObject<T>(double version) where T : new()
         {
             return (T)ReadObjectInternal(null, typeof(T), version, false);
@@ -49,6 +55,9 @@ namespace System.IO.Endian
         /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
         /// </summary>
         /// <param name="type">The type of object to read.</param>
+        /// <exception cref="AmbiguousMatchException" />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="MissingMethodException" />
         public object ReadObject(Type type)
         {
             return ReadObjectInternal(null, type, null, false);
@@ -66,6 +75,9 @@ namespace System.IO.Endian
         /// This determines which properties will be read, how they will be
         /// read and at what location in the stream to read them from.
         /// </param>
+        /// <exception cref="AmbiguousMatchException" />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="MissingMethodException" />
         public object ReadObject(Type type, double version)
         {
             return ReadObjectInternal(null, type, version, false);
@@ -78,6 +90,10 @@ namespace System.IO.Endian
         /// </summary>
         /// <typeparam name="T">The type of object to read.</typeparam>
         /// <param name="instance">The object to populate.</param>
+        /// <exception cref="AmbiguousMatchException" />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="MissingMethodException" />
         public void ReadObject<T>(T instance)
         {
             if (instance == null)
@@ -98,6 +114,10 @@ namespace System.IO.Endian
         /// This determines which properties will be read, how they will be
         /// read and at what location in the stream to read them from.
         /// </param>
+        /// <exception cref="AmbiguousMatchException" />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="MissingMethodException" />
         public void ReadObject<T>(T instance, double version) where T : new()
         {
             if (instance == null)
@@ -112,6 +132,10 @@ namespace System.IO.Endian
         /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
         /// </summary>
         /// <param name="type">The type of object to read.</param>
+        /// <exception cref="AmbiguousMatchException" />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="MissingMethodException" />
         public void ReadObject(object instance)
         {
             if (instance == null)
@@ -131,6 +155,10 @@ namespace System.IO.Endian
         /// This determines which properties will be read, how they will be
         /// read and at what location in the stream to read them from.
         /// </param>
+        /// <exception cref="AmbiguousMatchException" />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="MissingMethodException" />
         public void ReadObject(object instance, double version)
         {
             if (instance == null)

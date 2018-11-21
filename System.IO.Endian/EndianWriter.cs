@@ -525,6 +525,9 @@ namespace System.IO.Endian
         /// </summary>
         /// <param name="offset">A byte offest relative to the origin parameter.</param>
         /// <param name="origin">A value of type SeekOrigin indicating the reference point used to obtain the new position.</param>
+        /// <exception cref="IOException" />
+        /// <exception cref="NotSupportedException" />
+        /// <exception cref="ObjectDisposedException" />
         public void Seek(long offset, SeekOrigin origin)
         {
             switch (origin)
@@ -557,8 +560,12 @@ namespace System.IO.Endian
         /// as the beginning of the stream and will not dispose of the underlying stream when it is closed.
         /// </summary>
         /// <param name="origin">The position in the stream that will be treated as the beginning.</param>
+        /// <exception cref="ArgumentOutOfRangeException" />
         public EndianWriter CreateVirtualWriter(long origin)
         {
+            if (origin < 0 || origin > BaseStream.Length)
+                throw Exceptions.OutOfStreamBounds(nameof(origin), origin);
+
             return new EndianWriter(BaseStream, ByteOrder, encoding, true, origin);
         }
 
