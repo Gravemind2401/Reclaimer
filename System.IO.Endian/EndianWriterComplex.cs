@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -31,7 +32,7 @@ namespace System.IO.Endian
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            WriteObjectInternal(value, null, false);
+            WriteObjectInternal(value, null);
         }
 
         /// <summary>
@@ -58,7 +59,7 @@ namespace System.IO.Endian
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            WriteObjectInternal(value, version, false);
+            WriteObjectInternal(value, version);
         }
 
         /// <summary>
@@ -79,7 +80,7 @@ namespace System.IO.Endian
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            WriteObjectInternal(value, null, false);
+            WriteObjectInternal(value, null);
         }
 
         /// <summary>
@@ -105,7 +106,7 @@ namespace System.IO.Endian
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            WriteObjectInternal(value, version, false);
+            WriteObjectInternal(value, version);
         } 
 
         #endregion
@@ -113,12 +114,12 @@ namespace System.IO.Endian
         /// <summary>
         /// Checks if the specified property is writable.
         /// </summary>
-        /// <param name="property">The property to check.</param>
+        /// <param name="prop">The property to check.</param>
         /// <param name="version">The version to use when checking the property.</param>
         /// <returns></returns>
-        protected virtual bool CanWriteProperty(PropertyInfo property, double? version)
+        protected virtual bool CanWriteProperty(PropertyInfo prop, double? version)
         {
-            return Utils.CheckPropertyForReadWrite(property, version);
+            return Utils.CheckPropertyForReadWrite(prop, version);
         }
 
         /// <summary>
@@ -126,25 +127,28 @@ namespace System.IO.Endian
         /// the property against the specified instance of the property's containing type.
         /// </summary>
         /// <param name="instance">The instance of the type containing the property.</param>
-        /// <param name="property">The property to write.</param>
+        /// <param name="prop">The property to write.</param>
         /// <param name="version">The version to use when writing the property.</param>
-        protected virtual void WriteProperty(object instance, PropertyInfo property, double? version)
+        protected virtual void WriteProperty(object instance, PropertyInfo prop, double? version)
         {
-            if (property.GetGetMethod() == null || property.GetSetMethod() == null)
-                throw Exceptions.NonPublicGetSet(property.Name);
+            if (prop == null)
+                throw new ArgumentNullException(nameof(prop));
 
-            if (Attribute.IsDefined(property, typeof(ByteOrderAttribute)))
+            if (prop.GetGetMethod() == null || prop.GetSetMethod() == null)
+                throw Exceptions.NonPublicGetSet(prop.Name);
+
+            if (Attribute.IsDefined(prop, typeof(ByteOrderAttribute)))
             {
-                var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(property, version);
+                var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
                 if (attr != null) ByteOrder = attr.ByteOrder;
             }
 
-            var value = property.GetValue(instance);
-            var writeType = property.PropertyType;
+            var value = prop.GetValue(instance);
+            var writeType = prop.PropertyType;
 
-            if (Attribute.IsDefined(property, typeof(StoreTypeAttribute)))
+            if (Attribute.IsDefined(prop, typeof(StoreTypeAttribute)))
             {
-                var attr = Utils.GetAttributeForVersion<StoreTypeAttribute>(property, version);
+                var attr = Utils.GetAttributeForVersion<StoreTypeAttribute>(prop, version);
                 if (attr != null) writeType = attr.StoreType;
             }
 
@@ -153,7 +157,7 @@ namespace System.IO.Endian
 
             //in case this was called with a specific version number we should write that number
             //instead of [VersionNumber] property values to ensure the object can be read back in again
-            if (Attribute.IsDefined(property, typeof(VersionNumberAttribute)) && version.HasValue)
+            if (Attribute.IsDefined(prop, typeof(VersionNumberAttribute)) && version.HasValue)
             {
                 var converter = TypeDescriptor.GetConverter(typeof(double));
                 if (converter.CanConvertTo(writeType))
@@ -184,7 +188,7 @@ namespace System.IO.Endian
             if (valType.IsEnum)
             {
                 valType = valType.GetEnumUnderlyingType();
-                value = Convert.ChangeType(value, valType);
+                value = Convert.ChangeType(value, valType, CultureInfo.InvariantCulture);
             }
 
             if (writeType != valType)
@@ -192,16 +196,16 @@ namespace System.IO.Endian
                 var converter = TypeDescriptor.GetConverter(valType);
                 if (converter.CanConvertTo(writeType))
                     value = converter.ConvertTo(value, writeType);
-                else throw Exceptions.PropertyNotConvertable(property.Name, writeType.Name, valType.Name);
+                else throw Exceptions.PropertyNotConvertable(prop.Name, writeType.Name, valType.Name);
             }
 
             if (writeType.IsPrimitive)
                 WritePrimitiveValue(value);
             else if (writeType.Equals(typeof(string)))
-                WriteStringValue(instance, property);
+                WriteStringValue(instance, prop);
             else if (writeType.Equals(typeof(Guid)))
                 Write((Guid)value);
-            else WriteObjectInternal(value, version, true);
+            else WriteObjectInternal(value, version);
         }
 
         private void WritePropertyValue(object obj, PropertyInfo prop, double? version)
@@ -215,7 +219,7 @@ namespace System.IO.Endian
         private void WritePrimitiveValue(object value)
         {
             var type = value.GetType();
-            var primitiveMethod = (from m in GetType().GetMethods()
+            var primitiveMethod = (from m in typeof(EndianWriter).GetMethods()
                                    let param = m.GetParameters()
                                    where m.Name.Equals(nameof(Write))
                                    && param.Length == 1
@@ -223,7 +227,7 @@ namespace System.IO.Endian
                                    select m).SingleOrDefault();
 
             if (primitiveMethod == null)
-                throw Exceptions.MissingPrimitiveReadMethod(type.Name);
+                throw Exceptions.MissingPrimitiveWriteMethod(type.Name);
             else primitiveMethod.Invoke(this, new[] { value });
         }
 
@@ -260,7 +264,7 @@ namespace System.IO.Endian
             }
         }
 
-        private void WriteObjectInternal(object value, double? version, bool isProperty)
+        private void WriteObjectInternal(object value, double? version)
         {
             var type = value.GetType();
             if (type.IsPrimitive || type.Equals(typeof(string)))

@@ -167,6 +167,7 @@ namespace System.IO.Endian
         /// <param name="value">The two-byte unsigned integer to write.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public override void Write(ushort value)
         {
             Write(value, ByteOrder);
@@ -179,6 +180,7 @@ namespace System.IO.Endian
         /// <param name="value">The four-byte unsigned integer to write.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public override void Write(uint value)
         {
             Write(value, ByteOrder);
@@ -191,6 +193,7 @@ namespace System.IO.Endian
         /// <param name="value">The eight-byte unsigned integer to write.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public override void Write(ulong value)
         {
             Write(value, ByteOrder);
@@ -364,6 +367,7 @@ namespace System.IO.Endian
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public virtual void Write(ushort value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
@@ -385,6 +389,7 @@ namespace System.IO.Endian
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public virtual void Write(uint value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
@@ -406,6 +411,7 @@ namespace System.IO.Endian
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public virtual void Write(ulong value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)

@@ -188,11 +188,11 @@ namespace System.IO.Endian
         /// <summary>
         /// Checks if the specified property is readable.
         /// </summary>
-        /// <param name="property">The property to check.</param>
+        /// <param name="prop">The property to check.</param>
         /// <param name="version">The version to use when checking the property.</param>
-        protected virtual bool CanReadProperty(PropertyInfo property, double? version)
+        protected virtual bool CanReadProperty(PropertyInfo prop, double? version)
         {
-            return Utils.CheckPropertyForReadWrite(property, version);
+            return Utils.CheckPropertyForReadWrite(prop, version);
         }
 
         /// <summary>
@@ -200,25 +200,28 @@ namespace System.IO.Endian
         /// against the specified instance of the property's containing type.
         /// </summary>
         /// <param name="instance">The instance of the type containing the property.</param>
-        /// <param name="property">The property to read.</param>
+        /// <param name="prop">The property to read.</param>
         /// <param name="version">The version to use when reading the property.</param>
-        protected virtual void ReadProperty(object instance, PropertyInfo property, double? version)
+        protected virtual void ReadProperty(object instance, PropertyInfo prop, double? version)
         {
-            if (property.GetGetMethod() == null || property.GetSetMethod() == null)
-                throw Exceptions.NonPublicGetSet(property.Name);
+            if (prop == null)
+                throw new ArgumentNullException(nameof(prop));
 
-            if (Attribute.IsDefined(property, typeof(ByteOrderAttribute)))
+            if (prop.GetGetMethod() == null || prop.GetSetMethod() == null)
+                throw Exceptions.NonPublicGetSet(prop.Name);
+
+            if (Attribute.IsDefined(prop, typeof(ByteOrderAttribute)))
             {
-                var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(property, version);
+                var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
                 if (attr != null) ByteOrder = attr.ByteOrder;
             }
 
             object value = null;
-            var readType = property.PropertyType;
+            var readType = prop.PropertyType;
 
-            if (Attribute.IsDefined(property, typeof(StoreTypeAttribute)))
+            if (Attribute.IsDefined(prop, typeof(StoreTypeAttribute)))
             {
-                var attr = Utils.GetAttributeForVersion<StoreTypeAttribute>(property, version);
+                var attr = Utils.GetAttributeForVersion<StoreTypeAttribute>(prop, version);
                 if (attr != null) readType = attr.StoreType;
             }
 
@@ -228,7 +231,7 @@ namespace System.IO.Endian
             if (readType.IsPrimitive)
                 value = ReadPrimitiveValue(readType);
             else if (readType.Equals(typeof(string)))
-                value = ReadStringValue(property, version);
+                value = ReadStringValue(prop);
             else if (readType.Equals(typeof(Guid)))
                 value = ReadGuid();
             else if (readType.IsGenericType && readType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
@@ -242,19 +245,19 @@ namespace System.IO.Endian
             }
             else value = ReadObjectInternal(null, readType, version, true);
 
-            var propType = property.PropertyType.IsEnum ? property.PropertyType.GetEnumUnderlyingType() : property.PropertyType;
+            var propType = prop.PropertyType.IsEnum ? prop.PropertyType.GetEnumUnderlyingType() : prop.PropertyType;
             if (readType != propType)
             {
                 var converter = TypeDescriptor.GetConverter(readType);
                 if (converter.CanConvertTo(propType))
                     value = converter.ConvertTo(value, propType);
-                else throw Exceptions.PropertyNotConvertable(property.Name, readType.Name, propType.Name);
+                else throw Exceptions.PropertyNotConvertable(prop.Name, readType.Name, propType.Name);
             }
 
-            if (property.PropertyType.IsEnum)
-                value = Enum.ToObject(property.PropertyType, value);
+            if (prop.PropertyType.IsEnum)
+                value = Enum.ToObject(prop.PropertyType, value);
 
-            property.SetValue(instance, value);
+            prop.SetValue(instance, value);
         }
 
         private void ReadPropertyValue(object obj, PropertyInfo prop, double? version)
@@ -267,9 +270,9 @@ namespace System.IO.Endian
 
         private object ReadPrimitiveValue(Type type)
         {
-            var primitiveMethod = (from m in GetType().GetMethods()
-                                   where m.Name.StartsWith("Read")
-                                   && m.Name.Length > 4 //exclude "Read()"
+            var primitiveMethod = (from m in typeof(EndianReader).GetMethods()
+                                   where m.Name.StartsWith(nameof(Read), StringComparison.Ordinal)
+                                   && !m.Name.Equals(nameof(Read), StringComparison.Ordinal)
                                    && m.ReturnType.Equals(type)
                                    && m.GetParameters().Length == 0
                                    select m).SingleOrDefault();
@@ -279,7 +282,7 @@ namespace System.IO.Endian
             else return primitiveMethod.Invoke(this, null);
         }
 
-        private string ReadStringValue(PropertyInfo prop, double? version)
+        private string ReadStringValue(PropertyInfo prop)
         {
             var lenPrefixed = Utils.GetCustomAttribute<LengthPrefixedAttribute>(prop);
             var fixedLen = Utils.GetCustomAttribute<FixedLengthAttribute>(prop);

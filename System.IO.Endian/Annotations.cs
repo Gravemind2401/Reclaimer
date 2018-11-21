@@ -18,7 +18,7 @@ namespace System.IO.Endian
     /// Specifies the size of an object when it is stored in a stream.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true, Inherited = false)]
-    public class ObjectSizeAttribute : Attribute, IVersionAttribute
+    public sealed class ObjectSizeAttribute : Attribute, IVersionAttribute
     {
         private readonly long size;
         private double? minVersion;
@@ -87,7 +87,7 @@ namespace System.IO.Endian
     /// Specifies the offset of a property in a stream relative to the beginning of its containing type.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public class OffsetAttribute : Attribute, IVersionAttribute
+    public sealed class OffsetAttribute : Attribute, IVersionAttribute
     {
         private readonly long offset;
         private double? minVersion;
@@ -157,7 +157,7 @@ namespace System.IO.Endian
     /// This attribute is only valid for integer and floating-point typed properties.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = false)]
-    public class VersionNumberAttribute : Attribute
+    public sealed class VersionNumberAttribute : Attribute
     {
 
     }
@@ -166,7 +166,7 @@ namespace System.IO.Endian
     /// Specifies that a property is only applicable to a given range of versions.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = false)]
-    public class VersionSpecificAttribute : Attribute
+    public sealed class VersionSpecificAttribute : Attribute
     {
         private double? minVersion;
         private double? maxVersion;
@@ -243,7 +243,7 @@ namespace System.IO.Endian
     /// Specifies that an object is stored using a specific byte order.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public class ByteOrderAttribute : Attribute, IVersionAttribute
+    public sealed class ByteOrderAttribute : Attribute, IVersionAttribute
     {
         private readonly ByteOrder byteOrder;
         private double? minVersion;
@@ -308,7 +308,7 @@ namespace System.IO.Endian
     /// Specifies that a string property is stored as fixed-length.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = false)]
-    public class FixedLengthAttribute : Attribute
+    public sealed class FixedLengthAttribute : Attribute
     {
         private readonly int length;
 
@@ -349,7 +349,7 @@ namespace System.IO.Endian
     /// Specifies that a string is stored as null-terminated, optionally using a minimum number of bytes.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = false)]
-    public class NullTerminatedAttribute : Attribute
+    public sealed class NullTerminatedAttribute : Attribute
     {
         private int? length;
 
@@ -375,7 +375,7 @@ namespace System.IO.Endian
     /// Specifies that a string is stored as length-prefixed.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, Inherited = false)]
-    public class LengthPrefixedAttribute : Attribute
+    public sealed class LengthPrefixedAttribute : Attribute
     {
 
     }
@@ -384,7 +384,7 @@ namespace System.IO.Endian
     /// Specifies that a property value should be converted when being read or written.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public class StoreTypeAttribute : Attribute, IVersionAttribute
+    public sealed class StoreTypeAttribute : Attribute, IVersionAttribute
     {
         private readonly Type storeType;
         private double? minVersion;

@@ -174,6 +174,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public override ushort ReadUInt16()
         {
             return ReadUInt16(ByteOrder);
@@ -187,6 +188,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public override uint ReadUInt32()
         {
             return ReadUInt32(ByteOrder);
@@ -200,6 +202,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public override ulong ReadUInt64()
         {
             return ReadUInt64(ByteOrder);
@@ -352,6 +355,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public virtual ushort ReadUInt16(ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
@@ -370,6 +374,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public virtual uint ReadUInt32(ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
@@ -388,6 +393,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public virtual ulong ReadUInt64(ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
@@ -590,6 +596,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public virtual ushort PeekUInt16()
         {
             return PeekUInt16(ByteOrder);
@@ -603,6 +610,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public virtual uint PeekUInt32()
         {
             return PeekUInt32(ByteOrder);
@@ -616,6 +624,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public virtual ulong PeekUInt64()
         {
             return PeekUInt64(ByteOrder);
@@ -741,6 +750,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public virtual ushort PeekUInt16(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
@@ -757,6 +767,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public virtual uint PeekUInt32(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
@@ -773,6 +784,7 @@ namespace System.IO.Endian
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
+        [CLSCompliant(false)]
         public virtual ulong PeekUInt64(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
