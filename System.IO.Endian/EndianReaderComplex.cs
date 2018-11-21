@@ -22,6 +22,8 @@ namespace System.IO.Endian
         /// <typeparam name="T">The type of object to read.</typeparam>
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
+        /// <exception cref="InvalidCastException" />
+        /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
         public T ReadObject<T>() where T : new()
         {
@@ -42,6 +44,8 @@ namespace System.IO.Endian
         /// </param>
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
+        /// <exception cref="InvalidCastException" />
+        /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
         public T ReadObject<T>(double version) where T : new()
         {
@@ -57,6 +61,8 @@ namespace System.IO.Endian
         /// <param name="type">The type of object to read.</param>
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
+        /// <exception cref="InvalidCastException" />
+        /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
         public object ReadObject(Type type)
         {
@@ -77,6 +83,8 @@ namespace System.IO.Endian
         /// </param>
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
+        /// <exception cref="InvalidCastException" />
+        /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
         public object ReadObject(Type type, double version)
         {
@@ -93,6 +101,8 @@ namespace System.IO.Endian
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
+        /// <exception cref="InvalidCastException" />
+        /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
         public void ReadObject<T>(T instance)
         {
@@ -117,6 +127,8 @@ namespace System.IO.Endian
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
+        /// <exception cref="InvalidCastException" />
+        /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
         public void ReadObject<T>(T instance, double version) where T : new()
         {
@@ -135,6 +147,8 @@ namespace System.IO.Endian
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
+        /// <exception cref="InvalidCastException" />
+        /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
         public void ReadObject(object instance)
         {
@@ -158,6 +172,8 @@ namespace System.IO.Endian
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
+        /// <exception cref="InvalidCastException" />
+        /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
         public void ReadObject(object instance, double version)
         {

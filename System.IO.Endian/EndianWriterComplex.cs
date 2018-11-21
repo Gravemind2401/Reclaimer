@@ -23,6 +23,8 @@ namespace System.IO.Endian
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
+        /// <exception cref="InvalidCastException" />
+        /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
         public void WriteObject<T>(T value)
         {
@@ -48,6 +50,8 @@ namespace System.IO.Endian
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
+        /// <exception cref="InvalidCastException" />
+        /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
         public void WriteObject<T>(T value, double version)
         {
@@ -67,6 +71,8 @@ namespace System.IO.Endian
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
+        /// <exception cref="InvalidCastException" />
+        /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
         public void WriteObject(object value)
         {
@@ -91,6 +97,8 @@ namespace System.IO.Endian
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
+        /// <exception cref="InvalidCastException" />
+        /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
         public void WriteObject(object value, double version)
         {

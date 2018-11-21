@@ -62,6 +62,9 @@ namespace System.IO.Endian
                     return false; //property not valid for this version
             }
 
+            if (Utils.GetAttributeForVersion<OffsetAttribute>(property, version) == null)
+                throw Exceptions.NoOffsetForVersion(property.Name, version);
+
             return true;
         }
 

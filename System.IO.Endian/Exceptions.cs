@@ -79,14 +79,19 @@ namespace System.IO.Endian
             return new AmbiguousMatchException($"The '{propName}' string property has multiple string type specifier attributes applied.");
         }
 
-        internal static AmbiguousMatchException StringTypeUnknown(string propName)
+        internal static InvalidOperationException StringTypeUnknown(string propName)
         {
-            return new AmbiguousMatchException($"The '{propName}' string property was marked for read/write but does not have any string type attributes set.");
+            return new InvalidOperationException($"The '{propName}' string property was marked for read/write but does not have any string type attributes set.");
         }
 
-        internal static ArgumentException MultipleVersionsSpecified(string typeName)
+        internal static AmbiguousMatchException MultipleVersionsSpecified(string typeName)
         {
-            return new ArgumentException($"The object of type '{typeName}' could not be read because it has multiple properties with the {nameof(VersionNumberAttribute)} applied.");
+            return new AmbiguousMatchException($"The object of type '{typeName}' could not be read because it has multiple properties with the {nameof(VersionNumberAttribute)} applied.");
+        }
+
+        internal static InvalidOperationException NoOffsetForVersion(string propName, double? version)
+        {
+            return new InvalidOperationException($"The property '{propName}' has no offset specified for version '{version?.ToString() ?? "null"}'. If the property is not applicable for this version, apply the {nameof(VersionSpecificAttribute)} with appropriate parameters.");
         }
 
         internal static ArgumentException InvalidVersionAttribute()
@@ -99,9 +104,9 @@ namespace System.IO.Endian
             return new ArgumentException($"{methodName} should not be used on primitive types or strings.");
         }
 
-        internal static ArgumentException PropertyNotConvertable(string propName, string storeType, string propType)
+        internal static InvalidCastException PropertyNotConvertable(string propName, string storeType, string propType)
         {
-            return new ArgumentException($"The property '{propName}' has a {nameof(StoreTypeAttribute)} value of '{storeType}' but '{storeType}' could not be converted to/from '{propType}'.");
+            return new InvalidCastException($"The property '{propName}' has a {nameof(StoreTypeAttribute)} value of '{storeType}' but '{storeType}' could not be converted to/from '{propType}'.");
         }
 
         internal static ArgumentOutOfRangeException OutOfStreamBounds(string paramName, object value)
