@@ -11,6 +11,8 @@ namespace System.IO.Endian
 {
     public partial class EndianReader : BinaryReader
     {
+        #region ReadObject Overloads
+
         /// <summary>
         /// Reads a complex object from the current stream using reflection.
         /// The type being read must have a public parameterless conustructor.
@@ -20,7 +22,7 @@ namespace System.IO.Endian
         /// <typeparam name="T">The type of object to read.</typeparam>
         public T ReadObject<T>() where T : new()
         {
-            return (T)ReadObjectInternal(typeof(T), null, false);
+            return (T)ReadObjectInternal(null, typeof(T), null, false);
         }
 
         /// <summary>
@@ -37,7 +39,7 @@ namespace System.IO.Endian
         /// </param>
         public T ReadObject<T>(double version) where T : new()
         {
-            return (T)ReadObjectInternal(typeof(T), version, false);
+            return (T)ReadObjectInternal(null, typeof(T), version, false);
         }
 
         /// <summary>
@@ -49,7 +51,7 @@ namespace System.IO.Endian
         /// <param name="type">The type of object to read.</param>
         public object ReadObject(Type type)
         {
-            return ReadObjectInternal(type, null, false);
+            return ReadObjectInternal(null, type, null, false);
         }
 
         /// <summary>
@@ -66,8 +68,78 @@ namespace System.IO.Endian
         /// </param>
         public object ReadObject(Type type, double version)
         {
-            return ReadObjectInternal(type, version, false);
+            return ReadObjectInternal(null, type, version, false);
         }
+
+        /// <summary>
+        /// Populates the properties of a complex object from the current stream using reflection.
+        /// Each property to be read must have public get/set methods and
+        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// </summary>
+        /// <typeparam name="T">The type of object to read.</typeparam>
+        /// <param name="instance">The object to populate.</param>
+        public void ReadObject<T>(T instance)
+        {
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+
+            ReadObjectInternal(instance, instance.GetType(), null, false);
+        }
+
+        /// <summary>
+        /// Populates the properties of a complex object from the current stream using reflection.
+        /// Each property to be read must have public get/set methods and
+        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// </summary>
+        /// <typeparam name="T">The type of object to read.</typeparam>
+        /// <param name="instance">The object to populate.</param>
+        /// <param name="version">
+        /// The version that was used to store the object.
+        /// This determines which properties will be read, how they will be
+        /// read and at what location in the stream to read them from.
+        /// </param>
+        public void ReadObject<T>(T instance, double version) where T : new()
+        {
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+
+            ReadObjectInternal(instance, instance.GetType(), version, false);
+        }
+
+        /// <summary>
+        /// Populates the properties of a complex object from the current stream using reflection.
+        /// Each property to be read must have public get/set methods and
+        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// </summary>
+        /// <param name="type">The type of object to read.</param>
+        public void ReadObject(object instance)
+        {
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+
+            ReadObjectInternal(instance, instance.GetType(), null, false);
+        }
+
+        /// <summary>
+        /// Populates the properties of a complex object from the current stream using reflection.
+        /// Each property to be read must have public get/set methods and
+        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// </summary>
+        /// <param name="instance">The object to populate.</param>
+        /// <param name="version">
+        /// The version that was used to store the object.
+        /// This determines which properties will be read, how they will be
+        /// read and at what location in the stream to read them from.
+        /// </param>
+        public void ReadObject(object instance, double version)
+        {
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+
+            ReadObjectInternal(instance, instance.GetType(), version, false);
+        } 
+
+        #endregion
 
         /// <summary>
         /// Checks if the specified property is readable.
@@ -122,9 +194,9 @@ namespace System.IO.Endian
                     value = ReadPrimitiveValue(innerType);
                 else if (innerType.Equals(typeof(Guid)))
                     value = ReadGuid();
-                else value = ReadObjectInternal(innerType, version, true);
+                else value = ReadObjectInternal(null, innerType, version, true);
             }
-            else value = ReadObjectInternal(readType, version, true);
+            else value = ReadObjectInternal(null, readType, version, true);
 
             var propType = property.PropertyType.IsEnum ? property.PropertyType.GetEnumUnderlyingType() : property.PropertyType;
             if (readType != propType)
@@ -197,15 +269,18 @@ namespace System.IO.Endian
             return value;
         }
 
-        private object ReadObjectInternal(Type type, double? version, bool isProperty)
+        private object ReadObjectInternal(object instance, Type type, double? version, bool isProperty)
         {
             if (type.IsPrimitive || type.Equals(typeof(string)))
                 throw Exceptions.NotValidForPrimitiveTypes();
 
-            if (type.GetConstructor(Type.EmptyTypes) == null)
-                throw Exceptions.TypeNotConstructable(type.Name, isProperty);
+            if (instance == null)
+            {
+                if (type.GetConstructor(Type.EmptyTypes) == null)
+                    throw Exceptions.TypeNotConstructable(type.Name, isProperty);
 
-            var result = Activator.CreateInstance(type);
+                instance = Activator.CreateInstance(type);
+            }
 
             var originalPosition = BaseStream.Position;
             using (var reader = CreateVirtualReader())
@@ -226,10 +301,10 @@ namespace System.IO.Endian
                         if (offsets.Count > 1 || offsets[0].HasMinVersion || offsets[0].HasMaxVersion)
                             throw Exceptions.InvalidVersionAttribute();
 
-                        reader.ReadPropertyValue(result, vprop, null);
+                        reader.ReadPropertyValue(instance, vprop, null);
                         var converter = TypeDescriptor.GetConverter(vprop.PropertyType);
                         if (converter.CanConvertTo(typeof(double)))
-                            version = (double)converter.ConvertTo(vprop.GetValue(result), typeof(double));
+                            version = (double)converter.ConvertTo(vprop.GetValue(instance), typeof(double));
 
                         reader.Seek(0, SeekOrigin.Begin);
                     }
@@ -246,7 +321,7 @@ namespace System.IO.Endian
                     .OrderBy(p => Utils.GetAttributeForVersion<OffsetAttribute>(p, version).Offset);
 
                 foreach (var prop in propInfo)
-                    reader.ReadPropertyValue(result, prop, version);
+                    reader.ReadPropertyValue(instance, prop, version);
             }
 
             if (Attribute.IsDefined(type, typeof(ObjectSizeAttribute)))
@@ -255,7 +330,7 @@ namespace System.IO.Endian
                 BaseStream.Position = originalPosition + attr.Size;
             }
 
-            return result;
+            return instance;
         }
     }
 }

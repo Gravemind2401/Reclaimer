@@ -10,6 +10,8 @@ namespace System.IO.Endian
 {
     public partial class EndianWriter : BinaryWriter
     {
+        #region WriteObject Overloads
+
         /// <summary>
         /// Writes a complex object to the current stream using reflection.
         /// The type being written must have a public parameterless conustructor.
@@ -18,7 +20,7 @@ namespace System.IO.Endian
         /// </summary>
         /// <typeparam name="T">The type of object to write.</typeparam>
         /// <param name="value">The object to write.</param>
-        public void WriteObject<T>(T value) where T : new()
+        public void WriteObject<T>(T value)
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
@@ -39,7 +41,7 @@ namespace System.IO.Endian
         /// This determines which properties will be written, how they will be
         /// written and at what location in the stream to write them to.
         /// </param>
-        public void WriteObject<T>(T value, double version) where T : new()
+        public void WriteObject<T>(T value, double version)
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
@@ -80,7 +82,9 @@ namespace System.IO.Endian
                 throw new ArgumentNullException(nameof(value));
 
             WriteObjectInternal(value, version, false);
-        }
+        } 
+
+        #endregion
 
         /// <summary>
         /// Checks if the specified property is writable.
@@ -237,9 +241,6 @@ namespace System.IO.Endian
             var type = value.GetType();
             if (type.IsPrimitive || type.Equals(typeof(string)))
                 throw Exceptions.NotValidForPrimitiveTypes();
-
-            if (type.GetConstructor(Type.EmptyTypes) == null)
-                throw Exceptions.TypeNotConstructable(type.Name, isProperty);
 
             var originalPosition = BaseStream.Position;
             using (var writer = CreateVirtualWriter())
