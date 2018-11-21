@@ -262,7 +262,7 @@ namespace System.IO.Endian
         /// <summary>
         /// Gets a value indicating whether the byte order has a maximum version requirement.
         /// </summary>
-        public bool HasMaxVersion => minVersion.HasValue;
+        public bool HasMaxVersion => maxVersion.HasValue;
 
         /// <summary>
         /// Gets or sets the inclusive minimum version that the byte order is applicable to.
@@ -403,7 +403,7 @@ namespace System.IO.Endian
         /// <summary>
         /// Gets a value indicating whether the byte order has a maximum version requirement.
         /// </summary>
-        public bool HasMaxVersion => minVersion.HasValue;
+        public bool HasMaxVersion => maxVersion.HasValue;
 
         /// <summary>
         /// Gets or sets the inclusive minimum version that the byte order is applicable to.
