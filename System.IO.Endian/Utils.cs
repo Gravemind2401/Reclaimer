@@ -11,18 +11,21 @@ namespace System.IO.Endian
     {
         internal static T GetAttributeForVersion<T>(MemberInfo member, double? version) where T : Attribute, IVersionAttribute
         {
-            var matches = (from o in Utils.GetCustomAttributes<T>(member)
-                           let minVersion = o.HasMinVersion ? o.MinVersion : (double?)null
-                           let maxVersion = o.HasMaxVersion ? o.MaxVersion : (double?)null
-                           where
+            var matches = Utils.GetCustomAttributes<T>(member).Where(o =>
+            {
+                var minVersion = o.HasMinVersion ? o.MinVersion : (double?)null;
+                var maxVersion = o.HasMaxVersion ? o.MaxVersion : (double?)null;
 
-                           //exclude when read version is specified and is out of bounds (this expression will always be false if version is null)
-                           !(version != minVersion && (version < minVersion || version >= maxVersion))
+                //exclude when read version is specified and is out of bounds (this expression will always be false if version is null)
+                if ((version != minVersion && (version < minVersion || version >= maxVersion)))
+                    return false;
 
-                           //exclude when read version is not specified but at least one of the bounds is
-                           && !(!version.HasValue && (minVersion.HasValue || maxVersion.HasValue))
+                //exclude when read version is not specified but at least one of the bounds is
+                if (!version.HasValue && (minVersion.HasValue || maxVersion.HasValue))
+                    return false;
 
-                           select o).ToList();
+                return true;
+            }).ToList();
 
             if (matches.Count > 1)
             {

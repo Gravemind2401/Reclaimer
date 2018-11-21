@@ -128,7 +128,7 @@ namespace System.IO.Endian
             if (Attribute.IsDefined(property, typeof(ByteOrderAttribute)))
             {
                 var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(property, version);
-                ByteOrder = attr.ByteOrder;
+                if (attr != null) ByteOrder = attr.ByteOrder;
             }
 
             var value = property.GetValue(instance);
@@ -137,7 +137,7 @@ namespace System.IO.Endian
             if (Attribute.IsDefined(property, typeof(StoreTypeAttribute)))
             {
                 var attr = Utils.GetAttributeForVersion<StoreTypeAttribute>(property, version);
-                writeType = attr.StoreType;
+                if (attr != null) writeType = attr.StoreType;
             }
 
             if (writeType.IsEnum)
@@ -286,7 +286,7 @@ namespace System.IO.Endian
                 if (Attribute.IsDefined(type, typeof(ByteOrderAttribute)))
                 {
                     var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(type, version);
-                    writer.ByteOrder = attr.ByteOrder;
+                    if (attr != null) writer.ByteOrder = attr.ByteOrder;
                 }
 
                 var propInfo = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
@@ -300,7 +300,7 @@ namespace System.IO.Endian
             if (Attribute.IsDefined(type, typeof(ObjectSizeAttribute)))
             {
                 var attr = Utils.GetAttributeForVersion<ObjectSizeAttribute>(type, version);
-                BaseStream.Position = originalPosition + attr.Size;
+                if (attr != null) BaseStream.Position = originalPosition + attr.Size;
             }
         }
     }

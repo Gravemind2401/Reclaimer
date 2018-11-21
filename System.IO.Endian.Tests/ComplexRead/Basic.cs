@@ -247,6 +247,7 @@ namespace System.IO.Endian.Tests.ComplexRead
             public int Property3 { get; set; }
 
             [Offset(0x30)]
+            [ByteOrder(ByteOrder.BigEndian, MinVersion = 20)]
             public long Property4 { get; set; }
 
             [Offset(0x40)]
@@ -256,6 +257,7 @@ namespace System.IO.Endian.Tests.ComplexRead
             public ushort Property6 { get; set; }
 
             [Offset(0x60)]
+            [StoreType(typeof(long), MaxVersion = 10)]
             public uint Property7 { get; set; }
 
             [Offset(0x70)]

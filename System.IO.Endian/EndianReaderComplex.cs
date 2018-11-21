@@ -165,7 +165,7 @@ namespace System.IO.Endian
                 throw new ArgumentNullException(nameof(instance));
 
             ReadObjectInternal(instance, instance.GetType(), version, false);
-        } 
+        }
 
         #endregion
 
@@ -194,7 +194,7 @@ namespace System.IO.Endian
             if (Attribute.IsDefined(property, typeof(ByteOrderAttribute)))
             {
                 var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(property, version);
-                ByteOrder = attr.ByteOrder;
+                if (attr != null) ByteOrder = attr.ByteOrder;
             }
 
             object value = null;
@@ -203,7 +203,7 @@ namespace System.IO.Endian
             if (Attribute.IsDefined(property, typeof(StoreTypeAttribute)))
             {
                 var attr = Utils.GetAttributeForVersion<StoreTypeAttribute>(property, version);
-                readType = attr.StoreType;
+                if (attr != null) readType = attr.StoreType;
             }
 
             if (readType.IsEnum)
@@ -341,7 +341,7 @@ namespace System.IO.Endian
                 if (Attribute.IsDefined(type, typeof(ByteOrderAttribute)))
                 {
                     var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(type, version);
-                    reader.ByteOrder = attr.ByteOrder;
+                    if (attr != null) reader.ByteOrder = attr.ByteOrder;
                 }
 
                 var propInfo = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
@@ -355,7 +355,7 @@ namespace System.IO.Endian
             if (Attribute.IsDefined(type, typeof(ObjectSizeAttribute)))
             {
                 var attr = Utils.GetAttributeForVersion<ObjectSizeAttribute>(type, version);
-                BaseStream.Position = originalPosition + attr.Size;
+                if (attr != null) BaseStream.Position = originalPosition + attr.Size;
             }
 
             return instance;
