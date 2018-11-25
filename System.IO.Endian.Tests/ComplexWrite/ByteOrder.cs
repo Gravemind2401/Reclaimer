@@ -130,7 +130,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
             }
         }
 
-        [ObjectSize(0xFF)]
+        [FixedSize(0xFF)]
         [ByteOrder(ByteOrder.BigEndian)]
         public class DataClass03
         {

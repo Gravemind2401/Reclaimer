@@ -208,11 +208,11 @@ namespace System.IO.Endian
             else WriteObjectInternal(value, version);
         }
 
-        private void WritePropertyValue(object obj, PropertyInfo prop, double? version)
+        private void WritePropertyValue(object instance, PropertyInfo prop, double? version)
         {
             var originalByteOrder = ByteOrder;
             Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
-            WriteProperty(obj, prop, version);
+            WriteProperty(instance, prop, version);
             ByteOrder = originalByteOrder;
         }
 
@@ -231,9 +231,9 @@ namespace System.IO.Endian
             else primitiveMethod.Invoke(this, new[] { value });
         }
 
-        private void WriteStringValue(object obj, PropertyInfo prop)
+        private void WriteStringValue(object instance, PropertyInfo prop)
         {
-            var value = (string)prop.GetValue(obj);
+            var value = (string)prop.GetValue(instance);
 
             var lenPrefixed = Utils.GetCustomAttribute<LengthPrefixedAttribute>(prop);
             var fixedLen = Utils.GetCustomAttribute<FixedLengthAttribute>(prop);
@@ -264,6 +264,34 @@ namespace System.IO.Endian
             }
         }
 
+        private static double? GetVersionValue(object instance, Type type)
+        {
+            double? version = null;
+
+            var versionProps = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where(p => Attribute.IsDefined(p, typeof(VersionNumberAttribute)))
+                .ToList();
+
+            if (versionProps.Count > 1)
+                throw Exceptions.MultipleVersionsSpecified(type.Name);
+            else if (versionProps.Count == 1)
+            {
+                var vprop = versionProps[0];
+                if (Attribute.IsDefined(vprop, typeof(OffsetAttribute)))
+                {
+                    var offsets = Utils.GetCustomAttributes<OffsetAttribute>(vprop).ToList();
+                    if (offsets.Count > 1 || offsets[0].HasMinVersion || offsets[0].HasMaxVersion)
+                        throw Exceptions.InvalidVersionAttribute();
+                }
+
+                var converter = TypeDescriptor.GetConverter(vprop.PropertyType);
+                if (converter.CanConvertTo(typeof(double)))
+                    version = (double)converter.ConvertTo(vprop.GetValue(instance), typeof(double));
+            }
+
+            return version;
+        }
+
         private void WriteObjectInternal(object value, double? version)
         {
             var type = value.GetType();
@@ -274,26 +302,7 @@ namespace System.IO.Endian
             using (var writer = CreateVirtualWriter())
             {
                 if (!version.HasValue)
-                {
-                    var versionProps = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                        .Where(p => Attribute.IsDefined(p, typeof(OffsetAttribute)) && Attribute.IsDefined(p, typeof(VersionNumberAttribute)))
-                        .ToList();
-
-                    if (versionProps.Any())
-                    {
-                        if (versionProps.Count > 1)
-                            throw Exceptions.MultipleVersionsSpecified(type.Name);
-
-                        var vprop = versionProps[0];
-                        var offsets = Utils.GetCustomAttributes<OffsetAttribute>(vprop).ToList();
-                        if (offsets.Count > 1 || offsets[0].HasMinVersion || offsets[0].HasMaxVersion)
-                            throw Exceptions.InvalidVersionAttribute();
-
-                        var converter = TypeDescriptor.GetConverter(vprop.PropertyType);
-                        if (converter.CanConvertTo(typeof(double)))
-                            version = (double)converter.ConvertTo(vprop.GetValue(value), typeof(double));
-                    }
-                }
+                    version = GetVersionValue(value, type);
 
                 if (Attribute.IsDefined(type, typeof(ByteOrderAttribute)))
                 {
@@ -307,11 +316,27 @@ namespace System.IO.Endian
 
                 foreach (var prop in propInfo)
                     writer.WritePropertyValue(value, prop, version);
+
+                var lengthProps = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                    .Where(p => Attribute.IsDefined(p, typeof(DataLengthAttribute)))
+                    .ToList();
+
+                if (lengthProps.Count > 1)
+                    throw Exceptions.MultipleDataLengthsSpecified(type.Name, version);
+                else if (lengthProps.Count == 1 && Utils.GetAttributeForVersion<DataLengthAttribute>(lengthProps[0], version) != null)
+                {
+                    var converter = TypeDescriptor.GetConverter(lengthProps[0].PropertyType);
+                    if (converter.CanConvertTo(typeof(long)))
+                    {
+                        var len = (long)converter.ConvertTo(lengthProps[0].GetValue(value), typeof(long));
+                        BaseStream.Position = originalPosition + len;
+                    }
+                }
             }
 
-            if (Attribute.IsDefined(type, typeof(ObjectSizeAttribute)))
+            if (Attribute.IsDefined(type, typeof(FixedSizeAttribute)))
             {
-                var attr = Utils.GetAttributeForVersion<ObjectSizeAttribute>(type, version);
+                var attr = Utils.GetAttributeForVersion<FixedSizeAttribute>(type, version);
                 if (attr != null) BaseStream.Position = originalPosition + attr.Size;
             }
         }

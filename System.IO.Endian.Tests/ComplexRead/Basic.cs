@@ -234,7 +234,7 @@ namespace System.IO.Endian.Tests.ComplexRead
             }
         }
 
-        [ObjectSize(0xFF)]
+        [FixedSize(0xFF)]
         public class DataClass01
         {
             [Offset(0x00)]
@@ -309,7 +309,7 @@ namespace System.IO.Endian.Tests.ComplexRead
             public Guid Property11 { get; set; }
         }
 
-        [ObjectSize(0xFF)]
+        [FixedSize(0xFF)]
         public class FactoryClass01
         {
             //no public or parameterless constructors

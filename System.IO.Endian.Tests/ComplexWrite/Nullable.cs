@@ -139,7 +139,7 @@ namespace System.IO.Endian.Tests.ComplexWrite
             }
         }
 
-        [ObjectSize(0xFF)]
+        [FixedSize(0xFF)]
         public class DataClass07
         {
             [Offset(0x00)]

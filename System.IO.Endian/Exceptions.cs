@@ -93,6 +93,11 @@ namespace System.IO.Endian
             return new AmbiguousMatchException(ToCurrent($"The object of type '{typeName}' could not be read because it has multiple properties with the {nameof(VersionNumberAttribute)} applied."));
         }
 
+        internal static AmbiguousMatchException MultipleDataLengthsSpecified(string typeName, double? version)
+        {
+            return new AmbiguousMatchException(ToCurrent($"The object of type '{typeName}' could not be read because it has multiple properties with the {nameof(DataLengthAttribute)} applied that are valid for version '{version?.ToString(CultureInfo.CurrentCulture) ?? "null"}'."));
+        }
+
         internal static InvalidOperationException NoOffsetForVersion(string propName, double? version)
         {
             return new InvalidOperationException(ToCurrent($"The property '{propName}' has no offset specified for version '{version?.ToString(CultureInfo.CurrentCulture) ?? "null"}'. If the property is not applicable for this version, apply the {nameof(VersionSpecificAttribute)} with appropriate parameters."));

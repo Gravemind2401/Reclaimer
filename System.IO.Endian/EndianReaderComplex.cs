@@ -316,6 +316,36 @@ namespace System.IO.Endian
             return value;
         }
 
+        private double? GetVersionValue(object instance, Type type)
+        {
+            double? version = null;
+
+            var versionProps = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where(p => Attribute.IsDefined(p, typeof(VersionNumberAttribute)))
+                .ToList();
+
+            if (versionProps.Count > 1)
+                throw Exceptions.MultipleVersionsSpecified(type.Name);
+            else if (versionProps.Count == 1)
+            {
+                var vprop = versionProps[0];
+                if (Attribute.IsDefined(vprop, typeof(OffsetAttribute)))
+                {
+                    var offsets = Utils.GetCustomAttributes<OffsetAttribute>(vprop).ToList();
+                    if (offsets.Count > 1 || offsets[0].HasMinVersion || offsets[0].HasMaxVersion)
+                        throw Exceptions.InvalidVersionAttribute();
+
+                    ReadPropertyValue(instance, vprop, null);
+                }
+
+                var converter = TypeDescriptor.GetConverter(vprop.PropertyType);
+                if (converter.CanConvertTo(typeof(double)))
+                    version = (double)converter.ConvertTo(vprop.GetValue(instance), typeof(double));
+            }
+
+            return version;
+        }
+
         private object ReadObjectInternal(object instance, Type type, double? version, bool isProperty)
         {
             if (type.IsPrimitive || type.Equals(typeof(string)))
@@ -334,27 +364,8 @@ namespace System.IO.Endian
             {
                 if (!version.HasValue)
                 {
-                    var versionProps = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                        .Where(p => Attribute.IsDefined(p, typeof(OffsetAttribute)) && Attribute.IsDefined(p, typeof(VersionNumberAttribute)))
-                        .ToList();
-
-                    if (versionProps.Any())
-                    {
-                        if (versionProps.Count > 1)
-                            throw Exceptions.MultipleVersionsSpecified(type.Name);
-
-                        var vprop = versionProps[0];
-                        var offsets = Utils.GetCustomAttributes<OffsetAttribute>(vprop).ToList();
-                        if (offsets.Count > 1 || offsets[0].HasMinVersion || offsets[0].HasMaxVersion)
-                            throw Exceptions.InvalidVersionAttribute();
-
-                        reader.ReadPropertyValue(instance, vprop, null);
-                        var converter = TypeDescriptor.GetConverter(vprop.PropertyType);
-                        if (converter.CanConvertTo(typeof(double)))
-                            version = (double)converter.ConvertTo(vprop.GetValue(instance), typeof(double));
-
-                        reader.Seek(0, SeekOrigin.Begin);
-                    }
+                    version = reader.GetVersionValue(instance, type);
+                    reader.Seek(0, SeekOrigin.Begin);
                 }
 
                 if (Attribute.IsDefined(type, typeof(ByteOrderAttribute)))
@@ -369,11 +380,27 @@ namespace System.IO.Endian
 
                 foreach (var prop in propInfo)
                     reader.ReadPropertyValue(instance, prop, version);
+
+                var lengthProps = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                    .Where(p => Attribute.IsDefined(p, typeof(DataLengthAttribute)))
+                    .ToList();
+
+                if (lengthProps.Count > 1)
+                    throw Exceptions.MultipleDataLengthsSpecified(type.Name, version);
+                else if (lengthProps.Count == 1 && Utils.GetAttributeForVersion<DataLengthAttribute>(lengthProps[0], version) != null)
+                {
+                    var converter = TypeDescriptor.GetConverter(lengthProps[0].PropertyType);
+                    if (converter.CanConvertTo(typeof(long)))
+                    {
+                        var len = (long)converter.ConvertTo(lengthProps[0].GetValue(instance), typeof(long));
+                        BaseStream.Position = originalPosition + len;
+                    }
+                }
             }
 
-            if (Attribute.IsDefined(type, typeof(ObjectSizeAttribute)))
+            if (Attribute.IsDefined(type, typeof(FixedSizeAttribute)))
             {
-                var attr = Utils.GetAttributeForVersion<ObjectSizeAttribute>(type, version);
+                var attr = Utils.GetAttributeForVersion<FixedSizeAttribute>(type, version);
                 if (attr != null) BaseStream.Position = originalPosition + attr.Size;
             }
 

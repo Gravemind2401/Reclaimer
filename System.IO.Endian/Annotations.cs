@@ -15,10 +15,10 @@ namespace System.IO.Endian
     }
 
     /// <summary>
-    /// Specifies the size of an object when it is stored in a stream.
+    /// Specifies the size, in bytes, of an object when it is stored in a stream. Overrides the <seealso cref="DataLengthAttribute"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true, Inherited = false)]
-    public sealed class ObjectSizeAttribute : Attribute, IVersionAttribute
+    public sealed class FixedSizeAttribute : Attribute, IVersionAttribute
     {
         private readonly long size;
         private double? minVersion;
@@ -70,16 +70,67 @@ namespace System.IO.Endian
         }
 
         /// <summary>
-        /// Initializes a new instance of the <seealso cref="ObjectSizeAttribute"/> class with the specified size value.
+        /// Initializes a new instance of the <seealso cref="FixedSizeAttribute"/> class with the specified size value.
         /// </summary>
         /// <param name="size">The size of the object, in bytes.</param>
         /// <exception cref="ArgumentOutOfRangeException"/>
-        public ObjectSizeAttribute(long size)
+        public FixedSizeAttribute(long size)
         {
             if (size <= 0)
                 throw Exceptions.ParamMustBePositive(nameof(size), size);
 
             this.size = size;
+        }
+    }
+
+    /// <summary>
+    /// Specifies that the property value represents the number of bytes used to store its containing instance.
+    /// This attribute is only valid for integer valued properties.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
+    public sealed class DataLengthAttribute : Attribute, IVersionAttribute
+    {
+        private double? minVersion;
+        private double? maxVersion;
+
+        /// <summary>
+        /// Gets a value indicating whether the length has a minimum version requirement.
+        /// </summary>
+        public bool HasMinVersion => minVersion.HasValue;
+
+        /// <summary>
+        /// Gets a value indicating whether the length has a maximum version requirement.
+        /// </summary>
+        public bool HasMaxVersion => maxVersion.HasValue;
+
+        /// <summary>
+        /// Gets or sets the inclusive minimum version that the length is applicable to.
+        /// </summary>
+        public double MinVersion
+        {
+            get { return minVersion.GetValueOrDefault(); }
+            set
+            {
+                if (value > maxVersion)
+                    throw Exceptions.BoundaryOverlapMinimum(nameof(MinVersion), nameof(MaxVersion));
+
+                minVersion = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the exclusive maximum version that the length is applicable to.
+        /// </summary>
+        public double MaxVersion
+        {
+            get { return maxVersion.GetValueOrDefault(); }
+            set
+            {
+                if (value < minVersion)
+                    throw Exceptions.BoundaryOverlapMaximum(nameof(MinVersion), nameof(MaxVersion));
+
+                maxVersion = value;
+            }
         }
     }
 

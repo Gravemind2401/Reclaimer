@@ -148,7 +148,7 @@ namespace System.IO.Endian.Tests.ComplexRead
             }
         }
 
-        [ObjectSize(0xFF)]
+        [FixedSize(0xFF)]
         [ByteOrder(ByteOrder.BigEndian)]
         public class DataClass03
         {
