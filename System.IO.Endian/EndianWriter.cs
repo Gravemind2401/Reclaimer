@@ -575,6 +575,35 @@ namespace System.IO.Endian
             return new EndianWriter(BaseStream, ByteOrder, encoding, true, origin);
         }
 
+        /// <summary>
+        /// Calls <see cref="WriteObject{T}(T)"/> for each value in the set.
+        /// </summary>
+        /// <typeparam name="T">The type of object the set contains.</typeparam>
+        /// <param name="values">The set of values.</param>
+        public void WriteEnumerable<T>(IEnumerable<T> values)
+        {
+            if (values == null)
+                throw new ArgumentNullException(nameof(values));
+
+            foreach (var value in values)
+                WriteObject(value);
+        }
+
+        /// <summary>
+        /// Calls <see cref="WriteObject{T}(T, double)"/> for each value in the set.
+        /// </summary>
+        /// <typeparam name="T">The type of object the set contains.</typeparam>
+        /// <param name="values">The set of values.</param>
+        /// <param name="version">The version of the type to write.</param>
+        public void WriteEnumerable<T>(IEnumerable<T> values, double version)
+        {
+            if (values == null)
+                throw new ArgumentNullException(nameof(values));
+
+            foreach (var value in values)
+                WriteObject(value, version);
+        }
+
         #endregion
     }
 }

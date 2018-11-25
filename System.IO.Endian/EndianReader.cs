@@ -862,6 +862,37 @@ namespace System.IO.Endian
             return new EndianReader(BaseStream, ByteOrder, encoding, true, origin);
         }
 
+        /// <summary>
+        /// Calls and returns the value of <seealso cref="ReadObject{T}"/> until the specified number of objects have been read or the end of the stream has been reached.
+        /// </summary>
+        /// <typeparam name="T">The type of object to read.</typeparam>
+        /// <param name="count">The maximum number of objects to read.</param>
+        public IEnumerable<T> ReadEnumerable<T>(int count) where T : new()
+        {
+            if (count < 0)
+                throw Exceptions.ParamMustBeNonNegative(nameof(count), count);
+
+            int i = 1;
+            while (i++ < count && BaseStream.Position < BaseStream.Length)
+                yield return ReadObject<T>();
+        }
+
+        /// <summary>
+        /// Calls and returns the value of <seealso cref="ReadObject{T}(double)"/> until either the specified number of objects have been read or the end of the stream has been reached.
+        /// </summary>
+        /// <typeparam name="T">The type of object to read.</typeparam>
+        /// <param name="count">The maximum number of objects to read.</param>
+        /// <param name="version">The version of the type to read.</param>
+        public IEnumerable<T> ReadEnumerable<T>(int count, double version) where T : new()
+        {
+            if (count < 0)
+                throw Exceptions.ParamMustBeNonNegative(nameof(count), count);
+
+            int i = 1;
+            while (i++ < count && BaseStream.Position < BaseStream.Length)
+                yield return ReadObject<T>(version);
+        }
+
         #endregion
     }
 }

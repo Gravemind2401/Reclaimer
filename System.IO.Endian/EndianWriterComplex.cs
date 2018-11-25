@@ -199,12 +199,10 @@ namespace System.IO.Endian
                 else throw Exceptions.PropertyNotConvertable(prop.Name, writeType.Name, valType.Name);
             }
 
-            if (writeType.IsPrimitive)
-                WritePrimitiveValue(value);
+            if (writeType.IsPrimitive || writeType.Equals(typeof(Guid)))
+                WriteStandardValue(value);
             else if (writeType.Equals(typeof(string)))
                 WriteStringValue(instance, prop);
-            else if (writeType.Equals(typeof(Guid)))
-                Write((Guid)value);
             else WriteObjectInternal(value, version);
         }
 
@@ -216,7 +214,7 @@ namespace System.IO.Endian
             ByteOrder = originalByteOrder;
         }
 
-        private void WritePrimitiveValue(object value)
+        private void WriteStandardValue(object value)
         {
             var type = value.GetType();
             var primitiveMethod = (from m in typeof(EndianWriter).GetMethods()
@@ -295,8 +293,13 @@ namespace System.IO.Endian
         private void WriteObjectInternal(object value, double? version)
         {
             var type = value.GetType();
-            if (type.IsPrimitive || type.Equals(typeof(string)))
-                throw Exceptions.NotValidForPrimitiveTypes();
+            if (type.Equals(typeof(string)))
+                throw Exceptions.NotValidForStringTypes();
+            else if (type.IsPrimitive || type.Equals(typeof(Guid)))
+            {
+                WriteStandardValue(value);
+                return;
+            }
 
             var originalPosition = BaseStream.Position;
             using (var writer = CreateVirtualWriter())

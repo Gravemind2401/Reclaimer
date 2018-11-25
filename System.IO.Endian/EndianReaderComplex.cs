@@ -229,7 +229,7 @@ namespace System.IO.Endian
                 readType = readType.GetEnumUnderlyingType();
 
             if (readType.IsPrimitive)
-                value = ReadPrimitiveValue(readType);
+                value = ReadStandardValue(readType);
             else if (readType.Equals(typeof(string)))
                 value = ReadStringValue(prop);
             else if (readType.Equals(typeof(Guid)))
@@ -237,10 +237,8 @@ namespace System.IO.Endian
             else if (readType.IsGenericType && readType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
             {
                 var innerType = readType.GetGenericArguments()[0];
-                if (innerType.IsPrimitive)
-                    value = ReadPrimitiveValue(innerType);
-                else if (innerType.Equals(typeof(Guid)))
-                    value = ReadGuid();
+                if (innerType.IsPrimitive || innerType.Equals(typeof(Guid)))
+                    value = ReadStandardValue(innerType);
                 else value = ReadObjectInternal(null, innerType, version, true);
             }
             else value = ReadObjectInternal(null, readType, version, true);
@@ -268,7 +266,7 @@ namespace System.IO.Endian
             ByteOrder = originalByteOrder;
         }
 
-        private object ReadPrimitiveValue(Type type)
+        private object ReadStandardValue(Type type)
         {
             var primitiveMethod = (from m in typeof(EndianReader).GetMethods()
                                    where m.Name.StartsWith(nameof(Read), StringComparison.Ordinal)
@@ -348,8 +346,10 @@ namespace System.IO.Endian
 
         private object ReadObjectInternal(object instance, Type type, double? version, bool isProperty)
         {
-            if (type.IsPrimitive || type.Equals(typeof(string)))
-                throw Exceptions.NotValidForPrimitiveTypes();
+            if (type.Equals(typeof(string)))
+                throw Exceptions.NotValidForStringTypes();
+            else if (type.IsPrimitive || type.Equals(typeof(Guid)))
+                return ReadStandardValue(type);
 
             if (instance == null)
             {

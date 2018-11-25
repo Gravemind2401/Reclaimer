@@ -108,9 +108,9 @@ namespace System.IO.Endian
             return new ArgumentException(ToCurrent($"The property with the {nameof(VersionNumberAttribute)} applied must have a single offset supplied and no version restrictions."));
         }
 
-        internal static ArgumentException NotValidForPrimitiveTypes([CallerMemberName]string methodName = null)
+        internal static ArgumentException NotValidForStringTypes([CallerMemberName]string methodName = null)
         {
-            return new ArgumentException(ToCurrent($"{methodName} should not be used on primitive types or strings."));
+            return new ArgumentException(ToCurrent($"{methodName} cannot be used with strings."));
         }
 
         internal static InvalidCastException PropertyNotConvertable(string propName, string storeType, string propType)
