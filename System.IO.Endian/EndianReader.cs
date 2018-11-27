@@ -76,7 +76,7 @@ namespace System.IO.Endian
 
         }
 
-        private EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding, bool leaveOpen, long virtualOrigin)
+        protected EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding, bool leaveOpen, long virtualOrigin)
             : base(input, encoding, leaveOpen)
         {
             ByteOrder = byteOrder;
@@ -842,7 +842,7 @@ namespace System.IO.Endian
         /// with the same byte order and encoding that will treat the current position
         /// as the beginning of the stream and will not dispose of the underlying stream when it is closed.
         /// </summary>
-        public EndianReader CreateVirtualReader()
+        public virtual EndianReader CreateVirtualReader()
         {
             return CreateVirtualReader(BaseStream.Position);
         }
@@ -854,7 +854,7 @@ namespace System.IO.Endian
         /// </summary>
         /// <param name="origin">The position in the stream that will be treated as the beginning.</param>
         /// <exception cref="ArgumentOutOfRangeException" />
-        public EndianReader CreateVirtualReader(long origin)
+        public virtual EndianReader CreateVirtualReader(long origin)
         {
             if (origin < 0 || origin > BaseStream.Length)
                 throw Exceptions.OutOfStreamBounds(nameof(origin), origin);
