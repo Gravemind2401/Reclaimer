@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -196,60 +195,52 @@ namespace System.IO.Endian
         }
 
         /// <summary>
-        /// Reads a property from the current position in the stream and sets the property value
-        /// against the specified instance of the property's containing type.
+        /// This method is called for each property of an object when reading complex objects
+        /// to read the property value from the stream. The <seealso cref="ByteOrder"/> and
+        /// position of the stream are set before this method is called.
         /// </summary>
         /// <param name="instance">The instance of the type containing the property.</param>
         /// <param name="prop">The property to read.</param>
+        /// <param name="storeType">The type specified by this property's <seealso cref="StoreTypeAttribute"/>, if any.</param>
         /// <param name="version">The version to use when reading the property.</param>
-        protected virtual void ReadProperty(object instance, PropertyInfo prop, double? version)
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="MissingMethodException"/>
+        protected virtual void ReadProperty(object instance, PropertyInfo prop, Type storeType, double? version)
         {
             if (prop == null)
                 throw new ArgumentNullException(nameof(prop));
 
+            if (storeType == null)
+                throw new ArgumentNullException(nameof(storeType));
+
             if (prop.GetGetMethod() == null || prop.GetSetMethod() == null)
                 throw Exceptions.NonPublicGetSet(prop.Name);
 
-            if (Attribute.IsDefined(prop, typeof(ByteOrderAttribute)))
-            {
-                var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
-                if (attr != null) ByteOrder = attr.ByteOrder;
-            }
-
             object value = null;
-            var readType = prop.PropertyType;
 
-            if (Attribute.IsDefined(prop, typeof(StoreTypeAttribute)))
-            {
-                var attr = Utils.GetAttributeForVersion<StoreTypeAttribute>(prop, version);
-                if (attr != null) readType = attr.StoreType;
-            }
+            if (storeType.IsEnum)
+                storeType = storeType.GetEnumUnderlyingType();
 
-            if (readType.IsEnum)
-                readType = readType.GetEnumUnderlyingType();
-
-            if (readType.IsPrimitive)
-                value = ReadStandardValue(readType);
-            else if (readType.Equals(typeof(string)))
+            if (storeType.IsPrimitive || storeType.Equals(typeof(Guid)))
+                value = ReadStandardValue(storeType);
+            else if (storeType.Equals(typeof(string)))
                 value = ReadStringValue(prop);
-            else if (readType.Equals(typeof(Guid)))
-                value = ReadGuid();
-            else if (readType.IsGenericType && readType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            else if (storeType.IsGenericType && storeType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
             {
-                var innerType = readType.GetGenericArguments()[0];
+                var innerType = storeType.GetGenericArguments()[0];
                 if (innerType.IsPrimitive || innerType.Equals(typeof(Guid)))
                     value = ReadStandardValue(innerType);
                 else value = ReadObjectInternal(null, innerType, version, true);
             }
-            else value = ReadObjectInternal(null, readType, version, true);
+            else value = ReadObjectInternal(null, storeType, version, true);
 
             var propType = prop.PropertyType.IsEnum ? prop.PropertyType.GetEnumUnderlyingType() : prop.PropertyType;
-            if (readType != propType)
+            if (storeType != propType)
             {
-                var converter = TypeDescriptor.GetConverter(readType);
+                var converter = TypeDescriptor.GetConverter(storeType);
                 if (converter.CanConvertTo(propType))
                     value = converter.ConvertTo(value, propType);
-                else throw Exceptions.PropertyNotConvertable(prop.Name, readType.Name, propType.Name);
+                else throw Exceptions.PropertyNotConvertable(prop.Name, storeType.Name, propType.Name);
             }
 
             if (prop.PropertyType.IsEnum)
@@ -261,13 +252,35 @@ namespace System.IO.Endian
         private void ReadPropertyValue(object obj, PropertyInfo prop, double? version)
         {
             var originalByteOrder = ByteOrder;
+            var storeType = prop.PropertyType;
+
+            if (Attribute.IsDefined(prop, typeof(ByteOrderAttribute)))
+            {
+                var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
+                if (attr != null) ByteOrder = attr.ByteOrder;
+            }
+
+            if (Attribute.IsDefined(prop, typeof(StoreTypeAttribute)))
+            {
+                var attr = Utils.GetAttributeForVersion<StoreTypeAttribute>(prop, version);
+                if (attr != null) storeType = attr.StoreType;
+            }
+
             Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
-            ReadProperty(obj, prop, null);
+            ReadProperty(obj, prop, storeType, version);
+
             ByteOrder = originalByteOrder;
         }
 
-        private object ReadStandardValue(Type type)
+        /// <summary>
+        /// Reads and returns a primitive type or <seealso cref="Guid"/> from the underlying stream.
+        /// </summary>
+        /// <param name="type">The primitive type to read, or <seealso cref="Guid"/>.</param>
+        protected object ReadStandardValue(Type type)
         {
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+
             var primitiveMethod = (from m in typeof(EndianReader).GetMethods()
                                    where m.Name.StartsWith(nameof(Read), StringComparison.Ordinal)
                                    && !m.Name.Equals(nameof(Read), StringComparison.Ordinal)
@@ -280,8 +293,16 @@ namespace System.IO.Endian
             else return primitiveMethod.Invoke(this, null);
         }
 
-        private string ReadStringValue(PropertyInfo prop)
+        /// <summary>
+        /// Reads a string value from the underlying stream. The method used to read the string
+        /// is determined by the attributes applied to the supplied property.
+        /// </summary>
+        /// <param name="prop">The string property.</param>
+        protected string ReadStringValue(PropertyInfo prop)
         {
+            if (prop == null)
+                throw new ArgumentNullException(nameof(prop));
+
             var lenPrefixed = Utils.GetCustomAttribute<LengthPrefixedAttribute>(prop);
             var fixedLen = Utils.GetCustomAttribute<FixedLengthAttribute>(prop);
             var nullTerm = Utils.GetCustomAttribute<NullTerminatedAttribute>(prop);

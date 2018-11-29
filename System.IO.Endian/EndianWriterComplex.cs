@@ -123,50 +123,44 @@ namespace System.IO.Endian
         }
 
         /// <summary>
-        /// Writes a property to the current position in the stream using the value of
-        /// the property against the specified instance of the property's containing type.
+        /// This method is called for each property of an object when writing complex objects
+        /// to write the property value to the stream. The <seealso cref="ByteOrder"/> and
+        /// position of the stream are set before this method is called.
         /// </summary>
         /// <param name="instance">The instance of the type containing the property.</param>
         /// <param name="prop">The property to write.</param>
+        /// <param name="storeType">The type specified by this property's <seealso cref="StoreTypeAttribute"/>, if any.</param>
         /// <param name="version">The version to use when writing the property.</param>
-        protected virtual void WriteProperty(object instance, PropertyInfo prop, double? version)
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="MissingMethodException"/>
+        protected virtual void WriteProperty(object instance, PropertyInfo prop, Type storeType, double? version)
         {
             if (prop == null)
                 throw new ArgumentNullException(nameof(prop));
 
+            if (storeType == null)
+                throw new ArgumentNullException(nameof(storeType));
+
             if (prop.GetGetMethod() == null || prop.GetSetMethod() == null)
                 throw Exceptions.NonPublicGetSet(prop.Name);
 
-            if (Attribute.IsDefined(prop, typeof(ByteOrderAttribute)))
-            {
-                var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
-                if (attr != null) ByteOrder = attr.ByteOrder;
-            }
-
             var value = prop.GetValue(instance);
-            var writeType = prop.PropertyType;
 
-            if (Attribute.IsDefined(prop, typeof(StoreTypeAttribute)))
-            {
-                var attr = Utils.GetAttributeForVersion<StoreTypeAttribute>(prop, version);
-                if (attr != null) writeType = attr.StoreType;
-            }
-
-            if (writeType.IsEnum)
-                writeType = writeType.GetEnumUnderlyingType();
+            if (storeType.IsEnum)
+                storeType = storeType.GetEnumUnderlyingType();
 
             //in case this was called with a specific version number we should write that number
             //instead of [VersionNumber] property values to ensure the object can be read back in again
             if (Attribute.IsDefined(prop, typeof(VersionNumberAttribute)) && version.HasValue)
             {
                 var converter = TypeDescriptor.GetConverter(typeof(double));
-                if (converter.CanConvertTo(writeType))
-                    value = converter.ConvertTo(version.Value, writeType);
+                if (converter.CanConvertTo(storeType))
+                    value = converter.ConvertTo(version.Value, storeType);
             }
 
-            if (writeType.IsGenericType && writeType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            if (storeType.IsGenericType && storeType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
             {
-                var innerType = writeType.GetGenericArguments()[0];
+                var innerType = storeType.GetGenericArguments()[0];
                 if (value == null)
                 {
                     if (innerType.IsPrimitive)
@@ -181,7 +175,7 @@ namespace System.IO.Endian
                         value = Activator.CreateInstance(innerType);
                     }
                 }
-                writeType = innerType;
+                storeType = innerType;
             }
 
             var valType = value.GetType();
@@ -191,17 +185,17 @@ namespace System.IO.Endian
                 value = Convert.ChangeType(value, valType, CultureInfo.InvariantCulture);
             }
 
-            if (writeType != valType)
+            if (storeType != valType)
             {
                 var converter = TypeDescriptor.GetConverter(valType);
-                if (converter.CanConvertTo(writeType))
-                    value = converter.ConvertTo(value, writeType);
-                else throw Exceptions.PropertyNotConvertable(prop.Name, writeType.Name, valType.Name);
+                if (converter.CanConvertTo(storeType))
+                    value = converter.ConvertTo(value, storeType);
+                else throw Exceptions.PropertyNotConvertable(prop.Name, storeType.Name, valType.Name);
             }
 
-            if (writeType.IsPrimitive || writeType.Equals(typeof(Guid)))
+            if (storeType.IsPrimitive || storeType.Equals(typeof(Guid)))
                 WriteStandardValue(value);
-            else if (writeType.Equals(typeof(string)))
+            else if (storeType.Equals(typeof(string)))
                 WriteStringValue(instance, prop);
             else WriteObjectInternal(value, version);
         }
@@ -209,13 +203,35 @@ namespace System.IO.Endian
         private void WritePropertyValue(object instance, PropertyInfo prop, double? version)
         {
             var originalByteOrder = ByteOrder;
+            var storeType = prop.PropertyType;
+
+            if (Attribute.IsDefined(prop, typeof(ByteOrderAttribute)))
+            {
+                var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
+                if (attr != null) ByteOrder = attr.ByteOrder;
+            }
+
+            if (Attribute.IsDefined(prop, typeof(StoreTypeAttribute)))
+            {
+                var attr = Utils.GetAttributeForVersion<StoreTypeAttribute>(prop, version);
+                if (attr != null) storeType = attr.StoreType;
+            }
+
             Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
-            WriteProperty(instance, prop, version);
+            WriteProperty(instance, prop, storeType, version);
+
             ByteOrder = originalByteOrder;
         }
 
-        private void WriteStandardValue(object value)
+        /// <summary>
+        /// Writes a primitive type or <seealso cref="Guid"/> to the underlying stream.
+        /// </summary>
+        /// <param name="value">The instance of a primitive type or <seealso cref="Guid"/>.</param>
+        protected void WriteStandardValue(object value)
         {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
             var type = value.GetType();
             var primitiveMethod = (from m in typeof(EndianWriter).GetMethods()
                                    let param = m.GetParameters()
@@ -229,8 +245,20 @@ namespace System.IO.Endian
             else primitiveMethod.Invoke(this, new[] { value });
         }
 
-        private void WriteStringValue(object instance, PropertyInfo prop)
+        /// <summary>
+        /// Writes a string value to the underlying stream. The method used to write the string
+        /// is determined by the attributes applied to the supplied property.
+        /// </summary>
+        /// <param name="instance">The instance of the object containing the string property.</param>
+        /// <param name="prop">The string property.</param>
+        protected void WriteStringValue(object instance, PropertyInfo prop)
         {
+            if (instance == null)
+                throw new ArgumentNullException(nameof(instance));
+
+            if (prop == null)
+                throw new ArgumentNullException(nameof(prop));
+
             var value = (string)prop.GetValue(instance);
 
             var lenPrefixed = Utils.GetCustomAttribute<LengthPrefixedAttribute>(prop);
