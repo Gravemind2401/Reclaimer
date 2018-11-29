@@ -85,11 +85,28 @@ namespace System.IO.Endian
         /// <param name="parent">The <seealso cref="EndianWriter"/> instance to copy.</param>
         /// <param name="virtualOrigin">The position in the stream that will be treated as the beginning.</param>
         protected EndianWriter(EndianWriter parent, long virtualOrigin)
-            : base(parent.BaseStream, parent.encoding, true)
+            : base(BaseStreamOrThrow(parent), EncodingOrThrow(parent), true)
         {
+            if (parent == null)
+                throw new ArgumentNullException(nameof(parent));
+
             this.virtualOrigin = virtualOrigin;
             encoding = parent.encoding;
             ByteOrder = parent.ByteOrder;
+        }
+
+        private static Stream BaseStreamOrThrow(EndianWriter parent)
+        {
+            if (parent == null)
+                throw new ArgumentNullException(nameof(parent));
+            return parent.BaseStream;
+        }
+
+        private static Encoding EncodingOrThrow(EndianWriter parent)
+        {
+            if (parent == null)
+                throw new ArgumentNullException(nameof(parent));
+            return parent.encoding;
         }
 
         #endregion
