@@ -26,7 +26,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         public EndianReader(Stream input)
-            : this(input, BitConverter.IsLittleEndian ? ByteOrder.LittleEndian : ByteOrder.BigEndian, new UTF8Encoding(), false, 0)
+            : this(input, BitConverter.IsLittleEndian ? ByteOrder.LittleEndian : ByteOrder.BigEndian, new UTF8Encoding(), false)
         {
 
         }
@@ -40,7 +40,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         public EndianReader(Stream input, ByteOrder byteOrder)
-            : this(input, byteOrder, new UTF8Encoding(), false, 0)
+            : this(input, byteOrder, new UTF8Encoding(), false)
         {
 
         }
@@ -55,7 +55,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         public EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding)
-            : this(input, byteOrder, encoding, false, 0)
+            : this(input, byteOrder, encoding, false)
         {
 
         }
@@ -71,17 +71,25 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         public EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding, bool leaveOpen)
-            : this(input, byteOrder, encoding, leaveOpen, 0)
-        {
-
-        }
-
-        protected EndianReader(Stream input, ByteOrder byteOrder, Encoding encoding, bool leaveOpen, long virtualOrigin)
             : base(input, encoding, leaveOpen)
         {
-            ByteOrder = byteOrder;
-            this.virtualOrigin = virtualOrigin;
+            virtualOrigin = 0;
             this.encoding = encoding;
+            ByteOrder = byteOrder;
+        }
+
+        /// <summary>
+        /// Creates a copy of <paramref name="parent"/> that will treat the specified origin as the the beginning of the stream.
+        /// The resulting <seealso cref="EndianReader"/> will not close the underlying stream when it is closed.
+        /// </summary>
+        /// <param name="parent">The <seealso cref="EndianReader"/> instance to copy.</param>
+        /// <param name="virtualOrigin">The position in the stream that will be treated as the beginning.</param>
+        protected EndianReader(EndianReader parent, long virtualOrigin)
+            : base(parent.BaseStream, parent.encoding, true)
+        {
+            this.virtualOrigin = virtualOrigin;
+            encoding = parent.encoding;
+            ByteOrder = parent.ByteOrder;
         }
 
         #endregion
@@ -859,7 +867,7 @@ namespace System.IO.Endian
             if (origin < 0 || origin > BaseStream.Length)
                 throw Exceptions.OutOfStreamBounds(nameof(origin), origin);
 
-            return new EndianReader(BaseStream, ByteOrder, encoding, true, origin);
+            return new EndianReader(this, origin);
         }
 
         /// <summary>

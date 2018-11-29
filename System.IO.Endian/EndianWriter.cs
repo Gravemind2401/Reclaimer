@@ -26,7 +26,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         public EndianWriter(Stream output)
-            : this(output, BitConverter.IsLittleEndian ? ByteOrder.LittleEndian : ByteOrder.BigEndian, new UTF8Encoding(), false, 0)
+            : this(output, BitConverter.IsLittleEndian ? ByteOrder.LittleEndian : ByteOrder.BigEndian, new UTF8Encoding(), false)
         {
 
         }
@@ -40,7 +40,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         public EndianWriter(Stream output, ByteOrder byteOrder)
-            : this(output, byteOrder, new UTF8Encoding(), false, 0)
+            : this(output, byteOrder, new UTF8Encoding(), false)
         {
 
         }
@@ -55,7 +55,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         public EndianWriter(Stream output, ByteOrder byteOrder, Encoding encoding)
-            : this(output, byteOrder, encoding, false, 0)
+            : this(output, byteOrder, encoding, false)
         {
 
         }
@@ -71,17 +71,25 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentException" />
         /// <exception cref="ArgumentNullException" />
         public EndianWriter(Stream output, ByteOrder byteOrder, Encoding encoding, bool leaveOpen)
-            : this(output, byteOrder, encoding, leaveOpen, 0)
+            : base(output, encoding, leaveOpen)
         {
-
+            virtualOrigin = 0;
+            this.encoding = encoding;
+            ByteOrder = byteOrder;
         }
 
-        protected EndianWriter(Stream input, ByteOrder byteOrder, Encoding encoding, bool leaveOpen, long virtualOrigin)
-            : base(input, encoding, leaveOpen)
+        /// <summary>
+        /// Creates a copy of <paramref name="parent"/> that will treat the specified origin as the the beginning of the stream.
+        /// The resulting <seealso cref="EndianWriter"/> will not close the underlying stream when it is closed.
+        /// </summary>
+        /// <param name="parent">The <seealso cref="EndianWriter"/> instance to copy.</param>
+        /// <param name="virtualOrigin">The position in the stream that will be treated as the beginning.</param>
+        protected EndianWriter(EndianWriter parent, long virtualOrigin)
+            : base(parent.BaseStream, parent.encoding, true)
         {
-            ByteOrder = byteOrder;
             this.virtualOrigin = virtualOrigin;
-            this.encoding = encoding;
+            encoding = parent.encoding;
+            ByteOrder = parent.ByteOrder;
         }
 
         #endregion
@@ -572,7 +580,7 @@ namespace System.IO.Endian
             if (origin < 0 || origin > BaseStream.Length)
                 throw Exceptions.OutOfStreamBounds(nameof(origin), origin);
 
-            return new EndianWriter(BaseStream, ByteOrder, encoding, true, origin);
+            return new EndianWriter(this, origin);
         }
 
         /// <summary>
