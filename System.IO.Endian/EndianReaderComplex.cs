@@ -374,7 +374,7 @@ namespace System.IO.Endian
 
             if (instance == null)
             {
-                if (type.GetConstructor(Type.EmptyTypes) == null)
+                if (type.IsClass && type.GetConstructor(Type.EmptyTypes) == null)
                     throw Exceptions.TypeNotConstructable(type.Name, isProperty);
 
                 instance = Activator.CreateInstance(type);

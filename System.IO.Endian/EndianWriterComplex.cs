@@ -167,13 +167,8 @@ namespace System.IO.Endian
                         value = Activator.CreateInstance(innerType);
                     else if (innerType.Equals(typeof(Guid)))
                         value = Guid.Empty;
-                    else
-                    {
-                        if (innerType.GetConstructor(Type.EmptyTypes) == null)
-                            throw Exceptions.TypeNotConstructable(innerType.Name, true);
-
+                    else //inner type of Nullable<> will always be a struct so this should never fail
                         value = Activator.CreateInstance(innerType);
-                    }
                 }
                 storeType = innerType;
             }
