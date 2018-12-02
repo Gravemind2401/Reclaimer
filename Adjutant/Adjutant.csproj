@@ -1,16 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>a46dd713-d7f0-4d6a-bd0f-348d890e135a</ProjectGuid>
+    <ProjectGuid>{A46DD713-D7F0-4D6A-BD0F-348D890E135A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Adjutant</RootNamespace>
     <AssemblyName>Adjutant</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,25 +32,54 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Adjutant.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
-    
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Xml.Linq"/>
-    <Reference Include="System.Data.DataSetExtensions"/>
-    
-    
-    <Reference Include="Microsoft.CSharp"/>
-    
-    <Reference Include="System.Data"/>
-    
-    <Reference Include="System.Net.Http"/>
-    
-    <Reference Include="System.Xml"/>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Blam\Definitions\Enums.cs" />
+    <Compile Include="Blam\Definitions\ICacheFile.cs" />
+    <Compile Include="Blam\Definitions\IIndexItem.cs" />
+    <Compile Include="Blam\Halo1\CacheFile.cs" />
+    <Compile Include="Blam\Halo1\BlockCollection.cs" />
+    <Compile Include="IO\DataReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Spatial\UDHenN3.cs" />
+    <Compile Include="Spatial\DHenN3.cs" />
+    <Compile Include="Spatial\IRealVector2D.cs" />
+    <Compile Include="Spatial\IRealVector4D.cs" />
+    <Compile Include="Spatial\IRealVector3D.cs" />
+    <Compile Include="Spatial\RealVector2D.cs" />
+    <Compile Include="Spatial\RealVector4D.cs" />
+    <Compile Include="Spatial\RealVector3D.cs" />
+    <Compile Include="Utilities\Utils.cs" />
+    <Compile Include="Utilities\IAddressTranslator.cs" />
+    <Compile Include="Utilities\Pointer.cs" />
+    <Compile Include="Utilities\IBlockCollection.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\System.IO.Endian\System.IO.Endian\System.IO.Endian.csproj">
+      <Project>{06a312c3-c3ec-447d-b7b7-f50e47a886d5}</Project>
+      <Name>System.IO.Endian</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Adjutant.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Blam\Definitions\Meta\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -57,5 +89,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-
- </Project>
+</Project>

@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant
+namespace Adjutant.Utilities
 {
-    public class Class1
+    public interface IAddressTranslator
     {
+        int GetAddress(int pointer);
     }
 }
