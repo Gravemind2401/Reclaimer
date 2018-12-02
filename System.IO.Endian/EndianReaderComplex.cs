@@ -24,9 +24,9 @@ namespace System.IO.Endian
         /// <exception cref="InvalidCastException" />
         /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
-        public T ReadObject<T>() where T : new()
+        public T ReadObject<T>()
         {
-            return (T)ReadObjectInternal(null, typeof(T), null, false);
+            return (T)ReadObject(null, typeof(T), null);
         }
 
         /// <summary>
@@ -46,9 +46,9 @@ namespace System.IO.Endian
         /// <exception cref="InvalidCastException" />
         /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
-        public T ReadObject<T>(double version) where T : new()
+        public T ReadObject<T>(double version)
         {
-            return (T)ReadObjectInternal(null, typeof(T), version, false);
+            return (T)ReadObject(null, typeof(T), version);
         }
 
         /// <summary>
@@ -60,12 +60,16 @@ namespace System.IO.Endian
         /// <param name="type">The type of object to read.</param>
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
         /// <exception cref="InvalidCastException" />
         /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
         public object ReadObject(Type type)
         {
-            return ReadObjectInternal(null, type, null, false);
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+
+            return ReadObject(null, type, null);
         }
 
         /// <summary>
@@ -82,18 +86,23 @@ namespace System.IO.Endian
         /// </param>
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
         /// <exception cref="InvalidCastException" />
         /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
         public object ReadObject(Type type, double version)
         {
-            return ReadObjectInternal(null, type, version, false);
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+
+            return ReadObject(null, type, version);
         }
 
         /// <summary>
         /// Populates the properties of a complex object from the current stream using reflection.
         /// Each property to be read must have public get/set methods and
         /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// The object returned is the same instance that was supplied as the parameter.
         /// </summary>
         /// <typeparam name="T">The type of object to read.</typeparam>
         /// <param name="instance">The object to populate.</param>
@@ -103,12 +112,12 @@ namespace System.IO.Endian
         /// <exception cref="InvalidCastException" />
         /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
-        public void ReadObject<T>(T instance)
+        public T ReadObject<T>(T instance)
         {
             if (instance == null)
                 throw new ArgumentNullException(nameof(instance));
 
-            ReadObjectInternal(instance, instance.GetType(), null, false);
+            return (T)ReadObject(instance, instance.GetType(), null);
         }
 
         /// <summary>
@@ -122,6 +131,7 @@ namespace System.IO.Endian
         /// The version that was used to store the object.
         /// This determines which properties will be read, how they will be
         /// read and at what location in the stream to read them from.
+        /// The object returned is the same instance that was supplied as the parameter.
         /// </param>
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
@@ -129,18 +139,19 @@ namespace System.IO.Endian
         /// <exception cref="InvalidCastException" />
         /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
-        public void ReadObject<T>(T instance, double version) where T : new()
+        public T ReadObject<T>(T instance, double version)
         {
             if (instance == null)
                 throw new ArgumentNullException(nameof(instance));
 
-            ReadObjectInternal(instance, instance.GetType(), version, false);
+            return (T)ReadObject(instance, instance.GetType(), version);
         }
 
         /// <summary>
         /// Populates the properties of a complex object from the current stream using reflection.
         /// Each property to be read must have public get/set methods and
         /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// The object returned is the same instance that was supplied as the parameter.
         /// </summary>
         /// <param name="type">The type of object to read.</param>
         /// <exception cref="AmbiguousMatchException" />
@@ -149,12 +160,12 @@ namespace System.IO.Endian
         /// <exception cref="InvalidCastException" />
         /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
-        public void ReadObject(object instance)
+        public object ReadObject(object instance)
         {
             if (instance == null)
                 throw new ArgumentNullException(nameof(instance));
 
-            ReadObjectInternal(instance, instance.GetType(), null, false);
+            return ReadObject(instance, instance.GetType(), null);
         }
 
         /// <summary>
@@ -167,6 +178,7 @@ namespace System.IO.Endian
         /// The version that was used to store the object.
         /// This determines which properties will be read, how they will be
         /// read and at what location in the stream to read them from.
+        /// The object returned is the same instance that was supplied as the parameter.
         /// </param>
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
@@ -174,12 +186,12 @@ namespace System.IO.Endian
         /// <exception cref="InvalidCastException" />
         /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
-        public void ReadObject(object instance, double version)
+        public object ReadObject(object instance, double version)
         {
             if (instance == null)
                 throw new ArgumentNullException(nameof(instance));
 
-            ReadObjectInternal(instance, instance.GetType(), version, false);
+            return ReadObject(instance, instance.GetType(), version);
         }
 
         #endregion
@@ -230,9 +242,9 @@ namespace System.IO.Endian
                 var innerType = storeType.GetGenericArguments()[0];
                 if (innerType.IsPrimitive || innerType.Equals(typeof(Guid)))
                     value = ReadStandardValue(innerType);
-                else value = ReadObjectInternal(null, innerType, version, true);
+                else value = ReadObject(null, innerType, version);
             }
-            else value = ReadObjectInternal(null, storeType, version, true);
+            else value = ReadObject(null, storeType, version);
 
             var propType = prop.PropertyType.IsEnum ? prop.PropertyType.GetEnumUnderlyingType() : prop.PropertyType;
             if (storeType != propType)
@@ -363,6 +375,22 @@ namespace System.IO.Endian
             }
 
             return version;
+        }
+
+        /// <summary>
+        /// This function is called by all public ReadObject overloads.
+        /// </summary>
+        /// <param name="instance">The object to populate. This value will be null if no instance was provided.</param>
+        /// <param name="type">The type of object to read.</param>
+        /// <param name="version">
+        /// The version that was used to store the object.
+        /// This determines which properties will be read, how they will be
+        /// read and at what location in the stream to read them from.
+        /// This value will be null if no version was provided.
+        /// </param>
+        protected virtual object ReadObject(object instance, Type type, double? version)
+        {
+            return ReadObjectInternal(instance, type, version, false);
         }
 
         private object ReadObjectInternal(object instance, Type type, double? version, bool isProperty)

@@ -32,7 +32,7 @@ namespace System.IO.Endian
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            WriteObjectInternal(value, null);
+            WriteObject(value, null);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace System.IO.Endian
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            WriteObjectInternal(value, version);
+            WriteObject(value, (double?)version);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace System.IO.Endian
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            WriteObjectInternal(value, null);
+            WriteObject(value, null);
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace System.IO.Endian
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            WriteObjectInternal(value, version);
+            WriteObject(value, (double?)version);
         } 
 
         #endregion
@@ -192,7 +192,7 @@ namespace System.IO.Endian
                 WriteStandardValue(value);
             else if (storeType.Equals(typeof(string)))
                 WriteStringValue(instance, prop);
-            else WriteObjectInternal(value, version);
+            else WriteObject(value, version);
         }
 
         private void WritePropertyValue(object instance, PropertyInfo prop, double? version)
@@ -311,6 +311,23 @@ namespace System.IO.Endian
             }
 
             return version;
+        }
+
+        /// <summary>
+        /// This function is called by all public WriteObject overloads.
+        /// </summary>
+        /// <param name="value">The object to write.</param>
+        /// <param name="version">
+        /// The version that should be used to store the object.
+        /// This determines which properties will be written, how they will be
+        /// written and at what location in the stream to write them to.
+        /// </param>
+        protected virtual void WriteObject(object value, double? version)
+        {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
+            WriteObjectInternal(value, version);
         }
 
         private void WriteObjectInternal(object value, double? version)
