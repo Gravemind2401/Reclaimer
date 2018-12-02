@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Adjutant.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Endian;
@@ -9,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace Adjutant.IO
 {
+    /// <summary>
+    /// An <seealso cref="EndianReader"/> capable of basic dependency injection.
+    /// </summary>
     public class DependencyReader : EndianReader
     {
         private readonly Dictionary<Type, Func<object>> registeredTypes;
@@ -31,7 +35,7 @@ namespace Adjutant.IO
         public void RegisterType<T>(Func<T> constructor)
         {
             if (registeredTypes.ContainsKey(typeof(T)))
-                throw new ArgumentException();
+                throw new ArgumentException(Utils.CurrentCulture($"{typeof(T).Name} has already been registered."));
 
             registeredTypes.Add(typeof(T), () => constructor());
         }

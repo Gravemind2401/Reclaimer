@@ -54,7 +54,7 @@
     <Compile Include="Blam\Definitions\IIndexItem.cs" />
     <Compile Include="Blam\Halo1\CacheFile.cs" />
     <Compile Include="Blam\Halo1\BlockCollection.cs" />
-    <Compile Include="IO\DataReader.cs" />
+    <Compile Include="IO\DependencyReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Spatial\UDHenN3.cs" />
     <Compile Include="Spatial\DHenN3.cs" />

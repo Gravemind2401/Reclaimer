@@ -28,7 +28,6 @@ namespace Adjutant.Blam.Halo1
         public CacheFile(string fileName)
         {
             FileName = fileName;
-
             AddressTranslator = new AddressTranslator(this);
 
             using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))

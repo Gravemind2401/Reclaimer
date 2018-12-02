@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Spatial
 {
+    /// <summary>
+    /// A 2-dimensional vector.
+    /// Each dimension is represented by a 32-bit floating point number.
+    /// </summary>
     [FixedSize(8)]
     public struct RealVector2D : IRealVector2D
     {

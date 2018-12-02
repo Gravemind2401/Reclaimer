@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Spatial
 {
+    /// <summary>
+    /// A 3-dimensional vector.
+    /// Each dimension is represented by a 32-bit floating point number.
+    /// </summary>
     [FixedSize(12)]
     public struct RealVector3D : IRealVector3D
     {

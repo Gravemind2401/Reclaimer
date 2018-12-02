@@ -7,7 +7,11 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Spatial
 {
-    //10/11/11
+    /// <summary>
+    /// A 3-dimensional Vector compressed into 32 bits.
+    /// Each dimension is limited to a minimum of 0 and a maximum of 1.
+    /// The X dimension has 10 bits of precision, while the Y and Z dimensions have 11 bits of precision.
+    /// </summary>
     public struct UDHenN3
     {
         private uint _value;
