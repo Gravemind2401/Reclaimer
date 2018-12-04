@@ -53,11 +53,13 @@
     <Compile Include="Blam\Definitions\ICacheFile.cs" />
     <Compile Include="Blam\Definitions\IIndexItem.cs" />
     <Compile Include="Blam\Halo1\bitmap.cs" />
+    <Compile Include="Blam\Halo1\BSPAddressTranslator.cs" />
     <Compile Include="Blam\Halo1\CacheFile.cs" />
     <Compile Include="Blam\Halo1\gbxmodel.cs" />
     <Compile Include="Blam\Halo1\BlockCollection.cs" />
     <Compile Include="Blam\Halo1\scenario.cs" />
     <Compile Include="Blam\Halo1\scenario_structure_bsp.cs" />
+    <Compile Include="Blam\Halo1\TagAddressTranslator.cs" />
     <Compile Include="Blam\Halo1\TagReference.cs" />
     <Compile Include="IO\DependencyReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

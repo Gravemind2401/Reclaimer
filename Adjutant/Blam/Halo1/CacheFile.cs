@@ -2,8 +2,8 @@
 using Adjutant.IO;
 using Adjutant.Utilities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Endian;
 using System.Linq;
@@ -19,59 +19,33 @@ namespace Adjutant.Blam.Halo1
         public CacheType Type => Header.CacheType;
 
         public CacheHeader Header { get; private set; }
-        public IndexHeader IndexHeader { get; private set; }
-        public List<IndexItem> IndexItems { get; private set; }
-        public Dictionary<int, string> TagNames { get; private set; }
+        public CacheIndex Index { get; private set; }
 
-        public AddressTranslator AddressTranslator { get; private set; }
+        public TagAddressTranslator AddressTranslator { get; private set; }
 
         public CacheFile(string fileName)
         {
             FileName = fileName;
-            AddressTranslator = new AddressTranslator(this);
+            AddressTranslator = new TagAddressTranslator(this);
 
-            using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
-            using (var reader = new DependencyReader(fs, ByteOrder.LittleEndian))
+            using (var reader = CreateReader())
             {
-                reader.RegisterType<Pointer>(() => new Pointer(reader.ReadInt32(), AddressTranslator));
-
                 Header = reader.ReadObject<CacheHeader>();
 
                 reader.Seek(Header.IndexAddress, SeekOrigin.Begin);
-                IndexHeader = reader.ReadObject<IndexHeader>();
-                IndexItems = new List<IndexItem>();
-                for (int i = 0; i < IndexHeader.TagCount; i++)
-                    IndexItems.Add(reader.ReadObject(new IndexItem(this)));
-
-                TagNames = new Dictionary<int, string>();
-                foreach (var i in IndexItems)
-                {
-                    reader.Seek(i.FileNamePointer.Address, SeekOrigin.Begin);
-                    TagNames.Add(i.Id, reader.ReadNullTerminatedString());
-                }
+                Index = reader.ReadObject(new CacheIndex(this));
+                Index.ReadItems(reader);
             }
         }
-    }
 
-    public class AddressTranslator : IAddressTranslator
-    {
-        private readonly CacheFile cache;
-
-        private int Magic => cache.IndexHeader.Magic - (cache.Header.IndexAddress + 40);
-
-        public AddressTranslator(CacheFile cache)
+        public DependencyReader CreateReader()
         {
-            this.cache = cache;
-        }
-
-        public int GetAddress(int pointer)
-        {
-            return pointer - Magic;
-        }
-
-        public int GetPointer(int address)
-        {
-            return address + Magic;
+            var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read);
+            var reader = new DependencyReader(fs, ByteOrder.LittleEndian);
+            reader.RegisterType<CacheFile>(() => this);
+            reader.RegisterType<Pointer>(() => new Pointer(reader.ReadInt32(), AddressTranslator));
+            reader.RegisterType<IAddressTranslator>(() => AddressTranslator);
+            return reader;
         }
     }
 
@@ -110,8 +84,14 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(40)]
-    public class IndexHeader
+    public class CacheIndex : IEnumerable<IndexItem>
     {
+        private readonly CacheFile cache;
+        private readonly List<IndexItem> items;
+        private readonly Dictionary<int, string> filenames;
+
+        internal Dictionary<int, string> Filenames => filenames;
+
         [Offset(0)]
         public int Magic { get; set; }
 
@@ -129,6 +109,39 @@ namespace Adjutant.Blam.Halo1
 
         [Offset(28)]
         public int IndexDataOffset { get; set; }
+
+        public CacheIndex(CacheFile cache)
+        {
+            if (cache == null)
+                throw new ArgumentNullException(nameof(cache));
+
+            this.cache = cache;
+            items = new List<IndexItem>();
+            filenames = new Dictionary<int, string>();
+        }
+
+        internal void ReadItems(DependencyReader reader)
+        {
+            if (items.Any())
+                throw new InvalidOperationException();
+
+            for (int i = 0; i < TagCount; i++)
+            {
+                reader.Seek(cache.Header.IndexAddress + 40 + i * 32, SeekOrigin.Begin);
+
+                var item = reader.ReadObject(new IndexItem(cache));
+                items.Add(item);
+
+                reader.Seek(item.FileNamePointer.Address, SeekOrigin.Begin);
+                filenames.Add(item.Id, reader.ReadNullTerminatedString());
+            }
+        }
+
+        public IndexItem this[int index] => items[index];
+
+        public IEnumerator<IndexItem> GetEnumerator() => items.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
     }
 
     [FixedSize(32)]
@@ -165,17 +178,33 @@ namespace Adjutant.Blam.Halo1
 
         public string ClassCode => Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId)).TrimEnd();
 
-        public string FileName => cache.TagNames[Id];
+        public string FileName => cache.Index.Filenames[Id];
 
         public T ReadMetadata<T>()
         {
+            if (typeof(T).Equals(typeof(scenario_structure_bsp)))
+                return (T)(object)ReadBSPMetadata();
+
+            using (var reader = cache.CreateReader())
+            {
+                reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
+                return (T)reader.ReadObject(typeof(T), cache.Header.Version);
+            }
+        }
+
+        private scenario_structure_bsp ReadBSPMetadata()
+        {
+            var translator = new BSPAddressTranslator(cache, Id);
+
             using (var fs = new FileStream(cache.FileName, FileMode.Open, FileAccess.Read))
             using (var reader = new DependencyReader(fs, ByteOrder.LittleEndian))
             {
-                reader.RegisterType<IAddressTranslator>(() => cache.AddressTranslator);
+                reader.RegisterType<CacheFile>(() => cache);
+                reader.RegisterType<Pointer>(() => new Pointer(reader.ReadInt32(), translator));
+                reader.RegisterType<IAddressTranslator>(() => translator);
 
-                reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
-                return (T)reader.ReadObject(typeof(T), cache.Header.Version);
+                reader.Seek(translator.TagAddress, SeekOrigin.Begin);
+                return reader.ReadObject<scenario_structure_bsp>(cache.Header.Version);
             }
         }
 
