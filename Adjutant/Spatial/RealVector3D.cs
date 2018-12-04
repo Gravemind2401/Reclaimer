@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Adjutant.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO.Endian;
 using System.Linq;
@@ -14,9 +15,7 @@ namespace Adjutant.Spatial
     [FixedSize(12)]
     public struct RealVector3D : IRealVector3D
     {
-        private float x;
-        private float y;
-        private float z;
+        private float x, y, z;
 
         [Offset(0)]
         public float X
@@ -46,11 +45,10 @@ namespace Adjutant.Spatial
             this.z = z;
         }
 
-        public float Length
-        {
-            get { return (float)Math.Sqrt(x * x + y * y + z * z); }
-        }
+        public float Length => (float)Math.Sqrt(x * x + y * y + z * z);
 
+        public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}]");
+        
         #region Equality Operators
 
         public static bool operator ==(RealVector3D point1, RealVector3D point2)

@@ -18,9 +18,10 @@ namespace Adjutant.Utilities
             this.translator = translator;
         }
 
+        public int Value => _value;
         public int Address => translator.GetAddress(_value);
 
-        public override string ToString() => Address.ToString(CultureInfo.CurrentCulture);
+        public override string ToString() => Value.ToString(CultureInfo.CurrentCulture);
 
         #region Equality Operators
 

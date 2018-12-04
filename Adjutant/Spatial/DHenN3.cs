@@ -82,10 +82,7 @@ namespace Adjutant.Spatial
                     ((uint)x & 0x3FF);
         }
 
-        public override string ToString()
-        {
-            return Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}]");
-        }
+        public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}]");
 
         #region Equality Operators
 
