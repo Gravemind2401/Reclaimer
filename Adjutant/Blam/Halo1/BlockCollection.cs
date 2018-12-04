@@ -25,6 +25,9 @@ namespace Adjutant.Blam.Halo1
             var count = reader.ReadInt32();
             Pointer = new Pointer(reader.ReadInt32(), translator);
 
+            if (count == 0)
+                return;
+
             reader.BaseStream.Position = Pointer.Address;
             for (int i = 0; i < count; i++)
                 Add((T)reader.ReadObject(typeof(T)));
