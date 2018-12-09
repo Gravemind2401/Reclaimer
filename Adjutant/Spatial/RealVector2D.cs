@@ -37,7 +37,7 @@ namespace Adjutant.Spatial
             this.y = y;
         }
 
-        public float Length => (float)Math.Sqrt(x * x + y * y);
+        public float Length => (float)Math.Sqrt(X * X + Y * Y);
 
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}]");
        
@@ -45,8 +45,8 @@ namespace Adjutant.Spatial
 
         public static bool operator ==(RealVector2D point1, RealVector2D point2)
         {
-            return point1.X == point2.X &&
-                   point1.Y == point2.Y;
+            return point1.X == point2.X
+                && point1.Y == point2.Y;
         }
 
         public static bool operator !=(RealVector2D point1, RealVector2D point2)
@@ -56,8 +56,8 @@ namespace Adjutant.Spatial
 
         public static bool Equals(RealVector2D point1, RealVector2D point2)
         {
-            return point1.X.Equals(point2.X) &&
-                   point1.Y.Equals(point2.Y);
+            return point1.X.Equals(point2.X)
+                && point1.Y.Equals(point2.Y);
         }
 
         public override bool Equals(object obj)
@@ -75,8 +75,8 @@ namespace Adjutant.Spatial
 
         public override int GetHashCode()
         {
-            return X.GetHashCode() ^
-                   Y.GetHashCode();
+            return X.GetHashCode()
+                ^ Y.GetHashCode();
         }
 
         #endregion

@@ -73,8 +73,8 @@ namespace Adjutant.Spatial
 
         public override int GetHashCode()
         {
-            return Min.GetHashCode() ^
-                   Max.GetHashCode();
+            return Min.GetHashCode()
+                ^ Max.GetHashCode();
         }
 
         #endregion

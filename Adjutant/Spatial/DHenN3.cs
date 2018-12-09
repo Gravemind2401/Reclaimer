@@ -86,6 +86,18 @@ namespace Adjutant.Spatial
 
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}]");
 
+        [CLSCompliant(false)]
+        public static explicit operator uint(DHenN3 value)
+        {
+            return value._value;
+        }
+
+        [CLSCompliant(false)]
+        public static explicit operator DHenN3(uint value)
+        {
+            return new DHenN3(value);
+        }
+
         #region Equality Operators
 
         public static bool operator ==(DHenN3 point1, DHenN3 point2)

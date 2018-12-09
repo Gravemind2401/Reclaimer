@@ -53,18 +53,18 @@ namespace Adjutant.Spatial
             this.w = w;
         }
 
-        public float Length => (float)Math.Sqrt(x * x + y * y + z * z + w * w);
+        public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z + W * W);
 
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]");
-       
+
         #region Equality Operators
 
         public static bool operator ==(RealVector4D point1, RealVector4D point2)
         {
-            return point1.X == point2.X &&
-                   point1.Y == point2.Y &&
-                   point1.Z == point2.Z &&
-                   point1.W == point2.W;
+            return point1.X == point2.X
+                && point1.Y == point2.Y
+                && point1.Z == point2.Z
+                && point1.W == point2.W;
         }
 
         public static bool operator !=(RealVector4D point1, RealVector4D point2)
@@ -74,10 +74,10 @@ namespace Adjutant.Spatial
 
         public static bool Equals(RealVector4D point1, RealVector4D point2)
         {
-            return point1.X.Equals(point2.X) &&
-                   point1.Y.Equals(point2.Y) &&
-                   point1.Z.Equals(point2.Z) &&
-                   point1.W.Equals(point2.W);
+            return point1.X.Equals(point2.X)
+                && point1.Y.Equals(point2.Y)
+                && point1.Z.Equals(point2.Z)
+                && point1.W.Equals(point2.W);
         }
 
         public override bool Equals(object obj)
@@ -95,10 +95,10 @@ namespace Adjutant.Spatial
 
         public override int GetHashCode()
         {
-            return X.GetHashCode() ^
-                   Y.GetHashCode() ^
-                   Z.GetHashCode() ^
-                   W.GetHashCode();
+            return X.GetHashCode()
+                ^ Y.GetHashCode()
+                ^ Z.GetHashCode()
+                ^ W.GetHashCode();
         }
 
         #endregion

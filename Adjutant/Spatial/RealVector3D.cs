@@ -45,17 +45,17 @@ namespace Adjutant.Spatial
             this.z = z;
         }
 
-        public float Length => (float)Math.Sqrt(x * x + y * y + z * z);
+        public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z);
 
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}]");
-        
+
         #region Equality Operators
 
         public static bool operator ==(RealVector3D point1, RealVector3D point2)
         {
-            return point1.X == point2.X &&
-                   point1.Y == point2.Y &&
-                   point1.Z == point2.Z;
+            return point1.X == point2.X
+                && point1.Y == point2.Y
+                && point1.Z == point2.Z;
         }
 
         public static bool operator !=(RealVector3D point1, RealVector3D point2)
@@ -65,9 +65,9 @@ namespace Adjutant.Spatial
 
         public static bool Equals(RealVector3D point1, RealVector3D point2)
         {
-            return point1.X.Equals(point2.X) &&
-                   point1.Y.Equals(point2.Y) &&
-                   point1.Z.Equals(point2.Z);
+            return point1.X.Equals(point2.X)
+                && point1.Y.Equals(point2.Y)
+                && point1.Z.Equals(point2.Z);
         }
 
         public override bool Equals(object obj)
@@ -85,9 +85,9 @@ namespace Adjutant.Spatial
 
         public override int GetHashCode()
         {
-            return X.GetHashCode() ^
-                   Y.GetHashCode() ^
-                   Z.GetHashCode();
+            return X.GetHashCode()
+                ^ Y.GetHashCode()
+                ^ Z.GetHashCode();
         }
 
         #endregion
