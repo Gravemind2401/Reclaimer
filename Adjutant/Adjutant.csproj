@@ -59,12 +59,16 @@
     <Compile Include="Blam\Halo1\BlockCollection.cs" />
     <Compile Include="Blam\Halo1\scenario.cs" />
     <Compile Include="Blam\Halo1\scenario_structure_bsp.cs" />
+    <Compile Include="Blam\Halo1\SkinnedVertex.cs" />
     <Compile Include="Blam\Halo1\TagAddressTranslator.cs" />
     <Compile Include="Blam\Halo1\TagReference.cs" />
+    <Compile Include="Blam\Halo1\WorldVertex.cs" />
     <Compile Include="IO\DependencyReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Spatial\IRealBounds.cs" />
     <Compile Include="Spatial\RealBounds.cs" />
+    <Compile Include="Spatial\UByteN2.cs" />
+    <Compile Include="Spatial\UByteN4.cs" />
     <Compile Include="Spatial\UDHenN3.cs" />
     <Compile Include="Spatial\DHenN3.cs" />
     <Compile Include="Spatial\IRealVector2D.cs" />
