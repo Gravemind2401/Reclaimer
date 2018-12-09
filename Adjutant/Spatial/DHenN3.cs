@@ -12,7 +12,7 @@ namespace Adjutant.Spatial
     /// Each dimension is limited to a minimum of -1 and a maximum of 1.
     /// The X dimension has 10 bits of precision, while the Y and Z dimensions have 11 bits of precision.
     /// </summary>
-    public struct DHenN3
+    public struct DHenN3 : IRealVector3D
     {
         private uint _value;
 
@@ -33,7 +33,7 @@ namespace Adjutant.Spatial
             set
             {
                 value = Utils.Clamp(value, -1f, 1f) * scaleX;
-                this._value = (uint)((this._value & ~0x3FF) | ((uint)value & 0x3FF));
+                _value = (uint)((_value & ~0x3FF) | ((uint)value & 0x3FF));
             }
         }
 
@@ -47,7 +47,7 @@ namespace Adjutant.Spatial
             set
             {
                 value = Utils.Clamp(value, -1f, 1f) * scaleY;
-                this._value = (uint)((this._value & ~(0x7FF << 10)) | (((uint)value & 0x7FF) << 10));
+                _value = (uint)((_value & ~(0x7FF << 10)) | (((uint)value & 0x7FF) << 10));
             }
         }
 
@@ -61,26 +61,28 @@ namespace Adjutant.Spatial
             set
             {
                 value = Utils.Clamp(value, -1f, 1f) * scaleZ;
-                this._value = (uint)((this._value & ~(0x7FF << 21)) | (((uint)value & 0x7FF) << 21));
+                _value = (uint)((_value & ~(0x7FF << 21)) | (((uint)value & 0x7FF) << 21));
             }
         }
-        
+
         [CLSCompliant(false)]
         public DHenN3(uint value)
         {
-            this._value = value;
+            _value = value;
         }
 
         public DHenN3(float x, float y, float z)
         {
-            x = Utils.Clamp(x, -1f, 1f) * scaleX;
-            y = Utils.Clamp(x, -1f, 1f) * scaleY;
-            z = Utils.Clamp(x, -1f, 1f) * scaleZ;
+            x = Utils.Clamp(x, -1, 1) * scaleX;
+            y = Utils.Clamp(y, -1, 1) * scaleY;
+            z = Utils.Clamp(z, -1, 1) * scaleZ;
 
             _value = (((uint)z & 0x7FF) << 21) |
-                    (((uint)y & 0x7FF) << 10) |
-                    ((uint)x & 0x3FF);
+                     (((uint)y & 0x7FF) << 10) |
+                     ((uint)x & 0x3FF);
         }
+
+        public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z);
 
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}]");
 
