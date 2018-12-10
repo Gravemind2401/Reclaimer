@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO.Endian;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +14,7 @@ namespace Adjutant.Spatial
     /// Each dimension is represented by a 32-bit floating point number.
     /// </summary>
     [FixedSize(16)]
+    [StructLayout(LayoutKind.Sequential)]
     public struct RealVector4D : IRealVector4D
     {
         private float x, y, z, w;
@@ -56,51 +58,5 @@ namespace Adjutant.Spatial
         public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z + W * W);
 
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]");
-
-        #region Equality Operators
-
-        public static bool operator ==(RealVector4D point1, RealVector4D point2)
-        {
-            return point1.X == point2.X
-                && point1.Y == point2.Y
-                && point1.Z == point2.Z
-                && point1.W == point2.W;
-        }
-
-        public static bool operator !=(RealVector4D point1, RealVector4D point2)
-        {
-            return !(point1 == point2);
-        }
-
-        public static bool Equals(RealVector4D point1, RealVector4D point2)
-        {
-            return point1.X.Equals(point2.X)
-                && point1.Y.Equals(point2.Y)
-                && point1.Z.Equals(point2.Z)
-                && point1.W.Equals(point2.W);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj == null) || !(obj is RealVector4D))
-                return false;
-
-            return RealVector4D.Equals(this, (RealVector4D)obj);
-        }
-
-        public bool Equals(RealVector4D value)
-        {
-            return RealVector4D.Equals(this, value);
-        }
-
-        public override int GetHashCode()
-        {
-            return X.GetHashCode()
-                ^ Y.GetHashCode()
-                ^ Z.GetHashCode()
-                ^ W.GetHashCode();
-        }
-
-        #endregion
     }
 }
