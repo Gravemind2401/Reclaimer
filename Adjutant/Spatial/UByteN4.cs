@@ -14,60 +14,60 @@ namespace Adjutant.Spatial
     /// </summary>
     public struct UByteN4 : IRealVector4D
     {
-        private uint _value;
+        private uint bits;
 
         private const float scale = 0xFF;
 
         public float X
         {
-            get { return (_value & 0xFF) / scale; }
+            get { return (bits & 0xFF) / scale; }
             set
             {
                 value = Utils.Clamp(value, 0, 1) * scale;
-                _value = (uint)((_value & ~0xFF) | ((uint)value & 0xFF));
+                bits = (uint)((bits & ~0xFF) | ((uint)value & 0xFF));
             }
         }
 
         public float Y
         {
-            get { return ((_value >> 8) & 0xFF) / scale; }
+            get { return ((bits >> 8) & 0xFF) / scale; }
             set
             {
                 value = Utils.Clamp(value, 0, 1) * scale;
-                _value = (uint)((_value & ~(0xFF << 8)) | (((uint)value & 0xFF) << 8));
+                bits = (uint)((bits & ~(0xFF << 8)) | (((uint)value & 0xFF) << 8));
             }
         }
 
         public float Z
         {
-            get { return ((_value >> 16) & 0xFF) / scale; }
+            get { return ((bits >> 16) & 0xFF) / scale; }
             set
             {
                 value = Utils.Clamp(value, 0, 1) * scale;
-                _value = (uint)((_value & ~(0xFF << 16)) | (((uint)value & 0xFF) << 16));
+                bits = (uint)((bits & ~(0xFF << 16)) | (((uint)value & 0xFF) << 16));
             }
         }
 
         public float W
         {
-            get { return ((_value >> 24) & 0xFF) / scale; }
+            get { return ((bits >> 24) & 0xFF) / scale; }
             set
             {
                 value = Utils.Clamp(value, 0, 1) * scale;
-                _value = (uint)((_value & ~(0xFF << 24)) | (((uint)value & 0xFF) << 24));
+                bits = (uint)((bits & ~(0xFF << 24)) | (((uint)value & 0xFF) << 24));
             }
         }
 
         [CLSCompliant(false)]
         public UByteN4(uint value)
         {
-            _value = value;
+            bits = value;
         }
 
         public UByteN4(byte x, byte y, byte z, byte w)
         {
             var temp = (z << 24) | (y << 16) | (y << 8) | x;
-            _value = unchecked((uint)temp);
+            bits = unchecked((uint)temp);
         }
 
         public UByteN4(float x, float y, float z, float w)
@@ -78,7 +78,7 @@ namespace Adjutant.Spatial
             w = Utils.Clamp(w, 0, 1) * scale;
 
             var temp = ((byte)z << 24) | ((byte)y << 16) | ((byte)y << 8) | (byte)x;
-            _value = unchecked((uint)temp);
+            bits = unchecked((uint)temp);
         }
 
         public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z + W * W);
@@ -88,7 +88,7 @@ namespace Adjutant.Spatial
         [CLSCompliant(false)]
         public static explicit operator uint(UByteN4 value)
         {
-            return value._value;
+            return value.bits;
         }
 
         [CLSCompliant(false)]
@@ -101,7 +101,7 @@ namespace Adjutant.Spatial
 
         public static bool operator ==(UByteN4 point1, UByteN4 point2)
         {
-            return point1._value == point2._value;
+            return point1.bits == point2.bits;
         }
 
         public static bool operator !=(UByteN4 point1, UByteN4 point2)
@@ -111,7 +111,7 @@ namespace Adjutant.Spatial
 
         public static bool Equals(UByteN4 point1, UByteN4 point2)
         {
-            return point1._value.Equals(point2._value);
+            return point1.bits.Equals(point2.bits);
         }
 
         public override bool Equals(object obj)
@@ -129,7 +129,7 @@ namespace Adjutant.Spatial
 
         public override int GetHashCode()
         {
-            return _value.GetHashCode();
+            return bits.GetHashCode();
         }
 
         #endregion

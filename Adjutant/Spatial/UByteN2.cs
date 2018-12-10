@@ -14,40 +14,40 @@ namespace Adjutant.Spatial
     /// </summary>
     public struct UByteN2 : IRealVector2D
     {
-        private ushort _value;
+        private ushort bits;
 
         private const float scale = 0xFF;
 
         public float X
         {
-            get { return (_value & 0xFF) / scale; }
+            get { return (bits & 0xFF) / scale; }
             set
             {
                 value = Utils.Clamp(value, 0, 1) * scale;
-                _value = (ushort)((_value & ~0xFF) | ((ushort)value & 0xFF));
+                bits = (ushort)((bits & ~0xFF) | ((ushort)value & 0xFF));
             }
         }
 
         public float Y
         {
-            get { return ((_value >> 8) & 0xFF) / scale; }
+            get { return ((bits >> 8) & 0xFF) / scale; }
             set
             {
                 value = Utils.Clamp(value, 0, 1) * scale;
-                _value = (ushort)((_value & ~(0xFF << 8)) | (((ushort)value & 0xFF) << 8));
+                bits = (ushort)((bits & ~(0xFF << 8)) | (((ushort)value & 0xFF) << 8));
             }
         }
 
         [CLSCompliant(false)]
         public UByteN2(ushort value)
         {
-            _value = value;
+            bits = value;
         }
 
         public UByteN2(byte x, byte y)
         {
             var temp = (y << 8) | x;
-            _value = (ushort)temp;
+            bits = (ushort)temp;
         }
 
         public UByteN2(float x, float y)
@@ -56,7 +56,7 @@ namespace Adjutant.Spatial
             y = Utils.Clamp(y, 0, 1) * scale;
 
             var temp = ((byte)y << 8) | (byte)x;
-            _value = (ushort)temp;
+            bits = (ushort)temp;
         }
 
         public float Length => (float)Math.Sqrt(X * X + Y * Y);
@@ -66,7 +66,7 @@ namespace Adjutant.Spatial
         [CLSCompliant(false)]
         public static explicit operator ushort(UByteN2 value)
         {
-            return value._value;
+            return value.bits;
         }
 
         [CLSCompliant(false)]
@@ -79,7 +79,7 @@ namespace Adjutant.Spatial
 
         public static bool operator ==(UByteN2 point1, UByteN2 point2)
         {
-            return point1._value == point2._value;
+            return point1.bits == point2.bits;
         }
 
         public static bool operator !=(UByteN2 point1, UByteN2 point2)
@@ -89,7 +89,7 @@ namespace Adjutant.Spatial
 
         public static bool Equals(UByteN2 point1, UByteN2 point2)
         {
-            return point1._value.Equals(point2._value);
+            return point1.bits.Equals(point2.bits);
         }
 
         public override bool Equals(object obj)
@@ -107,7 +107,7 @@ namespace Adjutant.Spatial
 
         public override int GetHashCode()
         {
-            return _value.GetHashCode();
+            return bits.GetHashCode();
         }
 
         #endregion

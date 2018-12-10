@@ -14,7 +14,7 @@ namespace Adjutant.Spatial
     /// </summary>
     public struct DHenN3 : IRealVector3D
     {
-        private uint _value;
+        private uint bits;
 
         private const float scaleX = 0x1FF;
         private const float scaleY = 0x3FF;
@@ -27,13 +27,13 @@ namespace Adjutant.Spatial
         {
             get
             {
-                var temp = _value & 0x3FF;
+                var temp = bits & 0x3FF;
                 return (short)(temp | SignExtendX[temp >> 9]) / scaleX;
             }
             set
             {
                 value = Utils.Clamp(value, -1f, 1f) * scaleX;
-                _value = (uint)((_value & ~0x3FF) | ((uint)value & 0x3FF));
+                bits = (uint)((bits & ~0x3FF) | ((uint)value & 0x3FF));
             }
         }
 
@@ -41,13 +41,13 @@ namespace Adjutant.Spatial
         {
             get
             {
-                var temp = (_value >> 10) & 0x7FF;
+                var temp = (bits >> 10) & 0x7FF;
                 return (short)(temp | SignExtendYZ[temp >> 10]) / scaleY;
             }
             set
             {
                 value = Utils.Clamp(value, -1f, 1f) * scaleY;
-                _value = (uint)((_value & ~(0x7FF << 10)) | (((uint)value & 0x7FF) << 10));
+                bits = (uint)((bits & ~(0x7FF << 10)) | (((uint)value & 0x7FF) << 10));
             }
         }
 
@@ -55,20 +55,20 @@ namespace Adjutant.Spatial
         {
             get
             {
-                var temp = (_value >> 21) & 0x7FF;
+                var temp = (bits >> 21) & 0x7FF;
                 return (short)(temp | SignExtendYZ[temp >> 10]) / scaleZ;
             }
             set
             {
                 value = Utils.Clamp(value, -1f, 1f) * scaleZ;
-                _value = (uint)((_value & ~(0x7FF << 21)) | (((uint)value & 0x7FF) << 21));
+                bits = (uint)((bits & ~(0x7FF << 21)) | (((uint)value & 0x7FF) << 21));
             }
         }
 
         [CLSCompliant(false)]
         public DHenN3(uint value)
         {
-            _value = value;
+            bits = value;
         }
 
         public DHenN3(float x, float y, float z)
@@ -77,9 +77,9 @@ namespace Adjutant.Spatial
             y = Utils.Clamp(y, -1, 1) * scaleY;
             z = Utils.Clamp(z, -1, 1) * scaleZ;
 
-            _value = (((uint)z & 0x7FF) << 21) |
-                     (((uint)y & 0x7FF) << 10) |
-                     ((uint)x & 0x3FF);
+            bits = (((uint)z & 0x7FF) << 21) |
+                   (((uint)y & 0x7FF) << 10) |
+                    ((uint)x & 0x3FF);
         }
 
         public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z);
@@ -89,7 +89,7 @@ namespace Adjutant.Spatial
         [CLSCompliant(false)]
         public static explicit operator uint(DHenN3 value)
         {
-            return value._value;
+            return value.bits;
         }
 
         [CLSCompliant(false)]
@@ -102,7 +102,7 @@ namespace Adjutant.Spatial
 
         public static bool operator ==(DHenN3 point1, DHenN3 point2)
         {
-            return point1._value == point2._value;
+            return point1.bits == point2.bits;
         }
 
         public static bool operator !=(DHenN3 point1, DHenN3 point2)
@@ -112,7 +112,7 @@ namespace Adjutant.Spatial
 
         public static bool Equals(DHenN3 point1, DHenN3 point2)
         {
-            return point1._value.Equals(point2._value);
+            return point1.bits.Equals(point2.bits);
         }
 
         public override bool Equals(object obj)
@@ -130,7 +130,7 @@ namespace Adjutant.Spatial
 
         public override int GetHashCode()
         {
-            return _value.GetHashCode();
+            return bits.GetHashCode();
         }
 
         #endregion
