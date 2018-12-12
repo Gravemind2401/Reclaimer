@@ -20,8 +20,8 @@ namespace Adjutant.Spatial
         private const float scaleY = 0x3FF;
         private const float scaleZ = 0x3FF;
 
-        private static uint[] SignExtendX = { 0x00000000, 0xFFFFFC00 };
-        private static uint[] SignExtendYZ = { 0x00000000, 0xFFFFF800 };
+        private static readonly uint[] SignExtendX = { 0x00000000, 0xFFFFFC00 };
+        private static readonly uint[] SignExtendYZ = { 0x00000000, 0xFFFFF800 };
 
         public float X
         {
