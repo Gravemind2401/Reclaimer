@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Adjutant.Spatial
 {
     /// <summary>
-    /// A 2-dimensional Vector compressed into 16 bits.
+    /// A 2-dimensional vector compressed into 16 bits.
     /// Each dimension is limited to a minimum of 0 and a maximum of 1.
     /// Each dimension has 8 bits of precision.
     /// </summary>

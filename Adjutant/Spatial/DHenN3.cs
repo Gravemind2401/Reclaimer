@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Adjutant.Spatial
 {
     /// <summary>
-    /// A 3-dimensional Vector compressed into 32 bits.
+    /// A 3-dimensional vector compressed into 32 bits.
     /// Each dimension is limited to a minimum of -1 and a maximum of 1.
     /// The X dimension has 10 bits of precision, while the Y and Z dimensions have 11 bits of precision.
     /// </summary>
