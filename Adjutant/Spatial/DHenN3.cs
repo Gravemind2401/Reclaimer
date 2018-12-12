@@ -17,8 +17,7 @@ namespace Adjutant.Spatial
         private uint bits;
 
         private const float scaleX = 0x1FF;
-        private const float scaleY = 0x3FF;
-        private const float scaleZ = 0x3FF;
+        private const float scaleYZ = 0x3FF;
 
         private static readonly uint[] SignExtendX = { 0x00000000, 0xFFFFFC00 };
         private static readonly uint[] SignExtendYZ = { 0x00000000, 0xFFFFF800 };
@@ -42,11 +41,11 @@ namespace Adjutant.Spatial
             get
             {
                 var temp = (bits >> 10) & 0x7FF;
-                return (short)(temp | SignExtendYZ[temp >> 10]) / scaleY;
+                return (short)(temp | SignExtendYZ[temp >> 10]) / scaleYZ;
             }
             set
             {
-                value = Utils.Clamp(value, -1f, 1f) * scaleY;
+                value = Utils.Clamp(value, -1f, 1f) * scaleYZ;
                 bits = (uint)((bits & ~(0x7FF << 10)) | (((uint)value & 0x7FF) << 10));
             }
         }
@@ -56,11 +55,11 @@ namespace Adjutant.Spatial
             get
             {
                 var temp = (bits >> 21) & 0x7FF;
-                return (short)(temp | SignExtendYZ[temp >> 10]) / scaleZ;
+                return (short)(temp | SignExtendYZ[temp >> 10]) / scaleYZ;
             }
             set
             {
-                value = Utils.Clamp(value, -1f, 1f) * scaleZ;
+                value = Utils.Clamp(value, -1f, 1f) * scaleYZ;
                 bits = (uint)((bits & ~(0x7FF << 21)) | (((uint)value & 0x7FF) << 21));
             }
         }
@@ -74,8 +73,8 @@ namespace Adjutant.Spatial
         public DHenN3(float x, float y, float z)
         {
             x = Utils.Clamp(x, -1, 1) * scaleX;
-            y = Utils.Clamp(y, -1, 1) * scaleY;
-            z = Utils.Clamp(z, -1, 1) * scaleZ;
+            y = Utils.Clamp(y, -1, 1) * scaleYZ;
+            z = Utils.Clamp(z, -1, 1) * scaleYZ;
 
             bits = (((uint)z & 0x7FF) << 21) |
                    (((uint)y & 0x7FF) << 10) |

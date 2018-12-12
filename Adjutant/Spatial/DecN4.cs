@@ -17,6 +17,7 @@ namespace Adjutant.Spatial
         private uint bits;
 
         private const float scale = 0x1FF;
+        private const float scaleW = 0x001;
 
         private static readonly uint[] SignExtend = { 0x00000000, 0xFFFFFC00 };
         private static readonly uint[] SignExtendW = { 0x00000000, 0xFFFFFFFC };
@@ -68,11 +69,11 @@ namespace Adjutant.Spatial
             get
             {
                 var temp = (bits >> 30) & 0x003;
-                return (short)(temp | SignExtendW[temp >> 1]);
+                return (short)(temp | SignExtendW[temp >> 1]) / scaleW;
             }
             set
             {
-                value = Utils.Clamp(value, -1f, 1f);
+                value = Utils.Clamp(value, -1f, 1f) * scaleW;
                 bits = (uint)((bits & ~(0x003 << 30)) | (((uint)value & 0x003) << 30));
             }
         }
@@ -88,7 +89,7 @@ namespace Adjutant.Spatial
             x = Utils.Clamp(x, -1, 1) * scale;
             y = Utils.Clamp(y, -1, 1) * scale;
             z = Utils.Clamp(z, -1, 1) * scale;
-            w = Utils.Clamp(w, -1, 1);
+            w = Utils.Clamp(w, -1, 1) * scaleW;
 
             bits = (((uint)w & 0x003) << 30) |
                    (((uint)z & 0x3FF) << 20) |

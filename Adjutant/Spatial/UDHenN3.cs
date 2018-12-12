@@ -17,8 +17,7 @@ namespace Adjutant.Spatial
         private uint bits;
 
         private const float scaleX = 0x3FF;
-        private const float scaleY = 0x7FF;
-        private const float scaleZ = 0x7FF;
+        private const float scaleYZ = 0x7FF;
 
         public float X
         {
@@ -37,11 +36,11 @@ namespace Adjutant.Spatial
         {
             get
             {
-                return ((bits >> 10) & 0x7FF) / scaleY;
+                return ((bits >> 10) & 0x7FF) / scaleYZ;
             }
             set
             {
-                value = Utils.Clamp(value, 0f, 1f) * scaleY;
+                value = Utils.Clamp(value, 0f, 1f) * scaleYZ;
                 bits = (uint)((bits & ~(0x7FF << 10)) | (((uint)value & 0x7FF) << 10));
             }
         }
@@ -50,11 +49,11 @@ namespace Adjutant.Spatial
         {
             get
             {
-                return ((bits >> 21) & 0x7FF) / scaleZ;
+                return ((bits >> 21) & 0x7FF) / scaleYZ;
             }
             set
             {
-                value = Utils.Clamp(value, 0f, 1f) * scaleZ;
+                value = Utils.Clamp(value, 0f, 1f) * scaleYZ;
                 bits = (uint)((bits & ~(0x7FF << 21)) | (((uint)value & 0x7FF) << 21));
             }
         }
@@ -68,8 +67,8 @@ namespace Adjutant.Spatial
         public UDHenN3(float x, float y, float z)
         {
             x = Utils.Clamp(x, 0, 1) * scaleX;
-            y = Utils.Clamp(y, 0, 1) * scaleY;
-            z = Utils.Clamp(z, 0, 1) * scaleZ;
+            y = Utils.Clamp(y, 0, 1) * scaleYZ;
+            z = Utils.Clamp(z, 0, 1) * scaleYZ;
 
             bits = (((uint)z & 0x7FF) << 21) |
                    (((uint)y & 0x7FF) << 10) |
