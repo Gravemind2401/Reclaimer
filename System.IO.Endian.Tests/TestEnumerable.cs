@@ -31,7 +31,9 @@ namespace System.IO.Endian.Tests
 
                 stream.Position = 0;
                 int index = 0;
-                var enumerable = reader.ReadEnumerable<int>(100);
+                var enumerable = reader.ReadEnumerable<int>(100).ToArray();
+                Assert.AreEqual(100, enumerable.Length);
+
                 foreach (var i in enumerable)
                     Assert.AreEqual(rand[index++], i);
             }

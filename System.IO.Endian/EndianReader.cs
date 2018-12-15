@@ -894,7 +894,7 @@ namespace System.IO.Endian
             if (count < 0)
                 throw Exceptions.ParamMustBeNonNegative(nameof(count), count);
 
-            int i = 1;
+            int i = 0;
             while (i++ < count && BaseStream.Position < BaseStream.Length)
                 yield return ReadObject<T>();
         }
@@ -910,7 +910,7 @@ namespace System.IO.Endian
             if (count < 0)
                 throw Exceptions.ParamMustBeNonNegative(nameof(count), count);
 
-            int i = 1;
+            int i = 0;
             while (i++ < count && BaseStream.Position < BaseStream.Length)
                 yield return ReadObject<T>(version);
         }
