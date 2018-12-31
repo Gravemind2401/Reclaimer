@@ -1,4 +1,5 @@
-﻿using Adjutant.Utilities;
+﻿using Adjutant.Geometry;
+using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Adjutant.Spatial
     /// Each dimension is limited to a minimum of 0 and a maximum of 1.
     /// Each dimension has 8 bits of precision.
     /// </summary>
-    public struct UByteN4 : IRealVector4D
+    public struct UByteN4 : IRealVector4D, IXMVector
     {
         private uint bits;
 
@@ -96,6 +97,12 @@ namespace Adjutant.Spatial
         {
             return new UByteN4(value);
         }
+
+        #region IXMVector
+
+        VectorType IXMVector.VectorType => VectorType.UInt8_N4;
+
+        #endregion
 
         #region Equality Operators
 

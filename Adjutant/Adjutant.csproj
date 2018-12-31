@@ -66,6 +66,7 @@
     <Compile Include="Blam\Halo2\CacheFile.cs" />
     <Compile Include="Blam\Halo2\HeaderAddressTranslator.cs" />
     <Compile Include="Blam\Halo2\TagAddressTranslator.cs" />
+    <Compile Include="Geometry\VectorType.cs" />
     <Compile Include="Imaging\DdsHeader.cs" />
     <Compile Include="Imaging\DdsPixelFormat.cs" />
     <Compile Include="IO\DependencyReader.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Spatial\DecN4.cs" />
     <Compile Include="Spatial\HenDN3.cs" />
     <Compile Include="Spatial\IRealBounds.cs" />
+    <Compile Include="Geometry\IXMVector.cs" />
     <Compile Include="Spatial\RealBounds.cs" />
     <Compile Include="Spatial\UByteN2.cs" />
     <Compile Include="Spatial\UByteN4.cs" />

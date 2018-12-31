@@ -1,4 +1,5 @@
-﻿using Adjutant.Utilities;
+﻿using Adjutant.Geometry;
+using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Adjutant.Spatial
     /// Each dimension is limited to a minimum of 0 and a maximum of 1.
     /// The X and Y dimensions have 11 bits of precision, while the Z dimensions has 10 bits of precision.
     /// </summary>
-    public struct UHenDN3 : IRealVector3D
+    public struct UHenDN3 : IRealVector3D, IXMVector
     {
         private uint bits;
 
@@ -90,6 +91,18 @@ namespace Adjutant.Spatial
         {
             return new UHenDN3(value);
         }
+
+        #region IXMVector
+
+        float IXMVector.W
+        {
+            get { return float.NaN; }
+            set { }
+        }
+
+        VectorType IXMVector.VectorType => VectorType.UHenDN3;
+
+        #endregion
 
         #region Equality Operators
 

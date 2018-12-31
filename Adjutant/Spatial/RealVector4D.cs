@@ -1,4 +1,5 @@
-﻿using Adjutant.Utilities;
+﻿using Adjutant.Geometry;
+using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO.Endian;
@@ -15,7 +16,7 @@ namespace Adjutant.Spatial
     /// </summary>
     [FixedSize(16)]
     [StructLayout(LayoutKind.Sequential)]
-    public struct RealVector4D : IRealVector4D
+    public struct RealVector4D : IRealVector4D, IXMVector
     {
         private float x, y, z, w;
 
@@ -58,5 +59,11 @@ namespace Adjutant.Spatial
         public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z + W * W);
 
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]");
+
+        #region IXMVector
+
+        VectorType IXMVector.VectorType => VectorType.Float32_4;
+
+        #endregion
     }
 }
