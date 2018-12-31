@@ -63,6 +63,9 @@
     <Compile Include="Blam\Halo1\TagAddressTranslator.cs" />
     <Compile Include="Blam\Halo1\TagReference.cs" />
     <Compile Include="Blam\Halo1\WorldVertex.cs" />
+    <Compile Include="Blam\Halo2\CacheFile.cs" />
+    <Compile Include="Blam\Halo2\HeaderAddressTranslator.cs" />
+    <Compile Include="Blam\Halo2\TagAddressTranslator.cs" />
     <Compile Include="Imaging\DdsHeader.cs" />
     <Compile Include="Imaging\DdsPixelFormat.cs" />
     <Compile Include="IO\DependencyReader.cs" />
