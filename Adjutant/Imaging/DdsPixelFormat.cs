@@ -14,6 +14,11 @@ namespace Adjutant.Imaging
     [StructLayout(LayoutKind.Sequential)]
     public struct DdsPixelFormat
     {
+        private static readonly DdsPixelFormat defaultValue =
+            new DdsPixelFormat { dwSize = 32 };
+
+        public static DdsPixelFormat DefaultValue => defaultValue;
+
         [Offset(0)]
         [DataLength]
         public uint dwSize { get; set; } //must be 32
@@ -38,7 +43,7 @@ namespace Adjutant.Imaging
 
         [Offset(28)]
         public uint dwABitMask { get; set; }
-    };
+    }
 
     [Flags]
     public enum FormatFlags

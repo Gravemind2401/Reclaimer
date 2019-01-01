@@ -14,6 +14,17 @@ namespace Adjutant.Imaging
     [StructLayout(LayoutKind.Sequential)]
     public struct DdsHeader
     {
+        private static readonly DdsHeader defaultValue =
+            new DdsHeader
+            {
+                dwSize = 124,
+                dwFlags = HeaderFlags.DDSD_CAPS | HeaderFlags.DDSD_HEIGHT | HeaderFlags.DDSD_WIDTH | HeaderFlags.DDSD_PIXELFORMAT,
+                dwReserved1 = new uint[11],
+                ddspf = DdsPixelFormat.DefaultValue
+            };
+
+        public static DdsHeader DefaultValue => defaultValue;
+
         [Offset(0)]
         public uint dwSize { get; set; } //must be 124
 

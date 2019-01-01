@@ -69,7 +69,9 @@
     <Compile Include="Blam\Halo2\TagAddressTranslator.cs" />
     <Compile Include="Geometry\VectorType.cs" />
     <Compile Include="Imaging\DdsHeader.cs" />
+    <Compile Include="Imaging\DdsHeaderDxt10.cs" />
     <Compile Include="Imaging\DdsPixelFormat.cs" />
+    <Compile Include="Imaging\FourCC.cs" />
     <Compile Include="IO\DependencyReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Spatial\DecN4.cs" />
