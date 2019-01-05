@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace System.Drawing.Dds
 {
     /* https://docs.microsoft.com/en-us/windows/desktop/direct3ddds/dds-header-dxt10 */
-    [StructLayout(LayoutKind.Sequential)]
-    public class DdsHeaderDxt10
+    internal class DdsHeaderDxt10
     {
         public DxgiFormat DxgiFormat { get; set; }
         public D3D10ResourceDimension ResourceDimension { get; set; }
-        public D3D10ResourceMiscFlag MiscFlag { get; set; }
+        public D3D10ResourceMiscFlags MiscFlags { get; set; }
         public uint ArraySize { get; set; }
         public D3D10ResourceMiscFlag2 MiscFlags2 { get; set; }
     }
@@ -87,7 +85,7 @@ namespace System.Drawing.Dds
         R8_SInt,
         A8_UNorm,
         R1_UNorm,
-        R9G9B9E5_SharedEXP,
+        R9G9B9E5_SharedExp,
         R8G8_B8G8_UNorm,
         G8R8_G8B8_UNorm,
         BC1_Typeless,
@@ -142,7 +140,7 @@ namespace System.Drawing.Dds
         Force_UInt
     }
 
-    public enum D3D10ResourceDimension
+    internal enum D3D10ResourceDimension
     {
         Unknown,
         Buffer,
@@ -151,13 +149,15 @@ namespace System.Drawing.Dds
         Texture3D
     }
 
-    public enum D3D10ResourceMiscFlag
+    [Flags]
+    public enum D3D10ResourceMiscFlags
     {
-        GenerateMips,
-        Shared,
-        TextureCube,
-        SharedKeyedMutex,
-        GdiCompatible
+        None = 0,
+        GenerateMips = 0x01,
+        Shared = 0x02,
+        TextureCube = 0x04,
+        SharedKeyedMutex = 0x08,
+        GdiCompatible = 0x10
     }
 
     public enum D3D10ResourceMiscFlag2

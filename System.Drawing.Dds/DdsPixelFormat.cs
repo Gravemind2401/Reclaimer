@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace System.Drawing.Dds
 {
     /* https://docs.microsoft.com/en-us/windows/desktop/direct3ddds/dds-pixelformat */
-    public class DdsPixelFormat
+    internal class DdsPixelFormat
     {
-        private const uint dwSize = 32;
+        public const uint Size = 32;
 
-        public static uint Size => dwSize;
         public FormatFlags Flags { get; set; }
         public uint FourCC { get; set; }
         public uint RgbBitCount { get; set; }
@@ -23,7 +21,7 @@ namespace System.Drawing.Dds
     }
 
     [Flags]
-    public enum FormatFlags
+    internal enum FormatFlags
     {
         AlphaPixels = 0x1,
         Alpha = 0x2,

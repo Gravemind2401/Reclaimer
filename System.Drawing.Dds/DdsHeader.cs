@@ -1,44 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace System.Drawing.Dds
 {
     /* https://docs.microsoft.com/en-us/windows/desktop/direct3ddds/dds-header */
-    public class DdsHeader
+    internal class DdsHeader
     {
-        private const uint dwSize = 124;
-        private readonly uint[] dwReserved1;
-        private readonly DdsPixelFormat ddspf;
-
-        public static uint Size => dwSize;
+        public const uint Size = 124;
         public HeaderFlags Flags { get; set; }
         public uint Height { get; set; } //required
-        public uint Width { get; set; } //required
+        public uint Width { get; set; }  //required
         public uint PitchOrLinearSize { get; set; }
         public uint Depth { get; set; }
         public uint MipmapCount { get; set; }
-        public uint[] Reserved1 => dwReserved1; //unused
-        public DdsPixelFormat PixelFormat => ddspf;
+        public uint[] Reserved1 { get; private set; } //unused
+        public DdsPixelFormat PixelFormat { get; private set; }
         public DdsCaps Caps { get; set; }
         public DdsCaps2 Caps2 { get; set; }
         public uint Caps3 { get; set; } //unused
         public uint Caps4 { get; set; } //unused
-        public uint Reserved2 { get; set; } //unused
+        public uint Reserved2 { get; set; } //unused 
 
         public DdsHeader()
         {
-            Flags = HeaderFlags.Default;
-            dwReserved1 = new uint[11];
-            ddspf = new DdsPixelFormat();
+            Reserved1 = new uint[11];
+            PixelFormat = new DdsPixelFormat();
         }
     }
 
     [Flags]
-    public enum HeaderFlags
+    internal enum HeaderFlags
     {
         Default = Caps | Height | Width | PixelFormat,
 
@@ -53,20 +47,15 @@ namespace System.Drawing.Dds
     }
 
     [Flags]
-    public enum DdsCaps
+    internal enum DdsCaps
     {
         Complex = 0x8,
-        Texture = 0x1000,
-        Mipmap = 0x400000,
-
-        //aliases
-        DdsSurfaceFlagsTexture = Texture,
-        DdsSurfaceFlagsCubemap = Complex,
-        DdsSurfaceFlagsMipmap =  Complex | Mipmap
+        Texture = 0x1000, //required
+        Mipmap = 0x400000
     }
 
     [Flags]
-    public enum DdsCaps2
+    internal enum DdsCaps2
     {
         Cubemap = 0x200,
         CubemapPositiveX = 0x400,
@@ -75,16 +64,6 @@ namespace System.Drawing.Dds
         CubemapNegativeY = 0x2000,
         CubemapPositiveZ = 0x4000,
         CubemapNegativeZ = 0x8000,
-        Volume = 0x200000,
-
-        //aliases
-        DdsCubemapPositiveX = Cubemap | CubemapPositiveX,
-        DdsCubemapNegativeX = Cubemap | CubemapNegativeX,
-        DdsCubemapPositiveY = Cubemap | CubemapPositiveY,
-        DdsCubemapNegativeY = Cubemap | CubemapNegativeY,
-        DdsCubemapPositiveZ = Cubemap | CubemapPositiveZ,
-        DdsCubemapNegativeZ = Cubemap | CubemapNegativeZ,
-        DdsCubemapAllFaces = DdsCubemapPositiveX | DdsCubemapNegativeX | DdsCubemapPositiveY | DdsCubemapNegativeY | DdsCubemapPositiveZ | DdsCubemapNegativeZ,
-        DdsFlagsVolume = Volume
+        Volume = 0x200000
     }
 }

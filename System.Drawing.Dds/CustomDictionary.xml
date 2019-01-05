@@ -5,7 +5,10 @@
       <Word>Cubemap</Word>
       <Word>Dds</Word>
       <Word>Dxgi</Word>
+      <Word>Gdi</Word>
       <Word>Mipmap</Word>
+      <Word>Mips</Word>
+      <Word>Premultiplied</Word>
       <Word>Typeless</Word>
     </Recognized>
     <Deprecated>
@@ -21,9 +24,15 @@
   <Acronyms>
     <CasingExceptions>
       <Acronym>ATI</Acronym>
+      <Acronym>AYUV</Acronym>
       <Acronym>Dds</Acronym>
       <Acronym>Dxgi</Acronym>
       <Acronym>DXT</Acronym>
+      <Acronym>GRGB</Acronym>
+      <Acronym>RGBG</Acronym>
+      <Acronym>SRGB</Acronym>
+      <Acronym>YUV</Acronym>
+      <Acronym>YUY</Acronym>
     </CasingExceptions>
   </Acronyms>
 </Dictionary>
