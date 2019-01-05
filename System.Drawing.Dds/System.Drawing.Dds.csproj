@@ -50,7 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DdsHeader.cs" />
+    <Compile Include="DdsHeaderDxt10.cs" />
     <Compile Include="DdsPixelFormat.cs" />
+    <Compile Include="FourCC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
