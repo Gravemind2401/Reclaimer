@@ -8,69 +8,83 @@ using System.Threading.Tasks;
 namespace System.Drawing.Dds
 {
     /* https://docs.microsoft.com/en-us/windows/desktop/direct3ddds/dds-header */
-    [StructLayout(LayoutKind.Sequential)]
-    public struct DdsHeader
+    public class DdsHeader
     {
-        public uint dwSize { get; set; } //must be 124
-        public HeaderFlags dwFlags { get; set; }
-        public uint dwHeight { get; set; } //required
-        public uint dwWidth { get; set; } //required
-        public uint dwPitchOrLinearSize { get; set; }
-        public uint dwDepth { get; set; }
-        public uint dwMipMapCount { get; set; }
-        public uint[] dwReserved1 { get; set; } //length 11, unused
-        public DdsPixelFormat ddspf { get; set; }
-        public DdsCaps dwCaps { get; set; }
-        public DdsCaps2 dwCaps2 { get; set; }
-        public uint dwCaps3 { get; set; } //unused
-        public uint dwCaps4 { get; set; } //unused
-        public uint dwReserved2 { get; set; } //unused
+        private const uint dwSize = 124;
+        private readonly uint[] dwReserved1;
+        private readonly DdsPixelFormat ddspf;
+
+        public static uint Size => dwSize;
+        public HeaderFlags Flags { get; set; }
+        public uint Height { get; set; } //required
+        public uint Width { get; set; } //required
+        public uint PitchOrLinearSize { get; set; }
+        public uint Depth { get; set; }
+        public uint MipmapCount { get; set; }
+        public uint[] Reserved1 => dwReserved1; //unused
+        public DdsPixelFormat PixelFormat => ddspf;
+        public DdsCaps Caps { get; set; }
+        public DdsCaps2 Caps2 { get; set; }
+        public uint Caps3 { get; set; } //unused
+        public uint Caps4 { get; set; } //unused
+        public uint Reserved2 { get; set; } //unused
+
+        public DdsHeader()
+        {
+            Flags = HeaderFlags.Default;
+            dwReserved1 = new uint[11];
+            ddspf = new DdsPixelFormat();
+        }
     }
 
     [Flags]
     public enum HeaderFlags
     {
-        DDSD_CAPS = 0x1, //required
-        DDSD_HEIGHT = 0x2, //required
-        DDSD_WIDTH = 0x4, //required
-        DDSD_PITCH = 0x8,
-        DDSD_PIXELFORMAT = 0x1000, //required
-        DDSD_MIPMAPCOUNT = 0x20000,
-        DDSD_LINEARSIZE = 0x80000,
-        DDSD_DEPTH = 0x800000,
+        Default = Caps | Height | Width | PixelFormat,
+
+        Caps = 0x1, //required
+        Height = 0x2, //required
+        Width = 0x4, //required
+        Pitch = 0x8,
+        PixelFormat = 0x1000, //required
+        MipmapCount = 0x20000,
+        LinearSize = 0x80000,
+        Depth = 0x800000,
     }
 
     [Flags]
     public enum DdsCaps
     {
-        DDSCAPS_COMPLEX = 0x8,
-        DDSCAPS_TEXTURE = 0x1000,
-        DDSCAPS_MIPMAP = 0x400000,
+        Complex = 0x8,
+        Texture = 0x1000,
+        Mipmap = 0x400000,
 
-        DDS_SURFACE_FLAGS_TEXTURE = DDSCAPS_TEXTURE,
-        DDS_SURFACE_FLAGS_CUBEMAP = DDSCAPS_COMPLEX,
-        DDS_SURFACE_FLAGS_MIPMAP = DDSCAPS_COMPLEX | DDSCAPS_MIPMAP
+        //aliases
+        DdsSurfaceFlagsTexture = Texture,
+        DdsSurfaceFlagsCubemap = Complex,
+        DdsSurfaceFlagsMipmap =  Complex | Mipmap
     }
 
     [Flags]
     public enum DdsCaps2
     {
-        DDSCAPS2_CUBEMAP = 0x200,
-        DDSCAPS2_CUBEMAP_POSITIVEX = 0x400,
-        DDSCAPS2_CUBEMAP_NEGATIVEX = 0x800,
-        DDSCAPS2_CUBEMAP_POSITIVEY = 0x1000,
-        DDSCAPS2_CUBEMAP_NEGATIVEY = 0x2000,
-        DDSCAPS2_CUBEMAP_POSITIVEZ = 0x4000,
-        DDSCAPS2_CUBEMAP_NEGATIVEZ = 0x8000,
-        DDSCAPS2_VOLUME = 0x200000,
+        Cubemap = 0x200,
+        CubemapPositiveX = 0x400,
+        CubemapNegativeX = 0x800,
+        CubemapPositiveY = 0x1000,
+        CubemapNegativeY = 0x2000,
+        CubemapPositiveZ = 0x4000,
+        CubemapNegativeZ = 0x8000,
+        Volume = 0x200000,
 
-        DDS_CUBEMAP_POSITIVEX = DDSCAPS2_CUBEMAP | DDSCAPS2_CUBEMAP_POSITIVEX,
-        DDS_CUBEMAP_NEGATIVEX = DDSCAPS2_CUBEMAP | DDSCAPS2_CUBEMAP_NEGATIVEX,
-        DDS_CUBEMAP_POSITIVEY = DDSCAPS2_CUBEMAP | DDSCAPS2_CUBEMAP_POSITIVEY,
-        DDS_CUBEMAP_NEGATIVEY = DDSCAPS2_CUBEMAP | DDSCAPS2_CUBEMAP_NEGATIVEY,
-        DDS_CUBEMAP_POSITIVEZ = DDSCAPS2_CUBEMAP | DDSCAPS2_CUBEMAP_POSITIVEZ,
-        DDS_CUBEMAP_NEGATIVEZ = DDSCAPS2_CUBEMAP | DDSCAPS2_CUBEMAP_NEGATIVEZ,
-        DDS_CUBEMAP_ALLFACES = DDS_CUBEMAP_POSITIVEX | DDS_CUBEMAP_NEGATIVEX | DDS_CUBEMAP_POSITIVEY | DDS_CUBEMAP_NEGATIVEY | DDS_CUBEMAP_POSITIVEZ | DDS_CUBEMAP_NEGATIVEZ,
-        DDS_FLAGS_VOLUME = DDSCAPS2_VOLUME
+        //aliases
+        DdsCubemapPositiveX = Cubemap | CubemapPositiveX,
+        DdsCubemapNegativeX = Cubemap | CubemapNegativeX,
+        DdsCubemapPositiveY = Cubemap | CubemapPositiveY,
+        DdsCubemapNegativeY = Cubemap | CubemapNegativeY,
+        DdsCubemapPositiveZ = Cubemap | CubemapPositiveZ,
+        DdsCubemapNegativeZ = Cubemap | CubemapNegativeZ,
+        DdsCubemapAllFaces = DdsCubemapPositiveX | DdsCubemapNegativeX | DdsCubemapPositiveY | DdsCubemapNegativeY | DdsCubemapPositiveZ | DdsCubemapNegativeZ,
+        DdsFlagsVolume = Volume
     }
 }
