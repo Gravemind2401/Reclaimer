@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace System.Drawing.Dds
 {
-    public class DdsImage
+    public partial class DdsImage
     {
         private const uint DDS = 0x20534444;
 
@@ -227,6 +227,68 @@ namespace System.Drawing.Dds
         }
 
         #endregion
+
+        public void WriteToDisk(string fileName)
+        {
+            if (fileName == null)
+                throw new ArgumentNullException(nameof(fileName));
+
+            var dir = Directory.GetParent(fileName).FullName;
+
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                WriteToStream(fs);
+
+        }
+
+        public void WriteToStream(Stream stream)
+        {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+
+            using (var writer = new BinaryWriter(stream, Encoding.UTF8, true))
+            {
+                writer.Write(DDS);
+
+                writer.Write(DdsHeader.Size);
+                writer.Write((uint)header.Flags);
+                writer.Write(header.Height);
+                writer.Write(header.Width);
+                writer.Write(header.PitchOrLinearSize);
+                writer.Write(header.Depth);
+                writer.Write(header.MipmapCount);
+                foreach (var i in header.Reserved1)
+                    writer.Write(i);
+
+                writer.Write(DdsPixelFormat.Size);
+                writer.Write((uint)header.PixelFormat.Flags);
+                writer.Write(header.PixelFormat.FourCC);
+                writer.Write(header.PixelFormat.RgbBitCount);
+                writer.Write(header.PixelFormat.RBitmask);
+                writer.Write(header.PixelFormat.GBitmask);
+                writer.Write(header.PixelFormat.BBitmask);
+                writer.Write(header.PixelFormat.ABitmask);
+
+                writer.Write((uint)header.Caps);
+                writer.Write((uint)header.Caps2);
+                writer.Write(header.Caps3);
+                writer.Write(header.Caps4);
+                writer.Write(header.Reserved2);
+
+                if (header.PixelFormat.FourCC == (uint)FourCC.DX10)
+                {
+                    writer.Write((uint)dx10Header.DxgiFormat);
+                    writer.Write((uint)dx10Header.ResourceDimension);
+                    writer.Write((uint)dx10Header.MiscFlags);
+                    writer.Write(dx10Header.ArraySize);
+                    writer.Write((uint)dx10Header.MiscFlags2);
+                }
+
+                writer.Write(data);
+            }
+        }
     }
 
     /// <summary>
@@ -265,23 +327,24 @@ namespace System.Drawing.Dds
     /// </summary>
     public enum FourCC
     {
-        ATI1 = 0x31495441,
-        ATI2 = 0x32495441,
+        ATI1 = 0x31495441, //Also BC4, DXT5A
+        ATI2 = 0x32495441, //Also BC5, DXN
 
-        BC4U = 0x55344342,
-        BC4S = 0x53344342,
-        BC5U = 0x55354342,
-        BC5S = 0x53354342,
+        BC4U = 0x55344342, //DXGI_FORMAT_BC4_UNORM
+        BC4S = 0x53344342, //DXGI_FORMAT_BC4_SNORM
 
-        DXT1 = 0x31545844,
-        DXT2 = 0x32545844,
-        DXT3 = 0x33545844,
-        DXT4 = 0x34545844,
-        DXT5 = 0x35545844,
+        BC5U = 0x55354342, //DXGI_FORMAT_BC5_UNORM
+        BC5S = 0x53354342, //DXGI_FORMAT_BC5_SNORM
+
+        DXT1 = 0x31545844, //DXGI_FORMAT_BC1_UNORM
+        DXT2 = 0x32545844, //D3DFMT_DXT2 (also BC2)
+        DXT3 = 0x33545844, //DXGI_FORMAT_BC2_UNORM
+        DXT4 = 0x34545844, //D3DFMT_DXT4 (also BC3)
+        DXT5 = 0x35545844, //DXGI_FORMAT_BC3_UNORM
         DX10 = 0x30315844,
 
-        RGBG = 0x47424752,
-        GRGB = 0x42475247,
+        RGBG = 0x47424752, //DXGI_FORMAT_R8G8_B8G8_UNORM
+        GRGB = 0x42475247, //DXGI_FORMAT_G8R8_G8B8_UNORM
     }
 
     public enum DxgiTextureType

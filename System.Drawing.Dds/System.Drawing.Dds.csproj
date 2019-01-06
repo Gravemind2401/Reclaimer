@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DdsConvert.cs" />
     <Compile Include="DdsHeader.cs" />
     <Compile Include="DdsHeaderDxt10.cs" />
     <Compile Include="DdsImage.cs" />
