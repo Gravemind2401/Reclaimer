@@ -240,7 +240,6 @@ namespace System.Drawing.Dds
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
                 WriteToStream(fs);
-
         }
 
         public void WriteToStream(Stream stream)
@@ -345,6 +344,10 @@ namespace System.Drawing.Dds
 
         RGBG = 0x47424752, //DXGI_FORMAT_R8G8_B8G8_UNORM
         GRGB = 0x42475247, //DXGI_FORMAT_G8R8_G8B8_UNORM
+
+        UYVY = 0x59565955, //D3DFMT_UYVY
+        YUY2 = 0x32595559, //D3DFMT_YUY2
+        V8U8 = 117, //D3DFMT_CxV8U8
     }
 
     public enum DxgiTextureType

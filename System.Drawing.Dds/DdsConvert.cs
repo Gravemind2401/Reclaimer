@@ -26,11 +26,22 @@ namespace System.Drawing.Dds
                 for (int xBlock = 0; xBlock < xBlocks; xBlock++)
                 {
                     var srcIndex = (int)(yBlock * xBlocks + xBlock) * bytesPerBlock;
-                    palette[0] = BgraColour.From565(BitConverter.ToUInt16(data, srcIndex));
-                    palette[1] = BgraColour.From565(BitConverter.ToUInt16(data, srcIndex + 2));
+                    var c0 = BitConverter.ToUInt16(data, srcIndex);
+                    var c1 = BitConverter.ToUInt16(data, srcIndex + 2);
 
-                    palette[2] = Lerp(palette[0], palette[1], 1 / 3f);
-                    palette[3] = Lerp(palette[0], palette[1], 2 / 3f);
+                    palette[0] = BgraColour.From565(c0);
+                    palette[1] = BgraColour.From565(c1);
+
+                    if (c0 <= c1)
+                    {
+                        palette[2] = Lerp(palette[0], palette[1], 1 / 2f);
+                        palette[3] = new BgraColour(); //zero on all channels
+                    }
+                    else
+                    {
+                        palette[2] = Lerp(palette[0], palette[1], 1 / 3f);
+                        palette[3] = Lerp(palette[0], palette[1], 2 / 3f);
+                    }
 
                     for (int i = 0; i < 4; i++)
                     {
