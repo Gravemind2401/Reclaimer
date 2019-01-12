@@ -17,13 +17,15 @@ namespace System.Drawing.Dds
 
         #region Constructors
 
-        private DdsImage()
+        private DdsImage(DdsHeader header, DdsHeaderDxt10 dx10Header, byte[] data)
         {
-            header = new DdsHeader();
-            dx10Header = new DdsHeaderDxt10();
+            this.header = header;
+            this.dx10Header = dx10Header;
+            this.data = data;
         }
 
-        private DdsImage(uint height, uint width, byte[] pixelData) : this()
+        private DdsImage(uint height, uint width, byte[] pixelData) 
+            : this(new DdsHeader(), new DdsHeaderDxt10(), pixelData)
         {
             if (pixelData == null)
                 throw new ArgumentNullException(nameof(pixelData));
@@ -36,6 +38,13 @@ namespace System.Drawing.Dds
             data = pixelData;
         }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="DdsImage"/> with the specified dimensions, pixel format and pixel data.
+        /// </summary>
+        /// <param name="height">The height of the image in pixels.</param>
+        /// <param name="width">The width of the image in pixels.</param>
+        /// <param name="fourCC">The FourCC code representing the format of the pixel data.</param>
+        /// <param name="pixelData">The binary data containing the pixels of the image.</param>
         public DdsImage(uint height, uint width, uint fourCC, byte[] pixelData)
             : this(height, width, pixelData)
         {
@@ -43,30 +52,56 @@ namespace System.Drawing.Dds
             header.PixelFormat.FourCC = fourCC;
         }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="DdsImage"/> with the specified dimensions, pixel format and pixel data.
+        /// </summary>
+        /// <param name="height">The height of the image in pixels.</param>
+        /// <param name="width">The width of the image in pixels.</param>
+        /// <param name="fourCC">The FourCC code representing the format of the pixel data.</param>
+        /// <param name="pixelData">The binary data containing the pixels of the image.</param>
         public DdsImage(uint height, uint width, FourCC fourCC, byte[] pixelData)
             : this(height, width, (uint)fourCC, pixelData)
         {
 
         }
 
-        public DdsImage(uint height, uint width, uint bpp, uint RMask, uint GMask, uint BMask, uint AMask, byte[] pixelData)
+        /// <summary>
+        /// Creates a new instance of <see cref="DdsImage"/> with the specified dimensions and pixel data, where the pixel data is uncompressed.
+        /// </summary>
+        /// <param name="height">The height of the image in pixels.</param>
+        /// <param name="width">The width of the image in pixels.</param>
+        /// <param name="bpp">The number of bits used to represent each pixel.</param>
+        /// <param name="redMask">The mask used to isolate data for the red channel.</param>
+        /// <param name="greenMask">The mask used to isolate data for the green channel.</param>
+        /// <param name="blueMask">The mask used to isolate data for the blue channel.</param>
+        /// <param name="alphaMask">The mask used to isolate data for the alpha channel.</param>
+        /// <param name="pixelData">The binary data containing the pixels of the image.</param>
+        public DdsImage(uint height, uint width, uint bpp, uint redMask, uint greenMask, uint blueMask, uint alphaMask, byte[] pixelData)
             : this(height, width, pixelData)
         {
             header.PixelFormat.Flags |= FormatFlags.Rgb;
             header.PixelFormat.RgbBitCount = bpp;
-            header.PixelFormat.RBitmask = RMask;
-            header.PixelFormat.GBitmask = GMask;
-            header.PixelFormat.BBitmask = BMask;
-            header.PixelFormat.ABitmask = AMask;
+            header.PixelFormat.RBitmask = redMask;
+            header.PixelFormat.GBitmask = greenMask;
+            header.PixelFormat.BBitmask = blueMask;
+            header.PixelFormat.ABitmask = alphaMask;
 
-            if (AMask > 0)
+            if (alphaMask > 0)
             {
                 header.PixelFormat.Flags |= FormatFlags.AlphaPixels;
-                if (RMask == 0 && GMask == 0 && BMask == 0)
+                if (redMask == 0 && greenMask == 0 && blueMask == 0)
                     header.PixelFormat.Flags |= FormatFlags.Alpha;
             }
         }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="DdsImage"/> with the specified dimensions and pixel data, using D3D10 header and format information.
+        /// </summary>
+        /// <param name="height">The height of the image in pixels.</param>
+        /// <param name="width">The width of the image in pixels.</param>
+        /// <param name="dxgiFormat">The DxgiFormat value that identifies the format of the pixel data.</param>
+        /// <param name="textureType">The type of texture represented by the image.</param>
+        /// <param name="pixelData">The binary data containing the pixels of the image.</param>
         public DdsImage(uint height, uint width, DxgiFormat dxgiFormat, DxgiTextureType textureType, byte[] pixelData)
             : this(height, width, FourCC.DX10, pixelData)
         {
@@ -199,6 +234,9 @@ namespace System.Drawing.Dds
             }
         }
 
+        /// <summary>
+        /// Gets or sets flags indicating the type of texture represented by the image.
+        /// </summary>
         public TextureFlags TextureFlags
         {
             get { return (TextureFlags)header.Caps; }
@@ -214,12 +252,20 @@ namespace System.Drawing.Dds
             set { header.Caps2 = (DdsCaps2)value; }
         }
 
+        /// <summary>
+        /// Gets or sets miscellaneous flags for the image.
+        /// <para>These flags are only used if the FourCC code is set to <see cref="FourCC.DX10"/></para>
+        /// </summary>
         public D3D10ResourceMiscFlags DX10ResourceFlags
         {
             get { return dx10Header.MiscFlags; }
             set { dx10Header.MiscFlags = value; }
         }
 
+        /// <summary>
+        /// Gets or sets flags indicating the type of alpha used in the image.
+        /// <para>These flags are only used if the FourCC code is set to <see cref="FourCC.DX10"/></para>
+        /// </summary>
         public D3D10ResourceMiscFlag2 DX10AlphaFlags
         {
             get { return dx10Header.MiscFlags2; }
@@ -228,6 +274,11 @@ namespace System.Drawing.Dds
 
         #endregion
 
+        /// <summary>
+        /// Writes the DDS header and pixel data to a file on disk.
+        /// </summary>
+        /// <param name="fileName">The full path of the file to write.</param>
+        /// <exception cref="ArgumentNullException" />
         public void WriteToDisk(string fileName)
         {
             if (fileName == null)
@@ -242,6 +293,11 @@ namespace System.Drawing.Dds
                 WriteToStream(fs);
         }
 
+        /// <summary>
+        /// Writes the DDS header and pixel data to a stream object.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <exception cref="ArgumentNullException" />
         public void WriteToStream(Stream stream)
         {
             if (stream == null)
@@ -286,6 +342,74 @@ namespace System.Drawing.Dds
                 }
 
                 writer.Write(data);
+            }
+        }
+
+        /// <summary>
+        /// Reads a DDS header and pixel data from a file on disk.
+        /// </summary>
+        /// <param name="fileName">The full path of the file to read.</param>
+        /// <exception cref="ArgumentNullException" />
+        public static DdsImage ReadFromDisk(string fileName)
+        {
+            if (!File.Exists(fileName))
+                throw new ArgumentException("The specified file does not exist.", nameof(fileName));
+
+            using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                return ReadFromStream(fs);
+        }
+
+        /// <summary>
+        /// Reads a DDS header and pixel data from a stream object.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <exception cref="ArgumentNullException" />
+        public static DdsImage ReadFromStream(Stream stream)
+        {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+
+            using (var reader = new BinaryReader(stream, Encoding.UTF8, true))
+            {
+                if (reader.ReadUInt32() != DDS)
+                    throw new InvalidOperationException();
+
+                if (reader.ReadUInt32() != DdsHeader.Size)
+                    throw new InvalidDataException();
+
+                var header = new DdsHeader();
+                header.Flags = (HeaderFlags)reader.ReadUInt32();
+                header.Height = reader.ReadUInt32();
+                header.Width = reader.ReadUInt32();
+                header.PitchOrLinearSize = reader.ReadUInt32();
+                header.Depth = reader.ReadUInt32();
+                header.MipmapCount = reader.ReadUInt32();
+                for (int i = 0; i < header.Reserved1.Length; i++)
+                    header.Reserved1[i] = reader.ReadUInt32();
+
+                if (reader.ReadUInt32() != DdsPixelFormat.Size)
+                    throw new InvalidDataException();
+
+                header.PixelFormat.Flags = (FormatFlags)reader.ReadUInt32();
+                header.PixelFormat.FourCC = reader.ReadUInt32();
+                header.PixelFormat.RgbBitCount = reader.ReadUInt32();
+                header.PixelFormat.RBitmask = reader.ReadUInt32();
+                header.PixelFormat.GBitmask = reader.ReadUInt32();
+                header.PixelFormat.BBitmask = reader.ReadUInt32();
+                header.PixelFormat.ABitmask = reader.ReadUInt32();
+
+                var dx10Header = new DdsHeaderDxt10();
+                if (header.PixelFormat.FourCC == (uint)FourCC.DX10)
+                {
+                    dx10Header.DxgiFormat = (DxgiFormat)reader.ReadUInt32();
+                    dx10Header.ResourceDimension = (D3D10ResourceDimension)reader.ReadUInt32();
+                    dx10Header.MiscFlags = (D3D10ResourceMiscFlags)reader.ReadUInt32();
+                    dx10Header.ArraySize = reader.ReadUInt32();
+                    dx10Header.MiscFlags2 = (D3D10ResourceMiscFlag2)reader.ReadUInt32();
+                }
+
+                var data = reader.ReadBytes((int)(stream.Length - stream.Position));
+                return new DdsImage(header, dx10Header, data);
             }
         }
     }
