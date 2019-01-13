@@ -68,10 +68,6 @@
     <Compile Include="Blam\Halo2\HeaderAddressTranslator.cs" />
     <Compile Include="Blam\Halo2\TagAddressTranslator.cs" />
     <Compile Include="Geometry\VectorType.cs" />
-    <Compile Include="Imaging\DdsHeader.cs" />
-    <Compile Include="Imaging\DdsHeaderDxt10.cs" />
-    <Compile Include="Imaging\DdsPixelFormat.cs" />
-    <Compile Include="Imaging\FourCC.cs" />
     <Compile Include="IO\DependencyReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Spatial\DecN4.cs" />
@@ -97,6 +93,10 @@
     <Compile Include="Utilities\IBlockCollection.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\System.Drawing.Dds\System.Drawing.Dds\System.Drawing.Dds.csproj">
+      <Project>{a31a58a8-2bc6-43af-ad81-692b2e37f01a}</Project>
+      <Name>System.Drawing.Dds</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\System.IO.Endian\System.IO.Endian\System.IO.Endian.csproj">
       <Project>{06a312c3-c3ec-447d-b7b7-f50e47a886d5}</Project>
       <Name>System.IO.Endian</Name>
