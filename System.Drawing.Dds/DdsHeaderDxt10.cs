@@ -12,7 +12,7 @@ namespace System.Drawing.Dds
         public DxgiFormat DxgiFormat { get; set; }
         public D3D10ResourceDimension ResourceDimension { get; set; }
         public D3D10ResourceMiscFlags MiscFlags { get; set; }
-        public uint ArraySize { get; set; }
+        public int ArraySize { get; set; }
         public D3D10ResourceMiscFlag2 MiscFlags2 { get; set; }
     }
 

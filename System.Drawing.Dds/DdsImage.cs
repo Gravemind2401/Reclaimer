@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,11 @@ namespace System.Drawing.Dds
         private readonly DdsHeaderDxt10 dx10Header;
         private readonly byte[] data;
 
+        private static ArgumentOutOfRangeException ParamMustBeGreaterThanZero(string paramName, object value)
+        {
+            return new ArgumentOutOfRangeException(paramName, value, string.Format(CultureInfo.CurrentCulture, "{0} must be greater than zero.", paramName));
+        }
+
         #region Constructors
 
         private DdsImage(DdsHeader header, DdsHeaderDxt10 dx10Header, byte[] data)
@@ -24,11 +30,17 @@ namespace System.Drawing.Dds
             this.data = data;
         }
 
-        private DdsImage(uint height, uint width, byte[] pixelData) 
+        private DdsImage(int height, int width, byte[] pixelData)
             : this(new DdsHeader(), new DdsHeaderDxt10(), pixelData)
         {
             if (pixelData == null)
                 throw new ArgumentNullException(nameof(pixelData));
+
+            if (height <= 0)
+                throw ParamMustBeGreaterThanZero(nameof(height), height);
+
+            if (width <= 0)
+                throw ParamMustBeGreaterThanZero(nameof(width), width);
 
             header.Flags = HeaderFlags.Default;
             header.Height = height;
@@ -45,7 +57,7 @@ namespace System.Drawing.Dds
         /// <param name="width">The width of the image in pixels.</param>
         /// <param name="fourCC">The FourCC code representing the format of the pixel data.</param>
         /// <param name="pixelData">The binary data containing the pixels of the image.</param>
-        public DdsImage(uint height, uint width, uint fourCC, byte[] pixelData)
+        public DdsImage(int height, int width, int fourCC, byte[] pixelData)
             : this(height, width, pixelData)
         {
             header.PixelFormat.Flags |= FormatFlags.FourCC;
@@ -59,8 +71,8 @@ namespace System.Drawing.Dds
         /// <param name="width">The width of the image in pixels.</param>
         /// <param name="fourCC">The FourCC code representing the format of the pixel data.</param>
         /// <param name="pixelData">The binary data containing the pixels of the image.</param>
-        public DdsImage(uint height, uint width, FourCC fourCC, byte[] pixelData)
-            : this(height, width, (uint)fourCC, pixelData)
+        public DdsImage(int height, int width, FourCC fourCC, byte[] pixelData)
+            : this(height, width, (int)fourCC, pixelData)
         {
 
         }
@@ -76,9 +88,12 @@ namespace System.Drawing.Dds
         /// <param name="blueMask">The mask used to isolate data for the blue channel.</param>
         /// <param name="alphaMask">The mask used to isolate data for the alpha channel.</param>
         /// <param name="pixelData">The binary data containing the pixels of the image.</param>
-        public DdsImage(uint height, uint width, uint bpp, uint redMask, uint greenMask, uint blueMask, uint alphaMask, byte[] pixelData)
+        public DdsImage(int height, int width, int bpp, int redMask, int greenMask, int blueMask, int alphaMask, byte[] pixelData)
             : this(height, width, pixelData)
         {
+            if (bpp <= 0)
+                throw ParamMustBeGreaterThanZero(nameof(bpp), bpp);
+
             header.PixelFormat.Flags |= FormatFlags.Rgb;
             header.PixelFormat.RgbBitCount = bpp;
             header.PixelFormat.RBitmask = redMask;
@@ -102,7 +117,7 @@ namespace System.Drawing.Dds
         /// <param name="dxgiFormat">The DxgiFormat value that identifies the format of the pixel data.</param>
         /// <param name="textureType">The type of texture represented by the image.</param>
         /// <param name="pixelData">The binary data containing the pixels of the image.</param>
-        public DdsImage(uint height, uint width, DxgiFormat dxgiFormat, DxgiTextureType textureType, byte[] pixelData)
+        public DdsImage(int height, int width, DxgiFormat dxgiFormat, DxgiTextureType textureType, byte[] pixelData)
             : this(height, width, FourCC.DX10, pixelData)
         {
             dx10Header.DxgiFormat = dxgiFormat;
@@ -119,11 +134,14 @@ namespace System.Drawing.Dds
         /// <summary>
         /// Gets or sets the height of the image, in pixels.
         /// </summary>
-        public uint Height
+        public int Height
         {
             get { return header.Height; }
             set
             {
+                if (value <= 0)
+                    throw ParamMustBeGreaterThanZero(nameof(Height), value);
+
                 header.Height = value;
                 header.Flags |= HeaderFlags.Height;
             }
@@ -132,11 +150,14 @@ namespace System.Drawing.Dds
         /// <summary>
         /// Gets or sets the width of the image, in pixels.
         /// </summary>
-        public uint Width
+        public int Width
         {
             get { return header.Width; }
             set
             {
+                if (value <= 0)
+                    throw ParamMustBeGreaterThanZero(nameof(Width), value);
+
                 header.Width = value;
                 header.Flags |= HeaderFlags.Width;
             }
@@ -145,7 +166,7 @@ namespace System.Drawing.Dds
         /// <summary>
         /// Optional. Gets or sets the pitch of the image. This property is mutually exclusive with <see cref="LinearSize"/>.
         /// </summary>
-        public uint? Pitch
+        public int? Pitch
         {
             get
             {
@@ -156,6 +177,9 @@ namespace System.Drawing.Dds
             }
             set
             {
+                if (value <= 0)
+                    throw ParamMustBeGreaterThanZero(nameof(Pitch), value);
+
                 if (value.HasValue)
                 {
                     header.Flags |= HeaderFlags.Pitch;
@@ -171,7 +195,7 @@ namespace System.Drawing.Dds
         /// <summary>
         /// Optional. Gets or sets the linear size of the image. This property is mutually exclusive with <see cref="Pitch"/>.
         /// </summary>
-        public uint? LinearSize
+        public int? LinearSize
         {
             get
             {
@@ -182,6 +206,9 @@ namespace System.Drawing.Dds
             }
             set
             {
+                if (value <= 0)
+                    throw ParamMustBeGreaterThanZero(nameof(LinearSize), value);
+
                 if (value.HasValue)
                 {
                     header.Flags |= HeaderFlags.LinearSize;
@@ -197,7 +224,7 @@ namespace System.Drawing.Dds
         /// <summary>
         /// Optional. Gets or sets the depth of the image.
         /// </summary>
-        public uint? Depth
+        public int? Depth
         {
             get
             {
@@ -208,6 +235,9 @@ namespace System.Drawing.Dds
             }
             set
             {
+                if (value <= 0)
+                    throw ParamMustBeGreaterThanZero(nameof(Depth), value);
+
                 var flag = HeaderFlags.Depth;
                 header.Flags = value.HasValue ? header.Flags | flag : header.Flags & ~flag;
                 header.Depth = value ?? 0;
@@ -217,7 +247,7 @@ namespace System.Drawing.Dds
         /// <summary>
         /// Optional. Gets or sets the number of mipmaps contained within the image.
         /// </summary>
-        public uint? MipmapCount
+        public int? MipmapCount
         {
             get
             {
@@ -228,6 +258,9 @@ namespace System.Drawing.Dds
             }
             set
             {
+                if (value <= 0)
+                    throw ParamMustBeGreaterThanZero(nameof(MipmapCount), value);
+
                 var flag = HeaderFlags.MipmapCount;
                 header.Flags = value.HasValue ? header.Flags | flag : header.Flags & ~flag;
                 header.Depth = value ?? 0;
@@ -378,34 +411,34 @@ namespace System.Drawing.Dds
                     throw new InvalidDataException();
 
                 var header = new DdsHeader();
-                header.Flags = (HeaderFlags)reader.ReadUInt32();
-                header.Height = reader.ReadUInt32();
-                header.Width = reader.ReadUInt32();
-                header.PitchOrLinearSize = reader.ReadUInt32();
-                header.Depth = reader.ReadUInt32();
-                header.MipmapCount = reader.ReadUInt32();
+                header.Flags = (HeaderFlags)reader.ReadInt32();
+                header.Height = reader.ReadInt32();
+                header.Width = reader.ReadInt32();
+                header.PitchOrLinearSize = reader.ReadInt32();
+                header.Depth = reader.ReadInt32();
+                header.MipmapCount = reader.ReadInt32();
                 for (int i = 0; i < header.Reserved1.Length; i++)
-                    header.Reserved1[i] = reader.ReadUInt32();
+                    header.Reserved1[i] = reader.ReadInt32();
 
-                if (reader.ReadUInt32() != DdsPixelFormat.Size)
+                if (reader.ReadInt32() != DdsPixelFormat.Size)
                     throw new InvalidDataException();
 
-                header.PixelFormat.Flags = (FormatFlags)reader.ReadUInt32();
-                header.PixelFormat.FourCC = reader.ReadUInt32();
-                header.PixelFormat.RgbBitCount = reader.ReadUInt32();
-                header.PixelFormat.RBitmask = reader.ReadUInt32();
-                header.PixelFormat.GBitmask = reader.ReadUInt32();
-                header.PixelFormat.BBitmask = reader.ReadUInt32();
-                header.PixelFormat.ABitmask = reader.ReadUInt32();
+                header.PixelFormat.Flags = (FormatFlags)reader.ReadInt32();
+                header.PixelFormat.FourCC = reader.ReadInt32();
+                header.PixelFormat.RgbBitCount = reader.ReadInt32();
+                header.PixelFormat.RBitmask = reader.ReadInt32();
+                header.PixelFormat.GBitmask = reader.ReadInt32();
+                header.PixelFormat.BBitmask = reader.ReadInt32();
+                header.PixelFormat.ABitmask = reader.ReadInt32();
 
                 var dx10Header = new DdsHeaderDxt10();
                 if (header.PixelFormat.FourCC == (uint)FourCC.DX10)
                 {
-                    dx10Header.DxgiFormat = (DxgiFormat)reader.ReadUInt32();
-                    dx10Header.ResourceDimension = (D3D10ResourceDimension)reader.ReadUInt32();
-                    dx10Header.MiscFlags = (D3D10ResourceMiscFlags)reader.ReadUInt32();
-                    dx10Header.ArraySize = reader.ReadUInt32();
-                    dx10Header.MiscFlags2 = (D3D10ResourceMiscFlag2)reader.ReadUInt32();
+                    dx10Header.DxgiFormat = (DxgiFormat)reader.ReadInt32();
+                    dx10Header.ResourceDimension = (D3D10ResourceDimension)reader.ReadInt32();
+                    dx10Header.MiscFlags = (D3D10ResourceMiscFlags)reader.ReadInt32();
+                    dx10Header.ArraySize = reader.ReadInt32();
+                    dx10Header.MiscFlags2 = (D3D10ResourceMiscFlag2)reader.ReadInt32();
                 }
 
                 var data = reader.ReadBytes((int)(stream.Length - stream.Position));

@@ -9,15 +9,15 @@ namespace System.Drawing.Dds
     /* https://docs.microsoft.com/en-us/windows/desktop/direct3ddds/dds-pixelformat */
     internal class DdsPixelFormat
     {
-        public const uint Size = 32;
+        public const int Size = 32;
 
         public FormatFlags Flags { get; set; }
-        public uint FourCC { get; set; }
-        public uint RgbBitCount { get; set; }
-        public uint RBitmask { get; set; }
-        public uint GBitmask { get; set; }
-        public uint BBitmask { get; set; }
-        public uint ABitmask { get; set; }
+        public int FourCC { get; set; }
+        public int RgbBitCount { get; set; }
+        public int RBitmask { get; set; }
+        public int GBitmask { get; set; }
+        public int BBitmask { get; set; }
+        public int ABitmask { get; set; }
     }
 
     [Flags]

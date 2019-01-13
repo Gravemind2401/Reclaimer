@@ -12,7 +12,7 @@ namespace System.Drawing.Dds
     public partial class DdsImage
     {
         /* https://docs.microsoft.com/en-us/windows/desktop/direct3d10/d3d10-graphics-programming-guide-resources-block-compression */
-        internal static byte[] DecompressBC1(byte[] data, uint height, uint width)
+        internal static byte[] DecompressBC1(byte[] data, int height, int width)
         {
             var output = new BgraColour[width * height];
             var palette = new BgraColour[4];
@@ -62,7 +62,7 @@ namespace System.Drawing.Dds
             return output.SelectMany(c => c.AsEnumerable()).ToArray();
         }
 
-        internal static byte[] DecompressBC2(byte[] data, uint height, uint width)
+        internal static byte[] DecompressBC2(byte[] data, int height, int width)
         {
             var output = new BgraColour[width * height];
             var palette = new BgraColour[4];
@@ -105,7 +105,7 @@ namespace System.Drawing.Dds
             return output.SelectMany(c => c.AsEnumerable()).ToArray();
         }
 
-        internal static byte[] DecompressBC3(byte[] data, uint height, uint width)
+        internal static byte[] DecompressBC3(byte[] data, int height, int width)
         {
             var output = new BgraColour[width * height];
             var rgbPalette = new BgraColour[4];

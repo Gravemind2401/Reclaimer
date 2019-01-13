@@ -9,24 +9,24 @@ namespace System.Drawing.Dds
     /* https://docs.microsoft.com/en-us/windows/desktop/direct3ddds/dds-header */
     internal class DdsHeader
     {
-        public const uint Size = 124;
+        public const int Size = 124;
         public HeaderFlags Flags { get; set; }
-        public uint Height { get; set; } //required
-        public uint Width { get; set; }  //required
-        public uint PitchOrLinearSize { get; set; }
-        public uint Depth { get; set; }
-        public uint MipmapCount { get; set; }
-        public uint[] Reserved1 { get; private set; } //unused
+        public int Height { get; set; } //required
+        public int Width { get; set; }  //required
+        public int PitchOrLinearSize { get; set; }
+        public int Depth { get; set; }
+        public int MipmapCount { get; set; }
+        public int[] Reserved1 { get; private set; } //unused
         public DdsPixelFormat PixelFormat { get; private set; }
         public DdsCaps Caps { get; set; }
         public DdsCaps2 Caps2 { get; set; }
-        public uint Caps3 { get; set; } //unused
-        public uint Caps4 { get; set; } //unused
-        public uint Reserved2 { get; set; } //unused 
+        public int Caps3 { get; set; } //unused
+        public int Caps4 { get; set; } //unused
+        public int Reserved2 { get; set; } //unused 
 
         public DdsHeader()
         {
-            Reserved1 = new uint[11];
+            Reserved1 = new int[11];
             PixelFormat = new DdsPixelFormat();
         }
     }
