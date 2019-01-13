@@ -42,6 +42,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,6 +54,10 @@
     <Compile Include="Blam\Definitions\Enums.cs" />
     <Compile Include="Blam\Definitions\ICacheFile.cs" />
     <Compile Include="Blam\Definitions\IIndexItem.cs" />
+    <Compile Include="Blam\Halo2\bitmap.cs" />
+    <Compile Include="Blam\Halo2\BlockCollection.cs" />
+    <Compile Include="Blam\Halo2\render_model.cs" />
+    <Compile Include="Blam\Halo2\TagReference.cs" />
     <Compile Include="Blam\Halo1\bitmap.cs" />
     <Compile Include="Blam\Halo1\BSPAddressTranslator.cs" />
     <Compile Include="Blam\Halo1\CacheFile.cs" />

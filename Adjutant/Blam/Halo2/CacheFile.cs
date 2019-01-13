@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Endian;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,6 +47,24 @@ namespace Adjutant.Blam.Halo2
             reader.RegisterType<CacheFile>(() => this);
             reader.RegisterType<Pointer>(() => new Pointer(reader.ReadInt32(), translator));
             reader.RegisterType<IAddressTranslator>(() => translator);
+            reader.RegisterType<Matrix4x4>(() => new Matrix4x4
+            {
+                M11 = reader.ReadSingle(),
+                M12 = reader.ReadSingle(),
+                M13 = reader.ReadSingle(),
+
+                M21 = reader.ReadSingle(),
+                M22 = reader.ReadSingle(),
+                M23 = reader.ReadSingle(),
+
+                M31 = reader.ReadSingle(),
+                M32 = reader.ReadSingle(),
+                M33 = reader.ReadSingle(),
+
+                M41 = reader.ReadSingle(),
+                M42 = reader.ReadSingle(),
+                M43 = reader.ReadSingle(),
+            });
             return reader;
         }
     }
@@ -212,6 +231,16 @@ namespace Adjutant.Blam.Halo2
         public string ClassCode => Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId)).TrimEnd();
 
         public string FileName => cache.Index.Filenames[Id];
+
+        public T ReadMetadata<T>()
+        {
+            using (var reader = cache.CreateReader(cache.MetadataTranslator))
+            {
+                reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
+                var result = (T)reader.ReadObject(typeof(T), cache.Header.Version);
+                return result;
+            }
+        }
 
         public override string ToString()
         {
