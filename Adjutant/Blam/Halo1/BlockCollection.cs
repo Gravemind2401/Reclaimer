@@ -2,6 +2,7 @@
 using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO.Endian;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 namespace Adjutant.Blam.Halo1
 {
     [FixedSize(12)]
-    public class BlockCollection<T> : List<T>, IBlockCollection<T>
+    public class BlockCollection<T> : Collection<T>, IBlockCollection<T>
     {
         public Pointer Pointer { get; set; }
 

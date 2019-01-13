@@ -1,20 +1,18 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Adjutant")]
+[assembly: AssemblyTitle("Adjutant.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Gravemind2401")]
-[assembly: AssemblyProduct("Adjutant")]
-[assembly: AssemblyCopyright("Copyright © Gravemind2401 2018")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("Adjutant.Tests")]
+[assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: CLSCompliant(true)]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -22,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("a46dd713-d7f0-4d6a-bd0f-348d890e135a")]
+[assembly: Guid("241c66ba-7f51-4c38-8e5d-f25af37bc866")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -34,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("5.0.25.121")]
-[assembly: AssemblyFileVersion("5.0.25.121")]
+[assembly: AssemblyVersion("1.0.0.106")]
+[assembly: AssemblyFileVersion("1.0.0.106")]

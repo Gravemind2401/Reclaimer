@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adjutant", "Adjutant\Adjuta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.IO.Endian", "..\System.IO.Endian\System.IO.Endian\System.IO.Endian.csproj", "{06A312C3-C3EC-447D-B7B7-F50E47A886D5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adjutant.Tests", "Adjutant.Tests\Adjutant.Tests.csproj", "{241C66BA-7F51-4C38-8E5D-F25AF37BC866}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Drawing.Dds", "..\System.Drawing.Dds\System.Drawing.Dds\System.Drawing.Dds.csproj", "{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}"
 EndProject
 Global
@@ -23,6 +25,10 @@ Global
 		{06A312C3-C3EC-447D-B7B7-F50E47A886D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06A312C3-C3EC-447D-B7B7-F50E47A886D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06A312C3-C3EC-447D-B7B7-F50E47A886D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{241C66BA-7F51-4C38-8E5D-F25AF37BC866}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{241C66BA-7F51-4C38-8E5D-F25AF37BC866}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{241C66BA-7F51-4C38-8E5D-F25AF37BC866}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{241C66BA-7F51-4C38-8E5D-F25AF37BC866}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}.Release|Any CPU.ActiveCfg = Release|Any CPU
