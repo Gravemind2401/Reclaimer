@@ -26,11 +26,11 @@ namespace Adjutant.Tests.Blam.Halo1
         {
             var cache = new Adjutant.Blam.Halo1.CacheFile(Path.Combine(MapsFolder, $"{map}.map"));
 
-            var models = cache.Index.Where(i => i.ClassCode == "mod2")
+            var models = cache.TagIndex.Where(i => i.ClassCode == "mod2")
                 .Select(i => i.ReadMetadata<gbxmodel>())
                 .ToList();
 
-            var bsps = cache.Index.Where(i => i.ClassCode == "sbsp")
+            var bsps = cache.TagIndex.Where(i => i.ClassCode == "sbsp")
                 .Select(i => i.ReadMetadata<scenario_structure_bsp>())
                 .ToList();
         }
@@ -58,11 +58,11 @@ namespace Adjutant.Tests.Blam.Halo1
         {
             var cache = new Adjutant.Blam.Halo1.CacheFile(Path.Combine(MapsFolder, $"{map}.map"));
 
-            var models = cache.Index.Where(i => i.ClassCode == "mod2")
+            var models = cache.TagIndex.Where(i => i.ClassCode == "mod2")
                 .Select(i => i.ReadMetadata<gbxmodel>())
                 .ToList();
 
-            var bsps = cache.Index.Where(i => i.ClassCode == "sbsp")
+            var bsps = cache.TagIndex.Where(i => i.ClassCode == "sbsp")
                 .Select(i => i.ReadMetadata<scenario_structure_bsp>())
                 .ToList();
         }

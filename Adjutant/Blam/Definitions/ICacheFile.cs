@@ -12,7 +12,7 @@ namespace Adjutant.Blam.Definitions
         string BuildString { get; }
         CacheType Type { get; }
 
-        ICacheIndex<IIndexItem> Index { get; }
+        ITagIndex<IIndexItem> TagIndex { get; }
 
         string GetString(int id);
     }

@@ -11,7 +11,7 @@ namespace Adjutant.Blam.Halo1
     {
         private readonly CacheFile cache;
 
-        private int Magic => cache.Index.Magic - (cache.Header.IndexAddress + 40);
+        private int Magic => cache.TagIndex.Magic - (cache.Header.IndexAddress + 40);
 
         public TagAddressTranslator(CacheFile cache)
         {

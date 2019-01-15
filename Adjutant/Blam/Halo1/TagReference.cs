@@ -1,5 +1,4 @@
 ﻿using Adjutant.IO;
-using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO.Endian;
@@ -16,7 +15,7 @@ namespace Adjutant.Blam.Halo1
         private readonly short tagId;
 
         public int TagId => tagId;
-        public IndexItem Tag => cache.Index[TagId];
+        public IndexItem Tag => cache.TagIndex[TagId];
 
         public TagReference(CacheFile cache, DependencyReader reader)
         {

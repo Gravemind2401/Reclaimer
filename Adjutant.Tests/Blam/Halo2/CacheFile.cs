@@ -18,11 +18,11 @@ namespace Adjutant.Tests.Blam.Halo2
         {
             var cache = new Adjutant.Blam.Halo2.CacheFile(Path.Combine(MapsFolder, $"{map}.map"));
 
-            var bitmaps = cache.Index.Where(i => i.ClassCode == "bitm")
+            var bitmaps = cache.TagIndex.Where(i => i.ClassCode == "bitm")
                 .Select(i => i.ReadMetadata<bitmap>())
                 .ToList();
 
-            var models = cache.Index.Where(i => i.ClassCode == "mode")
+            var models = cache.TagIndex.Where(i => i.ClassCode == "mode")
                 .Select(i => i.ReadMetadata<render_model>())
                 .ToList();
 

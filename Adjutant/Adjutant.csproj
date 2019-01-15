@@ -53,7 +53,7 @@
   <ItemGroup>
     <Compile Include="Blam\Definitions\Enums.cs" />
     <Compile Include="Blam\Definitions\ICacheFile.cs" />
-    <Compile Include="Blam\Definitions\ICacheIndex.cs" />
+    <Compile Include="Blam\Definitions\ITagIndex.cs" />
     <Compile Include="Blam\Definitions\IIndexItem.cs" />
     <Compile Include="Blam\Halo2\bitmap.cs" />
     <Compile Include="Blam\Halo2\BlockCollection.cs" />

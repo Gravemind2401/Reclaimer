@@ -21,10 +21,10 @@ namespace Adjutant.Blam.Halo2
         public CacheType Type => Header.CacheType;
 
         public CacheHeader Header { get; private set; }
-        public CacheIndex Index { get; private set; }
 
         private readonly string[] strings;
         public ReadOnlyCollection<string> Strings { get; private set; }
+        public TagIndex TagIndex { get; private set; }
 
         public HeaderAddressTranslator HeaderTranslator { get; private set; }
         public TagAddressTranslator MetadataTranslator { get; private set; }
@@ -39,8 +39,6 @@ namespace Adjutant.Blam.Halo2
             {
                 Header = reader.ReadObject<CacheHeader>();
                 reader.Seek(Header.IndexAddress, SeekOrigin.Begin);
-                Index = reader.ReadObject(new CacheIndex(this));
-                Index.ReadItems();
 
                 var indices = new int[Header.StringCount];
                 reader.Seek(Header.StringTableIndexAddress, SeekOrigin.Begin);
@@ -61,6 +59,8 @@ namespace Adjutant.Blam.Halo2
                 }
 
                 Strings = new ReadOnlyCollection<string>(strings);
+                TagIndex = reader.ReadObject(new TagIndex(this));
+                TagIndex.ReadItems();
             }
         }
 
@@ -103,7 +103,7 @@ namespace Adjutant.Blam.Halo2
 
         #region ICacheFile
 
-        ICacheIndex<IIndexItem> ICacheFile.Index => Index;
+        ITagIndex<IIndexItem> ICacheFile.TagIndex => TagIndex;
 
         #endregion
     }
@@ -180,7 +180,7 @@ namespace Adjutant.Blam.Halo2
     }
 
     [FixedSize(32)]
-    public class CacheIndex : ICacheIndex<IndexItem>
+    public class TagIndex : ITagIndex<IndexItem>
     {
         private readonly CacheFile cache;
         private readonly List<IndexItem> items;
@@ -200,7 +200,7 @@ namespace Adjutant.Blam.Halo2
         [Offset(24)]
         public int TagCount { get; set; }
 
-        public CacheIndex(CacheFile cache)
+        public TagIndex(CacheFile cache)
         {
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
@@ -269,7 +269,7 @@ namespace Adjutant.Blam.Halo2
 
         public string ClassCode => Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId)).TrimEnd();
 
-        public string FileName => cache.Index.Filenames[Id];
+        public string FileName => cache.TagIndex.Filenames[Id];
 
         public T ReadMetadata<T>()
         {

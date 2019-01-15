@@ -19,7 +19,7 @@ namespace Adjutant.Blam.Halo1
         public CacheType Type => Header.CacheType;
 
         public CacheHeader Header { get; private set; }
-        public CacheIndex Index { get; private set; }
+        public TagIndex TagIndex { get; private set; }
 
         public TagAddressTranslator AddressTranslator { get; private set; }
 
@@ -33,8 +33,8 @@ namespace Adjutant.Blam.Halo1
                 Header = reader.ReadObject<CacheHeader>();
 
                 reader.Seek(Header.IndexAddress, SeekOrigin.Begin);
-                Index = reader.ReadObject(new CacheIndex(this));
-                Index.ReadItems(reader);
+                TagIndex = reader.ReadObject(new TagIndex(this));
+                TagIndex.ReadItems(reader);
             }
         }
 
@@ -50,7 +50,7 @@ namespace Adjutant.Blam.Halo1
 
         #region ICacheFile
 
-        ICacheIndex<IIndexItem> ICacheFile.Index => Index;
+        ITagIndex<IIndexItem> ICacheFile.TagIndex => TagIndex;
 
         string ICacheFile.GetString(int id)
         {
@@ -95,7 +95,7 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(40)]
-    public class CacheIndex : ICacheIndex<IndexItem>
+    public class TagIndex : ITagIndex<IndexItem>
     {
         private readonly CacheFile cache;
         private readonly List<IndexItem> items;
@@ -121,7 +121,7 @@ namespace Adjutant.Blam.Halo1
         [Offset(28)]
         public int IndexDataOffset { get; set; }
 
-        public CacheIndex(CacheFile cache)
+        public TagIndex(CacheFile cache)
         {
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
@@ -189,7 +189,7 @@ namespace Adjutant.Blam.Halo1
 
         public string ClassCode => Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId)).TrimEnd();
 
-        public string FileName => cache.Index.Filenames[Id];
+        public string FileName => cache.TagIndex.Filenames[Id];
 
         public T ReadMetadata<T>()
         {
