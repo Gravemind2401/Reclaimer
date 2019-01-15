@@ -100,6 +100,12 @@ namespace Adjutant.Blam.Halo2
 
             return Strings[id];
         }
+
+        #region ICacheFile
+
+        ICacheIndex<IIndexItem> ICacheFile.Index => Index;
+
+        #endregion
     }
 
     [FixedSize(2048)]
@@ -174,7 +180,7 @@ namespace Adjutant.Blam.Halo2
     }
 
     [FixedSize(32)]
-    public class CacheIndex : IEnumerable<IndexItem>
+    public class CacheIndex : ICacheIndex<IndexItem>
     {
         private readonly CacheFile cache;
         private readonly List<IndexItem> items;

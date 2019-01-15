@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Definitions
 {
-    interface IIndexItem
+    public interface IIndexItem
     {
         int Id { get; }
         Pointer MetaPointer { get; }

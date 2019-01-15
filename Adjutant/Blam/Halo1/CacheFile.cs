@@ -48,10 +48,16 @@ namespace Adjutant.Blam.Halo1
             return reader;
         }
 
-        public string GetString(int id)
+        #region ICacheFile
+
+        ICacheIndex<IIndexItem> ICacheFile.Index => Index;
+
+        string ICacheFile.GetString(int id)
         {
             throw new NotImplementedException();
         }
+
+        #endregion
     }
 
     public class CacheHeader
@@ -89,7 +95,7 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(40)]
-    public class CacheIndex : IEnumerable<IndexItem>
+    public class CacheIndex : ICacheIndex<IndexItem>
     {
         private readonly CacheFile cache;
         private readonly List<IndexItem> items;

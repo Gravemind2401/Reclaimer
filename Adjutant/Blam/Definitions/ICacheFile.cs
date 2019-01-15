@@ -12,6 +12,8 @@ namespace Adjutant.Blam.Definitions
         string BuildString { get; }
         CacheType Type { get; }
 
+        ICacheIndex<IIndexItem> Index { get; }
+
         string GetString(int id);
     }
 }
