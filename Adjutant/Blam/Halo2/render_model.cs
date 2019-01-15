@@ -1,4 +1,5 @@
 ﻿using Adjutant.Spatial;
+using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO.Endian;
@@ -53,20 +54,24 @@ namespace Adjutant.Blam.Halo2
     public class Region
     {
         [Offset(0)]
-        public short Name { get; set; }
+        public StringId Name { get; set; }
 
         [Offset(8)]
         public BlockCollection<Permutation> Permutation { get; set; }
+
+        public override string ToString() => Name;
     }
 
     [FixedSize(16)]
     public class Permutation
     {
         [Offset(0)]
-        public short Name { get; set; }
+        public StringId Name { get; set; }
 
         [Offset(14)]
         public short PieceIndex { get; set; }
+
+        public override string ToString() => Name;
     }
 
     [FixedSize(92)]
@@ -109,7 +114,7 @@ namespace Adjutant.Blam.Halo2
     public class Node
     {
         [Offset(0)]
-        public short Name { get; set; }
+        public StringId Name { get; set; }
 
         [Offset(4)]
         public short ParentIndex { get; set; }
@@ -134,16 +139,20 @@ namespace Adjutant.Blam.Halo2
 
         [Offset(92)]
         public float DistanceFromParent { get; set; }
+
+        public override string ToString() => Name;
     }
 
     [FixedSize(12)]
     public class MarkerGroup
     {
         [Offset(0)]
-        public short Name { get; set; }
+        public StringId Name { get; set; }
 
         [Offset(4)]
         public BlockCollection<Marker> Markers { get; set; }
+
+        public override string ToString() => Name;
     }
 
     [FixedSize(36)]

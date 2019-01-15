@@ -4,6 +4,7 @@ using Adjutant.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Endian;
 using System.Linq;
@@ -22,6 +23,9 @@ namespace Adjutant.Blam.Halo2
         public CacheHeader Header { get; private set; }
         public CacheIndex Index { get; private set; }
 
+        private readonly string[] strings;
+        public ReadOnlyCollection<string> Strings { get; private set; }
+
         public HeaderAddressTranslator HeaderTranslator { get; private set; }
         public TagAddressTranslator MetadataTranslator { get; private set; }
 
@@ -37,6 +41,26 @@ namespace Adjutant.Blam.Halo2
                 reader.Seek(Header.IndexAddress, SeekOrigin.Begin);
                 Index = reader.ReadObject(new CacheIndex(this));
                 Index.ReadItems();
+
+                var indices = new int[Header.StringCount];
+                reader.Seek(Header.StringTableIndexAddress, SeekOrigin.Begin);
+                for (int i = 0; i < Header.StringCount; i++)
+                    indices[i] = reader.ReadInt32();
+
+                strings = new string[Header.StringCount];
+                using (var reader2 = reader.CreateVirtualReader(Header.StringTableAddress))
+                {
+                    for (int i = 0; i < Header.StringCount; i++)
+                    {
+                        if (indices[i] < 0)
+                            continue;
+
+                        reader2.Seek(indices[i], SeekOrigin.Begin);
+                        strings[i] = reader2.ReadNullTerminatedString();
+                    }
+                }
+
+                Strings = new ReadOnlyCollection<string>(strings);
             }
         }
 
@@ -46,6 +70,7 @@ namespace Adjutant.Blam.Halo2
             var reader = new DependencyReader(fs, ByteOrder.LittleEndian);
             reader.RegisterType<CacheFile>(() => this);
             reader.RegisterType<Pointer>(() => new Pointer(reader.ReadInt32(), translator));
+            reader.RegisterType<StringId>(() => new StringId(reader.ReadInt16(), this));
             reader.RegisterType<IAddressTranslator>(() => translator);
             reader.RegisterType<Matrix4x4>(() => new Matrix4x4
             {
@@ -70,7 +95,10 @@ namespace Adjutant.Blam.Halo2
 
         public string GetString(int id)
         {
-            return null;
+            if (id < 0 || id >= strings.Length)
+                throw new ArgumentOutOfRangeException(nameof(id));
+
+            return Strings[id];
         }
     }
 
