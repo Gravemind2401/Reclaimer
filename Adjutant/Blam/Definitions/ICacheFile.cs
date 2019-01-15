@@ -11,5 +11,7 @@ namespace Adjutant.Blam.Definitions
         string FileName { get; }
         string BuildString { get; }
         CacheType Type { get; }
+
+        string GetString(int id);
     }
 }

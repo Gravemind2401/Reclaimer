@@ -47,6 +47,11 @@ namespace Adjutant.Blam.Halo1
             reader.RegisterType<IAddressTranslator>(() => AddressTranslator);
             return reader;
         }
+
+        public string GetString(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class CacheHeader

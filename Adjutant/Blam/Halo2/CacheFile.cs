@@ -67,6 +67,11 @@ namespace Adjutant.Blam.Halo2
             });
             return reader;
         }
+
+        public string GetString(int id)
+        {
+            return null;
+        }
     }
 
     [FixedSize(2048)]
