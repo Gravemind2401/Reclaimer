@@ -21,10 +21,8 @@ namespace Adjutant.Blam.Halo2
         public CacheType Type => Header.CacheType;
 
         public CacheHeader Header { get; private set; }
-
-        private readonly string[] strings;
-        public ReadOnlyCollection<string> Strings { get; private set; }
         public TagIndex TagIndex { get; private set; }
+        public StringIndex StringIndex { get; private set; }
 
         public HeaderAddressTranslator HeaderTranslator { get; private set; }
         public TagAddressTranslator MetadataTranslator { get; private set; }
@@ -39,28 +37,11 @@ namespace Adjutant.Blam.Halo2
             {
                 Header = reader.ReadObject<CacheHeader>();
                 reader.Seek(Header.IndexAddress, SeekOrigin.Begin);
-
-                var indices = new int[Header.StringCount];
-                reader.Seek(Header.StringTableIndexAddress, SeekOrigin.Begin);
-                for (int i = 0; i < Header.StringCount; i++)
-                    indices[i] = reader.ReadInt32();
-
-                strings = new string[Header.StringCount];
-                using (var reader2 = reader.CreateVirtualReader(Header.StringTableAddress))
-                {
-                    for (int i = 0; i < Header.StringCount; i++)
-                    {
-                        if (indices[i] < 0)
-                            continue;
-
-                        reader2.Seek(indices[i], SeekOrigin.Begin);
-                        strings[i] = reader2.ReadNullTerminatedString();
-                    }
-                }
-
-                Strings = new ReadOnlyCollection<string>(strings);
                 TagIndex = reader.ReadObject(new TagIndex(this));
+                StringIndex = new StringIndex(this);
+
                 TagIndex.ReadItems();
+                StringIndex.ReadItems();
             }
         }
 
@@ -93,17 +74,10 @@ namespace Adjutant.Blam.Halo2
             return reader;
         }
 
-        public string GetString(int id)
-        {
-            if (id < 0 || id >= strings.Length)
-                throw new ArgumentOutOfRangeException(nameof(id));
-
-            return Strings[id];
-        }
-
         #region ICacheFile
 
         ITagIndex<IIndexItem> ICacheFile.TagIndex => TagIndex;
+        IStringIndex ICacheFile.StringIndex => StringIndex;
 
         #endregion
     }
@@ -239,6 +213,52 @@ namespace Adjutant.Blam.Halo2
         public IndexItem this[int index] => items[index];
 
         public IEnumerator<IndexItem> GetEnumerator() => items.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
+    }
+
+    public class StringIndex : IStringIndex
+    {
+        private readonly CacheFile cache;
+        private readonly string[] items;
+
+        public StringIndex(CacheFile cache)
+        {
+            if (cache == null)
+                throw new ArgumentNullException(nameof(cache));
+
+            this.cache = cache;
+            items = new string[cache.Header.StringCount];
+        }
+
+        internal void ReadItems()
+        {
+            using (var reader = cache.CreateReader(cache.HeaderTranslator))
+            {
+                var indices = new int[cache.Header.StringCount];
+                reader.Seek(cache.Header.StringTableIndexAddress, SeekOrigin.Begin);
+                for (int i = 0; i < cache.Header.StringCount; i++)
+                    indices[i] = reader.ReadInt32();
+
+                using (var reader2 = reader.CreateVirtualReader(cache.Header.StringTableAddress))
+                {
+                    for (int i = 0; i < cache.Header.StringCount; i++)
+                    {
+                        if (indices[i] < 0)
+                            continue;
+
+                        reader2.Seek(indices[i], SeekOrigin.Begin);
+                        items[i] = reader2.ReadNullTerminatedString();
+                    }
+                }
+            }
+        }
+
+        public int StringCount => items.Length;
+
+        public string this[int id] => items[id];
+
+        public IEnumerator<string> GetEnumerator() => items.AsEnumerable().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
     }

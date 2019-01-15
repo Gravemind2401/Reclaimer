@@ -51,11 +51,7 @@ namespace Adjutant.Blam.Halo1
         #region ICacheFile
 
         ITagIndex<IIndexItem> ICacheFile.TagIndex => TagIndex;
-
-        string ICacheFile.GetString(int id)
-        {
-            throw new NotImplementedException();
-        }
+        IStringIndex ICacheFile.StringIndex => null;
 
         #endregion
     }
