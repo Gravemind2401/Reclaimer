@@ -20,7 +20,7 @@ namespace Adjutant.Blam.Halo2
         public TagReference(CacheFile cache, DependencyReader reader)
         {
             this.cache = cache;
-            tagId = reader.ReadInt32();
+            tagId = reader.ReadInt16();
         }
 
         public override string ToString() => Tag.ToString();

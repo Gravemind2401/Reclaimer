@@ -297,11 +297,20 @@ namespace Adjutant.Blam.Halo2
 
         public T ReadMetadata<T>()
         {
+            if (typeof(T).Equals(typeof(scenario_structure_bsp)))
+            {
+                var translator = new BSPAddressTranslator(cache, Id);
+                using (var reader = cache.CreateReader(translator))
+                {
+                    reader.Seek(translator.TagAddress, SeekOrigin.Begin);
+                    return (T)(object)reader.ReadObject<scenario_structure_bsp>(cache.Header.Version);
+                }
+            }
+
             using (var reader = cache.CreateReader(cache.MetadataTranslator))
             {
                 reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
-                var result = (T)reader.ReadObject(typeof(T), cache.Header.Version);
-                return result;
+                return (T)reader.ReadObject(typeof(T), cache.Header.Version);
             }
         }
 
