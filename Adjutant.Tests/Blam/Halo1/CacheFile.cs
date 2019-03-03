@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Adjutant.IO;
 using Adjutant.Blam.Halo1;
+using System.Threading.Tasks;
 
 namespace Adjutant.Tests.Blam.Halo1
 {
@@ -24,15 +25,7 @@ namespace Adjutant.Tests.Blam.Halo1
         [DataTestMethod]
         public void Halo1Campaign(string map)
         {
-            var cache = new Adjutant.Blam.Halo1.CacheFile(Path.Combine(MapsFolder, $"{map}.map"));
-
-            var models = cache.TagIndex.Where(i => i.ClassCode == "mod2")
-                .Select(i => i.ReadMetadata<gbxmodel>())
-                .ToList();
-
-            var bsps = cache.TagIndex.Where(i => i.ClassCode == "sbsp")
-                .Select(i => i.ReadMetadata<scenario_structure_bsp>())
-                .ToList();
+            TestMap(map);
         }
 
         [DataRow("beavercreek")]
@@ -56,15 +49,43 @@ namespace Adjutant.Tests.Blam.Halo1
         [DataTestMethod]
         public void Halo1Multiplayer(string map)
         {
+            TestMap(map);
+        }
+
+        private void TestMap(string map)
+        {
             var cache = new Adjutant.Blam.Halo1.CacheFile(Path.Combine(MapsFolder, $"{map}.map"));
 
-            var models = cache.TagIndex.Where(i => i.ClassCode == "mod2")
+            var t1 = Task.Run(() =>
+            {
+                var bitmaps = cache.TagIndex.Where(i => i.ClassCode == "bitm")
+                    .Select(i => i.ReadMetadata<bitmap>())
+                    .ToList();
+
+                return true;
+            });
+
+            var t2 = Task.Run(() =>
+            {
+                var models = cache.TagIndex.Where(i => i.ClassCode == "mod2")
                 .Select(i => i.ReadMetadata<gbxmodel>())
                 .ToList();
 
-            var bsps = cache.TagIndex.Where(i => i.ClassCode == "sbsp")
+                return true;
+            });
+
+            var t3 = Task.Run(() =>
+            {
+                var bsps = cache.TagIndex.Where(i => i.ClassCode == "sbsp")
                 .Select(i => i.ReadMetadata<scenario_structure_bsp>())
                 .ToList();
+
+                return true;
+            });
+
+            Assert.IsTrue(t1.GetAwaiter().GetResult());
+            Assert.IsTrue(t2.GetAwaiter().GetResult());
+            Assert.IsTrue(t3.GetAwaiter().GetResult());
         }
     }
 }

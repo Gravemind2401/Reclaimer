@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Adjutant.IO;
 using Adjutant.Blam.Halo2;
+using System.Threading.Tasks;
 
 namespace Adjutant.Tests.Blam.Halo2
 {
@@ -12,38 +13,81 @@ namespace Adjutant.Tests.Blam.Halo2
     {
         private const string MapsFolder = @"Y:\Halo\Halo2Xbox\maps";
 
+        [DataRow("mainmenu")]
+        [DataRow("00a_introduction")]
+        [DataRow("01a_tutorial")]
         [DataRow("01b_spacestation")]
+        [DataRow("03a_oldmombasa")]
+        [DataRow("03b_newmombasa")]
+        [DataRow("04a_gasgiant")]
+        [DataRow("04b_floodlab")]
+        [DataRow("05a_deltaapproach")]
+        [DataRow("05b_deltatowers")]
+        [DataRow("06a_sentinelwalls")]
+        [DataRow("06b_floodzone")]
+        [DataRow("07a_highcharity")]
+        [DataRow("07b_forerunnership")]
+        [DataRow("08a_deltacliffs")]
+        [DataRow("08b_deltacontrol")]
         [DataTestMethod]
         public void Halo2Campaign(string map)
         {
+            TestMap(map);
+        }
+
+        [DataRow("ascension")]
+        [DataRow("beavercreek")]
+        [DataRow("burial_mounds")]
+        [DataRow("coagulation")]
+        [DataRow("colossus")]
+        [DataRow("cyclotron")]
+        [DataRow("dune")]
+        [DataRow("foundation")]
+        [DataRow("headlong")]
+        [DataRow("lockout")]
+        [DataRow("midship")]
+        [DataRow("waterworks")]
+        [DataRow("zanzibar")]
+        [DataTestMethod]
+        public void Halo2Multiplayer(string map)
+        {
+            TestMap(map);
+        }
+
+        private void TestMap(string map)
+        {
             var cache = new Adjutant.Blam.Halo2.CacheFile(Path.Combine(MapsFolder, $"{map}.map"));
 
-            var bitmaps = cache.TagIndex.Where(i => i.ClassCode == "bitm")
-                .Select(i => i.ReadMetadata<bitmap>())
-                .ToList();
+            var t1 = Task.Run(() =>
+            {
+                var bitmaps = cache.TagIndex.Where(i => i.ClassCode == "bitm")
+                    .Select(i => i.ReadMetadata<bitmap>())
+                    .ToList();
 
-            var models = cache.TagIndex.Where(i => i.ClassCode == "mode")
+                return true;
+            });
+
+            var t2 = Task.Run(() =>
+            {
+                var models = cache.TagIndex.Where(i => i.ClassCode == "mode")
                 .Select(i => i.ReadMetadata<render_model>())
                 .ToList();
 
-            //var bsps = cache.Index.Where(i => i.ClassCode == "sbsp")
-            //    .Select(i => i.ReadMetadata<scenario_structure_bsp>())
-            //    .ToList();
+                return true;
+            });
+
+            var t3 = Task.Run(() =>
+            {
+                var bsps = cache.TagIndex.Where(i => i.ClassCode == "sbsp")
+                .Select(i => i.ReadMetadata<scenario_structure_bsp>())
+                .ToList();
+
+                return true;
+            });
+
+            Assert.IsTrue(t1.GetAwaiter().GetResult());
+            Assert.IsTrue(t2.GetAwaiter().GetResult());
+            Assert.IsTrue(t3.GetAwaiter().GetResult());
         }
-
-        //[DataRow("")]
-        //[DataTestMethod]
-        //public void Halo2Multiplayer(string map)
-        //{
-        //    var cache = new Adjutant.Blam.Halo1.CacheFile(Path.Combine(MapsFolder, $"{map}.map"));
-
-        //    var models = cache.Index.Where(i => i.ClassCode == "mode")
-        //        .Select(i => i.ReadMetadata<render_model>())
-        //        .ToList();
-
-        //    var bsps = cache.Index.Where(i => i.ClassCode == "sbsp")
-        //        .Select(i => i.ReadMetadata<scenario_structure_bsp>())
-        //        .ToList();
-        //}
     }
 }
