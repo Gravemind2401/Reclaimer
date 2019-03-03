@@ -161,6 +161,6 @@ namespace Adjutant.Blam.Halo1
     public class Shader
     {
         [Offset(12)]
-        public int TagId { get; set; }
+        public TagReference ShaderReference { get; set; }
     }
 }

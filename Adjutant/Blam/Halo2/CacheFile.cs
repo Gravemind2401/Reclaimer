@@ -24,6 +24,8 @@ namespace Adjutant.Blam.Halo2
         public TagIndex TagIndex { get; private set; }
         public StringIndex StringIndex { get; private set; }
 
+        public scenario Scenario { get; private set; }
+
         public HeaderAddressTranslator HeaderTranslator { get; private set; }
         public TagAddressTranslator MetadataTranslator { get; private set; }
 
@@ -42,6 +44,8 @@ namespace Adjutant.Blam.Halo2
 
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
+
+                Scenario = TagIndex.FirstOrDefault(t => t.ClassCode == "scnr")?.ReadMetadata<scenario>();
             }
         }
 

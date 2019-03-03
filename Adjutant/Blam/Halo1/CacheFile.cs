@@ -21,6 +21,8 @@ namespace Adjutant.Blam.Halo1
         public CacheHeader Header { get; private set; }
         public TagIndex TagIndex { get; private set; }
 
+        public scenario Scenario { get; private set; }
+
         public TagAddressTranslator AddressTranslator { get; private set; }
 
         public CacheFile(string fileName)
@@ -28,7 +30,7 @@ namespace Adjutant.Blam.Halo1
             FileName = fileName;
             AddressTranslator = new TagAddressTranslator(this);
 
-            using (var reader = CreateReader())
+            using (var reader = CreateReader(AddressTranslator))
             {
                 Header = reader.ReadObject<CacheHeader>();
 
@@ -36,15 +38,17 @@ namespace Adjutant.Blam.Halo1
                 TagIndex = reader.ReadObject(new TagIndex(this));
                 TagIndex.ReadItems(reader);
             }
+
+            Scenario = TagIndex.FirstOrDefault(t => t.ClassCode == "scnr")?.ReadMetadata<scenario>();
         }
 
-        public DependencyReader CreateReader()
+        public DependencyReader CreateReader(IAddressTranslator translator)
         {
             var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read);
             var reader = new DependencyReader(fs, ByteOrder.LittleEndian);
             reader.RegisterType<CacheFile>(() => this);
-            reader.RegisterType<Pointer>(() => new Pointer(reader.ReadInt32(), AddressTranslator));
-            reader.RegisterType<IAddressTranslator>(() => AddressTranslator);
+            reader.RegisterType<Pointer>(() => new Pointer(reader.ReadInt32(), translator));
+            reader.RegisterType<IAddressTranslator>(() => translator);
             return reader;
         }
 
@@ -190,28 +194,19 @@ namespace Adjutant.Blam.Halo1
         public T ReadMetadata<T>()
         {
             if (typeof(T).Equals(typeof(scenario_structure_bsp)))
-                return (T)(object)ReadBSPMetadata();
+            {
+                var translator = new BSPAddressTranslator(cache, Id);
+                using (var reader = cache.CreateReader(translator))
+                {
+                    reader.Seek(translator.TagAddress, SeekOrigin.Begin);
+                    return (T)(object)reader.ReadObject<scenario_structure_bsp>(cache.Header.Version);
+                }
+            }
 
-            using (var reader = cache.CreateReader())
+            using (var reader = cache.CreateReader(cache.AddressTranslator))
             {
                 reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
                 return (T)reader.ReadObject(typeof(T), cache.Header.Version);
-            }
-        }
-
-        private scenario_structure_bsp ReadBSPMetadata()
-        {
-            var translator = new BSPAddressTranslator(cache, Id);
-
-            using (var fs = new FileStream(cache.FileName, FileMode.Open, FileAccess.Read))
-            using (var reader = new DependencyReader(fs, ByteOrder.LittleEndian))
-            {
-                reader.RegisterType<CacheFile>(() => cache);
-                reader.RegisterType<Pointer>(() => new Pointer(reader.ReadInt32(), translator));
-                reader.RegisterType<IAddressTranslator>(() => translator);
-
-                reader.Seek(translator.TagAddress, SeekOrigin.Begin);
-                return reader.ReadObject<scenario_structure_bsp>(cache.Header.Version);
             }
         }
 
