@@ -95,10 +95,12 @@ namespace Adjutant.Blam.Halo2
         public short Type { get; set; }
 
         [Offset(4)]
-        public ushort VertexCount { get; set; }
+        [StoreType(typeof(ushort))]
+        public int VertexCount { get; set; }
 
         [Offset(6)]
-        public ushort FaceCount { get; set; }
+        [StoreType(typeof(ushort))]
+        public int FaceCount { get; set; }
 
         [Offset(20)]
         public byte Bones { get; set; }
