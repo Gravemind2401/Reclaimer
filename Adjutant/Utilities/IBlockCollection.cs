@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Utilities
 {
-    public interface IBlockCollection<T> : IList<T>, ICollection<T>
+    public interface IBlockCollection<T> : IList<T>, IReadOnlyList<T>
     {
         Pointer Pointer { get; set; }
     }

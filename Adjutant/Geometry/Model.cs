@@ -8,29 +8,45 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Geometry
 {
-    public class Model
+    public class Model : IModel
     {
         public Matrix4x4 CoordinateSystem { get; set; }
 
         public string Name { get; set; }
-        public List<Node> Nodes { get; set; }
-        public List<MarkerGroup> MarkerGroups { get; set; }
-        public List<Region> Regions { get; set; }
+        public List<INode> Nodes { get; set; }
+        public List<IMarkerGroup> MarkerGroups { get; set; }
+        public List<IRegion> Regions { get; set; }
         //public List<Shader> Shaders { get; set; }
         public List<IRealBounds5D> Bounds { get; set; }
-        public List<Mesh> Meshes { get; set; }
+        public List<IMesh> Meshes { get; set; }
 
         public Model()
         {
-            Nodes = new List<Node>();
-            MarkerGroups = new List<MarkerGroup>();
-            Regions = new List<Region>();
+            Nodes = new List<INode>();
+            MarkerGroups = new List<IMarkerGroup>();
+            Regions = new List<IRegion>();
             Bounds = new List<IRealBounds5D>();
-            Meshes = new List<Mesh>();
+            Meshes = new List<IMesh>();
         }
+
+        public override string ToString() => Name;
+
+        #region IModel
+
+        IReadOnlyList<INode> IModel.Nodes => Nodes;
+
+        IReadOnlyList<IMarkerGroup> IModel.MarkerGroups => MarkerGroups;
+
+        IReadOnlyList<IRegion> IModel.Regions => Regions;
+
+        IReadOnlyList<IRealBounds5D> IModel.Bounds => Bounds;
+
+        IReadOnlyList<IMesh> IModel.Meshes => Meshes;
+
+        #endregion
     }
 
-    public class Node
+    public class Node : INode
     {
         public string Name { get; set; }
         public short ParentIndex { get; set; }
@@ -39,39 +55,48 @@ namespace Adjutant.Geometry
         public IRealVector3D Position { get; set; }
         public IRealVector4D Rotation { get; set; }
 
-        public override string ToString()
-        {
-            return Name;
-        }
+        public override string ToString() => Name;
     }
 
-    public class MarkerGroup : List<Marker>
+    public class MarkerGroup : IMarkerGroup
     {
         public string Name { get; set; }
+        public List<IMarker> Markers { get; set; }
 
-        public override string ToString()
+        public MarkerGroup()
         {
-            return Name;
+            Markers = new List<IMarker>();
         }
+
+        public override string ToString() => Name;
+
+        #region IMarkerGroup
+
+        IReadOnlyList<IMarker> IMarkerGroup.Markers => Markers; 
+
+        #endregion
     }
 
-    public class Region
+    public class Region : IRegion
     {
         public string Name { get; set; }
-        public List<Permutation> Permutations { get; set; }
+        public List<IPermutation> Permutations { get; set; }
 
         public Region()
         {
-            Permutations = new List<Permutation>();
+            Permutations = new List<IPermutation>();
         }
 
-        public override string ToString()
-        {
-            return Name;
-        }
+        public override string ToString() => Name;
+
+        #region IRegion
+
+        IReadOnlyList<IPermutation> IRegion.Permutations => Permutations; 
+
+        #endregion
     }
 
-    public class Permutation
+    public class Permutation : IPermutation
     {
         public string Name { get; set; }
         public byte NodeIndex { get; set; }
@@ -80,20 +105,19 @@ namespace Adjutant.Geometry
 
         public float TransformScale { get; set; }
         public Matrix4x4 Transform { get; set; }
-        public List<Submesh> Submeshes { get; set; }
+        public List<ISubmesh> Submeshes { get; set; }
 
         public Permutation()
         {
-            Submeshes = new List<Submesh>();
+            Submeshes = new List<ISubmesh>();
         }
 
-        public override string ToString()
-        {
-            return Name;
-        }
+        public override string ToString() => Name;
+
+        IReadOnlyList<ISubmesh> IPermutation.Submeshes => Submeshes;
     }
 
-    public class Submesh
+    public class Submesh : ISubmesh
     {
         public short MaterialIndex { get; set; }
         public int IndexStart { get; set; }
@@ -102,7 +126,7 @@ namespace Adjutant.Geometry
         public int VertexLength { get; set; }
     }
 
-    public class Marker
+    public class Marker : IMarker
     {
         public byte RegionIndex { get; set; }
         public byte PermutationIndex { get; set; }
@@ -111,13 +135,21 @@ namespace Adjutant.Geometry
         public IRealVector4D Rotation { get; set; }
     }
 
-    public class Mesh
+    public class Mesh : IMesh
     {
         public VertexWeights VertexWeights { get; set; }
         public IndexFormat IndexFormat { get; set; }
 
         public IXMVector[] Vertices { get; set; }
         public int[] Indicies { get; set; }
+
+        #region IMesh
+
+        IReadOnlyList<IXMVector> IMesh.Vertices => Vertices;
+
+        IReadOnlyList<int> IMesh.Indicies => Indicies; 
+
+        #endregion
     }
 
     public enum VertexWeights

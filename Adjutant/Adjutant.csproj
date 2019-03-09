@@ -79,6 +79,7 @@
     <Compile Include="Blam\Halo2\CacheFile.cs" />
     <Compile Include="Blam\Halo2\HeaderAddressTranslator.cs" />
     <Compile Include="Blam\Halo2\TagAddressTranslator.cs" />
+    <Compile Include="Geometry\IModel.cs" />
     <Compile Include="Geometry\Model.cs" />
     <Compile Include="Geometry\VectorType.cs" />
     <Compile Include="IO\DependencyReader.cs" />
