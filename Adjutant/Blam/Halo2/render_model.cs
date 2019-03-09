@@ -32,7 +32,7 @@ namespace Adjutant.Blam.Halo2
     }
 
     [FixedSize(56)]
-    public class BoundingBox
+    public class BoundingBox : IRealBounds5D
     {
         [Offset(0)]
         public RealBounds XBounds { get; set; }
@@ -48,6 +48,20 @@ namespace Adjutant.Blam.Halo2
 
         [Offset(32)]
         public RealBounds VBounds { get; set; }
+
+        #region IRealBounds5D
+
+        IRealBounds IRealBounds5D.XBounds => XBounds;
+
+        IRealBounds IRealBounds5D.YBounds => YBounds;
+
+        IRealBounds IRealBounds5D.ZBounds => ZBounds;
+
+        IRealBounds IRealBounds5D.UBounds => UBounds;
+
+        IRealBounds IRealBounds5D.VBounds => VBounds; 
+
+        #endregion
     }
 
     [FixedSize(16)]
