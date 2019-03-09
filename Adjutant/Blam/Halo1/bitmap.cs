@@ -1,6 +1,10 @@
-﻿using Adjutant.Spatial;
+﻿using Adjutant.IO;
+using Adjutant.Spatial;
+using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Dds;
+using System.IO;
 using System.IO.Endian;
 using System.Linq;
 using System.Text;
@@ -8,13 +12,69 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Halo1
 {
-    public class bitmap
+    public class bitmap : IBitmap
     {
+        private readonly CacheFile cache;
+
+        public bitmap(CacheFile cache)
+        {
+            this.cache = cache;
+        }
+
         [Offset(84)]
         public BlockCollection<Sequence> Sequences { get; set; }
 
         [Offset(96)]
         public BlockCollection<BitmapData> Bitmaps { get; set; }
+
+        #region IBitmap
+
+        int IBitmap.BitmapCount => Bitmaps.Count;
+
+        public DdsImage ToDds(int index)
+        {
+            if (index < 0 || index >= Bitmaps.Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            var submap = Bitmaps[index];
+
+            var dir = Directory.GetParent(cache.FileName).FullName;
+            var bitmapsMap = Path.Combine(dir, "bitmaps.map");
+
+            byte[] data;
+
+            using (var fs = new FileStream(bitmapsMap, FileMode.Open, FileAccess.Read))
+            using (var reader = new DependencyReader(fs, ByteOrder.LittleEndian))
+            {
+                reader.Seek(submap.PixelsOffset, SeekOrigin.Begin);
+                data = reader.ReadBytes(submap.PixelsSize);
+            }
+
+            //FourCC fourCC;
+            DxgiFormat dxgi;
+            switch (submap.BitmapFormat)
+            {
+                case 14:
+                    //fourCC = FourCC.DXT1;
+                    dxgi = DxgiFormat.BC1_UNorm;
+                    break;
+                case 15:
+                    //fourCC = FourCC.DXT3;
+                    dxgi = DxgiFormat.BC2_UNorm;
+                    break;
+                case 16:
+                    //fourCC = FourCC.DXT5;
+                    dxgi = DxgiFormat.BC3_UNorm;
+                    break;
+
+                default: throw new NotSupportedException();
+            }
+
+            //return new DdsImage(submap.Height, submap.Width, fourCC, data);
+            return new DdsImage(submap.Height, submap.Width, dxgi, DxgiTextureType.Texture2D, data);
+        } 
+
+        #endregion
     }
 
     [FixedSize(64)]
@@ -54,7 +114,6 @@ namespace Adjutant.Blam.Halo1
 
         [Offset(24)]
         public RealVector2D RegPoint { get; set; }
-
     }
 
     [FixedSize(48)]
@@ -96,6 +155,5 @@ namespace Adjutant.Blam.Halo1
 
         [Offset(28)]
         public int PixelsSize { get; set; }
-
     }
 }
