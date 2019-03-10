@@ -561,18 +561,27 @@ namespace System.IO.Endian
         /// <exception cref="ObjectDisposedException" />
         public void Seek(long offset, SeekOrigin origin)
         {
+            long address = 0;
             switch (origin)
             {
                 case SeekOrigin.Begin:
-                    BaseStream.Position = virtualOrigin + offset;
+                    address = virtualOrigin + offset;
                     break;
                 case SeekOrigin.Current:
-                    BaseStream.Position += offset;
+                    address = BaseStream.Position + offset;
                     break;
                 case SeekOrigin.End:
-                    BaseStream.Position = BaseStream.Length + offset;
+                    address = BaseStream.Length + offset;
                     break;
             }
+
+            SeekAbsolute(address);
+        }
+
+        private void SeekAbsolute(long address)
+        {
+            if (BaseStream.Position != address)
+                BaseStream.Position = address;
         }
 
         /// <summary>

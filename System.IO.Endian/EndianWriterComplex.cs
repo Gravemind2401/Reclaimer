@@ -11,6 +11,10 @@ namespace System.IO.Endian
 {
     public partial class EndianWriter : BinaryWriter
     {
+        private static readonly Dictionary<Type, MethodInfo> stdMethodCache = new Dictionary<Type, MethodInfo>();
+        private static readonly Dictionary<Type, PropertyInfo> versionPropCache = new Dictionary<Type, PropertyInfo>();
+        private static readonly Dictionary<Type, PropertyInfo> lengthPropCache = new Dictionary<Type, PropertyInfo>();
+
         #region WriteObject Overloads
 
         /// <summary>
@@ -107,7 +111,7 @@ namespace System.IO.Endian
                 throw new ArgumentNullException(nameof(value));
 
             WriteObject(value, (double?)version);
-        } 
+        }
 
         #endregion
 
@@ -228,6 +232,12 @@ namespace System.IO.Endian
                 throw new ArgumentNullException(nameof(value));
 
             var type = value.GetType();
+            if (stdMethodCache.ContainsKey(type))
+            {
+                stdMethodCache[type].Invoke(this, new[] { value });
+                return;
+            }
+
             var primitiveMethod = (from m in typeof(EndianWriter).GetMethods()
                                    let param = m.GetParameters()
                                    where m.Name.Equals(nameof(Write))
@@ -237,7 +247,9 @@ namespace System.IO.Endian
 
             if (primitiveMethod == null)
                 throw Exceptions.MissingPrimitiveWriteMethod(type.Name);
-            else primitiveMethod.Invoke(this, new[] { value });
+
+            stdMethodCache.Add(type, primitiveMethod);
+            primitiveMethod.Invoke(this, new[] { value });
         }
 
         /// <summary>
@@ -289,25 +301,34 @@ namespace System.IO.Endian
         {
             double? version = null;
 
-            var versionProps = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            PropertyInfo versionProp;
+            if (versionPropCache.ContainsKey(type))
+                versionProp = versionPropCache[type];
+            else
+            {
+                var versionProps = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Where(p => Attribute.IsDefined(p, typeof(VersionNumberAttribute)))
                 .ToList();
 
-            if (versionProps.Count > 1)
-                throw Exceptions.MultipleVersionsSpecified(type.Name);
-            else if (versionProps.Count == 1)
+                if (versionProps.Count > 1)
+                    throw Exceptions.MultipleVersionsSpecified(type.Name);
+
+                versionProp = versionProps.FirstOrDefault();
+                versionPropCache.Add(type, versionProp);
+            }
+
+            if (versionProp != null)
             {
-                var vprop = versionProps[0];
-                if (Attribute.IsDefined(vprop, typeof(OffsetAttribute)))
+                if (Attribute.IsDefined(versionProp, typeof(OffsetAttribute)))
                 {
-                    var offsets = Utils.GetCustomAttributes<OffsetAttribute>(vprop).ToList();
+                    var offsets = Utils.GetCustomAttributes<OffsetAttribute>(versionProp).ToList();
                     if (offsets.Count > 1 || offsets[0].HasMinVersion || offsets[0].HasMaxVersion)
                         throw Exceptions.InvalidVersionAttribute();
                 }
 
-                var converter = TypeDescriptor.GetConverter(vprop.PropertyType);
+                var converter = TypeDescriptor.GetConverter(versionProp.PropertyType);
                 if (converter.CanConvertTo(typeof(double)))
-                    version = (double)converter.ConvertTo(vprop.GetValue(instance), typeof(double));
+                    version = (double)converter.ConvertTo(versionProp.GetValue(instance), typeof(double));
             }
 
             return version;
@@ -360,19 +381,28 @@ namespace System.IO.Endian
                 foreach (var prop in propInfo)
                     writer.WritePropertyValue(value, prop, version);
 
-                var lengthProps = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(p => Attribute.IsDefined(p, typeof(DataLengthAttribute)))
-                    .ToList();
-
-                if (lengthProps.Count > 1)
-                    throw Exceptions.MultipleDataLengthsSpecified(type.Name, version);
-                else if (lengthProps.Count == 1 && Utils.GetAttributeForVersion<DataLengthAttribute>(lengthProps[0], version) != null)
+                PropertyInfo lengthProp;
+                if (lengthPropCache.ContainsKey(type))
+                    lengthProp = lengthPropCache[type];
+                else
                 {
-                    var converter = TypeDescriptor.GetConverter(lengthProps[0].PropertyType);
+                    var lengthProps = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                    .Where(p => Attribute.IsDefined(p, typeof(DataLengthAttribute)));
+
+                    if (lengthProps.Count() > 1)
+                        throw Exceptions.MultipleDataLengthsSpecified(type.Name, version);
+
+                    lengthProp = lengthProps.FirstOrDefault();
+                    lengthPropCache.Add(type, lengthProp);
+                }
+
+                if (lengthProp != null && Utils.GetAttributeForVersion<DataLengthAttribute>(lengthProp, version) != null)
+                {
+                    var converter = TypeDescriptor.GetConverter(lengthProp.PropertyType);
                     if (converter.CanConvertTo(typeof(long)))
                     {
-                        var len = (long)converter.ConvertTo(lengthProps[0].GetValue(value), typeof(long));
-                        BaseStream.Position = originalPosition + len;
+                        var len = (long)converter.ConvertTo(lengthProp.GetValue(value), typeof(long));
+                        SeekAbsolute(originalPosition + len);
                     }
                 }
             }
@@ -380,7 +410,7 @@ namespace System.IO.Endian
             if (Attribute.IsDefined(type, typeof(FixedSizeAttribute)))
             {
                 var attr = Utils.GetAttributeForVersion<FixedSizeAttribute>(type, version);
-                if (attr != null) BaseStream.Position = originalPosition + attr.Size;
+                if (attr != null) SeekAbsolute(originalPosition + attr.Size);
             }
         }
     }

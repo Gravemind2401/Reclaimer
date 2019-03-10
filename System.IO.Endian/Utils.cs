@@ -9,8 +9,18 @@ namespace System.IO.Endian
 {
     internal static class Utils
     {
+        private static readonly Dictionary<string, Attribute> attrVerCache = new Dictionary<string, Attribute>();
+        private static readonly HashSet<string> propValidationCache = new HashSet<string>();
+
         internal static T GetAttributeForVersion<T>(MemberInfo member, double? version) where T : Attribute, IVersionAttribute
         {
+            var key = member is TypeInfo 
+                ? $"{typeof(T).Name}|{((TypeInfo)member).FullName}:{version}" 
+                : $"{typeof(T).Name}|{member.DeclaringType.FullName}.{member.Name}:{version}";
+
+            if (attrVerCache.ContainsKey(key))
+                return (T)attrVerCache[key];
+
             var matches = Utils.GetCustomAttributes<T>(member).Where(o =>
             {
                 var minVersion = o.HasMinVersion ? o.MinVersion : (double?)null;
@@ -34,18 +44,25 @@ namespace System.IO.Endian
                 {
                     matches = matches.Where(o => o.HasMinVersion || o.HasMaxVersion).ToList();
                     if (matches.Count == 1)
+                    {
+                        attrVerCache.Add(key, matches.Single());
                         return matches.Single();
+                    }
                     //else both or neither are versioned: fall through to the error below
                 }
 
                 throw Exceptions.AttributeVersionOverlap(member.Name, typeof(T).Name, version);
             }
 
+            attrVerCache.Add(key, matches.FirstOrDefault());
             return matches.FirstOrDefault();
         }
 
         internal static bool CheckPropertyForReadWrite(PropertyInfo property, double? version)
         {
+            var key = $"{property.DeclaringType.FullName}.{property.Name}:{version}";
+            if (propValidationCache.Contains(key)) return true;
+
             if (!Attribute.IsDefined(property, typeof(OffsetAttribute)))
                 return false; //ignore properties with no offset assigned
 
@@ -75,6 +92,7 @@ namespace System.IO.Endian
             if (Utils.GetAttributeForVersion<OffsetAttribute>(property, version) == null)
                 throw Exceptions.NoOffsetForVersion(property.Name, version);
 
+            propValidationCache.Add(key);
             return true;
         }
 
