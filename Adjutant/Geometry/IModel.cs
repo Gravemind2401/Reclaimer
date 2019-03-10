@@ -8,20 +8,20 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Geometry
 {
-    public interface IModel
+    public interface IGeometryModel
     {
         Matrix4x4 CoordinateSystem { get; }
 
         string Name { get; }
-        IReadOnlyList<INode> Nodes { get; }
-        IReadOnlyList<IMarkerGroup> MarkerGroups { get; }
-        IReadOnlyList<IRegion> Regions { get; }
+        IReadOnlyList<IGeometryNode> Nodes { get; }
+        IReadOnlyList<IGeometryMarkerGroup> MarkerGroups { get; }
+        IReadOnlyList<IGeometryRegion> Regions { get; }
         //IReadOnlyList<Shader> Shaders { get; }
         IReadOnlyList<IRealBounds5D> Bounds { get; }
-        IReadOnlyList<IMesh> Meshes { get; }
+        IReadOnlyList<IGeometryMesh> Meshes { get; }
     }
 
-    public interface INode
+    public interface IGeometryNode
     {
         string Name { get; }
         short ParentIndex { get; }
@@ -31,19 +31,19 @@ namespace Adjutant.Geometry
         IRealVector4D Rotation { get; }
     }
 
-    public interface IMarkerGroup
+    public interface IGeometryMarkerGroup
     {
         string Name { get; }
-        IReadOnlyList<IMarker> Markers { get; }
+        IReadOnlyList<IGeometryMarker> Markers { get; }
     }
 
-    public interface IRegion
+    public interface IGeometryRegion
     {
         string Name { get; }
-        IReadOnlyList<IPermutation> Permutations { get; }
+        IReadOnlyList<IGeometryPermutation> Permutations { get; }
     }
 
-    public interface IPermutation
+    public interface IGeometryPermutation
     {
         string Name { get; }
         byte NodeIndex { get; }
@@ -52,10 +52,10 @@ namespace Adjutant.Geometry
 
         float TransformScale { get; }
         Matrix4x4 Transform { get; }
-        IReadOnlyList<ISubmesh> Submeshes { get; }
+        IReadOnlyList<IGeometrySubmesh> Submeshes { get; }
     }
 
-    public interface ISubmesh
+    public interface IGeometrySubmesh
     {
         short MaterialIndex { get; }
         int IndexStart { get; }
@@ -64,7 +64,7 @@ namespace Adjutant.Geometry
         int VertexLength { get; }
     }
 
-    public interface IMarker
+    public interface IGeometryMarker
     {
         byte RegionIndex { get; }
         byte PermutationIndex { get; }
@@ -73,12 +73,12 @@ namespace Adjutant.Geometry
         IRealVector4D Rotation { get; }
     }
 
-    public interface IMesh
+    public interface IGeometryMesh
     {
         VertexWeights VertexWeights { get; }
         IndexFormat IndexFormat { get; }
 
-        IReadOnlyList<IXMVector> Vertices { get; }
+        IReadOnlyList<IVertex> Vertices { get; }
         IReadOnlyList<int> Indicies { get; }
     }
 }

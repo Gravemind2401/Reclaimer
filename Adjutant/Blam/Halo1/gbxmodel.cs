@@ -1,17 +1,28 @@
 ﻿using Adjutant.Spatial;
+using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO.Endian;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Adjutant.Geometry;
+using System.IO;
+using System.Numerics;
 
 namespace Adjutant.Blam.Halo1
 {
-    public class gbxmodel
+    public class gbxmodel : IRenderGeometry
     {
+        private readonly CacheFile cache;
+
+        public gbxmodel(CacheFile cache)
+        {
+            this.cache = cache;
+        }
+
         [Offset(0)]
-        public short Flags { get; set; }
+        public ModelFlags Flags { get; set; }
 
         [Offset(48)]
         public float UScale { get; set; }
@@ -33,10 +44,117 @@ namespace Adjutant.Blam.Halo1
 
         [Offset(220)]
         public BlockCollection<Shader> Shaders { get; set; }
+
+        #region IRenderGeometry
+
+        int IRenderGeometry.LodCount => Regions.SelectMany(r => r.Permutations).Max(p => p.LodCount);
+
+        public IGeometryModel ReadGeometry(int lod)
+        {
+            using (var reader = cache.CreateReader(cache.AddressTranslator))
+            {
+                var model = new GeometryModel { CoordinateSystem = CoordinateSystem.HaloCE };
+
+                model.Nodes.AddRange(Nodes);
+                model.MarkerGroups.AddRange(MarkerGroups);
+
+                foreach (var region in Regions)
+                {
+                    var gRegion = new GeometryRegion { Name = region.Name };
+                    gRegion.Permutations.AddRange(region.Permutations.Select(p =>
+                        new GeometryPermutation
+                        {
+                            Name = p.Name,
+                            NodeIndex = byte.MaxValue,
+                            Transform = Matrix4x4.Identity,
+                            TransformScale = 1,
+                            BoundsIndex = -1,
+                            MeshIndex = p.LodIndex(lod)
+                        }));
+
+                    model.Regions.Add(gRegion);
+                }
+
+                foreach (var section in Sections)
+                {
+                    var indices = new List<ushort>();
+                    var vertices = new List<SkinnedVertex>();
+
+                    var mesh = new GeometryMesh();
+
+                    foreach (var submesh in section.Submeshes)
+                    {
+                        var gSubmesh = new GeometrySubmesh
+                        {
+                            MaterialIndex = submesh.ShaderIndex,
+                            IndexStart = indices.Count,
+                            IndexLength = submesh.IndexCount,
+                            VertexStart = vertices.Count,
+                            VertexLength = submesh.VertexCount
+                        };
+
+                        var permutations = model.Regions
+                            .SelectMany(r => r.Permutations)
+                            .Where(p => p.MeshIndex == Sections.IndexOf(section));
+
+                        foreach (var p in permutations)
+                            ((List<IGeometrySubmesh>)p.Submeshes).Add(gSubmesh);
+
+                        reader.Seek(cache.TagIndex.VertexDataOffset + cache.TagIndex.IndexDataOffset + submesh.IndexOffset, SeekOrigin.Begin);
+                        indices.AddRange(reader.ReadEnumerable<ushort>(submesh.IndexCount));
+
+                        reader.Seek(cache.TagIndex.VertexDataOffset + submesh.VertexOffset, SeekOrigin.Begin);
+                        //var vertsTemp = reader.ReadEnumerable<SkinnedVertex>(submesh.VertexCount).ToList();
+                        var vertsTemp = new List<SkinnedVertex>();
+                        for (int i = 0; i < submesh.VertexCount; i++)
+                        {
+                            var position = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                            var normal = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                            var binormal = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                            var tangent = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                            var texcoord = new RealVector2D(reader.ReadSingle() * UScale, reader.ReadSingle() * VScale);
+                            var nodes = new RealVector2D(reader.ReadInt16(), reader.ReadInt16());
+                            var weights = new RealVector2D(reader.ReadSingle(), reader.ReadSingle());
+
+                            vertsTemp.Add(new SkinnedVertex
+                            {
+                                Position = position,
+                                Normal = normal,
+                                Binormal = binormal,
+                                Tangent = tangent,
+                                TexCoords = texcoord,
+                                NodeIndex1 = (short)nodes.X,
+                                NodeIndex2 = (short)nodes.Y,
+                                NodeWeights = weights
+                            });
+                        }
+
+                        vertices.AddRange(vertsTemp);
+                    }
+
+                    mesh.IndexFormat = IndexFormat.Stripped;
+                    mesh.VertexWeights = VertexWeights.Multiple;
+                    mesh.Indicies = indices.Select(i => (int)i).ToArray();
+                    mesh.Vertices = vertices.ToArray();
+
+                    model.Meshes.Add(mesh);
+                }
+
+                return model;
+            }
+        }
+
+        #endregion
+    }
+
+    [Flags]
+    public enum ModelFlags : short
+    {
+        UseLocalNodes = 1
     }
 
     [FixedSize(64)]
-    public class MarkerGroup
+    public class MarkerGroup : IGeometryMarkerGroup
     {
         [Offset(0)]
         [NullTerminated(Length = 32)]
@@ -46,10 +164,16 @@ namespace Adjutant.Blam.Halo1
         public BlockCollection<Marker> Markers { get; set; }
 
         public override string ToString() => Name;
+
+        #region IGeometryMarkerGroup
+
+        IReadOnlyList<IGeometryMarker> IGeometryMarkerGroup.Markers => Markers;
+
+        #endregion
     }
 
     [FixedSize(32)]
-    public class Marker
+    public class Marker : IGeometryMarker
     {
         [Offset(0)]
         public byte RegionIndex { get; set; }
@@ -67,10 +191,18 @@ namespace Adjutant.Blam.Halo1
 
         [Offset(16)]
         public RealVector4D Rotation { get; set; }
+
+        #region IGeometryMarker
+
+        IRealVector3D IGeometryMarker.Position => Position;
+
+        IRealVector4D IGeometryMarker.Rotation => Rotation;
+
+        #endregion
     }
 
     [FixedSize(156)]
-    public class Node
+    public class Node : IGeometryNode
     {
         [Offset(0)]
         [NullTerminated(Length = 32)]
@@ -97,6 +229,14 @@ namespace Adjutant.Blam.Halo1
         public float DistanceFromParent { get; set; }
 
         public override string ToString() => Name;
+
+        #region IGeometryNode
+
+        IRealVector3D IGeometryNode.Position => Position;
+
+        IRealVector4D IGeometryNode.Rotation => Rotation;
+
+        #endregion
     }
 
     [FixedSize(76)]
@@ -118,15 +258,35 @@ namespace Adjutant.Blam.Halo1
         [Offset(0)]
         [NullTerminated(Length = 32)]
         public string Name { get; set; }
+        
+        [Offset(64)]
+        public short SuperLowSectionIndex { get; set; }
 
-        //offset 64:
-        //int16: super low LOD
-        //int16: low LOD
-        //int16: medium LOD
-        //int16: high LOD
+        [Offset(66)]
+        public short LowSectionIndex { get; set; }
+
+        [Offset(68)]
+        public short MediumSectionIndex { get; set; }
+
+        [Offset(70)]
+        public short HighSectionIndex { get; set; }
 
         [Offset(72)]
-        public short PieceIndex { get; set; } //super high LOD
+        public short SuperHighSectionIndex { get; set; }
+
+        internal short[] LodArray => new[] { SuperHighSectionIndex, HighSectionIndex, MediumSectionIndex, LowSectionIndex, SuperLowSectionIndex };
+
+        internal int LodCount => LodArray.Count(i => i >= 0);
+
+        internal short LodIndex(int lod)
+        {
+            if (lod < 0 || lod > 4)
+                throw new IndexOutOfRangeException();
+
+            return LodArray.Take(lod + 1)
+                .Reverse()
+                .FirstOrDefault(i => i >= 0);
+        }
 
         public override string ToString() => Name;
     }

@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Geometry
 {
-    interface IVertex
+    public interface IVertex
     {
         IXMVector[] Position { get; }
         IXMVector[] TexCoords { get; }
         IXMVector[] Normal { get; }
-        IXMVector[] Tangent { get; }
         IXMVector[] Binormal { get; }
-        IXMVector[] Color { get; }
+        IXMVector[] Tangent { get; }
         IXMVector[] BlendIndices { get; }
         IXMVector[] BlendWeight { get; }
+        IXMVector[] Color { get; }
     }
 }

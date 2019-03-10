@@ -1,4 +1,6 @@
-﻿using Adjutant.Spatial;
+﻿using Adjutant.Geometry;
+using Adjutant.IO;
+using Adjutant.Spatial;
 using System;
 using System.Collections.Generic;
 using System.IO.Endian;
@@ -9,9 +11,8 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Halo1
 {
-    [FixedSize(66)]
-    [StructLayout(LayoutKind.Sequential)]
-    public struct SkinnedVertex
+    [FixedSize(68)]
+    public class SkinnedVertex : IVertex
     {
         [Offset(0)]
         public RealVector3D Position { get; set; }
@@ -29,14 +30,34 @@ namespace Adjutant.Blam.Halo1
         public RealVector2D TexCoords { get; set; }
 
         [Offset(56)]
-        public byte NodeIndex1 { get; set; }
-
-        [Offset(57)]
-        public byte NodeIndex2 { get; set; }
+        public short NodeIndex1 { get; set; }
 
         [Offset(58)]
+        public short NodeIndex2 { get; set; }
+
+        [Offset(60)]
         public RealVector2D NodeWeights { get; set; }
 
         public override string ToString() => Position.ToString();
+
+        #region IVertex
+
+        IXMVector[] IVertex.Position => new IXMVector[] { Position };
+
+        IXMVector[] IVertex.TexCoords => new IXMVector[] { TexCoords };
+
+        IXMVector[] IVertex.Normal => new IXMVector[] { Normal };
+
+        IXMVector[] IVertex.Binormal => new IXMVector[] { Binormal };
+
+        IXMVector[] IVertex.Tangent => new IXMVector[] { Tangent };
+
+        IXMVector[] IVertex.BlendIndices => new IXMVector[] { new RealVector2D(NodeIndex1, NodeIndex2) };
+
+        IXMVector[] IVertex.BlendWeight => new IXMVector[] { NodeWeights };
+
+        IXMVector[] IVertex.Color => new IXMVector[0];
+
+        #endregion
     }
 }

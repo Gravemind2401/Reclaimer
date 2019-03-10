@@ -13,4 +13,10 @@ namespace Adjutant.Utilities
         int BitmapCount { get; }
         DdsImage ToDds(int index);
     }
+
+    public interface IRenderGeometry
+    {
+        int LodCount { get; }
+        IGeometryModel ReadGeometry(int lod);
+    }
 }

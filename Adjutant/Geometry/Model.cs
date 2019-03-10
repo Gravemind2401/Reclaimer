@@ -8,45 +8,45 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Geometry
 {
-    public class Model : IModel
+    public class GeometryModel : IGeometryModel
     {
         public Matrix4x4 CoordinateSystem { get; set; }
 
         public string Name { get; set; }
-        public List<INode> Nodes { get; set; }
-        public List<IMarkerGroup> MarkerGroups { get; set; }
-        public List<IRegion> Regions { get; set; }
+        public List<IGeometryNode> Nodes { get; set; }
+        public List<IGeometryMarkerGroup> MarkerGroups { get; set; }
+        public List<IGeometryRegion> Regions { get; set; }
         //public List<Shader> Shaders { get; set; }
         public List<IRealBounds5D> Bounds { get; set; }
-        public List<IMesh> Meshes { get; set; }
+        public List<IGeometryMesh> Meshes { get; set; }
 
-        public Model()
+        public GeometryModel()
         {
-            Nodes = new List<INode>();
-            MarkerGroups = new List<IMarkerGroup>();
-            Regions = new List<IRegion>();
+            Nodes = new List<IGeometryNode>();
+            MarkerGroups = new List<IGeometryMarkerGroup>();
+            Regions = new List<IGeometryRegion>();
             Bounds = new List<IRealBounds5D>();
-            Meshes = new List<IMesh>();
+            Meshes = new List<IGeometryMesh>();
         }
 
         public override string ToString() => Name;
 
-        #region IModel
+        #region IGeometryModel
 
-        IReadOnlyList<INode> IModel.Nodes => Nodes;
+        IReadOnlyList<IGeometryNode> IGeometryModel.Nodes => Nodes;
 
-        IReadOnlyList<IMarkerGroup> IModel.MarkerGroups => MarkerGroups;
+        IReadOnlyList<IGeometryMarkerGroup> IGeometryModel.MarkerGroups => MarkerGroups;
 
-        IReadOnlyList<IRegion> IModel.Regions => Regions;
+        IReadOnlyList<IGeometryRegion> IGeometryModel.Regions => Regions;
 
-        IReadOnlyList<IRealBounds5D> IModel.Bounds => Bounds;
+        IReadOnlyList<IRealBounds5D> IGeometryModel.Bounds => Bounds;
 
-        IReadOnlyList<IMesh> IModel.Meshes => Meshes;
+        IReadOnlyList<IGeometryMesh> IGeometryModel.Meshes => Meshes;
 
         #endregion
     }
 
-    public class Node : INode
+    public class GeometryNode : IGeometryNode
     {
         public string Name { get; set; }
         public short ParentIndex { get; set; }
@@ -58,45 +58,45 @@ namespace Adjutant.Geometry
         public override string ToString() => Name;
     }
 
-    public class MarkerGroup : IMarkerGroup
+    public class GeometryMarkerGroup : IGeometryMarkerGroup
     {
         public string Name { get; set; }
-        public List<IMarker> Markers { get; set; }
+        public List<IGeometryMarker> Markers { get; set; }
 
-        public MarkerGroup()
+        public GeometryMarkerGroup()
         {
-            Markers = new List<IMarker>();
+            Markers = new List<IGeometryMarker>();
         }
 
         public override string ToString() => Name;
 
-        #region IMarkerGroup
+        #region IGeometryMarkerGroup
 
-        IReadOnlyList<IMarker> IMarkerGroup.Markers => Markers; 
+        IReadOnlyList<IGeometryMarker> IGeometryMarkerGroup.Markers => Markers; 
 
         #endregion
     }
 
-    public class Region : IRegion
+    public class GeometryRegion : IGeometryRegion
     {
         public string Name { get; set; }
-        public List<IPermutation> Permutations { get; set; }
+        public List<IGeometryPermutation> Permutations { get; set; }
 
-        public Region()
+        public GeometryRegion()
         {
-            Permutations = new List<IPermutation>();
+            Permutations = new List<IGeometryPermutation>();
         }
 
         public override string ToString() => Name;
 
-        #region IRegion
+        #region IGeometryRegion
 
-        IReadOnlyList<IPermutation> IRegion.Permutations => Permutations; 
+        IReadOnlyList<IGeometryPermutation> IGeometryRegion.Permutations => Permutations; 
 
         #endregion
     }
 
-    public class Permutation : IPermutation
+    public class GeometryPermutation : IGeometryPermutation
     {
         public string Name { get; set; }
         public byte NodeIndex { get; set; }
@@ -105,19 +105,23 @@ namespace Adjutant.Geometry
 
         public float TransformScale { get; set; }
         public Matrix4x4 Transform { get; set; }
-        public List<ISubmesh> Submeshes { get; set; }
+        public List<IGeometrySubmesh> Submeshes { get; set; }
 
-        public Permutation()
+        public GeometryPermutation()
         {
-            Submeshes = new List<ISubmesh>();
+            Submeshes = new List<IGeometrySubmesh>();
         }
 
         public override string ToString() => Name;
 
-        IReadOnlyList<ISubmesh> IPermutation.Submeshes => Submeshes;
+        #region IGeometryPermutation
+
+        IReadOnlyList<IGeometrySubmesh> IGeometryPermutation.Submeshes => Submeshes; 
+
+        #endregion
     }
 
-    public class Submesh : ISubmesh
+    public class GeometrySubmesh : IGeometrySubmesh
     {
         public short MaterialIndex { get; set; }
         public int IndexStart { get; set; }
@@ -126,7 +130,7 @@ namespace Adjutant.Geometry
         public int VertexLength { get; set; }
     }
 
-    public class Marker : IMarker
+    public class GeometryMarker : IGeometryMarker
     {
         public byte RegionIndex { get; set; }
         public byte PermutationIndex { get; set; }
@@ -135,19 +139,19 @@ namespace Adjutant.Geometry
         public IRealVector4D Rotation { get; set; }
     }
 
-    public class Mesh : IMesh
+    public class GeometryMesh : IGeometryMesh
     {
         public VertexWeights VertexWeights { get; set; }
         public IndexFormat IndexFormat { get; set; }
 
-        public IXMVector[] Vertices { get; set; }
+        public IVertex[] Vertices { get; set; }
         public int[] Indicies { get; set; }
 
-        #region IMesh
+        #region IGeometryMesh
 
-        IReadOnlyList<IXMVector> IMesh.Vertices => Vertices;
+        IReadOnlyList<IVertex> IGeometryMesh.Vertices => Vertices;
 
-        IReadOnlyList<int> IMesh.Indicies => Indicies; 
+        IReadOnlyList<int> IGeometryMesh.Indicies => Indicies; 
 
         #endregion
     }
