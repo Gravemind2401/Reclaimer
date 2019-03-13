@@ -104,6 +104,7 @@
     <Compile Include="Spatial\RealVector3D.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
     <Compile Include="Utilities\Interfaces.cs" />
+    <Compile Include="Utilities\MurMur3.cs" />
     <Compile Include="Utilities\StringId.cs" />
     <Compile Include="Utilities\Utils.cs" />
     <Compile Include="Utilities\IAddressTranslator.cs" />
