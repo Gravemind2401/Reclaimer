@@ -20,14 +20,13 @@ namespace System.IO.Endian
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true, Inherited = false)]
     public sealed class FixedSizeAttribute : Attribute, IVersionAttribute
     {
-        private readonly long size;
         private double? minVersion;
         private double? maxVersion;
 
         /// <summary>
         /// Gets the size of the object, in bytes.
         /// </summary>
-        public long Size => size;
+        public long Size { get; }
 
         /// <summary>
         /// Gets a value indicating whether the size has a minimum version requirement.
@@ -79,7 +78,7 @@ namespace System.IO.Endian
             if (size <= 0)
                 throw Exceptions.ParamMustBePositive(nameof(size), size);
 
-            this.size = size;
+            Size = size;
         }
     }
 
@@ -140,14 +139,13 @@ namespace System.IO.Endian
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
     public sealed class OffsetAttribute : Attribute, IVersionAttribute
     {
-        private readonly long offset;
         private double? minVersion;
         private double? maxVersion;
 
         /// <summary>
         /// Gets the offset of the property's value, in bytes.
         /// </summary>
-        public long Offset => offset;
+        public long Offset { get; }
 
         /// <summary>
         /// Gets a value indicating whether the offset has a minimum version requirement.
@@ -199,7 +197,7 @@ namespace System.IO.Endian
             if (offset < 0)
                 throw Exceptions.ParamMustBeNonNegative(nameof(offset), offset);
 
-            this.offset = offset;
+            Offset = offset;
         }
     }
 
@@ -219,12 +217,10 @@ namespace System.IO.Endian
     [AttributeUsage(AttributeTargets.Property, Inherited = false)]
     public sealed class MinVersionAttribute : Attribute
     {
-        private readonly double minVersion;
-
         /// <summary>
         /// Gets the inclusive minimum version that the property is applicable to.
         /// </summary>
-        public double MinVersion => minVersion;
+        public double MinVersion { get; }
 
         /// <summary>
         /// Initializes a new instance of the <seealso cref="MinVersionAttribute"/> class with the specified minimum version value.
@@ -232,7 +228,7 @@ namespace System.IO.Endian
         /// <param name="minVersion">The inclusive minimum version that the property is applicable to.</param>
         public MinVersionAttribute(double minVersion)
         {
-            this.minVersion = minVersion;
+            MinVersion = minVersion;
         }
     }
 
@@ -242,12 +238,10 @@ namespace System.IO.Endian
     [AttributeUsage(AttributeTargets.Property, Inherited = false)]
     public sealed class MaxVersionAttribute : Attribute
     {
-        private readonly double maxVersion;
-
         /// <summary>
         /// Gets the exclusive maximum version that the property is applicable to.
         /// </summary>
-        public double MaxVersion => maxVersion;
+        public double MaxVersion { get; }
 
         /// <summary>
         /// Initializes a new instance of the <seealso cref="MaxVersionAttribute"/> class with the specified maximum version value.
@@ -255,7 +249,7 @@ namespace System.IO.Endian
         /// <param name="maxVersion">The exclusive maximum version that the property is applicable to.</param>
         public MaxVersionAttribute(double maxVersion)
         {
-            this.maxVersion = maxVersion;
+            MaxVersion = maxVersion;
         }
     }
 
@@ -265,12 +259,10 @@ namespace System.IO.Endian
     [AttributeUsage(AttributeTargets.Property, Inherited = false)]
     public sealed class VersionSpecificAttribute : Attribute
     {
-        private readonly double version;
-
         /// <summary>
         /// Gets the version that the property is applicable to.
         /// </summary>
-        public double Version => version;
+        public double Version { get; }
 
         /// <summary>
         /// Initializes a new instance of the <seealso cref="VersionSpecificAttribute"/> class with the specified version value.
@@ -278,7 +270,7 @@ namespace System.IO.Endian
         /// <param name="version">The version that the property is applicable to.</param>
         public VersionSpecificAttribute(double version)
         {
-            this.version = version;
+            Version = version;
         }
     }
 
@@ -288,14 +280,13 @@ namespace System.IO.Endian
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
     public sealed class ByteOrderAttribute : Attribute, IVersionAttribute
     {
-        private readonly ByteOrder byteOrder;
         private double? minVersion;
         private double? maxVersion;
 
         /// <summary>
         /// Gets the byte order used to store the object.
         /// </summary>
-        public ByteOrder ByteOrder => byteOrder;
+        public ByteOrder ByteOrder { get; }
 
         /// <summary>
         /// Gets a value indicating whether the byte order has a minimum version requirement.
@@ -343,7 +334,7 @@ namespace System.IO.Endian
         /// <param name="byteOrder">The byte order that used to store the object.</param>
         public ByteOrderAttribute(ByteOrder byteOrder)
         {
-            this.byteOrder = byteOrder;
+            ByteOrder = byteOrder;
         }
     }
 
@@ -353,12 +344,10 @@ namespace System.IO.Endian
     [AttributeUsage(AttributeTargets.Property, Inherited = false)]
     public sealed class FixedLengthAttribute : Attribute
     {
-        private readonly int length;
-
         /// <summary>
         /// Gets the number of bytes used to store the string.
         /// </summary>
-        public int Length => length;
+        public int Length { get; }
 
         /// <summary>
         /// Gets or sets a value indicating if trailing white-space should be trimmed from the string.
@@ -383,7 +372,7 @@ namespace System.IO.Endian
             if (length <= 0)
                 throw Exceptions.ParamMustBePositive(nameof(length), length);
 
-            this.length = length;
+            Length = length;
             Padding = ' ';
         }
     }
@@ -429,14 +418,13 @@ namespace System.IO.Endian
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
     public sealed class StoreTypeAttribute : Attribute, IVersionAttribute
     {
-        private readonly Type storeType;
         private double? minVersion;
         private double? maxVersion;
 
         /// <summary>
         /// Gets the byte order that used to store the object.
         /// </summary>
-        public Type StoreType => storeType;
+        public Type StoreType { get; }
 
         /// <summary>
         /// Gets a value indicating whether the byte order has a minimum version requirement.
@@ -485,7 +473,7 @@ namespace System.IO.Endian
         /// <param name="storeType"></param>
         public StoreTypeAttribute(Type storeType)
         {
-            this.storeType = storeType;
+            StoreType = storeType;
         }
     }
 }

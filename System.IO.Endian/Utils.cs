@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -12,11 +13,20 @@ namespace System.IO.Endian
         private static readonly Dictionary<string, Attribute> attrVerCache = new Dictionary<string, Attribute>();
         private static readonly HashSet<string> propValidationCache = new HashSet<string>();
 
+        internal static string CurrentCulture(FormattableString formattable)
+        {
+            if (formattable == null)
+                throw new ArgumentNullException(nameof(formattable));
+
+            return formattable.ToString(CultureInfo.CurrentCulture);
+        }
+
         internal static T GetAttributeForVersion<T>(MemberInfo member, double? version) where T : Attribute, IVersionAttribute
         {
-            var key = member is TypeInfo 
-                ? $"{typeof(T).Name}|{((TypeInfo)member).FullName}:{version}" 
-                : $"{typeof(T).Name}|{member.DeclaringType.FullName}.{member.Name}:{version}";
+            var typeInfo = member as TypeInfo;
+            var key = typeInfo != null 
+                ? CurrentCulture($"{typeof(T).Name}|{typeInfo.FullName}:{version}")
+                : CurrentCulture($"{typeof(T).Name}|{member.DeclaringType.FullName}.{member.Name}:{version}");
 
             if (attrVerCache.ContainsKey(key))
                 return (T)attrVerCache[key];
@@ -60,7 +70,7 @@ namespace System.IO.Endian
 
         internal static bool CheckPropertyForReadWrite(PropertyInfo property, double? version)
         {
-            var key = $"{property.DeclaringType.FullName}.{property.Name}:{version}";
+            var key = CurrentCulture($"{property.DeclaringType.FullName}.{property.Name}:{version}");
             if (propValidationCache.Contains(key)) return true;
 
             if (!Attribute.IsDefined(property, typeof(OffsetAttribute)))
