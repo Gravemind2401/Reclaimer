@@ -16,18 +16,18 @@ namespace Adjutant.Blam.Halo2
 {
     public class CacheFile : ICacheFile
     {
-        public string FileName { get; private set; }
+        public string FileName { get; }
         public string BuildString => Header.BuildString;
         public CacheType Type => Header.CacheType;
 
-        public CacheHeader Header { get; private set; }
-        public TagIndex TagIndex { get; private set; }
-        public StringIndex StringIndex { get; private set; }
+        public CacheHeader Header { get; }
+        public TagIndex TagIndex { get; }
+        public StringIndex StringIndex { get; }
 
-        public scenario Scenario { get; private set; }
+        public scenario Scenario { get; }
 
-        public HeaderAddressTranslator HeaderTranslator { get; private set; }
-        public TagAddressTranslator MetadataTranslator { get; private set; }
+        public HeaderAddressTranslator HeaderTranslator { get; }
+        public TagAddressTranslator MetadataTranslator { get; }
 
         public CacheFile(string fileName)
         {
