@@ -58,17 +58,6 @@ namespace Adjutant.IO
             return new DependencyReader(this, origin);
         }
 
-        protected override bool CanReadProperty(PropertyInfo prop, double? version)
-        {
-            if (prop == null)
-                throw new ArgumentNullException(nameof(prop));
-
-            if (CanConstruct(prop.PropertyType))
-                return true;
-
-            return base.CanReadProperty(prop, version);
-        }
-
         protected override void ReadProperty(object instance, PropertyInfo prop, Type storeType, double? version)
         {
             if (prop == null)
