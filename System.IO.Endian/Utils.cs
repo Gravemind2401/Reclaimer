@@ -10,6 +10,7 @@ namespace System.IO.Endian
 {
     internal static class Utils
     {
+        private static readonly Dictionary<string, PropertyInfo[]> propInfoCache = new Dictionary<string, PropertyInfo[]>();
         private static readonly Dictionary<string, Attribute> attrVerCache = new Dictionary<string, Attribute>();
         private static readonly HashSet<string> propValidationCache = new HashSet<string>();
 
@@ -19,6 +20,21 @@ namespace System.IO.Endian
                 throw new ArgumentNullException(nameof(formattable));
 
             return formattable.ToString(CultureInfo.CurrentCulture);
+        }
+
+        internal static PropertyInfo[] GetProperties(Type type, double? version)
+        {
+            var key = CurrentCulture($"{type.FullName}:{version}");
+            if (propInfoCache.ContainsKey(key))
+                return propInfoCache[key];
+
+            var propInfo = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where(p => Utils.CheckPropertyForReadWrite(p, version))
+                .OrderBy(p => Utils.GetAttributeForVersion<OffsetAttribute>(p, version).Offset)
+                .ToArray();
+
+            propInfoCache.Add(key, propInfo);
+            return propInfo;
         }
 
         internal static T GetAttributeForVersion<T>(MemberInfo member, double? version) where T : Attribute, IVersionAttribute

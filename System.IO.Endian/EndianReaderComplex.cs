@@ -270,17 +270,11 @@ namespace System.IO.Endian
             var originalByteOrder = ByteOrder;
             var storeType = prop.PropertyType;
 
-            if (Attribute.IsDefined(prop, typeof(ByteOrderAttribute)))
-            {
-                var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
-                if (attr != null) ByteOrder = attr.ByteOrder;
-            }
+            var boAttr = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
+            if (boAttr != null) ByteOrder = boAttr.ByteOrder;
 
-            if (Attribute.IsDefined(prop, typeof(StoreTypeAttribute)))
-            {
-                var attr = Utils.GetAttributeForVersion<StoreTypeAttribute>(prop, version);
-                if (attr != null) storeType = attr.StoreType;
-            }
+            var stAttr = Utils.GetAttributeForVersion<StoreTypeAttribute>(prop, version);
+            if (stAttr != null) storeType = stAttr.StoreType;
 
             Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
             ReadProperty(obj, prop, storeType, version);
@@ -432,16 +426,10 @@ namespace System.IO.Endian
                 if (!version.HasValue)
                     version = reader.GetVersionValue(instance, type);
 
-                if (Attribute.IsDefined(type, typeof(ByteOrderAttribute)))
-                {
-                    var attr = Utils.GetAttributeForVersion<ByteOrderAttribute>(type, version);
-                    if (attr != null) reader.ByteOrder = attr.ByteOrder;
-                }
+                var boAttr = Utils.GetAttributeForVersion<ByteOrderAttribute>(type, version);
+                if (boAttr != null) reader.ByteOrder = boAttr.ByteOrder;
 
-                var propInfo = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(p => Utils.CheckPropertyForReadWrite(p, version))
-                    .OrderBy(p => Utils.GetAttributeForVersion<OffsetAttribute>(p, version).Offset);
-
+                var propInfo = Utils.GetProperties(type, version);
                 foreach (var prop in propInfo)
                     reader.ReadPropertyValue(instance, prop, version);
 
@@ -471,11 +459,8 @@ namespace System.IO.Endian
                 }
             }
 
-            if (Attribute.IsDefined(type, typeof(FixedSizeAttribute)))
-            {
-                var attr = Utils.GetAttributeForVersion<FixedSizeAttribute>(type, version);
-                if (attr != null) SeekAbsolute(originalPosition + attr.Size);
-            }
+            var fsAttr = Utils.GetAttributeForVersion<FixedSizeAttribute>(type, version);
+            if (fsAttr != null) SeekAbsolute(originalPosition + fsAttr.Size);
 
             return instance;
         }
