@@ -49,6 +49,13 @@ namespace Adjutant.Blam.Halo1
             reader.RegisterType<CacheFile>(() => this);
             reader.RegisterType<Pointer>(() => new Pointer(reader.ReadInt32(), translator));
             reader.RegisterType<IAddressTranslator>(() => translator);
+
+            var header = reader.PeekInt32();
+            if (header == CacheFactory.BigHeader)
+                reader.ByteOrder = ByteOrder.BigEndian;
+            else if (header != CacheFactory.LittleHeader)
+                throw Exceptions.NotAValidMapFile(Path.GetFileName(FileName));
+
             return reader;
         }
 
@@ -79,19 +86,7 @@ namespace Adjutant.Blam.Halo1
         [NullTerminated(Length = 32)]
         public string BuildString { get; set; }
 
-        public CacheType CacheType
-        {
-            get
-            {
-                switch (Version)
-                {
-                    case 5: return CacheType.Halo1Xbox;
-                    case 7: return CacheType.Halo1PC;
-                    case 609: return CacheType.Halo1CE;
-                    default: return CacheType.Unknown;
-                }
-            }
-        }
+        public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
     }
 
     [FixedSize(40)]

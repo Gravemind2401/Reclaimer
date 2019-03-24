@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Blam\CacheFactory.cs" />
     <Compile Include="Blam\Definitions\Enums.cs" />
     <Compile Include="Blam\Definitions\ICacheFile.cs" />
     <Compile Include="Blam\Definitions\IStringIndex.cs" />

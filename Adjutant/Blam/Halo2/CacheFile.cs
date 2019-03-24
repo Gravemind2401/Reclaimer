@@ -75,6 +75,13 @@ namespace Adjutant.Blam.Halo2
                 M42 = reader.ReadSingle(),
                 M43 = reader.ReadSingle(),
             });
+
+            var header = reader.PeekInt32();
+            if (header == CacheFactory.BigHeader)
+                reader.ByteOrder = ByteOrder.BigEndian;
+            else if (header != CacheFactory.LittleHeader)
+                throw Exceptions.NotAValidMapFile(Path.GetFileName(FileName));
+
             return reader;
         }
 
@@ -143,18 +150,7 @@ namespace Adjutant.Blam.Halo2
         [Offset(728, MaxVersion = 0)]
         public int FileTableIndexOffset { get; set; }
 
-        public CacheType CacheType
-        {
-            get
-            {
-                switch (Version)
-                {
-                    case 0: return CacheType.Halo2Xbox;
-                    case -1: return CacheType.Halo2Vista;
-                    default: return CacheType.Unknown;
-                }
-            }
-        }
+        public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
     }
 
     [FixedSize(32)]
