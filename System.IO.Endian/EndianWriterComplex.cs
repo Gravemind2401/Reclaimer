@@ -116,17 +116,6 @@ namespace System.IO.Endian
         #endregion
 
         /// <summary>
-        /// Checks if the specified property is writable.
-        /// </summary>
-        /// <param name="prop">The property to check.</param>
-        /// <param name="version">The version to use when checking the property.</param>
-        /// <returns></returns>
-        protected virtual bool CanWriteProperty(PropertyInfo prop, double? version)
-        {
-            return Utils.CheckPropertyForReadWrite(prop, version);
-        }
-
-        /// <summary>
         /// This method is called for each property of an object when writing complex objects
         /// to write the property value to the stream. The <seealso cref="ByteOrder"/> and
         /// position of the stream are set before this method is called.

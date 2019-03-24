@@ -201,16 +201,6 @@ namespace System.IO.Endian
         #endregion
 
         /// <summary>
-        /// Checks if the specified property is readable.
-        /// </summary>
-        /// <param name="prop">The property to check.</param>
-        /// <param name="version">The version to use when checking the property.</param>
-        protected virtual bool CanReadProperty(PropertyInfo prop, double? version)
-        {
-            return Utils.CheckPropertyForReadWrite(prop, version);
-        }
-
-        /// <summary>
         /// This method is called for each property of an object when reading complex objects
         /// to read the property value from the stream. The <seealso cref="ByteOrder"/> and
         /// position of the stream are set before this method is called.
