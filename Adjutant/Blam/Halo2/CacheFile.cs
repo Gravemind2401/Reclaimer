@@ -88,7 +88,7 @@ namespace Adjutant.Blam.Halo2
         #region ICacheFile
 
         ITagIndex<IIndexItem> ICacheFile.TagIndex => TagIndex;
-        IStringIndex ICacheFile.StringIndex => StringIndex;
+        IStringIndex<IStringItem> ICacheFile.StringIndex => StringIndex;
 
         #endregion
     }
@@ -217,10 +217,10 @@ namespace Adjutant.Blam.Halo2
         IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
     }
 
-    public class StringIndex : IStringIndex
+    public class StringIndex : IStringIndex<StringItem>
     {
         private readonly CacheFile cache;
-        private readonly string[] items;
+        private readonly StringItem[] items;
 
         public StringIndex(CacheFile cache)
         {
@@ -228,7 +228,7 @@ namespace Adjutant.Blam.Halo2
                 throw new ArgumentNullException(nameof(cache));
 
             this.cache = cache;
-            items = new string[cache.Header.StringCount];
+            items = new StringItem[cache.Header.StringCount];
         }
 
         internal void ReadItems()
@@ -244,11 +244,13 @@ namespace Adjutant.Blam.Halo2
                 {
                     for (int i = 0; i < cache.Header.StringCount; i++)
                     {
+                        items[i] = new StringItem { Id = i };
+
                         if (indices[i] < 0)
                             continue;
 
                         reader2.Seek(indices[i], SeekOrigin.Begin);
-                        items[i] = reader2.ReadNullTerminatedString();
+                        items[i].Value = reader2.ReadNullTerminatedString();
                     }
                 }
             }
@@ -256,9 +258,9 @@ namespace Adjutant.Blam.Halo2
 
         public int StringCount => items.Length;
 
-        public string this[int id] => items[id];
+        public StringItem this[int id] => items[id];
 
-        public IEnumerator<string> GetEnumerator() => items.AsEnumerable().GetEnumerator();
+        public IEnumerator<StringItem> GetEnumerator() => items.AsEnumerable().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
     }
@@ -314,5 +316,12 @@ namespace Adjutant.Blam.Halo2
         {
             return Utils.CurrentCulture($"[{ClassCode}] {FileName}");
         }
+    }
+
+    public class StringItem : IStringItem
+    {
+        public int Id { get; set; }
+
+        public string Value { get; set; }
     }
 }

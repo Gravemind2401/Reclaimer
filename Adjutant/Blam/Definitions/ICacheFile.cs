@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Adjutant.IO;
+using Adjutant.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +15,6 @@ namespace Adjutant.Blam.Definitions
         CacheType Type { get; }
 
         ITagIndex<IIndexItem> TagIndex { get; }
-        IStringIndex StringIndex { get; }
+        IStringIndex<IStringItem> StringIndex { get; }
     }
 }

@@ -22,7 +22,7 @@ namespace Adjutant.Utilities
         }
 
         public int Id => id;
-        public string Value => cache?.StringIndex?[id];
+        public string Value => cache?.StringIndex?[id].Value;
 
         public override string ToString() => Value;
 

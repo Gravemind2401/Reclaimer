@@ -62,7 +62,7 @@ namespace Adjutant.Blam.Halo1
         #region ICacheFile
 
         ITagIndex<IIndexItem> ICacheFile.TagIndex => TagIndex;
-        IStringIndex ICacheFile.StringIndex => null;
+        IStringIndex<IStringItem> ICacheFile.StringIndex => null;
 
         #endregion
     }
