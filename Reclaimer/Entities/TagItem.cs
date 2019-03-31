@@ -18,10 +18,10 @@ namespace Reclaimer.Entities
 {
     using Adjutant.Blam.Definitions;
 
-    // index_item
-    [Table("index_item", Schema = "main")]
+    // tag_item
+    [Table("tag_item", Schema = "main")]
     [System.CodeDom.Compiler.GeneratedCode("EF.Reverse.POCO.Generator", "2.37.2.0")]
-    public partial class IndexItem
+    public partial class TagItem
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Column(@"cache_id", Order = 0, TypeName = "integer")]
@@ -55,16 +55,16 @@ namespace Reclaimer.Entities
         // Foreign keys
 
         /// <summary>
-        /// Parent TagIndex pointed by [index_item].([CacheId]) (fk_index_item_1)
+        /// Parent TagIndex pointed by [tag_item].([CacheId]) (fk_tag_item_1)
         /// </summary>
-        [ForeignKey("CacheId"), Required] public virtual TagIndex TagIndex { get; set; } // fk_index_item_1
+        [ForeignKey("CacheId"), Required] public virtual TagIndex TagIndex { get; set; } // fk_tag_item_1
 
         /// <summary>
-        /// Parent Path pointed by [index_item].([PathId]) (fk_index_item_0)
+        /// Parent TagPath pointed by [tag_item].([PathId]) (fk_tag_item_0)
         /// </summary>
-        [ForeignKey("PathId"), Required] public virtual Path Path { get; set; } // fk_index_item_0
+        [ForeignKey("PathId"), Required] public virtual TagPath TagPath { get; set; } // fk_tag_item_0
 
-        public IndexItem()
+        public TagItem()
         {
             InitializePartial();
         }

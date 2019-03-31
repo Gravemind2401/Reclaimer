@@ -24,11 +24,12 @@ namespace Reclaimer.Entities
     public class FakeDatabaseContext : IDatabaseContext
     {
         public System.Data.Entity.DbSet<CacheFile> CacheFiles { get; set; }
-        public System.Data.Entity.DbSet<IndexItem> IndexItems { get; set; }
-        public System.Data.Entity.DbSet<Path> Paths { get; set; }
         public System.Data.Entity.DbSet<StringIndex> StringIndexes { get; set; }
         public System.Data.Entity.DbSet<StringItem> StringItems { get; set; }
+        public System.Data.Entity.DbSet<StringValue> StringValues { get; set; }
         public System.Data.Entity.DbSet<TagIndex> TagIndexes { get; set; }
+        public System.Data.Entity.DbSet<TagItem> TagItems { get; set; }
+        public System.Data.Entity.DbSet<TagPath> TagPaths { get; set; }
 
         public FakeDatabaseContext()
         {
@@ -37,11 +38,12 @@ namespace Reclaimer.Entities
             _database = null;
 
             CacheFiles = new FakeDbSet<CacheFile>("CacheId");
-            IndexItems = new FakeDbSet<IndexItem>("CacheId", "TagId");
-            Paths = new FakeDbSet<Path>("PathId");
             StringIndexes = new FakeDbSet<StringIndex>("CacheId");
             StringItems = new FakeDbSet<StringItem>("CacheId", "StringId");
+            StringValues = new FakeDbSet<StringValue>("ValueId");
             TagIndexes = new FakeDbSet<TagIndex>("CacheId");
+            TagItems = new FakeDbSet<TagItem>("CacheId", "TagId");
+            TagPaths = new FakeDbSet<TagPath>("PathId");
         }
 
         public int SaveChangesCount { get; private set; }

@@ -18,17 +18,17 @@ namespace Reclaimer.Entities
 {
     using Adjutant.Blam.Definitions;
 
-    // path
-    [Table("path", Schema = "main")]
+    // string_value
+    [Table("string_value", Schema = "main")]
     [System.CodeDom.Compiler.GeneratedCode("EF.Reverse.POCO.Generator", "2.37.2.0")]
-    public partial class Path
+    public partial class StringValue
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        [Column(@"path_id", Order = 0, TypeName = "integer")]
+        [Column(@"value_id", Order = 0, TypeName = "integer")]
         [Required]
         [Key]
-        [Display(Name = "Path ID")]
-        public long PathId { get; set; } // path_id (Primary key)
+        [Display(Name = "Value ID")]
+        public long ValueId { get; set; } // value_id (Primary key)
         [Column(@"value", Order = 1, TypeName = "varchar")]
         [MaxLength(512)]
         [StringLength(512)]
@@ -38,13 +38,13 @@ namespace Reclaimer.Entities
         // Reverse navigation
 
         /// <summary>
-        /// Child IndexItems where [index_item].[path_id] point to this entity (fk_index_item_0)
+        /// Child StringItems where [string_item].[value_id] point to this entity (fk_string_item_0)
         /// </summary>
-        public virtual System.Collections.Generic.ICollection<IndexItem> IndexItems { get; set; } // index_item.fk_index_item_0
+        public virtual System.Collections.Generic.ICollection<StringItem> StringItems { get; set; } // string_item.fk_string_item_0
 
-        public Path()
+        public StringValue()
         {
-            IndexItems = new System.Collections.Generic.List<IndexItem>();
+            StringItems = new System.Collections.Generic.List<StringItem>();
             InitializePartial();
         }
 

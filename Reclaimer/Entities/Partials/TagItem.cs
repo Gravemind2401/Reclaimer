@@ -9,7 +9,7 @@ using Reclaimer.Utils;
 
 namespace Reclaimer.Entities
 {
-    public partial class IndexItem : IIndexItem
+    public partial class TagItem : IIndexItem
     {
         private CacheFile Cache => TagIndex.CacheFile;
 
@@ -28,7 +28,7 @@ namespace Reclaimer.Entities
 
         int IIndexItem.Id => (int)TagId;
 
-        public string FileName => Path.Value;
+        public string FileName => TagPath.Value;
 
         public T ReadMetadata<T>()
         {

@@ -12,9 +12,9 @@ namespace Reclaimer.Entities
 {
     public partial class CacheFile : ICacheFile
     {
-        CacheType ICacheFile.Type => (CacheType)CacheType;
+        CacheType ICacheFile.Type => CacheType;
 
-        IStringIndex ICacheFile.StringIndex => StringIndex;
+        IStringIndex<IStringItem> ICacheFile.StringIndex => StringIndex;
 
         ITagIndex<IIndexItem> ICacheFile.TagIndex => TagIndex;
 

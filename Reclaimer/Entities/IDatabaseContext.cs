@@ -21,11 +21,12 @@ namespace Reclaimer.Entities
     public interface IDatabaseContext : System.IDisposable
     {
         System.Data.Entity.DbSet<CacheFile> CacheFiles { get; set; } // cache_file
-        System.Data.Entity.DbSet<IndexItem> IndexItems { get; set; } // index_item
-        System.Data.Entity.DbSet<Path> Paths { get; set; } // path
         System.Data.Entity.DbSet<StringIndex> StringIndexes { get; set; } // string_index
         System.Data.Entity.DbSet<StringItem> StringItems { get; set; } // string_item
+        System.Data.Entity.DbSet<StringValue> StringValues { get; set; } // string_value
         System.Data.Entity.DbSet<TagIndex> TagIndexes { get; set; } // tag_index
+        System.Data.Entity.DbSet<TagItem> TagItems { get; set; } // tag_item
+        System.Data.Entity.DbSet<TagPath> TagPaths { get; set; } // tag_path
 
         int SaveChanges();
         System.Threading.Tasks.Task<int> SaveChangesAsync();

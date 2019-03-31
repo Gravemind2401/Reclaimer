@@ -43,9 +43,9 @@ namespace Reclaimer.Entities
         // Reverse navigation
 
         /// <summary>
-        /// Child IndexItems where [index_item].[cache_id] point to this entity (fk_index_item_1)
+        /// Child TagItems where [tag_item].[cache_id] point to this entity (fk_tag_item_1)
         /// </summary>
-        public virtual System.Collections.Generic.ICollection<IndexItem> IndexItems { get; set; } // index_item.fk_index_item_1
+        public virtual System.Collections.Generic.ICollection<TagItem> TagItems { get; set; } // tag_item.fk_tag_item_1
 
         // Foreign keys
 
@@ -56,7 +56,7 @@ namespace Reclaimer.Entities
 
         public TagIndex()
         {
-            IndexItems = new System.Collections.Generic.List<IndexItem>();
+            TagItems = new System.Collections.Generic.List<TagItem>();
             InitializePartial();
         }
 

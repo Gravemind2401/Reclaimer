@@ -18,40 +18,33 @@ namespace Reclaimer.Entities
 {
     using Adjutant.Blam.Definitions;
 
-    // string_index
-    [Table("string_index", Schema = "main")]
+    // tag_path
+    [Table("tag_path", Schema = "main")]
     [System.CodeDom.Compiler.GeneratedCode("EF.Reverse.POCO.Generator", "2.37.2.0")]
-    public partial class StringIndex
+    public partial class TagPath
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        [Column(@"cache_id", Order = 0, TypeName = "integer")]
+        [Column(@"path_id", Order = 0, TypeName = "integer")]
         [Required]
         [Key]
-        [Display(Name = "Cache ID")]
-        [ForeignKey("CacheFile")]
-        public long CacheId { get; set; } // cache_id (Primary key)
-        [Column(@"string_count", Order = 1, TypeName = "int")]
-        [Required]
-        [Display(Name = "String count")]
-        public int StringCount { get; set; } // string_count
+        [Display(Name = "Path ID")]
+        public long PathId { get; set; } // path_id (Primary key)
+        [Column(@"value", Order = 1, TypeName = "varchar")]
+        [MaxLength(512)]
+        [StringLength(512)]
+        [Display(Name = "Value")]
+        public string Value { get; set; } // value (length: 512)
 
         // Reverse navigation
 
         /// <summary>
-        /// Child StringItems where [string_item].[cache_id] point to this entity (fk_string_item_1)
+        /// Child TagItems where [tag_item].[path_id] point to this entity (fk_tag_item_0)
         /// </summary>
-        public virtual System.Collections.Generic.ICollection<StringItem> StringItems { get; set; } // string_item.fk_string_item_1
+        public virtual System.Collections.Generic.ICollection<TagItem> TagItems { get; set; } // tag_item.fk_tag_item_0
 
-        // Foreign keys
-
-        /// <summary>
-        /// Parent CacheFile pointed by [string_index].([CacheId]) (fk_string_index_0)
-        /// </summary>
-        [ForeignKey("CacheId"), Required] public virtual CacheFile CacheFile { get; set; } // fk_string_index_0
-
-        public StringIndex()
+        public TagPath()
         {
-            StringItems = new System.Collections.Generic.List<StringItem>();
+            TagItems = new System.Collections.Generic.List<TagItem>();
             InitializePartial();
         }
 

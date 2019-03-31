@@ -18,19 +18,18 @@ namespace Reclaimer.Entities
 {
     using Adjutant.Blam.Definitions;
 
-    // string_item
+    // string_value
     [System.CodeDom.Compiler.GeneratedCode("EF.Reverse.POCO.Generator", "2.37.2.0")]
-    public class StringItemConfiguration : System.Data.Entity.ModelConfiguration.EntityTypeConfiguration<StringItem>
+    public class StringValueConfiguration : System.Data.Entity.ModelConfiguration.EntityTypeConfiguration<StringValue>
     {
-        public StringItemConfiguration()
+        public StringValueConfiguration()
             : this("main")
         {
         }
 
-        public StringItemConfiguration(string schema)
+        public StringValueConfiguration(string schema)
         {
-            Property(x => x.ValueId).IsOptional();
-
+            Property(x => x.Value).IsOptional().IsUnicode(false);
         }
     }
 

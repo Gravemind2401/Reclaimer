@@ -36,18 +36,21 @@ namespace Reclaimer.Entities
         [Display(Name = "String ID")]
         public long StringId { get; set; } // string_id (Primary key)
 
-        [Column(@"value", Order = 2, TypeName = "varchar")]
-        [MaxLength(512)]
-        [StringLength(512)]
-        [Display(Name = "Value")]
-        public string Value { get; set; } // value (length: 512)
+        [Column(@"value_id", Order = 2, TypeName = "integer")]
+        [Display(Name = "Value ID")]
+        public long? ValueId { get; set; } // value_id
 
         // Foreign keys
 
         /// <summary>
-        /// Parent StringIndex pointed by [string_item].([CacheId]) (fk_string_item_0)
+        /// Parent StringIndex pointed by [string_item].([CacheId]) (fk_string_item_1)
         /// </summary>
-        [ForeignKey("CacheId"), Required] public virtual StringIndex StringIndex { get; set; } // fk_string_item_0
+        [ForeignKey("CacheId"), Required] public virtual StringIndex StringIndex { get; set; } // fk_string_item_1
+
+        /// <summary>
+        /// Parent StringValue pointed by [string_item].([ValueId]) (fk_string_item_0)
+        /// </summary>
+        [ForeignKey("ValueId")] public virtual StringValue StringValue { get; set; } // fk_string_item_0
 
         public StringItem()
         {

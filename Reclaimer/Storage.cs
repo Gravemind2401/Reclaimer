@@ -16,7 +16,7 @@ namespace Reclaimer
 
         public static IQueryable<CacheFile> CacheFiles => Context.CacheFiles;
 
-        public static IQueryable<IndexItem> IndexItems => Context.IndexItems;
+        public static IQueryable<TagItem> IndexItems => Context.TagItems;
 
         private static long PathHash(string path)
         {
@@ -43,42 +43,39 @@ namespace Reclaimer
             entity.CacheType = cache.Type;
 
             var tagIndex = Context.TagIndexes.Create();
-            tagIndex.Magic = ((Adjutant.Blam.Halo1.CacheFile)cache).TagIndex.Magic;
+            tagIndex.Magic = cache.TagIndex.Magic;
             tagIndex.TagCount = cache.TagIndex.TagCount;
             tagIndex.CacheFile = entity;
 
             var allIds = cache.TagIndex.Select(t => PathHash(t.FileName)).ToArray();
 
-            var existingPaths = Context.Paths
+            var existingPaths = Context.TagPaths
                 .Where(p => allIds.Contains(p.PathId))
                 .ToDictionary(p => p.PathId);
 
-            var newPaths = new Dictionary<long, Path>();
+            var newPaths = new Dictionary<long, TagPath>();
             foreach (var tag in cache.TagIndex)
             {
                 using (new DiagnosticTimer($"tag {tag.Id}"))
                 {
-                    var item = Context.IndexItems.Create();
+                    var item = Context.TagItems.Create();
                     item.TagId = tag.Id;
                     item.MetaPointer = tag.MetaPointer.Value;
                     item.ClassCode = tag.ClassCode;
 
                     var hash = PathHash(tag.FileName);
-                    Path path;
+                    TagPath path;
 
                     if (newPaths.ContainsKey(hash))
                         path = newPaths[hash];
+                    else if (existingPaths.ContainsKey(hash))
+                        path = existingPaths[hash];
                     else
                     {
-                        if (existingPaths.ContainsKey(hash))
-                            path = existingPaths[hash];
-                        else
-                        {
-                            path = Context.Paths.Create();
-                            path.PathId = hash;
-                            path.Value = tag.FileName;
-                            newPaths.Add(hash, path);
-                        }
+                        path = Context.TagPaths.Create();
+                        path.PathId = hash;
+                        path.Value = tag.FileName;
+                        newPaths.Add(hash, path);
                     }
 
                     if (path.Value != tag.FileName)
@@ -87,17 +84,72 @@ namespace Reclaimer
                         throw new ArgumentException("filename hash collision!");
                     }
 
-                    item.Path = path;
-
-                    tagIndex.IndexItems.Add(item);
+                    item.TagPath = path;
+                    tagIndex.TagItems.Add(item);
                 }
             }
 
-            Context.IndexItems.AddRange(tagIndex.IndexItems);
-            Context.Paths.AddRange(newPaths.Values);
+            if (cache.StringIndex != null)
+            {
+                var stringIndex = Context.StringIndexes.Create();
+                stringIndex.StringCount = cache.StringIndex.StringCount;
+                stringIndex.CacheFile = entity;
+
+                allIds = cache.StringIndex
+                    .Where(s => s.Value != null)
+                    .Select(s => PathHash(s.Value))
+                    .Distinct()
+                    .ToArray();
+
+                var existingStrings = Context.StringValues
+                    .Where(s => allIds.Contains(s.ValueId))
+                    .ToDictionary(s => s.ValueId);
+
+                var newStrings = new Dictionary<long, StringValue>();
+                foreach (var str in cache.StringIndex)
+                {
+                    var item = Context.StringItems.Create();
+                    item.StringId = str.Id;
+
+                    if (str.Value != null)
+                    {
+                        var hash = PathHash(str.Value);
+                        StringValue val;
+
+                        if (newStrings.ContainsKey(hash))
+                            val = newStrings[hash];
+                        else if (existingStrings.ContainsKey(hash))
+                            val = existingStrings[hash];
+                        else
+                        {
+                            val = Context.StringValues.Create();
+                            val.ValueId = hash;
+                            val.Value = str.Value;
+                            newStrings.Add(hash, val);
+                        }
+
+                        if (val.Value != str.Value)
+                        {
+                            System.Diagnostics.Debugger.Break();
+                            throw new ArgumentException("string hash collision!");
+                        }
+
+                        item.StringValue = val;
+                    }
+
+                    stringIndex.StringItems.Add(item);
+                }
+
+                Context.StringIndexes.Add(stringIndex);
+                Context.StringItems.AddRange(stringIndex.StringItems);
+                Context.StringValues.AddRange(newStrings.Values);
+            }
 
             Context.CacheFiles.Add(entity);
             Context.TagIndexes.Add(tagIndex);
+
+            Context.TagItems.AddRange(tagIndex.TagItems);
+            Context.TagPaths.AddRange(newPaths.Values);
 
             await Context.SaveChangesAsync();
         }

@@ -8,24 +8,24 @@ using System.Collections;
 
 namespace Reclaimer.Entities
 {
-    public partial class TagIndex : ITagIndex<IndexItem>
+    public partial class TagIndex : ITagIndex<TagItem>
     {
-        IndexItem ITagIndex<IndexItem>.this[int index]
+        TagItem ITagIndex<TagItem>.this[int index]
         {
             get
             {
-                return IndexItems.First(i => i.TagId == index);
+                return TagItems.First(i => i.TagId == index);
             }
         }
 
-        IEnumerator<IndexItem> IEnumerable<IndexItem>.GetEnumerator()
+        IEnumerator<TagItem> IEnumerable<TagItem>.GetEnumerator()
         {
-            return IndexItems.GetEnumerator();
+            return TagItems.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return IndexItems.GetEnumerator();
+            return TagItems.GetEnumerator();
         }
     }
 }

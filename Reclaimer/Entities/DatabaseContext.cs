@@ -24,11 +24,12 @@ namespace Reclaimer.Entities
     public class DatabaseContext : System.Data.Entity.DbContext, IDatabaseContext
     {
         public System.Data.Entity.DbSet<CacheFile> CacheFiles { get; set; } // cache_file
-        public System.Data.Entity.DbSet<IndexItem> IndexItems { get; set; } // index_item
-        public System.Data.Entity.DbSet<Path> Paths { get; set; } // path
         public System.Data.Entity.DbSet<StringIndex> StringIndexes { get; set; } // string_index
         public System.Data.Entity.DbSet<StringItem> StringItems { get; set; } // string_item
+        public System.Data.Entity.DbSet<StringValue> StringValues { get; set; } // string_value
         public System.Data.Entity.DbSet<TagIndex> TagIndexes { get; set; } // tag_index
+        public System.Data.Entity.DbSet<TagItem> TagItems { get; set; } // tag_item
+        public System.Data.Entity.DbSet<TagPath> TagPaths { get; set; } // tag_path
 
         static DatabaseContext()
         {
@@ -79,21 +80,23 @@ namespace Reclaimer.Entities
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Configurations.Add(new CacheFileConfiguration());
-            modelBuilder.Configurations.Add(new IndexItemConfiguration());
-            modelBuilder.Configurations.Add(new PathConfiguration());
             modelBuilder.Configurations.Add(new StringIndexConfiguration());
             modelBuilder.Configurations.Add(new StringItemConfiguration());
+            modelBuilder.Configurations.Add(new StringValueConfiguration());
             modelBuilder.Configurations.Add(new TagIndexConfiguration());
+            modelBuilder.Configurations.Add(new TagItemConfiguration());
+            modelBuilder.Configurations.Add(new TagPathConfiguration());
         }
 
         public static System.Data.Entity.DbModelBuilder CreateModel(System.Data.Entity.DbModelBuilder modelBuilder, string schema)
         {
             modelBuilder.Configurations.Add(new CacheFileConfiguration(schema));
-            modelBuilder.Configurations.Add(new IndexItemConfiguration(schema));
-            modelBuilder.Configurations.Add(new PathConfiguration(schema));
             modelBuilder.Configurations.Add(new StringIndexConfiguration(schema));
             modelBuilder.Configurations.Add(new StringItemConfiguration(schema));
+            modelBuilder.Configurations.Add(new StringValueConfiguration(schema));
             modelBuilder.Configurations.Add(new TagIndexConfiguration(schema));
+            modelBuilder.Configurations.Add(new TagItemConfiguration(schema));
+            modelBuilder.Configurations.Add(new TagPathConfiguration(schema));
             return modelBuilder;
         }
     }

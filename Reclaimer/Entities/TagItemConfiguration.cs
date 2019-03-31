@@ -18,18 +18,19 @@ namespace Reclaimer.Entities
 {
     using Adjutant.Blam.Definitions;
 
-    // path
+    // tag_item
     [System.CodeDom.Compiler.GeneratedCode("EF.Reverse.POCO.Generator", "2.37.2.0")]
-    public class PathConfiguration : System.Data.Entity.ModelConfiguration.EntityTypeConfiguration<Path>
+    public class TagItemConfiguration : System.Data.Entity.ModelConfiguration.EntityTypeConfiguration<TagItem>
     {
-        public PathConfiguration()
+        public TagItemConfiguration()
             : this("main")
         {
         }
 
-        public PathConfiguration(string schema)
+        public TagItemConfiguration(string schema)
         {
-            Property(x => x.Value).IsOptional().IsUnicode(false);
+            Property(x => x.ClassCode).IsOptional().IsUnicode(false);
+
         }
     }
 

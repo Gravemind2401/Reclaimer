@@ -121,22 +121,11 @@
     <Compile Include="Entities\IDatabaseContext.cs">
       <DependentUpon>Database.tt</DependentUpon>
     </Compile>
-    <Compile Include="Entities\IndexItem.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\IndexItemConfiguration.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
     <Compile Include="Entities\Partials\CacheFile.cs" />
     <Compile Include="Entities\Partials\StringIndex.cs" />
+    <Compile Include="Entities\Partials\StringItem.cs" />
     <Compile Include="Entities\Partials\TagIndex.cs" />
-    <Compile Include="Entities\Partials\IndexItem.cs" />
-    <Compile Include="Entities\Path.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\PathConfiguration.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
+    <Compile Include="Entities\Partials\TagItem.cs" />
     <Compile Include="Entities\StringIndex.cs">
       <DependentUpon>Database.tt</DependentUpon>
     </Compile>
@@ -149,10 +138,28 @@
     <Compile Include="Entities\StringItemConfiguration.cs">
       <DependentUpon>Database.tt</DependentUpon>
     </Compile>
+    <Compile Include="Entities\StringValue.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\StringValueConfiguration.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
     <Compile Include="Entities\TagIndex.cs">
       <DependentUpon>Database.tt</DependentUpon>
     </Compile>
     <Compile Include="Entities\TagIndexConfiguration.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\TagItem.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\TagItemConfiguration.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\TagPath.cs">
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\TagPathConfiguration.cs">
       <DependentUpon>Database.tt</DependentUpon>
     </Compile>
     <Compile Include="Storage.cs" />
