@@ -4,6 +4,12 @@
              xmlns:local="clr-namespace:Reclaimer"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Studio;component/Themes/Generic.xaml" />
+                <ResourceDictionary Source="/Studio;component/Resources/Styles.xaml" />
+                <ResourceDictionary Source="/Studio;component/Themes/Blue.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
