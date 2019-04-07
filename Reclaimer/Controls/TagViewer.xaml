@@ -28,11 +28,13 @@
                       SelectionChanged="cmbBuild_SelectionChanged" />
             <ComboBox x:Name="cmbMap" Grid.Column="2"
                       ItemsSource="{Binding AllMaps}"
-                      SelectedItem="{Binding SelectedMapId}"
+                      SelectedValue="{Binding SelectedMapId}"
                       SelectionChanged="cmbMap_SelectionChanged"
                       SelectedValuePath="Item1" DisplayMemberPath="Item2" />
         </Grid>
-        <TreeView Grid.Row="2">
+        <TreeView Grid.Row="2" x:Name="tv"
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  VirtualizingStackPanel.VirtualizationMode="Recycling">
             
         </TreeView>
     </Grid>

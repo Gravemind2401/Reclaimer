@@ -23,6 +23,8 @@ namespace Reclaimer.Controls
     /// </summary>
     public partial class TagViewer : ControlBase, ITabContent
     {
+        private volatile bool isBusy;
+
         #region Properties
 
         private IEnumerable<CacheType> allGames;
@@ -75,7 +77,7 @@ namespace Reclaimer.Controls
 
         //object ITabContent.ToolTip => "Tag Viewer";
 
-        object ITabContent.Icon => null; 
+        object ITabContent.Icon => null;
 
         #endregion
 
@@ -90,8 +92,11 @@ namespace Reclaimer.Controls
 
         public async Task Refresh()
         {
+            isBusy = true;
             AllGames = await Storage.CacheFiles.Select(c => c.CacheType).Distinct().ToListAsync();
             SelectedGame = AllGames.FirstOrDefault();
+            LoadTags();
+            isBusy = false;
         }
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -101,6 +106,8 @@ namespace Reclaimer.Controls
 
         private async void cmbGame_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            isBusy = true;
+
             AllBuilds = await Storage.CacheFiles
                 .Where(c => c.CacheType == SelectedGame)
                 .Select(c => c.BuildString)
@@ -108,6 +115,11 @@ namespace Reclaimer.Controls
                 .ToListAsync();
 
             SelectedBuild = AllBuilds.First();
+
+            cmbBuild_SelectionChanged(null, null);
+            LoadTags();
+
+            isBusy = false;
         }
 
         private void cmbBuild_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -127,7 +139,29 @@ namespace Reclaimer.Controls
 
         private void cmbMap_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!isBusy)
+                LoadTags();
+        }
 
+        private void LoadTags()
+        {
+            tv.Items.Clear();
+            var items = Storage.IndexItemsFor(SelectedGame, SelectedBuild, SelectedMapId);
+
+            var result = items.GroupBy(i => i.ClassCode);
+
+            foreach (var g in result.OrderBy(g => g.Key))
+            {
+                var node = new TreeViewItem { Header = g.Key };
+                foreach (var i in g.OrderBy(i => i.FileName))
+                {
+                    node.Items.Add(new TreeViewItem
+                    {
+                        Header = i.FileName
+                    });
+                }
+                tv.Items.Add(node);
+            }
         }
     }
 }

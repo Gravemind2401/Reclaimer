@@ -12,11 +12,65 @@ namespace Reclaimer
 {
     public static class Storage
     {
+        private const string query = @"
+        select t.*, p.value
+        from tag_item t
+        join ( select t.cache_id,
+                      t.tag_id,
+                      row_number() over (partition by path_id order by c.priority) as rownum
+               from tag_item t
+               join cache_file c on t.cache_id = c.cache_id
+               where c.cache_type = @cache_type
+               and c.build_string = @build_string
+               and ( @map_id = -1 or c.cache_id = @map_id ) ) x on t.cache_id = x.cache_id and t.tag_id = x.tag_id
+        join tag_path p on t.path_id = p.path_id
+        where rownum = 1";
+
         internal static readonly DatabaseContext Context = new DatabaseContext();
 
         public static IQueryable<CacheFile> CacheFiles => Context.CacheFiles;
 
         public static IQueryable<TagItem> IndexItems => Context.TagItems;
+
+        public static IEnumerable<TagItem> IndexItemsFor(CacheType game, string build, int mapId)
+        {
+            var gameParam = new System.Data.SQLite.SQLiteParameter("cache_type", (int)game);
+            var buildParam = new System.Data.SQLite.SQLiteParameter("build_string", build);
+            var mapParam = new System.Data.SQLite.SQLiteParameter("map_id", mapId);
+
+            var results = new List<TagItem>();
+            Context.Database.Connection.Open();
+            using (var cmd = Context.Database.Connection.CreateCommand())
+            {
+                cmd.CommandText = query;
+                cmd.Parameters.Add(gameParam);
+                cmd.Parameters.Add(buildParam);
+                cmd.Parameters.Add(mapParam);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var item = new TagItem
+                        {
+                            CacheId = reader.GetInt32(0),
+                            TagId = reader.GetInt32(1),
+                            MetaPointer = reader.GetInt32(2),
+                            PathId = reader.GetInt32(3),
+                            ClassCode = reader.GetString(4),
+                            TagPath = new TagPath
+                            {
+                                PathId = reader.GetInt32(3),
+                                Value = reader.GetString(5)
+                            }
+                        };
+                        results.Add(item);
+                    }
+                }
+            }
+            Context.Database.Connection.Close();
+
+            return results;
+        }
 
         private static long PathHash(string path)
         {

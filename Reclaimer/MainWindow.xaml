@@ -1,4 +1,4 @@
-﻿<Window
+﻿<metro:MetroWindow
     x:Class="Reclaimer.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,7 +8,8 @@
     xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
     xmlns:local="clr-namespace:Reclaimer"
     mc:Ignorable="d" WindowState="Maximized"
-    Title="MainWindow" Height="768" Width="1366">
+    Style="{StaticResource MetroWindowStyle}"
+    Title="MainWindow" Height="900" Width="1600">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -36,4 +37,4 @@
             </studio:MultiPanel>
         </studio:DockContainer>
     </Grid>
-</Window>
+</metro:MetroWindow>

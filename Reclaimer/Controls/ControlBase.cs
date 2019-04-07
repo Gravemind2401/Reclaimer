@@ -13,16 +13,17 @@ namespace Reclaimer.Controls
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
+        protected bool SetProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
         {
             if (property == null && value == null)
-                return;
+                return false;
 
             if (property != null && value != null && property.Equals(value))
-                return;
+                return false;
 
             property = value;
             RaisePropertyChanged(propertyName);
+            return true;
         }
 
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
