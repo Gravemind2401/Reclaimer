@@ -88,7 +88,7 @@ namespace Adjutant.Blam.Halo1
                         {
                             MaterialIndex = submesh.ShaderIndex,
                             IndexStart = indices.Count,
-                            IndexLength = submesh.IndexCount,
+                            IndexLength = submesh.IndexCount + 2,
                             VertexStart = vertices.Count,
                             VertexLength = submesh.VertexCount
                         };
@@ -101,7 +101,7 @@ namespace Adjutant.Blam.Halo1
                             ((List<IGeometrySubmesh>)p.Submeshes).Add(gSubmesh);
 
                         reader.Seek(cache.TagIndex.VertexDataOffset + cache.TagIndex.IndexDataOffset + submesh.IndexOffset, SeekOrigin.Begin);
-                        indices.AddRange(reader.ReadEnumerable<ushort>(submesh.IndexCount));
+                        indices.AddRange(reader.ReadEnumerable<ushort>(gSubmesh.IndexLength));
 
                         reader.Seek(cache.TagIndex.VertexDataOffset + submesh.VertexOffset, SeekOrigin.Begin);
                         //var vertsTemp = reader.ReadEnumerable<SkinnedVertex>(submesh.VertexCount).ToList();

@@ -92,6 +92,7 @@
     <Compile Include="Geometry\IXMVector.cs" />
     <Compile Include="Spatial\IRealBounds5D.cs" />
     <Compile Include="Spatial\RealBounds.cs" />
+    <Compile Include="Spatial\RealBounds3D.cs" />
     <Compile Include="Spatial\UByteN2.cs" />
     <Compile Include="Spatial\UByteN4.cs" />
     <Compile Include="Spatial\UDecN4.cs" />
