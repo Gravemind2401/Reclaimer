@@ -29,8 +29,9 @@
                 <studio:MultiPanelContainer>
                     <studio:MultiPanelContainer.Panel1Content>
                         <studio:DocumentTabControl x:Name="docTab"
-                            HorizontalContentAlignment="Center"
+                            HorizontalContentAlignment="Stretch"
                             RemoveOnEmpty="False">
+                            
                         </studio:DocumentTabControl>
                     </studio:MultiPanelContainer.Panel1Content>
                 </studio:MultiPanelContainer>

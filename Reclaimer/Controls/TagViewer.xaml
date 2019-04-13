@@ -34,7 +34,8 @@
         </Grid>
         <TreeView Grid.Row="2" x:Name="tv"
                   VirtualizingStackPanel.IsVirtualizing="True"
-                  VirtualizingStackPanel.VirtualizationMode="Recycling">
+                  VirtualizingStackPanel.VirtualizationMode="Recycling"
+                  MouseDoubleClick="tv_MouseDoubleClick">
             
         </TreeView>
     </Grid>

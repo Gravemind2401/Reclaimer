@@ -69,6 +69,8 @@
       <HintPath>..\packages\System.Data.SQLite.Linq.1.0.110.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
@@ -92,6 +94,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controls\ControlBase.cs" />
+    <Compile Include="Controls\ModelViewer.xaml.cs">
+      <DependentUpon>ModelViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Renderer.xaml.cs">
+      <DependentUpon>Renderer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TagViewer.xaml.cs">
       <DependentUpon>TagViewer.xaml</DependentUpon>
     </Compile>
@@ -163,7 +171,16 @@
       <DependentUpon>Database.tt</DependentUpon>
     </Compile>
     <Compile Include="Storage.cs" />
+    <Compile Include="Utils\NativeMethods.cs" />
     <Compile Include="Utils\StandardAddressTranslator.cs" />
+    <Page Include="Controls\ModelViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Renderer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\TagViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

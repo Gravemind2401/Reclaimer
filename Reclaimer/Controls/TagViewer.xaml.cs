@@ -157,11 +157,34 @@ namespace Reclaimer.Controls
                 {
                     node.Items.Add(new TreeViewItem
                     {
-                        Header = i.FileName
+                        Header = i.FileName,
+                        Tag = i
                     });
                 }
                 tv.Items.Add(node);
             }
+        }
+
+        private void tv_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var item = (tv.SelectedItem as TreeViewItem)?.Tag as Entities.TagItem;
+
+            if (item == null) return;
+
+            if (item.ClassCode != "mod2") return;
+
+            var cache = Storage.CacheFiles.First(c => c.CacheId == item.CacheId);
+
+            var map = Adjutant.Blam.CacheFactory.ReadCacheFile(cache.FileName);
+            var tag = map.TagIndex[(int)item.TagId];
+
+            var mod2 = tag.ReadMetadata<Adjutant.Blam.Halo1.gbxmodel>();
+
+            var viewer = new ModelViewer();
+            viewer.LoadGeometry(mod2);
+
+            var wnd = Application.Current.MainWindow as MainWindow;
+            wnd.docTab.Items.Add(viewer);
         }
     }
 }
