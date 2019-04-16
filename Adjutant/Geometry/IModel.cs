@@ -1,4 +1,5 @@
 ﻿using Adjutant.Spatial;
+using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace Adjutant.Geometry
         IReadOnlyList<IGeometryNode> Nodes { get; }
         IReadOnlyList<IGeometryMarkerGroup> MarkerGroups { get; }
         IReadOnlyList<IGeometryRegion> Regions { get; }
-        //IReadOnlyList<Shader> Shaders { get; }
+        IReadOnlyList<IGeometryMaterial> Materials { get; }
         IReadOnlyList<IRealBounds5D> Bounds { get; }
         IReadOnlyList<IGeometryMesh> Meshes { get; }
     }
@@ -49,6 +50,7 @@ namespace Adjutant.Geometry
         byte NodeIndex { get; }
         short BoundsIndex { get; }
         int MeshIndex { get; }
+        int MeshCount { get; }
 
         float TransformScale { get; }
         Matrix4x4 Transform { get; }
@@ -80,5 +82,12 @@ namespace Adjutant.Geometry
 
         IReadOnlyList<IVertex> Vertices { get; }
         IReadOnlyList<int> Indicies { get; }
+    }
+
+    public interface IGeometryMaterial
+    {
+        string Name { get; }
+        IBitmap Diffuse { get; }
+        IRealVector2D Tiling { get; }
     }
 }

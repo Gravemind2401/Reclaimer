@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Adjutant.Utilities;
 
 namespace Adjutant.Geometry
 {
@@ -16,7 +17,7 @@ namespace Adjutant.Geometry
         public List<IGeometryNode> Nodes { get; set; }
         public List<IGeometryMarkerGroup> MarkerGroups { get; set; }
         public List<IGeometryRegion> Regions { get; set; }
-        //public List<Shader> Shaders { get; set; }
+        public List<IGeometryMaterial> Materials { get; set; }
         public List<IRealBounds5D> Bounds { get; set; }
         public List<IGeometryMesh> Meshes { get; set; }
 
@@ -25,6 +26,7 @@ namespace Adjutant.Geometry
             Nodes = new List<IGeometryNode>();
             MarkerGroups = new List<IGeometryMarkerGroup>();
             Regions = new List<IGeometryRegion>();
+            Materials = new List<IGeometryMaterial>();
             Bounds = new List<IRealBounds5D>();
             Meshes = new List<IGeometryMesh>();
         }
@@ -38,6 +40,8 @@ namespace Adjutant.Geometry
         IReadOnlyList<IGeometryMarkerGroup> IGeometryModel.MarkerGroups => MarkerGroups;
 
         IReadOnlyList<IGeometryRegion> IGeometryModel.Regions => Regions;
+
+        IReadOnlyList<IGeometryMaterial> IGeometryModel.Materials => Materials;
 
         IReadOnlyList<IRealBounds5D> IGeometryModel.Bounds => Bounds;
 
@@ -116,6 +120,8 @@ namespace Adjutant.Geometry
 
         #region IGeometryPermutation
 
+        int IGeometryPermutation.MeshCount => 1;
+
         IReadOnlyList<IGeometrySubmesh> IGeometryPermutation.Submeshes => Submeshes; 
 
         #endregion
@@ -154,6 +160,15 @@ namespace Adjutant.Geometry
         IReadOnlyList<int> IGeometryMesh.Indicies => Indicies; 
 
         #endregion
+    }
+
+    public class GeometryMaterial : IGeometryMaterial
+    {
+        public string Name { get; set; }
+
+        public IBitmap Diffuse { get; set; }
+
+        public IRealVector2D Tiling { get; set; }
     }
 
     public enum VertexWeights

@@ -58,6 +58,52 @@ namespace Adjutant.Blam.Halo1
                 model.Nodes.AddRange(Nodes);
                 model.MarkerGroups.AddRange(MarkerGroups);
 
+                foreach (var shader in Shaders)
+                {
+                    var tag = shader.ShaderReference.Tag;
+                    reader.Seek(tag.MetaPointer.Address, SeekOrigin.Begin);
+
+                    switch (tag.ClassCode)
+                    {
+                        case "soso":
+                            reader.Seek(176, SeekOrigin.Current);
+                            break;
+
+                        case "senv":
+                            reader.Seek(148, SeekOrigin.Current);
+                            break;
+
+                        case "sgla":
+                            reader.Seek(356, SeekOrigin.Current);
+                            break;
+
+                        case "schi":
+                            reader.Seek(228, SeekOrigin.Current);
+                            break;
+
+                        case "scex":
+                            reader.Seek(900, SeekOrigin.Current);
+                            break;
+
+                        case "swat":
+                        case "smet":
+                            reader.Seek(88, SeekOrigin.Current);
+                            break;
+                    }
+
+                    var bitmId = reader.ReadInt16();
+                    var bitmTag = cache.TagIndex[bitmId];
+
+                    var mat = new GeometryMaterial
+                    {
+                        Name = bitmTag.FileName,
+                        Diffuse = bitmTag.ReadMetadata<bitmap>(),
+                        Tiling = new RealVector2D(1, 1)
+                    };
+
+                    model.Materials.Add(mat);
+                }
+
                 foreach (var region in Regions)
                 {
                     var gRegion = new GeometryRegion { Name = region.Name };
@@ -258,7 +304,7 @@ namespace Adjutant.Blam.Halo1
         [Offset(0)]
         [NullTerminated(Length = 32)]
         public string Name { get; set; }
-        
+
         [Offset(64)]
         public short SuperLowSectionIndex { get; set; }
 
