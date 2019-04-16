@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adjutant", "..\Adjutant\Adj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reclaimer.Tests", "Reclaimer.Tests\Reclaimer.Tests.csproj", "{CCE59602-DE5D-4247-98BE-BC29D8188AED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Drawing.Dds", "..\System.Drawing.Dds\System.Drawing.Dds\System.Drawing.Dds.csproj", "{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{CCE59602-DE5D-4247-98BE-BC29D8188AED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCE59602-DE5D-4247-98BE-BC29D8188AED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCE59602-DE5D-4247-98BE-BC29D8188AED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,10 +7,19 @@
              xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
              mc:Ignorable="d" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
              d:DesignHeight="500" d:DesignWidth="900">
-    <studio:SplitContainer Panel1Size="250" Panel2Size="*" CanResize="True">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Studio;component/Resources/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <studio:SplitContainer Panel1Size="250" Panel2Size="*" CanResize="True" 
+                           SplitterShowsPreview="True" SplitterSize="5" SplitterBrush="Red">
         <studio:SplitContainer.Panel1Content>
-            <TreeView ItemsSource="{Binding TreeViewItems}">
-            </TreeView>
+            <studio:ExtendedTreeView ItemsSource="{Binding TreeViewItems}" CheckBoxes="True" VerticalContentAlignment="Center" />
         </studio:SplitContainer.Panel1Content>
         <studio:SplitContainer.Panel2Content>
             <local:Renderer x:Name="renderer" x:FieldModifier="private" 

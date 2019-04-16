@@ -16,28 +16,23 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Studio.Controls;
 using System.Collections.ObjectModel;
+using System.IO;
 
 namespace Reclaimer.Controls
 {
     /// <summary>
     /// Interaction logic for ModelViewer.xaml
     /// </summary>
-    public partial class ModelViewer : UserControl, ITabContent
+    public partial class ModelViewer : UserControl, ITabContent, IDisposable
     {
-        public ObservableCollection<TreeViewItem> TreeViewItems { get; }
+        public ObservableCollection<ExtendedTreeViewItem> TreeViewItems { get; }
 
         public ModelViewer()
         {
             InitializeComponent();
-            TreeViewItems = new ObservableCollection<TreeViewItem>();
+            TreeViewItems = new ObservableCollection<ExtendedTreeViewItem>();
             DataContext = this;
         }
-
-        public object Header => "ModelViewer";
-
-        public object Icon => null;
-
-        public TabItemUsage Usage => TabItemUsage.Document;
 
         public void LoadGeometry(Adjutant.Utilities.IRenderGeometry geom)
         {
@@ -46,14 +41,45 @@ namespace Reclaimer.Controls
             var group = new Model3DGroup();
             var vis = new ModelVisual3D();
 
+            var materials = new List<Material>();
+            foreach (var mat in model.Materials)
+            {
+                try
+                {
+                    var dds = mat.Diffuse.ToDds(0);
+                    var stream = new MemoryStream();
+
+                    dds.WriteToStreamRgba(stream);
+
+                    var dif = new BitmapImage();
+                    dif.BeginInit();
+                    dif.StreamSource = stream;
+                    dif.EndInit();
+
+                    materials.Add(new DiffuseMaterial
+                    {
+                        Brush = new ImageBrush(dif)
+                        {
+                            ViewportUnits = BrushMappingMode.Absolute,
+                            TileMode = TileMode.Tile,
+                            Viewport = new Rect(0, 0, 1f / Math.Abs(mat.Tiling.X), 1f / Math.Abs(mat.Tiling.Y))
+                        }
+                    });
+                }
+                catch
+                {
+                    materials.Add(errorMaterial);
+                }
+            }
+
             TreeViewItems.Clear();
             foreach (var region in model.Regions)
             {
-                var regNode = new TreeViewItem { Header = region.Name };
+                var regNode = new ExtendedTreeViewItem { Header = region.Name };
 
                 foreach (var perm in region.Permutations)
                 {
-                    var permNode = new TreeViewItem { Header = perm.Name };
+                    var permNode = new ExtendedTreeViewItem { Header = perm.Name };
                     regNode.Items.Add(permNode);
 
                     var mesh = model.Meshes[perm.MeshIndex];
@@ -73,7 +99,8 @@ namespace Reclaimer.Controls
                         mg.TextureCoordinates = new PointCollection(texcoords);
                         mg.TriangleIndices = new Int32Collection(indices);
 
-                        var g = new GeometryModel3D(mg, errorMaterial) { BackMaterial = errorMaterial };
+                        var mat = materials[sub.MaterialIndex];
+                        var g = new GeometryModel3D(mg, mat) { BackMaterial = mat };
                         group.Children.Add(g);
                     }
                 }
@@ -115,5 +142,21 @@ namespace Reclaimer.Controls
                 }
             }
         }
+
+        #region ITabContent
+        public object Header => "ModelViewer";
+
+        public object Icon => null;
+
+        public TabItemUsage Usage => TabItemUsage.Document;
+        #endregion
+
+        #region IDisposable
+        public void Dispose()
+        {
+            TreeViewItems.Clear();
+            renderer.ClearChildren();
+        }
+        #endregion
     }
 }

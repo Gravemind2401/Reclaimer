@@ -239,6 +239,10 @@
       <Project>{e90663b1-d346-4644-9d27-e8bec0520284}</Project>
       <Name>Studio</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\System.Drawing.Dds\System.Drawing.Dds\System.Drawing.Dds.csproj">
+      <Project>{a31a58a8-2bc6-43af-ad81-692b2e37f01a}</Project>
+      <Name>System.Drawing.Dds</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Entities\Database.tt">
