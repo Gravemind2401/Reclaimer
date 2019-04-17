@@ -171,20 +171,39 @@ namespace Reclaimer.Controls
 
             if (item == null) return;
 
-            if (item.ClassCode != "mod2") return;
+            if (item.ClassCode == "mod2")
+            {
+                var cache = Storage.CacheFiles.First(c => c.CacheId == item.CacheId);
 
-            var cache = Storage.CacheFiles.First(c => c.CacheId == item.CacheId);
+                var map = Adjutant.Blam.CacheFactory.ReadCacheFile(cache.FileName);
+                var tag = map.TagIndex[(int)item.TagId];
 
-            var map = Adjutant.Blam.CacheFactory.ReadCacheFile(cache.FileName);
-            var tag = map.TagIndex[(int)item.TagId];
+                var mod2 = tag.ReadMetadata<Adjutant.Blam.Halo1.gbxmodel>();
 
-            var mod2 = tag.ReadMetadata<Adjutant.Blam.Halo1.gbxmodel>();
+                var viewer = new ModelViewer();
+                viewer.LoadGeometry(mod2);
 
-            var viewer = new ModelViewer();
-            viewer.LoadGeometry(mod2);
+                var wnd = Application.Current.MainWindow as MainWindow;
+                wnd.docTab.Items.Add(viewer);
+                return;
+            }
 
-            var wnd = Application.Current.MainWindow as MainWindow;
-            wnd.docTab.Items.Add(viewer);
+            if (item.ClassCode == "bitm")
+            {
+                var cache = Storage.CacheFiles.First(c => c.CacheId == item.CacheId);
+
+                var map = Adjutant.Blam.CacheFactory.ReadCacheFile(cache.FileName);
+                var tag = map.TagIndex[(int)item.TagId];
+
+                var bitm = tag.ReadMetadata<Adjutant.Blam.Halo1.bitmap>();
+
+                var viewer = new BitmapViewer();
+                viewer.LoadImage(bitm);
+
+                var wnd = Application.Current.MainWindow as MainWindow;
+                wnd.docTab.Items.Add(viewer);
+                return;
+            }
         }
     }
 }

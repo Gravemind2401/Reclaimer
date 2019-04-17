@@ -93,6 +93,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\BitmapViewer.xaml.cs">
+      <DependentUpon>BitmapViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ControlBase.cs" />
     <Compile Include="Controls\ModelViewer.xaml.cs">
       <DependentUpon>ModelViewer.xaml</DependentUpon>
@@ -173,6 +176,10 @@
     <Compile Include="Storage.cs" />
     <Compile Include="Utils\NativeMethods.cs" />
     <Compile Include="Utils\StandardAddressTranslator.cs" />
+    <Page Include="Controls\BitmapViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\ModelViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

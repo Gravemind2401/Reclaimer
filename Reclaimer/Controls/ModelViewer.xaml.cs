@@ -51,14 +51,9 @@ namespace Reclaimer.Controls
 
                     dds.WriteToStreamRgba(stream);
 
-                    var dif = new BitmapImage();
-                    dif.BeginInit();
-                    dif.StreamSource = stream;
-                    dif.EndInit();
-
                     materials.Add(new DiffuseMaterial
                     {
-                        Brush = new ImageBrush(dif)
+                        Brush = new ImageBrush(dds.ToBitmapSource(96))
                         {
                             ViewportUnits = BrushMappingMode.Absolute,
                             TileMode = TileMode.Tile,
@@ -86,22 +81,26 @@ namespace Reclaimer.Controls
 
                     foreach (var sub in perm.Submeshes)
                     {
-                        var mg = new MeshGeometry3D();
+                        try
+                        {
+                            var mg = new MeshGeometry3D();
 
-                        var indices = mesh.Indicies.Skip(sub.IndexStart).Take(sub.IndexLength);
-                        if (mesh.IndexFormat == IndexFormat.Stripped) indices = Unstrip(indices);
+                            var indices = mesh.Indicies.Skip(sub.IndexStart).Take(sub.IndexLength);
+                            if (mesh.IndexFormat == IndexFormat.Stripped) indices = Unstrip(indices);
 
-                        var verts = mesh.Vertices.Skip(sub.VertexStart).Take(sub.VertexLength);
-                        var positions = verts.Select(v => new Point3D(v.Position[0].X, v.Position[0].Y, v.Position[0].Z));
-                        var texcoords = verts.Select(v => new Point(v.TexCoords[0].X, v.TexCoords[0].Y));
+                            var verts = mesh.Vertices.Skip(sub.VertexStart).Take(sub.VertexLength);
+                            var positions = verts.Select(v => new Point3D(v.Position[0].X, v.Position[0].Y, v.Position[0].Z));
+                            var texcoords = verts.Select(v => new Point(v.TexCoords[0].X, v.TexCoords[0].Y));
 
-                        mg.Positions = new Point3DCollection(positions);
-                        mg.TextureCoordinates = new PointCollection(texcoords);
-                        mg.TriangleIndices = new Int32Collection(indices);
+                            mg.Positions = new Point3DCollection(positions);
+                            mg.TextureCoordinates = new PointCollection(texcoords);
+                            mg.TriangleIndices = new Int32Collection(indices);
 
-                        var mat = materials[sub.MaterialIndex];
-                        var g = new GeometryModel3D(mg, mat) { BackMaterial = mat };
-                        group.Children.Add(g);
+                            var mat = materials[sub.MaterialIndex];
+                            var g = new GeometryModel3D(mg, mat) { BackMaterial = mat };
+                            group.Children.Add(g);
+                        }
+                        catch { }
                     }
                 }
 
