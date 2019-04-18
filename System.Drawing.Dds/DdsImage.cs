@@ -327,7 +327,7 @@ namespace System.Drawing.Dds
         }
 
         /// <summary>
-        /// Writes the DDS header and pixel data to a stream object.
+        /// Writes the DDS header and pixel data to a stream.
         /// </summary>
         /// <param name="stream">The stream to write to.</param>
         /// <exception cref="ArgumentNullException" />
@@ -383,10 +383,12 @@ namespace System.Drawing.Dds
         /// </summary>
         /// <param name="fileName">The full path of the file to read.</param>
         /// <exception cref="ArgumentNullException" />
+        /// <exception cref="InvalidOperationException" />
+        /// <exception cref="InvalidDataException" />
         public static DdsImage ReadFromDisk(string fileName)
         {
             if (!File.Exists(fileName))
-                throw new ArgumentException("The specified file does not exist.", nameof(fileName));
+                throw new FileNotFoundException("The specified file does not exist.", fileName);
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
                 return ReadFromStream(fs);
@@ -397,6 +399,8 @@ namespace System.Drawing.Dds
         /// </summary>
         /// <param name="stream">The stream to read from.</param>
         /// <exception cref="ArgumentNullException" />
+        /// <exception cref="InvalidOperationException" />
+        /// <exception cref="InvalidDataException" />
         public static DdsImage ReadFromStream(Stream stream)
         {
             if (stream == null)
@@ -405,10 +409,10 @@ namespace System.Drawing.Dds
             using (var reader = new BinaryReader(stream, Encoding.UTF8, true))
             {
                 if (reader.ReadUInt32() != DDS)
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("Data is not a valid DDS file");
 
                 if (reader.ReadUInt32() != DdsHeader.Size)
-                    throw new InvalidDataException();
+                    throw new InvalidDataException("Invalid DDS data");
 
                 var header = new DdsHeader();
                 header.Flags = (HeaderFlags)reader.ReadInt32();
@@ -421,7 +425,7 @@ namespace System.Drawing.Dds
                     header.Reserved1[i] = reader.ReadInt32();
 
                 if (reader.ReadInt32() != DdsPixelFormat.Size)
-                    throw new InvalidDataException();
+                    throw new InvalidDataException("Invalid DDS data");
 
                 header.PixelFormat.Flags = (FormatFlags)reader.ReadInt32();
                 header.PixelFormat.FourCC = reader.ReadInt32();

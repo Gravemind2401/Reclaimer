@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,8 +12,99 @@ namespace System.Drawing.Dds
 {
     public partial class DdsImage
     {
+        /// <summary>
+        /// Decompresses any compressed pixel data and saves the image to a file on disk using a standard image format.
+        /// </summary>
+        /// <param name="fileName">The full path of the file to write.</param>
+        /// <param name="format">The image format to write with.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="NotSupportedException" />
+        public void WriteToDisk(string fileName, ImageFormat format)
+        {
+            if (fileName == null)
+                throw new ArgumentNullException(nameof(fileName));
+
+            if (format == null)
+                throw new ArgumentNullException(nameof(format));
+
+            var dir = Directory.GetParent(fileName).FullName;
+
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                WriteToStream(fs, format);
+        }
+
+        /// <summary>
+        /// Decompresses any compressed pixel data and writes the image to a stream using a standard image format.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="format">The image format to write with.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="NotSupportedException" />
+        public void WriteToStream(Stream stream, ImageFormat format)
+        {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+
+            if (format == null)
+                throw new ArgumentNullException(nameof(format));
+
+            BitmapEncoder encoder;
+            if (format.Equals(ImageFormat.Bmp))
+                encoder = new BmpBitmapEncoder();
+            else if (format.Equals(ImageFormat.Gif))
+                encoder = new GifBitmapEncoder();
+            else if (format.Equals(ImageFormat.Jpeg))
+                encoder = new JpegBitmapEncoder();
+            else if (format.Equals(ImageFormat.Png))
+                encoder = new PngBitmapEncoder();
+            else if (format.Equals(ImageFormat.Tiff))
+                encoder = new TiffBitmapEncoder();
+            else throw new NotSupportedException("The specified format is not supported.");
+
+            var source = ToBitmapSource();
+            encoder.Frames.Add(BitmapFrame.Create(source));
+            encoder.Save(stream);
+        }
+
+        /// <summary>
+        /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>
+        /// </summary>
+        /// <exception cref="NotSupportedException" />
+        public BitmapSource ToBitmapSource() => ToBitmapSource(true);
+
+        /// <summary>
+        /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>
+        /// </summary>
+        /// <param name="alpha">Determines whether the alpha channel will be included in the output.</param>
+        /// <exception cref="NotSupportedException" />
+        public BitmapSource ToBitmapSource(bool alpha)
+        {
+            const double dpi = 96;
+
+            byte[] bgra;
+            switch (dx10Header.DxgiFormat)
+            {
+                case DxgiFormat.BC1_UNorm:
+                    bgra = DecompressBC1(data, Height, Width, alpha);
+                    break;
+                case DxgiFormat.BC2_UNorm:
+                    bgra = DecompressBC2(data, Height, Width, alpha);
+                    break;
+                case DxgiFormat.BC3_UNorm:
+                    bgra = DecompressBC3(data, Height, Width, alpha);
+                    break;
+
+                default: throw new NotSupportedException("The DxgiFormat is not supported.");
+            }
+
+            return BitmapSource.Create(Width, Height, dpi, dpi, alpha ? PixelFormats.Bgra32 : PixelFormats.Bgr24, null, bgra, Width * (alpha ? 4 : 3));
+        }
+
         /* https://docs.microsoft.com/en-us/windows/desktop/direct3d10/d3d10-graphics-programming-guide-resources-block-compression */
-        internal static byte[] DecompressBC1(byte[] data, int height, int width)
+        internal static byte[] DecompressBC1(byte[] data, int height, int width, bool alpha)
         {
             var output = new BgraColour[width * height];
             var palette = new BgraColour[4];
@@ -59,10 +151,10 @@ namespace System.Drawing.Dds
                 }
             }
 
-            return output.SelectMany(c => c.AsEnumerable()).ToArray();
+            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
         }
 
-        internal static byte[] DecompressBC2(byte[] data, int height, int width)
+        internal static byte[] DecompressBC2(byte[] data, int height, int width, bool alpha)
         {
             var output = new BgraColour[width * height];
             var palette = new BgraColour[4];
@@ -102,10 +194,10 @@ namespace System.Drawing.Dds
                 }
             }
 
-            return output.SelectMany(c => c.AsEnumerable()).ToArray();
+            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
         }
 
-        internal static byte[] DecompressBC3(byte[] data, int height, int width)
+        internal static byte[] DecompressBC3(byte[] data, int height, int width, bool alpha)
         {
             var output = new BgraColour[width * height];
             var rgbPalette = new BgraColour[4];
@@ -162,7 +254,7 @@ namespace System.Drawing.Dds
                 }
             }
 
-            return output.SelectMany(c => c.AsEnumerable()).ToArray();
+            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
         }
 
         private static byte Lerp(byte p1, byte p2, float fraction)
@@ -186,12 +278,12 @@ namespace System.Drawing.Dds
     {
         public byte b, g, r, a;
 
-        public IEnumerable<byte> AsEnumerable()
+        public IEnumerable<byte> AsEnumerable(bool alpha)
         {
             yield return b;
             yield return g;
             yield return r;
-            yield return a;
+            if (alpha) yield return a;
         }
 
         public static BgraColour From565(ushort value)
