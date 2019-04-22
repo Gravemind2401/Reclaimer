@@ -8,10 +8,23 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+/* https://docs.microsoft.com/en-us/windows/desktop/direct3d10/d3d10-graphics-programming-guide-resources-block-compression */
 namespace System.Drawing.Dds
 {
     public partial class DdsImage
     {
+        private delegate byte[] Decompress(byte[] data, int height, int width, bool alpha);
+
+        private static readonly Dictionary<DxgiFormat, Decompress> decompressMethods = new Dictionary<DxgiFormat, Decompress>
+        {
+            { DxgiFormat.BC1_UNorm, DecompressBC1 },
+            { DxgiFormat.BC2_UNorm, DecompressBC2 },
+            { DxgiFormat.BC3_UNorm, DecompressBC3 },
+            { DxgiFormat.B5G6R5_UNorm, DecompressB5G6R5 },
+            { DxgiFormat.B5G5R5A1_UNorm, DecompressB5G5R5A1 },
+            { DxgiFormat.B4G4R4A4_UNorm, DecompressB4G4R4A4 },
+        };
+
         /// <summary>
         /// Decompresses any compressed pixel data and saves the image to a file on disk using a standard image format.
         /// </summary>
@@ -85,25 +98,55 @@ namespace System.Drawing.Dds
             const double dpi = 96;
 
             byte[] bgra;
-            switch (dx10Header.DxgiFormat)
-            {
-                case DxgiFormat.BC1_UNorm:
-                    bgra = DecompressBC1(data, Height, Width, alpha);
-                    break;
-                case DxgiFormat.BC2_UNorm:
-                    bgra = DecompressBC2(data, Height, Width, alpha);
-                    break;
-                case DxgiFormat.BC3_UNorm:
-                    bgra = DecompressBC3(data, Height, Width, alpha);
-                    break;
 
-                default: throw new NotSupportedException("The DxgiFormat is not supported.");
+            if (decompressMethods.ContainsKey(dx10Header.DxgiFormat))
+                bgra = decompressMethods[dx10Header.DxgiFormat](data, Height, Width, alpha);
+            else
+            {
+                switch (dx10Header.DxgiFormat)
+                {
+                    case DxgiFormat.B8G8R8X8_UNorm:
+                    case DxgiFormat.B8G8R8A8_UNorm:
+                        bgra = data;
+                        break;
+
+                    default: throw new NotSupportedException("The DxgiFormat is not supported.");
+                }
             }
 
             return BitmapSource.Create(Width, Height, dpi, dpi, alpha ? PixelFormats.Bgra32 : PixelFormats.Bgr24, null, bgra, Width * (alpha ? 4 : 3));
         }
 
-        /* https://docs.microsoft.com/en-us/windows/desktop/direct3d10/d3d10-graphics-programming-guide-resources-block-compression */
+        internal static byte[] DecompressB5G6R5(byte[] data, int height, int width, bool alpha)
+        {
+            var output = new BgraColour[width * height];
+
+            for (int i = 0; i < output.Length; i++)
+                output[i] = BgraColour.From565(BitConverter.ToUInt16(data, i * 2));
+
+            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
+        }
+
+        internal static byte[] DecompressB5G5R5A1(byte[] data, int height, int width, bool alpha)
+        {
+            var output = new BgraColour[width * height];
+
+            for (int i = 0; i < output.Length; i++)
+                output[i] = BgraColour.From5551(BitConverter.ToUInt16(data, i * 2));
+
+            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
+        }
+
+        internal static byte[] DecompressB4G4R4A4(byte[] data, int height, int width, bool alpha)
+        {
+            var output = new BgraColour[width * height];
+
+            for (int i = 0; i < output.Length; i++)
+                output[i] = BgraColour.From4444(BitConverter.ToUInt16(data, i * 2));
+
+            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
+        }
+
         internal static byte[] DecompressBC1(byte[] data, int height, int width, bool alpha)
         {
             var output = new BgraColour[width * height];
@@ -117,7 +160,7 @@ namespace System.Drawing.Dds
             {
                 for (int xBlock = 0; xBlock < xBlocks; xBlock++)
                 {
-                    var srcIndex = (int)(yBlock * xBlocks + xBlock) * bytesPerBlock;
+                    var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
                     var c0 = BitConverter.ToUInt16(data, srcIndex);
                     var c1 = BitConverter.ToUInt16(data, srcIndex + 2);
 
@@ -167,7 +210,7 @@ namespace System.Drawing.Dds
             {
                 for (int xBlock = 0; xBlock < xBlocks; xBlock++)
                 {
-                    var srcIndex = (int)(yBlock * xBlocks + xBlock) * bytesPerBlock;
+                    var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
                     palette[0] = BgraColour.From565(BitConverter.ToUInt16(data, srcIndex + 8));
                     palette[1] = BgraColour.From565(BitConverter.ToUInt16(data, srcIndex + 10));
 
@@ -211,7 +254,7 @@ namespace System.Drawing.Dds
             {
                 for (int xBlock = 0; xBlock < xBlocks; xBlock++)
                 {
-                    var srcIndex = (int)(yBlock * xBlocks + xBlock) * bytesPerBlock;
+                    var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
                     rgbPalette[0] = BgraColour.From565(BitConverter.ToUInt16(data, srcIndex + 8));
                     rgbPalette[1] = BgraColour.From565(BitConverter.ToUInt16(data, srcIndex + 10));
 
@@ -298,6 +341,38 @@ namespace System.Drawing.Dds
                 g = (byte)((0xFF / GMask) * ((value >> 5) & GMask)),
                 r = (byte)((0xFF / RMask) * ((value >> 11) & RMask)),
                 a = byte.MaxValue
+            };
+        }
+
+        public static BgraColour From5551(ushort value)
+        {
+            byte BMask = 0x1F;
+            byte GMask = 0x1F;
+            byte RMask = 0x1F;
+            byte AMask = 0x01;
+
+            return new BgraColour
+            {
+                b = (byte)((0xFF / BMask) * (value & BMask)),
+                g = (byte)((0xFF / GMask) * ((value >> 5) & GMask)),
+                r = (byte)((0xFF / RMask) * ((value >> 10) & RMask)),
+                a = (byte)((0xFF / AMask) * ((value >> 15) & AMask))
+            };
+        }
+
+        public static BgraColour From4444(ushort value)
+        {
+            byte BMask = 0x0F;
+            byte GMask = 0x0F;
+            byte RMask = 0x0F;
+            byte AMask = 0x0F;
+
+            return new BgraColour
+            {
+                b = (byte)((0xFF / BMask) * (value & BMask)),
+                g = (byte)((0xFF / GMask) * ((value >> 4) & GMask)),
+                r = (byte)((0xFF / RMask) * ((value >> 8) & RMask)),
+                a = (byte)((0xFF / AMask) * ((value >> 12) & AMask)),
             };
         }
     }
