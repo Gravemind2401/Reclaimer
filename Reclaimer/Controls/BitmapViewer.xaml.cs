@@ -23,8 +23,6 @@ namespace Reclaimer.Controls
     /// </summary>
     public partial class BitmapViewer : UserControl, ITabContent
     {
-        private const double dpi = 96;
-
         public BitmapViewer()
         {
             InitializeComponent();
@@ -43,7 +41,7 @@ namespace Reclaimer.Controls
             try
             {
                 var dds = image.ToDds(0);
-                img.Source = dds.ToBitmapSource(dpi);
+                img.Source = dds.ToBitmapSource();
             }
             catch
             {

@@ -47,13 +47,10 @@ namespace Reclaimer.Controls
                 try
                 {
                     var dds = mat.Diffuse.ToDds(0);
-                    var stream = new MemoryStream();
-
-                    dds.WriteToStreamRgba(stream);
 
                     materials.Add(new DiffuseMaterial
                     {
-                        Brush = new ImageBrush(dds.ToBitmapSource(96))
+                        Brush = new ImageBrush(dds.ToBitmapSource())
                         {
                             ViewportUnits = BrushMappingMode.Absolute,
                             TileMode = TileMode.Tile,
