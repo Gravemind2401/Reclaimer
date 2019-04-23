@@ -22,8 +22,8 @@ namespace System.Drawing.Dds
             { DxgiFormat.BC3_UNorm, DecompressBC3 },
             { DxgiFormat.B5G6R5_UNorm, DecompressB5G6R5 },
             { DxgiFormat.B5G5R5A1_UNorm, DecompressB5G5R5A1 },
-            { DxgiFormat.B4G4R4A4_UNorm, DecompressB4G4R4A4 },
             { DxgiFormat.P8, DecompressP8 },
+            { DxgiFormat.B4G4R4A4_UNorm, DecompressB4G4R4A4 },
         };
 
         /// <summary>
@@ -118,16 +118,6 @@ namespace System.Drawing.Dds
             return BitmapSource.Create(Width, Height, dpi, dpi, alpha ? PixelFormats.Bgra32 : PixelFormats.Bgr24, null, bgra, Width * (alpha ? 4 : 3));
         }
 
-        internal static byte[] DecompressP8(byte[] data, int height, int width, bool alpha)
-        {
-            var output = new BgraColour[width * height];
-
-            for (int i = 0; i < output.Length; i++)
-                output[i] = new BgraColour { b = data[i], g = data[i], r = data[i], a = byte.MaxValue };
-
-            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
-        }
-
         internal static byte[] DecompressB5G6R5(byte[] data, int height, int width, bool alpha)
         {
             var output = new BgraColour[width * height];
@@ -144,6 +134,16 @@ namespace System.Drawing.Dds
 
             for (int i = 0; i < output.Length; i++)
                 output[i] = BgraColour.From5551(BitConverter.ToUInt16(data, i * 2));
+
+            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
+        }
+
+        internal static byte[] DecompressP8(byte[] data, int height, int width, bool alpha)
+        {
+            var output = new BgraColour[width * height];
+
+            for (int i = 0; i < output.Length; i++)
+                output[i] = new BgraColour { b = data[i], g = data[i], r = data[i], a = byte.MaxValue };
 
             return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
         }
