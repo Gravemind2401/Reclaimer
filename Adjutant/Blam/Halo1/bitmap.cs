@@ -14,6 +14,8 @@ namespace Adjutant.Blam.Halo1
 {
     public class bitmap : IBitmap
     {
+        private const string bitmapsMapName = "bitmaps.map";
+
         private readonly CacheFile cache;
 
         public bitmap(CacheFile cache)
@@ -39,7 +41,7 @@ namespace Adjutant.Blam.Halo1
             var submap = Bitmaps[index];
 
             var dir = Directory.GetParent(cache.FileName).FullName;
-            var bitmapsMap = Path.Combine(dir, "bitmaps.map");
+            var bitmapsMap = Path.Combine(dir, bitmapsMapName);
 
             byte[] data;
 
@@ -50,27 +52,47 @@ namespace Adjutant.Blam.Halo1
                 data = reader.ReadBytes(submap.PixelsSize);
             }
 
-            //FourCC fourCC;
             DxgiFormat dxgi;
             switch (submap.BitmapFormat)
             {
-                case 14:
-                    //fourCC = FourCC.DXT1;
+                case TextureFormat.DXT1:
                     dxgi = DxgiFormat.BC1_UNorm;
                     break;
-                case 15:
-                    //fourCC = FourCC.DXT3;
+                case TextureFormat.DXT3:
                     dxgi = DxgiFormat.BC2_UNorm;
                     break;
-                case 16:
-                    //fourCC = FourCC.DXT5;
+                case TextureFormat.DXT5:
                     dxgi = DxgiFormat.BC3_UNorm;
                     break;
 
+                case TextureFormat.A8R8G8B8:
+                    dxgi = DxgiFormat.B8G8R8A8_UNorm;
+                    break;
+
+                case TextureFormat.X8R8G8B8:
+                    dxgi = DxgiFormat.B8G8R8X8_UNorm;
+                    break;
+
+                case TextureFormat.R5G6B5:
+                    dxgi = DxgiFormat.B5G6R5_UNorm;
+                    break;
+
+                case TextureFormat.A1R5G5B5:
+                    dxgi = DxgiFormat.B5G5R5A1_UNorm;
+                    break;
+
+                case TextureFormat.A4R4G4B4:
+                    dxgi = DxgiFormat.B4G4R4A4_UNorm;
+                    break;
+
+                case TextureFormat.P8_bump:
+                case TextureFormat.P8:
+                    dxgi = DxgiFormat.P8;
+                    break;
+                
                 default: throw new NotSupportedException();
             }
 
-            //return new DdsImage(submap.Height, submap.Width, fourCC, data);
             return new DdsImage(submap.Height, submap.Width, dxgi, DxgiTextureType.Texture2D, data);
         } 
 
@@ -133,13 +155,13 @@ namespace Adjutant.Blam.Halo1
         public short Depth { get; set; }
 
         [Offset(10)]
-        public short BitmapType { get; set; }
+        public TextureType BitmapType { get; set; }
 
         [Offset(12)]
-        public short BitmapFormat { get; set; }
+        public TextureFormat BitmapFormat { get; set; }
 
         [Offset(14)]
-        public short Flags { get; set; }
+        public BitmapFlags Flags { get; set; }
 
         [Offset(16)]
         public short RegX { get; set; }
@@ -155,5 +177,52 @@ namespace Adjutant.Blam.Halo1
 
         [Offset(28)]
         public int PixelsSize { get; set; }
+    }
+
+    [Flags]
+    public enum BitmapFlags : short
+    {
+        V16U16 = 10,
+        Linear = 11,
+        Swizzled = 12,
+        Paletized = 13,
+        Compressed = 14,
+        PowerOfTwoDimensions = 15
+    }
+
+    public enum TextureType : short
+    {
+        Texture2D = 0,
+        Texture3D = 1,
+        CubeMap = 2,
+        Sprite = 3,
+        UIBitmap = 4
+    }
+
+    public enum TextureFormat : short
+    {
+        A8 = 0,
+        Y8 = 1,
+        AY8 = 2,
+        A8Y8 = 3,
+        Unused4 = 4,
+        Unused5 = 5,
+        R5G6B5 = 6,
+        Unused7 = 7,
+        A1R5G5B5 = 8,
+        A4R4G4B4 = 9,
+        X8R8G8B8 = 10,
+        A8R8G8B8 = 11,
+        Unused12 = 12,
+        Unused13 = 13,
+        DXT1 = 14,
+        DXT3 = 15,
+        DXT5 = 16,
+        P8_bump = 17,
+        P8 = 18,
+        ARGBFP32 = 19,
+        RGBFP32 = 20,
+        RGBFP16 = 21,
+        U8V8 = 22
     }
 }

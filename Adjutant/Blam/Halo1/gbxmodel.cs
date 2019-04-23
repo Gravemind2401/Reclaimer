@@ -92,6 +92,13 @@ namespace Adjutant.Blam.Halo1
                     }
 
                     var bitmId = reader.ReadInt16();
+
+                    if (bitmId == -1)
+                    {
+                        model.Materials.Add(null);
+                        continue;
+                    }
+
                     var bitmTag = cache.TagIndex[bitmId];
 
                     var mat = new GeometryMaterial
