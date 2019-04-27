@@ -157,28 +157,39 @@ namespace Adjutant.Blam.Halo1
                         indices.AddRange(reader.ReadEnumerable<ushort>(gSubmesh.IndexLength));
 
                         reader.Seek(cache.TagIndex.VertexDataOffset + submesh.VertexOffset, SeekOrigin.Begin);
-                        //var vertsTemp = reader.ReadEnumerable<SkinnedVertex>(submesh.VertexCount).ToList();
-                        var vertsTemp = new List<SkinnedVertex>();
-                        for (int i = 0; i < submesh.VertexCount; i++)
-                        {
-                            var position = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                            var normal = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                            var binormal = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                            var tangent = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                            var texcoord = new RealVector2D(reader.ReadSingle() * UScale, reader.ReadSingle() * VScale);
-                            var nodes = new RealVector2D(reader.ReadInt16(), reader.ReadInt16());
-                            var weights = new RealVector2D(reader.ReadSingle(), reader.ReadSingle());
+                        var vertsTemp = reader.ReadEnumerable<SkinnedVertex>(submesh.VertexCount).ToList();
+                        //var vertsTemp = new List<SkinnedVertex>();
+                        //for (int i = 0; i < submesh.VertexCount; i++)
+                        //{
+                        //    var position = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                        //    var normal = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                        //    var binormal = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                        //    var tangent = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                        //    var texcoord = new RealVector2D(reader.ReadSingle() * UScale, reader.ReadSingle() * VScale);
+                        //    var nodes = new RealVector2D(reader.ReadInt16(), reader.ReadInt16());
+                        //    var weights = new RealVector2D(reader.ReadSingle(), reader.ReadSingle());
 
-                            vertsTemp.Add(new SkinnedVertex
+                        //    vertsTemp.Add(new SkinnedVertex
+                        //    {
+                        //        Position = position,
+                        //        Normal = normal,
+                        //        Binormal = binormal,
+                        //        Tangent = tangent,
+                        //        TexCoords = texcoord,
+                        //        NodeIndex1 = (short)nodes.X,
+                        //        NodeIndex2 = (short)nodes.Y,
+                        //        NodeWeights = weights
+                        //    });
+                        //}
+
+                        if (UScale != 1 || VScale != 1)
+                        {
+                            vertsTemp.ForEach((v) =>
                             {
-                                Position = position,
-                                Normal = normal,
-                                Binormal = binormal,
-                                Tangent = tangent,
-                                TexCoords = texcoord,
-                                NodeIndex1 = (short)nodes.X,
-                                NodeIndex2 = (short)nodes.Y,
-                                NodeWeights = weights
+                                var vec = v.TexCoords;
+                                vec.X *= UScale;
+                                vec.Y *= VScale;
+                                v.TexCoords = vec;
                             });
                         }
 
