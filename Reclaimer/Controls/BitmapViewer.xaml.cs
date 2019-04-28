@@ -120,16 +120,30 @@ namespace Reclaimer.Controls
         {
             Array.Copy(ImageData, RenderData, ImageData.Length);
 
-            for (int i = 0; i < RenderData.Length; i++)
+            var singleChannel = -1;
+            if (Convert.ToInt32(BlueChannel) + Convert.ToInt32(GreenChannel) + Convert.ToInt32(RedChannel) + Convert.ToInt32(AlphaChannel) == 1)
             {
-                if (i % 4 == 0 && !BlueChannel)
-                    RenderData[i] = 0;
-                else if (i % 4 == 1 && !GreenChannel)
-                    RenderData[i] = 0;
-                else if (i % 4 == 2 && !RedChannel)
-                    RenderData[i] = 0;
-                else if (i % 4 == 3 && !AlphaChannel)
-                    RenderData[i] = byte.MaxValue;
+                if (BlueChannel) singleChannel = 0;
+                else if (GreenChannel) singleChannel = 1;
+                else if (RedChannel) singleChannel = 2;
+                else if (AlphaChannel) singleChannel = 3;
+            }
+
+            for (int i = 0; i < RenderData.Length; i += 4)
+            {
+                //if only one channel is selected treat it as greyscale
+                if (singleChannel >= 0)
+                {
+                    RenderData[i + 0] = RenderData[i + 1] = RenderData[i + 2] = RenderData[i + singleChannel];
+                    RenderData[i + 3] = byte.MaxValue;
+                }
+                else
+                {
+                    if (!BlueChannel) RenderData[i] = 0;
+                    if (!GreenChannel) RenderData[i + 1] = 0;
+                    if (!RedChannel) RenderData[i + 2] = 0;
+                    if (!AlphaChannel) RenderData[i + 3] = byte.MaxValue;
+                }
             }
 
             var src = BitmapSource.Create(PixelWidth, PixelHeight, dpi, dpi, PixelFormats.Bgra32, null, RenderData, PixelStride);

@@ -195,7 +195,18 @@ namespace Reclaimer.Controls
                 var map = Adjutant.Blam.CacheFactory.ReadCacheFile(cache.FileName);
                 var tag = map.TagIndex[(int)item.TagId];
 
-                var bitm = tag.ReadMetadata<Adjutant.Blam.Halo1.bitmap>();
+                Adjutant.Utilities.IBitmap bitm;
+                switch (map.Type)
+                {
+                    case CacheType.Halo1CE:
+                    case CacheType.Halo1PC:
+                        bitm = tag.ReadMetadata<Adjutant.Blam.Halo1.bitmap>();
+                        break;
+                    case CacheType.Halo2Xbox:
+                        bitm = tag.ReadMetadata<Adjutant.Blam.Halo2.bitmap>();
+                        break;
+                    default: throw new NotSupportedException();
+                }
 
                 var viewer = new BitmapViewer();
                 viewer.LoadImage(bitm);
