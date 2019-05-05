@@ -14,10 +14,6 @@ namespace Adjutant.Blam.Halo2
 {
     public class bitmap : IBitmap
     {
-        private const string mainmenuMapName = "mainmenu.map";
-        private const string sharedMapName = "shared.map";
-        private const string singlePlayerSharedMapName = "single_player_shared.map";
-
         private readonly CacheFile cache;
 
         public bitmap(CacheFile cache)
@@ -41,36 +37,7 @@ namespace Adjutant.Blam.Halo2
                 throw new ArgumentOutOfRangeException(nameof(index));
 
             var submap = Bitmaps[index];
-
-            var cacheIndex = (submap.Lod0Pointer & 0xC0000000) >> 30;
-            var address = submap.Lod0Pointer & 0x3FFFFFFF;
-
-            var dir = Directory.GetParent(cache.FileName).FullName;
-
-            var mapName = Path.GetFileName(cache.FileName);
-            switch(cacheIndex)
-            {
-                case 1:
-                    mapName = mainmenuMapName;
-                    break;
-                case 2:
-                    mapName = sharedMapName;
-                    break;
-                case 3:
-                    mapName = singlePlayerSharedMapName;
-                    break;
-            }
-
-            var targetMap = Path.Combine(dir, mapName);
-
-            byte[] data;
-
-            using (var fs = new FileStream(targetMap, FileMode.Open, FileAccess.Read))
-            using (var reader = new DependencyReader(fs, ByteOrder.LittleEndian))
-            {
-                reader.Seek(address, SeekOrigin.Begin);
-                data = reader.ReadBytes(submap.Lod0Size);
-            }
+            var data = submap.Lod0Pointer.ReadData(submap.Lod0Size);
 
             DxgiFormat dxgi;
             switch (submap.BitmapFormat)
@@ -181,7 +148,7 @@ namespace Adjutant.Blam.Halo2
         public TextureFormat BitmapFormat { get; set; }
 
         [Offset(14)]
-        public short Flags { get; set; }
+        public BitmapFlags Flags { get; set; }
 
         [Offset(16)]
         public short RegX { get; set; }
@@ -193,13 +160,13 @@ namespace Adjutant.Blam.Halo2
         public short MipmapCount { get; set; }
 
         [Offset(28)]
-        public int Lod0Pointer { get; set; }
+        public DataPointer Lod0Pointer { get; set; }
 
         [Offset(32)]
-        public int Lod1Pointer { get; set; }
+        public DataPointer Lod1Pointer { get; set; }
 
         [Offset(36)]
-        public int Lod2Pointer { get; set; }
+        public DataPointer Lod2Pointer { get; set; }
 
         [Offset(52)]
         public int Lod0Size { get; set; }
@@ -209,6 +176,12 @@ namespace Adjutant.Blam.Halo2
 
         [Offset(60)]
         public int Lod2Size { get; set; }
+    }
+
+    [Flags]
+    public enum BitmapFlags : short
+    {
+        Swizzled = 8
     }
 
     public enum TextureType : short

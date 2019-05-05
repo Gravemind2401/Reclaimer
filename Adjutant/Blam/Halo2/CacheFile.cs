@@ -57,6 +57,7 @@ namespace Adjutant.Blam.Halo2
             reader.RegisterType<Pointer>(() => new Pointer(reader.ReadInt32(), translator));
             reader.RegisterType<StringId>(() => new StringId(reader.ReadInt16(), this));
             reader.RegisterType<IAddressTranslator>(() => translator);
+            reader.RegisterType<DataPointer>(() => new DataPointer(reader.ReadInt32(), this));
             reader.RegisterType<Matrix4x4>(() => new Matrix4x4
             {
                 M11 = reader.ReadSingle(),

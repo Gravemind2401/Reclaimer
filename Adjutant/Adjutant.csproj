@@ -61,6 +61,7 @@
     <Compile Include="Blam\Halo2\bitmap.cs" />
     <Compile Include="Blam\Halo2\BlockCollection.cs" />
     <Compile Include="Blam\Halo2\BSPAddressTranslator.cs" />
+    <Compile Include="Blam\Halo2\DataPointer.cs" />
     <Compile Include="Blam\Halo2\render_model.cs" />
     <Compile Include="Blam\Halo2\scenario.cs" />
     <Compile Include="Blam\Halo2\scenario_structure_bsp.cs" />
