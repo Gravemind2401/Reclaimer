@@ -15,7 +15,7 @@ namespace Adjutant.Blam.Halo2
         private readonly int tagId;
 
         public int TagId => tagId;
-        public IndexItem Tag => cache.TagIndex[TagId];
+        public IndexItem Tag => TagId > 0 ? cache.TagIndex[TagId] : null;
 
         public TagReference(CacheFile cache, DependencyReader reader)
         {
@@ -23,6 +23,6 @@ namespace Adjutant.Blam.Halo2
             tagId = reader.ReadInt16();
         }
 
-        public override string ToString() => Tag.ToString();
+        public override string ToString() => Tag?.ToString();
     }
 }
