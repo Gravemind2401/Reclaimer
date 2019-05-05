@@ -32,7 +32,7 @@ namespace Reclaimer.Controls
 
         #region Dependency Properties
 
-        public static readonly DependencyProperty NearPlaneDistanceProperty = 
+        public static readonly DependencyProperty NearPlaneDistanceProperty =
             DependencyProperty.Register(nameof(NearPlaneDistance), typeof(double), typeof(Renderer), new PropertyMetadata(0.01));
 
         private static readonly DependencyPropertyKey MinFarPlaneDistancePropertyKey =
@@ -40,7 +40,7 @@ namespace Reclaimer.Controls
 
         public static readonly DependencyProperty MinFarPlaneDistanceProperty = MinFarPlaneDistancePropertyKey.DependencyProperty;
 
-        public static readonly DependencyProperty FarPlaneDistanceProperty = 
+        public static readonly DependencyProperty FarPlaneDistanceProperty =
             DependencyProperty.Register(nameof(FarPlaneDistance), typeof(double), typeof(Renderer), new PropertyMetadata(1000.0));
 
         private static readonly DependencyPropertyKey MaxFarPlaneDistancePropertyKey =
@@ -48,7 +48,7 @@ namespace Reclaimer.Controls
 
         public static readonly DependencyProperty MaxFarPlaneDistanceProperty = MaxFarPlaneDistancePropertyKey.DependencyProperty;
 
-        public static readonly DependencyProperty FieldOfViewProperty = 
+        public static readonly DependencyProperty FieldOfViewProperty =
             DependencyProperty.Register(nameof(FieldOfView), typeof(double), typeof(Renderer), new PropertyMetadata(90.0));
 
         public static readonly DependencyProperty CameraSpeedProperty =
@@ -108,8 +108,8 @@ namespace Reclaimer.Controls
         private Point lastPoint;
         private double yaw, pitch;
 
-        public Point3D MaxPosition = new Point3D(500, 500, 500);
-        public Point3D MinPosition = new Point3D(-500, -500, -500);
+        public Point3D MaxPosition { get; private set; } = new Point3D(500, 500, 500);
+        public Point3D MinPosition { get; private set; } = new Point3D(-500, -500, -500);
 
         public Renderer()
         {
@@ -250,78 +250,79 @@ namespace Reclaimer.Controls
             if (!IsMouseCaptured) return;
 
             #region Set FOV
-            if (CheckKeyState(Keys.NumPad6)) Camera.FieldOfView += Camera.FieldOfView / 100.0;
-            if (CheckKeyState(Keys.NumPad4)) Camera.FieldOfView -= Camera.FieldOfView / 100.0;
-            Camera.FieldOfView = ClipValue(Camera.FieldOfView, 45, 120);
+            if (CheckKeyState(Keys.NumPad6)) Camera.FieldOfView = ClipValue(Camera.FieldOfView + Camera.FieldOfView / 100.0, 45, 120);
+            if (CheckKeyState(Keys.NumPad4)) Camera.FieldOfView = ClipValue(Camera.FieldOfView - Camera.FieldOfView / 100.0, 45, 120);
             #endregion
 
             #region Set FPD
-            if (CheckKeyState(Keys.NumPad8)) Camera.FarPlaneDistance *= 1.01;
-            if (CheckKeyState(Keys.NumPad2)) Camera.FarPlaneDistance *= 0.99;
-            Camera.FarPlaneDistance = ClipValue(Camera.FarPlaneDistance, MinFarPlaneDistance, MaxFarPlaneDistance);
+            if (CheckKeyState(Keys.NumPad8)) Camera.FarPlaneDistance = ClipValue(Camera.FarPlaneDistance * 1.01, MinFarPlaneDistance, MaxFarPlaneDistance);
+            if (CheckKeyState(Keys.NumPad2)) Camera.FarPlaneDistance = ClipValue(Camera.FarPlaneDistance * 0.99, MinFarPlaneDistance, MaxFarPlaneDistance);
             #endregion
 
-            if (CheckKeyState(Keys.W) | CheckKeyState(Keys.A) | CheckKeyState(Keys.S) | CheckKeyState(Keys.D) | CheckKeyState(Keys.R) | CheckKeyState(Keys.F))
+            if (CheckKeyState(Keys.W) || CheckKeyState(Keys.A) || CheckKeyState(Keys.S) || CheckKeyState(Keys.D) || CheckKeyState(Keys.R) || CheckKeyState(Keys.F))
             {
+                var nextPosition = Camera.Position;
                 var len = Camera.LookDirection.Length;
-                Camera.LookDirection = new Vector3D(Camera.LookDirection.X / len, Camera.LookDirection.Y / len, Camera.LookDirection.Z / len);
+                var lookDirection = Camera.LookDirection = new Vector3D(Camera.LookDirection.X / len, Camera.LookDirection.Y / len, Camera.LookDirection.Z / len);
 
                 var dist = CameraSpeed;
                 if (CheckKeyState(Keys.ShiftKey)) dist *= 3;
                 if (CheckKeyState(Keys.Space)) dist /= 3;
 
                 #region Check WASD
+
                 if (CheckKeyState(Keys.W))
-                    Camera.Position = new Point3D(
-                        Camera.Position.X + Camera.LookDirection.X * dist,
-                        Camera.Position.Y + Camera.LookDirection.Y * dist,
-                        Camera.Position.Z + Camera.LookDirection.Z * dist);
+                {
+                    nextPosition.X += lookDirection.X * dist;
+                    nextPosition.Y += lookDirection.Y * dist;
+                    nextPosition.Z += lookDirection.Z * dist;
+                }
 
                 if (CheckKeyState(Keys.A))
-                    Camera.Position = new Point3D(
-                        Camera.Position.X - Math.Sin(yaw + RAD_090) * dist,
-                        Camera.Position.Y - Math.Cos(yaw + RAD_090) * dist,
-                        Camera.Position.Z);
+                {
+                    nextPosition.X -= Math.Sin(yaw + RAD_090) * dist;
+                    nextPosition.Y -= Math.Cos(yaw + RAD_090) * dist;
+                }
 
                 if (CheckKeyState(Keys.S))
-                    Camera.Position = new Point3D(
-                        Camera.Position.X - Camera.LookDirection.X * dist,
-                        Camera.Position.Y - Camera.LookDirection.Y * dist,
-                        Camera.Position.Z - Camera.LookDirection.Z * dist);
+                {
+                    nextPosition.X -= lookDirection.X * dist;
+                    nextPosition.Y -= lookDirection.Y * dist;
+                    nextPosition.Z -= lookDirection.Z * dist;
+                }
 
                 if (CheckKeyState(Keys.D))
-                    Camera.Position = new Point3D(
-                        Camera.Position.X + Math.Sin(yaw + RAD_090) * dist,
-                        Camera.Position.Y + Math.Cos(yaw + RAD_090) * dist,
-                        Camera.Position.Z);
+                {
+                    nextPosition.X += Math.Sin(yaw + RAD_090) * dist;
+                    nextPosition.Y += Math.Cos(yaw + RAD_090) * dist;
+                }
                 #endregion
 
                 #region Check RF
+
                 if (CheckKeyState(Keys.R))
                 {
-                    var relativeUp = Vector3D.CrossProduct(Camera.LookDirection, Vector3D.CrossProduct(Camera.LookDirection, Camera.UpDirection));
-                    relativeUp.Normalize();
-                    Camera.Position = new Point3D(
-                        Camera.Position.X - relativeUp.X * dist,
-                        Camera.Position.Y - relativeUp.Y * dist,
-                        Camera.Position.Z - relativeUp.Z * dist);
+                    var upAxis = Vector3D.CrossProduct(Camera.LookDirection, Vector3D.CrossProduct(Camera.LookDirection, Camera.UpDirection));
+                    upAxis.Normalize();
+                    nextPosition.X -= upAxis.X * dist;
+                    nextPosition.Y -= upAxis.Y * dist;
+                    nextPosition.Z -= upAxis.Z * dist;
                 }
 
                 if (CheckKeyState(Keys.F))
                 {
-                    var relativeDown = Vector3D.CrossProduct(Camera.LookDirection, Vector3D.CrossProduct(Camera.LookDirection, Camera.UpDirection));
-                    relativeDown.Normalize();
-                    Camera.Position = new Point3D(
-                        Camera.Position.X + relativeDown.X * dist,
-                        Camera.Position.Y + relativeDown.Y * dist,
-                        Camera.Position.Z + relativeDown.Z * dist);
+                    var upAxis = Vector3D.CrossProduct(Camera.LookDirection, Vector3D.CrossProduct(Camera.LookDirection, Camera.UpDirection));
+                    upAxis.Normalize();
+                    nextPosition.X += upAxis.X * dist;
+                    nextPosition.Y += upAxis.Y * dist;
+                    nextPosition.Z += upAxis.Z * dist;
                 }
                 #endregion
 
                 Camera.Position = new Point3D(
-                    ClipValue(Camera.Position.X, MinPosition.X, MaxPosition.X),
-                    ClipValue(Camera.Position.Y, MinPosition.Y, MaxPosition.Y),
-                    ClipValue(Camera.Position.Z, MinPosition.Z, MaxPosition.Z));
+                    ClipValue(nextPosition.X, MinPosition.X, MaxPosition.X),
+                    ClipValue(nextPosition.Y, MinPosition.Y, MaxPosition.Y),
+                    ClipValue(nextPosition.Z, MinPosition.Z, MaxPosition.Z));
             }
         }
 
@@ -373,10 +374,8 @@ namespace Reclaimer.Controls
 
         private void Renderer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (e.Delta > 0) CameraSpeed = Math.Ceiling(CameraSpeed * 1050) / 1000;
-            else CameraSpeed = Math.Floor(CameraSpeed * 0950) / 1000;
-
-            //CameraSpeed = ClipValue(CameraSpeed, 0.001, MaxCameraSpeed);
+            if (e.Delta > 0) CameraSpeed = ClipValue(Math.Ceiling(CameraSpeed * 1050) / 1000, 0.001, MaxCameraSpeed);
+            else CameraSpeed = ClipValue(Math.Floor(CameraSpeed * 0950) / 1000, 0.001, MaxCameraSpeed);
         }
 
         private static double ClipValue(double val, double min, double max)
@@ -384,12 +383,9 @@ namespace Reclaimer.Controls
             return Math.Min(Math.Max(min, val), max);
         }
 
-        #region KeyState Shit
-
         private static bool CheckKeyState(Keys keys)
         {
             return ((NativeMethods.GetAsyncKeyState((int)keys) & 32768) != 0);
         }
-        #endregion
     }
 }
