@@ -152,10 +152,10 @@ namespace Reclaimer.Controls
 
             foreach (var g in result.OrderBy(g => g.Key))
             {
-                var node = new TreeViewItem { Header = g.Key };
+                var node = new TreeNode { Header = g.Key };
                 foreach (var i in g.OrderBy(i => i.FileName))
                 {
-                    node.Items.Add(new TreeViewItem
+                    node.Children.Add(new TreeNode
                     {
                         Header = i.FileName,
                         Tag = i
@@ -167,21 +167,32 @@ namespace Reclaimer.Controls
 
         private void tv_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var item = (tv.SelectedItem as TreeViewItem)?.Tag as Entities.TagItem;
+            var item = (tv.SelectedItem as TreeNode)?.Tag as Entities.TagItem;
 
             if (item == null) return;
 
-            if (item.ClassCode == "mod2")
+            if (item.ClassCode == "mod2" || item.ClassCode == "mode")
             {
                 var cache = Storage.CacheFiles.First(c => c.CacheId == item.CacheId);
 
                 var map = Adjutant.Blam.CacheFactory.ReadCacheFile(cache.FileName);
                 var tag = map.TagIndex[(int)item.TagId];
 
-                var mod2 = tag.ReadMetadata<Adjutant.Blam.Halo1.gbxmodel>();
+                Adjutant.Utilities.IRenderGeometry mode;
+                switch (map.Type)
+                {
+                    case CacheType.Halo1CE:
+                    case CacheType.Halo1PC:
+                        mode = tag.ReadMetadata<Adjutant.Blam.Halo1.gbxmodel>();
+                        break;
+                    case CacheType.Halo2Xbox:
+                        mode = tag.ReadMetadata<Adjutant.Blam.Halo2.render_model>();
+                        break;
+                    default: throw new NotSupportedException();
+                }
 
                 var viewer = new ModelViewer();
-                viewer.LoadGeometry(mod2);
+                viewer.LoadGeometry(mode);
 
                 var wnd = Application.Current.MainWindow as MainWindow;
                 wnd.docTab.Items.Add(viewer);

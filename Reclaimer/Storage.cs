@@ -17,7 +17,7 @@ namespace Reclaimer
         from tag_item t
         join ( select t.cache_id,
                       t.tag_id,
-                      row_number() over (partition by path_id order by c.priority) as rownum
+                      row_number() over (partition by class_code, path_id order by c.priority desc) as rownum
                from tag_item t
                join cache_file c on t.cache_id = c.cache_id
                where c.cache_type = @cache_type

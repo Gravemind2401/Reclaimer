@@ -25,7 +25,14 @@ namespace Reclaimer.Controls
     /// </summary>
     public partial class ModelViewer : UserControl, ITabContent, IDisposable
     {
+        private static readonly DiffuseMaterial ErrorMaterial;
+
         public ObservableCollection<ExtendedTreeViewItem> TreeViewItems { get; }
+
+        static ModelViewer()
+        {
+            (ErrorMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Gold))).Freeze();
+        }
 
         public ModelViewer()
         {
@@ -36,7 +43,6 @@ namespace Reclaimer.Controls
 
         public void LoadGeometry(Adjutant.Utilities.IRenderGeometry geom)
         {
-            var errorMaterial = new DiffuseMaterial(new SolidColorBrush(Colors.Gold));
             var model = geom.ReadGeometry(0);
             var group = new Model3DGroup();
             var vis = new ModelVisual3D();
@@ -50,7 +56,7 @@ namespace Reclaimer.Controls
 
                     materials.Add(new DiffuseMaterial
                     {
-                        Brush = new ImageBrush(dds.ToBitmapSource())
+                        Brush = new ImageBrush(dds.ToBitmapSource(false))
                         {
                             ViewportUnits = BrushMappingMode.Absolute,
                             TileMode = TileMode.Tile,
@@ -60,7 +66,7 @@ namespace Reclaimer.Controls
                 }
                 catch
                 {
-                    materials.Add(errorMaterial);
+                    materials.Add(ErrorMaterial);
                 }
             }
 
@@ -76,29 +82,66 @@ namespace Reclaimer.Controls
 
                     var mesh = model.Meshes[perm.MeshIndex];
 
+                    var permGroup = new Model3DGroup();
+
+                    var texMatrix = Matrix.Identity;
+                    if (perm.BoundsIndex >= 0)
+                    {
+                        var bounds = model.Bounds[perm.BoundsIndex];
+                        texMatrix = new Matrix
+                        {
+                            M11 = bounds.UBounds.Length,
+                            M22 = bounds.VBounds.Length,
+                            OffsetX = bounds.UBounds.Min,
+                            OffsetY = bounds.VBounds.Min
+                        };
+
+                        var transform = new Matrix3D
+                        {
+                            M11 = bounds.XBounds.Length,
+                            M22 = bounds.YBounds.Length,
+                            M33 = bounds.ZBounds.Length,
+                            OffsetX = bounds.XBounds.Min,
+                            OffsetY = bounds.YBounds.Min,
+                            OffsetZ = bounds.ZBounds.Min
+                        };
+
+                        (permGroup.Transform = new MatrixTransform3D(transform)).Freeze();
+                    }
+
                     foreach (var sub in perm.Submeshes)
                     {
                         try
                         {
                             var mg = new MeshGeometry3D();
 
-                            var indices = mesh.Indicies.Skip(sub.IndexStart).Take(sub.IndexLength);
-                            if (mesh.IndexFormat == IndexFormat.Stripped) indices = Unstrip(indices);
+                            var indices = mesh.Indicies.Skip(sub.IndexStart).Take(sub.IndexLength).ToArray();
+                            if (mesh.IndexFormat == IndexFormat.Stripped) indices = Unstrip(indices).ToArray();
 
-                            var verts = mesh.Vertices.Skip(sub.VertexStart).Take(sub.VertexLength);
+                            var vertStart = indices.Min();
+                            var vertLength = indices.Max() - vertStart + 1;
+
+
+                            var verts = mesh.Vertices.Skip(vertStart).Take(vertLength);
                             var positions = verts.Select(v => new Point3D(v.Position[0].X, v.Position[0].Y, v.Position[0].Z));
-                            var texcoords = verts.Select(v => new Point(v.TexCoords[0].X, v.TexCoords[0].Y));
 
-                            mg.Positions = new Point3DCollection(positions);
-                            mg.TextureCoordinates = new PointCollection(texcoords);
-                            mg.TriangleIndices = new Int32Collection(indices);
+                            var texcoords = verts.Select(v => new Point(v.TexCoords[0].X, v.TexCoords[0].Y)).ToArray();
+                            if (!texMatrix.IsIdentity) texMatrix.Transform(texcoords);
 
-                            var mat = materials[sub.MaterialIndex];
-                            var g = new GeometryModel3D(mg, mat) { BackMaterial = mat };
-                            group.Children.Add(g);
+                            (mg.Positions = new Point3DCollection(positions)).Freeze();
+                            (mg.TextureCoordinates = new PointCollection(texcoords)).Freeze();
+                            (mg.TriangleIndices = new Int32Collection(indices.Select(i => i - vertStart))).Freeze();
+
+                            var mat = sub.MaterialIndex >= 0 ? materials[sub.MaterialIndex] : ErrorMaterial;
+                            var subGroup = new GeometryModel3D(mg, mat) { BackMaterial = mat };
+                            subGroup.Freeze();
+                            permGroup.Children.Add(subGroup);
                         }
                         catch { }
                     }
+
+                    permGroup.Freeze();
+                    group.Children.Add(permGroup);
                 }
 
                 TreeViewItems.Add(regNode);
