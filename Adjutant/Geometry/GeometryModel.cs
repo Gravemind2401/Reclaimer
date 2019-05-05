@@ -132,8 +132,6 @@ namespace Adjutant.Geometry
         public short MaterialIndex { get; set; }
         public int IndexStart { get; set; }
         public int IndexLength { get; set; }
-        public int VertexStart { get; set; }
-        public int VertexLength { get; set; }
     }
 
     public class GeometryMarker : IGeometryMarker

@@ -65,7 +65,9 @@
     <Compile Include="Blam\Halo2\render_model.cs" />
     <Compile Include="Blam\Halo2\scenario.cs" />
     <Compile Include="Blam\Halo2\scenario_structure_bsp.cs" />
+    <Compile Include="Blam\Halo2\shader.cs" />
     <Compile Include="Blam\Halo2\TagReference.cs" />
+    <Compile Include="Blam\Halo2\Vertex.cs" />
     <Compile Include="Geometry\CoordinateSystem.cs" />
     <Compile Include="Geometry\IVertex.cs" />
     <Compile Include="Blam\Halo1\bitmap.cs" />
@@ -89,6 +91,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Spatial\DecN4.cs" />
     <Compile Include="Spatial\HenDN3.cs" />
+    <Compile Include="Spatial\Int16N2.cs" />
+    <Compile Include="Spatial\Int16N3.cs" />
     <Compile Include="Spatial\IRealBounds.cs" />
     <Compile Include="Geometry\IXMVector.cs" />
     <Compile Include="Spatial\IRealBounds5D.cs" />

@@ -51,6 +51,9 @@ namespace Adjutant.Blam.Halo1
 
         public IGeometryModel ReadGeometry(int lod)
         {
+            if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
+                throw new ArgumentOutOfRangeException(nameof(lod));
+
             using (var reader = cache.CreateReader(cache.AddressTranslator))
             {
                 var model = new GeometryModel { CoordinateSystem = CoordinateSystem.HaloCE };
@@ -58,6 +61,7 @@ namespace Adjutant.Blam.Halo1
                 model.Nodes.AddRange(Nodes);
                 model.MarkerGroups.AddRange(MarkerGroups);
 
+                #region Add Shaders
                 foreach (var shader in Shaders)
                 {
                     var tag = shader.ShaderReference.Tag;
@@ -109,7 +113,8 @@ namespace Adjutant.Blam.Halo1
                     };
 
                     model.Materials.Add(mat);
-                }
+                } 
+                #endregion
 
                 foreach (var region in Regions)
                 {
@@ -130,7 +135,7 @@ namespace Adjutant.Blam.Halo1
 
                 foreach (var section in Sections)
                 {
-                    var indices = new List<ushort>();
+                    var indices = new List<int>();
                     var vertices = new List<SkinnedVertex>();
 
                     var mesh = new GeometryMesh();
@@ -141,9 +146,7 @@ namespace Adjutant.Blam.Halo1
                         {
                             MaterialIndex = submesh.ShaderIndex,
                             IndexStart = indices.Count,
-                            IndexLength = submesh.IndexCount + 2,
-                            VertexStart = vertices.Count,
-                            VertexLength = submesh.VertexCount
+                            IndexLength = submesh.IndexCount + 2
                         };
 
                         var permutations = model.Regions
@@ -154,7 +157,7 @@ namespace Adjutant.Blam.Halo1
                             ((List<IGeometrySubmesh>)p.Submeshes).Add(gSubmesh);
 
                         reader.Seek(cache.TagIndex.VertexDataOffset + cache.TagIndex.IndexDataOffset + submesh.IndexOffset, SeekOrigin.Begin);
-                        indices.AddRange(reader.ReadEnumerable<ushort>(gSubmesh.IndexLength));
+                        indices.AddRange(reader.ReadEnumerable<ushort>(gSubmesh.IndexLength).Select(i => i + vertices.Count));
 
                         reader.Seek(cache.TagIndex.VertexDataOffset + submesh.VertexOffset, SeekOrigin.Begin);
                         var vertsTemp = reader.ReadEnumerable<SkinnedVertex>(submesh.VertexCount).ToList();
@@ -198,7 +201,7 @@ namespace Adjutant.Blam.Halo1
 
                     mesh.IndexFormat = IndexFormat.Stripped;
                     mesh.VertexWeights = VertexWeights.Multiple;
-                    mesh.Indicies = indices.Select(i => (int)i).ToArray();
+                    mesh.Indicies = indices.ToArray();
                     mesh.Vertices = vertices.ToArray();
 
                     model.Meshes.Add(mesh);

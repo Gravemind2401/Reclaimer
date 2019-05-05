@@ -1,7 +1,9 @@
-﻿using Adjutant.Spatial;
+﻿using Adjutant.Geometry;
+using Adjutant.Spatial;
 using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Endian;
 using System.Linq;
 using System.Numerics;
@@ -10,8 +12,15 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Halo2
 {
-    public class render_model
+    public class render_model : IRenderGeometry
     {
+        private readonly CacheFile cache;
+
+        public render_model(CacheFile cache)
+        {
+            this.cache = cache;
+        }
+
         [Offset(20)]
         public BlockCollection<BoundingBox> BoundingBoxes { get; set; }
 
@@ -29,6 +38,178 @@ namespace Adjutant.Blam.Halo2
 
         [Offset(96)]
         public BlockCollection<Shader> Shaders { get; set; }
+
+        #region IRenderGeometry
+
+        int IRenderGeometry.LodCount => 1;
+
+        public IGeometryModel ReadGeometry(int lod)
+        {
+            if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
+                throw new ArgumentOutOfRangeException(nameof(lod));
+
+            var model = new GeometryModel { CoordinateSystem = CoordinateSystem.Default };
+
+            model.Nodes.AddRange(Nodes);
+            model.MarkerGroups.AddRange(MarkerGroups);
+            model.Bounds.AddRange(BoundingBoxes);
+
+            #region Shaders
+            var shadersMeta = Shaders.Select(s => s.ShaderReference.Tag.ReadMetadata<shader>()).ToList();
+            foreach (var shader in shadersMeta)
+            {
+                var bitmTag = shader.ShaderMaps[0].DiffuseBitmapReference.Tag;
+                if (bitmTag == null)
+                {
+                    model.Materials.Add(null);
+                    continue;
+                }
+
+                var mat = new GeometryMaterial
+                {
+                    Name = bitmTag.FileName,
+                    Diffuse = bitmTag.ReadMetadata<bitmap>(),
+                    Tiling = new RealVector2D(1, 1)
+                };
+
+                model.Materials.Add(mat);
+            } 
+            #endregion
+
+            foreach (var region in Regions)
+            {
+                var gRegion = new GeometryRegion { Name = region.Name };
+                gRegion.Permutations.AddRange(region.Permutations.Select(p =>
+                    new GeometryPermutation
+                    {
+                        Name = p.Name,
+                        NodeIndex = byte.MaxValue,
+                        Transform = Matrix4x4.Identity,
+                        TransformScale = 1,
+                        BoundsIndex = 0,
+                        MeshIndex = p.SectionIndex
+                    }));
+
+                model.Regions.Add(gRegion);
+            }
+
+            foreach (var section in Sections)
+            {
+                var data = section.RawPointer.ReadData(section.RawSize);
+                var headerSize = section.RawSize - section.DataSize - 4;
+
+                using (var ms = new MemoryStream(data))
+                using (var reader = new EndianReader(ms))
+                {
+                    var sectionInfo = reader.ReadObject<ResourceDetails>();
+
+                    var submeshResource = section.Resources[0];
+                    var indexResource = section.Resources.FirstOrDefault(r => r.Type0 == 32);
+                    var vertexResource = section.Resources.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 0);
+                    var uvResource = section.Resources.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 1);
+                    var normalsResource = section.Resources.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 2);
+                    var nodeMapResource = section.Resources.FirstOrDefault(r => r.Type0 == 100);
+
+                    reader.Seek(headerSize + submeshResource.Offset, SeekOrigin.Begin);
+                    var submeshes = reader.ReadEnumerable<Submesh>(submeshResource.Size / 72).ToList();
+
+                    foreach (var submesh in submeshes)
+                    {
+                        var gSubmesh = new GeometrySubmesh
+                        {
+                            MaterialIndex = submesh.ShaderIndex,
+                            IndexStart = submesh.IndexStart,
+                            IndexLength = submesh.IndexLength
+                        };
+
+                        var permutations = model.Regions
+                            .SelectMany(r => r.Permutations)
+                            .Where(p => p.MeshIndex == Sections.IndexOf(section));
+
+                        foreach (var p in permutations)
+                            ((List<IGeometrySubmesh>)p.Submeshes).Add(gSubmesh);
+                    }
+
+                    var mesh = new GeometryMesh();
+
+                    if (section.FaceCount * 3 == sectionInfo.IndexCount)
+                        mesh.IndexFormat = IndexFormat.Triangles;
+                    else mesh.IndexFormat = IndexFormat.Stripped;
+
+                    reader.Seek(headerSize + indexResource.Offset, SeekOrigin.Begin);
+                    mesh.Indicies = reader.ReadEnumerable<ushort>(sectionInfo.IndexCount).Select(i => (int)i).ToArray();
+
+                    var nodeMap = new byte[0];
+                    if (nodeMapResource != null)
+                    {
+                        reader.Seek(headerSize + nodeMapResource.Offset, SeekOrigin.Begin);
+                        nodeMap = reader.ReadBytes(sectionInfo.NodeMapCount);
+                    }
+
+                    #region Vertices
+                    mesh.Vertices = new IVertex[section.VertexCount];
+                    var vertexSize = vertexResource.Size / section.VertexCount;
+                    for (int i = 0; i < section.VertexCount; i++)
+                    {
+                        var vert = new Vertex();
+
+                        reader.Seek(headerSize + vertexResource.Offset + i * vertexSize, SeekOrigin.Begin);
+                        vert.Position = new Int16N3(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16());
+
+                        mesh.Vertices[i] = vert;
+                    }
+
+                    for (int i = 0; i < section.VertexCount; i++)
+                    {
+                        var vert = (Vertex)mesh.Vertices[i];
+
+                        reader.Seek(headerSize + uvResource.Offset + i * 4, SeekOrigin.Begin);
+                        vert.TexCoords = new Int16N2(reader.ReadInt16(), reader.ReadInt16());
+                    }
+
+                    for (int i = 0; i < section.VertexCount; i++)
+                    {
+                        var vert = (Vertex)mesh.Vertices[i];
+
+                        reader.Seek(headerSize + normalsResource.Offset + i * 12, SeekOrigin.Begin);
+                        vert.Normal = new HenDN3(reader.ReadUInt32());
+                    } 
+                    #endregion
+
+                    model.Meshes.Add(mesh);
+                }
+            }
+
+            return model;
+        }
+
+        #endregion
+
+        private struct ResourceDetails
+        {
+            [Offset(40)]
+            [StoreType(typeof(ushort))]
+            public int IndexCount { get; set; }
+
+            [Offset(108)]
+            [StoreType(typeof(ushort))]
+            public int NodeMapCount { get; set; }
+        }
+
+        [FixedSize(72)]
+        private struct Submesh
+        {
+            [Offset(4)]
+            public short ShaderIndex { get; set; }
+
+            [Offset(6)]
+            [StoreType(typeof(ushort))]
+            public int IndexStart { get; set; }
+
+            [Offset(8)]
+            [StoreType(typeof(ushort))]
+            public int IndexLength { get; set; }
+        }
     }
 
     [FixedSize(56)]
@@ -59,7 +240,7 @@ namespace Adjutant.Blam.Halo2
 
         IRealBounds IRealBounds5D.UBounds => UBounds;
 
-        IRealBounds IRealBounds5D.VBounds => VBounds; 
+        IRealBounds IRealBounds5D.VBounds => VBounds;
 
         #endregion
     }
@@ -71,7 +252,7 @@ namespace Adjutant.Blam.Halo2
         public StringId Name { get; set; }
 
         [Offset(8)]
-        public BlockCollection<Permutation> Permutation { get; set; }
+        public BlockCollection<Permutation> Permutations { get; set; }
 
         public override string ToString() => Name;
     }
@@ -83,7 +264,7 @@ namespace Adjutant.Blam.Halo2
         public StringId Name { get; set; }
 
         [Offset(14)]
-        public short PieceIndex { get; set; }
+        public short SectionIndex { get; set; }
 
         public override string ToString() => Name;
     }
@@ -92,7 +273,7 @@ namespace Adjutant.Blam.Halo2
     public class Section
     {
         [Offset(0)]
-        public short Type { get; set; }
+        public short WeightType { get; set; }
 
         [Offset(4)]
         [StoreType(typeof(ushort))]
@@ -106,7 +287,7 @@ namespace Adjutant.Blam.Halo2
         public byte Bones { get; set; }
 
         [Offset(56)]
-        public int RawOffset { get; set; }
+        public DataPointer RawPointer { get; set; }
 
         [Offset(60)]
         public int RawSize { get; set; }
@@ -121,13 +302,21 @@ namespace Adjutant.Blam.Halo2
     [FixedSize(16)]
     public class SectionResource
     {
-        public int Type { get; set; }
+        [Offset(4)]
+        public short Type0 { get; set; }
+
+        [Offset(6)]
+        public short Type1 { get; set; }
+
+        [Offset(8)]
         public int Size { get; set; }
+
+        [Offset(12)]
         public int Offset { get; set; }
     }
 
     [FixedSize(96)]
-    public class Node
+    public class Node : IGeometryNode
     {
         [Offset(0)]
         public StringId Name { get; set; }
@@ -157,10 +346,20 @@ namespace Adjutant.Blam.Halo2
         public float DistanceFromParent { get; set; }
 
         public override string ToString() => Name;
+
+        #region INode
+
+        string IGeometryNode.Name => Name;
+
+        IRealVector3D IGeometryNode.Position => Position;
+
+        IRealVector4D IGeometryNode.Rotation => Rotation;
+
+        #endregion
     }
 
     [FixedSize(12)]
-    public class MarkerGroup
+    public class MarkerGroup : IGeometryMarkerGroup
     {
         [Offset(0)]
         public StringId Name { get; set; }
@@ -169,10 +368,18 @@ namespace Adjutant.Blam.Halo2
         public BlockCollection<Marker> Markers { get; set; }
 
         public override string ToString() => Name;
+
+        #region IMarkerGroup
+
+        string IGeometryMarkerGroup.Name => Name;
+
+        IReadOnlyList<IGeometryMarker> IGeometryMarkerGroup.Markers => Markers;
+
+        #endregion
     }
 
     [FixedSize(36)]
-    public class Marker
+    public class Marker : IGeometryMarker
     {
         [Offset(0)]
         public byte RegionIndex { get; set; }
@@ -191,6 +398,14 @@ namespace Adjutant.Blam.Halo2
 
         [Offset(32)]
         public float Scale { get; set; }
+
+        #region IMarker
+
+        IRealVector3D IGeometryMarker.Position => Position;
+
+        IRealVector4D IGeometryMarker.Rotation => Rotation;
+
+        #endregion
     }
 
     [FixedSize(32)]

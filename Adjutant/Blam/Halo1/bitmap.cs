@@ -182,12 +182,7 @@ namespace Adjutant.Blam.Halo1
     [Flags]
     public enum BitmapFlags : short
     {
-        V16U16 = 10,
-        Linear = 11,
-        Swizzled = 12,
-        Paletized = 13,
-        Compressed = 14,
-        PowerOfTwoDimensions = 15
+        Swizzled = 8
     }
 
     public enum TextureType : short

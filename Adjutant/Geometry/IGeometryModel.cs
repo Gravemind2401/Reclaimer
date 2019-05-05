@@ -62,8 +62,6 @@ namespace Adjutant.Geometry
         short MaterialIndex { get; }
         int IndexStart { get; }
         int IndexLength { get; }
-        int VertexStart { get; }
-        int VertexLength { get; }
     }
 
     public interface IGeometryMarker
