@@ -93,10 +93,13 @@ namespace Reclaimer.Controls
             DataContext = this;
         }
 
-        public void LoadImage(IBitmap image)
+        public void LoadImage(IBitmap image, string fileName)
         {
             try
             {
+                TabToolTip = fileName;
+                TabHeader = System.IO.Path.GetFileName(fileName);
+
                 var dds = image.ToDds(0);
                 var src = dds.ToBitmapSource();
 
@@ -153,9 +156,9 @@ namespace Reclaimer.Controls
         }
 
         #region ITabContent
-        public object TabHeader => nameof(BitmapViewer);
+        public object TabHeader { get; private set; }
 
-        public object TabToolTip => nameof(BitmapViewer);
+        public object TabToolTip { get; private set; }
 
         public object TabIcon => null;
 

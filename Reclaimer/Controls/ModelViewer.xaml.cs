@@ -41,8 +41,11 @@ namespace Reclaimer.Controls
             DataContext = this;
         }
 
-        public void LoadGeometry(Adjutant.Utilities.IRenderGeometry geom)
+        public void LoadGeometry(Adjutant.Utilities.IRenderGeometry geom, string fileName)
         {
+            TabToolTip = fileName;
+            TabHeader = System.IO.Path.GetFileName(fileName);
+
             var model = geom.ReadGeometry(0);
             var group = new Model3DGroup();
             var vis = new ModelVisual3D();
@@ -183,9 +186,9 @@ namespace Reclaimer.Controls
         }
 
         #region ITabContent
-        public object TabHeader => "ModelViewer";
+        public object TabHeader { get; private set; }
 
-        public object TabToolTip => "ModelViewer";
+        public object TabToolTip { get; private set; }
 
         public object TabIcon => null;
 

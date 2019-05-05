@@ -191,7 +191,7 @@ namespace Reclaimer.Controls
                 }
 
                 var viewer = new ModelViewer();
-                viewer.LoadGeometry(mode);
+                viewer.LoadGeometry(mode, $"{tag.FileName}.{tag.ClassCode}");
 
                 var wnd = Application.Current.MainWindow as MainWindow;
                 wnd.docTab.Items.Add(viewer);
@@ -219,7 +219,7 @@ namespace Reclaimer.Controls
                 }
 
                 var viewer = new BitmapViewer();
-                viewer.LoadImage(bitm);
+                viewer.LoadImage(bitm, $"{tag.FileName}.{tag.ClassCode}");
 
                 var wnd = Application.Current.MainWindow as MainWindow;
                 wnd.docTab.Items.Add(viewer);
