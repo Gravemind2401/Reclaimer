@@ -71,13 +71,13 @@ namespace Reclaimer.Controls
 
         #region ITabContent
 
-        TabItemUsage ITabContent.Usage => TabItemUsage.Utility;
+        TabItemUsage ITabContent.TabUsage => TabItemUsage.Utility;
 
-        public object Header => "Tag Viewer";
+        public object TabHeader => "Tag Viewer";
 
-        //object ITabContent.ToolTip => "Tag Viewer";
+        public object TabToolTip => "Tag Viewer";
 
-        object ITabContent.Icon => null;
+        public object TabIcon => null;
 
         #endregion
 
@@ -87,7 +87,6 @@ namespace Reclaimer.Controls
         {
             InitializeComponent();
             DataContext = this;
-            ToolTip = Header;
         }
 
         public async Task Refresh()

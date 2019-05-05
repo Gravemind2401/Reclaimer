@@ -153,13 +153,13 @@ namespace Reclaimer.Controls
         }
 
         #region ITabContent
-        public object Header => nameof(BitmapViewer);
+        public object TabHeader => nameof(BitmapViewer);
 
-        public object Icon => null;
+        public object TabToolTip => nameof(BitmapViewer);
 
-        public TabItemUsage Usage => TabItemUsage.Document;
+        public object TabIcon => null;
 
-        //public object ToolTip => base.ToolTip;
+        TabItemUsage ITabContent.TabUsage => TabItemUsage.Document;
         #endregion
     }
 }

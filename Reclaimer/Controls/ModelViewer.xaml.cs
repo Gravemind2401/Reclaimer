@@ -183,11 +183,13 @@ namespace Reclaimer.Controls
         }
 
         #region ITabContent
-        public object Header => "ModelViewer";
+        public object TabHeader => "ModelViewer";
 
-        public object Icon => null;
+        public object TabToolTip => "ModelViewer";
 
-        public TabItemUsage Usage => TabItemUsage.Document;
+        public object TabIcon => null;
+
+        TabItemUsage ITabContent.TabUsage => TabItemUsage.Document;
         #endregion
 
         #region IDisposable

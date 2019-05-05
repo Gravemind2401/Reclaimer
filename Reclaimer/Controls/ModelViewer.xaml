@@ -22,8 +22,9 @@
             <studio:ExtendedTreeView ItemsSource="{Binding TreeViewItems}" CheckBoxes="True" VerticalContentAlignment="Center" />
         </studio:SplitContainer.Panel1Content>
         <studio:SplitContainer.Panel2Content>
-            <local:Renderer x:Name="renderer" x:FieldModifier="private" 
-                            Grid.Column="2" Background="CornflowerBlue" />
+            <local:Renderer x:Name="renderer"
+                            x:FieldModifier="private" 
+                            Background="CornflowerBlue" />
         </studio:SplitContainer.Panel2Content>
     </studio:SplitContainer>
 </UserControl>
