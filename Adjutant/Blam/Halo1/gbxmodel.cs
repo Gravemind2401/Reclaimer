@@ -64,46 +64,13 @@ namespace Adjutant.Blam.Halo1
                 #region Add Shaders
                 foreach (var shader in Shaders)
                 {
-                    var tag = shader.ShaderReference.Tag;
-                    reader.Seek(tag.MetaPointer.Address, SeekOrigin.Begin);
+                    var bitmTag = shader.ShaderReference.Tag?.GetShaderDiffuse(reader);
 
-                    switch (tag.ClassCode)
-                    {
-                        case "soso":
-                            reader.Seek(176, SeekOrigin.Current);
-                            break;
-
-                        case "senv":
-                            reader.Seek(148, SeekOrigin.Current);
-                            break;
-
-                        case "sgla":
-                            reader.Seek(356, SeekOrigin.Current);
-                            break;
-
-                        case "schi":
-                            reader.Seek(228, SeekOrigin.Current);
-                            break;
-
-                        case "scex":
-                            reader.Seek(900, SeekOrigin.Current);
-                            break;
-
-                        case "swat":
-                        case "smet":
-                            reader.Seek(88, SeekOrigin.Current);
-                            break;
-                    }
-
-                    var bitmId = reader.ReadInt16();
-
-                    if (bitmId == -1)
+                    if (bitmTag == null)
                     {
                         model.Materials.Add(null);
                         continue;
                     }
-
-                    var bitmTag = cache.TagIndex[bitmId];
 
                     var mat = new GeometryMaterial
                     {
@@ -137,8 +104,6 @@ namespace Adjutant.Blam.Halo1
                 {
                     var indices = new List<int>();
                     var vertices = new List<SkinnedVertex>();
-
-                    var mesh = new GeometryMesh();
 
                     foreach (var submesh in section.Submeshes)
                     {
@@ -199,12 +164,14 @@ namespace Adjutant.Blam.Halo1
                         vertices.AddRange(vertsTemp);
                     }
 
-                    mesh.IndexFormat = IndexFormat.Stripped;
-                    mesh.VertexWeights = VertexWeights.Multiple;
-                    mesh.Indicies = indices.ToArray();
-                    mesh.Vertices = vertices.ToArray();
+                    model.Meshes.Add(new GeometryMesh
+                    {
+                        IndexFormat = IndexFormat.Stripped,
+                        VertexWeights = VertexWeights.Multiple,
+                        Indicies = indices.ToArray(),
+                        Vertices = vertices.ToArray()
+                    });
 
-                    model.Meshes.Add(mesh);
                 }
 
                 return model;

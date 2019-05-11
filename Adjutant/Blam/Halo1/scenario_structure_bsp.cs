@@ -1,17 +1,27 @@
-﻿using Adjutant.IO;
+﻿using Adjutant.Geometry;
+using Adjutant.IO;
 using Adjutant.Spatial;
 using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Endian;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Halo1
 {
-    public class scenario_structure_bsp
+    public class scenario_structure_bsp : IRenderGeometry
     {
+        private readonly CacheFile cache;
+
+        public scenario_structure_bsp(CacheFile cache)
+        {
+            this.cache = cache;
+        }
+
         [Offset(224)]
         public RealBounds XBounds { get; set; }
 
@@ -32,6 +42,121 @@ namespace Adjutant.Blam.Halo1
 
         [Offset(600)]
         public BlockCollection<BspMarkerBlock> Markers { get; set; }
+
+        #region IRenderGeometry
+
+        int IRenderGeometry.LodCount => 1;
+
+        public IGeometryModel ReadGeometry(int lod)
+        {
+            if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
+                throw new ArgumentOutOfRangeException(nameof(lod));
+
+            using (var reader = cache.CreateReader(cache.AddressTranslator))
+            {
+                var model = new GeometryModel { CoordinateSystem = CoordinateSystem.HaloCE };
+
+                var group = new GeometryMarkerGroup();
+                group.Markers.AddRange(Markers);
+                model.MarkerGroups.Add(group);
+
+                #region Add Shaders
+
+                var shaderIds = Lightmaps.SelectMany(m => m.Materials)
+                    .Where(m => m.ShaderReference.TagId >= 0)
+                    .Select(m => m.ShaderReference.TagId)
+                    .Distinct().ToList();
+
+                var shaderTags = shaderIds.Select(i => cache.TagIndex[i]);
+                foreach (var shaderTag in shaderTags)
+                {
+                    var bitmTag = shaderTag.GetShaderDiffuse(reader);
+
+                    if (bitmTag == null)
+                    {
+                        model.Materials.Add(null);
+                        continue;
+                    }
+
+                    var mat = new GeometryMaterial
+                    {
+                        Name = bitmTag.FileName,
+                        Diffuse = bitmTag.ReadMetadata<bitmap>(),
+                        Tiling = new RealVector2D(1, 1)
+                    };
+
+                    model.Materials.Add(mat);
+                } 
+
+                #endregion
+
+                reader.Seek(SurfacePointer.Address, SeekOrigin.Begin);
+                var indices = reader.ReadEnumerable<ushort>(SurfaceCount * 3).ToArray();
+
+                var gRegion = new GeometryRegion { Name = "Clusters" };
+
+                int sectionIndex = 0;
+                foreach (var section in Lightmaps)
+                {
+                    if (section.Materials.Count == 0)
+                        continue;
+
+                    var localIndices = new List<int>();
+                    var vertices = new List<WorldVertex>();
+
+                    var gPermutation = new GeometryPermutation
+                    {
+                        Name = sectionIndex.ToString("D3"),
+                        NodeIndex = byte.MaxValue,
+                        Transform = Matrix4x4.Identity,
+                        TransformScale = 1,
+                        BoundsIndex = -1,
+                        MeshIndex = sectionIndex
+                    };
+
+                    foreach (var submesh in section.Materials)
+                    {
+                        reader.Seek(submesh.VertexPointer.Address, SeekOrigin.Begin);
+
+                        var gSubmesh = new GeometrySubmesh
+                        {
+                            MaterialIndex = (short)shaderIds.IndexOf(submesh.ShaderReference.TagId),
+                            IndexStart = localIndices.Count,
+                            IndexLength = submesh.SurfaceCount * 3
+                        };
+
+                        localIndices.AddRange(
+                            indices.Skip(submesh.SurfaceIndex * 3)
+                                   .Take(submesh.SurfaceCount * 3)
+                                   .Select(i => i + vertices.Count)
+                        );
+
+                        var vertsTemp = reader.ReadEnumerable<WorldVertex>(submesh.VertexCount).ToList();
+                        vertices.AddRange(vertsTemp);
+
+                        gPermutation.Submeshes.Add(gSubmesh);
+                    }
+
+                    gRegion.Permutations.Add(gPermutation);
+
+                    model.Meshes.Add(new GeometryMesh
+                    {
+                        IndexFormat = IndexFormat.Triangles,
+                        VertexWeights = VertexWeights.None,
+                        Indicies = localIndices.ToArray(),
+                        Vertices = vertices.ToArray()
+                    });
+
+                    sectionIndex++;
+                }
+
+                model.Regions.Add(gRegion);
+
+                return model;
+            }
+        }
+
+        #endregion
     }
 
     [FixedSize(32)]
@@ -89,7 +214,7 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(60)]
-    public class BspMarkerBlock
+    public class BspMarkerBlock : IGeometryMarker
     {
         [Offset(0)]
         [NullTerminated(Length = 32)]
@@ -100,5 +225,19 @@ namespace Adjutant.Blam.Halo1
 
         [Offset(48)]
         public RealVector3D Position { get; set; }
+
+        #region IGeometryMarker
+
+        byte IGeometryMarker.RegionIndex => byte.MaxValue;
+
+        byte IGeometryMarker.PermutationIndex => byte.MaxValue;
+
+        byte IGeometryMarker.NodeIndex => byte.MaxValue;
+
+        IRealVector3D IGeometryMarker.Position => Position;
+
+        IRealVector4D IGeometryMarker.Rotation => Rotation;
+
+        #endregion
     }
 }

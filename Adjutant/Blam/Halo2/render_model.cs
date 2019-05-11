@@ -369,7 +369,7 @@ namespace Adjutant.Blam.Halo2
 
         public override string ToString() => Name;
 
-        #region IMarkerGroup
+        #region IGeometryMarkerGroup
 
         string IGeometryMarkerGroup.Name => Name;
 
@@ -399,7 +399,7 @@ namespace Adjutant.Blam.Halo2
         [Offset(32)]
         public float Scale { get; set; }
 
-        #region IMarker
+        #region IGeometryMarker
 
         IRealVector3D IGeometryMarker.Position => Position;
 

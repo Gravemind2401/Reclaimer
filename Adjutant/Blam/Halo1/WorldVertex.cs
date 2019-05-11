@@ -1,4 +1,5 @@
-﻿using Adjutant.Spatial;
+﻿using Adjutant.Geometry;
+using Adjutant.Spatial;
 using System;
 using System.Collections.Generic;
 using System.IO.Endian;
@@ -10,8 +11,7 @@ using System.Threading.Tasks;
 namespace Adjutant.Blam.Halo1
 {
     [FixedSize(56)]
-    [StructLayout(LayoutKind.Sequential)]
-    public struct WorldVertex
+    public class WorldVertex : IVertex
     {
         [Offset(0)]
         public RealVector3D Position { get; set; }
@@ -29,5 +29,25 @@ namespace Adjutant.Blam.Halo1
         public RealVector2D TexCoords { get; set; }
 
         public override string ToString() => Position.ToString();
+
+        #region IVertex
+
+        IXMVector[] IVertex.Position => new IXMVector[] { Position };
+
+        IXMVector[] IVertex.TexCoords => new IXMVector[] { TexCoords };
+
+        IXMVector[] IVertex.Normal => new IXMVector[] { Normal };
+
+        IXMVector[] IVertex.Binormal => new IXMVector[] { Binormal };
+
+        IXMVector[] IVertex.Tangent => new IXMVector[] { Tangent };
+
+        IXMVector[] IVertex.BlendIndices => new IXMVector[0];
+
+        IXMVector[] IVertex.BlendWeight => new IXMVector[0];
+
+        IXMVector[] IVertex.Color => new IXMVector[0];
+
+        #endregion
     }
 }

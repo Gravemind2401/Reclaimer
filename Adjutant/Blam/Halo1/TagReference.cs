@@ -15,7 +15,7 @@ namespace Adjutant.Blam.Halo1
         private readonly short tagId;
 
         public int TagId => tagId;
-        public IndexItem Tag => TagId > 0 ? cache.TagIndex[TagId] : null;
+        public IndexItem Tag => TagId >= 0 ? cache.TagIndex[TagId] : null;
 
         public TagReference(CacheFile cache, DependencyReader reader)
         {
