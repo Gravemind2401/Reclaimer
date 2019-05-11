@@ -124,7 +124,6 @@ namespace Reclaimer.Controls
                             var vertStart = indices.Min();
                             var vertLength = indices.Max() - vertStart + 1;
 
-
                             var verts = mesh.Vertices.Skip(vertStart).Take(vertLength);
                             var positions = verts.Select(v => new Point3D(v.Position[0].X, v.Position[0].Y, v.Position[0].Z));
 
@@ -134,6 +133,12 @@ namespace Reclaimer.Controls
                             (mg.Positions = new Point3DCollection(positions)).Freeze();
                             (mg.TextureCoordinates = new PointCollection(texcoords)).Freeze();
                             (mg.TriangleIndices = new Int32Collection(indices.Select(i => i - vertStart))).Freeze();
+
+                            if (mesh.Vertices[0].Normal.Length > 0)
+                            {
+                                var normals = verts.Select(v => new Vector3D(v.Normal[0].X, v.Normal[0].Y, v.Normal[0].Z));
+                                (mg.Normals = new Vector3DCollection(normals)).Freeze();
+                            }
 
                             var mat = sub.MaterialIndex >= 0 ? materials[sub.MaterialIndex] : ErrorMaterial;
                             var subGroup = new GeometryModel3D(mg, mat) { BackMaterial = mat };
@@ -200,6 +205,7 @@ namespace Reclaimer.Controls
         {
             TreeViewItems.Clear();
             renderer.ClearChildren();
+            GC.Collect();
         }
         #endregion
     }

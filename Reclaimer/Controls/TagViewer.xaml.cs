@@ -170,6 +170,31 @@ namespace Reclaimer.Controls
 
             if (item == null) return;
 
+            if (item.ClassCode == "sbsp")
+            {
+                var cache = Storage.CacheFiles.First(c => c.CacheId == item.CacheId);
+
+                var map = Adjutant.Blam.CacheFactory.ReadCacheFile(cache.FileName);
+                var tag = map.TagIndex[(int)item.TagId];
+
+                Adjutant.Utilities.IRenderGeometry sbsp;
+                switch (map.Type)
+                {
+                    case CacheType.Halo1CE:
+                    case CacheType.Halo1PC:
+                        sbsp = tag.ReadMetadata<Adjutant.Blam.Halo1.scenario_structure_bsp>();
+                        break;
+                    default: throw new NotSupportedException();
+                }
+
+                var viewer = new ModelViewer();
+                viewer.LoadGeometry(sbsp, $"{tag.FileName}.{tag.ClassCode}");
+
+                var wnd = Application.Current.MainWindow as MainWindow;
+                wnd.docTab.Items.Add(viewer);
+                return;
+            }
+
             if (item.ClassCode == "mod2" || item.ClassCode == "mode")
             {
                 var cache = Storage.CacheFiles.First(c => c.CacheId == item.CacheId);
