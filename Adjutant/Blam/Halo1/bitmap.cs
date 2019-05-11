@@ -24,10 +24,10 @@ namespace Adjutant.Blam.Halo1
         }
 
         [Offset(84)]
-        public BlockCollection<Sequence> Sequences { get; set; }
+        public BlockCollection<SequenceBlock> Sequences { get; set; }
 
         [Offset(96)]
-        public BlockCollection<BitmapData> Bitmaps { get; set; }
+        public BlockCollection<BitmapDataBlock> Bitmaps { get; set; }
 
         #region IBitmap
 
@@ -100,7 +100,7 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(64)]
-    public class Sequence
+    public class SequenceBlock
     {
         [Offset(0)]
         [NullTerminated(Length = 32)]
@@ -113,11 +113,11 @@ namespace Adjutant.Blam.Halo1
         public short BitmapCount { get; set; }
 
         [Offset(52)]
-        public BlockCollection<Sprite> Sprites { get; set; }
+        public BlockCollection<SpriteBlock> Sprites { get; set; }
     }
 
     [FixedSize(32)]
-    public class Sprite
+    public class SpriteBlock
     {
         [Offset(0)]
         public short SubmapIndex { get; set; }
@@ -139,7 +139,7 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(48)]
-    public class BitmapData
+    public class BitmapDataBlock
     {
         [Offset(0)]
         [FixedLength(4)]

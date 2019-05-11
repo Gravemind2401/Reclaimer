@@ -12,11 +12,11 @@ namespace Adjutant.Blam.Halo2
     public class scenario
     {
         [Offset(528)]
-        public BlockCollection<StructureBSP> StructureBSPs { get; set; }
+        public BlockCollection<StructureBspBlock> StructureBSPs { get; set; }
     }
 
     [FixedSize(68)]
-    public class StructureBSP
+    public class StructureBspBlock
     {
         [Offset(0)]
         public int MetadataAddress { get; set; }

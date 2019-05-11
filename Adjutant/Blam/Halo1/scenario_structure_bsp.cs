@@ -28,21 +28,21 @@ namespace Adjutant.Blam.Halo1
         public Pointer SurfacePointer { get; set; }
 
         [Offset(284)]
-        public BlockCollection<Lightmap> Lightmaps { get; set; }
+        public BlockCollection<LightmapBlock> Lightmaps { get; set; }
 
         [Offset(600)]
-        public BlockCollection<BSPMarker> Markers { get; set; }
+        public BlockCollection<BspMarkerBlock> Markers { get; set; }
     }
 
     [FixedSize(32)]
-    public class Lightmap
+    public class LightmapBlock
     {
         [Offset(20)]
-        public BlockCollection<Material> Materials { get; set; }
+        public BlockCollection<MaterialBlock> Materials { get; set; }
     }
 
     [FixedSize(256)]
-    public class Material
+    public class MaterialBlock
     {
         [Offset(12)]
         public TagReference ShaderReference { get; set; }
@@ -63,17 +63,17 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(104)]
-    public class Cluster
+    public class ClusterBlock
     {
         [Offset(52)]
-        public BlockCollection<Subcluster> Subclusters { get; set; }
+        public BlockCollection<SubclusterBlock> Subclusters { get; set; }
 
         [Offset(68)]
         public BlockCollection<int> SurfaceIndices { get; set; }
     }
 
     [FixedSize(36)]
-    public class Subcluster
+    public class SubclusterBlock
     {
         [Offset(0)]
         public RealBounds XBounds { get; set; }
@@ -89,7 +89,7 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(60)]
-    public class BSPMarker
+    public class BspMarkerBlock
     {
         [Offset(0)]
         [NullTerminated(Length = 32)]

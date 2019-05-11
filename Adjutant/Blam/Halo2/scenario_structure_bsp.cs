@@ -22,20 +22,20 @@ namespace Adjutant.Blam.Halo2
         public RealBounds ZBounds { get; set; }
 
         [Offset(172)]
-        public BlockCollection<Cluster> Clusters { get; set; }
+        public BlockCollection<ClusterBlock> Clusters { get; set; }
 
         [Offset(180)]
-        public BlockCollection<Shader> Shaders { get; set; }
+        public BlockCollection<ShaderBlock> Shaders { get; set; }
 
         [Offset(328)]
-        public BlockCollection<BSPSection> Sections { get; set; }
+        public BlockCollection<BspSectionBlock> Sections { get; set; }
 
         [Offset(336)]
-        public BlockCollection<GeometryInstance> GeometryInstances { get; set; }
+        public BlockCollection<GeometryInstanceBlock> GeometryInstances { get; set; }
     }
 
     [FixedSize(176)]
-    public class Cluster
+    public class ClusterBlock
     {
         [Offset(0)]
         [StoreType(typeof(ushort))]
@@ -46,7 +46,7 @@ namespace Adjutant.Blam.Halo2
         public int FaceCount { get; set; }
 
         [Offset(24)]
-        public BlockCollection<BoundingBox> BoundingBoxes { get; set; }
+        public BlockCollection<BoundingBoxBlock> BoundingBoxes { get; set; }
 
         [Offset(40)]
         public int DataOffset { get; set; }
@@ -58,17 +58,17 @@ namespace Adjutant.Blam.Halo2
         public int HeaderSize { get; set; }
 
         [Offset(56)]
-        public BlockCollection<SectionResource> Resources { get; set; }
+        public BlockCollection<SectionResourceBlock> Resources { get; set; }
     }
 
     [FixedSize(200)]
-    public class BSPSection : Cluster
+    public class BspSectionBlock : ClusterBlock
     {
 
     }
 
     [FixedSize(88)]
-    public class GeometryInstance
+    public class GeometryInstanceBlock
     {
         [Offset(0)]
         public float Scale { get; set; }

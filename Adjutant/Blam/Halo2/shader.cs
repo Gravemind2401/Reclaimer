@@ -10,14 +10,14 @@ namespace Adjutant.Blam.Halo2
     public class shader
     {
         [Offset(12)]
-        public BlockCollection<ShaderMap> ShaderMaps { get; set; }
+        public BlockCollection<ShaderMapBlock> ShaderMaps { get; set; }
 
         [Offset(32)]
-        public BlockCollection<ShaderProperties> ShaderProperties { get; set; }
+        public BlockCollection<ShaderPropertiesBlock> ShaderProperties { get; set; }
     }
 
     [FixedSize(80)]
-    public class ShaderMap
+    public class ShaderMapBlock
     {
         [Offset(4)]
         public TagReference DiffuseBitmapReference { get; set; }
@@ -30,17 +30,17 @@ namespace Adjutant.Blam.Halo2
     }
 
     [FixedSize(124)]
-    public class ShaderProperties
+    public class ShaderPropertiesBlock
     {
         [Offset(0)]
         public TagReference TemplateReference { get; set; }
 
         [Offset(20)]
-        public BlockCollection<TilingInfo> Tilings { get; set; }
+        public BlockCollection<TilingInfoBlock> Tilings { get; set; }
     }
 
     [FixedSize(16)]
-    public class TilingInfo
+    public class TilingInfoBlock
     {
         [Offset(0)]
         public float UTiling { get; set; }

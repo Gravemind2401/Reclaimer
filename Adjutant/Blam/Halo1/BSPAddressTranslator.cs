@@ -9,7 +9,7 @@ namespace Adjutant.Blam.Halo1
 {
     public class BSPAddressTranslator : IAddressTranslator
     {
-        private readonly StructureBSP data;
+        private readonly StructureBspBlock data;
 
         private int Magic => data.Magic - data.MetadataAddress;
 

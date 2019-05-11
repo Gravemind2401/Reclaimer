@@ -31,19 +31,19 @@ namespace Adjutant.Blam.Halo1
         public float VScale { get; set; }
 
         [Offset(172)]
-        public BlockCollection<MarkerGroup> MarkerGroups { get; set; }
+        public BlockCollection<MarkerGroupBlock> MarkerGroups { get; set; }
 
         [Offset(184)]
-        public BlockCollection<Node> Nodes { get; set; }
+        public BlockCollection<NodeBlock> Nodes { get; set; }
 
         [Offset(196)]
-        public BlockCollection<Region> Regions { get; set; }
+        public BlockCollection<RegionBlock> Regions { get; set; }
 
         [Offset(208)]
-        public BlockCollection<ModelSection> Sections { get; set; }
+        public BlockCollection<ModelSectionBlock> Sections { get; set; }
 
         [Offset(220)]
-        public BlockCollection<Shader> Shaders { get; set; }
+        public BlockCollection<ShaderBlock> Shaders { get; set; }
 
         #region IRenderGeometry
 
@@ -221,14 +221,14 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(64)]
-    public class MarkerGroup : IGeometryMarkerGroup
+    public class MarkerGroupBlock : IGeometryMarkerGroup
     {
         [Offset(0)]
         [NullTerminated(Length = 32)]
         public string Name { get; set; }
 
         [Offset(52)]
-        public BlockCollection<Marker> Markers { get; set; }
+        public BlockCollection<MarkerBlock> Markers { get; set; }
 
         public override string ToString() => Name;
 
@@ -240,7 +240,7 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(32)]
-    public class Marker : IGeometryMarker
+    public class MarkerBlock : IGeometryMarker
     {
         [Offset(0)]
         public byte RegionIndex { get; set; }
@@ -269,7 +269,7 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(156)]
-    public class Node : IGeometryNode
+    public class NodeBlock : IGeometryNode
     {
         [Offset(0)]
         [NullTerminated(Length = 32)]
@@ -307,20 +307,20 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(76)]
-    public class Region
+    public class RegionBlock
     {
         [Offset(0)]
         [NullTerminated(Length = 32)]
         public string Name { get; set; }
 
         [Offset(64)]
-        public BlockCollection<Permutation> Permutations { get; set; }
+        public BlockCollection<PermutationBlock> Permutations { get; set; }
 
         public override string ToString() => Name;
     }
 
     [FixedSize(88)]
-    public class Permutation
+    public class PermutationBlock
     {
         [Offset(0)]
         [NullTerminated(Length = 32)]
@@ -359,14 +359,14 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(48)]
-    public class ModelSection
+    public class ModelSectionBlock
     {
         [Offset(36)]
-        public BlockCollection<Submesh> Submeshes { get; set; }
+        public BlockCollection<SubmeshBlock> Submeshes { get; set; }
     }
 
     [FixedSize(132)]
-    public class Submesh
+    public class SubmeshBlock
     {
         [Offset(4)]
         public short ShaderIndex { get; set; }
@@ -385,7 +385,7 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(32)]
-    public class Shader
+    public class ShaderBlock
     {
         [Offset(12)]
         public TagReference ShaderReference { get; set; }

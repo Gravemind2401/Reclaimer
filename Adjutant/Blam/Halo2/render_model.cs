@@ -22,22 +22,22 @@ namespace Adjutant.Blam.Halo2
         }
 
         [Offset(20)]
-        public BlockCollection<BoundingBox> BoundingBoxes { get; set; }
+        public BlockCollection<BoundingBoxBlock> BoundingBoxes { get; set; }
 
         [Offset(28)]
-        public BlockCollection<Region> Regions { get; set; }
+        public BlockCollection<RegionBlock> Regions { get; set; }
 
         [Offset(36)]
-        public BlockCollection<Section> Sections { get; set; }
+        public BlockCollection<SectionBlock> Sections { get; set; }
 
         [Offset(72)]
-        public BlockCollection<Node> Nodes { get; set; }
+        public BlockCollection<NodeBlock> Nodes { get; set; }
 
         [Offset(88)]
-        public BlockCollection<MarkerGroup> MarkerGroups { get; set; }
+        public BlockCollection<MarkerGroupBlock> MarkerGroups { get; set; }
 
         [Offset(96)]
-        public BlockCollection<Shader> Shaders { get; set; }
+        public BlockCollection<ShaderBlock> Shaders { get; set; }
 
         #region IRenderGeometry
 
@@ -213,7 +213,7 @@ namespace Adjutant.Blam.Halo2
     }
 
     [FixedSize(56)]
-    public class BoundingBox : IRealBounds5D
+    public class BoundingBoxBlock : IRealBounds5D
     {
         [Offset(0)]
         public RealBounds XBounds { get; set; }
@@ -246,19 +246,19 @@ namespace Adjutant.Blam.Halo2
     }
 
     [FixedSize(16)]
-    public class Region
+    public class RegionBlock
     {
         [Offset(0)]
         public StringId Name { get; set; }
 
         [Offset(8)]
-        public BlockCollection<Permutation> Permutations { get; set; }
+        public BlockCollection<PermutationBlock> Permutations { get; set; }
 
         public override string ToString() => Name;
     }
 
     [FixedSize(16)]
-    public class Permutation
+    public class PermutationBlock
     {
         [Offset(0)]
         public StringId Name { get; set; }
@@ -270,7 +270,7 @@ namespace Adjutant.Blam.Halo2
     }
 
     [FixedSize(92)]
-    public class Section
+    public class SectionBlock
     {
         [Offset(0)]
         public short WeightType { get; set; }
@@ -296,11 +296,11 @@ namespace Adjutant.Blam.Halo2
         public int DataSize { get; set; }
 
         [Offset(72)]
-        public BlockCollection<SectionResource> Resources { get; set; }
+        public BlockCollection<SectionResourceBlock> Resources { get; set; }
     }
 
     [FixedSize(16)]
-    public class SectionResource
+    public class SectionResourceBlock
     {
         [Offset(4)]
         public short Type0 { get; set; }
@@ -316,7 +316,7 @@ namespace Adjutant.Blam.Halo2
     }
 
     [FixedSize(96)]
-    public class Node : IGeometryNode
+    public class NodeBlock : IGeometryNode
     {
         [Offset(0)]
         public StringId Name { get; set; }
@@ -359,13 +359,13 @@ namespace Adjutant.Blam.Halo2
     }
 
     [FixedSize(12)]
-    public class MarkerGroup : IGeometryMarkerGroup
+    public class MarkerGroupBlock : IGeometryMarkerGroup
     {
         [Offset(0)]
         public StringId Name { get; set; }
 
         [Offset(4)]
-        public BlockCollection<Marker> Markers { get; set; }
+        public BlockCollection<MarkerBlock> Markers { get; set; }
 
         public override string ToString() => Name;
 
@@ -379,7 +379,7 @@ namespace Adjutant.Blam.Halo2
     }
 
     [FixedSize(36)]
-    public class Marker : IGeometryMarker
+    public class MarkerBlock : IGeometryMarker
     {
         [Offset(0)]
         public byte RegionIndex { get; set; }
@@ -409,7 +409,7 @@ namespace Adjutant.Blam.Halo2
     }
 
     [FixedSize(32)]
-    public class Shader
+    public class ShaderBlock
     {
         [Offset(12)]
         public TagReference ShaderReference { get; set; }
