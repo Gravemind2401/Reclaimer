@@ -12,6 +12,7 @@ namespace Adjutant.Blam
 {
     public static class CacheFactory
     {
+        //when read using little endian
         internal const int LittleHeader = 0x68656164;
         internal const int BigHeader = 0x64616568;
 

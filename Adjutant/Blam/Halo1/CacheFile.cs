@@ -46,15 +46,15 @@ namespace Adjutant.Blam.Halo1
         {
             var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read);
             var reader = new DependencyReader(fs, ByteOrder.LittleEndian);
-            reader.RegisterType<CacheFile>(() => this);
-            reader.RegisterType<Pointer>(() => new Pointer(reader.ReadInt32(), translator));
-            reader.RegisterType<IAddressTranslator>(() => translator);
 
             var header = reader.PeekInt32();
             if (header == CacheFactory.BigHeader)
                 reader.ByteOrder = ByteOrder.BigEndian;
             else if (header != CacheFactory.LittleHeader)
                 throw Exceptions.NotAValidMapFile(Path.GetFileName(FileName));
+
+            reader.RegisterInstance<CacheFile>(this);
+            reader.RegisterInstance<IAddressTranslator>(translator);
 
             return reader;
         }

@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Definitions;
+using Adjutant.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,18 @@ namespace Adjutant.Utilities
                 throw new ArgumentNullException(nameof(cache));
 
             this.id = id;
+            this.cache = cache;
+        }
+
+        public StringId(DependencyReader reader, ICacheFile cache)
+        {
+            if (reader == null)
+                throw new ArgumentNullException(nameof(reader));
+
+            if (cache == null)
+                throw new ArgumentNullException(nameof(cache));
+
+            this.id = reader.ReadInt16();
             this.cache = cache;
         }
 

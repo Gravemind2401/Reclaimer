@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Adjutant.IO;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -18,10 +19,25 @@ namespace Adjutant.Blam.Halo2
         private readonly CacheFile _cache;
         private readonly int _value;
 
-        public DataPointer(int value, CacheFile source)
+        public DataPointer(int value, CacheFile cache)
         {
+            if (cache == null)
+                throw new ArgumentNullException(nameof(cache));
+
             _value = value;
-            _cache = source;
+            _cache = cache;
+        }
+
+        public DataPointer(DependencyReader reader, CacheFile cache)
+        {
+            if (reader == null)
+                throw new ArgumentNullException(nameof(reader));
+
+            if (cache == null)
+                throw new ArgumentNullException(nameof(cache));
+
+            _value = reader.ReadInt32();
+            _cache = cache;
         }
 
         public int Value => _value;

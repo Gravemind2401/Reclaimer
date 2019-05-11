@@ -53,11 +53,15 @@ namespace Adjutant.Blam.Halo2
         {
             var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read);
             var reader = new DependencyReader(fs, ByteOrder.LittleEndian);
-            reader.RegisterType<CacheFile>(() => this);
-            reader.RegisterType<Pointer>(() => new Pointer(reader.ReadInt32(), translator));
-            reader.RegisterType<StringId>(() => new StringId(reader.ReadInt16(), this));
-            reader.RegisterType<IAddressTranslator>(() => translator);
-            reader.RegisterType<DataPointer>(() => new DataPointer(reader.ReadInt32(), this));
+
+            var header = reader.PeekInt32();
+            if (header == CacheFactory.BigHeader)
+                reader.ByteOrder = ByteOrder.BigEndian;
+            else if (header != CacheFactory.LittleHeader)
+                throw Exceptions.NotAValidMapFile(Path.GetFileName(FileName));
+
+            reader.RegisterInstance<CacheFile>(this);
+            reader.RegisterInstance<IAddressTranslator>(translator);
             reader.RegisterType<Matrix4x4>(() => new Matrix4x4
             {
                 M11 = reader.ReadSingle(),
@@ -76,12 +80,6 @@ namespace Adjutant.Blam.Halo2
                 M42 = reader.ReadSingle(),
                 M43 = reader.ReadSingle(),
             });
-
-            var header = reader.PeekInt32();
-            if (header == CacheFactory.BigHeader)
-                reader.ByteOrder = ByteOrder.BigEndian;
-            else if (header != CacheFactory.LittleHeader)
-                throw Exceptions.NotAValidMapFile(Path.GetFileName(FileName));
 
             return reader;
         }

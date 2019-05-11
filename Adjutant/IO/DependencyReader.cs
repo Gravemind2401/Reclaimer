@@ -16,11 +16,13 @@ namespace Adjutant.IO
     public class DependencyReader : EndianReader
     {
         private readonly Dictionary<Type, Func<object>> registeredTypes;
+        private readonly Dictionary<Type, object> registeredInstances;
 
         public DependencyReader(Stream input, ByteOrder byteOrder)
             : base(input, byteOrder)
         {
             registeredTypes = new Dictionary<Type, Func<object>>();
+            registeredInstances = new Dictionary<Type, object>();
         }
 
         protected DependencyReader(DependencyReader parent, long virtualOrigin)
@@ -30,14 +32,23 @@ namespace Adjutant.IO
                 throw new ArgumentNullException(nameof(parent));
 
             registeredTypes = parent.registeredTypes;
+            registeredInstances = parent.registeredInstances;
         }
 
         public void RegisterType<T>(Func<T> constructor)
         {
-            if (registeredTypes.ContainsKey(typeof(T)))
+            if (registeredTypes.ContainsKey(typeof(T)) || registeredInstances.ContainsKey(typeof(T)))
                 throw new ArgumentException(Utils.CurrentCulture($"{typeof(T).Name} has already been registered."));
 
             registeredTypes.Add(typeof(T), () => constructor());
+        }
+
+        public void RegisterInstance<T>(T instance)
+        {
+            if (registeredTypes.ContainsKey(typeof(T)) || registeredInstances.ContainsKey(typeof(T)))
+                throw new ArgumentException(Utils.CurrentCulture($"{typeof(T).Name} has already been registered."));
+
+            registeredInstances.Add(typeof(T), instance);
         }
 
         protected override object ReadObject(object instance, Type type, double? version)
@@ -74,7 +85,7 @@ namespace Adjutant.IO
 
         private bool CanConstruct(Type type)
         {
-            return registeredTypes.ContainsKey(type) || FindConstructor(type) != null;
+            return registeredTypes.ContainsKey(type) || registeredInstances.ContainsKey(type) || FindConstructor(type) != null;
         }
 
         private object Construct(Type type)
@@ -84,6 +95,9 @@ namespace Adjutant.IO
 
             if (registeredTypes.ContainsKey(type))
                 return registeredTypes[type]();
+
+            if (registeredInstances.ContainsKey(type))
+                return registeredInstances[type];
 
             var constructor = FindConstructor(type);
             var info = constructor.GetParameters();

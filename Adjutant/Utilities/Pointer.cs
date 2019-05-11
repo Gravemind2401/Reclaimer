@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Adjutant.IO;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -18,6 +19,18 @@ namespace Adjutant.Utilities
                 throw new ArgumentNullException(nameof(translator));
 
             this._value = value;
+            this.translator = translator;
+        }
+
+        public Pointer(DependencyReader reader, IAddressTranslator translator)
+        {
+            if (reader == null)
+                throw new ArgumentNullException(nameof(reader));
+
+            if (translator == null)
+                throw new ArgumentNullException(nameof(translator));
+
+            this._value = reader.ReadInt32();
             this.translator = translator;
         }
 
