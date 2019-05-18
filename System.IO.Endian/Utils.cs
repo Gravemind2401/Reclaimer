@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -10,9 +11,9 @@ namespace System.IO.Endian
 {
     internal static class Utils
     {
-        private static readonly Dictionary<string, PropertyInfo[]> propInfoCache = new Dictionary<string, PropertyInfo[]>();
-        private static readonly Dictionary<string, Attribute> attrVerCache = new Dictionary<string, Attribute>();
-        private static readonly HashSet<string> propValidationCache = new HashSet<string>();
+        private static readonly ConcurrentDictionary<string, PropertyInfo[]> propInfoCache = new ConcurrentDictionary<string, PropertyInfo[]>();
+        private static readonly ConcurrentDictionary<string, Attribute> attrVerCache = new ConcurrentDictionary<string, Attribute>();
+        private static readonly ConcurrentDictionary<string, bool> propValidationCache = new ConcurrentDictionary<string, bool>();
 
         internal static string CurrentCulture(FormattableString formattable)
         {
@@ -33,7 +34,7 @@ namespace System.IO.Endian
                 .OrderBy(p => Utils.GetAttributeForVersion<OffsetAttribute>(p, version).Offset)
                 .ToArray();
 
-            propInfoCache.Add(key, propInfo);
+            propInfoCache.TryAdd(key, propInfo);
             return propInfo;
         }
 
@@ -71,7 +72,7 @@ namespace System.IO.Endian
                     matches = matches.Where(o => o.HasMinVersion || o.HasMaxVersion).ToList();
                     if (matches.Count == 1)
                     {
-                        attrVerCache.Add(key, matches.Single());
+                        attrVerCache.TryAdd(key, matches.Single());
                         return matches.Single();
                     }
                     //else both or neither are versioned: fall through to the error below
@@ -80,14 +81,14 @@ namespace System.IO.Endian
                 throw Exceptions.AttributeVersionOverlap(member.Name, typeof(T).Name, version);
             }
 
-            attrVerCache.Add(key, matches.FirstOrDefault());
+            attrVerCache.TryAdd(key, matches.FirstOrDefault());
             return matches.FirstOrDefault();
         }
 
         internal static bool CheckPropertyForReadWrite(PropertyInfo property, double? version)
         {
             var key = CurrentCulture($"{property.DeclaringType.FullName}.{property.Name}:{version}");
-            if (propValidationCache.Contains(key)) return true;
+            if (propValidationCache.ContainsKey(key)) return true;
 
             if (!Attribute.IsDefined(property, typeof(OffsetAttribute)))
                 return false; //ignore properties with no offset assigned
@@ -118,7 +119,7 @@ namespace System.IO.Endian
             if (Utils.GetAttributeForVersion<OffsetAttribute>(property, version) == null)
                 throw Exceptions.NoOffsetForVersion(property.Name, version);
 
-            propValidationCache.Add(key);
+            propValidationCache.TryAdd(key, true);
             return true;
         }
 
