@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -10,9 +10,9 @@ namespace System.IO.Endian
 {
     public partial class EndianReader : BinaryReader
     {
-        private static readonly Dictionary<Type, MethodInfo> stdMethodCache = new Dictionary<Type, MethodInfo>();
-        private static readonly Dictionary<Type, PropertyInfo> versionPropCache = new Dictionary<Type, PropertyInfo>();
-        private static readonly Dictionary<Type, PropertyInfo> lengthPropCache = new Dictionary<Type, PropertyInfo>();
+        private static readonly ConcurrentDictionary<Type, MethodInfo> stdMethodCache = new ConcurrentDictionary<Type, MethodInfo>();
+        private static readonly ConcurrentDictionary<Type, PropertyInfo> versionPropCache = new ConcurrentDictionary<Type, PropertyInfo>();
+        private static readonly ConcurrentDictionary<Type, PropertyInfo> lengthPropCache = new ConcurrentDictionary<Type, PropertyInfo>();
 
         #region ReadObject Overloads
 
@@ -294,7 +294,7 @@ namespace System.IO.Endian
             if (primitiveMethod == null)
                 throw Exceptions.MissingPrimitiveReadMethod(type.Name);
 
-            stdMethodCache.Add(type, primitiveMethod);
+            stdMethodCache.TryAdd(type, primitiveMethod);
             return primitiveMethod.Invoke(this, null);
         }
 
@@ -357,7 +357,7 @@ namespace System.IO.Endian
                     throw Exceptions.MultipleVersionsSpecified(type.Name);
 
                 versionProp = versionProps.FirstOrDefault();
-                versionPropCache.Add(type, versionProp);
+                versionPropCache.TryAdd(type, versionProp);
             }
 
             if (versionProp != null)
@@ -435,7 +435,7 @@ namespace System.IO.Endian
                         throw Exceptions.MultipleDataLengthsSpecified(type.Name, version);
 
                     lengthProp = lengthProps.FirstOrDefault();
-                    lengthPropCache.Add(type, lengthProp);
+                    lengthPropCache.TryAdd(type, lengthProp);
                 }
 
                 if (lengthProp != null && Utils.GetAttributeForVersion<DataLengthAttribute>(lengthProp, version) != null)
