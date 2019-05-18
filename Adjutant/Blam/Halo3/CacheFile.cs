@@ -1,0 +1,331 @@
+﻿using Adjutant.Blam.Definitions;
+using Adjutant.IO;
+using Adjutant.Utilities;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Endian;
+using System.Linq;
+using System.Numerics;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Adjutant.Blam.Halo3
+{
+    public class CacheFile
+    {
+        public string FileName { get; }
+        public string BuildString => Header.BuildString;
+        public CacheType Type => Header.CacheType;
+
+        public CacheHeader Header { get; }
+        public TagIndex TagIndex { get; }
+        public StringIndex StringIndex { get; }
+
+        public HeaderAddressTranslator HeaderTranslator { get; }
+        public TagAddressTranslator MetadataTranslator { get; }
+
+        public CacheFile(string fileName)
+        {
+            var version = (int)CacheFactory.GetCacheTypeByFile(fileName);
+
+            FileName = fileName;
+            HeaderTranslator = new HeaderAddressTranslator(this);
+            MetadataTranslator = new TagAddressTranslator(this);
+
+            using (var reader = CreateReader(HeaderTranslator))
+                Header = reader.ReadObject<CacheHeader>(version);
+
+            Header.IndexPointer = new Pointer(Header.IndexPointer.Value, MetadataTranslator);
+
+            using (var reader = CreateReader(MetadataTranslator))
+            {
+                reader.Seek(Header.IndexPointer.Address, SeekOrigin.Begin);
+                TagIndex = reader.ReadObject(new TagIndex(this));
+                StringIndex = new StringIndex(this);
+
+                TagIndex.ReadItems();
+                StringIndex.ReadItems();
+            }
+        }
+
+        public DependencyReader CreateReader(IAddressTranslator translator)
+        {
+            var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read);
+            var reader = new DependencyReader(fs, ByteOrder.LittleEndian);
+
+            var header = reader.PeekInt32();
+            if (header == CacheFactory.BigHeader)
+                reader.ByteOrder = ByteOrder.BigEndian;
+            else if (header != CacheFactory.LittleHeader)
+                throw Exceptions.NotAValidMapFile(Path.GetFileName(FileName));
+
+            reader.RegisterInstance<CacheFile>(this);
+            reader.RegisterInstance<IAddressTranslator>(translator);
+
+            return reader;
+        }
+    }
+
+    [FixedSize(2048, MaxVersion = (int)CacheType.Halo3Retail)]
+    [FixedSize(12288, MinVersion = (int)CacheType.Halo3Retail)]
+    public class CacheHeader
+    {
+        [Offset(8)]
+        public int FileSize { get; set; }
+
+        [Offset(16)]
+        public Pointer IndexPointer { get; set; }
+
+        [Offset(20)]
+        [VersionSpecific((int)CacheType.Halo3Beta)]
+        public int MetadataAddress { get; set; }
+
+        [Offset(284)]
+        [NullTerminated(Length = 32)]
+        public string BuildString { get; set; }
+
+        [Offset(352, MaxVersion = (int)CacheType.Halo3Retail)]
+        [Offset(344, MinVersion = (int)CacheType.Halo3Retail)]
+        public int StringCount { get; set; }
+
+        [Offset(356, MaxVersion = (int)CacheType.Halo3Retail)]
+        [Offset(348, MinVersion = (int)CacheType.Halo3Retail)]
+        public int StringTableSize { get; set; }
+
+        [Offset(360, MaxVersion = (int)CacheType.Halo3Retail)]
+        [Offset(352, MinVersion = (int)CacheType.Halo3Retail)]
+        public Pointer StringTableIndexPointer { get; set; }
+
+        [Offset(364, MaxVersion = (int)CacheType.Halo3Retail)]
+        [Offset(356, MinVersion = (int)CacheType.Halo3Retail)]
+        public Pointer StringTablePointer { get; set; }
+
+        [Offset(440, MaxVersion = (int)CacheType.Halo3Retail)]
+        [Offset(432, MinVersion = (int)CacheType.Halo3Retail)]
+        [NullTerminated(Length = 256)]
+        public string ScenarioName { get; set; }
+
+        [Offset(700, MaxVersion = (int)CacheType.Halo3Retail)]
+        [Offset(692, MinVersion = (int)CacheType.Halo3Retail)]
+        public int FileCount { get; set; }
+
+        [Offset(704, MaxVersion = (int)CacheType.Halo3Retail)]
+        [Offset(696, MinVersion = (int)CacheType.Halo3Retail)]
+        public Pointer FileTablePointer { get; set; }
+
+        [Offset(708, MaxVersion = (int)CacheType.Halo3Retail)]
+        [Offset(700, MinVersion = (int)CacheType.Halo3Retail)]
+        public int FileTableSize { get; set; }
+
+        [Offset(712, MaxVersion = (int)CacheType.Halo3Retail)]
+        [Offset(704, MinVersion = (int)CacheType.Halo3Retail)]
+        public Pointer FileTableIndexPointer { get; set; }
+
+        [Offset(752, MaxVersion = (int)CacheType.Halo3Retail)]
+        [Offset(744, MinVersion = (int)CacheType.Halo3Retail)]
+        public int VirtualBaseAddress { get; set; }
+
+        [Offset(1136)]
+        [VersionSpecific((int)CacheType.Halo3Retail)]
+        public int RawTableOffset { get; set; }
+
+        [Offset(1144)]
+        [VersionSpecific((int)CacheType.Halo3Retail)]
+        public int LocaleModifier { get; set; }
+
+        [Offset(1160)]
+        [VersionSpecific((int)CacheType.Halo3Retail)]
+        public int RawTableSize { get; set; }
+
+        public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
+    }
+
+    [FixedSize(32)]
+    public class TagIndex : ITagIndex<IndexItem>
+    {
+        private readonly CacheFile cache;
+        private readonly List<IndexItem> items;
+
+        internal Dictionary<int, string> Filenames { get; }
+        internal List<TagClass> Classes { get; }
+
+        [Offset(0)]
+        public int TagClassCount { get; set; }
+
+        [Offset(4)]
+        public Pointer TagClassDataPointer { get; set; }
+
+        [Offset(8)]
+        public int TagCount { get; set; }
+
+        [Offset(12)]
+        public Pointer TagDataPointer { get; set; }
+
+        [Offset(16)]
+        public int TagInfoHeaderCount { get; set; }
+
+        [Offset(20)]
+        public Pointer TagInfoHeaderPointer { get; set; }
+
+        [Offset(24)]
+        public int TagInfoHeaderCount2 { get; set; }
+
+        [Offset(28)]
+        public Pointer TagInfoHeaderPointer2 { get; set; }
+
+        public TagIndex(CacheFile cache)
+        {
+            if (cache == null)
+                throw new ArgumentNullException(nameof(cache));
+
+            this.cache = cache;
+            items = new List<IndexItem>();
+
+            Classes = new List<TagClass>();
+            Filenames = new Dictionary<int, string>();
+        }
+
+        internal void ReadItems()
+        {
+            if (items.Any())
+                throw new InvalidOperationException();
+
+            using (var reader = cache.CreateReader(cache.MetadataTranslator))
+            {
+                reader.Seek(TagClassDataPointer.Address, SeekOrigin.Begin);
+                Classes.AddRange(reader.ReadEnumerable<TagClass>(TagClassCount));
+
+                reader.Seek(TagDataPointer.Address, SeekOrigin.Begin);
+                for (int i = 0; i < TagCount; i++)
+                    items.Add(reader.ReadObject(new IndexItem(cache, i)));
+
+                reader.Seek(cache.Header.FileTableIndexPointer.Address, SeekOrigin.Begin);
+                var indices = reader.ReadEnumerable<int>(TagCount).ToArray();
+
+                for (int i = 0; i < TagCount; i++)
+                {
+                    if (indices[i] == -1)
+                    {
+                        Filenames.Add(i, null);
+                        continue;
+                    }
+
+                    reader.Seek(cache.Header.FileTablePointer.Address + indices[i], SeekOrigin.Begin);
+                    Filenames.Add(i, reader.ReadNullTerminatedString());
+                }
+            }
+        }
+
+        public IndexItem this[int index] => items[index];
+
+        public IEnumerator<IndexItem> GetEnumerator() => items.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
+    }
+
+    public class StringIndex : IEnumerable<string>
+    {
+        private readonly CacheFile cache;
+        private readonly string[] items;
+
+        public StringIndex(CacheFile cache)
+        {
+            if (cache == null)
+                throw new ArgumentNullException(nameof(cache));
+
+            this.cache = cache;
+            items = new string[cache.Header.StringCount];
+        }
+
+        internal void ReadItems()
+        {
+            using (var reader = cache.CreateReader(cache.HeaderTranslator))
+            {
+                reader.Seek(cache.Header.StringTableIndexPointer.Address, SeekOrigin.Begin);
+                var indices = reader.ReadEnumerable<int>(cache.Header.StringCount).ToArray();
+
+                using (var reader2 = reader.CreateVirtualReader(cache.Header.StringTablePointer.Address))
+                {
+                    for (int i = 0; i < cache.Header.StringCount; i++)
+                    {
+                        if (indices[i] < 0)
+                            continue;
+
+                        reader2.Seek(indices[i], SeekOrigin.Begin);
+                        items[i] = reader2.ReadNullTerminatedString();
+                    }
+                }
+            }
+        }
+
+        public int StringCount => items.Length;
+
+        public string this[int id] => items[id];
+
+        public IEnumerator<string> GetEnumerator() => items.AsEnumerable().GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
+    }
+
+    [FixedSize(16)]
+    public class TagClass
+    {
+        [Offset(0)]
+        [FixedLength(4)]
+        public string ClassCode { get; set; }
+
+        [Offset(4)]
+        [FixedLength(4)]
+        public string ParentClassCode { get; set; }
+
+        [Offset(8)]
+        [FixedLength(4)]
+        public string ParentClassCode2 { get; set; }
+
+        [Offset(12)]
+        public int ClassName { get; set; }
+    }
+
+    [FixedSize(8)]
+    public class IndexItem : IIndexItem
+    {
+        private readonly CacheFile cache;
+
+        public IndexItem(CacheFile cache, int index)
+        {
+            this.cache = cache;
+            Id = index;
+        }
+
+        public int Id { get; }
+
+        [Offset(0)]
+        public short ClassIndex { get; set; }
+
+        [Offset(2)]
+        public short Unknown { get; set; }
+
+        [Offset(4)]
+        public Pointer MetaPointer { get; set; }
+
+        public string ClassCode => ClassIndex >= 0 ? cache.TagIndex.Classes[ClassIndex].ClassCode : null;
+
+        public string FileName => cache.TagIndex.Filenames[Id];
+
+        public T ReadMetadata<T>()
+        {
+            using (var reader = cache.CreateReader(cache.MetadataTranslator))
+            {
+                reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
+                return (T)reader.ReadObject(typeof(T), (int)cache.Type);
+            }
+        }
+
+        public override string ToString()
+        {
+            return Utils.CurrentCulture($"[{ClassCode}] {FileName}");
+        }
+    }
+}

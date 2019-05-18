@@ -68,6 +68,9 @@
     <Compile Include="Blam\Halo2\shader.cs" />
     <Compile Include="Blam\Halo2\TagReference.cs" />
     <Compile Include="Blam\Halo2\Vertex.cs" />
+    <Compile Include="Blam\Halo3\CacheFile.cs" />
+    <Compile Include="Blam\Halo3\HeaderAddressTranslator.cs" />
+    <Compile Include="Blam\Halo3\TagAddressTranslator.cs" />
     <Compile Include="Geometry\CoordinateSystem.cs" />
     <Compile Include="Geometry\IVertex.cs" />
     <Compile Include="Blam\Halo1\bitmap.cs" />
