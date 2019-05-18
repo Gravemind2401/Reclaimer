@@ -157,9 +157,8 @@ namespace Adjutant.Blam.Halo2
     {
         private readonly CacheFile cache;
         private readonly List<IndexItem> items;
-        private readonly Dictionary<int, string> filenames;
 
-        internal Dictionary<int, string> Filenames => filenames;
+        internal Dictionary<int, string> Filenames { get; }
 
         [Offset(0)]
         public int Magic { get; set; }
@@ -168,7 +167,7 @@ namespace Adjutant.Blam.Halo2
         public int TagClassCount { get; set; }
 
         [Offset(8)]
-        public Pointer TagInfoAddress { get; set; }
+        public Pointer TagDataAddress { get; set; }
 
         [Offset(24)]
         public int TagCount { get; set; }
@@ -180,7 +179,7 @@ namespace Adjutant.Blam.Halo2
 
             this.cache = cache;
             items = new List<IndexItem>();
-            filenames = new Dictionary<int, string>();
+            Filenames = new Dictionary<int, string>();
         }
 
         internal void ReadItems()
@@ -190,13 +189,9 @@ namespace Adjutant.Blam.Halo2
 
             using (var reader = cache.CreateReader(cache.MetadataTranslator))
             {
+                reader.Seek(TagDataAddress.Address, SeekOrigin.Begin);
                 for (int i = 0; i < TagCount; i++)
-                {
-                    reader.Seek(TagInfoAddress.Address + i * 16, SeekOrigin.Begin);
-
-                    var item = reader.ReadObject(new IndexItem(cache));
-                    items.Add(item);
-                }
+                    items.Add(reader.ReadObject(new IndexItem(cache)));
 
                 reader.Seek(cache.Header.FileTableIndexOffset, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<int>(TagCount).ToArray();
@@ -204,7 +199,7 @@ namespace Adjutant.Blam.Halo2
                 for (int i = 0; i < TagCount; i++)
                 {
                     reader.Seek(cache.Header.FileTableAddress + indices[i], SeekOrigin.Begin);
-                    filenames.Add(i, reader.ReadNullTerminatedString());
+                    Filenames.Add(i, reader.ReadNullTerminatedString());
                 }
             }
         }

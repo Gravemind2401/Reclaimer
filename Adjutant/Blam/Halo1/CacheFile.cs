@@ -94,9 +94,8 @@ namespace Adjutant.Blam.Halo1
     {
         private readonly CacheFile cache;
         private readonly List<IndexItem> items;
-        private readonly Dictionary<int, string> filenames;
 
-        internal Dictionary<int, string> Filenames => filenames;
+        internal Dictionary<int, string> Filenames { get; }
 
         [Offset(0)]
         public int Magic { get; set; }
@@ -123,7 +122,7 @@ namespace Adjutant.Blam.Halo1
 
             this.cache = cache;
             items = new List<IndexItem>();
-            filenames = new Dictionary<int, string>();
+            Filenames = new Dictionary<int, string>();
         }
 
         internal void ReadItems(DependencyReader reader)
@@ -139,7 +138,7 @@ namespace Adjutant.Blam.Halo1
                 items.Add(item);
 
                 reader.Seek(item.FileNamePointer.Address, SeekOrigin.Begin);
-                filenames.Add(item.Id, reader.ReadNullTerminatedString());
+                Filenames.Add(item.Id, reader.ReadNullTerminatedString());
             }
         }
 
