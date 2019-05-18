@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Definitions
 {
-    public interface IStringIndex<out TStringItem> : IEnumerable<TStringItem> where TStringItem : IStringItem
+    public interface IStringIndex : IEnumerable<string>
     {
         int StringCount { get; }
-        TStringItem this[int id] { get; }
+        string this[int id] { get; }
     }
 }

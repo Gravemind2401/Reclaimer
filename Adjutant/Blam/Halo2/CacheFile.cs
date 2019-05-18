@@ -61,6 +61,7 @@ namespace Adjutant.Blam.Halo2
                 throw Exceptions.NotAValidMapFile(Path.GetFileName(FileName));
 
             reader.RegisterInstance<CacheFile>(this);
+            reader.RegisterInstance<ICacheFile>(this);
             reader.RegisterInstance<IAddressTranslator>(translator);
             reader.RegisterType<Matrix4x4>(() => new Matrix4x4
             {
@@ -87,7 +88,7 @@ namespace Adjutant.Blam.Halo2
         #region ICacheFile
 
         ITagIndex<IIndexItem> ICacheFile.TagIndex => TagIndex;
-        IStringIndex<IStringItem> ICacheFile.StringIndex => StringIndex;
+        IStringIndex ICacheFile.StringIndex => StringIndex;
 
         #endregion
     }
@@ -211,10 +212,10 @@ namespace Adjutant.Blam.Halo2
         IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
     }
 
-    public class StringIndex : IStringIndex<StringItem>
+    public class StringIndex : IStringIndex
     {
         private readonly CacheFile cache;
-        private readonly StringItem[] items;
+        private readonly string[] items;
 
         public StringIndex(CacheFile cache)
         {
@@ -222,7 +223,7 @@ namespace Adjutant.Blam.Halo2
                 throw new ArgumentNullException(nameof(cache));
 
             this.cache = cache;
-            items = new StringItem[cache.Header.StringCount];
+            items = new string[cache.Header.StringCount];
         }
 
         internal void ReadItems()
@@ -238,13 +239,11 @@ namespace Adjutant.Blam.Halo2
                 {
                     for (int i = 0; i < cache.Header.StringCount; i++)
                     {
-                        items[i] = new StringItem { Id = i };
-
                         if (indices[i] < 0)
                             continue;
 
                         reader2.Seek(indices[i], SeekOrigin.Begin);
-                        items[i].Value = reader2.ReadNullTerminatedString();
+                        items[i] = reader2.ReadNullTerminatedString();
                     }
                 }
             }
@@ -252,9 +251,9 @@ namespace Adjutant.Blam.Halo2
 
         public int StringCount => items.Length;
 
-        public StringItem this[int id] => items[id];
+        public string this[int id] => items[id];
 
-        public IEnumerator<StringItem> GetEnumerator() => items.AsEnumerable().GetEnumerator();
+        public IEnumerator<string> GetEnumerator() => items.AsEnumerable().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
     }
@@ -310,12 +309,5 @@ namespace Adjutant.Blam.Halo2
         {
             return Utils.CurrentCulture($"[{ClassCode}] {FileName}");
         }
-    }
-
-    public class StringItem : IStringItem
-    {
-        public int Id { get; set; }
-
-        public string Value { get; set; }
     }
 }

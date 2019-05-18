@@ -15,6 +15,6 @@ namespace Adjutant.Blam.Definitions
         CacheType Type { get; }
 
         ITagIndex<IIndexItem> TagIndex { get; }
-        IStringIndex<IStringItem> StringIndex { get; }
+        IStringIndex StringIndex { get; }
     }
 }

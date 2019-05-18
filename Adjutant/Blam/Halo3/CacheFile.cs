@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Halo3
 {
-    public class CacheFile
+    public class CacheFile : ICacheFile
     {
         public string FileName { get; }
         public string BuildString => Header.BuildString;
@@ -66,6 +66,13 @@ namespace Adjutant.Blam.Halo3
 
             return reader;
         }
+
+        #region ICacheFile
+
+        ITagIndex<IIndexItem> ICacheFile.TagIndex => TagIndex;
+        IStringIndex ICacheFile.StringIndex => StringIndex;
+
+        #endregion
     }
 
     [FixedSize(2048, MaxVersion = (int)CacheType.Halo3Retail)]
@@ -225,7 +232,7 @@ namespace Adjutant.Blam.Halo3
         IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
     }
 
-    public class StringIndex : IEnumerable<string>
+    public class StringIndex : IStringIndex
     {
         private readonly CacheFile cache;
         private readonly string[] items;

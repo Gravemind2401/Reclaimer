@@ -54,6 +54,7 @@ namespace Adjutant.Blam.Halo1
                 throw Exceptions.NotAValidMapFile(Path.GetFileName(FileName));
 
             reader.RegisterInstance<CacheFile>(this);
+            reader.RegisterInstance<ICacheFile>(this);
             reader.RegisterInstance<IAddressTranslator>(translator);
 
             return reader;
@@ -62,7 +63,7 @@ namespace Adjutant.Blam.Halo1
         #region ICacheFile
 
         ITagIndex<IIndexItem> ICacheFile.TagIndex => TagIndex;
-        IStringIndex<IStringItem> ICacheFile.StringIndex => null;
+        IStringIndex ICacheFile.StringIndex => null;
 
         #endregion
     }
