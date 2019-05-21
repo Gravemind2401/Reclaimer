@@ -1,4 +1,5 @@
-﻿using Adjutant.IO;
+﻿using Adjutant.Blam.Definitions;
+using Adjutant.IO;
 using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
@@ -13,9 +14,9 @@ namespace Adjutant.Blam.Halo1
     [FixedSize(12)]
     public class BlockCollection<T> : Collection<T>, IBlockCollection<T>
     {
-        public Pointer Pointer { get; set; }
+        public Pointer Pointer { get; }
 
-        public BlockCollection(DependencyReader reader, IAddressTranslator translator)
+        public BlockCollection(DependencyReader reader, ICacheFile cache, IAddressTranslator translator)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
@@ -31,7 +32,7 @@ namespace Adjutant.Blam.Halo1
 
             reader.BaseStream.Position = Pointer.Address;
             for (int i = 0; i < count; i++)
-                Add((T)reader.ReadObject(typeof(T)));
+                Add((T)reader.ReadObject(typeof(T), (int)cache.Type));
         }
     }
 }
