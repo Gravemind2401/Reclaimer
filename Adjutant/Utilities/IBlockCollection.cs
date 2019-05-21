@@ -9,6 +9,6 @@ namespace Adjutant.Utilities
 {
     public interface IBlockCollection<T> : IList<T>, IReadOnlyList<T>
     {
-        Pointer Pointer { get; set; }
+        Pointer Pointer { get; }
     }
 }

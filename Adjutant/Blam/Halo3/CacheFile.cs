@@ -23,6 +23,9 @@ namespace Adjutant.Blam.Halo3
         public TagIndex TagIndex { get; }
         public StringIndex StringIndex { get; }
 
+        public cache_file_resource_gestalt ResourceGestalt { get; }
+        public cache_file_resource_layout_table ResourceLayoutTable { get; }
+
         public HeaderAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
 
@@ -48,6 +51,9 @@ namespace Adjutant.Blam.Halo3
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
             }
+
+            ResourceGestalt = TagIndex.FirstOrDefault(t => t.ClassCode == "zone")?.ReadMetadata<cache_file_resource_gestalt>();
+            ResourceLayoutTable = TagIndex.FirstOrDefault(t => t.ClassCode == "play")?.ReadMetadata<cache_file_resource_layout_table>();
         }
 
         public DependencyReader CreateReader(IAddressTranslator translator)
@@ -62,6 +68,7 @@ namespace Adjutant.Blam.Halo3
                 throw Exceptions.NotAValidMapFile(Path.GetFileName(FileName));
 
             reader.RegisterInstance<CacheFile>(this);
+            reader.RegisterInstance<ICacheFile>(this);
             reader.RegisterInstance<IAddressTranslator>(translator);
 
             return reader;
@@ -136,7 +143,7 @@ namespace Adjutant.Blam.Halo3
 
         [Offset(1136)]
         [VersionSpecific((int)CacheType.Halo3Retail)]
-        public int RawTableOffset { get; set; }
+        public int DataTableAddress { get; set; }
 
         [Offset(1144)]
         [VersionSpecific((int)CacheType.Halo3Retail)]
@@ -144,7 +151,7 @@ namespace Adjutant.Blam.Halo3
 
         [Offset(1160)]
         [VersionSpecific((int)CacheType.Halo3Retail)]
-        public int RawTableSize { get; set; }
+        public int DataTableSize { get; set; }
 
         public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
     }

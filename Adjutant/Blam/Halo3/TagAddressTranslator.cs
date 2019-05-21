@@ -18,7 +18,7 @@ namespace Adjutant.Blam.Halo3
                 if (cache.Type == Definitions.CacheType.Halo3Beta)
                     return cache.Header.VirtualBaseAddress - cache.Header.MetadataAddress;
 
-                return cache.Header.VirtualBaseAddress - (cache.Header.RawTableOffset + cache.Header.RawTableSize);
+                return cache.Header.VirtualBaseAddress - (cache.Header.DataTableAddress + cache.Header.DataTableSize);
             }
         }
 

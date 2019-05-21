@@ -36,6 +36,11 @@ namespace Adjutant.Blam
                 case CacheType.Halo2Vista:
                     return new Halo2.CacheFile(fileName);
 
+                case CacheType.Halo3Beta:
+                case CacheType.Halo3Retail:
+                case CacheType.Halo3ODST:
+                    return new Halo3.CacheFile(fileName);
+
                 default: throw Exceptions.NotAValidMapFile(Path.GetFileName(fileName));
             }
         }

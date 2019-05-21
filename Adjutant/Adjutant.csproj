@@ -67,9 +67,15 @@
     <Compile Include="Blam\Halo2\shader.cs" />
     <Compile Include="Blam\Halo2\TagReference.cs" />
     <Compile Include="Blam\Halo2\Vertex.cs" />
+    <Compile Include="Blam\Halo3\bitmap.cs" />
+    <Compile Include="Blam\Halo3\BlockCollection.cs" />
     <Compile Include="Blam\Halo3\CacheFile.cs" />
+    <Compile Include="Blam\Halo3\cache_file_resource_gestalt.cs" />
+    <Compile Include="Blam\Halo3\cache_file_resource_layout_table.cs" />
+    <Compile Include="Blam\Halo3\ResourceIdentifier.cs" />
     <Compile Include="Blam\Halo3\HeaderAddressTranslator.cs" />
     <Compile Include="Blam\Halo3\TagAddressTranslator.cs" />
+    <Compile Include="Blam\Halo3\TagReference.cs" />
     <Compile Include="Geometry\CoordinateSystem.cs" />
     <Compile Include="Geometry\IVertex.cs" />
     <Compile Include="Blam\Halo1\bitmap.cs" />
