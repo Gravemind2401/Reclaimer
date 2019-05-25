@@ -8,9 +8,9 @@ using System.Collections;
 
 namespace Reclaimer.Entities
 {
-    public partial class StringIndex : IStringIndex<StringItem>
+    public partial class StringIndex : IStringIndex
     {
-        StringItem IStringIndex<StringItem>.this[int id]
+        string IStringIndex.this[int id]
         {
             get
             {
@@ -18,7 +18,7 @@ namespace Reclaimer.Entities
             }
         }
 
-        IEnumerator<StringItem> IEnumerable<StringItem>.GetEnumerator()
+        IEnumerator<string> IEnumerable<string>.GetEnumerator()
         {
             throw new NotImplementedException();
         }

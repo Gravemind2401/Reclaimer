@@ -178,7 +178,7 @@ namespace Reclaimer.Controls
                 var tag = map.TagIndex[(int)item.TagId];
 
                 Adjutant.Utilities.IRenderGeometry sbsp;
-                switch (map.Type)
+                switch (map.CacheType)
                 {
                     case CacheType.Halo1CE:
                     case CacheType.Halo1PC:
@@ -203,7 +203,7 @@ namespace Reclaimer.Controls
                 var tag = map.TagIndex[(int)item.TagId];
 
                 Adjutant.Utilities.IRenderGeometry mode;
-                switch (map.Type)
+                switch (map.CacheType)
                 {
                     case CacheType.Halo1CE:
                     case CacheType.Halo1PC:
@@ -231,7 +231,7 @@ namespace Reclaimer.Controls
                 var tag = map.TagIndex[(int)item.TagId];
 
                 Adjutant.Utilities.IBitmap bitm;
-                switch (map.Type)
+                switch (map.CacheType)
                 {
                     case CacheType.Halo1CE:
                     case CacheType.Halo1PC:

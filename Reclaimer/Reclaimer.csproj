@@ -134,7 +134,6 @@
     </Compile>
     <Compile Include="Entities\Partials\CacheFile.cs" />
     <Compile Include="Entities\Partials\StringIndex.cs" />
-    <Compile Include="Entities\Partials\StringItem.cs" />
     <Compile Include="Entities\Partials\TagIndex.cs" />
     <Compile Include="Entities\Partials\TagItem.cs" />
     <Compile Include="Entities\StringIndex.cs">

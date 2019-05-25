@@ -94,7 +94,7 @@ namespace Reclaimer
 
             entity.FileName = cache.FileName;
             entity.BuildString = cache.BuildString;
-            entity.CacheType = cache.Type;
+            entity.CacheType = cache.CacheType;
 
             var tagIndex = Context.TagIndexes.Create();
             tagIndex.Magic = cache.TagIndex.Magic;
@@ -150,8 +150,8 @@ namespace Reclaimer
                 stringIndex.CacheFile = entity;
 
                 allIds = cache.StringIndex
-                    .Where(s => s.Value != null)
-                    .Select(s => PathHash(s.Value))
+                    .Where(s => s != null)
+                    .Select(s => PathHash(s))
                     .Distinct()
                     .ToArray();
 
@@ -160,14 +160,15 @@ namespace Reclaimer
                     .ToDictionary(s => s.ValueId);
 
                 var newStrings = new Dictionary<long, StringValue>();
+                int index = 0;
                 foreach (var str in cache.StringIndex)
                 {
                     var item = Context.StringItems.Create();
-                    item.StringId = str.Id;
+                    item.StringId = index++;
 
-                    if (str.Value != null)
+                    if (str != null)
                     {
-                        var hash = PathHash(str.Value);
+                        var hash = PathHash(str);
                         StringValue val;
 
                         if (newStrings.ContainsKey(hash))
@@ -178,11 +179,11 @@ namespace Reclaimer
                         {
                             val = Context.StringValues.Create();
                             val.ValueId = hash;
-                            val.Value = str.Value;
+                            val.Value = str;
                             newStrings.Add(hash, val);
                         }
 
-                        if (val.Value != str.Value)
+                        if (val.Value != str)
                         {
                             System.Diagnostics.Debugger.Break();
                             throw new ArgumentException("string hash collision!");
