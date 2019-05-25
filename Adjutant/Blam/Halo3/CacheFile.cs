@@ -23,8 +23,27 @@ namespace Adjutant.Blam.Halo3
         public TagIndex TagIndex { get; }
         public StringIndex StringIndex { get; }
 
-        public cache_file_resource_gestalt ResourceGestalt { get; }
-        public cache_file_resource_layout_table ResourceLayoutTable { get; }
+        private cache_file_resource_gestalt resourceGestalt;
+        public cache_file_resource_gestalt ResourceGestalt
+        {
+            get
+            {
+                if (resourceGestalt == null)
+                    resourceGestalt = TagIndex.FirstOrDefault(t => t.ClassCode == "zone")?.ReadMetadata<cache_file_resource_gestalt>();
+                return resourceGestalt;
+            }
+        }
+
+        private cache_file_resource_layout_table resourceLayoutTable;
+        public cache_file_resource_layout_table ResourceLayoutTable
+        {
+            get
+            {
+                if (resourceLayoutTable == null)
+                    resourceLayoutTable = TagIndex.FirstOrDefault(t => t.ClassCode == "play")?.ReadMetadata<cache_file_resource_layout_table>();
+                return resourceLayoutTable;
+            }
+        }
 
         public HeaderAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
@@ -51,9 +70,6 @@ namespace Adjutant.Blam.Halo3
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
             }
-
-            ResourceGestalt = TagIndex.FirstOrDefault(t => t.ClassCode == "zone")?.ReadMetadata<cache_file_resource_gestalt>();
-            ResourceLayoutTable = TagIndex.FirstOrDefault(t => t.ClassCode == "play")?.ReadMetadata<cache_file_resource_layout_table>();
         }
 
         public DependencyReader CreateReader(IAddressTranslator translator)
@@ -142,15 +158,15 @@ namespace Adjutant.Blam.Halo3
         public int VirtualBaseAddress { get; set; }
 
         [Offset(1136)]
-        [VersionSpecific((int)CacheType.Halo3Retail)]
+        [MinVersion((int)CacheType.Halo3Retail)]
         public int DataTableAddress { get; set; }
 
         [Offset(1144)]
-        [VersionSpecific((int)CacheType.Halo3Retail)]
+        [MinVersion((int)CacheType.Halo3Retail)]
         public int LocaleModifier { get; set; }
 
         [Offset(1160)]
-        [VersionSpecific((int)CacheType.Halo3Retail)]
+        [MinVersion((int)CacheType.Halo3Retail)]
         public int DataTableSize { get; set; }
 
         public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
