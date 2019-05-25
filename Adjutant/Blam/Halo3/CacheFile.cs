@@ -17,7 +17,7 @@ namespace Adjutant.Blam.Halo3
     {
         public string FileName { get; }
         public string BuildString => Header.BuildString;
-        public CacheType Type => Header.CacheType;
+        public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
 
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
@@ -168,8 +168,6 @@ namespace Adjutant.Blam.Halo3
         [Offset(1160)]
         [MinVersion((int)CacheType.Halo3Retail)]
         public int DataTableSize { get; set; }
-
-        public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
     }
 
     [FixedSize(32)]
@@ -349,7 +347,7 @@ namespace Adjutant.Blam.Halo3
             using (var reader = cache.CreateReader(cache.MetadataTranslator))
             {
                 reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
-                return (T)reader.ReadObject(typeof(T), (int)cache.Type);
+                return (T)reader.ReadObject(typeof(T), (int)cache.CacheType);
             }
         }
 

@@ -18,7 +18,7 @@ namespace Adjutant.Blam.Halo2
     {
         public string FileName { get; }
         public string BuildString => Header.BuildString;
-        public CacheType Type => Header.CacheType;
+        public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
 
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
@@ -149,8 +149,6 @@ namespace Adjutant.Blam.Halo2
         [Offset(716, MinVersion = 0)]
         [Offset(728, MaxVersion = 0)]
         public int FileTableIndexOffset { get; set; }
-
-        public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
     }
 
     [FixedSize(32)]

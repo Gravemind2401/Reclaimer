@@ -45,7 +45,7 @@ namespace Adjutant.Blam.Halo3
 
         public byte[] ReadData()
         {
-            if (cache.Type == Definitions.CacheType.Halo3Beta)
+            if (cache.CacheType == Definitions.CacheType.Halo3Beta)
                 return ReadDataHalo3Beta();
 
             var directory = Directory.GetParent(cache.FileName).FullName;

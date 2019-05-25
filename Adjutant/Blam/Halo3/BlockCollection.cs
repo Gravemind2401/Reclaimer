@@ -32,7 +32,7 @@ namespace Adjutant.Blam.Halo3
 
             reader.BaseStream.Position = Pointer.Address;
             for (int i = 0; i < count; i++)
-                Add((T)reader.ReadObject(typeof(T), (int)cache.Type));
+                Add((T)reader.ReadObject(typeof(T), (int)cache.CacheType));
         }
     }
 }
