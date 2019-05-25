@@ -14,6 +14,13 @@ namespace Adjutant.Blam.Halo3
 {
     public class bitmap : IBitmap
     {
+        private readonly CacheFile cache;
+
+        public bitmap(CacheFile cache)
+        {
+            this.cache = cache;
+        }
+
         [Offset(84)]
         public BlockCollection<SequenceBlock> Sequences { get; set; }
 
@@ -32,7 +39,81 @@ namespace Adjutant.Blam.Halo3
 
         public DdsImage ToDds(int index)
         {
-            throw new NotImplementedException();
+            if (index < 0 || index >= Bitmaps.Count)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            var submap = Bitmaps[index];
+
+            var resource = InterleavedResources.Any()
+                ? InterleavedResources[submap.InterleavedIndex].ResourceId
+                : Resources[index].ResourceId;
+
+            var data = resource.ReadData();
+
+            var bpp = submap.BitmapFormat.Bpp();
+            for (int i = 0; i < data.Length - 1; i += bpp)
+                Array.Reverse(data, i, bpp);
+
+            if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
+            {
+                var blockSize = submap.BitmapFormat.LinearBlockSize();
+                var texelPitch = submap.BitmapFormat.LinearTexelPitch();
+
+                data = TextureUtils.XTextureScramble(data, submap.Width, submap.Height, blockSize, texelPitch, false);
+            }
+
+            DxgiFormat dxgi;
+            switch (submap.BitmapFormat)
+            {
+                case TextureFormat.DXT1:
+                    dxgi = DxgiFormat.BC1_UNorm;
+                    break;
+
+                case TextureFormat.DXT3:
+                    dxgi = DxgiFormat.BC2_UNorm;
+                    break;
+
+                case TextureFormat.DXT5:
+                    dxgi = DxgiFormat.BC3_UNorm;
+                    break;
+
+                case TextureFormat.DXT5a:
+                    dxgi = DxgiFormat.BC4_UNorm;
+                    break;
+
+                case TextureFormat.DXN:
+                    dxgi = DxgiFormat.BC5_UNorm;
+                    break;
+
+                case TextureFormat.A8R8G8B8:
+                    dxgi = DxgiFormat.B8G8R8A8_UNorm;
+                    break;
+
+                case TextureFormat.X8R8G8B8:
+                    dxgi = DxgiFormat.B8G8R8X8_UNorm;
+                    break;
+
+                case TextureFormat.R5G6B5:
+                    dxgi = DxgiFormat.B5G6R5_UNorm;
+                    break;
+
+                case TextureFormat.A1R5G5B5:
+                    dxgi = DxgiFormat.B5G5R5A1_UNorm;
+                    break;
+
+                case TextureFormat.A4R4G4B4:
+                    dxgi = DxgiFormat.B4G4R4A4_UNorm;
+                    break;
+
+                case TextureFormat.P8_bump:
+                case TextureFormat.P8:
+                    dxgi = DxgiFormat.P8;
+                    break;
+
+                default: throw new NotSupportedException();
+            }
+
+            return new DdsImage(submap.Height, submap.Width, dxgi, DxgiTextureType.Texture2D, data);
         }
 
         #endregion

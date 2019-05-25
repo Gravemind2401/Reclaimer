@@ -122,6 +122,7 @@
     <Compile Include="Utilities\Interfaces.cs" />
     <Compile Include="Utilities\MurMur3.cs" />
     <Compile Include="Utilities\StringId.cs" />
+    <Compile Include="Utilities\TextureUtils.cs" />
     <Compile Include="Utilities\Utils.cs" />
     <Compile Include="Utilities\IAddressTranslator.cs" />
     <Compile Include="Utilities\Pointer.cs" />
