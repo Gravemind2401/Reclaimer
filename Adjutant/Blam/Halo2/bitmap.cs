@@ -39,15 +39,23 @@ namespace Adjutant.Blam.Halo2
             var submap = Bitmaps[index];
             var data = submap.Lod0Pointer.ReadData(submap.Lod0Size);
 
+            if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
+            {
+                var bpp = submap.BitmapFormat.Bpp();
+                data = TextureUtils.Swizzle(data, submap.Width, submap.Height, 1, bpp);
+            }
+
             DxgiFormat dxgi;
             switch (submap.BitmapFormat)
             {
                 case TextureFormat.DXT1:
                     dxgi = DxgiFormat.BC1_UNorm;
                     break;
+
                 case TextureFormat.DXT3:
                     dxgi = DxgiFormat.BC2_UNorm;
                     break;
+
                 case TextureFormat.DXT5:
                     dxgi = DxgiFormat.BC3_UNorm;
                     break;

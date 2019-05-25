@@ -52,15 +52,24 @@ namespace Adjutant.Blam.Halo1
                 data = reader.ReadBytes(submap.PixelsSize);
             }
 
+            //not sure if this works, haven't seen any Halo1 bitmaps with the swizzle flag
+            //if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
+            //{
+            //    var bpp = submap.BitmapFormat.Bpp();
+            //    data = TextureUtils.Swizzle(data, submap.Width, submap.Height, 1, bpp);
+            //}
+
             DxgiFormat dxgi;
             switch (submap.BitmapFormat)
             {
                 case TextureFormat.DXT1:
                     dxgi = DxgiFormat.BC1_UNorm;
                     break;
+
                 case TextureFormat.DXT3:
                     dxgi = DxgiFormat.BC2_UNorm;
                     break;
+
                 case TextureFormat.DXT5:
                     dxgi = DxgiFormat.BC3_UNorm;
                     break;

@@ -12,6 +12,42 @@ namespace Adjutant.Utilities
         #region Extensions
 
         //bytes, not bits
+        public static int Bpp(this Blam.Halo1.TextureFormat format)
+        {
+            switch (format)
+            {
+                case Blam.Halo1.TextureFormat.A8R8G8B8:
+                case Blam.Halo1.TextureFormat.X8R8G8B8:
+                    return 4;
+
+                case Blam.Halo1.TextureFormat.A8:
+                case Blam.Halo1.TextureFormat.Y8:
+                case Blam.Halo1.TextureFormat.AY8:
+                case Blam.Halo1.TextureFormat.P8_bump:
+                    return 1;
+
+                default: return 2;
+            }
+        }
+
+        public static int Bpp(this Blam.Halo2.TextureFormat format)
+        {
+            switch (format)
+            {
+                case Blam.Halo2.TextureFormat.A8R8G8B8:
+                case Blam.Halo2.TextureFormat.X8R8G8B8:
+                    return 4;
+
+                case Blam.Halo2.TextureFormat.A8:
+                case Blam.Halo2.TextureFormat.Y8:
+                case Blam.Halo2.TextureFormat.AY8:
+                case Blam.Halo2.TextureFormat.P8_bump:
+                    return 1;
+
+                default: return 2;
+            }
+        }
+
         public static int Bpp(this Blam.Halo3.TextureFormat format)
         {
             switch (format)
@@ -84,6 +120,106 @@ namespace Adjutant.Utilities
 
         #endregion
 
+        #region Original Xbox
+
+        /* http://www.h2maps.net/Tools/Xbox/Mutation/Mutation/DDS/Swizzle.cs */
+
+        private class MaskSet
+        {
+            public readonly int x;
+            public readonly int y;
+            public readonly int z;
+
+            public MaskSet(int w, int h, int d)
+            {
+                int bit = 1;
+                int index = 1;
+
+                while (bit < w || bit < h || bit < d)
+                {
+                    if (bit < w)
+                    {
+                        x |= index;
+                        index <<= 1;
+                    }
+
+                    if (bit < h)
+                    {
+                        y |= index;
+                        index <<= 1;
+                    }
+
+                    if (bit < d)
+                    {
+                        z |= index;
+                        index <<= 1;
+                    }
+
+                    bit <<= 1;
+                }
+            }
+        }
+
+        public static byte[] Swizzle(byte[] data, int width, int height, int depth, int bpp, bool deswizzle = true)
+        {
+            int a = 0, b = 0;
+            var output = new byte[data.Length];
+
+            var masks = new MaskSet(width, height, depth);
+            for (int y = 0; y < height * depth; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    if (deswizzle)
+                    {
+                        a = ((y * width) + x) * bpp;
+                        b = (Swizzle(x, y, depth, masks)) * bpp;
+                    }
+                    else
+                    {
+                        b = ((y * width) + x) * bpp;
+                        a = (Swizzle(x, y, depth, masks)) * bpp;
+                    }
+
+                    if (a < output.Length && b < data.Length)
+                    {
+                        for (int i = 0; i < bpp; i++)
+                            output[a + i] = data[b + i];
+                    }
+                    else return null;
+                }
+            }
+
+            return output;
+        }
+
+        private static int Swizzle(int x, int y, int z, MaskSet masks)
+        {
+            return SwizzleAxis(x, masks.x) | SwizzleAxis(y, masks.y) | (z == -1 ? 0 : SwizzleAxis(z, masks.z));
+        }
+
+        private static int SwizzleAxis(int val, int mask)
+        {
+            int bit = 1;
+            int result = 0;
+
+            while (bit <= mask)
+            {
+                int tmp = mask & bit;
+
+                if (tmp != 0) result |= (val & bit);
+                else val <<= 1;
+
+                bit <<= 1;
+            }
+
+            return result;
+        } 
+
+        #endregion
+
+        #region Xbox 360
+
         /* https://github.com/gdkchan/MESTool/blob/master/MESTool/Program.cs */
 
         public static byte[] XTextureScramble(byte[] data, int width, int height, int blockSize, int texelPitch, bool toLinear = false)
@@ -150,5 +286,7 @@ namespace Adjutant.Utilities
 
             return macro + micro + ((offsetT & 16) >> 4);
         }
+
+        #endregion
     }
 }
