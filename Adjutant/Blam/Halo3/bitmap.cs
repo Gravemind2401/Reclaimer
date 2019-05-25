@@ -45,8 +45,8 @@ namespace Adjutant.Blam.Halo3
             var submap = Bitmaps[index];
 
             var resource = InterleavedResources.Any()
-                ? InterleavedResources[submap.InterleavedIndex].ResourceId
-                : Resources[index].ResourceId;
+                ? InterleavedResources[submap.InterleavedIndex].ResourcePointer
+                : Resources[index].ResourcePointer;
 
             var data = resource.ReadData();
 
@@ -212,7 +212,7 @@ namespace Adjutant.Blam.Halo3
     public class BitmapResourceBlock
     {
         [Offset(0)]
-        public ResourceIdentifier ResourceId { get; set; }
+        public ResourceIdentifier ResourcePointer { get; set; }
 
         [Offset(4)]
         public int Unknown { get; set; }

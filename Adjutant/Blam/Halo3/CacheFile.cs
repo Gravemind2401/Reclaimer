@@ -86,6 +86,24 @@ namespace Adjutant.Blam.Halo3
             reader.RegisterInstance<CacheFile>(this);
             reader.RegisterInstance<ICacheFile>(this);
             reader.RegisterInstance<IAddressTranslator>(translator);
+            reader.RegisterType<Matrix4x4>(() => new Matrix4x4
+            {
+                M11 = reader.ReadSingle(),
+                M12 = reader.ReadSingle(),
+                M13 = reader.ReadSingle(),
+
+                M21 = reader.ReadSingle(),
+                M22 = reader.ReadSingle(),
+                M23 = reader.ReadSingle(),
+
+                M31 = reader.ReadSingle(),
+                M32 = reader.ReadSingle(),
+                M33 = reader.ReadSingle(),
+
+                M41 = reader.ReadSingle(),
+                M42 = reader.ReadSingle(),
+                M43 = reader.ReadSingle(),
+            });
 
             return reader;
         }
@@ -290,7 +308,31 @@ namespace Adjutant.Blam.Halo3
 
         public int StringCount => items.Length;
 
-        public string this[int id] => items[id];
+        public string this[int id]
+        {
+            get
+            {
+                if (cache.CacheType == CacheType.Halo3Beta)
+                {
+                    if (id > 64307) return items[id - 64307];
+                    else if (id > 1229) return items[id + 1173];
+                }
+                else if (cache.CacheType == CacheType.Halo3Retail)
+                {
+                    if (id > 262143) return items[id - 259153];
+                    else if (id > 64329) return items[id - 64329];
+                    else if (id > 1208) return items[id + 1882];
+                }
+                else if (cache.CacheType == CacheType.Halo3ODST)
+                {
+                    if (id > 258846) return items[id - 258846];
+                    else if (id > 64231) return items[id - 64231];
+                    else if (id > 1304) return items[id + 2098];
+                }
+
+                return items[id];
+            }
+        }
 
         public IEnumerator<string> GetEnumerator() => items.AsEnumerable().GetEnumerator();
 

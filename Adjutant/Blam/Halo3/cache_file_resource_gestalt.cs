@@ -32,7 +32,7 @@ namespace Adjutant.Blam.Halo3
         public TagReference OwnerReference { get; set; }
 
         [Offset(16)]
-        public ResourceIdentifier DataPointer { get; set; }
+        public ResourceIdentifier ResourcePointer { get; set; }
 
         [Offset(24, MaxVersion = (int)CacheType.Halo3Retail)]
         [Offset(20, MinVersion = (int)CacheType.Halo3Retail)]
@@ -76,7 +76,7 @@ namespace Adjutant.Blam.Halo3
 
         [Offset(72, MaxVersion = (int)CacheType.Halo3Retail)]
         [Offset(40, MinVersion = (int)CacheType.Halo3Retail)]
-        public BlockCollection<ResourceDefinitionFixupBlock> ResourceFixups { get; set; }
+        public BlockCollection<ResourceFixupBlock> ResourceFixups { get; set; }
 
         [Offset(84, MaxVersion = (int)CacheType.Halo3Retail)]
         [Offset(52, MinVersion = (int)CacheType.Halo3Retail)]

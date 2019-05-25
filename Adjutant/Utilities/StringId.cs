@@ -30,7 +30,7 @@ namespace Adjutant.Utilities
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
 
-            this.id = reader.ReadInt16();
+            this.id = cache.CacheType < CacheType.Halo3Beta ? reader.ReadInt16() : reader.ReadInt32();
             this.cache = cache;
         }
 

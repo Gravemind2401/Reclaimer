@@ -132,14 +132,14 @@ namespace Adjutant.Tests.Blam.Halo3
                 return true;
             });
 
-            //var t2 = Task.Run(() =>
-            //{
-            //    var models = cache.TagIndex.Where(i => i.ClassCode == "mode")
-            //    .Select(i => i.ReadMetadata<render_model>())
-            //    .ToList();
+            var t2 = Task.Run(() =>
+            {
+                var models = cache.TagIndex.Where(i => i.ClassCode == "mode")
+                .Select(i => i.ReadMetadata<render_model>())
+                .ToList();
 
-            //    return true;
-            //});
+                return true;
+            });
 
             //var t3 = Task.Run(() =>
             //{
@@ -152,7 +152,7 @@ namespace Adjutant.Tests.Blam.Halo3
 
             Assert.IsTrue(t0.GetAwaiter().GetResult());
             Assert.IsTrue(t1.GetAwaiter().GetResult());
-            //Assert.IsTrue(t2.GetAwaiter().GetResult());
+            Assert.IsTrue(t2.GetAwaiter().GetResult());
             //Assert.IsTrue(t3.GetAwaiter().GetResult());
         }
     }

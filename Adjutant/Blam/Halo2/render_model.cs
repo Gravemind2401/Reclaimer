@@ -347,7 +347,7 @@ namespace Adjutant.Blam.Halo2
 
         public override string ToString() => Name;
 
-        #region INode
+        #region IGeometryNode
 
         string IGeometryNode.Name => Name;
 
