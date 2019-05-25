@@ -20,6 +20,8 @@ namespace System.Drawing.Dds
             { DxgiFormat.BC1_UNorm, DecompressBC1 },
             { DxgiFormat.BC2_UNorm, DecompressBC2 },
             { DxgiFormat.BC3_UNorm, DecompressBC3 },
+            { DxgiFormat.BC4_UNorm, DecompressBC4 },
+            { DxgiFormat.BC5_UNorm, DecompressBC5 },
             { DxgiFormat.B5G6R5_UNorm, DecompressB5G6R5 },
             { DxgiFormat.B5G5R5A1_UNorm, DecompressB5G5R5A1 },
             { DxgiFormat.P8, DecompressP8 },
@@ -303,6 +305,140 @@ namespace System.Drawing.Dds
                             var result = rgbPalette[pIndex];
                             result.a = alphaPalette[(alphaIndexBits >> (pixelIndex % 8) * 3) & 0x7];
                             output[destIndex] = result;
+                        }
+                    }
+                }
+            }
+
+            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
+        }
+
+        internal static byte[] DecompressBC4(byte[] data, int height, int width, bool alpha)
+        {
+            var output = new BgraColour[width * height];
+            var palette = new byte[8];
+
+            var bytesPerBlock = 8;
+            var xBlocks = width / 4;
+            var yBlocks = height / 4;
+
+            for (int yBlock = 0; yBlock < yBlocks; yBlock++)
+            {
+                for (int xBlock = 0; xBlock < xBlocks; xBlock++)
+                {
+                    var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
+                    palette[0] = data[srcIndex];
+                    palette[1] = data[srcIndex + 1];
+
+                    var gradients = palette[0] > palette[1] ? 7f : 5f;
+                    for (int i = 1; i < gradients; i++)
+                        palette[i + 1] = Lerp(palette[0], palette[1], i / gradients);
+
+                    if (palette[0] <= palette[1])
+                    {
+                        palette[6] = byte.MinValue;
+                        palette[7] = byte.MaxValue;
+                    }
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        for (int j = 0; j < 4; j++)
+                        {
+                            var pixelIndex = i * 4 + j;
+                            var pStart = srcIndex + (pixelIndex < 8 ? 2 : 5);
+                            var pIndexBits = (data[pStart + 2] << 16) | (data[pStart + 1] << 8) | data[pStart];
+
+                            var destX = xBlock * 4 + j;
+                            var destY = yBlock * 4 + i;
+
+                            var destIndex = destY * width + destX;
+                            var pIndex = (byte)((pIndexBits >> (pixelIndex % 8) * 3) & 0x7);
+
+                            output[destIndex] = new BgraColour
+                            {
+                                b = palette[pIndex],
+                                g = palette[pIndex],
+                                r = palette[pIndex],
+                                a = byte.MaxValue,
+                            };
+                        }
+                    }
+                }
+            }
+
+            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
+        }
+
+        internal static byte[] DecompressBC5(byte[] data, int height, int width, bool alpha)
+        {
+            var output = new BgraColour[width * height];
+            var rPalette = new byte[8];
+            var gPalette = new byte[8];
+
+            var bytesPerBlock = 16;
+            var xBlocks = width / 4;
+            var yBlocks = height / 4;
+
+            for (int yBlock = 0; yBlock < yBlocks; yBlock++)
+            {
+                for (int xBlock = 0; xBlock < xBlocks; xBlock++)
+                {
+                    var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
+
+                    rPalette[0] = data[srcIndex];
+                    rPalette[1] = data[srcIndex + 1];
+
+                    var gradients = rPalette[0] > rPalette[1] ? 7f : 5f;
+                    for (int i = 1; i < gradients; i++)
+                        rPalette[i + 1] = Lerp(rPalette[0], rPalette[1], i / gradients);
+
+                    if (rPalette[0] <= rPalette[1])
+                    {
+                        rPalette[6] = byte.MinValue;
+                        rPalette[7] = byte.MaxValue;
+                    }
+
+                    gPalette[0] = data[srcIndex + 8];
+                    gPalette[1] = data[srcIndex + 9];
+
+                    gradients = gPalette[0] > gPalette[1] ? 7f : 5f;
+                    for (int i = 1; i < gradients; i++)
+                        gPalette[i + 1] = Lerp(gPalette[0], gPalette[1], i / gradients);
+
+                    if (gPalette[0] <= gPalette[1])
+                    {
+                        gPalette[6] = byte.MinValue;
+                        gPalette[7] = byte.MaxValue;
+                    }
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        for (int j = 0; j < 4; j++)
+                        {
+                            var pixelIndex = i * 4 + j;
+
+                            var rStart = srcIndex + (pixelIndex < 8 ? 2 : 5);
+                            var rIndexBits = (data[rStart + 2] << 16) | (data[rStart + 1] << 8) | data[rStart];
+
+                            var gStart = srcIndex + (pixelIndex < 8 ? 10 : 13);
+                            var gIndexBits = (data[gStart + 2] << 16) | (data[gStart + 1] << 8) | data[gStart];
+
+                            var destX = xBlock * 4 + j;
+                            var destY = yBlock * 4 + i;
+
+                            var destIndex = destY * width + destX;
+                            var shift = (pixelIndex % 8) * 3;
+
+                            var rIndex = (byte)((rIndexBits >> shift) & 0x7);
+                            var gIndex = (byte)((gIndexBits >> shift) & 0x7);
+
+                            output[destIndex] = new BgraColour
+                            {
+                                //b = rPalette[rIndex],
+                                g = gPalette[gIndex],
+                                r = rPalette[rIndex],
+                                a = byte.MaxValue,
+                            };
                         }
                     }
                 }
