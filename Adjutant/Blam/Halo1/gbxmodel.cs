@@ -167,7 +167,7 @@ namespace Adjutant.Blam.Halo1
                     model.Meshes.Add(new GeometryMesh
                     {
                         IndexFormat = IndexFormat.Stripped,
-                        VertexWeights = VertexWeights.Multiple,
+                        VertexWeights = VertexWeights.Skinned,
                         Indicies = indices.ToArray(),
                         Vertices = vertices.ToArray()
                     });

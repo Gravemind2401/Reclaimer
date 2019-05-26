@@ -107,7 +107,7 @@ namespace Adjutant.Blam.Halo3
             foreach (var region in Regions)
             {
                 var gRegion = new GeometryRegion { Name = region.Name };
-                gRegion.Permutations.AddRange(region.Permutations.Select(p =>
+                gRegion.Permutations.AddRange(region.Permutations.Where(p => p.SectionIndex >= 0).Select(p =>
                     new GeometryPermutation
                     {
                         Name = p.Name,
@@ -118,7 +118,8 @@ namespace Adjutant.Blam.Halo3
                         MeshIndex = p.SectionIndex
                     }));
 
-                model.Regions.Add(gRegion);
+                if (gRegion.Permutations.Any())
+                    model.Regions.Add(gRegion);
             }
 
             VertexBufferInfo[] vertexBufferInfo;
@@ -201,7 +202,69 @@ namespace Adjutant.Blam.Halo3
 
             model.Meshes.AddRange(meshes);
 
+            CreateInstanceMeshes(model);
+
             return model;
+        }
+
+        private void CreateInstanceMeshes(GeometryModel model)
+        {
+            if (InstancedGeometrySectionIndex < 0)
+                return;
+
+            var gRegion = new GeometryRegion { Name = "Instances" };
+            gRegion.Permutations.AddRange(GeometryInstances.Select(i =>
+                new GeometryPermutation
+                {
+                    Name = i.Name,
+                    NodeIndex = (byte)i.NodeIndex,
+                    Transform = i.Transform,
+                    TransformScale = i.TransformScale,
+                    BoundsIndex = 0,
+                    MeshIndex = InstancedGeometrySectionIndex + GeometryInstances.IndexOf(i)
+                }));
+
+            model.Regions.Add(gRegion);
+
+            var sourceMesh = model.Meshes[InstancedGeometrySectionIndex];
+            model.Meshes.Remove(sourceMesh);
+
+            var section = Sections[InstancedGeometrySectionIndex];
+            foreach (var subset in section.Subsets)
+            {
+                var mesh = new GeometryMesh
+                {
+                     IndexFormat = sourceMesh.IndexFormat,
+                     VertexWeights = VertexWeights.Rigid
+                };
+
+                var strip = sourceMesh.Indicies.Skip(subset.IndexStart).Take(subset.IndexLength);
+
+                var min = strip.Min();
+                var max = strip.Max();
+                var len = max - min + 1;
+
+                mesh.Indicies = strip.Select(i => i - min).ToArray();
+                mesh.Vertices = sourceMesh.Vertices.Skip(min).Take(len).ToArray();
+
+                model.Meshes.Add(mesh);
+
+                var sectionIndex = InstancedGeometrySectionIndex + section.Subsets.IndexOf(subset);
+                var submesh = section.Submeshes[subset.SubmeshIndex];
+                var gSubmesh = new GeometrySubmesh
+                {
+                    MaterialIndex = submesh.ShaderIndex,
+                    IndexStart = 0,
+                    IndexLength = mesh.Indicies.Length
+                };
+
+                var permutations = model.Regions
+                    .SelectMany(r => r.Permutations)
+                    .Where(p => p.MeshIndex == sectionIndex);
+
+                foreach (var p in permutations)
+                    ((List<IGeometrySubmesh>)p.Submeshes).Add(gSubmesh);
+            }
         }
 
         #endregion
@@ -442,11 +505,11 @@ namespace Adjutant.Blam.Halo3
     {
         [Offset(0)]
         [StoreType(typeof(ushort))]
-        public int FaceIndex { get; set; }
+        public int IndexStart { get; set; }
 
         [Offset(2)]
         [StoreType(typeof(ushort))]
-        public int FaceCount { get; set; }
+        public int IndexLength { get; set; }
 
         [Offset(4)]
         [StoreType(typeof(ushort))]
