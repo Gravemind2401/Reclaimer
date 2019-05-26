@@ -10,10 +10,11 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Adjutant.Blam.Halo3
 {
-    public class render_model
+    public class render_model : IRenderGeometry
     {
         private readonly CacheFile cache;
 
@@ -59,6 +60,171 @@ namespace Adjutant.Blam.Halo3
         public ResourceIdentifier ResourcePointer { get; set; }
 
         public override string ToString() => Name;
+
+        #region IRenderGeometry
+
+        int IRenderGeometry.LodCount => 1;
+
+        public IGeometryModel ReadGeometry(int lod)
+        {
+            if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
+                throw new ArgumentOutOfRangeException(nameof(lod));
+
+            var model = new GeometryModel { CoordinateSystem = CoordinateSystem.Default };
+
+            model.Nodes.AddRange(Nodes);
+            model.MarkerGroups.AddRange(MarkerGroups);
+            model.Bounds.AddRange(BoundingBoxes);
+
+            #region Shaders
+            var shadersMeta = Shaders.Select(s => s.ShaderReference.Tag.ReadMetadata<shader>()).ToList();
+            foreach (var shader in shadersMeta)
+            {
+                var template = shader.ShaderProperties[0].TemplateReference.Tag.ReadMetadata<render_method_template>();
+                var stringId = template.Usages.FirstOrDefault(s => s.Value == "base_map");
+                var diffuseIndex = stringId.Value == null ? 0 : template.Usages.IndexOf(stringId);
+
+                var map = shader.ShaderProperties[0].ShaderMaps[diffuseIndex];
+                var bitmTag = map.BitmapReference.Tag;
+                if (bitmTag == null)
+                {
+                    model.Materials.Add(null);
+                    continue;
+                }
+
+                var tile = map.TilingIndex == byte.MaxValue ? (RealVector4D?)null : shader.ShaderProperties[0].TilingData[map.TilingIndex];
+                var mat = new GeometryMaterial
+                {
+                    Name = bitmTag.FileName,
+                    Diffuse = bitmTag.ReadMetadata<bitmap>(),
+                    Tiling = new RealVector2D(tile?.X ?? 1, tile?.Y ?? 1)
+                };
+
+                model.Materials.Add(mat);
+            }
+            #endregion
+
+            foreach (var region in Regions)
+            {
+                var gRegion = new GeometryRegion { Name = region.Name };
+                gRegion.Permutations.AddRange(region.Permutations.Select(p =>
+                    new GeometryPermutation
+                    {
+                        Name = p.Name,
+                        NodeIndex = byte.MaxValue,
+                        Transform = Matrix4x4.Identity,
+                        TransformScale = 1,
+                        BoundsIndex = 0,
+                        MeshIndex = p.SectionIndex
+                    }));
+
+                model.Regions.Add(gRegion);
+            }
+
+            VertexBufferInfo[] vertexBufferInfo;
+            IndexBufferInfo[] indexBufferInfo;
+
+            var entry = cache.ResourceGestalt.ResourceEntries[ResourcePointer.ResourceIndex];
+            using (var cacheReader = cache.CreateReader(cache.MetadataTranslator))
+            using (var reader = cacheReader.CreateVirtualReader(cache.ResourceGestalt.FixupDataPointer.Address))
+            {
+                reader.Seek(entry.FixupOffset + (entry.FixupSize - 24), SeekOrigin.Begin);
+                var vertexBufferCount = reader.ReadInt32();
+                reader.Seek(8, SeekOrigin.Current);
+                var indexBufferCount = reader.ReadInt32();
+
+                reader.Seek(entry.FixupOffset, SeekOrigin.Begin);
+                vertexBufferInfo = reader.ReadEnumerable<VertexBufferInfo>(vertexBufferCount).ToArray();
+                reader.Seek(12 * vertexBufferCount, SeekOrigin.Current); //12 byte struct here for each vertex buffer
+                indexBufferInfo = reader.ReadEnumerable<IndexBufferInfo>(indexBufferCount).ToArray();
+                //12 byte struct here for each index buffer
+                //4x 12 byte structs here
+            }
+
+            var meshes = new GeometryMesh[Sections.Count];
+
+            using (var ms = new MemoryStream(ResourcePointer.ReadData()))
+            using (var reader = new EndianReader(ms, ByteOrder.BigEndian))
+            {
+                var doc = new XmlDocument();
+                doc.LoadXml(Adjutant.Properties.Resources.Halo3VertexBuffer);
+
+                var lookup = doc.FirstChild.ChildNodes.Cast<XmlNode>()
+                    .ToDictionary(n => Convert.ToInt32(n.Attributes["type"].Value, 16));
+
+                foreach (var section in Sections)
+                {
+                    var sectionIndex = Sections.IndexOf(section);
+                    foreach (var submesh in section.Submeshes)
+                    {
+                        var gSubmesh = new GeometrySubmesh
+                        {
+                            MaterialIndex = submesh.ShaderIndex,
+                            IndexStart = submesh.IndexStart,
+                            IndexLength = submesh.IndexLength
+                        };
+
+                        var permutations = model.Regions
+                            .SelectMany(r => r.Permutations)
+                            .Where(p => p.MeshIndex == sectionIndex);
+
+                        foreach (var p in permutations)
+                            ((List<IGeometrySubmesh>)p.Submeshes).Add(gSubmesh);
+                    }
+
+                    var node = lookup[section.VertexFormat];
+                    var vInfo = vertexBufferInfo[section.VertexBufferIndex];
+                    var iInfo = indexBufferInfo[section.IndexBufferIndex];
+
+                    var mesh = meshes[sectionIndex] = new GeometryMesh
+                    {
+                        IndexFormat = iInfo.IndexFormat,
+                        Vertices = new IVertex[vInfo.VertexCount]
+                    };
+
+                    var address = entry.ResourceFixups[section.VertexBufferIndex].Offset & 0x0FFFFFFF;
+                    reader.Seek(address, SeekOrigin.Begin);
+                    for (int i = 0; i < vInfo.VertexCount; i++)
+                    {
+                        var vert = new XmlVertex(reader, node);
+                        mesh.Vertices[i] = vert;
+                    }
+
+                    var totalIndices = section.Submeshes.Sum(s => s.IndexLength);
+                    address = entry.ResourceFixups[vertexBufferInfo.Length * 2 + section.IndexBufferIndex].Offset & 0x0FFFFFFF;
+                    reader.Seek(address, SeekOrigin.Begin);
+                    if (totalIndices > ushort.MaxValue)
+                        mesh.Indicies = reader.ReadEnumerable<int>(totalIndices).ToArray();
+                    else mesh.Indicies = reader.ReadEnumerable<ushort>(totalIndices).Select(i => (int)i).ToArray();
+                }
+            }
+
+            model.Meshes.AddRange(meshes);
+
+            return model;
+        }
+
+        #endregion
+
+        [FixedSize(28)]
+        private struct VertexBufferInfo
+        {
+            [Offset(0)]
+            public int VertexCount { get; set; }
+
+            [Offset(8)]
+            public int DataLength { get; set; }
+        }
+
+        [FixedSize(24)]
+        private struct IndexBufferInfo
+        {
+            [Offset(0)]
+            public IndexFormat IndexFormat { get; set; }
+
+            [Offset(4)]
+            public int DataLength { get; set; }
+        }
     }
 
     [Flags]
@@ -74,7 +240,7 @@ namespace Adjutant.Blam.Halo3
         public StringId Name { get; set; }
 
         [Offset(4)]
-        public BlockCollection<PermutationBlock> Permuations { get; set; }
+        public BlockCollection<PermutationBlock> Permutations { get; set; }
 
         public override string ToString() => Name;
     }
@@ -252,11 +418,11 @@ namespace Adjutant.Blam.Halo3
 
         [Offset(4)]
         [StoreType(typeof(ushort))]
-        public int FaceIndex { get; set; }
+        public int IndexStart { get; set; }
 
         [Offset(6)]
         [StoreType(typeof(ushort))]
-        public int FaceCount { get; set; }
+        public int IndexLength { get; set; }
 
         [Offset(8)]
         [StoreType(typeof(ushort))]

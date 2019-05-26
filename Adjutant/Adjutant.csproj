@@ -72,11 +72,14 @@
     <Compile Include="Blam\Halo3\CacheFile.cs" />
     <Compile Include="Blam\Halo3\cache_file_resource_gestalt.cs" />
     <Compile Include="Blam\Halo3\cache_file_resource_layout_table.cs" />
+    <Compile Include="Blam\Halo3\render_method_template.cs" />
     <Compile Include="Blam\Halo3\render_model.cs" />
     <Compile Include="Blam\Halo3\ResourceIdentifier.cs" />
     <Compile Include="Blam\Halo3\HeaderAddressTranslator.cs" />
+    <Compile Include="Blam\Halo3\shader.cs" />
     <Compile Include="Blam\Halo3\TagAddressTranslator.cs" />
     <Compile Include="Blam\Halo3\TagReference.cs" />
+    <Compile Include="Blam\Definitions\XmlVertex.cs" />
     <Compile Include="Geometry\CoordinateSystem.cs" />
     <Compile Include="Geometry\IVertex.cs" />
     <Compile Include="Blam\Halo1\bitmap.cs" />
@@ -98,6 +101,11 @@
     <Compile Include="Geometry\VectorType.cs" />
     <Compile Include="IO\DependencyReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Spatial\DecN4.cs" />
     <Compile Include="Spatial\HenDN3.cs" />
     <Compile Include="Spatial\Int16N2.cs" />
@@ -147,7 +155,15 @@
     <None Include="Adjutant.snk" />
     <None Include="Adjutant.ruleset" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Resources\Halo3VertexBuffer.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
