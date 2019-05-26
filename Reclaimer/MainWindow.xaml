@@ -18,10 +18,11 @@
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" Grid.ColumnSpan="2">
             <MenuItem Header="File">
-                <MenuItem Header="Open" Click="MenuItem_Click" />
+                <MenuItem Header="Open" Click="menuOpen_Click" />
+                <MenuItem Header="Import" Click="menuImport_Click" />
             </MenuItem>
             <MenuItem Header="View">
-                <MenuItem Header="Tag Viewer" Click="MenuItem_Click_1" />
+                <MenuItem Header="Tag Viewer" Click="menuTagViewer_Click" />
             </MenuItem>
         </Menu>
         <studio:DockContainer Grid.Row="1" x:Name="Container">

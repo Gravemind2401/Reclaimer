@@ -70,6 +70,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\System.Windows.Interactivity.dll</HintPath>
@@ -102,6 +103,9 @@
     </Compile>
     <Compile Include="Controls\Renderer.xaml.cs">
       <DependentUpon>Renderer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MapViewer.xaml.cs">
+      <DependentUpon>MapViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TagViewer.xaml.cs">
       <DependentUpon>TagViewer.xaml</DependentUpon>
@@ -186,6 +190,10 @@
     <Page Include="Controls\Renderer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MapViewer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\TagViewer.xaml">
       <SubType>Designer</SubType>

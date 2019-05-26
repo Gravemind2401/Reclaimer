@@ -86,6 +86,7 @@ namespace Reclaimer.Controls
                     var mesh = model.Meshes[perm.MeshIndex];
 
                     var permGroup = new Model3DGroup();
+                    var tGroup = new Transform3DGroup();
 
                     var texMatrix = Matrix.Identity;
                     if (perm.BoundsIndex >= 0)
@@ -109,8 +110,45 @@ namespace Reclaimer.Controls
                             OffsetZ = bounds.ZBounds.Min
                         };
 
-                        (permGroup.Transform = new MatrixTransform3D(transform)).Freeze();
+                        var tform = new MatrixTransform3D(transform);
+                        tform.Freeze();
+                        tGroup.Children.Add(tform);
                     }
+
+                    if (perm.TransformScale != 1)
+                    {
+                        var tform = new ScaleTransform3D(perm.TransformScale, perm.TransformScale, perm.TransformScale);
+
+                        tform.Freeze();
+                        tGroup.Children.Add(tform);
+                    }
+
+                    if (!perm.Transform.IsIdentity)
+                    {
+                        var tform = new MatrixTransform3D(new Matrix3D
+                        {
+                            M11 = perm.Transform.M11,
+                            M12 = perm.Transform.M12,
+                            M13 = perm.Transform.M13,
+
+                            M21 = perm.Transform.M21,
+                            M22 = perm.Transform.M22,
+                            M23 = perm.Transform.M23,
+
+                            M31 = perm.Transform.M31,
+                            M32 = perm.Transform.M32,
+                            M33 = perm.Transform.M33,
+
+                            OffsetX = perm.Transform.M41,
+                            OffsetY = perm.Transform.M42,
+                            OffsetZ = perm.Transform.M43
+                        });
+
+                        tform.Freeze();
+                        tGroup.Children.Add(tform);
+                    }
+
+                    (permGroup.Transform = tGroup).Freeze();
 
                     foreach (var sub in perm.Submeshes)
                     {
@@ -134,7 +172,7 @@ namespace Reclaimer.Controls
                             (mg.TextureCoordinates = new PointCollection(texcoords)).Freeze();
                             (mg.TriangleIndices = new Int32Collection(indices.Select(i => i - vertStart))).Freeze();
 
-                            if (mesh.Vertices[0].Normal.Length > 0)
+                            if (mesh.Vertices[0].Normal.Count > 0)
                             {
                                 var normals = verts.Select(v => new Vector3D(v.Normal[0].X, v.Normal[0].Y, v.Normal[0].Z));
                                 (mg.Normals = new Vector3DCollection(normals)).Freeze();

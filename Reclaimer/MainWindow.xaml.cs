@@ -27,7 +27,31 @@ namespace Reclaimer
             InitializeComponent();
         }
 
-        private async void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void menuOpen_Click(object sender, RoutedEventArgs e)
+        {
+            var ofd = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Halo Map Files|*.map",
+                Multiselect = false,
+                CheckFileExists = true
+            };
+
+            if (ofd.ShowDialog() != true)
+                return;
+
+            var tc = MainPanel.GetElementAtPath(Dock.Left) as Studio.Controls.UtilityTabControl;
+            var mv = new Controls.MapViewer();
+
+            if (tc == null) tc = new Studio.Controls.UtilityTabControl();
+
+            if (!MainPanel.GetChildren().Contains(tc))
+                MainPanel.AddElement(tc, null, Dock.Left, new GridLength(400));
+
+            mv.LoadMap(ofd.FileName);
+            tc.Items.Add(mv);
+        }
+
+        private async void menuImport_Click(object sender, RoutedEventArgs e)
         {
             var ofd = new Microsoft.Win32.OpenFileDialog
             {
@@ -51,10 +75,9 @@ namespace Reclaimer
 
                 MessageBox.Show("all done");
             });
-
         }
 
-        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        private void menuTagViewer_Click(object sender, RoutedEventArgs e)
         {
             var tc = MainPanel.GetElementAtPath(Dock.Left) as Studio.Controls.UtilityTabControl;
 
