@@ -9,13 +9,13 @@ namespace Adjutant.Geometry
 {
     public interface IVertex
     {
-        IXMVector[] Position { get; }
-        IXMVector[] TexCoords { get; }
-        IXMVector[] Normal { get; }
-        IXMVector[] Binormal { get; }
-        IXMVector[] Tangent { get; }
-        IXMVector[] BlendIndices { get; }
-        IXMVector[] BlendWeight { get; }
-        IXMVector[] Color { get; }
+        IReadOnlyList<IXMVector> Position { get; }
+        IReadOnlyList<IXMVector> TexCoords { get; }
+        IReadOnlyList<IXMVector> Normal { get; }
+        IReadOnlyList<IXMVector> Binormal { get; }
+        IReadOnlyList<IXMVector> Tangent { get; }
+        IReadOnlyList<IXMVector> BlendIndices { get; }
+        IReadOnlyList<IXMVector> BlendWeight { get; }
+        IReadOnlyList<IXMVector> Color { get; }
     }
 }

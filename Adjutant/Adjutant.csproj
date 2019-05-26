@@ -101,6 +101,10 @@
     <Compile Include="Spatial\DecN4.cs" />
     <Compile Include="Spatial\HenDN3.cs" />
     <Compile Include="Spatial\Int16N2.cs" />
+    <Compile Include="Spatial\UByte4.cs" />
+    <Compile Include="Spatial\UInt16N2.cs" />
+    <Compile Include="Spatial\UInt16N4.cs" />
+    <Compile Include="Spatial\Int16N4.cs" />
     <Compile Include="Spatial\Int16N3.cs" />
     <Compile Include="Spatial\IRealBounds.cs" />
     <Compile Include="Geometry\IXMVector.cs" />

@@ -18,21 +18,21 @@ namespace Adjutant.Blam.Halo2
 
         #region IVertex
 
-        IXMVector[] IVertex.Position => new IXMVector[] { Position };
+        IReadOnlyList<IXMVector> IVertex.Position => new IXMVector[] { Position };
 
-        IXMVector[] IVertex.TexCoords => new IXMVector[] { TexCoords };
+        IReadOnlyList<IXMVector> IVertex.TexCoords => new IXMVector[] { TexCoords };
 
-        IXMVector[] IVertex.Normal => new IXMVector[] { Normal };
+        IReadOnlyList<IXMVector> IVertex.Normal => new IXMVector[] { Normal };
 
-        IXMVector[] IVertex.Binormal => new IXMVector[0];
+        IReadOnlyList<IXMVector> IVertex.Binormal => new IXMVector[0];
 
-        IXMVector[] IVertex.Tangent => new IXMVector[0];
+        IReadOnlyList<IXMVector> IVertex.Tangent => new IXMVector[0];
 
-        IXMVector[] IVertex.BlendIndices => new IXMVector[0];// { new RealVector2D(NodeIndex1, NodeIndex2) };
+        IReadOnlyList<IXMVector> IVertex.BlendIndices => new IXMVector[0];// { new RealVector2D(NodeIndex1, NodeIndex2) };
 
-        IXMVector[] IVertex.BlendWeight => new IXMVector[0];// { NodeWeights };
+        IReadOnlyList<IXMVector> IVertex.BlendWeight => new IXMVector[0];// { NodeWeights };
 
-        IXMVector[] IVertex.Color => new IXMVector[0];
+        IReadOnlyList<IXMVector> IVertex.Color => new IXMVector[0];
 
         #endregion
     }
