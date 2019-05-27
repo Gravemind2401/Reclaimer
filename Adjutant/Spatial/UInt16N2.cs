@@ -21,13 +21,13 @@ namespace Adjutant.Spatial
         public float X
         {
             get { return x / (float)ushort.MaxValue; }
-            set { x = (ushort)(value * ushort.MaxValue); }
+            set { x = (ushort)(Utils.Clamp(value, 0, 1) * ushort.MaxValue); }
         }
 
         public float Y
         {
             get { return y / (float)ushort.MaxValue; }
-            set { y = (ushort)(value * ushort.MaxValue); }
+            set { y = (ushort)(Utils.Clamp(value, 0, 1) * ushort.MaxValue); }
         }
 
         [CLSCompliant(false)]
@@ -39,8 +39,8 @@ namespace Adjutant.Spatial
 
         public UInt16N2(float x, float y)
         {
-            this.x = (ushort)(x * ushort.MaxValue);
-            this.y = (ushort)(y * ushort.MaxValue);
+            this.x = (ushort)(Utils.Clamp(x, 0, 1) * ushort.MaxValue);
+            this.y = (ushort)(Utils.Clamp(y, 0, 1) * ushort.MaxValue);
         }
 
         public float Length => (float)Math.Sqrt(X * X + Y * Y);

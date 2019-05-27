@@ -21,25 +21,25 @@ namespace Adjutant.Spatial
         public float X
         {
             get { return x / (float)ushort.MaxValue; }
-            set { x = (ushort)(value * ushort.MaxValue); }
+            set { x = (ushort)(Utils.Clamp(value, 0, 1) * ushort.MaxValue); }
         }
 
         public float Y
         {
             get { return y / (float)ushort.MaxValue; }
-            set { y = (ushort)(value * ushort.MaxValue); }
+            set { y = (ushort)(Utils.Clamp(value, 0, 1) * ushort.MaxValue); }
         }
 
         public float Z
         {
             get { return z / (float)ushort.MaxValue; }
-            set { z = (ushort)(value * ushort.MaxValue); }
+            set { z = (ushort)(Utils.Clamp(value, 0, 1) * ushort.MaxValue); }
         }
 
         public float W
         {
             get { return w / (float)ushort.MaxValue; }
-            set { w = (ushort)(value * ushort.MaxValue); }
+            set { w = (ushort)(Utils.Clamp(value, 0, 1) * ushort.MaxValue); }
         }
 
         [CLSCompliant(false)]
@@ -53,10 +53,10 @@ namespace Adjutant.Spatial
 
         public UInt16N4(float x, float y, float z, float w)
         {
-            this.x = (ushort)(x * ushort.MaxValue);
-            this.y = (ushort)(y * ushort.MaxValue);
-            this.z = (ushort)(z * ushort.MaxValue);
-            this.w = (ushort)(w * ushort.MaxValue);
+            this.x = (ushort)(Utils.Clamp(x, 0, 1) * ushort.MaxValue);
+            this.y = (ushort)(Utils.Clamp(y, 0, 1) * ushort.MaxValue);
+            this.z = (ushort)(Utils.Clamp(z, 0, 1) * ushort.MaxValue);
+            this.w = (ushort)(Utils.Clamp(w, 0, 1) * ushort.MaxValue);
         }
 
         public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z + W * W);
