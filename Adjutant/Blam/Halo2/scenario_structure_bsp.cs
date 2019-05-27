@@ -3,6 +3,7 @@ using Adjutant.Spatial;
 using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Endian;
 using System.Linq;
@@ -39,6 +40,27 @@ namespace Adjutant.Blam.Halo2
 
         int IRenderGeometry.LodCount => 1;
 
+        private IEnumerable<GeometryMaterial> GetMaterials()
+        {
+            var shadersMeta = Shaders.Select(s => s.ShaderReference.Tag.ReadMetadata<shader>()).ToList();
+            foreach (var shader in shadersMeta)
+            {
+                var bitmTag = shader.ShaderMaps[0].DiffuseBitmapReference.Tag;
+                if (bitmTag == null)
+                {
+                    yield return null;
+                    continue;
+                }
+
+                yield return new GeometryMaterial
+                {
+                    Name = bitmTag.FileName,
+                    Diffuse = bitmTag.ReadMetadata<bitmap>(),
+                    Tiling = new RealVector2D(1, 1)
+                };
+            }
+        }
+
         public IGeometryModel ReadGeometry(int lod)
         {
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
@@ -46,27 +68,7 @@ namespace Adjutant.Blam.Halo2
 
             var model = new GeometryModel { CoordinateSystem = CoordinateSystem.Default };
 
-            #region Shaders
-            var shadersMeta = Shaders.Select(s => s.ShaderReference.Tag.ReadMetadata<shader>()).ToList();
-            foreach (var shader in shadersMeta)
-            {
-                var bitmTag = shader.ShaderMaps[0].DiffuseBitmapReference.Tag;
-                if (bitmTag == null)
-                {
-                    model.Materials.Add(null);
-                    continue;
-                }
-
-                var mat = new GeometryMaterial
-                {
-                    Name = bitmTag.FileName,
-                    Diffuse = bitmTag.ReadMetadata<bitmap>(),
-                    Tiling = new RealVector2D(1, 1)
-                };
-
-                model.Materials.Add(mat);
-            }
-            #endregion
+            model.Materials.AddRange(GetMaterials());
 
             #region Clusters
             var clusterRegion = new GeometryRegion { Name = "Clusters" };
@@ -79,6 +81,7 @@ namespace Adjutant.Blam.Halo2
                 using (var ms = new MemoryStream(data))
                 using (var reader = new EndianReader(ms, ByteOrder.LittleEndian))
                 {
+                    var sectionIndex = Clusters.IndexOf(section);
                     var sectionInfo = reader.ReadObject<MeshResourceDetailsBlock>();
 
                     var submeshResource = section.Resources[0];
@@ -131,7 +134,7 @@ namespace Adjutant.Blam.Halo2
 
                     var perm = new GeometryPermutation
                     {
-                        Name = Clusters.IndexOf(section).ToString("D3"),
+                        Name = sectionIndex.ToString("D3", CultureInfo.CurrentCulture),
                         NodeIndex = byte.MaxValue,
                         Transform = Matrix4x4.Identity,
                         TransformScale = 1,

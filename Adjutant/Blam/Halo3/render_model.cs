@@ -65,18 +65,8 @@ namespace Adjutant.Blam.Halo3
 
         int IRenderGeometry.LodCount => 1;
 
-        public IGeometryModel ReadGeometry(int lod)
+        private IEnumerable<GeometryMaterial> GetMaterials()
         {
-            if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
-                throw new ArgumentOutOfRangeException(nameof(lod));
-
-            var model = new GeometryModel { CoordinateSystem = CoordinateSystem.Default };
-
-            model.Nodes.AddRange(Nodes);
-            model.MarkerGroups.AddRange(MarkerGroups);
-            model.Bounds.AddRange(BoundingBoxes);
-
-            #region Shaders
             var shadersMeta = Shaders.Select(s => s.ShaderReference.Tag.ReadMetadata<shader>()).ToList();
             foreach (var shader in shadersMeta)
             {
@@ -88,21 +78,31 @@ namespace Adjutant.Blam.Halo3
                 var bitmTag = map.BitmapReference.Tag;
                 if (bitmTag == null)
                 {
-                    model.Materials.Add(null);
+                    yield return null;
                     continue;
                 }
 
                 var tile = map.TilingIndex == byte.MaxValue ? (RealVector4D?)null : shader.ShaderProperties[0].TilingData[map.TilingIndex];
-                var mat = new GeometryMaterial
+                yield return new GeometryMaterial
                 {
                     Name = bitmTag.FileName,
                     Diffuse = bitmTag.ReadMetadata<bitmap>(),
                     Tiling = new RealVector2D(tile?.X ?? 1, tile?.Y ?? 1)
                 };
-
-                model.Materials.Add(mat);
             }
-            #endregion
+        }
+
+        public IGeometryModel ReadGeometry(int lod)
+        {
+            if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
+                throw new ArgumentOutOfRangeException(nameof(lod));
+
+            var model = new GeometryModel { CoordinateSystem = CoordinateSystem.Default };
+
+            model.Nodes.AddRange(Nodes);
+            model.MarkerGroups.AddRange(MarkerGroups);
+            model.Bounds.AddRange(BoundingBoxes);
+            model.Materials.AddRange(GetMaterials());
 
             foreach (var region in Regions)
             {

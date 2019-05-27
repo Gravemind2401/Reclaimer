@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Adjutant.Geometry;
 using System.IO;
 using System.Numerics;
+using Adjutant.IO;
 
 namespace Adjutant.Blam.Halo1
 {
@@ -49,6 +50,27 @@ namespace Adjutant.Blam.Halo1
 
         int IRenderGeometry.LodCount => Regions.SelectMany(r => r.Permutations).Max(p => p.LodCount);
 
+        private IEnumerable<GeometryMaterial> GetMaterials(DependencyReader reader)
+        {
+            foreach (var shader in Shaders)
+            {
+                var bitmTag = shader.ShaderReference.Tag?.GetShaderDiffuse(reader);
+
+                if (bitmTag == null)
+                {
+                    yield return null;
+                    continue;
+                }
+
+                yield return new GeometryMaterial
+                {
+                    Name = bitmTag.FileName,
+                    Diffuse = bitmTag.ReadMetadata<bitmap>(),
+                    Tiling = new RealVector2D(1, 1)
+                };
+            }
+        }
+
         public IGeometryModel ReadGeometry(int lod)
         {
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
@@ -60,28 +82,7 @@ namespace Adjutant.Blam.Halo1
 
                 model.Nodes.AddRange(Nodes);
                 model.MarkerGroups.AddRange(MarkerGroups);
-
-                #region Add Shaders
-                foreach (var shader in Shaders)
-                {
-                    var bitmTag = shader.ShaderReference.Tag?.GetShaderDiffuse(reader);
-
-                    if (bitmTag == null)
-                    {
-                        model.Materials.Add(null);
-                        continue;
-                    }
-
-                    var mat = new GeometryMaterial
-                    {
-                        Name = bitmTag.FileName,
-                        Diffuse = bitmTag.ReadMetadata<bitmap>(),
-                        Tiling = new RealVector2D(1, 1)
-                    };
-
-                    model.Materials.Add(mat);
-                } 
-                #endregion
+                model.Materials.AddRange(GetMaterials(reader));
 
                 foreach (var region in Regions)
                 {
@@ -160,6 +161,21 @@ namespace Adjutant.Blam.Halo1
                                 v.TexCoords = vec;
                             });
                         }
+
+                        //if (Flags.HasFlag(ModelFlags.UseLocalNodes))
+                        //{
+                        //    var address = section.Submeshes.Pointer.Address;
+                        //    address += section.Submeshes.IndexOf(submesh) * 132;
+                        //    reader.Seek(address + 107, SeekOrigin.Begin);
+                        //    var nodeCount = reader.ReadByte();
+                        //    var nodes = reader.ReadEnumerable<byte>(nodeCount).ToArray();
+
+                        //    vertsTemp.ForEach((v) =>
+                        //    {
+                        //        v.NodeIndex1 = nodes[v.NodeIndex1];
+                        //        v.NodeIndex2 = nodes[v.NodeIndex2];
+                        //    });
+                        //}
 
                         vertices.AddRange(vertsTemp);
                     }
@@ -315,7 +331,7 @@ namespace Adjutant.Blam.Halo1
         internal short LodIndex(int lod)
         {
             if (lod < 0 || lod > 4)
-                throw new IndexOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(lod));
 
             return LodArray.Take(lod + 1)
                 .Reverse()

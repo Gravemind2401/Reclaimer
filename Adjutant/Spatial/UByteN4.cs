@@ -67,7 +67,7 @@ namespace Adjutant.Spatial
 
         public UByteN4(byte x, byte y, byte z, byte w)
         {
-            var temp = (z << 24) | (y << 16) | (y << 8) | x;
+            var temp = (w << 24) | (z << 16) | (y << 8) | x;
             bits = unchecked((uint)temp);
         }
 

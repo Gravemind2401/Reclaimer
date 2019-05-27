@@ -61,5 +61,42 @@ namespace Adjutant.Spatial
         VectorType IXMVector.VectorType => VectorType.Float32_2;
 
         #endregion
+
+        #region Equality Operators
+
+        public static bool operator ==(RealVector2D value1, RealVector2D value2)
+        {
+            return value1.x == value2.x && value1.y == value2.y;
+        }
+
+        public static bool operator !=(RealVector2D value1, RealVector2D value2)
+        {
+            return !(value1 == value2);
+        }
+
+        public static bool Equals(RealVector2D value1, RealVector2D value2)
+        {
+            return value1.x.Equals(value2.x) && value1.y.Equals(value2.y);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if ((obj == null) || !(obj is RealVector2D))
+                return false;
+
+            return RealVector2D.Equals(this, (RealVector2D)obj);
+        }
+
+        public bool Equals(RealVector2D value)
+        {
+            return RealVector2D.Equals(this, value);
+        }
+
+        public override int GetHashCode()
+        {
+            return x.GetHashCode() ^ y.GetHashCode();
+        }
+
+        #endregion
     }
 }

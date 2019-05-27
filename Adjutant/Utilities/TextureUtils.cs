@@ -160,8 +160,16 @@ namespace Adjutant.Utilities
             }
         }
 
-        public static byte[] Swizzle(byte[] data, int width, int height, int depth, int bpp, bool deswizzle = true)
+        public static byte[] Swizzle(byte[] data, int width, int height, int depth, int bpp)
         {
+            return Swizzle(data, width, height, depth, bpp, true);
+        }
+
+        public static byte[] Swizzle(byte[] data, int width, int height, int depth, int bpp, bool deswizzle)
+        {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
             int a = 0, b = 0;
             var output = new byte[data.Length];
 
@@ -214,16 +222,23 @@ namespace Adjutant.Utilities
             }
 
             return result;
-        } 
+        }
 
         #endregion
 
         #region Xbox 360
 
         /* https://github.com/gdkchan/MESTool/blob/master/MESTool/Program.cs */
-
-        public static byte[] XTextureScramble(byte[] data, int width, int height, int blockSize, int texelPitch, bool toLinear = false)
+        public static byte[] XTextureScramble(byte[] data, int width, int height, int blockSize, int texelPitch)
         {
+            return XTextureScramble(data, width, height, blockSize, texelPitch, false);
+        }
+
+        public static byte[] XTextureScramble(byte[] data, int width, int height, int blockSize, int texelPitch, bool toLinear)
+        {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
             var output = new byte[data.Length];
 
             int xBlocks = width / blockSize;
@@ -247,8 +262,6 @@ namespace Adjutant.Utilities
                         Array.Copy(data, sourceIndex, output, destIndex, texelPitch);
                 }
             }
-
-            var identical = Enumerable.Range(0, data.Length).All(i => data[i] == output[i]);
 
             return output;
         }

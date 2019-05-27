@@ -197,6 +197,8 @@ namespace Adjutant.Blam.Halo3
         internal Dictionary<int, string> Filenames { get; }
         internal List<TagClass> Classes { get; }
 
+        public int Magic => 0;
+
         [Offset(0)]
         public int TagClassCount { get; set; }
 

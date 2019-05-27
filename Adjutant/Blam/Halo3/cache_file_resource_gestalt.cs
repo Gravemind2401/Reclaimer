@@ -100,6 +100,6 @@ namespace Adjutant.Blam.Halo3
         public int Offset { get; set; }
 
         [Offset(4)]
-        public int Type { get; set; }
+        public int Unknown { get; set; }
     }
 }

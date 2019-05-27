@@ -65,5 +65,42 @@ namespace Adjutant.Spatial
         VectorType IXMVector.VectorType => VectorType.Float32_4;
 
         #endregion
+
+        #region Equality Operators
+
+        public static bool operator ==(RealVector4D value1, RealVector4D value2)
+        {
+            return value1.x == value2.x && value1.y == value2.y && value1.z == value2.z && value1.w == value2.w;
+        }
+
+        public static bool operator !=(RealVector4D value1, RealVector4D value2)
+        {
+            return !(value1 == value2);
+        }
+
+        public static bool Equals(RealVector4D value1, RealVector4D value2)
+        {
+            return value1.x.Equals(value2.x) && value1.y.Equals(value2.y) && value1.z.Equals(value2.z) && value1.w.Equals(value2.w);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if ((obj == null) || !(obj is RealVector4D))
+                return false;
+
+            return RealVector4D.Equals(this, (RealVector4D)obj);
+        }
+
+        public bool Equals(RealVector4D value)
+        {
+            return RealVector4D.Equals(this, value);
+        }
+
+        public override int GetHashCode()
+        {
+            return x.GetHashCode() ^ y.GetHashCode() ^ z.GetHashCode() ^ w.GetHashCode();
+        }
+
+        #endregion
     }
 }

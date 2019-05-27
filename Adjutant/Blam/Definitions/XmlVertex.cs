@@ -2,6 +2,7 @@
 using Adjutant.Spatial;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO.Endian;
 using System.Linq;
 using System.Text;
@@ -40,7 +41,7 @@ namespace Adjutant.Blam.Definitions
 
             foreach (XmlNode child in node.ChildNodes)
             {
-                var stream = int.Parse(child.Attributes["stream"].Value);
+                var stream = int.Parse(child.Attributes["stream"].Value, CultureInfo.InvariantCulture);
                 if (stream > 0) throw new NotSupportedException();
 
                 var offset = Convert.ToInt32(child.Attributes["offset"].Value, 16);
@@ -80,7 +81,7 @@ namespace Adjutant.Blam.Definitions
             }
         }
 
-        private IXMVector ReadValue(VectorType type, EndianReader reader)
+        private static IXMVector ReadValue(VectorType type, EndianReader reader)
         {
             switch (type)
             {

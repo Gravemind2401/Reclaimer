@@ -28,7 +28,8 @@ namespace Adjutant.Utilities
             uint k1 = 0;
             uint streamLength = 0;
 
-            using (var reader = new BinaryReader(new MemoryStream(data)))
+            using (var ms = new MemoryStream(data))
+            using (var reader = new BinaryReader(ms))
             {
                 byte[] chunk = reader.ReadBytes(4);
                 while (chunk.Length > 0)
