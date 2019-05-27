@@ -36,4 +36,33 @@ namespace Adjutant.Blam.Halo2
 
         #endregion
     }
+
+    public class WorldVertex : IVertex
+    {
+        public RealVector3D Position { get; set; }
+
+        public RealVector2D TexCoords { get; set; }
+
+        public HenDN3 Normal { get; set; }
+
+        #region IVertex
+
+        IReadOnlyList<IXMVector> IVertex.Position => new IXMVector[] { Position };
+
+        IReadOnlyList<IXMVector> IVertex.TexCoords => new IXMVector[] { TexCoords };
+
+        IReadOnlyList<IXMVector> IVertex.Normal => new IXMVector[] { Normal };
+
+        IReadOnlyList<IXMVector> IVertex.Binormal => new IXMVector[0];
+
+        IReadOnlyList<IXMVector> IVertex.Tangent => new IXMVector[0];
+
+        IReadOnlyList<IXMVector> IVertex.BlendIndices => new IXMVector[0];// { new RealVector2D(NodeIndex1, NodeIndex2) };
+
+        IReadOnlyList<IXMVector> IVertex.BlendWeight => new IXMVector[0];// { NodeWeights };
+
+        IReadOnlyList<IXMVector> IVertex.Color => new IXMVector[0];
+
+        #endregion
+    }
 }

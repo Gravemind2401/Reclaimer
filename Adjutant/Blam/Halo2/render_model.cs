@@ -14,13 +14,6 @@ namespace Adjutant.Blam.Halo2
 {
     public class render_model : IRenderGeometry
     {
-        private readonly CacheFile cache;
-
-        public render_model(CacheFile cache)
-        {
-            this.cache = cache;
-        }
-
         [Offset(20)]
         public BlockCollection<BoundingBoxBlock> BoundingBoxes { get; set; }
 
@@ -95,13 +88,13 @@ namespace Adjutant.Blam.Halo2
 
             foreach (var section in Sections)
             {
-                var data = section.RawPointer.ReadData(section.RawSize);
-                var headerSize = section.RawSize - section.DataSize - 4;
+                var data = section.DataPointer.ReadData(section.DataSize);
+                var baseAddress = section.DataSize - section.HeaderSize - 4;
 
                 using (var ms = new MemoryStream(data))
-                using (var reader = new EndianReader(ms))
+                using (var reader = new EndianReader(ms, ByteOrder.LittleEndian))
                 {
-                    var sectionInfo = reader.ReadObject<ResourceDetails>();
+                    var sectionInfo = reader.ReadObject<MeshResourceDetailsBlock>();
 
                     var submeshResource = section.Resources[0];
                     var indexResource = section.Resources.FirstOrDefault(r => r.Type0 == 32);
@@ -110,8 +103,8 @@ namespace Adjutant.Blam.Halo2
                     var normalsResource = section.Resources.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 2);
                     var nodeMapResource = section.Resources.FirstOrDefault(r => r.Type0 == 100);
 
-                    reader.Seek(headerSize + submeshResource.Offset, SeekOrigin.Begin);
-                    var submeshes = reader.ReadEnumerable<Submesh>(submeshResource.Size / 72).ToList();
+                    reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
+                    var submeshes = reader.ReadEnumerable<SubmeshDataBlock>(submeshResource.Size / 72).ToList();
 
                     foreach (var submesh in submeshes)
                     {
@@ -136,13 +129,13 @@ namespace Adjutant.Blam.Halo2
                         mesh.IndexFormat = IndexFormat.Triangles;
                     else mesh.IndexFormat = IndexFormat.Stripped;
 
-                    reader.Seek(headerSize + indexResource.Offset, SeekOrigin.Begin);
+                    reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
                     mesh.Indicies = reader.ReadEnumerable<ushort>(sectionInfo.IndexCount).Select(i => (int)i).ToArray();
 
                     var nodeMap = new byte[0];
                     if (nodeMapResource != null)
                     {
-                        reader.Seek(headerSize + nodeMapResource.Offset, SeekOrigin.Begin);
+                        reader.Seek(baseAddress + nodeMapResource.Offset, SeekOrigin.Begin);
                         nodeMap = reader.ReadBytes(sectionInfo.NodeMapCount);
                     }
 
@@ -153,7 +146,7 @@ namespace Adjutant.Blam.Halo2
                     {
                         var vert = new Vertex();
 
-                        reader.Seek(headerSize + vertexResource.Offset + i * vertexSize, SeekOrigin.Begin);
+                        reader.Seek(baseAddress + vertexResource.Offset + i * vertexSize, SeekOrigin.Begin);
                         vert.Position = new Int16N3(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16());
 
                         mesh.Vertices[i] = vert;
@@ -163,7 +156,7 @@ namespace Adjutant.Blam.Halo2
                     {
                         var vert = (Vertex)mesh.Vertices[i];
 
-                        reader.Seek(headerSize + uvResource.Offset + i * 4, SeekOrigin.Begin);
+                        reader.Seek(baseAddress + uvResource.Offset + i * 4, SeekOrigin.Begin);
                         vert.TexCoords = new Int16N2(reader.ReadInt16(), reader.ReadInt16());
                     }
 
@@ -171,7 +164,7 @@ namespace Adjutant.Blam.Halo2
                     {
                         var vert = (Vertex)mesh.Vertices[i];
 
-                        reader.Seek(headerSize + normalsResource.Offset + i * 12, SeekOrigin.Begin);
+                        reader.Seek(baseAddress + normalsResource.Offset + i * 12, SeekOrigin.Begin);
                         vert.Normal = new HenDN3(reader.ReadUInt32());
                     } 
                     #endregion
@@ -184,32 +177,32 @@ namespace Adjutant.Blam.Halo2
         }
 
         #endregion
+    }
 
-        private struct ResourceDetails
-        {
-            [Offset(40)]
-            [StoreType(typeof(ushort))]
-            public int IndexCount { get; set; }
+    public struct MeshResourceDetailsBlock
+    {
+        [Offset(40)]
+        [StoreType(typeof(ushort))]
+        public int IndexCount { get; set; }
 
-            [Offset(108)]
-            [StoreType(typeof(ushort))]
-            public int NodeMapCount { get; set; }
-        }
+        [Offset(108)]
+        [StoreType(typeof(ushort))]
+        public int NodeMapCount { get; set; }
+    }
 
-        [FixedSize(72)]
-        private struct Submesh
-        {
-            [Offset(4)]
-            public short ShaderIndex { get; set; }
+    [FixedSize(72)]
+    public struct SubmeshDataBlock
+    {
+        [Offset(4)]
+        public short ShaderIndex { get; set; }
 
-            [Offset(6)]
-            [StoreType(typeof(ushort))]
-            public int IndexStart { get; set; }
+        [Offset(6)]
+        [StoreType(typeof(ushort))]
+        public int IndexStart { get; set; }
 
-            [Offset(8)]
-            [StoreType(typeof(ushort))]
-            public int IndexLength { get; set; }
-        }
+        [Offset(8)]
+        [StoreType(typeof(ushort))]
+        public int IndexLength { get; set; }
     }
 
     [FixedSize(56)]
@@ -287,13 +280,13 @@ namespace Adjutant.Blam.Halo2
         public byte Bones { get; set; }
 
         [Offset(56)]
-        public DataPointer RawPointer { get; set; }
+        public DataPointer DataPointer { get; set; }
 
         [Offset(60)]
-        public int RawSize { get; set; }
+        public int DataSize { get; set; }
 
         [Offset(68)]
-        public int DataSize { get; set; }
+        public int HeaderSize { get; set; }
 
         [Offset(72)]
         public BlockCollection<SectionResourceBlock> Resources { get; set; }
