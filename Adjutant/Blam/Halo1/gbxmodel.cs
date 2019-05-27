@@ -105,6 +105,7 @@ namespace Adjutant.Blam.Halo1
                 {
                     var indices = new List<int>();
                     var vertices = new List<SkinnedVertex>();
+                    var submeshes = new List<IGeometrySubmesh>();
 
                     foreach (var submesh in section.Submeshes)
                     {
@@ -115,12 +116,7 @@ namespace Adjutant.Blam.Halo1
                             IndexLength = submesh.IndexCount + 2
                         };
 
-                        var permutations = model.Regions
-                            .SelectMany(r => r.Permutations)
-                            .Where(p => p.MeshIndex == Sections.IndexOf(section));
-
-                        foreach (var p in permutations)
-                            ((List<IGeometrySubmesh>)p.Submeshes).Add(gSubmesh);
+                        submeshes.Add(gSubmesh);
 
                         reader.Seek(cache.TagIndex.VertexDataOffset + cache.TagIndex.IndexDataOffset + submesh.IndexOffset, SeekOrigin.Begin);
                         indices.AddRange(reader.ReadEnumerable<ushort>(gSubmesh.IndexLength).Select(i => i + vertices.Count));
@@ -185,7 +181,8 @@ namespace Adjutant.Blam.Halo1
                         IndexFormat = IndexFormat.Stripped,
                         VertexWeights = VertexWeights.Skinned,
                         Indicies = indices.ToArray(),
-                        Vertices = vertices.ToArray()
+                        Vertices = vertices.ToArray(),
+                        Submeshes = submeshes
                     });
 
                 }

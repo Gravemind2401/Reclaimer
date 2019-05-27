@@ -156,23 +156,6 @@ namespace Adjutant.Blam.Halo3
                 foreach (var section in Sections)
                 {
                     var sectionIndex = Sections.IndexOf(section);
-                    foreach (var submesh in section.Submeshes)
-                    {
-                        var gSubmesh = new GeometrySubmesh
-                        {
-                            MaterialIndex = submesh.ShaderIndex,
-                            IndexStart = submesh.IndexStart,
-                            IndexLength = submesh.IndexLength
-                        };
-
-                        var permutations = model.Regions
-                            .SelectMany(r => r.Permutations)
-                            .Where(p => p.MeshIndex == sectionIndex);
-
-                        foreach (var p in permutations)
-                            ((List<IGeometrySubmesh>)p.Submeshes).Add(gSubmesh);
-                    }
-
                     var node = lookup[section.VertexFormat];
                     var vInfo = vertexBufferInfo[section.VertexBufferIndex];
                     var iInfo = indexBufferInfo[section.IndexBufferIndex];
@@ -182,6 +165,16 @@ namespace Adjutant.Blam.Halo3
                         IndexFormat = iInfo.IndexFormat,
                         Vertices = new IVertex[vInfo.VertexCount]
                     };
+
+                    foreach (var submesh in section.Submeshes)
+                    {
+                        mesh.Submeshes.Add(new GeometrySubmesh
+                        {
+                            MaterialIndex = submesh.ShaderIndex,
+                            IndexStart = submesh.IndexStart,
+                            IndexLength = submesh.IndexLength
+                        });
+                    }
 
                     var address = entry.ResourceFixups[section.VertexBufferIndex].Offset & 0x0FFFFFFF;
                     reader.Seek(address, SeekOrigin.Begin);
@@ -247,23 +240,16 @@ namespace Adjutant.Blam.Halo3
                 mesh.Indicies = strip.Select(i => i - min).ToArray();
                 mesh.Vertices = sourceMesh.Vertices.Skip(min).Take(len).ToArray();
 
-                model.Meshes.Add(mesh);
-
                 var sectionIndex = InstancedGeometrySectionIndex + section.Subsets.IndexOf(subset);
                 var submesh = section.Submeshes[subset.SubmeshIndex];
-                var gSubmesh = new GeometrySubmesh
+                mesh.Submeshes.Add(new GeometrySubmesh
                 {
                     MaterialIndex = submesh.ShaderIndex,
                     IndexStart = 0,
                     IndexLength = mesh.Indicies.Length
-                };
+                });
 
-                var permutations = model.Regions
-                    .SelectMany(r => r.Permutations)
-                    .Where(p => p.MeshIndex == sectionIndex);
-
-                foreach (var p in permutations)
-                    ((List<IGeometrySubmesh>)p.Submeshes).Add(gSubmesh);
+                model.Meshes.Add(mesh);
             }
         }
 

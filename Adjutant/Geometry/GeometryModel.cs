@@ -106,32 +106,12 @@ namespace Adjutant.Geometry
         public byte NodeIndex { get; set; }
         public short BoundsIndex { get; set; }
         public int MeshIndex { get; set; }
+        public int MeshCount { get; set; }
 
         public float TransformScale { get; set; }
         public Matrix4x4 Transform { get; set; }
-        public List<IGeometrySubmesh> Submeshes { get; set; }
-
-        public GeometryPermutation()
-        {
-            Submeshes = new List<IGeometrySubmesh>();
-        }
 
         public override string ToString() => Name;
-
-        #region IGeometryPermutation
-
-        int IGeometryPermutation.MeshCount => 1;
-
-        IReadOnlyList<IGeometrySubmesh> IGeometryPermutation.Submeshes => Submeshes; 
-
-        #endregion
-    }
-
-    public class GeometrySubmesh : IGeometrySubmesh
-    {
-        public short MaterialIndex { get; set; }
-        public int IndexStart { get; set; }
-        public int IndexLength { get; set; }
     }
 
     public class GeometryMarker : IGeometryMarker
@@ -151,13 +131,29 @@ namespace Adjutant.Geometry
         public IVertex[] Vertices { get; set; }
         public int[] Indicies { get; set; }
 
+        public List<IGeometrySubmesh> Submeshes { get; set; }
+
+        public GeometryMesh()
+        {
+            Submeshes = new List<IGeometrySubmesh>();
+        }
+
         #region IGeometryMesh
 
         IReadOnlyList<IVertex> IGeometryMesh.Vertices => Vertices;
 
         IReadOnlyList<int> IGeometryMesh.Indicies => Indicies; 
 
+        IReadOnlyList<IGeometrySubmesh> IGeometryMesh.Submeshes => Submeshes; 
+
         #endregion
+    }
+
+    public class GeometrySubmesh : IGeometrySubmesh
+    {
+        public short MaterialIndex { get; set; }
+        public int IndexStart { get; set; }
+        public int IndexLength { get; set; }
     }
 
     public class GeometryMaterial : IGeometryMaterial

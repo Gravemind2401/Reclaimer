@@ -75,13 +75,14 @@ namespace Adjutant.Blam.Halo2
 
             foreach (var section in Clusters.Where(s => s.VertexCount > 0))
             {
+                var sectionIndex = Clusters.IndexOf(section);
+
                 var data = section.DataPointer.ReadData(section.DataSize);
                 var baseAddress = section.HeaderSize + 8;
 
                 using (var ms = new MemoryStream(data))
                 using (var reader = new EndianReader(ms, ByteOrder.LittleEndian))
                 {
-                    var sectionIndex = Clusters.IndexOf(section);
                     var sectionInfo = reader.ReadObject<MeshResourceDetailsBlock>();
 
                     var submeshResource = section.Resources[0];
@@ -144,7 +145,7 @@ namespace Adjutant.Blam.Halo2
 
                     foreach (var submesh in submeshes)
                     {
-                        perm.Submeshes.Add(new GeometrySubmesh
+                        mesh.Submeshes.Add(new GeometrySubmesh
                         {
                             MaterialIndex = submesh.ShaderIndex,
                             IndexStart = submesh.IndexStart,
@@ -164,7 +165,7 @@ namespace Adjutant.Blam.Halo2
             foreach (var section in Sections.Where(s => s.VertexCount > 0))
             {
                 var sectionIndex = Sections.IndexOf(section);
-                var sectionRegion = new GeometryRegion { Name = $"Instances {sectionIndex:D3}" };
+                var sectionRegion = new GeometryRegion { Name = Utils.CurrentCulture($"Instances {sectionIndex:D3}") };
 
                 var data = section.DataPointer.ReadData(section.DataSize);
                 var baseAddress = section.HeaderSize + 8;
@@ -234,15 +235,14 @@ namespace Adjutant.Blam.Halo2
                             MeshIndex = model.Meshes.Count
                         }).ToList();
 
-                    var gSubmeshes = submeshes.Select(s => new GeometrySubmesh
-                    {
-                        MaterialIndex = s.ShaderIndex,
-                        IndexStart = s.IndexStart,
-                        IndexLength = s.IndexLength
-                    }).ToList();
-
-                    foreach (var p in perms)
-                        p.Submeshes.AddRange(gSubmeshes);
+                    mesh.Submeshes.AddRange(
+                        submeshes.Select(s => new GeometrySubmesh
+                        {
+                            MaterialIndex = s.ShaderIndex,
+                            IndexStart = s.IndexStart,
+                            IndexLength = s.IndexLength
+                        })
+                    );
 
                     sectionRegion.Permutations.AddRange(perms);
                     model.Meshes.Add(mesh);

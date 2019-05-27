@@ -106,24 +106,17 @@ namespace Adjutant.Blam.Halo2
                     reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
                     var submeshes = reader.ReadEnumerable<SubmeshDataBlock>(submeshResource.Size / 72).ToList();
 
+                    var mesh = new GeometryMesh();
+
                     foreach (var submesh in submeshes)
                     {
-                        var gSubmesh = new GeometrySubmesh
+                        mesh.Submeshes.Add(new GeometrySubmesh
                         {
                             MaterialIndex = submesh.ShaderIndex,
                             IndexStart = submesh.IndexStart,
                             IndexLength = submesh.IndexLength
-                        };
-
-                        var permutations = model.Regions
-                            .SelectMany(r => r.Permutations)
-                            .Where(p => p.MeshIndex == Sections.IndexOf(section));
-
-                        foreach (var p in permutations)
-                            ((List<IGeometrySubmesh>)p.Submeshes).Add(gSubmesh);
+                        });
                     }
-
-                    var mesh = new GeometryMesh();
 
                     if (section.FaceCount * 3 == sectionInfo.IndexCount)
                         mesh.IndexFormat = IndexFormat.Triangles;

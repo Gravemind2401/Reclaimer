@@ -54,7 +54,6 @@ namespace Adjutant.Geometry
 
         float TransformScale { get; }
         Matrix4x4 Transform { get; }
-        IReadOnlyList<IGeometrySubmesh> Submeshes { get; }
     }
 
     public interface IGeometrySubmesh
@@ -80,6 +79,8 @@ namespace Adjutant.Geometry
 
         IReadOnlyList<IVertex> Vertices { get; }
         IReadOnlyList<int> Indicies { get; }
+
+        IReadOnlyList<IGeometrySubmesh> Submeshes { get; }
     }
 
     public interface IGeometryMaterial

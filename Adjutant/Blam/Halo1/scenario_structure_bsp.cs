@@ -104,6 +104,7 @@ namespace Adjutant.Blam.Halo1
 
                     var localIndices = new List<int>();
                     var vertices = new List<WorldVertex>();
+                    var submeshes = new List<IGeometrySubmesh>();
 
                     var gPermutation = new GeometryPermutation
                     {
@@ -119,12 +120,12 @@ namespace Adjutant.Blam.Halo1
                     {
                         reader.Seek(submesh.VertexPointer.Address, SeekOrigin.Begin);
 
-                        var gSubmesh = new GeometrySubmesh
+                        submeshes.Add(new GeometrySubmesh
                         {
                             MaterialIndex = (short)shaderIds.IndexOf(submesh.ShaderReference.TagId),
                             IndexStart = localIndices.Count,
                             IndexLength = submesh.SurfaceCount * 3
-                        };
+                        });
 
                         localIndices.AddRange(
                             indices.Skip(submesh.SurfaceIndex * 3)
@@ -134,8 +135,6 @@ namespace Adjutant.Blam.Halo1
 
                         var vertsTemp = reader.ReadEnumerable<WorldVertex>(submesh.VertexCount).ToList();
                         vertices.AddRange(vertsTemp);
-
-                        gPermutation.Submeshes.Add(gSubmesh);
                     }
 
                     gRegion.Permutations.Add(gPermutation);
@@ -145,7 +144,8 @@ namespace Adjutant.Blam.Halo1
                         IndexFormat = IndexFormat.Triangles,
                         VertexWeights = VertexWeights.None,
                         Indicies = localIndices.ToArray(),
-                        Vertices = vertices.ToArray()
+                        Vertices = vertices.ToArray(),
+                        Submeshes = submeshes
                     });
 
                     sectionIndex++;
