@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -13,19 +14,41 @@ namespace System.Drawing.Dds
 {
     public partial class DdsImage
     {
-        private delegate byte[] Decompress(byte[] data, int height, int width, bool alpha);
+        private delegate IEnumerable<byte> Decompress(byte[] data, int height, int width);
 
-        private static readonly Dictionary<DxgiFormat, Decompress> decompressMethods = new Dictionary<DxgiFormat, Decompress>
+        private static readonly Dictionary<DxgiFormat, Decompress> decompressMethodsDxgi = new Dictionary<DxgiFormat, Decompress>
         {
+            { DxgiFormat.BC1_Typeless, DecompressBC1 },
             { DxgiFormat.BC1_UNorm, DecompressBC1 },
+            { DxgiFormat.BC2_Typeless, DecompressBC2 },
             { DxgiFormat.BC2_UNorm, DecompressBC2 },
+            { DxgiFormat.BC3_Typeless, DecompressBC3 },
             { DxgiFormat.BC3_UNorm, DecompressBC3 },
+            { DxgiFormat.BC4_Typeless, DecompressBC4 },
             { DxgiFormat.BC4_UNorm, DecompressBC4 },
+            { DxgiFormat.BC4_SNorm, DecompressBC4 },
+            { DxgiFormat.BC5_Typeless, DecompressBC5 },
             { DxgiFormat.BC5_UNorm, DecompressBC5 },
+            { DxgiFormat.BC5_SNorm, DecompressBC5 },
             { DxgiFormat.B5G6R5_UNorm, DecompressB5G6R5 },
             { DxgiFormat.B5G5R5A1_UNorm, DecompressB5G5R5A1 },
             { DxgiFormat.P8, DecompressP8 },
             { DxgiFormat.B4G4R4A4_UNorm, DecompressB4G4R4A4 },
+        };
+
+        private static readonly Dictionary<FourCC, Decompress> decompressMethodsFourCC = new Dictionary<FourCC, Decompress>
+        {
+            { FourCC.DXT1, DecompressBC1 },
+            { FourCC.DXT2, DecompressBC2 },
+            { FourCC.DXT3, DecompressBC2 },
+            { FourCC.DXT4, DecompressBC3 },
+            { FourCC.DXT5, DecompressBC3 },
+            { FourCC.BC4U, DecompressBC4 },
+            { FourCC.BC4S, DecompressBC4 },
+            { FourCC.ATI1, DecompressBC4 },
+            { FourCC.BC5U, DecompressBC5 },
+            { FourCC.BC5S, DecompressBC5 },
+            { FourCC.ATI2, DecompressBC5 },
         };
 
         /// <summary>
@@ -35,7 +58,18 @@ namespace System.Drawing.Dds
         /// <param name="format">The image format to write with.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="NotSupportedException" />
-        public void WriteToDisk(string fileName, ImageFormat format)
+        public void WriteToDisk(string fileName, ImageFormat format) => WriteToDisk(fileName, format, DecompressOptions.None);
+
+        /// <summary>
+        /// Decompresses any compressed pixel data and saves the image to a file on disk using a standard image format,
+        /// optionally unwrapping cubemap images.
+        /// </summary>
+        /// <param name="fileName">The full path of the file to write.</param>
+        /// <param name="format">The image format to write with.</param>
+        /// <param name="unwrapCubemap">True to unwrap a cubemap. False to output each tile horizontally.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="NotSupportedException" />
+        public void WriteToDisk(string fileName, ImageFormat format, DecompressOptions options)
         {
             if (fileName == null)
                 throw new ArgumentNullException(nameof(fileName));
@@ -49,7 +83,7 @@ namespace System.Drawing.Dds
                 Directory.CreateDirectory(dir);
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-                WriteToStream(fs, format);
+                WriteToStream(fs, format, options);
         }
 
         /// <summary>
@@ -59,7 +93,18 @@ namespace System.Drawing.Dds
         /// <param name="format">The image format to write with.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="NotSupportedException" />
-        public void WriteToStream(Stream stream, ImageFormat format)
+        public void WriteToStream(Stream stream, ImageFormat format) => WriteToStream(stream, format, DecompressOptions.None);
+
+        /// <summary>
+        /// Decompresses any compressed pixel data and writes the image to a stream using a standard image format.
+        /// optionally unwrapping cubemap images.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="format">The image format to write with.</param>
+        /// <param name="unwrapCubemap">True to unwrap a cubemap. False to output each tile horizontally.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="NotSupportedException" />
+        public void WriteToStream(Stream stream, ImageFormat format, DecompressOptions options)
         {
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream));
@@ -80,7 +125,7 @@ namespace System.Drawing.Dds
                 encoder = new TiffBitmapEncoder();
             else throw new NotSupportedException("The specified format is not supported.");
 
-            var source = ToBitmapSource();
+            var source = ToBitmapSource(options);
             encoder.Frames.Add(BitmapFrame.Create(source));
             encoder.Save(stream);
         }
@@ -89,78 +134,129 @@ namespace System.Drawing.Dds
         /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>
         /// </summary>
         /// <exception cref="NotSupportedException" />
-        public BitmapSource ToBitmapSource() => ToBitmapSource(true);
+        public BitmapSource ToBitmapSource() => ToBitmapSource(DecompressOptions.None);
 
         /// <summary>
         /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>
         /// </summary>
-        /// <param name="alpha">True to output as 32bpp with alpha. False to output as 24bpp without alpha.</param>
+        /// <param name="options">Options to use during decompression.</param>
         /// <exception cref="NotSupportedException" />
-        public BitmapSource ToBitmapSource(bool alpha)
+        public BitmapSource ToBitmapSource(DecompressOptions options)
         {
             const double dpi = 96;
+            var virtualHeight = Height;
 
-            byte[] bgra;
+            var isCubeMap = TextureFlags.HasFlag(TextureFlags.DdsSurfaceFlagsCubemap) && CubemapFlags.HasFlag(CubemapFlags.DdsCubemapAllFaces);
+            if (isCubeMap) virtualHeight *= 6;
 
-            if (decompressMethods.ContainsKey(dx10Header.DxgiFormat))
-                bgra = decompressMethods[dx10Header.DxgiFormat](data, Height, Width, alpha);
-            else
+            IEnumerable<byte> bgra;
+            if (header.PixelFormat.FourCC == (uint)FourCC.DX10)
             {
-                switch (dx10Header.DxgiFormat)
+                if (decompressMethodsDxgi.ContainsKey(dx10Header.DxgiFormat))
+                    bgra = decompressMethodsDxgi[dx10Header.DxgiFormat](data, virtualHeight, Width);
+                else
                 {
-                    case DxgiFormat.B8G8R8X8_UNorm:
-                    case DxgiFormat.B8G8R8A8_UNorm:
-                        bgra = data;
-                        break;
+                    switch (dx10Header.DxgiFormat)
+                    {
+                        case DxgiFormat.B8G8R8X8_UNorm:
+                        case DxgiFormat.B8G8R8A8_UNorm:
+                            bgra = data;
+                            break;
 
-                    default: throw new NotSupportedException("The DxgiFormat is not supported.");
+                        default: throw new NotSupportedException("The DxgiFormat is not supported.");
+                    }
                 }
             }
+            else
+            {
+                var fourcc = (FourCC)header.PixelFormat.FourCC;
+                if (decompressMethodsFourCC.ContainsKey(fourcc))
+                    bgra = decompressMethodsFourCC[fourcc](data, virtualHeight, Width);
+                else throw new NotSupportedException("The FourCC is not supported.");
+            }
 
-            return BitmapSource.Create(Width, Height, dpi, dpi, alpha ? PixelFormats.Bgra32 : PixelFormats.Bgr24, null, bgra, Width * (alpha ? 4 : 3));
+            var format = PixelFormats.Bgra32;
+            var bpp = 4;
+
+            if (options.HasFlag(DecompressOptions.Bgr24))
+            {
+                format = PixelFormats.Bgr24;
+                bpp = 3;
+                bgra = TakeSkipRepeat(bgra, 3, 1);
+            }
+
+            var source = BitmapSource.Create(Width, virtualHeight, dpi, dpi, format, null, bgra.ToArray(), Width * bpp);
+
+            if (isCubeMap && options.HasFlag(DecompressOptions.UnwrapCubemap))
+                source = UnwrapCubemapSource(source, dpi, format);
+
+            return source;
         }
 
-        internal static byte[] DecompressB5G6R5(byte[] data, int height, int width, bool alpha)
+        private BitmapSource UnwrapCubemapSource(BitmapSource source, double dpi, Windows.Media.PixelFormat format)
+        {
+            var bpp = format.BitsPerPixel / 8;
+            var stride = bpp * Width;
+            var dest = new WriteableBitmap(Width * 4, Height * 3, dpi, dpi, format, null);
+
+            var xTiles = new[] { 2, 1, 0, 1, 1, 3 };
+            var yTiles = new[] { 1, 0, 1, 2, 1, 1 };
+
+            for (int i = 0; i < 6; i++)
+            {
+                var sourceRect = new Int32Rect(0, Height * i, Width, Height);
+                var destRect = new Int32Rect(xTiles[i] * Width, yTiles[i] * Height, Width, Height);
+
+                var buffer = new byte[Width * Height * bpp];
+                source.CopyPixels(sourceRect, buffer, stride, 0);
+                dest.WritePixels(destRect, buffer, stride, 0);
+            }
+
+            return dest;
+        }
+
+        #region Decompression Methods
+        internal static IEnumerable<byte> DecompressB5G6R5(byte[] data, int height, int width)
         {
             var output = new BgraColour[width * height];
 
             for (int i = 0; i < output.Length; i++)
                 output[i] = BgraColour.From565(BitConverter.ToUInt16(data, i * 2));
 
-            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
+            return output.SelectMany(c => c.AsEnumerable());
         }
 
-        internal static byte[] DecompressB5G5R5A1(byte[] data, int height, int width, bool alpha)
+        internal static IEnumerable<byte> DecompressB5G5R5A1(byte[] data, int height, int width)
         {
             var output = new BgraColour[width * height];
 
             for (int i = 0; i < output.Length; i++)
                 output[i] = BgraColour.From5551(BitConverter.ToUInt16(data, i * 2));
 
-            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
+            return output.SelectMany(c => c.AsEnumerable());
         }
 
-        internal static byte[] DecompressP8(byte[] data, int height, int width, bool alpha)
+        internal static IEnumerable<byte> DecompressP8(byte[] data, int height, int width)
         {
             var output = new BgraColour[width * height];
 
             for (int i = 0; i < output.Length; i++)
                 output[i] = new BgraColour { b = data[i], g = data[i], r = data[i], a = byte.MaxValue };
 
-            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
+            return output.SelectMany(c => c.AsEnumerable());
         }
 
-        internal static byte[] DecompressB4G4R4A4(byte[] data, int height, int width, bool alpha)
+        internal static IEnumerable<byte> DecompressB4G4R4A4(byte[] data, int height, int width)
         {
             var output = new BgraColour[width * height];
 
             for (int i = 0; i < output.Length; i++)
                 output[i] = BgraColour.From4444(BitConverter.ToUInt16(data, i * 2));
 
-            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
+            return output.SelectMany(c => c.AsEnumerable());
         }
 
-        internal static byte[] DecompressBC1(byte[] data, int height, int width, bool alpha)
+        internal static IEnumerable<byte> DecompressBC1(byte[] data, int height, int width)
         {
             var output = new BgraColour[width * height];
             var palette = new BgraColour[4];
@@ -207,10 +303,10 @@ namespace System.Drawing.Dds
                 }
             }
 
-            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
+            return output.SelectMany(c => c.AsEnumerable());
         }
 
-        internal static byte[] DecompressBC2(byte[] data, int height, int width, bool alpha)
+        internal static IEnumerable<byte> DecompressBC2(byte[] data, int height, int width)
         {
             var output = new BgraColour[width * height];
             var palette = new BgraColour[4];
@@ -250,10 +346,10 @@ namespace System.Drawing.Dds
                 }
             }
 
-            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
+            return output.SelectMany(c => c.AsEnumerable());
         }
 
-        internal static byte[] DecompressBC3(byte[] data, int height, int width, bool alpha)
+        internal static IEnumerable<byte> DecompressBC3(byte[] data, int height, int width)
         {
             var output = new BgraColour[width * height];
             var rgbPalette = new BgraColour[4];
@@ -310,10 +406,10 @@ namespace System.Drawing.Dds
                 }
             }
 
-            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
+            return output.SelectMany(c => c.AsEnumerable());
         }
 
-        internal static byte[] DecompressBC4(byte[] data, int height, int width, bool alpha)
+        internal static IEnumerable<byte> DecompressBC4(byte[] data, int height, int width)
         {
             var output = new BgraColour[width * height];
             var palette = new byte[8];
@@ -366,10 +462,10 @@ namespace System.Drawing.Dds
                 }
             }
 
-            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
+            return output.SelectMany(c => c.AsEnumerable());
         }
 
-        internal static byte[] DecompressBC5(byte[] data, int height, int width, bool alpha)
+        internal static IEnumerable<byte> DecompressBC5(byte[] data, int height, int width)
         {
             var output = new BgraColour[width * height];
             var rPalette = new byte[8];
@@ -444,8 +540,10 @@ namespace System.Drawing.Dds
                 }
             }
 
-            return output.SelectMany(c => c.AsEnumerable(alpha)).ToArray();
+            return output.SelectMany(c => c.AsEnumerable());
         }
+
+        #endregion
 
         private static byte Lerp(byte p1, byte p2, float fraction)
         {
@@ -462,18 +560,39 @@ namespace System.Drawing.Dds
                 a = Lerp(c0.a, c1.a, fraction)
             };
         }
+
+        private static IEnumerable<T> TakeSkipRepeat<T>(IEnumerable<T> enumerable, int take, int skip)
+        {
+            int i = 0;
+            foreach (var item in enumerable)
+            {
+                if (i < take)
+                    yield return item;
+
+                if (++i >= take + skip)
+                    i = 0;
+            }
+        }
+    }
+
+    [Flags]
+    public enum DecompressOptions
+    {
+        None = 0,
+        Bgr24 = 1,
+        UnwrapCubemap = 2
     }
 
     internal struct BgraColour
     {
         public byte b, g, r, a;
 
-        public IEnumerable<byte> AsEnumerable(bool alpha)
+        public IEnumerable<byte> AsEnumerable()
         {
             yield return b;
             yield return g;
             yield return r;
-            if (alpha) yield return a;
+            yield return a;
         }
 
         public static BgraColour From565(ushort value)

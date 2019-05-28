@@ -263,7 +263,7 @@ namespace System.Drawing.Dds
 
                 var flag = HeaderFlags.MipmapCount;
                 header.Flags = value.HasValue ? header.Flags | flag : header.Flags & ~flag;
-                header.Depth = value ?? 0;
+                header.MipmapCount = value ?? 0;
             }
         }
 
