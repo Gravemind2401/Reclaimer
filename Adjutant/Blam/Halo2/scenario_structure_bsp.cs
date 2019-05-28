@@ -140,7 +140,8 @@ namespace Adjutant.Blam.Halo2
                         Transform = Matrix4x4.Identity,
                         TransformScale = 1,
                         BoundsIndex = -1,
-                        MeshIndex = model.Meshes.Count
+                        MeshIndex = model.Meshes.Count,
+                        MeshCount = 1
                     };
 
                     foreach (var submesh in submeshes)
@@ -232,7 +233,8 @@ namespace Adjutant.Blam.Halo2
                             Transform = i.Transform,
                             TransformScale = i.TransformScale,
                             BoundsIndex = -1,
-                            MeshIndex = model.Meshes.Count
+                            MeshIndex = model.Meshes.Count,
+                            MeshCount = 1
                         }).ToList();
 
                     mesh.Submeshes.AddRange(

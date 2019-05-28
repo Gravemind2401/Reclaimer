@@ -113,7 +113,8 @@ namespace Adjutant.Blam.Halo1
                         Transform = Matrix4x4.Identity,
                         TransformScale = 1,
                         BoundsIndex = -1,
-                        MeshIndex = sectionIndex
+                        MeshIndex = sectionIndex,
+                        MeshCount = 1
                     };
 
                     foreach (var submesh in section.Materials)

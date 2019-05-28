@@ -95,7 +95,8 @@ namespace Adjutant.Blam.Halo1
                             Transform = Matrix4x4.Identity,
                             TransformScale = 1,
                             BoundsIndex = -1,
-                            MeshIndex = p.LodIndex(lod)
+                            MeshIndex = p.LodIndex(lod),
+                            MeshCount = 1
                         }));
 
                     model.Regions.Add(gRegion);

@@ -88,7 +88,8 @@ namespace Adjutant.Blam.Halo3
                         Transform = Matrix4x4.Identity,
                         TransformScale = 1,
                         BoundsIndex = 0,
-                        MeshIndex = p.SectionIndex
+                        MeshIndex = p.SectionIndex,
+                        MeshCount = 1
                     }));
 
                 if (gRegion.Permutations.Any())
@@ -123,7 +124,8 @@ namespace Adjutant.Blam.Halo3
                     Transform = i.Transform,
                     TransformScale = i.TransformScale,
                     BoundsIndex = 0,
-                    MeshIndex = InstancedGeometrySectionIndex + GeometryInstances.IndexOf(i)
+                    MeshIndex = InstancedGeometrySectionIndex + GeometryInstances.IndexOf(i),
+                    MeshCount = 1
                 }));
 
             model.Regions.Add(gRegion);
