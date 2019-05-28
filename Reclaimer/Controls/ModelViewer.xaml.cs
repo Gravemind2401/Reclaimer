@@ -80,10 +80,12 @@ namespace Reclaimer.Controls
 
                 foreach (var perm in region.Permutations)
                 {
+                    var mesh = model.Meshes[perm.MeshIndex];
+                    if (mesh == null)
+                        continue;
+
                     var permNode = new ExtendedTreeViewItem { Header = perm.Name };
                     regNode.Items.Add(permNode);
-
-                    var mesh = model.Meshes[perm.MeshIndex];
 
                     var permGroup = new Model3DGroup();
                     var tGroup = new Transform3DGroup();
@@ -150,7 +152,7 @@ namespace Reclaimer.Controls
 
                     (permGroup.Transform = tGroup).Freeze();
 
-                    foreach (var sub in perm.Submeshes)
+                    foreach (var sub in mesh.Submeshes)
                     {
                         try
                         {

@@ -82,6 +82,14 @@ namespace Reclaimer.Controls
                     case CacheType.Halo1PC:
                         sbsp = item.ReadMetadata<Adjutant.Blam.Halo1.scenario_structure_bsp>();
                         break;
+                    case CacheType.Halo2Xbox:
+                        sbsp = item.ReadMetadata<Adjutant.Blam.Halo2.scenario_structure_bsp>();
+                        break;
+                    case CacheType.Halo3Beta:
+                    case CacheType.Halo3Retail:
+                    case CacheType.Halo3ODST:
+                        sbsp = item.ReadMetadata<Adjutant.Blam.Halo3.scenario_structure_bsp>();
+                        break;
                     default: throw new NotSupportedException();
                 }
 
