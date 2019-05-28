@@ -141,19 +141,19 @@ namespace Adjutant.Tests.Blam.Halo3
                 return true;
             });
 
-            //var t3 = Task.Run(() =>
-            //{
-            //    var bsps = cache.TagIndex.Where(i => i.ClassCode == "sbsp")
-            //    .Select(i => i.ReadMetadata<scenario_structure_bsp>())
-            //    .ToList();
+            var t3 = Task.Run(() =>
+            {
+                var bsps = cache.TagIndex.Where(i => i.ClassCode == "sbsp")
+                .Select(i => i.ReadMetadata<scenario_structure_bsp>())
+                .ToList();
 
-            //    return true;
-            //});
+                return true;
+            });
 
             Assert.IsTrue(t0.GetAwaiter().GetResult());
             Assert.IsTrue(t1.GetAwaiter().GetResult());
             Assert.IsTrue(t2.GetAwaiter().GetResult());
-            //Assert.IsTrue(t3.GetAwaiter().GetResult());
+            Assert.IsTrue(t3.GetAwaiter().GetResult());
         }
     }
 }

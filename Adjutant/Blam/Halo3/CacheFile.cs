@@ -23,6 +23,8 @@ namespace Adjutant.Blam.Halo3
         public TagIndex TagIndex { get; }
         public StringIndex StringIndex { get; }
 
+        public scenario Scenario { get; }
+
         private cache_file_resource_gestalt resourceGestalt;
         public cache_file_resource_gestalt ResourceGestalt
         {
@@ -70,6 +72,8 @@ namespace Adjutant.Blam.Halo3
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
             }
+
+            Scenario = TagIndex.FirstOrDefault(t => t.ClassCode == "scnr")?.ReadMetadata<scenario>();
         }
 
         public DependencyReader CreateReader(IAddressTranslator translator)
@@ -390,6 +394,8 @@ namespace Adjutant.Blam.Halo3
         {
             using (var reader = cache.CreateReader(cache.MetadataTranslator))
             {
+                reader.RegisterInstance<IndexItem>(this);
+
                 reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
                 return (T)reader.ReadObject(typeof(T), (int)cache.CacheType);
             }

@@ -1,0 +1,30 @@
+﻿using Adjutant.Blam.Definitions;
+using System;
+using System.Collections.Generic;
+using System.IO.Endian;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Adjutant.Blam.Halo3
+{
+    public class scenario
+    {
+        [Offset(12, MaxVersion = (int)CacheType.Halo3Retail)]
+        [Offset(20, MinVersion = (int)CacheType.Halo3Retail)]
+        public BlockCollection<StructureBspBlock> StructureBsps { get; set; }
+
+        [Offset(1720, MaxVersion = (int)CacheType.Halo3Retail)]
+        [Offset(1776, MinVersion = (int)CacheType.Halo3Retail, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(1852, MinVersion = (int)CacheType.Halo3ODST)]
+        public TagReference ScenarioLightmapReference { get; set; }
+    }
+
+    [FixedSize(104, MaxVersion = (int)CacheType.Halo3Retail)]
+    [FixedSize(108, MinVersion = (int)CacheType.Halo3Retail)]
+    public class StructureBspBlock
+    {
+        [Offset(0)]
+        public TagReference BspReference { get; set; }
+    }
+}

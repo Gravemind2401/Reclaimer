@@ -72,10 +72,15 @@
     <Compile Include="Blam\Halo3\CacheFile.cs" />
     <Compile Include="Blam\Halo3\cache_file_resource_gestalt.cs" />
     <Compile Include="Blam\Halo3\cache_file_resource_layout_table.cs" />
+    <Compile Include="Blam\Halo3\Halo3Common.cs" />
     <Compile Include="Blam\Halo3\render_method_template.cs" />
     <Compile Include="Blam\Halo3\render_model.cs" />
     <Compile Include="Blam\Halo3\ResourceIdentifier.cs" />
     <Compile Include="Blam\Halo3\HeaderAddressTranslator.cs" />
+    <Compile Include="Blam\Halo3\scenario.cs" />
+    <Compile Include="Blam\Halo3\scenario_lightmap.cs" />
+    <Compile Include="Blam\Halo3\scenario_lightmap_bsp_data.cs" />
+    <Compile Include="Blam\Halo3\scenario_structure_bsp.cs" />
     <Compile Include="Blam\Halo3\shader.cs" />
     <Compile Include="Blam\Halo3\TagAddressTranslator.cs" />
     <Compile Include="Blam\Halo3\TagReference.cs" />
