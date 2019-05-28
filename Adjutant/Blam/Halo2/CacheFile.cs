@@ -44,9 +44,9 @@ namespace Adjutant.Blam.Halo2
 
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
-
-                Scenario = TagIndex.FirstOrDefault(t => t.ClassCode == "scnr")?.ReadMetadata<scenario>();
             }
+
+            Scenario = TagIndex.FirstOrDefault(t => t.ClassCode == "scnr")?.ReadMetadata<scenario>();
         }
 
         public DependencyReader CreateReader(IAddressTranslator translator)

@@ -12,7 +12,7 @@ namespace Adjutant.Blam.Halo2
     public class scenario
     {
         [Offset(528)]
-        public BlockCollection<StructureBspBlock> StructureBSPs { get; set; }
+        public BlockCollection<StructureBspBlock> StructureBsps { get; set; }
     }
 
     [FixedSize(68)]
@@ -28,6 +28,6 @@ namespace Adjutant.Blam.Halo2
         public int Magic { get; set; }
 
         [Offset(20)]
-        public TagReference BSPReference { get; set; }
+        public TagReference BspReference { get; set; }
     }
 }
