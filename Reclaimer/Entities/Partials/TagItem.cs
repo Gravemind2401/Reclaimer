@@ -1,4 +1,4 @@
-﻿using Adjutant.Blam.Definitions;
+﻿using Adjutant.Blam.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;

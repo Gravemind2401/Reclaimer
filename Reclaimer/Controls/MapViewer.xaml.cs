@@ -1,4 +1,4 @@
-﻿using Adjutant.Blam.Definitions;
+﻿using Adjutant.Blam.Common;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -15,7 +15,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Studio.Controls;
-using Adjutant.Blam;
 
 namespace Reclaimer.Controls
 {

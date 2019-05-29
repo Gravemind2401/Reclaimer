@@ -1,4 +1,4 @@
-﻿using Adjutant.Blam.Definitions;
+﻿using Adjutant.Blam.Common;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -174,7 +174,7 @@ namespace Reclaimer.Controls
             {
                 var cache = Storage.CacheFiles.First(c => c.CacheId == item.CacheId);
 
-                var map = Adjutant.Blam.CacheFactory.ReadCacheFile(cache.FileName);
+                var map = CacheFactory.ReadCacheFile(cache.FileName);
                 var tag = map.TagIndex[(int)item.TagId];
 
                 Adjutant.Utilities.IRenderGeometry sbsp;
@@ -199,7 +199,7 @@ namespace Reclaimer.Controls
             {
                 var cache = Storage.CacheFiles.First(c => c.CacheId == item.CacheId);
 
-                var map = Adjutant.Blam.CacheFactory.ReadCacheFile(cache.FileName);
+                var map = CacheFactory.ReadCacheFile(cache.FileName);
                 var tag = map.TagIndex[(int)item.TagId];
 
                 Adjutant.Utilities.IRenderGeometry mode;
@@ -227,7 +227,7 @@ namespace Reclaimer.Controls
             {
                 var cache = Storage.CacheFiles.First(c => c.CacheId == item.CacheId);
 
-                var map = Adjutant.Blam.CacheFactory.ReadCacheFile(cache.FileName);
+                var map = CacheFactory.ReadCacheFile(cache.FileName);
                 var tag = map.TagIndex[(int)item.TagId];
 
                 Adjutant.Utilities.IBitmap bitm;

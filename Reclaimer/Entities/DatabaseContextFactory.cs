@@ -16,7 +16,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Reclaimer.Entities
 {
-    using Adjutant.Blam.Definitions;
+    using Adjutant.Blam.Common;
 
     public class DatabaseContextFactory : System.Data.Entity.Infrastructure.IDbContextFactory<DatabaseContext>
     {

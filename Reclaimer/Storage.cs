@@ -1,4 +1,4 @@
-﻿using Adjutant.Blam.Definitions;
+﻿using Adjutant.Blam.Common;
 using Adjutant.Utilities;
 using Reclaimer.Entities;
 using System;
@@ -82,7 +82,7 @@ namespace Reclaimer
             ICacheFile cache;
             try
             {
-                cache = Adjutant.Blam.CacheFactory.ReadCacheFile(fileName);
+                cache = CacheFactory.ReadCacheFile(fileName);
             }
             catch
             {
@@ -97,7 +97,7 @@ namespace Reclaimer
             entity.CacheType = cache.CacheType;
 
             var tagIndex = Context.TagIndexes.Create();
-            tagIndex.Magic = cache.TagIndex.Magic;
+            //tagIndex.Magic = cache.TagIndex.Magic;
             tagIndex.TagCount = cache.TagIndex.TagCount;
             tagIndex.CacheFile = entity;
 
