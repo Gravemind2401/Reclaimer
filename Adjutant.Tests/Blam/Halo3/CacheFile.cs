@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Adjutant.Blam.Halo3;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 using System.Linq;
-using Adjutant.IO;
-using Adjutant.Blam.Halo3;
 using System.Threading.Tasks;
 
 namespace Adjutant.Tests.Blam.Halo3

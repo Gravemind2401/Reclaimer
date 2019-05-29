@@ -1,4 +1,5 @@
-﻿using Adjutant.Spatial;
+﻿using Adjutant.Blam.Common;
+using Adjutant.Spatial;
 using System;
 using System.Collections.Generic;
 using System.IO.Endian;

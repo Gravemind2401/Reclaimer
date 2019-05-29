@@ -1,11 +1,9 @@
 ﻿using Adjutant.Geometry;
-using Adjutant.IO;
 using Adjutant.Spatial;
 using System;
 using System.Collections.Generic;
 using System.IO.Endian;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 

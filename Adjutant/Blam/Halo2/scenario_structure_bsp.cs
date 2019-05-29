@@ -1,4 +1,5 @@
-﻿using Adjutant.Geometry;
+﻿using Adjutant.Blam.Common;
+using Adjutant.Geometry;
 using Adjutant.Spatial;
 using Adjutant.Utilities;
 using System;

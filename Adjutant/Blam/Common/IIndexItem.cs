@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Definitions
+namespace Adjutant.Blam.Common
 {
     public interface IIndexItem
     {
@@ -13,5 +13,7 @@ namespace Adjutant.Blam.Definitions
         Pointer MetaPointer { get; }
         string FileName { get; }
         string ClassCode { get; }
+
+        T ReadMetadata<T>();
     }
 }

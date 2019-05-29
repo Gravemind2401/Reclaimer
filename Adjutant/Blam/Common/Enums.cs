@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Definitions
+namespace Adjutant.Blam.Common
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
     internal sealed class BuildStringAttribute : Attribute

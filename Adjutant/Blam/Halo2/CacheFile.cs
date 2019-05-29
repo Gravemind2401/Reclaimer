@@ -1,10 +1,8 @@
-﻿using Adjutant.Blam.Definitions;
-using Adjutant.IO;
+﻿using Adjutant.Blam.Common;
 using Adjutant.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Endian;
 using System.Linq;

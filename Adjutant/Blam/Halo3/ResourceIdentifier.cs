@@ -1,4 +1,5 @@
-﻿using Adjutant.IO;
+﻿using Adjutant.Blam.Common;
+using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -45,7 +46,7 @@ namespace Adjutant.Blam.Halo3
 
         public byte[] ReadData()
         {
-            if (cache.CacheType == Definitions.CacheType.Halo3Beta)
+            if (cache.CacheType == CacheType.Halo3Beta)
                 return ReadDataHalo3Beta();
 
             var directory = Directory.GetParent(cache.FileName).FullName;

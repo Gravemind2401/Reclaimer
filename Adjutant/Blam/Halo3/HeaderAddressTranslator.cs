@@ -1,4 +1,5 @@
-﻿using Adjutant.Utilities;
+﻿using Adjutant.Blam.Common;
+using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Adjutant.Blam.Halo3
         {
             get
             {
-                if (cache.CacheType == Definitions.CacheType.Halo3Beta)
+                if (cache.CacheType == CacheType.Halo3Beta)
                     return 0;
 
                 return cache.Header.StringTableIndexPointer.Value - 12288; //size of header

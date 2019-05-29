@@ -1,12 +1,11 @@
-﻿using Adjutant.IO;
-using Adjutant.Utilities;
+﻿using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Definitions
+namespace Adjutant.Blam.Common
 {
     public interface ICacheFile
     {
@@ -16,5 +15,7 @@ namespace Adjutant.Blam.Definitions
 
         ITagIndex<IIndexItem> TagIndex { get; }
         IStringIndex StringIndex { get; }
+
+        DependencyReader CreateReader(IAddressTranslator translator);
     }
 }

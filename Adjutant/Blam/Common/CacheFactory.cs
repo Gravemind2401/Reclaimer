@@ -1,5 +1,4 @@
-﻿using Adjutant.Blam.Definitions;
-using Adjutant.Utilities;
+﻿using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam
+namespace Adjutant.Blam.Common
 {
     public static class CacheFactory
     {

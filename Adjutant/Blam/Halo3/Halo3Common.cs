@@ -1,4 +1,4 @@
-﻿using Adjutant.Blam.Definitions;
+﻿using Adjutant.Blam.Common;
 using Adjutant.Geometry;
 using Adjutant.Spatial;
 using System;

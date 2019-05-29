@@ -1,14 +1,13 @@
-﻿using Adjutant.Spatial;
+﻿using Adjutant.Blam.Common;
+using Adjutant.Spatial;
 using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Dds;
 using System.IO.Endian;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Drawing.Dds;
-using System.IO;
-using Adjutant.IO;
 
 namespace Adjutant.Blam.Halo3
 {

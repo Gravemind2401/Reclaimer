@@ -1,5 +1,4 @@
-﻿using Adjutant.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Endian;
@@ -8,7 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.IO
+namespace Adjutant.Utilities
 {
     /// <summary>
     /// An <seealso cref="EndianReader"/> capable of basic dependency injection.

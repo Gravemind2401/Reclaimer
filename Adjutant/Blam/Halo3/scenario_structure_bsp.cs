@@ -1,11 +1,10 @@
-﻿using Adjutant.Blam.Definitions;
+﻿using Adjutant.Blam.Common;
 using Adjutant.Geometry;
 using Adjutant.Spatial;
 using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.IO.Endian;
 using System.Linq;
 using System.Numerics;

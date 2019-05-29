@@ -1,15 +1,15 @@
-﻿using Adjutant.Spatial;
+﻿using Adjutant.Blam.Common;
+using Adjutant.Geometry;
+using Adjutant.Spatial;
 using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Endian;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Adjutant.Geometry;
-using System.IO;
-using System.Numerics;
-using Adjutant.IO;
 
 namespace Adjutant.Blam.Halo1
 {

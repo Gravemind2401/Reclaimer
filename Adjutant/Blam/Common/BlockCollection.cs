@@ -1,6 +1,4 @@
-﻿using Adjutant.Blam.Definitions;
-using Adjutant.IO;
-using Adjutant.Utilities;
+﻿using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,10 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo1
+namespace Adjutant.Blam.Common
 {
-    [FixedSize(12)]
-    public class BlockCollection<T> : Collection<T>, IBlockCollection<T>
+    [FixedSize(12, MaxVersion = (int)CacheType.Halo2Xbox)]
+    [FixedSize(8, MinVersion = (int)CacheType.Halo2Xbox, MaxVersion = (int)CacheType.Halo3Beta)]
+    [FixedSize(12, MinVersion = (int)CacheType.Halo3Beta)]
+    public class BlockCollection<T> : Collection<T>
     {
         public Pointer Pointer { get; }
 
