@@ -98,12 +98,21 @@ namespace Adjutant.Blam.Halo1
                 case TextureFormat.P8:
                     dxgi = DxgiFormat.P8;
                     break;
-                
+
                 default: throw new NotSupportedException();
             }
 
-            return new DdsImage(submap.Height, submap.Width, dxgi, DxgiTextureType.Texture2D, data);
-        } 
+            var dds = new DdsImage(submap.Height, submap.Width, dxgi, DxgiTextureType.Texture2D, data);
+
+            if (submap.BitmapType == TextureType.CubeMap)
+            {
+                dds.TextureFlags = TextureFlags.DdsSurfaceFlagsCubemap;
+                dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
+                dds.DX10ResourceFlags = D3D10ResourceMiscFlags.TextureCube;
+            }
+
+            return dds;
+        }
 
         #endregion
     }
