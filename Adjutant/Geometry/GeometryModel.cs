@@ -104,7 +104,6 @@ namespace Adjutant.Geometry
     {
         public string Name { get; set; }
         public byte NodeIndex { get; set; }
-        public short BoundsIndex { get; set; }
         public int MeshIndex { get; set; }
         public int MeshCount { get; set; }
 
@@ -131,6 +130,7 @@ namespace Adjutant.Geometry
         public IVertex[] Vertices { get; set; }
         public int[] Indicies { get; set; }
 
+        public short BoundsIndex { get; set; }
         public List<IGeometrySubmesh> Submeshes { get; set; }
 
         public GeometryMesh()

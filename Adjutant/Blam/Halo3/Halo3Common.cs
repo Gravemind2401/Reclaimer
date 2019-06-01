@@ -76,7 +76,7 @@ namespace Adjutant.Blam.Halo3
             }
         }
 
-        public static IEnumerable<GeometryMesh> GetMeshes(CacheFile cache, ResourceIdentifier resourcePointer, IList<SectionBlock> sections)
+        public static IEnumerable<GeometryMesh> GetMeshes(CacheFile cache, ResourceIdentifier resourcePointer, IList<SectionBlock> sections, Func<SectionBlock, short> boundsIndex)
         {
             VertexBufferInfo[] vertexBufferInfo;
             IndexBufferInfo[] indexBufferInfo;
@@ -123,7 +123,8 @@ namespace Adjutant.Blam.Halo3
                     var mesh = new GeometryMesh
                     {
                         IndexFormat = iInfo.IndexFormat,
-                        Vertices = new IVertex[vInfo.VertexCount]
+                        Vertices = new IVertex[vInfo.VertexCount],
+                        BoundsIndex = boundsIndex(section)
                     };
 
                     mesh.Submeshes.AddRange(

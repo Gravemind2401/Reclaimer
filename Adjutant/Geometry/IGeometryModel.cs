@@ -48,19 +48,11 @@ namespace Adjutant.Geometry
     {
         string Name { get; }
         byte NodeIndex { get; }
-        short BoundsIndex { get; }
         int MeshIndex { get; }
         int MeshCount { get; }
 
         float TransformScale { get; }
         Matrix4x4 Transform { get; }
-    }
-
-    public interface IGeometrySubmesh
-    {
-        short MaterialIndex { get; }
-        int IndexStart { get; }
-        int IndexLength { get; }
     }
 
     public interface IGeometryMarker
@@ -80,7 +72,15 @@ namespace Adjutant.Geometry
         IReadOnlyList<IVertex> Vertices { get; }
         IReadOnlyList<int> Indicies { get; }
 
+        short BoundsIndex { get; }
         IReadOnlyList<IGeometrySubmesh> Submeshes { get; }
+    }
+
+    public interface IGeometrySubmesh
+    {
+        short MaterialIndex { get; }
+        int IndexStart { get; }
+        int IndexLength { get; }
     }
 
     public interface IGeometryMaterial

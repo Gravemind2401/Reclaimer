@@ -112,7 +112,6 @@ namespace Adjutant.Blam.Halo1
                         NodeIndex = byte.MaxValue,
                         Transform = Matrix4x4.Identity,
                         TransformScale = 1,
-                        BoundsIndex = -1,
                         MeshIndex = sectionIndex,
                         MeshCount = 1
                     };
@@ -146,6 +145,7 @@ namespace Adjutant.Blam.Halo1
                         VertexWeights = VertexWeights.None,
                         Indicies = localIndices.ToArray(),
                         Vertices = vertices.ToArray(),
+                        BoundsIndex = -1,
                         Submeshes = submeshes
                     });
 

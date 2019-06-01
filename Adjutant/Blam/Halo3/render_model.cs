@@ -85,7 +85,6 @@ namespace Adjutant.Blam.Halo3
                         NodeIndex = byte.MaxValue,
                         Transform = Matrix4x4.Identity,
                         TransformScale = 1,
-                        BoundsIndex = 0,
                         MeshIndex = p.SectionIndex,
                         MeshCount = 1
                     }));
@@ -94,7 +93,7 @@ namespace Adjutant.Blam.Halo3
                     model.Regions.Add(gRegion);
             }
 
-            model.Meshes.AddRange(Halo3Common.GetMeshes(cache, ResourcePointer, Sections));
+            model.Meshes.AddRange(Halo3Common.GetMeshes(cache, ResourcePointer, Sections, s => 0));
 
             CreateInstanceMeshes(model);
 
@@ -121,7 +120,6 @@ namespace Adjutant.Blam.Halo3
                     NodeIndex = (byte)i.NodeIndex,
                     Transform = i.Transform,
                     TransformScale = i.TransformScale,
-                    BoundsIndex = 0,
                     MeshIndex = InstancedGeometrySectionIndex + GeometryInstances.IndexOf(i),
                     MeshCount = 1
                 }));
@@ -137,7 +135,8 @@ namespace Adjutant.Blam.Halo3
                 var mesh = new GeometryMesh
                 {
                      IndexFormat = sourceMesh.IndexFormat,
-                     VertexWeights = VertexWeights.Rigid
+                     VertexWeights = VertexWeights.Rigid,
+                     BoundsIndex = 0
                 };
 
                 var strip = sourceMesh.Indicies.Skip(subset.IndexStart).Take(subset.IndexLength);

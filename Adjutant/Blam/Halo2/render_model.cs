@@ -80,7 +80,6 @@ namespace Adjutant.Blam.Halo2
                         NodeIndex = byte.MaxValue,
                         Transform = Matrix4x4.Identity,
                         TransformScale = 1,
-                        BoundsIndex = 0,
                         MeshIndex = p.SectionIndex,
                         MeshCount = 1
                     }));
@@ -108,7 +107,7 @@ namespace Adjutant.Blam.Halo2
                     reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
                     var submeshes = reader.ReadEnumerable<SubmeshDataBlock>(submeshResource.Size / 72).ToList();
 
-                    var mesh = new GeometryMesh();
+                    var mesh = new GeometryMesh { BoundsIndex = 0, };
 
                     foreach (var submesh in submeshes)
                     {
@@ -161,7 +160,7 @@ namespace Adjutant.Blam.Halo2
 
                         reader.Seek(baseAddress + normalsResource.Offset + i * 12, SeekOrigin.Begin);
                         vert.Normal = new HenDN3(reader.ReadUInt32());
-                    } 
+                    }
                     #endregion
 
                     model.Meshes.Add(mesh);

@@ -98,7 +98,6 @@ namespace Adjutant.Blam.Halo3
                     NodeIndex = byte.MaxValue,
                     Transform = Matrix4x4.Identity,
                     TransformScale = 1,
-                    BoundsIndex = -1,
                     MeshIndex = c.SectionIndex,
                     MeshCount = 1
                 })
@@ -116,7 +115,6 @@ namespace Adjutant.Blam.Halo3
                         NodeIndex = byte.MaxValue,
                         Transform = i.Transform,
                         TransformScale = i.TransformScale,
-                        BoundsIndex = i.SectionIndex,
                         MeshIndex = i.SectionIndex,
                         MeshCount = 1
                     })
@@ -124,7 +122,11 @@ namespace Adjutant.Blam.Halo3
                 model.Regions.Add(sectionRegion);
             }
 
-            model.Meshes.AddRange(Halo3Common.GetMeshes(cache, lightmapData.ResourcePointer, lightmapData.Sections));
+            model.Meshes.AddRange(Halo3Common.GetMeshes(cache, lightmapData.ResourcePointer, lightmapData.Sections, (s) =>
+            {
+                var index = lightmapData.Sections.IndexOf(s);
+                return (short)(index >= BoundingBoxes.Count ? -1 : index);
+            }));
 
             return model;
         }
