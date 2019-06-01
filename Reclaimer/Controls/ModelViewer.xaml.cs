@@ -59,7 +59,7 @@ namespace Reclaimer.Controls
 
                     materials.Add(new DiffuseMaterial
                     {
-                        Brush = new ImageBrush(dds.ToBitmapSource(false))
+                        Brush = new ImageBrush(dds.ToBitmapSource(System.Drawing.Dds.DecompressOptions.Bgr24))
                         {
                             ViewportUnits = BrushMappingMode.Absolute,
                             TileMode = TileMode.Tile,

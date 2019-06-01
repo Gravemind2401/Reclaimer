@@ -31,7 +31,7 @@ namespace Reclaimer.Controls
 
         public object TabHeader => System.IO.Path.GetFileName(cache.FileName);
 
-        public object TabToolTip => cache.FileName;
+        public object TabToolTip => $"Map Viewer - {TabHeader}";
 
         public object TabIcon => null;
 

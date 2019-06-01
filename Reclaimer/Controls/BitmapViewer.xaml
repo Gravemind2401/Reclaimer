@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Reclaimer.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="400" d:DesignWidth="400">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -19,23 +19,53 @@
         <ToolBarTray DockPanel.Dock="Top" IsLocked="True" Margin="0" 
                      Background="{DynamicResource ToolBarBackground}">
             <ToolBar Margin="3,2">
-                <!--<Separator />-->
-                <ToggleButton IsChecked="{Binding BlueChannel, Mode=TwoWay}">
-                    <ContentControl Template="{StaticResource BlueChannel_16x}" />
+                <ComboBox ItemsSource="{Binding Indexes}"
+                          SelectedIndex="{Binding SelectedIndex}" />
+                <Separator />
+                <Button Click="btnFitActual_Click"
+                        ToolTip="Zoom image to actual size">
+                    <ContentControl Template="{StaticResource ic_ZoomToActual_16x}" />
+                </Button>
+                <Button Click="btnFitWindow_Click"
+                        ToolTip="Fit image to window">
+                    <ContentControl Template="{StaticResource ic_ZoomToFit_16x}" />
+                </Button>
+                <Button Click="btnFitWidth_Click"
+                        ToolTip="Fit image width to window">
+                    <ContentControl Template="{StaticResource ic_ZoomToWidth_16x}" />
+                </Button>
+                <Separator />
+                <ToggleButton IsChecked="{Binding BlueChannel, Mode=TwoWay}"
+                              ToolTip="Show or hide the blue channel">
+                    <ContentControl Template="{StaticResource ic_BlueChannel_16x}" />
                 </ToggleButton>
-                <ToggleButton IsChecked="{Binding GreenChannel, Mode=TwoWay}">
-                    <ContentControl Template="{StaticResource GreenChannel_16x}" />
+                <ToggleButton IsChecked="{Binding GreenChannel, Mode=TwoWay}"
+                              ToolTip="Show or hide the green channel">
+                    <ContentControl Template="{StaticResource ic_GreenChannel_16x}" />
                 </ToggleButton>
-                <ToggleButton IsChecked="{Binding RedChannel, Mode=TwoWay}">
-                    <ContentControl Template="{StaticResource RedChannel_16x}" />
+                <ToggleButton IsChecked="{Binding RedChannel, Mode=TwoWay}"
+                              ToolTip="Show or hide the red channel">
+                    <ContentControl Template="{StaticResource ic_RedChannel_16x}" />
                 </ToggleButton>
-                <ToggleButton IsChecked="{Binding AlphaChannel, Mode=TwoWay}">
-                    <ContentControl Template="{StaticResource AlphaChannel_16x}" />
+                <ToggleButton IsChecked="{Binding AlphaChannel, Mode=TwoWay}"
+                              ToolTip="Show or hide the alpha channel">
+                    <ContentControl Template="{StaticResource ic_AlphaChannel_16x}" />
                 </ToggleButton>
+                <Separator />
+                <Button Click="btnExportSelected_Click"
+                        ToolTip="Export selected channels">
+                    <ContentControl Template="{StaticResource ic_Save_16x}" />
+                </Button>
+                <Button Click="btnExportAll_Click"
+                        ToolTip="Export all channels">
+                    <ContentControl Template="{StaticResource ic_SaveAll_16x}" />
+                </Button>
             </ToolBar>
         </ToolBarTray>
-        <Grid Background="{DynamicResource CheckerboardBrush}">
+        <local:ZoomPanel x:Name="zoomPanel"
+                         Background="{DynamicResource CheckerboardBrush}"
+                         MaxZoom="8" MinZoom="0.1">
             <Image RenderTransformOrigin="0.5,0.5" Source="{Binding ImageSource}" />
-        </Grid>
+        </local:ZoomPanel>
     </DockPanel>
 </UserControl>

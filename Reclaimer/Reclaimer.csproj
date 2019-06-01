@@ -110,6 +110,7 @@
     <Compile Include="Controls\TagViewer.xaml.cs">
       <DependentUpon>TagViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ZoomPanel.cs" />
     <Compile Include="Entities\CacheFile.cs">
       <DependentUpon>Database.tt</DependentUpon>
     </Compile>
@@ -268,6 +269,8 @@
       <LastGenOutput>Database.cs</LastGenOutput>
     </Content>
     <Content Include="Resources\DatabaseCreate.sql" />
+    <Resource Include="Resources\grab.cur" />
+    <Resource Include="Resources\grabbing.cur" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
