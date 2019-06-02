@@ -111,7 +111,7 @@ namespace Adjutant.Blam.Halo3
                 {
                     if (section.VertexBufferIndex < 0 || section.IndexBufferIndex < 0)
                     {
-                        yield return null;
+                        yield return new GeometryMesh();
                         continue;
                     }
 
