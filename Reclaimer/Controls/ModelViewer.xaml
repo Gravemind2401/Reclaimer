@@ -11,20 +11,87 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Templates.xaml" />
                 <ResourceDictionary Source="/Studio;component/Resources/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="showHideStyle" TargetType="ToggleButton">
+                <Setter Property="Background" Value="LightGray" />
+                <Setter Property="Opacity" Value="0.5" />
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border Background="{TemplateBinding Background}"
+                                    Opacity="{TemplateBinding Opacity}">
+                                <ContentControl x:Name="cc" Margin="{TemplateBinding Padding}"
+                                                Template="{StaticResource ic_ChevronLeft_16x}" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource Self}}" Value="True">
+                                    <Setter TargetName="cc" Property="Template" Value="{StaticResource ic_ChevronRight_16x}" />
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="White" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
     
-    <studio:SplitContainer Panel1Size="250" Panel2Size="*" CanResize="True" 
-                           SplitterShowsPreview="True" SplitterSize="5" SplitterBrush="Red">
-        <studio:SplitContainer.Panel1Content>
-            <studio:ExtendedTreeView ItemsSource="{Binding TreeViewItems}" CheckBoxes="True" VerticalContentAlignment="Center" />
-        </studio:SplitContainer.Panel1Content>
-        <studio:SplitContainer.Panel2Content>
-            <local:Renderer x:Name="renderer"
-                            x:FieldModifier="private" 
-                            Background="CornflowerBlue" />
-        </studio:SplitContainer.Panel2Content>
-    </studio:SplitContainer>
+    <DockPanel>
+        <ToolBarTray DockPanel.Dock="Top" IsLocked="True" Margin="0" 
+                     Background="{DynamicResource ToolBarBackground}">
+            <ToolBar Margin="3,2">
+                <ComboBox ItemsSource="{Binding Indexes}"
+                          SelectedIndex="{Binding SelectedLod}" />
+                <Separator />
+                <Button Click="btnCollapseAll_Click"
+                        ToolTip="Collapse all">
+                    <ContentControl Template="{StaticResource ic_CollapseGroup_16x}" />
+                </Button>
+                <Button Click="btnExpandAll_Click"
+                        ToolTip="Expand all">
+                    <ContentControl Template="{StaticResource ic_ExpandAll_16x}" />
+                </Button>
+                <Button Click="btnSelectAll_Click"
+                        ToolTip="Select all">
+                    <ContentControl Template="{StaticResource ic_Checklist_16x}" />
+                </Button>
+                <Button Click="btnSelectNone_Click"
+                        ToolTip="Select none">
+                    <ContentControl Template="{StaticResource ic_CheckboxList_16x}" />
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+        <studio:SplitContainer x:Name="splitPanel" x:FieldModifier="private"
+                               Panel1Size="250" Panel2Size="*" CanResize="True"
+                               SplitterShowsPreview="True" SplitterBrush="LightGray"
+                               MinPanelSize="0">
+            <studio:SplitContainer.Panel1Content>
+                    <studio:ExtendedTreeView ItemsSource="{Binding TreeViewItems}" CheckBoxes="True" VerticalContentAlignment="Center"
+                                             ItemChecked="ExtendedTreeView_ItemChecked"
+                                             ItemUnchecked="ExtendedTreeView_ItemChecked"
+                                             ItemDoubleClick="ExtendedTreeView_ItemDoubleClick" />
+            </studio:SplitContainer.Panel1Content>
+            <studio:SplitContainer.Panel2Content>
+                <Grid>
+                    <local:Renderer x:Name="renderer"
+                                    x:FieldModifier="private" 
+                                    Background="CornflowerBlue" />
+                    <ToggleButton Style="{StaticResource showHideStyle}"
+                                  HorizontalAlignment="Left" VerticalAlignment="Center"
+                                  Padding="2,20" Click="btnToggleDetails_Click">
+                        
+                    </ToggleButton>
+                </Grid>
+            </studio:SplitContainer.Panel2Content>
+        </studio:SplitContainer>
+    </DockPanel>
 </UserControl>
