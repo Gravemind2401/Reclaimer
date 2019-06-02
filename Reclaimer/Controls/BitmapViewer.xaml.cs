@@ -17,17 +17,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Reclaimer.Controls
 {
     /// <summary>
     /// Interaction logic for BitmapViewer.xaml
     /// </summary>
-    public partial class BitmapViewer : UserControl, ITabContent, INotifyPropertyChanged
+    public partial class BitmapViewer : ControlBase, ITabContent
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private const double dpi = 96;
 
         private byte[] imageData;
@@ -38,6 +35,8 @@ namespace Reclaimer.Controls
         private int pixelWidth, pixelHeight, pixelStride;
 
         public IEnumerable<int> Indexes { get; private set; }
+
+        TabItemUsage ITabContent.TabUsage => TabItemUsage.Document;
 
         #region Dependency Properties
         public static readonly DependencyPropertyKey ImageSourcePropertyKey =
@@ -123,12 +122,12 @@ namespace Reclaimer.Controls
                 bitmap = image;
 
                 TabToolTip = fileName;
-                TabHeader = System.IO.Path.GetFileName(fileName);
-                sourceName = System.IO.Path.GetFileNameWithoutExtension(fileName);
+                TabHeader = Path.GetFileName(fileName);
+                sourceName = Path.GetFileNameWithoutExtension(fileName);
 
                 Indexes = Enumerable.Range(0, bitmap.BitmapCount);
                 SetImage(0);
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Indexes)));
+                RaisePropertyChanged(nameof(Indexes));
             }
             catch
             {
@@ -228,7 +227,7 @@ namespace Reclaimer.Controls
             }
         }
 
-        #region Event Handlers
+        #region Toolbar Events
         private void btnFitActual_Click(object sender, RoutedEventArgs e)
         {
             zoomPanel.ResetZoom();
@@ -260,16 +259,6 @@ namespace Reclaimer.Controls
         {
             ExportImage(true);
         }
-        #endregion
-
-        #region ITabContent
-        public object TabHeader { get; private set; }
-
-        public object TabToolTip { get; private set; }
-
-        public object TabIcon => null;
-
-        TabItemUsage ITabContent.TabUsage => TabItemUsage.Document;
         #endregion
     }
 }

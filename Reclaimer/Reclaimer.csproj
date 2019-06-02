@@ -178,8 +178,10 @@
       <DependentUpon>Database.tt</DependentUpon>
     </Compile>
     <Compile Include="Storage.cs" />
+    <Compile Include="Utils\BindableBase.cs" />
     <Compile Include="Utils\NativeMethods.cs" />
     <Compile Include="Utils\StandardAddressTranslator.cs" />
+    <Compile Include="Utils\TreeNode.cs" />
     <Page Include="Controls\BitmapViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

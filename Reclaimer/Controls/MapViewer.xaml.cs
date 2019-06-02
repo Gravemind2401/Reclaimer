@@ -1,7 +1,9 @@
 ﻿using Adjutant.Blam.Common;
+using Reclaimer.Utils;
+using Studio.Controls;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,29 +15,17 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Studio.Controls;
 
 namespace Reclaimer.Controls
 {
     /// <summary>
-    /// Interaction logic for TagViewer.xaml
+    /// Interaction logic for MapViewer.xaml
     /// </summary>
     public partial class MapViewer : ControlBase, ITabContent
     {
         private ICacheFile cache;
 
-        #region ITabContent
-
         TabItemUsage ITabContent.TabUsage => TabItemUsage.Utility;
-
-        public object TabHeader => System.IO.Path.GetFileName(cache.FileName);
-
-        public object TabToolTip => $"Map Viewer - {TabHeader}";
-
-        public object TabIcon => null;
-
-        #endregion
 
         public MapViewer()
         {
@@ -45,9 +35,12 @@ namespace Reclaimer.Controls
 
         public void LoadMap(string fileName)
         {
-            tv.Items.Clear();
-
             cache = CacheFactory.ReadCacheFile(fileName);
+
+            TabHeader = Path.GetFileName(cache.FileName);
+            TabToolTip = $"Map Viewer - {TabHeader}";
+
+            tv.Items.Clear();
 
             var result = cache.TagIndex.GroupBy(i => i.ClassCode);
 

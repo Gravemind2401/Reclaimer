@@ -20,17 +20,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Reclaimer.Controls
 {
     /// <summary>
     /// Interaction logic for ModelViewer.xaml
     /// </summary>
-    public partial class ModelViewer : UserControl, ITabContent, IDisposable
+    public partial class ModelViewer : ControlBase, ITabContent, IDisposable
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private static readonly DiffuseMaterial ErrorMaterial;
 
         #region Dependency Properties
@@ -49,6 +46,8 @@ namespace Reclaimer.Controls
             control.SetLod((int)e.NewValue);
         } 
         #endregion
+
+        TabItemUsage ITabContent.TabUsage => TabItemUsage.Document;
 
         private readonly Model3DGroup modelGroup = new Model3DGroup();
         private readonly ModelVisual3D visual = new ModelVisual3D();
@@ -76,12 +75,12 @@ namespace Reclaimer.Controls
         public void LoadGeometry(IRenderGeometry geometry, string fileName)
         {
             TabToolTip = fileName;
-            TabHeader = System.IO.Path.GetFileName(fileName);
+            TabHeader = Path.GetFileName(fileName);
             this.geometry = geometry;
 
             Indexes = Enumerable.Range(0, geometry.LodCount);
             SetLod(0);
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Indexes)));
+            RaisePropertyChanged(nameof(Indexes));
         }
 
         private void SetLod(int index)
@@ -413,16 +412,6 @@ namespace Reclaimer.Controls
                 splitPanel.SplitterSize = new GridLength(5);
             }
         }
-
-        #region ITabContent
-        public object TabHeader { get; private set; }
-
-        public object TabToolTip { get; private set; }
-
-        public object TabIcon => null;
-
-        TabItemUsage ITabContent.TabUsage => TabItemUsage.Document;
-        #endregion
 
         #region IDisposable
         public void Dispose()

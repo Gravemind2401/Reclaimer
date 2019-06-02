@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Studio.Controls;
+using Reclaimer.Utils;
 
 namespace Reclaimer.Controls
 {
@@ -69,17 +70,7 @@ namespace Reclaimer.Controls
             set { SetProperty(ref selectedMapId, value); }
         }
 
-        #region ITabContent
-
         TabItemUsage ITabContent.TabUsage => TabItemUsage.Utility;
-
-        public object TabHeader => "Tag Viewer";
-
-        public object TabToolTip => "Tag Viewer";
-
-        public object TabIcon => null;
-
-        #endregion
 
         #endregion
 
@@ -87,6 +78,8 @@ namespace Reclaimer.Controls
         {
             InitializeComponent();
             DataContext = this;
+
+            TabHeader = TabToolTip = "Tag Viewer";
         }
 
         public async Task Refresh()
