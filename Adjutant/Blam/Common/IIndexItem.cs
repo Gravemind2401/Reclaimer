@@ -13,6 +13,7 @@ namespace Adjutant.Blam.Common
         Pointer MetaPointer { get; }
         string FileName { get; }
         string ClassCode { get; }
+        string ClassName { get; }
 
         T ReadMetadata<T>();
     }

@@ -250,7 +250,11 @@ namespace Adjutant.Blam.Halo3
 
                 reader.Seek(TagDataPointer.Address, SeekOrigin.Begin);
                 for (int i = 0; i < TagCount; i++)
-                    items.Add(reader.ReadObject(new IndexItem(cache, i)));
+                {
+                    //every Halo3 map has an empty tag
+                    var item = reader.ReadObject(new IndexItem(cache, i));
+                    if (item.ClassIndex >= 0) items.Add(item);
+                }
 
                 reader.Seek(cache.Header.FileTableIndexPointer.Address, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<int>(TagCount).ToArray();
@@ -360,7 +364,7 @@ namespace Adjutant.Blam.Halo3
         public string ParentClassCode2 { get; set; }
 
         [Offset(12)]
-        public int ClassName { get; set; }
+        public StringId ClassName { get; set; }
     }
 
     [FixedSize(8)]
@@ -385,7 +389,9 @@ namespace Adjutant.Blam.Halo3
         [Offset(4)]
         public Pointer MetaPointer { get; set; }
 
-        public string ClassCode => ClassIndex >= 0 ? cache.TagIndex.Classes[ClassIndex].ClassCode : null;
+        public string ClassCode => cache.TagIndex.Classes[ClassIndex].ClassCode;
+
+        public string ClassName => cache.TagIndex.Classes[ClassIndex].ClassName.Value;
 
         public string FileName => cache.TagIndex.Filenames[Id];
 

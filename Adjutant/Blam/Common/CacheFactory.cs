@@ -6,6 +6,7 @@ using System.IO.Endian;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Adjutant.Blam.Common
 {
@@ -14,6 +15,39 @@ namespace Adjutant.Blam.Common
         //when read using little endian
         internal const int LittleHeader = 0x68656164;
         internal const int BigHeader = 0x64616568;
+
+        private static Dictionary<string, string> halo1Classes;
+        internal static IReadOnlyDictionary<string, string> Halo1Classes
+        {
+            get
+            {
+                if (halo1Classes == null)
+                    halo1Classes = ReadClassXml(Properties.Resources.Halo1Classes);
+
+                return halo1Classes;
+            }
+        }
+
+        private static Dictionary<string, string> halo2Classes;
+        internal static IReadOnlyDictionary<string, string> Halo2Classes
+        {
+            get
+            {
+                if (halo2Classes == null)
+                    halo2Classes = ReadClassXml(Properties.Resources.Halo2Classes);
+
+                return halo2Classes;
+            }
+        }
+
+        private static Dictionary<string, string> ReadClassXml(string xml)
+        {
+            var doc = new XmlDocument();
+            doc.LoadXml(xml);
+
+            return doc.FirstChild.ChildNodes.Cast<XmlNode>()
+                .ToDictionary(n => n.Attributes["code"].Value, n => n.Attributes["name"].Value);
+        }
 
         public static ICacheFile ReadCacheFile(string fileName)
         {

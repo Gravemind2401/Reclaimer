@@ -158,6 +158,8 @@
     <None Include="Adjutant.ruleset" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\Halo1Classes.xml" />
+    <Content Include="Resources\Halo2Classes.xml" />
     <Content Include="Resources\Halo3VertexBuffer.xml" />
   </ItemGroup>
   <ItemGroup>

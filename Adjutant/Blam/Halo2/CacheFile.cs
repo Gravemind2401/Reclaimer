@@ -188,7 +188,11 @@ namespace Adjutant.Blam.Halo2
             {
                 reader.Seek(TagDataAddress.Address, SeekOrigin.Begin);
                 for (int i = 0; i < TagCount; i++)
-                    items.Add(reader.ReadObject(new IndexItem(cache)));
+                {
+                    //Halo2Vista multiplayer maps have empty tags in them
+                    var item = reader.ReadObject(new IndexItem(cache));
+                    if (item.Id >= 0) items.Add(item);
+                }
 
                 reader.Seek(cache.Header.FileTableIndexOffset, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<int>(TagCount).ToArray();
@@ -265,11 +269,10 @@ namespace Adjutant.Blam.Halo2
         }
 
         [Offset(0)]
-        [ByteOrder(ByteOrder.BigEndian)]
         public int ClassId { get; set; }
 
         [Offset(4)]
-        [StoreType(typeof(ushort))]
+        [StoreType(typeof(short))]
         public int Id { get; set; }
 
         [Offset(8)]
@@ -278,7 +281,18 @@ namespace Adjutant.Blam.Halo2
         [Offset(12)]
         public int MetaSize { get; set; }
 
-        public string ClassCode => Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId)).TrimEnd();
+        public string ClassCode => Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId).Reverse().ToArray());
+
+        public string ClassName
+        {
+            get
+            {
+                if (CacheFactory.Halo2Classes.ContainsKey(ClassCode))
+                    return CacheFactory.Halo2Classes[ClassCode];
+
+                return ClassCode;
+            }
+        }
 
         public string FileName => cache.TagIndex.Filenames[Id];
 

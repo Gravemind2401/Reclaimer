@@ -61,6 +61,45 @@ namespace Adjutant.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;classes&gt;
+        ///  &lt;class code=&quot;actr&quot; name=&quot;actor&quot; /&gt;
+        ///  &lt;class code=&quot;actv&quot; name=&quot;actor_variant&quot; /&gt;
+        ///  &lt;class code=&quot;ant!&quot; name=&quot;antenna&quot; /&gt;
+        ///  &lt;class code=&quot;antr&quot; name=&quot;model_animations&quot; /&gt;
+        ///  &lt;class code=&quot;bipd&quot; name=&quot;biped&quot; /&gt;
+        ///  &lt;class code=&quot;bitm&quot; name=&quot;bitmap&quot; /&gt;
+        ///  &lt;class code=&quot;boom&quot; name=&quot;spheroid&quot; /&gt;
+        ///  &lt;class code=&quot;cdmg&quot; name=&quot;continuous_damage_effect&quot; /&gt;
+        ///  &lt;class code=&quot;coll&quot; name=&quot;model_collision_geometry&quot; /&gt;
+        ///  &lt;class code=&quot;colo&quot; name=&quot;color_table&quot; /&gt;
+        ///  &lt;class code=&quot;cont&quot; name=&quot;contrail&quot; /&gt;
+        ///  &lt;class co [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Halo1Classes {
+            get {
+                return ResourceManager.GetString("Halo1Classes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;classes&gt;
+        ///  &lt;class code=&quot;*cen&quot; name=&quot;scenario_scenery_resource&quot; /&gt;
+        ///  &lt;class code=&quot;*eap&quot; name=&quot;scenario_weapons_resource&quot; /&gt;
+        ///  &lt;class code=&quot;*ehi&quot; name=&quot;scenario_vehicles_resource&quot; /&gt;
+        ///  &lt;class code=&quot;*fsc&quot; name=&quot;scenario_effect_scenery_resource&quot; /&gt;
+        ///  &lt;class code=&quot;*igh&quot; name=&quot;scenario_lights_resource&quot; /&gt;
+        ///  &lt;class code=&quot;*ipd&quot; name=&quot;scenario_bipeds_resource&quot; /&gt;
+        ///  &lt;class code=&quot;*qip&quot; name=&quot;scenario_equipment_resource&quot; /&gt;
+        ///  &lt;class code=&quot;*rea&quot; name=&quot;scenario_creature_resource&quot; /&gt;
+        ///  &lt;class code=&quot;*sce&quot; name=&quot;s [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Halo2Classes {
+            get {
+                return ResourceManager.GetString("Halo2Classes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;VertexDefinitions&gt;
         ///  &lt;vertex type=&quot;0x00&quot; name=&quot;s_world_vertex&quot;&gt;
         ///    &lt;value stream=&quot;0&quot; offset=&quot;0x0&quot; type=&quot;Float32_3&quot; usage=&quot;position&quot; usageIndex=&quot;0&quot; /&gt;

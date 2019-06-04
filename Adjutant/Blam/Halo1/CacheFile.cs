@@ -158,7 +158,6 @@ namespace Adjutant.Blam.Halo1
         }
 
         [Offset(0)]
-        [ByteOrder(ByteOrder.BigEndian)]
         public int ClassId { get; set; }
 
         //parent class codes here
@@ -179,7 +178,18 @@ namespace Adjutant.Blam.Halo1
         [Offset(28)]
         public int Unknown2 { get; set; }
 
-        public string ClassCode => Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId)).TrimEnd();
+        public string ClassCode => Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId).Reverse().ToArray());
+
+        public string ClassName
+        {
+            get
+            {
+                if (CacheFactory.Halo1Classes.ContainsKey(ClassCode))
+                    return CacheFactory.Halo1Classes[ClassCode];
+
+                return ClassCode;
+            }
+        }
 
         public string FileName => cache.TagIndex.Filenames[Id];
 
