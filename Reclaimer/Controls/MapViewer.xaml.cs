@@ -42,7 +42,7 @@ namespace Reclaimer.Controls
 
             tv.Items.Clear();
 
-            var result = cache.TagIndex.GroupBy(i => i.ClassCode);
+            var result = cache.TagIndex.GroupBy(i => i.ClassName);
 
             foreach (var g in result.OrderBy(g => g.Key))
             {

@@ -6,11 +6,12 @@
              xmlns:local="clr-namespace:Reclaimer.Controls"
              xmlns:u="clr-namespace:Reclaimer.Utils"
              xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
-             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="500">
+             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
     
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Templates.xaml" />
                 <ResourceDictionary Source="/Studio;component/Resources/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
@@ -31,9 +32,20 @@
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate DataType="u:TreeNode" ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal">
-                        <ContentControl x:Name="iconHost" />
-                        <TextBlock Text="{Binding Header}" />
+                        <ContentControl x:Name="iconHost" Margin="0,2,5,1" />
+                        <TextBlock Text="{Binding Header}" VerticalAlignment="Center" />
                     </StackPanel>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding HasItems, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
+                            <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_Folder_16x}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
+                            <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_FolderOpen_16x}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding HasItems, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="False">
+                            <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_Document_16x}" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </studio:ExtendedTreeView>

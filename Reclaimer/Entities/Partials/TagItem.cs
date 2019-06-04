@@ -30,6 +30,8 @@ namespace Reclaimer.Entities
 
         public string FileName => TagPath.Value;
 
+        public string ClassName => ClassCode;
+
         public T ReadMetadata<T>()
         {
             throw new NotImplementedException();
