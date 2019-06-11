@@ -14,6 +14,7 @@ namespace System.Drawing.Dds
 
         private readonly DdsHeader header;
         private readonly DdsHeaderDxt10 dx10Header;
+        private readonly DdsHeaderXbox xboxHeader;
         private readonly byte[] data;
 
         private static ArgumentOutOfRangeException ParamMustBeGreaterThanZero(string paramName, object value)
@@ -23,15 +24,16 @@ namespace System.Drawing.Dds
 
         #region Constructors
 
-        private DdsImage(DdsHeader header, DdsHeaderDxt10 dx10Header, byte[] data)
+        private DdsImage(DdsHeader header, DdsHeaderDxt10 dx10Header, DdsHeaderXbox xboxHeader, byte[] data)
         {
             this.header = header;
             this.dx10Header = dx10Header;
+            this.xboxHeader = xboxHeader;
             this.data = data;
         }
 
         private DdsImage(int height, int width, byte[] pixelData)
-            : this(new DdsHeader(), new DdsHeaderDxt10(), pixelData)
+            : this(new DdsHeader(), new DdsHeaderDxt10(), new DdsHeaderXbox(), pixelData)
         {
             if (pixelData == null)
                 throw new ArgumentNullException(nameof(pixelData));
@@ -125,6 +127,24 @@ namespace System.Drawing.Dds
             dx10Header.MiscFlags = D3D10ResourceMiscFlags.None;
             dx10Header.ArraySize = 1;
             dx10Header.MiscFlags2 = D3D10ResourceMiscFlag2.DdsAlphaModeStraight;
+        }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="DdsImage"/> with the specified dimensions and pixel data, using D3D10 header and format information.
+        /// </summary>
+        /// <param name="height">The height of the image in pixels.</param>
+        /// <param name="width">The width of the image in pixels.</param>
+        /// <param name="xboxFormat">The XboxFormat value that identifies the format of the pixel data.</param>
+        /// <param name="textureType">The type of texture represented by the image.</param>
+        /// <param name="pixelData">The binary data containing the pixels of the image.</param>
+        public DdsImage(int height, int width, XboxFormat xboxFormat, DxgiTextureType textureType, byte[] pixelData)
+            : this(height, width, FourCC.XBOX, pixelData)
+        {
+            xboxHeader.XboxFormat = xboxFormat;
+            xboxHeader.ResourceDimension = (D3D10ResourceDimension)textureType;
+            xboxHeader.MiscFlags = D3D10ResourceMiscFlags.None;
+            xboxHeader.ArraySize = 1;
+            xboxHeader.MiscFlags2 = D3D10ResourceMiscFlag2.DdsAlphaModeStraight;
         }
 
         #endregion
@@ -305,6 +325,26 @@ namespace System.Drawing.Dds
             set { dx10Header.MiscFlags2 = value; }
         }
 
+        /// <summary>
+        /// Gets or sets miscellaneous flags for the image.
+        /// <para>These flags are only used if the FourCC code is set to <see cref="FourCC.XBOX"/></para>
+        /// </summary>
+        public D3D10ResourceMiscFlags XboxResourceFlags
+        {
+            get { return xboxHeader.MiscFlags; }
+            set { xboxHeader.MiscFlags = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets flags indicating the type of alpha used in the image.
+        /// <para>These flags are only used if the FourCC code is set to <see cref="FourCC.XBOX"/></para>
+        /// </summary>
+        public D3D10ResourceMiscFlag2 XboxAlphaFlags
+        {
+            get { return xboxHeader.MiscFlags2; }
+            set { xboxHeader.MiscFlags2 = value; }
+        }
+
         #endregion
 
         /// <summary>
@@ -372,6 +412,14 @@ namespace System.Drawing.Dds
                     writer.Write((uint)dx10Header.MiscFlags);
                     writer.Write(dx10Header.ArraySize);
                     writer.Write((uint)dx10Header.MiscFlags2);
+                }
+                else if (header.PixelFormat.FourCC == (uint)FourCC.XBOX)
+                {
+                    writer.Write((uint)xboxHeader.XboxFormat);
+                    writer.Write((uint)xboxHeader.ResourceDimension);
+                    writer.Write((uint)xboxHeader.MiscFlags);
+                    writer.Write(xboxHeader.ArraySize);
+                    writer.Write((uint)xboxHeader.MiscFlags2);
                 }
 
                 writer.Write(data);
@@ -445,8 +493,18 @@ namespace System.Drawing.Dds
                     dx10Header.MiscFlags2 = (D3D10ResourceMiscFlag2)reader.ReadInt32();
                 }
 
+                var xboxHeader = new DdsHeaderXbox();
+                if (header.PixelFormat.FourCC == (uint)FourCC.XBOX)
+                {
+                    xboxHeader.XboxFormat = (XboxFormat)reader.ReadInt32();
+                    xboxHeader.ResourceDimension = (D3D10ResourceDimension)reader.ReadInt32();
+                    xboxHeader.MiscFlags = (D3D10ResourceMiscFlags)reader.ReadInt32();
+                    xboxHeader.ArraySize = reader.ReadInt32();
+                    xboxHeader.MiscFlags2 = (D3D10ResourceMiscFlag2)reader.ReadInt32();
+                }
+
                 var data = reader.ReadBytes((int)(stream.Length - stream.Position));
-                return new DdsImage(header, dx10Header, data);
+                return new DdsImage(header, dx10Header, xboxHeader, data);
             }
         }
     }
@@ -502,6 +560,7 @@ namespace System.Drawing.Dds
         DXT4 = 0x34545844, //D3DFMT_DXT4 (also BC3)
         DXT5 = 0x35545844, //DXGI_FORMAT_BC3_UNORM
         DX10 = 0x30315844,
+        XBOX = 0x584F4258,
 
         RGBG = 0x47424752, //DXGI_FORMAT_R8G8_B8G8_UNORM
         GRGB = 0x42475247, //DXGI_FORMAT_G8R8_G8B8_UNORM

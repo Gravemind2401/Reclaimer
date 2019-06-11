@@ -33,7 +33,20 @@ namespace System.Drawing.Dds
             { DxgiFormat.B5G6R5_UNorm, DecompressB5G6R5 },
             { DxgiFormat.B5G5R5A1_UNorm, DecompressB5G5R5A1 },
             { DxgiFormat.P8, DecompressP8 },
-            { DxgiFormat.B4G4R4A4_UNorm, DecompressB4G4R4A4 },
+            { DxgiFormat.B4G4R4A4_UNorm, DecompressB4G4R4A4 }
+        };
+
+        private static readonly Dictionary<XboxFormat, Decompress> decompressMethodsXbox = new Dictionary<XboxFormat, Decompress>
+        {
+            { XboxFormat.CTX1, DecompressCTX1 },
+            { XboxFormat.DXN, DecompressDXN },
+            { XboxFormat.DXN_mono_alpha, DecompressDXN_mono_alpha },
+            { XboxFormat.DXT3a_scalar, DecompressDXT3a_scalar },
+            { XboxFormat.DXT3a_mono, DecompressDXT3a_mono },
+            { XboxFormat.DXT3a_alpha, DecompressDXT3a_alpha },
+            { XboxFormat.DXT5a_scalar, DecompressDXT5a_scalar },
+            { XboxFormat.DXT5a_mono, DecompressDXT5a_mono },
+            { XboxFormat.DXT5a_alpha, DecompressDXT5a_alpha }
         };
 
         private static readonly Dictionary<FourCC, Decompress> decompressMethodsFourCC = new Dictionary<FourCC, Decompress>
@@ -123,7 +136,7 @@ namespace System.Drawing.Dds
                 encoder = new PngBitmapEncoder();
             else if (format.Equals(ImageFormat.Tiff))
                 encoder = new TiffBitmapEncoder();
-            else throw new NotSupportedException("The specified format is not supported.");
+            else throw new NotSupportedException("The ImageFormat is not supported.");
 
             var source = ToBitmapSource(options);
             encoder.Frames.Add(BitmapFrame.Create(source));
@@ -166,6 +179,12 @@ namespace System.Drawing.Dds
                         default: throw new NotSupportedException("The DxgiFormat is not supported.");
                     }
                 }
+            }
+            else if (header.PixelFormat.FourCC == (uint)FourCC.XBOX)
+            {
+                if (decompressMethodsXbox.ContainsKey(xboxHeader.XboxFormat))
+                    bgra = decompressMethodsXbox[xboxHeader.XboxFormat](data, virtualHeight, Width);
+                else throw new NotSupportedException("The XboxFormat is not supported.");
             }
             else
             {
@@ -215,7 +234,7 @@ namespace System.Drawing.Dds
             return dest;
         }
 
-        #region Decompression Methods
+        #region Standard Decompression Methods
         internal static IEnumerable<byte> DecompressB5G6R5(byte[] data, int height, int width)
         {
             var output = new BgraColour[width * height];
@@ -238,12 +257,13 @@ namespace System.Drawing.Dds
 
         internal static IEnumerable<byte> DecompressP8(byte[] data, int height, int width)
         {
-            var output = new BgraColour[width * height];
-
-            for (int i = 0; i < output.Length; i++)
-                output[i] = new BgraColour { b = data[i], g = data[i], r = data[i], a = byte.MaxValue };
-
-            return output.SelectMany(c => c.AsEnumerable());
+            foreach (var y in data)
+            {
+                yield return y;
+                yield return y;
+                yield return y;
+                yield return byte.MaxValue;
+            }
         }
 
         internal static IEnumerable<byte> DecompressB4G4R4A4(byte[] data, int height, int width)
@@ -542,12 +562,180 @@ namespace System.Drawing.Dds
 
             return output.SelectMany(c => c.AsEnumerable());
         }
+        #endregion
 
+        #region Xbox Decompression Methods
+        internal static IEnumerable<byte> DecompressBC1DualChannel(byte[] data, int height, int width)
+        {
+            var output = new BgraColour[width * height];
+            var palette = new BgraColour[4];
+
+            var bytesPerBlock = 8;
+            var xBlocks = width / 4;
+            var yBlocks = height / 4;
+
+            for (int yBlock = 0; yBlock < yBlocks; yBlock++)
+            {
+                for (int xBlock = 0; xBlock < xBlocks; xBlock++)
+                {
+                    var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
+                    palette[0] = new BgraColour { g = data[srcIndex + 0], r = data[srcIndex + 1], a = byte.MaxValue };
+                    palette[1] = new BgraColour { g = data[srcIndex + 2], r = data[srcIndex + 3], a = byte.MaxValue };
+
+                    palette[2] = Lerp(palette[0], palette[1], 1 / 3f);
+                    palette[3] = Lerp(palette[0], palette[1], 2 / 3f);
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        var indexBits = data[srcIndex + 4 + i];
+                        for (int j = 0; j < 4; j++)
+                        {
+                            var destX = xBlock * 4 + j;
+                            var destY = yBlock * 4 + i;
+
+                            var destIndex = destY * width + destX;
+                            var pIndex = (byte)((indexBits >> j * 2) & 0x3);
+                            var colour = palette[pIndex];
+                            colour.b = CalculateZVector(colour.r, colour.g);
+                            output[destIndex] = colour;
+                        }
+                    }
+                }
+            }
+
+            return output.SelectMany(c => c.AsEnumerable());
+        }
+
+        internal static IEnumerable<byte> DecompressBC2AlphaOnly(byte[] data, int height, int width, bool bgr, bool a)
+        {
+            var output = new BgraColour[width * height];
+
+            var bytesPerBlock = 8;
+            var xBlocks = width / 4;
+            var yBlocks = height / 4;
+
+            for (int yBlock = 0; yBlock < yBlocks; yBlock++)
+            {
+                for (int xBlock = 0; xBlock < xBlocks; xBlock++)
+                {
+                    var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
+                    for (int i = 0; i < 4; i++)
+                    {
+                        var alphaBits = BitConverter.ToUInt16(data, srcIndex + i * 2);
+                        for (int j = 0; j < 4; j++)
+                        {
+                            var destX = xBlock * 4 + j;
+                            var destY = yBlock * 4 + i;
+                            var destIndex = destY * width + destX;
+
+                            var value = (byte)(((alphaBits >> j * 4) & 0xF) * (0xFF / 0xF));
+                            output[destIndex] = new BgraColour
+                            {
+                                b = bgr ? value : (byte)0,
+                                g = bgr ? value : (byte)0,
+                                r = bgr ? value : (byte)0,
+                                a = a ? value : byte.MaxValue,
+                            };
+                        }
+                    }
+                }
+            }
+
+            return output.SelectMany(c => c.AsEnumerable());
+        }
+
+        internal static IEnumerable<byte> DecompressBC3AlphaOnly(byte[] data, int height, int width, bool bgr, bool a)
+        {
+            //same bit layout as BC4
+            data = DecompressBC4(data, height, width).ToArray();
+
+            for (int i = 0; i < data.Length; i += 4)
+            {
+                var scalar = data[i];
+                yield return bgr ? scalar : (byte)0;
+                yield return bgr ? scalar : (byte)0;
+                yield return bgr ? scalar : (byte)0;
+                yield return a ? scalar : byte.MaxValue;
+            }
+        }
+
+        internal static IEnumerable<byte> DecompressCTX1(byte[] data, int height, int width)
+        {
+            return DecompressBC1DualChannel(data, height, width);
+        }
+
+        internal static IEnumerable<byte> DecompressDXN(byte[] data, int height, int width)
+        {
+            data = DecompressBC5(data, height, width).ToArray();
+            for (int i = 0; i < data.Length; i += 4)
+                data[i] = CalculateZVector(data[i + 2], data[i + 1]);
+
+            return data;
+        }
+
+        internal static IEnumerable<byte> DecompressDXN_mono_alpha(byte[] data, int height, int width)
+        {
+            data = DecompressBC5(data, height, width).ToArray();
+            for (int i = 0; i < data.Length; i += 4)
+            {
+                var g = data[i + 1];
+                var r = data[i + 2];
+
+                yield return r;
+                yield return r;
+                yield return r;
+                yield return g;
+            }
+        }
+
+        internal static IEnumerable<byte> DecompressDXT3a_scalar(byte[] data, int height, int width)
+        {
+            return DecompressBC2AlphaOnly(data, height, width, true, true);
+        }
+
+        internal static IEnumerable<byte> DecompressDXT3a_mono(byte[] data, int height, int width)
+        {
+            return DecompressBC2AlphaOnly(data, height, width, true, false);
+        }
+
+        internal static IEnumerable<byte> DecompressDXT3a_alpha(byte[] data, int height, int width)
+        {
+            return DecompressBC2AlphaOnly(data, height, width, false, true);
+        }
+
+        internal static IEnumerable<byte> DecompressDXT5a_scalar(byte[] data, int height, int width)
+        {
+            return DecompressBC3AlphaOnly(data, height, width, true, true);
+        }
+
+        internal static IEnumerable<byte> DecompressDXT5a_mono(byte[] data, int height, int width)
+        {
+            return DecompressBC3AlphaOnly(data, height, width, true, false);
+        }
+
+        internal static IEnumerable<byte> DecompressDXT5a_alpha(byte[] data, int height, int width)
+        {
+            return DecompressBC3AlphaOnly(data, height, width, false, true);
+        }
         #endregion
 
         private static byte Lerp(byte p1, byte p2, float fraction)
         {
             return (byte)((p1 * (1 - fraction)) + (p2 * fraction));
+        }
+
+        private static float Lerp(float p1, float p2, float fraction)
+        {
+            return (p1 * (1 - fraction)) + (p2 * fraction);
+        }
+
+        private static byte CalculateZVector(byte r, byte g)
+        {
+            var x = Lerp(-1f, 1f, r / 255f);
+            var y = Lerp(-1f, 1f, g / 255f);
+            var z = (float)Math.Sqrt(1 - x * x - y * y);
+
+            return (byte)((z + 1) / 2 * 255f);
         }
 
         private static BgraColour Lerp(BgraColour c0, BgraColour c1, float fraction)
