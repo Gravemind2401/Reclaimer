@@ -34,6 +34,30 @@ namespace Adjutant.Blam.Halo3
 
         #region IBitmap
 
+        private static readonly Dictionary<TextureFormat, DxgiFormat> dxgiLookup = new Dictionary<TextureFormat, DxgiFormat>
+        {
+            { TextureFormat.DXT1, DxgiFormat.BC1_UNorm },
+            { TextureFormat.DXT3, DxgiFormat.BC2_UNorm },
+            { TextureFormat.DXT5, DxgiFormat.BC3_UNorm },
+            { TextureFormat.A8R8G8B8, DxgiFormat.B8G8R8A8_UNorm },
+            { TextureFormat.X8R8G8B8, DxgiFormat.B8G8R8X8_UNorm },
+            { TextureFormat.R5G6B5, DxgiFormat.B5G6R5_UNorm },
+            { TextureFormat.A1R5G5B5, DxgiFormat.B5G5R5A1_UNorm },
+            { TextureFormat.A4R4G4B4, DxgiFormat.B4G4R4A4_UNorm }
+        };
+
+        private static readonly Dictionary<TextureFormat, XboxFormat> xboxLookup = new Dictionary<TextureFormat, XboxFormat>
+        {
+            { TextureFormat.CTX1, XboxFormat.CTX1 },
+            { TextureFormat.DXT3a_mono, XboxFormat.DXT3a_mono },
+            { TextureFormat.DXT3a_alpha, XboxFormat.DXT3a_alpha },
+            { TextureFormat.DXT5a, XboxFormat.DXT5a_scalar },
+            { TextureFormat.DXT5a_mono, XboxFormat.DXT5a_mono },
+            { TextureFormat.DXT5a_alpha, XboxFormat.DXT5a_alpha },
+            { TextureFormat.DXN, XboxFormat.DXN },
+            { TextureFormat.DXN_mono_alpha, XboxFormat.DXN_mono_alpha }
+        };
+
         int IBitmap.BitmapCount => Bitmaps.Count;
 
         public DdsImage ToDds(int index)
@@ -61,58 +85,11 @@ namespace Adjutant.Blam.Halo3
                 data = TextureUtils.XTextureScramble(data, submap.Width, submap.Height, blockSize, texelPitch, false);
             }
 
-            DxgiFormat dxgi;
-            switch (submap.BitmapFormat)
-            {
-                case TextureFormat.DXT1:
-                    dxgi = DxgiFormat.BC1_UNorm;
-                    break;
-
-                case TextureFormat.DXT3:
-                    dxgi = DxgiFormat.BC2_UNorm;
-                    break;
-
-                case TextureFormat.DXT5:
-                    dxgi = DxgiFormat.BC3_UNorm;
-                    break;
-
-                case TextureFormat.DXT5a:
-                    dxgi = DxgiFormat.BC4_UNorm;
-                    break;
-
-                case TextureFormat.DXN:
-                    dxgi = DxgiFormat.BC5_UNorm;
-                    break;
-
-                case TextureFormat.A8R8G8B8:
-                    dxgi = DxgiFormat.B8G8R8A8_UNorm;
-                    break;
-
-                case TextureFormat.X8R8G8B8:
-                    dxgi = DxgiFormat.B8G8R8X8_UNorm;
-                    break;
-
-                case TextureFormat.R5G6B5:
-                    dxgi = DxgiFormat.B5G6R5_UNorm;
-                    break;
-
-                case TextureFormat.A1R5G5B5:
-                    dxgi = DxgiFormat.B5G5R5A1_UNorm;
-                    break;
-
-                case TextureFormat.A4R4G4B4:
-                    dxgi = DxgiFormat.B4G4R4A4_UNorm;
-                    break;
-
-                case TextureFormat.P8_bump:
-                case TextureFormat.P8:
-                    dxgi = DxgiFormat.P8;
-                    break;
-
-                default: throw new NotSupportedException();
-            }
-
-            return new DdsImage(submap.Height, submap.Width, dxgi, DxgiTextureType.Texture2D, data);
+            if (dxgiLookup.ContainsKey(submap.BitmapFormat))
+                return new DdsImage(submap.Height, submap.Width, dxgiLookup[submap.BitmapFormat], DxgiTextureType.Texture2D, data);
+            else if (xboxLookup.ContainsKey(submap.BitmapFormat))
+                return new DdsImage(submap.Height, submap.Width, xboxLookup[submap.BitmapFormat], DxgiTextureType.Texture2D, data);
+            else throw new NotSupportedException();
         }
 
         #endregion
