@@ -480,6 +480,7 @@ namespace System.IO.Endian
         /// and the current encoding of the <seealso cref="EndianWriter"/>.
         /// </summary>
         /// <param name="value">The string value to write.</param>
+        /// <param name="byteOrder">The ByteOrder to write with.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -535,7 +536,6 @@ namespace System.IO.Endian
         /// Writes a length-prefixed or null-terminated string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
         /// </summary>
         /// <param name="value">The string value to write.</param>
-        /// <param name="isNullTerminated">true to terminate the string with a null character. false to write a length-prefixed string.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
