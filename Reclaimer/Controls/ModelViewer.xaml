@@ -68,6 +68,11 @@
                         ToolTip="Select none">
                     <ContentControl Template="{StaticResource ic_CheckboxList_16x}" />
                 </Button>
+                <Separator />
+                <Button Click="btnSave_Click"
+                        ToolTip="Save">
+                    <ContentControl Template="{StaticResource ic_Save_16x}" />
+                </Button>
             </ToolBar>
         </ToolBarTray>
         <studio:SplitContainer x:Name="splitPanel" x:FieldModifier="private"

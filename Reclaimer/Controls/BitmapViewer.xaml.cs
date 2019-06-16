@@ -198,7 +198,8 @@ namespace Reclaimer.Controls
                 OverwritePrompt = true,
                 FileName = sourceName,
                 Filter = filter,
-                FilterIndex = 1
+                FilterIndex = 1,
+                AddExtension = true
             };
 
             if (sfd.ShowDialog() != true)

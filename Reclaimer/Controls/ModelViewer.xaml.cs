@@ -1,5 +1,6 @@
 ﻿using Adjutant.Geometry;
 using Adjutant.Utilities;
+using Microsoft.Win32;
 using Studio.Controls;
 using System;
 using System.Collections.Generic;
@@ -53,6 +54,7 @@ namespace Reclaimer.Controls
         private readonly ModelVisual3D visual = new ModelVisual3D();
 
         private IRenderGeometry geometry;
+        private IGeometryModel model;
 
         public IEnumerable<int> Indexes { get; private set; }
         public ObservableCollection<ExtendedTreeViewItem> TreeViewItems { get; }
@@ -85,7 +87,7 @@ namespace Reclaimer.Controls
 
         private void SetLod(int index)
         {
-            var model = geometry.ReadGeometry(index);
+            model = geometry.ReadGeometry(index);
             var meshes = GetMeshes(model).ToList();
 
             TreeViewItems.Clear();
@@ -254,7 +256,7 @@ namespace Reclaimer.Controls
                         var geom = new MeshGeometry3D();
 
                         var indices = mesh.Indicies.Skip(sub.IndexStart).Take(sub.IndexLength).ToArray();
-                        if (mesh.IndexFormat == IndexFormat.Stripped) indices = Unstrip(indices).ToArray();
+                        if (mesh.IndexFormat == IndexFormat.Stripped) indices = indices.Unstrip().ToArray();
 
                         var vertStart = indices.Min();
                         var vertLength = indices.Max() - vertStart + 1;
@@ -287,34 +289,6 @@ namespace Reclaimer.Controls
                 mGroup.Freeze();
 
                 yield return mGroup;
-            }
-        }
-
-        private IEnumerable<int> Unstrip(IEnumerable<int> strip)
-        {
-            var arr = strip.ToArray();
-
-            for (int n = 0; n < arr.Length - 2; n++)
-            {
-                int i1 = arr[n + 0];
-                int i2 = arr[n + 1];
-                int i3 = arr[n + 2];
-
-                if ((i1 != i2) && (i1 != i3) && (i2 != i3))
-                {
-                    yield return i1;
-
-                    if (n % 2 == 0)
-                    {
-                        yield return i2;
-                        yield return i3;
-                    }
-                    else
-                    {
-                        yield return i3;
-                        yield return i2;
-                    }
-                }
             }
         }
 
@@ -395,6 +369,22 @@ namespace Reclaimer.Controls
         {
             foreach (var item in TreeViewItems)
                 item.IsChecked = false;
+        }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            var sfd = new SaveFileDialog
+            {
+                OverwritePrompt = true,
+                FileName = model.Name,
+                Filter = "AMF Files|*.amf",
+                AddExtension = true
+            };
+
+            if (sfd.ShowDialog() != true)
+                return;
+
+            model.WriteAMF(sfd.FileName);
         }
         #endregion
 
