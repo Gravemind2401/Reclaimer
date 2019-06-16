@@ -13,22 +13,27 @@ namespace Adjutant.Geometry
     {
         public Matrix4x4 CoordinateSystem { get; set; }
 
-        public string Name { get; set; }
-        public List<IGeometryNode> Nodes { get; set; }
-        public List<IGeometryMarkerGroup> MarkerGroups { get; set; }
-        public List<IGeometryRegion> Regions { get; set; }
-        public List<IGeometryMaterial> Materials { get; set; }
-        public List<IRealBounds5D> Bounds { get; set; }
-        public List<IGeometryMesh> Meshes { get; set; }
+        public string Name { get; }
+        public List<IGeometryNode> Nodes { get; }
+        public List<IGeometryMarkerGroup> MarkerGroups { get; }
+        public List<IGeometryRegion> Regions { get; }
+        public List<IGeometryMaterial> Materials { get; }
+        public List<IRealBounds5D> Bounds { get; }
+        public List<IGeometryMesh> Meshes { get; }
 
-        public GeometryModel()
+        public GeometryModel(string name)
         {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+
+            Name = name;
             Nodes = new List<IGeometryNode>();
             MarkerGroups = new List<IGeometryMarkerGroup>();
             Regions = new List<IGeometryRegion>();
             Materials = new List<IGeometryMaterial>();
             Bounds = new List<IRealBounds5D>();
             Meshes = new List<IGeometryMesh>();
+            CoordinateSystem = Matrix4x4.Identity;
         }
 
         public override string ToString() => Name;

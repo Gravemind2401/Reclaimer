@@ -68,7 +68,7 @@ namespace Adjutant.Blam.Halo3
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var model = new GeometryModel { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(Name) { CoordinateSystem = CoordinateSystem.Default };
 
             model.Nodes.AddRange(Nodes);
             model.MarkerGroups.AddRange(MarkerGroups);
@@ -134,9 +134,9 @@ namespace Adjutant.Blam.Halo3
             {
                 var mesh = new GeometryMesh
                 {
-                     IndexFormat = sourceMesh.IndexFormat,
-                     VertexWeights = VertexWeights.Rigid,
-                     BoundsIndex = 0
+                    IndexFormat = sourceMesh.IndexFormat,
+                    VertexWeights = VertexWeights.Rigid,
+                    BoundsIndex = 0
                 };
 
                 var strip = sourceMesh.Indicies.Skip(subset.IndexStart).Take(subset.IndexLength);

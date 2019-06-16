@@ -5,6 +5,7 @@ using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.IO.Endian;
 using System.Linq;
 using System.Numerics;
@@ -77,7 +78,7 @@ namespace Adjutant.Blam.Halo3
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var model = new GeometryModel { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(Path.GetFileName(item.FileName)) { CoordinateSystem = CoordinateSystem.Default };
 
             var bspBlock = cache.Scenario.StructureBsps.First(s => s.BspReference.TagId == item.Id);
             var bspIndex = cache.Scenario.StructureBsps.IndexOf(bspBlock);

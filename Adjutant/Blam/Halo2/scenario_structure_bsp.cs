@@ -16,6 +16,13 @@ namespace Adjutant.Blam.Halo2
 {
     public class scenario_structure_bsp : IRenderGeometry
     {
+        private readonly IndexItem item;
+
+        public scenario_structure_bsp(IndexItem item)
+        {
+            this.item = item;
+        }
+
         [Offset(68)]
         public RealBounds XBounds { get; set; }
 
@@ -67,7 +74,7 @@ namespace Adjutant.Blam.Halo2
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var model = new GeometryModel { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(Path.GetFileName(item.FileName)) { CoordinateSystem = CoordinateSystem.Default };
 
             model.Materials.AddRange(GetMaterials());
 
