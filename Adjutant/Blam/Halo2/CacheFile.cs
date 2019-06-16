@@ -153,7 +153,7 @@ namespace Adjutant.Blam.Halo2
     public class TagIndex : ITagIndex<IndexItem>
     {
         private readonly CacheFile cache;
-        private readonly List<IndexItem> items;
+        private readonly Dictionary<int, IndexItem> items;
 
         internal Dictionary<int, string> Filenames { get; }
 
@@ -175,7 +175,7 @@ namespace Adjutant.Blam.Halo2
                 throw new ArgumentNullException(nameof(cache));
 
             this.cache = cache;
-            items = new List<IndexItem>();
+            items = new Dictionary<int, IndexItem>();
             Filenames = new Dictionary<int, string>();
         }
 
@@ -191,7 +191,7 @@ namespace Adjutant.Blam.Halo2
                 {
                     //Halo2Vista multiplayer maps have empty tags in them
                     var item = reader.ReadObject(new IndexItem(cache));
-                    if (item.Id >= 0) items.Add(item);
+                    if (item.Id >= 0) items.Add(i, item);
                 }
 
                 reader.Seek(cache.Header.FileTableIndexOffset, SeekOrigin.Begin);
@@ -207,9 +207,9 @@ namespace Adjutant.Blam.Halo2
 
         public IndexItem this[int index] => items[index];
 
-        public IEnumerator<IndexItem> GetEnumerator() => items.GetEnumerator();
+        public IEnumerator<IndexItem> GetEnumerator() => items.Values.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => items.Values.GetEnumerator();
     }
 
     public class StringIndex : IStringIndex

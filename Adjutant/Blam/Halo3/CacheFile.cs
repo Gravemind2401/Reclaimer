@@ -195,7 +195,7 @@ namespace Adjutant.Blam.Halo3
     public class TagIndex : ITagIndex<IndexItem>
     {
         private readonly CacheFile cache;
-        private readonly List<IndexItem> items;
+        private readonly Dictionary<int, IndexItem> items;
 
         internal Dictionary<int, string> Filenames { get; }
         internal List<TagClass> Classes { get; }
@@ -232,7 +232,7 @@ namespace Adjutant.Blam.Halo3
                 throw new ArgumentNullException(nameof(cache));
 
             this.cache = cache;
-            items = new List<IndexItem>();
+            items = new Dictionary<int, IndexItem>();
 
             Classes = new List<TagClass>();
             Filenames = new Dictionary<int, string>();
@@ -253,7 +253,7 @@ namespace Adjutant.Blam.Halo3
                 {
                     //every Halo3 map has an empty tag
                     var item = reader.ReadObject(new IndexItem(cache, i));
-                    if (item.ClassIndex >= 0) items.Add(item);
+                    if (item.ClassIndex >= 0) items.Add(i, item);
                 }
 
                 reader.Seek(cache.Header.FileTableIndexPointer.Address, SeekOrigin.Begin);
@@ -275,9 +275,9 @@ namespace Adjutant.Blam.Halo3
 
         public IndexItem this[int index] => items[index];
 
-        public IEnumerator<IndexItem> GetEnumerator() => items.GetEnumerator();
+        public IEnumerator<IndexItem> GetEnumerator() => items.Values.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => items.Values.GetEnumerator();
     }
 
     public class StringIndex : IStringIndex
