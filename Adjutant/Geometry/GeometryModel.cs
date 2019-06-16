@@ -168,8 +168,8 @@ namespace Adjutant.Geometry
     public enum VertexWeights
     {
         None,
-        Rigid,
-        Skinned
+        Skinned,
+        Rigid
     }
 
     public enum IndexFormat

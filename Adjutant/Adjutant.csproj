@@ -84,6 +84,7 @@
     <Compile Include="Blam\Halo3\TagReference.cs" />
     <Compile Include="Blam\Common\XmlVertex.cs" />
     <Compile Include="Geometry\CoordinateSystem.cs" />
+    <Compile Include="Geometry\Extensions.cs" />
     <Compile Include="Geometry\IVertex.cs" />
     <Compile Include="Blam\Halo1\bitmap.cs" />
     <Compile Include="Blam\Halo1\BSPAddressTranslator.cs" />
@@ -101,6 +102,8 @@
     <Compile Include="Blam\Halo2\TagAddressTranslator.cs" />
     <Compile Include="Geometry\IGeometryModel.cs" />
     <Compile Include="Geometry\GeometryModel.cs" />
+    <Compile Include="Geometry\TransformedVector.cs" />
+    <Compile Include="Geometry\TransformedVertex.cs" />
     <Compile Include="Geometry\VectorType.cs" />
     <Compile Include="Utilities\DependencyReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
