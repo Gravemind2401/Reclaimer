@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Reclaimer
+namespace Reclaimer.Windows
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

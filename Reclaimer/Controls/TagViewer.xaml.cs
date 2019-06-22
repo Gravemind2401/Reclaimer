@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Studio.Controls;
 using Reclaimer.Utils;
+using Reclaimer.Windows;
 
 namespace Reclaimer.Controls
 {

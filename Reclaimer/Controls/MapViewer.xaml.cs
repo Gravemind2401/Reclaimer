@@ -1,5 +1,6 @@
 ﻿using Adjutant.Blam.Common;
 using Reclaimer.Utils;
+using Reclaimer.Windows;
 using Studio.Controls;
 using System;
 using System.Collections.Generic;

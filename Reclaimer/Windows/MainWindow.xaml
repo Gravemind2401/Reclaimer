@@ -1,15 +1,32 @@
 ﻿<metro:MetroWindow
-    x:Class="Reclaimer.MainWindow"
+    x:Class="Reclaimer.Windows.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
-    xmlns:local="clr-namespace:Reclaimer"
+    xmlns:local="clr-namespace:Reclaimer.Windows"
+    xmlns:c="clr-namespace:Studio.Controls;assembly=Studio"
     mc:Ignorable="d" WindowState="Maximized"
-    Style="{StaticResource MetroWindowStyle}"
+    Style="{StaticResource MainWindowStyle}"
     Title="MainWindow" Height="900" Width="1600">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style TargetType="c:DocumentTabControl" BasedOn="{StaticResource {x:Type c:DocumentTabControl}}">
+                <Setter Property="NewWindowType" Value="{x:Type local:TabWindow}" />
+            </Style>
+
+            <Style TargetType="c:UtilityTabControl" BasedOn="{StaticResource {x:Type c:UtilityTabControl}}">
+                <Setter Property="NewWindowType" Value="{x:Type local:UtilityWindow}" />
+            </Style>
+
+            <Style TargetType="c:MultiPanel">
+                <Setter Property="DefaultDockSize" Value="400" />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>

@@ -182,6 +182,12 @@
     <Compile Include="Utils\NativeMethods.cs" />
     <Compile Include="Utils\StandardAddressTranslator.cs" />
     <Compile Include="Utils\TreeNode.cs" />
+    <Compile Include="Windows\TabWindow.xaml.cs">
+      <DependentUpon>TabWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\UtilityWindow.xaml.cs">
+      <DependentUpon>UtilityWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="Controls\BitmapViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -202,7 +208,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -210,11 +216,19 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Resources\Templates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\TabWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\UtilityWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

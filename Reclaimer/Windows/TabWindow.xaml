@@ -1,0 +1,40 @@
+﻿<metro:MetroWindow x:Class="Reclaimer.Windows.TabWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Reclaimer.Windows"
+        xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:c="clr-namespace:Studio.Controls;assembly=Studio"
+        mc:Ignorable="d" Height="300" Width="300"
+        Loaded="MetroWindow_Loaded"
+        ShowActivated="True" WindowStartupLocation="Manual"
+        Style="{StaticResource TabWindowStyle}"
+        Title="TabWindow">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style TargetType="c:DocumentTabControl" BasedOn="{StaticResource {x:Type c:DocumentTabControl}}">
+                <Setter Property="NewWindowType" Value="{x:Type local:TabWindow}" />
+            </Style>
+
+            <Style TargetType="c:UtilityTabControl" BasedOn="{StaticResource {x:Type c:UtilityTabControl}}">
+                <Setter Property="NewWindowType" Value="{x:Type local:UtilityWindow}" />
+            </Style>
+
+            <Style TargetType="c:MultiPanel" BasedOn="{StaticResource {x:Type c:MultiPanel}}">
+                <Setter Property="DefaultDockSize" Value="350" />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid x:Name="root">
+        <c:DockContainer x:Name="dockContainer">
+            <c:MultiPanel x:Name="contentPanel">
+                <c:MultiPanelContainer>
+
+                </c:MultiPanelContainer>
+            </c:MultiPanel>
+        </c:DockContainer>
+    </Grid>
+</metro:MetroWindow>
