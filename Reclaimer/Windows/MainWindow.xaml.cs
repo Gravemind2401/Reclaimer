@@ -14,41 +14,25 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Studio.Controls;
+using Reclaimer.Plugins;
 
 namespace Reclaimer.Windows
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow
+    public partial class MainWindow : MetroWindow, IMultiPanelHost
     {
+        MultiPanel IMultiPanelHost.MultiPanel => MainPanel;
+
+        DocumentTabControl IMultiPanelHost.DocumentContainer => docTab;
+
         public MainWindow()
         {
             InitializeComponent();
-        }
 
-        private void menuOpen_Click(object sender, RoutedEventArgs e)
-        {
-            var ofd = new Microsoft.Win32.OpenFileDialog
-            {
-                Filter = "Halo Map Files|*.map",
-                Multiselect = false,
-                CheckFileExists = true
-            };
-
-            if (ofd.ShowDialog() != true)
-                return;
-
-            var tc = MainPanel.GetElementAtPath(Dock.Left) as Studio.Controls.UtilityTabControl;
-            var mv = new Controls.MapViewer();
-
-            if (tc == null) tc = new Studio.Controls.UtilityTabControl();
-
-            if (!MainPanel.GetChildren().Contains(tc))
-                MainPanel.AddElement(tc, null, Dock.Left, new GridLength(400));
-
-            mv.LoadMap(ofd.FileName);
-            tc.Items.Add(mv);
+            Substrate.LoadPlugins();
         }
 
         private async void menuImport_Click(object sender, RoutedEventArgs e)
@@ -86,6 +70,73 @@ namespace Reclaimer.Windows
 
             if (!MainPanel.GetChildren().Contains(tc))
                 MainPanel.AddElement(tc, null, Dock.Left, new GridLength(400));
+        }
+
+        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            menu.Items.Clear();
+
+            foreach (var plugin in Substrate.AllPlugins)
+            {
+                foreach (var item in plugin.MenuItems)
+                    AddMenuItem(plugin, item);
+            }
+        }
+
+        private void AddMenuItem(Plugin source, PluginMenuItem item)
+        {
+            var menuItem = GetMenuItem(item.Path);
+            menuItem.Tag = item.Key;
+
+            menuItem.Click -= GetHandler(source, item.Key); // incase the key is not unique
+            menuItem.Click += GetHandler(source, item.Key);
+
+            var root = GetRoot(menuItem);
+            if (!menu.Items.Contains(root))
+                menu.Items.Add(root);
+        }
+
+        private Dictionary<string, RoutedEventHandler> actionLookup = new Dictionary<string, RoutedEventHandler>();
+        private RoutedEventHandler GetHandler(Plugin source, string key)
+        {
+            if (actionLookup.ContainsKey(key))
+                return actionLookup[key];
+
+            var action = new RoutedEventHandler((s, e) => source.OnMenuItemClick(key));
+            actionLookup.Add(key, action);
+
+            return action;
+        }
+
+        private Dictionary<string, MenuItem> menuLookup = new Dictionary<string, MenuItem>();
+        private MenuItem GetMenuItem(string path)
+        {
+            if (menuLookup.ContainsKey(path))
+                return menuLookup[path];
+
+            var index = path.LastIndexOf('\\');
+            var branch = index < 0 ? null : path.Substring(0, index);
+            var leaf = index < 0 ? path : path.Substring(index + 1);
+
+            var item = new MenuItem { Header = leaf };
+            menuLookup.Add(path, item);
+
+            if (branch == null)
+                return item;
+
+            var parent = GetMenuItem(branch);
+            parent.Items.Add(item);
+
+            return item;
+        }
+
+        private MenuItem GetRoot(MenuItem item)
+        {
+            var temp = item;
+            while ((temp = temp.Parent as MenuItem) != null)
+                item = temp;
+
+            return item;
         }
     }
 }

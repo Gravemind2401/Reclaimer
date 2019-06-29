@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Common;
+using Reclaimer.Plugins;
 using Reclaimer.Utils;
 using Reclaimer.Windows;
 using Studio.Controls;
@@ -64,91 +65,8 @@ namespace Reclaimer.Controls
         {
             var item = (tv.SelectedItem as TreeNode)?.Tag as IIndexItem;
 
-            if (item == null) return;
-
-            if (item.ClassCode == "sbsp")
-            {
-                Adjutant.Utilities.IRenderGeometry sbsp;
-                switch (cache.CacheType)
-                {
-                    case CacheType.Halo1CE:
-                    case CacheType.Halo1PC:
-                        sbsp = item.ReadMetadata<Adjutant.Blam.Halo1.scenario_structure_bsp>();
-                        break;
-                    case CacheType.Halo2Xbox:
-                        sbsp = item.ReadMetadata<Adjutant.Blam.Halo2.scenario_structure_bsp>();
-                        break;
-                    case CacheType.Halo3Beta:
-                    case CacheType.Halo3Retail:
-                    case CacheType.Halo3ODST:
-                        sbsp = item.ReadMetadata<Adjutant.Blam.Halo3.scenario_structure_bsp>();
-                        break;
-                    default: throw new NotSupportedException();
-                }
-
-                var viewer = new ModelViewer();
-                viewer.LoadGeometry(sbsp, $"{item.FileName}.{item.ClassCode}");
-
-                var wnd = Application.Current.MainWindow as MainWindow;
-                wnd.docTab.Items.Add(viewer);
-                return;
-            }
-
-            if (item.ClassCode == "mod2" || item.ClassCode == "mode")
-            {
-                Adjutant.Utilities.IRenderGeometry mode;
-                switch (cache.CacheType)
-                {
-                    case CacheType.Halo1CE:
-                    case CacheType.Halo1PC:
-                        mode = item.ReadMetadata<Adjutant.Blam.Halo1.gbxmodel>();
-                        break;
-                    case CacheType.Halo2Xbox:
-                        mode = item.ReadMetadata<Adjutant.Blam.Halo2.render_model>();
-                        break;
-                    case CacheType.Halo3Beta:
-                    case CacheType.Halo3Retail:
-                    case CacheType.Halo3ODST:
-                        mode = item.ReadMetadata<Adjutant.Blam.Halo3.render_model>();
-                        break;
-                    default: throw new NotSupportedException();
-                }
-
-                var viewer = new ModelViewer();
-                viewer.LoadGeometry(mode, $"{item.FileName}.{item.ClassCode}");
-
-                var wnd = Application.Current.MainWindow as MainWindow;
-                wnd.docTab.Items.Add(viewer);
-                return;
-            }
-
-            if (item.ClassCode == "bitm")
-            {
-                Adjutant.Utilities.IBitmap bitm;
-                switch (cache.CacheType)
-                {
-                    case CacheType.Halo1CE:
-                    case CacheType.Halo1PC:
-                        bitm = item.ReadMetadata<Adjutant.Blam.Halo1.bitmap>();
-                        break;
-                    case CacheType.Halo2Xbox:
-                        bitm = item.ReadMetadata<Adjutant.Blam.Halo2.bitmap>();
-                        break;
-                    case CacheType.Halo3Beta:
-                    case CacheType.Halo3Retail:
-                    case CacheType.Halo3ODST:
-                        bitm = item.ReadMetadata<Adjutant.Blam.Halo3.bitmap>();
-                        break;
-                    default: throw new NotSupportedException();
-                }
-
-                var viewer = new BitmapViewer();
-                viewer.LoadImage(bitm, $"{item.FileName}.{item.ClassCode}");
-
-                var wnd = Application.Current.MainWindow as MainWindow;
-                wnd.docTab.Items.Add(viewer);
-                return;
-            }
+            if (item != null)
+                Substrate.OpenWithDefault(item, $"{cache.CacheType}.{item.ClassCode}", Substrate.GetHostWindow(this));
         }
     }
 }

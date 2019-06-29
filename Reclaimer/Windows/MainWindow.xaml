@@ -10,6 +10,7 @@
     xmlns:c="clr-namespace:Studio.Controls;assembly=Studio"
     mc:Ignorable="d" WindowState="Maximized"
     Style="{StaticResource MainWindowStyle}"
+    Loaded="MetroWindow_Loaded"
     Title="MainWindow" Height="900" Width="1600">
 
     <Window.Resources>
@@ -33,14 +34,14 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Menu Grid.Row="0" Grid.ColumnSpan="2">
-            <MenuItem Header="File">
+        <Menu Grid.Row="0" Grid.ColumnSpan="2" x:Name="menu">
+            <!--<MenuItem Header="File">
                 <MenuItem Header="Open" Click="menuOpen_Click" />
                 <MenuItem Header="Import" Click="menuImport_Click" />
             </MenuItem>
             <MenuItem Header="View">
                 <MenuItem Header="Tag Viewer" Click="menuTagViewer_Click" />
-            </MenuItem>
+            </MenuItem>-->
         </Menu>
         <studio:DockContainer Grid.Row="1" x:Name="Container">
             <studio:MultiPanel x:Name="MainPanel" DefaultDockSize="400">

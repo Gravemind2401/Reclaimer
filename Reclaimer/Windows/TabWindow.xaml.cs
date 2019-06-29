@@ -19,7 +19,7 @@ namespace Reclaimer.Windows
     /// <summary>
     /// Interaction logic for TabWindow.xaml
     /// </summary>
-    public partial class TabWindow : MetroWindow, ITabWindow
+    public partial class TabWindow : MetroWindow, IMultiPanelHost, ITabWindow
     {
         private ExtendedTabControl tempControl;
         private ITabContent tempItem;
@@ -34,7 +34,7 @@ namespace Reclaimer.Windows
         {
             get { return (bool)GetValue(IsDraggingProperty); }
             private set { SetValue(IsDraggingPropertyKey, value); }
-        } 
+        }
         #endregion
 
         public TabWindow()
@@ -52,6 +52,10 @@ namespace Reclaimer.Windows
             Left += curPos.X - tab.ActualWidth / 2;
             Top += curPos.Y - tab.ActualHeight / 2;
         }
+
+        MultiPanel IMultiPanelHost.MultiPanel => contentPanel;
+
+        DocumentTabControl IMultiPanelHost.DocumentContainer => tempControl as DocumentTabControl;
 
         #region ITabWindow
         IEnumerable<ITabContent> ITabWindow.TargetItems =>
@@ -71,10 +75,10 @@ namespace Reclaimer.Windows
 
             tempItem = e.TabItems.First();
 
-            if (tempItem.TabUsage == TabItemUsage.Document)
-                tempControl = new DocumentTabControl();
-            else
-                tempControl = new UtilityTabControl();
+            //if (tempItem.TabUsage == TabItemUsage.Document)
+            tempControl = new DocumentTabControl();
+            //else
+            //    tempControl = new UtilityTabControl();
 
             root.Width = visualBounds.Width;
             root.Height = visualBounds.Height;

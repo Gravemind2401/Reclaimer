@@ -177,11 +177,17 @@
     <Compile Include="Entities\TagPathConfiguration.cs">
       <DependentUpon>Database.tt</DependentUpon>
     </Compile>
+    <Compile Include="Plugins\BitmapViewer.cs" />
+    <Compile Include="Plugins\MapViewer.cs" />
+    <Compile Include="Plugins\ModelViewer.cs" />
+    <Compile Include="Plugins\Plugin.cs" />
+    <Compile Include="Plugins\Substrate.cs" />
     <Compile Include="Storage.cs" />
     <Compile Include="Utils\BindableBase.cs" />
     <Compile Include="Utils\NativeMethods.cs" />
     <Compile Include="Utils\StandardAddressTranslator.cs" />
     <Compile Include="Utils\TreeNode.cs" />
+    <Compile Include="Windows\IMultiPanelHost.cs" />
     <Compile Include="Windows\TabWindow.xaml.cs">
       <DependentUpon>TabWindow.xaml</DependentUpon>
     </Compile>
