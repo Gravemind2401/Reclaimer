@@ -21,11 +21,13 @@ namespace Reclaimer.Plugins
 
     public abstract class Plugin
     {
-        private readonly Dictionary<DateTime, string> log = new Dictionary<DateTime, string>();
+        internal readonly List<LogEntry> logEntries = new List<LogEntry>();
 
         public Plugin() { }
 
-        internal string Key => GetType().FullName;
+        internal string Assembly => GetType().Assembly.FullName;
+
+        internal virtual string Key => GetType().FullName;
 
         public abstract string Name { get; }
 
@@ -50,15 +52,16 @@ namespace Reclaimer.Plugins
 
         //on context item click
 
-        protected void LogOutput(string message)
+        protected internal void LogOutput(string message)
         {
-            log.Add(DateTime.Now, message);
-            Substrate.LogOutput(this, message);
+            var entry = new LogEntry(DateTime.Now, message);
+            logEntries.Add(entry);
+            Substrate.LogOutput(this, entry);
         }
 
         protected internal void ClearLog()
         {
-            log.Clear();
+            logEntries.Clear();
         }
     }
 }

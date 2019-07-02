@@ -28,11 +28,14 @@ namespace Reclaimer.Windows
 
         DocumentTabControl IMultiPanelHost.DocumentContainer => docTab;
 
+        private readonly Controls.OutputViewer outputViewer;
+
         public MainWindow()
         {
             InitializeComponent();
 
             Substrate.LoadPlugins();
+            outputViewer = new Controls.OutputViewer();
         }
 
         private async void menuImport_Click(object sender, RoutedEventArgs e)
@@ -72,9 +75,26 @@ namespace Reclaimer.Windows
                 MainPanel.AddElement(tc, null, Dock.Left, new GridLength(400));
         }
 
+        private void menuOutput_Click(object sender, RoutedEventArgs e)
+        {
+            if (outputViewer == null)
+
+                if (outputViewer.Parent != null)
+                    return;
+
+            var tc = MainPanel.GetElementAtPath(Dock.Bottom) as UtilityTabControl;
+            if (tc == null) tc = new UtilityTabControl();
+
+            if (!MainPanel.GetChildren().Contains(tc))
+                MainPanel.AddElement(tc, null, Dock.Bottom, new GridLength(250));
+
+            tc.Items.Add(outputViewer);
+        }
+
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            menu.Items.Clear();
+            foreach (MenuItem item in menu.Items)
+                menuLookup.Add(item.Header as string, item);
 
             foreach (var plugin in Substrate.AllPlugins)
             {

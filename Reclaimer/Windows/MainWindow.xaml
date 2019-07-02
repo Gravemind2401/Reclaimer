@@ -42,6 +42,9 @@
             <MenuItem Header="View">
                 <MenuItem Header="Tag Viewer" Click="menuTagViewer_Click" />
             </MenuItem>-->
+            <MenuItem Header="View">
+                <MenuItem Header="Output" Click="menuOutput_Click" />
+            </MenuItem>
         </Menu>
         <studio:DockContainer Grid.Row="1" x:Name="Container">
             <studio:MultiPanel x:Name="MainPanel" DefaultDockSize="400">

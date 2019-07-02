@@ -101,6 +101,9 @@
     <Compile Include="Controls\ModelViewer.xaml.cs">
       <DependentUpon>ModelViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\OutputViewer.xaml.cs">
+      <DependentUpon>OutputViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Renderer.xaml.cs">
       <DependentUpon>Renderer.xaml</DependentUpon>
     </Compile>
@@ -202,6 +205,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\OutputViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Renderer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -211,6 +218,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\TagViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Dark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Blue.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -12,6 +12,7 @@
                 <!--<ResourceDictionary Source="/Studio;component/Themes/Generic.xaml" />-->
                 <ResourceDictionary Source="/Studio;component/Resources/Styles.xaml" />
                 <ResourceDictionary Source="/Studio;component/Themes/Blue.xaml" />
+                <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Style TargetType="metro:MetroWindow" x:Key="MainWindowStyle">
