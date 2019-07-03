@@ -8,6 +8,7 @@
     xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
     xmlns:local="clr-namespace:Reclaimer.Windows"
     xmlns:c="clr-namespace:Studio.Controls;assembly=Studio"
+    xmlns:u="clr-namespace:Studio.Utilities;assembly=Studio"
     mc:Ignorable="d" WindowState="Maximized"
     Style="{StaticResource MainWindowStyle}"
     Loaded="MetroWindow_Loaded"
@@ -15,6 +16,8 @@
 
     <Window.Resources>
         <ResourceDictionary>
+            <u:BoolToVisibilityConverter x:Key="visConverter" TrueValue="Visible" FalseValue="Collapsed" />
+
             <Style TargetType="c:DocumentTabControl" BasedOn="{StaticResource {x:Type c:DocumentTabControl}}">
                 <Setter Property="NewWindowType" Value="{x:Type local:TabWindow}" />
             </Style>
@@ -42,9 +45,13 @@
             <MenuItem Header="View">
                 <MenuItem Header="Tag Viewer" Click="menuTagViewer_Click" />
             </MenuItem>-->
+            <MenuItem Header="File" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
+            <MenuItem Header="Edit" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
             <MenuItem Header="View">
                 <MenuItem Header="Output" Click="menuOutput_Click" />
             </MenuItem>
+            <MenuItem Header="Tools" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
+            <MenuItem Header="Help" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
         </Menu>
         <studio:DockContainer Grid.Row="1" x:Name="Container">
             <studio:MultiPanel x:Name="MainPanel" DefaultDockSize="400">

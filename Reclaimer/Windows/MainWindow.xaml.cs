@@ -66,9 +66,7 @@ namespace Reclaimer.Windows
 
         private void menuTagViewer_Click(object sender, RoutedEventArgs e)
         {
-            var tc = MainPanel.GetElementAtPath(Dock.Left) as Studio.Controls.UtilityTabControl;
-
-            if (tc == null) tc = new Studio.Controls.UtilityTabControl();
+            var tc = MainPanel.GetElementAtPath(Dock.Left) as UtilityTabControl ?? new UtilityTabControl();
             tc.Items.Add(new Controls.TagViewer());
 
             if (!MainPanel.GetChildren().Contains(tc))
@@ -77,13 +75,10 @@ namespace Reclaimer.Windows
 
         private void menuOutput_Click(object sender, RoutedEventArgs e)
         {
-            if (outputViewer == null)
+            if (outputViewer.Parent != null)
+                return;
 
-                if (outputViewer.Parent != null)
-                    return;
-
-            var tc = MainPanel.GetElementAtPath(Dock.Bottom) as UtilityTabControl;
-            if (tc == null) tc = new UtilityTabControl();
+            var tc = MainPanel.GetElementAtPath(Dock.Bottom) as UtilityTabControl ?? new UtilityTabControl();
 
             if (!MainPanel.GetChildren().Contains(tc))
                 MainPanel.AddElement(tc, null, Dock.Bottom, new GridLength(250));
@@ -93,6 +88,7 @@ namespace Reclaimer.Windows
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            //add initial menu items
             foreach (MenuItem item in menu.Items)
                 menuLookup.Add(item.Header as string, item);
 
@@ -106,10 +102,11 @@ namespace Reclaimer.Windows
         private void AddMenuItem(Plugin source, PluginMenuItem item)
         {
             var menuItem = GetMenuItem(item.Path);
-            menuItem.Tag = item.Key;
+            var itemKey = $"{source.Key}::{item.Key}";
+            menuItem.Tag = itemKey;
 
-            menuItem.Click -= GetHandler(source, item.Key); // incase the key is not unique
-            menuItem.Click += GetHandler(source, item.Key);
+            menuItem.Click -= GetHandler(source, itemKey); // incase the key is not unique
+            menuItem.Click += GetHandler(source, itemKey);
 
             var root = GetRoot(menuItem);
             if (!menu.Items.Contains(root))

@@ -40,18 +40,13 @@
             </ToolBar>
         </ToolBarTray>
         <TextBox x:Name="txtOutput" x:FieldModifier="private" 
-                 IsReadOnly="True" Padding="2" TextWrapping="NoWrap"
+                 IsReadOnly="True" Padding="10,0" TextWrapping="NoWrap"
                  BorderThickness="0" FontFamily="Lucida Console"
+                 TextBlock.LineHeight="15" TextBlock.LineStackingStrategy="BlockLineHeight"
                  Background="{DynamicResource OutputViewerBackground}"
                  Foreground="{DynamicResource OutputViewerForeground}"
                  ScrollViewer.HorizontalScrollBarVisibility="Visible"
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
-                 TextOptions.TextFormattingMode="Display">
-            <TextBox.Resources>
-                <Style TargetType="Paragraph">
-                    <Setter Property="Margin" Value="6,0 "/>
-                </Style>
-            </TextBox.Resources>
-        </TextBox>
+                 TextOptions.TextFormattingMode="Display" />
     </DockPanel>
 </local:ControlBase>
