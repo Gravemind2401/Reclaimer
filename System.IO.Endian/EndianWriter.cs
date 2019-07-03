@@ -603,9 +603,7 @@ namespace System.IO.Endian
         /// <exception cref="ArgumentOutOfRangeException" />
         public virtual EndianWriter CreateVirtualWriter(long origin)
         {
-            if (origin < 0 || origin > BaseStream.Length)
-                throw Exceptions.OutOfStreamBounds(nameof(origin), origin);
-
+            //don't check stream bounds for writer - it can typically write beyond EOF
             return new EndianWriter(this, origin);
         }
 
