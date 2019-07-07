@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Reclaimer.Controls"
              xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
+             xmlns:u="clr-namespace:Reclaimer.Utils"
              mc:Ignorable="d" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
              d:DesignHeight="500" d:DesignWidth="900">
 
@@ -14,6 +15,9 @@
                 <ResourceDictionary Source="/Resources/Templates.xaml" />
                 <ResourceDictionary Source="/Studio;component/Resources/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <u:ToStringConverter x:Key="stringConverter" />
+            <u:RadToDegConverter x:Key="radToDegConverter" />
 
             <Style x:Key="showHideStyle" TargetType="ToggleButton">
                 <Setter Property="Background" Value="LightGray" />
@@ -48,10 +52,7 @@
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top" IsLocked="True" Margin="0" 
                      Background="{DynamicResource ToolBarBackground}">
-            <ToolBar Margin="3,2">
-                <ComboBox ItemsSource="{Binding Indexes}"
-                          SelectedIndex="{Binding SelectedLod}" />
-                <Separator />
+            <ToolBar Margin="3,1">
                 <Button Click="btnCollapseAll_Click"
                         ToolTip="Collapse all">
                     <ContentControl Template="{StaticResource ic_CollapseGroup_16x}" />
@@ -73,6 +74,69 @@
                         ToolTip="Save">
                     <ContentControl Template="{StaticResource ic_Save_16x}" />
                 </Button>
+            </ToolBar>
+        </ToolBarTray>
+        <ToolBarTray DockPanel.Dock="Bottom" IsLocked="True" Margin="0" 
+                     Background="{DynamicResource ToolBarBackground}">
+            <ToolBar Margin="3,1">
+                <ToolBar.Resources>
+                    <Style TargetType="Label">
+                        <Setter Property="Padding" Value="4,0,6,2" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                    </Style>
+                </ToolBar.Resources>
+                <ComboBox ItemsSource="{Binding Indexes}"
+                          SelectedIndex="{Binding SelectedLod}" />
+                <Separator />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition MinWidth="65" />
+                        <ColumnDefinition MinWidth="65" />
+                        <ColumnDefinition MinWidth="65" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Position:" />
+                    <Label Grid.Column="1" HorizontalAlignment="Right" 
+                           Content="{Binding Position.X, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F2'}" />
+                    <Label Grid.Column="2" HorizontalAlignment="Right" 
+                           Content="{Binding Position.Y, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F2'}" />
+                    <Label Grid.Column="3" HorizontalAlignment="Right" 
+                           Content="{Binding Position.Z, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F2'}" />
+                </Grid>
+                <Separator />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition MinWidth="50" />
+                        <ColumnDefinition MinWidth="50" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Angle:" />
+                    <Label Grid.Column="1" HorizontalAlignment="Right" 
+                           Content="{Binding Yaw, ElementName=renderer, Converter={StaticResource radToDegConverter}, ConverterParameter='F2'}" />
+                    <Label Grid.Column="2" HorizontalAlignment="Right" 
+                           Content="{Binding Pitch, ElementName=renderer, Converter={StaticResource radToDegConverter}, ConverterParameter='F2'}" />
+                </Grid>
+                <Separator />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition MinWidth="35" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="FOV:" />
+                    <Label Grid.Column="1" HorizontalAlignment="Right" 
+                           Content="{Binding FieldOfView, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F0'}" />
+                </Grid>
+                <Separator />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition MinWidth="40" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Speed:" />
+                    <Label Grid.Column="1" HorizontalAlignment="Right" 
+                           Content="{Binding CameraSpeed, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F2'}" />
+                </Grid>
+                <Separator />
             </ToolBar>
         </ToolBarTray>
         <studio:SplitContainer x:Name="splitPanel" x:FieldModifier="private"

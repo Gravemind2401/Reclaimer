@@ -104,12 +104,10 @@
     <Compile Include="Controls\OutputViewer.xaml.cs">
       <DependentUpon>OutputViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Renderer.xaml.cs">
-      <DependentUpon>Renderer.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\MapViewer.xaml.cs">
       <DependentUpon>MapViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Renderer.cs" />
     <Compile Include="Controls\TagViewer.xaml.cs">
       <DependentUpon>TagViewer.xaml</DependentUpon>
     </Compile>
@@ -187,6 +185,8 @@
     <Compile Include="Plugins\Substrate.cs" />
     <Compile Include="Storage.cs" />
     <Compile Include="Utils\BindableBase.cs" />
+    <Compile Include="Utils\RadToDegConverter.cs" />
+    <Compile Include="Utils\ToStringConverter.cs" />
     <Compile Include="Utils\NativeMethods.cs" />
     <Compile Include="Utils\StandardAddressTranslator.cs" />
     <Compile Include="Utils\TreeNode.cs" />
@@ -209,10 +209,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Renderer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\MapViewer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -226,6 +222,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Blue.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
