@@ -102,11 +102,11 @@ namespace Reclaimer.Windows
         private void AddMenuItem(Plugin source, PluginMenuItem item)
         {
             var menuItem = GetMenuItem(item.Path);
-            var itemKey = $"{source.Key}::{item.Key}";
-            menuItem.Tag = itemKey;
+            var fullKey = $"{source.Key}::{item.Key}";
+            menuItem.Tag = fullKey;
 
-            menuItem.Click -= GetHandler(source, itemKey); // incase the key is not unique
-            menuItem.Click += GetHandler(source, itemKey);
+            menuItem.Click -= GetHandler(source, item.Key); // incase the key is not unique
+            menuItem.Click += GetHandler(source, item.Key);
 
             var root = GetRoot(menuItem);
             if (!menu.Items.Contains(root))
@@ -116,11 +116,12 @@ namespace Reclaimer.Windows
         private Dictionary<string, RoutedEventHandler> actionLookup = new Dictionary<string, RoutedEventHandler>();
         private RoutedEventHandler GetHandler(Plugin source, string key)
         {
-            if (actionLookup.ContainsKey(key))
-                return actionLookup[key];
+            var fullKey = $"{source.Key}::{key}";
+            if (actionLookup.ContainsKey(fullKey))
+                return actionLookup[fullKey];
 
             var action = new RoutedEventHandler((s, e) => source.OnMenuItemClick(key));
-            actionLookup.Add(key, action);
+            actionLookup.Add(fullKey, action);
 
             return action;
         }
