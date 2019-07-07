@@ -1,90 +1,16 @@
 ﻿<Application x:Class="Reclaimer.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:w="clr-namespace:Reclaimer.Windows"
-             xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              StartupUri="Windows/MainWindow.xaml"
              ShutdownMode="OnMainWindowClose">
     
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!--<ResourceDictionary Source="/Studio;component/Themes/Generic.xaml" />-->
-                <ResourceDictionary Source="/Studio;component/Resources/Styles.xaml" />
                 <ResourceDictionary Source="/Studio;component/Themes/Blue.xaml" />
                 <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
+                <ResourceDictionary Source="/Reclaimer;component/Themes/Default.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <Style TargetType="metro:MetroWindow" x:Key="MainWindowStyle">
-                <Setter Property="BorderBrush" Value="{DynamicResource WindowActiveBorderBrush}" />
-                <Setter Property="NonActiveBorderBrush" Value="{DynamicResource WindowInactiveBorderBrush}" />
-
-                <Setter Property="TitleForeground" Value="{DynamicResource WindowTitleActiveForeground}" />
-                <Setter Property="WindowTitleBrush" Value="{DynamicResource WindowTitleBackground}" />
-                <Setter Property="NonActiveWindowTitleBrush" Value="{DynamicResource WindowTitleBackground}" />
-
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="TitleCaps" Value="False" />
-                <Setter Property="TitlebarHeight" Value="32" />
-                <Setter Property="WindowTransitionsEnabled" Value="False" />
-
-                <Setter Property="WindowMinButtonStyle" Value="{StaticResource WindowButtonStyle}" />
-                <Setter Property="WindowMaxButtonStyle" Value="{StaticResource WindowButtonStyle}" />
-                <Setter Property="WindowCloseButtonStyle" Value="{StaticResource WindowButtonStyle}" />
-
-                <Style.Triggers>
-                    <Trigger Property="IsActive" Value="False">
-                        <Setter Property="TitleForeground" Value="{DynamicResource WindowTitleInactiveForeground}" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-
-            <Style TargetType="w:TabWindow" x:Key="TabWindowStyle" BasedOn="{StaticResource MainWindowStyle}">
-                <!--<Setter Property="AllowsTransparency" Value="True" />-->
-                <Setter Property="TitleForeground" Value="{DynamicResource TabWindowTitleActiveForeground}" />
-                <Setter Property="WindowTitleBrush" Value="{DynamicResource TabWindowTitleBackground}" />
-                <Setter Property="NonActiveWindowTitleBrush" Value="{DynamicResource TabWindowTitleBackground}" />
-
-                <Setter Property="WindowMinButtonStyle" Value="{StaticResource TabWindowButtonStyle}" />
-                <Setter Property="WindowMaxButtonStyle" Value="{StaticResource TabWindowButtonStyle}" />
-                <Setter Property="WindowCloseButtonStyle" Value="{StaticResource TabWindowButtonStyle}" />
-
-                <!-- this requires AllowsTransparency, but MetroWindow is buggy when you enable it --> 
-                <!--<Style.Triggers>
-                    <Trigger Property="IsActive" Value="False">
-                        <Setter Property="TitleForeground" Value="{DynamicResource TabWindowTitleInactiveForeground}" />
-                    </Trigger>
-                    <Trigger Property="IsDragging" Value="False">
-                        <Setter Property="TitlebarHeight" Value="30" />
-                        <Setter Property="BorderThickness" Value="1" />
-                        <Setter Property="Background" Value="{DynamicResource WindowBackground}" />
-                    </Trigger>
-                    <Trigger Property="IsDragging" Value="True">
-                        <Setter Property="TitlebarHeight" Value="0" />
-                        <Setter Property="BorderThickness" Value="0" />
-                        <Setter Property="Background" Value="Transparent" />
-                    </Trigger>
-                </Style.Triggers>-->
-            </Style>
-
-            <Style TargetType="metro:MetroWindow" x:Key="UtilityWindowStyle">
-                <Setter Property="BorderBrush" Value="{DynamicResource WindowActiveBorderBrush}" />
-                <Setter Property="NonActiveBorderBrush" Value="{DynamicResource WindowInactiveBorderBrush}" />
-
-                <Setter Property="WindowTitleBrush" Value="{DynamicResource UtilityTitleActiveBackground}" />
-                <Setter Property="NonActiveWindowTitleBrush" Value="{DynamicResource UtilityTitleBackground}" />
-
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="TitleCaps" Value="False" />
-                <Setter Property="TitlebarHeight" Value="21" />
-                <Setter Property="WindowTransitionsEnabled" Value="False" />
-
-                <Setter Property="WindowMaxButtonStyle" Value="{StaticResource UtilityWindowButtonStyle}" />
-                <Setter Property="WindowCloseButtonStyle" Value="{StaticResource UtilityWindowCloseButtonStyle}" />
-
-                <Setter Property="ShowInTaskbar" Value="False" />
-                <Setter Property="ShowMinButton" Value="False" />
-            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

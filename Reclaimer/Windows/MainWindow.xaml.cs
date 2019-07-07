@@ -97,6 +97,19 @@ namespace Reclaimer.Windows
                 foreach (var item in plugin.MenuItems)
                     AddMenuItem(plugin, item);
             }
+
+            var themeRoot = GetMenuItem("Themes");
+            foreach (var theme in App.Instance.Themes)
+            {
+                var item = new MenuItem { Header = theme, Tag = theme };
+                themeRoot.Items.Add(item);
+                item.Click += ThemeMenuItem_Click;
+            }
+        }
+
+        private void ThemeMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            App.Instance.SetTheme((sender as MenuItem).Tag as string);
         }
 
         private void AddMenuItem(Plugin source, PluginMenuItem item)

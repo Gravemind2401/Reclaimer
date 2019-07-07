@@ -51,6 +51,7 @@
                 <MenuItem Header="Output" Click="menuOutput_Click" />
             </MenuItem>
             <MenuItem Header="Tools" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
+            <MenuItem Header="Themes" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
             <MenuItem Header="Help" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
         </Menu>
         <studio:DockContainer Grid.Row="1" x:Name="Container">
