@@ -1,5 +1,6 @@
 ﻿using MahApps.Metro.Controls;
 using Studio.Controls;
+using Studio.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +49,7 @@ namespace Reclaimer.Windows
             root.Width = root.Height = double.NaN;
 
             var tab = (FrameworkElement)tempControl.ItemContainerGenerator.ContainerFromIndex(0);
-            var curPos = Mouse.GetPosition(tab);
+            var curPos = tab.GetRelativeMousePosition();
             Left += curPos.X - tab.ActualWidth / 2;
             Top += curPos.Y - tab.ActualHeight / 2;
         }
