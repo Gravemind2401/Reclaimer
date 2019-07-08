@@ -7,18 +7,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo3
+namespace Adjutant.Blam.Common
 {
-    [FixedSize(16)]
+    [FixedSize(4, MaxVersion = (int)CacheType.Halo2Xbox)]
+    [FixedSize(8, MinVersion = (int)CacheType.Halo2Xbox, MaxVersion = (int)CacheType.Halo3Beta)]
+    [FixedSize(16, MinVersion = (int)CacheType.Halo3Beta)]
     public struct TagReference
     {
-        private readonly CacheFile cache;
-        private readonly int tagId;
+        private readonly ICacheFile cache;
+        private readonly short tagId;
 
         public int TagId => tagId;
-        public IndexItem Tag => TagId >= 0 ? cache.TagIndex[TagId] : null;
+        public IIndexItem Tag => TagId >= 0 ? cache.TagIndex[TagId] : null;
 
-        public TagReference(CacheFile cache, DependencyReader reader)
+        public TagReference(ICacheFile cache, DependencyReader reader)
         {
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
@@ -27,7 +29,10 @@ namespace Adjutant.Blam.Halo3
                 throw new ArgumentNullException(nameof(reader));
 
             this.cache = cache;
-            reader.Seek(14, SeekOrigin.Current);
+
+            if (cache.CacheType >= CacheType.Halo3Beta)
+                reader.Seek(14, SeekOrigin.Current);
+
             tagId = reader.ReadInt16();
         }
 

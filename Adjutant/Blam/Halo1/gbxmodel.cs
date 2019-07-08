@@ -56,7 +56,7 @@ namespace Adjutant.Blam.Halo1
         {
             foreach (var shader in Shaders)
             {
-                var bitmTag = shader.ShaderReference.Tag?.GetShaderDiffuse(reader);
+                var bitmTag = (shader.ShaderReference.Tag as IndexItem)?.GetShaderDiffuse(reader);
 
                 if (bitmTag == null)
                 {

@@ -64,7 +64,6 @@
     <Compile Include="Blam\Halo2\scenario.cs" />
     <Compile Include="Blam\Halo2\scenario_structure_bsp.cs" />
     <Compile Include="Blam\Halo2\shader.cs" />
-    <Compile Include="Blam\Halo2\TagReference.cs" />
     <Compile Include="Blam\Halo2\Vertex.cs" />
     <Compile Include="Blam\Halo3\bitmap.cs" />
     <Compile Include="Blam\Halo3\CacheFile.cs" />
@@ -81,7 +80,6 @@
     <Compile Include="Blam\Halo3\scenario_structure_bsp.cs" />
     <Compile Include="Blam\Halo3\shader.cs" />
     <Compile Include="Blam\Halo3\TagAddressTranslator.cs" />
-    <Compile Include="Blam\Halo3\TagReference.cs" />
     <Compile Include="Blam\Common\XmlVertex.cs" />
     <Compile Include="Geometry\CoordinateSystem.cs" />
     <Compile Include="Geometry\Extensions.cs" />
@@ -95,7 +93,7 @@
     <Compile Include="Blam\Halo1\scenario_structure_bsp.cs" />
     <Compile Include="Blam\Halo1\SkinnedVertex.cs" />
     <Compile Include="Blam\Halo1\TagAddressTranslator.cs" />
-    <Compile Include="Blam\Halo1\TagReference.cs" />
+    <Compile Include="Blam\Common\TagReference.cs" />
     <Compile Include="Blam\Halo1\WorldVertex.cs" />
     <Compile Include="Blam\Halo2\CacheFile.cs" />
     <Compile Include="Blam\Halo2\HeaderAddressTranslator.cs" />
