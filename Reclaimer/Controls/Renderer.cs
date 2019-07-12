@@ -258,7 +258,7 @@ namespace Reclaimer.Controls
             var len = bounds.Length;
 
             CameraSpeed = Math.Ceiling(len) / 1000;
-            MaxCameraSpeed = Math.Ceiling(len * 5) / 1000;
+            MaxCameraSpeed = Math.Ceiling(len * 6) / 1000;
             MaxPosition = new Point3D(
                 bounds.XBounds.Max + len * 3,
                 bounds.YBounds.Max + len * 3,
