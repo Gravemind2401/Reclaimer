@@ -9,6 +9,8 @@ namespace Adjutant.Blam.Common
 {
     public interface IIndexItem
     {
+        ICacheFile CacheFile { get; }
+
         int Id { get; }
         Pointer MetaPointer { get; }
         string FileName { get; }

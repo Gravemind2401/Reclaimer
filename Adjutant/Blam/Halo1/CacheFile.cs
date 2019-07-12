@@ -63,6 +63,7 @@ namespace Adjutant.Blam.Halo1
 
         ITagIndex<IIndexItem> ICacheFile.TagIndex => TagIndex;
         IStringIndex ICacheFile.StringIndex => null;
+        IAddressTranslator ICacheFile.DefaultAddressTranslator => AddressTranslator;
 
         #endregion
     }
@@ -151,6 +152,7 @@ namespace Adjutant.Blam.Halo1
     public class IndexItem : IIndexItem
     {
         private readonly CacheFile cache;
+        ICacheFile IIndexItem.CacheFile => cache;
 
         public IndexItem(CacheFile cache)
         {
