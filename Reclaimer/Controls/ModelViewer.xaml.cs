@@ -27,7 +27,7 @@ namespace Reclaimer.Controls
     /// <summary>
     /// Interaction logic for ModelViewer.xaml
     /// </summary>
-    public partial class ModelViewer : ControlBase, ITabContent, IDisposable
+    public partial class ModelViewer : DocumentItem, IDisposable
     {
         private static readonly DiffuseMaterial ErrorMaterial;
 
@@ -47,8 +47,6 @@ namespace Reclaimer.Controls
             control.SetLod((int)e.NewValue);
         } 
         #endregion
-
-        TabItemUsage ITabContent.TabUsage => TabItemUsage.Document;
 
         private readonly Model3DGroup modelGroup = new Model3DGroup();
         private readonly ModelVisual3D visual = new ModelVisual3D();

@@ -23,7 +23,7 @@ namespace Reclaimer.Controls
     /// <summary>
     /// Interaction logic for TagViewer.xaml
     /// </summary>
-    public partial class TagViewer : ControlBase, ITabContent
+    public partial class TagViewer : UtilityItem
     {
         private volatile bool isBusy;
 
@@ -70,8 +70,6 @@ namespace Reclaimer.Controls
             get { return selectedMapId; }
             set { SetProperty(ref selectedMapId, value); }
         }
-
-        TabItemUsage ITabContent.TabUsage => TabItemUsage.Utility;
 
         #endregion
 

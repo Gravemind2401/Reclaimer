@@ -21,7 +21,7 @@ namespace Reclaimer.Controls
     /// <summary>
     /// Interaction logic for OutputViewer.xaml
     /// </summary>
-    public partial class OutputViewer : ControlBase, ITabContent
+    public partial class OutputViewer : UtilityItem
     {
         #region Dependency Properties
         public static readonly DependencyProperty WordWrapEnabledProperty =
@@ -41,8 +41,6 @@ namespace Reclaimer.Controls
         #endregion
 
         public ObservableCollection<Tuple<string, string>> LoadedPlugins { get; }
-
-        TabItemUsage ITabContent.TabUsage => TabItemUsage.Utility;
 
         public OutputViewer()
         {

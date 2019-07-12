@@ -23,7 +23,7 @@ namespace Reclaimer.Controls
     /// <summary>
     /// Interaction logic for BitmapViewer.xaml
     /// </summary>
-    public partial class BitmapViewer : ControlBase, ITabContent
+    public partial class BitmapViewer : DocumentItem
     {
         private const double dpi = 96;
 
@@ -35,8 +35,6 @@ namespace Reclaimer.Controls
         private int pixelWidth, pixelHeight, pixelStride;
 
         public IEnumerable<int> Indexes { get; private set; }
-
-        TabItemUsage ITabContent.TabUsage => TabItemUsage.Document;
 
         #region Dependency Properties
         public static readonly DependencyPropertyKey ImageSourcePropertyKey =

@@ -23,11 +23,9 @@ namespace Reclaimer.Controls
     /// <summary>
     /// Interaction logic for MapViewer.xaml
     /// </summary>
-    public partial class MapViewer : ControlBase, ITabContent
+    public partial class MapViewer : UtilityItem
     {
         private ICacheFile cache;
-
-        TabItemUsage ITabContent.TabUsage => TabItemUsage.Utility;
 
         public MapViewer()
         {

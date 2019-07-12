@@ -101,7 +101,6 @@
     <Compile Include="Controls\BitmapViewer.xaml.cs">
       <DependentUpon>BitmapViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ControlBase.cs" />
     <Compile Include="Controls\MetaViewer.xaml.cs">
       <DependentUpon>MetaViewer.xaml</DependentUpon>
     </Compile>

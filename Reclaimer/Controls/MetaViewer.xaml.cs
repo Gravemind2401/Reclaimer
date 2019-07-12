@@ -23,10 +23,8 @@ namespace Reclaimer.Controls
     /// <summary>
     /// Interaction logic for MetaViewer.xaml
     /// </summary>
-    public partial class MetaViewer : ControlBase, ITabContent
+    public partial class MetaViewer : DocumentItem
     {
-        TabItemUsage ITabContent.TabUsage => TabItemUsage.Document;
-
         public ObservableCollection<MetaValue> Metadata { get; }
 
         public MetaViewer()
