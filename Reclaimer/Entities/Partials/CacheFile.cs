@@ -29,6 +29,14 @@ namespace Reclaimer.Entities
             }
         }
 
+        public IAddressTranslator DefaultAddressTranslator
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public DependencyReader CreateReader(IAddressTranslator translator)
         {
             throw new NotImplementedException();

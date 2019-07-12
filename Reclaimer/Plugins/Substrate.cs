@@ -72,9 +72,14 @@ namespace Reclaimer.Plugins
 
         public static bool OpenWithDefault(object file, string key, IMultiPanelHost targetWindow)
         {
-            var handler = AllPlugins.FirstOrDefault(p => p.CanOpenFile(file, key));
-            handler?.OpenFile(file, key, targetWindow);
-            return handler != null;
+            var found = false;
+            foreach (var p in AllPlugins.Where(p => p.CanOpenFile(file, key)))
+            {
+                found = true;
+                p.OpenFile(file, key, targetWindow);
+            }
+
+            return found;
         }
 
         //open with prompt

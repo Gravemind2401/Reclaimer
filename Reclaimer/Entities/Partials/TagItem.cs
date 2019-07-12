@@ -32,6 +32,14 @@ namespace Reclaimer.Entities
 
         public string ClassName => ClassCode;
 
+        public ICacheFile CacheFile
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public T ReadMetadata<T>()
         {
             throw new NotImplementedException();

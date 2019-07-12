@@ -1,0 +1,72 @@
+﻿<local:ControlBase x:Class="Reclaimer.Controls.MetaViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Reclaimer.Controls"
+             xmlns:u="clr-namespace:Reclaimer.Utils"
+             xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
+             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
+    
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Templates.xaml" />
+                <ResourceDictionary Source="/Studio;component/Resources/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <u:MetaValueTemplateSelector x:Key="templateSelector" />
+
+            <DataTemplate x:Key="DefaultTemplate">
+                <Grid Margin="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Content="{Binding Name}" />
+                    <TextBox Grid.Column="1" Width="200" HorizontalAlignment="Left"
+                             IsReadOnly="True" Text="{Binding Value}" />
+                </Grid>
+            </DataTemplate>
+            
+            <DataTemplate x:Key="StructureTemplate">
+                <Border Margin="1,5" BorderThickness="1" BorderBrush="Black" IsEnabled="{Binding IsEnabled}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Row="0" Grid.Column="0" Content="{Binding Name}"
+                               FontSize="14" FontWeight="Bold" />
+                        <ComboBox Grid.Row="0" Grid.Column="1"
+                                  HorizontalAlignment="Left" VerticalAlignment="Center"
+                                  ItemsSource="{Binding BlockLabels}" SelectedIndex="{Binding BlockIndex}" />
+                        <ItemsControl Grid.Row="1" Grid.ColumnSpan="2" Margin="5,5,0,0"
+                                      ItemsSource="{Binding Children}"
+                                      ItemTemplateSelector="{StaticResource templateSelector}">
+                            
+                        </ItemsControl>
+                    </Grid>
+                </Border>
+            </DataTemplate>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" Background="{DynamicResource ToolBarBackground}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+            </Grid.RowDefinitions>
+        </Grid>
+        <ScrollViewer>
+            <ItemsControl ItemsSource="{Binding Metadata}"
+                          ItemTemplateSelector="{StaticResource templateSelector}">
+            
+            </ItemsControl>
+        </ScrollViewer>
+    </DockPanel>
+</local:ControlBase>
