@@ -62,9 +62,34 @@ namespace Reclaimer.Controls
         private void tv_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var item = (tv.SelectedItem as TreeNode)?.Tag as IIndexItem;
+            if (item == null) return;
 
-            if (item != null)
-                Substrate.OpenWithDefault(item, $"{cache.CacheType}.{item.ClassCode}", Substrate.GetHostWindow(this));
+            var fileName = $"{Path.GetFileName(item.FileName)}.{item.ClassName}";
+            var fileKey = $"{cache.CacheType}.{item.ClassCode}";
+            var args = new OpenFileArgs(fileName, item, fileKey, Substrate.GetHostWindow(this));
+            Substrate.OpenWithDefault(args);
+        }
+
+        private void menuOpen_Click(object sender, RoutedEventArgs e)
+        {
+            var item = (tv.SelectedItem as TreeNode)?.Tag as IIndexItem;
+            if (item == null) return;
+
+            var fileName = $"{Path.GetFileName(item.FileName)}.{item.ClassName}";
+            var fileKey = $"{cache.CacheType}.{item.ClassCode}";
+            var args = new OpenFileArgs(fileName, item, fileKey, Substrate.GetHostWindow(this));
+            Substrate.OpenWithDefault(args);
+        }
+
+        private void menuOpenWith_Click(object sender, RoutedEventArgs e)
+        {
+            var item = (tv.SelectedItem as TreeNode)?.Tag as IIndexItem;
+            if (item == null) return;
+
+            var fileName = $"{Path.GetFileName(item.FileName)}.{item.ClassName}";
+            var fileKey = $"{cache.CacheType}.{item.ClassCode}";
+            var args = new OpenFileArgs(fileName, item, fileKey, Substrate.GetHostWindow(this));
+            Substrate.OpenWithPrompt(args);
         }
     }
 }

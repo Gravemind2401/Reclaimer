@@ -48,6 +48,12 @@
                     </DataTemplate.Triggers>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
+            <TreeView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Open" Click="menuOpen_Click" />
+                    <MenuItem Header="Open With..." Click="menuOpenWith_Click" />
+                </ContextMenu>
+            </TreeView.ContextMenu>
         </studio:ExtendedTreeView>
     </DockPanel>
 </studio:UtilityItem>

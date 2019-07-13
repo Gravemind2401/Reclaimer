@@ -204,6 +204,9 @@
     <Compile Include="Utils\StandardAddressTranslator.cs" />
     <Compile Include="Utils\TreeNode.cs" />
     <Compile Include="Windows\IMultiPanelHost.cs" />
+    <Compile Include="Windows\OpenWithDialog.xaml.cs">
+      <DependentUpon>OpenWithDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\TabWindow.xaml.cs">
       <DependentUpon>TabWindow.xaml</DependentUpon>
     </Compile>
@@ -263,6 +266,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Resources\Templates.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\OpenWithDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

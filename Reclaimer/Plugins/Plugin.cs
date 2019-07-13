@@ -45,9 +45,9 @@ namespace Reclaimer.Plugins
             Substrate.SavePluginSettings(Key, settings);
         }
 
-        public virtual bool CanOpenFile(object file, string key) => false;
+        public virtual bool CanOpenFile(object file, string fileTypeKey) => false;
 
-        public virtual void OpenFile(object file, string key, IMultiPanelHost targetWindow) { }
+        public virtual void OpenFile(OpenFileArgs args) { }
 
         public virtual IEnumerable<PluginMenuItem> MenuItems
         {

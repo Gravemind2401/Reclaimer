@@ -26,10 +26,10 @@ namespace Reclaimer.Plugins
             SaveSettings(settings);
         }
 
-        public override bool CanOpenFile(object file, string key)
+        public override bool CanOpenFile(object file, string fileTypeKey)
         {
             CacheType cacheType;
-            if (!Enum.TryParse(key.Split('.').First(), out cacheType))
+            if (!Enum.TryParse(fileTypeKey.Split('.').First(), out cacheType))
                 return false;
 
             var item = file as IIndexItem;
@@ -39,14 +39,14 @@ namespace Reclaimer.Plugins
             return File.Exists(xml);
         }
 
-        public override void OpenFile(object file, string key, IMultiPanelHost targetWindow)
+        public override void OpenFile(OpenFileArgs args)
         {
-            var item = file as IIndexItem;
+            var item = args.File as IIndexItem;
 
             var doc = new XmlDocument();
             doc.Load(GetDefinitionPath(item));
 
-            var container = targetWindow.DocumentContainer;
+            var container = args.TargetWindow.DocumentContainer;
 
             var viewer = new Controls.MetaViewer();
             viewer.LoadMetadata(item, doc);

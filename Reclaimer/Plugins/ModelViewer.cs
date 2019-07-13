@@ -12,20 +12,20 @@ namespace Reclaimer.Plugins
     {
         public override string Name => "Model Viewer";
 
-        public override bool CanOpenFile(object file, string key)
+        public override bool CanOpenFile(object file, string fileTypeKey)
         {
             CacheType cacheType;
-            if (!Enum.TryParse(key.Split('.').First(), out cacheType))
+            if (!Enum.TryParse(fileTypeKey.Split('.').First(), out cacheType))
                 return false;
 
-            return file is IIndexItem && (key.EndsWith(".mode") || key.EndsWith(".mod2") || key.EndsWith(".sbsp"));
+            return file is IIndexItem && (fileTypeKey.EndsWith(".mode") || fileTypeKey.EndsWith(".mod2") || fileTypeKey.EndsWith(".sbsp"));
         }
 
-        public override void OpenFile(object file, string key, IMultiPanelHost targetWindow)
+        public override void OpenFile(OpenFileArgs args)
         {
-            var item = file as IIndexItem;
-            var cacheType = (CacheType)Enum.Parse(typeof(CacheType), key.Split('.').First());
-            var container = targetWindow.DocumentContainer;
+            var item = args.File as IIndexItem;
+            var cacheType = (CacheType)Enum.Parse(typeof(CacheType), args.FileTypeKey.Split('.').First());
+            var container = args.TargetWindow.DocumentContainer;
 
             LogOutput($"Loading model: {item.FileName}");
 

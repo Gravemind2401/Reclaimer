@@ -105,19 +105,54 @@ namespace Reclaimer.Plugins
 
         internal static void LogOutput(Plugin source, LogEntry entry) => Log?.Invoke(source, new LogEventArgs(source, entry));
 
-        public static bool OpenWithDefault(object file, string key, IMultiPanelHost targetWindow)
+        internal static Plugin GetDefaultHandler(OpenFileArgs args)
         {
-            var found = false;
-            foreach (var p in AllPlugins.Where(p => p.CanOpenFile(file, key)))
+            if (App.Settings.DefaultHandlers.ContainsKey(args.FileTypeKey))
             {
-                found = true;
-                p.OpenFile(file, key, targetWindow);
+                var handlerKey = App.Settings.DefaultHandlers[args.FileTypeKey];
+                if (plugins.ContainsKey(handlerKey)) //in case the plugin is no longer installed
+                    return plugins[handlerKey];
             }
 
-            return found;
+            var handler = AllPlugins
+                .Where(p => p.CanOpenFile(args.File, args.FileTypeKey))
+                .OrderBy(p => p.Name)
+                .FirstOrDefault();
+
+            if (handler == null)
+                return handler;
+
+            if (App.Settings.DefaultHandlers.ContainsKey(args.FileTypeKey))
+                App.Settings.DefaultHandlers.Remove(args.FileTypeKey);
+
+            App.Settings.DefaultHandlers.Add(args.FileTypeKey, handler.Key);
+
+            return handler;
         }
 
-        //open with prompt
+        public static bool OpenWithDefault(OpenFileArgs args)
+        {
+            var defaultHandler = GetDefaultHandler(args);
+            if (defaultHandler == null)
+                return false;
+
+            defaultHandler.OpenFile(args);
+            return true;
+        }
+
+        public static bool OpenWithPrompt(OpenFileArgs args)
+        {
+            var defaultHandler = GetDefaultHandler(args);
+            if (defaultHandler == null)
+                return false;
+
+            var allHandlers = AllPlugins
+                .Where(p => p.CanOpenFile(args.File, args.FileTypeKey));
+
+            OpenWithDialog.HandleFile(allHandlers, args);
+            return true;
+        }
+
 
         //add utility/tab
 
@@ -136,6 +171,28 @@ namespace Reclaimer.Plugins
                 host = Application.Current.MainWindow as IMultiPanelHost;
             else host = Window.GetWindow(element) as IMultiPanelHost ?? Application.Current.MainWindow as IMultiPanelHost;
             return host;
+        }
+    }
+
+    public class OpenFileArgs
+    {
+        public string FileName { get; }
+        public object File { get; }
+        public string FileTypeKey { get; }
+        public IMultiPanelHost TargetWindow { get; }
+
+        public OpenFileArgs(string fileName, object file, string key)
+            : this(fileName, file, key, Substrate.GetHostWindow())
+        {
+
+        }
+        
+        public OpenFileArgs(string fileName, object file, string fileTypeKey, IMultiPanelHost targetWindow)
+        {
+            FileName = fileName;
+            File = file;
+            FileTypeKey = fileTypeKey;
+            TargetWindow = targetWindow;
         }
     }
 
