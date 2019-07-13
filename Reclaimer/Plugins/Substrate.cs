@@ -83,7 +83,11 @@ namespace Reclaimer.Plugins
                 var json = JsonConvert.SerializeObject(App.Settings.PluginSettings[key]);
                 return JsonConvert.DeserializeObject<T>(json);
             }
-            catch { return new T(); }
+            catch (Exception e)
+            {
+                LogError($"Error loading settings for {plugins[key].Name}:", e);
+                return new T();
+            }
         }
 
         internal static void SavePluginSettings<T>(string key, T settings) where T : new()
@@ -96,6 +100,8 @@ namespace Reclaimer.Plugins
         }
 
         internal static void LogOutput(string message) => defaultPlugin.LogOutput(message);
+
+        internal static void LogError(string message, Exception e) => defaultPlugin.LogError(message, e);
 
         internal static void LogOutput(Plugin source, LogEntry entry) => Log?.Invoke(source, new LogEventArgs(source, entry));
 

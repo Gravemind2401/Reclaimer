@@ -69,6 +69,13 @@ namespace Reclaimer.Plugins
             Substrate.LogOutput(this, entry);
         }
 
+        protected internal void LogError(string message, Exception e)
+        {
+            var entry = new LogEntry(DateTime.Now, $"{message}{Environment.NewLine}{e.ToString()}");
+            logEntries.Add(entry);
+            Substrate.LogOutput(this, entry);
+        }
+
         protected internal void ClearLog()
         {
             logEntries.Clear();
