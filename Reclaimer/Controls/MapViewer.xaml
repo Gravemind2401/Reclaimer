@@ -8,15 +8,6 @@
              xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
              mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
     
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Resources/Templates.xaml" />
-                <ResourceDictionary Source="/Studio;component/Resources/Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-    
     <DockPanel>
         <Grid DockPanel.Dock="Top" Background="{DynamicResource ToolBarBackground}">
             <Grid.RowDefinitions>

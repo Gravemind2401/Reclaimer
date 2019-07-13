@@ -10,6 +10,7 @@
                 <ResourceDictionary Source="/Studio;component/Themes/Blue.xaml" />
                 <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                 <ResourceDictionary Source="/Reclaimer;component/Themes/Default.xaml" />
+                <ResourceDictionary Source="/Reclaimer;component/Resources/Templates.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -18,6 +18,7 @@ namespace Reclaimer
         internal static Settings Settings { get; private set; }
 
         private static ResourceDictionary defaultResources;
+        private static ResourceDictionary templateResources;
         private static readonly Dictionary<string, ResourceDictionary> themes = new Dictionary<string, ResourceDictionary>();
 
 
@@ -38,6 +39,7 @@ namespace Reclaimer
             base.OnStartup(e);
 
             defaultResources = new ResourceDictionary { Source = new Uri("/Reclaimer;component/Themes/Default.xaml", UriKind.RelativeOrAbsolute) };
+            templateResources = new ResourceDictionary { Source = new Uri("/Reclaimer;component/Resources/Templates.xaml", UriKind.RelativeOrAbsolute) };
 
             var blue = new ResourceDictionary();
             blue.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/Studio;component/Themes/Blue.xaml", UriKind.RelativeOrAbsolute) });
@@ -79,6 +81,7 @@ namespace Reclaimer
 
             Instance.Resources.MergedDictionaries.Clear();
             Instance.Resources.MergedDictionaries.Add(defaultResources);
+            Instance.Resources.MergedDictionaries.Add(templateResources);
             Instance.Resources.MergedDictionaries.Add(themes[theme]);
 
             Settings.Theme = theme;

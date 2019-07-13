@@ -7,25 +7,36 @@
         xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:c="clr-namespace:Studio.Controls;assembly=Studio"
         mc:Ignorable="d" Height="300" Width="300"
-        Loaded="MetroWindow_Loaded"
+        Loaded="MetroWindow_Loaded" Icon="../Resources/Reclaimer.ico"
         ShowActivated="True" WindowStartupLocation="Manual"
         Style="{StaticResource TabWindowStyle}"
-        Title="TabWindow">
+        Title="Reclaimer">
+
+    <metro:MetroWindow.IconTemplate>
+        <DataTemplate>
+            <ContentControl x:Name="content"
+                            Foreground="{DynamicResource WindowIconBrushSecondaryActive}" 
+                            Template="{StaticResource ic_Reclaimer}" />
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Value="False">
+                    <Setter TargetName="content" Property="Foreground" Value="{DynamicResource WindowIconBrushSecondaryInactive}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </metro:MetroWindow.IconTemplate>
 
     <Window.Resources>
-        <ResourceDictionary>
-            <Style TargetType="c:DocumentTabControl" BasedOn="{StaticResource {x:Type c:DocumentTabControl}}">
-                <Setter Property="NewWindowType" Value="{x:Type local:TabWindow}" />
-            </Style>
+        <Style TargetType="c:DocumentTabControl" BasedOn="{StaticResource {x:Type c:DocumentTabControl}}">
+            <Setter Property="NewWindowType" Value="{x:Type local:TabWindow}" />
+        </Style>
 
-            <Style TargetType="c:UtilityTabControl" BasedOn="{StaticResource {x:Type c:UtilityTabControl}}">
-                <Setter Property="NewWindowType" Value="{x:Type local:UtilityWindow}" />
-            </Style>
+        <Style TargetType="c:UtilityTabControl" BasedOn="{StaticResource {x:Type c:UtilityTabControl}}">
+            <Setter Property="NewWindowType" Value="{x:Type local:UtilityWindow}" />
+        </Style>
 
-            <Style TargetType="c:MultiPanel" BasedOn="{StaticResource {x:Type c:MultiPanel}}">
-                <Setter Property="DefaultDockSize" Value="350" />
-            </Style>
-        </ResourceDictionary>
+        <Style TargetType="c:MultiPanel" BasedOn="{StaticResource {x:Type c:MultiPanel}}">
+            <Setter Property="DefaultDockSize" Value="350" />
+        </Style>
     </Window.Resources>
 
     <Grid x:Name="root">

@@ -9,14 +9,6 @@
              mc:Ignorable="d"
              d:DesignHeight="250" d:DesignWidth="600">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Resources/Templates.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-    
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top" IsLocked="True" Margin="0" 
                      Background="{DynamicResource ToolBarBackground}">

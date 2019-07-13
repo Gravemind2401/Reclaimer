@@ -9,51 +9,44 @@
              mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
     
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Resources/Templates.xaml" />
-                <ResourceDictionary Source="/Studio;component/Resources/Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
+        <u:MetaValueTemplateSelector x:Key="templateSelector" />
 
-            <u:MetaValueTemplateSelector x:Key="templateSelector" />
-
-            <DataTemplate x:Key="DefaultTemplate">
-                <Grid Margin="1">
+        <DataTemplate x:Key="DefaultTemplate">
+            <Grid Margin="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="{Binding Name}" />
+                <TextBox Grid.Column="1" Width="200" HorizontalAlignment="Left"
+                         IsReadOnly="True" Text="{Binding Value}" />
+            </Grid>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="StructureTemplate">
+            <Border Margin="1,5" BorderThickness="1" BorderBrush="Black" IsEnabled="{Binding IsEnabled}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="{Binding Name}" />
-                    <TextBox Grid.Column="1" Width="200" HorizontalAlignment="Left"
-                             IsReadOnly="True" Text="{Binding Value}" />
+                    <Label Grid.Row="0" Grid.Column="0" Content="{Binding Name}"
+                           FontSize="14" FontWeight="Bold" />
+                    <ComboBox Grid.Row="0" Grid.Column="1"
+                              HorizontalAlignment="Left" VerticalAlignment="Center"
+                              ItemsSource="{Binding BlockLabels}" SelectedIndex="{Binding BlockIndex}" />
+                    <ItemsControl Grid.Row="1" Grid.ColumnSpan="2" Margin="5,5,0,0"
+                                  ItemsSource="{Binding Children}"
+                                  ItemTemplateSelector="{StaticResource templateSelector}">
+                        
+                    </ItemsControl>
                 </Grid>
-            </DataTemplate>
-            
-            <DataTemplate x:Key="StructureTemplate">
-                <Border Margin="1,5" BorderThickness="1" BorderBrush="Black" IsEnabled="{Binding IsEnabled}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="200" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Row="0" Grid.Column="0" Content="{Binding Name}"
-                               FontSize="14" FontWeight="Bold" />
-                        <ComboBox Grid.Row="0" Grid.Column="1"
-                                  HorizontalAlignment="Left" VerticalAlignment="Center"
-                                  ItemsSource="{Binding BlockLabels}" SelectedIndex="{Binding BlockIndex}" />
-                        <ItemsControl Grid.Row="1" Grid.ColumnSpan="2" Margin="5,5,0,0"
-                                      ItemsSource="{Binding Children}"
-                                      ItemTemplateSelector="{StaticResource templateSelector}">
-                            
-                        </ItemsControl>
-                    </Grid>
-                </Border>
-            </DataTemplate>
-        </ResourceDictionary>
+            </Border>
+        </DataTemplate>
     </UserControl.Resources>
 
     <DockPanel>

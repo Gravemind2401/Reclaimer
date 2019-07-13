@@ -10,43 +10,36 @@
              d:DesignHeight="500" d:DesignWidth="900">
 
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Resources/Templates.xaml" />
-                <ResourceDictionary Source="/Studio;component/Resources/Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
+        <u:ToStringConverter x:Key="stringConverter" />
+        <u:RadToDegConverter x:Key="radToDegConverter" />
 
-            <u:ToStringConverter x:Key="stringConverter" />
-            <u:RadToDegConverter x:Key="radToDegConverter" />
+        <Style x:Key="showHideStyle" TargetType="ToggleButton">
+            <Setter Property="Background" Value="LightGray" />
+            <Setter Property="Opacity" Value="0.5" />
 
-            <Style x:Key="showHideStyle" TargetType="ToggleButton">
-                <Setter Property="Background" Value="LightGray" />
-                <Setter Property="Opacity" Value="0.5" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}"
+                                Opacity="{TemplateBinding Opacity}">
+                            <ContentControl x:Name="cc" Margin="{TemplateBinding Padding}"
+                                            Template="{StaticResource ic_ChevronLeft_16x}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource Self}}" Value="True">
+                                <Setter TargetName="cc" Property="Template" Value="{StaticResource ic_ChevronRight_16x}" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
 
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="ToggleButton">
-                            <Border Background="{TemplateBinding Background}"
-                                    Opacity="{TemplateBinding Opacity}">
-                                <ContentControl x:Name="cc" Margin="{TemplateBinding Padding}"
-                                                Template="{StaticResource ic_ChevronLeft_16x}" />
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource Self}}" Value="True">
-                                    <Setter TargetName="cc" Property="Template" Value="{StaticResource ic_ChevronRight_16x}" />
-                                </DataTrigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="White" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-        </ResourceDictionary>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="White" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </UserControl.Resources>
     
     <DockPanel>

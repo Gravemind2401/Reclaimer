@@ -37,6 +37,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\Reclaimer.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
@@ -334,6 +337,7 @@
       <LastGenOutput>Database.cs</LastGenOutput>
     </Content>
     <Content Include="Resources\DatabaseCreate.sql" />
+    <Resource Include="Resources\Reclaimer.ico" />
     <Resource Include="Resources\grab.cur" />
     <Resource Include="Resources\grabbing.cur" />
   </ItemGroup>

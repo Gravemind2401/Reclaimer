@@ -1,6 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <!--<SolidColorBrush x:Key="WindowIconBrushPrimaryActive" Color="#FF00AFFF" />-->
+    <SolidColorBrush x:Key="WindowIconBrushPrimaryActive" Color="White" />
+    <SolidColorBrush x:Key="WindowIconBrushPrimaryInactive" Color="#FF818183" />
+    <SolidColorBrush x:Key="WindowIconBrushSecondaryActive" Color="White" />
+    <SolidColorBrush x:Key="WindowIconBrushSecondaryInactive" Color="#FF818183" />
     <SolidColorBrush x:Key="OutputViewerBackground" Color="#FF252526" />
     <SolidColorBrush x:Key="OutputViewerForeground" Color="#FFF1F1F1" />
 
