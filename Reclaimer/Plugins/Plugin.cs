@@ -35,6 +35,16 @@ namespace Reclaimer.Plugins
 
         public virtual void Suspend() { }
 
+        protected T LoadSettings<T>() where T : new()
+        {
+            return Substrate.GetPluginSettings<T>(Key);
+        }
+
+        protected void SaveSettings<T>(T settings) where T : new()
+        {
+            Substrate.SavePluginSettings(Key, settings);
+        }
+
         public virtual bool CanOpenFile(object file, string key) => false;
 
         public virtual void OpenFile(object file, string key, IMultiPanelHost targetWindow) { }

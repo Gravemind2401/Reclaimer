@@ -1,4 +1,5 @@
-﻿using Reclaimer.Windows;
+﻿using Newtonsoft.Json;
+using Reclaimer.Windows;
 using Studio.Controls;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,8 @@ namespace Reclaimer.Plugins
 
         private static readonly DefaultPlugin defaultPlugin = new DefaultPlugin();
         private static readonly Dictionary<string, Plugin> plugins = new Dictionary<string, Plugin>();
+
+        internal static Dictionary<string, string> DefaultHandlers { get; set; }
 
         internal static IEnumerable<Plugin> AllPlugins => plugins.Values;
 
@@ -66,6 +69,32 @@ namespace Reclaimer.Plugins
             }
         }
 
+        internal static T GetPluginSettings<T>(string key) where T : new()
+        {
+            if (!App.Settings.PluginSettings.ContainsKey(key))
+                return new T();
+
+            //we cant just cast it because we cant guarantee it has the correct type
+            //but we still want to preserve settings between changes, so re-serializing
+            //will preserve any properties that still match
+
+            try
+            {
+                var json = JsonConvert.SerializeObject(App.Settings.PluginSettings[key]);
+                return JsonConvert.DeserializeObject<T>(json);
+            }
+            catch { return new T(); }
+        }
+
+        internal static void SavePluginSettings<T>(string key, T settings) where T : new()
+        {
+            if (App.Settings.PluginSettings.ContainsKey(key))
+                App.Settings.PluginSettings[key] = settings;
+            else App.Settings.PluginSettings.Add(key, settings);
+
+            App.Settings.Save();
+        }
+
         internal static void LogOutput(string message) => defaultPlugin.LogOutput(message);
 
         internal static void LogOutput(Plugin source, LogEntry entry) => Log?.Invoke(source, new LogEventArgs(source, entry));
@@ -85,6 +114,12 @@ namespace Reclaimer.Plugins
         //open with prompt
 
         //add utility/tab
+
+        internal static void Shutdown()
+        {
+            foreach (var p in AllPlugins)
+                p.Suspend();
+        }
 
         public static IMultiPanelHost GetHostWindow() => GetHostWindow(null);
 

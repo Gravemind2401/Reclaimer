@@ -99,7 +99,7 @@ namespace Reclaimer.Windows
             }
 
             var themeRoot = GetMenuItem("Themes");
-            foreach (var theme in App.Instance.Themes)
+            foreach (var theme in App.Themes)
             {
                 var item = new MenuItem { Header = theme, Tag = theme };
                 themeRoot.Items.Add(item);
@@ -109,7 +109,7 @@ namespace Reclaimer.Windows
 
         private void ThemeMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            App.Instance.SetTheme((sender as MenuItem).Tag as string);
+            App.SetTheme((sender as MenuItem).Tag as string);
         }
 
         private void AddMenuItem(Plugin source, PluginMenuItem item)
