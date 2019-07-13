@@ -21,13 +21,14 @@ using Keys = System.Windows.Forms.Keys;
 namespace Reclaimer.Controls
 {
     [TemplatePart(Name = PART_Viewport, Type = typeof(FrameworkElement))]
-    public class Renderer : Control
+    public class Renderer : Control, IDisposable
     {
         private const string PART_Viewport = "PART_Viewport";
 
         private const double RAD_089 = 1.5706217940;
         private const double RAD_090 = 1.5707963268;
         private const double RAD_360 = 6.2831853072;
+        private const double SpeedMultipler = 0.001;
 
         #region Dependency Properties
 
@@ -172,6 +173,7 @@ namespace Reclaimer.Controls
             NormalizeSet();
             timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, 10) };
             timer.Tick += Timer_Tick;
+            timer.Start();
         }
 
         #region Overrides
@@ -193,7 +195,6 @@ namespace Reclaimer.Controls
             Cursor = Cursors.None;
             lastPoint = PointToScreen(e.GetPosition(this));
             lastPoint = new Point((int)lastPoint.X, (int)lastPoint.Y);
-            timer.Start();
         }
 
         protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
@@ -202,7 +203,6 @@ namespace Reclaimer.Controls
 
             ReleaseMouseCapture();
             Cursor = Cursors.Cross;
-            timer.Stop();
         }
 
         protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
@@ -257,8 +257,8 @@ namespace Reclaimer.Controls
 
             var len = bounds.Length;
 
-            CameraSpeed = Math.Ceiling(len) / 1000;
-            MaxCameraSpeed = Math.Ceiling(len * 6) / 1000;
+            CameraSpeed = Math.Ceiling(len);
+            MaxCameraSpeed = Math.Ceiling(len * 6);
             MaxPosition = new Point3D(
                 bounds.XBounds.Max + len * 3,
                 bounds.YBounds.Max + len * 3,
@@ -317,6 +317,12 @@ namespace Reclaimer.Controls
             OnViewportUnset(); //don't use Viewport.Children.Clear() because it will remove the lights
         }
 
+        public void Dispose()
+        {
+            timer.Stop();
+            Viewport.Children.Clear();
+        }
+
         private void ZoomToBounds(RealBounds3D bounds)
         {
             var len = bounds.Length;
@@ -356,7 +362,7 @@ namespace Reclaimer.Controls
 
         private void UpdateCameraPosition()
         {
-            if (!IsMouseCaptured) return;
+            if (!IsMouseCaptured && !IsFocused) return;
 
             #region Set FOV
             if (CheckKeyState(Keys.NumPad6)) FieldOfView = ClipValue(FieldOfView + FieldOfView / 100.0, 45, 120);
@@ -368,13 +374,15 @@ namespace Reclaimer.Controls
             if (CheckKeyState(Keys.NumPad2)) FarPlaneDistance = ClipValue(FarPlaneDistance * 0.99, MinFarPlaneDistance, MaxFarPlaneDistance);
             #endregion
 
+            if (!IsMouseCaptured) return;
+
             if (CheckKeyState(Keys.W) || CheckKeyState(Keys.A) || CheckKeyState(Keys.S) || CheckKeyState(Keys.D) || CheckKeyState(Keys.R) || CheckKeyState(Keys.F))
             {
                 var nextPosition = Position;
                 var len = LookDirection.Length;
                 var lookDirection = LookDirection = new Vector3D(LookDirection.X / len, LookDirection.Y / len, LookDirection.Z / len);
 
-                var dist = CameraSpeed;
+                var dist = CameraSpeed * SpeedMultipler;
                 if (CheckKeyState(Keys.ShiftKey)) dist *= 3;
                 if (CheckKeyState(Keys.Space)) dist /= 3;
 

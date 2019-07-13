@@ -120,6 +120,16 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition MinWidth="60" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Speed:" />
+                    <Label Grid.Column="1" HorizontalAlignment="Right" 
+                           Content="{Binding CameraSpeed, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F2'}" />
+                </Grid>
+                <Separator />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition MinWidth="35" />
                     </Grid.ColumnDefinitions>
                     <Label Content="FOV:" />
@@ -130,11 +140,11 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition MinWidth="40" />
+                        <ColumnDefinition MinWidth="45" />
                     </Grid.ColumnDefinitions>
-                    <Label Content="Speed:" />
+                    <Label Content="Far Plane:" />
                     <Label Grid.Column="1" HorizontalAlignment="Right" 
-                           Content="{Binding CameraSpeed, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F2'}" />
+                           Content="{Binding FarPlaneDistance, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F0'}" />
                 </Grid>
                 <Separator />
             </ToolBar>

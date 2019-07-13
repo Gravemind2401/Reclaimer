@@ -405,7 +405,7 @@ namespace Reclaimer.Controls
         public void Dispose()
         {
             TreeViewItems.Clear();
-            renderer.ClearChildren();
+            renderer.Dispose();
             GC.Collect();
         }
         #endregion
