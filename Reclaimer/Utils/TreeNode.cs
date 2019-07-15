@@ -23,16 +23,44 @@ namespace Reclaimer.Utils
             set { SetProperty(ref tag, value); }
         }
 
+        public bool HasChildren => Children?.Count > 0;
+
         private ObservableCollection<TreeNode> children;
         public ObservableCollection<TreeNode> Children
         {
             get { return children; }
-            set { SetProperty(ref children, value); }
+            set
+            {
+                var prev = children;
+                if (SetProperty(ref children, value))
+                    OnChildrenChanged(prev, value);
+            }
         }
 
         public TreeNode()
         {
             Children = new ObservableCollection<TreeNode>();
+        }
+
+        public TreeNode(string header) : this()
+        {
+            Header = header;
+        }
+
+        private void OnChildrenChanged(ObservableCollection<TreeNode> prev, ObservableCollection<TreeNode> next)
+        {
+            if (prev != null)
+                prev.CollectionChanged -= Children_CollectionChanged;
+
+            if (next != null)
+                next.CollectionChanged += Children_CollectionChanged;
+
+            RaisePropertyChanged(nameof(HasChildren));
+        }
+
+        private void Children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(HasChildren));
         }
     }
 }

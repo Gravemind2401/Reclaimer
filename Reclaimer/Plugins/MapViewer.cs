@@ -14,7 +14,19 @@ namespace Reclaimer.Plugins
         const string OpenKey = "MapViewer.OpenMap";
         const string OpenPath = "File\\Open Map";
 
+        internal static MapViewerSettings Settings;
+
         public override string Name => "Map Viewer";
+
+        public override void Initialise()
+        {
+            Settings = LoadSettings<MapViewerSettings>();
+        }
+
+        public override void Suspend()
+        {
+            SaveSettings(Settings);
+        }
 
         public override IEnumerable<PluginMenuItem> MenuItems
         {
@@ -55,5 +67,10 @@ namespace Reclaimer.Plugins
 
             LogOutput($"Loaded map file: {ofd.FileName}");
         }
+    }
+
+    internal class MapViewerSettings
+    {
+        public bool HierarchyView { get; set; }
     }
 }

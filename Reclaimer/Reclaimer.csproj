@@ -200,6 +200,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Storage.cs" />
     <Compile Include="Utils\BindableBase.cs" />
+    <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Utils\MetaValue.cs" />
     <Compile Include="Utils\RadToDegConverter.cs" />
     <Compile Include="Utils\ToStringConverter.cs" />

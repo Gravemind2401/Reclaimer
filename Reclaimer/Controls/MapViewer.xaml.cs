@@ -27,6 +27,22 @@ namespace Reclaimer.Controls
     {
         private ICacheFile cache;
 
+        public static readonly DependencyProperty HierarchyViewProperty =
+            DependencyProperty.Register(nameof(HierarchyView), typeof(bool), typeof(MapViewer), new PropertyMetadata(false, HierarchyViewChanged));
+
+        public bool HierarchyView
+        {
+            get { return (bool)GetValue(HierarchyViewProperty); }
+            set { SetValue(HierarchyViewProperty, value); }
+        }
+
+        public static void HierarchyViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var mv = d as MapViewer;
+            Plugins.MapViewer.Settings.HierarchyView = mv.HierarchyView;
+            mv.BuildTagTree(mv.txtSearch.Text);
+        }
+
         public MapViewer()
         {
             InitializeComponent();
@@ -40,11 +56,25 @@ namespace Reclaimer.Controls
             TabHeader = Path.GetFileName(cache.FileName);
             TabToolTip = $"Map Viewer - {TabHeader}";
 
-            tv.Items.Clear();
+            HierarchyView = Plugins.MapViewer.Settings.HierarchyView;
+            BuildTagTree(null);
+        }
 
-            var result = cache.TagIndex.GroupBy(i => i.ClassName);
+        private void BuildTagTree(string filter)
+        {
+            if (HierarchyView)
+                BuildHierarchyTree(filter);
+            else BuildClassTree(filter);
+        }
 
-            foreach (var g in result.OrderBy(g => g.Key))
+        private void BuildClassTree(string filter)
+        {
+            var result = new List<TreeNode>();
+            var classGroups = cache.TagIndex
+                .Where(i => FilterTag(filter, i))
+                .GroupBy(i => i.ClassName);
+
+            foreach (var g in classGroups.OrderBy(g => g.Key))
             {
                 var node = new TreeNode { Header = g.Key };
                 foreach (var i in g.OrderBy(i => i.FileName))
@@ -55,8 +85,88 @@ namespace Reclaimer.Controls
                         Tag = i
                     });
                 }
-                tv.Items.Add(node);
+                result.Add(node);
             }
+
+            tv.ItemsSource = result;
+        }
+
+        private void BuildHierarchyTree(string filter)
+        {
+            var result = new List<TreeNode>();
+            var lookup = new Dictionary<string, TreeNode>();
+
+            foreach (var tag in cache.TagIndex.Where(i => FilterTag(filter, i)).OrderBy(i => i.FileName))
+            {
+                var node = MakeNode(result, lookup, $"{tag.FileName}.{tag.ClassName}");
+                node.Tag = tag;
+            }
+
+            tv.ItemsSource = result;
+        }
+
+        private bool FilterTag(string filter, IIndexItem tag)
+        {
+            if (string.IsNullOrEmpty(filter))
+                return true;
+
+            if (tag.FileName.ToUpper().Contains(filter.ToUpper()))
+                return true;
+
+            if (tag.ClassCode.ToUpper() == filter.ToUpper())
+                return true;
+
+            if (tag.ClassName.ToUpper() == filter.ToUpper())
+                return true;
+
+            return false;
+        }
+
+        private TreeNode MakeNode(IList<TreeNode> root, IDictionary<string, TreeNode> lookup, string path, bool inner = false)
+        {
+            if (lookup.ContainsKey(path))
+                return lookup[path];
+
+            var index = path.LastIndexOf('\\');
+            var branch = index < 0 ? null : path.Substring(0, index);
+            var leaf = index < 0 ? path : path.Substring(index + 1);
+
+            var item = new TreeNode(leaf);
+            lookup.Add(path, item);
+
+            if (branch == null)
+            {
+                if (inner)
+                    root.Insert(root.LastIndexWhere(n => n.HasChildren) + 1, item);
+                else root.Add(item);
+
+                return item;
+            }
+
+            var parent = MakeNode(root, lookup, branch, true);
+
+            if (inner)
+                parent.Children.Insert(parent.Children.LastIndexWhere(n => n.HasChildren) + 1, item);
+            else parent.Children.Add(item);
+
+            return item;
+        }
+
+        private void RecursiveCollapseNode(TreeNode node)
+        {
+            foreach (var n in node.Children)
+                RecursiveCollapseNode(n);
+        }
+
+        #region Event Handlers
+        private void btnCollapseAll_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void txtSearch_SearchChanged(object sender, RoutedEventArgs e)
+        {
+            BuildTagTree(txtSearch.Text);
         }
 
         private void tv_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -91,5 +201,6 @@ namespace Reclaimer.Controls
             var args = new OpenFileArgs(fileName, item, fileKey, Substrate.GetHostWindow(this));
             Substrate.OpenWithPrompt(args);
         }
+        #endregion
     }
 }

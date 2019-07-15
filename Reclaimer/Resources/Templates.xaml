@@ -463,4 +463,29 @@
         </Viewbox>
     </ControlTemplate>
 
+    <ControlTemplate x:Key="ic_Hierarchy_16x" TargetType="ContentControl">
+        <Viewbox Width="16" Height="16">
+            <Rectangle Width="16" Height="16">
+                <Rectangle.Fill>
+                    <DrawingBrush>
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <DrawingGroup.Children>
+                                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M5.0004,-0.000199999999999534L5.0004,4.9998 1.9994,4.9998 1.9994,9.9998 0.000399999999999956,9.9998 0.000399999999999956,15.9998 16.0004,15.9998 16.0004,9.9998 14.0004,9.9998 14.0004,4.9998 10.9994,4.9998 10.9994,-0.000199999999999534z" />
+                                    <GeometryDrawing Brush="#FF414141" Geometry="F1M10,1L6,1 6,5 10,5z" />
+                                    <GeometryDrawing Brush="#FF414141" Geometry="F1M7,6L3,6 3,10 7,10z" />
+                                    <GeometryDrawing Brush="#FF414141" Geometry="F1M9,10L13,10 13,6 9,6z" />
+                                    <GeometryDrawing Brush="#FF414141" Geometry="F1M1,15L5,15 5,11 1,11z" />
+                                    <GeometryDrawing Brush="#FF414141" Geometry="F1M6,15L10,15 10,11 6,11z" />
+                                    <GeometryDrawing Brush="#FF414141" Geometry="F1M11,15L15,15 15,11 11,11z" />
+                                </DrawingGroup.Children>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Viewbox>
+    </ControlTemplate>
+
 </ResourceDictionary>
