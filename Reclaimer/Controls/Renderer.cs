@@ -171,7 +171,7 @@ namespace Reclaimer.Controls
         public Renderer() : base()
         {
             NormalizeSet();
-            timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, 10) };
+            timer = new DispatcherTimer(DispatcherPriority.Send) { Interval = new TimeSpan(0, 0, 0, 0, 10) };
             timer.Tick += Timer_Tick;
             timer.Start();
         }
