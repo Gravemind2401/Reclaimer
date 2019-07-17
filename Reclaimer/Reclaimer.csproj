@@ -193,7 +193,11 @@
     </Compile>
     <Compile Include="Plugins\BitmapViewer.cs" />
     <Compile Include="Plugins\MapViewer.cs" />
-    <Compile Include="Plugins\MetaViewer.cs" />
+    <Compile Include="Plugins\MetaViewer\Helpers.cs" />
+    <Compile Include="Plugins\MetaViewer\MetaViewerPlugin.cs" />
+    <Compile Include="Plugins\MetaViewer\SimpleValue.cs" />
+    <Compile Include="Plugins\MetaViewer\StringValue.cs" />
+    <Compile Include="Plugins\MetaViewer\StructureValue.cs" />
     <Compile Include="Plugins\ModelViewer.cs" />
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins\Substrate.cs" />
@@ -201,7 +205,7 @@
     <Compile Include="Storage.cs" />
     <Compile Include="Utils\BindableBase.cs" />
     <Compile Include="Utils\Extensions.cs" />
-    <Compile Include="Utils\MetaValue.cs" />
+    <Compile Include="Plugins\MetaViewer\MetaValue.cs" />
     <Compile Include="Utils\RadToDegConverter.cs" />
     <Compile Include="Utils\ToStringConverter.cs" />
     <Compile Include="Utils\NativeMethods.cs" />

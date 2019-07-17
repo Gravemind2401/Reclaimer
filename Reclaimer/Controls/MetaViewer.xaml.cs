@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Common;
+using Reclaimer.Plugins.MetaViewer;
 using Reclaimer.Utils;
 using Studio.Controls;
 using System;

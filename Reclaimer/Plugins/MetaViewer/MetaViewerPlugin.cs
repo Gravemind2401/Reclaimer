@@ -8,9 +8,9 @@ using Adjutant.Blam.Common;
 using System.IO;
 using System.Xml;
 
-namespace Reclaimer.Plugins
+namespace Reclaimer.Plugins.MetaViewer
 {
-    public class MetaViewer : Plugin
+    public class MetaViewerPlugin : Plugin
     {
         private Settings settings;
 
