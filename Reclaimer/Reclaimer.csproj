@@ -204,6 +204,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Storage.cs" />
     <Compile Include="Utils\BindableBase.cs" />
+    <Compile Include="Utils\DiagnosticTimer.cs" />
     <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Plugins\MetaViewer\MetaValue.cs" />
     <Compile Include="Utils\RadToDegConverter.cs" />
