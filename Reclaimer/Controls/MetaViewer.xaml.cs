@@ -43,7 +43,7 @@ namespace Reclaimer.Controls
             {
                 try
                 {
-                    var meta = new MetaValue(n, tag.CacheFile, tag.MetaPointer.Address);
+                    var meta = MetaValue.GetValue(n, tag.CacheFile, tag.MetaPointer.Address);
                     Metadata.Add(meta);
                 }
                 catch { }

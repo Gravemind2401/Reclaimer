@@ -27,23 +27,20 @@ namespace Reclaimer.Utils
         }
     }
 
-    public class MetaValue : BindableBase
+    public abstract class MetaValue : BindableBase
     {
-        private ICacheFile cache;
-        private XmlNode node;
+        protected readonly ICacheFile cache;
+        protected readonly XmlNode node;
 
         public string Name { get; }
+        public int Offset { get; }
+        public string ToolTip { get; }
         public string Description { get; }
-        public string Label { get; }
-        public int Length { get; }
         public bool IsVisible { get; }
 
-        public long BaseAddress { get; }
-        public int Offset { get; }
-        public int BlockSize { get; }
+        public long BaseAddress { get; internal set; }
 
         public MetaValueType ValueType { get; }
-
         public long ValueAddress => BaseAddress + Offset;
 
         private bool isEnabled;
@@ -53,40 +50,9 @@ namespace Reclaimer.Utils
             set { SetProperty(ref isEnabled, value); }
         }
 
-        private object _value;
-        public object Value
-        {
-            get { return _value; }
-            set { SetProperty(ref _value, value); }
-        }
+        public virtual string EntryString => null;
 
-        private int blockIndex;
-        public int BlockIndex
-        {
-            get { return blockIndex; }
-            set
-            {
-                if (SetProperty(ref blockIndex, value))
-                    ReadValue();
-            }
-        }
-
-        private IEnumerable<string> blockLabels;
-        public IEnumerable<string> BlockLabels
-        {
-            get { return blockLabels; }
-            set { SetProperty(ref blockLabels, value); }
-        }
-
-        public ObservableCollection<MetaValue> Children { get; }
-
-        public MetaValue(XmlNode node, ICacheFile cache, long metaAddress)
-            : this(node, cache, metaAddress, cache.CreateReader(cache.DefaultAddressTranslator), false)
-        {
-
-        }
-
-        private MetaValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader, bool leaveOpen)
+        protected MetaValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
         {
             this.cache = cache;
             this.node = node;
@@ -94,56 +60,32 @@ namespace Reclaimer.Utils
             BaseAddress = baseAddress;
 
             Name = node.Attributes["name"]?.Value;
-            Description = node.Attributes["desc"]?.Value;
-            Label = node.Attributes["label"]?.Value;
-            Length = GetIntAttribute(node, "length", 0);
-            IsVisible = GetBoolAttribute(node, "visible", true);
-
-            Offset = GetIntAttribute(node, "offset", 0);
-            BlockSize = GetIntAttribute(node, "size", 0);
+            Description = GetStringAttribute(node, "description", "desc");
+            Offset = GetIntAttribute(node, "offset") ?? 0;
+            ToolTip = GetStringAttribute(node, "tooltip");
+            IsVisible = GetBoolAttribute(node, "visible") ?? false;
 
             ValueType = GetMetaValueType(node.Name);
-
-            Children = new ObservableCollection<MetaValue>();
-
-            ReadValue(reader, leaveOpen);
         }
 
-        private void ReadValue() => ReadValue(cache.CreateReader(cache.DefaultAddressTranslator), false);
-
-        private void ReadValue(EndianReader reader, bool leaveOpen)
+        public static MetaValue GetValue(XmlNode node, ICacheFile cache, long baseAddress)
         {
-            IsEnabled = true;
-
-            try
+            using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
             {
-                reader.Seek(ValueAddress, SeekOrigin.Begin);
+                reader.Seek(baseAddress, SeekOrigin.Begin);
 
-                switch (ValueType)
+                switch (GetMetaValueType(node.Name))
                 {
-                    case MetaValueType.Undefined:
-                    default:
-                        Value = reader.ReadInt32();
-                        break;
+                    case MetaValueType.Structure:
+                        return new StructureValue(node, cache, baseAddress, reader);
 
-                    case MetaValueType.Struct: ReadStruct(reader); break;
-                    case MetaValueType.StringId: ReadStringId(reader); break;
+                    case MetaValueType.String:
+                    case MetaValueType.StringId:
+                        return new StringValue(node, cache, baseAddress, reader);
+
                     //case MetaValueType.TagRef: LoadTagRef(reader); break;
 
                     //case MetaValueType.Comment: Value = metaNode.InnerText; break;
-
-                    case MetaValueType.String: Value = reader.ReadNullTerminatedString(Length); break;
-
-                    case MetaValueType.Float32: Value = reader.ReadSingle(); break;
-
-                    case MetaValueType.Int8: Value = reader.ReadByte(); break;
-                    case MetaValueType.Int16: Value = reader.ReadInt16(); break;
-                    case MetaValueType.Int32: Value = reader.ReadInt32(); break;
-                    case MetaValueType.Int64: Value = reader.ReadInt64(); break;
-
-                    case MetaValueType.UInt16: Value = reader.ReadUInt16(); break;
-                    case MetaValueType.UInt32: Value = reader.ReadUInt32(); break;
-                    case MetaValueType.UInt64: Value = reader.ReadUInt64(); break;
 
                     //case MetaValueType.Bitmask8:
                     //case MetaValueType.Bitmask16:
@@ -159,86 +101,69 @@ namespace Reclaimer.Utils
                     //    Value = new RealQuat(reader.ReadInt16(), reader.ReadInt16());
                     //    break;
 
-                    case MetaValueType.RealBounds:
-                    case MetaValueType.RealPoint2D:
-                    case MetaValueType.RealVector2D:
-                        Value = new RealVector2D(reader.ReadSingle(), reader.ReadSingle());
-                        break;
+                    //case MetaValueType.RealBounds:
+                    //case MetaValueType.RealPoint2D:
+                    //case MetaValueType.RealVector2D:
+                    //    Value = new RealVector2D(reader.ReadSingle(), reader.ReadSingle());
+                    //    break;
 
-                    case MetaValueType.RealPoint3D:
-                    case MetaValueType.RealVector3D:
-                        Value = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                        break;
+                    //case MetaValueType.RealPoint3D:
+                    //case MetaValueType.RealVector3D:
+                    //    Value = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                    //    break;
 
-                    case MetaValueType.RealPoint4D:
-                    case MetaValueType.RealVector4D:
-                        Value = new RealVector4D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                        break;
+                    //case MetaValueType.RealPoint4D:
+                    //case MetaValueType.RealVector4D:
+                    //    Value = new RealVector4D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                    //    break;
+
+                    default: return new SimpleValue(node, cache, baseAddress, reader);
                 }
-
-                if (!leaveOpen)
-                    reader.Dispose();
             }
-            catch { IsEnabled = false; }
         }
 
-        private void ReadStringId(EndianReader reader)
+        internal abstract void ReadValue(EndianReader reader);
+
+        protected static string GetStringAttribute(XmlNode node, params string[] possibleNames)
         {
-            reader.Seek(ValueAddress, SeekOrigin.Begin);
-            var id = cache.CacheType < CacheType.Halo3Beta ? reader.ReadInt16() : reader.ReadInt32();
-            Value = cache.StringIndex[id];
+            return FindAttribute(node, possibleNames)?.Value;
         }
 
-        private void ReadStruct(EndianReader reader)
+        protected static int? GetIntAttribute(XmlNode node, params string[] possibleNames)
         {
-            Children.Clear();
-
-            reader.Seek(ValueAddress, SeekOrigin.Begin);
-            var count = reader.ReadInt32();
-            var pointer = new Pointer(reader.ReadInt32(), cache.DefaultAddressTranslator);
-
-            BlockLabels = count > 0
-                ? Enumerable.Range(0, count).Select(i => $"Block {i:D3}")
-                : Enumerable.Empty<string>();
-
-            if (count <= 0)
-            {
-                IsEnabled = false;
-                return;
-            }
-
-            foreach (XmlNode n in node.ChildNodes)
-                Children.Add(new MetaValue(n, cache, pointer.Address + BlockIndex * BlockSize, reader, true));
-        }
-
-        private static int GetIntAttribute(XmlNode node, string valueName, int defaultValue)
-        {
-            if (node.Attributes[valueName] == null) return defaultValue;
+            var attr = FindAttribute(node, possibleNames);
+            if (attr == null) return null;
 
             int intVal;
-            var strVal = node.Attributes[valueName].Value;
+            var strVal = attr.Value;
 
             if (int.TryParse(strVal, out intVal))
                 return intVal;
             else if (int.TryParse(strVal.Substring(2), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out intVal))
                 return intVal;
-            else return defaultValue;
+            else return null;
         }
 
-        private static bool GetBoolAttribute(XmlNode node, string valueName, bool defaultValue)
+        protected static bool? GetBoolAttribute(XmlNode node, params string[] possibleNames)
         {
-            if (node.Attributes[valueName] == null) return defaultValue;
+            var attr = FindAttribute(node, possibleNames);
+            if (attr == null) return null;
 
-            bool bVal;
-            var strVal = node.Attributes[valueName].Value;
+            bool boolVal;
+            var strVal = attr.Value;
 
-            if (bool.TryParse(strVal, out bVal))
-                return bVal;
-            else return defaultValue;
+            if (bool.TryParse(strVal, out boolVal))
+                return boolVal;
+            else return null;
+        }
+
+        protected static XmlAttribute FindAttribute(XmlNode node, params string[] possibleNames)
+        {
+            return node.Attributes.Cast<XmlAttribute>().FirstOrDefault(a => possibleNames.Any(s => s.ToUpper() == a.Name.ToUpper()));
         }
 
         private static readonly Dictionary<string, MetaValueType> typeLookup = new Dictionary<string, MetaValueType>();
-        private static MetaValueType GetMetaValueType(string typeName)
+        protected static MetaValueType GetMetaValueType(string typeName)
         {
             if (typeName == null)
                 throw new ArgumentNullException(nameof(typeName));
@@ -258,7 +183,7 @@ namespace Reclaimer.Utils
             {
                 foreach (MetaValueTypeAliasAttribute attr in fi.GetCustomAttributes(typeof(MetaValueTypeAliasAttribute), false))
                 {
-                    if (attr.Alias == typeName)
+                    if (attr.Alias.ToUpper() == typeName)
                     {
                         result = (MetaValueType)fi.GetValue(null);
                         typeLookup.Add(typeName, result);
@@ -272,20 +197,225 @@ namespace Reclaimer.Utils
         }
     }
 
+    public class StructureValue : MetaValue
+    {
+        public int BlockSize { get; }
+
+        private int blockCount;
+        public int BlockCount
+        {
+            get { return blockCount; }
+            set { SetProperty(ref blockCount, value); }
+        }
+
+        private int blockAddress;
+        public int BlockAddress
+        {
+            get { return blockAddress; }
+            set { SetProperty(ref blockAddress, value); }
+        }
+
+        private int blockIndex;
+        public int BlockIndex
+        {
+            get { return blockIndex; }
+            set
+            {
+                value = Math.Min(Math.Max(0, value), BlockCount - 1);
+
+                if (SetProperty(ref blockIndex, value))
+                    RefreshChildren();
+            }
+        }
+
+        private IEnumerable<string> blockLabels;
+        public IEnumerable<string> BlockLabels
+        {
+            get { return blockLabels; }
+            set { SetProperty(ref blockLabels, value); }
+        }
+
+        public ObservableCollection<MetaValue> Children { get; }
+
+        public StructureValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
+            : base(node, cache, baseAddress, reader)
+        {
+            BlockSize = GetIntAttribute(node, "entrySize", "size") ?? 0;
+            Children = new ObservableCollection<MetaValue>();
+            ReadValue(reader);
+        }
+
+        internal override void ReadValue(EndianReader reader)
+        {
+            IsEnabled = true;
+
+            try
+            {
+                Children.Clear();
+                reader.Seek(ValueAddress, SeekOrigin.Begin);
+
+                BlockCount = reader.ReadInt32();
+                BlockAddress = new Pointer(reader.ReadInt32(), cache.DefaultAddressTranslator).Address;
+
+                if (BlockCount <= 0 || BlockAddress + BlockCount * BlockSize > reader.BaseStream.Length)
+                {
+                    IsEnabled = false;
+                    return;
+                }
+
+                blockIndex = 0;
+                foreach (XmlNode n in node.ChildNodes)
+                    Children.Add(MetaValue.GetValue(n, cache, BlockAddress));
+
+                RaisePropertyChanged(nameof(BlockIndex));
+
+                var entryOffset = GetIntAttribute(node, "entryName", "entryOffset", "label");
+                var entry = Children.FirstOrDefault(c => c.Offset == entryOffset);
+
+                if (entry == null)
+                    BlockLabels = Enumerable.Range(0, Math.Min(BlockCount, 100)).Select(i => $"Block {i:D3}");
+                else
+                {
+                    var labels = new List<string>();
+                    for (int i = 0; i < BlockCount; i++)
+                    {
+                        entry.BaseAddress = BlockAddress + i * BlockSize;
+                        entry.ReadValue(reader);
+                        labels.Add(entry.EntryString);
+                    }
+                    BlockLabels = labels;
+                }
+            }
+            catch { IsEnabled = false; }
+        }
+
+        private void RefreshChildren()
+        {
+            if (BlockCount <= 0)
+                return;
+
+            using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
+            {
+                foreach (var c in Children)
+                {
+                    c.BaseAddress = BlockAddress + BlockIndex * BlockSize;
+                    c.ReadValue(reader);
+                }
+            }
+        }
+    }
+
+    public class SimpleValue : MetaValue
+    {
+        public override string EntryString => Value.ToString();
+
+        private object _value;
+        public object Value
+        {
+            get { return _value; }
+            set { SetProperty(ref _value, value); }
+        }
+
+        public SimpleValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
+            : base(node, cache, baseAddress, reader)
+        {
+            ReadValue(reader);
+        }
+
+        internal override void ReadValue(EndianReader reader)
+        {
+            IsEnabled = true;
+
+            try
+            {
+                reader.Seek(ValueAddress, SeekOrigin.Begin);
+
+                switch (ValueType)
+                {
+                    case MetaValueType.Int8: Value = reader.ReadByte(); break;
+                    case MetaValueType.Int16: Value = reader.ReadInt16(); break;
+                    case MetaValueType.Int32: Value = reader.ReadInt32(); break;
+                    case MetaValueType.Int64: Value = reader.ReadInt64(); break;
+                    case MetaValueType.UInt16: Value = reader.ReadUInt16(); break;
+                    case MetaValueType.UInt32: Value = reader.ReadUInt32(); break;
+                    case MetaValueType.UInt64: Value = reader.ReadUInt64(); break;
+                    case MetaValueType.Float32: Value = reader.ReadSingle(); break;
+
+                    case MetaValueType.Comment: Value = node.InnerText; break;
+
+                    case MetaValueType.Undefined:
+                    default:
+                        Value = reader.ReadInt32();
+                        break;
+                }
+            }
+            catch { IsEnabled = false; }
+        }
+    }
+
+    public class StringValue : MetaValue
+    {
+        public override string EntryString => Value;
+
+        public int Length { get; }
+
+        private string _value;
+        public string Value
+        {
+            get { return _value; }
+            set { SetProperty(ref _value, value); }
+        }
+
+        public StringValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
+            : base(node, cache, baseAddress, reader)
+        {
+            Length = GetIntAttribute(node, "length", "maxlength", "size") ?? 0;
+            ReadValue(reader);
+        }
+
+        internal override void ReadValue(EndianReader reader)
+        {
+            IsEnabled = true;
+
+            try
+            {
+                reader.Seek(ValueAddress, SeekOrigin.Begin);
+
+                if (ValueType == MetaValueType.String)
+                    Value = reader.ReadNullTerminatedString();
+                else
+                {
+                    var id = cache.CacheType < CacheType.Halo3Beta ? reader.ReadInt16() : reader.ReadInt32();
+                    Value = cache.StringIndex[id];
+                }
+            }
+            catch { IsEnabled = false; }
+        }
+    }
+
     public enum MetaValueType
     {
+        [MetaValueTypeAlias("struct")]
         [MetaValueTypeAlias("reflexive")]
-        Struct,
+        Structure,
+
         StructureGroup,
 
         [MetaValueTypeAlias("tagreference")]
         TagRef,
 
         StringId,
+
+        [MetaValueTypeAlias("ascii")]
         String,
 
+        [MetaValueTypeAlias("bitfield8")]
         Bitmask8,
+
+        [MetaValueTypeAlias("bitfield16")]
         Bitmask16,
+
+        [MetaValueTypeAlias("bitfield32")]
         Bitmask32,
 
         Comment,
@@ -295,15 +425,28 @@ namespace Reclaimer.Utils
         [MetaValueTypeAlias("float")]
         Float32,
 
-        [MetaValueTypeAlias("byte")]
+        [MetaValueTypeAlias("sbyte")]
         Int8,
+
+        [MetaValueTypeAlias("short")]
         Int16,
+
+        [MetaValueTypeAlias("int")]
         Int32,
+
+        [MetaValueTypeAlias("long")]
         Int64,
 
+        [MetaValueTypeAlias("byte")]
         UInt8,
+
+        [MetaValueTypeAlias("ushort")]
         UInt16,
+
+        [MetaValueTypeAlias("uint")]
         UInt32,
+
+        [MetaValueTypeAlias("ulong")]
         UInt64,
 
         RawID,
@@ -342,7 +485,7 @@ namespace Reclaimer.Utils
 
             switch (meta.ValueType)
             {
-                case MetaValueType.Struct:
+                case MetaValueType.Structure:
                     return element.FindResource("StructureTemplate") as DataTemplate;
 
                 default:
