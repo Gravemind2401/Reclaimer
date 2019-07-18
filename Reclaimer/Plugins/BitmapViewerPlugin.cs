@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Reclaimer.Plugins
 {
-    public class BitmapViewer : Plugin
+    public class BitmapViewerPlugin : Plugin
     {
         public override string Name => "Bitmap Viewer";
 

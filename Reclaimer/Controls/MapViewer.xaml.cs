@@ -39,7 +39,7 @@ namespace Reclaimer.Controls
         public static void HierarchyViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var mv = d as MapViewer;
-            Plugins.MapViewer.Settings.HierarchyView = mv.HierarchyView;
+            Plugins.MapViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
             mv.BuildTagTree(mv.txtSearch.Text);
         }
 
@@ -56,7 +56,7 @@ namespace Reclaimer.Controls
             TabHeader = Path.GetFileName(cache.FileName);
             TabToolTip = $"Map Viewer - {TabHeader}";
 
-            HierarchyView = Plugins.MapViewer.Settings.HierarchyView;
+            HierarchyView = Plugins.MapViewerPlugin.Settings.HierarchyView;
             BuildTagTree(null);
         }
 

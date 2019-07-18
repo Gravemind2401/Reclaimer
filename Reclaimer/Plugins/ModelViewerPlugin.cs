@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Reclaimer.Plugins
 {
-    public class ModelViewer : Plugin
+    public class ModelViewerPlugin : Plugin
     {
         public override string Name => "Model Viewer";
 

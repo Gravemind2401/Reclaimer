@@ -9,7 +9,7 @@ using System.Windows.Controls;
 
 namespace Reclaimer.Plugins
 {
-    public class MapViewer : Plugin
+    public class MapViewerPlugin : Plugin
     {
         const string OpenKey = "MapViewer.OpenMap";
         const string OpenPath = "File\\Open Map";
