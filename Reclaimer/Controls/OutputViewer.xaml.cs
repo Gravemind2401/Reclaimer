@@ -37,7 +37,7 @@ namespace Reclaimer.Controls
         {
             var control = d as OutputViewer;
             control.txtOutput.TextWrapping = control.WordWrapEnabled ? TextWrapping.Wrap : TextWrapping.NoWrap;
-        } 
+        }
         #endregion
 
         public ObservableCollection<Tuple<string, string>> LoadedPlugins { get; }
@@ -86,6 +86,8 @@ namespace Reclaimer.Controls
 
             txtOutput.Clear();
             txtOutput.AppendText(string.Join(Environment.NewLine, output) + Environment.NewLine);
+            txtOutput.CaretIndex = txtOutput.Text.Length;
+            txtOutput.ScrollToEnd();
         }
 
         private void btnClearAll_Click(object sender, RoutedEventArgs e)
@@ -96,13 +98,25 @@ namespace Reclaimer.Controls
             cmbPlugins_SelectionChanged(null, null);
         }
 
-        private void Substrate_Log(object sender, LogEventArgs e)
+        private async void Substrate_Log(object sender, LogEventArgs e)
         {
-            var key = cmbPlugins.SelectedValue as string;
+            try
+            {
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    var key = cmbPlugins.SelectedValue as string;
 
-            if (key == string.Empty || key == e.Source.Key)
-                txtOutput.AppendText(e.Entry.Message + Environment.NewLine);
-        } 
+                    if (key != string.Empty && key != e.Source.Key)
+                        return;
+
+                    txtOutput.AppendText(e.Entry.Message + Environment.NewLine);
+
+                    if (txtOutput.CaretIndex == txtOutput.Text.Length)
+                        txtOutput.ScrollToEnd();
+                });
+            }
+            catch (TaskCanceledException) { }
+        }
         #endregion
     }
 }

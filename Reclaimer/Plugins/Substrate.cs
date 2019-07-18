@@ -51,12 +51,19 @@ namespace Reclaimer.Plugins
                 foreach (var fileName in Directory.EnumerateFiles(dir, "*.dll"))
                 {
                     LogOutput($"Scanning {fileName} for plugins");
-                    var assembly = Assembly.LoadFrom(fileName);
-
-                    foreach (var p in FindPlugins(assembly))
+                    try
                     {
-                        LogOutput($"Found plugin {p.Key} [{p.Name}]");
-                        temp.Add(p);
+                        var assembly = Assembly.LoadFrom(fileName);
+
+                        foreach (var p in FindPlugins(assembly))
+                        {
+                            LogOutput($"Found plugin {p.Key} [{p.Name}]");
+                            temp.Add(p);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError($"Could not scan file {fileName}", ex);
                     }
                 }
             }
@@ -64,8 +71,15 @@ namespace Reclaimer.Plugins
             foreach (var p in temp)
             {
                 LogOutput($"Loading plugin {p.Key} [{p.Name}]");
-                plugins.Add(p.Key, p);
-                p.Initialise();
+                try
+                {
+                    p.Initialise();
+                    plugins.Add(p.Key, p);
+                }
+                catch (Exception ex)
+                {
+                    LogError($"Could not load plugin {p.Key} [{p.Name}]", ex);
+                }
             }
         }
 
@@ -186,7 +200,7 @@ namespace Reclaimer.Plugins
         {
 
         }
-        
+
         public OpenFileArgs(string fileName, object file, string fileTypeKey, IMultiPanelHost targetWindow)
         {
             FileName = fileName;

@@ -26,6 +26,7 @@ namespace ExamplePlugin
             {
                 yield return new PluginMenuItem("Key1", "Example\\Item 1");
                 yield return new PluginMenuItem("Key2", "Example\\Item 2");
+                yield return new PluginMenuItem("Key3", "Example\\Output Test");
             }
         }
 
@@ -35,6 +36,17 @@ namespace ExamplePlugin
                 MessageBox.Show("Item 1 Click");
             else if (key == "Key2")
                 MessageBox.Show("Item 2 Click");
+            else
+            {
+                Task.Run(() =>
+                {
+                    for (int i = 0; i < 100; i++)
+                    {
+                        LogOutput($"Output line {i}!");
+                        System.Threading.Thread.Sleep(100);
+                    }
+                });
+            }
         }
 
         public override bool CanOpenFile(object file, string fileTypeKey)

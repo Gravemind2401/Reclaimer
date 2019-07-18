@@ -32,9 +32,9 @@
                 </ToggleButton>
             </ToolBar>
         </ToolBarTray>
-        <TextBox x:Name="txtOutput" x:FieldModifier="private" 
-                 IsReadOnly="True" Padding="10,0" TextWrapping="NoWrap"
-                 BorderThickness="0" FontFamily="Lucida Console"
+        <TextBox x:Name="txtOutput" x:FieldModifier="private"
+                 Padding="10,0" TextWrapping="NoWrap" FontFamily="Lucida Console"
+                 BorderThickness="0" IsReadOnly="True" IsReadOnlyCaretVisible="True"
                  TextBlock.LineHeight="15" TextBlock.LineStackingStrategy="BlockLineHeight"
                  Background="{DynamicResource OutputViewerBackground}"
                  Foreground="{DynamicResource OutputViewerForeground}"
