@@ -488,4 +488,53 @@
         </Viewbox>
     </ControlTemplate>
 
+    <ControlTemplate x:Key="ic_ShowAllFiles_16x" TargetType="ContentControl">
+        <Viewbox Width="16" Height="16">
+            <Rectangle Width="16" Height="16">
+                <Rectangle.Fill>
+                    <DrawingBrush>
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <DrawingGroup.Children>
+                                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M13.5469,0L7.9999,0C7.7269,0,7.4509,0.062,7.1929,0.17L6.9999,0 1.9999,0C1.0299,0,-9.99999999997669E-05,0.701,-9.99999999997669E-05,2L-9.99999999997669E-05,10C-9.99999999997669E-05,11.299,1.0299,12,1.9999,12L2.9999,12 2.9999,14C2.9999,15.299,4.0299,16,4.9999,16L10.9999,16C12.2989,16,12.9999,14.97,12.9999,14L12.9999,12 13.9999,12C15.2989,12,15.9999,10.97,15.9999,10L15.9999,2.062z" />
+                                    <GeometryDrawing Brush="#FF414141" Geometry="F1M2,2L6,2C6,1.609,6.101,1.28,6.258,1L1.964,1C1.964,1,1,1,1,2L1,10C1,11,1.964,11,1.964,11L3,11 3,10 2,10z" />
+                                    <GeometryDrawing Brush="#FF414141" Geometry="F1M12.624,1L7.964,1C7.964,1,7,1,7,2L7,4 8,4 8,2 12,2 12,4 14,4 14,5 14,6 14,10 13,10 13,11 13.965,11C14.965,11,15,10,15,10L15,3.136z" />
+                                    <GeometryDrawing Brush="#FF414141" Geometry="F1M11.0234,9L11.0234,10 11.0234,14 5.0234,14 5.0234,6 9.0234,6 9.0234,8 11.0234,8z M9.6244,5L4.9634,5C4.9634,5,4.0234,5,4.0234,6L4.0234,14C4.0234,15,4.9644,15,4.9644,15L10.9644,15C11.9644,15,12.0234,14,12.0234,14L12.0234,7.136z" />
+                                    <GeometryDrawing Brush="#FF414141" Geometry="F1M9.023,9L6.023,9 6.023,8 9.023,8z" />
+                                    <GeometryDrawing Brush="#FF414141" Geometry="F1M10.023,11L6.023,11 6.023,10 10.023,10z" />
+                                    <GeometryDrawing Brush="#FF414141" Geometry="F1M10.023,13L6.023,13 6.023,12 10.023,12z" />
+                                    <GeometryDrawing Brush="#FFF0EFF1" Geometry="F1M3,6C3,4.701,4.03,4,5,4L8,4 8,3.996 6,3.96 6,2 2,2 2,10 3,10z" />
+                                    <GeometryDrawing Brush="#FFF0EFF1" Geometry="F1M12,3.96L12,2 8,2 8,4 10,4 13,6.648 13,10 14,10 14,3.996z" />
+                                    <GeometryDrawing Brush="#FFF0EFF1" Geometry="F1M9,9L6,9 6,8 9,8z M10,11L6,11 6,10 10,10z M10,13L6,13 6,12 10,12z M9,6L5,6 5,14 11,14 11,7.996 9,7.96z" />
+                                </DrawingGroup.Children>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ic_Expander_16x" TargetType="ContentControl">
+        <Viewbox Width="16" Height="16">
+            <Rectangle Width="16" Height="16">
+                <Rectangle.Fill>
+                    <DrawingBrush>
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <DrawingGroup.Children>
+                                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M8,0C3.589,0 0,3.589 0,8 0,12.411 3.589,16 8,16 12.411,16 16,12.411 16,8 16,3.589 12.411,0 8,0" />
+                                    <GeometryDrawing Brush="#FF414141" Geometry="F1M10,8.293L10.707,9 8,11.707 5.293,9 6,8.293 8,10.293z M10,5.293L10.707,6 8,8.707 5.293,6 6,5.293 8,7.293z M8,13C5.243,13 3,10.757 3,8 3,5.243 5.243,3 8,3 10.757,3 13,5.243 13,8 13,10.757 10.757,13 8,13 M8,0.999999999999999C4.133,0.999999999999999 1,4.134 1,8 1,11.866 4.133,15 8,15 11.866,15 15,11.866 15,8 15,4.134 11.866,0.999999999999999 8,0.999999999999999" />
+                                    <GeometryDrawing Brush="#FFF0EFF1" Geometry="F1M8,8.707L5.293,6 6,5.293 8,7.293 10,5.293 10.707,6z M8,11.707L5.293,9 6,8.293 8,10.293 10,8.293 10.707,9z M8,3C5.238,3 3,5.239 3,8 3,10.762 5.238,13 8,13 10.762,13 13,10.762 13,8 13,5.239 10.762,3 8,3" />
+                                </DrawingGroup.Children>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Viewbox>
+    </ControlTemplate>
+
 </ResourceDictionary>

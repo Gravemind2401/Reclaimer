@@ -5,61 +5,190 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Reclaimer.Controls"
              xmlns:mv="clr-namespace:Reclaimer.Plugins.MetaViewer"
+             xmlns:u="clr-namespace:Studio.Utilities;assembly=Studio"
              xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
              mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
     
     <UserControl.Resources>
+        <mv:ShowInvisiblesConverter x:Key="invisConverter" />
+        <mv:FieldVisibilityConverter x:Key="fieldVisConverter" />
         <mv:MetaValueTemplateSelector x:Key="templateSelector" />
+        <u:BoolToVisibilityConverter x:Key="boolToVisConverter" />
+
+        <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
 
         <DataTemplate x:Key="DefaultTemplate">
-            <Grid Margin="1">
+            <Grid Margin="1" ToolTip="{Binding ToolTip}">
+                <Grid.Visibility>
+                    <MultiBinding Converter="{StaticResource invisConverter}">
+                        <Binding Path="IsVisible" />
+                        <Binding Path="ShowInvisibles" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=local:MetaViewer}" />
+                    </MultiBinding>   
+                </Grid.Visibility>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Content="{Binding Name}" VerticalAlignment="Center" />
-                <TextBox Grid.Column="1" Width="200"
-                         HorizontalAlignment="Left" VerticalAlignment="Center" 
+                <Label Grid.Column="0">
+                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                </Label>
+                <TextBox Grid.Column="1" Width="100" HorizontalAlignment="Left"
                          IsReadOnly="True" Text="{Binding Value}" />
+                <Label Grid.Column="2">
+                    <TextBlock Text="{Binding Description}" TextTrimming="CharacterEllipsis" />
+                </Label>
             </Grid>
         </DataTemplate>
-        
+
+        <DataTemplate x:Key="StringValueTemplate">
+            <Grid Margin="1" ToolTip="{Binding ToolTip}">
+                <Grid.Visibility>
+                    <MultiBinding Converter="{StaticResource invisConverter}">
+                        <Binding Path="IsVisible" />
+                        <Binding Path="ShowInvisibles" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=local:MetaViewer}" />
+                    </MultiBinding>
+                </Grid.Visibility>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0">
+                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                </Label>
+                <TextBox Grid.Column="1" Width="200" HorizontalAlignment="Left"
+                         MaxLength="{Binding Length}"
+                         IsReadOnly="True" Text="{Binding Value}" />
+                <Label Grid.Column="2">
+                    <TextBlock Text="{Binding Description}" TextTrimming="CharacterEllipsis" />
+                </Label>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="MultiValueTemplate">
+            <DataTemplate.Resources>
+                <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
+                    <Setter Property="Width" Value="20" />
+                </Style>
+                <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                    <Setter Property="Width" Value="100" />
+                    <Setter Property="IsReadOnly" Value="True" />
+                </Style>
+            </DataTemplate.Resources>
+
+            <Grid Margin="1" ToolTip="{Binding ToolTip}">
+                <Grid.Visibility>
+                    <MultiBinding Converter="{StaticResource invisConverter}">
+                        <Binding Path="IsVisible" />
+                        <Binding Path="ShowInvisibles" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=local:MetaViewer}" />
+                    </MultiBinding>
+                </Grid.Visibility>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="180" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Width="180">
+                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                </Label>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding Converter={StaticResource fieldVisConverter}, ConverterParameter=0}">
+                        <Label Content="{Binding Labels[0]}" />
+                        <TextBox Text="{Binding Value1}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding Converter={StaticResource fieldVisConverter}, ConverterParameter=1}">
+                        <Label Content="{Binding Labels[1]}" />
+                        <TextBox Text="{Binding Value2}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding Converter={StaticResource fieldVisConverter}, ConverterParameter=2}">
+                        <Label Content="{Binding Labels[2]}" />
+                        <TextBox Text="{Binding Value3}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding Converter={StaticResource fieldVisConverter}, ConverterParameter=3}">
+                        <Label Content="{Binding Labels[3]}" />
+                        <TextBox Text="{Binding Value4}" />
+                    </StackPanel>
+                </StackPanel>
+                <Label Grid.Column="2">
+                    <TextBlock Text="{Binding Description}" TextTrimming="CharacterEllipsis" />
+                </Label>
+            </Grid>
+        </DataTemplate>
+
         <DataTemplate x:Key="StructureTemplate">
-            <Border Margin="1,5" BorderThickness="1" BorderBrush="Black" IsEnabled="{Binding IsEnabled}">
+            <Border Margin="1,5" BorderThickness="0"
+                    IsEnabled="{Binding IsEnabled}">
+                <Border.Visibility>
+                    <MultiBinding Converter="{StaticResource invisConverter}">
+                        <Binding Path="IsVisible" />
+                        <Binding Path="ShowInvisibles" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=local:MetaViewer}" />
+                    </MultiBinding>
+                </Border.Visibility>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="15" />
                         <ColumnDefinition Width="200" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Row="0" Grid.Column="0" Content="{Binding Name}"
-                           FontSize="14" FontWeight="Bold" />
-                    <ComboBox Grid.Row="0" Grid.Column="1"
+                    <Border Grid.Row="0" Grid.ColumnSpan="3" Background="{DynamicResource ToolBarBackground}" />
+                    <Border Grid.Column="0" Grid.Row="1" Background="{DynamicResource ToolBarBackground}" />
+                    <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+                        <ToggleButton Style="{StaticResource ToolBarToggleButtonStyle}"
+                                      VerticalAlignment="Center" Margin="3"
+                                      IsChecked="{Binding IsExpanded}">
+                            <ContentControl Template="{StaticResource ic_Expander_16x}" />
+                        </ToggleButton>
+                        <Label FontSize="14" FontWeight="Bold">
+                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                        </Label>
+                    </StackPanel>
+                    <ComboBox Grid.Row="0" Grid.Column="2" Width="200"
+                              Style="{StaticResource ToolBarComboBoxStyle}"
                               HorizontalAlignment="Left" VerticalAlignment="Center"
                               ItemsSource="{Binding BlockLabels}" SelectedIndex="{Binding BlockIndex}" />
-                    <ItemsControl Grid.Row="1" Grid.ColumnSpan="2" Margin="5,5,0,0"
-                                  ItemsSource="{Binding Children}"
-                                  ItemTemplateSelector="{StaticResource templateSelector}">
-                        
-                    </ItemsControl>
+                    <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
+                          Visibility="{Binding IsExpanded, Converter={StaticResource boolToVisConverter}}">
+                        <ItemsControl Margin="5,5,0,0" ItemsSource="{Binding Children}"
+                                      Visibility="{Binding HasChildren, Converter={StaticResource boolToVisConverter}}"
+                                      ItemTemplateSelector="{StaticResource templateSelector}">
+                        </ItemsControl>
+                    </Grid>
                 </Grid>
             </Border>
         </DataTemplate>
     </UserControl.Resources>
 
     <DockPanel>
-        <Grid DockPanel.Dock="Top" Background="{DynamicResource ToolBarBackground}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30" />
-            </Grid.RowDefinitions>
-        </Grid>
-        <ScrollViewer>
-            <ItemsControl ItemsSource="{Binding Metadata}"
+        <ToolBarTray DockPanel.Dock="Top" Margin="0" IsLocked="True"
+                     Background="{DynamicResource ToolBarBackground}">
+            <ToolBar Band="0" Padding="3,2">
+                <ToggleButton IsChecked="{Binding ShowInvisibles}">
+                    <ContentControl Template="{StaticResource ic_ShowAllFiles_16x}" />
+                </ToggleButton>
+                <Separator />
+                <Button Click="btnCollapseAll_Click">
+                    <ContentControl Template="{StaticResource ic_CollapseGroup_16x}" />
+                </Button>
+                <Button Click="btnExpandAll_Click">
+                    <ContentControl Template="{StaticResource ic_ExpandAll_16x}" />
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+        <ScrollViewer VerticalScrollBarVisibility="Visible"
+                      HorizontalScrollBarVisibility="Auto">
+            <ItemsControl Padding="1" ItemsSource="{Binding Metadata}"
                           ItemTemplateSelector="{StaticResource templateSelector}">
-            
             </ItemsControl>
         </ScrollViewer>
     </DockPanel>

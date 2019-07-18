@@ -50,6 +50,14 @@ namespace Reclaimer.Plugins.MetaViewer
             set { SetProperty(ref blockLabels, value); }
         }
 
+        private bool isExpanded;
+        public bool IsExpanded
+        {
+            get { return isExpanded; }
+            set { SetProperty(ref isExpanded, value); }
+        }
+
+        public bool HasChildren => Children.Any();
         public ObservableCollection<MetaValue> Children { get; }
 
         public StructureValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
@@ -57,6 +65,7 @@ namespace Reclaimer.Plugins.MetaViewer
         {
             BlockSize = GetIntAttribute(node, "entrySize", "size") ?? 0;
             Children = new ObservableCollection<MetaValue>();
+            IsExpanded = true;
             RefreshValue(reader);
         }
 
@@ -83,6 +92,7 @@ namespace Reclaimer.Plugins.MetaViewer
                     Children.Add(MetaValue.GetValue(n, cache, BlockAddress));
 
                 RaisePropertyChanged(nameof(BlockIndex));
+                RaisePropertyChanged(nameof(HasChildren));
 
                 var entryOffset = GetIntAttribute(node, "entryName", "entryOffset", "label");
                 var entry = Children.FirstOrDefault(c => c.Offset == entryOffset);

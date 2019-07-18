@@ -26,6 +26,22 @@ namespace Reclaimer.Controls
     /// </summary>
     public partial class MetaViewer : DocumentItem
     {
+        #region Dependency Properties
+        public static readonly DependencyProperty ShowInvisiblesProperty =
+            DependencyProperty.Register(nameof(ShowInvisibles), typeof(bool), typeof(MetaViewer), new PropertyMetadata(false, ShowInvisiblesChanged));
+
+        public bool ShowInvisibles
+        {
+            get { return (bool)GetValue(ShowInvisiblesProperty); }
+            set { SetValue(ShowInvisiblesProperty, value); }
+        }
+
+        public static void ShowInvisiblesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            MetaViewerPlugin.Settings.ShowInvisibles = e.NewValue as bool? ?? false;
+        }
+        #endregion
+
         public ObservableCollection<MetaValue> Metadata { get; }
 
         public MetaViewer()
@@ -33,6 +49,7 @@ namespace Reclaimer.Controls
             InitializeComponent();
             Metadata = new ObservableCollection<MetaValue>();
             DataContext = this;
+            ShowInvisibles = MetaViewerPlugin.Settings.ShowInvisibles;
         }
 
         public void LoadMetadata(IIndexItem tag, XmlDocument definition)
@@ -49,6 +66,25 @@ namespace Reclaimer.Controls
                 }
                 catch { }
             }
+        }
+
+        private void RecursiveToggle(IEnumerable<MetaValue> collection, bool value)
+        {
+            foreach (StructureValue s in collection.Where(s => s is StructureValue))
+            {
+                s.IsExpanded = value;
+                RecursiveToggle(s.Children, value);
+            }
+        }
+
+        private void btnCollapseAll_Click(object sender, RoutedEventArgs e)
+        {
+            RecursiveToggle(Metadata, false);
+        }
+
+        private void btnExpandAll_Click(object sender, RoutedEventArgs e)
+        {
+            RecursiveToggle(Metadata, true);
         }
     }
 }

@@ -83,24 +83,14 @@ namespace Reclaimer.Plugins.MetaViewer
 
                     //case MetaValueType.ShortBounds:
                     //case MetaValueType.ShortPoint2D:
-                    //    Value = new RealQuat(reader.ReadInt16(), reader.ReadInt16());
-                    //    break;
-
-                    //case MetaValueType.RealBounds:
-                    //case MetaValueType.RealPoint2D:
-                    //case MetaValueType.RealVector2D:
-                    //    Value = new RealVector2D(reader.ReadSingle(), reader.ReadSingle());
-                    //    break;
-
-                    //case MetaValueType.RealPoint3D:
-                    //case MetaValueType.RealVector3D:
-                    //    Value = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                    //    break;
-
-                    //case MetaValueType.RealPoint4D:
-                    //case MetaValueType.RealVector4D:
-                    //    Value = new RealVector4D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                    //    break;
+                    case MetaValueType.RealBounds:
+                    case MetaValueType.RealPoint2D:
+                    case MetaValueType.RealPoint3D:
+                    case MetaValueType.RealPoint4D:
+                    case MetaValueType.RealVector2D:
+                    case MetaValueType.RealVector3D:
+                    case MetaValueType.RealVector4D:
+                        return new MultiValue(node, cache, baseAddress, reader);
 
                     default: return new SimpleValue(node, cache, baseAddress, reader);
                 }

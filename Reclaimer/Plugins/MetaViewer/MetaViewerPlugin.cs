@@ -12,18 +12,18 @@ namespace Reclaimer.Plugins.MetaViewer
 {
     public class MetaViewerPlugin : Plugin
     {
-        private Settings settings;
+        internal static PluginSettings Settings { get; private set; }
 
         public override string Name => "Meta Viewer";
 
         public override void Initialise()
         {
-            settings = LoadSettings<Settings>();
+            Settings = LoadSettings<PluginSettings>();
         }
 
         public override void Suspend()
         {
-            SaveSettings(settings);
+            SaveSettings(Settings);
         }
 
         public override bool CanOpenFile(object file, string fileTypeKey)
@@ -97,7 +97,7 @@ namespace Reclaimer.Plugins.MetaViewer
             }
         }
 
-        private class Settings
+        internal class PluginSettings
         {
             public bool ShowInvisibles { get; set; }
         }

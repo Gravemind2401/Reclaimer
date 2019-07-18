@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Reclaimer.Plugins.MetaViewer
 {
@@ -83,20 +85,97 @@ namespace Reclaimer.Plugins.MetaViewer
 
         Undefined,
 
-        ShortBounds,
+        //ShortBounds,
+
+        [MetaValueTypeAlias("bounds")]
         RealBounds,
 
-        ShortPoint2D,
+        //ShortPoint2D,
+
+        [MetaValueTypeAlias("point2")]
+        [MetaValueTypeAlias("point2d")]
         RealPoint2D,
+
+        [MetaValueTypeAlias("point3")]
+        [MetaValueTypeAlias("point3d")]
         RealPoint3D,
+
+        [MetaValueTypeAlias("point4")]
+        [MetaValueTypeAlias("point4d")]
         RealPoint4D,
 
+        [MetaValueTypeAlias("vector2")]
+        [MetaValueTypeAlias("vector2d")]
         RealVector2D,
+
+        [MetaValueTypeAlias("vector3")]
+        [MetaValueTypeAlias("vector3d")]
         RealVector3D,
+
+        [MetaValueTypeAlias("vector4")]
+        [MetaValueTypeAlias("vector4d")]
         RealVector4D,
 
         Colour32RGB,
         Colour32ARGB,
+    }
+
+    public class ShowInvisiblesConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values?.Length == 2 && values[0] is bool && values[1] is bool)
+            {
+                if ((bool)values[0] || (bool)values[1])
+                    return Visibility.Visible;
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class FieldVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var meta = value as MetaValue;
+            int index;
+
+            if (meta == null || !int.TryParse(parameter?.ToString(), out index))
+                return Visibility.Collapsed;
+
+            var isVisible = false;
+            switch (meta.ValueType)
+            {
+                case MetaValueType.RealBounds:
+                case MetaValueType.RealPoint2D:
+                case MetaValueType.RealVector2D:
+                    isVisible = index < 2;
+                    break;
+
+                case MetaValueType.RealPoint3D:
+                case MetaValueType.RealVector3D:
+                    isVisible = index < 3;
+                    break;
+
+                case MetaValueType.RealPoint4D:
+                case MetaValueType.RealVector4D:
+                    isVisible = index < 4;
+                    break;
+            }
+
+            return isVisible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class MetaValueTemplateSelector : DataTemplateSelector
@@ -109,14 +188,14 @@ namespace Reclaimer.Plugins.MetaViewer
             if (element == null || meta == null)
                 return base.SelectTemplate(item, container);
 
-            switch (meta.ValueType)
-            {
-                case MetaValueType.Structure:
-                    return element.FindResource("StructureTemplate") as DataTemplate;
-
-                default:
-                    return element.FindResource("DefaultTemplate") as DataTemplate;
-            }
+            if (meta is StructureValue)
+                return element.FindResource("StructureTemplate") as DataTemplate;
+            else if (meta is StringValue)
+                return element.FindResource("StringValueTemplate") as DataTemplate;
+            else if (meta is MultiValue)
+                return element.FindResource("MultiValueTemplate") as DataTemplate;
+            else
+                return element.FindResource("DefaultTemplate") as DataTemplate;
         }
     }
 }
