@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Reclaimer
 {
@@ -19,6 +20,7 @@ namespace Reclaimer
         };
 
         public string Theme { get; set; }
+        public WindowState WindowState { get; set; }
 
         public Dictionary<string, string> DefaultHandlers
         {

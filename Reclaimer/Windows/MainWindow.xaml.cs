@@ -105,6 +105,13 @@ namespace Reclaimer.Windows
                 themeRoot.Items.Add(item);
                 item.Click += ThemeMenuItem_Click;
             }
+
+            WindowState = App.Settings.WindowState;
+        }
+
+        private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            App.Settings.WindowState = WindowState;
         }
 
         private void ThemeMenuItem_Click(object sender, RoutedEventArgs e)

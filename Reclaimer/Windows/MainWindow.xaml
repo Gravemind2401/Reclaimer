@@ -11,7 +11,7 @@
     xmlns:u="clr-namespace:Studio.Utilities;assembly=Studio"
     mc:Ignorable="d" WindowState="Maximized" Icon="../Resources/Reclaimer.ico"
     Style="{StaticResource MainWindowStyle}"
-    Loaded="MetroWindow_Loaded"
+    Loaded="MetroWindow_Loaded" Closing="MetroWindow_Closing"
     Title="Reclaimer" Height="900" Width="1600">
 
     <metro:MetroWindow.IconTemplate>
