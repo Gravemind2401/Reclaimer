@@ -12,7 +12,7 @@ namespace Reclaimer.Plugins.MetaViewer
 {
     public class StringValue : MetaValue
     {
-        internal override string EntryString => Value;
+        public override string EntryString => Value;
 
         public int Length { get; }
 
@@ -20,17 +20,17 @@ namespace Reclaimer.Plugins.MetaViewer
         public string Value
         {
             get { return _value; }
-            set { SetProperty(ref _value, value); }
+            set { SetMetaProperty(ref _value, value); }
         }
 
         public StringValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
             : base(node, cache, baseAddress, reader)
         {
             Length = GetIntAttribute(node, "length", "maxlength", "size") ?? 0;
-            RefreshValue(reader);
+            ReadValue(reader);
         }
 
-        public override void RefreshValue(EndianReader reader)
+        public override void ReadValue(EndianReader reader)
         {
             IsEnabled = true;
 
@@ -45,8 +45,22 @@ namespace Reclaimer.Plugins.MetaViewer
                     var id = cache.CacheType < CacheType.Halo3Beta ? reader.ReadInt16() : reader.ReadInt32();
                     Value = cache.StringIndex[id];
                 }
+
+                IsDirty = false;
             }
             catch { IsEnabled = false; }
+        }
+
+        public override void WriteValue(EndianWriter writer)
+        {
+            writer.Seek(ValueAddress, SeekOrigin.Begin);
+
+            if (ValueType == MetaValueType.String)
+                writer.WriteStringFixedLength(Value, Length);
+            else
+                throw new NotImplementedException();
+
+            IsDirty = false;
         }
     }
 }

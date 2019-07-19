@@ -66,10 +66,10 @@ namespace Reclaimer.Plugins.MetaViewer
             BlockSize = GetIntAttribute(node, "entrySize", "size") ?? 0;
             Children = new ObservableCollection<MetaValue>();
             IsExpanded = true;
-            RefreshValue(reader);
+            ReadValue(reader);
         }
 
-        public override void RefreshValue(EndianReader reader)
+        public override void ReadValue(EndianReader reader)
         {
             IsEnabled = true;
 
@@ -105,13 +105,18 @@ namespace Reclaimer.Plugins.MetaViewer
                     for (int i = 0; i < BlockCount; i++)
                     {
                         entry.BaseAddress = BlockAddress + i * BlockSize;
-                        entry.RefreshValue(reader);
+                        entry.ReadValue(reader);
                         labels.Add(entry.EntryString);
                     }
                     BlockLabels = labels;
                 }
             }
             catch { IsEnabled = false; }
+        }
+
+        public override void WriteValue(EndianWriter writer)
+        {
+            throw new NotImplementedException();
         }
 
         private void RefreshChildren()
@@ -124,7 +129,7 @@ namespace Reclaimer.Plugins.MetaViewer
                 foreach (var c in Children)
                 {
                     c.BaseAddress = BlockAddress + BlockIndex * BlockSize;
-                    c.RefreshValue(reader);
+                    c.ReadValue(reader);
                 }
             }
         }

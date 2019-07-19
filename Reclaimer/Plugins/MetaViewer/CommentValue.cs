@@ -24,9 +24,14 @@ namespace Reclaimer.Plugins.MetaViewer
             Body = node.InnerText;
         }
 
-        public override void RefreshValue(EndianReader reader)
+        public override void ReadValue(EndianReader reader)
         {
 
+        }
+
+        public override void WriteValue(EndianWriter writer)
+        {
+            
         }
     }
 }

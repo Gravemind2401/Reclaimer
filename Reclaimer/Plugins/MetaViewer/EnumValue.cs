@@ -17,7 +17,7 @@ namespace Reclaimer.Plugins.MetaViewer
         public int Value
         {
             get { return _value; }
-            set { SetProperty(ref _value, value); }
+            set { SetMetaProperty(ref _value, value); }
         }
 
         public ObservableCollection<Tuple<int, string>> Options { get; }
@@ -26,11 +26,10 @@ namespace Reclaimer.Plugins.MetaViewer
             : base(node, cache, baseAddress, reader)
         {
             Options = new ObservableCollection<Tuple<int, string>>();
-
-            RefreshValue(reader);
+            ReadValue(reader);
         }
 
-        public override void RefreshValue(EndianReader reader)
+        public override void ReadValue(EndianReader reader)
         {
             IsEnabled = true;
 
@@ -69,8 +68,32 @@ namespace Reclaimer.Plugins.MetaViewer
                     if (val >= 0)
                         Options.Add(Tuple.Create(val.Value, label));
                 }
+
+                IsDirty = false;
             }
             catch { IsEnabled = false; }
+        }
+
+        public override void WriteValue(EndianWriter writer)
+        {
+            writer.Seek(ValueAddress, SeekOrigin.Begin);
+
+            switch (ValueType)
+            {
+                case MetaValueType.Enum8:
+                    writer.Write((byte)Value);
+                    break;
+
+                case MetaValueType.Enum16:
+                    writer.Write((short)Value);
+                    break;
+
+                case MetaValueType.Enum32:
+                    writer.Write(Value);
+                    break;
+            }
+
+            IsDirty = false;
         }
     }
 }

@@ -14,7 +14,12 @@ namespace Reclaimer.Plugins.MetaViewer
 {
     public class BitmaskValue : MetaValue
     {
-        private int Value { get; set; }
+        private int _value;
+        public int Value
+        {
+            get { return _value; }
+            set { SetMetaProperty(ref _value, value); }
+        }
 
         public ObservableCollection<BitValue> Options { get; }
 
@@ -22,10 +27,10 @@ namespace Reclaimer.Plugins.MetaViewer
             : base(node, cache, baseAddress, reader)
         {
             Options = new ObservableCollection<BitValue>();
-            RefreshValue(reader);
+            ReadValue(reader);
         }
 
-        public override void RefreshValue(EndianReader reader)
+        public override void ReadValue(EndianReader reader)
         {
             IsEnabled = true;
 
@@ -64,8 +69,32 @@ namespace Reclaimer.Plugins.MetaViewer
                     if (val >= 0)
                         Options.Add(new BitValue(this, label, val.Value));
                 }
+
+                IsDirty = false;
             }
             catch { IsEnabled = false; }
+        }
+
+        public override void WriteValue(EndianWriter writer)
+        {
+            writer.Seek(ValueAddress, SeekOrigin.Begin);
+
+            switch (ValueType)
+            {
+                case MetaValueType.Enum8:
+                    writer.Write((byte)Value);
+                    break;
+
+                case MetaValueType.Enum16:
+                    writer.Write((short)Value);
+                    break;
+
+                case MetaValueType.Enum32:
+                    writer.Write(Value);
+                    break;
+            }
+
+            IsDirty = false;
         }
 
         private void RefreshOptions()

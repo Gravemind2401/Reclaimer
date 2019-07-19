@@ -16,28 +16,28 @@ namespace Reclaimer.Plugins.MetaViewer
         public float Value1
         {
             get { return value1; }
-            set { SetProperty(ref value1, value); }
+            set { SetMetaProperty(ref value1, value); }
         }
 
         private float value2;
         public float Value2
         {
             get { return value2; }
-            set { SetProperty(ref value2, value); }
+            set { SetMetaProperty(ref value2, value); }
         }
 
         private float value3;
         public float Value3
         {
             get { return value3; }
-            set { SetProperty(ref value3, value); }
+            set { SetMetaProperty(ref value3, value); }
         }
 
         private float value4;
         public float Value4
         {
             get { return value4; }
-            set { SetProperty(ref value4, value); }
+            set { SetMetaProperty(ref value4, value); }
         }
 
         public string[] Labels { get; }
@@ -56,10 +56,10 @@ namespace Reclaimer.Plugins.MetaViewer
             else if (ValueType == MetaValueType.RealBounds)
                 Labels = new[] { "min", "max", string.Empty, string.Empty };
 
-            RefreshValue(reader);
+            ReadValue(reader);
         }
 
-        public override void RefreshValue(EndianReader reader)
+        public override void ReadValue(EndianReader reader)
         {
             IsEnabled = true;
 
@@ -78,8 +78,29 @@ namespace Reclaimer.Plugins.MetaViewer
 
                 if (ValueType == MetaValueType.RealVector4D || ValueType == MetaValueType.RealVector4D)
                     Value4 = reader.ReadSingle();
+
+                IsDirty = false;
             }
             catch { IsEnabled = false; }
+        }
+
+        public override void WriteValue(EndianWriter writer)
+        {
+            writer.Seek(ValueAddress, SeekOrigin.Begin);
+
+            writer.Write(Value1);
+            writer.Write(Value2);
+
+            if (ValueType == MetaValueType.RealPoint3D
+                || ValueType == MetaValueType.RealPoint4D
+                || ValueType == MetaValueType.RealVector3D
+                || ValueType == MetaValueType.RealVector4D)
+                writer.Write(Value3);
+
+            if (ValueType == MetaValueType.RealVector4D || ValueType == MetaValueType.RealVector4D)
+                writer.Write(Value4);
+
+            IsDirty = false;
         }
     }
 }

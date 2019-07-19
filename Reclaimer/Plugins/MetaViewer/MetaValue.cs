@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Reclaimer.Utils;
+using System.Runtime.CompilerServices;
 
 namespace Reclaimer.Plugins.MetaViewer
 {
@@ -35,7 +36,9 @@ namespace Reclaimer.Plugins.MetaViewer
             set { SetProperty(ref isEnabled, value); }
         }
 
-        internal virtual string EntryString => null;
+        public virtual string EntryString => null;
+
+        public bool IsDirty { get; protected set; }
 
         protected MetaValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
         {
@@ -51,6 +54,13 @@ namespace Reclaimer.Plugins.MetaViewer
             IsVisible = GetBoolAttribute(node, "visible") ?? false;
 
             ValueType = GetMetaValueType(node.Name);
+        }
+
+        protected bool SetMetaProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
+        {
+            var changed = SetProperty(ref property, value, propertyName);
+            if (changed) IsDirty = true;
+            return changed;
         }
 
         public static MetaValue GetValue(XmlNode node, ICacheFile cache, long baseAddress)
@@ -99,7 +109,9 @@ namespace Reclaimer.Plugins.MetaViewer
             }
         }
 
-        public abstract void RefreshValue(EndianReader reader);
+        public abstract void ReadValue(EndianReader reader);
+
+        public abstract void WriteValue(EndianWriter writer);
 
         protected static string GetStringAttribute(XmlNode node, params string[] possibleNames)
         {
