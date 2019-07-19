@@ -178,6 +178,19 @@ namespace Reclaimer.Plugins.MetaViewer
         }
     }
 
+    public class CommentVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return string.IsNullOrEmpty(value as string) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class MetaValueTemplateSelector : DataTemplateSelector
     {
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
@@ -188,14 +201,24 @@ namespace Reclaimer.Plugins.MetaViewer
             if (element == null || meta == null)
                 return base.SelectTemplate(item, container);
 
-            if (meta is StructureValue)
+            if (meta is CommentValue)
+                return element.FindResource("CommentTemplate") as DataTemplate;
+            else if (meta is StructureValue)
                 return element.FindResource("StructureTemplate") as DataTemplate;
-            else if (meta is StringValue)
-                return element.FindResource("StringValueTemplate") as DataTemplate;
             else if (meta is MultiValue)
                 return element.FindResource("MultiValueTemplate") as DataTemplate;
-            else
-                return element.FindResource("DefaultTemplate") as DataTemplate;
+            else if (element.Tag as string == "content")
+            {
+                if (meta is StringValue)
+                    return element.FindResource("StringContent") as DataTemplate;
+                else if (meta is EnumValue)
+                    return element.FindResource("EnumContent") as DataTemplate;
+                else if (meta is BitmaskValue)
+                    return element.FindResource("BitmaskContent") as DataTemplate;
+                else
+                    return element.FindResource("DefaultContent") as DataTemplate;
+            }
+            else return element.FindResource("SingleValueTemplate") as DataTemplate;
         }
     }
 }

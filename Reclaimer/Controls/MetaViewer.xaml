@@ -12,42 +12,72 @@
     <UserControl.Resources>
         <mv:ShowInvisiblesConverter x:Key="invisConverter" />
         <mv:FieldVisibilityConverter x:Key="fieldVisConverter" />
+        <mv:CommentVisibilityConverter x:Key="commentVisConverter" />
         <mv:MetaValueTemplateSelector x:Key="templateSelector" />
         <u:BoolToVisibilityConverter x:Key="boolToVisConverter" />
 
         <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
-            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Top" />
         </Style>
 
         <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
-        <DataTemplate x:Key="DefaultTemplate">
-            <Grid Margin="1" ToolTip="{Binding ToolTip}">
-                <Grid.Visibility>
-                    <MultiBinding Converter="{StaticResource invisConverter}">
-                        <Binding Path="IsVisible" />
-                        <Binding Path="ShowInvisibles" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=local:MetaViewer}" />
-                    </MultiBinding>   
-                </Grid.Visibility>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="0">
-                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
-                </Label>
-                <TextBox Grid.Column="1" Width="100" HorizontalAlignment="Left"
-                         IsReadOnly="True" Text="{Binding Value}" />
-                <Label Grid.Column="2">
-                    <TextBlock Text="{Binding Description}" TextTrimming="CharacterEllipsis" />
-                </Label>
-            </Grid>
+        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style TargetType="ListBox" BasedOn="{StaticResource {x:Type ListBox}}">
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <DataTemplate x:Key="DefaultContent">
+            <TextBox Width="100" IsReadOnly="True" Text="{Binding Value}" />
         </DataTemplate>
 
-        <DataTemplate x:Key="StringValueTemplate">
+        <DataTemplate x:Key="StringContent">
+            <TextBox Width="200" MaxLength="{Binding Length}"
+                     IsReadOnly="True" Text="{Binding Value}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="EnumContent">
+            <ComboBox Grid.Column="1" Width="200" MaxHeight="260" 
+                      IsEnabled="False"
+                      ItemsSource="{Binding Options}"
+                      SelectedValuePath="Item1" DisplayMemberPath="Item2"
+                      SelectedValue="{Binding Value}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="BitmaskContent">
+            <ListBox ItemsSource="{Binding Options}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox Width="200" IsEnabled="False"
+                                  IsChecked="{Binding IsChecked}" Content="{Binding Name}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CommentTemplate">
+            <Border Margin="1,25,1,1" Width="600" 
+                    BorderThickness="1" HorizontalAlignment="Left"
+                    BorderBrush="{DynamicResource TextBoxDisabledBorderBrush}"
+                    Background="{DynamicResource TextBoxDisabledBackground}">
+                <StackPanel>
+                    <Label FontSize="14" FontWeight="Bold" 
+                           Visibility="{Binding Title, Converter={StaticResource commentVisConverter}}">
+                        <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+                    </Label>
+                    <Label Visibility="{Binding Body, Converter={StaticResource commentVisConverter}}">
+                        <TextBlock Text="{Binding Body}" TextWrapping="Wrap" />
+                    </Label>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SingleValueTemplate">
             <Grid Margin="1" ToolTip="{Binding ToolTip}">
                 <Grid.Visibility>
                     <MultiBinding Converter="{StaticResource invisConverter}">
@@ -63,9 +93,8 @@
                 <Label Grid.Column="0">
                     <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                 </Label>
-                <TextBox Grid.Column="1" Width="200" HorizontalAlignment="Left"
-                         MaxLength="{Binding Length}"
-                         IsReadOnly="True" Text="{Binding Value}" />
+                <ContentPresenter Grid.Column="1" Content="{Binding}" Tag="content"
+                                  ContentTemplateSelector="{StaticResource templateSelector}" />
                 <Label Grid.Column="2">
                     <TextBlock Text="{Binding Description}" TextTrimming="CharacterEllipsis" />
                 </Label>
@@ -123,7 +152,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="StructureTemplate">
-            <Border Margin="1,5" BorderThickness="0"
+            <Border Margin="1,25,1,1" BorderThickness="0"
                     IsEnabled="{Binding IsEnabled}">
                 <Border.Visibility>
                     <MultiBinding Converter="{StaticResource invisConverter}">
@@ -137,7 +166,7 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="15" />
+                        <ColumnDefinition Width="10" />
                         <ColumnDefinition Width="200" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
@@ -153,9 +182,9 @@
                             <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                         </Label>
                     </StackPanel>
-                    <ComboBox Grid.Row="0" Grid.Column="2" Width="200"
+                    <ComboBox Grid.Row="0" Grid.Column="2"
+                              Width="200" VerticalAlignment="Center"
                               Style="{StaticResource ToolBarComboBoxStyle}"
-                              HorizontalAlignment="Left" VerticalAlignment="Center"
                               ItemsSource="{Binding BlockLabels}" SelectedIndex="{Binding BlockIndex}" />
                     <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
                           Visibility="{Binding IsExpanded, Converter={StaticResource boolToVisConverter}}">
@@ -187,7 +216,7 @@
         </ToolBarTray>
         <ScrollViewer VerticalScrollBarVisibility="Visible"
                       HorizontalScrollBarVisibility="Auto">
-            <ItemsControl Padding="1" ItemsSource="{Binding Metadata}"
+            <ItemsControl Padding="5,0" ItemsSource="{Binding Metadata}"
                           ItemTemplateSelector="{StaticResource templateSelector}">
             </ItemsControl>
         </ScrollViewer>

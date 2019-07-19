@@ -70,16 +70,18 @@ namespace Reclaimer.Plugins.MetaViewer
 
                     //case MetaValueType.TagRef: LoadTagRef(reader); break;
 
-                    //case MetaValueType.Comment: Value = metaNode.InnerText; break;
+                    case MetaValueType.Comment:
+                        return new CommentValue(node, cache, baseAddress, reader);
 
-                    //case MetaValueType.Bitmask8:
-                    //case MetaValueType.Bitmask16:
-                    //case MetaValueType.Bitmask32:
-                    //case MetaValueType.Enum8:
-                    //case MetaValueType.Enum16:
-                    //case MetaValueType.Enum32:
-                    //    LoadOptions(reader);
-                    //    break;
+                    case MetaValueType.Bitmask8:
+                    case MetaValueType.Bitmask16:
+                    case MetaValueType.Bitmask32:
+                        return new BitmaskValue(node, cache, baseAddress, reader);
+
+                    case MetaValueType.Enum8:
+                    case MetaValueType.Enum16:
+                    case MetaValueType.Enum32:
+                        return new EnumValue(node, cache, baseAddress, reader);
 
                     //case MetaValueType.ShortBounds:
                     //case MetaValueType.ShortPoint2D:
