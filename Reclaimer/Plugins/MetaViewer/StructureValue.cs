@@ -98,7 +98,7 @@ namespace Reclaimer.Plugins.MetaViewer
                 var entry = Children.FirstOrDefault(c => c.Offset == entryOffset);
 
                 if (entry == null)
-                    BlockLabels = Enumerable.Range(0, Math.Min(BlockCount, 100)).Select(i => $"Block {i:D3}");
+                    BlockLabels = Enumerable.Range(0, Math.Min(BlockCount, 100)).Select(i => $"Block {i:D2}");
                 else
                 {
                     var labels = new List<string>();
@@ -106,7 +106,7 @@ namespace Reclaimer.Plugins.MetaViewer
                     {
                         entry.BaseAddress = BlockAddress + i * BlockSize;
                         entry.ReadValue(reader);
-                        labels.Add(entry.EntryString);
+                        labels.Add($"{i:D2} : {entry.EntryString}");
                     }
                     BlockLabels = labels;
                 }

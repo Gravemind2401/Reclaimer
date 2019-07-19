@@ -42,7 +42,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="EnumContent">
-            <ComboBox Grid.Column="1" Width="200" MaxHeight="260" 
+            <ComboBox Grid.Column="1" Width="200"
                       IsEnabled="False"
                       ItemsSource="{Binding Options}"
                       SelectedValuePath="Item1" DisplayMemberPath="Item2"
@@ -50,11 +50,11 @@
         </DataTemplate>
 
         <DataTemplate x:Key="BitmaskContent">
-            <ListBox ItemsSource="{Binding Options}">
+            <ListBox Width="200" MaxHeight="260" IsEnabled="False" 
+                     ItemsSource="{Binding Options}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <CheckBox Width="200" IsEnabled="False"
-                                  IsChecked="{Binding IsChecked}" Content="{Binding Name}" />
+                        <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding Name}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
@@ -167,7 +167,7 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition MinWidth="205" MaxWidth="205" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Border Grid.Row="0" Grid.ColumnSpan="3" Background="{DynamicResource ToolBarBackground}" />
@@ -182,8 +182,8 @@
                             <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                         </Label>
                     </StackPanel>
-                    <ComboBox Grid.Row="0" Grid.Column="2"
-                              Width="200" VerticalAlignment="Center"
+                    <ComboBox Grid.Row="0" Grid.Column="2" Width="200"
+                              VerticalAlignment="Center" HorizontalAlignment="Left"
                               Style="{StaticResource ToolBarComboBoxStyle}"
                               ItemsSource="{Binding BlockLabels}" SelectedIndex="{Binding BlockIndex}" />
                     <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
