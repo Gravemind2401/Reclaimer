@@ -41,23 +41,42 @@ namespace Adjutant.Blam.Halo1
             Scenario = TagIndex.FirstOrDefault(t => t.ClassCode == "scnr")?.ReadMetadata<scenario>();
         }
 
-        public DependencyReader CreateReader(IAddressTranslator translator)
+        private DependencyReader CreateReader(string fileName, IAddressTranslator translator, bool headerCheck)
         {
-            var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read);
+            var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
             var reader = new DependencyReader(fs, ByteOrder.LittleEndian);
 
             var header = reader.PeekInt32();
             if (header == CacheFactory.BigHeader)
                 reader.ByteOrder = ByteOrder.BigEndian;
-            else if (header != CacheFactory.LittleHeader)
-                throw Exceptions.NotAValidMapFile(Path.GetFileName(FileName));
+            else if (headerCheck && header != CacheFactory.LittleHeader)
+                throw Exceptions.NotAValidMapFile(Path.GetFileName(fileName));
 
             reader.RegisterInstance<CacheFile>(this);
             reader.RegisterInstance<ICacheFile>(this);
-            reader.RegisterInstance<IAddressTranslator>(translator);
+
+            if (translator != null)
+                reader.RegisterInstance<IAddressTranslator>(translator);
 
             return reader;
         }
+
+        public DependencyReader CreateReader(IAddressTranslator translator)
+        {
+            if (translator == null)
+                throw new ArgumentNullException(nameof(translator));
+
+            return CreateReader(FileName, translator, true);
+        }
+
+        internal DependencyReader CreateBitmapsReader()
+        {
+            var folder = Directory.GetParent(FileName).FullName;
+            var bitmapsMap = Path.Combine(folder, "bitmaps.map");
+
+            return CreateReader(bitmapsMap, null, false);
+        }
+
 
         #region ICacheFile
 
@@ -197,22 +216,33 @@ namespace Adjutant.Blam.Halo1
 
         public T ReadMetadata<T>()
         {
-            if (typeof(T).Equals(typeof(scenario_structure_bsp)))
+            long address;
+            DependencyReader reader;
+
+            if (ClassCode == "sbsp")
             {
                 var translator = new BSPAddressTranslator(cache, Id);
-                using (var reader = cache.CreateReader(translator))
-                {
-                    reader.RegisterInstance<IndexItem>(this);
-                    reader.Seek(translator.TagAddress, SeekOrigin.Begin);
-                    return (T)(object)reader.ReadObject<scenario_structure_bsp>(cache.Header.Version);
-                }
+                reader = cache.CreateReader(translator);
+                address = translator.TagAddress;
+            }
+            else if (ClassCode == "bitm" && MetaPointer.Address < 0)
+            {
+                reader = cache.CreateBitmapsReader();
+                var translator = new BitmapsAddressTranslator(cache, this, reader);
+                reader.RegisterInstance<IAddressTranslator>(translator);
+                address = translator.TagAddress;
+            }
+            else
+            {
+                reader = cache.CreateReader(cache.AddressTranslator);
+                address = MetaPointer.Address;
             }
 
-            using (var reader = cache.CreateReader(cache.AddressTranslator))
+            using (reader)
             {
                 reader.RegisterInstance<IndexItem>(this);
-                reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
-                return (T)reader.ReadObject(typeof(T), cache.Header.Version);
+                reader.Seek(address, SeekOrigin.Begin);
+                return reader.ReadObject<T>(cache.Header.Version);
             }
         }
 
