@@ -38,41 +38,6 @@ namespace Reclaimer.Windows
             outputViewer = new Controls.OutputViewer();
         }
 
-        private async void menuImport_Click(object sender, RoutedEventArgs e)
-        {
-            var ofd = new Microsoft.Win32.OpenFileDialog
-            {
-                Filter = "Halo Map Files|*.map",
-                Multiselect = true,
-                CheckFileExists = true
-            };
-
-            if (ofd.ShowDialog() != true)
-                return;
-
-            await Task.Run(async () =>
-            {
-                foreach (var fileName in ofd.FileNames)
-                {
-                    if (!File.Exists(fileName))
-                        continue;
-
-                    await Storage.ImportCacheFile(fileName);
-                }
-
-                MessageBox.Show("all done");
-            });
-        }
-
-        private void menuTagViewer_Click(object sender, RoutedEventArgs e)
-        {
-            var tc = MainPanel.GetElementAtPath(Dock.Left) as UtilityTabControl ?? new UtilityTabControl();
-            tc.Items.Add(new Controls.TagViewer());
-
-            if (!MainPanel.GetChildren().Contains(tc))
-                MainPanel.AddElement(tc, null, Dock.Left, new GridLength(400));
-        }
-
         private void menuOutput_Click(object sender, RoutedEventArgs e)
         {
             if (outputViewer.Parent != null)

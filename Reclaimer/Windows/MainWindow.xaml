@@ -49,13 +49,6 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" Grid.ColumnSpan="2" x:Name="menu">
-            <!--<MenuItem Header="File">
-                <MenuItem Header="Open" Click="menuOpen_Click" />
-                <MenuItem Header="Import" Click="menuImport_Click" />
-            </MenuItem>
-            <MenuItem Header="View">
-                <MenuItem Header="Tag Viewer" Click="menuTagViewer_Click" />
-            </MenuItem>-->
             <MenuItem Header="File" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
             <MenuItem Header="Edit" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
             <MenuItem Header="View">

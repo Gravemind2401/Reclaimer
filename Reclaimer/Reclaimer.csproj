@@ -45,14 +45,6 @@
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net46\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
@@ -64,18 +56,6 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite, Version=1.0.110.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.Core.1.0.110.0\lib\net46\System.Data.SQLite.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Data.SQLite.EF6, Version=1.0.110.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.110.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Data.SQLite.Linq, Version=1.0.110.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.110.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Endian, Version=1.0.56.180, Culture=neutral, PublicKeyToken=4c1f0321ae9dcf07, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -121,76 +101,7 @@
       <DependentUpon>MapViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Renderer.cs" />
-    <Compile Include="Controls\TagViewer.xaml.cs">
-      <DependentUpon>TagViewer.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\ZoomPanel.cs" />
-    <Compile Include="Entities\CacheFile.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\CacheFileConfiguration.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\Database.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\DatabaseContext.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\DatabaseContextFactory.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\FakeDatabaseContext.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\FakeDbSet.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\IDatabaseContext.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\Partials\CacheFile.cs" />
-    <Compile Include="Entities\Partials\StringIndex.cs" />
-    <Compile Include="Entities\Partials\TagIndex.cs" />
-    <Compile Include="Entities\Partials\TagItem.cs" />
-    <Compile Include="Entities\StringIndex.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\StringIndexConfiguration.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\StringItem.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\StringItemConfiguration.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\StringValue.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\StringValueConfiguration.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\TagIndex.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\TagIndexConfiguration.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\TagItem.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\TagItemConfiguration.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\TagPath.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\TagPathConfiguration.cs">
-      <DependentUpon>Database.tt</DependentUpon>
-    </Compile>
     <Compile Include="Plugins\BitmapViewerPlugin.cs" />
     <Compile Include="Plugins\MapViewerPlugin.cs" />
     <Compile Include="Plugins\MetaViewer\BitmaskValue.cs" />
@@ -206,9 +117,7 @@
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins\Substrate.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Storage.cs" />
     <Compile Include="Utils\BindableBase.cs" />
-    <Compile Include="Utils\DiagnosticTimer.cs" />
     <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Plugins\MetaViewer\MetaValue.cs" />
     <Compile Include="Utils\RadToDegConverter.cs" />
@@ -245,10 +154,6 @@
     <Page Include="Controls\MapViewer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\TagViewer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Dark.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -319,13 +224,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="Entities\EF.Reverse.POCO.Core.ttinclude" />
-    <None Include="Entities\EF.Reverse.POCO.ttinclude" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Adjutant\Adjutant\Adjutant.csproj">
@@ -342,10 +240,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Entities\Database.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Database.cs</LastGenOutput>
-    </Content>
     <Content Include="Resources\DatabaseCreate.sql" />
     <Resource Include="Resources\Reclaimer.ico" />
     <Resource Include="Resources\grab.cur" />
