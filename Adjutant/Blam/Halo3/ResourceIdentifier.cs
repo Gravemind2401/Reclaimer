@@ -73,7 +73,7 @@ namespace Adjutant.Blam.Halo3
             var targetFile = cache.FileName;
             if (page.CacheIndex >= 0)
             {
-                var mapName = Path.GetFileName(cache.ResourceLayoutTable.SharedCaches[page.CacheIndex].FileName);
+                var mapName = Utils.GetFileName(cache.ResourceLayoutTable.SharedCaches[page.CacheIndex].FileName);
                 targetFile = Path.Combine(directory, mapName);
             }
 

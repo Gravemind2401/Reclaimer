@@ -26,7 +26,7 @@ namespace Adjutant.Utilities
 
         internal static ArgumentException NotAValidMapFile(string fileName)
         {
-            return new ArgumentException(Utils.CurrentCulture($"The file '{fileName}' cannot be opened as a map. It is invalid or unsupported."));
+            return new ArgumentException(Utils.CurrentCulture($"The file '{Utils.GetFileName(fileName)}' cannot be opened as a map. It is invalid or unsupported."));
         }
     }
 }

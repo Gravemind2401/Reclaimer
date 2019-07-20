@@ -84,7 +84,7 @@ namespace Adjutant.Blam.Halo3
             if (header == CacheFactory.BigHeader)
                 reader.ByteOrder = ByteOrder.BigEndian;
             else if (header != CacheFactory.LittleHeader)
-                throw Exceptions.NotAValidMapFile(Path.GetFileName(FileName));
+                throw Exceptions.NotAValidMapFile(FileName);
 
             reader.RegisterInstance<CacheFile>(this);
             reader.RegisterInstance<ICacheFile>(this);
@@ -395,7 +395,9 @@ namespace Adjutant.Blam.Halo3
 
         public string ClassName => cache.TagIndex.Classes[ClassIndex].ClassName.Value;
 
-        public string FileName => cache.TagIndex.Filenames[Id];
+        public string FileName => Utils.GetFileName(FullPath);
+
+        public string FullPath => cache.TagIndex.Filenames[Id];
 
         public T ReadMetadata<T>()
         {
@@ -410,7 +412,7 @@ namespace Adjutant.Blam.Halo3
 
         public override string ToString()
         {
-            return Utils.CurrentCulture($"[{ClassCode}] {FileName}");
+            return Utils.CurrentCulture($"[{ClassCode}] {FullPath}");
         }
     }
 }

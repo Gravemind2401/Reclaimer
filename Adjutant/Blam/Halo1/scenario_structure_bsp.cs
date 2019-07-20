@@ -57,7 +57,7 @@ namespace Adjutant.Blam.Halo1
 
             using (var reader = cache.CreateReader(cache.AddressTranslator))
             {
-                var model = new GeometryModel(Path.GetFileName(item.FileName)) { CoordinateSystem = CoordinateSystem.HaloCE };
+                var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.HaloCE };
 
                 var group = new GeometryMarkerGroup();
                 group.Markers.AddRange(Markers);
@@ -83,7 +83,7 @@ namespace Adjutant.Blam.Halo1
 
                     var mat = new GeometryMaterial
                     {
-                        Name = bitmTag.FileName,
+                        Name = bitmTag.FullPath,
                         Diffuse = bitmTag.ReadMetadata<bitmap>(),
                         Tiling = new RealVector2D(1, 1)
                     };

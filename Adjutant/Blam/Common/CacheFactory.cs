@@ -74,7 +74,7 @@ namespace Adjutant.Blam.Common
                 case CacheType.Halo3ODST:
                     return new Halo3.CacheFile(fileName);
 
-                default: throw Exceptions.NotAValidMapFile(Path.GetFileName(fileName));
+                default: throw Exceptions.NotAValidMapFile(fileName);
             }
         }
 
@@ -93,7 +93,7 @@ namespace Adjutant.Blam.Common
                 if (header == BigHeader)
                     reader.ByteOrder = ByteOrder.BigEndian;
                 else if (header != LittleHeader)
-                    throw Exceptions.NotAValidMapFile(Path.GetFileName(fileName));
+                    throw Exceptions.NotAValidMapFile(fileName);
 
                 var version = reader.ReadInt32();
 
@@ -106,7 +106,7 @@ namespace Adjutant.Blam.Common
                     version = reader.ReadInt32();
                     if (version == 0) buildAddress = 288; //Halo2 Xbox
                     else if (version == -1) buildAddress = 300; //Halo2 Vista
-                    else throw Exceptions.NotAValidMapFile(Path.GetFileName(fileName));
+                    else throw Exceptions.NotAValidMapFile(fileName);
                 }
                 else buildAddress = 284;
 

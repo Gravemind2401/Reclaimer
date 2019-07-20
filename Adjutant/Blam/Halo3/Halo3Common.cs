@@ -69,7 +69,7 @@ namespace Adjutant.Blam.Halo3
 
                 yield return new GeometryMaterial
                 {
-                    Name = bitmTag.FileName,
+                    Name = bitmTag.FullPath,
                     Diffuse = bitmTag.ReadMetadata<bitmap>(),
                     Tiling = new RealVector2D(tile?.X ?? 1, tile?.Y ?? 1)
                 };

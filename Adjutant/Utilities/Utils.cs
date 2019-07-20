@@ -21,5 +21,10 @@ namespace Adjutant.Utilities
         {
             return Math.Min(Math.Max(min, value), max);
         }
+
+        public static string GetFileName(this string value)
+        {
+            return value?.Split('\\').Last();
+        }
     }
 }

@@ -78,7 +78,7 @@ namespace Adjutant.Blam.Halo3
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var model = new GeometryModel(Path.GetFileName(item.FileName)) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
 
             var bspBlock = cache.Scenario.StructureBsps.First(s => s.BspReference.TagId == item.Id);
             var bspIndex = cache.Scenario.StructureBsps.IndexOf(bspBlock);

@@ -50,7 +50,7 @@ namespace Adjutant.Blam.Halo1
             if (header == CacheFactory.BigHeader)
                 reader.ByteOrder = ByteOrder.BigEndian;
             else if (headerCheck && header != CacheFactory.LittleHeader)
-                throw Exceptions.NotAValidMapFile(Path.GetFileName(fileName));
+                throw Exceptions.NotAValidMapFile(fileName);
 
             reader.RegisterInstance<CacheFile>(this);
             reader.RegisterInstance<ICacheFile>(this);
@@ -212,7 +212,9 @@ namespace Adjutant.Blam.Halo1
             }
         }
 
-        public string FileName => cache.TagIndex.Filenames[Id];
+        public string FileName => Utils.GetFileName(FullPath);
+
+        public string FullPath => cache.TagIndex.Filenames[Id];
 
         public T ReadMetadata<T>()
         {
@@ -290,7 +292,7 @@ namespace Adjutant.Blam.Halo1
 
         public override string ToString()
         {
-            return Utils.CurrentCulture($"[{ClassCode}] {FileName}");
+            return Utils.CurrentCulture($"[{ClassCode}] {FullPath}");
         }
     }
 }

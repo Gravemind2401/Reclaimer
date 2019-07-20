@@ -13,7 +13,7 @@ namespace Adjutant.Blam.Common
 
         int Id { get; }
         Pointer MetaPointer { get; }
-        string FileName { get; }
+        string FullPath { get; }
         string ClassCode { get; }
         string ClassName { get; }
 
