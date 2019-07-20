@@ -15,10 +15,12 @@ namespace Adjutant.Blam.Halo1
     public class bitmap : IBitmap
     {
         private readonly CacheFile cache;
+        private readonly IndexItem item;
 
-        public bitmap(CacheFile cache)
+        public bitmap(CacheFile cache, IndexItem item)
         {
             this.cache = cache;
+            this.item = item;
         }
 
         [Offset(84)]
@@ -40,6 +42,10 @@ namespace Adjutant.Blam.Halo1
 
             var dir = Directory.GetParent(cache.FileName).FullName;
             var bitmapSource = Path.Combine(dir, CacheFile.BitmapsMap);
+
+            //player made maps have internal bitmap resources
+            if (cache.CacheType == CacheType.Halo1CE && item.MetaPointer.Address > 0)
+                bitmapSource = cache.FileName;
 
             byte[] data;
 
