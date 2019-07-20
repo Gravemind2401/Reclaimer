@@ -1,6 +1,6 @@
 ﻿using Adjutant.Blam.Common;
 using Reclaimer.Plugins;
-using Reclaimer.Utils;
+using Reclaimer.Utilities;
 using Reclaimer.Windows;
 using Studio.Controls;
 using System;

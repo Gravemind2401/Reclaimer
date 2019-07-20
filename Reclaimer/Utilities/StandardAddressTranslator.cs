@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Reclaimer.Utils
+namespace Reclaimer.Utilities
 {
     public class StandardAddressTranslator : IAddressTranslator
     {

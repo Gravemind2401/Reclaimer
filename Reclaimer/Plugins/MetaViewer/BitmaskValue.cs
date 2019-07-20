@@ -1,5 +1,5 @@
 ﻿using Adjutant.Blam.Common;
-using Reclaimer.Utils;
+using Reclaimer.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

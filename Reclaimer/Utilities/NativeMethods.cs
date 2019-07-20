@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Reclaimer.Utils
+namespace Reclaimer.Utilities
 {
     internal static class NativeMethods
     {

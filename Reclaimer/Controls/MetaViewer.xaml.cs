@@ -1,6 +1,6 @@
 ﻿using Adjutant.Blam.Common;
 using Reclaimer.Plugins.MetaViewer;
-using Reclaimer.Utils;
+using Reclaimer.Utilities;
 using Studio.Controls;
 using System;
 using System.Collections.Generic;

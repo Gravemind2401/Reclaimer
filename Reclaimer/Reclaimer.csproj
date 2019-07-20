@@ -117,14 +117,14 @@
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins\Substrate.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Utils\BindableBase.cs" />
-    <Compile Include="Utils\Extensions.cs" />
+    <Compile Include="Utilities\BindableBase.cs" />
+    <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Plugins\MetaViewer\MetaValue.cs" />
-    <Compile Include="Utils\RadToDegConverter.cs" />
-    <Compile Include="Utils\ToStringConverter.cs" />
-    <Compile Include="Utils\NativeMethods.cs" />
-    <Compile Include="Utils\StandardAddressTranslator.cs" />
-    <Compile Include="Utils\TreeNode.cs" />
+    <Compile Include="Utilities\RadToDegConverter.cs" />
+    <Compile Include="Utilities\ToStringConverter.cs" />
+    <Compile Include="Utilities\NativeMethods.cs" />
+    <Compile Include="Utilities\StandardAddressTranslator.cs" />
+    <Compile Include="Utilities\TreeNode.cs" />
     <Compile Include="Windows\IMultiPanelHost.cs" />
     <Compile Include="Windows\OpenWithDialog.xaml.cs">
       <DependentUpon>OpenWithDialog.xaml</DependentUpon>

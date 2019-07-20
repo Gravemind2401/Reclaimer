@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Reclaimer.Utils;
+using Reclaimer.Utilities;
 using System.Runtime.CompilerServices;
 
 namespace Reclaimer.Plugins.MetaViewer
