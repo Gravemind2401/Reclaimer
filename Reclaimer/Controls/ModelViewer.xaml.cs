@@ -1,6 +1,7 @@
 ﻿using Adjutant.Geometry;
 using Adjutant.Utilities;
 using Microsoft.Win32;
+using Reclaimer.Utilities;
 using Studio.Controls;
 using System;
 using System.Collections.Generic;
@@ -75,7 +76,7 @@ namespace Reclaimer.Controls
         public void LoadGeometry(IRenderGeometry geometry, string fileName)
         {
             TabToolTip = fileName;
-            TabHeader = Path.GetFileName(fileName);
+            TabHeader = Utils.GetFileName(fileName);
             this.geometry = geometry;
 
             Indexes = Enumerable.Range(0, geometry.LodCount);

@@ -1,5 +1,6 @@
 ﻿using Adjutant.Utilities;
 using Microsoft.Win32;
+using Reclaimer.Utilities;
 using Studio.Controls;
 using System;
 using System.Collections.Generic;
@@ -120,8 +121,8 @@ namespace Reclaimer.Controls
                 bitmap = image;
 
                 TabToolTip = fileName;
-                TabHeader = Path.GetFileName(fileName);
-                sourceName = Path.GetFileNameWithoutExtension(fileName);
+                TabHeader = Utils.GetFileName(fileName);
+                sourceName = Utils.GetFileNameWithoutExtension(fileName);
 
                 Indexes = Enumerable.Range(0, bitmap.BitmapCount);
                 SetImage(0);

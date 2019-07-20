@@ -53,7 +53,7 @@ namespace Reclaimer.Controls
         {
             cache = CacheFactory.ReadCacheFile(fileName);
 
-            TabHeader = Path.GetFileName(cache.FileName);
+            TabHeader = Utils.GetFileName(cache.FileName);
             TabToolTip = $"Map Viewer - {TabHeader}";
 
             HierarchyView = Plugins.MapViewerPlugin.Settings.HierarchyView;
@@ -174,7 +174,7 @@ namespace Reclaimer.Controls
             var item = (tv.SelectedItem as TreeNode)?.Tag as IIndexItem;
             if (item == null) return;
 
-            var fileName = $"{Path.GetFileName(item.FullPath)}.{item.ClassName}";
+            var fileName = $"{Utils.GetFileName(item.FullPath)}.{item.ClassName}";
             var fileKey = $"{cache.CacheType}.{item.ClassCode}";
             var args = new OpenFileArgs(fileName, item, fileKey, Substrate.GetHostWindow(this));
             Substrate.OpenWithDefault(args);
@@ -185,7 +185,7 @@ namespace Reclaimer.Controls
             var item = (tv.SelectedItem as TreeNode)?.Tag as IIndexItem;
             if (item == null) return;
 
-            var fileName = $"{Path.GetFileName(item.FullPath)}.{item.ClassName}";
+            var fileName = $"{Utils.GetFileName(item.FullPath)}.{item.ClassName}";
             var fileKey = $"{cache.CacheType}.{item.ClassCode}";
             var args = new OpenFileArgs(fileName, item, fileKey, Substrate.GetHostWindow(this));
             Substrate.OpenWithDefault(args);
@@ -196,7 +196,7 @@ namespace Reclaimer.Controls
             var item = (tv.SelectedItem as TreeNode)?.Tag as IIndexItem;
             if (item == null) return;
 
-            var fileName = $"{Path.GetFileName(item.FullPath)}.{item.ClassName}";
+            var fileName = $"{Utils.GetFileName(item.FullPath)}.{item.ClassName}";
             var fileKey = $"{cache.CacheType}.{item.ClassCode}";
             var args = new OpenFileArgs(fileName, item, fileKey, Substrate.GetHostWindow(this));
             Substrate.OpenWithPrompt(args);

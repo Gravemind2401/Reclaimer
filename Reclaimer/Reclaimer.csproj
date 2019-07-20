@@ -125,6 +125,7 @@
     <Compile Include="Utilities\NativeMethods.cs" />
     <Compile Include="Utilities\StandardAddressTranslator.cs" />
     <Compile Include="Utilities\TreeNode.cs" />
+    <Compile Include="Utilities\Utils.cs" />
     <Compile Include="Windows\IMultiPanelHost.cs" />
     <Compile Include="Windows\OpenWithDialog.xaml.cs">
       <DependentUpon>OpenWithDialog.xaml</DependentUpon>

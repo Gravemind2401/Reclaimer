@@ -55,7 +55,7 @@ namespace Reclaimer.Controls
         public void LoadMetadata(IIndexItem tag, XmlDocument definition)
         {
             TabToolTip = $"{tag.FullPath}.{tag.ClassCode}";
-            TabHeader = $"{Path.GetFileName(tag.FullPath)}.{tag.ClassCode}";
+            TabHeader = $"{Utils.GetFileName(tag.FullPath)}.{tag.ClassCode}";
 
             foreach (XmlNode n in definition.DocumentElement.ChildNodes)
             {
