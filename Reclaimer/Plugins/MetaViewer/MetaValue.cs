@@ -78,7 +78,8 @@ namespace Reclaimer.Plugins.MetaViewer
                     case MetaValueType.StringId:
                         return new StringValue(node, cache, baseAddress, reader);
 
-                    //case MetaValueType.TagRef: LoadTagRef(reader); break;
+                    case MetaValueType.TagRef:
+                        return new TagReferenceValue(node, cache, baseAddress, reader);
 
                     case MetaValueType.Comment:
                         return new CommentValue(node, cache, baseAddress, reader);

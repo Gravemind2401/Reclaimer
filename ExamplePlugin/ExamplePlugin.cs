@@ -10,7 +10,7 @@ namespace ExamplePlugin
 {
     public class ExamplePlugin : Plugin
     {
-        public override string Name => "Example Plugin";
+        public override string Name => "ZZZ_Example Plugin";
 
         private PluginSettings Settings { get; set; }
 

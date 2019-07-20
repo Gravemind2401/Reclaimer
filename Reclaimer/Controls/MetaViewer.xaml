@@ -37,20 +37,19 @@
         </DataTemplate>
 
         <DataTemplate x:Key="StringContent">
-            <TextBox Width="200" MaxLength="{Binding Length}"
+            <TextBox Width="180" MaxLength="{Binding Length}"
                      IsReadOnly="True" Text="{Binding Value}" />
         </DataTemplate>
 
         <DataTemplate x:Key="EnumContent">
-            <ComboBox Grid.Column="1" Width="200"
-                      IsEnabled="False"
+            <ComboBox Width="180" IsEnabled="False"
                       ItemsSource="{Binding Options}"
                       SelectedValuePath="Item1" DisplayMemberPath="Item2"
                       SelectedValue="{Binding Value}" />
         </DataTemplate>
 
         <DataTemplate x:Key="BitmaskContent">
-            <ListBox Width="200" MaxHeight="260" IsEnabled="False" 
+            <ListBox Width="180" MaxHeight="260" IsEnabled="False" 
                      ItemsSource="{Binding Options}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -58,6 +57,18 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TagReferenceContent">
+            <StackPanel Orientation="Horizontal">
+                <ComboBox Width="180" IsEnabled="False"
+                      ItemsSource="{Binding ClassOptions}"
+                      SelectedValue="{Binding SelectedClass}" />
+                <ComboBox Width="400" Margin="5,0" IsEnabled="False"
+                      ItemsSource="{Binding TagOptions}"
+                      SelectedValuePath="Id" DisplayMemberPath="FullPath"
+                      SelectedValue="{Binding Value}" />
+            </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="CommentTemplate">
@@ -166,7 +177,7 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition MinWidth="10" MaxWidth="10" />
                         <ColumnDefinition MinWidth="205" MaxWidth="205" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
@@ -182,7 +193,7 @@
                             <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                         </Label>
                     </StackPanel>
-                    <ComboBox Grid.Row="0" Grid.Column="2" Width="200"
+                    <ComboBox Grid.Row="0" Grid.Column="2" Width="180"
                               VerticalAlignment="Center" HorizontalAlignment="Left"
                               Style="{StaticResource ToolBarComboBoxStyle}"
                               ItemsSource="{Binding BlockLabels}" SelectedIndex="{Binding BlockIndex}" />

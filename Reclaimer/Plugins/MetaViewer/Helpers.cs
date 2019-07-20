@@ -215,6 +215,8 @@ namespace Reclaimer.Plugins.MetaViewer
                     return element.FindResource("EnumContent") as DataTemplate;
                 else if (meta is BitmaskValue)
                     return element.FindResource("BitmaskContent") as DataTemplate;
+                else if (meta is TagReferenceValue)
+                    return element.FindResource("TagReferenceContent") as DataTemplate;
                 else
                     return element.FindResource("DefaultContent") as DataTemplate;
             }
