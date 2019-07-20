@@ -14,8 +14,6 @@ namespace Adjutant.Blam.Halo1
 {
     public class bitmap : IBitmap
     {
-        private const string bitmapsMapName = "bitmaps.map";
-
         private readonly CacheFile cache;
 
         public bitmap(CacheFile cache)
@@ -41,11 +39,11 @@ namespace Adjutant.Blam.Halo1
             var submap = Bitmaps[index];
 
             var dir = Directory.GetParent(cache.FileName).FullName;
-            var bitmapsMap = Path.Combine(dir, bitmapsMapName);
+            var bitmapSource = Path.Combine(dir, CacheFile.BitmapsMap);
 
             byte[] data;
 
-            using (var fs = new FileStream(bitmapsMap, FileMode.Open, FileAccess.Read))
+            using (var fs = new FileStream(bitmapSource, FileMode.Open, FileAccess.Read))
             using (var reader = new DependencyReader(fs, ByteOrder.LittleEndian))
             {
                 reader.Seek(submap.PixelsOffset, SeekOrigin.Begin);

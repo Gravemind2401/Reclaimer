@@ -12,10 +12,6 @@ namespace Adjutant.Blam.Halo2
 {
     public struct DataPointer
     {
-        private const string mainMenu_map = "mainmenu.map";
-        private const string shared_map = "shared.map";
-        private const string spShared_map = "single_player_shared.map";
-
         private readonly CacheFile _cache;
         private readonly int _value;
 
@@ -57,13 +53,13 @@ namespace Adjutant.Blam.Halo2
             switch (Location)
             {
                 case DataLocation.MainMenu:
-                    target = Path.Combine(directory, mainMenu_map);
+                    target = Path.Combine(directory, CacheFile.MainMenuMap);
                     break;
                 case DataLocation.Shared:
-                    target = Path.Combine(directory, shared_map);
+                    target = Path.Combine(directory, CacheFile.SharedMap);
                     break;
                 case DataLocation.SinglePlayerShared:
-                    target = Path.Combine(directory, spShared_map);
+                    target = Path.Combine(directory, CacheFile.SinglePlayerSharedMap);
                     break;
                 default:
                     target = _cache.FileName;

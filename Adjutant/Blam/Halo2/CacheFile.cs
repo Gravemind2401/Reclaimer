@@ -14,6 +14,10 @@ namespace Adjutant.Blam.Halo2
 {
     public class CacheFile : ICacheFile
     {
+        public const string MainMenuMap = "mainmenu.map";
+        public const string SharedMap = "shared.map";
+        public const string SinglePlayerSharedMap = "single_player_shared.map";
+
         public string FileName { get; }
         public string BuildString => Header.BuildString;
         public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);

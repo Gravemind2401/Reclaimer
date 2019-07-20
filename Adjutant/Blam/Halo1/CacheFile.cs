@@ -13,6 +13,8 @@ namespace Adjutant.Blam.Halo1
 {
     public class CacheFile : ICacheFile
     {
+        public const string BitmapsMap = "bitmaps.map";
+
         public string FileName { get; }
         public string BuildString => Header.BuildString;
         public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
@@ -72,7 +74,7 @@ namespace Adjutant.Blam.Halo1
         internal DependencyReader CreateBitmapsReader()
         {
             var folder = Directory.GetParent(FileName).FullName;
-            var bitmapsMap = Path.Combine(folder, "bitmaps.map");
+            var bitmapsMap = Path.Combine(folder, BitmapsMap);
 
             return CreateReader(bitmapsMap, null, false);
         }
