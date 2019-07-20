@@ -20,13 +20,13 @@ namespace Adjutant.Blam.Halo2
     [FixedSize(80)]
     public class ShaderMapBlock
     {
-        [Offset(4)]
+        [Offset(0)]
         public TagReference DiffuseBitmapReference { get; set; }
 
-        [Offset(12)]
+        [Offset(8)]
         public TagReference IllumBitmapReference { get; set; }
 
-        [Offset(56)]
+        [Offset(54)]
         public TagReference BitmapReference2 { get; set; }
     }
 

@@ -405,7 +405,7 @@ namespace Adjutant.Blam.Halo2
     [FixedSize(32)]
     public class ShaderBlock
     {
-        [Offset(12)]
+        [Offset(8)]
         public TagReference ShaderReference { get; set; }
     }
 }

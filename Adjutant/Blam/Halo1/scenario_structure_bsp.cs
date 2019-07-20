@@ -173,7 +173,7 @@ namespace Adjutant.Blam.Halo1
     [FixedSize(256)]
     public class MaterialBlock
     {
-        [Offset(12)]
+        [Offset(0)]
         public TagReference ShaderReference { get; set; }
 
         [Offset(20)]

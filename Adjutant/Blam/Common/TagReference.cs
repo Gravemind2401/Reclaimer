@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Common
 {
-    [FixedSize(4, MaxVersion = (int)CacheType.Halo2Xbox)]
+    [FixedSize(16, MaxVersion = (int)CacheType.Halo2Xbox)]
     [FixedSize(8, MinVersion = (int)CacheType.Halo2Xbox, MaxVersion = (int)CacheType.Halo3Beta)]
     [FixedSize(16, MinVersion = (int)CacheType.Halo3Beta)]
     public struct TagReference
@@ -32,6 +32,10 @@ namespace Adjutant.Blam.Common
 
             if (cache.CacheType >= CacheType.Halo3Beta)
                 reader.Seek(14, SeekOrigin.Current);
+            else if (cache.CacheType >= CacheType.Halo2Xbox)
+                reader.Seek(4, SeekOrigin.Current);
+            else
+                reader.Seek(12, SeekOrigin.Current);
 
             tagId = reader.ReadInt16();
         }

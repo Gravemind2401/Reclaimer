@@ -27,7 +27,7 @@ namespace Adjutant.Blam.Halo2
         [Offset(8)]
         public int Magic { get; set; }
 
-        [Offset(20)]
+        [Offset(16)]
         public TagReference BspReference { get; set; }
     }
 }
