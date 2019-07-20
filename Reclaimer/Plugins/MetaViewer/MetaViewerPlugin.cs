@@ -57,7 +57,7 @@ namespace Reclaimer.Plugins.MetaViewer
         private string GetDefinitionPath(IIndexItem item)
         {
             var xmlName = string.Join("_", item.ClassCode.Split(Path.GetInvalidFileNameChars())).PadRight(4);
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins", PluginFolder(item.CacheFile.CacheType), $"{xmlName}.xml");
+            return Path.Combine(Substrate.PluginsDirectory, PluginFolder(item.CacheFile.CacheType), $"{xmlName}.xml");
         }
 
         private string PluginFolder(CacheType cacheType)

@@ -31,6 +31,8 @@ namespace Reclaimer.Plugins
 
         internal static Plugin GetPlugin(string key) => plugins.ContainsKey(key) ? plugins[key] : null;
 
+        public static string PluginsDirectory => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins");
+
         private static IEnumerable<Plugin> FindPlugins(Assembly assembly)
         {
             return assembly.GetExportedTypes()
@@ -45,10 +47,9 @@ namespace Reclaimer.Plugins
             temp.Add(defaultPlugin);
             temp.AddRange(FindPlugins(typeof(Substrate).Assembly));
 
-            var dir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins");
-            if (Directory.Exists(dir))
+            if (Directory.Exists(PluginsDirectory))
             {
-                foreach (var fileName in Directory.EnumerateFiles(dir, "*.dll"))
+                foreach (var fileName in Directory.EnumerateFiles(PluginsDirectory, "*.dll"))
                 {
                     LogOutput($"Scanning {fileName} for plugins");
                     try
@@ -166,7 +167,6 @@ namespace Reclaimer.Plugins
             OpenWithDialog.HandleFile(allHandlers, args);
             return true;
         }
-
 
         //add utility/tab
 
