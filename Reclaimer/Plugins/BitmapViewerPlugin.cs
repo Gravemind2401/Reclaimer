@@ -27,7 +27,7 @@ namespace Reclaimer.Plugins
             var cacheType = (CacheType)Enum.Parse(typeof(CacheType), args.FileTypeKey.Split('.').First());
             var container = args.TargetWindow.DocumentContainer;
 
-            LogOutput($"Loading image: {item.FileName}");
+            LogOutput($"Loading image: {item.FullPath}");
 
             if (item.ClassCode == "bitm")
             {
@@ -50,13 +50,13 @@ namespace Reclaimer.Plugins
                 }
 
                 var viewer = new Controls.BitmapViewer();
-                viewer.LoadImage(bitm, $"{item.FileName}.{item.ClassCode}");
+                viewer.LoadImage(bitm, $"{item.FullPath}.{item.ClassCode}");
 
                 container.Items.Add(viewer);
                 return;
             }
 
-            LogOutput($"Loaded image: {item.FileName}");
+            LogOutput($"Loaded image: {item.FullPath}");
         }
     }
 }

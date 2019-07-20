@@ -27,7 +27,7 @@ namespace Reclaimer.Plugins
             var cacheType = (CacheType)Enum.Parse(typeof(CacheType), args.FileTypeKey.Split('.').First());
             var container = args.TargetWindow.DocumentContainer;
 
-            LogOutput($"Loading model: {item.FileName}");
+            LogOutput($"Loading model: {item.FullPath}");
 
             if (item.ClassCode == "sbsp")
             {
@@ -50,7 +50,7 @@ namespace Reclaimer.Plugins
                 }
 
                 var viewer = new Controls.ModelViewer();
-                viewer.LoadGeometry(sbsp, $"{item.FileName}.{item.ClassCode}");
+                viewer.LoadGeometry(sbsp, $"{item.FullPath}.{item.ClassCode}");
 
                 container.Items.Add(viewer);
                 return;
@@ -77,13 +77,13 @@ namespace Reclaimer.Plugins
                 }
 
                 var viewer = new Controls.ModelViewer();
-                viewer.LoadGeometry(mode, $"{item.FileName}.{item.ClassCode}");
+                viewer.LoadGeometry(mode, $"{item.FullPath}.{item.ClassCode}");
 
                 container.Items.Add(viewer);
                 return;
             }
 
-            LogOutput($"Loaded model: {item.FileName}");
+            LogOutput($"Loaded model: {item.FullPath}");
         }
     }
 }

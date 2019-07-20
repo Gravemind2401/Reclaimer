@@ -77,11 +77,11 @@ namespace Reclaimer.Controls
             foreach (var g in classGroups.OrderBy(g => g.Key))
             {
                 var node = new TreeNode { Header = g.Key };
-                foreach (var i in g.OrderBy(i => i.FileName))
+                foreach (var i in g.OrderBy(i => i.FullPath))
                 {
                     node.Children.Add(new TreeNode
                     {
-                        Header = i.FileName,
+                        Header = i.FullPath,
                         Tag = i
                     });
                 }
@@ -96,9 +96,9 @@ namespace Reclaimer.Controls
             var result = new List<TreeNode>();
             var lookup = new Dictionary<string, TreeNode>();
 
-            foreach (var tag in cache.TagIndex.Where(i => FilterTag(filter, i)).OrderBy(i => i.FileName))
+            foreach (var tag in cache.TagIndex.Where(i => FilterTag(filter, i)).OrderBy(i => i.FullPath))
             {
-                var node = MakeNode(result, lookup, $"{tag.FileName}.{tag.ClassName}");
+                var node = MakeNode(result, lookup, $"{tag.FullPath}.{tag.ClassName}");
                 node.Tag = tag;
             }
 
@@ -110,7 +110,7 @@ namespace Reclaimer.Controls
             if (string.IsNullOrEmpty(filter))
                 return true;
 
-            if (tag.FileName.ToUpper().Contains(filter.ToUpper()))
+            if (tag.FullPath.ToUpper().Contains(filter.ToUpper()))
                 return true;
 
             if (tag.ClassCode.ToUpper() == filter.ToUpper())
@@ -174,7 +174,7 @@ namespace Reclaimer.Controls
             var item = (tv.SelectedItem as TreeNode)?.Tag as IIndexItem;
             if (item == null) return;
 
-            var fileName = $"{Path.GetFileName(item.FileName)}.{item.ClassName}";
+            var fileName = $"{Path.GetFileName(item.FullPath)}.{item.ClassName}";
             var fileKey = $"{cache.CacheType}.{item.ClassCode}";
             var args = new OpenFileArgs(fileName, item, fileKey, Substrate.GetHostWindow(this));
             Substrate.OpenWithDefault(args);
@@ -185,7 +185,7 @@ namespace Reclaimer.Controls
             var item = (tv.SelectedItem as TreeNode)?.Tag as IIndexItem;
             if (item == null) return;
 
-            var fileName = $"{Path.GetFileName(item.FileName)}.{item.ClassName}";
+            var fileName = $"{Path.GetFileName(item.FullPath)}.{item.ClassName}";
             var fileKey = $"{cache.CacheType}.{item.ClassCode}";
             var args = new OpenFileArgs(fileName, item, fileKey, Substrate.GetHostWindow(this));
             Substrate.OpenWithDefault(args);
@@ -196,7 +196,7 @@ namespace Reclaimer.Controls
             var item = (tv.SelectedItem as TreeNode)?.Tag as IIndexItem;
             if (item == null) return;
 
-            var fileName = $"{Path.GetFileName(item.FileName)}.{item.ClassName}";
+            var fileName = $"{Path.GetFileName(item.FullPath)}.{item.ClassName}";
             var fileKey = $"{cache.CacheType}.{item.ClassCode}";
             var args = new OpenFileArgs(fileName, item, fileKey, Substrate.GetHostWindow(this));
             Substrate.OpenWithPrompt(args);
