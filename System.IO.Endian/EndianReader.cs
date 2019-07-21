@@ -898,7 +898,7 @@ namespace System.IO.Endian
         /// </summary>
         /// <typeparam name="T">The type of object to read.</typeparam>
         /// <param name="count">The maximum number of objects to read.</param>
-        public IEnumerable<T> ReadEnumerable<T>(int count) where T : new()
+        public IEnumerable<T> ReadEnumerable<T>(int count)
         {
             if (count < 0)
                 throw Exceptions.ParamMustBeNonNegative(nameof(count), count);
@@ -914,7 +914,7 @@ namespace System.IO.Endian
         /// <typeparam name="T">The type of object to read.</typeparam>
         /// <param name="count">The maximum number of objects to read.</param>
         /// <param name="version">The version of the type to read.</param>
-        public IEnumerable<T> ReadEnumerable<T>(int count, double version) where T : new()
+        public IEnumerable<T> ReadEnumerable<T>(int count, double version)
         {
             if (count < 0)
                 throw Exceptions.ParamMustBeNonNegative(nameof(count), count);

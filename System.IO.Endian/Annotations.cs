@@ -422,22 +422,22 @@ namespace System.IO.Endian
         private double? maxVersion;
 
         /// <summary>
-        /// Gets the byte order that used to store the object.
+        /// Gets the type that used to store the object.
         /// </summary>
         public Type StoreType { get; }
 
         /// <summary>
-        /// Gets a value indicating whether the byte order has a minimum version requirement.
+        /// Gets a value indicating whether the store type has a minimum version requirement.
         /// </summary>
         public bool HasMinVersion => minVersion.HasValue;
 
         /// <summary>
-        /// Gets a value indicating whether the byte order has a maximum version requirement.
+        /// Gets a value indicating whether the store type has a maximum version requirement.
         /// </summary>
         public bool HasMaxVersion => maxVersion.HasValue;
 
         /// <summary>
-        /// Gets or sets the inclusive minimum version that the byte order is applicable to.
+        /// Gets or sets the inclusive minimum version that the store type is applicable to.
         /// </summary>
         public double MinVersion
         {
@@ -474,6 +474,56 @@ namespace System.IO.Endian
         public StoreTypeAttribute(Type storeType)
         {
             StoreType = storeType;
+        }
+    }
+
+    /// <summary>
+    /// Specifies that a property value should be converted when being read or written.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Constructor, AllowMultiple = true, Inherited = false)]
+    public sealed class BinaryConstructorAttribute : Attribute, IVersionAttribute
+    {
+        private double? minVersion;
+        private double? maxVersion;
+
+        /// <summary>
+        /// Gets a value indicating whether the constructor has a minimum version requirement.
+        /// </summary>
+        public bool HasMinVersion => minVersion.HasValue;
+
+        /// <summary>
+        /// Gets a value indicating whether the constructor has a maximum version requirement.
+        /// </summary>
+        public bool HasMaxVersion => maxVersion.HasValue;
+
+        /// <summary>
+        /// Gets or sets the inclusive minimum version that the constructor is applicable to.
+        /// </summary>
+        public double MinVersion
+        {
+            get { return minVersion.GetValueOrDefault(); }
+            set
+            {
+                if (value > maxVersion)
+                    throw Exceptions.BoundaryOverlapMinimum(nameof(MinVersion), nameof(MaxVersion));
+
+                minVersion = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the exclusive maximum version that the constructor is applicable to.
+        /// </summary>
+        public double MaxVersion
+        {
+            get { return maxVersion.GetValueOrDefault(); }
+            set
+            {
+                if (value < minVersion)
+                    throw Exceptions.BoundaryOverlapMaximum(nameof(MinVersion), nameof(MaxVersion));
+
+                maxVersion = value;
+            }
         }
     }
 }

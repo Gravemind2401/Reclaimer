@@ -90,6 +90,16 @@ namespace System.IO.Endian
             return new AmbiguousMatchException(Utils.CurrentCulture($"The object of type '{typeName}' could not be read because it has multiple properties with the {nameof(DataLengthAttribute)} applied that are valid for version '{version?.ToString(CultureInfo.CurrentCulture) ?? "null"}'."));
         }
 
+        internal static AmbiguousMatchException MultipleBinaryConstructorsSpecified(string typeName, double? version)
+        {
+            return new AmbiguousMatchException(Utils.CurrentCulture($"The object of type '{typeName}' could not be read because it has multiple constructors with the {nameof(BinaryConstructorAttribute)} applied that are valid for version '{version?.ToString(CultureInfo.CurrentCulture) ?? "null"}'."));
+        }
+
+        internal static InvalidOperationException NonPrimitiveBinaryConstructorParameter(string typeName)
+        {
+            return new InvalidOperationException(Utils.CurrentCulture($"The object of type '{typeName}' could not be read because {nameof(BinaryConstructorAttribute)} was specified on a constructor that requires non-primitive parameters."));
+        }
+
         internal static InvalidOperationException NoOffsetForVersion(string propName, double? version)
         {
             return new InvalidOperationException(Utils.CurrentCulture($"The property '{propName}' has no offset specified for version '{version?.ToString(CultureInfo.CurrentCulture) ?? "null"}'. If the property is not applicable for this version, apply the {nameof(VersionSpecificAttribute)} with appropriate parameters."));

@@ -58,6 +58,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="ComplexRead\BinaryConstructor.cs" />
     <Compile Include="ComplexRead\Enums.cs" />
     <Compile Include="ComplexRead\DataLength.cs" />
     <Compile Include="ComplexRead\StoreType.cs" />

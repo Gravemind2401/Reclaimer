@@ -12,7 +12,9 @@ namespace System.IO.Endian
     {
         private static readonly ConcurrentDictionary<Type, MethodInfo> stdMethodCache = new ConcurrentDictionary<Type, MethodInfo>();
         private static readonly ConcurrentDictionary<Type, PropertyInfo> versionPropCache = new ConcurrentDictionary<Type, PropertyInfo>();
-        private static readonly ConcurrentDictionary<Type, PropertyInfo> lengthPropCache = new ConcurrentDictionary<Type, PropertyInfo>();
+        private static readonly ConcurrentDictionary<string, PropertyInfo> lengthPropCache = new ConcurrentDictionary<string, PropertyInfo>();
+        private static readonly ConcurrentDictionary<string, ConstructorInfo> ctorCache = new ConcurrentDictionary<string, ConstructorInfo>();
+        private static readonly ConcurrentDictionary<ConstructorInfo, Type[]> ctorParamCache = new ConcurrentDictionary<ConstructorInfo, Type[]>();
 
         #region ReadObject Overloads
 
@@ -395,6 +397,27 @@ namespace System.IO.Endian
             return ReadObjectInternal(instance, type, version, false);
         }
 
+        private object ConstructObject(ConstructorInfo ctorInfo)
+        {
+            Type[] types;
+            if (ctorParamCache.ContainsKey(ctorInfo))
+                types = ctorParamCache[ctorInfo];
+            else
+            {
+                types = ctorInfo.GetParameters()
+                    .Select(p => p.ParameterType)
+                    .ToArray();
+
+                if (types.Any(t => !t.IsPrimitive))
+                    throw Exceptions.NonPrimitiveBinaryConstructorParameter(ctorInfo.DeclaringType.Name);
+
+                ctorParamCache.TryAdd(ctorInfo, types);
+            }
+
+            var args = types.Select(t => ReadStandardValue(t)).ToArray();
+            return ctorInfo.Invoke(args);
+        }
+
         private object ReadObjectInternal(object instance, Type type, double? version, bool isProperty)
         {
             if (type.Equals(typeof(string)))
@@ -402,12 +425,30 @@ namespace System.IO.Endian
             else if (type.IsPrimitive || type.Equals(typeof(Guid)))
                 return ReadStandardValue(type);
 
+            var typeKey = Utils.CurrentCulture($"{type.FullName}:{version}");
+
             if (instance == null)
             {
-                if (type.IsClass && type.GetConstructor(Type.EmptyTypes) == null)
-                    throw Exceptions.TypeNotConstructable(type.Name, isProperty);
+                ConstructorInfo ctorInfo;
+                if (ctorCache.ContainsKey(typeKey))
+                    ctorInfo = ctorCache[typeKey];
+                else
+                {
+                    var constructors = type.GetConstructors()
+                        .Where(c => Utils.GetAttributeForVersion<BinaryConstructorAttribute>(c, version) != null);
 
-                instance = Activator.CreateInstance(type);
+                    if (constructors.Count() > 1)
+                        throw Exceptions.MultipleBinaryConstructorsSpecified(type.Name, version);
+
+                    ctorInfo = constructors.FirstOrDefault();
+                    ctorCache.TryAdd(typeKey, ctorInfo);
+                }
+
+                if (ctorInfo != null)
+                    instance = ConstructObject(ctorInfo);
+                else if (type.IsClass && type.GetConstructor(Type.EmptyTypes) == null)
+                    throw Exceptions.TypeNotConstructable(type.Name, isProperty);
+                else instance = Activator.CreateInstance(type);
             }
 
             var originalPosition = BaseStream.Position;
@@ -424,8 +465,8 @@ namespace System.IO.Endian
                     reader.ReadPropertyValue(instance, prop, version);
 
                 PropertyInfo lengthProp;
-                if (lengthPropCache.ContainsKey(type))
-                    lengthProp = lengthPropCache[type];
+                if (lengthPropCache.ContainsKey(typeKey))
+                    lengthProp = lengthPropCache[typeKey];
                 else
                 {
                     var lengthProps = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
@@ -435,7 +476,7 @@ namespace System.IO.Endian
                         throw Exceptions.MultipleDataLengthsSpecified(type.Name, version);
 
                     lengthProp = lengthProps.FirstOrDefault();
-                    lengthPropCache.TryAdd(type, lengthProp);
+                    lengthPropCache.TryAdd(typeKey, lengthProp);
                 }
 
                 if (lengthProp != null && Utils.GetAttributeForVersion<DataLengthAttribute>(lengthProp, version) != null)
