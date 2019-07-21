@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Common;
+using Reclaimer.Utilities;
 using Reclaimer.Windows;
 using System;
 using System.Collections.Generic;
@@ -24,66 +25,70 @@ namespace Reclaimer.Plugins
         public override void OpenFile(OpenFileArgs args)
         {
             var item = args.File as IIndexItem;
-            var cacheType = (CacheType)Enum.Parse(typeof(CacheType), args.FileTypeKey.Split('.').First());
             var container = args.TargetWindow.DocumentContainer;
 
             LogOutput($"Loading model: {item.FullPath}");
 
-            if (item.ClassCode == "sbsp")
+            try
             {
-                Adjutant.Utilities.IRenderGeometry sbsp;
-                switch (cacheType)
+                if (item.ClassCode == "sbsp")
                 {
-                    case CacheType.Halo1CE:
-                    case CacheType.Halo1PC:
-                        sbsp = item.ReadMetadata<Adjutant.Blam.Halo1.scenario_structure_bsp>();
-                        break;
-                    case CacheType.Halo2Xbox:
-                        sbsp = item.ReadMetadata<Adjutant.Blam.Halo2.scenario_structure_bsp>();
-                        break;
-                    case CacheType.Halo3Beta:
-                    case CacheType.Halo3Retail:
-                    case CacheType.Halo3ODST:
-                        sbsp = item.ReadMetadata<Adjutant.Blam.Halo3.scenario_structure_bsp>();
-                        break;
-                    default: throw new NotSupportedException();
+                    Adjutant.Utilities.IRenderGeometry sbsp;
+                    switch (item.CacheFile.CacheType)
+                    {
+                        case CacheType.Halo1CE:
+                        case CacheType.Halo1PC:
+                            sbsp = item.ReadMetadata<Adjutant.Blam.Halo1.scenario_structure_bsp>();
+                            break;
+                        case CacheType.Halo2Xbox:
+                            sbsp = item.ReadMetadata<Adjutant.Blam.Halo2.scenario_structure_bsp>();
+                            break;
+                        case CacheType.Halo3Beta:
+                        case CacheType.Halo3Retail:
+                        case CacheType.Halo3ODST:
+                            sbsp = item.ReadMetadata<Adjutant.Blam.Halo3.scenario_structure_bsp>();
+                            break;
+                        default: throw Exceptions.TagClassNotSupported(item);
+                    }
+
+                    var viewer = new Controls.ModelViewer();
+                    viewer.LoadGeometry(sbsp, $"{item.FullPath}.{item.ClassCode}");
+
+                    container.Items.Add(viewer);
                 }
+                else if (item.ClassCode == "mod2" || item.ClassCode == "mode")
+                {
+                    Adjutant.Utilities.IRenderGeometry mode;
+                    switch (item.CacheFile.CacheType)
+                    {
+                        case CacheType.Halo1CE:
+                        case CacheType.Halo1PC:
+                            mode = item.ReadMetadata<Adjutant.Blam.Halo1.gbxmodel>();
+                            break;
+                        case CacheType.Halo2Xbox:
+                            mode = item.ReadMetadata<Adjutant.Blam.Halo2.render_model>();
+                            break;
+                        case CacheType.Halo3Beta:
+                        case CacheType.Halo3Retail:
+                        case CacheType.Halo3ODST:
+                            mode = item.ReadMetadata<Adjutant.Blam.Halo3.render_model>();
+                            break;
+                        default: throw Exceptions.TagClassNotSupported(item);
+                    }
 
-                var viewer = new Controls.ModelViewer();
-                viewer.LoadGeometry(sbsp, $"{item.FullPath}.{item.ClassCode}");
+                    var viewer = new Controls.ModelViewer();
+                    viewer.LoadGeometry(mode, $"{item.FullPath}.{item.ClassCode}");
 
-                container.Items.Add(viewer);
-                return;
+                    container.Items.Add(viewer);
+                }
+                else throw Exceptions.TagClassNotSupported(item);
+
+                LogOutput($"Loaded model: {item.FullPath}");
             }
-
-            if (item.ClassCode == "mod2" || item.ClassCode == "mode")
+            catch (Exception e)
             {
-                Adjutant.Utilities.IRenderGeometry mode;
-                switch (cacheType)
-                {
-                    case CacheType.Halo1CE:
-                    case CacheType.Halo1PC:
-                        mode = item.ReadMetadata<Adjutant.Blam.Halo1.gbxmodel>();
-                        break;
-                    case CacheType.Halo2Xbox:
-                        mode = item.ReadMetadata<Adjutant.Blam.Halo2.render_model>();
-                        break;
-                    case CacheType.Halo3Beta:
-                    case CacheType.Halo3Retail:
-                    case CacheType.Halo3ODST:
-                        mode = item.ReadMetadata<Adjutant.Blam.Halo3.render_model>();
-                        break;
-                    default: throw new NotSupportedException();
-                }
-
-                var viewer = new Controls.ModelViewer();
-                viewer.LoadGeometry(mode, $"{item.FullPath}.{item.ClassCode}");
-
-                container.Items.Add(viewer);
-                return;
+                LogError($"Error loading image: {item.FullPath}", e);
             }
-
-            LogOutput($"Loaded model: {item.FullPath}");
         }
     }
 }

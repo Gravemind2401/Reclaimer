@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Common;
+using Reclaimer.Utilities;
 using Reclaimer.Windows;
 using System;
 using System.Collections.Generic;
@@ -24,39 +25,45 @@ namespace Reclaimer.Plugins
         public override void OpenFile(OpenFileArgs args)
         {
             var item = args.File as IIndexItem;
-            var cacheType = (CacheType)Enum.Parse(typeof(CacheType), args.FileTypeKey.Split('.').First());
             var container = args.TargetWindow.DocumentContainer;
 
             LogOutput($"Loading image: {item.FullPath}");
 
-            if (item.ClassCode == "bitm")
+            try
             {
-                Adjutant.Utilities.IBitmap bitm;
-                switch (cacheType)
+                if (item.ClassCode == "bitm")
                 {
-                    case CacheType.Halo1CE:
-                    case CacheType.Halo1PC:
-                        bitm = item.ReadMetadata<Adjutant.Blam.Halo1.bitmap>();
-                        break;
-                    case CacheType.Halo2Xbox:
-                        bitm = item.ReadMetadata<Adjutant.Blam.Halo2.bitmap>();
-                        break;
-                    case CacheType.Halo3Beta:
-                    case CacheType.Halo3Retail:
-                    case CacheType.Halo3ODST:
-                        bitm = item.ReadMetadata<Adjutant.Blam.Halo3.bitmap>();
-                        break;
-                    default: throw new NotSupportedException();
+                    Adjutant.Utilities.IBitmap bitm;
+                    switch (item.CacheFile.CacheType)
+                    {
+                        case CacheType.Halo1CE:
+                        case CacheType.Halo1PC:
+                            bitm = item.ReadMetadata<Adjutant.Blam.Halo1.bitmap>();
+                            break;
+                        case CacheType.Halo2Xbox:
+                            bitm = item.ReadMetadata<Adjutant.Blam.Halo2.bitmap>();
+                            break;
+                        case CacheType.Halo3Beta:
+                        case CacheType.Halo3Retail:
+                        case CacheType.Halo3ODST:
+                            bitm = item.ReadMetadata<Adjutant.Blam.Halo3.bitmap>();
+                            break;
+                        default: throw Exceptions.TagClassNotSupported(item);
+                    }
+
+                    var viewer = new Controls.BitmapViewer();
+                    viewer.LoadImage(bitm, $"{item.FullPath}.{item.ClassCode}");
+
+                    container.Items.Add(viewer);
                 }
+                else throw Exceptions.TagClassNotSupported(item);
 
-                var viewer = new Controls.BitmapViewer();
-                viewer.LoadImage(bitm, $"{item.FullPath}.{item.ClassCode}");
-
-                container.Items.Add(viewer);
-                return;
+                LogOutput($"Loaded image: {item.FullPath}");
             }
-
-            LogOutput($"Loaded image: {item.FullPath}");
+            catch (Exception e)
+            {
+                LogError($"Error loading image: {item.FullPath}", e);
+            }
         }
     }
 }

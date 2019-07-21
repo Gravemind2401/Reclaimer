@@ -30,11 +30,12 @@ namespace Reclaimer.Controls
     /// </summary>
     public partial class ModelViewer : DocumentItem, IDisposable
     {
+        private static readonly string[] AllLods = new[] { "Highest", "High", "Medium", "Low", "Lowest" };
         private static readonly DiffuseMaterial ErrorMaterial;
 
         #region Dependency Properties
         public static readonly DependencyProperty SelectedLodProperty =
-            DependencyProperty.Register(nameof(SelectedLod), typeof(int), typeof(ModelViewer), new PropertyMetadata(0, SelectedIndexPropertyChanged));
+            DependencyProperty.Register(nameof(SelectedLod), typeof(int), typeof(ModelViewer), new PropertyMetadata(0, SelectedLodChanged));
 
         public int SelectedLod
         {
@@ -42,7 +43,7 @@ namespace Reclaimer.Controls
             set { SetValue(SelectedLodProperty, value); }
         }
 
-        public static void SelectedIndexPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        public static void SelectedLodChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (ModelViewer)d;
             control.SetLod((int)e.NewValue);
@@ -55,7 +56,7 @@ namespace Reclaimer.Controls
         private IRenderGeometry geometry;
         private IGeometryModel model;
 
-        public IEnumerable<int> Indexes { get; private set; }
+        public IEnumerable<string> AvailableLods { get; private set; }
         public ObservableCollection<ExtendedTreeViewItem> TreeViewItems { get; }
 
         static ModelViewer()
@@ -79,9 +80,9 @@ namespace Reclaimer.Controls
             TabHeader = Utils.GetFileName(fileName);
             this.geometry = geometry;
 
-            Indexes = Enumerable.Range(0, geometry.LodCount);
+            AvailableLods = AllLods.Take(geometry.LodCount);
             SetLod(0);
-            RaisePropertyChanged(nameof(Indexes));
+            RaisePropertyChanged(nameof(AvailableLods));
         }
 
         private void SetLod(int index)

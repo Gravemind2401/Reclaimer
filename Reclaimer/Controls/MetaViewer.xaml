@@ -213,14 +213,14 @@
         <ToolBarTray DockPanel.Dock="Top" Margin="0" IsLocked="True"
                      Background="{DynamicResource ToolBarBackground}">
             <ToolBar Band="0" Padding="3,2">
-                <ToggleButton IsChecked="{Binding ShowInvisibles}">
+                <ToggleButton IsChecked="{Binding ShowInvisibles}" ToolTip="Show hidden">
                     <ContentControl Template="{StaticResource ic_ShowAllFiles_16x}" />
                 </ToggleButton>
                 <Separator />
-                <Button Click="btnCollapseAll_Click">
+                <Button Click="btnCollapseAll_Click" ToolTip="Collapse all">
                     <ContentControl Template="{StaticResource ic_CollapseGroup_16x}" />
                 </Button>
-                <Button Click="btnExpandAll_Click">
+                <Button Click="btnExpandAll_Click" ToolTip="Expand all">
                     <ContentControl Template="{StaticResource ic_ExpandAll_16x}" />
                 </Button>
             </ToolBar>

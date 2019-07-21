@@ -78,7 +78,7 @@
                         <Setter Property="VerticalAlignment" Value="Center" />
                     </Style>
                 </ToolBar.Resources>
-                <ComboBox ItemsSource="{Binding Indexes}"
+                <ComboBox ItemsSource="{Binding AvailableLods}"
                           SelectedIndex="{Binding SelectedLod}" />
                 <Separator />
                 <Grid>

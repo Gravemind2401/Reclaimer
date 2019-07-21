@@ -5,16 +5,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Reclaimer.Controls"
              xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
+             xmlns:u="clr-namespace:Studio.Utilities;assembly=Studio"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <u:BoolToVisibilityConverter x:Key="boolToVisConverter" />
+    </UserControl.Resources>
 
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top" IsLocked="True" Margin="0" 
                      Background="{DynamicResource ToolBarBackground}">
             <ToolBar Margin="3,2">
-                <ComboBox ItemsSource="{Binding Indexes}"
-                          SelectedIndex="{Binding SelectedIndex}" />
-                <Separator />
                 <Button Click="btnFitActual_Click"
                         ToolTip="Zoom image to actual size">
                     <ContentControl Template="{StaticResource ic_ZoomToActual_16x}" />
@@ -53,6 +55,14 @@
                         ToolTip="Export all channels">
                     <ContentControl Template="{StaticResource ic_SaveAll_16x}" />
                 </Button>
+            </ToolBar>
+        </ToolBarTray>
+        <ToolBarTray x:Name="bottomToolbar" DockPanel.Dock="Bottom" IsLocked="True" Margin="0"  
+                     Visibility="{Binding HasMultiple, Converter={StaticResource boolToVisConverter}}"
+                     Background="{DynamicResource ToolBarBackground}">
+            <ToolBar Margin="3,2">
+                <ComboBox ItemsSource="{Binding Indexes}"
+                          SelectedIndex="{Binding SelectedIndex}" />
             </ToolBar>
         </ToolBarTray>
         <local:ZoomPanel x:Name="zoomPanel"

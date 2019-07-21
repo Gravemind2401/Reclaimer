@@ -46,6 +46,11 @@ namespace Reclaimer.Controls
         public static readonly DependencyProperty SelectedIndexProperty =
             DependencyProperty.Register(nameof(SelectedIndex), typeof(int), typeof(BitmapViewer), new PropertyMetadata(0, SelectedIndexPropertyChanged));
 
+        public static readonly DependencyPropertyKey HasMultiplePropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(HasMultiple), typeof(bool), typeof(BitmapViewer), new PropertyMetadata(false, null, CoerceHasMultiple));
+
+        public static readonly DependencyProperty HasMultipleProperty = HasMultiplePropertyKey.DependencyProperty;
+
         public static readonly DependencyProperty BlueChannelProperty =
             DependencyProperty.Register(nameof(BlueChannel), typeof(bool), typeof(BitmapViewer), new PropertyMetadata(true, ChannelPropertyChanged));
 
@@ -70,6 +75,12 @@ namespace Reclaimer.Controls
             set { SetValue(SelectedIndexProperty, value); }
         }
 
+        public bool HasMultiple
+        {
+            get { return (bool)GetValue(HasMultipleProperty); }
+            private set { SetValue(HasMultiplePropertyKey, value); }
+        }
+
         public bool BlueChannel
         {
             get { return (bool)GetValue(BlueChannelProperty); }
@@ -92,6 +103,11 @@ namespace Reclaimer.Controls
         {
             get { return (bool)GetValue(AlphaChannelProperty); }
             set { SetValue(AlphaChannelProperty, value); }
+        }
+
+        public static object CoerceHasMultiple(DependencyObject d, object baseValue)
+        {
+            return (d as BitmapViewer)?.Indexes.Count() > 1;
         }
 
         public static void ChannelPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -127,6 +143,7 @@ namespace Reclaimer.Controls
                 Indexes = Enumerable.Range(0, bitmap.BitmapCount);
                 SetImage(0);
                 RaisePropertyChanged(nameof(Indexes));
+                CoerceValue(HasMultipleProperty);
             }
             catch
             {

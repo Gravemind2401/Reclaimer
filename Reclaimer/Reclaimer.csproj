@@ -119,6 +119,7 @@
     <Compile Include="Plugins\Substrate.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Utilities\BindableBase.cs" />
+    <Compile Include="Utilities\Exceptions.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Plugins\MetaViewer\MetaValue.cs" />
     <Compile Include="Utilities\RadToDegConverter.cs" />
