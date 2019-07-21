@@ -125,7 +125,6 @@
     <Compile Include="Utilities\RadToDegConverter.cs" />
     <Compile Include="Utilities\ToStringConverter.cs" />
     <Compile Include="Utilities\NativeMethods.cs" />
-    <Compile Include="Utilities\StandardAddressTranslator.cs" />
     <Compile Include="Utilities\TreeNode.cs" />
     <Compile Include="Utilities\Utils.cs" />
     <Compile Include="Windows\IMultiPanelHost.cs" />
