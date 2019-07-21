@@ -255,8 +255,8 @@ namespace Reclaimer.Controls
                     {
                         var geom = new MeshGeometry3D();
 
-                        var indices = mesh.Indicies.Skip(sub.IndexStart).Take(sub.IndexLength).ToArray();
-                        if (mesh.IndexFormat == IndexFormat.Stripped) indices = indices.Unstrip().ToArray();
+                        var indices = mesh.Indicies.Skip(sub.IndexStart).Take(sub.IndexLength).ToList();
+                        if (mesh.IndexFormat == IndexFormat.Stripped) indices = indices.Unstrip().ToList();
 
                         var vertStart = indices.Min();
                         var vertLength = indices.Max() - vertStart + 1;

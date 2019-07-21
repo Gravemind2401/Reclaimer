@@ -213,6 +213,10 @@
         <ToolBarTray DockPanel.Dock="Top" Margin="0" IsLocked="True"
                      Background="{DynamicResource ToolBarBackground}">
             <ToolBar Band="0" Padding="3,2">
+                <Button Click="btnReload_Click" ToolTip="Reload data">
+                    <ContentControl Template="{StaticResource ic_Refresh_16x}" />
+                </Button>
+                <Separator />
                 <ToggleButton IsChecked="{Binding ShowInvisibles}" ToolTip="Show hidden">
                     <ContentControl Template="{StaticResource ic_ShowAllFiles_16x}" />
                 </ToggleButton>

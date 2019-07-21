@@ -42,6 +42,9 @@ namespace Reclaimer.Controls
         }
         #endregion
 
+        private IIndexItem tag;
+        private string fileName;
+
         public ObservableCollection<MetaValue> Metadata { get; }
 
         public MetaViewer()
@@ -52,12 +55,25 @@ namespace Reclaimer.Controls
             ShowInvisibles = MetaViewerPlugin.Settings.ShowInvisibles;
         }
 
-        public void LoadMetadata(IIndexItem tag, XmlDocument definition)
+        public void LoadMetadata(IIndexItem tag, string xmlFileName)
         {
             TabToolTip = $"{tag.FullPath}.{tag.ClassCode}";
             TabHeader = $"{Utils.GetFileName(tag.FullPath)}.{tag.ClassCode}";
 
-            foreach (XmlNode n in definition.DocumentElement.ChildNodes)
+            this.tag = tag;
+            fileName = xmlFileName;
+
+            LoadData();
+        }
+
+        private void LoadData()
+        {
+            Metadata.Clear();
+
+            var doc = new XmlDocument();
+            doc.Load(fileName);
+
+            foreach (XmlNode n in doc.DocumentElement.ChildNodes)
             {
                 try
                 {
@@ -75,6 +91,11 @@ namespace Reclaimer.Controls
                 s.IsExpanded = value;
                 RecursiveToggle(s.Children, value);
             }
+        }
+
+        private void btnReload_Click(object sender, RoutedEventArgs e)
+        {
+            LoadData();
         }
 
         private void btnCollapseAll_Click(object sender, RoutedEventArgs e)

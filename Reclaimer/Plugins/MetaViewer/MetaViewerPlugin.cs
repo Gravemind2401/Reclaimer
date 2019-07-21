@@ -43,14 +43,10 @@ namespace Reclaimer.Plugins.MetaViewer
         {
             var item = args.File as IIndexItem;
 
-            var doc = new XmlDocument();
-            doc.Load(GetDefinitionPath(item));
+            var viewer = new Controls.MetaViewer();
+            viewer.LoadMetadata(item, GetDefinitionPath(item));
 
             var container = args.TargetWindow.DocumentContainer;
-
-            var viewer = new Controls.MetaViewer();
-            viewer.LoadMetadata(item, doc);
-
             container.Items.Add(viewer);
         }
 

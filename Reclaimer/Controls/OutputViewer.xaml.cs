@@ -65,6 +65,8 @@ namespace Reclaimer.Controls
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             Substrate.Log += Substrate_Log;
+            txtOutput.CaretIndex = txtOutput.Text.Length;
+            txtOutput.ScrollToEnd();
         }
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)

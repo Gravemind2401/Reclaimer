@@ -23,7 +23,7 @@
         </ToolBarTray>
         <Grid DockPanel.Dock="Top" Background="{DynamicResource ToolBarBackground}">
             <studio:SearchTextBox x:Name="txtSearch" x:FieldModifier="private"
-                    Margin="0,2" HintText="Search Tags" LiveSearchEnabled="True" ToolBar.OverflowMode="Never"
+                    Margin="0,2" HintText="Search Tags" LiveSearchEnabled="True"
                     SearchAccepted="txtSearch_SearchChanged" SearchCanceled="txtSearch_SearchChanged" />
         </Grid>
         <studio:ExtendedTreeView x:Name="tv"
