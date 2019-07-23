@@ -58,6 +58,7 @@
     <Compile Include="Blam\Common\ITagIndex.cs" />
     <Compile Include="Blam\Common\IIndexItem.cs" />
     <Compile Include="Blam\Halo1\BitmapsAddressTranslator.cs" />
+    <Compile Include="Blam\Halo1\CompressedVertex.cs" />
     <Compile Include="Blam\Halo2\bitmap.cs" />
     <Compile Include="Blam\Halo2\BSPAddressTranslator.cs" />
     <Compile Include="Blam\Halo2\DataPointer.cs" />
@@ -92,7 +93,7 @@
     <Compile Include="Blam\Common\BlockCollection.cs" />
     <Compile Include="Blam\Halo1\scenario.cs" />
     <Compile Include="Blam\Halo1\scenario_structure_bsp.cs" />
-    <Compile Include="Blam\Halo1\SkinnedVertex.cs" />
+    <Compile Include="Blam\Halo1\UncompressedVertex.cs" />
     <Compile Include="Blam\Halo1\TagAddressTranslator.cs" />
     <Compile Include="Blam\Common\TagReference.cs" />
     <Compile Include="Blam\Halo1\WorldVertex.cs" />

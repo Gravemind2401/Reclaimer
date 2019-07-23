@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Adjutant.Blam.Halo1
 {
     [FixedSize(68)]
-    public class SkinnedVertex : IVertex
+    public class UncompressedVertex : IVertex
     {
         [Offset(0)]
         public RealVector3D Position { get; set; }

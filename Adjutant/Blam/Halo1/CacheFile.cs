@@ -109,11 +109,14 @@ namespace Adjutant.Blam.Halo1
         public string BuildString { get; set; }
     }
 
-    [FixedSize(40)]
+    [FixedSize(36, MaxVersion = (int)CacheType.Halo1PC)]
+    [FixedSize(40, MinVersion = (int)CacheType.Halo1PC)]
     public class TagIndex : ITagIndex<IndexItem>
     {
         private readonly CacheFile cache;
         private readonly List<IndexItem> items;
+
+        public int HeaderSize => cache.CacheType == CacheType.Halo1Xbox ? 36 : 40;
 
         internal Dictionary<int, string> Filenames { get; }
 
@@ -152,7 +155,7 @@ namespace Adjutant.Blam.Halo1
 
             for (int i = 0; i < TagCount; i++)
             {
-                reader.Seek(cache.Header.IndexAddress + 40 + i * 32, SeekOrigin.Begin);
+                reader.Seek(cache.Header.IndexAddress + HeaderSize + i * 32, SeekOrigin.Begin);
 
                 var item = reader.ReadObject(new IndexItem(cache));
                 items.Add(item);

@@ -43,8 +43,9 @@ namespace Adjutant.Blam.Halo1
             var dir = Directory.GetParent(cache.FileName).FullName;
             var bitmapSource = Path.Combine(dir, CacheFile.BitmapsMap);
 
-            //player made maps have internal bitmap resources
-            if (cache.CacheType == CacheType.Halo1CE && item.MetaPointer.Address > 0)
+            //Xbox maps and player-made CE maps use internal bitmap resources
+            if (cache.CacheType == CacheType.Halo1Xbox
+                || cache.CacheType == CacheType.Halo1CE && item.MetaPointer.Address > 0)
                 bitmapSource = cache.FileName;
 
             byte[] data;

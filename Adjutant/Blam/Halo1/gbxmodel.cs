@@ -103,13 +103,30 @@ namespace Adjutant.Blam.Halo1
                     model.Regions.Add(gRegion);
                 }
 
-                foreach (var section in Sections)
-                {
-                    var indices = new List<int>();
-                    var vertices = new List<SkinnedVertex>();
-                    var submeshes = new List<IGeometrySubmesh>();
+                if (cache.CacheType == CacheType.Halo1Xbox)
+                    model.Meshes.AddRange(ReadXboxMeshes(reader));
+                else model.Meshes.AddRange(ReadPCMeshes(reader));
 
-                    foreach (var submesh in section.Submeshes)
+                return model;
+            }
+        }
+
+        private IEnumerable<GeometryMesh> ReadXboxMeshes(DependencyReader reader)
+        {
+            var magic = cache.TagIndex.Magic - (cache.Header.IndexAddress + cache.TagIndex.HeaderSize);
+
+            foreach (var section in Sections)
+            {
+                var indices = new List<int>();
+                var vertices = new List<CompressedVertex>();
+                var submeshes = new List<IGeometrySubmesh>();
+
+                foreach (var submesh in section.Submeshes)
+                {
+                    if (submesh.IndexCount == 0 || submesh.VertexCount == 0)
+                        continue;
+
+                    try
                     {
                         var gSubmesh = new GeometrySubmesh
                         {
@@ -120,34 +137,20 @@ namespace Adjutant.Blam.Halo1
 
                         submeshes.Add(gSubmesh);
 
-                        reader.Seek(cache.TagIndex.VertexDataOffset + cache.TagIndex.IndexDataOffset + submesh.IndexOffset, SeekOrigin.Begin);
-                        indices.AddRange(reader.ReadEnumerable<ushort>(gSubmesh.IndexLength).Select(i => i + vertices.Count));
+                        reader.Seek(submesh.IndexOffset - magic, SeekOrigin.Begin);
+                        reader.ReadInt32();
+                        reader.Seek(reader.ReadInt32() - magic, SeekOrigin.Begin);
 
-                        reader.Seek(cache.TagIndex.VertexDataOffset + submesh.VertexOffset, SeekOrigin.Begin);
-                        var vertsTemp = reader.ReadEnumerable<SkinnedVertex>(submesh.VertexCount).ToList();
-                        //var vertsTemp = new List<SkinnedVertex>();
-                        //for (int i = 0; i < submesh.VertexCount; i++)
-                        //{
-                        //    var position = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                        //    var normal = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                        //    var binormal = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                        //    var tangent = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                        //    var texcoord = new RealVector2D(reader.ReadSingle() * UScale, reader.ReadSingle() * VScale);
-                        //    var nodes = new RealVector2D(reader.ReadInt16(), reader.ReadInt16());
-                        //    var weights = new RealVector2D(reader.ReadSingle(), reader.ReadSingle());
+                        var indicesTemp = reader.ReadEnumerable<ushort>(gSubmesh.IndexLength).ToList();
+                        indices.AddRange(indicesTemp.Select(i => i + vertices.Count));
 
-                        //    vertsTemp.Add(new SkinnedVertex
-                        //    {
-                        //        Position = position,
-                        //        Normal = normal,
-                        //        Binormal = binormal,
-                        //        Tangent = tangent,
-                        //        TexCoords = texcoord,
-                        //        NodeIndex1 = (short)nodes.X,
-                        //        NodeIndex2 = (short)nodes.Y,
-                        //        NodeWeights = weights
-                        //    });
-                        //}
+                        reader.Seek(submesh.VertexOffset - magic, SeekOrigin.Begin);
+                        reader.ReadInt32();
+                        reader.Seek(reader.ReadInt32() - magic, SeekOrigin.Begin);
+
+                        var vertsTemp = new List<CompressedVertex>();
+                        for (int i = 0; i < submesh.VertexCount; i++)
+                            vertsTemp.Add(new CompressedVertex(reader));
 
                         if (UScale != 1 || VScale != 1)
                         {
@@ -160,37 +163,86 @@ namespace Adjutant.Blam.Halo1
                             });
                         }
 
-                        //if (Flags.HasFlag(ModelFlags.UseLocalNodes))
-                        //{
-                        //    var address = section.Submeshes.Pointer.Address;
-                        //    address += section.Submeshes.IndexOf(submesh) * 132;
-                        //    reader.Seek(address + 107, SeekOrigin.Begin);
-                        //    var nodeCount = reader.ReadByte();
-                        //    var nodes = reader.ReadEnumerable<byte>(nodeCount).ToArray();
-
-                        //    vertsTemp.ForEach((v) =>
-                        //    {
-                        //        v.NodeIndex1 = nodes[v.NodeIndex1];
-                        //        v.NodeIndex2 = nodes[v.NodeIndex2];
-                        //    });
-                        //}
-
                         vertices.AddRange(vertsTemp);
                     }
-
-                    model.Meshes.Add(new GeometryMesh
-                    {
-                        IndexFormat = IndexFormat.Stripped,
-                        VertexWeights = VertexWeights.Skinned,
-                        Indicies = indices.ToArray(),
-                        Vertices = vertices.ToArray(),
-                        BoundsIndex = -1,
-                        Submeshes = submeshes
-                    });
-
+                    catch { }
                 }
 
-                return model;
+                yield return new GeometryMesh
+                {
+                    IndexFormat = IndexFormat.Stripped,
+                    VertexWeights = VertexWeights.Skinned,
+                    Indicies = indices.ToArray(),
+                    Vertices = vertices.ToArray(),
+                    BoundsIndex = -1,
+                    Submeshes = submeshes
+                };
+            }
+        }
+
+        private IEnumerable<GeometryMesh> ReadPCMeshes(DependencyReader reader)
+        {
+            foreach (var section in Sections)
+            {
+                var indices = new List<int>();
+                var vertices = new List<UncompressedVertex>();
+                var submeshes = new List<IGeometrySubmesh>();
+
+                foreach (var submesh in section.Submeshes)
+                {
+                    var gSubmesh = new GeometrySubmesh
+                    {
+                        MaterialIndex = submesh.ShaderIndex,
+                        IndexStart = indices.Count,
+                        IndexLength = submesh.IndexCount + 2
+                    };
+
+                    submeshes.Add(gSubmesh);
+
+                    reader.Seek(cache.TagIndex.VertexDataOffset + cache.TagIndex.IndexDataOffset + submesh.IndexOffset, SeekOrigin.Begin);
+                    indices.AddRange(reader.ReadEnumerable<ushort>(gSubmesh.IndexLength).Select(i => i + vertices.Count));
+
+                    reader.Seek(cache.TagIndex.VertexDataOffset + submesh.VertexOffset, SeekOrigin.Begin);
+                    var vertsTemp = reader.ReadEnumerable<UncompressedVertex>(submesh.VertexCount).ToList();
+
+                    if (UScale != 1 || VScale != 1)
+                    {
+                        vertsTemp.ForEach((v) =>
+                        {
+                            var vec = v.TexCoords;
+                            vec.X *= UScale;
+                            vec.Y *= VScale;
+                            v.TexCoords = vec;
+                        });
+                    }
+
+                    //if (Flags.HasFlag(ModelFlags.UseLocalNodes))
+                    //{
+                    //    var address = section.Submeshes.Pointer.Address;
+                    //    address += section.Submeshes.IndexOf(submesh) * 132;
+                    //    reader.Seek(address + 107, SeekOrigin.Begin);
+                    //    var nodeCount = reader.ReadByte();
+                    //    var nodes = reader.ReadEnumerable<byte>(nodeCount).ToArray();
+
+                    //    vertsTemp.ForEach((v) =>
+                    //    {
+                    //        v.NodeIndex1 = nodes[v.NodeIndex1];
+                    //        v.NodeIndex2 = nodes[v.NodeIndex2];
+                    //    });
+                    //}
+
+                    vertices.AddRange(vertsTemp);
+                }
+
+                yield return new GeometryMesh
+                {
+                    IndexFormat = IndexFormat.Stripped,
+                    VertexWeights = VertexWeights.Skinned,
+                    Indicies = indices.ToArray(),
+                    Vertices = vertices.ToArray(),
+                    BoundsIndex = -1,
+                    Submeshes = submeshes
+                };
             }
         }
 
@@ -348,7 +400,8 @@ namespace Adjutant.Blam.Halo1
         public BlockCollection<SubmeshBlock> Submeshes { get; set; }
     }
 
-    [FixedSize(132)]
+    [FixedSize(208, MaxVersion = (int)CacheType.Halo1PC)]
+    [FixedSize(132, MinVersion = (int)CacheType.Halo1PC)]
     public class SubmeshBlock
     {
         [Offset(4)]
@@ -357,7 +410,8 @@ namespace Adjutant.Blam.Halo1
         [Offset(72)]
         public int IndexCount { get; set; }
 
-        [Offset(76)]
+        [Offset(80, MaxVersion = (int)CacheType.Halo1PC)]
+        [Offset(76, MinVersion = (int)CacheType.Halo1PC)]
         public int IndexOffset { get; set; }
 
         [Offset(88)]
