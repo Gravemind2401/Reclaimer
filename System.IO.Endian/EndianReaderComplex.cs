@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -243,13 +242,8 @@ namespace System.IO.Endian
             else value = ReadObject(null, storeType, version);
 
             var propType = prop.PropertyType.IsEnum ? prop.PropertyType.GetEnumUnderlyingType() : prop.PropertyType;
-            if (storeType != propType)
-            {
-                var converter = TypeDescriptor.GetConverter(storeType);
-                if (converter.CanConvertTo(propType))
-                    value = converter.ConvertTo(value, propType);
-                else throw Exceptions.PropertyNotConvertable(prop.Name, storeType.Name, propType.Name);
-            }
+            if (value != null && storeType != propType && !Utils.TryConvert(ref value, storeType, propType))
+                throw Exceptions.PropertyNotConvertable(prop.Name, storeType.Name, propType.Name);
 
             if (prop.PropertyType.IsEnum)
                 value = Enum.ToObject(prop.PropertyType, value);
@@ -373,9 +367,9 @@ namespace System.IO.Endian
                     ReadPropertyValue(instance, versionProp, null);
                 }
 
-                var converter = TypeDescriptor.GetConverter(versionProp.PropertyType);
-                if (converter.CanConvertTo(typeof(double)))
-                    version = (double)converter.ConvertTo(versionProp.GetValue(instance), typeof(double));
+                var temp = versionProp.GetValue(instance);
+                if (temp != null && Utils.TryConvert(ref temp, versionProp.PropertyType, typeof(double)))
+                    version = (double)temp;
             }
 
             return version;
@@ -481,12 +475,9 @@ namespace System.IO.Endian
 
                 if (lengthProp != null && Utils.GetAttributeForVersion<DataLengthAttribute>(lengthProp, version) != null)
                 {
-                    var converter = TypeDescriptor.GetConverter(lengthProp.PropertyType);
-                    if (converter.CanConvertTo(typeof(long)))
-                    {
-                        var len = (long)converter.ConvertTo(lengthProp.GetValue(instance), typeof(long));
-                        SeekAbsolute(originalPosition + len);
-                    }
+                    var temp = lengthProp.GetValue(instance);
+                    if (temp != null && Utils.TryConvert(ref temp, lengthProp.PropertyType, typeof(long)))
+                        SeekAbsolute(originalPosition + (long)temp);
                 }
             }
 

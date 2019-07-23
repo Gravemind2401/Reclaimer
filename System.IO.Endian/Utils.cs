@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -137,6 +138,25 @@ namespace System.IO.Endian
         internal static IEnumerable<T> GetCustomAttributes<T>(MemberInfo member) where T : Attribute
         {
             return Attribute.GetCustomAttributes(member, typeof(T)).OfType<T>();
+        }
+
+        internal static bool TryConvert(ref object value, Type fromType, Type toType)
+        {
+            var converter = TypeDescriptor.GetConverter(fromType);
+            if (converter.CanConvertTo(toType))
+            {
+                value = converter.ConvertTo(value, toType);
+                return true;
+            }
+
+            converter = TypeDescriptor.GetConverter(toType);
+            if (converter.CanConvertFrom(fromType))
+            {
+                value = converter.ConvertFrom(value);
+                return true;
+            }
+
+            return false;
         }
     }
 }

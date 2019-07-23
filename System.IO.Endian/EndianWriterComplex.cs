@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -146,9 +145,9 @@ namespace System.IO.Endian
             //instead of [VersionNumber] property values to ensure the object can be read back in again
             if (Attribute.IsDefined(prop, typeof(VersionNumberAttribute)) && version.HasValue)
             {
-                var converter = TypeDescriptor.GetConverter(typeof(double));
-                if (converter.CanConvertTo(storeType))
-                    value = converter.ConvertTo(version.Value, storeType);
+                object temp = version.Value;
+                if (temp != null && Utils.TryConvert(ref temp, typeof(double), storeType))
+                    value = temp;
             }
 
             if (storeType.IsGenericType && storeType.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
@@ -173,13 +172,8 @@ namespace System.IO.Endian
                 value = Convert.ChangeType(value, valType, CultureInfo.InvariantCulture);
             }
 
-            if (storeType != valType)
-            {
-                var converter = TypeDescriptor.GetConverter(valType);
-                if (converter.CanConvertTo(storeType))
-                    value = converter.ConvertTo(value, storeType);
-                else throw Exceptions.PropertyNotConvertable(prop.Name, storeType.Name, valType.Name);
-            }
+            if (value != null && storeType != valType && !Utils.TryConvert(ref value, valType, storeType))
+                throw Exceptions.PropertyNotConvertable(prop.Name, storeType.Name, valType.Name);
 
             if (storeType.IsPrimitive || storeType.Equals(typeof(Guid)))
                 WriteStandardValue(value);
@@ -309,9 +303,9 @@ namespace System.IO.Endian
                         throw Exceptions.InvalidVersionAttribute();
                 }
 
-                var converter = TypeDescriptor.GetConverter(versionProp.PropertyType);
-                if (converter.CanConvertTo(typeof(double)))
-                    version = (double)converter.ConvertTo(versionProp.GetValue(instance), typeof(double));
+                var temp = versionProp.GetValue(instance);
+                if (temp != null && Utils.TryConvert(ref temp, versionProp.PropertyType, typeof(double)))
+                    version = (double)temp;
             }
 
             return version;
@@ -375,12 +369,9 @@ namespace System.IO.Endian
 
                 if (lengthProp != null && Utils.GetAttributeForVersion<DataLengthAttribute>(lengthProp, version) != null)
                 {
-                    var converter = TypeDescriptor.GetConverter(lengthProp.PropertyType);
-                    if (converter.CanConvertTo(typeof(long)))
-                    {
-                        var len = (long)converter.ConvertTo(lengthProp.GetValue(value), typeof(long));
-                        SeekAbsolute(originalPosition + len);
-                    }
+                    var temp = lengthProp.GetValue(value);
+                    if (temp != null && Utils.TryConvert(ref temp, lengthProp.PropertyType, typeof(long)))
+                        SeekAbsolute(originalPosition + (long)temp);
                 }
             }
 
