@@ -41,12 +41,18 @@ namespace System.IO.Endian
         internal static T GetAttributeForVersion<T>(MemberInfo member, double? version) where T : Attribute, IVersionAttribute
         {
             var typeInfo = member as TypeInfo;
-            var key = typeInfo != null 
-                ? CurrentCulture($"{typeof(T).Name}|{typeInfo.FullName}:{version}")
-                : CurrentCulture($"{typeof(T).Name}|{member.DeclaringType.FullName}.{member.Name}:{version}");
+            var ctorInfo = member as ConstructorInfo;
 
-            if (attrVerCache.ContainsKey(key))
-                return (T)attrVerCache[key];
+            string infoKey;
+            if (typeInfo != null)
+                infoKey = CurrentCulture($"{typeof(T).Name}|{typeInfo.FullName}:{version}");
+            else if (ctorInfo != null)
+                infoKey = CurrentCulture($"{typeof(T).Name}|{ctorInfo}:{version}");
+            else
+                infoKey = CurrentCulture($"{typeof(T).Name}|{member.DeclaringType.FullName}.{member.Name}:{version}");
+
+            if (attrVerCache.ContainsKey(infoKey))
+                return (T)attrVerCache[infoKey];
 
             var matches = Utils.GetCustomAttributes<T>(member).Where(o =>
             {
@@ -72,7 +78,7 @@ namespace System.IO.Endian
                     matches = matches.Where(o => o.HasMinVersion || o.HasMaxVersion).ToList();
                     if (matches.Count == 1)
                     {
-                        attrVerCache.TryAdd(key, matches.Single());
+                        attrVerCache.TryAdd(infoKey, matches.Single());
                         return matches.Single();
                     }
                     //else both or neither are versioned: fall through to the error below
@@ -81,7 +87,7 @@ namespace System.IO.Endian
                 throw Exceptions.AttributeVersionOverlap(member.Name, typeof(T).Name, version);
             }
 
-            attrVerCache.TryAdd(key, matches.FirstOrDefault());
+            attrVerCache.TryAdd(infoKey, matches.FirstOrDefault());
             return matches.FirstOrDefault();
         }
 
