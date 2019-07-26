@@ -104,7 +104,8 @@
     <Compile Include="Blam\Halo2\TagAddressTranslator.cs" />
     <Compile Include="Geometry\IGeometryModel.cs" />
     <Compile Include="Geometry\GeometryModel.cs" />
-    <Compile Include="Geometry\TransformedVector.cs" />
+    <Compile Include="Geometry\TransformedVector2D.cs" />
+    <Compile Include="Geometry\TransformedVector3D.cs" />
     <Compile Include="Geometry\TransformedVertex.cs" />
     <Compile Include="Geometry\VectorType.cs" />
     <Compile Include="Utilities\DependencyReader.cs" />

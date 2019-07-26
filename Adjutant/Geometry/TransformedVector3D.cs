@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Geometry
 {
-    public struct TransformedVector : IXMVector
+    public struct TransformedVector3D : IXMVector
     {
         private readonly Matrix4x4 transform;
         private readonly IXMVector source;
         private readonly bool isPoint;
 
-        public TransformedVector(IXMVector source, Matrix4x4 transform, bool isPoint)
+        public TransformedVector3D(IXMVector source, Matrix4x4 transform, bool isPoint)
         {
             this.source = source;
             this.transform = transform;

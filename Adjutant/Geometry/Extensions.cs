@@ -14,19 +14,23 @@ namespace Adjutant.Geometry
     {
         public static IEnumerable<int> Unstrip(this IEnumerable<int> strip)
         {
-            var allIndices = strip.ToArray();
+            int position = 0;
+            int i0 = 0, i1 = 0, i2 = 0;
 
-            for (int i = 0; i < allIndices.Length - 2; i++)
+            foreach (int index in strip)
             {
-                int i0 = allIndices[i + 0];
-                int i1 = allIndices[i + 1];
-                int i2 = allIndices[i + 2];
+                i0 = i1;
+                i1 = i2;
+                i2 = index;
 
-                if ((i0 != i1) && (i0 != i2) && (i1 != i2))
+                if (position++ < 2)
+                    continue;
+
+                if (i0 != i1 && i0 != i2 && i1 != i2)
                 {
                     yield return i0;
 
-                    if (i % 2 == 0)
+                    if (position % 2 == 1)
                     {
                         yield return i1;
                         yield return i2;
@@ -278,7 +282,7 @@ namespace Adjutant.Geometry
 
                             vector = vert.TexCoords.Count > 0 ? vert.TexCoords[0] : emptyVector;
                             bw.Write(vector.X);
-                            bw.Write(vector.Y);
+                            bw.Write(1 - vector.Y);
 
                             if (part.VertexWeights == VertexWeights.Rigid)
                             {
@@ -353,7 +357,7 @@ namespace Adjutant.Geometry
                         {
                             var indices = part.Indicies.Skip(submesh.IndexStart).Take(submesh.IndexLength);
                             if (part.IndexFormat == IndexFormat.Stripped)
-                                indices = Unstrip(part.Indicies);
+                                indices = Unstrip(indices);
 
                             foreach (var index in indices)
                             {
@@ -399,6 +403,9 @@ namespace Adjutant.Geometry
                 {
                     const string nullPath = "null";
 
+                    //skip null shaders
+                    if (material == null)
+                    {
                         bw.WriteStringNullTerminated(nullPath);
                         for (int i = 0; i < 8; i++)
                             bw.WriteStringNullTerminated(nullPath);
@@ -408,6 +415,30 @@ namespace Adjutant.Geometry
 
                         bw.Write(Convert.ToByte(false));
                         bw.Write(Convert.ToByte(false));
+
+                        continue;
+                    }
+
+                    bw.WriteStringNullTerminated(material.Name);
+                    for (int i = 0; i < 8; i++)
+                    {
+                        var submat = material.Submaterials.FirstOrDefault(s => s.Usage == (MaterialUsage)i);
+                        bw.WriteStringNullTerminated(submat?.Bitmap.Name ?? nullPath);
+                        if (submat != null)
+                        {
+                            bw.Write(submat.Tiling.X);
+                            bw.Write(submat.Tiling.Y);
+                        }
+                    }
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                            bw.Write(0);
+                            continue;
+                    }
+
+                    bw.Write((byte)0);
+                    bw.Write((byte)0);
                 }
                 #endregion
 

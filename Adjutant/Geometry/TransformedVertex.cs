@@ -29,11 +29,11 @@ namespace Adjutant.Geometry
             var transform3D = bounds.AsTransform();
             var transform2D = bounds.AsTextureTransform();
 
-            Position = source.Position.Select(v => (IXMVector)new TransformedVector(v, transform3D, true)).ToArray();
-            TexCoords = source.TexCoords.Select(v => (IXMVector)new TransformedVector(v, transform2D, true)).ToArray();
-            Normal = source.Normal.Select(v => (IXMVector)new TransformedVector(v, transform3D, false)).ToArray();
-            Binormal = source.Binormal.Select(v => (IXMVector)new TransformedVector(v, transform3D, false)).ToArray();
-            Tangent = source.Tangent.Select(v => (IXMVector)new TransformedVector(v, transform3D, false)).ToArray();
+            Position = source.Position.Select(v => (IXMVector)new TransformedVector3D(v, transform3D, true)).ToArray();
+            TexCoords = source.TexCoords.Select(v => (IXMVector)new TransformedVector2D(v, transform2D, true)).ToArray();
+            Normal = source.Normal.Select(v => (IXMVector)new TransformedVector3D(v, transform3D, false)).ToArray();
+            Binormal = source.Binormal.Select(v => (IXMVector)new TransformedVector3D(v, transform3D, false)).ToArray();
+            Tangent = source.Tangent.Select(v => (IXMVector)new TransformedVector3D(v, transform3D, false)).ToArray();
         }
     }
 }
