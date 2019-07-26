@@ -52,27 +52,6 @@ namespace Adjutant.Blam.Halo1
 
         int IRenderGeometry.LodCount => Regions.SelectMany(r => r.Permutations).Max(p => p.LodCount);
 
-        private IEnumerable<GeometryMaterial> GetMaterials(DependencyReader reader)
-        {
-            foreach (var shader in Shaders)
-            {
-                var bitmTag = (shader.ShaderReference.Tag as IndexItem)?.GetShaderDiffuse(reader);
-
-                if (bitmTag == null)
-                {
-                    yield return null;
-                    continue;
-                }
-
-                yield return new GeometryMaterial
-                {
-                    Name = bitmTag.FullPath,
-                    Diffuse = bitmTag.ReadMetadata<bitmap>(),
-                    Tiling = new RealVector2D(1, 1)
-                };
-            }
-        }
-
         public IGeometryModel ReadGeometry(int lod)
         {
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
@@ -84,7 +63,9 @@ namespace Adjutant.Blam.Halo1
 
                 model.Nodes.AddRange(Nodes);
                 model.MarkerGroups.AddRange(MarkerGroups);
-                model.Materials.AddRange(GetMaterials(reader));
+
+                var shaderRefs = Shaders.Select(s => s.ShaderReference);
+                model.Materials.AddRange(Halo1Common.GetMaterials(shaderRefs, reader));
 
                 foreach (var region in Regions)
                 {

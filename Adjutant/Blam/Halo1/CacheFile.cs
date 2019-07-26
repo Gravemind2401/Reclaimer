@@ -253,48 +253,6 @@ namespace Adjutant.Blam.Halo1
             }
         }
 
-        internal IndexItem GetShaderDiffuse(DependencyReader reader)
-        {
-            int offset;
-            switch (ClassCode)
-            {
-                case "soso":
-                    offset = 176;
-                    break;
-
-                case "senv":
-                    offset = 148;
-                    break;
-
-                case "sgla":
-                    offset = 356;
-                    break;
-
-                case "schi":
-                    offset = 228;
-                    break;
-
-                case "scex":
-                    offset = 900;
-                    break;
-
-                case "swat":
-                case "smet":
-                    offset = 88;
-                    break;
-
-                default: throw new InvalidOperationException();
-            }
-
-            reader.Seek(MetaPointer.Address + offset, SeekOrigin.Begin);
-
-            var bitmId = reader.ReadInt16();
-
-            if (bitmId == -1)
-                return null;
-            else return cache.TagIndex[bitmId];
-        }
-
         public override string ToString()
         {
             return Utils.CurrentCulture($"[{ClassCode}] {FullPath}");

@@ -31,7 +31,9 @@ namespace Adjutant.Blam.Halo1
 
         #region IBitmap
 
-        int IBitmap.BitmapCount => Bitmaps.Count;
+        string IBitmap.Name => item.FullPath;
+
+        int IBitmap.SubmapCount => Bitmaps.Count;
 
         public DdsImage ToDds(int index)
         {

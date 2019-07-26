@@ -44,27 +44,6 @@ namespace Adjutant.Blam.Halo2
 
         int IRenderGeometry.LodCount => 1;
 
-        private IEnumerable<GeometryMaterial> GetMaterials()
-        {
-            var shadersMeta = Shaders.Select(s => s.ShaderReference.Tag.ReadMetadata<shader>()).ToList();
-            foreach (var shader in shadersMeta)
-            {
-                var bitmTag = shader.ShaderMaps[0].DiffuseBitmapReference.Tag;
-                if (bitmTag == null)
-                {
-                    yield return null;
-                    continue;
-                }
-
-                yield return new GeometryMaterial
-                {
-                    Name = bitmTag.FullPath,
-                    Diffuse = bitmTag.ReadMetadata<bitmap>(),
-                    Tiling = new RealVector2D(1, 1)
-                };
-            }
-        }
-
         public IGeometryModel ReadGeometry(int lod)
         {
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
@@ -75,7 +54,7 @@ namespace Adjutant.Blam.Halo2
             model.Nodes.AddRange(Nodes);
             model.MarkerGroups.AddRange(MarkerGroups);
             model.Bounds.AddRange(BoundingBoxes);
-            model.Materials.AddRange(GetMaterials());
+            model.Materials.AddRange(Halo2Common.GetMaterials(Shaders));
 
             foreach (var region in Regions)
             {

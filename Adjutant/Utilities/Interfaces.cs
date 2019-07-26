@@ -10,7 +10,8 @@ namespace Adjutant.Utilities
 {
     public interface IBitmap
     {
-        int BitmapCount { get; }
+        string Name { get; }
+        int SubmapCount { get; }
         DdsImage ToDds(int index);
     }
 

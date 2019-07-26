@@ -14,10 +14,12 @@ namespace Adjutant.Blam.Halo3
     public class bitmap : IBitmap
     {
         private readonly CacheFile cache;
+        private readonly IndexItem item;
 
-        public bitmap(CacheFile cache)
+        public bitmap(CacheFile cache, IndexItem item)
         {
             this.cache = cache;
+            this.item = item;
         }
 
         [Offset(84)]
@@ -58,7 +60,9 @@ namespace Adjutant.Blam.Halo3
             { TextureFormat.DXN_mono_alpha, XboxFormat.DXN_mono_alpha }
         };
 
-        int IBitmap.BitmapCount => Bitmaps.Count;
+        string IBitmap.Name => item.FullPath;
+
+        int IBitmap.SubmapCount => Bitmaps.Count;
 
         public DdsImage ToDds(int index)
         {

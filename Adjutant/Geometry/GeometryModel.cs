@@ -164,10 +164,32 @@ namespace Adjutant.Geometry
     public class GeometryMaterial : IGeometryMaterial
     {
         public string Name { get; set; }
+        public List<ISubmaterial> Submaterials { get; set; }
 
-        public IBitmap Diffuse { get; set; }
+        public GeometryMaterial()
+        {
+            Submaterials = new List<ISubmaterial>();
+        }
 
+        IReadOnlyList<ISubmaterial> IGeometryMaterial.Submaterials => Submaterials;
+    }
+
+    public class SubMaterial : ISubmaterial
+    {
+        public MaterialUsage Usage { get; set; }
+        public IBitmap Bitmap { get; set; }
         public IRealVector2D Tiling { get; set; }
+    }
+
+    public enum MaterialUsage
+    {
+        Diffuse,
+        DiffuseDetail,
+        ColourChange,
+        Normal,
+        NormalDetail,
+        SelfIllumination,
+        Specular
     }
 
     public enum VertexWeights

@@ -1,6 +1,7 @@
 ﻿using Adjutant.Blam.Common;
 using Adjutant.Geometry;
 using Adjutant.Spatial;
+using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,46 +33,65 @@ namespace Adjutant.Blam.Halo3
         public int DataLength { get; set; }
     }
 
-    public static class Halo3Common
+    internal static class Halo3Common
     {
+        private static readonly Dictionary<string, MaterialUsage> usageLookup = new Dictionary<string, MaterialUsage>
+        {
+            { "base_map", MaterialUsage.Diffuse },
+            { "detail_map", MaterialUsage.DiffuseDetail },
+            { "detail_map_overlay", MaterialUsage.DiffuseDetail },
+            { "change_color_map", MaterialUsage.ColourChange },
+            { "bump_map", MaterialUsage.Normal },
+            { "bump_detail_map", MaterialUsage.NormalDetail },
+            { "self_illum_map", MaterialUsage.SelfIllumination },
+            { "specular_map", MaterialUsage.Specular }
+        };
+
         public static IEnumerable<GeometryMaterial> GetMaterials(IList<ShaderBlock> shaders)
         {
-            var shadersMeta = shaders.Select(s => s.ShaderReference.Tag?.ReadMetadata<shader>()).ToList();
-            foreach (var shader in shadersMeta)
+            for (int i = 0; i < shaders.Count; i++)
             {
+                var shader = shaders[i].ShaderReference.Tag?.ReadMetadata<shader>();
                 if (shader == null)
                 {
                     yield return null;
                     continue;
                 }
 
+                var subMaterials = new List<ISubmaterial>();
                 var template = shader.ShaderProperties[0].TemplateReference.Tag.ReadMetadata<render_method_template>();
-                var stringId = template.Usages.FirstOrDefault(s => s.Value == "base_map");
+                for (int j = 0; j < template.Usages.Count; j++)
+                {
+                    if (!usageLookup.ContainsKey(template.Usages[j].Value))
+                        continue;
 
-                if (stringId.Value == null)
+                    var map = shader.ShaderProperties[0].ShaderMaps[j];
+                    var bitmTag = map.BitmapReference.Tag;
+                    if (bitmTag == null)
+                        continue;
+
+                    var tile = map.TilingIndex == byte.MaxValue
+                        ? (RealVector4D?)null
+                        : shader.ShaderProperties[0].TilingData[map.TilingIndex];
+
+                    subMaterials.Add(new SubMaterial
+                    {
+                        Usage = usageLookup[template.Usages[j].Value],
+                        Bitmap = bitmTag.ReadMetadata<bitmap>(),
+                        Tiling = new RealVector2D(tile?.X ?? 1, tile?.Y ?? 1)
+                    });
+                }
+
+                if (subMaterials.Count == 0)
                 {
                     yield return null;
                     continue;
                 }
-
-                var diffuseIndex = template.Usages.IndexOf(stringId);
-                var map = shader.ShaderProperties[0].ShaderMaps[diffuseIndex];
-                var bitmTag = map.BitmapReference.Tag;
-                if (bitmTag == null)
-                {
-                    yield return null;
-                    continue;
-                }
-
-                var tile = map.TilingIndex == byte.MaxValue 
-                    ? (RealVector4D?)null 
-                    : shader.ShaderProperties[0].TilingData[map.TilingIndex];
 
                 yield return new GeometryMaterial
                 {
-                    Name = bitmTag.FullPath,
-                    Diffuse = bitmTag.ReadMetadata<bitmap>(),
-                    Tiling = new RealVector2D(tile?.X ?? 1, tile?.Y ?? 1)
+                    Name = Utils.GetFileName(shaders[i].ShaderReference.Tag.FullPath),
+                    Submaterials = subMaterials
                 };
             }
         }

@@ -63,35 +63,15 @@ namespace Adjutant.Blam.Halo1
                 group.Markers.AddRange(Markers);
                 model.MarkerGroups.Add(group);
 
-                #region Add Shaders
-
-                var shaderIds = Lightmaps.SelectMany(m => m.Materials)
+                var shaderRefs = Lightmaps.SelectMany(m => m.Materials)
                     .Where(m => m.ShaderReference.TagId >= 0)
-                    .Select(m => m.ShaderReference.TagId)
-                    .Distinct().ToList();
+                    .GroupBy(m => m.ShaderReference.TagId)
+                    .Select(g => g.First().ShaderReference)
+                    .ToList();
 
-                var shaderTags = shaderIds.Select(i => cache.TagIndex[i]);
-                foreach (var shaderTag in shaderTags)
-                {
-                    var bitmTag = shaderTag.GetShaderDiffuse(reader);
+                var shaderIds = shaderRefs.Select(r => r.TagId).ToList();
 
-                    if (bitmTag == null)
-                    {
-                        model.Materials.Add(null);
-                        continue;
-                    }
-
-                    var mat = new GeometryMaterial
-                    {
-                        Name = bitmTag.FullPath,
-                        Diffuse = bitmTag.ReadMetadata<bitmap>(),
-                        Tiling = new RealVector2D(1, 1)
-                    };
-
-                    model.Materials.Add(mat);
-                } 
-
-                #endregion
+                model.Materials.AddRange(Halo1Common.GetMaterials(shaderRefs, reader));
 
                 reader.Seek(SurfacePointer.Address, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<ushort>(SurfaceCount * 3).ToArray();

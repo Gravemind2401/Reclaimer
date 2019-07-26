@@ -15,10 +15,12 @@ namespace Adjutant.Blam.Halo2
     public class bitmap : IBitmap
     {
         private readonly CacheFile cache;
+        private readonly IndexItem item;
 
-        public bitmap(CacheFile cache)
+        public bitmap(CacheFile cache, IndexItem item)
         {
             this.cache = cache;
+            this.item = item;
         }
 
         [Offset(60)]
@@ -29,7 +31,9 @@ namespace Adjutant.Blam.Halo2
 
         #region IBitmap
 
-        int IBitmap.BitmapCount => Bitmaps.Count;
+        string IBitmap.Name => item.FullPath;
+
+        int IBitmap.SubmapCount => Bitmaps.Count;
 
         public DdsImage ToDds(int index)
         {

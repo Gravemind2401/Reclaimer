@@ -86,7 +86,13 @@ namespace Adjutant.Geometry
     public interface IGeometryMaterial
     {
         string Name { get; }
-        IBitmap Diffuse { get; }
+        IReadOnlyList<ISubmaterial> Submaterials { get; }
+    }
+
+    public interface ISubmaterial
+    {
+        MaterialUsage Usage { get; }
+        IBitmap Bitmap { get; }
         IRealVector2D Tiling { get; }
     }
 }
