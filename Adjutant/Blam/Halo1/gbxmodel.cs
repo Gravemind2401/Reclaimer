@@ -275,6 +275,8 @@ namespace Adjutant.Blam.Halo1
         [Offset(16)]
         public RealVector4D Rotation { get; set; }
 
+        public override string ToString() => Position.ToString();
+
         #region IGeometryMarker
 
         IRealVector3D IGeometryMarker.Position => Position;
@@ -407,5 +409,7 @@ namespace Adjutant.Blam.Halo1
     {
         [Offset(0)]
         public TagReference ShaderReference { get; set; }
+
+        public override string ToString() => ShaderReference.Tag?.FullPath;
     }
 }

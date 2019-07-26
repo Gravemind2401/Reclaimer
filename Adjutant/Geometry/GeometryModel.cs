@@ -125,6 +125,8 @@ namespace Adjutant.Geometry
         public byte NodeIndex { get; set; }
         public IRealVector3D Position { get; set; }
         public IRealVector4D Rotation { get; set; }
+
+        public override string ToString() => Position.ToString();
     }
 
     public class GeometryMesh : IGeometryMesh
@@ -171,6 +173,8 @@ namespace Adjutant.Geometry
             Submaterials = new List<ISubmaterial>();
         }
 
+        public override string ToString() => Name;
+
         IReadOnlyList<ISubmaterial> IGeometryMaterial.Submaterials => Submaterials;
     }
 
@@ -179,6 +183,8 @@ namespace Adjutant.Geometry
         public MaterialUsage Usage { get; set; }
         public IBitmap Bitmap { get; set; }
         public IRealVector2D Tiling { get; set; }
+
+        public override string ToString() => $"[{Usage}] {Bitmap.Name}";
     }
 
     public enum MaterialUsage

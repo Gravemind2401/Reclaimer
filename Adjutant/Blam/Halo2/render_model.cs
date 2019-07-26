@@ -372,6 +372,8 @@ namespace Adjutant.Blam.Halo2
         [Offset(32)]
         public float Scale { get; set; }
 
+        public override string ToString() => Position.ToString();
+
         #region IGeometryMarker
 
         IRealVector3D IGeometryMarker.Position => Position;
@@ -386,5 +388,7 @@ namespace Adjutant.Blam.Halo2
     {
         [Offset(8)]
         public TagReference ShaderReference { get; set; }
+
+        public override string ToString() => ShaderReference.Tag?.FullPath;
     }
 }
