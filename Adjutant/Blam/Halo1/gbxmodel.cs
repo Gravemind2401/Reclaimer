@@ -74,9 +74,6 @@ namespace Adjutant.Blam.Halo1
                         new GeometryPermutation
                         {
                             Name = p.Name,
-                            NodeIndex = byte.MaxValue,
-                            Transform = Matrix4x4.Identity,
-                            TransformScale = 1,
                             MeshIndex = p.LodIndex(lod),
                             MeshCount = 1
                         }));
@@ -155,7 +152,6 @@ namespace Adjutant.Blam.Halo1
                     VertexWeights = VertexWeights.Skinned,
                     Indicies = indices.ToArray(),
                     Vertices = vertices.ToArray(),
-                    BoundsIndex = -1,
                     Submeshes = submeshes
                 };
             }
@@ -221,7 +217,6 @@ namespace Adjutant.Blam.Halo1
                     VertexWeights = VertexWeights.Skinned,
                     Indicies = indices.ToArray(),
                     Vertices = vertices.ToArray(),
-                    BoundsIndex = -1,
                     Submeshes = submeshes
                 };
             }

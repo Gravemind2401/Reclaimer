@@ -82,9 +82,6 @@ namespace Adjutant.Blam.Halo3
                     new GeometryPermutation
                     {
                         Name = p.Name,
-                        NodeIndex = byte.MaxValue,
-                        Transform = Matrix4x4.Identity,
-                        TransformScale = 1,
                         MeshIndex = p.SectionIndex,
                         MeshCount = 1
                     }));
@@ -117,7 +114,6 @@ namespace Adjutant.Blam.Halo3
                 new GeometryPermutation
                 {
                     Name = i.Name,
-                    NodeIndex = (byte)i.NodeIndex,
                     Transform = i.Transform,
                     TransformScale = i.TransformScale,
                     MeshIndex = InstancedGeometrySectionIndex + GeometryInstances.IndexOf(i),
@@ -130,12 +126,14 @@ namespace Adjutant.Blam.Halo3
             model.Meshes.Remove(sourceMesh);
 
             var section = Sections[InstancedGeometrySectionIndex];
-            foreach (var subset in section.Subsets)
+            for (int i = 0; i < GeometryInstances.Count; i++)
             {
+                var subset = section.Subsets[i];
                 var mesh = new GeometryMesh
                 {
                     IndexFormat = sourceMesh.IndexFormat,
                     VertexWeights = VertexWeights.Rigid,
+                    NodeIndex = (byte)GeometryInstances[i].NodeIndex,
                     BoundsIndex = 0
                 };
 
@@ -145,10 +143,9 @@ namespace Adjutant.Blam.Halo3
                 var max = strip.Max();
                 var len = max - min + 1;
 
-                mesh.Indicies = strip.Select(i => i - min).ToArray();
+                mesh.Indicies = strip.Select(j => j - min).ToArray();
                 mesh.Vertices = sourceMesh.Vertices.Skip(min).Take(len).ToArray();
 
-                var sectionIndex = InstancedGeometrySectionIndex + section.Subsets.IndexOf(subset);
                 var submesh = section.Submeshes[subset.SubmeshIndex];
                 mesh.Submeshes.Add(new GeometrySubmesh
                 {

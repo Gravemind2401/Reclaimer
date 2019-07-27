@@ -80,7 +80,7 @@ namespace Adjutant.Blam.Halo2
                     reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
                     var submeshes = reader.ReadEnumerable<SubmeshDataBlock>(submeshResource.Size / 72).ToList();
 
-                    var mesh = new GeometryMesh { BoundsIndex = -1 };
+                    var mesh = new GeometryMesh();
 
                     if (section.FaceCount * 3 == sectionInfo.IndexCount)
                         mesh.IndexFormat = IndexFormat.Triangles;
@@ -122,9 +122,6 @@ namespace Adjutant.Blam.Halo2
                     var perm = new GeometryPermutation
                     {
                         Name = sectionIndex.ToString("D3", CultureInfo.CurrentCulture),
-                        NodeIndex = byte.MaxValue,
-                        Transform = Matrix4x4.Identity,
-                        TransformScale = 1,
                         MeshIndex = model.Meshes.Count,
                         MeshCount = 1
                     };
@@ -170,7 +167,7 @@ namespace Adjutant.Blam.Halo2
                     reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
                     var submeshes = reader.ReadEnumerable<SubmeshDataBlock>(submeshResource.Size / 72).ToList();
 
-                    var mesh = new GeometryMesh { BoundsIndex = -1 };
+                    var mesh = new GeometryMesh();
 
                     if (section.FaceCount * 3 == sectionInfo.IndexCount)
                         mesh.IndexFormat = IndexFormat.Triangles;
@@ -214,7 +211,6 @@ namespace Adjutant.Blam.Halo2
                         .Select(i => new GeometryPermutation
                         {
                             Name = i.Name,
-                            NodeIndex = byte.MaxValue,
                             Transform = i.Transform,
                             TransformScale = i.TransformScale,
                             MeshIndex = model.Meshes.Count,

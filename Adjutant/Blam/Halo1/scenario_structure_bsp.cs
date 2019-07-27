@@ -91,9 +91,6 @@ namespace Adjutant.Blam.Halo1
                     var gPermutation = new GeometryPermutation
                     {
                         Name = sectionIndex.ToString("D3", CultureInfo.CurrentCulture),
-                        NodeIndex = byte.MaxValue,
-                        Transform = Matrix4x4.Identity,
-                        TransformScale = 1,
                         MeshIndex = sectionIndex,
                         MeshCount = 1
                     };
@@ -127,7 +124,6 @@ namespace Adjutant.Blam.Halo1
                         VertexWeights = VertexWeights.None,
                         Indicies = localIndices.ToArray(),
                         Vertices = vertices.ToArray(),
-                        BoundsIndex = -1,
                         Submeshes = submeshes
                     });
 

@@ -108,12 +108,17 @@ namespace Adjutant.Geometry
     public class GeometryPermutation : IGeometryPermutation
     {
         public string Name { get; set; }
-        public byte NodeIndex { get; set; }
         public int MeshIndex { get; set; }
         public int MeshCount { get; set; }
 
         public float TransformScale { get; set; }
         public Matrix4x4 Transform { get; set; }
+
+        public GeometryPermutation()
+        {
+            TransformScale = 1;
+            Transform = Matrix4x4.Identity;
+        }
 
         public override string ToString() => Name;
     }
@@ -137,7 +142,8 @@ namespace Adjutant.Geometry
         public IVertex[] Vertices { get; set; }
         public int[] Indicies { get; set; }
 
-        public short BoundsIndex { get; set; }
+        public byte? NodeIndex { get; set; }
+        public short? BoundsIndex { get; set; }
         public List<IGeometrySubmesh> Submeshes { get; set; }
 
         public GeometryMesh()
@@ -166,16 +172,20 @@ namespace Adjutant.Geometry
     public class GeometryMaterial : IGeometryMaterial
     {
         public string Name { get; set; }
+        public MaterialFlags Flags { get; set; }
         public List<ISubmaterial> Submaterials { get; set; }
+        public List<TintColour> TintColours { get; set; }
 
         public GeometryMaterial()
         {
             Submaterials = new List<ISubmaterial>();
+            TintColours = new List<TintColour>();
         }
 
         public override string ToString() => Name;
 
         IReadOnlyList<ISubmaterial> IGeometryMaterial.Submaterials => Submaterials;
+        IReadOnlyList<TintColour> IGeometryMaterial.TintColours => TintColours;
     }
 
     public class SubMaterial : ISubmaterial
@@ -187,27 +197,12 @@ namespace Adjutant.Geometry
         public override string ToString() => $"[{Usage}] {Bitmap.Name}";
     }
 
-    public enum MaterialUsage
+    public class TintColour
     {
-        Diffuse,
-        DiffuseDetail,
-        ColourChange,
-        Normal,
-        NormalDetail,
-        SelfIllumination,
-        Specular
-    }
-
-    public enum VertexWeights
-    {
-        None,
-        Skinned,
-        Rigid
-    }
-
-    public enum IndexFormat
-    {
-        Triangles = 3,
-        Stripped = 5
+        public TintUsage Usage { get; set; }
+        public byte R { get; set; }
+        public byte G { get; set; }
+        public byte B { get; set; }
+        public byte A { get; set; }
     }
 }

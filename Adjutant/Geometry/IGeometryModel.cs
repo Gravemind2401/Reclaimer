@@ -47,7 +47,6 @@ namespace Adjutant.Geometry
     public interface IGeometryPermutation
     {
         string Name { get; }
-        byte NodeIndex { get; }
         int MeshIndex { get; }
         int MeshCount { get; }
 
@@ -72,7 +71,8 @@ namespace Adjutant.Geometry
         IReadOnlyList<IVertex> Vertices { get; }
         IReadOnlyList<int> Indicies { get; }
 
-        short BoundsIndex { get; }
+        byte? NodeIndex { get; }
+        short? BoundsIndex { get; }
         IReadOnlyList<IGeometrySubmesh> Submeshes { get; }
     }
 
@@ -86,7 +86,9 @@ namespace Adjutant.Geometry
     public interface IGeometryMaterial
     {
         string Name { get; }
+        MaterialFlags Flags { get; }
         IReadOnlyList<ISubmaterial> Submaterials { get; }
+        IReadOnlyList<TintColour> TintColours { get; }
     }
 
     public interface ISubmaterial

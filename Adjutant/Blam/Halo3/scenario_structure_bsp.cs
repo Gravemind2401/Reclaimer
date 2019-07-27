@@ -96,9 +96,6 @@ namespace Adjutant.Blam.Halo3
                 Clusters.Select(c => new GeometryPermutation
                 {
                     Name = Clusters.IndexOf(c).ToString("D3", CultureInfo.CurrentCulture),
-                    NodeIndex = byte.MaxValue,
-                    Transform = Matrix4x4.Identity,
-                    TransformScale = 1,
                     MeshIndex = c.SectionIndex,
                     MeshCount = 1
                 })
@@ -113,7 +110,6 @@ namespace Adjutant.Blam.Halo3
                     instanceGroup.Select(i => new GeometryPermutation
                     {
                         Name = i.Name,
-                        NodeIndex = byte.MaxValue,
                         Transform = i.Transform,
                         TransformScale = i.TransformScale,
                         MeshIndex = i.SectionIndex,
@@ -125,8 +121,8 @@ namespace Adjutant.Blam.Halo3
 
             model.Meshes.AddRange(Halo3Common.GetMeshes(cache, lightmapData.ResourcePointer, lightmapData.Sections, (s) =>
             {
-                var index = lightmapData.Sections.IndexOf(s);
-                return (short)(index >= BoundingBoxes.Count ? -1 : index);
+                var index = (short)lightmapData.Sections.IndexOf(s);
+                return index >= BoundingBoxes.Count ? (short?)null : index;
             }));
 
             return model;

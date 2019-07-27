@@ -63,9 +63,6 @@ namespace Adjutant.Blam.Halo2
                     new GeometryPermutation
                     {
                         Name = p.Name,
-                        NodeIndex = byte.MaxValue,
-                        Transform = Matrix4x4.Identity,
-                        TransformScale = 1,
                         MeshIndex = p.SectionIndex,
                         MeshCount = 1
                     }));

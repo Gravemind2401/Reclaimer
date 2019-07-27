@@ -88,6 +88,11 @@ namespace Adjutant.Geometry
             {
                 var dupeDic = new Dictionary<int, long>();
 
+                var validRegions = model.Regions
+                    .Select(r => new { r.Name, Permutations = r.Permutations.Where(p => model.Meshes[p.MeshIndex].Submeshes.Count > 0).ToList() })
+                    .Where(r => r.Permutations.Count > 0)
+                    .ToList();
+
                 #region Address Lists
                 var headerAddressList = new List<long>();
                 var headerValueList = new List<long>();
@@ -111,7 +116,7 @@ namespace Adjutant.Geometry
                 #region Header
                 bw.Write("AMF!".ToCharArray());
                 bw.Write(2.0f);
-                bw.WriteStringNullTerminated(model.Name ?? "");
+                bw.WriteStringNullTerminated(model.Name ?? string.Empty);
 
                 bw.Write(model.Nodes.Count);
                 headerAddressList.Add(bw.BaseStream.Position);
@@ -121,7 +126,7 @@ namespace Adjutant.Geometry
                 headerAddressList.Add(bw.BaseStream.Position);
                 bw.Write(0);
 
-                bw.Write(model.Regions.Count);
+                bw.Write(validRegions.Count);
                 headerAddressList.Add(bw.BaseStream.Position);
                 bw.Write(0);
 
@@ -181,7 +186,7 @@ namespace Adjutant.Geometry
 
                 #region Regions
                 headerValueList.Add(bw.BaseStream.Position);
-                foreach (var region in model.Regions)
+                foreach (var region in validRegions)
                 {
                     bw.WriteStringNullTerminated(region.Name);
                     bw.Write(region.Permutations.Count);
@@ -191,7 +196,7 @@ namespace Adjutant.Geometry
                 #endregion
 
                 #region Permutations
-                foreach (var region in model.Regions)
+                foreach (var region in validRegions)
                 {
                     permValueList.Add(bw.BaseStream.Position);
                     foreach (var perm in region.Permutations)
@@ -200,7 +205,7 @@ namespace Adjutant.Geometry
 
                         bw.WriteStringNullTerminated(perm.Name);
                         bw.Write((byte)part.VertexWeights);
-                        bw.Write(perm.NodeIndex);
+                        bw.Write(part.NodeIndex ?? byte.MaxValue);
 
                         bw.Write(part.Vertices.Count);
                         vertAddressList.Add(bw.BaseStream.Position);
@@ -249,7 +254,7 @@ namespace Adjutant.Geometry
                 #region Vertices
                 var emptyVector = new RealVector3D();
 
-                foreach (var region in model.Regions)
+                foreach (var region in validRegions)
                 {
                     foreach (var perm in region.Permutations)
                     {
@@ -267,7 +272,7 @@ namespace Adjutant.Geometry
                         vertValueList.Add(bw.BaseStream.Position);
 
                         IXMVector vector;
-                        var vertices = part.BoundsIndex < 0 ? part.Vertices : part.Vertices.Select(v => (IVertex)new CompressedVertex(v, model.Bounds[part.BoundsIndex]));
+                        var vertices = part.BoundsIndex >= 0 ? part.Vertices.Select(v => (IVertex)new CompressedVertex(v, model.Bounds[part.BoundsIndex.Value])) : part.Vertices;
                         foreach (var vert in vertices)
                         {
                             vector = vert.Position.Count > 0 ? vert.Position[0] : emptyVector;
@@ -317,6 +322,7 @@ namespace Adjutant.Geometry
                                     bw.Write((byte)255);
                                     bw.Write(0);
                                     continue;
+                                    //throw new Exception("no weights on a weighted node. report this.");
                                 }
 
                                 for (int i = 0; i < 4; i++)
@@ -337,7 +343,7 @@ namespace Adjutant.Geometry
 
                 #region Indices
                 dupeDic.Clear();
-                foreach (var region in model.Regions)
+                foreach (var region in validRegions)
                 {
                     foreach (var perm in region.Permutations)
                     {
@@ -370,7 +376,7 @@ namespace Adjutant.Geometry
                 #endregion
 
                 #region Submeshes
-                foreach (var region in model.Regions)
+                foreach (var region in validRegions)
                 {
                     foreach (var perm in region.Permutations)
                     {
@@ -433,12 +439,21 @@ namespace Adjutant.Geometry
 
                     for (int i = 0; i < 4; i++)
                     {
+                        var tint = material.TintColours.FirstOrDefault(t => t.Usage == (TintUsage)i);
+                        if (tint == null)
+                        {
                             bw.Write(0);
                             continue;
+                        }
+
+                        bw.Write(tint.R);
+                        bw.Write(tint.G);
+                        bw.Write(tint.B);
+                        bw.Write(tint.A);
                     }
 
-                    bw.Write((byte)0);
-                    bw.Write((byte)0);
+                    bw.Write(Convert.ToByte(material.Flags.HasFlag(MaterialFlags.Transparent)));
+                    bw.Write(Convert.ToByte(material.Flags.HasFlag(MaterialFlags.ColourChange)));
                 }
                 #endregion
 

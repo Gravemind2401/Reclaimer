@@ -47,11 +47,19 @@ namespace Adjutant.Blam.Halo3
             { "specular_map", MaterialUsage.Specular }
         };
 
+        private static readonly Dictionary<string, TintUsage> tintLookup = new Dictionary<string, TintUsage>
+        {
+            { "albedo_color", TintUsage.Albedo },
+            { "self_illum_color", TintUsage.SelfIllumination },
+            { "specular_tint", TintUsage.Specular }
+        };
+
         public static IEnumerable<GeometryMaterial> GetMaterials(IList<ShaderBlock> shaders)
         {
             for (int i = 0; i < shaders.Count; i++)
             {
-                var shader = shaders[i].ShaderReference.Tag?.ReadMetadata<shader>();
+                var tag = shaders[i].ShaderReference.Tag;
+                var shader = tag?.ReadMetadata<shader>();
                 if (shader == null)
                 {
                     yield return null;
@@ -88,15 +96,38 @@ namespace Adjutant.Blam.Halo3
                     continue;
                 }
 
-                yield return new GeometryMaterial
+                var material = new GeometryMaterial
                 {
                     Name = Utils.GetFileName(shaders[i].ShaderReference.Tag.FullPath),
                     Submaterials = subMaterials
                 };
+
+                for (int j = 0; j < template.Arguments.Count; j++)
+                {
+                    if (!tintLookup.ContainsKey(template.Arguments[j].Value))
+                        continue;
+
+                    material.TintColours.Add(new TintColour
+                    {
+                        Usage = tintLookup[template.Arguments[j].Value],
+                        R = (byte)(shader.ShaderProperties[0].TilingData[j].X * byte.MaxValue),
+                        G = (byte)(shader.ShaderProperties[0].TilingData[j].Y * byte.MaxValue),
+                        B = (byte)(shader.ShaderProperties[0].TilingData[j].Z * byte.MaxValue),
+                        A = (byte)(shader.ShaderProperties[0].TilingData[j].W * byte.MaxValue),
+                    });
+                }
+
+                if (tag.ClassCode != "rmsh")
+                    material.Flags |= MaterialFlags.Transparent;
+
+                if (subMaterials.Any(m => m.Usage == MaterialUsage.ColourChange) && !subMaterials.Any(m => m.Usage == MaterialUsage.Diffuse))
+                    material.Flags |= MaterialFlags.ColourChange;
+
+                yield return material;
             }
         }
 
-        public static IEnumerable<GeometryMesh> GetMeshes(CacheFile cache, ResourceIdentifier resourcePointer, IList<SectionBlock> sections, Func<SectionBlock, short> boundsIndex)
+        public static IEnumerable<GeometryMesh> GetMeshes(CacheFile cache, ResourceIdentifier resourcePointer, IList<SectionBlock> sections, Func<SectionBlock, short?> boundsIndex)
         {
             VertexBufferInfo[] vertexBufferInfo;
             IndexBufferInfo[] indexBufferInfo;
@@ -135,7 +166,6 @@ namespace Adjutant.Blam.Halo3
                         continue;
                     }
 
-                    var sectionIndex = sections.IndexOf(section);
                     var node = lookup[section.VertexFormat];
                     var vInfo = vertexBufferInfo[section.VertexBufferIndex];
                     var iInfo = indexBufferInfo[section.IndexBufferIndex];
@@ -144,6 +174,7 @@ namespace Adjutant.Blam.Halo3
                     {
                         IndexFormat = iInfo.IndexFormat,
                         Vertices = new IVertex[vInfo.VertexCount],
+                        NodeIndex = section.NodeIndex == byte.MaxValue ? (byte?)null : section.NodeIndex,
                         BoundsIndex = boundsIndex(section)
                     };
 

@@ -86,6 +86,7 @@
     <Compile Include="Blam\Halo3\TagAddressTranslator.cs" />
     <Compile Include="Blam\Common\XmlVertex.cs" />
     <Compile Include="Geometry\CoordinateSystem.cs" />
+    <Compile Include="Geometry\Enums.cs" />
     <Compile Include="Geometry\Extensions.cs" />
     <Compile Include="Geometry\IVertex.cs" />
     <Compile Include="Blam\Halo1\bitmap.cs" />
