@@ -170,10 +170,22 @@ namespace Adjutant.Blam.Halo3
                     var vInfo = vertexBufferInfo[section.VertexBufferIndex];
                     var iInfo = indexBufferInfo[section.IndexBufferIndex];
 
+                    Func<XmlNode, string, bool> hasUsage = (n, u) =>
+                    {
+                        return n.ChildNodes.Cast<XmlNode>().Any(c => c.Attributes["usage"]?.Value == u);
+                    };
+
+                    var skinType = VertexWeights.None;
+                    if (hasUsage(node, "blendindices"))
+                        skinType = hasUsage(node, "blendweight") ? VertexWeights.Skinned : VertexWeights.Rigid;
+                    else if (section.NodeIndex < byte.MaxValue)
+                        skinType = VertexWeights.Rigid;
+
                     var mesh = new GeometryMesh
                     {
                         IndexFormat = iInfo.IndexFormat,
                         Vertices = new IVertex[vInfo.VertexCount],
+                        VertexWeights = skinType,
                         NodeIndex = section.NodeIndex == byte.MaxValue ? (byte?)null : section.NodeIndex,
                         BoundsIndex = boundsIndex(section)
                     };

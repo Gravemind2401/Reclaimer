@@ -304,12 +304,9 @@ namespace Adjutant.Geometry
 
                                 foreach (int index in indices) bw.Write((byte)index);
 
-                                if (indices.Count < 4) bw.Write((byte)255);
-
-                                continue;
+                                if (indices.Count < 4) bw.Write(byte.MaxValue);
                             }
-
-                            if (part.VertexWeights == VertexWeights.Skinned)
+                            else if (part.VertexWeights == VertexWeights.Skinned)
                             {
                                 var indices = (vert.BlendIndices.Count > 0 ? vert.BlendIndices[0] : emptyVector).AsEnumerable().ToArray();
                                 var weights = (vert.BlendWeight.Count > 0 ? vert.BlendWeight[0] : emptyVector).AsEnumerable().ToArray();
@@ -331,7 +328,7 @@ namespace Adjutant.Geometry
                                         bw.Write((byte)indices[i]);
                                 }
 
-                                if (count != 4) bw.Write((byte)255);
+                                if (count != 4) bw.Write(byte.MaxValue);
 
                                 foreach (var w in weights.Where(w => w > 0))
                                     bw.Write(w);
