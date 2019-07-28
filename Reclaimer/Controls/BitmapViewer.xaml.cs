@@ -140,7 +140,7 @@ namespace Reclaimer.Controls
                 TabHeader = Utils.GetFileName(fileName);
                 sourceName = Utils.GetFileNameWithoutExtension(fileName);
 
-                Indexes = Enumerable.Range(0, bitmap.BitmapCount);
+                Indexes = Enumerable.Range(0, bitmap.SubmapCount);
                 SetImage(0);
                 RaisePropertyChanged(nameof(Indexes));
                 CoerceValue(HasMultipleProperty);

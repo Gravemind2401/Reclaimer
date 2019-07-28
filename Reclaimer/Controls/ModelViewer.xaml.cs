@@ -180,13 +180,14 @@ namespace Reclaimer.Controls
 
                 try
                 {
-                    var dds = mat.Diffuse.ToDds(0);
+                    var diffuse = mat.Submaterials.First(m => m.Usage == MaterialUsage.Diffuse);
+                    var dds = diffuse.Bitmap.ToDds(0);
 
                     var brush = new ImageBrush(dds.ToBitmapSource(DecompressOptions.Bgr24))
                     {
                         ViewportUnits = BrushMappingMode.Absolute,
                         TileMode = TileMode.Tile,
-                        Viewport = new Rect(0, 0, 1f / Math.Abs(mat.Tiling.X), 1f / Math.Abs(mat.Tiling.Y))
+                        Viewport = new Rect(0, 0, 1f / Math.Abs(diffuse.Tiling.X), 1f / Math.Abs(diffuse.Tiling.Y))
                     };
 
                     brush.Freeze();
@@ -225,7 +226,7 @@ namespace Reclaimer.Controls
                 var texMatrix = Matrix.Identity;
                 if (mesh.BoundsIndex >= 0)
                 {
-                    var bounds = model.Bounds[mesh.BoundsIndex];
+                    var bounds = model.Bounds[mesh.BoundsIndex.Value];
                     texMatrix = new Matrix
                     {
                         M11 = bounds.UBounds.Length,
