@@ -59,7 +59,7 @@ namespace Reclaimer.Windows
 
             foreach (var plugin in Substrate.AllPlugins)
             {
-                foreach (var item in plugin.MenuItems)
+                foreach (var item in plugin.GetMenuItems())
                     AddMenuItem(plugin, item);
             }
 
@@ -87,28 +87,20 @@ namespace Reclaimer.Windows
         private void AddMenuItem(Plugin source, PluginMenuItem item)
         {
             var menuItem = GetMenuItem(item.Path);
-            var fullKey = $"{source.Key}::{item.Key}";
-            menuItem.Tag = fullKey;
+            menuItem.Tag = item;
 
-            menuItem.Click -= GetHandler(source, item.Key); // incase the key is not unique
-            menuItem.Click += GetHandler(source, item.Key);
+            menuItem.Click -= CustomMenuItem_Click; // incase the key is not unique
+            menuItem.Click += CustomMenuItem_Click;
 
             var root = GetRoot(menuItem);
             if (!menu.Items.Contains(root))
                 menu.Items.Add(root);
         }
 
-        private Dictionary<string, RoutedEventHandler> actionLookup = new Dictionary<string, RoutedEventHandler>();
-        private RoutedEventHandler GetHandler(Plugin source, string key)
+        private void CustomMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var fullKey = $"{source.Key}::{key}";
-            if (actionLookup.ContainsKey(fullKey))
-                return actionLookup[fullKey];
-
-            var action = new RoutedEventHandler((s, e) => source.OnMenuItemClick(key));
-            actionLookup.Add(fullKey, action);
-
-            return action;
+            var item = (sender as MenuItem)?.Tag as PluginMenuItem;
+            item?.ExecuteHandler();
         }
 
         private Dictionary<string, MenuItem> menuLookup = new Dictionary<string, MenuItem>();

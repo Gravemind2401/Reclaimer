@@ -28,15 +28,12 @@ namespace Reclaimer.Plugins
             SaveSettings(Settings);
         }
 
-        public override IEnumerable<PluginMenuItem> MenuItems
+        public override IEnumerable<PluginMenuItem> GetMenuItems()
         {
-            get
-            {
-                yield return new PluginMenuItem(OpenKey, OpenPath);
-            }
+            yield return new PluginMenuItem(OpenKey, OpenPath, OnMenuItemClick);
         }
 
-        public override void OnMenuItemClick(string key)
+        private void OnMenuItemClick(string key)
         {
             if (key != OpenKey) return;
 

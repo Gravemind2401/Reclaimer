@@ -130,7 +130,7 @@ namespace Reclaimer.Plugins
             }
 
             var handler = AllPlugins
-                .Where(p => p.CanOpenFile(args.File, args.FileTypeKey))
+                .Where(p => p.CanOpenFile(args))
                 .OrderBy(p => p.Name)
                 .FirstOrDefault();
 
@@ -162,7 +162,7 @@ namespace Reclaimer.Plugins
                 return false;
 
             var allHandlers = AllPlugins
-                .Where(p => p.CanOpenFile(args.File, args.FileTypeKey));
+                .Where(p => p.CanOpenFile(args));
 
             OpenWithDialog.HandleFile(allHandlers, args);
             return true;

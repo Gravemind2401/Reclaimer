@@ -20,17 +20,14 @@ namespace ExamplePlugin
             LogOutput("Loaded example settings");
         }
 
-        public override IEnumerable<PluginMenuItem> MenuItems
+        public override IEnumerable<PluginMenuItem> GetMenuItems()
         {
-            get
-            {
-                yield return new PluginMenuItem("Key1", "Example\\Item 1");
-                yield return new PluginMenuItem("Key2", "Example\\Item 2");
-                yield return new PluginMenuItem("Key3", "Example\\Output Test");
-            }
+            yield return new PluginMenuItem("Key1", "Example\\Item 1", OnMenuItemClick);
+            yield return new PluginMenuItem("Key2", "Example\\Item 2", OnMenuItemClick);
+            yield return new PluginMenuItem("Key3", "Example\\Output Test", OnMenuItemClick);
         }
 
-        public override void OnMenuItemClick(string key)
+        private void OnMenuItemClick(string key)
         {
             if (key == "Key1")
                 MessageBox.Show("Item 1 Click");
@@ -49,7 +46,7 @@ namespace ExamplePlugin
             }
         }
 
-        public override bool CanOpenFile(object file, string fileTypeKey)
+        public override bool CanOpenFile(OpenFileArgs args)
         {
             return true;
         }

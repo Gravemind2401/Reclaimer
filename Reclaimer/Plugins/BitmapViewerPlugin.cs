@@ -13,13 +13,13 @@ namespace Reclaimer.Plugins
     {
         public override string Name => "Bitmap Viewer";
 
-        public override bool CanOpenFile(object file, string fileTypeKey)
+        public override bool CanOpenFile(OpenFileArgs args)
         {
             CacheType cacheType;
-            if (!Enum.TryParse(fileTypeKey.Split('.').First(), out cacheType))
+            if (!Enum.TryParse(args.FileTypeKey.Split('.').First(), out cacheType))
                 return false;
 
-            return file is IIndexItem && fileTypeKey.EndsWith(".bitm");
+            return args.File is IIndexItem && args.FileTypeKey.EndsWith(".bitm");
         }
 
         public override void OpenFile(OpenFileArgs args)

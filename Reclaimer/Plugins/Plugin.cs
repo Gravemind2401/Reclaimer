@@ -7,14 +7,30 @@ using System.Threading.Tasks;
 
 namespace Reclaimer.Plugins
 {
-    public struct PluginMenuItem
+    public delegate void MenuItemClickHandler(string key);
+
+    public class PluginMenuItem
     {
-        public string Key { get; }
+        private readonly string key;
+        private readonly MenuItemClickHandler handler;
+
         public string Path { get; }
 
-        public PluginMenuItem(string key, string path)
+        public void ExecuteHandler() => handler(key);
+
+        public PluginMenuItem(string key, string path, MenuItemClickHandler handler)
         {
-            Key = key;
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
+
+            if (handler == null)
+                throw new ArgumentNullException(nameof(handler));
+
+            this.key = key;
+            this.handler = handler;
             Path = path;
         }
     }
@@ -45,16 +61,15 @@ namespace Reclaimer.Plugins
             Substrate.SavePluginSettings(Key, settings);
         }
 
-        public virtual bool CanOpenFile(object file, string fileTypeKey) => false;
+        public virtual bool CanOpenFile(OpenFileArgs args) => false;
 
         public virtual void OpenFile(OpenFileArgs args) { }
 
-        public virtual IEnumerable<PluginMenuItem> MenuItems
+        public virtual IEnumerable<PluginMenuItem> GetMenuItems()
         {
-            get { yield break; }
+            yield break;
         }
 
-        public virtual void OnMenuItemClick(string key) { }
 
         //themes (including existing)
 

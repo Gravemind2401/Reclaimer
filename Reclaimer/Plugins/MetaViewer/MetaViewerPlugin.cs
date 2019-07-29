@@ -26,13 +26,13 @@ namespace Reclaimer.Plugins.MetaViewer
             SaveSettings(Settings);
         }
 
-        public override bool CanOpenFile(object file, string fileTypeKey)
+        public override bool CanOpenFile(OpenFileArgs args)
         {
             CacheType cacheType;
-            if (!Enum.TryParse(fileTypeKey.Split('.').First(), out cacheType))
+            if (!Enum.TryParse(args.FileTypeKey.Split('.').First(), out cacheType))
                 return false;
 
-            var item = file as IIndexItem;
+            var item = args.File as IIndexItem;
             if (item == null) return false;
 
             var xml = GetDefinitionPath(item);

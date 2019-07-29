@@ -13,13 +13,13 @@ namespace Reclaimer.Plugins
     {
         public override string Name => "Model Viewer";
 
-        public override bool CanOpenFile(object file, string fileTypeKey)
+        public override bool CanOpenFile(OpenFileArgs args)
         {
             CacheType cacheType;
-            if (!Enum.TryParse(fileTypeKey.Split('.').First(), out cacheType))
+            if (!Enum.TryParse(args.FileTypeKey.Split('.').First(), out cacheType))
                 return false;
 
-            return file is IIndexItem && (fileTypeKey.EndsWith(".mode") || fileTypeKey.EndsWith(".mod2") || fileTypeKey.EndsWith(".sbsp"));
+            return args.File is IIndexItem && (args.FileTypeKey.EndsWith(".mode") || args.FileTypeKey.EndsWith(".mod2") || args.FileTypeKey.EndsWith(".sbsp"));
         }
 
         public override void OpenFile(OpenFileArgs args)
