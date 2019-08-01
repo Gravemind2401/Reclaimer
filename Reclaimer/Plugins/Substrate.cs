@@ -168,6 +168,11 @@ namespace Reclaimer.Plugins
             return true;
         }
 
+        public static IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
+        {
+            return AllPlugins.SelectMany(p => p.GetContextItems(context));
+        }
+
         //add utility/tab
 
         internal static void Shutdown()

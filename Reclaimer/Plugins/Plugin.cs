@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace Reclaimer.Plugins
 {
     public delegate void MenuItemClickHandler(string key);
+    public delegate void ContextItemClickHandler(string key, OpenFileArgs context);
 
     public class PluginMenuItem
     {
@@ -19,6 +20,32 @@ namespace Reclaimer.Plugins
         public void ExecuteHandler() => handler(key);
 
         public PluginMenuItem(string key, string path, MenuItemClickHandler handler)
+        {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
+
+            if (handler == null)
+                throw new ArgumentNullException(nameof(handler));
+
+            this.key = key;
+            this.handler = handler;
+            Path = path;
+        }
+    }
+
+    public class PluginContextItem
+    {
+        private readonly string key;
+        private readonly ContextItemClickHandler handler;
+
+        public string Path { get; }
+
+        public void ExecuteHandler(OpenFileArgs context) => handler(key, context);
+
+        public PluginContextItem(string key, string path, ContextItemClickHandler handler)
         {
             if (key == null)
                 throw new ArgumentNullException(nameof(key));
@@ -70,12 +97,12 @@ namespace Reclaimer.Plugins
             yield break;
         }
 
+        public virtual IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
+        {
+            yield break;
+        }
 
         //themes (including existing)
-
-        //context items for files
-
-        //on context item click
 
         protected internal void LogOutput(string message)
         {

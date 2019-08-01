@@ -5,6 +5,7 @@ using Reclaimer.Windows;
 using Studio.Controls;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,10 @@ namespace Reclaimer.Controls
     /// </summary>
     public partial class MapViewer : UtilityItem
     {
+        private readonly MenuItem OpenContextItem;
+        private readonly MenuItem OpenWithContextItem;
+        private readonly Separator ContextSeparator;
+
         private ICacheFile cache;
 
         public static readonly DependencyProperty HierarchyViewProperty =
@@ -36,16 +41,25 @@ namespace Reclaimer.Controls
             set { SetValue(HierarchyViewProperty, value); }
         }
 
+        public ObservableCollection<UIElement> ContextItems { get; }
+
         public static void HierarchyViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var mv = d as MapViewer;
-            Plugins.MapViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
+            MapViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
             mv.BuildTagTree(mv.txtSearch.Text);
         }
 
         public MapViewer()
         {
             InitializeComponent();
+
+            OpenContextItem = new MenuItem { Header = "Open" };
+            OpenWithContextItem = new MenuItem { Header = "Open With..." };
+            ContextSeparator = new Separator();
+
+            ContextItems = new ObservableCollection<UIElement>();
+
             DataContext = this;
         }
 
@@ -56,7 +70,7 @@ namespace Reclaimer.Controls
             TabHeader = Utils.GetFileName(cache.FileName);
             TabToolTip = $"Map Viewer - {TabHeader}";
 
-            HierarchyView = Plugins.MapViewerPlugin.Settings.HierarchyView;
+            HierarchyView = MapViewerPlugin.Settings.HierarchyView;
             BuildTagTree(null);
         }
 
@@ -158,6 +172,18 @@ namespace Reclaimer.Controls
                 RecursiveCollapseNode(n);
         }
 
+        private OpenFileArgs GetSelectedArgs()
+        {
+            var node = tv.SelectedItem as TreeNode;
+            if (node.HasChildren) //folder
+                return new OpenFileArgs(node.Header, node, $"{cache.CacheType}.*");
+
+            var item = node.Tag as IIndexItem;
+            var fileName = $"{Utils.GetFileName(item.FullPath)}.{item.ClassName}";
+            var fileKey = $"{cache.CacheType}.{item.ClassCode}";
+            return new OpenFileArgs(fileName, item, fileKey, Substrate.GetHostWindow(this));
+        }
+
         #region Event Handlers
         private void btnCollapseAll_Click(object sender, RoutedEventArgs e)
         {
@@ -169,37 +195,61 @@ namespace Reclaimer.Controls
             BuildTagTree(txtSearch.Text);
         }
 
-        private void tv_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void TreeItemMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            if (e.ChangedButton != MouseButton.Left)
+                return;
+
+            if ((sender as TreeViewItem)?.DataContext != tv.SelectedItem)
+                return; //because this event bubbles to the parent node
+
             var item = (tv.SelectedItem as TreeNode)?.Tag as IIndexItem;
             if (item == null) return;
 
-            var fileName = $"{Utils.GetFileName(item.FullPath)}.{item.ClassName}";
-            var fileKey = $"{cache.CacheType}.{item.ClassCode}";
-            var args = new OpenFileArgs(fileName, item, fileKey, Substrate.GetHostWindow(this));
-            Substrate.OpenWithDefault(args);
+            Substrate.OpenWithDefault(GetSelectedArgs());
         }
 
-        private void menuOpen_Click(object sender, RoutedEventArgs e)
+        private void TreeItemContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            var item = (tv.SelectedItem as TreeNode)?.Tag as IIndexItem;
-            if (item == null) return;
+            foreach (MenuItem item in ContextItems.Where(i => i is MenuItem))
+                item.Click -= ContextItem_Click;
 
-            var fileName = $"{Utils.GetFileName(item.FullPath)}.{item.ClassName}";
-            var fileKey = $"{cache.CacheType}.{item.ClassCode}";
-            var args = new OpenFileArgs(fileName, item, fileKey, Substrate.GetHostWindow(this));
-            Substrate.OpenWithDefault(args);
+            var menu = (sender as ContextMenu);
+            var node = tv.SelectedItem as TreeNode;
+
+            ContextItems.Clear();
+            if (node.Tag is IIndexItem)
+            {
+                ContextItems.Add(OpenContextItem);
+                ContextItems.Add(OpenWithContextItem);
+            }
+
+            var customItems = Substrate.GetContextItems(GetSelectedArgs());
+
+            if (ContextItems.Any() && customItems.Any())
+                ContextItems.Add(ContextSeparator);
+
+            foreach (var item in customItems)
+                ContextItems.Add(new MenuItem { Header = item.Path, Tag = item });
+
+            foreach (MenuItem item in ContextItems.Where(i => i is MenuItem))
+                item.Click += ContextItem_Click;
+
+            if (!ContextItems.Any())
+                e.Handled = true;
         }
 
-        private void menuOpenWith_Click(object sender, RoutedEventArgs e)
+        private void ContextItem_Click(object sender, RoutedEventArgs e)
         {
             var item = (tv.SelectedItem as TreeNode)?.Tag as IIndexItem;
             if (item == null) return;
 
-            var fileName = $"{Utils.GetFileName(item.FullPath)}.{item.ClassName}";
-            var fileKey = $"{cache.CacheType}.{item.ClassCode}";
-            var args = new OpenFileArgs(fileName, item, fileKey, Substrate.GetHostWindow(this));
-            Substrate.OpenWithPrompt(args);
+            var args = GetSelectedArgs();
+            if (sender == OpenContextItem)
+                Substrate.OpenWithDefault(args);
+            else if (sender == OpenWithContextItem)
+                Substrate.OpenWithPrompt(args);
+            else ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(args);
         }
         #endregion
     }

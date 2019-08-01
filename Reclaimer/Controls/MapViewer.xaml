@@ -7,7 +7,10 @@
              xmlns:u="clr-namespace:Reclaimer.Utilities"
              xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
              mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
-    
+    <UserControl.Resources>
+        <ContextMenu x:Key="TreeItemContextMenu" 
+                     ItemsSource="{Binding ContextItems, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+    </UserControl.Resources>
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top" Margin="0" IsLocked="True"
                      Background="{DynamicResource ToolBarBackground}">
@@ -29,8 +32,14 @@
         <studio:ExtendedTreeView x:Name="tv"
                   VirtualizingStackPanel.IsVirtualizing="True"
                   VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
-                  VirtualizingStackPanel.VirtualizationMode="Recycling"
-                  MouseDoubleClick="tv_MouseDoubleClick">
+                  VirtualizingStackPanel.VirtualizationMode="Recycling">
+            <TreeView.Resources>
+                <Style TargetType="studio:ExtendedTreeViewItem" BasedOn="{StaticResource {x:Type studio:ExtendedTreeViewItem}}">
+                    <Setter Property="ContextMenu" Value="{StaticResource TreeItemContextMenu}" />
+                    <EventSetter Event="MouseDoubleClick" Handler="TreeItemMouseDoubleClick" />
+                    <EventSetter Event="ContextMenuOpening" Handler="TreeItemContextMenuOpening" />
+                </Style>
+            </TreeView.Resources>
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate DataType="u:TreeNode" ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal">
@@ -50,12 +59,6 @@
                     </DataTemplate.Triggers>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
-            <TreeView.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Open" Click="menuOpen_Click" />
-                    <MenuItem Header="Open With..." Click="menuOpenWith_Click" />
-                </ContextMenu>
-            </TreeView.ContextMenu>
         </studio:ExtendedTreeView>
     </DockPanel>
 </studio:UtilityItem>
