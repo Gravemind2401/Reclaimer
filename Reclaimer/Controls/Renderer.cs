@@ -320,7 +320,7 @@ namespace Reclaimer.Controls
         public void Dispose()
         {
             timer.Stop();
-            Viewport.Children.Clear();
+            Viewport?.Children.Clear();
         }
 
         private void ZoomToBounds(RealBounds3D bounds)
