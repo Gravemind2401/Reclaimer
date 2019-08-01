@@ -49,18 +49,9 @@ namespace Reclaimer.Plugins
 
             LogOutput($"Loading map file: {ofd.FileName}");
 
-            var host = Substrate.GetHostWindow(null);
-
-            var tc = host.MultiPanel.GetElementAtPath(Dock.Left) as UtilityTabControl;
             var mv = new Controls.MapViewer();
-
-            if (tc == null) tc = new UtilityTabControl();
-
-            if (!host.MultiPanel.GetChildren().Contains(tc))
-                host.MultiPanel.AddElement(tc, null, Dock.Left, new GridLength(400));
-
             mv.LoadMap(ofd.FileName);
-            tc.Items.Add(mv);
+            Substrate.AddUtility(mv, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
 
             LogOutput($"Loaded map file: {ofd.FileName}");
         }

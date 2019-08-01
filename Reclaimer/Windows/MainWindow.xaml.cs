@@ -43,12 +43,7 @@ namespace Reclaimer.Windows
             if (outputViewer.Parent != null)
                 return;
 
-            var tc = MainPanel.GetElementAtPath(Dock.Bottom) as UtilityTabControl ?? new UtilityTabControl();
-
-            if (!MainPanel.GetChildren().Contains(tc))
-                MainPanel.AddElement(tc, null, Dock.Bottom, new GridLength(250));
-
-            tc.Items.Add(outputViewer);
+            Substrate.AddUtility(outputViewer, Substrate.GetHostWindow(), Dock.Bottom, new GridLength(250));
         }
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)

@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Reclaimer.Plugins
 {
@@ -173,7 +174,60 @@ namespace Reclaimer.Plugins
             return AllPlugins.SelectMany(p => p.GetContextItems(context));
         }
 
-        //add utility/tab
+        public static void AddUtility(ITabContent item, IMultiPanelHost host, Dock targetDock)
+        {
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
+
+            AddUtility(item, host, targetDock, host.MultiPanel.DefaultDockSize);
+        }
+
+        public static void AddUtility(ITabContent item, IMultiPanelHost host, Dock targetDock, GridLength targetSize)
+        {
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+
+            if (host == null)
+                throw new ArgumentNullException(nameof(host));
+
+            if (item.TabUsage != TabItemUsage.Utility)
+                throw new ArgumentException("item TabUsage must be TabItemUsage.Utility", nameof(item));
+
+            var opposite = targetDock == Dock.Left || targetDock == Dock.Top
+                ? (Dock)((int)targetDock + 2)
+                : (Dock)((int)targetDock - 2);
+
+            UtilityTabControl tc;
+
+            var idealPath = host.MultiPanel.GetChildren()
+                .Select(c => host.MultiPanel.GetPathToElement(c))
+                .Where(p => !p.Contains(opposite))
+                .Where(p => p.Last() == targetDock)
+                .OrderBy(p => p.Count)
+                .FirstOrDefault();
+
+            if (idealPath != null)
+            {
+                tc = host.MultiPanel.GetElementAtPath(idealPath) as UtilityTabControl;
+                if (tc != null)
+                {
+                    tc.Items.Add(item);
+                    return;
+                }
+            }
+
+            var targetHalf = host.MultiPanel.GetPathToElement(host.DocumentContainer)
+                .Cast<Dock?>()
+                .LastOrDefault(d => d == targetDock || d == opposite);
+
+            tc = new UtilityTabControl();
+            var targetElement = targetHalf == null || targetHalf == targetDock
+                ? host.DocumentContainer
+                : null;
+
+            host.MultiPanel.AddElement(tc, targetElement, targetDock, targetSize);
+            tc.Items.Add(item);
+        }
 
         internal static void Shutdown()
         {
