@@ -147,10 +147,17 @@
                                SplitterShowsPreview="True" SplitterBrush="LightGray"
                                MinPanelSize="0">
             <studio:SplitContainer.Panel1Content>
-                    <studio:ExtendedTreeView ItemsSource="{Binding TreeViewItems}" CheckBoxes="True" VerticalContentAlignment="Center"
-                                             ItemChecked="ExtendedTreeView_ItemChecked"
-                                             ItemUnchecked="ExtendedTreeView_ItemChecked"
-                                             ItemDoubleClick="ExtendedTreeView_ItemDoubleClick" />
+                <studio:ExtendedTreeView x:Name="tv"
+                        ItemsSource="{Binding TreeViewItems}" 
+                        CheckBoxes="True" VerticalContentAlignment="Center"
+                        ItemChecked="ExtendedTreeView_ItemChecked"
+                        ItemUnchecked="ExtendedTreeView_ItemChecked">
+                    <TreeView.Resources>
+                        <Style TargetType="studio:ExtendedTreeViewItem" BasedOn="{StaticResource {x:Type studio:ExtendedTreeViewItem}}">
+                            <EventSetter Event="MouseDoubleClick" Handler="ExtendedTreeView_ItemDoubleClick" />
+                        </Style>
+                    </TreeView.Resources>
+                </studio:ExtendedTreeView>
             </studio:SplitContainer.Panel1Content>
             <studio:SplitContainer.Panel2Content>
                 <Grid>

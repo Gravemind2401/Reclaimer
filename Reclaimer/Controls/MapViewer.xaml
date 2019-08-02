@@ -36,8 +36,10 @@
             <TreeView.Resources>
                 <Style TargetType="studio:ExtendedTreeViewItem" BasedOn="{StaticResource {x:Type studio:ExtendedTreeViewItem}}">
                     <Setter Property="ContextMenu" Value="{StaticResource TreeItemContextMenu}" />
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                     <EventSetter Event="MouseDoubleClick" Handler="TreeItemMouseDoubleClick" />
                     <EventSetter Event="ContextMenuOpening" Handler="TreeItemContextMenuOpening" />
+                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="TreeItemPreviewMouseRightButtonDown" />
                 </Style>
             </TreeView.Resources>
             <TreeView.ItemTemplate>

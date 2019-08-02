@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Reclaimer.Utilities
 {
-    public class BindableBase : INotifyPropertyChanged
+    public abstract class BindableBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

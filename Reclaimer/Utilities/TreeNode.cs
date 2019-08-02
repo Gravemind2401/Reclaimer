@@ -23,6 +23,13 @@ namespace Reclaimer.Utilities
             set { SetProperty(ref tag, value); }
         }
 
+        private bool isExpanded;
+        public bool IsExpanded
+        {
+            get { return isExpanded; }
+            set { SetProperty(ref isExpanded, value); }
+        }
+        
         public bool HasChildren => Children?.Count > 0;
 
         private ObservableCollection<TreeNode> children;

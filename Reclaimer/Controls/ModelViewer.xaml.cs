@@ -296,7 +296,10 @@ namespace Reclaimer.Controls
         #region Treeview Events
         private void ExtendedTreeView_ItemDoubleClick(object sender, RoutedEventArgs e)
         {
-            var item = e.OriginalSource as ExtendedTreeViewItem;
+            if (sender != tv.SelectedItem)
+                return; //because this event bubbles to the parent node
+
+            var item = sender as ExtendedTreeViewItem;
             var mesh = item.Tag as Model3DGroup;
             if (mesh != null)
                 renderer.LocateObject(mesh);

@@ -170,6 +170,7 @@ namespace Reclaimer.Controls
         {
             foreach (var n in node.Children)
                 RecursiveCollapseNode(n);
+            node.IsExpanded = false;
         }
 
         private OpenFileArgs GetSelectedArgs()
@@ -187,12 +188,20 @@ namespace Reclaimer.Controls
         #region Event Handlers
         private void btnCollapseAll_Click(object sender, RoutedEventArgs e)
         {
+            var nodes = tv.ItemsSource as List<TreeNode>;
 
+            foreach (var node in nodes)
+                RecursiveCollapseNode(node);
         }
 
         private void txtSearch_SearchChanged(object sender, RoutedEventArgs e)
         {
             BuildTagTree(txtSearch.Text);
+        }
+
+        private void TreeItemPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            (sender as TreeViewItem).IsSelected = true;
         }
 
         private void TreeItemMouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -241,9 +250,6 @@ namespace Reclaimer.Controls
 
         private void ContextItem_Click(object sender, RoutedEventArgs e)
         {
-            var item = (tv.SelectedItem as TreeNode)?.Tag as IIndexItem;
-            if (item == null) return;
-
             var args = GetSelectedArgs();
             if (sender == OpenContextItem)
                 Substrate.OpenWithDefault(args);
