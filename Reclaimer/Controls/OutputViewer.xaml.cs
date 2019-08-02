@@ -87,7 +87,8 @@ namespace Reclaimer.Controls
                 .Select(p => p.Message);
 
             txtOutput.Clear();
-            txtOutput.AppendText(string.Join(Environment.NewLine, output) + Environment.NewLine);
+            if (output.Any())
+                txtOutput.AppendText(string.Join(Environment.NewLine, output) + Environment.NewLine);
             txtOutput.CaretIndex = txtOutput.Text.Length;
             txtOutput.ScrollToEnd();
         }

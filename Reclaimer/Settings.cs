@@ -17,6 +17,7 @@ namespace Reclaimer
         {
             Formatting = Formatting.Indented,
             NullValueHandling = NullValueHandling.Ignore,
+            Converters = new[] { new Newtonsoft.Json.Converters.StringEnumConverter() }
         };
 
         public string Theme { get; set; }
@@ -28,6 +29,7 @@ namespace Reclaimer
             set { Substrate.DefaultHandlers = value; }
         }
 
+        //will initially be read in as JObjects
         public Dictionary<string, object> PluginSettings { get; set; }
 
         public Settings()

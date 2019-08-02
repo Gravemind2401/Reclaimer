@@ -12,13 +12,13 @@ namespace Reclaimer.Plugins.MetaViewer
 {
     public class MetaViewerPlugin : Plugin
     {
-        internal static PluginSettings Settings { get; private set; }
+        internal static MetaViewerSettings Settings { get; private set; }
 
         public override string Name => "Meta Viewer";
 
         public override void Initialise()
         {
-            Settings = LoadSettings<PluginSettings>();
+            Settings = LoadSettings<MetaViewerSettings>();
         }
 
         public override void Suspend()
@@ -93,7 +93,7 @@ namespace Reclaimer.Plugins.MetaViewer
             }
         }
 
-        internal class PluginSettings
+        internal class MetaViewerSettings
         {
             public bool ShowInvisibles { get; set; }
         }
