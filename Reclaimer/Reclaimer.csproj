@@ -101,6 +101,7 @@
     </Compile>
     <Compile Include="Controls\Renderer.cs" />
     <Compile Include="Controls\ZoomPanel.cs" />
+    <Compile Include="Plugins\BatchExtractPlugin.cs" />
     <Compile Include="Plugins\BitmapViewerPlugin.cs" />
     <Compile Include="Plugins\MapViewerPlugin.cs" />
     <Compile Include="Plugins\MetaViewer\BitmaskValue.cs" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Reclaimer.Utilities
@@ -31,6 +32,18 @@ namespace Reclaimer.Utilities
                 if (predicate(item)) match = index++;
 
             return match;
+        }
+
+        /// <summary>
+        /// Performs a case-insensitive replace.
+        /// </summary>
+        /// <param name="input">The string to search.</param>
+        /// <param name="pattern">The value that will be replaced.</param>
+        /// <param name="replacement">The replacement value.</param>
+        /// <returns></returns>
+        public static string PatternReplace(this string input, string pattern, string replacement)
+        {
+            return Regex.Replace(input, Regex.Escape(pattern), replacement, RegexOptions.IgnoreCase);
         }
     }
 }
