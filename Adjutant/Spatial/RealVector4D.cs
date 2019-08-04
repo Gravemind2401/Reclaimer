@@ -58,6 +58,8 @@ namespace Adjutant.Spatial
 
         public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z + W * W);
 
+        public RealVector4D Conjugate => new RealVector4D(-X, -Y, -Z, W);
+
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]");
 
         #region IXMVector

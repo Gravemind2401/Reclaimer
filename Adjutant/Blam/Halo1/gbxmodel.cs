@@ -302,10 +302,10 @@ namespace Adjutant.Blam.Halo1
         [Offset(40)]
         public RealVector3D Position { get; set; }
 
-        [Offset(56)]
+        [Offset(52)]
         public RealVector4D Rotation { get; set; }
 
-        [Offset(72)]
+        [Offset(68)]
         public float DistanceFromParent { get; set; }
 
         public override string ToString() => Name;
@@ -314,7 +314,7 @@ namespace Adjutant.Blam.Halo1
 
         IRealVector3D IGeometryNode.Position => Position;
 
-        IRealVector4D IGeometryNode.Rotation => Rotation;
+        IRealVector4D IGeometryNode.Rotation => Rotation.Conjugate;
 
         #endregion
     }
