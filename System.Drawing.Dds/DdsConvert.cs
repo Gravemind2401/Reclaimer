@@ -71,7 +71,7 @@ namespace System.Drawing.Dds
         /// <param name="format">The image format to write with.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="NotSupportedException" />
-        public void WriteToDisk(string fileName, ImageFormat format) => WriteToDisk(fileName, format, DecompressOptions.None);
+        public void WriteToDisk(string fileName, ImageFormat format) => WriteToDisk(fileName, format, DecompressOptions.Default);
 
         /// <summary>
         /// Decompresses any compressed pixel data and saves the image to a file on disk using a standard image format,
@@ -106,7 +106,7 @@ namespace System.Drawing.Dds
         /// <param name="format">The image format to write with.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="NotSupportedException" />
-        public void WriteToStream(Stream stream, ImageFormat format) => WriteToStream(stream, format, DecompressOptions.None);
+        public void WriteToStream(Stream stream, ImageFormat format) => WriteToStream(stream, format, DecompressOptions.Default);
 
         /// <summary>
         /// Decompresses any compressed pixel data and writes the image to a stream using a standard image format.
@@ -147,7 +147,7 @@ namespace System.Drawing.Dds
         /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>
         /// </summary>
         /// <exception cref="NotSupportedException" />
-        public BitmapSource ToBitmapSource() => ToBitmapSource(DecompressOptions.None);
+        public BitmapSource ToBitmapSource() => ToBitmapSource(DecompressOptions.Default);
 
         /// <summary>
         /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>
@@ -197,6 +197,10 @@ namespace System.Drawing.Dds
             var format = PixelFormats.Bgra32;
             var bpp = 4;
 
+            //at least one 'remove channel' flag is set
+            if ((options & DecompressOptions.RemoveAllChannels) != 0)
+                bgra = SelectChannels(bgra, options);
+
             if (options.HasFlag(DecompressOptions.Bgr24))
             {
                 format = PixelFormats.Bgr24;
@@ -210,6 +214,48 @@ namespace System.Drawing.Dds
                 source = UnwrapCubemapSource(source, dpi, format);
 
             return source;
+        }
+
+        private IEnumerable<byte> SelectChannels(IEnumerable<byte> sourcePixels, DecompressOptions channels)
+        {
+            var blue = !channels.HasFlag(DecompressOptions.RemoveBlueChannel);
+            var green = !channels.HasFlag(DecompressOptions.RemoveGreenChannel);
+            var red = !channels.HasFlag(DecompressOptions.RemoveRedChannel);
+            var alpha = !channels.HasFlag(DecompressOptions.RemoveAlphaChannel);
+
+            var channelIndex = -1;
+            if (Convert.ToInt32(blue) + Convert.ToInt32(green) + Convert.ToInt32(red) + Convert.ToInt32(alpha) == 1)
+            {
+                if (blue) channelIndex = 0;
+                else if (green) channelIndex = 1;
+                else if (red) channelIndex = 2;
+                else if (alpha) channelIndex = 3;
+            }
+
+            var temp = new List<byte>(4);
+            foreach (var b in sourcePixels)
+            {
+                temp.Add(b);
+                if (temp.Count < 4)
+                    continue;
+
+                if (channelIndex >= 0)
+                {
+                    yield return temp[channelIndex];
+                    yield return temp[channelIndex];
+                    yield return temp[channelIndex];
+                    yield return byte.MaxValue;
+                }
+                else
+                {
+                    yield return blue ? temp[0] : (byte)0;
+                    yield return green ? temp[1] : (byte)0;
+                    yield return red ? temp[2] : (byte)0;
+                    yield return alpha ? temp[3] : byte.MaxValue;
+                }
+
+                temp.Clear();
+            }
         }
 
         private BitmapSource UnwrapCubemapSource(BitmapSource source, double dpi, Windows.Media.PixelFormat format)
@@ -766,9 +812,19 @@ namespace System.Drawing.Dds
     [Flags]
     public enum DecompressOptions
     {
-        None = 0,
+        Default = 0,
         Bgr24 = 1,
-        UnwrapCubemap = 2
+        UnwrapCubemap = 2,
+        RemoveBlueChannel = 4,
+        RemoveGreenChannel = 8,
+        RemoveRedChannel = 16,
+        RemoveAlphaChannel = 32,
+
+        BlueChannelOnly = RemoveGreenChannel | RemoveRedChannel | RemoveAlphaChannel,
+        GreenChannelOnly = RemoveBlueChannel | RemoveRedChannel | RemoveAlphaChannel,
+        RedChannelOnly = RemoveBlueChannel | RemoveGreenChannel | RemoveAlphaChannel,
+        AlphaChannelOnly = RemoveBlueChannel | RemoveGreenChannel | RemoveRedChannel,
+        RemoveAllChannels = RemoveBlueChannel | RemoveGreenChannel | RemoveRedChannel | RemoveAlphaChannel
     }
 
     internal struct BgraColour
