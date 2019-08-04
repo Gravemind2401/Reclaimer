@@ -125,6 +125,7 @@ namespace Adjutant.Blam.Halo2
 
                         reader.Seek(baseAddress + vertexResource.Offset + i * vertexSize, SeekOrigin.Begin);
                         vert.Position = new Int16N3(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16());
+                        ReadBlendData(reader, section, mesh, vert, nodeMap);
 
                         mesh.Vertices[i] = vert;
                     }
@@ -151,6 +152,50 @@ namespace Adjutant.Blam.Halo2
             }
 
             return model;
+        }
+
+        private void ReadBlendData(EndianReader reader, SectionBlock section, GeometryMesh mesh, Vertex vert, byte[] nodeMap)
+        {
+            if (section.NodesPerVertex == 0)
+            {
+                if (section.GeometryClassification == GeometryClassification.Rigid)
+                    mesh.NodeIndex = 0;
+                return;
+            }
+
+            if (section.GeometryClassification == GeometryClassification.Rigid)
+                mesh.VertexWeights = VertexWeights.Rigid;
+            else if (section.GeometryClassification == GeometryClassification.RigidBoned)
+            {
+                mesh.VertexWeights = VertexWeights.Skinned;
+                vert.BlendIndices = new RealVector4D(reader.ReadByte(), 0, 0, 0);
+                vert.BlendWeight = new RealVector4D(1, 0, 0, 0);
+                reader.ReadByte();
+            }
+            else if (section.GeometryClassification == GeometryClassification.Skinned)
+            {
+                mesh.VertexWeights = VertexWeights.Skinned;
+                if (section.NodesPerVertex == 2 || section.NodesPerVertex == 4)
+                    reader.ReadInt16();
+
+                var nodes = Enumerable.Range(0, 4).Select(i => section.NodesPerVertex > i ? reader.ReadByte() : 0).ToList();
+                var weights = Enumerable.Range(0, 4).Select(i => section.NodesPerVertex > i ? reader.ReadByte() / (float)byte.MaxValue : 0).ToList();
+
+                vert.BlendIndices = new RealVector4D(nodes[0], nodes[1], nodes[2], nodes[3]);
+                vert.BlendWeight = new RealVector4D(weights[0], weights[1], weights[2], weights[3]);
+            }
+
+            if (nodeMap.Length > 0)
+            {
+                var temp = vert.BlendIndices;
+                vert.BlendIndices = new RealVector4D
+                {
+                    X = section.NodesPerVertex > 0 ? nodeMap[(int)temp.X] : 0,
+                    Y = section.NodesPerVertex > 1 ? nodeMap[(int)temp.Y] : 0,
+                    Z = section.NodesPerVertex > 2 ? nodeMap[(int)temp.Z] : 0,
+                    W = section.NodesPerVertex > 3 ? nodeMap[(int)temp.W] : 0,
+                };
+            }
         }
 
         #endregion
@@ -239,11 +284,19 @@ namespace Adjutant.Blam.Halo2
         public override string ToString() => Name;
     }
 
+    public enum GeometryClassification : short
+    {
+        Worldspace = 0,
+        Rigid = 1,
+        RigidBoned = 2,
+        Skinned = 3
+    }
+
     [FixedSize(92)]
     public class SectionBlock
     {
         [Offset(0)]
-        public short WeightType { get; set; }
+        public GeometryClassification GeometryClassification { get; set; }
 
         [Offset(4)]
         [StoreType(typeof(ushort))]
@@ -254,7 +307,7 @@ namespace Adjutant.Blam.Halo2
         public int FaceCount { get; set; }
 
         [Offset(20)]
-        public byte Bones { get; set; }
+        public byte NodesPerVertex { get; set; }
 
         [Offset(56)]
         public DataPointer DataPointer { get; set; }

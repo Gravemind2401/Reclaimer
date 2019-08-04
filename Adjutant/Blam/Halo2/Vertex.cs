@@ -16,6 +16,10 @@ namespace Adjutant.Blam.Halo2
 
         public HenDN3 Normal { get; set; }
 
+        public RealVector4D BlendIndices { get; set; }
+
+        public RealVector4D BlendWeight { get; set; }
+
         #region IVertex
 
         IReadOnlyList<IXMVector> IVertex.Position => new IXMVector[] { Position };
@@ -28,9 +32,9 @@ namespace Adjutant.Blam.Halo2
 
         IReadOnlyList<IXMVector> IVertex.Tangent => new IXMVector[0];
 
-        IReadOnlyList<IXMVector> IVertex.BlendIndices => new IXMVector[0];// { new RealVector2D(NodeIndex1, NodeIndex2) };
+        IReadOnlyList<IXMVector> IVertex.BlendIndices => new IXMVector[] { BlendIndices };
 
-        IReadOnlyList<IXMVector> IVertex.BlendWeight => new IXMVector[0];// { NodeWeights };
+        IReadOnlyList<IXMVector> IVertex.BlendWeight => new IXMVector[] { BlendWeight };
 
         IReadOnlyList<IXMVector> IVertex.Color => new IXMVector[0];
 
