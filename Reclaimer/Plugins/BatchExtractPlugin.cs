@@ -184,7 +184,7 @@ namespace Reclaimer.Plugins
                 }
 
                 var format = Settings.BitmapFormat == BitmapFormat.PNG ? ImageFormat.Png : ImageFormat.Tiff;
-                var options = Settings.BitmapMode == BitmapMode.NoAlpha ? DecompressOptions.Bgr24 : DecompressOptions.None;
+                var options = Settings.BitmapMode == BitmapMode.NoAlpha ? DecompressOptions.Bgr24 : DecompressOptions.Default;
                 dds.WriteToDisk(fileName, format, options | DecompressOptions.UnwrapCubemap);
             }
 

@@ -28,12 +28,9 @@ namespace Reclaimer.Controls
     {
         private const double dpi = 96;
 
-        private byte[] imageData;
-        private byte[] renderData;
-
         private IBitmap bitmap;
+        private DdsImage dds;
         private string sourceName;
-        private int pixelWidth, pixelHeight, pixelStride;
 
         public IEnumerable<int> Indexes { get; private set; }
 
@@ -113,14 +110,15 @@ namespace Reclaimer.Controls
         public static void ChannelPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (BitmapViewer)d;
-            if (control.imageData != null)
+            if (control.dds != null)
                 control.Render();
         }
 
         public static void SelectedIndexPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (BitmapViewer)d;
-            control.SetImage((int)e.NewValue);
+            control.dds = control.bitmap.ToDds((int)e.NewValue);
+            control.Render();
         }
         #endregion
 
@@ -141,7 +139,8 @@ namespace Reclaimer.Controls
                 sourceName = Utils.GetFileNameWithoutExtension(fileName);
 
                 Indexes = Enumerable.Range(0, bitmap.SubmapCount);
-                SetImage(0);
+                dds = bitmap.ToDds(0);
+                Render();
                 RaisePropertyChanged(nameof(Indexes));
                 CoerceValue(HasMultipleProperty);
             }
@@ -151,56 +150,21 @@ namespace Reclaimer.Controls
             }
         }
 
-        private void SetImage(int index)
-        {
-            var dds = bitmap.ToDds(index);
-            var src = dds.ToBitmapSource(DecompressOptions.UnwrapCubemap);
-
-            pixelWidth = src.PixelWidth;
-            pixelHeight = src.PixelHeight;
-            pixelStride = src.PixelWidth * 4;
-
-            imageData = new byte[pixelStride * pixelHeight];
-            src.CopyPixels(imageData, pixelStride, 0);
-
-            renderData = new byte[pixelStride * pixelHeight];
-            Render();
-        }
-
         private void Render()
         {
-            Array.Copy(imageData, renderData, imageData.Length);
-
-            var singleChannel = -1;
-            if (Convert.ToInt32(BlueChannel) + Convert.ToInt32(GreenChannel) + Convert.ToInt32(RedChannel) + Convert.ToInt32(AlphaChannel) == 1)
-            {
-                if (BlueChannel) singleChannel = 0;
-                else if (GreenChannel) singleChannel = 1;
-                else if (RedChannel) singleChannel = 2;
-                else if (AlphaChannel) singleChannel = 3;
-            }
-
-            for (int i = 0; i < renderData.Length; i += 4)
-            {
-                //if only one channel is selected treat it as greyscale
-                if (singleChannel >= 0)
-                {
-                    renderData[i + 0] = renderData[i + 1] = renderData[i + 2] = renderData[i + singleChannel];
-                    renderData[i + 3] = byte.MaxValue;
-                }
-                else
-                {
-                    if (!BlueChannel) renderData[i] = 0;
-                    if (!GreenChannel) renderData[i + 1] = 0;
-                    if (!RedChannel) renderData[i + 2] = 0;
-                    if (!AlphaChannel) renderData[i + 3] = byte.MaxValue;
-                }
-            }
-
-            var src = BitmapSource.Create(pixelWidth, pixelHeight, dpi, dpi, PixelFormats.Bgra32, null, renderData, pixelStride);
+            var src = dds.ToBitmapSource(GetOptions());
             if (src.CanFreeze) src.Freeze();
-
             ImageSource = src;
+        }
+
+        private DecompressOptions GetOptions()
+        {
+            var options = DecompressOptions.UnwrapCubemap;
+            if (!BlueChannel) options |= DecompressOptions.RemoveBlueChannel;
+            if (!GreenChannel) options |= DecompressOptions.RemoveGreenChannel;
+            if (!RedChannel) options |= DecompressOptions.RemoveRedChannel;
+            if (!AlphaChannel) options |= DecompressOptions.RemoveAlphaChannel;
+            return options;
         }
 
         private void ExportImage(bool allChannels)
@@ -238,7 +202,7 @@ namespace Reclaimer.Controls
                     ? (BitmapEncoder)new TiffBitmapEncoder()
                     : new PngBitmapEncoder();
 
-                var src = allChannels ? bitmap.ToDds(0).ToBitmapSource() : ImageSource;
+                var src = allChannels ? dds.ToBitmapSource() : ImageSource;
                 encoder.Frames.Add(BitmapFrame.Create(src));
                 encoder.Save(fs);
             }
@@ -252,8 +216,8 @@ namespace Reclaimer.Controls
 
         private void btnFitWindow_Click(object sender, RoutedEventArgs e)
         {
-            var xScale = zoomPanel.ActualWidth / pixelWidth;
-            var yScale = zoomPanel.ActualHeight / pixelHeight;
+            var xScale = zoomPanel.ActualWidth / dds.Width;
+            var yScale = zoomPanel.ActualHeight / dds.Height;
 
             zoomPanel.ResetZoom();
             zoomPanel.ZoomLevel = Math.Min(xScale, yScale);
@@ -261,7 +225,7 @@ namespace Reclaimer.Controls
 
         private void btnFitWidth_Click(object sender, RoutedEventArgs e)
         {
-            var xScale = zoomPanel.ActualWidth / pixelWidth;
+            var xScale = zoomPanel.ActualWidth / dds.Width;
 
             zoomPanel.ResetZoom();
             zoomPanel.ZoomLevel = xScale;
