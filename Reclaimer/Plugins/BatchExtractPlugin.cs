@@ -76,11 +76,11 @@ namespace Reclaimer.Plugins
             var folder = Settings.DataFolder;
             if (Settings.PromptForFolder)
             {
-                var fbd = new System.Windows.Forms.FolderBrowserDialog();
-                if (fbd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                var fsd = new FolderSelectDialog();
+                if (!fsd.ShowDialog())
                     return;
 
-                Settings.DataFolder = folder = fbd.SelectedPath;
+                Settings.DataFolder = folder = fsd.SelectedPath;
             }
 
             tokenSource = new CancellationTokenSource();

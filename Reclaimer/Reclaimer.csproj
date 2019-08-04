@@ -122,6 +122,7 @@
     <Compile Include="Utilities\Exceptions.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Plugins\MetaViewer\MetaValue.cs" />
+    <Compile Include="Utilities\FolderSelectDialog.cs" />
     <Compile Include="Utilities\RadToDegConverter.cs" />
     <Compile Include="Utilities\ToStringConverter.cs" />
     <Compile Include="Utilities\NativeMethods.cs" />
