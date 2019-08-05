@@ -9,6 +9,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
@@ -44,7 +45,12 @@ namespace Reclaimer.Plugins
 
             if (context.File is TreeNode && split[1] == "*")
                 yield return new PluginContextItem("ExtractAll", "Extract All", OnContextItemClick);
-            else yield return new PluginContextItem("Extract", "Extract", OnContextItemClick);
+            else
+            {
+                var item = context.File as IIndexItem;
+                if (item.ClassCode == "bitm" || item.ClassCode == "mode" || item.ClassCode == "mod2" || item.ClassCode == "sbsp")
+                    yield return new PluginContextItem("Extract", "Extract", OnContextItemClick);
+            }
         }
 
         public override void Suspend()
@@ -175,20 +181,61 @@ namespace Reclaimer.Plugins
             for (int i = 0; i < bitmap.SubmapCount; i++)
             {
                 var dds = bitmap.ToDds(i);
-                var fileName = MakePath(tag, Settings.DataFolder) + (bitmap.SubmapCount > 1 ? $"[{i}]" : string.Empty) + "." + Settings.BitmapFormat.ToString().ToLower();
+                var fileName = MakePath(tag, Settings.DataFolder);
+                var ext = "." + Settings.BitmapFormat.ToString().ToLower();
+
+                if (bitmap.SubmapCount > 1)
+                    fileName += $"[{i}]";
 
                 if (Settings.BitmapFormat == BitmapFormat.DDS)
                 {
-                    dds.WriteToDisk(fileName);
-                    break;
+                    dds.WriteToDisk(fileName + ext);
+                    continue;
                 }
 
                 var format = Settings.BitmapFormat == BitmapFormat.PNG ? ImageFormat.Png : ImageFormat.Tiff;
-                var options = Settings.BitmapMode == BitmapMode.NoAlpha ? DecompressOptions.Bgr24 : DecompressOptions.Default;
-                dds.WriteToDisk(fileName, format, options | DecompressOptions.UnwrapCubemap);
+                if (Settings.BitmapMode == BitmapMode.Default)
+                    WriteImageStandard(dds, fileName, ext, format);
+                else if (Settings.BitmapMode == BitmapMode.Bgr24)
+                    WriteImage24bit(dds, fileName, ext, format);
+                else if (Settings.BitmapMode == BitmapMode.IsolateChannels)
+                    WriteImageIsolated(dds, fileName, ext, format);
+                else if (Settings.BitmapMode == BitmapMode.Mixed)
+                    WriteImageMixed(dds, fileName, ext, format);
             }
 
             LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
+        }
+
+        private void WriteImageStandard(DdsImage image, string fileName, string extension, ImageFormat format)
+        {
+            image.WriteToDisk(fileName + extension, format, DecompressOptions.UnwrapCubemap);
+        }
+
+        private void WriteImage24bit(DdsImage image, string fileName, string extension, ImageFormat format)
+        {
+            image.WriteToDisk(fileName + extension, format, DecompressOptions.UnwrapCubemap | DecompressOptions.Bgr24);
+        }
+
+        private void WriteImageIsolated(DdsImage image, string fileName, string extension, ImageFormat format)
+        {
+            var options = DecompressOptions.UnwrapCubemap | DecompressOptions.Bgr24;
+            image.WriteToDisk($"{fileName}_blue{extension}", format, options | DecompressOptions.BlueChannelOnly);
+            image.WriteToDisk($"{fileName}_green{extension}", format, options | DecompressOptions.GreenChannelOnly);
+            image.WriteToDisk($"{fileName}_red{extension}", format, options | DecompressOptions.RedChannelOnly);
+            image.WriteToDisk($"{fileName}_alpha{extension}", format, options | DecompressOptions.AlphaChannelOnly);
+        }
+
+        private static string[] isolate = new[] { "([_ ]multi)$", "([_ ]multipurpose)$", "([_ ]cc)$" };
+        private void WriteImageMixed(DdsImage image, string fileName, string extension, ImageFormat format)
+        {
+            var imageName = fileName.Split('\\').Last();
+            if (imageName.EndsWith("]"))
+                imageName = imageName.Substring(0, imageName.LastIndexOf('['));
+
+            if (isolate.Any(s => Regex.IsMatch(imageName, s)))
+                WriteImageIsolated(image, fileName, extension, format);
+            else WriteImageStandard(image, fileName, extension, format);
         }
 
         private void SaveModel(IIndexItem tag)
@@ -268,7 +315,7 @@ namespace Reclaimer.Plugins
                 OverwriteExisting = true;
                 FolderMode = FolderMode.Hierarchy;
                 BitmapFormat = BitmapFormat.TIF;
-                BitmapMode = BitmapMode.Standard;
+                BitmapMode = BitmapMode.Default;
                 ModelFormat = ModelFormat.AMF;
             }
         }
@@ -282,9 +329,10 @@ namespace Reclaimer.Plugins
 
         private enum BitmapMode
         {
-            Standard,
-            NoAlpha,
-            IsolateChannels
+            Default,
+            Bgr24,
+            IsolateChannels,
+            Mixed
         }
 
         private enum BitmapFormat
