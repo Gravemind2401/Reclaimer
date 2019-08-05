@@ -28,22 +28,15 @@ namespace Reclaimer.Windows
 
         DocumentTabControl IMultiPanelHost.DocumentContainer => docTab;
 
-        private readonly Controls.OutputViewer outputViewer;
-
         public MainWindow()
         {
             InitializeComponent();
-
             Substrate.LoadPlugins();
-            outputViewer = new Controls.OutputViewer();
         }
 
         private void menuOutput_Click(object sender, RoutedEventArgs e)
         {
-            if (outputViewer.Parent != null)
-                return;
-
-            Substrate.AddUtility(outputViewer, Substrate.GetHostWindow(), Dock.Bottom, new GridLength(250));
+            Substrate.ShowOutput();
         }
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)

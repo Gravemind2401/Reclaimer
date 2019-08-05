@@ -75,11 +75,12 @@ namespace Reclaimer.Plugins
                 LogOutput($"Loading plugin {p.Key} [{p.Name}]");
                 try
                 {
-                    p.Initialise();
                     plugins.Add(p.Key, p);
+                    p.Initialise();
                 }
                 catch (Exception ex)
                 {
+                    plugins.Remove(p.Key);
                     LogError($"Could not load plugin {p.Key} [{p.Name}]", ex);
                 }
             }
@@ -227,6 +228,14 @@ namespace Reclaimer.Plugins
 
             host.MultiPanel.AddElement(tc, targetElement, targetDock, targetSize);
             tc.Items.Add(item);
+        }
+
+        public static void ShowOutput()
+        {
+            if (Controls.OutputViewer.Instance.Parent != null)
+                return;
+
+            AddUtility(Controls.OutputViewer.Instance, GetHostWindow(), Dock.Bottom, new GridLength(250));
         }
 
         internal static void Shutdown()

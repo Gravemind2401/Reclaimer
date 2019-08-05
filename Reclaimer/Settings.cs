@@ -16,7 +16,7 @@ namespace Reclaimer
         private static JsonSerializerSettings serializerSettings => new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
-            NullValueHandling = NullValueHandling.Ignore,
+            NullValueHandling = NullValueHandling.Include,
             Converters = new[] { new Newtonsoft.Json.Converters.StringEnumConverter() }
         };
 

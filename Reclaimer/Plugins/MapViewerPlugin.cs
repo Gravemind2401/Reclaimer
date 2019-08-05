@@ -44,6 +44,9 @@ namespace Reclaimer.Plugins
                 CheckFileExists = true
             };
 
+            if (!string.IsNullOrEmpty(Settings.MapFolder))
+                ofd.InitialDirectory = Settings.MapFolder;
+
             if (ofd.ShowDialog() != true)
                 return;
 
@@ -59,6 +62,7 @@ namespace Reclaimer.Plugins
 
     internal class MapViewerSettings
     {
+        public string MapFolder { get; set; }
         public bool HierarchyView { get; set; }
     }
 }

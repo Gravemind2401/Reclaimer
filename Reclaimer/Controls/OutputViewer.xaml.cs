@@ -40,6 +40,18 @@ namespace Reclaimer.Controls
         }
         #endregion
 
+        private static OutputViewer instance;
+        public static OutputViewer Instance
+        {
+            get
+            {
+                if (instance == null)
+                    instance = new OutputViewer();
+
+                return instance;
+            }
+        }
+
         public ObservableCollection<Tuple<string, string>> LoadedPlugins { get; }
 
         public OutputViewer()

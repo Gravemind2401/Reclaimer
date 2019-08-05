@@ -83,12 +83,16 @@ namespace Reclaimer.Plugins
             if (Settings.PromptForFolder)
             {
                 var fsd = new FolderSelectDialog();
+                if (!string.IsNullOrEmpty(Settings.DataFolder))
+                    fsd.InitialDirectory = Settings.DataFolder;
+
                 if (!fsd.ShowDialog())
                     return;
 
                 Settings.DataFolder = folder = fsd.SelectedPath;
             }
 
+            Substrate.ShowOutput();
             tokenSource = new CancellationTokenSource();
             isBusy = true;
 
