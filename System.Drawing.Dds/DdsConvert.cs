@@ -32,12 +32,14 @@ namespace System.Drawing.Dds
             { DxgiFormat.BC5_SNorm, DecompressBC5 },
             { DxgiFormat.B5G6R5_UNorm, DecompressB5G6R5 },
             { DxgiFormat.B5G5R5A1_UNorm, DecompressB5G5R5A1 },
-            { DxgiFormat.P8, DecompressP8 },
+            { DxgiFormat.P8, DecompressY8 },
             { DxgiFormat.B4G4R4A4_UNorm, DecompressB4G4R4A4 }
         };
 
         private static readonly Dictionary<XboxFormat, Decompress> decompressMethodsXbox = new Dictionary<XboxFormat, Decompress>
         {
+            { XboxFormat.A8, DecompressA8 },
+            { XboxFormat.AY8, DecompressAY8 },
             { XboxFormat.CTX1, DecompressCTX1 },
             { XboxFormat.DXN, DecompressDXN },
             { XboxFormat.DXN_mono_alpha, DecompressDXN_mono_alpha },
@@ -46,7 +48,9 @@ namespace System.Drawing.Dds
             { XboxFormat.DXT3a_alpha, DecompressDXT3a_alpha },
             { XboxFormat.DXT5a_scalar, DecompressDXT5a_scalar },
             { XboxFormat.DXT5a_mono, DecompressDXT5a_mono },
-            { XboxFormat.DXT5a_alpha, DecompressDXT5a_alpha }
+            { XboxFormat.DXT5a_alpha, DecompressDXT5a_alpha },
+            { XboxFormat.Y8, DecompressY8 },
+            { XboxFormat.Y8A8, DecompressY8A8 },
         };
 
         private static readonly Dictionary<FourCC, Decompress> decompressMethodsFourCC = new Dictionary<FourCC, Decompress>
@@ -289,11 +293,6 @@ namespace System.Drawing.Dds
         internal static IEnumerable<byte> DecompressB5G5R5A1(byte[] data, int height, int width)
         {
             return Enumerable.Range(0, height * width).SelectMany(i => BgraColour.From5551(BitConverter.ToUInt16(data, i * 2)).AsEnumerable());
-        }
-
-        internal static IEnumerable<byte> DecompressP8(byte[] data, int height, int width)
-        {
-            return data.SelectMany(b => Enumerable.Range(0, 4).Select(i => i < 3 ? b : byte.MaxValue));
         }
 
         internal static IEnumerable<byte> DecompressB4G4R4A4(byte[] data, int height, int width)
@@ -590,6 +589,32 @@ namespace System.Drawing.Dds
         #endregion
 
         #region Xbox Decompression Methods
+        internal static IEnumerable<byte> DecompressA8(byte[] data, int height, int width)
+        {
+            return data.SelectMany(b => Enumerable.Range(0, 4).Select(i => i < 3 ? byte.MinValue : b));
+        }
+
+        internal static IEnumerable<byte> DecompressAY8(byte[] data, int height, int width)
+        {
+            return data.SelectMany(b => Enumerable.Range(0, 4).Select(i => b));
+        }
+
+        internal static IEnumerable<byte> DecompressY8(byte[] data, int height, int width)
+        {
+            return data.SelectMany(b => Enumerable.Range(0, 4).Select(i => i < 3 ? b : byte.MaxValue));
+        }
+
+        internal static IEnumerable<byte> DecompressY8A8(byte[] data, int height, int width)
+        {
+            for (int i = 0; i < height * width; i++)
+            {
+                yield return data[i * 2 + 1];
+                yield return data[i * 2 + 1];
+                yield return data[i * 2 + 1];
+                yield return data[i * 2];
+            }
+        }
+
         internal static IEnumerable<byte> DecompressBC1DualChannel(byte[] data, int height, int width)
         {
             var output = new BgraColour[width * height];

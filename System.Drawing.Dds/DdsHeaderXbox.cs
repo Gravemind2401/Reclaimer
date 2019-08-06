@@ -22,6 +22,8 @@ namespace System.Drawing.Dds
     public enum XboxFormat
     {
         Unknown,
+        A8,
+        AY8,
         CTX1,
         DXN,
         DXN_mono_alpha,
@@ -31,5 +33,7 @@ namespace System.Drawing.Dds
         DXT5a_scalar,
         DXT5a_mono,
         DXT5a_alpha,
+        Y8,
+        Y8A8,
     }
 }
