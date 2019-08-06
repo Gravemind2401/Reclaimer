@@ -283,43 +283,22 @@ namespace System.Drawing.Dds
         #region Standard Decompression Methods
         internal static IEnumerable<byte> DecompressB5G6R5(byte[] data, int height, int width)
         {
-            var output = new BgraColour[width * height];
-
-            for (int i = 0; i < output.Length; i++)
-                output[i] = BgraColour.From565(BitConverter.ToUInt16(data, i * 2));
-
-            return output.SelectMany(c => c.AsEnumerable());
+            return Enumerable.Range(0, height * width).SelectMany(i => BgraColour.From565(BitConverter.ToUInt16(data, i * 2)).AsEnumerable());
         }
 
         internal static IEnumerable<byte> DecompressB5G5R5A1(byte[] data, int height, int width)
         {
-            var output = new BgraColour[width * height];
-
-            for (int i = 0; i < output.Length; i++)
-                output[i] = BgraColour.From5551(BitConverter.ToUInt16(data, i * 2));
-
-            return output.SelectMany(c => c.AsEnumerable());
+            return Enumerable.Range(0, height * width).SelectMany(i => BgraColour.From5551(BitConverter.ToUInt16(data, i * 2)).AsEnumerable());
         }
 
         internal static IEnumerable<byte> DecompressP8(byte[] data, int height, int width)
         {
-            foreach (var y in data)
-            {
-                yield return y;
-                yield return y;
-                yield return y;
-                yield return byte.MaxValue;
-            }
+            return data.SelectMany(b => Enumerable.Range(0, 4).Select(i => i < 3 ? b : byte.MaxValue));
         }
 
         internal static IEnumerable<byte> DecompressB4G4R4A4(byte[] data, int height, int width)
         {
-            var output = new BgraColour[width * height];
-
-            for (int i = 0; i < output.Length; i++)
-                output[i] = BgraColour.From4444(BitConverter.ToUInt16(data, i * 2));
-
-            return output.SelectMany(c => c.AsEnumerable());
+            return Enumerable.Range(0, height * width).SelectMany(i => BgraColour.From4444(BitConverter.ToUInt16(data, i * 2)).AsEnumerable());
         }
 
         internal static IEnumerable<byte> DecompressBC1(byte[] data, int height, int width)
@@ -327,7 +306,7 @@ namespace System.Drawing.Dds
             var output = new BgraColour[width * height];
             var palette = new BgraColour[4];
 
-            var bytesPerBlock = 8;
+            const int bytesPerBlock = 8;
             var xBlocks = width / 4;
             var yBlocks = height / 4;
 
@@ -377,7 +356,7 @@ namespace System.Drawing.Dds
             var output = new BgraColour[width * height];
             var palette = new BgraColour[4];
 
-            var bytesPerBlock = 16;
+            const int bytesPerBlock = 16;
             var xBlocks = width / 4;
             var yBlocks = height / 4;
 
@@ -421,7 +400,7 @@ namespace System.Drawing.Dds
             var rgbPalette = new BgraColour[4];
             var alphaPalette = new byte[8];
 
-            var bytesPerBlock = 16;
+            const int bytesPerBlock = 16;
             var xBlocks = width / 4;
             var yBlocks = height / 4;
 
@@ -480,7 +459,7 @@ namespace System.Drawing.Dds
             var output = new BgraColour[width * height];
             var palette = new byte[8];
 
-            var bytesPerBlock = 8;
+            const int bytesPerBlock = 8;
             var xBlocks = width / 4;
             var yBlocks = height / 4;
 
@@ -537,7 +516,7 @@ namespace System.Drawing.Dds
             var rPalette = new byte[8];
             var gPalette = new byte[8];
 
-            var bytesPerBlock = 16;
+            const int bytesPerBlock = 16;
             var xBlocks = width / 4;
             var yBlocks = height / 4;
 
@@ -616,7 +595,7 @@ namespace System.Drawing.Dds
             var output = new BgraColour[width * height];
             var palette = new BgraColour[4];
 
-            var bytesPerBlock = 8;
+            const int bytesPerBlock = 8;
             var xBlocks = width / 4;
             var yBlocks = height / 4;
 
@@ -656,7 +635,7 @@ namespace System.Drawing.Dds
         {
             var output = new BgraColour[width * height];
 
-            var bytesPerBlock = 8;
+            const int bytesPerBlock = 8;
             var xBlocks = width / 4;
             var yBlocks = height / 4;
 
@@ -677,9 +656,9 @@ namespace System.Drawing.Dds
                             var value = (byte)(((alphaBits >> j * 4) & 0xF) * (0xFF / 0xF));
                             output[destIndex] = new BgraColour
                             {
-                                b = bgr ? value : (byte)0,
-                                g = bgr ? value : (byte)0,
-                                r = bgr ? value : (byte)0,
+                                b = bgr ? value : byte.MinValue,
+                                g = bgr ? value : byte.MinValue,
+                                r = bgr ? value : byte.MinValue,
                                 a = a ? value : byte.MaxValue,
                             };
                         }
@@ -698,9 +677,9 @@ namespace System.Drawing.Dds
             for (int i = 0; i < data.Length; i += 4)
             {
                 var scalar = data[i];
-                yield return bgr ? scalar : (byte)0;
-                yield return bgr ? scalar : (byte)0;
-                yield return bgr ? scalar : (byte)0;
+                yield return bgr ? scalar : byte.MinValue;
+                yield return bgr ? scalar : byte.MinValue;
+                yield return bgr ? scalar : byte.MinValue;
                 yield return a ? scalar : byte.MaxValue;
             }
         }
@@ -812,18 +791,64 @@ namespace System.Drawing.Dds
     [Flags]
     public enum DecompressOptions
     {
+        /// <summary>
+        /// The default option. If no other flags are specified, 32bpp BGRA will be used.
+        /// </summary>
         Default = 0,
+
+        /// <summary>
+        /// Outputs pixel data in 24bpp BGR format. Does not output an alpha channel regardless of any other flags specified.
+        /// </summary>
         Bgr24 = 1,
+
+        /// <summary>
+        /// When used on a cubemap image, unwraps each cube face onto a single bitmap.
+        /// </summary>
         UnwrapCubemap = 2,
+
+        /// <summary>
+        /// Replaces all blue channel data with zeros.
+        /// </summary>
         RemoveBlueChannel = 4,
+
+        /// <summary>
+        /// Replaces all green channel data with zeros.
+        /// </summary>
         RemoveGreenChannel = 8,
+
+        /// <summary>
+        /// Replaces all red channel data with zeros.
+        /// </summary>
         RemoveRedChannel = 16,
+
+        /// <summary>
+        /// Replaces all alpha channel data with full opacity.
+        /// </summary>
         RemoveAlphaChannel = 32,
 
+        /// <summary>
+        /// Replicates the blue channel data over the green and red channels. The alpha channel will be fully opaque.
+        /// </summary>
         BlueChannelOnly = RemoveGreenChannel | RemoveRedChannel | RemoveAlphaChannel,
+
+        /// <summary>
+        /// Replicates the green channel data over the blue and red channels. The alpha channel will be fully opaque.
+        /// </summary>
         GreenChannelOnly = RemoveBlueChannel | RemoveRedChannel | RemoveAlphaChannel,
+
+        /// <summary>
+        /// Replicates the red channel data over the blue and green and channels. The alpha channel will be fully opaque.
+        /// </summary>
         RedChannelOnly = RemoveBlueChannel | RemoveGreenChannel | RemoveAlphaChannel,
+
+        /// <summary>
+        /// Replicates the alpha channel data over the blue, green and red channels. The alpha channel will be fully opaque.
+        /// </summary>
         AlphaChannelOnly = RemoveBlueChannel | RemoveGreenChannel | RemoveRedChannel,
+
+        /// <summary>
+        /// Produces a solid black image with opaque alpha.
+        /// </summary>
         RemoveAllChannels = RemoveBlueChannel | RemoveGreenChannel | RemoveRedChannel | RemoveAlphaChannel
     }
 
@@ -841,9 +866,9 @@ namespace System.Drawing.Dds
 
         public static BgraColour From565(ushort value)
         {
-            byte BMask = 0x1F;
-            byte GMask = 0x3F;
-            byte RMask = 0x1F;
+            const byte BMask = 0x1F;
+            const byte GMask = 0x3F;
+            const byte RMask = 0x1F;
 
             return new BgraColour
             {
@@ -856,10 +881,10 @@ namespace System.Drawing.Dds
 
         public static BgraColour From5551(ushort value)
         {
-            byte BMask = 0x1F;
-            byte GMask = 0x1F;
-            byte RMask = 0x1F;
-            byte AMask = 0x01;
+            const byte BMask = 0x1F;
+            const byte GMask = 0x1F;
+            const byte RMask = 0x1F;
+            const byte AMask = 0x01;
 
             return new BgraColour
             {
@@ -872,10 +897,10 @@ namespace System.Drawing.Dds
 
         public static BgraColour From4444(ushort value)
         {
-            byte BMask = 0x0F;
-            byte GMask = 0x0F;
-            byte RMask = 0x0F;
-            byte AMask = 0x0F;
+            const byte BMask = 0x0F;
+            const byte GMask = 0x0F;
+            const byte RMask = 0x0F;
+            const byte AMask = 0x0F;
 
             return new BgraColour
             {
