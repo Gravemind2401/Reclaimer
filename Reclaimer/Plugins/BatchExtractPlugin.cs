@@ -202,9 +202,11 @@ namespace Reclaimer.Plugins
                     WriteImageStandard(dds, fileName, ext, format);
                 else if (Settings.BitmapMode == BitmapMode.Bgr24)
                     WriteImage24bit(dds, fileName, ext, format);
-                else if (Settings.BitmapMode == BitmapMode.IsolateChannels)
+                else if (Settings.BitmapMode == BitmapMode.IsolateAlpha)
+                    WriteImageIsolatedAlpha(dds, fileName, ext, format);
+                else if (Settings.BitmapMode == BitmapMode.IsolateAll)
                     WriteImageIsolated(dds, fileName, ext, format);
-                else if (Settings.BitmapMode == BitmapMode.Mixed)
+                else if (Settings.BitmapMode == BitmapMode.MixedIsolate)
                     WriteImageMixed(dds, fileName, ext, format);
             }
 
@@ -219,6 +221,12 @@ namespace Reclaimer.Plugins
         private void WriteImage24bit(DdsImage image, string fileName, string extension, ImageFormat format)
         {
             image.WriteToDisk(fileName + extension, format, DecompressOptions.UnwrapCubemap | DecompressOptions.Bgr24);
+        }
+
+        private void WriteImageIsolatedAlpha(DdsImage image, string fileName, string extension, ImageFormat format)
+        {
+            image.WriteToDisk($"{fileName}_hue{extension}", format, DecompressOptions.UnwrapCubemap | DecompressOptions.Bgr24);
+            image.WriteToDisk($"{fileName}_alpha{extension}", format, DecompressOptions.UnwrapCubemap | DecompressOptions.Bgr24 | DecompressOptions.AlphaChannelOnly);
         }
 
         private void WriteImageIsolated(DdsImage image, string fileName, string extension, ImageFormat format)
@@ -239,7 +247,7 @@ namespace Reclaimer.Plugins
 
             if (isolate.Any(s => Regex.IsMatch(imageName, s)))
                 WriteImageIsolated(image, fileName, extension, format);
-            else WriteImageStandard(image, fileName, extension, format);
+            else WriteImageIsolatedAlpha(image, fileName, extension, format);
         }
 
         private void SaveModel(IIndexItem tag)
@@ -335,8 +343,9 @@ namespace Reclaimer.Plugins
         {
             Default,
             Bgr24,
-            IsolateChannels,
-            Mixed
+            IsolateAlpha,
+            IsolateAll,
+            MixedIsolate
         }
 
         private enum BitmapFormat
