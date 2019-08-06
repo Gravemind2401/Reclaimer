@@ -64,7 +64,8 @@ namespace Reclaimer.Windows
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            App.Settings.WindowState = WindowState;
+            if (App.Settings.RememberWindowState)
+                App.Settings.WindowState = WindowState;
         }
 
         private void ThemeMenuItem_Click(object sender, RoutedEventArgs e)

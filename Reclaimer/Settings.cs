@@ -21,6 +21,7 @@ namespace Reclaimer
         };
 
         public string Theme { get; set; }
+        public bool RememberWindowState { get; set; }
         public WindowState WindowState { get; set; }
 
         public Dictionary<string, string> DefaultHandlers
