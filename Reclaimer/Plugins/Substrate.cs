@@ -147,6 +147,14 @@ namespace Reclaimer.Plugins
             return handler;
         }
 
+        internal static bool HandlePhysicalFile(string fileName)
+        {
+            var ext = Path.GetExtension(fileName).TrimStart('.');
+            var handler = AllPlugins.FirstOrDefault(p => p.SupportsFileExtension(ext));
+            handler?.OpenPhysicalFile(fileName);
+            return handler != null;
+        }
+
         public static bool OpenWithDefault(OpenFileArgs args)
         {
             var defaultHandler = GetDefaultHandler(args);

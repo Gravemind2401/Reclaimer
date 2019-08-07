@@ -61,6 +61,7 @@
       <HintPath>..\..\System.IO.Endian\System.IO.Endian\bin\Debug\System.IO.Endian.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\System.Windows.Interactivity.dll</HintPath>
@@ -101,6 +102,7 @@
     </Compile>
     <Compile Include="Controls\Renderer.cs" />
     <Compile Include="Controls\ZoomPanel.cs" />
+    <Compile Include="InstanceManager.cs" />
     <Compile Include="Plugins\BatchExtractPlugin.cs" />
     <Compile Include="Plugins\BitmapViewerPlugin.cs" />
     <Compile Include="Plugins\MapViewerPlugin.cs" />

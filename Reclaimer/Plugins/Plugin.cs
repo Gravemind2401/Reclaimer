@@ -92,6 +92,10 @@ namespace Reclaimer.Plugins
 
         public virtual void OpenFile(OpenFileArgs args) { }
 
+        public virtual bool SupportsFileExtension(string extension) => false;
+
+        public virtual void OpenPhysicalFile(string fileName) { }
+
         public virtual IEnumerable<PluginMenuItem> GetMenuItems()
         {
             yield break;

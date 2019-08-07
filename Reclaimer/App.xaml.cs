@@ -23,7 +23,6 @@ namespace Reclaimer
         private static ResourceDictionary templateResources;
         private static readonly Dictionary<string, ResourceDictionary> themes = new Dictionary<string, ResourceDictionary>();
 
-
         public App() : base()
         {
             Instance = this;
@@ -69,6 +68,9 @@ namespace Reclaimer
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            if (!InstanceManager.CreateSingleInstance("Reclaimer.Application", OnReceivedCommandLineArguments))
+                return;
+
             base.OnStartup(e);
 
             defaultResources = new ResourceDictionary { Source = new Uri("/Reclaimer;component/Themes/Default.xaml", UriKind.RelativeOrAbsolute) };
@@ -87,12 +89,46 @@ namespace Reclaimer
             Settings = Settings.FromFile();
 
             SetTheme(Settings.Theme);
+
+            MainWindow = new Windows.MainWindow();
+            MainWindow.Show();
+
+            ProcessCommandLineArguments(Environment.GetCommandLineArgs());
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
             Substrate.Shutdown();
             base.OnExit(e);
+        }
+
+        private void OnReceivedCommandLineArguments(object sender, InstanceCallbackEventArgs e)
+        {
+            ProcessCommandLineArguments(e.Arguments);
+        }
+
+        private void ProcessCommandLineArguments(params string[] arguments)
+        {
+            if (Dispatcher == null || arguments == null || arguments.Length == 0)
+                return;
+
+            Dispatcher.Invoke(() =>
+            {
+                foreach (var arg in arguments)
+                {
+                    if (Path.GetInvalidPathChars().Any(c => arg.Contains(c)))
+                        continue; // not a file name
+
+                    if (!Path.HasExtension(arg) || Path.GetExtension(arg).ToLower() == ".exe" || !File.Exists(arg))
+                        continue;
+
+                    if (Substrate.HandlePhysicalFile(arg))
+                        Substrate.LogOutput($"Handled file: {arg}");
+                    else Substrate.LogOutput($"No handler found for file: {arg}");
+                }
+
+                MainWindow.Activate();
+            });
         }
 
         #region Themes

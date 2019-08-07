@@ -40,7 +40,7 @@ namespace Reclaimer.Plugins
             var ofd = new Microsoft.Win32.OpenFileDialog
             {
                 Filter = "Halo Map Files|*.map",
-                Multiselect = false,
+                Multiselect = true,
                 CheckFileExists = true
             };
 
@@ -50,13 +50,24 @@ namespace Reclaimer.Plugins
             if (ofd.ShowDialog() != true)
                 return;
 
-            LogOutput($"Loading map file: {ofd.FileName}");
+            foreach (var fileName in ofd.FileNames)
+                OpenPhysicalFile(fileName);
+        }
+
+        public override bool SupportsFileExtension(string extension)
+        {
+            return extension.ToLower() == "map";
+        }
+
+        public override void OpenPhysicalFile(string fileName)
+        {
+            LogOutput($"Loading map file: {fileName}");
 
             var mv = new Controls.MapViewer();
-            mv.LoadMap(ofd.FileName);
+            mv.LoadMap(fileName);
             Substrate.AddUtility(mv, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
 
-            LogOutput($"Loaded map file: {ofd.FileName}");
+            LogOutput($"Loaded map file: {fileName}");
         }
     }
 
