@@ -15,24 +15,15 @@ namespace Reclaimer.Plugins
 {
     public static class Substrate
     {
+        #region Non Public
         private class DefaultPlugin : Plugin
         {
             internal override string Key => nameof(Reclaimer);
             public override string Name => nameof(Reclaimer);
         }
 
-        internal static event EventHandler<LogEventArgs> Log;
-
         private static readonly DefaultPlugin defaultPlugin = new DefaultPlugin();
         private static readonly Dictionary<string, Plugin> plugins = new Dictionary<string, Plugin>();
-
-        internal static Dictionary<string, string> DefaultHandlers { get; set; }
-
-        internal static IEnumerable<Plugin> AllPlugins => plugins.Values;
-
-        internal static Plugin GetPlugin(string key) => plugins.ContainsKey(key) ? plugins[key] : null;
-
-        public static string PluginsDirectory => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins");
 
         private static IEnumerable<Plugin> FindPlugins(Assembly assembly)
         {
@@ -40,6 +31,14 @@ namespace Reclaimer.Plugins
                 .Where(t => t.IsSubclassOf(typeof(Plugin)))
                 .Select(t => Activator.CreateInstance(t) as Plugin);
         }
+
+        internal static event EventHandler<LogEventArgs> Log;
+
+        internal static Dictionary<string, string> DefaultHandlers { get; set; }
+
+        internal static IEnumerable<Plugin> AllPlugins => plugins.Values;
+
+        internal static Plugin GetPlugin(string key) => plugins.ContainsKey(key) ? plugins[key] : null;
 
         internal static void LoadPlugins()
         {
@@ -155,6 +154,16 @@ namespace Reclaimer.Plugins
             return handler != null;
         }
 
+        internal static void Shutdown()
+        {
+            foreach (var p in AllPlugins)
+                p.Suspend();
+        }
+        #endregion
+
+        #region Public
+        public static string PluginsDirectory => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins");
+
         public static bool OpenWithDefault(OpenFileArgs args)
         {
             var defaultHandler = GetDefaultHandler(args);
@@ -246,12 +255,6 @@ namespace Reclaimer.Plugins
             AddUtility(Controls.OutputViewer.Instance, GetHostWindow(), Dock.Bottom, new GridLength(250));
         }
 
-        internal static void Shutdown()
-        {
-            foreach (var p in AllPlugins)
-                p.Suspend();
-        }
-
         public static IMultiPanelHost GetHostWindow() => GetHostWindow(null);
 
         public static IMultiPanelHost GetHostWindow(UIElement element)
@@ -261,7 +264,8 @@ namespace Reclaimer.Plugins
                 host = Application.Current.MainWindow as IMultiPanelHost;
             else host = Window.GetWindow(element) as IMultiPanelHost ?? Application.Current.MainWindow as IMultiPanelHost;
             return host;
-        }
+        } 
+        #endregion
     }
 
     public class OpenFileArgs
