@@ -3,6 +3,7 @@ using Adjutant.Geometry;
 using Adjutant.Utilities;
 using Reclaimer.Utilities;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing.Dds;
 using System.Drawing.Imaging;
@@ -18,6 +19,10 @@ namespace Reclaimer.Plugins
 {
     public class BatchExtractPlugin : Plugin
     {
+        private const string supportedTags = "bitm,mode,mod2,sbsp";
+
+        private readonly ConcurrentQueue<IIndexItem> extractionQueue = new ConcurrentQueue<IIndexItem>();
+
         private bool isBusy;
         private CancellationTokenSource tokenSource;
 
@@ -40,16 +45,16 @@ namespace Reclaimer.Plugins
         {
             CacheType cacheType;
             var split = context.FileTypeKey.Split('.');
-            if (split.Length == 2 && !Enum.TryParse(split[0], out cacheType))
+            if (split.Length != 2 || !Enum.TryParse(split[0], out cacheType))
                 yield break;
 
             if (context.File is TreeNode && split[1] == "*")
-                yield return new PluginContextItem("ExtractAll", "Extract All", OnContextItemClick);
+                yield return new PluginContextItem("ExtractAll", isBusy ? "Add to extraction queue" : "Extract All", OnContextItemClick);
             else
             {
                 var item = context.File as IIndexItem;
-                if (item.ClassCode == "bitm" || item.ClassCode == "mode" || item.ClassCode == "mod2" || item.ClassCode == "sbsp")
-                    yield return new PluginContextItem("Extract", "Extract", OnContextItemClick);
+                if (supportedTags.Split(',').Any(s => item.ClassCode == s))
+                    yield return new PluginContextItem("Extract", isBusy ? "Add to extraction queue" : "Extract", OnContextItemClick);
             }
         }
 
@@ -73,14 +78,8 @@ namespace Reclaimer.Plugins
 
         private void OnContextItemClick(string key, OpenFileArgs context)
         {
-            if (isBusy)
-            {
-                System.Windows.Forms.MessageBox.Show("Already in progress");
-                return;
-            }
-
             var folder = Settings.DataFolder;
-            if (Settings.PromptForFolder)
+            if (Settings.PromptForFolder && !isBusy)
             {
                 var fsd = new FolderSelectDialog();
                 if (!string.IsNullOrEmpty(Settings.DataFolder))
@@ -92,6 +91,12 @@ namespace Reclaimer.Plugins
                 Settings.DataFolder = folder = fsd.SelectedPath;
             }
 
+            if (context.File is TreeNode)
+                BatchQueue(context.File as TreeNode);
+            else extractionQueue.Enqueue(context.File as IIndexItem);
+
+            if (isBusy) return;
+
             Substrate.ShowOutput();
             tokenSource = new CancellationTokenSource();
             isBusy = true;
@@ -101,9 +106,18 @@ namespace Reclaimer.Plugins
                 var counter = new ExtractCounter();
                 var start = DateTime.Now;
 
-                if (context.File is TreeNode)
-                    BatchExtract(context.File as TreeNode, counter);
-                else Extract(context as IIndexItem, counter);
+                while (extractionQueue.Count > 0)
+                {
+                    if (tokenSource.IsCancellationRequested)
+                        break;
+
+                    IIndexItem item;
+                    if (!extractionQueue.TryDequeue(out item))
+                        break;
+
+                    if (item != null)
+                        Extract(item, counter);
+                }
 
                 var span = DateTime.Now - start;
                 LogOutput($"Extracted {counter.Extracted} tags in {Math.Round(span.TotalSeconds)} seconds with {counter.Errors} errors.");
@@ -114,22 +128,14 @@ namespace Reclaimer.Plugins
             }, tokenSource.Token);
         }
 
-        private void BatchExtract(TreeNode node, ExtractCounter counter)
+        private void BatchQueue(TreeNode node)
         {
-            if (tokenSource.IsCancellationRequested)
-                return;
-
             if (node.HasChildren)
             {
                 foreach (var child in node.Children)
-                    BatchExtract(child, counter);
+                    BatchQueue(child);
             }
-            else
-            {
-                var tag = node.Tag as IIndexItem;
-                if (tag == null) return;
-                Extract(node.Tag as IIndexItem, counter);
-            }
+            else extractionQueue.Enqueue(node.Tag as IIndexItem);
         }
 
         private void Extract(IIndexItem tag, ExtractCounter counter)
