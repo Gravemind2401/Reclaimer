@@ -50,6 +50,9 @@ namespace Adjutant.Blam.Halo3
 
         private static readonly Dictionary<TextureFormat, XboxFormat> xboxLookup = new Dictionary<TextureFormat, XboxFormat>
         {
+            { TextureFormat.A8, XboxFormat.A8 },
+            { TextureFormat.A8Y8, XboxFormat.Y8A8 },
+            { TextureFormat.AY8, XboxFormat.AY8 },
             { TextureFormat.CTX1, XboxFormat.CTX1 },
             { TextureFormat.DXT3a_mono, XboxFormat.DXT3a_mono },
             { TextureFormat.DXT3a_alpha, XboxFormat.DXT3a_alpha },
@@ -57,7 +60,10 @@ namespace Adjutant.Blam.Halo3
             { TextureFormat.DXT5a_mono, XboxFormat.DXT5a_mono },
             { TextureFormat.DXT5a_alpha, XboxFormat.DXT5a_alpha },
             { TextureFormat.DXN, XboxFormat.DXN },
-            { TextureFormat.DXN_mono_alpha, XboxFormat.DXN_mono_alpha }
+            { TextureFormat.DXN_mono_alpha, XboxFormat.DXN_mono_alpha },
+            { TextureFormat.P8, XboxFormat.Y8 },
+            { TextureFormat.P8_bump, XboxFormat.Y8 },
+            { TextureFormat.Y8, XboxFormat.Y8 }
         };
 
         string IBitmap.Name => item.FullPath;
@@ -86,14 +92,28 @@ namespace Adjutant.Blam.Halo3
                 var blockSize = submap.BitmapFormat.LinearBlockSize();
                 var texelPitch = submap.BitmapFormat.LinearTexelPitch();
 
-                data = TextureUtils.XTextureScramble(data, submap.Width, submap.Height, blockSize, texelPitch, false);
+                var virtualHeight = submap.BitmapType == TextureType.CubeMap 
+                    ? submap.Height * 6 
+                    : submap.Height;
+
+                data = TextureUtils.XTextureScramble(data, submap.Width, virtualHeight, blockSize, texelPitch, false);
             }
 
+            DdsImage dds;
             if (dxgiLookup.ContainsKey(submap.BitmapFormat))
-                return new DdsImage(submap.Height, submap.Width, dxgiLookup[submap.BitmapFormat], DxgiTextureType.Texture2D, data);
+                dds = new DdsImage(submap.Height, submap.Width, dxgiLookup[submap.BitmapFormat], DxgiTextureType.Texture2D, data);
             else if (xboxLookup.ContainsKey(submap.BitmapFormat))
-                return new DdsImage(submap.Height, submap.Width, xboxLookup[submap.BitmapFormat], DxgiTextureType.Texture2D, data);
-            else throw new NotSupportedException();
+                dds = new DdsImage(submap.Height, submap.Width, xboxLookup[submap.BitmapFormat], DxgiTextureType.Texture2D, data);
+            else throw Exceptions.BitmapFormatNotSupported(submap.BitmapFormat.ToString());
+
+            if (submap.BitmapType == TextureType.CubeMap)
+            {
+                dds.TextureFlags = TextureFlags.DdsSurfaceFlagsCubemap;
+                dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
+                dds.DX10ResourceFlags = D3D10ResourceMiscFlags.TextureCube;
+            }
+
+            return dds;
         }
 
         #endregion

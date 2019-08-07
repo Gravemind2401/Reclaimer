@@ -28,5 +28,10 @@ namespace Adjutant.Utilities
         {
             return new ArgumentException(Utils.CurrentCulture($"The file '{Utils.GetFileName(fileName)}' cannot be opened as a map. It is invalid or unsupported."));
         }
+
+        internal static NotSupportedException BitmapFormatNotSupported(string formatName)
+        {
+            return new NotSupportedException($"The BitmapFormat '{formatName}' is not supported.");
+        }
     }
 }
