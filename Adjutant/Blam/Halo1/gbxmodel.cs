@@ -141,6 +141,21 @@ namespace Adjutant.Blam.Halo1
                             });
                         }
 
+                        //if (Flags.HasFlag(ModelFlags.UseLocalNodes))
+                        //{
+                        //    var address = section.Submeshes.Pointer.Address;
+                        //    address += section.Submeshes.IndexOf(submesh) * 208;
+                        //    reader.Seek(address + 107, SeekOrigin.Begin);
+                        //    var nodeCount = reader.ReadByte();
+                        //    var nodes = reader.ReadEnumerable<byte>(nodeCount).ToArray();
+
+                        //    vertsTemp.ForEach((v) =>
+                        //    {
+                        //        v.NodeIndex1 = nodes[v.NodeIndex1];
+                        //        v.NodeIndex2 = nodes[v.NodeIndex2];
+                        //    });
+                        //}
+
                         vertices.AddRange(vertsTemp);
                     }
                     catch { }
@@ -193,20 +208,20 @@ namespace Adjutant.Blam.Halo1
                         });
                     }
 
-                    //if (Flags.HasFlag(ModelFlags.UseLocalNodes))
-                    //{
-                    //    var address = section.Submeshes.Pointer.Address;
-                    //    address += section.Submeshes.IndexOf(submesh) * 132;
-                    //    reader.Seek(address + 107, SeekOrigin.Begin);
-                    //    var nodeCount = reader.ReadByte();
-                    //    var nodes = reader.ReadEnumerable<byte>(nodeCount).ToArray();
+                    if (Flags.HasFlag(ModelFlags.UseLocalNodes))
+                    {
+                        var address = section.Submeshes.Pointer.Address;
+                        address += section.Submeshes.IndexOf(submesh) * 132;
+                        reader.Seek(address + 107, SeekOrigin.Begin);
+                        var nodeCount = reader.ReadByte();
+                        var nodes = reader.ReadEnumerable<byte>(nodeCount).ToArray();
 
-                    //    vertsTemp.ForEach((v) =>
-                    //    {
-                    //        v.NodeIndex1 = nodes[v.NodeIndex1];
-                    //        v.NodeIndex2 = nodes[v.NodeIndex2];
-                    //    });
-                    //}
+                        vertsTemp.ForEach((v) =>
+                        {
+                            v.NodeIndex1 = nodes[v.NodeIndex1];
+                            v.NodeIndex2 = nodes[v.NodeIndex2];
+                        });
+                    }
 
                     vertices.AddRange(vertsTemp);
                 }

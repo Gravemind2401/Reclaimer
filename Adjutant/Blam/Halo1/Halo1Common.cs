@@ -46,7 +46,7 @@ namespace Adjutant.Blam.Halo1
                     offset = 88;
                     break;
 
-                default: throw new InvalidOperationException();
+                default: return null;
             }
 
             reader.Seek(tagRef.Tag.MetaPointer.Address + offset, SeekOrigin.Begin);
