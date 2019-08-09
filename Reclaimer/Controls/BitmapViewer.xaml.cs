@@ -152,14 +152,14 @@ namespace Reclaimer.Controls
 
         private void Render()
         {
-            var src = dds.ToBitmapSource(GetOptions());
+            var src = dds.ToBitmapSource(GetOptions(), bitmap.CubeLayout);
             if (src.CanFreeze) src.Freeze();
             ImageSource = src;
         }
 
         private DecompressOptions GetOptions()
         {
-            var options = DecompressOptions.UnwrapCubemap;
+            var options = DecompressOptions.Default;
             if (!BlueChannel) options |= DecompressOptions.RemoveBlueChannel;
             if (!GreenChannel) options |= DecompressOptions.RemoveGreenChannel;
             if (!RedChannel) options |= DecompressOptions.RemoveRedChannel;

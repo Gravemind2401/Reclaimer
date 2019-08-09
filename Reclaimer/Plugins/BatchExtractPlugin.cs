@@ -205,55 +205,45 @@ namespace Reclaimer.Plugins
 
                 var format = Settings.BitmapFormat == BitmapFormat.PNG ? ImageFormat.Png : ImageFormat.Tiff;
                 if (Settings.BitmapMode == BitmapMode.Default)
-                    WriteImageStandard(dds, fileName, ext, format);
+                    dds.WriteToDisk(fileName + ext, format);
                 else if (Settings.BitmapMode == BitmapMode.Bgr24)
-                    WriteImage24bit(dds, fileName, ext, format);
+                    dds.WriteToDisk(fileName + ext, format, DecompressOptions.Bgr24);
                 else if (Settings.BitmapMode == BitmapMode.IsolateAlpha)
-                    WriteImageIsolatedAlpha(dds, fileName, ext, format);
+                    WriteImageIsolateAlpha(dds, fileName, ext, format, bitmap.CubeLayout);
                 else if (Settings.BitmapMode == BitmapMode.IsolateAll)
-                    WriteImageIsolated(dds, fileName, ext, format);
+                    WriteImageIsolateAll(dds, fileName, ext, format, bitmap.CubeLayout);
                 else if (Settings.BitmapMode == BitmapMode.MixedIsolate)
-                    WriteImageMixed(dds, fileName, ext, format);
+                    WriteImageMixedIsolate(dds, fileName, ext, format, bitmap.CubeLayout);
             }
 
             LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
         }
 
-        private void WriteImageStandard(DdsImage image, string fileName, string extension, ImageFormat format)
+        private void WriteImageIsolateAlpha(DdsImage image, string fileName, string extension, ImageFormat format, CubemapLayout layout)
         {
-            image.WriteToDisk(fileName + extension, format, DecompressOptions.UnwrapCubemap);
+            image.WriteToDisk($"{fileName}_hue{extension}", format, DecompressOptions.Bgr24);
+            image.WriteToDisk($"{fileName}_alpha{extension}", format, DecompressOptions.Bgr24 | DecompressOptions.AlphaChannelOnly);
         }
 
-        private void WriteImage24bit(DdsImage image, string fileName, string extension, ImageFormat format)
+        private void WriteImageIsolateAll(DdsImage image, string fileName, string extension, ImageFormat format, CubemapLayout layout)
         {
-            image.WriteToDisk(fileName + extension, format, DecompressOptions.UnwrapCubemap | DecompressOptions.Bgr24);
-        }
-
-        private void WriteImageIsolatedAlpha(DdsImage image, string fileName, string extension, ImageFormat format)
-        {
-            image.WriteToDisk($"{fileName}_hue{extension}", format, DecompressOptions.UnwrapCubemap | DecompressOptions.Bgr24);
-            image.WriteToDisk($"{fileName}_alpha{extension}", format, DecompressOptions.UnwrapCubemap | DecompressOptions.Bgr24 | DecompressOptions.AlphaChannelOnly);
-        }
-
-        private void WriteImageIsolated(DdsImage image, string fileName, string extension, ImageFormat format)
-        {
-            var options = DecompressOptions.UnwrapCubemap | DecompressOptions.Bgr24;
+            var options = DecompressOptions.Bgr24;
             image.WriteToDisk($"{fileName}_blue{extension}", format, options | DecompressOptions.BlueChannelOnly);
             image.WriteToDisk($"{fileName}_green{extension}", format, options | DecompressOptions.GreenChannelOnly);
             image.WriteToDisk($"{fileName}_red{extension}", format, options | DecompressOptions.RedChannelOnly);
             image.WriteToDisk($"{fileName}_alpha{extension}", format, options | DecompressOptions.AlphaChannelOnly);
         }
 
-        private static string[] isolate = new[] { "([_ ]multi)$", "([_ ]multipurpose)$", "([_ ]cc)$" };
-        private void WriteImageMixed(DdsImage image, string fileName, string extension, ImageFormat format)
+        private static readonly string[] shouldIsolate = new[] { "([_ ]multi)$", "([_ ]multipurpose)$", "([_ ]cc)$" };
+        private void WriteImageMixedIsolate(DdsImage image, string fileName, string extension, ImageFormat format, CubemapLayout layout)
         {
             var imageName = fileName.Split('\\').Last();
             if (imageName.EndsWith("]"))
                 imageName = imageName.Substring(0, imageName.LastIndexOf('['));
 
-            if (isolate.Any(s => Regex.IsMatch(imageName, s)))
-                WriteImageIsolated(image, fileName, extension, format);
-            else WriteImageIsolatedAlpha(image, fileName, extension, format);
+            if (shouldIsolate.Any(s => Regex.IsMatch(imageName, s, RegexOptions.IgnoreCase)))
+                WriteImageIsolateAll(image, fileName, extension, format, layout);
+            else WriteImageIsolateAlpha(image, fileName, extension, format, layout);
         }
 
         private void SaveModel(IIndexItem tag)
