@@ -68,6 +68,7 @@ namespace System.Drawing.Dds
             { FourCC.ATI2, DecompressBC5 },
         };
 
+        #region WriteToDisk
         /// <summary>
         /// Decompresses any compressed pixel data and saves the image to a file on disk using a standard image format.
         /// </summary>
@@ -101,27 +102,52 @@ namespace System.Drawing.Dds
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
                 WriteToStream(fs, format, options);
-        }
+        } 
+        #endregion
+
+        #region WriteToStream
+        /// <summary>
+        /// Decompresses any compressed pixel data and writes the image to a stream using a standard image format
+        /// using the default decompression options and a non-cubemap layout.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="format">The image format to write with.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="NotSupportedException" />
+        public void WriteToStream(Stream stream, ImageFormat format) => WriteToStream(stream, format, DecompressOptions.Default, CubemapLayout.NonCubemap);
+
+        /// <summary>
+        /// Decompresses any compressed pixel data and writes the image to a stream using a standard image format
+        /// using the specified decompression options and a non-cubemap layout.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="format">The image format to write with.</param>
+        /// <param name="options">Options to use when decompressing the image.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="NotSupportedException" />
+        public void WriteToStream(Stream stream, ImageFormat format, DecompressOptions options) => WriteToStream(stream, format, options, CubemapLayout.NonCubemap);
+
+        /// <summary>
+        /// Decompresses any compressed pixel data and writes the image to a stream using a standard image format
+        /// using the default decompression options the specified cubemap layout.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="format">The image format to write with.</param>
+        /// <param name="layout">The layout of the cubemap. Has no effect if the DDS cubemap flags are not set.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="NotSupportedException" />
+        public void WriteToStream(Stream stream, ImageFormat format, CubemapLayout layout) => WriteToStream(stream, format, DecompressOptions.Default, layout);
 
         /// <summary>
         /// Decompresses any compressed pixel data and writes the image to a stream using a standard image format.
         /// </summary>
         /// <param name="stream">The stream to write to.</param>
         /// <param name="format">The image format to write with.</param>
+        /// <param name="options">Options to use when decompressing the image.</param>
+        /// <param name="layout">The layout of the cubemap. Has no effect if the DDS cubemap flags are not set.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="NotSupportedException" />
-        public void WriteToStream(Stream stream, ImageFormat format) => WriteToStream(stream, format, DecompressOptions.Default);
-
-        /// <summary>
-        /// Decompresses any compressed pixel data and writes the image to a stream using a standard image format.
-        /// optionally unwrapping cubemap images.
-        /// </summary>
-        /// <param name="stream">The stream to write to.</param>
-        /// <param name="format">The image format to write with.</param>
-        /// <param name="unwrapCubemap">True to unwrap a cubemap. False to output each tile horizontally.</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="NotSupportedException" />
-        public void WriteToStream(Stream stream, ImageFormat format, DecompressOptions options)
+        public void WriteToStream(Stream stream, ImageFormat format, DecompressOptions options, CubemapLayout layout)
         {
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream));
@@ -142,23 +168,38 @@ namespace System.Drawing.Dds
                 encoder = new TiffBitmapEncoder();
             else throw new NotSupportedException("The ImageFormat is not supported.");
 
-            var source = ToBitmapSource(options);
+            var source = ToBitmapSource(options, layout);
             encoder.Frames.Add(BitmapFrame.Create(source));
             encoder.Save(stream);
         }
+        #endregion
 
+        #region ToBitmapSource
         /// <summary>
-        /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>
+        /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>.
         /// </summary>
         /// <exception cref="NotSupportedException" />
-        public BitmapSource ToBitmapSource() => ToBitmapSource(DecompressOptions.Default);
+        public BitmapSource ToBitmapSource() => ToBitmapSource(DecompressOptions.Default, CubemapLayout.NonCubemap);
+
+        /// <summary>
+        /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>.
+        /// </summary>
+        /// <exception cref="NotSupportedException" />
+        public BitmapSource ToBitmapSource(DecompressOptions options) => ToBitmapSource(options, CubemapLayout.NonCubemap);
+
+        /// <summary>
+        /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>.
+        /// </summary>
+        /// <exception cref="NotSupportedException" />
+        public BitmapSource ToBitmapSource(CubemapLayout layout) => ToBitmapSource(DecompressOptions.Default, layout);
 
         /// <summary>
         /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>
         /// </summary>
         /// <param name="options">Options to use during decompression.</param>
+        /// <param name="layout">The layout of the cubemap. Has no effect if the DDS cubemap flags are not set.</param>
         /// <exception cref="NotSupportedException" />
-        public BitmapSource ToBitmapSource(DecompressOptions options)
+        public BitmapSource ToBitmapSource(DecompressOptions options, CubemapLayout layout)
         {
             const double dpi = 96;
             var virtualHeight = Height;
@@ -214,11 +255,12 @@ namespace System.Drawing.Dds
 
             var source = BitmapSource.Create(Width, virtualHeight, dpi, dpi, format, null, bgra.ToArray(), Width * bpp);
 
-            if (isCubeMap && options.HasFlag(DecompressOptions.UnwrapCubemap))
-                source = UnwrapCubemapSource(source, dpi, format);
+            if (isCubeMap && layout.IsValid)
+                source = UnwrapCubemapSource(source, dpi, format, layout);
 
             return source;
-        }
+        } 
+        #endregion
 
         private IEnumerable<byte> SelectChannels(IEnumerable<byte> sourcePixels, DecompressOptions channels)
         {
@@ -262,22 +304,28 @@ namespace System.Drawing.Dds
             }
         }
 
-        private BitmapSource UnwrapCubemapSource(BitmapSource source, double dpi, Windows.Media.PixelFormat format)
+        private BitmapSource UnwrapCubemapSource(BitmapSource source, double dpi, Windows.Media.PixelFormat format, CubemapLayout layout)
         {
             var bpp = format.BitsPerPixel / 8;
             var stride = bpp * Width;
             var dest = new WriteableBitmap(Width * 4, Height * 3, dpi, dpi, format, null);
 
-            var xTiles = new[] { 2, 1, 0, 1, 1, 3 };
-            var yTiles = new[] { 1, 0, 1, 2, 1, 1 };
+            var faceArray = new[] { layout.Face1, layout.Face2, layout.Face3, layout.Face4, layout.Face5, layout.Face6 };
+            var rotateArray = new[] { layout.Orientation1, layout.Orientation2, layout.Orientation3, layout.Orientation4, layout.Orientation5, layout.Orientation6 };
+
+            var xTiles = new[] { 1, 0, 1, 2, 3, 1 };
+            var yTiles = new[] { 0, 1, 1, 1, 1, 2 };
 
             for (int i = 0; i < 6; i++)
             {
+                var tileIndex = (int)faceArray[i] - 1;
+
                 var sourceRect = new Int32Rect(0, Height * i, Width, Height);
-                var destRect = new Int32Rect(xTiles[i] * Width, yTiles[i] * Height, Width, Height);
+                var destRect = new Int32Rect(xTiles[tileIndex] * Width, yTiles[tileIndex] * Height, Width, Height);
 
                 var buffer = new byte[Width * Height * bpp];
                 source.CopyPixels(sourceRect, buffer, stride, 0);
+                buffer = Rotate(buffer, Width, Height, bpp, rotateArray[i]);
                 dest.WritePixels(destRect, buffer, stride, 0);
             }
 
@@ -788,6 +836,59 @@ namespace System.Drawing.Dds
             return (byte)((z + 1) / 2 * 255f);
         }
 
+        private static byte[] Rotate(byte[] buffer, int width, int height, int bpp, RotateFlipType rotation)
+        {
+            var rot = (int)rotation;
+
+            if (rot == 0)
+                return buffer;
+
+            var turns = 4 - rot % 4; //starting at 4 because we need to undo the rotations, not apply them
+            var output = new byte[buffer.Length];
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    var sourceIndex = y * width * bpp + x * bpp;
+
+                    int destW = rot % 2 == 0 ? width : height;
+                    int destH = rot % 2 == 0 ? height : width;
+
+                    int destX, destY;
+                    if (turns == 0)
+                    {
+                        destX = x;
+                        destY = y;
+                    }
+                    else if (turns == 1)
+                    {
+                        destY = x;
+                        destX = (height - 1) - y;
+                    }
+                    else if (turns == 2)
+                    {
+                        destY = (height - 1) - y;
+                        destX = (width - 1) - x;
+                    }
+                    else //if (turns == 3)
+                    {
+                        destY = (width - 1) - x;
+                        destX = y;
+                    }
+
+                    if (rot > 3) //flip X
+                        destX = (destW - 1) - destX;
+
+                    var destIndex = destY * destW * bpp + destX * bpp;
+                    for (int i = 0; i < bpp; i++)
+                        output[destIndex + i] = buffer[sourceIndex + i];
+                }
+            }
+
+            return output;
+        }
+
         private static BgraColour Lerp(BgraColour c0, BgraColour c1, float fraction)
         {
             return new BgraColour
@@ -827,29 +928,24 @@ namespace System.Drawing.Dds
         Bgr24 = 1,
 
         /// <summary>
-        /// When used on a cubemap image, unwraps each cube face onto a single bitmap.
-        /// </summary>
-        UnwrapCubemap = 2,
-
-        /// <summary>
         /// Replaces all blue channel data with zeros.
         /// </summary>
-        RemoveBlueChannel = 4,
+        RemoveBlueChannel = 2,
 
         /// <summary>
         /// Replaces all green channel data with zeros.
         /// </summary>
-        RemoveGreenChannel = 8,
+        RemoveGreenChannel = 4,
 
         /// <summary>
         /// Replaces all red channel data with zeros.
         /// </summary>
-        RemoveRedChannel = 16,
+        RemoveRedChannel = 8,
 
         /// <summary>
         /// Replaces all alpha channel data with full opacity.
         /// </summary>
-        RemoveAlphaChannel = 32,
+        RemoveAlphaChannel = 16,
 
         /// <summary>
         /// Replicates the blue channel data over the green and red channels. The alpha channel will be fully opaque.
@@ -875,6 +971,39 @@ namespace System.Drawing.Dds
         /// Produces a solid black image with opaque alpha.
         /// </summary>
         RemoveAllChannels = RemoveBlueChannel | RemoveGreenChannel | RemoveRedChannel | RemoveAlphaChannel
+    }
+
+    public enum CubemapFace
+    {
+        None,
+        Top,
+        Left,
+        Front,
+        Right,
+        Back,
+        Bottom
+    }
+
+    public class CubemapLayout
+    {
+        private static readonly CubemapLayout invalid = new CubemapLayout();
+        public static CubemapLayout NonCubemap => invalid;
+
+        public CubemapFace Face1 { get; set; }
+        public CubemapFace Face2 { get; set; }
+        public CubemapFace Face3 { get; set; }
+        public CubemapFace Face4 { get; set; }
+        public CubemapFace Face5 { get; set; }
+        public CubemapFace Face6 { get; set; }
+
+        public RotateFlipType Orientation1 { get; set; }
+        public RotateFlipType Orientation2 { get; set; }
+        public RotateFlipType Orientation3 { get; set; }
+        public RotateFlipType Orientation4 { get; set; }
+        public RotateFlipType Orientation5 { get; set; }
+        public RotateFlipType Orientation6 { get; set; }
+
+        public bool IsValid => (Face1 | Face2 | Face3 | Face4 | Face5 | Face6) > 0;
     }
 
     internal struct BgraColour
