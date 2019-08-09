@@ -3,6 +3,7 @@ using Adjutant.Spatial;
 using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Dds;
 using System.IO.Endian;
 using System.Linq;
@@ -66,9 +67,25 @@ namespace Adjutant.Blam.Halo3
             { TextureFormat.Y8, XboxFormat.Y8 }
         };
 
+        private static readonly CubemapLayout Halo3CubeLayout = new CubemapLayout
+        {
+            Face1 = CubemapFace.Right,
+            Face2 = CubemapFace.Left,
+            Face3 = CubemapFace.Back,
+            Face4 = CubemapFace.Front,
+            Face5 = CubemapFace.Top,
+            Face6 = CubemapFace.Bottom,
+            Orientation1 = RotateFlipType.Rotate270FlipNone,
+            Orientation2 = RotateFlipType.Rotate90FlipNone,
+            Orientation3 = RotateFlipType.Rotate180FlipNone,
+            Orientation6 = RotateFlipType.Rotate180FlipNone
+        };
+
         string IBitmap.Name => item.FullPath;
 
         int IBitmap.SubmapCount => Bitmaps.Count;
+
+        CubemapLayout IBitmap.CubeLayout => Halo3CubeLayout;
 
         public DdsImage ToDds(int index)
         {

@@ -12,6 +12,7 @@ namespace Adjutant.Utilities
     {
         string Name { get; }
         int SubmapCount { get; }
+        CubemapLayout CubeLayout { get; }
         DdsImage ToDds(int index);
     }
 
