@@ -60,6 +60,7 @@ namespace Adjutant.Blam.Halo3
             using (var reader = CreateReader(HeaderTranslator))
                 Header = reader.ReadObject<CacheHeader>(version);
 
+            //change IndexPointer to use MetadataTranslator instead of HeaderTranslator
             Header.IndexPointer = new Pointer(Header.IndexPointer.Value, MetadataTranslator);
 
             using (var reader = CreateReader(MetadataTranslator))
@@ -260,16 +261,19 @@ namespace Adjutant.Blam.Halo3
                 reader.Seek(cache.Header.FileTableIndexPointer.Address, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<int>(TagCount).ToArray();
 
-                for (int i = 0; i < TagCount; i++)
+                using (var tempReader = reader.CreateVirtualReader(cache.Header.FileTablePointer.Address))
                 {
-                    if (indices[i] == -1)
+                    for (int i = 0; i < TagCount; i++)
                     {
-                        Filenames.Add(i, null);
-                        continue;
-                    }
+                        if (indices[i] == -1)
+                        {
+                            Filenames.Add(i, null);
+                            continue;
+                        }
 
-                    reader.Seek(cache.Header.FileTablePointer.Address + indices[i], SeekOrigin.Begin);
-                    Filenames.Add(i, reader.ReadNullTerminatedString());
+                        tempReader.Seek(indices[i], SeekOrigin.Begin);
+                        Filenames.Add(i, tempReader.ReadNullTerminatedString());
+                    }
                 }
             }
         }
@@ -302,15 +306,15 @@ namespace Adjutant.Blam.Halo3
                 reader.Seek(cache.Header.StringTableIndexPointer.Address, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<int>(cache.Header.StringCount).ToArray();
 
-                using (var reader2 = reader.CreateVirtualReader(cache.Header.StringTablePointer.Address))
+                using (var tempReader = reader.CreateVirtualReader(cache.Header.StringTablePointer.Address))
                 {
                     for (int i = 0; i < cache.Header.StringCount; i++)
                     {
                         if (indices[i] < 0)
                             continue;
 
-                        reader2.Seek(indices[i], SeekOrigin.Begin);
-                        items[i] = reader2.ReadNullTerminatedString();
+                        tempReader.Seek(indices[i], SeekOrigin.Begin);
+                        items[i] = tempReader.ReadNullTerminatedString();
                     }
                 }
             }
@@ -366,6 +370,11 @@ namespace Adjutant.Blam.Halo3
 
         [Offset(12)]
         public StringId ClassName { get; set; }
+
+        public override string ToString()
+        {
+            return Utils.CurrentCulture($"[{ClassCode}] {ClassName.Value}");
+        }
     }
 
     [FixedSize(8)]

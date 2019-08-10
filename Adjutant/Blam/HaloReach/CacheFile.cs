@@ -339,6 +339,11 @@ namespace Adjutant.Blam.HaloReach
 
         [Offset(12)]
         public StringId ClassName { get; set; }
+
+        public override string ToString()
+        {
+            return Utils.CurrentCulture($"[{ClassCode}] {ClassName.Value}");
+        }
     }
 
     [FixedSize(8)]
