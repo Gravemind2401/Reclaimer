@@ -11,7 +11,7 @@ namespace Adjutant.Utilities
     {
         #region Extensions
 
-        private enum CommonTextureFormat
+        private enum KnownTextureFormat
         {
             Unknown,
             A8,
@@ -42,96 +42,96 @@ namespace Adjutant.Utilities
             DXN_mono_alpha
         }
 
-        private static CommonTextureFormat AsCommon(this Enum format)
+        private static KnownTextureFormat AsKnown(this Enum format)
         {
             var name = format.ToString();
-            CommonTextureFormat common;
+            KnownTextureFormat common;
             if (Enum.TryParse(name, out common))
                 return common;
-            else return CommonTextureFormat.Unknown;
+            else return KnownTextureFormat.Unknown;
         }
 
         //bytes, not bits
-        private static int GetBpp(CommonTextureFormat format)
+        private static int GetBpp(KnownTextureFormat format)
         {
             switch (format)
             {
-                case CommonTextureFormat.A8R8G8B8:
-                case CommonTextureFormat.X8R8G8B8:
+                case KnownTextureFormat.A8R8G8B8:
+                case KnownTextureFormat.X8R8G8B8:
                     return 4;
 
-                case CommonTextureFormat.A8:
-                case CommonTextureFormat.Y8:
-                case CommonTextureFormat.AY8:
-                case CommonTextureFormat.P8_bump:
+                case KnownTextureFormat.A8:
+                case KnownTextureFormat.Y8:
+                case KnownTextureFormat.AY8:
+                case KnownTextureFormat.P8_bump:
                     return 1;
 
                 default: return 2;
             }
         }
 
-        private static int GetLinearBlockSize(CommonTextureFormat format)
+        private static int GetLinearBlockSize(KnownTextureFormat format)
         {
             switch (format)
             {
-                case CommonTextureFormat.DXT5a_mono:
-                case CommonTextureFormat.DXT5a_alpha:
-                case CommonTextureFormat.DXT1:
-                case CommonTextureFormat.CTX1:
-                case CommonTextureFormat.DXT5a:
-                case CommonTextureFormat.DXT3a_alpha:
-                case CommonTextureFormat.DXT3a_mono:
-                case CommonTextureFormat.DXT3:
-                case CommonTextureFormat.DXT5:
-                case CommonTextureFormat.DXN:
-                case CommonTextureFormat.DXN_mono_alpha:
+                case KnownTextureFormat.DXT5a_mono:
+                case KnownTextureFormat.DXT5a_alpha:
+                case KnownTextureFormat.DXT1:
+                case KnownTextureFormat.CTX1:
+                case KnownTextureFormat.DXT5a:
+                case KnownTextureFormat.DXT3a_alpha:
+                case KnownTextureFormat.DXT3a_mono:
+                case KnownTextureFormat.DXT3:
+                case KnownTextureFormat.DXT5:
+                case KnownTextureFormat.DXN:
+                case KnownTextureFormat.DXN_mono_alpha:
                     return 4;
 
                 default: return 1;
             }
         }
 
-        private static int GetLinearTexelPitch(CommonTextureFormat format)
+        private static int GetLinearTexelPitch(KnownTextureFormat format)
         {
             switch (format)
             {
-                case CommonTextureFormat.DXT5a_mono:
-                case CommonTextureFormat.DXT5a_alpha:
-                case CommonTextureFormat.DXT1:
-                case CommonTextureFormat.CTX1:
-                case CommonTextureFormat.DXT5a:
-                case CommonTextureFormat.DXT3a_alpha:
-                case CommonTextureFormat.DXT3a_mono:
+                case KnownTextureFormat.DXT5a_mono:
+                case KnownTextureFormat.DXT5a_alpha:
+                case KnownTextureFormat.DXT1:
+                case KnownTextureFormat.CTX1:
+                case KnownTextureFormat.DXT5a:
+                case KnownTextureFormat.DXT3a_alpha:
+                case KnownTextureFormat.DXT3a_mono:
                     return 8;
 
-                case CommonTextureFormat.DXT3:
-                case CommonTextureFormat.DXT5:
-                case CommonTextureFormat.DXN:
-                case CommonTextureFormat.DXN_mono_alpha:
+                case KnownTextureFormat.DXT3:
+                case KnownTextureFormat.DXT5:
+                case KnownTextureFormat.DXN:
+                case KnownTextureFormat.DXN_mono_alpha:
                     return 16;
 
-                case CommonTextureFormat.AY8:
-                case CommonTextureFormat.Y8:
+                case KnownTextureFormat.AY8:
+                case KnownTextureFormat.Y8:
                     return 1;
 
-                case CommonTextureFormat.A8R8G8B8:
-                case CommonTextureFormat.X8R8G8B8:
+                case KnownTextureFormat.A8R8G8B8:
+                case KnownTextureFormat.X8R8G8B8:
                     return 4;
 
                 default: return 2;
             }
         }
 
-        public static int Bpp(this Blam.Halo1.TextureFormat format) => GetBpp(format.AsCommon());
-        public static int Bpp(this Blam.Halo2.TextureFormat format) => GetBpp(format.AsCommon());
-        public static int Bpp(this Blam.Halo3.TextureFormat format) => GetBpp(format.AsCommon());
-        public static int Bpp(this Blam.HaloReach.TextureFormat format) => GetBpp(format.AsCommon());
+        public static int Bpp(this Blam.Halo1.TextureFormat format) => GetBpp(format.AsKnown());
+        public static int Bpp(this Blam.Halo2.TextureFormat format) => GetBpp(format.AsKnown());
+        public static int Bpp(this Blam.Halo3.TextureFormat format) => GetBpp(format.AsKnown());
+        public static int Bpp(this Blam.HaloReach.TextureFormat format) => GetBpp(format.AsKnown());
 
-        public static int LinearBlockSize(this Blam.Halo3.TextureFormat format) => GetLinearBlockSize(format.AsCommon());
-        public static int LinearBlockSize(this Blam.HaloReach.TextureFormat format) => GetLinearBlockSize(format.AsCommon());
+        public static int LinearBlockSize(this Blam.Halo3.TextureFormat format) => GetLinearBlockSize(format.AsKnown());
+        public static int LinearBlockSize(this Blam.HaloReach.TextureFormat format) => GetLinearBlockSize(format.AsKnown());
 
-        public static int LinearTexelPitch(this Blam.Halo3.TextureFormat format) => GetLinearTexelPitch(format.AsCommon());
-        public static int LinearTexelPitch(this Blam.HaloReach.TextureFormat format) => GetLinearTexelPitch(format.AsCommon());
+        public static int LinearTexelPitch(this Blam.Halo3.TextureFormat format) => GetLinearTexelPitch(format.AsKnown());
+        public static int LinearTexelPitch(this Blam.HaloReach.TextureFormat format) => GetLinearTexelPitch(format.AsKnown());
 
         #endregion
 
