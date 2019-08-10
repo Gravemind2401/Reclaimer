@@ -74,6 +74,10 @@ namespace Adjutant.Blam.Common
                 case CacheType.Halo3ODST:
                     return new Halo3.CacheFile(fileName);
 
+                case CacheType.HaloReachBeta:
+                case CacheType.HaloReachRetail:
+                    return new HaloReach.CacheFile(fileName);
+
                 default: throw Exceptions.NotAValidMapFile(fileName);
             }
         }
