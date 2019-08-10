@@ -48,6 +48,10 @@ namespace Reclaimer.Plugins
                         case CacheType.Halo3ODST:
                             bitm = item.ReadMetadata<Adjutant.Blam.Halo3.bitmap>();
                             break;
+                        case CacheType.HaloReachBeta:
+                        case CacheType.HaloReachRetail:
+                            bitm = item.ReadMetadata<Adjutant.Blam.HaloReach.bitmap>();
+                            break;
                         default: throw Exceptions.TagClassNotSupported(item);
                     }
 
