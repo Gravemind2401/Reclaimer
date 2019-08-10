@@ -125,10 +125,13 @@ namespace Adjutant.Utilities
         public static int Bpp(this Blam.Halo1.TextureFormat format) => GetBpp(format.AsCommon());
         public static int Bpp(this Blam.Halo2.TextureFormat format) => GetBpp(format.AsCommon());
         public static int Bpp(this Blam.Halo3.TextureFormat format) => GetBpp(format.AsCommon());
+        public static int Bpp(this Blam.HaloReach.TextureFormat format) => GetBpp(format.AsCommon());
 
         public static int LinearBlockSize(this Blam.Halo3.TextureFormat format) => GetLinearBlockSize(format.AsCommon());
+        public static int LinearBlockSize(this Blam.HaloReach.TextureFormat format) => GetLinearBlockSize(format.AsCommon());
 
         public static int LinearTexelPitch(this Blam.Halo3.TextureFormat format) => GetLinearTexelPitch(format.AsCommon());
+        public static int LinearTexelPitch(this Blam.HaloReach.TextureFormat format) => GetLinearTexelPitch(format.AsCommon());
 
         #endregion
 

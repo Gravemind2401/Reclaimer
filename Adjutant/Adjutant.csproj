@@ -86,8 +86,12 @@
     <Compile Include="Blam\Halo3\shader.cs" />
     <Compile Include="Blam\Halo3\TagAddressTranslator.cs" />
     <Compile Include="Blam\Common\XmlVertex.cs" />
+    <Compile Include="Blam\HaloReach\bitmap.cs" />
     <Compile Include="Blam\HaloReach\CacheFile.cs" />
+    <Compile Include="Blam\HaloReach\cache_file_resource_gestalt.cs" />
+    <Compile Include="Blam\HaloReach\cache_file_resource_layout_table.cs" />
     <Compile Include="Blam\HaloReach\HeaderAddressTranslator.cs" />
+    <Compile Include="Blam\HaloReach\ResourceIdentifier.cs" />
     <Compile Include="Blam\HaloReach\TagAddressTranslator.cs" />
     <Compile Include="Geometry\CoordinateSystem.cs" />
     <Compile Include="Geometry\Enums.cs" />

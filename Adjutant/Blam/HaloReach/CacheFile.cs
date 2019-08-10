@@ -30,6 +30,30 @@ namespace Adjutant.Blam.HaloReach
         public TagIndex TagIndex { get; }
         public StringIndex StringIndex { get; }
 
+        //public scenario Scenario { get; }
+
+        private cache_file_resource_gestalt resourceGestalt;
+        public cache_file_resource_gestalt ResourceGestalt
+        {
+            get
+            {
+                if (resourceGestalt == null)
+                    resourceGestalt = TagIndex.FirstOrDefault(t => t.ClassCode == "zone")?.ReadMetadata<cache_file_resource_gestalt>();
+                return resourceGestalt;
+            }
+        }
+
+        private cache_file_resource_layout_table resourceLayoutTable;
+        public cache_file_resource_layout_table ResourceLayoutTable
+        {
+            get
+            {
+                if (resourceLayoutTable == null)
+                    resourceLayoutTable = TagIndex.FirstOrDefault(t => t.ClassCode == "play")?.ReadMetadata<cache_file_resource_layout_table>();
+                return resourceLayoutTable;
+            }
+        }
+
         public HeaderAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
 
