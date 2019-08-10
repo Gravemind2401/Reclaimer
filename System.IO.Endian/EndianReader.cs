@@ -497,7 +497,7 @@ namespace System.IO.Endian
             var bytes = new List<byte>();
 
             byte val;
-            while ((val = ReadByte()) != 0)
+            while (BaseStream.Position < BaseStream.Length && (val = ReadByte()) != 0)
                 bytes.Add(val);
 
             return encoding.GetString(bytes.ToArray());
