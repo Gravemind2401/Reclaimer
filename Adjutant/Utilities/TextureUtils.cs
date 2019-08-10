@@ -11,112 +11,124 @@ namespace Adjutant.Utilities
     {
         #region Extensions
 
+        private enum CommonTextureFormat
+        {
+            Unknown,
+            A8,
+            Y8,
+            AY8,
+            A8Y8,
+            R5G6B5,
+            A1R5G5B5,
+            A4R4G4B4,
+            X8R8G8B8,
+            A8R8G8B8,
+            DXT1,
+            DXT3,
+            DXT5,
+            P8_bump,
+            P8,
+            ARGBFP32,
+            RGBFP32,
+            RGBFP16,
+            U8V8,
+            DXT5a,
+            DXN,
+            CTX1,
+            DXT3a_alpha,
+            DXT3a_mono,
+            DXT5a_alpha,
+            DXT5a_mono,
+            DXN_mono_alpha
+        }
+
+        private static CommonTextureFormat AsCommon(this Enum format)
+        {
+            var name = format.ToString();
+            CommonTextureFormat common;
+            if (Enum.TryParse(name, out common))
+                return common;
+            else return CommonTextureFormat.Unknown;
+        }
+
         //bytes, not bits
-        public static int Bpp(this Blam.Halo1.TextureFormat format)
+        private static int GetBpp(CommonTextureFormat format)
         {
             switch (format)
             {
-                case Blam.Halo1.TextureFormat.A8R8G8B8:
-                case Blam.Halo1.TextureFormat.X8R8G8B8:
+                case CommonTextureFormat.A8R8G8B8:
+                case CommonTextureFormat.X8R8G8B8:
                     return 4;
 
-                case Blam.Halo1.TextureFormat.A8:
-                case Blam.Halo1.TextureFormat.Y8:
-                case Blam.Halo1.TextureFormat.AY8:
-                case Blam.Halo1.TextureFormat.P8_bump:
+                case CommonTextureFormat.A8:
+                case CommonTextureFormat.Y8:
+                case CommonTextureFormat.AY8:
+                case CommonTextureFormat.P8_bump:
                     return 1;
 
                 default: return 2;
             }
         }
 
-        public static int Bpp(this Blam.Halo2.TextureFormat format)
+        private static int GetLinearBlockSize(CommonTextureFormat format)
         {
             switch (format)
             {
-                case Blam.Halo2.TextureFormat.A8R8G8B8:
-                case Blam.Halo2.TextureFormat.X8R8G8B8:
-                    return 4;
-
-                case Blam.Halo2.TextureFormat.A8:
-                case Blam.Halo2.TextureFormat.Y8:
-                case Blam.Halo2.TextureFormat.AY8:
-                case Blam.Halo2.TextureFormat.P8_bump:
-                    return 1;
-
-                default: return 2;
-            }
-        }
-
-        public static int Bpp(this Blam.Halo3.TextureFormat format)
-        {
-            switch (format)
-            {
-                case Blam.Halo3.TextureFormat.A8R8G8B8:
-                case Blam.Halo3.TextureFormat.X8R8G8B8:
-                    return 4;
-
-                case Blam.Halo3.TextureFormat.A8:
-                case Blam.Halo3.TextureFormat.Y8:
-                case Blam.Halo3.TextureFormat.AY8:
-                case Blam.Halo3.TextureFormat.P8_bump:
-                    return 1;
-
-                default: return 2;
-            }
-        }
-
-        public static int LinearBlockSize(this Blam.Halo3.TextureFormat format)
-        {
-            switch (format)
-            {
-                case Blam.Halo3.TextureFormat.DXT5a_mono:
-                case Blam.Halo3.TextureFormat.DXT5a_alpha:
-                case Blam.Halo3.TextureFormat.DXT1:
-                case Blam.Halo3.TextureFormat.CTX1:
-                case Blam.Halo3.TextureFormat.DXT5a:
-                case Blam.Halo3.TextureFormat.DXT3a_alpha:
-                case Blam.Halo3.TextureFormat.DXT3a_mono:
-                case Blam.Halo3.TextureFormat.DXT3:
-                case Blam.Halo3.TextureFormat.DXT5:
-                case Blam.Halo3.TextureFormat.DXN:
-                case Blam.Halo3.TextureFormat.DXN_mono_alpha:
+                case CommonTextureFormat.DXT5a_mono:
+                case CommonTextureFormat.DXT5a_alpha:
+                case CommonTextureFormat.DXT1:
+                case CommonTextureFormat.CTX1:
+                case CommonTextureFormat.DXT5a:
+                case CommonTextureFormat.DXT3a_alpha:
+                case CommonTextureFormat.DXT3a_mono:
+                case CommonTextureFormat.DXT3:
+                case CommonTextureFormat.DXT5:
+                case CommonTextureFormat.DXN:
+                case CommonTextureFormat.DXN_mono_alpha:
                     return 4;
 
                 default: return 1;
             }
         }
 
-        public static int LinearTexelPitch(this Blam.Halo3.TextureFormat format)
+        private static int GetLinearTexelPitch(CommonTextureFormat format)
         {
             switch (format)
             {
-                case Blam.Halo3.TextureFormat.DXT5a_mono:
-                case Blam.Halo3.TextureFormat.DXT5a_alpha:
-                case Blam.Halo3.TextureFormat.DXT1:
-                case Blam.Halo3.TextureFormat.CTX1:
-                case Blam.Halo3.TextureFormat.DXT5a:
-                case Blam.Halo3.TextureFormat.DXT3a_alpha:
-                case Blam.Halo3.TextureFormat.DXT3a_mono:
+                case CommonTextureFormat.DXT5a_mono:
+                case CommonTextureFormat.DXT5a_alpha:
+                case CommonTextureFormat.DXT1:
+                case CommonTextureFormat.CTX1:
+                case CommonTextureFormat.DXT5a:
+                case CommonTextureFormat.DXT3a_alpha:
+                case CommonTextureFormat.DXT3a_mono:
                     return 8;
 
-                case Blam.Halo3.TextureFormat.DXT3:
-                case Blam.Halo3.TextureFormat.DXT5:
-                case Blam.Halo3.TextureFormat.DXN:
-                case Blam.Halo3.TextureFormat.DXN_mono_alpha:
+                case CommonTextureFormat.DXT3:
+                case CommonTextureFormat.DXT5:
+                case CommonTextureFormat.DXN:
+                case CommonTextureFormat.DXN_mono_alpha:
                     return 16;
 
-                case Blam.Halo3.TextureFormat.AY8:
-                case Blam.Halo3.TextureFormat.Y8:
+                case CommonTextureFormat.AY8:
+                case CommonTextureFormat.Y8:
                     return 1;
 
-                case Blam.Halo3.TextureFormat.A8R8G8B8:
-                case Blam.Halo3.TextureFormat.X8R8G8B8:
+                case CommonTextureFormat.A8R8G8B8:
+                case CommonTextureFormat.X8R8G8B8:
                     return 4;
 
                 default: return 2;
             }
         }
+
+        public static int Bpp(this Blam.Halo1.TextureFormat format) => GetBpp(format.AsCommon());
+        public static int Bpp(this Blam.Halo2.TextureFormat format) => GetBpp(format.AsCommon());
+        public static int Bpp(this Blam.Halo3.TextureFormat format) => GetBpp(format.AsCommon());
+
+        public static int LinearBlockSize(this Blam.Halo3.TextureFormat format) => GetLinearBlockSize(format.AsCommon());
+
+        public static int LinearTexelPitch(this Blam.Halo3.TextureFormat format) => GetLinearTexelPitch(format.AsCommon());
 
         #endregion
 
