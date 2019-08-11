@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Reclaimer.Windows"
         mc:Ignorable="d" Height="320" Width="480"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize">
+        ShowInTaskbar="False" ResizeMode="NoResize">
 
     <Window.Resources>
         <Style TargetType="Window" />
