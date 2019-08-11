@@ -30,7 +30,7 @@ namespace Adjutant.Blam.HaloReach
         public TagIndex TagIndex { get; }
         public StringIndex StringIndex { get; }
 
-        //public scenario Scenario { get; }
+        public scenario Scenario { get; }
 
         private cache_file_resource_gestalt resourceGestalt;
         public cache_file_resource_gestalt ResourceGestalt
@@ -81,7 +81,7 @@ namespace Adjutant.Blam.HaloReach
                 StringIndex.ReadItems();
             }
 
-            //Scenario = TagIndex.FirstOrDefault(t => t.ClassCode == "scnr")?.ReadMetadata<scenario>();
+            Scenario = TagIndex.FirstOrDefault(t => t.ClassCode == "scnr")?.ReadMetadata<scenario>();
         }
 
         public DependencyReader CreateReader(IAddressTranslator translator)

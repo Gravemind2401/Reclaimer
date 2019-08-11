@@ -95,6 +95,10 @@
     <Compile Include="Blam\HaloReach\render_method_template.cs" />
     <Compile Include="Blam\HaloReach\render_model.cs" />
     <Compile Include="Blam\HaloReach\ResourceIdentifier.cs" />
+    <Compile Include="Blam\HaloReach\scenario.cs" />
+    <Compile Include="Blam\HaloReach\scenario_lightmap.cs" />
+    <Compile Include="Blam\HaloReach\scenario_lightmap_bsp_data.cs" />
+    <Compile Include="Blam\HaloReach\scenario_structure_bsp.cs" />
     <Compile Include="Blam\HaloReach\shader.cs" />
     <Compile Include="Blam\HaloReach\TagAddressTranslator.cs" />
     <Compile Include="Geometry\CoordinateSystem.cs" />
@@ -171,6 +175,10 @@
     <ProjectReference Include="..\..\System.IO.Endian\System.IO.Endian\System.IO.Endian.csproj">
       <Project>{06a312c3-c3ec-447d-b7b7-f50e47a886d5}</Project>
       <Name>System.IO.Endian</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Markeli.Half\Markeli.Half.csproj">
+      <Project>{8de687a2-fd57-42cd-9389-527330d5af9f}</Project>
+      <Name>Markeli.Half</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

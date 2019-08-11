@@ -87,8 +87,8 @@ namespace Adjutant.Blam.Common
             {
                 case VectorType.DecN4: return new DecN4(reader.ReadUInt32());
                 case VectorType.DHenN3: return new DHenN3(reader.ReadUInt32());
-                case VectorType.Float16_2: break;
-                case VectorType.Float16_4: break;
+                case VectorType.Float16_2: return new RealVector2D(Half.ToHalf(reader.ReadUInt16()), Half.ToHalf(reader.ReadUInt16()));
+                case VectorType.Float16_4: return new RealVector4D(Half.ToHalf(reader.ReadUInt16()), Half.ToHalf(reader.ReadUInt16()), Half.ToHalf(reader.ReadUInt16()), Half.ToHalf(reader.ReadUInt16()));
                 case VectorType.Float32_2: return new RealVector2D(reader.ReadSingle(), reader.ReadSingle());
                 case VectorType.Float32_3: return new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 case VectorType.Float32_4: return new RealVector4D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
