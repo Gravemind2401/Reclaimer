@@ -7,18 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo3
+namespace Adjutant.Blam.HaloReach
 {
     public class shader
     {
         [Offset(0)]
         public TagReference BaseShaderReference { get; set; }
 
-        [Offset(40)]
+        [Offset(56)]
         public BlockCollection<ShaderPropertiesBlock> ShaderProperties { get; set; }
     }
 
-    [FixedSize(132)]
+    [FixedSize(176)]
     public class ShaderPropertiesBlock
     {
         [Offset(0)]

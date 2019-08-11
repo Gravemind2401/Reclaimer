@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Adjutant.Blam.Halo3
+namespace Adjutant.Blam.HaloReach
 {
     [FixedSize(28)]
     public struct VertexBufferInfo
@@ -23,17 +23,17 @@ namespace Adjutant.Blam.Halo3
         public int DataLength { get; set; }
     }
 
-    [FixedSize(24)]
+    [FixedSize(28)]
     public struct IndexBufferInfo
     {
         [Offset(0)]
         public IndexFormat IndexFormat { get; set; }
 
-        [Offset(4)]
+        [Offset(8)]
         public int DataLength { get; set; }
     }
 
-    internal static class Halo3Common
+    internal static class HaloReachCommon
     {
         private static readonly Dictionary<string, MaterialUsage> usageLookup = new Dictionary<string, MaterialUsage>
         {
@@ -153,7 +153,7 @@ namespace Adjutant.Blam.Halo3
             using (var reader = new EndianReader(ms, ByteOrder.BigEndian))
             {
                 var doc = new XmlDocument();
-                doc.LoadXml(Adjutant.Properties.Resources.Halo3VertexBuffer);
+                doc.LoadXml(Adjutant.Properties.Resources.HaloReachVertexBuffer);
 
                 var lookup = doc.FirstChild.ChildNodes.Cast<XmlNode>()
                     .ToDictionary(n => Convert.ToInt32(n.Attributes["type"].Value, 16));

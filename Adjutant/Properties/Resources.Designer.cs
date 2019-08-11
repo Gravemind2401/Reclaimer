@@ -115,5 +115,22 @@ namespace Adjutant.Properties {
                 return ResourceManager.GetString("Halo3VertexBuffer", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;VertexDefinitions&gt;
+        ///  &lt;vertex type=&quot;0x00&quot; name=&quot;s_world_vertex&quot;&gt;
+        ///    &lt;value stream=&quot;0&quot; offset=&quot;0x0&quot; type=&quot;Float32_4&quot; usage=&quot;position&quot; usageIndex=&quot;0&quot; /&gt;
+        ///    &lt;value stream=&quot;0&quot; offset=&quot;0x10&quot; type=&quot;Float16_2&quot; usage=&quot;texcoords&quot; usageIndex=&quot;0&quot; /&gt;
+        ///    &lt;value stream=&quot;0&quot; offset=&quot;0x14&quot; type=&quot;DHenN3&quot; usage=&quot;normal&quot; usageIndex=&quot;0&quot; /&gt;
+        ///    &lt;value stream=&quot;0&quot; offset=&quot;0x18&quot; type=&quot;DHenN3&quot; usage=&quot;tangent&quot; usageIndex=&quot;0&quot; /&gt;
+        ///  &lt;/vertex&gt;
+        ///  &lt;vertex type=&quot;0x01&quot; name=&quot;s_rigid_vertex&quot;&gt;
+        ///    &lt;value stream=&quot;0&quot; offset=&quot;0x0&quot; type [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HaloReachVertexBuffer {
+            get {
+                return ResourceManager.GetString("HaloReachVertexBuffer", resourceCulture);
+            }
+        }
     }
 }

@@ -90,8 +90,12 @@
     <Compile Include="Blam\HaloReach\CacheFile.cs" />
     <Compile Include="Blam\HaloReach\cache_file_resource_gestalt.cs" />
     <Compile Include="Blam\HaloReach\cache_file_resource_layout_table.cs" />
+    <Compile Include="Blam\HaloReach\HaloReachCommon.cs" />
     <Compile Include="Blam\HaloReach\HeaderAddressTranslator.cs" />
+    <Compile Include="Blam\HaloReach\render_method_template.cs" />
+    <Compile Include="Blam\HaloReach\render_model.cs" />
     <Compile Include="Blam\HaloReach\ResourceIdentifier.cs" />
+    <Compile Include="Blam\HaloReach\shader.cs" />
     <Compile Include="Blam\HaloReach\TagAddressTranslator.cs" />
     <Compile Include="Geometry\CoordinateSystem.cs" />
     <Compile Include="Geometry\Enums.cs" />
@@ -177,6 +181,7 @@
     <Content Include="Resources\Halo1Classes.xml" />
     <Content Include="Resources\Halo2Classes.xml" />
     <Content Include="Resources\Halo3VertexBuffer.xml" />
+    <Content Include="Resources\HaloReachVertexBuffer.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
