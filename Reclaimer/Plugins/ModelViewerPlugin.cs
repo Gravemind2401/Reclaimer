@@ -48,6 +48,10 @@ namespace Reclaimer.Plugins
                         case CacheType.Halo3ODST:
                             sbsp = item.ReadMetadata<Adjutant.Blam.Halo3.scenario_structure_bsp>();
                             break;
+                        case CacheType.HaloReachBeta:
+                        case CacheType.HaloReachRetail:
+                            sbsp = item.ReadMetadata<Adjutant.Blam.HaloReach.scenario_structure_bsp>();
+                            break;
                         default: throw Exceptions.TagClassNotSupported(item);
                     }
 
@@ -72,6 +76,10 @@ namespace Reclaimer.Plugins
                         case CacheType.Halo3Retail:
                         case CacheType.Halo3ODST:
                             mode = item.ReadMetadata<Adjutant.Blam.Halo3.render_model>();
+                            break;
+                        case CacheType.HaloReachBeta:
+                        case CacheType.HaloReachRetail:
+                            mode = item.ReadMetadata<Adjutant.Blam.HaloReach.render_model>();
                             break;
                         default: throw Exceptions.TagClassNotSupported(item);
                     }
