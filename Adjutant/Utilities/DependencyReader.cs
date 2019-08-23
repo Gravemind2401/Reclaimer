@@ -22,6 +22,7 @@ namespace Adjutant.Utilities
         {
             registeredTypes = new Dictionary<Type, Func<object>>();
             registeredInstances = new Dictionary<Type, object>();
+            DynamicReadEnabled = true;
         }
 
         protected DependencyReader(DependencyReader parent, long virtualOrigin)
@@ -32,6 +33,7 @@ namespace Adjutant.Utilities
 
             registeredTypes = parent.registeredTypes;
             registeredInstances = parent.registeredInstances;
+            DynamicReadEnabled = true;
         }
 
         public void RegisterType<T>(Func<T> constructor)
@@ -50,14 +52,6 @@ namespace Adjutant.Utilities
             registeredInstances.Add(typeof(T), instance);
         }
 
-        protected override object ReadObject(object instance, Type type, double? version)
-        {
-            if (instance == null && CanConstruct(type))
-                instance = Construct(type);
-
-            return base.ReadObject(instance, type, version);
-        }
-
         public override EndianReader CreateVirtualReader()
         {
             return CreateVirtualReader(BaseStream.Position);
@@ -68,37 +62,19 @@ namespace Adjutant.Utilities
             return new DependencyReader(this, origin);
         }
 
-        protected override void ReadProperty(object instance, PropertyInfo prop, Type storeType, double? version)
+        protected override object CreateInstance(Type type, double? version)
         {
-            if (prop == null)
-                throw new ArgumentNullException(nameof(prop));
-
-            if (CanConstruct(prop.PropertyType))
-            {
-                var value = Construct(prop.PropertyType);
-                base.ReadObject(value, storeType, version);
-                prop.SetValue(instance, value);
-            }
-            else base.ReadProperty(instance, prop, storeType, version);
-        }
-
-        private bool CanConstruct(Type type)
-        {
-            return registeredTypes.ContainsKey(type) || registeredInstances.ContainsKey(type) || FindConstructor(type) != null;
-        }
-
-        private object Construct(Type type)
-        {
-            if (!CanConstruct(type))
-                throw new InvalidOperationException();
-
             if (registeredTypes.ContainsKey(type))
                 return registeredTypes[type]();
 
-            if (registeredInstances.ContainsKey(type))
-                return registeredInstances[type];
-
             var constructor = FindConstructor(type);
+            if (constructor == null)
+                return base.CreateInstance(type, version);
+            else return Construct(type, constructor);
+        }
+
+        private object Construct(Type type, ConstructorInfo constructor)
+        {
             var info = constructor.GetParameters();
             var args = new List<object>();
 
@@ -106,14 +82,25 @@ namespace Adjutant.Utilities
             {
                 if (registeredTypes.ContainsKey(p.ParameterType))
                     args.Add(registeredTypes[p.ParameterType]());
+                else if (registeredInstances.ContainsKey(p.ParameterType))
+                    args.Add(registeredInstances[p.ParameterType]);
                 else if (p.ParameterType == typeof(DependencyReader))
                     args.Add(this);
-                else if (CanConstruct(p.ParameterType))
-                    args.Add(Construct(p.ParameterType));
-                else throw new InvalidOperationException();
+                else
+                {
+                    var ctor2 = FindConstructor(type);
+                    if (ctor2 == null)
+                        throw new InvalidOperationException();
+                    args.Add(Construct(p.ParameterType, ctor2));
+                }
             }
 
             return constructor.Invoke(args.ToArray());
+        }
+
+        private bool CanConstruct(Type type)
+        {
+            return type == typeof(DependencyReader) || registeredTypes.ContainsKey(type) || registeredInstances.ContainsKey(type) || FindConstructor(type) != null;
         }
 
         private ConstructorInfo FindConstructor(Type type)
@@ -121,7 +108,7 @@ namespace Adjutant.Utilities
             foreach (var constructor in type.GetConstructors())
             {
                 var info = constructor.GetParameters();
-                if (info.Any() && info.All(i => CanConstruct(i.ParameterType) || i.ParameterType == typeof(DependencyReader)))
+                if (info.Any() && info.All(i => CanConstruct(i.ParameterType)))
                     return constructor;
             }
 
