@@ -52,12 +52,9 @@ namespace System.IO.Endian
             return new MissingMethodException(Utils.CurrentCulture($"{nameof(EndianWriter)} does not have a primitive write function for {typeName} values."));
         }
 
-        internal static MissingMethodException TypeNotConstructable(string typeName, bool isProperty)
+        internal static MissingMethodException TypeNotConstructable(string typeName)
         {
-            if (isProperty)
-                return new MissingMethodException(Utils.CurrentCulture($"A property of type '{typeName}' was marked for read/write but '{typeName}' does not have a public default constructor."));
-            else
-                return new MissingMethodException(Utils.CurrentCulture($"Cannot create an object of type '{typeName}' because '{typeName}' does not have a public default constructor."));
+            return new MissingMethodException(Utils.CurrentCulture($"Cannot create an object of type '{typeName}' because '{typeName}' does not have a public default constructor."));
         }
 
         internal static MissingMethodException NonPublicGetSet(string propName)

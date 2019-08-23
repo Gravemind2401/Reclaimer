@@ -142,6 +142,9 @@ namespace System.IO.Endian
 
         internal static bool TryConvert(ref object value, Type fromType, Type toType)
         {
+            if (value?.GetType() == toType)
+                return true;
+
             var converter = TypeDescriptor.GetConverter(fromType);
             if (converter.CanConvertTo(toType))
             {

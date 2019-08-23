@@ -15,6 +15,8 @@ namespace System.IO.Endian
         private static readonly ConcurrentDictionary<string, ConstructorInfo> ctorCache = new ConcurrentDictionary<string, ConstructorInfo>();
         private static readonly ConcurrentDictionary<ConstructorInfo, Type[]> ctorParamCache = new ConcurrentDictionary<ConstructorInfo, Type[]>();
 
+        public bool DynamicReadEnabled { get; set; }
+
         #region ReadObject Overloads
 
         /// <summary>
@@ -200,6 +202,17 @@ namespace System.IO.Endian
         }
 
         #endregion
+
+        private object DynamicRead(object instance, Type type, double? version)
+        {
+            if (instance == null)
+                instance = CreateInstance(type, version);
+
+            var read = typeof(DynamicReader<>).MakeGenericType(type)
+                .GetMethod("Read", BindingFlags.Static | BindingFlags.Public);
+
+            return read.Invoke(null, new object[] { this, version, instance });
+        }
 
         /// <summary>
         /// This method is called for each property of an object when reading complex objects
@@ -388,7 +401,36 @@ namespace System.IO.Endian
         /// </param>
         protected virtual object ReadObject(object instance, Type type, double? version)
         {
-            return ReadObjectInternal(instance, type, version, false);
+            if (DynamicReadEnabled && !type.IsPrimitive)
+                return DynamicRead(instance, type, version);
+            else
+                return ReadObjectInternal(instance, type, version);
+        }
+
+        protected virtual object CreateInstance(Type type, double? version)
+        {
+            var typeKey = Utils.CurrentCulture($"{type.FullName}:{version}");
+
+            ConstructorInfo ctorInfo;
+            if (ctorCache.ContainsKey(typeKey))
+                ctorInfo = ctorCache[typeKey];
+            else
+            {
+                var constructors = type.GetConstructors()
+                    .Where(c => Utils.GetAttributeForVersion<BinaryConstructorAttribute>(c, version) != null);
+
+                if (constructors.Count() > 1)
+                    throw Exceptions.MultipleBinaryConstructorsSpecified(type.Name, version);
+
+                ctorInfo = constructors.FirstOrDefault();
+                if (ctorInfo == null && type.IsClass && type.GetConstructor(Type.EmptyTypes) == null)
+                    throw Exceptions.TypeNotConstructable(type.Name);
+                else ctorCache.TryAdd(typeKey, ctorInfo);
+            }
+
+            if (ctorInfo != null)
+                return ConstructObject(ctorInfo);
+            else return Activator.CreateInstance(type);
         }
 
         private object ConstructObject(ConstructorInfo ctorInfo)
@@ -412,7 +454,7 @@ namespace System.IO.Endian
             return ctorInfo.Invoke(args);
         }
 
-        private object ReadObjectInternal(object instance, Type type, double? version, bool isProperty)
+        private object ReadObjectInternal(object instance, Type type, double? version)
         {
             if (type.Equals(typeof(string)))
                 throw Exceptions.NotValidForStringTypes();
@@ -422,28 +464,7 @@ namespace System.IO.Endian
             var typeKey = Utils.CurrentCulture($"{type.FullName}:{version}");
 
             if (instance == null)
-            {
-                ConstructorInfo ctorInfo;
-                if (ctorCache.ContainsKey(typeKey))
-                    ctorInfo = ctorCache[typeKey];
-                else
-                {
-                    var constructors = type.GetConstructors()
-                        .Where(c => Utils.GetAttributeForVersion<BinaryConstructorAttribute>(c, version) != null);
-
-                    if (constructors.Count() > 1)
-                        throw Exceptions.MultipleBinaryConstructorsSpecified(type.Name, version);
-
-                    ctorInfo = constructors.FirstOrDefault();
-                    ctorCache.TryAdd(typeKey, ctorInfo);
-                }
-
-                if (ctorInfo != null)
-                    instance = ConstructObject(ctorInfo);
-                else if (type.IsClass && type.GetConstructor(Type.EmptyTypes) == null)
-                    throw Exceptions.TypeNotConstructable(type.Name, isProperty);
-                else instance = Activator.CreateInstance(type);
-            }
+                instance = CreateInstance(type, version);
 
             var originalPosition = BaseStream.Position;
             using (var reader = CreateVirtualReader())

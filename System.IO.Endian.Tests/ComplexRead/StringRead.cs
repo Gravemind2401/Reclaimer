@@ -8,9 +8,11 @@ namespace System.IO.Endian.Tests.ComplexRead
     public partial class ComplexRead
     {
         [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void ReadStrings01(ByteOrder order)
+        [DataRow(ByteOrder.LittleEndian, false)]
+        [DataRow(ByteOrder.BigEndian, false)]
+        [DataRow(ByteOrder.LittleEndian, true)]
+        [DataRow(ByteOrder.BigEndian, true)]
+        public void ReadStrings01(ByteOrder order, bool dynamicRead)
         {
             var value1 = "Length_Prefixed_String_#01!";
             var value2 = "Fixed_Length_String_#01!";
@@ -20,6 +22,7 @@ namespace System.IO.Endian.Tests.ComplexRead
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
+                reader.DynamicReadEnabled = dynamicRead;
                 writer.Write(value1);
 
                 stream.Position = 0x20;
@@ -53,9 +56,11 @@ namespace System.IO.Endian.Tests.ComplexRead
         }
 
         [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void ReadStrings02(ByteOrder order)
+        [DataRow(ByteOrder.LittleEndian, false)]
+        [DataRow(ByteOrder.BigEndian, false)]
+        [DataRow(ByteOrder.LittleEndian, true)]
+        [DataRow(ByteOrder.BigEndian, true)]
+        public void ReadStrings02(ByteOrder order, bool dynamicRead)
         {
             var value1 = "Length_Prefixed_String_#01!";
             var value2 = "Length_Prefixed_String_#02!";
@@ -65,6 +70,7 @@ namespace System.IO.Endian.Tests.ComplexRead
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
+                reader.DynamicReadEnabled = dynamicRead;
                 writer.Write(value1, ByteOrder.BigEndian);
 
                 stream.Position = 0x20;

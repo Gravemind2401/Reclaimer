@@ -57,6 +57,7 @@
     <Compile Include="EndianWriterComplex.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DynamicReader.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
