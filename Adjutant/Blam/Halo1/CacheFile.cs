@@ -28,6 +28,9 @@ namespace Adjutant.Blam.Halo1
 
         public CacheFile(string fileName)
         {
+            if (!File.Exists(fileName))
+                throw Exceptions.FileNotFound(fileName);
+
             FileName = fileName;
             AddressTranslator = new TagAddressTranslator(this);
 
@@ -78,7 +81,6 @@ namespace Adjutant.Blam.Halo1
 
             return CreateReader(bitmapsMap, null, false);
         }
-
 
         #region ICacheFile
 

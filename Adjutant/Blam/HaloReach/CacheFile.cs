@@ -59,6 +59,9 @@ namespace Adjutant.Blam.HaloReach
 
         public CacheFile(string fileName)
         {
+            if (!File.Exists(fileName))
+                throw Exceptions.FileNotFound(fileName);
+
             var version = (int)CacheFactory.GetCacheTypeByFile(fileName);
 
             FileName = fileName;

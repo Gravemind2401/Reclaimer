@@ -33,6 +33,9 @@ namespace Adjutant.Blam.Halo2
 
         public CacheFile(string fileName)
         {
+            if (!File.Exists(fileName))
+                throw Exceptions.FileNotFound(fileName);
+
             FileName = fileName;
             HeaderTranslator = new HeaderAddressTranslator(this);
             MetadataTranslator = new TagAddressTranslator(this);
