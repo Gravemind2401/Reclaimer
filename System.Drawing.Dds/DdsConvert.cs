@@ -14,7 +14,7 @@ namespace System.Drawing.Dds
 {
     public partial class DdsImage
     {
-        private delegate IEnumerable<byte> Decompress(byte[] data, int height, int width);
+        private delegate byte[] Decompress(byte[] data, int height, int width, bool bgr24);
 
         private static readonly Dictionary<DxgiFormat, Decompress> decompressMethodsDxgi = new Dictionary<DxgiFormat, Decompress>
         {
@@ -102,7 +102,7 @@ namespace System.Drawing.Dds
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
                 WriteToStream(fs, format, options);
-        } 
+        }
         #endregion
 
         #region WriteToStream
@@ -207,18 +207,20 @@ namespace System.Drawing.Dds
             var isCubeMap = TextureFlags.HasFlag(TextureFlags.DdsSurfaceFlagsCubemap) && CubemapFlags.HasFlag(CubemapFlags.DdsCubemapAllFaces);
             if (isCubeMap) virtualHeight *= 6;
 
-            IEnumerable<byte> bgra;
+            var bgr24 = options.HasFlag(DecompressOptions.Bgr24);
+
+            byte[] pixels;
             if (header.PixelFormat.FourCC == (uint)FourCC.DX10)
             {
                 if (decompressMethodsDxgi.ContainsKey(dx10Header.DxgiFormat))
-                    bgra = decompressMethodsDxgi[dx10Header.DxgiFormat](data, virtualHeight, Width);
+                    pixels = decompressMethodsDxgi[dx10Header.DxgiFormat](data, virtualHeight, Width, bgr24);
                 else
                 {
                     switch (dx10Header.DxgiFormat)
                     {
                         case DxgiFormat.B8G8R8X8_UNorm:
                         case DxgiFormat.B8G8R8A8_UNorm:
-                            bgra = data;
+                            pixels = bgr24 ? ToArray(SkipNth(data, 4), true, virtualHeight, Width) : data;
                             break;
 
                         default: throw new NotSupportedException("The DxgiFormat is not supported.");
@@ -228,79 +230,66 @@ namespace System.Drawing.Dds
             else if (header.PixelFormat.FourCC == (uint)FourCC.XBOX)
             {
                 if (decompressMethodsXbox.ContainsKey(xboxHeader.XboxFormat))
-                    bgra = decompressMethodsXbox[xboxHeader.XboxFormat](data, virtualHeight, Width);
+                    pixels = decompressMethodsXbox[xboxHeader.XboxFormat](data, virtualHeight, Width, bgr24);
                 else throw new NotSupportedException("The XboxFormat is not supported.");
             }
             else
             {
                 var fourcc = (FourCC)header.PixelFormat.FourCC;
                 if (decompressMethodsFourCC.ContainsKey(fourcc))
-                    bgra = decompressMethodsFourCC[fourcc](data, virtualHeight, Width);
+                    pixels = decompressMethodsFourCC[fourcc](data, virtualHeight, Width, bgr24);
                 else throw new NotSupportedException("The FourCC is not supported.");
             }
 
-            var format = PixelFormats.Bgra32;
-            var bpp = 4;
+            var format = bgr24 ? PixelFormats.Bgr24 : PixelFormats.Bgra32;
+            var bpp = bgr24 ? 3 : 4;
 
             //at least one 'remove channel' flag is set
             if ((options & DecompressOptions.RemoveAllChannels) != 0)
-                bgra = SelectChannels(bgra, options);
+                MaskChannels(pixels, options);
 
-            if (options.HasFlag(DecompressOptions.Bgr24))
-            {
-                format = PixelFormats.Bgr24;
-                bpp = 3;
-                bgra = TakeSkipRepeat(bgra, 3, 1);
-            }
-
-            var source = BitmapSource.Create(Width, virtualHeight, dpi, dpi, format, null, bgra.ToArray(), Width * bpp);
+            var source = BitmapSource.Create(Width, virtualHeight, dpi, dpi, format, null, pixels, Width * bpp);
 
             if (isCubeMap && layout.IsValid)
                 source = UnwrapCubemapSource(source, dpi, format, layout);
 
             return source;
-        } 
+        }
         #endregion
 
-        private IEnumerable<byte> SelectChannels(IEnumerable<byte> sourcePixels, DecompressOptions channels)
+        private void MaskChannels(byte[] source, DecompressOptions channels)
         {
-            var blue = !channels.HasFlag(DecompressOptions.RemoveBlueChannel);
-            var green = !channels.HasFlag(DecompressOptions.RemoveGreenChannel);
-            var red = !channels.HasFlag(DecompressOptions.RemoveRedChannel);
-            var alpha = !channels.HasFlag(DecompressOptions.RemoveAlphaChannel);
+            var bpp = channels.HasFlag(DecompressOptions.Bgr24) ? 3 : 4;
+            int mask = 0;
 
-            var channelIndex = -1;
-            if (Convert.ToInt32(blue) + Convert.ToInt32(green) + Convert.ToInt32(red) + Convert.ToInt32(alpha) == 1)
+            if (!channels.HasFlag(DecompressOptions.RemoveBlueChannel)) mask |= 1;
+            if (!channels.HasFlag(DecompressOptions.RemoveGreenChannel)) mask |= 2;
+            if (!channels.HasFlag(DecompressOptions.RemoveRedChannel)) mask |= 4;
+            if (!channels.HasFlag(DecompressOptions.RemoveAlphaChannel)) mask |= 8;
+
+            int channelIndex;
+            if (mask == 1) channelIndex = 0;
+            else if (mask == 2) channelIndex = 1;
+            else if (mask == 4) channelIndex = 2;
+            else if (mask == 8) channelIndex = 3;
+            else channelIndex = -1;
+
+            for (int i = 0; i < source.Length; i += bpp)
             {
-                if (blue) channelIndex = 0;
-                else if (green) channelIndex = 1;
-                else if (red) channelIndex = 2;
-                else if (alpha) channelIndex = 3;
-            }
-
-            var temp = new List<byte>(4);
-            foreach (var b in sourcePixels)
-            {
-                temp.Add(b);
-                if (temp.Count < 4)
-                    continue;
-
-                if (channelIndex >= 0)
+                for (int j = 0; j < bpp; j++)
                 {
-                    yield return temp[channelIndex];
-                    yield return temp[channelIndex];
-                    yield return temp[channelIndex];
-                    yield return byte.MaxValue;
+                    if (channelIndex >= 0)
+                    {
+                        if (j == 3) source[i + j] = byte.MaxValue; //full opacity
+                        else source[i + j] = channelIndex < bpp ? source[i + channelIndex] : byte.MinValue;
+                    }
+                    else
+                    {
+                        var bit = (int)Math.Pow(2, j);
+                        if ((mask & bit) == 0)
+                            source[i + j] = j < 3 ? byte.MinValue : byte.MaxValue;
+                    }
                 }
-                else
-                {
-                    yield return blue ? temp[0] : (byte)0;
-                    yield return green ? temp[1] : (byte)0;
-                    yield return red ? temp[2] : (byte)0;
-                    yield return alpha ? temp[3] : byte.MaxValue;
-                }
-
-                temp.Clear();
             }
         }
 
@@ -333,24 +322,25 @@ namespace System.Drawing.Dds
         }
 
         #region Standard Decompression Methods
-        internal static IEnumerable<byte> DecompressB5G6R5(byte[] data, int height, int width)
+        internal static byte[] DecompressB5G6R5(byte[] source, int height, int width, bool bgr24)
         {
-            return Enumerable.Range(0, height * width).SelectMany(i => BgraColour.From565(BitConverter.ToUInt16(data, i * 2)).AsEnumerable());
+            return ToArray(Enumerable.Range(0, height * width).SelectMany(i => BgraColour.From565(BitConverter.ToUInt16(source, i * 2)).AsEnumerable(bgr24)), bgr24, height, width);
         }
 
-        internal static IEnumerable<byte> DecompressB5G5R5A1(byte[] data, int height, int width)
+        internal static byte[] DecompressB5G5R5A1(byte[] data, int height, int width, bool bgr24)
         {
-            return Enumerable.Range(0, height * width).SelectMany(i => BgraColour.From5551(BitConverter.ToUInt16(data, i * 2)).AsEnumerable());
+            return ToArray(Enumerable.Range(0, height * width).SelectMany(i => BgraColour.From5551(BitConverter.ToUInt16(data, i * 2)).AsEnumerable(bgr24)), bgr24, height, width);
         }
 
-        internal static IEnumerable<byte> DecompressB4G4R4A4(byte[] data, int height, int width)
+        internal static byte[] DecompressB4G4R4A4(byte[] data, int height, int width, bool bgr24)
         {
-            return Enumerable.Range(0, height * width).SelectMany(i => BgraColour.From4444(BitConverter.ToUInt16(data, i * 2)).AsEnumerable());
+            return ToArray(Enumerable.Range(0, height * width).SelectMany(i => BgraColour.From4444(BitConverter.ToUInt16(data, i * 2)).AsEnumerable(bgr24)), bgr24, height, width);
         }
 
-        internal static IEnumerable<byte> DecompressBC1(byte[] data, int height, int width)
+        internal static byte[] DecompressBC1(byte[] data, int height, int width, bool bgr24)
         {
-            var output = new BgraColour[width * height];
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
             var palette = new BgraColour[4];
 
             const int bytesPerBlock = 8;
@@ -387,20 +377,21 @@ namespace System.Drawing.Dds
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
 
-                            var destIndex = destY * width + destX;
+                            var destIndex = (destY * width + destX) * bpp;
                             var pIndex = (byte)((indexBits >> j * 2) & 0x3);
-                            output[destIndex] = palette[pIndex];
+                            palette[pIndex].Copy(output, destIndex, bgr24);
                         }
                     }
                 }
             }
 
-            return output.SelectMany(c => c.AsEnumerable());
+            return output;
         }
 
-        internal static IEnumerable<byte> DecompressBC2(byte[] data, int height, int width)
+        internal static byte[] DecompressBC2(byte[] data, int height, int width, bool bgr24)
         {
-            var output = new BgraColour[width * height];
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
             var palette = new BgraColour[4];
 
             const int bytesPerBlock = 16;
@@ -427,23 +418,24 @@ namespace System.Drawing.Dds
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
 
-                            var destIndex = destY * width + destX;
+                            var destIndex = (destY * width + destX) * bpp;
                             var pIndex = (byte)((indexBits >> j * 2) & 0x3);
 
                             var result = palette[pIndex];
                             result.a = (byte)(((alphaBits >> j * 4) & 0xF) * (0xFF / 0xF));
-                            output[destIndex] = result;
+                            result.Copy(output, destIndex, bgr24);
                         }
                     }
                 }
             }
 
-            return output.SelectMany(c => c.AsEnumerable());
+            return output;
         }
 
-        internal static IEnumerable<byte> DecompressBC3(byte[] data, int height, int width)
+        internal static byte[] DecompressBC3(byte[] data, int height, int width, bool bgr24)
         {
-            var output = new BgraColour[width * height];
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
             var rgbPalette = new BgraColour[4];
             var alphaPalette = new byte[8];
 
@@ -487,23 +479,24 @@ namespace System.Drawing.Dds
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
 
-                            var destIndex = destY * width + destX;
+                            var destIndex = (destY * width + destX) * bpp;
                             var pIndex = (byte)((rgbIndexBits >> j * 2) & 0x3);
 
                             var result = rgbPalette[pIndex];
                             result.a = alphaPalette[(alphaIndexBits >> (pixelIndex % 8) * 3) & 0x7];
-                            output[destIndex] = result;
+                            result.Copy(output, destIndex, bgr24);
                         }
                     }
                 }
             }
 
-            return output.SelectMany(c => c.AsEnumerable());
+            return output;
         }
 
-        internal static IEnumerable<byte> DecompressBC4(byte[] data, int height, int width)
+        internal static byte[] DecompressBC4(byte[] data, int height, int width, bool bgr24)
         {
-            var output = new BgraColour[width * height];
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
             var palette = new byte[8];
 
             const int bytesPerBlock = 8;
@@ -539,27 +532,23 @@ namespace System.Drawing.Dds
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
 
-                            var destIndex = destY * width + destX;
+                            var destIndex = (destY * width + destX) * bpp;
                             var pIndex = (byte)((pIndexBits >> (pixelIndex % 8) * 3) & 0x7);
 
-                            output[destIndex] = new BgraColour
-                            {
-                                b = palette[pIndex],
-                                g = palette[pIndex],
-                                r = palette[pIndex],
-                                a = byte.MaxValue,
-                            };
+                            output[destIndex] = output[destIndex + 1] = output[destIndex + 2] = palette[pIndex];
+                            if (!bgr24) output[destIndex + 3] = byte.MaxValue;
                         }
                     }
                 }
             }
 
-            return output.SelectMany(c => c.AsEnumerable());
+            return output;
         }
 
-        internal static IEnumerable<byte> DecompressBC5(byte[] data, int height, int width)
+        internal static byte[] DecompressBC5(byte[] data, int height, int width, bool bgr24)
         {
-            var output = new BgraColour[width * height];
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
             var rPalette = new byte[8];
             var gPalette = new byte[8];
 
@@ -614,58 +603,50 @@ namespace System.Drawing.Dds
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
 
-                            var destIndex = destY * width + destX;
+                            var destIndex = (destY * width + destX) * bpp;
                             var shift = (pixelIndex % 8) * 3;
 
                             var rIndex = (byte)((rIndexBits >> shift) & 0x7);
                             var gIndex = (byte)((gIndexBits >> shift) & 0x7);
 
-                            output[destIndex] = new BgraColour
-                            {
-                                //b = rPalette[rIndex],
-                                g = gPalette[gIndex],
-                                r = rPalette[rIndex],
-                                a = byte.MaxValue,
-                            };
+                            //output[destIndex] = byte.MinValue;
+                            output[destIndex + 1] = gPalette[gIndex];
+                            output[destIndex + 2] = rPalette[rIndex];
+                            if (!bgr24) output[destIndex + 3] = byte.MaxValue;
                         }
                     }
                 }
             }
 
-            return output.SelectMany(c => c.AsEnumerable());
+            return output;
         }
         #endregion
 
         #region Xbox Decompression Methods
-        internal static IEnumerable<byte> DecompressA8(byte[] data, int height, int width)
+        internal static byte[] DecompressA8(byte[] data, int height, int width, bool bgr24)
         {
-            return data.SelectMany(b => Enumerable.Range(0, 4).Select(i => i < 3 ? byte.MinValue : b));
+            return ToArray(data.SelectMany(b => Enumerable.Range(0, bgr24 ? 3 : 4).Select(i => i < 3 ? byte.MinValue : b)), bgr24, height, width);
         }
 
-        internal static IEnumerable<byte> DecompressAY8(byte[] data, int height, int width)
+        internal static byte[] DecompressAY8(byte[] data, int height, int width, bool bgr24)
         {
-            return data.SelectMany(b => Enumerable.Range(0, 4).Select(i => b));
+            return ToArray(data.SelectMany(b => Enumerable.Range(0, bgr24 ? 3 : 4).Select(i => b)), bgr24, height, width);
         }
 
-        internal static IEnumerable<byte> DecompressY8(byte[] data, int height, int width)
+        internal static byte[] DecompressY8(byte[] data, int height, int width, bool bgr24)
         {
-            return data.SelectMany(b => Enumerable.Range(0, 4).Select(i => i < 3 ? b : byte.MaxValue));
+            return ToArray(data.SelectMany(b => Enumerable.Range(0, bgr24 ? 3 : 4).Select(i => i < 3 ? b : byte.MaxValue)), bgr24, height, width);
         }
 
-        internal static IEnumerable<byte> DecompressY8A8(byte[] data, int height, int width)
+        internal static byte[] DecompressY8A8(byte[] data, int height, int width, bool bgr24)
         {
-            for (int i = 0; i < height * width; i++)
-            {
-                yield return data[i * 2 + 1];
-                yield return data[i * 2 + 1];
-                yield return data[i * 2 + 1];
-                yield return data[i * 2];
-            }
+            return ToArray(Enumerable.Range(0, height * width).SelectMany(i => Enumerable.Range(0, bgr24 ? 3 : 4).Select(j => j < 3 ? data[i * 2 + 1] : data[i * 2])), bgr24, height, width);
         }
 
-        internal static IEnumerable<byte> DecompressBC1DualChannel(byte[] data, int height, int width)
+        internal static byte[] DecompressBC1DualChannel(byte[] data, int height, int width, bool bgr24)
         {
-            var output = new BgraColour[width * height];
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
             var palette = new BgraColour[4];
 
             const int bytesPerBlock = 8;
@@ -691,22 +672,23 @@ namespace System.Drawing.Dds
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
 
-                            var destIndex = destY * width + destX;
+                            var destIndex = (destY * width + destX) * bpp;
                             var pIndex = (byte)((indexBits >> j * 2) & 0x3);
                             var colour = palette[pIndex];
                             colour.b = CalculateZVector(colour.r, colour.g);
-                            output[destIndex] = colour;
+                            colour.Copy(output, destIndex, bgr24);
                         }
                     }
                 }
             }
 
-            return output.SelectMany(c => c.AsEnumerable());
+            return output;
         }
 
-        internal static IEnumerable<byte> DecompressBC2AlphaOnly(byte[] data, int height, int width, bool bgr, bool a)
+        internal static byte[] DecompressBC2AlphaOnly(byte[] data, int height, int width, bool bgr, bool a, bool bgr24)
         {
-            var output = new BgraColour[width * height];
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
 
             const int bytesPerBlock = 8;
             var xBlocks = width / 4;
@@ -724,96 +706,89 @@ namespace System.Drawing.Dds
                         {
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
-                            var destIndex = destY * width + destX;
+                            var destIndex = (destY * width + destX) * bpp;
 
                             var value = (byte)(((alphaBits >> j * 4) & 0xF) * (0xFF / 0xF));
-                            output[destIndex] = new BgraColour
-                            {
-                                b = bgr ? value : byte.MinValue,
-                                g = bgr ? value : byte.MinValue,
-                                r = bgr ? value : byte.MinValue,
-                                a = a ? value : byte.MaxValue,
-                            };
+                            if (bgr) output[destIndex] = output[destIndex + 1] = output[destIndex + 2] = value;
+                            if (!bgr24) output[destIndex + 3] = a ? value : byte.MaxValue;
                         }
                     }
                 }
             }
 
-            return output.SelectMany(c => c.AsEnumerable());
+            return output;
         }
 
-        internal static IEnumerable<byte> DecompressBC3AlphaOnly(byte[] data, int height, int width, bool bgr, bool a)
+        internal static byte[] DecompressBC3AlphaOnly(byte[] data, int height, int width, bool bgr, bool a, bool bgr24)
         {
             //same bit layout as BC4
-            data = DecompressBC4(data, height, width).ToArray();
+            data = DecompressBC4(data, height, width, bgr24);
 
             for (int i = 0; i < data.Length; i += 4)
             {
-                var scalar = data[i];
-                yield return bgr ? scalar : byte.MinValue;
-                yield return bgr ? scalar : byte.MinValue;
-                yield return bgr ? scalar : byte.MinValue;
-                yield return a ? scalar : byte.MaxValue;
+                data[i + 1] = data[i + 2] = bgr ? data[i] : byte.MinValue; //gr = b
+                if (!bgr24) data[i + 3] = a ? data[i] : byte.MaxValue; //a = b
             }
+
+            return data;
         }
 
-        internal static IEnumerable<byte> DecompressCTX1(byte[] data, int height, int width)
+        internal static byte[] DecompressCTX1(byte[] data, int height, int width, bool bgr24)
         {
-            return DecompressBC1DualChannel(data, height, width);
+            return DecompressBC1DualChannel(data, height, width, bgr24);
         }
 
-        internal static IEnumerable<byte> DecompressDXN(byte[] data, int height, int width)
+        internal static byte[] DecompressDXN(byte[] data, int height, int width, bool bgr24)
         {
-            data = DecompressBC5(data, height, width).ToArray();
-            for (int i = 0; i < data.Length; i += 4)
+            var bpp = bgr24 ? 3 : 4;
+            data = DecompressBC5(data, height, width, bgr24);
+            for (int i = 0; i < data.Length; i += bpp)
                 data[i] = CalculateZVector(data[i + 2], data[i + 1]);
 
             return data;
         }
 
-        internal static IEnumerable<byte> DecompressDXN_mono_alpha(byte[] data, int height, int width)
+        internal static byte[] DecompressDXN_mono_alpha(byte[] data, int height, int width, bool bgr24)
         {
-            data = DecompressBC5(data, height, width).ToArray();
-            for (int i = 0; i < data.Length; i += 4)
+            var bpp = bgr24 ? 3 : 4;
+            data = DecompressBC5(data, height, width, bgr24);
+            for (int i = 0; i < data.Length; i += bpp)
             {
-                var g = data[i + 1];
-                var r = data[i + 2];
-
-                yield return r;
-                yield return r;
-                yield return r;
-                yield return g;
+                if (!bgr24) data[i + 3] = data[i + 1]; //a = g
+                data[i] = data[i + 1] = data[i + 2]; //bg = r
             }
+
+            return data;
         }
 
-        internal static IEnumerable<byte> DecompressDXT3a_scalar(byte[] data, int height, int width)
+        internal static byte[] DecompressDXT3a_scalar(byte[] data, int height, int width, bool bgr24)
         {
-            return DecompressBC2AlphaOnly(data, height, width, true, true);
+            return DecompressBC2AlphaOnly(data, height, width, true, true, bgr24);
         }
 
-        internal static IEnumerable<byte> DecompressDXT3a_mono(byte[] data, int height, int width)
+        internal static byte[] DecompressDXT3a_mono(byte[] data, int height, int width, bool bgr24)
         {
-            return DecompressBC2AlphaOnly(data, height, width, true, false);
+            return DecompressBC2AlphaOnly(data, height, width, true, false, bgr24);
         }
 
-        internal static IEnumerable<byte> DecompressDXT3a_alpha(byte[] data, int height, int width)
+        internal static byte[] DecompressDXT3a_alpha(byte[] data, int height, int width, bool bgr24)
         {
-            return DecompressBC2AlphaOnly(data, height, width, false, true);
+            return DecompressBC2AlphaOnly(data, height, width, false, true, bgr24);
         }
 
-        internal static IEnumerable<byte> DecompressDXT5a_scalar(byte[] data, int height, int width)
+        internal static byte[] DecompressDXT5a_scalar(byte[] data, int height, int width, bool bgr24)
         {
-            return DecompressBC3AlphaOnly(data, height, width, true, true);
+            return DecompressBC3AlphaOnly(data, height, width, true, true, bgr24);
         }
 
-        internal static IEnumerable<byte> DecompressDXT5a_mono(byte[] data, int height, int width)
+        internal static byte[] DecompressDXT5a_mono(byte[] data, int height, int width, bool bgr24)
         {
-            return DecompressBC3AlphaOnly(data, height, width, true, false);
+            return DecompressBC3AlphaOnly(data, height, width, true, false, bgr24);
         }
 
-        internal static IEnumerable<byte> DecompressDXT5a_alpha(byte[] data, int height, int width)
+        internal static byte[] DecompressDXT5a_alpha(byte[] data, int height, int width, bool bgr24)
         {
-            return DecompressBC3AlphaOnly(data, height, width, false, true);
+            return DecompressBC3AlphaOnly(data, height, width, false, true, bgr24);
         }
         #endregion
 
@@ -900,17 +875,40 @@ namespace System.Drawing.Dds
             };
         }
 
-        private static IEnumerable<T> TakeSkipRepeat<T>(IEnumerable<T> enumerable, int take, int skip)
+        private static IEnumerable<T> SkipNth<T>(IEnumerable<T> enumerable, int n)
         {
             int i = 0;
             foreach (var item in enumerable)
             {
-                if (i < take)
+                if (++i != n)
                     yield return item;
-
-                if (++i >= take + skip)
-                    i = 0;
+                else i = 0;
             }
+        }
+
+        private static byte[] ToArray(IEnumerable<byte> source, bool bgr24, int height, int width)
+        {
+            var len = height * width * (bgr24 ? 3 : 4);
+            var arraySource = source as byte[];
+            if (arraySource?.Length >= len)
+            {
+                if (arraySource.Length == len)
+                    return arraySource;
+
+                var subArray = new byte[len];
+                Array.Copy(arraySource, subArray, len);
+                return subArray;
+            }
+
+            var output = new byte[len];
+            int i = 0;
+            foreach (var b in source)
+            {
+                output[i++] = b;
+                if (i >= output.Length)
+                    break;
+            }
+            return output;
         }
     }
 
@@ -1010,12 +1008,20 @@ namespace System.Drawing.Dds
     {
         public byte b, g, r, a;
 
-        public IEnumerable<byte> AsEnumerable()
+        public IEnumerable<byte> AsEnumerable(bool bgr24)
         {
             yield return b;
             yield return g;
             yield return r;
-            yield return a;
+            if (!bgr24) yield return a;
+        }
+
+        public void Copy(byte[] destination, int destinationIndex, bool bgr24)
+        {
+            destination[destinationIndex] = b;
+            destination[destinationIndex + 1] = g;
+            destination[destinationIndex + 2] = r;
+            if (!bgr24) destination[destinationIndex + 3] = a;
         }
 
         public static BgraColour From565(ushort value)
