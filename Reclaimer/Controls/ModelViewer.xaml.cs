@@ -206,7 +206,7 @@ namespace Reclaimer.Controls
         private IEnumerable<Model3DGroup> GetMeshes(IGeometryModel model)
         {
             var indexes = model.Regions.SelectMany(r => r.Permutations)
-                .Select(p => p.MeshIndex).Distinct().ToArray();
+                .Select(p => p.MeshIndex).Distinct().ToList();
 
             var materials = GetMaterials(model).ToList();
 

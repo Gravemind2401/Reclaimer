@@ -30,6 +30,21 @@ namespace Reclaimer.Plugins
 
         private BatchExtractSettings Settings { get; set; }
 
+        private PluginContextItem ExtractMultipleContextItem
+        {
+            get
+            {
+                return new PluginContextItem("ExtractAll", isBusy ? "Add to extraction queue" : "Extract All", OnContextItemClick);
+            }
+        }
+        private PluginContextItem ExtractSingleContextItem
+        {
+            get
+            {
+                return new PluginContextItem("Extract", isBusy ? "Add to extraction queue" : "Extract", OnContextItemClick);
+            }
+        }
+
         public override void Initialise()
         {
             Settings = LoadSettings<BatchExtractSettings>();
@@ -43,18 +58,21 @@ namespace Reclaimer.Plugins
 
         public override IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
         {
-            CacheType cacheType;
-            var split = context.FileTypeKey.Split('.');
-            if (split.Length != 2 || !Enum.TryParse(split[0], out cacheType))
-                yield break;
-
-            if (context.File is TreeNode && split[1] == "*")
-                yield return new PluginContextItem("ExtractAll", isBusy ? "Add to extraction queue" : "Extract All", OnContextItemClick);
-            else
+            Match match;
+            if ((match = Regex.Match(context.FileTypeKey, @"Blam\.(\w+)\.(.*)")).Success)
             {
-                var item = context.File as IIndexItem;
-                if (supportedTags.Split(',').Any(s => item.ClassCode == s))
-                    yield return new PluginContextItem("Extract", isBusy ? "Add to extraction queue" : "Extract", OnContextItemClick);
+                CacheType cacheType;
+                if (!Enum.TryParse(match.Groups[1].Value, out cacheType))
+                    yield break;
+
+                if (match.Groups[2].Value == "*" && context.File.Any(i => i is TreeNode))
+                    yield return ExtractMultipleContextItem;
+                else
+                {
+                    var item = context.File.OfType<IIndexItem>().FirstOrDefault();
+                    if (item != null && supportedTags.Split(',').Any(s => item.ClassCode == s))
+                        yield return ExtractSingleContextItem;
+                }
             }
         }
 
@@ -91,9 +109,15 @@ namespace Reclaimer.Plugins
                 Settings.DataFolder = folder = fsd.SelectedPath;
             }
 
-            if (context.File is TreeNode)
-                BatchQueue(context.File as TreeNode);
-            else extractionQueue.Enqueue(context.File as IIndexItem);
+            var node = context.File.OfType<TreeNode>().FirstOrDefault();
+            if (node != null)
+                BatchQueue(node);
+            else
+            {
+                var item = context.File.OfType<IIndexItem>().FirstOrDefault();
+                if (item != null)
+                    extractionQueue.Enqueue(item);
+            }
 
             if (isBusy) return;
 

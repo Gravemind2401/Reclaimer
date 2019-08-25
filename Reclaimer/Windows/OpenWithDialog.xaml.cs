@@ -1,4 +1,5 @@
 ﻿using Reclaimer.Plugins;
+using Reclaimer.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -49,7 +50,7 @@ namespace Reclaimer.Windows
         private void LoadList(IEnumerable<Plugin> handlers, OpenFileArgs args)
         {
             this.args = args;
-            Title = $"Open With - {args.FileName}";
+            Title = $"Open With - {Utils.GetFileName(args.FileName)}";
 
             var defaultHandler = App.Settings.DefaultHandlers[args.FileTypeKey];
 

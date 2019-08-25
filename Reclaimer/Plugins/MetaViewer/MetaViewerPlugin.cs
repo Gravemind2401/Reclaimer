@@ -7,6 +7,7 @@ using Reclaimer.Windows;
 using Adjutant.Blam.Common;
 using System.IO;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace Reclaimer.Plugins.MetaViewer
 {
@@ -28,11 +29,14 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public override bool CanOpenFile(OpenFileArgs args)
         {
+            var match = Regex.Match(args.FileTypeKey, @"Blam\.(\w+)\.(.*)");
+            if (!match.Success) return false;
+
             CacheType cacheType;
-            if (!Enum.TryParse(args.FileTypeKey.Split('.').First(), out cacheType))
+            if (!Enum.TryParse(match.Groups[1].Value, out cacheType))
                 return false;
 
-            var item = args.File as IIndexItem;
+            var item = args.File.OfType<IIndexItem>().FirstOrDefault();
             if (item == null) return false;
 
             var xml = GetDefinitionPath(item);
@@ -41,7 +45,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public override void OpenFile(OpenFileArgs args)
         {
-            var item = args.File as IIndexItem;
+            var item = args.File.OfType<IIndexItem>().FirstOrDefault();
 
             var viewer = new Controls.MetaViewer();
             viewer.LoadMetadata(item, GetDefinitionPath(item));

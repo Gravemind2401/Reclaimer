@@ -322,7 +322,7 @@ namespace Reclaimer.Plugins
         /// <summary>
         /// The file object.
         /// </summary>
-        public object File { get; }
+        public object[] File { get; }
 
         /// <summary>
         /// A unique key representing the type of file.
@@ -334,13 +334,13 @@ namespace Reclaimer.Plugins
         /// </summary>
         public IMultiPanelHost TargetWindow { get; }
 
-        public OpenFileArgs(string fileName, object file, string key)
-            : this(fileName, file, key, Substrate.GetHostWindow())
+        public OpenFileArgs(string fileName, string fileTypeKey, params object[] file)
+            : this(fileName, fileTypeKey, Substrate.GetHostWindow(), file)
         {
 
         }
 
-        public OpenFileArgs(string fileName, object file, string fileTypeKey, IMultiPanelHost targetWindow)
+        public OpenFileArgs(string fileName, string fileTypeKey, IMultiPanelHost targetWindow, params object[] file)
         {
             FileName = fileName;
             File = file;

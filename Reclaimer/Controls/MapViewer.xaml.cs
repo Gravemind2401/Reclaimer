@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Common;
+using Adjutant.Utilities;
 using Reclaimer.Plugins;
 using Reclaimer.Utilities;
 using Reclaimer.Windows;
@@ -177,12 +178,85 @@ namespace Reclaimer.Controls
         {
             var node = tv.SelectedItem as TreeNode;
             if (node.HasChildren) //folder
-                return new OpenFileArgs(node.Header, node, $"{cache.CacheType}.*");
+                return new OpenFileArgs(node.Header, $"Blam.{cache.CacheType}.*", node);
 
             var item = node.Tag as IIndexItem;
-            var fileName = $"{Utils.GetFileName(item.FullPath)}.{item.ClassName}";
-            var fileKey = $"{cache.CacheType}.{item.ClassCode}";
-            return new OpenFileArgs(fileName, item, fileKey, Substrate.GetHostWindow(this));
+            var fileName = $"{item.FullPath}.{item.ClassName}";
+            var fileKey = $"Blam.{cache.CacheType}.{item.ClassCode}";
+            return new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), GetFileFormats(item).ToArray());
+        }
+
+        private IEnumerable<object> GetFileFormats(IIndexItem item)
+        {
+            yield return item;
+
+            if (item.ClassCode == "bitm")
+            {
+                switch (item.CacheFile.CacheType)
+                {
+                    case CacheType.Halo1CE:
+                    case CacheType.Halo1PC:
+                        yield return item.ReadMetadata<Adjutant.Blam.Halo1.bitmap>();
+                        break;
+                    case CacheType.Halo2Xbox:
+                        yield return item.ReadMetadata<Adjutant.Blam.Halo2.bitmap>();
+                        break;
+                    case CacheType.Halo3Beta:
+                    case CacheType.Halo3Retail:
+                    case CacheType.Halo3ODST:
+                        yield return item.ReadMetadata<Adjutant.Blam.Halo3.bitmap>();
+                        break;
+                    case CacheType.HaloReachBeta:
+                    case CacheType.HaloReachRetail:
+                        yield return item.ReadMetadata<Adjutant.Blam.HaloReach.bitmap>();
+                        break;
+                    default: throw Exceptions.TagClassNotSupported(item);
+                }
+            }
+            else if (item.ClassCode == "mod2" || item.ClassCode == "mode")
+            {
+                switch (item.CacheFile.CacheType)
+                {
+                    case CacheType.Halo1CE:
+                    case CacheType.Halo1PC:
+                        yield return item.ReadMetadata<Adjutant.Blam.Halo1.gbxmodel>();
+                        break;
+                    case CacheType.Halo2Xbox:
+                        yield return item.ReadMetadata<Adjutant.Blam.Halo2.render_model>();
+                        break;
+                    case CacheType.Halo3Beta:
+                    case CacheType.Halo3Retail:
+                    case CacheType.Halo3ODST:
+                        yield return item.ReadMetadata<Adjutant.Blam.Halo3.render_model>();
+                        break;
+                    case CacheType.HaloReachBeta:
+                    case CacheType.HaloReachRetail:
+                        yield return item.ReadMetadata<Adjutant.Blam.HaloReach.render_model>();
+                        break;
+                }
+            }
+            else if(item.ClassCode == "sbsp")
+            {
+                switch (item.CacheFile.CacheType)
+                {
+                    case CacheType.Halo1CE:
+                    case CacheType.Halo1PC:
+                        yield return item.ReadMetadata<Adjutant.Blam.Halo1.scenario_structure_bsp>();
+                        break;
+                    case CacheType.Halo2Xbox:
+                        yield return item.ReadMetadata<Adjutant.Blam.Halo2.scenario_structure_bsp>();
+                        break;
+                    case CacheType.Halo3Beta:
+                    case CacheType.Halo3Retail:
+                    case CacheType.Halo3ODST:
+                        yield return item.ReadMetadata<Adjutant.Blam.Halo3.scenario_structure_bsp>();
+                        break;
+                    case CacheType.HaloReachBeta:
+                    case CacheType.HaloReachRetail:
+                        yield return item.ReadMetadata<Adjutant.Blam.HaloReach.scenario_structure_bsp>();
+                        break;
+                }
+            }
         }
 
         #region Event Handlers
