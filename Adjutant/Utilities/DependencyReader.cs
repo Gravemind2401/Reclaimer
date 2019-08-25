@@ -16,12 +16,14 @@ namespace Adjutant.Utilities
     {
         private readonly Dictionary<Type, Func<object>> registeredTypes;
         private readonly Dictionary<Type, object> registeredInstances;
+        private readonly Dictionary<Type, ConstructorInfo> ctorLookup;
 
         public DependencyReader(Stream input, ByteOrder byteOrder)
             : base(input, byteOrder)
         {
             registeredTypes = new Dictionary<Type, Func<object>>();
             registeredInstances = new Dictionary<Type, object>();
+            ctorLookup = new Dictionary<Type, ConstructorInfo>();
             DynamicReadEnabled = true;
         }
 
@@ -33,6 +35,7 @@ namespace Adjutant.Utilities
 
             registeredTypes = parent.registeredTypes;
             registeredInstances = parent.registeredInstances;
+            ctorLookup = parent.ctorLookup;
             DynamicReadEnabled = true;
         }
 
@@ -105,13 +108,20 @@ namespace Adjutant.Utilities
 
         private ConstructorInfo FindConstructor(Type type)
         {
+            if (ctorLookup.ContainsKey(type))
+                return ctorLookup[type];
+
             foreach (var constructor in type.GetConstructors())
             {
                 var info = constructor.GetParameters();
                 if (info.Any() && info.All(i => CanConstruct(i.ParameterType)))
+                {
+                    ctorLookup.Add(type, constructor);
                     return constructor;
+                }
             }
 
+            ctorLookup.Add(type, null);
             return null;
         }
     }

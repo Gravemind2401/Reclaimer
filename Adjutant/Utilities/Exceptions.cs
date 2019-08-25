@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Adjutant.Saber3D.Common;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -32,6 +33,11 @@ namespace Adjutant.Utilities
         internal static NotSupportedException BitmapFormatNotSupported(string formatName)
         {
             return new NotSupportedException($"The BitmapFormat '{formatName}' is not supported.");
+        }
+
+        internal static ArgumentException NotASaberTextureItem(IPakItem item)
+        {
+            return new ArgumentException($"'{item.Name}' is not a texture file.");
         }
     }
 }

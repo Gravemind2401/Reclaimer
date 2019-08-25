@@ -125,6 +125,11 @@
     <Compile Include="Geometry\TransformedVector3D.cs" />
     <Compile Include="Geometry\TransformedVertex.cs" />
     <Compile Include="Geometry\VectorType.cs" />
+    <Compile Include="Saber3D\Common\Enums.cs" />
+    <Compile Include="Saber3D\Common\IPakFile.cs" />
+    <Compile Include="Saber3D\Common\IPakItem.cs" />
+    <Compile Include="Saber3D\Halo1X\PakFile.cs" />
+    <Compile Include="Saber3D\Halo1X\Texture.cs" />
     <Compile Include="Utilities\AesHelper.cs" />
     <Compile Include="Utilities\DependencyReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
