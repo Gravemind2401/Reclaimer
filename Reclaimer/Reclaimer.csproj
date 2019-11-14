@@ -235,7 +235,7 @@
       <Project>{A46DD713-D7F0-4D6A-BD0F-348D890E135A}</Project>
       <Name>Adjutant</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Studio\Studio\Studio.csproj">
+    <ProjectReference Include="..\..\Studio Old\Studio\Studio.csproj">
       <Project>{e90663b1-d346-4644-9d27-e8bec0520284}</Project>
       <Name>Studio</Name>
     </ProjectReference>
