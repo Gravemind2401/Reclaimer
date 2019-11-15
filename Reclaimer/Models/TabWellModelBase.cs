@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Reclaimer.Models
 {
-    public abstract class TabWellBase : TabOwnerBase
+    public abstract class TabWellModelBase : TabOwnerModelBase
     {
-        public ObservableCollection<TabItem> Children { get; }
+        public ObservableCollection<TabModel> Children { get; }
 
         private bool isActive;
         public bool IsActive
@@ -19,8 +19,8 @@ namespace Reclaimer.Models
             set { SetProperty(ref isActive, value); }
         }
 
-        private TabItem selectedItem;
-        public TabItem SelectedItem
+        private TabModel selectedItem;
+        public TabModel SelectedItem
         {
             get { return selectedItem; }
             set { SetProperty(ref selectedItem, value); }
@@ -40,27 +40,27 @@ namespace Reclaimer.Models
             set { SetProperty(ref height, value, UpdateChildrenHeight); }
         }
 
-        public DelegateCommand<TabItem> CloseTabCommand { get; }
-        public DelegateCommand<TabItem> TogglePinStatusCommand { get; }
-        public DelegateCommand<TabItem> SelectItemCommand { get; }
+        public DelegateCommand<TabModel> CloseTabCommand { get; }
+        public DelegateCommand<TabModel> TogglePinStatusCommand { get; }
+        public DelegateCommand<TabModel> SelectItemCommand { get; }
         //public DelegateCommand<FloatEventArgs> FloatTabCommand { get; }
         //public DelegateCommand<FloatEventArgs> FloatAllCommand { get; }
         //public DelegateCommand<DockEventArgs> DockCommand { get; }
 
-        public TabWellBase()
+        public TabWellModelBase()
         {
-            CloseTabCommand = new DelegateCommand<TabItem>(CloseTabExecuted);
-            TogglePinStatusCommand = new DelegateCommand<TabItem>(TogglePinStatusExecuted);
-            SelectItemCommand = new DelegateCommand<TabItem>(SelectItemExecuted);
+            CloseTabCommand = new DelegateCommand<TabModel>(CloseTabExecuted);
+            TogglePinStatusCommand = new DelegateCommand<TabModel>(TogglePinStatusExecuted);
+            SelectItemCommand = new DelegateCommand<TabModel>(SelectItemExecuted);
             //FloatTabCommand = new DelegateCommand<FloatEventArgs>(FloatTabExecuted);
             //FloatAllCommand = new DelegateCommand<FloatEventArgs>(FloatAllExecuted);
             //DockCommand = new DelegateCommand<DockEventArgs>(DockExecuted);
 
-            Children = new ObservableCollection<TabItem>();
+            Children = new ObservableCollection<TabModel>();
             Children.CollectionChanged += Children_CollectionChanged;
         }
 
-        protected virtual void CloseTabExecuted(TabItem item)
+        protected virtual void CloseTabExecuted(TabModel item)
         {
             var parent = ParentContainer;
             Children.Remove(item ?? SelectedItem);
@@ -69,12 +69,12 @@ namespace Reclaimer.Models
                 parent.Host.Close();
         }
 
-        protected virtual void TogglePinStatusExecuted(TabItem item)
+        protected virtual void TogglePinStatusExecuted(TabModel item)
         {
 
         }
 
-        protected virtual void SelectItemExecuted(TabItem item)
+        protected virtual void SelectItemExecuted(TabModel item)
         {
             SelectedItem = item;
         }
@@ -83,13 +83,13 @@ namespace Reclaimer.Models
         {
             if (e.OldItems != null)
             {
-                foreach (var tab in e.OldItems.OfType<TabItem>())
+                foreach (var tab in e.OldItems.OfType<TabModel>())
                     tab.Parent = null;
             }
 
             if (e.NewItems != null)
             {
-                foreach (var tab in e.NewItems.OfType<TabItem>())
+                foreach (var tab in e.NewItems.OfType<TabModel>())
                     tab.Parent = this;
             }
 
@@ -113,6 +113,6 @@ namespace Reclaimer.Models
                 item.Height = Height;
         }
 
-        internal override IEnumerable<TabItem> AllTabs => Children;
+        internal override IEnumerable<TabModel> AllTabs => Children;
     }
 }

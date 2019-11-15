@@ -9,9 +9,9 @@ using System.Windows.Controls;
 
 namespace Reclaimer.Models
 {
-    public class DocumentPanel : TabOwnerBase
+    public class DocumentPanelModel : TabOwnerModelBase
     {
-        public ObservableCollection<DocumentWell> Children { get; }
+        public ObservableCollection<DocumentWellModel> Children { get; }
 
         private Orientation orientation;
         public Orientation Orientation
@@ -22,15 +22,15 @@ namespace Reclaimer.Models
 
         //public DelegateCommand<DockEventArgs> DockCommand { get; }
 
-        public DocumentPanel()
+        public DocumentPanelModel()
         {
             //DockCommand = new DelegateCommand<DockEventArgs>(DockExecuted);
 
-            Children = new ObservableCollection<DocumentWell>();
+            Children = new ObservableCollection<DocumentWellModel>();
             Children.CollectionChanged += Children_CollectionChanged;
         }
 
-        public DocumentPanel(DocumentWell child) : this()
+        public DocumentPanelModel(DocumentWellModel child) : this()
         {
             Children.Add(child);
         }
@@ -39,17 +39,17 @@ namespace Reclaimer.Models
         {
             if (e.OldItems != null)
             {
-                foreach (var item in e.OldItems.OfType<DocumentWell>())
+                foreach (var item in e.OldItems.OfType<DocumentWellModel>())
                     item.Parent = null;
             }
 
             if (e.NewItems != null)
             {
-                foreach (var item in e.NewItems.OfType<DocumentWell>())
+                foreach (var item in e.NewItems.OfType<DocumentWellModel>())
                     item.Parent = this;
             }
         }
 
-        internal override IEnumerable<TabItem> AllTabs => Children.SelectMany(c => c.Children);
+        internal override IEnumerable<TabModel> AllTabs => Children.SelectMany(c => c.Children);
     }
 }

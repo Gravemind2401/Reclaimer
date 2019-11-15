@@ -8,10 +8,10 @@ using System.Windows.Controls;
 
 namespace Reclaimer.Models
 {
-    public class SplitPanel : TabOwnerBase
+    public class SplitPanelModel : TabOwnerModelBase
     {
-        private ObservableCollection<TabOwnerBase> items = new ObservableCollection<TabOwnerBase>();
-        public ReadOnlyObservableCollection<TabOwnerBase> Items { get; }
+        private ObservableCollection<TabOwnerModelBase> items = new ObservableCollection<TabOwnerModelBase>();
+        public ReadOnlyObservableCollection<TabOwnerModelBase> Items { get; }
 
         private Orientation orientation = Orientation.Horizontal;
         public Orientation Orientation
@@ -20,7 +20,7 @@ namespace Reclaimer.Models
             set { SetProperty(ref orientation, value); }
         }
 
-        public TabOwnerBase Item1
+        public TabOwnerModelBase Item1
         {
             get { return Items[0]; }
             set
@@ -36,7 +36,7 @@ namespace Reclaimer.Models
             }
         }
 
-        public TabOwnerBase Item2
+        public TabOwnerModelBase Item2
         {
             get { return Items[1]; }
             set
@@ -52,14 +52,14 @@ namespace Reclaimer.Models
             }
         }
 
-        public SplitPanel()
+        public SplitPanelModel()
         {
             items.Add(null);
             items.Add(null);
-            Items = new ReadOnlyObservableCollection<TabOwnerBase>(items);
+            Items = new ReadOnlyObservableCollection<TabOwnerModelBase>(items);
         }
 
-        private void OnItemChanged(TabOwnerBase prev, TabOwnerBase next)
+        private void OnItemChanged(TabOwnerModelBase prev, TabOwnerModelBase next)
         {
             prev?.SetParent(null);
             next?.SetParent(this);
@@ -77,7 +77,7 @@ namespace Reclaimer.Models
             }
         }
 
-        public bool Add(TabOwnerBase item)
+        public bool Add(TabOwnerModelBase item)
         {
             if (Item1 == null)
             {
@@ -93,7 +93,7 @@ namespace Reclaimer.Models
             return false;
         }
 
-        public bool Remove(TabOwnerBase item)
+        public bool Remove(TabOwnerModelBase item)
         {
             if (Item1 == item)
             {
@@ -109,7 +109,7 @@ namespace Reclaimer.Models
             return false;
         }
 
-        public bool Replace(TabOwnerBase prev, TabOwnerBase next)
+        public bool Replace(TabOwnerModelBase prev, TabOwnerModelBase next)
         {
             if (Item1 == prev)
             {
@@ -129,12 +129,12 @@ namespace Reclaimer.Models
             return false;
         }
 
-        internal override IEnumerable<TabItem> AllTabs
+        internal override IEnumerable<TabModel> AllTabs
         {
             get
             {
-                var tabs1 = Item1?.AllTabs ?? Enumerable.Empty<TabItem>();
-                var tabs2 = Item2?.AllTabs ?? Enumerable.Empty<TabItem>();
+                var tabs1 = Item1?.AllTabs ?? Enumerable.Empty<TabModel>();
+                var tabs2 = Item2?.AllTabs ?? Enumerable.Empty<TabModel>();
                 return tabs1.Concat(tabs2);
             }
         }

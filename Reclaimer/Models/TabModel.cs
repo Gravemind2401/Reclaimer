@@ -1,4 +1,5 @@
 ﻿using Prism.Mvvm;
+using Studio.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,21 +9,14 @@ using System.Windows;
 
 namespace Reclaimer.Models
 {
-    public class TabItem : BindableBase
+    public class TabModel : BindableBase
     {
-        private TabOwnerBase parent;
-        public TabOwnerBase Parent
+        private TabOwnerModelBase parent;
+        public TabOwnerModelBase Parent
         {
             get { return parent; }
             internal set { SetProperty(ref parent, value); }
         }
-
-        //private TabItemType usage;
-        //public TabItemType Usage
-        //{
-        //    get { return usage; }
-        //    set { SetProperty(ref usage, value); }
-        //}
 
         private bool isPinned;
         public bool IsPinned

@@ -9,10 +9,10 @@ using System.Windows;
 
 namespace Reclaimer.Models
 {
-    public abstract class TabOwnerBase : BindableBase
+    public abstract class TabOwnerModelBase : BindableBase
     {
-        private TabOwnerBase parent;
-        public TabOwnerBase Parent
+        private TabOwnerModelBase parent;
+        public TabOwnerModelBase Parent
         {
             get { return parent; }
             set { SetProperty(ref parent, value, OnParentChanged); }
@@ -43,22 +43,22 @@ namespace Reclaimer.Models
             else return false;
         }
 
-        protected virtual void OnParentChanged(TabOwnerBase prev, TabOwnerBase next)
+        protected virtual void OnParentChanged(TabOwnerModelBase prev, TabOwnerModelBase next)
         {
 
         }
 
-        internal SplitPanel ParentBrach => Parent as SplitPanel;
+        internal SplitPanelModel ParentBrach => Parent as SplitPanelModel;
 
-        internal DockContainer ParentContainer
+        internal DockContainerModel ParentContainer
         {
             get
             {
                 var model = Parent;
                 while (model != null)
                 {
-                    if (model is DockContainer)
-                        return model as DockContainer;
+                    if (model is DockContainerModel)
+                        return model as DockContainerModel;
                     else model = model.Parent;
                 }
 
@@ -66,8 +66,8 @@ namespace Reclaimer.Models
             }
         }
 
-        internal void SetParent(TabOwnerBase parent) => Parent = parent;
+        internal void SetParent(TabOwnerModelBase parent) => Parent = parent;
 
-        internal abstract IEnumerable<TabItem> AllTabs { get; }
+        internal abstract IEnumerable<TabModel> AllTabs { get; }
     }
 }

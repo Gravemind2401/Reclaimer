@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Reclaimer.Models
 {
-    public class DocumentWell : TabWellBase
+    public class DocumentWellModel : TabWellModelBase
     {
-        public DocumentPanel ParentPanel => Parent as DocumentPanel;
+        public DocumentPanelModel ParentPanel => Parent as DocumentPanelModel;
 
-        protected override void TogglePinStatusExecuted(TabItem item)
+        protected override void TogglePinStatusExecuted(TabModel item)
         {
             item.IsPinned = !item.IsPinned;
         }

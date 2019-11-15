@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace Reclaimer.Models
 {
-    public class ToolWell : TabWellBase
+    public class ToolWellModel : TabWellModelBase
     {
         private bool isWindow;
         public bool IsWindow
@@ -23,7 +23,7 @@ namespace Reclaimer.Models
             internal set { SetProperty(ref dock, value); }
         }
 
-        protected override void TogglePinStatusExecuted(TabItem _)
+        protected override void TogglePinStatusExecuted(TabModel _)
         {
             var container = ParentContainer; //keep an instance because it will get nulled at the end
             foreach (var item in Children.ToList())

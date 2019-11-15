@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace Reclaimer.Models
 {
-    public class DockContainer : TabOwnerBase
+    public class DockContainerModel : TabOwnerModelBase
     {
         internal Window Host { get; set; }
 
@@ -20,39 +20,39 @@ namespace Reclaimer.Models
             internal set { SetProperty(ref isRafted, value); }
         }
 
-        private TabItem selectedDockItem;
-        public TabItem SelectedDockItem
+        private TabModel selectedDockItem;
+        public TabModel SelectedDockItem
         {
             get { return selectedDockItem; }
             set { SetProperty(ref selectedDockItem, value); }
         }
 
-        private TabOwnerBase content;
-        public TabOwnerBase Content
+        private TabOwnerModelBase content;
+        public TabOwnerModelBase Content
         {
             get { return content; }
             set { SetProperty(ref content, value, OnContentChanged); }
         }
 
-        public ObservableCollection<TabItem> LeftDockItems { get; }
-        public ObservableCollection<TabItem> TopDockItems { get; }
-        public ObservableCollection<TabItem> RightDockItems { get; }
-        public ObservableCollection<TabItem> BottomDockItems { get; }
+        public ObservableCollection<TabModel> LeftDockItems { get; }
+        public ObservableCollection<TabModel> TopDockItems { get; }
+        public ObservableCollection<TabModel> RightDockItems { get; }
+        public ObservableCollection<TabModel> BottomDockItems { get; }
 
-        public DelegateCommand<TabItem> CloseTabCommand { get; }
-        public DelegateCommand<TabItem> TogglePinStatusCommand { get; }
+        public DelegateCommand<TabModel> CloseTabCommand { get; }
+        public DelegateCommand<TabModel> TogglePinStatusCommand { get; }
         //public DelegateCommand<DockEventArgs> DockCommand { get; }
 
-        public DockContainer()
+        public DockContainerModel()
         {
             //CloseTabCommand = new DelegateCommand<TabItem>(CloseTabExecuted);
             //TogglePinStatusCommand = new DelegateCommand<TabItem>(TogglePinStatusExecuted);
             //DockCommand = new DelegateCommand<DockEventArgs>(DockExecuted);
 
-            LeftDockItems = new ObservableCollection<TabItem>();
-            TopDockItems = new ObservableCollection<TabItem>();
-            RightDockItems = new ObservableCollection<TabItem>();
-            BottomDockItems = new ObservableCollection<TabItem>();
+            LeftDockItems = new ObservableCollection<TabModel>();
+            TopDockItems = new ObservableCollection<TabModel>();
+            RightDockItems = new ObservableCollection<TabModel>();
+            BottomDockItems = new ObservableCollection<TabModel>();
 
             LeftDockItems.CollectionChanged += DockItems_CollectionChanged;
             TopDockItems.CollectionChanged += DockItems_CollectionChanged;
@@ -64,28 +64,28 @@ namespace Reclaimer.Models
         {
             if (e.OldItems != null)
             {
-                foreach (var item in e.OldItems.OfType<TabItem>())
+                foreach (var item in e.OldItems.OfType<TabModel>())
                     item.Parent = null;
             }
 
             if (e.NewItems != null)
             {
-                foreach (var item in e.NewItems.OfType<TabItem>())
+                foreach (var item in e.NewItems.OfType<TabModel>())
                     item.Parent = this;
             }
         }
 
-        private void OnContentChanged(TabOwnerBase prev, TabOwnerBase next)
+        private void OnContentChanged(TabOwnerModelBase prev, TabOwnerModelBase next)
         {
             prev?.SetParent(null);
             next?.SetParent(this);
         }
 
-        internal override IEnumerable<TabItem> AllTabs
+        internal override IEnumerable<TabModel> AllTabs
         {
             get
             {
-                var contentItems = Content?.AllTabs ?? Enumerable.Empty<TabItem>();
+                var contentItems = Content?.AllTabs ?? Enumerable.Empty<TabModel>();
                 return LeftDockItems.Concat(TopDockItems).Concat(RightDockItems).Concat(BottomDockItems).Concat(contentItems);
             }
         }
