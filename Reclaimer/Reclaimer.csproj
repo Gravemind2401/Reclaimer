@@ -41,6 +41,10 @@
     <ApplicationIcon>Resources\Reclaimer.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.2.0.4\lib\net46\CommonServiceLocator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
       <Private>True</Private>
@@ -53,7 +57,16 @@
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Prism, Version=7.2.0.1367, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Core.7.2.0.1367\lib\net45\Prism.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Prism.Wpf, Version=7.2.0.1367, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Wpf.7.2.0.1367\lib\net45\Prism.Wpf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Endian, Version=1.0.56.180, Culture=neutral, PublicKeyToken=4c1f0321ae9dcf07, processorArchitecture=MSIL">
@@ -62,9 +75,13 @@
     </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\Prism.Wpf.7.2.0.1367\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
@@ -103,6 +120,14 @@
     <Compile Include="Controls\Renderer.cs" />
     <Compile Include="Controls\ZoomPanel.cs" />
     <Compile Include="InstanceManager.cs" />
+    <Compile Include="Models\DockContainer.cs" />
+    <Compile Include="Models\DocumentPanel.cs" />
+    <Compile Include="Models\DocumentWell.cs" />
+    <Compile Include="Models\TabOwnerBase.cs" />
+    <Compile Include="Models\SplitPanel.cs" />
+    <Compile Include="Models\TabItem.cs" />
+    <Compile Include="Models\TabWellBase.cs" />
+    <Compile Include="Models\ToolWell.cs" />
     <Compile Include="Plugins\BatchExtractPlugin.cs" />
     <Compile Include="Plugins\BitmapViewerPlugin.cs" />
     <Compile Include="Plugins\MapViewerPlugin.cs" />
