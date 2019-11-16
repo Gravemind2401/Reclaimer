@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Reclaimer.Utilities
 {
@@ -44,6 +45,18 @@ namespace Reclaimer.Utilities
         public static string PatternReplace(this string input, string pattern, string replacement)
         {
             return Regex.Replace(input, Regex.Escape(pattern), replacement, RegexOptions.IgnoreCase);
+        }
+
+        public static void TransitionTo(this Window prev, Window next)
+        {
+            //if we try to close window A then show and drag window B we get the error 'Can only call DragMove when primary mouse button is down.'
+            //this is a workaround to ensure window A has closed before windo B attempts to show and drag
+            prev.Closed += (s, e) =>
+            {
+                next.Show();
+                next.DragMove();
+            };
+            prev.Close();
         }
     }
 }

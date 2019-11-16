@@ -162,11 +162,11 @@
     <Compile Include="Windows\OpenWithDialog.xaml.cs">
       <DependentUpon>OpenWithDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\TabWindow.xaml.cs">
-      <DependentUpon>TabWindow.xaml</DependentUpon>
+    <Compile Include="Windows\RaftedWindow.xaml.cs">
+      <DependentUpon>RaftedWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\UtilityWindow.xaml.cs">
-      <DependentUpon>UtilityWindow.xaml</DependentUpon>
+    <Compile Include="Windows\ToolWindow.xaml.cs">
+      <DependentUpon>ToolWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\BitmapViewer.xaml">
       <SubType>Designer</SubType>
@@ -220,11 +220,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\TabWindow.xaml">
+    <Page Include="Windows\RaftedWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\UtilityWindow.xaml">
+    <Page Include="Windows\ToolWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

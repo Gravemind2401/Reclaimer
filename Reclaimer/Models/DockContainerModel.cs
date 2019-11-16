@@ -66,10 +66,10 @@ namespace Reclaimer.Models
 
         private void CloseTabExecuted(TabModel item)
         {
-            LeftDockItems?.Remove(SelectedDockItem);
-            TopDockItems?.Remove(SelectedDockItem);
-            RightDockItems?.Remove(SelectedDockItem);
-            BottomDockItems?.Remove(SelectedDockItem);
+            LeftDockItems.Remove(SelectedDockItem);
+            TopDockItems.Remove(SelectedDockItem);
+            RightDockItems.Remove(SelectedDockItem);
+            BottomDockItems.Remove(SelectedDockItem);
         }
 
         private void TogglePinStatusExecuted(TabModel item)

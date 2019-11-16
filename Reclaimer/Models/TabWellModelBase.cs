@@ -1,4 +1,5 @@
 ﻿using Prism.Commands;
+using Studio.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,18 +44,18 @@ namespace Reclaimer.Models
         public DelegateCommand<TabModel> CloseTabCommand { get; }
         public DelegateCommand<TabModel> TogglePinStatusCommand { get; }
         public DelegateCommand<TabModel> SelectItemCommand { get; }
-        //public DelegateCommand<FloatEventArgs> FloatTabCommand { get; }
-        //public DelegateCommand<FloatEventArgs> FloatAllCommand { get; }
-        //public DelegateCommand<DockEventArgs> DockCommand { get; }
+        public DelegateCommand<FloatEventArgs> FloatTabCommand { get; }
+        public DelegateCommand<FloatEventArgs> FloatAllCommand { get; }
+        public DelegateCommand<DockEventArgs> DockCommand { get; }
 
         public TabWellModelBase()
         {
             CloseTabCommand = new DelegateCommand<TabModel>(CloseTabExecuted);
             TogglePinStatusCommand = new DelegateCommand<TabModel>(TogglePinStatusExecuted);
             SelectItemCommand = new DelegateCommand<TabModel>(SelectItemExecuted);
-            //FloatTabCommand = new DelegateCommand<FloatEventArgs>(FloatTabExecuted);
-            //FloatAllCommand = new DelegateCommand<FloatEventArgs>(FloatAllExecuted);
-            //DockCommand = new DelegateCommand<DockEventArgs>(DockExecuted);
+            FloatTabCommand = new DelegateCommand<FloatEventArgs>(FloatTabExecuted);
+            FloatAllCommand = new DelegateCommand<FloatEventArgs>(FloatAllExecuted);
+            DockCommand = new DelegateCommand<DockEventArgs>(DockExecuted);
 
             Children = new ObservableCollection<TabModel>();
             Children.CollectionChanged += Children_CollectionChanged;
@@ -77,6 +78,41 @@ namespace Reclaimer.Models
         protected virtual void SelectItemExecuted(TabModel item)
         {
             SelectedItem = item;
+        }
+
+        protected virtual void FloatTabExecuted(FloatEventArgs e)
+        {
+
+        }
+
+        protected virtual void FloatAllExecuted(FloatEventArgs e)
+        {
+
+        }
+
+        protected virtual void DockExecuted(DockEventArgs e)
+        {
+            //Reverse() to preserve tab order
+            var groups = e.SourceContent.OfType<TabWellModelBase>().Reverse().ToList();
+            var target = e.TargetItem as TabModel;
+            var index = target == null || target.IsPinned ? 0 : Children.IndexOf(target);
+
+            foreach (var group in groups)
+            {
+                var allChildren = group.Children.Reverse().ToList();
+                foreach (var item in allChildren)
+                {
+                    group.Children.Remove(item);
+                    item.IsPinned = false;
+                    item.IsActive = false;
+
+                    Children.Insert(index, item);
+                }
+            }
+
+            e.SourceWindow.Close();
+            IsActive = true;
+            SelectedItem = Children[index];
         }
 
         private void Children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

@@ -1,0 +1,39 @@
+﻿<metro:MetroWindow x:Class="Reclaimer.Windows.RaftedWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Reclaimer.Windows"
+        xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:s="clr-namespace:Studio.Controls;assembly=Studio"
+        mc:Ignorable="d" Height="300" Width="300" Icon="../Resources/Reclaimer.ico"
+        Style="{StaticResource RaftedWindowStyle}" Title="Reclaimer">
+
+    <metro:MetroWindow.IconTemplate>
+        <DataTemplate>
+            <ContentControl x:Name="content"
+                            Foreground="{DynamicResource WindowIconBrushSecondaryActive}" 
+                            Template="{StaticResource ic_Reclaimer}" />
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Value="False">
+                    <Setter TargetName="content" Property="Foreground" Value="{DynamicResource WindowIconBrushSecondaryInactive}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </metro:MetroWindow.IconTemplate>
+
+    <Grid>
+        <s:DockContainer
+                DataContext="{Binding Model, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                LeftItemsSource="{Binding LeftDockItems}"
+                TopItemsSource="{Binding TopDockItems}"
+                RightItemsSource="{Binding RightDockItems}"
+                BottomItemsSource="{Binding BottomDockItems}"
+                SelectedItem="{Binding SelectedDockItem}"
+                SelectedContentTemplate="{StaticResource DockedToolTemplate}"
+                DockCommand="{Binding DockCommand}">
+            <ContentPresenter Content="{Binding Content}"
+                    ContentTemplateSelector="{StaticResource coreTemplateSelector}" />
+        </s:DockContainer>
+    </Grid>
+</metro:MetroWindow>

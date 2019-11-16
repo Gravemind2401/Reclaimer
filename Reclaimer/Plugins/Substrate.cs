@@ -209,30 +209,30 @@ namespace Reclaimer.Plugins
         }
 
         /// <summary>
-        /// Adds a utility to the specified window. If a tab control exists in the target location
-        /// the utility will be added to the existing tab control, otherwise a new tab control will be created.
+        /// Adds a tool to the specified window. If a tab control exists in the target location
+        /// the tool will be added to the existing tab control, otherwise a new tab control will be created.
         /// The size of the tab control will be set to the host's default dock size.
         /// </summary>
-        /// <param name="item">The utility item to add.</param>
-        /// <param name="host">The window the utility will be added to.</param>
-        /// <param name="targetDock">The dock are the utility will be added to.</param>
-        public static void AddUtility(TabModel item, Windows.ITabContentHost host, Dock targetDock)
+        /// <param name="item">The tool item to add.</param>
+        /// <param name="host">The window the tool will be added to.</param>
+        /// <param name="targetDock">The dock area the tool will be added to.</param>
+        public static void AddTool(TabModel item, ITabContentHost host, Dock targetDock)
         {
             if (host == null)
                 throw new ArgumentNullException(nameof(host));
 
-            AddUtility(item, host, targetDock, new GridLength(DockContainerModel.DefaultDockSize));
+            AddTool(item, host, targetDock, new GridLength(DockContainerModel.DefaultDockSize));
         }
 
         /// <summary>
-        /// Adds a utility to the specified window. If a tab control exists in the target location
-        /// the utility will be added to the existing tab control, otherwise a new tab control will be created.
+        /// Adds a tool to the specified window. If a tab control exists in the target location
+        /// the tool will be added to the existing tab control, otherwise a new tab control will be created.
         /// The size of the tab control will be set to <param name="targetSize"/>.
         /// </summary>
-        /// <param name="item">The utility item to add.</param>
-        /// <param name="host">The window the utility will be added to.</param>
-        /// <param name="targetDock">The dock are the utility will be added to.</param>
-        public static void AddUtility(TabModel item, Windows.ITabContentHost host, Dock targetDock, GridLength targetSize)
+        /// <param name="item">The tool item to add.</param>
+        /// <param name="host">The window the tool will be added to.</param>
+        /// <param name="targetDock">The dock area the tool will be added to.</param>
+        public static void AddTool(TabModel item, ITabContentHost host, Dock targetDock, GridLength targetSize)
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
@@ -252,14 +252,14 @@ namespace Reclaimer.Plugins
         }
 
         /// <summary>
-        /// Displays the output utility if it is not already visible.
+        /// Displays the output tool if it is not already visible.
         /// </summary>
         public static void ShowOutput()
         {
             if (Controls.OutputViewer.Instance.Parent != null)
                 return;
             
-            AddUtility(Controls.OutputViewer.Instance, GetHostWindow(), Dock.Bottom, new GridLength(250));
+            AddTool(Controls.OutputViewer.Instance, GetHostWindow(), Dock.Bottom, new GridLength(250));
         }
 
         /// <summary>

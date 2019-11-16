@@ -46,11 +46,22 @@ namespace Reclaimer.Models
             set { SetProperty(ref toolTip, value); }
         }
 
+        private double width;
+        public double Width
+        {
+            get { return width; }
+            set { SetProperty(ref width, value); }
+        }
+
+        private double height;
+        public double Height
+        {
+            get { return height; }
+            set { SetProperty(ref height, value); }
+        }
+
         public FrameworkElement Content { get; }
         public TabItemType Usage { get; }
-
-        internal double Width { get; set; }
-        internal double Height { get; set; }
 
         public TabModel(FrameworkElement content, TabItemType usage)
         {
