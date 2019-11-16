@@ -158,7 +158,7 @@
     <Compile Include="Utilities\NativeMethods.cs" />
     <Compile Include="Utilities\TreeNode.cs" />
     <Compile Include="Utilities\Utils.cs" />
-    <Compile Include="Windows\IContentHost.cs" />
+    <Compile Include="Windows\ITabContentHost.cs" />
     <Compile Include="Windows\OpenWithDialog.xaml.cs">
       <DependentUpon>OpenWithDialog.xaml</DependentUpon>
     </Compile>

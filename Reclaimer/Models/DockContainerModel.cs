@@ -190,6 +190,8 @@ namespace Reclaimer.Models
             }
 
             well.Children.Add(item);
+            well.SelectedItem = item;
+            well.IsActive = true;
         }
 
         private void DockItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

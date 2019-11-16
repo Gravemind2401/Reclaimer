@@ -147,15 +147,27 @@
                 </Style>
             </s:SplitPanel.Resources>
             <TreeView x:Name="tv" s:SplitPanel.DesiredSize="250"
-                    ItemsSource="{Binding TreeViewItems}">
-                    <!--CheckBoxes="True" VerticalContentAlignment="Center"
-                    ItemChecked="ExtendedTreeView_ItemChecked"
-                    ItemUnchecked="ExtendedTreeView_ItemChecked">-->
-                <TreeView.Resources>
+                    ItemsSource="{Binding TreeViewItems}"
+                    VerticalContentAlignment="Center">
+                <TreeView.ItemContainerStyle>
                     <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
-                        <EventSetter Event="MouseDoubleClick" Handler="ExtendedTreeView_ItemDoubleClick" />
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                        <Setter Property="ItemsSource" Value="{Binding Items}" />
+                        <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick" />
                     </Style>
-                </TreeView.Resources>
+                </TreeView.ItemContainerStyle>
+                <TreeView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding IsChecked}"
+                                      VerticalAlignment="Center"
+                                      Checked="TreeViewItem_Checked"
+                                      Unchecked="TreeViewItem_Checked" />
+                            <TextBlock Text="{Binding Header}" Margin="5,0,0,0"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </DataTemplate>
+                </TreeView.ItemTemplate>
             </TreeView>
             <Grid>
                 <local:Renderer x:Name="renderer"

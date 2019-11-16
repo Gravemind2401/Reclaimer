@@ -306,12 +306,12 @@ namespace Reclaimer.Controls
         }
 
         #region Treeview Events
-        private void ExtendedTreeView_ItemDoubleClick(object sender, RoutedEventArgs e)
+        private void TreeViewItem_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
-            if (sender != tv.SelectedItem)
+            var item = (sender as FrameworkElement).DataContext as TreeItemModel;
+            if (item != tv.SelectedItem)
                 return; //because this event bubbles to the parent node
 
-            var item = sender as TreeItemModel;
             var mesh = item.Tag as Model3DGroup;
             if (mesh != null)
                 renderer.LocateObject(mesh);
@@ -319,12 +319,12 @@ namespace Reclaimer.Controls
 
         private bool isWorking = false;
 
-        private void ExtendedTreeView_ItemChecked(object sender, RoutedEventArgs e)
+        private void TreeViewItem_Checked(object sender, RoutedEventArgs e)
         {
             if (isWorking) return;
 
             isWorking = true;
-            SetState(e.OriginalSource as TreeItemModel);
+            SetState((e.OriginalSource as FrameworkElement).DataContext as TreeItemModel);
             isWorking = false;
         }
 
