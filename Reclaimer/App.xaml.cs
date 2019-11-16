@@ -57,9 +57,10 @@ namespace Reclaimer
                 if (File.Exists(test))
                     return Assembly.LoadFrom(test);
 
-                test = Path.Combine(Substrate.PluginsDirectory, "Dependencies", assemblyName + ".dll");
+                var root = Path.GetDirectoryName(args.RequestingAssembly.Location);
+                test = Path.Combine(root, assemblyName + ".dll");
                 if (File.Exists(test))
-                    return Assembly.LoadFrom(test);
+                    return Assembly.LoadFile(test);
             }
             catch { }
 

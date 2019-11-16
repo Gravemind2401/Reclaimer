@@ -50,12 +50,16 @@ namespace Reclaimer.Plugins
 
             if (Directory.Exists(PluginsDirectory))
             {
-                foreach (var fileName in Directory.EnumerateFiles(PluginsDirectory, "*.dll"))
+                foreach (var folder in Directory.EnumerateDirectories(PluginsDirectory))
                 {
+                    var fileName = Path.Combine(folder, $"{Path.GetFileName(folder)}.dll");
+                    if (!File.Exists(fileName))
+                        continue;
+
                     LogOutput($"Scanning {fileName} for plugins");
                     try
                     {
-                        var assembly = Assembly.LoadFrom(fileName);
+                        var assembly = Assembly.LoadFile(fileName);
 
                         foreach (var p in FindPlugins(assembly))
                         {
