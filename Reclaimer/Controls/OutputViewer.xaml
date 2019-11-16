@@ -1,4 +1,4 @@
-﻿<studio:UtilityItem x:Class="Reclaimer.Controls.OutputViewer"
+﻿<UserControl x:Class="Reclaimer.Controls.OutputViewer"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -10,9 +10,8 @@
              d:DesignHeight="250" d:DesignWidth="600">
 
     <DockPanel>
-        <ToolBarTray DockPanel.Dock="Top" IsLocked="True" Margin="0" 
-                     Background="{DynamicResource ToolBarBackground}">
-            <ToolBar Margin="3,1">
+        <ToolBarTray DockPanel.Dock="Top" IsLocked="True">
+            <ToolBar>
                 <Label Padding="4,0,6,2" VerticalAlignment="Center"
                        TextOptions.TextFormattingMode="Display"
                        Content="Show output from:" />
@@ -42,4 +41,4 @@
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
                  TextOptions.TextFormattingMode="Display" />
     </DockPanel>
-</studio:UtilityItem>
+</UserControl>

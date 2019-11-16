@@ -1,4 +1,4 @@
-﻿<studio:DocumentItem x:Class="Reclaimer.Controls.MetaViewer"
+﻿<UserControl x:Class="Reclaimer.Controls.MetaViewer"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -14,7 +14,7 @@
         <mv:FieldVisibilityConverter x:Key="fieldVisConverter" />
         <mv:CommentVisibilityConverter x:Key="commentVisConverter" />
         <mv:MetaValueTemplateSelector x:Key="templateSelector" />
-        <u:BoolToVisibilityConverter x:Key="boolToVisConverter" />
+        <u:VisibilityConverter x:Key="boolToVisConverter" />
 
         <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
             <Setter Property="VerticalAlignment" Value="Top" />
@@ -181,10 +181,10 @@
                         <ColumnDefinition MinWidth="205" MaxWidth="205" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Border Grid.Row="0" Grid.ColumnSpan="3" Background="{DynamicResource ToolBarBackground}" />
-                    <Border Grid.Column="0" Grid.Row="1" Background="{DynamicResource ToolBarBackground}" />
+                    <Border Grid.Row="0" Grid.ColumnSpan="3" Background="{DynamicResource Environment.CommandBar.Gradient}" />
+                    <Border Grid.Column="0" Grid.Row="1" Background="{DynamicResource Environment.CommandBar.Gradient}" />
                     <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-                        <ToggleButton Style="{StaticResource ToolBarToggleButtonStyle}"
+                        <ToggleButton Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}"
                                       VerticalAlignment="Center" Margin="3"
                                       IsChecked="{Binding IsExpanded}">
                             <ContentControl Template="{StaticResource ic_Expander_16x}" />
@@ -195,7 +195,7 @@
                     </StackPanel>
                     <ComboBox Grid.Row="0" Grid.Column="2" Width="180"
                               VerticalAlignment="Center" HorizontalAlignment="Left"
-                              Style="{StaticResource ToolBarComboBoxStyle}"
+                              Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}"
                               ItemsSource="{Binding BlockLabels}" SelectedIndex="{Binding BlockIndex}" />
                     <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
                           Visibility="{Binding IsExpanded, Converter={StaticResource boolToVisConverter}}">
@@ -210,9 +210,8 @@
     </UserControl.Resources>
 
     <DockPanel>
-        <ToolBarTray DockPanel.Dock="Top" Margin="0" IsLocked="True"
-                     Background="{DynamicResource ToolBarBackground}">
-            <ToolBar Band="0" Padding="3,2">
+        <ToolBarTray DockPanel.Dock="Top" IsLocked="True">
+            <ToolBar>
                 <Button Click="btnReload_Click" ToolTip="Reload data">
                     <ContentControl Template="{StaticResource ic_Refresh_16x}" />
                 </Button>
@@ -236,4 +235,4 @@
             </ItemsControl>
         </ScrollViewer>
     </DockPanel>
-</studio:DocumentItem>
+</UserControl>

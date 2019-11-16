@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Reclaimer.Models
@@ -59,6 +60,24 @@ namespace Reclaimer.Models
             Items = new ReadOnlyObservableCollection<TabOwnerModelBase>(items);
         }
 
+        public SplitPanelModel(Dock dock, TabWellModelBase content) : this()
+        {
+            Orientation = dock == Dock.Left || dock == Dock.Right ? Orientation.Horizontal : Orientation.Vertical;
+
+            if (dock == Dock.Left || dock == Dock.Top)
+            {
+                Item1 = content;
+                Item1.PanelSize = new GridLength(dock == Dock.Left ? content.Width : content.Height);
+                Item2 = null;
+            }
+            else
+            {
+                Item1 = null;
+                Item2 = content;
+                Item2.PanelSize = new GridLength(dock == Dock.Right ? content.Width : content.Height);
+            }
+        }
+
         private void OnItemChanged(TabOwnerModelBase prev, TabOwnerModelBase next)
         {
             prev?.SetParent(null);
@@ -70,8 +89,8 @@ namespace Reclaimer.Models
                 if (remaining == null) return;
                 Item1 = Item2 = null;
 
-                if (ParentBrach != null)
-                    ParentBrach.Replace(this, remaining);
+                if (ParentBranch != null)
+                    ParentBranch.Replace(this, remaining);
                 else if (ParentContainer != null)
                     ParentContainer.Content = remaining;
             }

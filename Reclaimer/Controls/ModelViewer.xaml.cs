@@ -1,6 +1,7 @@
 ﻿using Adjutant.Geometry;
 using Adjutant.Utilities;
 using Microsoft.Win32;
+using Reclaimer.Models;
 using Reclaimer.Utilities;
 using Studio.Controls;
 using System;
@@ -28,14 +29,25 @@ namespace Reclaimer.Controls
     /// <summary>
     /// Interaction logic for ModelViewer.xaml
     /// </summary>
-    public partial class ModelViewer : DocumentItem, IDisposable
+    public partial class ModelViewer : IDisposable
     {
         private static readonly string[] AllLods = new[] { "Highest", "High", "Medium", "Low", "Lowest" };
         private static readonly DiffuseMaterial ErrorMaterial;
 
         #region Dependency Properties
+        private static readonly DependencyPropertyKey AvailableLodsPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(AvailableLods), typeof(IEnumerable<string>), typeof(ModelViewer), new PropertyMetadata());
+
+        public static readonly DependencyProperty AvailableLodsProperty = AvailableLodsPropertyKey.DependencyProperty;
+
         public static readonly DependencyProperty SelectedLodProperty =
             DependencyProperty.Register(nameof(SelectedLod), typeof(int), typeof(ModelViewer), new PropertyMetadata(0, SelectedLodChanged));
+
+        public IEnumerable<string> AvailableLods
+        {
+            get { return (IEnumerable<string>)GetValue(AvailableLodsProperty); }
+            private set { SetValue(AvailableLodsPropertyKey, value); }
+        }
 
         public int SelectedLod
         {
@@ -56,8 +68,8 @@ namespace Reclaimer.Controls
         private IRenderGeometry geometry;
         private IGeometryModel model;
 
-        public IEnumerable<string> AvailableLods { get; private set; }
-        public ObservableCollection<ExtendedTreeViewItem> TreeViewItems { get; }
+        public TabModel TabModel { get; }
+        public ObservableCollection<TreeItemModel> TreeViewItems { get; }
 
         static ModelViewer()
         {
@@ -67,7 +79,8 @@ namespace Reclaimer.Controls
         public ModelViewer()
         {
             InitializeComponent();
-            TreeViewItems = new ObservableCollection<ExtendedTreeViewItem>();
+            TabModel = new TabModel(this, TabItemType.Document);
+            TreeViewItems = new ObservableCollection<TreeItemModel>();
             DataContext = this;
 
             visual.Content = modelGroup;
@@ -76,13 +89,12 @@ namespace Reclaimer.Controls
 
         public void LoadGeometry(IRenderGeometry geometry, string fileName)
         {
-            TabToolTip = fileName;
-            TabHeader = Utils.GetFileName(fileName);
+            TabModel.ToolTip = fileName;
+            TabModel.Header = Utils.GetFileName(fileName);
             this.geometry = geometry;
 
             AvailableLods = AllLods.Take(geometry.LodCount);
             SetLod(0);
-            RaisePropertyChanged(nameof(AvailableLods));
         }
 
         private void SetLod(int index)
@@ -94,7 +106,7 @@ namespace Reclaimer.Controls
             modelGroup.Children.Clear();
             foreach (var region in model.Regions)
             {
-                var regNode = new ExtendedTreeViewItem { Header = region.Name, IsChecked = true };
+                var regNode = new TreeItemModel { Header = region.Name, IsChecked = true };
 
                 foreach (var perm in region.Permutations)
                 {
@@ -102,7 +114,7 @@ namespace Reclaimer.Controls
                     if (mesh == null)
                         continue;
 
-                    var permNode = new ExtendedTreeViewItem { Header = perm.Name, IsChecked = true };
+                    var permNode = new TreeItemModel { Header = perm.Name, IsChecked = true };
                     regNode.Items.Add(permNode);
 
                     var tGroup = new Transform3DGroup();
@@ -299,7 +311,7 @@ namespace Reclaimer.Controls
             if (sender != tv.SelectedItem)
                 return; //because this event bubbles to the parent node
 
-            var item = sender as ExtendedTreeViewItem;
+            var item = sender as TreeItemModel;
             var mesh = item.Tag as Model3DGroup;
             if (mesh != null)
                 renderer.LocateObject(mesh);
@@ -312,16 +324,16 @@ namespace Reclaimer.Controls
             if (isWorking) return;
 
             isWorking = true;
-            SetState(e.OriginalSource as ExtendedTreeViewItem);
+            SetState(e.OriginalSource as TreeItemModel);
             isWorking = false;
         }
 
-        private void SetState(ExtendedTreeViewItem item)
+        private void SetState(TreeItemModel item)
         {
             if (item.HasItems == false)
             {
-                var parent = item.Parent as ExtendedTreeViewItem;
-                var children = parent.Items.Cast<ExtendedTreeViewItem>();
+                var parent = item.Parent as TreeItemModel;
+                var children = parent.Items.Cast<TreeItemModel>();
 
                 if (children.All(i => i.IsChecked == true))
                     parent.IsChecked = true;
@@ -337,7 +349,7 @@ namespace Reclaimer.Controls
             }
             else
             {
-                foreach (ExtendedTreeViewItem i in item.Items)
+                foreach (TreeItemModel i in item.Items)
                 {
                     var group = i.Tag as Model3DGroup;
                     i.IsChecked = item.IsChecked;
@@ -397,13 +409,14 @@ namespace Reclaimer.Controls
             var toggle = sender as ToggleButton;
             if (toggle.IsChecked == true)
             {
-                toggle.Tag = splitPanel.Panel1Size;
-                splitPanel.Panel1Size = splitPanel.SplitterSize = new GridLength(0);
+                toggle.Tag = SplitPanel.GetDesiredSize(splitPanel.Children[0]);
+                SplitPanel.SetDesiredSize(splitPanel.Children[0], new GridLength(0));
+                splitPanel.SplitterThickness = 0;
             }
             else
             {
-                splitPanel.Panel1Size = (GridLength)toggle.Tag;
-                splitPanel.SplitterSize = new GridLength(5);
+                SplitPanel.SetDesiredSize(splitPanel.Children[0], (GridLength)toggle.Tag);
+                splitPanel.SplitterThickness = 3;
             }
         }
 

@@ -19,7 +19,7 @@ namespace Reclaimer.Plugins
         public override void OpenFile(OpenFileArgs args)
         {
             var bitm = args.File.OfType<IBitmap>().FirstOrDefault();
-            var container = args.TargetWindow.DocumentContainer;
+            var container = args.TargetWindow.DocumentPanel;
 
             LogOutput($"Loading image: {args.FileName}");
 
@@ -28,7 +28,7 @@ namespace Reclaimer.Plugins
                 var viewer = new Controls.BitmapViewer();
                 viewer.LoadImage(bitm, args.FileName);
 
-                container.Items.Add(viewer);
+                container.AddItem(viewer.TabModel);
 
                 LogOutput($"Loaded image: {args.FileName}");
             }

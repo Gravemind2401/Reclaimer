@@ -20,10 +20,10 @@ namespace Reclaimer.Windows
     /// <summary>
     /// Interaction logic for TabWindow.xaml
     /// </summary>
-    public partial class TabWindow : MetroWindow, IMultiPanelHost, ITabWindow
+    public partial class TabWindow : MetroWindow//, IMultiPanelHost//, ITabWindow
     {
-        private ExtendedTabControl tempControl;
-        private ITabContent tempItem;
+        //private ExtendedTabControl tempControl;
+        //private ITabContent tempItem;
 
         #region Dependency Properties
         public static readonly DependencyPropertyKey IsDraggingPropertyKey =
@@ -45,73 +45,73 @@ namespace Reclaimer.Windows
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            SizeToContent = SizeToContent.Manual;
-            root.Width = root.Height = double.NaN;
-
-            var tab = (FrameworkElement)tempControl.ItemContainerGenerator.ContainerFromIndex(0);
-            var curPos = tab.GetRelativeMousePosition();
-            Left += curPos.X - tab.ActualWidth / 2;
-            Top += curPos.Y - tab.ActualHeight / 2;
+            //SizeToContent = SizeToContent.Manual;
+            //root.Width = root.Height = double.NaN;
+            //
+            //var tab = (FrameworkElement)tempControl.ItemContainerGenerator.ContainerFromIndex(0);
+            //var curPos = tab.GetRelativeMousePosition();
+            //Left += curPos.X - tab.ActualWidth / 2;
+            //Top += curPos.Y - tab.ActualHeight / 2;
         }
 
-        MultiPanel IMultiPanelHost.MultiPanel => contentPanel;
+        //MultiPanel IMultiPanelHost.MultiPanel => contentPanel;
 
-        DocumentTabControl IMultiPanelHost.DocumentContainer => tempControl as DocumentTabControl;
+        //DocumentTabControl IMultiPanelHost.DocumentContainer => tempControl as DocumentTabControl;
 
         #region ITabWindow
-        IEnumerable<ITabContent> ITabWindow.TargetItems =>
-            contentPanel.GetChildren()
-            .OfType<ExtendedTabControl>()
-            .SelectMany(c => c.Items.OfType<ITabContent>())
-            .Concat(dockContainer.AllDockItems.OfType<ITabContent>());
-
-        void ITabWindow.Initialize(DetachEventArgs e)
-        {
-            var visualBounds = e.VisualBounds;
-
-            Left = visualBounds.Left;
-            Top = visualBounds.Top;
-
-            SizeToContent = SizeToContent.WidthAndHeight;
-
-            tempItem = e.TabItems.First();
-
-            //if (tempItem.TabUsage == TabItemUsage.Document)
-            tempControl = new DocumentTabControl();
-            //else
-            //    tempControl = new UtilityTabControl();
-
-            root.Width = visualBounds.Width;
-            root.Height = visualBounds.Height;
-
-            foreach (var item in e.TabItems)
-                tempControl.Items.Add(item);
-
-            tempControl.RemoveOnEmpty = false;
-            contentPanel.AddElement(tempControl, null, Dock.Top);
-
-            IsDragging = true;
-        }
-
-        void ITabWindow.OnDragStop()
-        {
-            IsDragging = false;
-        }
-
-        void ITabWindow.OnConsumed()
-        {
-            Close();
-        }
-
-        void ITabWindow.OnTabControlEmpty(ExtendedTabControl tabControl)
-        {
-            var tabControls = contentPanel.GetChildren()
-                .Where(c => c is ExtendedTabControl)
-                .Cast<ExtendedTabControl>();
-
-            if (!tabControls.Any(c => c.HasItems))
-                Close();
-        }
+        //IEnumerable<ITabContent> ITabWindow.TargetItems =>
+        //    contentPanel.GetChildren()
+        //    .OfType<ExtendedTabControl>()
+        //    .SelectMany(c => c.Items.OfType<ITabContent>())
+        //    .Concat(dockContainer.AllDockItems.OfType<ITabContent>());
+        //
+        //void ITabWindow.Initialize(DetachEventArgs e)
+        //{
+        //    var visualBounds = e.VisualBounds;
+        //
+        //    Left = visualBounds.Left;
+        //    Top = visualBounds.Top;
+        //
+        //    SizeToContent = SizeToContent.WidthAndHeight;
+        //
+        //    tempItem = e.TabItems.First();
+        //
+        //    //if (tempItem.TabUsage == TabItemUsage.Document)
+        //    tempControl = new DocumentTabControl();
+        //    //else
+        //    //    tempControl = new UtilityTabControl();
+        //
+        //    root.Width = visualBounds.Width;
+        //    root.Height = visualBounds.Height;
+        //
+        //    foreach (var item in e.TabItems)
+        //        tempControl.Items.Add(item);
+        //
+        //    tempControl.RemoveOnEmpty = false;
+        //    contentPanel.AddElement(tempControl, null, Dock.Top);
+        //
+        //    IsDragging = true;
+        //}
+        //
+        //void ITabWindow.OnDragStop()
+        //{
+        //    IsDragging = false;
+        //}
+        //
+        //void ITabWindow.OnConsumed()
+        //{
+        //    Close();
+        //}
+        //
+        //void ITabWindow.OnTabControlEmpty(ExtendedTabControl tabControl)
+        //{
+        //    var tabControls = contentPanel.GetChildren()
+        //        .Where(c => c is ExtendedTabControl)
+        //        .Cast<ExtendedTabControl>();
+        //
+        //    if (!tabControls.Any(c => c.HasItems))
+        //        Close();
+        //}
         #endregion
     }
 }

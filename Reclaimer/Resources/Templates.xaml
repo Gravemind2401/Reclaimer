@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ControlTemplate x:Key="ic_Reclaimer" TargetType="ContentControl">
-        <Viewbox Margin="8,0,6,0" Width="24" Height="24">
+        <Viewbox Margin="8,1,6,0" Width="24" Height="24">
             <Rectangle Height="24" Width="24">
                 <Rectangle.Fill>
                     <DrawingBrush>

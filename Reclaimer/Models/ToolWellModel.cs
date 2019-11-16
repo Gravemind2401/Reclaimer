@@ -50,8 +50,8 @@ namespace Reclaimer.Models
 
         internal void Remove()
         {
-            if (ParentBrach != null)
-                ParentBrach.Remove(this);
+            if (ParentBranch != null)
+                ParentBranch.Remove(this);
             else if (ParentContainer != null)
                 ParentContainer.Content = null;
         }

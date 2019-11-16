@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Reclaimer.Models;
 using Reclaimer.Windows;
 using Studio.Controls;
 using System;
@@ -215,12 +216,12 @@ namespace Reclaimer.Plugins
         /// <param name="item">The utility item to add.</param>
         /// <param name="host">The window the utility will be added to.</param>
         /// <param name="targetDock">The dock are the utility will be added to.</param>
-        public static void AddUtility(ITabContent item, IMultiPanelHost host, Dock targetDock)
+        public static void AddUtility(TabModel item, Windows.ITabContentHost host, Dock targetDock)
         {
             if (host == null)
                 throw new ArgumentNullException(nameof(host));
 
-            AddUtility(item, host, targetDock, host.MultiPanel.DefaultDockSize);
+            AddUtility(item, host, targetDock, new GridLength(DockContainerModel.DefaultDockSize));
         }
 
         /// <summary>
@@ -231,7 +232,7 @@ namespace Reclaimer.Plugins
         /// <param name="item">The utility item to add.</param>
         /// <param name="host">The window the utility will be added to.</param>
         /// <param name="targetDock">The dock are the utility will be added to.</param>
-        public static void AddUtility(ITabContent item, IMultiPanelHost host, Dock targetDock, GridLength targetSize)
+        public static void AddUtility(TabModel item, Windows.ITabContentHost host, Dock targetDock, GridLength targetSize)
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
@@ -239,43 +240,15 @@ namespace Reclaimer.Plugins
             if (host == null)
                 throw new ArgumentNullException(nameof(host));
 
-            if (item.TabUsage != TabItemUsage.Utility)
-                throw new ArgumentException("item TabUsage must be TabItemUsage.Utility", nameof(item));
+            if (item.Usage != TabItemType.Tool)
+                throw new ArgumentException("item Usage must be TabItemType.Tool", nameof(item));
 
-            var opposite = targetDock == Dock.Left || targetDock == Dock.Top
-                ? (Dock)((int)targetDock + 2)
-                : (Dock)((int)targetDock - 2);
-
-            UtilityTabControl tc;
-
-            var idealPath = host.MultiPanel.GetChildren()
-                .Select(c => host.MultiPanel.GetPathToElement(c))
-                .Where(p => !p.Contains(opposite))
-                .Where(p => p.Last() == targetDock)
-                .OrderBy(p => p.Count)
+            var well = host.DockContainer.AllTabs
+                .Where(t => (t.Parent as ToolWellModel)?.Dock == targetDock)
+                .Select(t => t.Parent as ToolWellModel)
                 .FirstOrDefault();
 
-            if (idealPath != null)
-            {
-                tc = host.MultiPanel.GetElementAtPath(idealPath) as UtilityTabControl;
-                if (tc != null)
-                {
-                    tc.Items.Add(item);
-                    return;
-                }
-            }
-
-            var targetHalf = host.MultiPanel.GetPathToElement(host.DocumentContainer)
-                .Cast<Dock?>()
-                .LastOrDefault(d => d == targetDock || d == opposite);
-
-            tc = new UtilityTabControl();
-            var targetElement = targetHalf == null || targetHalf == targetDock
-                ? host.DocumentContainer
-                : null;
-
-            host.MultiPanel.AddElement(tc, targetElement, targetDock, targetSize);
-            tc.Items.Add(item);
+            host.DockContainer.AddTool2(item, targetDock, targetSize);
         }
 
         /// <summary>
@@ -285,25 +258,25 @@ namespace Reclaimer.Plugins
         {
             if (Controls.OutputViewer.Instance.Parent != null)
                 return;
-
+            
             AddUtility(Controls.OutputViewer.Instance, GetHostWindow(), Dock.Bottom, new GridLength(250));
         }
 
         /// <summary>
         /// Gets the application's main window.
         /// </summary>
-        public static IMultiPanelHost GetHostWindow() => GetHostWindow(null);
+        public static ITabContentHost GetHostWindow() => GetHostWindow(null);
 
         /// <summary>
         /// Gets the owner window of a particular <see cref="UIElement"/>.
         /// </summary>
         /// <param name="element">The element to find the host for.</param>
-        public static IMultiPanelHost GetHostWindow(UIElement element)
+        public static ITabContentHost GetHostWindow(UIElement element)
         {
-            IMultiPanelHost host;
+            ITabContentHost host;
             if (element == null)
-                host = Application.Current.MainWindow as IMultiPanelHost;
-            else host = Window.GetWindow(element) as IMultiPanelHost ?? Application.Current.MainWindow as IMultiPanelHost;
+                host = Application.Current.MainWindow as ITabContentHost;
+            else host = Window.GetWindow(element) as ITabContentHost ?? Application.Current.MainWindow as ITabContentHost;
             return host;
         } 
         #endregion
@@ -332,7 +305,7 @@ namespace Reclaimer.Plugins
         /// <summary>
         /// The window the file should be sent to.
         /// </summary>
-        public IMultiPanelHost TargetWindow { get; }
+        public ITabContentHost TargetWindow { get; }
 
         public OpenFileArgs(string fileName, string fileTypeKey, params object[] file)
             : this(fileName, fileTypeKey, Substrate.GetHostWindow(), file)
@@ -340,7 +313,7 @@ namespace Reclaimer.Plugins
 
         }
 
-        public OpenFileArgs(string fileName, string fileTypeKey, IMultiPanelHost targetWindow, params object[] file)
+        public OpenFileArgs(string fileName, string fileTypeKey, ITabContentHost targetWindow, params object[] file)
         {
             FileName = fileName;
             File = file;

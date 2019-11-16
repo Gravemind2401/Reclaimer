@@ -131,6 +131,7 @@
     <Compile Include="Models\TabModel.cs" />
     <Compile Include="Models\TabWellModelBase.cs" />
     <Compile Include="Models\ToolWellModel.cs" />
+    <Compile Include="Models\TreeItemModel.cs" />
     <Compile Include="Plugins\MetaViewer\BitmaskValue.cs" />
     <Compile Include="Plugins\MetaViewer\CommentValue.cs" />
     <Compile Include="Plugins\MetaViewer\EnumValue.cs" />
@@ -146,16 +147,18 @@
     <Compile Include="Plugins\Substrate.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Utilities\BindableBase.cs" />
+    <Compile Include="Utilities\CoreTemplateSelector.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Plugins\MetaViewer\MetaValue.cs" />
     <Compile Include="Utilities\FolderSelectDialog.cs" />
+    <Compile Include="Utilities\GridLengthConverter.cs" />
     <Compile Include="Utilities\RadToDegConverter.cs" />
     <Compile Include="Utilities\ToStringConverter.cs" />
     <Compile Include="Utilities\NativeMethods.cs" />
     <Compile Include="Utilities\TreeNode.cs" />
     <Compile Include="Utilities\Utils.cs" />
-    <Compile Include="Windows\IMultiPanelHost.cs" />
+    <Compile Include="Windows\IContentHost.cs" />
     <Compile Include="Windows\OpenWithDialog.xaml.cs">
       <DependentUpon>OpenWithDialog.xaml</DependentUpon>
     </Compile>
@@ -190,10 +193,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\Blue.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Default.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -260,8 +259,8 @@
       <Project>{A46DD713-D7F0-4D6A-BD0F-348D890E135A}</Project>
       <Name>Adjutant</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Studio Old\Studio\Studio.csproj">
-      <Project>{e90663b1-d346-4644-9d27-e8bec0520284}</Project>
+    <ProjectReference Include="..\..\Studio\Studio\Studio.csproj">
+      <Project>{5f4c3814-8097-4869-b5e2-4c21ef45ceb2}</Project>
       <Name>Studio</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\System.Drawing.Dds\System.Drawing.Dds\System.Drawing.Dds.csproj">

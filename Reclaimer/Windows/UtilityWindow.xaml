@@ -9,13 +9,13 @@
         mc:Ignorable="d" Height="300" Width="300"
         Loaded="MetroWindow_Loaded"
         ShowActivated="True" WindowStartupLocation="Manual"
-        Style="{StaticResource UtilityWindowStyle}"
+        Style="{StaticResource ToolWindowStyle}"
         Title="{Binding SelectedItem.TabHeader, ElementName=tabControl}">
     
     <Grid x:Name="root" Background="{DynamicResource WindowBackground}">
-        <c:UtilityTabControl x:Name="tabControl" ShowTitlePanel="False"
+        <!--<c:UtilityTabControl x:Name="tabControl" ShowTitlePanel="False"
                              NewWindowType="{x:Type local:UtilityWindow}">
 
-        </c:UtilityTabControl>
+        </c:UtilityTabControl>-->
     </Grid>
 </metro:MetroWindow>

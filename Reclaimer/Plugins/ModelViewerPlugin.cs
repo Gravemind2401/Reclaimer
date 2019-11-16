@@ -23,7 +23,7 @@ namespace Reclaimer.Plugins
         public override void OpenFile(OpenFileArgs args)
         {
             var model = args.File.OfType<IRenderGeometry>().FirstOrDefault();
-            var container = args.TargetWindow.DocumentContainer;
+            var container = args.TargetWindow.DocumentPanel;
 
             LogOutput($"Loading model: {args.FileName}");
 
@@ -32,7 +32,7 @@ namespace Reclaimer.Plugins
                 var viewer = new Controls.ModelViewer();
                 viewer.LoadGeometry(model, $"{args.FileName}");
 
-                container.Items.Add(viewer); ;
+                container.AddItem(viewer.TabModel);
 
                 LogOutput($"Loaded model: {args.FileName}");
             }

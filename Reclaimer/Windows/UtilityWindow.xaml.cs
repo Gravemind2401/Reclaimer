@@ -19,7 +19,7 @@ namespace Reclaimer.Windows
     /// <summary>
     /// Interaction logic for UtilityWindow.xaml
     /// </summary>
-    public partial class UtilityWindow : MetroWindow, ITabWindow
+    public partial class UtilityWindow : MetroWindow//, ITabWindow
     {
         public UtilityWindow()
         {
@@ -49,38 +49,38 @@ namespace Reclaimer.Windows
         }
 
         #region ITabWindow
-        IEnumerable<ITabContent> ITabWindow.TargetItems => tabControl.Items.OfType<ITabContent>();
-
-        void ITabWindow.Initialize(DetachEventArgs e)
-        {
-            var visualBounds = e.VisualBounds;
-
-            Left = visualBounds.Left;
-            Top = visualBounds.Top;
-
-            SizeToContent = SizeToContent.WidthAndHeight;
-
-            root.Width = visualBounds.Width;
-            root.Height = visualBounds.Height;
-
-            foreach (var item in e.TabItems)
-                tabControl.Items.Add(item);
-        }
-
-        void ITabWindow.OnDragStop()
-        {
-
-        }
-
-        void ITabWindow.OnConsumed()
-        {
-            Close();
-        }
-
-        void ITabWindow.OnTabControlEmpty(ExtendedTabControl tabControl)
-        {
-            Close();
-        }
+        //IEnumerable<ITabContent> ITabWindow.TargetItems => tabControl.Items.OfType<ITabContent>();
+        //
+        //void ITabWindow.Initialize(DetachEventArgs e)
+        //{
+        //    var visualBounds = e.VisualBounds;
+        //
+        //    Left = visualBounds.Left;
+        //    Top = visualBounds.Top;
+        //
+        //    SizeToContent = SizeToContent.WidthAndHeight;
+        //
+        //    root.Width = visualBounds.Width;
+        //    root.Height = visualBounds.Height;
+        //
+        //    foreach (var item in e.TabItems)
+        //        tabControl.Items.Add(item);
+        //}
+        //
+        //void ITabWindow.OnDragStop()
+        //{
+        //
+        //}
+        //
+        //void ITabWindow.OnConsumed()
+        //{
+        //    Close();
+        //}
+        //
+        //void ITabWindow.OnTabControlEmpty(ExtendedTabControl tabControl)
+        //{
+        //    Close();
+        //}
         #endregion
     }
 }

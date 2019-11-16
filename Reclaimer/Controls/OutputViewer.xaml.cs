@@ -1,4 +1,5 @@
-﻿using Reclaimer.Plugins;
+﻿using Reclaimer.Models;
+using Reclaimer.Plugins;
 using Studio.Controls;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,7 @@ namespace Reclaimer.Controls
     /// <summary>
     /// Interaction logic for OutputViewer.xaml
     /// </summary>
-    public partial class OutputViewer : UtilityItem
+    public partial class OutputViewer
     {
         #region Dependency Properties
         public static readonly DependencyProperty WordWrapEnabledProperty =
@@ -40,13 +41,17 @@ namespace Reclaimer.Controls
         }
         #endregion
 
-        private static OutputViewer instance;
-        public static OutputViewer Instance
+        private static TabModel instance;
+        public static TabModel Instance
         {
             get
             {
                 if (instance == null)
-                    instance = new OutputViewer();
+                {
+                    var viewer = new OutputViewer();
+                    instance = new TabModel(viewer, TabItemType.Tool);
+                    instance.Header = instance.ToolTip = "Output";
+                }
 
                 return instance;
             }
@@ -56,9 +61,6 @@ namespace Reclaimer.Controls
 
         public OutputViewer()
         {
-            TabHeader = "Output";
-            TabToolTip = "Output";
-
             LoadedPlugins = new ObservableCollection<Tuple<string, string>>();
 
             var list = Substrate.AllPlugins.Select(p => Tuple.Create(p.Key, p.Name)).ToList();

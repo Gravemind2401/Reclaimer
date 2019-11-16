@@ -1,5 +1,6 @@
 ﻿using Adjutant.Utilities;
 using Microsoft.Win32;
+using Reclaimer.Models;
 using Reclaimer.Utilities;
 using Studio.Controls;
 using System;
@@ -24,7 +25,7 @@ namespace Reclaimer.Controls
     /// <summary>
     /// Interaction logic for BitmapViewer.xaml
     /// </summary>
-    public partial class BitmapViewer : DocumentItem
+    public partial class BitmapViewer
     {
         private const double dpi = 96;
 
@@ -32,10 +33,13 @@ namespace Reclaimer.Controls
         private DdsImage dds;
         private string sourceName;
 
-        public IEnumerable<int> Indexes { get; private set; }
-
         #region Dependency Properties
-        public static readonly DependencyPropertyKey ImageSourcePropertyKey =
+        private static readonly DependencyPropertyKey IndexesPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(Indexes), typeof(IEnumerable<int>), typeof(BitmapViewer), new PropertyMetadata());
+
+        public static readonly DependencyProperty IndexesProperty = IndexesPropertyKey.DependencyProperty;
+
+        private static readonly DependencyPropertyKey ImageSourcePropertyKey =
             DependencyProperty.RegisterReadOnly(nameof(ImageSource), typeof(BitmapSource), typeof(BitmapViewer), new PropertyMetadata());
 
         public static readonly DependencyProperty ImageSourceProperty = ImageSourcePropertyKey.DependencyProperty;
@@ -43,7 +47,7 @@ namespace Reclaimer.Controls
         public static readonly DependencyProperty SelectedIndexProperty =
             DependencyProperty.Register(nameof(SelectedIndex), typeof(int), typeof(BitmapViewer), new PropertyMetadata(0, SelectedIndexPropertyChanged));
 
-        public static readonly DependencyPropertyKey HasMultiplePropertyKey =
+        private static readonly DependencyPropertyKey HasMultiplePropertyKey =
             DependencyProperty.RegisterReadOnly(nameof(HasMultiple), typeof(bool), typeof(BitmapViewer), new PropertyMetadata(false, null, CoerceHasMultiple));
 
         public static readonly DependencyProperty HasMultipleProperty = HasMultiplePropertyKey.DependencyProperty;
@@ -59,6 +63,12 @@ namespace Reclaimer.Controls
 
         public static readonly DependencyProperty AlphaChannelProperty =
             DependencyProperty.Register(nameof(AlphaChannel), typeof(bool), typeof(BitmapViewer), new PropertyMetadata(true, ChannelPropertyChanged));
+
+        public IEnumerable<int> Indexes
+        {
+            get { return (IEnumerable<int>)GetValue(IndexesProperty); }
+            private set { SetValue(IndexesPropertyKey, value); }
+        }
 
         public BitmapSource ImageSource
         {
@@ -122,9 +132,12 @@ namespace Reclaimer.Controls
         }
         #endregion
 
+        public TabModel TabModel { get; }
+
         public BitmapViewer()
         {
             InitializeComponent();
+            TabModel = new TabModel(this, TabItemType.Document);
             DataContext = this;
         }
 
@@ -134,19 +147,18 @@ namespace Reclaimer.Controls
             {
                 bitmap = image;
 
-                TabToolTip = fileName;
-                TabHeader = Utils.GetFileName(fileName);
+                TabModel.ToolTip = fileName;
+                TabModel.Header = Utils.GetFileName(fileName);
                 sourceName = Utils.GetFileNameWithoutExtension(fileName);
 
                 Indexes = Enumerable.Range(0, bitmap.SubmapCount);
                 dds = bitmap.ToDds(0);
                 Render();
-                RaisePropertyChanged(nameof(Indexes));
                 CoerceValue(HasMultipleProperty);
             }
             catch
             {
-                
+
             }
         }
 

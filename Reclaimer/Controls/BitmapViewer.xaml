@@ -1,4 +1,4 @@
-﻿<studio:DocumentItem x:Class="Reclaimer.Controls.BitmapViewer"
+﻿<UserControl x:Class="Reclaimer.Controls.BitmapViewer"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -10,13 +10,12 @@
              d:DesignHeight="400" d:DesignWidth="400">
 
     <UserControl.Resources>
-        <u:BoolToVisibilityConverter x:Key="boolToVisConverter" />
+        <u:VisibilityConverter x:Key="boolToVisConverter" />
     </UserControl.Resources>
 
     <DockPanel>
-        <ToolBarTray DockPanel.Dock="Top" IsLocked="True" Margin="0" 
-                     Background="{DynamicResource ToolBarBackground}">
-            <ToolBar Margin="3,2">
+        <ToolBarTray DockPanel.Dock="Top" IsLocked="True">
+            <ToolBar>
                 <Button Click="btnFitActual_Click"
                         ToolTip="Zoom image to actual size">
                     <ContentControl Template="{StaticResource ic_ZoomToActual_16x}" />
@@ -58,17 +57,28 @@
             </ToolBar>
         </ToolBarTray>
         <ToolBarTray x:Name="bottomToolbar" DockPanel.Dock="Bottom" IsLocked="True" Margin="0"  
-                     Visibility="{Binding HasMultiple, Converter={StaticResource boolToVisConverter}}"
-                     Background="{DynamicResource ToolBarBackground}">
+                     Visibility="{Binding HasMultiple, Converter={StaticResource boolToVisConverter}}">
             <ToolBar Margin="3,2">
                 <ComboBox ItemsSource="{Binding Indexes}"
                           SelectedIndex="{Binding SelectedIndex}" />
             </ToolBar>
         </ToolBarTray>
-        <local:ZoomPanel x:Name="zoomPanel"
-                         Background="{DynamicResource CheckerboardBrush}"
-                         MaxZoom="8" MinZoom="0.1">
+        <local:ZoomPanel x:Name="zoomPanel" MaxZoom="8" MinZoom="0.1">
+            <local:ZoomPanel.Background>
+                <VisualBrush TileMode="Tile"
+                        Viewport="0,0,16,16"
+                        ViewportUnits="Absolute"
+                        Viewbox="0,0,16,16"
+                        ViewboxUnits="Absolute">
+                    <VisualBrush.Visual>
+                        <Grid Background="{DynamicResource Cider.Artboard.Background}">
+                            <Path Fill="{DynamicResource Cider.Artboard.SecondaryBackground}" Data="M0,0 H8 V8 H0 Z"  />
+                            <Path Fill="{DynamicResource Cider.Artboard.SecondaryBackground}" Data="M8,8 H16 V16 H8 Z"  />
+                        </Grid>
+                    </VisualBrush.Visual>
+                </VisualBrush>
+            </local:ZoomPanel.Background>
             <Image RenderTransformOrigin="0.5,0.5" Source="{Binding ImageSource}" />
         </local:ZoomPanel>
     </DockPanel>
-</studio:DocumentItem>
+</UserControl>

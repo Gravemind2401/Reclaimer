@@ -50,8 +50,8 @@ namespace Reclaimer.Plugins.MetaViewer
             var viewer = new Controls.MetaViewer();
             viewer.LoadMetadata(item, GetDefinitionPath(item));
 
-            var container = args.TargetWindow.DocumentContainer;
-            container.Items.Add(viewer);
+            var container = args.TargetWindow.DocumentPanel;
+            container.AddItem(viewer.TabModel);
         }
 
         private string GetDefinitionPath(IIndexItem item)

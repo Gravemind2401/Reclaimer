@@ -65,7 +65,7 @@ namespace Reclaimer.Plugins
 
             var mv = new Controls.MapViewer();
             mv.LoadMap(fileName);
-            Substrate.AddUtility(mv, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
+            Substrate.AddUtility(mv.TabModel, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
 
             LogOutput($"Loaded map file: {fileName}");
         }

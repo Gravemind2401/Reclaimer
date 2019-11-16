@@ -16,21 +16,28 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Studio.Controls;
 using Reclaimer.Plugins;
+using Reclaimer.Models;
 
 namespace Reclaimer.Windows
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow, IMultiPanelHost
+    public partial class MainWindow : MetroWindow, ITabContentHost
     {
-        MultiPanel IMultiPanelHost.MultiPanel => MainPanel;
+        DockContainerModel ITabContentHost.DockContainer => Model;
+        DocumentPanelModel ITabContentHost.DocumentPanel => DocPanel;
 
-        DocumentTabControl IMultiPanelHost.DocumentContainer => docTab;
+        public DockContainerModel Model { get; }
+        private DocumentPanelModel DocPanel { get; }
 
         public MainWindow()
         {
             InitializeComponent();
+
+            Model = new DockContainerModel();
+            Model.Content = DocPanel = new DocumentPanelModel();
+
             Substrate.LoadPlugins();
         }
 

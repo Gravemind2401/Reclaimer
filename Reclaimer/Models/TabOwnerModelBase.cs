@@ -48,7 +48,7 @@ namespace Reclaimer.Models
 
         }
 
-        internal SplitPanelModel ParentBrach => Parent as SplitPanelModel;
+        internal SplitPanelModel ParentBranch => Parent as SplitPanelModel;
 
         internal DockContainerModel ParentContainer
         {

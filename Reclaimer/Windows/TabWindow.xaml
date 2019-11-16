@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Reclaimer.Windows"
         xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:c="clr-namespace:Studio.Controls;assembly=Studio"
+        xmlns:s="clr-namespace:Studio.Controls;assembly=Studio"
         mc:Ignorable="d" Height="300" Width="300"
         Loaded="MetroWindow_Loaded" Icon="../Resources/Reclaimer.ico"
         ShowActivated="True" WindowStartupLocation="Manual"
-        Style="{StaticResource TabWindowStyle}"
+        Style="{StaticResource RaftedWindowStyle}"
         Title="Reclaimer">
 
     <metro:MetroWindow.IconTemplate>
@@ -26,26 +26,26 @@
     </metro:MetroWindow.IconTemplate>
 
     <Window.Resources>
-        <Style TargetType="c:DocumentTabControl" BasedOn="{StaticResource {x:Type c:DocumentTabControl}}">
+        <!--<Style TargetType="s:DocumentTabControl" BasedOn="{StaticResource {x:Type s:DocumentTabControl}}">
             <Setter Property="NewWindowType" Value="{x:Type local:TabWindow}" />
         </Style>
 
-        <Style TargetType="c:UtilityTabControl" BasedOn="{StaticResource {x:Type c:UtilityTabControl}}">
+        <Style TargetType="s:UtilityTabControl" BasedOn="{StaticResource {x:Type s:UtilityTabControl}}">
             <Setter Property="NewWindowType" Value="{x:Type local:UtilityWindow}" />
         </Style>
 
-        <Style TargetType="c:MultiPanel" BasedOn="{StaticResource {x:Type c:MultiPanel}}">
+        <Style TargetType="s:MultiPanel" BasedOn="{StaticResource {x:Type s:MultiPanel}}">
             <Setter Property="DefaultDockSize" Value="350" />
-        </Style>
+        </Style>-->
     </Window.Resources>
 
     <Grid x:Name="root">
-        <c:DockContainer x:Name="dockContainer">
+        <!--<s:DockContainer x:Name="dockContainer">
             <c:MultiPanel x:Name="contentPanel">
                 <c:MultiPanelContainer>
 
                 </c:MultiPanelContainer>
             </c:MultiPanel>
-        </c:DockContainer>
+        </s:DockContainer>-->
     </Grid>
 </metro:MetroWindow>

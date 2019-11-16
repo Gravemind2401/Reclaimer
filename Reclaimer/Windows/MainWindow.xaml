@@ -5,14 +5,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
-    xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
     xmlns:local="clr-namespace:Reclaimer.Windows"
-    xmlns:c="clr-namespace:Studio.Controls;assembly=Studio"
+    xmlns:s="clr-namespace:Studio.Controls;assembly=Studio"
     xmlns:u="clr-namespace:Studio.Utilities;assembly=Studio"
     mc:Ignorable="d" WindowState="Maximized" Icon="../Resources/Reclaimer.ico"
     Style="{StaticResource MainWindowStyle}"
     Loaded="MetroWindow_Loaded" Closing="MetroWindow_Closing"
-    Title="Reclaimer" Height="900" Width="1600">
+    Title="Reclaimer" Width="1600" Height="900">
 
     <metro:MetroWindow.IconTemplate>
         <DataTemplate>
@@ -28,19 +27,19 @@
     </metro:MetroWindow.IconTemplate>
 
     <Window.Resources>
-        <u:BoolToVisibilityConverter x:Key="visConverter" TrueValue="Visible" FalseValue="Collapsed" />
+        <u:VisibilityConverter x:Key="visConverter" TrueValue="Visible" FalseValue="Collapsed" />
 
-        <Style TargetType="c:DocumentTabControl" BasedOn="{StaticResource {x:Type c:DocumentTabControl}}">
+        <!--<Style TargetType="s:DocumentTabControl" BasedOn="{StaticResource {x:Type s:DocumentTabControl}}">
             <Setter Property="NewWindowType" Value="{x:Type local:TabWindow}" />
         </Style>
 
-        <Style TargetType="c:UtilityTabControl" BasedOn="{StaticResource {x:Type c:UtilityTabControl}}">
+        <Style TargetType="s:UtilityTabControl" BasedOn="{StaticResource {x:Type s:UtilityTabControl}}">
             <Setter Property="NewWindowType" Value="{x:Type local:UtilityWindow}" />
         </Style>
 
-        <Style TargetType="c:MultiPanel">
+        <Style TargetType="s:MultiPanel">
             <Setter Property="DefaultDockSize" Value="400" />
-        </Style>
+        </Style>-->
     </Window.Resources>
 
     <Grid>
@@ -58,18 +57,20 @@
             <MenuItem Header="Themes" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
             <MenuItem Header="Help" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
         </Menu>
-        <studio:DockContainer Grid.Row="1" x:Name="Container">
-            <studio:MultiPanel x:Name="MainPanel" DefaultDockSize="400">
-                <studio:MultiPanelContainer>
-                    <studio:MultiPanelContainer.Panel1Content>
-                        <studio:DocumentTabControl x:Name="docTab"
-                            HorizontalContentAlignment="Stretch"
-                            RemoveOnEmpty="False">
-                            
-                        </studio:DocumentTabControl>
-                    </studio:MultiPanelContainer.Panel1Content>
-                </studio:MultiPanelContainer>
-            </studio:MultiPanel>
-        </studio:DockContainer>
+
+        <s:DockContainer Grid.Row="1" 
+                DataContext="{Binding Model, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                LeftItemsSource="{Binding LeftDockItems}"
+                TopItemsSource="{Binding TopDockItems}"
+                RightItemsSource="{Binding RightDockItems}"
+                BottomItemsSource="{Binding BottomDockItems}"
+                SelectedItem="{Binding SelectedDockItem}"
+                SelectedContentTemplate="{StaticResource DockedToolTemplate}"
+                DockCommand="{Binding DockCommand}">
+            <Grid Background="{DynamicResource Environment.EnvironmentBackgroundGradient}">
+                <ContentPresenter Content="{Binding Content}"
+                        ContentTemplateSelector="{StaticResource coreTemplateSelector}" />
+            </Grid>
+        </s:DockContainer>
     </Grid>
 </metro:MetroWindow>

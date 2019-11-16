@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Common;
+using Reclaimer.Models;
 using Reclaimer.Plugins.MetaViewer;
 using Reclaimer.Utilities;
 using Studio.Controls;
@@ -24,7 +25,7 @@ namespace Reclaimer.Controls
     /// <summary>
     /// Interaction logic for MetaViewer.xaml
     /// </summary>
-    public partial class MetaViewer : DocumentItem
+    public partial class MetaViewer
     {
         #region Dependency Properties
         public static readonly DependencyProperty ShowInvisiblesProperty =
@@ -45,11 +46,13 @@ namespace Reclaimer.Controls
         private IIndexItem tag;
         private string fileName;
 
+        public TabModel TabModel { get; }
         public ObservableCollection<MetaValue> Metadata { get; }
 
         public MetaViewer()
         {
             InitializeComponent();
+            TabModel = new TabModel(this, TabItemType.Document);
             Metadata = new ObservableCollection<MetaValue>();
             DataContext = this;
             ShowInvisibles = MetaViewerPlugin.Settings.ShowInvisibles;
@@ -57,8 +60,8 @@ namespace Reclaimer.Controls
 
         public void LoadMetadata(IIndexItem tag, string xmlFileName)
         {
-            TabToolTip = $"{tag.FullPath}.{tag.ClassCode}";
-            TabHeader = $"{Utils.GetFileName(tag.FullPath)}.{tag.ClassCode}";
+            TabModel.ToolTip = $"{tag.FullPath}.{tag.ClassCode}";
+            TabModel.Header = $"{Utils.GetFileName(tag.FullPath)}.{tag.ClassCode}";
 
             this.tag = tag;
             fileName = xmlFileName;

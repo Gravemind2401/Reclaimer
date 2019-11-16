@@ -6,6 +6,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -19,7 +20,6 @@ namespace Reclaimer
         internal static App Instance { get; private set; }
         internal static Settings Settings { get; private set; }
 
-        private static ResourceDictionary defaultResources;
         private static ResourceDictionary templateResources;
         private static readonly Dictionary<string, ResourceDictionary> themes = new Dictionary<string, ResourceDictionary>();
 
@@ -73,18 +73,23 @@ namespace Reclaimer
 
             base.OnStartup(e);
 
-            defaultResources = new ResourceDictionary { Source = new Uri("/Reclaimer;component/Themes/Default.xaml", UriKind.RelativeOrAbsolute) };
             templateResources = new ResourceDictionary { Source = new Uri("/Reclaimer;component/Resources/Templates.xaml", UriKind.RelativeOrAbsolute) };
 
-            var blue = new ResourceDictionary();
-            blue.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/Studio;component/Themes/Blue.xaml", UriKind.RelativeOrAbsolute) });
-            blue.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/Reclaimer;component/Themes/Blue.xaml", UriKind.RelativeOrAbsolute) });
-            AddTheme("Blue", blue);
+            var themeList = new[] { "Blue", "Dark", "Light", "Green", "Purple", "Red", "Tan", "Solarized (Dark)", "Solarized (Light)" };
 
-            var dark = new ResourceDictionary();
-            dark.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/Studio;component/Themes/Dark.xaml", UriKind.RelativeOrAbsolute) });
-            dark.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/Reclaimer;component/Themes/Dark.xaml", UriKind.RelativeOrAbsolute) });
-            AddTheme("Dark", dark);
+            foreach (var s in themeList)
+            {
+                var resource = Regex.Replace(s, @"[ \(\)]", string.Empty);
+
+                var theme = new ResourceDictionary();
+                theme.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"/Studio;component/Themes/{resource}.xaml", UriKind.RelativeOrAbsolute) });
+
+                if (resource != "Blue" && resource != "Dark")
+                    resource = resource.Contains("Dark") ? "Dark" : "Blue";
+
+                theme.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"/Reclaimer;component/Themes/{resource}.xaml", UriKind.RelativeOrAbsolute) });
+                AddTheme(s, theme);
+            }
 
             Settings = Settings.FromFile();
 
@@ -149,7 +154,6 @@ namespace Reclaimer
                 throw new KeyNotFoundException($"'{theme}' does not exist");
 
             Instance.Resources.MergedDictionaries.Clear();
-            Instance.Resources.MergedDictionaries.Add(defaultResources);
             Instance.Resources.MergedDictionaries.Add(templateResources);
             Instance.Resources.MergedDictionaries.Add(themes[theme]);
 

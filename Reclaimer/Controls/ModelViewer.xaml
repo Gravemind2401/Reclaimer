@@ -1,10 +1,10 @@
-﻿<studio:DocumentItem x:Class="Reclaimer.Controls.ModelViewer"
+﻿<UserControl x:Class="Reclaimer.Controls.ModelViewer"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Reclaimer.Controls"
-             xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
+             xmlns:s="clr-namespace:Studio.Controls;assembly=Studio"
              xmlns:u="clr-namespace:Reclaimer.Utilities"
              mc:Ignorable="d" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
              d:DesignHeight="500" d:DesignWidth="900">
@@ -43,8 +43,7 @@
     </UserControl.Resources>
     
     <DockPanel>
-        <ToolBarTray DockPanel.Dock="Top" IsLocked="True" Margin="0" 
-                     Background="{DynamicResource ToolBarBackground}">
+        <ToolBarTray DockPanel.Dock="Top" IsLocked="True">
             <ToolBar Margin="3,1">
                 <Button Click="btnCollapseAll_Click"
                         ToolTip="Collapse all">
@@ -69,11 +68,10 @@
                 </Button>
             </ToolBar>
         </ToolBarTray>
-        <ToolBarTray DockPanel.Dock="Bottom" IsLocked="True" Margin="0" 
-                     Background="{DynamicResource ToolBarBackground}">
+        <ToolBarTray DockPanel.Dock="Bottom" IsLocked="True">
             <ToolBar Margin="3,1">
                 <ToolBar.Resources>
-                    <Style TargetType="Label" BasedOn="{StaticResource ToolBarLabelStyle}">
+                    <Style TargetType="Label">
                         <Setter Property="Padding" Value="4,0,6,2" />
                         <Setter Property="VerticalAlignment" Value="Center" />
                     </Style>
@@ -142,35 +140,33 @@
                 <Separator />
             </ToolBar>
         </ToolBarTray>
-        <studio:SplitContainer x:Name="splitPanel" x:FieldModifier="private"
-                               Panel1Size="250" Panel2Size="*" CanResize="True"
-                               SplitterShowsPreview="True" SplitterBrush="LightGray"
-                               MinPanelSize="0">
-            <studio:SplitContainer.Panel1Content>
-                <studio:ExtendedTreeView x:Name="tv"
-                        ItemsSource="{Binding TreeViewItems}" 
-                        CheckBoxes="True" VerticalContentAlignment="Center"
-                        ItemChecked="ExtendedTreeView_ItemChecked"
-                        ItemUnchecked="ExtendedTreeView_ItemChecked">
-                    <TreeView.Resources>
-                        <Style TargetType="studio:ExtendedTreeViewItem" BasedOn="{StaticResource {x:Type studio:ExtendedTreeViewItem}}">
-                            <EventSetter Event="MouseDoubleClick" Handler="ExtendedTreeView_ItemDoubleClick" />
-                        </Style>
-                    </TreeView.Resources>
-                </studio:ExtendedTreeView>
-            </studio:SplitContainer.Panel1Content>
-            <studio:SplitContainer.Panel2Content>
-                <Grid>
-                    <local:Renderer x:Name="renderer"
-                                    x:FieldModifier="private" 
-                                    Background="CornflowerBlue" />
-                    <ToggleButton Style="{StaticResource showHideStyle}"
-                                  HorizontalAlignment="Left" VerticalAlignment="Center"
-                                  Padding="2,20" Click="btnToggleDetails_Click">
-                        
-                    </ToggleButton>
-                </Grid>
-            </studio:SplitContainer.Panel2Content>
-        </studio:SplitContainer>
+        <s:SplitPanel x:Name="splitPanel" x:FieldModifier="private" SplitterThickness="3">
+            <s:SplitPanel.Resources>
+                <Style TargetType="s:SplitPanelSplitter" BasedOn="{StaticResource {x:Type s:SplitPanelSplitter}}">
+                    <Setter Property="Background" Value="LightGray" />
+                </Style>
+            </s:SplitPanel.Resources>
+            <TreeView x:Name="tv" s:SplitPanel.DesiredSize="250"
+                    ItemsSource="{Binding TreeViewItems}">
+                    <!--CheckBoxes="True" VerticalContentAlignment="Center"
+                    ItemChecked="ExtendedTreeView_ItemChecked"
+                    ItemUnchecked="ExtendedTreeView_ItemChecked">-->
+                <TreeView.Resources>
+                    <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                        <EventSetter Event="MouseDoubleClick" Handler="ExtendedTreeView_ItemDoubleClick" />
+                    </Style>
+                </TreeView.Resources>
+            </TreeView>
+            <Grid>
+                <local:Renderer x:Name="renderer"
+                                x:FieldModifier="private" 
+                                Background="CornflowerBlue" />
+                <ToggleButton Style="{StaticResource showHideStyle}"
+                              HorizontalAlignment="Left" VerticalAlignment="Center"
+                              Padding="2,20" Click="btnToggleDetails_Click">
+                    
+                </ToggleButton>
+            </Grid>
+        </s:SplitPanel>
     </DockPanel>
-</studio:DocumentItem>
+</UserControl>

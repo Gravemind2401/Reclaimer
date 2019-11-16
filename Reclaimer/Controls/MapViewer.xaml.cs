@@ -1,5 +1,6 @@
 ﻿using Adjutant.Blam.Common;
 using Adjutant.Utilities;
+using Reclaimer.Models;
 using Reclaimer.Plugins;
 using Reclaimer.Utilities;
 using Reclaimer.Windows;
@@ -25,7 +26,7 @@ namespace Reclaimer.Controls
     /// <summary>
     /// Interaction logic for MapViewer.xaml
     /// </summary>
-    public partial class MapViewer : UtilityItem
+    public partial class MapViewer
     {
         private readonly MenuItem OpenContextItem;
         private readonly MenuItem OpenWithContextItem;
@@ -42,6 +43,7 @@ namespace Reclaimer.Controls
             set { SetValue(HierarchyViewProperty, value); }
         }
 
+        public TabModel TabModel { get; }
         public ObservableCollection<UIElement> ContextItems { get; }
 
         public static void HierarchyViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -59,6 +61,7 @@ namespace Reclaimer.Controls
             OpenWithContextItem = new MenuItem { Header = "Open With..." };
             ContextSeparator = new Separator();
 
+            TabModel = new TabModel(this, TabItemType.Tool);
             ContextItems = new ObservableCollection<UIElement>();
 
             DataContext = this;
@@ -68,8 +71,8 @@ namespace Reclaimer.Controls
         {
             cache = CacheFactory.ReadCacheFile(fileName);
 
-            TabHeader = Utils.GetFileName(cache.FileName);
-            TabToolTip = $"Map Viewer - {TabHeader}";
+            TabModel.Header = Utils.GetFileName(cache.FileName);
+            TabModel.ToolTip = $"Map Viewer - {TabModel.Header}";
 
             HierarchyView = MapViewerPlugin.Settings.HierarchyView;
             BuildTagTree(null);
