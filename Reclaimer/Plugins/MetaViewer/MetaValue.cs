@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using Reclaimer.Utilities;
 using System.Runtime.CompilerServices;
+using Prism.Mvvm;
 
 namespace Reclaimer.Plugins.MetaViewer
 {

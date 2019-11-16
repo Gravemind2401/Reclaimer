@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Common;
+using Prism.Mvvm;
 using Reclaimer.Utilities;
 using System;
 using System.Collections.Generic;
