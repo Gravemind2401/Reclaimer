@@ -43,4 +43,12 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+	GlobalSection(AutomaticVersions) = postSolution
+		UpdateAssemblyVersion.Release|Any CPU = True
+		UpdateAssemblyFileVersion.Release|Any CPU = True
+		UpdateAssemblyInfoVersion.Release|Any CPU = True
+		AssemblyVersionSettings.Release|Any CPU = None.None.None.None
+		AssemblyFileVersionSettings.Release|Any CPU = None.None.None.None
+		AssemblyInfoVersionSettings.Release|Any CPU = None.None.None.None
+	EndGlobalSection
 EndGlobal
