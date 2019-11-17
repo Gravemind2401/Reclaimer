@@ -111,7 +111,15 @@ namespace Reclaimer.Controls
             var item = node.Tag as IPakItem;
             var fileName = $"{item.Name}.{item.ItemType}";
             var fileKey = $"Saber3D.Halo1X.{item.ItemType}";
-            return new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), item);
+            return new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), GetFileFormats(item).ToArray());
+        }
+
+        private IEnumerable<object> GetFileFormats(IPakItem item)
+        {
+            yield return item;
+
+            if (item.ItemType == PakItemType.Textures)
+                yield return new Adjutant.Saber3D.Halo1X.Texture((Adjutant.Saber3D.Halo1X.PakItem)item);
         }
 
         #region Event Handlers

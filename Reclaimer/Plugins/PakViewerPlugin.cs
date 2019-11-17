@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace Reclaimer.Plugins
 {
-    internal class PakViewerPlugin : Plugin
+    public class PakViewerPlugin : Plugin
     {
         const string OpenKey = "PakViewer.OpenPak";
         const string OpenPath = "File\\Open Pak";
