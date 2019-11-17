@@ -276,8 +276,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\DatabaseCreate.sql" />
-    <Content Include="Resources\Reclaimer.svg" />
+    <None Include="Resources\Reclaimer.svg" />
     <Resource Include="Resources\Reclaimer.ico" />
     <Resource Include="Resources\grab.cur" />
     <Resource Include="Resources\grabbing.cur" />
