@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Reclaimer.Models
@@ -52,6 +53,13 @@ namespace Reclaimer.Models
 
         private void DockExecuted(DockEventArgs e)
         {
+            //dock can only be center or outer - no splits
+            if (e.TargetDock != DockTarget.Center)
+            {
+                OuterDock(e);
+                return;
+            }
+
             var groups = e.SourceContent.OfType<TabWellModelBase>().ToList();
             var newGroup = new DocumentWellModel();
 
@@ -72,6 +80,53 @@ namespace Reclaimer.Models
             Children.Add(newGroup);
             newGroup.IsActive = true;
             newGroup.SelectedItem = newGroup.Children[0];
+        }
+
+        private void OuterDock(DockEventArgs e)
+        {
+            var groups = e.SourceContent.OfType<TabWellModelBase>().ToList();
+            var newGroup = new ToolWellModel() { Dock = (Dock)((int)e.TargetDock - 5) };
+
+            foreach (var group in groups)
+            {
+                var allChildren = group.Children.ToList();
+                foreach (var item in allChildren)
+                {
+                    group.Children.Remove(item);
+                    item.IsPinned = false;
+                    item.IsActive = false;
+
+                    newGroup.Children.Add(item);
+                }
+            }
+
+            var newSplit = new SplitPanelModel();
+            newSplit.Orientation = e.TargetDock == DockTarget.DockLeft || e.TargetDock == DockTarget.DockRight
+                ? Orientation.Horizontal
+                : Orientation.Vertical;
+
+            if (ParentBranch == null)
+                ParentContainer.Content = newSplit;
+            else
+                ParentBranch.Replace(this, newSplit);
+
+            if (e.TargetDock == DockTarget.DockTop || e.TargetDock == DockTarget.DockLeft)
+            {
+                newSplit.Item1 = newGroup;
+                newSplit.Item2 = this;
+                newSplit.Item1.PanelSize = new GridLength(e.DesiredSize);
+            }
+            else
+            {
+                newSplit.Item1 = this;
+                newSplit.Item2 = newGroup;
+                newSplit.Item2.PanelSize = new GridLength(e.DesiredSize);
+            }
+
+            newGroup.IsActive = true;
+            newGroup.SelectedItem = newGroup.Children.First();
+
+            e.SourceWindow.Close();
         }
 
         private void Children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

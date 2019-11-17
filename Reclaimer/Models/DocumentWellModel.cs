@@ -119,20 +119,20 @@ namespace Reclaimer.Models
                 ? Orientation.Horizontal
                 : Orientation.Vertical;
 
-            if (ParentBranch == null)
+            if (ParentPanel.ParentBranch == null)
                 ParentContainer.Content = newSplit;
             else
-                ParentBranch.Replace(Parent, newSplit);
+                ParentPanel.ParentBranch.Replace(ParentPanel, newSplit);
 
             if (e.TargetDock == DockTarget.DockTop || e.TargetDock == DockTarget.DockLeft)
             {
                 newSplit.Item1 = newGroup;
-                newSplit.Item2 = Parent;
+                newSplit.Item2 = ParentPanel;
                 newSplit.Item1.PanelSize = new GridLength(e.DesiredSize);
             }
             else
             {
-                newSplit.Item1 = Parent;
+                newSplit.Item1 = ParentPanel;
                 newSplit.Item2 = newGroup;
                 newSplit.Item2.PanelSize = new GridLength(e.DesiredSize);
             }
