@@ -87,17 +87,17 @@ namespace Reclaimer.Controls
 
         private void BuildClassTree(string filter)
         {
-            var result = new List<TreeNode>();
+            var result = new List<TreeItemModel>();
             var classGroups = cache.TagIndex
                 .Where(i => FilterTag(filter, i))
                 .GroupBy(i => i.ClassName);
 
             foreach (var g in classGroups.OrderBy(g => g.Key))
             {
-                var node = new TreeNode { Header = g.Key };
+                var node = new TreeItemModel { Header = g.Key };
                 foreach (var i in g.OrderBy(i => i.FullPath))
                 {
-                    node.Children.Add(new TreeNode
+                    node.Items.Add(new TreeItemModel
                     {
                         Header = i.FullPath,
                         Tag = i
@@ -111,8 +111,8 @@ namespace Reclaimer.Controls
 
         private void BuildHierarchyTree(string filter)
         {
-            var result = new List<TreeNode>();
-            var lookup = new Dictionary<string, TreeNode>();
+            var result = new List<TreeItemModel>();
+            var lookup = new Dictionary<string, TreeItemModel>();
 
             foreach (var tag in cache.TagIndex.Where(i => FilterTag(filter, i)).OrderBy(i => i.FullPath))
             {
@@ -140,7 +140,7 @@ namespace Reclaimer.Controls
             return false;
         }
 
-        private TreeNode MakeNode(IList<TreeNode> root, IDictionary<string, TreeNode> lookup, string path, bool inner = false)
+        private TreeItemModel MakeNode(IList<TreeItemModel> root, IDictionary<string, TreeItemModel> lookup, string path, bool inner = false)
         {
             if (lookup.ContainsKey(path))
                 return lookup[path];
@@ -149,13 +149,13 @@ namespace Reclaimer.Controls
             var branch = index < 0 ? null : path.Substring(0, index);
             var leaf = index < 0 ? path : path.Substring(index + 1);
 
-            var item = new TreeNode(leaf);
+            var item = new TreeItemModel(leaf);
             lookup.Add(path, item);
 
             if (branch == null)
             {
                 if (inner)
-                    root.Insert(root.LastIndexWhere(n => n.HasChildren) + 1, item);
+                    root.Insert(root.LastIndexWhere(n => n.HasItems) + 1, item);
                 else root.Add(item);
 
                 return item;
@@ -164,23 +164,23 @@ namespace Reclaimer.Controls
             var parent = MakeNode(root, lookup, branch, true);
 
             if (inner)
-                parent.Children.Insert(parent.Children.LastIndexWhere(n => n.HasChildren) + 1, item);
-            else parent.Children.Add(item);
+                parent.Items.Insert(parent.Items.LastIndexWhere(n => n.HasItems) + 1, item);
+            else parent.Items.Add(item);
 
             return item;
         }
 
-        private void RecursiveCollapseNode(TreeNode node)
+        private void RecursiveCollapseNode(TreeItemModel node)
         {
-            foreach (var n in node.Children)
+            foreach (var n in node.Items)
                 RecursiveCollapseNode(n);
             node.IsExpanded = false;
         }
 
         private OpenFileArgs GetSelectedArgs()
         {
-            var node = tv.SelectedItem as TreeNode;
-            if (node.HasChildren) //folder
+            var node = tv.SelectedItem as TreeItemModel;
+            if (node.HasItems) //folder
                 return new OpenFileArgs(node.Header, $"Blam.{cache.CacheType}.*", node);
 
             var item = node.Tag as IIndexItem;
@@ -265,7 +265,7 @@ namespace Reclaimer.Controls
         #region Event Handlers
         private void btnCollapseAll_Click(object sender, RoutedEventArgs e)
         {
-            var nodes = tv.ItemsSource as List<TreeNode>;
+            var nodes = tv.ItemsSource as List<TreeItemModel>;
 
             foreach (var node in nodes)
                 RecursiveCollapseNode(node);
@@ -289,7 +289,7 @@ namespace Reclaimer.Controls
             if ((sender as TreeViewItem)?.DataContext != tv.SelectedItem)
                 return; //because this event bubbles to the parent node
 
-            var item = (tv.SelectedItem as TreeNode)?.Tag as IIndexItem;
+            var item = (tv.SelectedItem as TreeItemModel)?.Tag as IIndexItem;
             if (item == null) return;
 
             Substrate.OpenWithDefault(GetSelectedArgs());
@@ -301,7 +301,7 @@ namespace Reclaimer.Controls
                 item.Click -= ContextItem_Click;
 
             var menu = (sender as ContextMenu);
-            var node = tv.SelectedItem as TreeNode;
+            var node = tv.SelectedItem as TreeItemModel;
 
             ContextItems.Clear();
             if (node.Tag is IIndexItem)

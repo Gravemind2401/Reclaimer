@@ -62,17 +62,17 @@ namespace Reclaimer.Controls
 
         private void BuildItemTree(string filter)
         {
-            var result = new List<TreeNode>();
+            var result = new List<TreeItemModel>();
             var itemGroups = pak.Items
                 .Where(i => FilterTag(filter, i))
                 .GroupBy(i => i.ItemType.ToString());
 
             foreach (var g in itemGroups.OrderBy(g => g.Key))
             {
-                var node = new TreeNode { Header = g.Key };
+                var node = new TreeItemModel { Header = g.Key };
                 foreach (var item in g.OrderBy(i => i.Name))
                 {
-                    node.Children.Add(new TreeNode
+                    node.Items.Add(new TreeItemModel
                     {
                         Header = item.Name,
                         Tag = item
@@ -95,17 +95,17 @@ namespace Reclaimer.Controls
             return false;
         }
 
-        private void RecursiveCollapseNode(TreeNode node)
+        private void RecursiveCollapseNode(TreeItemModel node)
         {
-            foreach (var n in node.Children)
+            foreach (var n in node.Items)
                 RecursiveCollapseNode(n);
             node.IsExpanded = false;
         }
 
         private OpenFileArgs GetSelectedArgs()
         {
-            var node = tv.SelectedItem as TreeNode;
-            if (node.HasChildren) //folder
+            var node = tv.SelectedItem as TreeItemModel;
+            if (node.HasItems) //folder
                 return new OpenFileArgs(node.Header, $"Saber3D.Halo1X.*", node);
 
             var item = node.Tag as IPakItem;
@@ -125,7 +125,7 @@ namespace Reclaimer.Controls
         #region Event Handlers
         private void btnCollapseAll_Click(object sender, RoutedEventArgs e)
         {
-            var nodes = tv.ItemsSource as List<TreeNode>;
+            var nodes = tv.ItemsSource as List<TreeItemModel>;
 
             foreach (var node in nodes)
                 RecursiveCollapseNode(node);
@@ -149,7 +149,7 @@ namespace Reclaimer.Controls
             if ((sender as TreeViewItem)?.DataContext != tv.SelectedItem)
                 return; //because this event bubbles to the parent node
 
-            var item = (tv.SelectedItem as TreeNode)?.Tag as IPakItem;
+            var item = (tv.SelectedItem as TreeItemModel)?.Tag as IPakItem;
             if (item == null) return;
 
             Substrate.OpenWithDefault(GetSelectedArgs());
@@ -161,7 +161,7 @@ namespace Reclaimer.Controls
                 item.Click -= ContextItem_Click;
 
             var menu = (sender as ContextMenu);
-            var node = tv.SelectedItem as TreeNode;
+            var node = tv.SelectedItem as TreeItemModel;
 
             ContextItems.Clear();
             if (node.Tag is IPakItem)

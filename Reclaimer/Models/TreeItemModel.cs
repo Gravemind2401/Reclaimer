@@ -55,6 +55,11 @@ namespace Reclaimer.Models
             Items.CollectionChanged += Items_CollectionChanged;
         }
 
+        public TreeItemModel(string header) : this()
+        {
+            Header = header;
+        }
+
         private void Items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (e.OldItems != null)

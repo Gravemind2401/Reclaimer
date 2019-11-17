@@ -1,6 +1,7 @@
 ﻿using Adjutant.Blam.Common;
 using Adjutant.Geometry;
 using Adjutant.Utilities;
+using Reclaimer.Models;
 using Reclaimer.Utilities;
 using System;
 using System.Collections.Concurrent;
@@ -65,7 +66,7 @@ namespace Reclaimer.Plugins
                 if (!Enum.TryParse(match.Groups[1].Value, out cacheType))
                     yield break;
 
-                if (match.Groups[2].Value == "*" && context.File.Any(i => i is TreeNode))
+                if (match.Groups[2].Value == "*" && context.File.Any(i => i is TreeItemModel))
                     yield return ExtractMultipleContextItem;
                 else
                 {
@@ -109,7 +110,7 @@ namespace Reclaimer.Plugins
                 Settings.DataFolder = folder = fsd.SelectedPath;
             }
 
-            var node = context.File.OfType<TreeNode>().FirstOrDefault();
+            var node = context.File.OfType<TreeItemModel>().FirstOrDefault();
             if (node != null)
                 BatchQueue(node);
             else
@@ -152,11 +153,11 @@ namespace Reclaimer.Plugins
             }, tokenSource.Token);
         }
 
-        private void BatchQueue(TreeNode node)
+        private void BatchQueue(TreeItemModel node)
         {
-            if (node.HasChildren)
+            if (node.HasItems)
             {
-                foreach (var child in node.Children)
+                foreach (var child in node.Items)
                     BatchQueue(child);
             }
             else extractionQueue.Enqueue(node.Tag as IIndexItem);
