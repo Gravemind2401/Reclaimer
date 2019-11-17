@@ -42,6 +42,7 @@ namespace Adjutant.Blam.Halo2
 
             using (var reader = CreateReader(HeaderTranslator))
             {
+                reader.DynamicReadEnabled = false;
                 Header = reader.ReadObject<CacheHeader>();
                 reader.Seek(Header.IndexAddress, SeekOrigin.Begin);
                 TagIndex = reader.ReadObject(new TagIndex(this));
