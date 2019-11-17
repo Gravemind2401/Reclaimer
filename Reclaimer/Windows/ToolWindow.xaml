@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Reclaimer.Windows"
         xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:s="clr-namespace:Studio.Controls;assembly=Studio"
-        mc:Ignorable="d" Height="300" Width="300"
+        mc:Ignorable="d" Height="300" Width="300" Closed="ToolWindow_Closed"
         s:DockManager.IsActive="{Binding IsActive, RelativeSource={RelativeSource Self}, Mode=OneWay}"
         Title="{Binding Content.SelectedItem.ToolTip, RelativeSource={RelativeSource Self}}"
         WindowStartupLocation="Manual" ShowMinButton="False"

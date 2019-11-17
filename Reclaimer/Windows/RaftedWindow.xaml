@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:Reclaimer.Windows"
         xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:s="clr-namespace:Studio.Controls;assembly=Studio"
-        mc:Ignorable="d" Height="300" Width="300" Icon="../Resources/Reclaimer.ico"
+        mc:Ignorable="d" Height="300" Width="300"
+        Closed="RaftedWindow_Closed" Icon="../Resources/Reclaimer.ico"
         Style="{StaticResource RaftedWindowStyle}" Title="Reclaimer">
 
     <metro:MetroWindow.IconTemplate>

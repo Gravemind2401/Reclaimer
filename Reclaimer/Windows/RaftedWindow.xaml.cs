@@ -44,5 +44,10 @@ namespace Reclaimer.Windows
             Model = container;
             DocPanel = panel;
         }
+
+        private void RaftedWindow_Closed(object sender, EventArgs e)
+        {
+            Model.Dispose();
+        }
     }
 }

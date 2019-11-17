@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace Reclaimer.Models
 {
-    public class TabModel : BindableBase
+    public class TabModel : BindableBase, IDisposable
     {
         private TabOwnerModelBase parent;
         public TabOwnerModelBase Parent
@@ -70,6 +70,11 @@ namespace Reclaimer.Models
 
             Content = content;
             Usage = usage;
+        }
+
+        public void Dispose()
+        {
+            (Content as IDisposable)?.Dispose();
         }
     }
 }

@@ -25,5 +25,10 @@ namespace Reclaimer.Windows
         {
             InitializeComponent();
         }
+
+        private void ToolWindow_Closed(object sender, EventArgs e)
+        {
+            (Content as IDisposable)?.Dispose();
+        }
     }
 }

@@ -64,7 +64,10 @@ namespace Reclaimer.Models
         protected virtual void CloseTabExecuted(TabModel item)
         {
             var parent = ParentContainer;
-            Children.Remove(item ?? SelectedItem);
+
+            item = item ?? SelectedItem;
+            Children.Remove(item);
+            item.Dispose();
 
             if (parent != null && parent.IsRafted && !parent.AllTabs.Any())
                 parent.Host.Close();

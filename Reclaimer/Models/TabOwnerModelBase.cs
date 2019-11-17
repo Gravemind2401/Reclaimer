@@ -9,7 +9,7 @@ using System.Windows;
 
 namespace Reclaimer.Models
 {
-    public abstract class TabOwnerModelBase : BindableBase
+    public abstract class TabOwnerModelBase : BindableBase, IDisposable
     {
         private TabOwnerModelBase parent;
         public TabOwnerModelBase Parent
@@ -69,5 +69,11 @@ namespace Reclaimer.Models
         internal void SetParent(TabOwnerModelBase parent) => Parent = parent;
 
         internal abstract IEnumerable<TabModel> AllTabs { get; }
+
+        public void Dispose()
+        {
+            foreach (var item in AllTabs.ToList())
+                item.Dispose();
+        }
     }
 }

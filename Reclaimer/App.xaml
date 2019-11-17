@@ -319,6 +319,7 @@
                 <Setter Property="NonActiveBorderBrush" Value="{DynamicResource Environment.MainWindow.InactiveBorder}" />
                 <!--<Setter Property="NonActiveGlowBrush" Value="{DynamicResource Environment.MainWindow.InactiveBorder}" />-->
 
+                <Setter Property="Background" Value="{DynamicResource Environment.EnvironmentBackgroundGradient}" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="TitleCaps" Value="False" />
                 <Setter Property="TitlebarHeight" Value="29" />
