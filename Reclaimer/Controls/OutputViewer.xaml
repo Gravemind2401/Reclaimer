@@ -13,6 +13,7 @@
         <ToolBarTray DockPanel.Dock="Top" IsLocked="True">
             <ToolBar>
                 <Label Padding="4,0,6,2" VerticalAlignment="Center"
+                       Foreground="{DynamicResource Environment.CommandBar.TextActive}"
                        TextOptions.TextFormattingMode="Display"
                        Content="Show output from:" />
                 <ComboBox x:Name="cmbPlugins" x:FieldModifier="private"

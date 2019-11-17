@@ -66,7 +66,8 @@ namespace Reclaimer.Windows
                 item.Click += ThemeMenuItem_Click;
             }
 
-            WindowState = App.Settings.WindowState;
+            if (App.Settings.WindowState != WindowState.Minimized)
+                WindowState = App.Settings.WindowState;
         }
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
