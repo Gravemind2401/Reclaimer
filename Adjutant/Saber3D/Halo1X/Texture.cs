@@ -16,6 +16,7 @@ namespace Adjutant.Saber3D.Halo1X
         private const int BigHeader = 0x54434950; //PICT
 
         private readonly PakItem item;
+        private readonly bool isBigEndian;
 
         public int Width { get; }
         public int Height { get; }
@@ -63,6 +64,16 @@ namespace Adjutant.Saber3D.Halo1X
                 data = reader.ReadBytes(size);
             }
 
+            if (isBigEndian)
+            {
+                var bpp = Format.Bpp();
+                if (bpp > 1)
+                {
+                    for (int i = 0; i < data.Length; i += bpp)
+                        Array.Reverse(data, i, bpp);
+                }
+            }
+
             DdsImage dds;
             if (dxgiLookup.ContainsKey(Format))
                 dds = new DdsImage(Height * MapCount, Width, dxgiLookup[Format], DxgiTextureType.Texture2D, data);
@@ -78,7 +89,7 @@ namespace Adjutant.Saber3D.Halo1X
             //}
 
             return dds;
-        } 
+        }
         #endregion
 
         public Texture(PakItem item)
@@ -92,25 +103,31 @@ namespace Adjutant.Saber3D.Halo1X
                 var head = reader.ReadInt32();
                 if (head == LittleHeader)
                     reader.ByteOrder = ByteOrder.LittleEndian;
-                else if (head == BigHeader)
-                    reader.ByteOrder = ByteOrder.BigEndian;
-                else throw Exceptions.NotASaberTextureItem(item);
+                else
+                {
+                    reader.Seek(8, SeekOrigin.Begin);
+                    head = reader.ReadInt32();
 
-                var flag = head == LittleHeader;
+                    if (head == BigHeader)
+                        reader.ByteOrder = ByteOrder.BigEndian;
+                    else throw Exceptions.NotASaberTextureItem(item);
 
-                reader.Seek(flag ? 16 : 12, SeekOrigin.Begin);
+                    isBigEndian = true;
+                }
+
+                reader.Seek(isBigEndian ? 12 : 16, SeekOrigin.Begin);
                 Width = reader.ReadInt32();
                 Height = reader.ReadInt32();
 
-                reader.Seek(flag ? 28 : 24, SeekOrigin.Begin);
+                reader.Seek(isBigEndian ? 24 : 28, SeekOrigin.Begin);
                 MapCount = reader.ReadInt32();
 
-                reader.Seek(flag ? 38 : 32, SeekOrigin.Begin);
+                reader.Seek(isBigEndian ? 32 : 38, SeekOrigin.Begin);
                 Format = (TextureFormat)reader.ReadInt32();
                 if (Format == TextureFormat.AlsoDXT1)
                     Format = TextureFormat.DXT1; //for compatibility with KnownTextureFormat
 
-                DataOffset = flag ? 58 : 4096;
+                DataOffset = isBigEndian ? 4096 : 58;
             }
         }
     }
