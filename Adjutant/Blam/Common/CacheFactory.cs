@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Endian;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -136,6 +137,54 @@ namespace Adjutant.Blam.Common
             }
 
             return CacheType.Unknown;
+        }
+
+        public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator)
+        {
+            var fs = new FileStream(cache.FileName, FileMode.Open, FileAccess.Read);
+            var reader = new DependencyReader(fs, ByteOrder.LittleEndian);
+
+            var header = reader.PeekInt32();
+            if (header == BigHeader)
+                reader.ByteOrder = ByteOrder.BigEndian;
+            else if (header != LittleHeader)
+                throw Exceptions.NotAValidMapFile(cache.FileName);
+
+            reader.RegisterInstance(cache);
+            reader.RegisterInstance(translator);
+
+            if (cache.CacheType < CacheType.Halo2Xbox)
+                reader.RegisterInstance((Halo1.CacheFile)cache);
+            else if (cache.CacheType < CacheType.Halo3Beta)
+                reader.RegisterInstance((Halo2.CacheFile)cache);
+            else if (cache.CacheType < CacheType.HaloReachBeta)
+                reader.RegisterInstance((Halo3.CacheFile)cache);
+            else if (cache.CacheType < CacheType.Halo4Beta)
+                reader.RegisterInstance((HaloReach.CacheFile)cache);
+
+            if (cache.CacheType >= CacheType.Halo2Xbox)
+            {
+                reader.RegisterType(() => new Matrix4x4
+                {
+                    M11 = reader.ReadSingle(),
+                    M12 = reader.ReadSingle(),
+                    M13 = reader.ReadSingle(),
+
+                    M21 = reader.ReadSingle(),
+                    M22 = reader.ReadSingle(),
+                    M23 = reader.ReadSingle(),
+
+                    M31 = reader.ReadSingle(),
+                    M32 = reader.ReadSingle(),
+                    M33 = reader.ReadSingle(),
+
+                    M41 = reader.ReadSingle(),
+                    M42 = reader.ReadSingle(),
+                    M43 = reader.ReadSingle(),
+                });
+            }
+
+            return reader;
         }
     }
 }

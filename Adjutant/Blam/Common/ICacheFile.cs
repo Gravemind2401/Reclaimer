@@ -17,7 +17,5 @@ namespace Adjutant.Blam.Common
         IStringIndex StringIndex { get; }
 
         IAddressTranslator DefaultAddressTranslator { get; }
-
-        DependencyReader CreateReader(IAddressTranslator translator);
     }
 }

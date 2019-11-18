@@ -87,41 +87,7 @@ namespace Adjutant.Blam.HaloReach
             Scenario = TagIndex.FirstOrDefault(t => t.ClassCode == "scnr")?.ReadMetadata<scenario>();
         }
 
-        public DependencyReader CreateReader(IAddressTranslator translator)
-        {
-            var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read);
-            var reader = new DependencyReader(fs, ByteOrder.LittleEndian);
-
-            var header = reader.PeekInt32();
-            if (header == CacheFactory.BigHeader)
-                reader.ByteOrder = ByteOrder.BigEndian;
-            else if (header != CacheFactory.LittleHeader)
-                throw Exceptions.NotAValidMapFile(FileName);
-
-            reader.RegisterInstance<CacheFile>(this);
-            reader.RegisterInstance<ICacheFile>(this);
-            reader.RegisterInstance<IAddressTranslator>(translator);
-            reader.RegisterType<Matrix4x4>(() => new Matrix4x4
-            {
-                M11 = reader.ReadSingle(),
-                M12 = reader.ReadSingle(),
-                M13 = reader.ReadSingle(),
-
-                M21 = reader.ReadSingle(),
-                M22 = reader.ReadSingle(),
-                M23 = reader.ReadSingle(),
-
-                M31 = reader.ReadSingle(),
-                M32 = reader.ReadSingle(),
-                M33 = reader.ReadSingle(),
-
-                M41 = reader.ReadSingle(),
-                M42 = reader.ReadSingle(),
-                M43 = reader.ReadSingle(),
-            });
-
-            return reader;
-        }
+        public DependencyReader CreateReader(IAddressTranslator translator) => CacheFactory.CreateReader(this, translator);
 
         #region ICacheFile
 
