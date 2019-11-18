@@ -139,6 +139,12 @@ namespace Adjutant.Blam.Common
             return CacheType.Unknown;
         }
 
+        public static int GetCacheGeneration(this CacheType cacheType)
+        {
+            var field = typeof(CacheType).GetField(cacheType.ToString());
+            return field.GetCustomAttributes(typeof(CacheGenerationAttribute), false).OfType<CacheGenerationAttribute>().FirstOrDefault()?.Generation ?? -1;
+        }
+
         public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator)
         {
             var fs = new FileStream(cache.FileName, FileMode.Open, FileAccess.Read);

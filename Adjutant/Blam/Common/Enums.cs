@@ -17,47 +17,71 @@ namespace Adjutant.Blam.Common
         }
     }
 
+    [AttributeUsage(AttributeTargets.Field)]
+    internal sealed class CacheGenerationAttribute : Attribute
+    {
+        public int Generation { get; }
+
+        public CacheGenerationAttribute(int generation)
+        {
+            Generation = generation;
+        }
+    }
+
     public enum CacheType
     {
         Unknown = -1,
 
+        [CacheGeneration(1)]
         [BuildString("01.01.14.2342")]
         Halo1Xbox,
 
+        [CacheGeneration(1)]
         [BuildString("01.00.00.0564")]
         Halo1PC,
 
+        [CacheGeneration(1)]
         [BuildString("01.00.00.0609")]
         Halo1CE,
 
+        [CacheGeneration(1)]
         [BuildString("01.00.01.0563")]
         Halo1AE,
 
+        [CacheGeneration(2)]
         [BuildString("02.09.27.09809")]
         Halo2Xbox,
 
+        [CacheGeneration(2)]
         [BuildString("11081.07.04.30.0934.main")]
         Halo2Vista,
         
+        [CacheGeneration(3)]
         [BuildString("09699.07.05.01.1534.delta")]
         Halo3Beta,
 
+        [CacheGeneration(3)]
         [BuildString("11855.07.08.20.2317.halo3_ship")]
         [BuildString("12065.08.08.26.0819.halo3_ship")] //multiplayer map pack
         Halo3Retail,
 
+        [CacheGeneration(3)]
         [BuildString("13895.09.04.27.2201.atlas_relea")]
         Halo3ODST,
 
+        [CacheGeneration(3)]
         [BuildString("09730.10.04.09.1309.omaha_delta")]
         HaloReachBeta,
 
+        [CacheGeneration(3)]
         [BuildString("11860.10.07.24.0147.omaha_relea")]
         HaloReachRetail,
 
+        [CacheGeneration(4)]
         [BuildString("14064.12.05.05.1011.beta")]
         Halo4Beta,
 
+        [CacheGeneration(4)]
         [BuildString("20810.12.09.22.1647.main")] //retail
         [BuildString("16531.12.07.05.0200.main")] //DLC1
         [BuildString("17539.12.07.24.0200.main")] //DLC3
