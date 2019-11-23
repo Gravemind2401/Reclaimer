@@ -1,4 +1,5 @@
-﻿using Adjutant.Utilities;
+﻿using Adjutant.Blam.Common;
+using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -12,10 +13,10 @@ namespace Adjutant.Blam.Halo2
 {
     public struct DataPointer
     {
-        private readonly CacheFile _cache;
+        private readonly ICacheFile _cache;
         private readonly int _value;
 
-        public DataPointer(int value, CacheFile cache)
+        public DataPointer(int value, ICacheFile cache)
         {
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
@@ -24,7 +25,7 @@ namespace Adjutant.Blam.Halo2
             _cache = cache;
         }
 
-        public DataPointer(DependencyReader reader, CacheFile cache)
+        public DataPointer(DependencyReader reader, ICacheFile cache)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));

@@ -16,9 +16,9 @@ namespace Adjutant.Blam.Halo2
 {
     public class scenario_structure_bsp : IRenderGeometry
     {
-        private readonly IndexItem item;
+        private readonly IIndexItem item;
 
-        public scenario_structure_bsp(IndexItem item)
+        public scenario_structure_bsp(IIndexItem item)
         {
             this.item = item;
         }
@@ -53,7 +53,7 @@ namespace Adjutant.Blam.Halo2
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
             model.Materials.AddRange(Halo2Common.GetMaterials(Shaders));
 
             #region Clusters

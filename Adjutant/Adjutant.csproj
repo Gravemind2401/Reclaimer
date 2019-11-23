@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Blam\Common\CacheFactory.cs" />
     <Compile Include="Blam\Common\Enums.cs" />
+    <Compile Include="Blam\Common\Extensions.cs" />
     <Compile Include="Blam\Common\ICacheFile.cs" />
     <Compile Include="Blam\Common\IStringIndex.cs" />
     <Compile Include="Blam\Common\ITagIndex.cs" />

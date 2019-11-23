@@ -219,8 +219,6 @@ namespace Adjutant.Blam.Halo1
             }
         }
 
-        public string FileName => Utils.GetFileName(FullPath);
-
         public string FullPath => cache.TagIndex.Filenames[Id];
 
         public T ReadMetadata<T>()
@@ -249,7 +247,8 @@ namespace Adjutant.Blam.Halo1
 
             using (reader)
             {
-                reader.RegisterInstance<IndexItem>(this);
+                reader.RegisterInstance(this);
+                reader.RegisterInstance<IIndexItem>(this);
                 reader.Seek(address, SeekOrigin.Begin);
                 return reader.ReadObject<T>(cache.Header.Version);
             }

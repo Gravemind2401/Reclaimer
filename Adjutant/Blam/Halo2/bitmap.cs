@@ -15,10 +15,10 @@ namespace Adjutant.Blam.Halo2
 {
     public class bitmap : IBitmap
     {
-        private readonly CacheFile cache;
-        private readonly IndexItem item;
+        private readonly ICacheFile cache;
+        private readonly IIndexItem item;
 
-        public bitmap(CacheFile cache, IndexItem item)
+        public bitmap(ICacheFile cache, IIndexItem item)
         {
             this.cache = cache;
             this.item = item;

@@ -162,8 +162,6 @@ namespace Adjutant.Blam.HaloReach
         internal Dictionary<int, string> Filenames { get; }
         internal List<TagClass> Classes { get; }
 
-        public int Magic => 0;
-
         [Offset(0)]
         public int TagClassCount { get; set; }
 
@@ -374,7 +372,8 @@ namespace Adjutant.Blam.HaloReach
         {
             using (var reader = cache.CreateReader(cache.MetadataTranslator))
             {
-                reader.RegisterInstance<IndexItem>(this);
+                reader.RegisterInstance(this);
+                reader.RegisterInstance<IIndexItem>(this);
 
                 reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
                 return (T)reader.ReadObject(typeof(T), (int)cache.CacheType);

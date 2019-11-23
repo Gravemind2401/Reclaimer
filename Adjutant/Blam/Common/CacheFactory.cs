@@ -159,36 +159,40 @@ namespace Adjutant.Blam.Common
             reader.RegisterInstance(cache);
             reader.RegisterInstance(translator);
 
-            if (cache.CacheType < CacheType.Halo2Xbox)
-                reader.RegisterInstance((Halo1.CacheFile)cache);
-            else if (cache.CacheType < CacheType.Halo3Beta)
-                reader.RegisterInstance((Halo2.CacheFile)cache);
-            else if (cache.CacheType < CacheType.HaloReachBeta)
-                reader.RegisterInstance((Halo3.CacheFile)cache);
-            else if (cache.CacheType < CacheType.Halo4Beta)
-                reader.RegisterInstance((HaloReach.CacheFile)cache);
-
-            if (cache.CacheType >= CacheType.Halo2Xbox)
+            try
             {
-                reader.RegisterType(() => new Matrix4x4
+                if (cache.CacheType < CacheType.Halo2Xbox)
+                    reader.RegisterInstance((Halo1.CacheFile)cache);
+                else if (cache.CacheType < CacheType.Halo3Beta)
+                    reader.RegisterInstance((Halo2.CacheFile)cache);
+                else if (cache.CacheType < CacheType.HaloReachBeta)
+                    reader.RegisterInstance((Halo3.CacheFile)cache);
+                else if (cache.CacheType < CacheType.Halo4Beta)
+                    reader.RegisterInstance((HaloReach.CacheFile)cache);
+
+                if (cache.CacheType >= CacheType.Halo2Xbox)
                 {
-                    M11 = reader.ReadSingle(),
-                    M12 = reader.ReadSingle(),
-                    M13 = reader.ReadSingle(),
+                    reader.RegisterType(() => new Matrix4x4
+                    {
+                        M11 = reader.ReadSingle(),
+                        M12 = reader.ReadSingle(),
+                        M13 = reader.ReadSingle(),
 
-                    M21 = reader.ReadSingle(),
-                    M22 = reader.ReadSingle(),
-                    M23 = reader.ReadSingle(),
+                        M21 = reader.ReadSingle(),
+                        M22 = reader.ReadSingle(),
+                        M23 = reader.ReadSingle(),
 
-                    M31 = reader.ReadSingle(),
-                    M32 = reader.ReadSingle(),
-                    M33 = reader.ReadSingle(),
+                        M31 = reader.ReadSingle(),
+                        M32 = reader.ReadSingle(),
+                        M33 = reader.ReadSingle(),
 
-                    M41 = reader.ReadSingle(),
-                    M42 = reader.ReadSingle(),
-                    M43 = reader.ReadSingle(),
-                });
+                        M41 = reader.ReadSingle(),
+                        M42 = reader.ReadSingle(),
+                        M43 = reader.ReadSingle(),
+                    });
+                }
             }
+            catch { }
 
             return reader;
         }

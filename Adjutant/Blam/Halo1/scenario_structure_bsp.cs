@@ -17,9 +17,9 @@ namespace Adjutant.Blam.Halo1
     public class scenario_structure_bsp : IRenderGeometry
     {
         private readonly CacheFile cache;
-        private readonly IndexItem item;
+        private readonly IIndexItem item;
 
-        public scenario_structure_bsp(CacheFile cache, IndexItem item)
+        public scenario_structure_bsp(CacheFile cache, IIndexItem item)
         {
             this.cache = cache;
             this.item = item;
@@ -57,7 +57,7 @@ namespace Adjutant.Blam.Halo1
 
             using (var reader = cache.CreateReader(cache.AddressTranslator))
             {
-                var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.HaloCE };
+                var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.HaloCE };
 
                 var group = new GeometryMarkerGroup();
                 group.Markers.AddRange(Markers);

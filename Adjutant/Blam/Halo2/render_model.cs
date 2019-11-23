@@ -15,9 +15,9 @@ namespace Adjutant.Blam.Halo2
 {
     public class render_model : IRenderGeometry
     {
-        private readonly IndexItem item;
+        private readonly IIndexItem item;
 
-        public render_model(IndexItem item)
+        public render_model(IIndexItem item)
         {
             this.item = item;
         }
@@ -49,7 +49,7 @@ namespace Adjutant.Blam.Halo2
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
 
             model.Nodes.AddRange(Nodes);
             model.MarkerGroups.AddRange(MarkerGroups);

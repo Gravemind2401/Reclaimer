@@ -16,9 +16,9 @@ namespace Adjutant.Blam.Halo1
     public class gbxmodel : IRenderGeometry
     {
         private readonly CacheFile cache;
-        private readonly IndexItem item;
+        private readonly IIndexItem item;
 
-        public gbxmodel(CacheFile cache, IndexItem item)
+        public gbxmodel(CacheFile cache, IIndexItem item)
         {
             this.cache = cache;
             this.item = item;
@@ -59,7 +59,7 @@ namespace Adjutant.Blam.Halo1
 
             using (var reader = cache.CreateReader(cache.AddressTranslator))
             {
-                var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.HaloCE };
+                var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.HaloCE };
 
                 model.Nodes.AddRange(Nodes);
                 model.MarkerGroups.AddRange(MarkerGroups);
