@@ -62,6 +62,7 @@
     <Compile Include="Blam\Halo1\BitmapsAddressTranslator.cs" />
     <Compile Include="Blam\Halo1\CompressedVertex.cs" />
     <Compile Include="Blam\Halo1\Halo1Common.cs" />
+    <Compile Include="Blam\Halo1\ITagIndexGen1.cs" />
     <Compile Include="Blam\Halo2\bitmap.cs" />
     <Compile Include="Blam\Halo2\BSPAddressTranslator.cs" />
     <Compile Include="Blam\Halo2\DataPointer.cs" />

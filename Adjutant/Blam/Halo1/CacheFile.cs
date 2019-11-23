@@ -113,7 +113,7 @@ namespace Adjutant.Blam.Halo1
 
     [FixedSize(36, MaxVersion = (int)CacheType.Halo1PC)]
     [FixedSize(40, MinVersion = (int)CacheType.Halo1PC)]
-    public class TagIndex : ITagIndex<IndexItem>
+    public class TagIndex : ITagIndex<IndexItem>, ITagIndexGen1
     {
         private readonly CacheFile cache;
         private readonly List<IndexItem> items;
@@ -121,6 +121,8 @@ namespace Adjutant.Blam.Halo1
         public int HeaderSize => cache.CacheType == CacheType.Halo1Xbox ? 36 : 40;
 
         internal Dictionary<int, string> Filenames { get; }
+
+        int ITagIndexGen1.Magic => Magic - (cache.Header.IndexAddress + cache.TagIndex.HeaderSize);
 
         [Offset(0)]
         public int Magic { get; set; }

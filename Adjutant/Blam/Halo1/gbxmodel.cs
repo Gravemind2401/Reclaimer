@@ -15,10 +15,10 @@ namespace Adjutant.Blam.Halo1
 {
     public class gbxmodel : IRenderGeometry
     {
-        private readonly CacheFile cache;
+        private readonly ICacheFile cache;
         private readonly IIndexItem item;
 
-        public gbxmodel(CacheFile cache, IIndexItem item)
+        public gbxmodel(ICacheFile cache, IIndexItem item)
         {
             this.cache = cache;
             this.item = item;
@@ -57,7 +57,7 @@ namespace Adjutant.Blam.Halo1
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            using (var reader = cache.CreateReader(cache.AddressTranslator))
+            using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
             {
                 var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.HaloCE };
 
@@ -91,7 +91,9 @@ namespace Adjutant.Blam.Halo1
 
         private IEnumerable<GeometryMesh> ReadXboxMeshes(DependencyReader reader)
         {
-            var magic = cache.TagIndex.Magic - (cache.Header.IndexAddress + cache.TagIndex.HeaderSize);
+            var tagIndex = cache.TagIndex as ITagIndexGen1;
+            if (tagIndex == null)
+                throw new NotSupportedException();
 
             foreach (var section in Sections)
             {
@@ -115,16 +117,16 @@ namespace Adjutant.Blam.Halo1
 
                         submeshes.Add(gSubmesh);
 
-                        reader.Seek(submesh.IndexOffset - magic, SeekOrigin.Begin);
+                        reader.Seek(submesh.IndexOffset - tagIndex.Magic, SeekOrigin.Begin);
                         reader.ReadInt32();
-                        reader.Seek(reader.ReadInt32() - magic, SeekOrigin.Begin);
+                        reader.Seek(reader.ReadInt32() - tagIndex.Magic, SeekOrigin.Begin);
 
                         var indicesTemp = reader.ReadEnumerable<ushort>(gSubmesh.IndexLength).ToList();
                         indices.AddRange(indicesTemp.Select(i => i + vertices.Count));
 
-                        reader.Seek(submesh.VertexOffset - magic, SeekOrigin.Begin);
+                        reader.Seek(submesh.VertexOffset - tagIndex.Magic, SeekOrigin.Begin);
                         reader.ReadInt32();
-                        reader.Seek(reader.ReadInt32() - magic, SeekOrigin.Begin);
+                        reader.Seek(reader.ReadInt32() - tagIndex.Magic, SeekOrigin.Begin);
 
                         var vertsTemp = new List<CompressedVertex>();
                         for (int i = 0; i < submesh.VertexCount; i++)
@@ -174,6 +176,10 @@ namespace Adjutant.Blam.Halo1
 
         private IEnumerable<GeometryMesh> ReadPCMeshes(DependencyReader reader)
         {
+            var tagIndex = cache.TagIndex as ITagIndexGen1;
+            if (tagIndex == null)
+                throw new NotSupportedException();
+
             foreach (var section in Sections)
             {
                 var indices = new List<int>();
@@ -191,10 +197,10 @@ namespace Adjutant.Blam.Halo1
 
                     submeshes.Add(gSubmesh);
 
-                    reader.Seek(cache.TagIndex.VertexDataOffset + cache.TagIndex.IndexDataOffset + submesh.IndexOffset, SeekOrigin.Begin);
+                    reader.Seek(tagIndex.VertexDataOffset + tagIndex.IndexDataOffset + submesh.IndexOffset, SeekOrigin.Begin);
                     indices.AddRange(reader.ReadEnumerable<ushort>(gSubmesh.IndexLength).Select(i => i + vertices.Count));
 
-                    reader.Seek(cache.TagIndex.VertexDataOffset + submesh.VertexOffset, SeekOrigin.Begin);
+                    reader.Seek(tagIndex.VertexDataOffset + submesh.VertexOffset, SeekOrigin.Begin);
                     var vertsTemp = reader.ReadEnumerable<UncompressedVertex>(submesh.VertexCount).ToList();
 
                     if (UScale != 1 || VScale != 1)

@@ -16,10 +16,10 @@ namespace Adjutant.Blam.Halo1
 {
     public class scenario_structure_bsp : IRenderGeometry
     {
-        private readonly CacheFile cache;
+        private readonly ICacheFile cache;
         private readonly IIndexItem item;
 
-        public scenario_structure_bsp(CacheFile cache, IIndexItem item)
+        public scenario_structure_bsp(ICacheFile cache, IIndexItem item)
         {
             this.cache = cache;
             this.item = item;
@@ -55,7 +55,7 @@ namespace Adjutant.Blam.Halo1
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            using (var reader = cache.CreateReader(cache.AddressTranslator))
+            using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
             {
                 var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.HaloCE };
 

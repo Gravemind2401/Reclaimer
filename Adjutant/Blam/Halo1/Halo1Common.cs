@@ -13,7 +13,7 @@ namespace Adjutant.Blam.Halo1
 {
     internal static class Halo1Common
     {
-        public static IndexItem GetShaderDiffuse(TagReference tagRef, DependencyReader reader)
+        public static IIndexItem GetShaderDiffuse(TagReference tagRef, DependencyReader reader)
         {
             if (tagRef.Tag == null)
                 return null;
@@ -55,7 +55,7 @@ namespace Adjutant.Blam.Halo1
 
             if (bitmId == -1)
                 return null;
-            else return (IndexItem)tagRef.Tag.CacheFile.TagIndex[bitmId];
+            else return tagRef.Tag.CacheFile.TagIndex[bitmId];
         }
 
         public static IEnumerable<GeometryMaterial> GetMaterials(IEnumerable<TagReference> shaderRefs, DependencyReader reader)
