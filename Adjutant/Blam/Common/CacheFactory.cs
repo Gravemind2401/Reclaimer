@@ -161,14 +161,10 @@ namespace Adjutant.Blam.Common
 
             try
             {
-                if (cache.CacheType < CacheType.Halo2Xbox)
-                    reader.RegisterInstance((Halo1.CacheFile)cache);
-                else if (cache.CacheType < CacheType.Halo3Beta)
-                    reader.RegisterInstance((Halo2.CacheFile)cache);
-                else if (cache.CacheType < CacheType.HaloReachBeta)
-                    reader.RegisterInstance((Halo3.CacheFile)cache);
-                else if (cache.CacheType < CacheType.Halo4Beta)
+                if (cache.CacheType >= CacheType.HaloReachBeta)
                     reader.RegisterInstance((HaloReach.CacheFile)cache);
+                else if (cache.CacheType >= CacheType.Halo3Beta)
+                    reader.RegisterInstance((Halo3.CacheFile)cache);
 
                 if (cache.CacheType >= CacheType.Halo2Xbox)
                 {

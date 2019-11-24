@@ -249,7 +249,6 @@ namespace Adjutant.Blam.Halo1
 
             using (reader)
             {
-                reader.RegisterInstance(this);
                 reader.RegisterInstance<IIndexItem>(this);
                 reader.Seek(address, SeekOrigin.Begin);
                 return reader.ReadObject<T>(cache.Header.Version);

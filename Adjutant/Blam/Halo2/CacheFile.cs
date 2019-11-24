@@ -130,6 +130,8 @@ namespace Adjutant.Blam.Halo2
         private readonly CacheFile cache;
         private readonly Dictionary<int, IndexItem> items;
 
+        public int HeaderSize => 32;
+
         internal Dictionary<int, string> Filenames { get; }
 
         [Offset(0)]
@@ -270,8 +272,6 @@ namespace Adjutant.Blam.Halo2
             }
         }
 
-        public string FileName => Utils.GetFileName(FullPath);
-
         public string FullPath => cache.TagIndex.Filenames[Id];
 
         public T ReadMetadata<T>()
@@ -281,7 +281,6 @@ namespace Adjutant.Blam.Halo2
                 var translator = new BSPAddressTranslator(cache, Id);
                 using (var reader = cache.CreateReader(translator))
                 {
-                    reader.RegisterInstance(this);
                     reader.RegisterInstance<IIndexItem>(this);
                     reader.Seek(translator.TagAddress, SeekOrigin.Begin);
                     return (T)(object)reader.ReadObject<scenario_structure_bsp>(cache.Header.Version);
@@ -290,7 +289,6 @@ namespace Adjutant.Blam.Halo2
 
             using (var reader = cache.CreateReader(cache.MetadataTranslator))
             {
-                reader.RegisterInstance(this);
                 reader.RegisterInstance<IIndexItem>(this);
                 reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
                 return (T)reader.ReadObject(typeof(T), cache.Header.Version);
