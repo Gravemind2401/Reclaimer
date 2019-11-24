@@ -41,6 +41,8 @@ namespace Adjutant.Blam.Common
             }
         }
 
+        internal static string[] SystemClasses = new[] { "scnr", "ugh!", "play", "zone" };
+
         private static Dictionary<string, string> ReadClassXml(string xml)
         {
             var doc = new XmlDocument();
@@ -159,36 +161,28 @@ namespace Adjutant.Blam.Common
             reader.RegisterInstance(cache);
             reader.RegisterInstance(translator);
 
-            try
+            //build string will be null during initialisation, preventing a CacheType from being determined
+            if (cache.BuildString != null && cache.CacheType >= CacheType.Halo2Xbox)
             {
-                if (cache.CacheType >= CacheType.HaloReachBeta)
-                    reader.RegisterInstance((HaloReach.CacheFile)cache);
-                else if (cache.CacheType >= CacheType.Halo3Beta)
-                    reader.RegisterInstance((Halo3.CacheFile)cache);
-
-                if (cache.CacheType >= CacheType.Halo2Xbox)
+                reader.RegisterType(() => new Matrix4x4
                 {
-                    reader.RegisterType(() => new Matrix4x4
-                    {
-                        M11 = reader.ReadSingle(),
-                        M12 = reader.ReadSingle(),
-                        M13 = reader.ReadSingle(),
+                    M11 = reader.ReadSingle(),
+                    M12 = reader.ReadSingle(),
+                    M13 = reader.ReadSingle(),
 
-                        M21 = reader.ReadSingle(),
-                        M22 = reader.ReadSingle(),
-                        M23 = reader.ReadSingle(),
+                    M21 = reader.ReadSingle(),
+                    M22 = reader.ReadSingle(),
+                    M23 = reader.ReadSingle(),
 
-                        M31 = reader.ReadSingle(),
-                        M32 = reader.ReadSingle(),
-                        M33 = reader.ReadSingle(),
+                    M31 = reader.ReadSingle(),
+                    M32 = reader.ReadSingle(),
+                    M33 = reader.ReadSingle(),
 
-                        M41 = reader.ReadSingle(),
-                        M42 = reader.ReadSingle(),
-                        M43 = reader.ReadSingle(),
-                    });
-                }
+                    M41 = reader.ReadSingle(),
+                    M42 = reader.ReadSingle(),
+                    M43 = reader.ReadSingle(),
+                });
             }
-            catch { }
 
             return reader;
         }

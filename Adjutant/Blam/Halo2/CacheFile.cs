@@ -19,14 +19,12 @@ namespace Adjutant.Blam.Halo2
         public const string SinglePlayerSharedMap = "single_player_shared.map";
 
         public string FileName { get; }
-        public string BuildString => Header.BuildString;
+        public string BuildString => Header?.BuildString;
         public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
 
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
         public StringIndex StringIndex { get; }
-
-        public scenario Scenario { get; }
 
         public HeaderAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
@@ -51,8 +49,6 @@ namespace Adjutant.Blam.Halo2
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
             }
-
-            Scenario = TagIndex.FirstOrDefault(t => t.ClassCode == "scnr")?.ReadMetadata<scenario>();
         }
 
         public DependencyReader CreateReader(IAddressTranslator translator) => CacheFactory.CreateReader(this, translator);
@@ -129,10 +125,13 @@ namespace Adjutant.Blam.Halo2
     {
         private readonly CacheFile cache;
         private readonly Dictionary<int, IndexItem> items;
+        private readonly Dictionary<string, IIndexItem> sysItems;
 
         public int HeaderSize => 32;
 
         internal Dictionary<int, string> Filenames { get; }
+
+        public IReadOnlyDictionary<string, IIndexItem> GlobalTags => sysItems;
 
         [Offset(0)]
         public int Magic { get; set; }
@@ -153,6 +152,7 @@ namespace Adjutant.Blam.Halo2
 
             this.cache = cache;
             items = new Dictionary<int, IndexItem>();
+            sysItems = new Dictionary<string, IIndexItem>();
             Filenames = new Dictionary<int, string>();
         }
 
@@ -168,7 +168,12 @@ namespace Adjutant.Blam.Halo2
                 {
                     //Halo2Vista multiplayer maps have empty tags in them
                     var item = reader.ReadObject(new IndexItem(cache));
-                    if (item.Id >= 0) items.Add(i, item);
+                    if (item.Id < 0) continue;
+
+                    items.Add(i, item);
+
+                    if (CacheFactory.SystemClasses.Contains(item.ClassCode))
+                        sysItems.Add(item.ClassCode, item);
                 }
 
                 reader.Seek(cache.Header.FileTableIndexOffset, SeekOrigin.Begin);
@@ -241,6 +246,8 @@ namespace Adjutant.Blam.Halo2
         private readonly CacheFile cache;
         ICacheFile IIndexItem.CacheFile => cache;
 
+        private object metadataCache;
+
         public IndexItem(CacheFile cache)
         {
             this.cache = cache;
@@ -276,22 +283,34 @@ namespace Adjutant.Blam.Halo2
 
         public T ReadMetadata<T>()
         {
-            if (typeof(T).Equals(typeof(scenario_structure_bsp)))
+            if (metadataCache?.GetType() == typeof(T))
+                return (T)metadataCache;
+
+            long address;
+            DependencyReader reader;
+
+            if (ClassCode == "sbsp")
             {
                 var translator = new BSPAddressTranslator(cache, Id);
-                using (var reader = cache.CreateReader(translator))
-                {
-                    reader.RegisterInstance<IIndexItem>(this);
-                    reader.Seek(translator.TagAddress, SeekOrigin.Begin);
-                    return (T)(object)reader.ReadObject<scenario_structure_bsp>(cache.Header.Version);
-                }
+                reader = cache.CreateReader(translator);
+                address = translator.TagAddress;
+            }
+            else
+            {
+                reader = cache.CreateReader(cache.MetadataTranslator);
+                address = MetaPointer.Address;
             }
 
-            using (var reader = cache.CreateReader(cache.MetadataTranslator))
+            using (reader)
             {
                 reader.RegisterInstance<IIndexItem>(this);
-                reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
-                return (T)reader.ReadObject(typeof(T), cache.Header.Version);
+                reader.Seek(address, SeekOrigin.Begin);
+                var result = (T)reader.ReadObject(typeof(T), cache.Header.Version);
+
+                if (CacheFactory.SystemClasses.Contains(ClassCode))
+                    metadataCache = result;
+
+                return result;
             }
         }
 

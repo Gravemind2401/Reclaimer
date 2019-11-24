@@ -127,14 +127,15 @@ namespace Adjutant.Blam.HaloReach
             }
         }
 
-        public static IEnumerable<GeometryMesh> GetMeshes(CacheFile cache, ResourceIdentifier resourcePointer, IList<SectionBlock> sections, Func<SectionBlock, short?> boundsIndex)
+        public static IEnumerable<GeometryMesh> GetMeshes(ICacheFile cache, ResourceIdentifier resourcePointer, IList<SectionBlock> sections, Func<SectionBlock, short?> boundsIndex)
         {
             VertexBufferInfo[] vertexBufferInfo;
             IndexBufferInfo[] indexBufferInfo;
 
-            var entry = cache.ResourceGestalt.ResourceEntries[resourcePointer.ResourceIndex];
-            using (var cacheReader = cache.CreateReader(cache.MetadataTranslator))
-            using (var reader = cacheReader.CreateVirtualReader(cache.ResourceGestalt.FixupDataPointer.Address))
+            var resourceGestalt = cache.TagIndex.GlobalTags["zone"].ReadMetadata<cache_file_resource_gestalt>();
+            var entry = resourceGestalt.ResourceEntries[resourcePointer.ResourceIndex];
+            using (var cacheReader = cache.CreateReader(cache.DefaultAddressTranslator))
+            using (var reader = cacheReader.CreateVirtualReader(resourceGestalt.FixupDataPointer.Address))
             {
                 reader.Seek(entry.FixupOffset + (entry.FixupSize - 24), SeekOrigin.Begin);
                 var vertexBufferCount = reader.ReadInt32();

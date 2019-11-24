@@ -16,10 +16,10 @@ namespace Adjutant.Blam.Halo3
     {
         private const string shared_map = "shared.map";
 
-        private readonly CacheFile cache;
+        private readonly ICacheFile cache;
         private readonly int identifier; //actually two shorts
 
-        public ResourceIdentifier(int identifier, CacheFile cache)
+        public ResourceIdentifier(int identifier, ICacheFile cache)
         {
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
@@ -28,7 +28,7 @@ namespace Adjutant.Blam.Halo3
             this.identifier = identifier;
         }
 
-        public ResourceIdentifier(DependencyReader reader, CacheFile cache)
+        public ResourceIdentifier(DependencyReader reader, ICacheFile cache)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
@@ -50,30 +50,32 @@ namespace Adjutant.Blam.Halo3
                 return ReadDataHalo3Beta();
 
             var directory = Directory.GetParent(cache.FileName).FullName;
-            var entry = cache.ResourceGestalt.ResourceEntries[ResourceIndex];
+            var resourceGestalt = cache.TagIndex.GlobalTags["zone"].ReadMetadata<cache_file_resource_gestalt>();
+            var resourceLayoutTable = cache.TagIndex.GlobalTags["play"].ReadMetadata<cache_file_resource_layout_table>();
+            var entry = resourceGestalt.ResourceEntries[ResourceIndex];
 
             if (entry.SegmentIndex < 0)
                 throw new InvalidOperationException("Data not found");
 
-            var segment = cache.ResourceLayoutTable.Segments[entry.SegmentIndex];
+            var segment = resourceLayoutTable.Segments[entry.SegmentIndex];
             var pageIndex = segment.OptionalPageIndex >= 0 ? segment.OptionalPageIndex : segment.RequiredPageIndex;
             var chunkOffset = segment.OptionalPageOffset >= 0 ? segment.OptionalPageOffset : segment.RequiredPageOffset;
 
             if (pageIndex < 0 || chunkOffset < 0)
                 throw new InvalidOperationException("Data not found");
 
-            var page = cache.ResourceLayoutTable.Pages[pageIndex];
+            var page = resourceLayoutTable.Pages[pageIndex];
             if (page.DataOffset < 0)
             {
                 pageIndex = segment.RequiredPageIndex;
                 chunkOffset = segment.RequiredPageOffset;
-                page = cache.ResourceLayoutTable.Pages[pageIndex];
+                page = resourceLayoutTable.Pages[pageIndex];
             }
 
             var targetFile = cache.FileName;
             if (page.CacheIndex >= 0)
             {
-                var mapName = Utils.GetFileName(cache.ResourceLayoutTable.SharedCaches[page.CacheIndex].FileName);
+                var mapName = Utils.GetFileName(resourceLayoutTable.SharedCaches[page.CacheIndex].FileName);
                 targetFile = Path.Combine(directory, mapName);
             }
 
@@ -99,8 +101,9 @@ namespace Adjutant.Blam.Halo3
 
         private byte[] ReadDataHalo3Beta()
         {
+            var resourceGestalt = cache.TagIndex.GlobalTags["zone"].ReadMetadata<cache_file_resource_gestalt>();
             var directory = Directory.GetParent(cache.FileName).FullName;
-            var entry = cache.ResourceGestalt.ResourceEntries[ResourceIndex];
+            var entry = resourceGestalt.ResourceEntries[ResourceIndex];
 
             var address = entry.OptionalOffset > 0 ? entry.OptionalOffset : entry.RequiredOffset;
             var size = entry.OptionalSize > 0 ? entry.OptionalSize : entry.RequiredSize;

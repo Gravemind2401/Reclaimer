@@ -14,9 +14,9 @@ namespace Adjutant.Blam.HaloReach
 {
     public class render_model : IRenderGeometry
     {
-        private readonly CacheFile cache;
+        private readonly ICacheFile cache;
 
-        public render_model(CacheFile cache)
+        public render_model(ICacheFile cache)
         {
             this.cache = cache;
         }

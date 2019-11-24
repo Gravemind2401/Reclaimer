@@ -16,12 +16,12 @@ namespace Adjutant.Blam.HaloReach
 {
     public class scenario_structure_bsp : IRenderGeometry
     {
-        private readonly CacheFile cache;
-        private readonly IndexItem item;
+        private readonly ICacheFile cache;
+        private readonly IIndexItem item;
 
         private bool loadedInstances;
 
-        public scenario_structure_bsp(CacheFile cache, IndexItem item)
+        public scenario_structure_bsp(ICacheFile cache, IIndexItem item)
         {
             this.cache = cache;
             this.item = item;
@@ -76,12 +76,13 @@ namespace Adjutant.Blam.HaloReach
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var scenario = cache.TagIndex.GlobalTags["scnr"].ReadMetadata<scenario>();
+            var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
 
-            var bspBlock = cache.Scenario.StructureBsps.First(s => s.BspReference.TagId == item.Id);
-            var bspIndex = cache.Scenario.StructureBsps.IndexOf(bspBlock);
+            var bspBlock = scenario.StructureBsps.First(s => s.BspReference.TagId == item.Id);
+            var bspIndex = scenario.StructureBsps.IndexOf(bspBlock);
 
-            var lightmap = cache.Scenario.ScenarioLightmapReference.Tag.ReadMetadata<scenario_lightmap>();
+            var lightmap = scenario.ScenarioLightmapReference.Tag.ReadMetadata<scenario_lightmap>();
             var lightmapData = lightmap.LightmapRefs[bspIndex].LightmapDataReference.Tag.ReadMetadata<scenario_lightmap_bsp_data>();
 
             model.Bounds.AddRange(BoundingBoxes);
@@ -100,11 +101,12 @@ namespace Adjutant.Blam.HaloReach
 
             if (cache.CacheType == CacheType.HaloReachRetail && !loadedInstances)
             {
-                var entry = cache.ResourceGestalt.ResourceEntries[InstancesResourcePointer.ResourceIndex];
+                var resourceGestalt = cache.TagIndex.GlobalTags["zone"].ReadMetadata<cache_file_resource_gestalt>();
+                var entry = resourceGestalt.ResourceEntries[InstancesResourcePointer.ResourceIndex];
                 var address = entry.FixupOffset + entry.ResourceFixups[entry.ResourceFixups.Count - 10].Offset & 0x0FFFFFFF;
 
-                using (var cacheReader = cache.CreateReader(cache.MetadataTranslator))
-                using (var reader = cacheReader.CreateVirtualReader(cache.ResourceGestalt.FixupDataPointer.Address))
+                using (var cacheReader = cache.CreateReader(cache.DefaultAddressTranslator))
+                using (var reader = cacheReader.CreateVirtualReader(resourceGestalt.FixupDataPointer.Address))
                 {
                     for (int i = 0; i < GeometryInstances.Count; i++)
                     {

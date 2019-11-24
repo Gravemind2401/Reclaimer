@@ -10,5 +10,6 @@ namespace Adjutant.Blam.Common
     {
         int TagCount { get; }
         TIndexItem this[int index] { get; }
+        IReadOnlyDictionary<string, IIndexItem> GlobalTags { get; }
     }
 }

@@ -16,10 +16,10 @@ namespace Adjutant.Blam.Halo3
 {
     public class scenario_structure_bsp : IRenderGeometry
     {
-        private readonly CacheFile cache;
-        private readonly IndexItem item;
+        private readonly ICacheFile cache;
+        private readonly IIndexItem item;
 
-        public scenario_structure_bsp(CacheFile cache, IndexItem item)
+        public scenario_structure_bsp(ICacheFile cache, IIndexItem item)
         {
             this.cache = cache;
             this.item = item;
@@ -78,12 +78,13 @@ namespace Adjutant.Blam.Halo3
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var scenario = cache.TagIndex.GlobalTags["scnr"].ReadMetadata<scenario>();
+            var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
 
-            var bspBlock = cache.Scenario.StructureBsps.First(s => s.BspReference.TagId == item.Id);
-            var bspIndex = cache.Scenario.StructureBsps.IndexOf(bspBlock);
+            var bspBlock = scenario.StructureBsps.First(s => s.BspReference.TagId == item.Id);
+            var bspIndex = scenario.StructureBsps.IndexOf(bspBlock);
 
-            var lightmap = cache.Scenario.ScenarioLightmapReference.Tag.ReadMetadata<scenario_lightmap>();
+            var lightmap = scenario.ScenarioLightmapReference.Tag.ReadMetadata<scenario_lightmap>();
             var lightmapData = cache.CacheType < CacheType.Halo3ODST
                 ? lightmap.LightmapData[bspIndex]
                 : lightmap.LightmapRefs[bspIndex].Tag.ReadMetadata<scenario_lightmap_bsp_data>();

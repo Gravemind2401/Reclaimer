@@ -15,36 +15,12 @@ namespace Adjutant.Blam.Halo3
     public class CacheFile : ICacheFile
     {
         public string FileName { get; }
-        public string BuildString => Header.BuildString;
+        public string BuildString => Header?.BuildString;
         public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
 
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
         public StringIndex StringIndex { get; }
-
-        public scenario Scenario { get; }
-
-        private cache_file_resource_gestalt resourceGestalt;
-        public cache_file_resource_gestalt ResourceGestalt
-        {
-            get
-            {
-                if (resourceGestalt == null)
-                    resourceGestalt = TagIndex.FirstOrDefault(t => t.ClassCode == "zone")?.ReadMetadata<cache_file_resource_gestalt>();
-                return resourceGestalt;
-            }
-        }
-
-        private cache_file_resource_layout_table resourceLayoutTable;
-        public cache_file_resource_layout_table ResourceLayoutTable
-        {
-            get
-            {
-                if (resourceLayoutTable == null)
-                    resourceLayoutTable = TagIndex.FirstOrDefault(t => t.ClassCode == "play")?.ReadMetadata<cache_file_resource_layout_table>();
-                return resourceLayoutTable;
-            }
-        }
 
         public HeaderAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
@@ -75,8 +51,6 @@ namespace Adjutant.Blam.Halo3
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
             }
-
-            Scenario = TagIndex.FirstOrDefault(t => t.ClassCode == "scnr")?.ReadMetadata<scenario>();
         }
 
         public DependencyReader CreateReader(IAddressTranslator translator) => CacheFactory.CreateReader(this, translator);
@@ -167,9 +141,12 @@ namespace Adjutant.Blam.Halo3
     {
         private readonly CacheFile cache;
         private readonly Dictionary<int, IndexItem> items;
+        private readonly Dictionary<string, IIndexItem> sysItems;
 
         internal Dictionary<int, string> Filenames { get; }
         internal List<TagClass> Classes { get; }
+
+        public IReadOnlyDictionary<string, IIndexItem> GlobalTags => sysItems;
 
         [Offset(0)]
         public int TagClassCount { get; set; }
@@ -202,6 +179,7 @@ namespace Adjutant.Blam.Halo3
 
             this.cache = cache;
             items = new Dictionary<int, IndexItem>();
+            sysItems = new Dictionary<string, IIndexItem>();
 
             Classes = new List<TagClass>();
             Filenames = new Dictionary<int, string>();
@@ -222,7 +200,12 @@ namespace Adjutant.Blam.Halo3
                 {
                     //every Halo3 map has an empty tag
                     var item = reader.ReadObject(new IndexItem(cache, i));
-                    if (item.ClassIndex >= 0) items.Add(i, item);
+                    if (item.ClassIndex < 0) continue;
+
+                    items.Add(i, item);
+
+                    if (CacheFactory.SystemClasses.Contains(item.ClassCode))
+                        sysItems.Add(item.ClassCode, item);
                 }
 
                 reader.Seek(cache.Header.FileTableIndexPointer.Address, SeekOrigin.Begin);
@@ -350,6 +333,8 @@ namespace Adjutant.Blam.Halo3
         private readonly CacheFile cache;
         ICacheFile IIndexItem.CacheFile => cache;
 
+        private object metadataCache;
+
         public IndexItem(CacheFile cache, int index)
         {
             this.cache = cache;
@@ -377,13 +362,20 @@ namespace Adjutant.Blam.Halo3
 
         public T ReadMetadata<T>()
         {
+            if (metadataCache?.GetType() == typeof(T))
+                return (T)metadataCache;
+
             using (var reader = cache.CreateReader(cache.MetadataTranslator))
             {
-                reader.RegisterInstance(this);
                 reader.RegisterInstance<IIndexItem>(this);
 
                 reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
-                return (T)reader.ReadObject(typeof(T), (int)cache.CacheType);
+                var result = (T)reader.ReadObject(typeof(T), (int)cache.CacheType);
+
+                if (CacheFactory.SystemClasses.Contains(ClassCode))
+                    metadataCache = result;
+
+                return result;
             }
         }
 

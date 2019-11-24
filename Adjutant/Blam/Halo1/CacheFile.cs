@@ -16,13 +16,11 @@ namespace Adjutant.Blam.Halo1
         public const string BitmapsMap = "bitmaps.map";
 
         public string FileName { get; }
-        public string BuildString => Header.BuildString;
+        public string BuildString => Header?.BuildString;
         public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
 
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
-
-        public scenario Scenario { get; }
 
         public TagAddressTranslator AddressTranslator { get; }
 
@@ -42,8 +40,6 @@ namespace Adjutant.Blam.Halo1
                 TagIndex = reader.ReadObject(new TagIndex(this));
                 TagIndex.ReadItems(reader);
             }
-
-            Scenario = TagIndex.FirstOrDefault(t => t.ClassCode == "scnr")?.ReadMetadata<scenario>();
         }
 
         private DependencyReader CreateReader(string fileName, IAddressTranslator translator, bool headerCheck)
@@ -117,12 +113,13 @@ namespace Adjutant.Blam.Halo1
     {
         private readonly CacheFile cache;
         private readonly List<IndexItem> items;
+        private readonly Dictionary<string, IIndexItem> sysItems;
 
         public int HeaderSize => cache.CacheType == CacheType.Halo1Xbox ? 36 : 40;
 
         internal Dictionary<int, string> Filenames { get; }
 
-        int ITagIndexGen1.Magic => Magic - (cache.Header.IndexAddress + cache.TagIndex.HeaderSize);
+        public IReadOnlyDictionary<string, IIndexItem> GlobalTags => sysItems;
 
         [Offset(0)]
         public int Magic { get; set; }
@@ -149,6 +146,7 @@ namespace Adjutant.Blam.Halo1
 
             this.cache = cache;
             items = new List<IndexItem>();
+            sysItems = new Dictionary<string, IIndexItem>();
             Filenames = new Dictionary<int, string>();
         }
 
@@ -164,10 +162,15 @@ namespace Adjutant.Blam.Halo1
                 var item = reader.ReadObject(new IndexItem(cache));
                 items.Add(item);
 
+                if (CacheFactory.SystemClasses.Contains(item.ClassCode))
+                    sysItems.Add(item.ClassCode, item);
+
                 reader.Seek(item.FileNamePointer.Address, SeekOrigin.Begin);
                 Filenames.Add(item.Id, reader.ReadNullTerminatedString());
             }
         }
+
+        int ITagIndexGen1.Magic => Magic - (cache.Header.IndexAddress + cache.TagIndex.HeaderSize);
 
         public IndexItem this[int index] => items[index];
 
@@ -181,6 +184,8 @@ namespace Adjutant.Blam.Halo1
     {
         private readonly CacheFile cache;
         ICacheFile IIndexItem.CacheFile => cache;
+
+        private object metadataCache;
 
         public IndexItem(CacheFile cache)
         {
@@ -225,6 +230,9 @@ namespace Adjutant.Blam.Halo1
 
         public T ReadMetadata<T>()
         {
+            if (metadataCache?.GetType() == typeof(T))
+                return (T)metadataCache;
+
             long address;
             DependencyReader reader;
 
@@ -251,7 +259,12 @@ namespace Adjutant.Blam.Halo1
             {
                 reader.RegisterInstance<IIndexItem>(this);
                 reader.Seek(address, SeekOrigin.Begin);
-                return reader.ReadObject<T>(cache.Header.Version);
+                var result = reader.ReadObject<T>((int)cache.CacheType);
+
+                if (CacheFactory.SystemClasses.Contains(ClassCode))
+                    metadataCache = result;
+
+                return result;
             }
         }
 
