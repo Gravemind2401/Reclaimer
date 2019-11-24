@@ -44,8 +44,8 @@ namespace Adjutant.Blam.HaloReach
 
         public byte[] ReadData()
         {
-            var resourceGestalt = cache.TagIndex.GlobalTags["zone"].ReadMetadata<cache_file_resource_gestalt>();
-            var resourceLayoutTable = cache.TagIndex.GlobalTags["play"].ReadMetadata<cache_file_resource_layout_table>();
+            var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
+            var resourceLayoutTable = cache.TagIndex.GetGlobalTag("play").ReadMetadata<cache_file_resource_layout_table>();
 
             var directory = Directory.GetParent(cache.FileName).FullName;
             var entry = resourceGestalt.ResourceEntries[ResourceIndex];

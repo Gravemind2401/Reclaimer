@@ -76,7 +76,7 @@ namespace Adjutant.Blam.HaloReach
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var scenario = cache.TagIndex.GlobalTags["scnr"].ReadMetadata<scenario>();
+            var scenario = cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
             var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
 
             var bspBlock = scenario.StructureBsps.First(s => s.BspReference.TagId == item.Id);
@@ -101,7 +101,7 @@ namespace Adjutant.Blam.HaloReach
 
             if (cache.CacheType == CacheType.HaloReachRetail && !loadedInstances)
             {
-                var resourceGestalt = cache.TagIndex.GlobalTags["zone"].ReadMetadata<cache_file_resource_gestalt>();
+                var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
                 var entry = resourceGestalt.ResourceEntries[InstancesResourcePointer.ResourceIndex];
                 var address = entry.FixupOffset + entry.ResourceFixups[entry.ResourceFixups.Count - 10].Offset & 0x0FFFFFFF;
 

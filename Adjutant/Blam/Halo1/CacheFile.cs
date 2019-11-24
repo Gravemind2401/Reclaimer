@@ -113,13 +113,11 @@ namespace Adjutant.Blam.Halo1
     {
         private readonly CacheFile cache;
         private readonly List<IndexItem> items;
-        private readonly Dictionary<string, IIndexItem> sysItems;
+        private readonly Dictionary<string, IndexItem> sysItems;
 
         public int HeaderSize => cache.CacheType == CacheType.Halo1Xbox ? 36 : 40;
 
         internal Dictionary<int, string> Filenames { get; }
-
-        public IReadOnlyDictionary<string, IIndexItem> GlobalTags => sysItems;
 
         [Offset(0)]
         public int Magic { get; set; }
@@ -146,7 +144,7 @@ namespace Adjutant.Blam.Halo1
 
             this.cache = cache;
             items = new List<IndexItem>();
-            sysItems = new Dictionary<string, IIndexItem>();
+            sysItems = new Dictionary<string, IndexItem>();
             Filenames = new Dictionary<int, string>();
         }
 
@@ -169,6 +167,8 @@ namespace Adjutant.Blam.Halo1
                 Filenames.Add(item.Id, reader.ReadNullTerminatedString());
             }
         }
+
+        public IndexItem GetGlobalTag(string classCode) => sysItems[classCode];
 
         int ITagIndexGen1.Magic => Magic - (cache.Header.IndexAddress + cache.TagIndex.HeaderSize);
 

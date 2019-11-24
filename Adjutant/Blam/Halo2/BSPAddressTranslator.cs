@@ -17,7 +17,7 @@ namespace Adjutant.Blam.Halo2
 
         public BSPAddressTranslator(CacheFile cache, int id)
         {
-            var bspData = cache.TagIndex.GlobalTags["scnr"].ReadMetadata<scenario>().StructureBsps.SingleOrDefault(i => (i.BspReference.TagId) == id);
+            var bspData = cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>().StructureBsps.SingleOrDefault(i => (i.BspReference.TagId) == id);
             if (bspData == null)
                 throw new InvalidOperationException();
 

@@ -132,7 +132,7 @@ namespace Adjutant.Blam.HaloReach
             VertexBufferInfo[] vertexBufferInfo;
             IndexBufferInfo[] indexBufferInfo;
 
-            var resourceGestalt = cache.TagIndex.GlobalTags["zone"].ReadMetadata<cache_file_resource_gestalt>();
+            var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
             var entry = resourceGestalt.ResourceEntries[resourcePointer.ResourceIndex];
             using (var cacheReader = cache.CreateReader(cache.DefaultAddressTranslator))
             using (var reader = cacheReader.CreateVirtualReader(resourceGestalt.FixupDataPointer.Address))

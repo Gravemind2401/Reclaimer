@@ -50,8 +50,8 @@ namespace Adjutant.Blam.Halo3
                 return ReadDataHalo3Beta();
 
             var directory = Directory.GetParent(cache.FileName).FullName;
-            var resourceGestalt = cache.TagIndex.GlobalTags["zone"].ReadMetadata<cache_file_resource_gestalt>();
-            var resourceLayoutTable = cache.TagIndex.GlobalTags["play"].ReadMetadata<cache_file_resource_layout_table>();
+            var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
+            var resourceLayoutTable = cache.TagIndex.GetGlobalTag("play").ReadMetadata<cache_file_resource_layout_table>();
             var entry = resourceGestalt.ResourceEntries[ResourceIndex];
 
             if (entry.SegmentIndex < 0)
@@ -101,7 +101,7 @@ namespace Adjutant.Blam.Halo3
 
         private byte[] ReadDataHalo3Beta()
         {
-            var resourceGestalt = cache.TagIndex.GlobalTags["zone"].ReadMetadata<cache_file_resource_gestalt>();
+            var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
             var directory = Directory.GetParent(cache.FileName).FullName;
             var entry = resourceGestalt.ResourceEntries[ResourceIndex];
 

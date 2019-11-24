@@ -141,12 +141,10 @@ namespace Adjutant.Blam.Halo3
     {
         private readonly CacheFile cache;
         private readonly Dictionary<int, IndexItem> items;
-        private readonly Dictionary<string, IIndexItem> sysItems;
+        private readonly Dictionary<string, IndexItem> sysItems;
 
         internal Dictionary<int, string> Filenames { get; }
         internal List<TagClass> Classes { get; }
-
-        public IReadOnlyDictionary<string, IIndexItem> GlobalTags => sysItems;
 
         [Offset(0)]
         public int TagClassCount { get; set; }
@@ -179,7 +177,7 @@ namespace Adjutant.Blam.Halo3
 
             this.cache = cache;
             items = new Dictionary<int, IndexItem>();
-            sysItems = new Dictionary<string, IIndexItem>();
+            sysItems = new Dictionary<string, IndexItem>();
 
             Classes = new List<TagClass>();
             Filenames = new Dictionary<int, string>();
@@ -227,6 +225,8 @@ namespace Adjutant.Blam.Halo3
                 }
             }
         }
+
+        public IndexItem GetGlobalTag(string classCode) => sysItems[classCode];
 
         public IndexItem this[int index] => items[index];
 

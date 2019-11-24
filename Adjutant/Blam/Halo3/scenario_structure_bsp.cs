@@ -78,7 +78,7 @@ namespace Adjutant.Blam.Halo3
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var scenario = cache.TagIndex.GlobalTags["scnr"].ReadMetadata<scenario>();
+            var scenario = cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
             var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
 
             var bspBlock = scenario.StructureBsps.First(s => s.BspReference.TagId == item.Id);
