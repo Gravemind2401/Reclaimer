@@ -11,7 +11,7 @@ namespace Adjutant.Blam.Halo1
     {
         private readonly StructureBspBlock data;
 
-        private int Magic => data.Magic - data.MetadataAddress;
+        public int Magic => data.Magic - data.MetadataAddress;
 
         public int TagAddress => data.MetadataAddress;
 
