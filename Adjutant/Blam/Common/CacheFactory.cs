@@ -41,7 +41,7 @@ namespace Adjutant.Blam.Common
             }
         }
 
-        internal static string[] SystemClasses = new[] { "scnr", "ugh!", "play", "zone" };
+        internal static readonly string[] SystemClasses = new[] { "scnr", "ugh!", "play", "zone" };
 
         private static Dictionary<string, string> ReadClassXml(string xml)
         {
