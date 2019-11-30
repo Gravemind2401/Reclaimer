@@ -127,13 +127,16 @@ namespace Adjutant.Utilities
         public static int Bpp(this Blam.Halo2.TextureFormat format) => GetBpp(format.AsKnown());
         public static int Bpp(this Blam.Halo3.TextureFormat format) => GetBpp(format.AsKnown());
         public static int Bpp(this Blam.HaloReach.TextureFormat format) => GetBpp(format.AsKnown());
+        public static int Bpp(this Blam.Halo4.TextureFormat format) => GetBpp(format.AsKnown());
         public static int Bpp(this Saber3D.Halo1X.TextureFormat format) => GetBpp(format.AsKnown());
 
         public static int LinearBlockSize(this Blam.Halo3.TextureFormat format) => GetLinearBlockSize(format.AsKnown());
         public static int LinearBlockSize(this Blam.HaloReach.TextureFormat format) => GetLinearBlockSize(format.AsKnown());
+        public static int LinearBlockSize(this Blam.Halo4.TextureFormat format) => GetLinearBlockSize(format.AsKnown());
 
         public static int LinearTexelPitch(this Blam.Halo3.TextureFormat format) => GetLinearTexelPitch(format.AsKnown());
         public static int LinearTexelPitch(this Blam.HaloReach.TextureFormat format) => GetLinearTexelPitch(format.AsKnown());
+        public static int LinearTexelPitch(this Blam.Halo4.TextureFormat format) => GetLinearTexelPitch(format.AsKnown());
 
         #endregion
 

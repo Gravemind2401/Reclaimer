@@ -9,10 +9,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo3
+namespace Adjutant.Blam.Halo4
 {
     public class CacheFile : ICacheFile
     {
+        public const string FileNamesKey = "LetsAllPlayNice!";
+        public const string StringsKey = "ILikeSafeStrings";
+        public const string LocalesKey = "BungieHaloReach!";
+        public const string NetworkKey = "SneakerNetReigns";
+
+        public int HeaderSize => 122880;
+
         public string FileName { get; }
         public string BuildString => Header?.BuildString;
         public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
@@ -63,8 +70,7 @@ namespace Adjutant.Blam.Halo3
         #endregion
     }
 
-    [FixedSize(2048, MaxVersion = (int)CacheType.Halo3Retail)]
-    [FixedSize(12288, MinVersion = (int)CacheType.Halo3Retail)]
+    [FixedSize(122880)]
     public class CacheHeader
     {
         [Offset(8)]
@@ -73,66 +79,52 @@ namespace Adjutant.Blam.Halo3
         [Offset(16)]
         public Pointer IndexPointer { get; set; }
 
-        [Offset(20)]
-        [VersionSpecific((int)CacheType.Halo3Beta)]
-        public int MetadataAddress { get; set; }
-
         [Offset(284)]
         [NullTerminated(Length = 32)]
         public string BuildString { get; set; }
 
-        [Offset(352, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(344, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(344)]
         public int StringCount { get; set; }
 
-        [Offset(356, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(348, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(348)]
         public int StringTableSize { get; set; }
 
-        [Offset(360, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(352, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(352)]
         public Pointer StringTableIndexPointer { get; set; }
 
-        [Offset(364, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(356, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(356)]
         public Pointer StringTablePointer { get; set; }
 
-        [Offset(440, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(432, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(432)]
         [NullTerminated(Length = 256)]
         public string ScenarioName { get; set; }
 
-        [Offset(700, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(692, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(692)]
         public int FileCount { get; set; }
 
-        [Offset(704, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(696, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(696)]
         public Pointer FileTablePointer { get; set; }
 
-        [Offset(708, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(700, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(700)]
         public int FileTableSize { get; set; }
 
-        [Offset(712, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(704, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(704)]
         public Pointer FileTableIndexPointer { get; set; }
 
-        [Offset(752, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(744, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(760)]
         public int VirtualBaseAddress { get; set; }
 
-        [Offset(1136)]
-        [MinVersion((int)CacheType.Halo3Retail)]
+        [Offset(1152)]
         public int DataTableAddress { get; set; }
 
-        [Offset(1144)]
-        [MinVersion((int)CacheType.Halo3Retail)]
+        [Offset(1160)]
         public int LocaleModifier { get; set; }
 
-        [Offset(1160)]
-        [MinVersion((int)CacheType.Halo3Retail)]
+        [Offset(1176)]
         public int DataTableSize { get; set; }
+
+        [Offset(1180)]
+        public int MetadataAddress { get; set; }
     }
 
     [FixedSize(32)]
@@ -195,7 +187,6 @@ namespace Adjutant.Blam.Halo3
                 reader.Seek(TagDataPointer.Address, SeekOrigin.Begin);
                 for (int i = 0; i < TagCount; i++)
                 {
-                    //every Halo3 map has an empty tag
                     var item = reader.ReadObject(new IndexItem(cache, i));
                     if (item.ClassIndex < 0) continue;
 
@@ -208,7 +199,10 @@ namespace Adjutant.Blam.Halo3
                 reader.Seek(cache.Header.FileTableIndexPointer.Address, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<int>(TagCount).ToArray();
 
-                using (var tempReader = reader.CreateVirtualReader(cache.Header.FileTablePointer.Address))
+                reader.Seek(cache.Header.FileTablePointer.Address, SeekOrigin.Begin);
+                var decrypted = reader.ReadAesBytes(cache.Header.FileTableSize, CacheFile.FileNamesKey);
+                using (var ms = new MemoryStream(decrypted))
+                using (var tempReader = new EndianReader(ms))
                 {
                     for (int i = 0; i < TagCount; i++)
                     {
@@ -255,7 +249,10 @@ namespace Adjutant.Blam.Halo3
                 reader.Seek(cache.Header.StringTableIndexPointer.Address, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<int>(cache.Header.StringCount).ToArray();
 
-                using (var tempReader = reader.CreateVirtualReader(cache.Header.StringTablePointer.Address))
+                reader.Seek(cache.Header.StringTablePointer.Address, SeekOrigin.Begin);
+                var decrypted = reader.ReadAesBytes(cache.Header.StringTableSize, CacheFile.StringsKey);
+                using (var ms = new MemoryStream(decrypted))
+                using (var tempReader = new EndianReader(ms))
                 {
                     for (int i = 0; i < cache.Header.StringCount; i++)
                     {
@@ -275,25 +272,28 @@ namespace Adjutant.Blam.Halo3
         {
             get
             {
-                if (cache.CacheType == CacheType.Halo3Beta)
+                try
                 {
-                    if (id > 64307) return items[id - 64307];
-                    else if (id > 1229) return items[id + 1173];
-                }
-                else if (cache.CacheType == CacheType.Halo3Retail)
-                {
-                    if (id > 262143) return items[id - 259153];
-                    else if (id > 64329) return items[id - 64329];
-                    else if (id > 1208) return items[id + 1882];
-                }
-                else if (cache.CacheType == CacheType.Halo3ODST)
-                {
-                    if (id > 258846) return items[id - 258846];
-                    else if (id > 64231) return items[id - 64231];
-                    else if (id > 1304) return items[id + 2098];
-                }
+                    if (cache.CacheType == CacheType.Halo4Beta)
+                    {
+                        if (id > 1488) return items[id + 5937];
+                    }
+                    else if (cache.CacheType == CacheType.Halo4Retail)
+                    {
+                        if (cache.BuildString == "16531.12.07.05.0200.main")
+                        {
+                            if (id > 1568) return items[id + 6520];
+                        }
+                        else
+                        {
+                            if (id > 522703) return items[id - 522703];
+                            else if (id > 1584) return items[id + 6796];
+                        }
+                    }
 
-                return items[id];
+                    return items[id];
+                }
+                catch { return "#error"; }
             }
         }
 

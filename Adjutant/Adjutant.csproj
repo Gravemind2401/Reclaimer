@@ -88,6 +88,13 @@
     <Compile Include="Blam\Halo3\shader.cs" />
     <Compile Include="Blam\Halo3\TagAddressTranslator.cs" />
     <Compile Include="Blam\Common\XmlVertex.cs" />
+    <Compile Include="Blam\Halo4\bitmap.cs" />
+    <Compile Include="Blam\Halo4\CacheFile.cs" />
+    <Compile Include="Blam\Halo4\cache_file_resource_gestalt.cs" />
+    <Compile Include="Blam\Halo4\cache_file_resource_layout_table.cs" />
+    <Compile Include="Blam\Halo4\HeaderAddressTranslator.cs" />
+    <Compile Include="Blam\Halo4\ResourceIdentifier.cs" />
+    <Compile Include="Blam\Halo4\TagAddressTranslator.cs" />
     <Compile Include="Blam\HaloReach\bitmap.cs" />
     <Compile Include="Blam\HaloReach\CacheFile.cs" />
     <Compile Include="Blam\HaloReach\cache_file_resource_gestalt.cs" />
@@ -173,6 +180,7 @@
     <Compile Include="Utilities\Utils.cs" />
     <Compile Include="Utilities\IAddressTranslator.cs" />
     <Compile Include="Utilities\Pointer.cs" />
+    <Compile Include="Utilities\XCompress.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\System.Drawing.Dds\System.Drawing.Dds\System.Drawing.Dds.csproj">
