@@ -213,6 +213,10 @@ namespace Reclaimer.Controls
                     case CacheType.HaloReachRetail:
                         yield return item.ReadMetadata<Adjutant.Blam.HaloReach.bitmap>();
                         break;
+                    case CacheType.Halo4Beta:
+                    case CacheType.Halo4Retail:
+                        yield return item.ReadMetadata<Adjutant.Blam.Halo4.bitmap>();
+                        break;
                     default: throw Exceptions.TagClassNotSupported(item);
                 }
             }
