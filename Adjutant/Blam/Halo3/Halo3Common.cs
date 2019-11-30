@@ -37,6 +37,7 @@ namespace Adjutant.Blam.Halo3
     {
         private static readonly Dictionary<string, MaterialUsage> usageLookup = new Dictionary<string, MaterialUsage>
         {
+            { "blend_map", MaterialUsage.BlendMap },
             { "base_map", MaterialUsage.Diffuse },
             { "detail_map", MaterialUsage.DiffuseDetail },
             { "detail_map_overlay", MaterialUsage.DiffuseDetail },
@@ -44,7 +45,8 @@ namespace Adjutant.Blam.Halo3
             { "bump_map", MaterialUsage.Normal },
             { "bump_detail_map", MaterialUsage.NormalDetail },
             { "self_illum_map", MaterialUsage.SelfIllumination },
-            { "specular_map", MaterialUsage.Specular }
+            { "specular_map", MaterialUsage.Specular },
+            { "foam_texture", MaterialUsage.Diffuse }
         };
 
         private static readonly Dictionary<string, TintUsage> tintLookup = new Dictionary<string, TintUsage>
@@ -70,7 +72,9 @@ namespace Adjutant.Blam.Halo3
                 var template = shader.ShaderProperties[0].TemplateReference.Tag.ReadMetadata<render_method_template>();
                 for (int j = 0; j < template.Usages.Count; j++)
                 {
-                    if (!usageLookup.ContainsKey(template.Usages[j].Value))
+                    var usage = template.Usages[j].Value;
+                    var entry = usageLookup.FirstOrNull(p => usage.StartsWith(p.Key));
+                    if (!entry.HasValue)
                         continue;
 
                     var map = shader.ShaderProperties[0].ShaderMaps[j];
@@ -84,7 +88,7 @@ namespace Adjutant.Blam.Halo3
 
                     subMaterials.Add(new SubMaterial
                     {
-                        Usage = usageLookup[template.Usages[j].Value],
+                        Usage = entry.Value.Value,
                         Bitmap = bitmTag.ReadMetadata<bitmap>(),
                         Tiling = new RealVector2D(tile?.X ?? 1, tile?.Y ?? 1)
                     });
@@ -117,7 +121,9 @@ namespace Adjutant.Blam.Halo3
                     });
                 }
 
-                if (tag.ClassCode != "rmsh")
+                if (tag.ClassCode == "rmtr")
+                    material.Flags |= MaterialFlags.TerrainBlend;
+                else if (tag.ClassCode != "rmsh")
                     material.Flags |= MaterialFlags.Transparent;
 
                 if (subMaterials.Any(m => m.Usage == MaterialUsage.ColourChange) && !subMaterials.Any(m => m.Usage == MaterialUsage.Diffuse))

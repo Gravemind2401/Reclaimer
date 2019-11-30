@@ -9,7 +9,7 @@ namespace Adjutant.Utilities
 {
     internal static class Utils
     {
-        internal static string CurrentCulture(FormattableString formattable)
+        public static string CurrentCulture(FormattableString formattable)
         {
             if (formattable == null)
                 throw new ArgumentNullException(nameof(formattable));
@@ -17,7 +17,7 @@ namespace Adjutant.Utilities
             return formattable.ToString(CultureInfo.CurrentCulture);
         }
 
-        internal static float Clamp(float value, float min, float max)
+        public static float Clamp(float value, float min, float max)
         {
             return Math.Min(Math.Max(min, value), max);
         }
@@ -25,6 +25,17 @@ namespace Adjutant.Utilities
         public static string GetFileName(this string value)
         {
             return value?.Split('\\').Last();
+        }
+
+        public static TSource? FirstOrNull<TSource>(this IEnumerable<TSource> source, Predicate<TSource> predicate) where TSource : struct
+        {
+            foreach (var item in source)
+            {
+                if (predicate(item))
+                    return item;
+            }
+
+            return null;
         }
     }
 }

@@ -23,18 +23,20 @@ namespace Adjutant.Geometry
     public enum MaterialFlags
     {
         Transparent,
-        ColourChange
+        ColourChange,
+        TerrainBlend
     }
 
     public enum MaterialUsage
     {
-        Diffuse,
-        DiffuseDetail,
-        ColourChange,
-        Normal,
-        NormalDetail,
-        SelfIllumination,
-        Specular
+        BlendMap = -1,
+        Diffuse = 0,
+        DiffuseDetail = 1,
+        ColourChange = 2,
+        Normal = 3,
+        NormalDetail = 4,
+        SelfIllumination = 5,
+        Specular = 6
     }
 
     public enum TintUsage

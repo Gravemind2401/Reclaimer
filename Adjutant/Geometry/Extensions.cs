@@ -422,35 +422,67 @@ namespace Adjutant.Geometry
                         continue;
                     }
 
-                    bw.WriteStringNullTerminated(material.Name);
-                    for (int i = 0; i < 8; i++)
+                    if (material.Flags.HasFlag(MaterialFlags.TerrainBlend))
                     {
-                        var submat = material.Submaterials.FirstOrDefault(s => s.Usage == (MaterialUsage)i);
-                        bw.WriteStringNullTerminated(submat?.Bitmap.Name ?? nullPath);
-                        if (submat != null)
-                        {
-                            bw.Write(submat.Tiling.X);
-                            bw.Write(submat.Tiling.Y);
-                        }
-                    }
+                        bw.WriteStringNullTerminated("*" + material.Name);
 
-                    for (int i = 0; i < 4; i++)
-                    {
-                        var tint = material.TintColours.FirstOrDefault(t => t.Usage == (TintUsage)i);
-                        if (tint == null)
+                        var blendInfo = material.Submaterials.FirstOrDefault(s => s.Usage == MaterialUsage.BlendMap);
+                        var baseInfo = material.Submaterials.Where(s => s.Usage == MaterialUsage.Diffuse).ToList();
+                        var bumpInfo = material.Submaterials.Where(s => s.Usage == MaterialUsage.Normal).ToList();
+                        var detailInfo = material.Submaterials.Where(s => s.Usage == MaterialUsage.DiffuseDetail).ToList();
+
+                        if (blendInfo == null)
+                            bw.WriteStringNullTerminated(nullPath);
+                        else
                         {
-                            bw.Write(0);
-                            continue;
+                            bw.WriteStringNullTerminated(blendInfo.Bitmap.Name);
+                            bw.Write(blendInfo.Tiling.X);
+                            bw.Write(blendInfo.Tiling.Y);
                         }
 
-                        bw.Write(tint.R);
-                        bw.Write(tint.G);
-                        bw.Write(tint.B);
-                        bw.Write(tint.A);
-                    }
+                        bw.Write((byte)baseInfo.Count);
+                        bw.Write((byte)bumpInfo.Count);
+                        bw.Write((byte)detailInfo.Count);
 
-                    bw.Write(Convert.ToByte(material.Flags.HasFlag(MaterialFlags.Transparent)));
-                    bw.Write(Convert.ToByte(material.Flags.HasFlag(MaterialFlags.ColourChange)));
+                        foreach (var info in baseInfo.Concat(bumpInfo).Concat(detailInfo))
+                        {
+                            bw.WriteStringNullTerminated(info.Bitmap.Name);
+                            bw.Write(info.Tiling.X);
+                            bw.Write(info.Tiling.Y);
+                        }
+                    }
+                    else
+                    {
+                        bw.WriteStringNullTerminated(material.Name);
+                        for (int i = 0; i < 8; i++)
+                        {
+                            var submat = material.Submaterials.FirstOrDefault(s => s.Usage == (MaterialUsage)i);
+                            bw.WriteStringNullTerminated(submat?.Bitmap.Name ?? nullPath);
+                            if (submat != null)
+                            {
+                                bw.Write(submat.Tiling.X);
+                                bw.Write(submat.Tiling.Y);
+                            }
+                        }
+
+                        for (int i = 0; i < 4; i++)
+                        {
+                            var tint = material.TintColours.FirstOrDefault(t => t.Usage == (TintUsage)i);
+                            if (tint == null)
+                            {
+                                bw.Write(0);
+                                continue;
+                            }
+
+                            bw.Write(tint.R);
+                            bw.Write(tint.G);
+                            bw.Write(tint.B);
+                            bw.Write(tint.A);
+                        }
+
+                        bw.Write(Convert.ToByte(material.Flags.HasFlag(MaterialFlags.Transparent)));
+                        bw.Write(Convert.ToByte(material.Flags.HasFlag(MaterialFlags.ColourChange)));
+                    }
                 }
                 #endregion
 
