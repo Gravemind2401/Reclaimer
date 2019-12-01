@@ -381,7 +381,15 @@ namespace System.IO.Endian
                 }
 
                 var temp = versionProp.GetValue(instance);
-                if (temp != null && Utils.TryConvert(ref temp, versionProp.PropertyType, typeof(double)))
+
+                var versionType = versionProp.PropertyType;
+                if (versionType.IsEnum)
+                {
+                    versionType = versionType.GetEnumUnderlyingType();
+                    temp = Convert.ChangeType(temp, versionType);
+                }
+
+                if (temp != null && Utils.TryConvert(ref temp, versionType, typeof(double)))
                     version = (double)temp;
             }
 
