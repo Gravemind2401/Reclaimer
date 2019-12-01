@@ -75,7 +75,7 @@ namespace Adjutant.Blam.Halo4
                 targetFile = Path.Combine(directory, mapName);
             }
 
-            byte[] compressed;
+            byte[] compressed, decompressed;
 
             using (var fs = new FileStream(targetFile, FileMode.Open, FileAccess.Read))
             using (var reader = new EndianReader(fs, ByteOrder.BigEndian))
@@ -87,14 +87,24 @@ namespace Adjutant.Blam.Halo4
                 compressed = reader.ReadBytes(page.CompressedSize);
             }
 
-            byte[] decompressed = new byte[page.DecompressedSize];
-            int startSize = page.CompressedSize;
-            int endSize = page.DecompressedSize;
-            int decompressionContext = 0;
-            XCompress.XMemCreateDecompressionContext(XCompress.XMemCodecType.LZX, 0, 0, ref decompressionContext);
-            XCompress.XMemResetDecompressionContext(decompressionContext);
-            XCompress.XMemDecompressStream(decompressionContext, decompressed, ref endSize, compressed, ref startSize);
-            XCompress.XMemDestroyDecompressionContext(decompressionContext);
+            if (cache.CacheType <= CacheType.Halo4Beta)
+            {
+                using (var ms = new MemoryStream(compressed))
+                using (var stream = new DeflateStream(ms, CompressionMode.Decompress))
+                using (var br = new BinaryReader(stream))
+                    decompressed = br.ReadBytes(page.DecompressedSize);
+            }
+            else
+            {
+                decompressed = new byte[page.DecompressedSize];
+                int startSize = page.CompressedSize;
+                int endSize = page.DecompressedSize;
+                int decompressionContext = 0;
+                XCompress.XMemCreateDecompressionContext(XCompress.XMemCodecType.LZX, 0, 0, ref decompressionContext);
+                XCompress.XMemResetDecompressionContext(decompressionContext);
+                XCompress.XMemDecompressStream(decompressionContext, decompressed, ref endSize, compressed, ref startSize);
+                XCompress.XMemDestroyDecompressionContext(decompressionContext);
+            }
 
             return decompressed.Skip(chunkOffset).ToArray();
         }

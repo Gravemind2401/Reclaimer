@@ -196,6 +196,10 @@ namespace Adjutant.Blam.Halo4
                         sysItems.Add(item.ClassCode, item);
                 }
 
+                var play = sysItems["play"];
+                if (play.MetaPointer.Value == 0)
+                    play.MetaPointer = new Pointer(sysItems["zone"].MetaPointer.Value + 28, cache.MetadataTranslator);
+
                 reader.Seek(cache.Header.FileTableIndexPointer.Address, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<int>(TagCount).ToArray();
 
@@ -276,7 +280,9 @@ namespace Adjutant.Blam.Halo4
                 {
                     if (cache.CacheType == CacheType.Halo4Beta)
                     {
-                        if (id > 1488) return items[id + 5937];
+                        if (id > 3662803) return items[id - 3662803];
+                        else if (id > 260655) return items[id - 260655];
+                        else if (id > 1488) return items[id + 5937];
                     }
                     else if (cache.CacheType == CacheType.Halo4Retail)
                     {
@@ -286,7 +292,8 @@ namespace Adjutant.Blam.Halo4
                         }
                         else
                         {
-                            if (id > 522703) return items[id - 522703];
+                            if (id > 7331943) return items[id - 7331943];
+                            else if (id > 522703) return items[id - 522703];
                             else if (id > 1584) return items[id + 6796];
                         }
                     }
