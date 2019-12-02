@@ -95,6 +95,8 @@
     <Compile Include="Blam\Halo4\HeaderAddressTranslator.cs" />
     <Compile Include="Blam\Halo4\ResourceIdentifier.cs" />
     <Compile Include="Blam\Halo4\TagAddressTranslator.cs" />
+    <Compile Include="Blam\Halo5\Enums.cs" />
+    <Compile Include="Blam\Halo5\Module.cs" />
     <Compile Include="Blam\HaloReach\bitmap.cs" />
     <Compile Include="Blam\HaloReach\CacheFile.cs" />
     <Compile Include="Blam\HaloReach\cache_file_resource_gestalt.cs" />
@@ -204,6 +206,7 @@
     <Content Include="Resources\Halo1Classes.xml" />
     <Content Include="Resources\Halo2Classes.xml" />
     <Content Include="Resources\Halo3VertexBuffer.xml" />
+    <Content Include="Resources\Halo5Classes.xml" />
     <Content Include="Resources\HaloReachVertexBuffer.xml" />
   </ItemGroup>
   <ItemGroup>

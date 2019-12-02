@@ -117,6 +117,26 @@ namespace Adjutant.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;classes&gt;
+        ///  &lt;class code=&quot;GobS&quot; name=&quot;gobo_setting&quot; /&gt;
+        ///  &lt;class code=&quot;LMMg&quot; name=&quot;lightmap_model_globals&quot; /&gt;
+        ///  &lt;class code=&quot;LigS&quot; name=&quot;lighting_settings&quot; /&gt;
+        ///  &lt;class code=&quot;SDzs&quot; name=&quot;streamingzoneset&quot; /&gt;
+        ///  &lt;class code=&quot;&amp;lt;fx&amp;gt;&quot; name=&quot;sound_effect_template&quot; /&gt;
+        ///  &lt;class code=&quot;aTag&quot; name=&quot;AnyTag&quot; /&gt;
+        ///  &lt;class code=&quot;aaap&quot; name=&quot;AmbientActionPointDefinitionTag&quot; /&gt;
+        ///  &lt;class code=&quot;achi&quot; name=&quot;achievements&quot; /&gt;
+        ///  &lt;class code=&quot;acme&quot; name=&quot;gestalt&quot; /&gt;
+        ///  &lt;class code=&quot;adlg&quot; name=&quot;ai_dialogue_globals&quot; /&gt;
+        ///   [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Halo5Classes {
+            get {
+                return ResourceManager.GetString("Halo5Classes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;VertexDefinitions&gt;
         ///  &lt;vertex type=&quot;0x00&quot; name=&quot;s_world_vertex&quot;&gt;
         ///    &lt;value stream=&quot;0&quot; offset=&quot;0x0&quot; type=&quot;Float32_4&quot; usage=&quot;position&quot; usageIndex=&quot;0&quot; /&gt;
