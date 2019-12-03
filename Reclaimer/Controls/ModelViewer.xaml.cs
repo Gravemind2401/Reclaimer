@@ -59,7 +59,7 @@ namespace Reclaimer.Controls
         {
             var control = (ModelViewer)d;
             control.SetLod((int)e.NewValue);
-        } 
+        }
         #endregion
 
         private readonly Model3DGroup modelGroup = new Model3DGroup();
@@ -393,14 +393,17 @@ namespace Reclaimer.Controls
             {
                 OverwritePrompt = true,
                 FileName = model.Name,
-                Filter = "AMF Files|*.amf",
+                Filter = "AMF Files|*.amf|JMS Files|*.jms",
                 AddExtension = true
             };
 
             if (sfd.ShowDialog() != true)
                 return;
 
-            model.WriteAMF(sfd.FileName);
+            if (sfd.FilterIndex == 1)
+                model.WriteAMF(sfd.FileName);
+            else
+                model.WriteJMS(sfd.FileName);
         }
         #endregion
 
