@@ -61,10 +61,15 @@ namespace Adjutant.Blam.Halo3
             for (int i = 0; i < shaders.Count; i++)
             {
                 var tag = shaders[i].ShaderReference.Tag;
+                var material = new GeometryMaterial
+                {
+                    Name = Utils.GetFileName(tag.FullPath)
+                };
+
                 var shader = tag?.ReadMetadata<shader>();
                 if (shader == null)
                 {
-                    yield return null;
+                    yield return material;
                     continue;
                 }
 
@@ -96,15 +101,11 @@ namespace Adjutant.Blam.Halo3
 
                 if (subMaterials.Count == 0)
                 {
-                    yield return null;
+                    yield return material;
                     continue;
                 }
 
-                var material = new GeometryMaterial
-                {
-                    Name = Utils.GetFileName(shaders[i].ShaderReference.Tag.FullPath),
-                    Submaterials = subMaterials
-                };
+                material.Submaterials = subMaterials;
 
                 for (int j = 0; j < template.Arguments.Count; j++)
                 {

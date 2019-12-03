@@ -525,5 +525,137 @@ namespace Adjutant.Geometry
                 #endregion
             }
         }
+
+        public static void WriteJMS(this IGeometryModel model, string fileName)
+        {
+            const float scale = 100f;
+            const string float4 = "{0:F6}\t{1:F6}\t{2:F6}\t{3:F6}";
+            const string float3 = "{0:F6}\t{1:F6}\t{2:F6}";
+            const string float1 = "{0:F6}";
+
+            var modelName = Path.GetFileNameWithoutExtension(fileName);
+            var directory = Path.Combine(Directory.GetParent(fileName).FullName, "models");
+            Directory.CreateDirectory(directory);
+
+            var permNames = model.Regions.SelectMany(r => r.Permutations)
+                .Select(p => p.Name)
+                .Distinct();
+
+            foreach (var permName in permNames)
+            {
+                var allRegions = model.Regions.Where(r => r.Permutations.Any(p => p.Name == permName)).ToList();
+                var allPerms = model.Regions.SelectMany(r => r.Permutations).Where(p => p.Name == permName).ToList();
+
+                using (var sw = new StreamWriter(Path.Combine(directory, permName + ".jms")))
+                {
+                    sw.WriteLine("8200");
+                    sw.WriteLine("14689795");
+
+                    sw.WriteLine(model.Nodes.Count);
+                    foreach (var node in model.Nodes)
+                    {
+                        sw.WriteLine(node.Name);
+                        sw.WriteLine(node.FirstChildIndex);
+                        sw.WriteLine(node.NextSiblingIndex);
+                        sw.WriteLine("{0}\t{1}\t{2}\t{3}", -node.Rotation.X, -node.Rotation.Y, -node.Rotation.Z, node.Rotation.W);
+                        sw.WriteLine(float3, node.Position.X * scale, node.Position.Y * scale, node.Position.Z * scale);
+                    }
+
+                    sw.WriteLine(model.Materials.Count);
+                    foreach (var mat in model.Materials)
+                    {
+                        sw.WriteLine(mat.Name);
+                        sw.WriteLine("<none>"); //unknown
+                    }
+
+                    sw.WriteLine(model.MarkerGroups.Sum(g => g.Markers.Count));
+                    foreach (var group in model.MarkerGroups)
+                    {
+                        foreach (var marker in group.Markers)
+                        {
+                            sw.WriteLine(group.Name);
+                            sw.WriteLine(-1); //unknown
+                            sw.WriteLine(marker.NodeIndex);
+                            sw.WriteLine(float4, marker.Rotation.X, marker.Rotation.Y, marker.Rotation.Z, marker.Rotation.W);
+                            sw.WriteLine(float3, marker.Position.X * scale, marker.Position.Y * scale, marker.Position.Z * scale);
+                            sw.WriteLine(1); //radius
+                        }
+                    }
+
+                    sw.WriteLine(allRegions.Count);
+                    foreach (var region in allRegions)
+                        sw.WriteLine(region.Name);
+
+                    #region Vertices
+                    sw.WriteLine(allPerms.SelectMany(p => model.Meshes.Skip(p.MeshIndex).Take(p.MeshCount)).Sum(m => m.Vertices.Count));
+                    foreach (var perm in allPerms)
+                    {
+                        var mesh = model.Meshes[perm.MeshIndex];
+                        foreach (var vert in mesh.Vertices)
+                        {
+                            var decompressed = vert;
+                            if (mesh.BoundsIndex >= 0)
+                                decompressed = new CompressedVertex(vert, model.Bounds[mesh.BoundsIndex.Value]);
+
+                            var pos = decompressed.Position.FirstOrDefault();
+                            var norm = vert.Normal.FirstOrDefault();
+                            var tex = decompressed.TexCoords.FirstOrDefault();
+                            var weights = decompressed.BlendWeight.FirstOrDefault();
+                            var nodes = decompressed.BlendIndices.FirstOrDefault();
+
+                            var node1 = nodes?.X ?? 0;
+                            if (mesh.NodeIndex < byte.MaxValue)
+                                node1 = mesh.NodeIndex.Value;
+
+                            sw.WriteLine("{0:F0}", node1);
+
+                            sw.WriteLine(float3, pos.X * scale, pos.Y * scale, pos.Z * scale);
+                            sw.WriteLine(float3, norm.X, norm.Y, norm.Z);
+
+                            sw.WriteLine(nodes?.Y ?? 0);
+                            sw.WriteLine(float1, weights?.Y ?? 0);
+
+                            sw.WriteLine(float1, tex.X);
+                            sw.WriteLine(float1, 1 - tex.Y);
+                            sw.WriteLine(float1, 0f);
+                        }
+                    } 
+                    #endregion
+
+                    #region Triangles
+                    var totalEdges = allPerms.SelectMany(p =>
+                    {
+                        var mesh = model.Meshes[p.MeshIndex];
+                        if (mesh.IndexFormat == IndexFormat.Triangles)
+                            return mesh.Indicies;
+                        else return mesh.Submeshes.SelectMany(s => mesh.Indicies.Skip(s.IndexStart).Take(s.IndexLength).Unstrip());
+                    }).Count();
+
+                    sw.WriteLine(totalEdges / 3);
+                    int offset = 0;
+                    foreach (var perm in allPerms)
+                    {
+                        var regIndex = allRegions.TakeWhile(r => !r.Permutations.Contains(perm)).Count();
+                        var mesh = model.Meshes[perm.MeshIndex];
+                        foreach (var sub in mesh.Submeshes)
+                        {
+                            var temp = mesh.Indicies.Skip(sub.IndexStart).Take(sub.IndexLength);
+                            if (mesh.IndexFormat == IndexFormat.Stripped)
+                                temp = temp.Unstrip();
+
+                            var indices = temp.ToList();
+                            for (int i = 0; i < indices.Count; i += 3)
+                            {
+                                sw.WriteLine(regIndex);
+                                sw.WriteLine(sub.MaterialIndex);
+                                sw.WriteLine("{0}\t{1}\t{2}", offset + indices[i], offset + indices[i + 1], offset + indices[i + 2]);
+                            }
+                        }
+                        offset += mesh.Vertices.Count;
+                    }
+                    #endregion
+                }
+            }
+        }
     }
 }
