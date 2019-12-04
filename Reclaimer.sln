@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamplePlugin", "ExamplePlu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Studio", "..\Studio\Studio\Studio.csproj", "{5F4C3814-8097-4869-B5E2-4C21EF45CEB2}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Reclaimer.Setup", "Reclaimer.Setup\Reclaimer.Setup.vdproj", "{00227FE4-8DDA-411F-BFD5-297B94C92C28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,16 +41,10 @@ Global
 		{5F4C3814-8097-4869-B5E2-4C21EF45CEB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F4C3814-8097-4869-B5E2-4C21EF45CEB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F4C3814-8097-4869-B5E2-4C21EF45CEB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00227FE4-8DDA-411F-BFD5-297B94C92C28}.Debug|Any CPU.ActiveCfg = Debug
+		{00227FE4-8DDA-411F-BFD5-297B94C92C28}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(AutomaticVersions) = postSolution
-		UpdateAssemblyVersion.Release|Any CPU = True
-		UpdateAssemblyFileVersion.Release|Any CPU = True
-		UpdateAssemblyInfoVersion.Release|Any CPU = True
-		AssemblyVersionSettings.Release|Any CPU = None.None.None.None
-		AssemblyFileVersionSettings.Release|Any CPU = None.None.None.None
-		AssemblyInfoVersionSettings.Release|Any CPU = None.None.None.None
 	EndGlobalSection
 EndGlobal
