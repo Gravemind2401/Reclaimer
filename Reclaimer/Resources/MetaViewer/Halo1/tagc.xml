@@ -1,0 +1,5 @@
+<plugin>
+  <reflexive name="tag references" offset="0x0" visible="true" entrySize="0x8">
+    <tagRef name="tag" offset="0x0" visible="true" />
+  </reflexive>
+</plugin>

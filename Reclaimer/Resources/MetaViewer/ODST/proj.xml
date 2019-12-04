@@ -1,0 +1,239 @@
+<plugin class="proj" headersize="684">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <bitmask16 name="Flags" offset="0" visible="True">
+    <option name="Does Not Cast Shadow" value="0" />
+    <option name="Search Cardinal Direction Lightmaps" value="1" />
+    <option name="unused" value="2" />
+    <option name="Not A Pathfinding Obstacle" value="3" />
+    <option name="Extension Of Parent" value="4" />
+    <option name="Does Not Cause Collision Damage" value="5" />
+    <option name="Early Mover" value="6" />
+    <option name="Early Mover Localized Physics" value="7" />
+    <option name="Use Static Massive Lightmap Sample" value="8" />
+    <option name="Object Scales Attachments" value="9" />
+    <option name="Inherits Player's Appearance" value="10" />
+    <option name="Dead Bipeds Can't Localize" value="11" />
+    <option name="Attach To Clusters By Dynamic Sphere" value="12" />
+    <option name="Effects Created By This Object Do Not" value="13" />
+  </bitmask16>
+  <float32 name="Bounding Radius" offset="4" visible="True" />
+  <float32 name="Bounding Offset X" offset="8" visible="True" />
+  <float32 name="Bounding Offset Y" offset="12" visible="True" />
+  <float32 name="Bounding Offset Z" offset="16" visible="True" />
+  <float32 name="Acceleration Scale" offset="20" visible="True" />
+  <enum32 name="Lightmap Shadow Mode" offset="24" visible="True">
+    <option name="Default" value="0" />
+    <option name="Never" value="1" />
+    <option name="Always" value="2" />
+  </enum32>
+  <enum32 name="Sweetener size=" offset="28" visible="True">
+    <option name="Small" value="0" />
+    <option name="Medium" value="1" />
+    <option name="Large" value="2" />
+  </enum32>
+  <float32 name="Dynamic Light Sphere Radius" offset="32" visible="True" />
+  <float32 name="Dynamic Light Sphere Offset X" offset="36" visible="True" />
+  <float32 name="Dynamic Light Sphere Offset Y" offset="40" visible="True" />
+  <float32 name="Dynamic Light Sphere Offset Z" offset="44" visible="True" />
+  <float32 name="Default Model Variant (stringID)" offset="48" visible="True" />
+  <tagRef name="Model" offset="52" visible="False" />
+  <tagRef name="Crate Object" offset="64" visible="True" />
+  <tagRef name="Modifier Shader" offset="80" visible="True" />
+  <tagRef name="Creation Effect" offset="96" visible="True" />
+  <tagRef name="Creation Effect" offset="112" visible="True" />
+  <tagRef name="Material Effects" offset="128" visible="True" />
+  <struct name="AI Properties" offset="144" visible="True" size="12">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="12" visible="False" />
+  </struct>
+  <undefined name="Unused" offset="152" visible="False" />
+  <struct name="Functions" offset="156" visible="True" size="32">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="12" visible="False" />
+  </struct>
+  <undefined name="Unknown" offset="168" visible="False" />
+  <struct name="Unknown 0" offset="172" visible="False" size="44">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="12" visible="False" />
+    <undefined name="Unknown" offset="16" visible="False" />
+    <undefined name="Unknown" offset="20" visible="False" />
+    <undefined name="Unknown" offset="24" visible="False" />
+    <undefined name="Unknown" offset="28" visible="False" />
+    <undefined name="Unknown" offset="32" visible="False" />
+    <undefined name="Unknown" offset="36" visible="False" />
+    <undefined name="Unknown" offset="40" visible="False" />
+  </struct>
+  <undefined name="Unknown" offset="184" visible="False" />
+  <struct name="Attachments" offset="188" visible="True" size="36">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <tagRef name="Attachment" offset="4" visible="True" />
+    <undefined name="Unknown" offset="20" visible="False" />
+    <undefined name="Unknown" offset="24" visible="False" />
+    <undefined name="Unknown" offset="28" visible="False" />
+    <undefined name="Unknown" offset="32" visible="False" />
+  </struct>
+  <struct name="Widgets" offset="200" visible="False" size="16">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="12" visible="False" />
+  </struct>
+  <struct name="Unknown 3" offset="212" visible="False" size="24">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <struct name="Unknown 4" offset="12" visible="False" size="40">
+      <undefined name="Unknown" offset="0" visible="False" />
+      <undefined name="Unknown" offset="4" visible="False" />
+      <undefined name="Unknown" offset="8" visible="False" />
+      <undefined name="Unknown" offset="12" visible="False" />
+      <undefined name="Unknown" offset="16" visible="False" />
+      <undefined name="Unknown" offset="20" visible="False" />
+      <undefined name="Unknown" offset="24" visible="False" />
+      <undefined name="Unknown" offset="28" visible="False" />
+      <undefined name="Unknown" offset="32" visible="False" />
+      <undefined name="Unknown" offset="36" visible="False" />
+    </struct>
+  </struct>
+  <undefined name="Unknown" offset="224" visible="False" />
+  <undefined name="Unknown" offset="228" visible="False" />
+  <undefined name="Unknown" offset="232" visible="False" />
+  <undefined name="Unknown" offset="236" visible="False" />
+  <undefined name="Unknown" offset="240" visible="False" />
+  <undefined name="Unknown" offset="244" visible="False" />
+  <undefined name="Unknown" offset="248" visible="False" />
+  <undefined name="Unknown" offset="252" visible="False" />
+  <undefined name="Unknown" offset="256" visible="False" />
+  <int16 name="Unknown" offset="260" visible="False" />
+  <bitmask16 name="Flags" offset="262" visible="True">
+    <option name="Oriented Along Velocity" value="0" />
+    <option name="AI Must Use Ballistic Aiming" value="1" />
+    <option name="Detonation Max Time If Attached" value="2" />
+    <option name="Has Super Combining Explosion" value="3" />
+    <option name="Damage Scales Based On Distance" value="4" />
+    <option name="Travels Instantaneously" value="5" />
+    <option name="Steering Adjusts Orientation" value="6" />
+    <option name="Don't Noise Up Steering" value="7" />
+    <option name="Can Track Behind Itself" value="8" />
+    <option name="Robotron Steering" value="9" />
+    <option name="Faster When Owned By Player" value="10" />
+  </bitmask16>
+  <enum16 name="Detonation Timer Starts" offset="264" visible="True">
+    <option name="Immediately" value="0" />
+    <option name="After first bounce" value="1" />
+    <option name="When at rest" value="2" />
+    <option name="After First Bounce Off Any Surface" value="3" />
+  </enum16>
+  <enum16 name="Impact Noise" offset="266" visible="True">
+    <option name="Silent" value="0" />
+    <option name="Medium" value="1" />
+    <option name="Loud" value="2" />
+    <option name="Shout" value="3" />
+    <option name="Quiet" value="4" />
+  </enum16>
+  <float32 name="Collision Radius" offset="268" visible="True" />
+  <float32 name="Arming Time" offset="272" visible="True" />
+  <float32 name="Danger Radius" offset="276" visible="True" />
+  <float32 name="Timer (min. sec)" offset="280" visible="True" />
+  <float32 name="Timer (max. sec)" offset="284" visible="True" />
+  <float32 name="Minimum Velocity" offset="288" visible="True" />
+  <float32 name="Maximum Range" offset="292" visible="True" />
+  <undefined name="Unknown" offset="296" visible="False" />
+  <enum16 name="Detonation Noise" offset="300" visible="True">
+    <option name="Silent" value="0" />
+    <option name="Medium" value="1" />
+    <option name="Loud" value="2" />
+    <option name="Shout" value="3" />
+    <option name="Quiet" value="4" />
+  </enum16>
+  <int16 name="Super Detonation Projectile Count" offset="302" visible="True" />
+  <undefined name="Unknown" offset="304" visible="False" />
+  <tagRef name="Unknown" offset="308" visible="False" />
+  <tagRef name="Unknown" offset="324" visible="False" />
+  <tagRef name="Unknown" offset="340" visible="False" />
+  <tagRef name="Unknown" offset="356" visible="False" />
+  <tagRef name="Unknown" offset="372" visible="False" />
+  <tagRef name="Unknown" offset="388" visible="False" />
+  <tagRef name="Unknown" offset="404" visible="False" />
+  <undefined name="Unknown" offset="420" visible="False" />
+  <undefined name="Unknown" offset="424" visible="False" />
+  <undefined name="Unknown" offset="428" visible="False" />
+  <undefined name="Unknown" offset="432" visible="False" />
+  <undefined name="Unknown" offset="436" visible="False" />
+  <tagRef name="Unknown" offset="440" visible="False" />
+  <undefined name="Unknown" offset="456" visible="False" />
+  <tagRef name="Flyby Sound" offset="460" visible="True" />
+  <tagRef name="Impact Sound" offset="476" visible="True" />
+  <tagRef name="Object Impact Sound" offset="492" visible="True" />
+  <tagRef name="Impact Damage" offset="508" visible="True" />
+  <undefined name="Unknown" offset="524" visible="False" />
+  <tagRef name="Unknown" offset="528" visible="False" />
+  <tagRef name="Unknown" offset="544" visible="False" />
+  <float32 name="Air Gravity Scale" offset="560" visible="True" />
+  <float32 name="Air Damage Range (min)" offset="564" visible="True" />
+  <float32 name="Air Damage Range (max)" offset="568" visible="True" />
+  <float32 name="Water Gravity Scale" offset="572" visible="True" />
+  <float32 name="Water Damage Scale (min)" offset="576" visible="True" />
+  <float32 name="Water Damage Scale (max)" offset="580" visible="True" />
+  <float32 name="Initial Velocity" offset="584" visible="True" />
+  <float32 name="Final Velocity" offset="588" visible="True" />
+  <undefined name="Unknown" offset="592" visible="False" />
+  <undefined name="Unknown" offset="596" visible="False" />
+  <float32 name="Guided Angular Velocity Lower (DpS)" offset="600" visible="True" />
+  <float32 name="Guided Angular Velocity Upper (DpS)" offset="604" visible="True" />
+  <undefined name="Unknown" offset="608" visible="False" />
+  <float32 name="Acceleration Range (min)" offset="612" visible="True" />
+  <float32 name="Acceleration Range (max)" offset="616" visible="True" />
+  <undefined name="Unknown" offset="620" visible="False" />
+  <undefined name="Unknown" offset="624" visible="False" />
+  <float32 name="Targeted Leading Fraction" offset="628" visible="True" />
+  <undefined name="Unknown" offset="632" visible="False" />
+  <struct name="Unknown 4" offset="636" visible="False" size="64">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="12" visible="False" />
+    <undefined name="Unknown" offset="16" visible="False" />
+    <undefined name="Unknown" offset="20" visible="False" />
+    <undefined name="Unknown" offset="24" visible="False" />
+    <undefined name="Unknown" offset="28" visible="False" />
+    <undefined name="Unknown" offset="32" visible="False" />
+    <undefined name="Unknown" offset="36" visible="False" />
+    <undefined name="Unknown" offset="40" visible="False" />
+    <undefined name="Unknown" offset="44" visible="False" />
+    <undefined name="Unknown" offset="48" visible="False" />
+    <undefined name="Unknown" offset="52" visible="False" />
+    <undefined name="Unknown" offset="56" visible="False" />
+    <undefined name="Unknown" offset="60" visible="False" />
+  </struct>
+  <struct name="Unknown 5" offset="648" visible="False" size="48">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="12" visible="False" />
+    <undefined name="Unknown" offset="16" visible="False" />
+    <undefined name="Unknown" offset="20" visible="False" />
+    <undefined name="Unknown" offset="24" visible="False" />
+    <undefined name="Unknown" offset="28" visible="False" />
+    <undefined name="Unknown" offset="32" visible="False" />
+    <undefined name="Unknown" offset="36" visible="False" />
+    <undefined name="Unknown" offset="40" visible="False" />
+    <undefined name="Unknown" offset="44" visible="False" />
+  </struct>
+  <struct name="Unknown 6" offset="660" visible="False" size="4">
+    <undefined name="Unknown" offset="0" visible="False" />
+  </struct>
+  <struct name="Unknown 7" offset="672" visible="False" size="12">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+  </struct>
+</plugin>

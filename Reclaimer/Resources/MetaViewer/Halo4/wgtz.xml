@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<plugin game="Halo 4" baseSize="0x2C0">
+	<revisions>
+		<revision author="Lord Zedd" version="1">Portin without generation</revision>
+	</revisions>
+	<undefined name="Unknown" offset="0x0" visible="true" />
+	<tagRef name="Shared UI Globals" offset="0x4" visible="true" />
+	<tagref name="Editable Settings" offset="0x14" visible="true" />
+	<tagref name="Hopper Descriptions" offset="0x24" visible="true" />
+	<struct name="Menus" offset="0x34" visible="true" size="0x14">
+		<undefined name="00000005" offset="0x0" visible="true" />
+		<tagref name="00000006" offset="0x4" visible="true" />
+	</struct>
+	<struct name="Widget Skewing" offset="0x40" visible="true" size="0x18">
+		<int16 name="00000005" offset="0x0" visible="true" />
+		<int16 name="00000005" offset="0x2" visible="true" />
+		<undefined name="00000006" offset="0x4" visible="true" />
+		<undefined name="00000007" offset="0x8" visible="true" />
+		<undefined name="00000008" offset="0xC" visible="true" />
+		<undefined name="00000009" offset="0x10" visible="true" />
+		<undefined name="00000010" offset="0x14" visible="true" />
+	</struct>
+	<struct name="Embedded Cameras" offset="0x4C" visible="true" size="0x64">
+		<stringId name="Unknown" offset="0x0" visible="true" />
+		<undefined name="Unknown" offset="0x4" visible="true" />
+		<undefined name="Unknown" offset="0x8" visible="true" />
+		<undefined name="Unknown" offset="0xC" visible="true" />
+		<undefined name="Unknown" offset="0x10" visible="true" />
+		<undefined name="Unknown" offset="0x14" visible="true" />
+		<undefined name="Unknown" offset="0x18" visible="true" />
+		<undefined name="Unknown" offset="0x1C" visible="true" />
+		<undefined name="Unknown" offset="0x20" visible="true" />
+		<undefined name="Unknown" offset="0x24" visible="true" />
+		<int32 name="Unknown" offset="0x28" visible="true" />
+		<undefined name="Unknown" offset="0x2C" visible="true" />
+		<undefined name="Unknown" offset="0x30" visible="true" />
+		<undefined name="Unknown" offset="0x34" visible="true" />
+		<undefined name="Unknown" offset="0x38" visible="true" />
+		<undefined name="Unknown" offset="0x3C" visible="true" />
+		<undefined name="Unknown" offset="0x40" visible="true" />
+		<undefined name="Unknown" offset="0x44" visible="true" />
+		<undefined name="Unknown" offset="0x48" visible="true" />
+		<undefined name="Unknown" offset="0x4C" visible="true" />
+		<undefined name="Unknown" offset="0x50" visible="true" />
+		<undefined name="Unknown" offset="0x54" visible="true" />
+		<undefined name="Unknown" offset="0x58" visible="true" />
+		<undefined name="Unknown" offset="0x5C" visible="true" />
+		<undefined name="Unknown" offset="0x60" visible="true" />
+		<int16 name="Unknown" offset="0x64" visible="true" />
+	</struct>
+	<struct name="Testo" offset="0x58" visible="true" size="0x38">
+		<undefined name="00000005" offset="0x0" visible="true" />
+		<undefined name="00000006" offset="0x4" visible="true" />
+		<dataref name="00000007" offset="0x8" visible="true" />
+		<undefined name="00000012" offset="0x1C" visible="true" />
+		<undefined name="00000013" offset="0x20" visible="true" />
+		<undefined name="00000014" offset="0x24" visible="true" />
+		<undefined name="00000015" offset="0x28" visible="true" />
+		<undefined name="00000016" offset="0x2C" visible="true" />
+		<undefined name="00000017" offset="0x30" visible="true" />
+		<undefined name="00000018" offset="0x34" visible="true" />
+	</struct>
+	<struct name="Testo" offset="0x64" visible="true" size="0x40">
+		<dataref name="00000005" offset="0x0" visible="true" />
+		<undefined name="00000010" offset="0x14" visible="true" />
+		<undefined name="00000011" offset="0x18" visible="true" />
+		<undefined name="00000012" offset="0x1C" visible="true" />
+		<undefined name="00000013" offset="0x20" visible="true" />
+		<undefined name="00000014" offset="0x24" visible="true" />
+		<undefined name="00000015" offset="0x28" visible="true" />
+		<undefined name="00000016" offset="0x2C" visible="true" />
+		<undefined name="00000017" offset="0x30" visible="true" />
+		<undefined name="00000018" offset="0x34" visible="true" />
+		<undefined name="00000019" offset="0x38" visible="true" />
+		<undefined name="00000020" offset="0x3C" visible="true" />
+	</struct>
+	<tagRef name="Cookie Purchase Globals" offset="0x70" visible="true" />
+	<tagRef name="Infinity Images" offset="0x80" visible="true" />
+	<struct name="Testo" offset="0x90" visible="true" size="0x14">
+		<dataref name="00000005" offset="0x0" visible="true" />
+	</struct>
+	<tagref name="Unknown" offset="0x9C" visible="true" />
+	<tagRef name="Damage Types" offset="0xAC" visible="true" />
+	<struct name="Testo" offset="0xBC" visible="true" size="0x18">
+		<undefined name="00000005" offset="0x0" visible="true" />
+		<undefined name="00000006" offset="0x4" visible="true" />
+		<tagref name="00000007" offset="0x8" visible="true" />
+	</struct>
+	<undefined name="00000055" offset="0xc8" visible="true" />
+	<struct name="Game Start UI 1" offset="0xCC" visible="true" size="0x18">
+		<undefined name="00000005" offset="0x0" visible="true" />
+		<tagref name="00000006" offset="0x4" visible="true" />
+		<undefined name="00000010" offset="0x14" visible="true" />
+	</struct>
+	<struct name="Game End UI 1" offset="0xd8" visible="true" size="0x18">
+		<undefined name="00000005" offset="0x0" visible="true" />
+		<tagref name="00000006" offset="0x4" visible="true" />
+		<undefined name="00000010" offset="0x14" visible="true" />
+	</struct>
+	<struct name="Game Start UI 2" offset="0xe4" visible="true" size="0x18">
+		<undefined name="00000005" offset="0x0" visible="true" />
+		<tagref name="00000006" offset="0x4" visible="true" />
+		<undefined name="00000010" offset="0x14" visible="true" />
+	</struct>
+	<struct name="Game End UI 2" offset="0xf0" visible="true" size="0x18">
+		<undefined name="00000005" offset="0x0" visible="true" />
+		<tagref name="00000006" offset="0x4" visible="true" />
+		<undefined name="00000010" offset="0x14" visible="true" />
+	</struct>
+	<struct name="Game End UI 3" offset="0xfC" visible="true" size="0x18">
+		<undefined name="00000005" offset="0x0" visible="true" />
+		<tagref name="00000006" offset="0x4" visible="true" />
+		<undefined name="00000010" offset="0x14" visible="true" />
+	</struct>
+	<tagRef name="UI HUD Globals" offset="0x108" visible="true" />
+	<tagref name="Portrait Poses" offset="0x118" visible="true" />
+	<struct name="Testo" offset="0x128" visible="true" size="0x20">
+		<tagref name="00000005" offset="0x0" visible="true" />
+		<tagref name="00000009" offset="0x10" visible="true" />
+	</struct>
+	<undefined name="Unknown" offset="0x134" visible="true" />
+	<tagRef name="Unknown" offset="0x138" visible="true" />
+	<undefined name="00000088" offset="0x148" visible="true" />
+</plugin>

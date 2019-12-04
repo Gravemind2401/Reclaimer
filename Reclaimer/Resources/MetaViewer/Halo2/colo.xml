@@ -1,0 +1,4 @@
+<plugin>
+  <revisions />
+  <struct name="Colors" offset="0x0" visible="True" size="0x30" />
+</plugin>

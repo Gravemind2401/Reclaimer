@@ -1,0 +1,13 @@
+<plugin class="gegl" headersize="44">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <tagRef name="Multiplayer Engine" offset="0" visible="True" />
+  <tagRef name="Game Strings" offset="16" visible="True" />
+  <struct name="Unknown 0" offset="32" visible="False" size="63">
+    <tagRef name="Unknown" offset="0" visible="False" />
+    <tagRef name="Unknown" offset="16" visible="False" />
+    <tagRef name="Unknown" offset="32" visible="False" />
+    <tagRef name="Unknown" offset="48" visible="False" />
+  </struct>
+</plugin>

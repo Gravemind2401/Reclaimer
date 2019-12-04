@@ -1,0 +1,256 @@
+<plugin>
+  <revisions />
+  <enum32 name="Language" offset="0xAC" visible="True" />
+  <struct name="Havok Cleanup Resources" offset="0xB0" visible="True" size="0x8">
+    <tagRef name="Object Cleanup Effect" offset="0x0" visible="True" />
+  </struct>
+  <struct name="Collision Damage" offset="0xB8" visible="True" size="0x48">
+    <tagRef name="Collision Damage" offset="0x0" visible="True" />
+  </struct>
+  <struct name="Sound Info" offset="0xC0" visible="True" size="0x24">
+    <tagRef name="Sound Class" offset="0x0" visible="True" />
+    <tagRef name="Sound FX" offset="0x8" visible="True" />
+    <tagRef name="Sound Mix" offset="0x10" visible="True" />
+    <tagRef name="Sound Combat Dialogue" offset="0x18" visible="True" />
+  </struct>
+  <struct name="AI Information" offset="0xC8" visible="True" size="0x168">
+    <tagRef name="AI Dialog" offset="0x60" visible="True" />
+    <struct name="Gravemind Properties" offset="0x120" visible="True" size="0xC" />
+  </struct>
+  <struct name="Damage Table" offset="0xD0" visible="True" size="0x8">
+    <struct name="Damage Groups" offset="0x0" visible="True" size="0xC">
+      <stringID name="Name" offset="0x0" visible="True" />
+      <struct name="Armor Modifiers" offset="0x4" visible="True" size="0x8">
+        <stringID name="Name" offset="0x0" visible="True" />
+      </struct>
+    </struct>
+  </struct>
+  <struct name="Sounds (Obsolete)" offset="0xE0" visible="True" size="0x8">
+    <tagRef name="Sound" offset="0x0" visible="True" />
+  </struct>
+  <struct name="Camera" offset="0xE8" visible="True" size="0x14">
+    <tagRef name="Default Unit Camera Track" offset="0x0" visible="True" />
+  </struct>
+  <struct name="Player Control" offset="0xF0" visible="True" size="0x80">
+    <int16 name="Min Weapon Swap Ticks" offset="0x6C" visible="True" />
+    <int16 name="Min Autoleveling Ticks" offset="0x6E" visible="True" />
+    <struct name="Look Function" offset="0x74" visible="True" size="0x4" />
+  </struct>
+  <struct name="Difficulty" offset="0xF8" visible="True" size="0x284" />
+  <struct name="Grenades" offset="0x100" visible="True" size="0x2C">
+    <int16 name="Max Count" offset="0x0" visible="True" />
+    <tagRef name="Throwing Effect" offset="0x4" visible="True" />
+    <tagRef name="Equipment" offset="0x1C" visible="True" />
+    <tagRef name="Projectile" offset="0x24" visible="True" />
+  </struct>
+  <struct name="Rasterizer Data" offset="0x108" visible="True" size="0x108">
+    <tagRef name="Distance Attenuation" offset="0x0" visible="True" />
+    <tagRef name="Vector Normalization" offset="0x8" visible="True" />
+    <tagRef name="Gradients" offset="0x10" visible="True" />
+    <tagRef name="Loading Screen" offset="0x18" visible="True" />
+    <tagRef name="Loading Screen Sweep" offset="0x20" visible="True" />
+    <tagRef name="Loading Screen Spinner" offset="0x28" visible="True" />
+    <tagRef name="Glow" offset="0x30" visible="True" />
+    <tagRef name="Loading Screen Logos" offset="0x38" visible="True" />
+    <tagRef name="Loading Screen Tickers" offset="0x40" visible="True" />
+    <struct name="Global Vertex Shaders" offset="0x58" visible="True" size="0x8">
+      <tagRef name="Vertex Shader" offset="0x0" visible="True" />
+    </struct>
+    <tagRef name="Default 2D" offset="0x60" visible="True" />
+    <tagRef name="Default 3D" offset="0x68" visible="True" />
+    <tagRef name="Default Cube Map" offset="0x70" visible="True" />
+    <tagRef name="Global Shader" offset="0xCC" visible="True" />
+    <tagRef name="unused" offset="0x100" visible="True" />
+  </struct>
+  <struct name="Interface Tag Refernces" offset="0x110" visible="True" size="0x98">
+    <tagRef name="Font System" offset="0x0" visible="True" />
+    <tagRef name="Font Terminal" offset="0x8" visible="True" />
+    <tagRef name="Screen Color Table" offset="0x10" visible="True" />
+    <tagRef name="Hud Color Table" offset="0x18" visible="True" />
+    <tagRef name="Editor Color Table" offset="0x20" visible="True" />
+    <tagRef name="Dialog Color Table" offset="0x28" visible="True" />
+    <tagRef name="Hud Globals" offset="0x30" visible="True" />
+    <tagRef name="Motion Sensor Sweep Bitmap" offset="0x38" visible="True" />
+    <tagRef name="Motion Sensor Sweep Bitmap Mask" offset="0x40" visible="True" />
+    <tagRef name="Multiplayer Hud Bitmap" offset="0x48" visible="True" />
+    <tagRef name="Hud Digits Definition" offset="0x58" visible="True" />
+    <tagRef name="Motion Sensor Blip Bitmap" offset="0x60" visible="True" />
+    <tagRef name="Interface Goo Map 1" offset="0x68" visible="True" />
+    <tagRef name="Interface Goo Map 2" offset="0x70" visible="True" />
+    <tagRef name="Interface Goo Map 3" offset="0x78" visible="True" />
+    <tagRef name="Mainmenu UI Globals" offset="0x80" visible="True" />
+    <tagRef name="Singleplayer UI Globals" offset="0x88" visible="True" />
+    <tagRef name="Multiplayer UI Globals" offset="0x90" visible="True" />
+  </struct>
+  <struct name="Weapon List (To Do With Hard Coded Enum)" offset="0x128" visible="True" size="0x98">
+    <tagRef name="Weapon" offset="0x0" visible="True" />
+  </struct>
+  <struct name="Cheat Powerups" offset="0x128" visible="True" size="0x98">
+    <tagRef name="Powerup" offset="0x0" visible="True" />
+  </struct>
+  <struct name="Multiplayer Information (depricated)" offset="0x128" visible="True" size="0x98">
+    <tagRef name="Flag" offset="0x0" visible="True" />
+    <tagRef name="Unit" offset="0x8" visible="True" />
+    <tagRef name="Hill Shader" offset="0x18" visible="True" />
+    <tagRef name="Flag Shader" offset="0x20" visible="True" />
+    <tagRef name="Ball" offset="0x28" visible="True" />
+  </struct>
+  <struct name="Player Information" offset="0x130" visible="True" size="0x11C">
+    <tagRef name="unused" offset="0x0" visible="True" />
+    <tagRef name="Coop Respawn Effect" offset="0xB0" visible="True" />
+    <tagRef name="Binoculars Zoom In Sound" offset="0xC4" visible="True" />
+    <tagRef name="Binoculars Zoom Out Sound" offset="0xCC" visible="True" />
+    <tagRef name="Active Camo On" offset="0xE4" visible="True" />
+    <tagRef name="Active Camo Off" offset="0xEC" visible="True" />
+    <tagRef name="Active Camo Error" offset="0xF4" visible="True" />
+    <tagRef name="Active Camo Ready" offset="0xFC" visible="True" />
+    <tagRef name="Flashlight On" offset="0x104" visible="True" />
+    <tagRef name="Flashlight Off" offset="0x10C" visible="True" />
+    <tagRef name="Ice Cream" offset="0x114" visible="True" />
+  </struct>
+  <struct name="Player Representation" offset="0x138" visible="True" size="0xBC">
+    <tagRef name="1st Person Hands" offset="0x0" visible="True" />
+    <tagRef name="1st Person Body" offset="0x8" visible="True" />
+    <tagRef name="3rd Person Unit" offset="0xB0" visible="True" />
+    <stringID name="3rd Person Unit Variant" offset="0xB8" visible="True" />
+  </struct>
+  <struct name="Falling Damage" offset="0x140" visible="True" size="0x68">
+    <tagRef name="Falling Damage" offset="0x10" visible="True" />
+    <tagRef name="Distance Damage" offset="0x24" visible="True" />
+    <tagRef name="Vehicle Environment Collision Damage" offset="0x2C" visible="True" />
+    <tagRef name="Vehicle Killed Unit Damage Effect" offset="0x34" visible="True" />
+    <tagRef name="Vehicle Collision Damage" offset="0x3C" visible="True" />
+    <tagRef name="Flaming Death Damage" offset="0x44" visible="True" />
+  </struct>
+  <struct name="Old Materials" offset="0x148" visible="True" size="0x24">
+    <stringID name="Material Name" offset="0x0" visible="True" />
+    <stringID name="General Material Name" offset="0x4" visible="True" />
+    <tagRef name="Melee Hit Sound" offset="0x1C" visible="True" />
+  </struct>
+  <struct name="Materials" offset="0x150" visible="True" size="0xB4">
+    <stringID name="Name" offset="0x0" visible="True" />
+    <stringID name="Parent Name" offset="0x4" visible="True" />
+    <enum32 name="Old Material Type" offset="0xC" visible="True">
+      <option name="Dirt" value="0x0" />
+      <option name="Sand" value="0x1" />
+      <option name="Stone" value="0x2" />
+      <option name="Snow" value="0x3" />
+      <option name="Wood" value="0x4" />
+      <option name="Metal (hollow)" value="0x5" />
+      <option name="Metal (thin)" value="0x6" />
+      <option name="Metal (thick)" value="0x7" />
+      <option name="Rubber" value="0x8" />
+      <option name="Glass" value="0x9" />
+      <option name="Force Field" value="0xA" />
+      <option name="Grunt" value="0xB" />
+      <option name="Hunter Armor" value="0xC" />
+      <option name="Hunter Skin" value="0xD" />
+      <option name="Elite" value="0xE" />
+      <option name="Jackal" value="0xF" />
+      <option name="Jackal Energy Shield" value="0x10" />
+      <option name="Engineer Skin" value="0x11" />
+      <option name="Engineer Force Field" value="0x12" />
+      <option name="Flood Combat Form" value="0x13" />
+      <option name="Flood Carrier Form" value="0x14" />
+      <option name="Cyborg Armor" value="0x15" />
+      <option name="Cyborg Energy Shield" value="0x16" />
+      <option name="Human Armor" value="0x17" />
+      <option name="Human Skin" value="0x18" />
+      <option name="Sentinel" value="0x19" />
+      <option name="Monitor" value="0x1A" />
+      <option name="Plastic" value="0x1B" />
+      <option name="Water" value="0x1C" />
+      <option name="Leaves" value="0x1D" />
+      <option name="Elite Energy Shield" value="0x1E" />
+      <option name="Ice" value="0x1F" />
+      <option name="Hunter Shield" value="0x20" />
+    </enum32>
+    <stringID name="General Armor" offset="0x10" visible="True" />
+    <stringID name="Specific Armor" offset="0x14" visible="True" />
+    <tagRef name="Old Material Physics" offset="0x28" visible="True" />
+    <tagRef name="Breakable Surface" offset="0x30" visible="True" />
+    <tagRef name="Sound Sweetener (small)" offset="0x38" visible="True" />
+    <tagRef name="Sound Sweetener (medium)" offset="0x40" visible="True" />
+    <tagRef name="Sound Sweetener (large)" offset="0x48" visible="True" />
+    <tagRef name="Sound Sweetener Rolling" offset="0x50" visible="True" />
+    <tagRef name="Sound Sweetener Grinding" offset="0x58" visible="True" />
+    <tagRef name="Sound Sweetener (melee)" offset="0x60" visible="True" />
+    <tagRef name="Effect Sweetener (small)" offset="0x70" visible="True" />
+    <tagRef name="Effect Sweetener (medium)" offset="0x78" visible="True" />
+    <tagRef name="Effect Sweetener (large)" offset="0x80" visible="True" />
+    <tagRef name="Effect Sweetener Rolling" offset="0x88" visible="True" />
+    <tagRef name="Effect Sweetener Grinding" offset="0x90" visible="True" />
+    <tagRef name="Effect Sweetener (melee)" offset="0x98" visible="True" />
+    <tagRef name="Material Effects" offset="0xAC" visible="True" />
+  </struct>
+  <struct name="Multiplayer UI (obsolete)" offset="0x158" visible="True" size="0x20" />
+  <struct name="Profile Colors" offset="0x160" visible="True" size="0xC" />
+  <tagRef name="Multiplayer Globals" offset="0x168" visible="True" />
+  <struct name="Runtime Level Data" offset="0x170" visible="True" size="0x8">
+    <struct name="Campaign Levels" offset="0x0" visible="True" size="0x108">
+      <int32 name="Campaign ID" offset="0x0" visible="True" />
+      <int32 name="Map ID" offset="0x4" visible="True" />
+    </struct>
+  </struct>
+  <struct name="UI Level Data" offset="0x178" visible="True" size="0x18">
+    <struct name="Campaigns" offset="0x0" visible="True" size="0xB44">
+      <int32 name="Campaign ID" offset="0x0" visible="True" />
+    </struct>
+    <struct name="Campaign Levels" offset="0x8" visible="True" size="0xB50">
+      <int32 name="Campaign ID" offset="0x0" visible="True" />
+      <int32 name="Map ID" offset="0x4" visible="True" />
+      <tagRef name="Preview Image" offset="0x8" visible="True" />
+    </struct>
+    <struct name="Multiplayer" offset="0x10" visible="True" size="0xC64">
+      <int32 name="Map ID" offset="0x0" visible="True" />
+      <tagRef name="Preview Image" offset="0x4" visible="True" />
+      <int32 name="Sort Order" offset="0xC4C" visible="True" />
+    </struct>
+  </struct>
+  <tagRef name="Default Global Lighting" offset="0x180" visible="True" />
+  <int32 name="English String Count" offset="0x190" visible="True" />
+  <int32 name="English String Table Size" offset="0x194" visible="True" />
+  <int32 name="English String Index Offset" offset="0x198" visible="True" />
+  <int32 name="English String Table Offset" offset="0x19C" visible="True" />
+  <int32 name="Unknown" offset="0x1A0" visible="False" />
+  <int32 name="Japanese String Count" offset="0x1AC" visible="True" />
+  <int32 name="Japanese String Table Size" offset="0x1B0" visible="True" />
+  <int32 name="Japanese String Index Offset" offset="0x1B4" visible="True" />
+  <int32 name="Japanese String Table Offset" offset="0x1B8" visible="True" />
+  <int32 name="Unknown" offset="0x1BC" visible="False" />
+  <int32 name="German String Count" offset="0x1C8" visible="True" />
+  <int32 name="German String Table Size" offset="0x1CC" visible="True" />
+  <int32 name="German String Index Offset" offset="0x1D0" visible="True" />
+  <int32 name="German String Table Offset" offset="0x1D4" visible="True" />
+  <int32 name="Unknown" offset="0x1D8" visible="False" />
+  <int32 name="French String Count" offset="0x1E4" visible="True" />
+  <int32 name="French String Table Size" offset="0x1E8" visible="True" />
+  <int32 name="French String Index Offset" offset="0x1EC" visible="True" />
+  <int32 name="French String Table Offset" offset="0x1F0" visible="True" />
+  <int32 name="Unknown" offset="0x1F4" visible="False" />
+  <int32 name="Spanish String Count" offset="0x200" visible="True" />
+  <int32 name="Spanish String Table Size" offset="0x204" visible="True" />
+  <int32 name="Spanish String Index Offset" offset="0x208" visible="True" />
+  <int32 name="Spanish String Table Offset" offset="0x20C" visible="True" />
+  <int32 name="Unknown" offset="0x210" visible="False" />
+  <int32 name="Italian String Count" offset="0x21C" visible="True" />
+  <int32 name="Italian String Table Size" offset="0x220" visible="True" />
+  <int32 name="Italian String Index Offset" offset="0x224" visible="True" />
+  <int32 name="Italian String Table Offset" offset="0x228" visible="True" />
+  <int32 name="Unknown" offset="0x22C" visible="False" />
+  <int32 name="Korean String Count" offset="0x238" visible="True" />
+  <int32 name="Korean String Table Size" offset="0x23C" visible="True" />
+  <int32 name="Korean String Index Offset" offset="0x240" visible="True" />
+  <int32 name="Korean String Table Offset" offset="0x244" visible="True" />
+  <int32 name="Unknown" offset="0x248" visible="False" />
+  <int32 name="Chinese String Count" offset="0x254" visible="True" />
+  <int32 name="Chinese String Table Size" offset="0x258" visible="True" />
+  <int32 name="Chinese String Index Offset" offset="0x25C" visible="True" />
+  <int32 name="Chinese String Table Offset" offset="0x260" visible="True" />
+  <int32 name="Unknown" offset="0x264" visible="False" />
+  <int32 name="Portuguese String Count" offset="0x270" visible="True" />
+  <int32 name="Portuguese String Table Size" offset="0x274" visible="True" />
+  <int32 name="Portuguese String Index Offset" offset="0x278" visible="True" />
+  <int32 name="Portuguese String Table Offset" offset="0x27C" visible="True" />
+  <int32 name="Unknown" offset="0x280" visible="False" />
+</plugin>

@@ -1,0 +1,981 @@
+<plugin>
+  <revisions />
+  <tagRef name="Parent Animation Graph" offset="0x0" visible="True" />
+  <bitmask8 name="Inheritance Flags" offset="0x10" visible="True">
+    <option name="Inherit Root Trans Scale Only" value="0" />
+    <option name="Inherit For Use On Player" value="1" />
+    <option name="Bit 2" value="2" />
+    <option name="Bit 3" value="3" />
+    <option name="Bit 4" value="4" />
+    <option name="Bit 5" value="5" />
+    <option name="Bit 6" value="6" />
+    <option name="Bit 7" value="7" />
+  </bitmask8>
+  <bitmask8 name="Private Flags" offset="0x11" visible="True">
+    <option name="Prepared For Cache" value="0" />
+    <option name="Bit 1" value="1" />
+    <option name="Imported With Codec Compressors" value="2" />
+    <option name="Bit 3" value="3" />
+    <option name="Written To Cache" value="4" />
+    <option name="Animation Data Reordered" value="5" />
+    <option name="Bit 6" value="6" />
+    <option name="Bit 7" value="7" />
+  </bitmask8>
+  <int16 name="Animation Codec Pack" offset="0x12" visible="True" />
+  <struct name="Skeleton Nodes" offset="0x14" visible="True" size="0x20">
+    <stringID name="Name" offset="0x0" visible="True" />
+    <int16 name="Next Sibling Node Index" offset="0x4" visible="True" />
+    <int16 name="First Child Node Index" offset="0x6" visible="True" />
+    <int16 name="Parent Node Index" offset="0x8" visible="True" />
+    <bitmask8 name="Model Flags" offset="0xA" visible="True">
+      <option name="Primary Model" value="0" />
+      <option name="Secondary Model" value="1" />
+      <option name="Local Root" value="2" />
+      <option name="Left Hand" value="3" />
+      <option name="Right Hand" value="4" />
+      <option name="Left Arm Member" value="5" />
+      <option name="Bit 6" value="6" />
+      <option name="Bit 7" value="7" />
+    </bitmask8>
+    <bitmask8 name="Node Joint Flags" offset="0xB" visible="True">
+      <option name="Ball-Socket" value="0" />
+      <option name="Hinge" value="1" />
+      <option name="No Movement" value="2" />
+      <option name="Bit 3" value="3" />
+      <option name="Bit 4" value="4" />
+      <option name="Bit 5" value="5" />
+      <option name="Bit 6" value="6" />
+      <option name="Bit 7" value="7" />
+    </bitmask8>
+  </struct>
+  <struct name="Sound References" offset="0x20" visible="True" size="0x14">
+    <tagRef name="Sound" offset="0x0" visible="True" />
+    <bitmask16 name="Flags" offset="0x10" visible="True">
+      <option name="Allow on Player" value="0" />
+      <option name="Left Arm Only" value="1" />
+      <option name="Right Arm Only" value="2" />
+      <option name="First Person Only" value="3" />
+      <option name="Forward Only" value="4" />
+      <option name="Reverse Only" value="5" />
+      <option name="Bit 6" value="6" />
+      <option name="Bit 7" value="7" />
+      <option name="Bit 8" value="8" />
+      <option name="Bit 9" value="9" />
+      <option name="Bit 10" value="10" />
+      <option name="Bit 11" value="11" />
+      <option name="Bit 12" value="12" />
+      <option name="Bit 13" value="13" />
+      <option name="Bit 14" value="14" />
+      <option name="Bit 15" value="15" />
+    </bitmask16>
+    <int16 name="Unknown" offset="0x12" visible="False" />
+  </struct>
+  <struct name="Effect References" offset="0x2C" visible="True" size="0x14">
+    <tagRef name="Effect" offset="0x0" visible="True" />
+    <bitmask16 name="Flags" offset="0x10" visible="True">
+      <option name="Allow on Player" value="0" />
+      <option name="Left Arm Only" value="1" />
+      <option name="Right Arm Only" value="2" />
+      <option name="First Person Only" value="3" />
+      <option name="Forward Only" value="4" />
+      <option name="Reverse Only" value="5" />
+      <option name="Bit 6" value="6" />
+      <option name="Bit 7" value="7" />
+      <option name="Bit 8" value="8" />
+      <option name="Bit 9" value="9" />
+      <option name="Bit 10" value="10" />
+      <option name="Bit 11" value="11" />
+      <option name="Bit 12" value="12" />
+      <option name="Bit 13" value="13" />
+      <option name="Bit 14" value="14" />
+      <option name="Bit 15" value="15" />
+    </bitmask16>
+    <int16 name="Unknown" offset="0x12" visible="False" />
+  </struct>
+  <struct name="Blend Screens" offset="0x38" visible="True" size="0x1C">
+    <stringID name="Label" offset="0x0" visible="True" />
+    <int16 name="Right Frame Count" offset="0xC" visible="True" />
+    <int16 name="Left Frame Count" offset="0xE" visible="True" />
+    <int16 name="Down Pitch Frame Count" offset="0x18" visible="True" />
+    <int16 name="Up Pitch Frame Count" offset="0x1A" visible="True" />
+  </struct>
+  <struct name="Legs" offset="0x44" visible="True" size="0x1C">
+    <stringID name="Foot Marker" offset="0x0" visible="True" />
+    <stringID name="Ankle Marker" offset="0xC" visible="True" />
+    <enum16 name="Anchors" offset="0x18" visible="True">
+      <option name="False" value="0x0" />
+      <option name="True" value="0x1" />
+    </enum16>
+    <int16 name="Unknown" offset="0x1A" visible="False" />
+  </struct>
+  <struct name="Animations" offset="0x50" visible="True" size="0x88">
+    <stringID name="Name" offset="0x0" visible="True" />
+    <int16 name="Loop Frame Index" offset="0x8" visible="True" />
+    <bitmask16 name="Playback Flags" offset="0xA" visible="True">
+      <option name="Disable Interpolation In" value="0" />
+      <option name="Disable Interpolation Out" value="1" />
+      <option name="Disable Mode ik" value="2" />
+      <option name="Disable Weapon ik" value="3" />
+      <option name="Disable Weapon Aim/First Person" value="4" />
+      <option name="Disable Look Screen" value="5" />
+      <option name="Disable Transition Adjustment" value="6" />
+      <option name="Bit 7" value="7" />
+      <option name="Bit 8" value="8" />
+      <option name="Bit 9" value="9" />
+      <option name="Bit 10" value="10" />
+      <option name="Bit 11" value="11" />
+      <option name="Bit 12" value="12" />
+      <option name="Bit 13" value="13" />
+      <option name="Bit 14" value="14" />
+      <option name="Bit 15" value="15" />
+    </bitmask16>
+    <int8 name="Blend Screen" offset="0xC" visible="True" />
+    <enum8 name="Desired Compression" offset="0xD" visible="True">
+      <option name="Best Score" value="0x0" />
+      <option name="Best Compression" value="0x1" />
+      <option name="Best Accuracy" value="0x2" />
+      <option name="Best Fullframe" value="0x3" />
+      <option name="Best Small Keyframe" value="0x4" />
+      <option name="Best Large Keyframe" value="0x5" />
+    </enum8>
+    <enum8 name="Current Compression" offset="0xE" visible="True">
+      <option name="Best Score" value="0x0" />
+      <option name="Best Compression" value="0x1" />
+      <option name="Best Accuracy" value="0x2" />
+      <option name="Best Fullframe" value="0x3" />
+      <option name="Best Small Keyframe" value="0x4" />
+      <option name="Best Large Keyframe" value="0x5" />
+    </enum8>
+    <int16 name="Frame Count" offset="0x10" visible="True" />
+    <enum8 name="Type" offset="0x12" visible="True">
+      <option name="Base" value="0x0" />
+      <option name="Overlay" value="0x1" />
+      <option name="Replacement" value="0x2" />
+    </enum8>
+    <enum8 name="Frame Info Type" offset="0x13" visible="True">
+      <option name="None" value="0x0" />
+      <option name="dx,dy" value="0x1" />
+      <option name="dx,dy,dyaw" value="0x2" />
+      <option name="dx,dy,dz,dyaw" value="0x3" />
+    </enum8>
+    <bitmask16 name="Production Flags" offset="0x14" visible="True">
+      <option name="Do Not Monitor Changes" value="0" />
+      <option name="Verify Sound Events" value="1" />
+      <option name="Do Not Inherit For Player Graphs" value="2" />
+      <option name="Bit 3" value="3" />
+      <option name="Bit 4" value="4" />
+      <option name="Bit 5" value="5" />
+      <option name="Bit 6" value="6" />
+      <option name="Bit 7" value="7" />
+      <option name="Bit 8" value="8" />
+      <option name="Bit 9" value="9" />
+      <option name="Bit 10" value="10" />
+      <option name="Bit 11" value="11" />
+      <option name="Bit 12" value="12" />
+      <option name="Bit 13" value="13" />
+      <option name="Bit 14" value="14" />
+      <option name="Bit 15" value="15" />
+    </bitmask16>
+    <bitmask16 name="Internal Flags" offset="0x16" visible="True">
+      <option name="Bit 0" value="0" />
+      <option name="World Relative" value="1" />
+      <option name="Bit 2" value="2" />
+      <option name="Bit 3" value="3" />
+      <option name="Bit 4" value="4" />
+      <option name="Compression Disabled" value="5" />
+      <option name="Old Production Checksum" value="6" />
+      <option name="Valid Production Checksum" value="7" />
+      <option name="Bit 8" value="8" />
+      <option name="Bit 9" value="9" />
+      <option name="Bit 10" value="10" />
+      <option name="Bit 11" value="11" />
+      <option name="Bit 12" value="12" />
+      <option name="Bit 13" value="13" />
+      <option name="Bit 14" value="14" />
+      <option name="Bit 15" value="15" />
+    </bitmask16>
+    <int32 name="Node List Checksum" offset="0x18" visible="True" />
+    <int32 name="Production Checksum" offset="0x1C" visible="True" />
+    <int16 name="Unknown" offset="0x20" visible="False" />
+    <int16 name="Unknown" offset="0x22" visible="False" />
+    <int16 name="Previous Variant Sibling" offset="0x24" visible="True" />
+    <int16 name="Next Variant Sibling" offset="0x26" visible="True" />
+    <int16 name="Raw Information Group Index" offset="0x28" visible="True" />
+    <int16 name="Raw Information Member Index" offset="0x2A" visible="True" />
+    <struct name="Frame Events" offset="0x2C" visible="True" size="0x4">
+      <enum16 name="Type" offset="0x0" visible="True">
+        <option name="Primary Keyframe" value="0x0" />
+        <option name="Secondary Keyframe" value="0x1" />
+        <option name="Left Foot" value="0x2" />
+        <option name="Right Foot" value="0x3" />
+        <option name="Allow Interruption" value="0x4" />
+        <option name="Transition A" value="0x5" />
+        <option name="Transition B" value="0x6" />
+        <option name="Transition C" value="0x7" />
+        <option name="Transition D" value="0x8" />
+        <option name="Both-Feet Shuffle" value="0x9" />
+        <option name="Body Impact" value="0xA" />
+      </enum16>
+      <int16 name="Frame" offset="0x2" visible="True" />
+    </struct>
+    <struct name="Sound Events" offset="0x38" visible="True" size="0x8">
+      <int16 name="Sound" offset="0x0" visible="True" />
+      <int16 name="Frame" offset="0x2" visible="True" />
+      <stringID name="Marker Name" offset="0x4" visible="True" />
+    </struct>
+    <struct name="Effect Events" offset="0x44" visible="True" size="0x8">
+      <int16 name="Effect" offset="0x0" visible="True" />
+      <int16 name="Frame" offset="0x2" visible="True" />
+      <stringID name="Marker Name" offset="0x4" visible="True" />
+    </struct>
+    <undefined name="Unknown" offset="0x50" visible="False" />
+    <undefined name="Unknown" offset="0x54" visible="False" />
+    <undefined name="Unknown" offset="0x58" visible="False" />
+    <struct name="Object-Space Parent Nodes" offset="0x5C" visible="True" size="0x1C">
+      <int16 name="Node Index" offset="0x0" visible="True" />
+      <bitmask16 name="Component Flags" offset="0x2" visible="True">
+        <option name="Rotation" value="0" />
+        <option name="Translation" value="1" />
+        <option name="Scale" value="2" />
+      </bitmask16>
+      <int16 name="Rotation x" offset="0x4" visible="True" />
+      <int16 name="Rotation y" offset="0x6" visible="True" />
+      <int16 name="Rotation z" offset="0x8" visible="True" />
+      <int16 name="Rotation w" offset="0xA" visible="True" />
+    </struct>
+    <struct name="Leg Anchoring" offset="0x68" visible="True" size="0x10">
+      <int16 name="Leg Index" offset="0x0" visible="True" />
+      <int16 name="Unknown" offset="0x2" visible="False" />
+      <struct name="Unknown" offset="0x4" visible="True" size="0x14">
+        <int16 name="Frame 1a" offset="0x0" visible="True" />
+        <int16 name="Frame 2a" offset="0x2" visible="True" />
+        <int16 name="Frame 1b" offset="0x4" visible="True" />
+        <int16 name="Frame 2b" offset="0x6" visible="True" />
+        <undefined name="Unknown" offset="0x8" visible="False" />
+        <undefined name="Unknown" offset="0xC" visible="False" />
+        <undefined name="Unknown" offset="0x10" visible="False" />
+      </struct>
+    </struct>
+  </struct>
+  <struct name="Modes" offset="0x5C" visible="True" size="0x28">
+    <stringID name="Label" offset="0x0" visible="True" />
+    <struct name="Weapon Class" offset="0x4" visible="True" size="0x1C">
+      <stringID name="Label" offset="0x0" visible="True" />
+      <struct name="Weapon Type" offset="0x4" visible="True" size="0x34">
+        <stringID name="Label" offset="0x0" visible="True" />
+        <struct name="Actions" offset="0x4" visible="True" size="0x8">
+          <stringID name="Label" offset="0x0" visible="True" />
+          <int16 name="Graph Index" offset="0x4" visible="True" />
+          <int16 name="Animation" offset="0x6" visible="True" />
+        </struct>
+        <struct name="Overlays" offset="0x10" visible="True" size="0x8">
+          <stringID name="Label" offset="0x0" visible="True" />
+          <int16 name="Graph Index" offset="0x4" visible="True" />
+          <int16 name="Animation" offset="0x6" visible="True" />
+        </struct>
+        <struct name="Death and Damage" offset="0x1C" visible="True" size="0x10">
+          <stringID name="Label" offset="0x0" visible="True" />
+          <struct name="Directions" offset="0x4" visible="True" size="0xC">
+            <struct name="Regions" offset="0x0" visible="True" size="0x4">
+              <int16 name="Graph Index" offset="0x0" visible="True" />
+              <int16 name="Animation" offset="0x2" visible="True" />
+            </struct>
+          </struct>
+        </struct>
+        <struct name="Transitions" offset="0x28" visible="True" size="0x18">
+          <stringID name="Full Name" offset="0x0" visible="True" />
+          <stringID name="State Name" offset="0x4" visible="True" />
+          <int16 name="Unknown" offset="0x8" visible="False" />
+          <int8 name="Index A" offset="0xA" visible="True" />
+          <int8 name="Index B" offset="0xB" visible="True" />
+          <struct name="Destinations" offset="0xC" visible="True" size="0x14">
+            <stringID name="Full Name" offset="0x0" visible="True" />
+            <stringID name="Mode Name" offset="0x4" visible="True" />
+            <stringID name="State Name" offset="0x8" visible="True" />
+            <enum8 name="Frame Event Link" offset="0xC" visible="True">
+              <option name="No Keyframe" value="0x0" />
+              <option name="Keyframe Type A" value="0x1" />
+              <option name="Keyframe Type B" value="0x2" />
+              <option name="Keyframe Type C" value="0x3" />
+              <option name="Keyframe Type D" value="0x4" />
+            </enum8>
+            <int8 name="Unknown" offset="0xD" visible="False" />
+            <int8 name="Index A" offset="0xE" visible="True" />
+            <int8 name="Index B" offset="0xF" visible="True" />
+            <int16 name="Graph Index" offset="0x10" visible="True" />
+            <int16 name="Animation" offset="0x12" visible="True" />
+          </struct>
+        </struct>
+      </struct>
+      <struct name="Weapon ik" offset="0x10" visible="True" size="0x8">
+        <stringID name="Marker" offset="0x0" visible="True" />
+        <stringID name="Attach To Marker" offset="0x4" visible="True" />
+      </struct>
+    </struct>
+    <struct name="Mode ik" offset="0x10" visible="True" size="0x8">
+      <stringID name="Marker" offset="0x0" visible="True" />
+      <stringID name="Attach To Marker" offset="0x4" visible="True" />
+    </struct>
+    <undefined name="Unknown" offset="0x1C" visible="False" />
+    <undefined name="Unknown" offset="0x20" visible="False" />
+    <undefined name="Unknown" offset="0x24" visible="False" />
+  </struct>
+  <struct name="Vehicle Suspension" offset="0x68" visible="True" size="0x28">
+    <stringID name="Label" offset="0x0" visible="True" />
+    <int16 name="Graph Index" offset="0x4" visible="True" />
+    <int16 name="Animation" offset="0x6" visible="True" />
+    <stringID name="Marker Name" offset="0x8" visible="True" />
+    <comment name="Destroyed Suspension" visible="True" />
+    <stringID name="Region Name" offset="0x18" visible="True" />
+  </struct>
+  <struct name="Object Overlays" offset="0x74" visible="True" size="0x14">
+    <stringID name="Label" offset="0x0" visible="True" />
+    <int16 name="Graph Index" offset="0x4" visible="True" />
+    <int16 name="Animation" offset="0x6" visible="True" />
+    <int16 name="Unknown" offset="0x8" visible="False" />
+    <enum16 name="Function Controls" offset="0xA" visible="True">
+      <option name="Frame" value="0x0" />
+      <option name="Scale" value="0x1" />
+    </enum16>
+    <stringID name="Function" offset="0xC" visible="True" />
+    <undefined name="Unknown" offset="0x10" visible="False" />
+  </struct>
+  <comment name="Inheritance" visible="True">The Node Map block should have the same count as the Inherited Graph's nodes. Each Local Node value corresponds to the nodes of THIS graph. If there is no matching node, -1 is acceptable.
+The Node Map Flags reflect which nodes in the Node Map are used, meaning a bit should be unchecked if it is -1 in the map.
+Root z Offset allows for differences in height. Updates in realtime so poke around until it looks how you want.
+To reference an inherited graph, set the Graph Index value of the animation(s) you want to the Inheritance List index that points to the graph.</comment>
+  <struct name="Inheritance List" offset="0x80" visible="True" size="0x30">
+    <tagRef name="Inherited Graph" offset="0x0" visible="True" />
+    <struct name="Node Map" offset="0x10" visible="True" size="0x2">
+      <int16 name="Local Node" offset="0x0" visible="True" />
+    </struct>
+    <struct name="Node Map Flags" offset="0x1C" visible="True" size="0x4">
+      <bitmask32 name="Local Node Flags" offset="0x0" visible="True">
+        <option name="Node 0, 32, 64, 96, 128, 160, 192, 224" value="0" />
+        <option name="Node 1, 33, 65, 97, 129, 161, 193, 225" value="1" />
+        <option name="Node 2, 34, 66, 98, 130, 162, 194, 226" value="2" />
+        <option name="Node 3, 35, 67, 99, 131, 163, 195, 227" value="3" />
+        <option name="Node 4, 36, 68, 100, 132, 164, 196, 228" value="4" />
+        <option name="Node 5, 37, 69, 101, 133, 165, 197, 229" value="5" />
+        <option name="Node 6, 38, 70, 102, 134, 166, 198, 230" value="6" />
+        <option name="Node 7, 39, 71, 103, 135, 167, 199, 231" value="7" />
+        <option name="Node 8, 40, 72, 104, 136, 168, 200, 232" value="8" />
+        <option name="Node 9, 41, 73, 105, 137, 169, 201, 233" value="9" />
+        <option name="Node 10, 42, 74, 106, 138, 170, 202, 234" value="10" />
+        <option name="Node 11, 43, 75, 107, 139, 171, 203, 235" value="11" />
+        <option name="Node 12, 44, 76, 108, 140, 172, 204, 236" value="12" />
+        <option name="Node 13, 45, 77, 109, 141, 173, 205, 237" value="13" />
+        <option name="Node 14, 46, 78, 110, 142, 174, 206, 238" value="14" />
+        <option name="Node 15, 47, 79, 111, 143, 175, 207, 239" value="15" />
+        <option name="Node 16, 48, 80, 112, 144, 176, 208, 240" value="16" />
+        <option name="Node 17, 49, 81, 113, 145, 177, 209, 241" value="17" />
+        <option name="Node 18, 50, 82, 114, 146, 178, 210, 242" value="18" />
+        <option name="Node 19, 51, 83, 115, 147, 179, 211, 243" value="19" />
+        <option name="Node 20, 52, 84, 116, 148, 180, 212, 244" value="20" />
+        <option name="Node 21, 53, 85, 117, 149, 181, 213, 245" value="21" />
+        <option name="Node 22, 54, 86, 118, 150, 182, 214, 246" value="22" />
+        <option name="Node 23, 55, 87, 119, 151, 183, 215, 247" value="23" />
+        <option name="Node 24, 56, 88, 120, 152, 184, 216, 248" value="24" />
+        <option name="Node 25, 57, 89, 121, 153, 185, 217, 249" value="25" />
+        <option name="Node 26, 58, 90, 122, 154, 186, 218, 250" value="26" />
+        <option name="Node 27, 59, 91, 123, 155, 187, 219, 251" value="27" />
+        <option name="Node 28, 60, 92, 124, 156, 188, 220, 252" value="28" />
+        <option name="Node 29, 61, 93, 125, 157, 189, 221, 253" value="29" />
+        <option name="Node 30, 62, 94, 126, 158, 190, 222, 254" value="30" />
+        <option name="Node 31, 63, 95, 127, 159, 191, 223, 255" value="31" />
+      </bitmask32>
+    </struct>
+    <bitmask32 name="Inheritance Flags" offset="0x2C" visible="True">
+      <option name="Tighten Nodes" value="0" />
+      <option name="Bit 1" value="1" />
+      <option name="Bit 2" value="2" />
+      <option name="Bit 3" value="3" />
+      <option name="Bit 4" value="4" />
+      <option name="Bit 5" value="5" />
+      <option name="Bit 6" value="6" />
+      <option name="Bit 7" value="7" />
+      <option name="Bit 8" value="8" />
+      <option name="Bit 9" value="9" />
+      <option name="Bit 10" value="10" />
+      <option name="Bit 11" value="11" />
+      <option name="Bit 12" value="12" />
+      <option name="Bit 13" value="13" />
+      <option name="Bit 14" value="14" />
+      <option name="Bit 15" value="15" />
+      <option name="Bit 16" value="16" />
+      <option name="Bit 17" value="17" />
+      <option name="Bit 18" value="18" />
+      <option name="Bit 19" value="19" />
+      <option name="Bit 20" value="20" />
+      <option name="Bit 21" value="21" />
+      <option name="Bit 22" value="22" />
+      <option name="Bit 23" value="23" />
+      <option name="Bit 24" value="24" />
+      <option name="Bit 25" value="25" />
+      <option name="Bit 26" value="26" />
+      <option name="Bit 27" value="27" />
+      <option name="Bit 28" value="28" />
+      <option name="Bit 29" value="29" />
+      <option name="Bit 30" value="30" />
+      <option name="Bit 31" value="31" />
+    </bitmask32>
+  </struct>
+  <struct name="Weapon List" offset="0x8C" visible="True" size="0x8">
+    <stringID name="Weapon Name" offset="0x0" visible="True" />
+    <stringID name="Weapon Class" offset="0x4" visible="True" />
+  </struct>
+  <bitmask32 name="Unknown Arm Nodes 1" offset="0x98" visible="False">
+    <option name="Node 0" value="0" />
+    <option name="Node 1" value="1" />
+    <option name="Node 2" value="2" />
+    <option name="Node 3" value="3" />
+    <option name="Node 4" value="4" />
+    <option name="Node 5" value="5" />
+    <option name="Node 6" value="6" />
+    <option name="Node 7" value="7" />
+    <option name="Node 8" value="8" />
+    <option name="Node 9" value="9" />
+    <option name="Node 10" value="10" />
+    <option name="Node 11" value="11" />
+    <option name="Node 12" value="12" />
+    <option name="Node 13" value="13" />
+    <option name="Node 14" value="14" />
+    <option name="Node 15" value="15" />
+    <option name="Node 16" value="16" />
+    <option name="Node 17" value="17" />
+    <option name="Node 18" value="18" />
+    <option name="Node 19" value="19" />
+    <option name="Node 20" value="20" />
+    <option name="Node 21" value="21" />
+    <option name="Node 22" value="22" />
+    <option name="Node 23" value="23" />
+    <option name="Node 24" value="24" />
+    <option name="Node 25" value="25" />
+    <option name="Node 26" value="26" />
+    <option name="Node 27" value="27" />
+    <option name="Node 28" value="28" />
+    <option name="Node 29" value="29" />
+    <option name="Node 30" value="30" />
+    <option name="Node 31" value="31" />
+  </bitmask32>
+  <bitmask32 name="Unknown Arm Nodes 2" offset="0x9C" visible="False">
+    <option name="Node 32" value="0" />
+    <option name="Node 33" value="1" />
+    <option name="Node 34" value="2" />
+    <option name="Node 35" value="3" />
+    <option name="Node 36" value="4" />
+    <option name="Node 37" value="5" />
+    <option name="Node 38" value="6" />
+    <option name="Node 39" value="7" />
+    <option name="Node 40" value="8" />
+    <option name="Node 41" value="9" />
+    <option name="Node 42" value="10" />
+    <option name="Node 43" value="11" />
+    <option name="Node 44" value="12" />
+    <option name="Node 45" value="13" />
+    <option name="Node 46" value="14" />
+    <option name="Node 47" value="15" />
+    <option name="Node 48" value="16" />
+    <option name="Node 49" value="17" />
+    <option name="Node 50" value="18" />
+    <option name="Node 51" value="19" />
+    <option name="Node 52" value="20" />
+    <option name="Node 53" value="21" />
+    <option name="Node 54" value="22" />
+    <option name="Node 55" value="23" />
+    <option name="Node 56" value="24" />
+    <option name="Node 57" value="25" />
+    <option name="Node 58" value="26" />
+    <option name="Node 59" value="27" />
+    <option name="Node 60" value="28" />
+    <option name="Node 61" value="29" />
+    <option name="Node 62" value="30" />
+    <option name="Node 63" value="31" />
+  </bitmask32>
+  <bitmask32 name="Unknown Arm Nodes 3" offset="0xA0" visible="False">
+    <option name="Node 64" value="0" />
+    <option name="Node 65" value="1" />
+    <option name="Node 66" value="2" />
+    <option name="Node 67" value="3" />
+    <option name="Node 68" value="4" />
+    <option name="Node 69" value="5" />
+    <option name="Node 70" value="6" />
+    <option name="Node 71" value="7" />
+    <option name="Node 72" value="8" />
+    <option name="Node 73" value="9" />
+    <option name="Node 74" value="10" />
+    <option name="Node 75" value="11" />
+    <option name="Node 76" value="12" />
+    <option name="Node 77" value="13" />
+    <option name="Node 78" value="14" />
+    <option name="Node 79" value="15" />
+    <option name="Node 80" value="16" />
+    <option name="Node 81" value="17" />
+    <option name="Node 82" value="18" />
+    <option name="Node 83" value="19" />
+    <option name="Node 84" value="20" />
+    <option name="Node 85" value="21" />
+    <option name="Node 86" value="22" />
+    <option name="Node 87" value="23" />
+    <option name="Node 88" value="24" />
+    <option name="Node 89" value="25" />
+    <option name="Node 90" value="26" />
+    <option name="Node 91" value="27" />
+    <option name="Node 92" value="28" />
+    <option name="Node 93" value="29" />
+    <option name="Node 94" value="30" />
+    <option name="Node 95" value="31" />
+  </bitmask32>
+  <bitmask32 name="Unknown Arm Nodes 4" offset="0xA4" visible="False">
+    <option name="Node 96" value="0" />
+    <option name="Node 97" value="1" />
+    <option name="Node 98" value="2" />
+    <option name="Node 99" value="3" />
+    <option name="Node 100" value="4" />
+    <option name="Node 101" value="5" />
+    <option name="Node 102" value="6" />
+    <option name="Node 103" value="7" />
+    <option name="Node 104" value="8" />
+    <option name="Node 105" value="9" />
+    <option name="Node 106" value="10" />
+    <option name="Node 107" value="11" />
+    <option name="Node 108" value="12" />
+    <option name="Node 109" value="13" />
+    <option name="Node 110" value="14" />
+    <option name="Node 111" value="15" />
+    <option name="Node 112" value="16" />
+    <option name="Node 113" value="17" />
+    <option name="Node 114" value="18" />
+    <option name="Node 115" value="19" />
+    <option name="Node 116" value="20" />
+    <option name="Node 117" value="21" />
+    <option name="Node 118" value="22" />
+    <option name="Node 119" value="23" />
+    <option name="Node 120" value="24" />
+    <option name="Node 121" value="25" />
+    <option name="Node 122" value="26" />
+    <option name="Node 123" value="27" />
+    <option name="Node 124" value="28" />
+    <option name="Node 125" value="29" />
+    <option name="Node 126" value="30" />
+    <option name="Node 127" value="31" />
+  </bitmask32>
+  <bitmask32 name="Unknown Arm Nodes 5" offset="0xA8" visible="False">
+    <option name="Node 128" value="0" />
+    <option name="Node 129" value="1" />
+    <option name="Node 130" value="2" />
+    <option name="Node 131" value="3" />
+    <option name="Node 132" value="4" />
+    <option name="Node 133" value="5" />
+    <option name="Node 134" value="6" />
+    <option name="Node 135" value="7" />
+    <option name="Node 136" value="8" />
+    <option name="Node 137" value="9" />
+    <option name="Node 138" value="10" />
+    <option name="Node 139" value="11" />
+    <option name="Node 140" value="12" />
+    <option name="Node 141" value="13" />
+    <option name="Node 142" value="14" />
+    <option name="Node 143" value="15" />
+    <option name="Node 144" value="16" />
+    <option name="Node 145" value="17" />
+    <option name="Node 146" value="18" />
+    <option name="Node 147" value="19" />
+    <option name="Node 148" value="20" />
+    <option name="Node 149" value="21" />
+    <option name="Node 150" value="22" />
+    <option name="Node 151" value="23" />
+    <option name="Node 152" value="24" />
+    <option name="Node 153" value="25" />
+    <option name="Node 154" value="26" />
+    <option name="Node 155" value="27" />
+    <option name="Node 156" value="28" />
+    <option name="Node 157" value="29" />
+    <option name="Node 158" value="30" />
+    <option name="Node 159" value="31" />
+  </bitmask32>
+  <bitmask32 name="Unknown Arm Nodes 6" offset="0xAC" visible="False">
+    <option name="Node 160" value="0" />
+    <option name="Node 161" value="1" />
+    <option name="Node 162" value="2" />
+    <option name="Node 163" value="3" />
+    <option name="Node 164" value="4" />
+    <option name="Node 165" value="5" />
+    <option name="Node 166" value="6" />
+    <option name="Node 167" value="7" />
+    <option name="Node 168" value="8" />
+    <option name="Node 169" value="9" />
+    <option name="Node 170" value="10" />
+    <option name="Node 171" value="11" />
+    <option name="Node 172" value="12" />
+    <option name="Node 173" value="13" />
+    <option name="Node 174" value="14" />
+    <option name="Node 175" value="15" />
+    <option name="Node 176" value="16" />
+    <option name="Node 177" value="17" />
+    <option name="Node 178" value="18" />
+    <option name="Node 179" value="19" />
+    <option name="Node 180" value="20" />
+    <option name="Node 181" value="21" />
+    <option name="Node 182" value="22" />
+    <option name="Node 183" value="23" />
+    <option name="Node 184" value="24" />
+    <option name="Node 185" value="25" />
+    <option name="Node 186" value="26" />
+    <option name="Node 187" value="27" />
+    <option name="Node 188" value="28" />
+    <option name="Node 189" value="29" />
+    <option name="Node 190" value="30" />
+    <option name="Node 191" value="31" />
+  </bitmask32>
+  <bitmask32 name="Unknown Arm Nodes 7" offset="0xB0" visible="False">
+    <option name="Node 192" value="0" />
+    <option name="Node 193" value="1" />
+    <option name="Node 194" value="2" />
+    <option name="Node 195" value="3" />
+    <option name="Node 196" value="4" />
+    <option name="Node 197" value="5" />
+    <option name="Node 198" value="6" />
+    <option name="Node 199" value="7" />
+    <option name="Node 200" value="8" />
+    <option name="Node 201" value="9" />
+    <option name="Node 202" value="10" />
+    <option name="Node 203" value="11" />
+    <option name="Node 204" value="12" />
+    <option name="Node 205" value="13" />
+    <option name="Node 206" value="14" />
+    <option name="Node 207" value="15" />
+    <option name="Node 208" value="16" />
+    <option name="Node 209" value="17" />
+    <option name="Node 210" value="18" />
+    <option name="Node 211" value="19" />
+    <option name="Node 212" value="20" />
+    <option name="Node 213" value="21" />
+    <option name="Node 214" value="22" />
+    <option name="Node 215" value="23" />
+    <option name="Node 216" value="24" />
+    <option name="Node 217" value="25" />
+    <option name="Node 218" value="26" />
+    <option name="Node 219" value="27" />
+    <option name="Node 220" value="28" />
+    <option name="Node 221" value="29" />
+    <option name="Node 222" value="30" />
+    <option name="Node 223" value="31" />
+  </bitmask32>
+  <bitmask32 name="Unknown Arm Nodes 8" offset="0xB4" visible="False">
+    <option name="Node 224" value="0" />
+    <option name="Node 225" value="1" />
+    <option name="Node 226" value="2" />
+    <option name="Node 227" value="3" />
+    <option name="Node 228" value="4" />
+    <option name="Node 229" value="5" />
+    <option name="Node 230" value="6" />
+    <option name="Node 231" value="7" />
+    <option name="Node 232" value="8" />
+    <option name="Node 233" value="9" />
+    <option name="Node 234" value="10" />
+    <option name="Node 235" value="11" />
+    <option name="Node 236" value="12" />
+    <option name="Node 237" value="13" />
+    <option name="Node 238" value="14" />
+    <option name="Node 239" value="15" />
+    <option name="Node 240" value="16" />
+    <option name="Node 241" value="17" />
+    <option name="Node 242" value="18" />
+    <option name="Node 243" value="19" />
+    <option name="Node 244" value="20" />
+    <option name="Node 245" value="21" />
+    <option name="Node 246" value="22" />
+    <option name="Node 247" value="23" />
+    <option name="Node 248" value="24" />
+    <option name="Node 249" value="25" />
+    <option name="Node 250" value="26" />
+    <option name="Node 251" value="27" />
+    <option name="Node 252" value="28" />
+    <option name="Node 253" value="29" />
+    <option name="Node 254" value="30" />
+    <option name="Node 255" value="31" />
+  </bitmask32>
+  <bitmask32 name="Unknown Nodes 1" offset="0xB8" visible="False">
+    <option name="Node 0" value="0" />
+    <option name="Node 1" value="1" />
+    <option name="Node 2" value="2" />
+    <option name="Node 3" value="3" />
+    <option name="Node 4" value="4" />
+    <option name="Node 5" value="5" />
+    <option name="Node 6" value="6" />
+    <option name="Node 7" value="7" />
+    <option name="Node 8" value="8" />
+    <option name="Node 9" value="9" />
+    <option name="Node 10" value="10" />
+    <option name="Node 11" value="11" />
+    <option name="Node 12" value="12" />
+    <option name="Node 13" value="13" />
+    <option name="Node 14" value="14" />
+    <option name="Node 15" value="15" />
+    <option name="Node 16" value="16" />
+    <option name="Node 17" value="17" />
+    <option name="Node 18" value="18" />
+    <option name="Node 19" value="19" />
+    <option name="Node 20" value="20" />
+    <option name="Node 21" value="21" />
+    <option name="Node 22" value="22" />
+    <option name="Node 23" value="23" />
+    <option name="Node 24" value="24" />
+    <option name="Node 25" value="25" />
+    <option name="Node 26" value="26" />
+    <option name="Node 27" value="27" />
+    <option name="Node 28" value="28" />
+    <option name="Node 29" value="29" />
+    <option name="Node 30" value="30" />
+    <option name="Node 31" value="31" />
+  </bitmask32>
+  <bitmask32 name="Unknown Nodes 2" offset="0xBC" visible="False">
+    <option name="Node 32" value="0" />
+    <option name="Node 33" value="1" />
+    <option name="Node 34" value="2" />
+    <option name="Node 35" value="3" />
+    <option name="Node 36" value="4" />
+    <option name="Node 37" value="5" />
+    <option name="Node 38" value="6" />
+    <option name="Node 39" value="7" />
+    <option name="Node 40" value="8" />
+    <option name="Node 41" value="9" />
+    <option name="Node 42" value="10" />
+    <option name="Node 43" value="11" />
+    <option name="Node 44" value="12" />
+    <option name="Node 45" value="13" />
+    <option name="Node 46" value="14" />
+    <option name="Node 47" value="15" />
+    <option name="Node 48" value="16" />
+    <option name="Node 49" value="17" />
+    <option name="Node 50" value="18" />
+    <option name="Node 51" value="19" />
+    <option name="Node 52" value="20" />
+    <option name="Node 53" value="21" />
+    <option name="Node 54" value="22" />
+    <option name="Node 55" value="23" />
+    <option name="Node 56" value="24" />
+    <option name="Node 57" value="25" />
+    <option name="Node 58" value="26" />
+    <option name="Node 59" value="27" />
+    <option name="Node 60" value="28" />
+    <option name="Node 61" value="29" />
+    <option name="Node 62" value="30" />
+    <option name="Node 63" value="31" />
+  </bitmask32>
+  <bitmask32 name="Unknown Nodes 3" offset="0xC0" visible="False">
+    <option name="Node 64" value="0" />
+    <option name="Node 65" value="1" />
+    <option name="Node 66" value="2" />
+    <option name="Node 67" value="3" />
+    <option name="Node 68" value="4" />
+    <option name="Node 69" value="5" />
+    <option name="Node 70" value="6" />
+    <option name="Node 71" value="7" />
+    <option name="Node 72" value="8" />
+    <option name="Node 73" value="9" />
+    <option name="Node 74" value="10" />
+    <option name="Node 75" value="11" />
+    <option name="Node 76" value="12" />
+    <option name="Node 77" value="13" />
+    <option name="Node 78" value="14" />
+    <option name="Node 79" value="15" />
+    <option name="Node 80" value="16" />
+    <option name="Node 81" value="17" />
+    <option name="Node 82" value="18" />
+    <option name="Node 83" value="19" />
+    <option name="Node 84" value="20" />
+    <option name="Node 85" value="21" />
+    <option name="Node 86" value="22" />
+    <option name="Node 87" value="23" />
+    <option name="Node 88" value="24" />
+    <option name="Node 89" value="25" />
+    <option name="Node 90" value="26" />
+    <option name="Node 91" value="27" />
+    <option name="Node 92" value="28" />
+    <option name="Node 93" value="29" />
+    <option name="Node 94" value="30" />
+    <option name="Node 95" value="31" />
+  </bitmask32>
+  <bitmask32 name="Unknown Nodes 4" offset="0xC4" visible="False">
+    <option name="Node 96" value="0" />
+    <option name="Node 97" value="1" />
+    <option name="Node 98" value="2" />
+    <option name="Node 99" value="3" />
+    <option name="Node 100" value="4" />
+    <option name="Node 101" value="5" />
+    <option name="Node 102" value="6" />
+    <option name="Node 103" value="7" />
+    <option name="Node 104" value="8" />
+    <option name="Node 105" value="9" />
+    <option name="Node 106" value="10" />
+    <option name="Node 107" value="11" />
+    <option name="Node 108" value="12" />
+    <option name="Node 109" value="13" />
+    <option name="Node 110" value="14" />
+    <option name="Node 111" value="15" />
+    <option name="Node 112" value="16" />
+    <option name="Node 113" value="17" />
+    <option name="Node 114" value="18" />
+    <option name="Node 115" value="19" />
+    <option name="Node 116" value="20" />
+    <option name="Node 117" value="21" />
+    <option name="Node 118" value="22" />
+    <option name="Node 119" value="23" />
+    <option name="Node 120" value="24" />
+    <option name="Node 121" value="25" />
+    <option name="Node 122" value="26" />
+    <option name="Node 123" value="27" />
+    <option name="Node 124" value="28" />
+    <option name="Node 125" value="29" />
+    <option name="Node 126" value="30" />
+    <option name="Node 127" value="31" />
+  </bitmask32>
+  <bitmask32 name="Unknown Nodes 5" offset="0xC8" visible="False">
+    <option name="Node 128" value="0" />
+    <option name="Node 129" value="1" />
+    <option name="Node 130" value="2" />
+    <option name="Node 131" value="3" />
+    <option name="Node 132" value="4" />
+    <option name="Node 133" value="5" />
+    <option name="Node 134" value="6" />
+    <option name="Node 135" value="7" />
+    <option name="Node 136" value="8" />
+    <option name="Node 137" value="9" />
+    <option name="Node 138" value="10" />
+    <option name="Node 139" value="11" />
+    <option name="Node 140" value="12" />
+    <option name="Node 141" value="13" />
+    <option name="Node 142" value="14" />
+    <option name="Node 143" value="15" />
+    <option name="Node 144" value="16" />
+    <option name="Node 145" value="17" />
+    <option name="Node 146" value="18" />
+    <option name="Node 147" value="19" />
+    <option name="Node 148" value="20" />
+    <option name="Node 149" value="21" />
+    <option name="Node 150" value="22" />
+    <option name="Node 151" value="23" />
+    <option name="Node 152" value="24" />
+    <option name="Node 153" value="25" />
+    <option name="Node 154" value="26" />
+    <option name="Node 155" value="27" />
+    <option name="Node 156" value="28" />
+    <option name="Node 157" value="29" />
+    <option name="Node 158" value="30" />
+    <option name="Node 159" value="31" />
+  </bitmask32>
+  <bitmask32 name="Unknown Nodes 6" offset="0xCC" visible="False">
+    <option name="Node 160" value="0" />
+    <option name="Node 161" value="1" />
+    <option name="Node 162" value="2" />
+    <option name="Node 163" value="3" />
+    <option name="Node 164" value="4" />
+    <option name="Node 165" value="5" />
+    <option name="Node 166" value="6" />
+    <option name="Node 167" value="7" />
+    <option name="Node 168" value="8" />
+    <option name="Node 169" value="9" />
+    <option name="Node 170" value="10" />
+    <option name="Node 171" value="11" />
+    <option name="Node 172" value="12" />
+    <option name="Node 173" value="13" />
+    <option name="Node 174" value="14" />
+    <option name="Node 175" value="15" />
+    <option name="Node 176" value="16" />
+    <option name="Node 177" value="17" />
+    <option name="Node 178" value="18" />
+    <option name="Node 179" value="19" />
+    <option name="Node 180" value="20" />
+    <option name="Node 181" value="21" />
+    <option name="Node 182" value="22" />
+    <option name="Node 183" value="23" />
+    <option name="Node 184" value="24" />
+    <option name="Node 185" value="25" />
+    <option name="Node 186" value="26" />
+    <option name="Node 187" value="27" />
+    <option name="Node 188" value="28" />
+    <option name="Node 189" value="29" />
+    <option name="Node 190" value="30" />
+    <option name="Node 191" value="31" />
+  </bitmask32>
+  <bitmask32 name="Unknown Nodes 7" offset="0xD0" visible="False">
+    <option name="Node 192" value="0" />
+    <option name="Node 193" value="1" />
+    <option name="Node 194" value="2" />
+    <option name="Node 195" value="3" />
+    <option name="Node 196" value="4" />
+    <option name="Node 197" value="5" />
+    <option name="Node 198" value="6" />
+    <option name="Node 199" value="7" />
+    <option name="Node 200" value="8" />
+    <option name="Node 201" value="9" />
+    <option name="Node 202" value="10" />
+    <option name="Node 203" value="11" />
+    <option name="Node 204" value="12" />
+    <option name="Node 205" value="13" />
+    <option name="Node 206" value="14" />
+    <option name="Node 207" value="15" />
+    <option name="Node 208" value="16" />
+    <option name="Node 209" value="17" />
+    <option name="Node 210" value="18" />
+    <option name="Node 211" value="19" />
+    <option name="Node 212" value="20" />
+    <option name="Node 213" value="21" />
+    <option name="Node 214" value="22" />
+    <option name="Node 215" value="23" />
+    <option name="Node 216" value="24" />
+    <option name="Node 217" value="25" />
+    <option name="Node 218" value="26" />
+    <option name="Node 219" value="27" />
+    <option name="Node 220" value="28" />
+    <option name="Node 221" value="29" />
+    <option name="Node 222" value="30" />
+    <option name="Node 223" value="31" />
+  </bitmask32>
+  <bitmask32 name="Unknown Nodes 8" offset="0xD4" visible="False">
+    <option name="Node 224" value="0" />
+    <option name="Node 225" value="1" />
+    <option name="Node 226" value="2" />
+    <option name="Node 227" value="3" />
+    <option name="Node 228" value="4" />
+    <option name="Node 229" value="5" />
+    <option name="Node 230" value="6" />
+    <option name="Node 231" value="7" />
+    <option name="Node 232" value="8" />
+    <option name="Node 233" value="9" />
+    <option name="Node 234" value="10" />
+    <option name="Node 235" value="11" />
+    <option name="Node 236" value="12" />
+    <option name="Node 237" value="13" />
+    <option name="Node 238" value="14" />
+    <option name="Node 239" value="15" />
+    <option name="Node 240" value="16" />
+    <option name="Node 241" value="17" />
+    <option name="Node 242" value="18" />
+    <option name="Node 243" value="19" />
+    <option name="Node 244" value="20" />
+    <option name="Node 245" value="21" />
+    <option name="Node 246" value="22" />
+    <option name="Node 247" value="23" />
+    <option name="Node 248" value="24" />
+    <option name="Node 249" value="25" />
+    <option name="Node 250" value="26" />
+    <option name="Node 251" value="27" />
+    <option name="Node 252" value="28" />
+    <option name="Node 253" value="29" />
+    <option name="Node 254" value="30" />
+    <option name="Node 255" value="31" />
+  </bitmask32>
+  <undefined name="Unknown" offset="0xEC" visible="False" />
+  <undefined name="Unknown" offset="0xF0" visible="False" />
+  <undefined name="Unknown" offset="0xF4" visible="False" />
+  <struct name="Raw Information Groups" offset="0xF8" visible="True" size="0xC">
+    <int32 name="Member Count" offset="0x0" visible="True" />
+    <rawID name="[zone] Asset" offset="0x4" visible="True" />
+    <uint16 name="[zone] Asset Salt" offset="0x4" visible="True" />
+    <uint16 name="[zone] Asset Index" offset="0x6" visible="True" />
+    <int32 name="Useless Padding" offset="0x8" visible="False" />
+  </struct>
+</plugin>

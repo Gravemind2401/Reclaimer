@@ -1,0 +1,36 @@
+<plugin class="ligh" headersize="148">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Mapped plugin structure a new.</revision>
+    <revision author="DarkShallFall" version="0.9">I did what you see so go fuck ya self.</revision>
+  </revisions>
+  <bitmask32 name="Flags" offset="0" visible="True">
+    <option name="No Illumination" value="0" />
+    <option name="Force Cast Environment Shadow" value="1" />
+    <option name="Only Render In 1st Person" value="2" />
+    <option name="Only Render In 3rd Person" value="3" />
+    <option name="Don't Fade When Invisible" value="4" />
+    <option name="Multiplayer Override" value="5" />
+    <option name="Animated Gel" value="6" />
+  </bitmask32>
+  <enum16 name="Type" offset="4" visible="True">
+    <option name="Sphere" value="0" />
+    <option name="Orthogonal" value="1" />
+    <option name="Projective" value="2" />
+    <option name="Pyramid" value="3" />
+  </enum16>
+  <float32 name="Sphere Light Radius" offset="8" visible="True" />
+  <float32 name="Frustum Light Near Width" offset="12" visible="True" />
+  <float32 name="Frustum Light Height Stretch" offset="16" visible="True" />
+  <float32 name="Frustum Light Field Of View" offset="20" visible="True" />
+  <stringID name="Color Change Scale" offset="24" visible="True" />
+  <uint32 name="Offset" offset="52" visible="True" />
+  <stringID name="Brightness Change Scale" offset="60" visible="True" />
+  <tagRef name="Gel Map" offset="96" visible="True" />
+  <float32 name="Intensity" offset="112" visible="True" />
+  <float32 name="Illumination Amount" offset="116" visible="True" />
+  <float32 name="Brightness" offset="120" visible="True" />
+  <float32 name="Duration" offset="124" visible="True" />
+  <int16 name="Falloff Distance" offset="128" visible="True" />
+  <int16 name="Cutoff Distance" offset="130" visible="True" />
+  <tagRef name="Lens Flare" offset="132" visible="True" />
+</plugin>

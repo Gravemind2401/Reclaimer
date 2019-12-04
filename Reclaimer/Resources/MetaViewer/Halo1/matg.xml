@@ -1,0 +1,785 @@
+<plugin>
+  <undefined name="Unknown" offset="0x0" visible="false" />
+  <undefined name="Unknown" offset="0x4" visible="false" />
+  <undefined name="Unknown" offset="0x8" visible="false" />
+  <undefined name="Unknown" offset="0xC" visible="false" />
+  <undefined name="Unknown" offset="0x10" visible="false" />
+  <undefined name="Unknown" offset="0x14" visible="false" />
+  <undefined name="Unknown" offset="0x18" visible="false" />
+  <undefined name="Unknown" offset="0x1C" visible="false" />
+  <undefined name="Unknown" offset="0x20" visible="false" />
+  <undefined name="Unknown" offset="0x24" visible="false" />
+  <undefined name="Unknown" offset="0x28" visible="false" />
+  <undefined name="Unknown" offset="0x2C" visible="false" />
+  <undefined name="Unknown" offset="0x30" visible="false" />
+  <undefined name="Unknown" offset="0x34" visible="false" />
+  <undefined name="Unknown" offset="0x38" visible="false" />
+  <undefined name="Unknown" offset="0x3C" visible="false" />
+  <undefined name="Unknown" offset="0x40" visible="false" />
+  <undefined name="Unknown" offset="0x44" visible="false" />
+  <undefined name="Unknown" offset="0x48" visible="false" />
+  <undefined name="Unknown" offset="0x4C" visible="false" />
+  <undefined name="Unknown" offset="0x50" visible="false" />
+  <undefined name="Unknown" offset="0x54" visible="false" />
+  <undefined name="Unknown" offset="0x58" visible="false" />
+  <undefined name="Unknown" offset="0x5C" visible="false" />
+  <undefined name="Unknown" offset="0x60" visible="false" />
+  <undefined name="Unknown" offset="0x64" visible="false" />
+  <undefined name="Unknown" offset="0x68" visible="false" />
+  <undefined name="Unknown" offset="0x6C" visible="false" />
+  <undefined name="Unknown" offset="0x70" visible="false" />
+  <undefined name="Unknown" offset="0x74" visible="false" />
+  <undefined name="Unknown" offset="0x78" visible="false" />
+  <undefined name="Unknown" offset="0x7C" visible="false" />
+  <undefined name="Unknown" offset="0x80" visible="false" />
+  <undefined name="Unknown" offset="0x84" visible="false" />
+  <undefined name="Unknown" offset="0x88" visible="false" />
+  <undefined name="Unknown" offset="0x8C" visible="false" />
+  <undefined name="Unknown" offset="0x90" visible="false" />
+  <undefined name="Unknown" offset="0x94" visible="false" />
+  <undefined name="Unknown" offset="0x98" visible="false" />
+  <undefined name="Unknown" offset="0x9C" visible="false" />
+  <undefined name="Unknown" offset="0xA0" visible="false" />
+  <undefined name="Unknown" offset="0xA4" visible="false" />
+  <undefined name="Unknown" offset="0xA8" visible="false" />
+  <undefined name="Unknown" offset="0xAC" visible="false" />
+  <undefined name="Unknown" offset="0xB0" visible="false" />
+  <undefined name="Unknown" offset="0xB4" visible="false" />
+  <undefined name="Unknown" offset="0xB8" visible="false" />
+  <undefined name="Unknown" offset="0xBC" visible="false" />
+  <undefined name="Unknown" offset="0xC0" visible="false" />
+  <undefined name="Unknown" offset="0xC4" visible="false" />
+  <undefined name="Unknown" offset="0xC8" visible="false" />
+  <undefined name="Unknown" offset="0xCC" visible="false" />
+  <undefined name="Unknown" offset="0xD0" visible="false" />
+  <undefined name="Unknown" offset="0xD4" visible="false" />
+  <undefined name="Unknown" offset="0xD8" visible="false" />
+  <undefined name="Unknown" offset="0xDC" visible="false" />
+  <undefined name="Unknown" offset="0xE0" visible="false" />
+  <undefined name="Unknown" offset="0xE4" visible="false" />
+  <undefined name="Unknown" offset="0xE8" visible="false" />
+  <undefined name="Unknown" offset="0xEC" visible="false" />
+  <undefined name="Unknown" offset="0xF0" visible="false" />
+  <undefined name="Unknown" offset="0xF4" visible="false" />
+  <reflexive name="sounds" offset="0xF8" visible="true" entrySize="0x8">
+    <tagRef name="sound" offset="0x0" visible="true" />
+  </reflexive>
+  <reflexive name="camera" offset="0x100" visible="true" entrySize="0x8">
+    <tagRef name="default unit camera track" offset="0x0" visible="true" />
+  </reflexive>
+  <reflexive name="player control" offset="0x108" visible="true" entrySize="0x7C">
+    <float32 name="magnetism friction" offset="0x0" visible="true" description="how much the crosshair slows over enemies" />
+    <float32 name="magnetism adhesion" offset="0x4" visible="true" description="how much the crosshair sticks to enemies" />
+    <float32 name="inconsequential target scale" offset="0x8" visible="true" description="scales magnetism level for inconsequential targets like infection forms" />
+    <undefined name="Unknown" offset="0xC" visible="false" />
+    <undefined name="Unknown" offset="0x10" visible="false" />
+    <undefined name="Unknown" offset="0x14" visible="false" />
+    <undefined name="Unknown" offset="0x18" visible="false" />
+    <undefined name="Unknown" offset="0x1C" visible="false" />
+    <undefined name="Unknown" offset="0x20" visible="false" />
+    <undefined name="Unknown" offset="0x24" visible="false" />
+    <undefined name="Unknown" offset="0x28" visible="false" />
+    <undefined name="Unknown" offset="0x2C" visible="false" />
+    <undefined name="Unknown" offset="0x30" visible="false" />
+    <undefined name="Unknown" offset="0x34" visible="false" />
+    <undefined name="Unknown" offset="0x38" visible="false" />
+    <undefined name="Unknown" offset="0x3C" visible="false" />
+    <float32 name="look acceleration time" offset="0x40" visible="true" description="time for a pegged look to reach maximum effect" />
+    <float32 name="look acceleration scale" offset="0x44" visible="true" description="maximum effect of a pegged look (scales last value in the look function below)" />
+    <float32 name="look peg threshold [0,1]" offset="0x48" visible="true" description="magnitude of yaw for pegged acceleration to kick in" />
+    <float32 name="look default pitch rate" offset="0x4C" visible="true" description="degrees" />
+    <float32 name="look default yaw rate" offset="0x50" visible="true" description="degrees" />
+    <float32 name="look autolevelling scale" offset="0x54" visible="true" description="1 is fast, 0 is none, &gt;1 will probably be really fast" />
+    <undefined name="Unknown" offset="0x58" visible="false" />
+    <undefined name="Unknown" offset="0x5C" visible="false" />
+    <undefined name="Unknown" offset="0x60" visible="false" />
+    <undefined name="Unknown" offset="0x64" visible="false" />
+    <undefined name="Unknown" offset="0x68" visible="false" />
+    <int16 name="minimum weapon swap ticks" offset="0x6C" visible="true" description="amount of time player needs to hold down ACTION to pick up a new weapon" />
+    <int16 name="minimum autolevelling ticks" offset="0x6E" visible="true" description="amount of time player needs to move and not look up or down for autolevelling to kick in" />
+    <degree name="minimum angle for vehicle flipping" offset="0x70" visible="true" description="degrees" />
+    <reflexive name="look function" offset="0x74" visible="true" entrySize="0x4">
+      <float32 name="scale" offset="0x0" visible="true" />
+    </reflexive>
+  </reflexive>
+  <reflexive name="difficulty" offset="0x110" visible="true" entrySize="0x284">
+    <comment title="health">scale values for enemy health and damage settings</comment>
+    <float32 name="easy enemy damage" offset="0x0" visible="true" description="enemy damage multiplier on easy difficulty" />
+    <float32 name="normal enemy damage" offset="0x4" visible="true" description="enemy damage multiplier on normal difficulty" />
+    <float32 name="hard enemy damage" offset="0x8" visible="true" description="enemy damage multiplier on hard difficulty" />
+    <float32 name="imposs. enemy damage" offset="0xC" visible="true" description="enemy damage multiplier on impossible difficulty" />
+    <float32 name="easy enemy vitality" offset="0x10" visible="true" description="enemy maximum body vitality scale on easy difficulty" />
+    <float32 name="normal enemy vitality" offset="0x14" visible="true" description="enemy maximum body vitality scale on normal difficulty" />
+    <float32 name="hard enemy vitality" offset="0x18" visible="true" description="enemy maximum body vitality scale on hard difficulty" />
+    <float32 name="imposs. enemy vitality" offset="0x1C" visible="true" description="enemy maximum body vitality scale on impossible difficulty" />
+    <float32 name="easy enemy shield" offset="0x20" visible="true" description="enemy maximum shield vitality scale on easy difficulty" />
+    <float32 name="normal enemy shield" offset="0x24" visible="true" description="enemy maximum shield vitality scale on normal difficulty" />
+    <float32 name="hard enemy shield" offset="0x28" visible="true" description="enemy maximum shield vitality scale on hard difficulty" />
+    <float32 name="imposs. enemy shield" offset="0x2C" visible="true" description="enemy maximum shield vitality scale on impossible difficulty" />
+    <float32 name="easy enemy recharge" offset="0x30" visible="true" description="enemy shield recharge scale on easy difficulty" />
+    <float32 name="normal enemy recharge" offset="0x34" visible="true" description="enemy shield recharge scale on normal difficulty" />
+    <float32 name="hard enemy recharge" offset="0x38" visible="true" description="enemy shield recharge scale on hard difficulty" />
+    <float32 name="imposs. enemy recharge" offset="0x3C" visible="true" description="enemy shield recharge scale on impossible difficulty" />
+    <float32 name="easy friend damage" offset="0x40" visible="true" description="friend damage multiplier on easy difficulty" />
+    <float32 name="normal friend damage" offset="0x44" visible="true" description="friend damage multiplier on normal difficulty" />
+    <float32 name="hard friend damage" offset="0x48" visible="true" description="friend damage multiplier on hard difficulty" />
+    <float32 name="imposs. friend damage" offset="0x4C" visible="true" description="friend damage multiplier on impossible difficulty" />
+    <float32 name="easy friend vitality" offset="0x50" visible="true" description="friend maximum body vitality scale on easy difficulty" />
+    <float32 name="normal friend vitality" offset="0x54" visible="true" description="friend maximum body vitality scale on normal difficulty" />
+    <float32 name="hard friend vitality" offset="0x58" visible="true" description="friend maximum body vitality scale on hard difficulty" />
+    <float32 name="imposs. friend vitality" offset="0x5C" visible="true" description="friend maximum body vitality scale on impossible difficulty" />
+    <float32 name="easy friend shield" offset="0x60" visible="true" description="friend maximum shield vitality scale on easy difficulty" />
+    <float32 name="normal friend shield" offset="0x64" visible="true" description="friend maximum shield vitality scale on normal difficulty" />
+    <float32 name="hard friend shield" offset="0x68" visible="true" description="friend maximum shield vitality scale on hard difficulty" />
+    <float32 name="imposs. friend shield" offset="0x6C" visible="true" description="friend maximum shield vitality scale on impossible difficulty" />
+    <float32 name="easy friend recharge" offset="0x70" visible="true" description="friend shield recharge scale on easy difficulty" />
+    <float32 name="normal friend recharge" offset="0x74" visible="true" description="friend shield recharge scale on normal difficulty" />
+    <float32 name="hard friend recharge" offset="0x78" visible="true" description="friend shield recharge scale on hard difficulty" />
+    <float32 name="imposs. friend recharge" offset="0x7C" visible="true" description="friend shield recharge scale on impossible difficulty" />
+    <float32 name="easy infection forms" offset="0x80" visible="true" description="toughness of infection forms (may be negative) on easy difficulty" />
+    <float32 name="normal infection forms" offset="0x84" visible="true" description="toughness of infection forms (may be negative) on normal difficulty" />
+    <float32 name="hard infection forms" offset="0x88" visible="true" description="toughness of infection forms (may be negative) on hard difficulty" />
+    <float32 name="imposs. infection forms" offset="0x8C" visible="true" description="toughness of infection forms (may be negative) on impossible difficulty" />
+    <undefined name="Unknown" offset="0x90" visible="false" />
+    <undefined name="Unknown" offset="0x94" visible="false" />
+    <undefined name="Unknown" offset="0x98" visible="false" />
+    <undefined name="Unknown" offset="0x9C" visible="false" />
+    <comment title="ranged fire">difficulty-affecting values for enemy ranged combat settings</comment>
+    <float32 name="easy rate of fire" offset="0xA0" visible="true" description="enemy rate of fire scale on easy difficulty" />
+    <float32 name="normal rate of fire" offset="0xA4" visible="true" description="enemy rate of fire scale on normal difficulty" />
+    <float32 name="hard rate of fire" offset="0xA8" visible="true" description="enemy rate of fire scale on hard difficulty" />
+    <float32 name="imposs. rate of fire" offset="0xAC" visible="true" description="enemy rate of fire scale on impossible difficulty" />
+    <float32 name="easy projectile error" offset="0xB0" visible="true" description="enemy projectile error scale, as a fraction of their base firing error. on easy difficulty" />
+    <float32 name="normal projectile error" offset="0xB4" visible="true" description="enemy projectile error scale, as a fraction of their base firing error. on normal difficulty" />
+    <float32 name="hard projectile error" offset="0xB8" visible="true" description="enemy projectile error scale, as a fraction of their base firing error. on hard difficulty" />
+    <float32 name="imposs. projectile error" offset="0xBC" visible="true" description="enemy projectile error scale, as a fraction of their base firing error. on impossible difficulty" />
+    <float32 name="easy burst error" offset="0xC0" visible="true" description="enemy burst error scale; reduces intra-burst shot distance. on easy difficulty" />
+    <float32 name="normal burst error" offset="0xC4" visible="true" description="enemy burst error scale; reduces intra-burst shot distance. on normal difficulty" />
+    <float32 name="hard burst error" offset="0xC8" visible="true" description="enemy burst error scale; reduces intra-burst shot distance. on hard difficulty" />
+    <float32 name="imposs. burst error" offset="0xCC" visible="true" description="enemy burst error scale; reduces intra-burst shot distance. on impossible difficulty" />
+    <float32 name="easy new target delay" offset="0xD0" visible="true" description="enemy new-target delay scale factor. on easy difficulty" />
+    <float32 name="normal new target delay" offset="0xD4" visible="true" description="enemy new-target delay scale factor. on normal difficulty" />
+    <float32 name="hard new target delay" offset="0xD8" visible="true" description="enemy new-target delay scale factor. on hard difficulty" />
+    <float32 name="imposs. new target delay" offset="0xDC" visible="true" description="enemy new-target delay scale factor. on impossible difficulty" />
+    <float32 name="easy burst separation" offset="0xE0" visible="true" description="delay time between bursts scale factor for enemies. on easy difficulty" />
+    <float32 name="normal burst separation" offset="0xE4" visible="true" description="delay time between bursts scale factor for enemies. on normal difficulty" />
+    <float32 name="hard burst separation" offset="0xE8" visible="true" description="delay time between bursts scale factor for enemies. on hard difficulty" />
+    <float32 name="imposs. burst separation" offset="0xEC" visible="true" description="delay time between bursts scale factor for enemies. on impossible difficulty" />
+    <float32 name="easy target tracking" offset="0xF0" visible="true" description="additional target tracking fraction for enemies. on easy difficulty" />
+    <float32 name="normal target tracking" offset="0xF4" visible="true" description="additional target tracking fraction for enemies. on normal difficulty" />
+    <float32 name="hard target tracking" offset="0xF8" visible="true" description="additional target tracking fraction for enemies. on hard difficulty" />
+    <float32 name="imposs. target tracking" offset="0xFC" visible="true" description="additional target tracking fraction for enemies. on impossible difficulty" />
+    <float32 name="easy target leading" offset="0x100" visible="true" description="additional target leading fraction for enemies. on easy difficulty" />
+    <float32 name="normal target leading" offset="0x104" visible="true" description="additional target leading fraction for enemies. on normal difficulty" />
+    <float32 name="hard target leading" offset="0x108" visible="true" description="additional target leading fraction for enemies. on hard difficulty" />
+    <float32 name="imposs. target leading" offset="0x10C" visible="true" description="additional target leading fraction for enemies. on impossible difficulty" />
+    <float32 name="easy overcharge chance" offset="0x110" visible="true" description="overcharge chance scale factor for enemies. on easy difficulty" />
+    <float32 name="normal overcharge chance" offset="0x114" visible="true" description="overcharge chance scale factor for enemies. on normal difficulty" />
+    <float32 name="hard overcharge chance" offset="0x118" visible="true" description="overcharge chance scale factor for enemies. on hard difficulty" />
+    <float32 name="imposs. overcharge chance" offset="0x11C" visible="true" description="overcharge chance scale factor for enemies. on impossible difficulty" />
+    <float32 name="easy special fire delay" offset="0x120" visible="true" description="delay between special-fire shots (overcharge, banshee bombs) scale factor for enemies. on easy difficulty" />
+    <float32 name="normal special fire delay" offset="0x124" visible="true" description="delay between special-fire shots (overcharge, banshee bombs) scale factor for enemies. on normal difficulty" />
+    <float32 name="hard special fire delay" offset="0x128" visible="true" description="delay between special-fire shots (overcharge, banshee bombs) scale factor for enemies. on hard difficulty" />
+    <float32 name="imposs. special fire delay" offset="0x12C" visible="true" description="delay between special-fire shots (overcharge, banshee bombs) scale factor for enemies. on impossible difficulty" />
+    <float32 name="easy guidance vs player" offset="0x130" visible="true" description="guidance velocity scale factor for all projectiles targeted on a player. on easy difficulty" />
+    <float32 name="normal guidance vs player" offset="0x134" visible="true" description="guidance velocity scale factor for all projectiles targeted on a player. on normal difficulty" />
+    <float32 name="hard guidance vs player" offset="0x138" visible="true" description="guidance velocity scale factor for all projectiles targeted on a player. on hard difficulty" />
+    <float32 name="imposs. guidance vs player" offset="0x13C" visible="true" description="guidance velocity scale factor for all projectiles targeted on a player. on impossible difficulty" />
+    <float32 name="easy melee delay base" offset="0x140" visible="true" description="delay period added to all melee attacks, even when berserk. on easy difficulty" />
+    <float32 name="normal melee delay base" offset="0x144" visible="true" description="delay period added to all melee attacks, even when berserk. on normal difficulty" />
+    <float32 name="hard melee delay base" offset="0x148" visible="true" description="delay period added to all melee attacks, even when berserk. on hard difficulty" />
+    <float32 name="imposs. melee delay base" offset="0x14C" visible="true" description="delay period added to all melee attacks, even when berserk. on impossible difficulty" />
+    <float32 name="easy melee delay scale" offset="0x150" visible="true" description="multiplier for all existing non-berserk melee delay times. on easy difficulty" />
+    <float32 name="normal melee delay scale" offset="0x154" visible="true" description="multiplier for all existing non-berserk melee delay times. on normal difficulty" />
+    <float32 name="hard melee delay scale" offset="0x158" visible="true" description="multiplier for all existing non-berserk melee delay times. on hard difficulty" />
+    <float32 name="imposs. melee delay scale" offset="0x15C" visible="true" description="multiplier for all existing non-berserk melee delay times. on impossible difficulty" />
+    <undefined name="Unknown" offset="0x160" visible="false" />
+    <undefined name="Unknown" offset="0x164" visible="false" />
+    <undefined name="Unknown" offset="0x168" visible="false" />
+    <undefined name="Unknown" offset="0x16C" visible="false" />
+    <comment title="grenades">difficulty-affecting values for enemy grenade behavior</comment>
+    <float32 name="easy grenade chance scale" offset="0x170" visible="true" description="scale factor affecting the desicions to throw a grenade. on easy difficulty" />
+    <float32 name="normal grenade chance scale" offset="0x174" visible="true" description="scale factor affecting the desicions to throw a grenade. on normal difficulty" />
+    <float32 name="hard grenade chance scale" offset="0x178" visible="true" description="scale factor affecting the desicions to throw a grenade. on hard difficulty" />
+    <float32 name="imposs. grenade chance scale" offset="0x17C" visible="true" description="scale factor affecting the desicions to throw a grenade. on impossible difficulty" />
+    <float32 name="easy grenade timer scale" offset="0x180" visible="true" description="scale factor affecting the delay period between grenades thrown from the same encounter (lower is more often). on easy difficulty" />
+    <float32 name="normal grenade timer scale" offset="0x184" visible="true" description="scale factor affecting the delay period between grenades thrown from the same encounter (lower is more often). on normal difficulty" />
+    <float32 name="hard grenade timer scale" offset="0x188" visible="true" description="scale factor affecting the delay period between grenades thrown from the same encounter (lower is more often). on hard difficulty" />
+    <float32 name="imposs. grenade timer scale" offset="0x18C" visible="true" description="scale factor affecting the delay period between grenades thrown from the same encounter (lower is more often). on impossible difficulty" />
+    <undefined name="Unknown" offset="0x190" visible="false" />
+    <undefined name="Unknown" offset="0x194" visible="false" />
+    <undefined name="Unknown" offset="0x198" visible="false" />
+    <undefined name="Unknown" offset="0x19C" visible="false" />
+    <undefined name="Unknown" offset="0x1A0" visible="false" />
+    <undefined name="Unknown" offset="0x1A4" visible="false" />
+    <undefined name="Unknown" offset="0x1A8" visible="false" />
+    <undefined name="Unknown" offset="0x1AC" visible="false" />
+    <undefined name="Unknown" offset="0x1B0" visible="false" />
+    <undefined name="Unknown" offset="0x1B4" visible="false" />
+    <undefined name="Unknown" offset="0x1B8" visible="false" />
+    <undefined name="Unknown" offset="0x1BC" visible="false" />
+    <comment title="placement">difficulty-affecting values for enemy placement</comment>
+    <float32 name="easy major upgrade (normal)" offset="0x1C0" visible="true" description="fraction of actors upgraded to their major variant. on easy difficulty" />
+    <float32 name="normal major upgrade (normal)" offset="0x1C4" visible="true" description="fraction of actors upgraded to their major variant. on normal difficulty" />
+    <float32 name="hard major upgrade (normal)" offset="0x1C8" visible="true" description="fraction of actors upgraded to their major variant. on hard difficulty" />
+    <float32 name="imposs. major upgrade (normal)" offset="0x1CC" visible="true" description="fraction of actors upgraded to their major variant. on impossible difficulty" />
+    <float32 name="easy major upgrade (few)" offset="0x1D0" visible="true" description="fraction of actors upgraded to their major variant when mix = normal. on easy difficulty" />
+    <float32 name="normal major upgrade (few)" offset="0x1D4" visible="true" description="fraction of actors upgraded to their major variant when mix = normal. on normal difficulty" />
+    <float32 name="hard major upgrade (few)" offset="0x1D8" visible="true" description="fraction of actors upgraded to their major variant when mix = normal. on hard difficulty" />
+    <float32 name="imposs. major upgrade (few)" offset="0x1DC" visible="true" description="fraction of actors upgraded to their major variant when mix = normal. on impossible difficulty" />
+    <float32 name="easy major upgrade (many)" offset="0x1E0" visible="true" description="fraction of actors upgraded to their major variant when mix = many. on easy difficulty" />
+    <float32 name="normal major upgrade (many)" offset="0x1E4" visible="true" description="fraction of actors upgraded to their major variant when mix = many. on normal difficulty" />
+    <float32 name="hard major upgrade (many)" offset="0x1E8" visible="true" description="fraction of actors upgraded to their major variant when mix = many. on hard difficulty" />
+    <float32 name="imposs. major upgrade (many)" offset="0x1EC" visible="true" description="fraction of actors upgraded to their major variant when mix = many. on impossible difficulty" />
+    <undefined name="Unknown" offset="0x1F0" visible="false" />
+    <undefined name="Unknown" offset="0x1F4" visible="false" />
+    <undefined name="Unknown" offset="0x1F8" visible="false" />
+    <undefined name="Unknown" offset="0x1FC" visible="false" />
+    <undefined name="Unknown" offset="0x200" visible="false" />
+    <undefined name="Unknown" offset="0x204" visible="false" />
+    <undefined name="Unknown" offset="0x208" visible="false" />
+    <undefined name="Unknown" offset="0x20C" visible="false" />
+    <undefined name="Unknown" offset="0x210" visible="false" />
+    <undefined name="Unknown" offset="0x214" visible="false" />
+    <undefined name="Unknown" offset="0x218" visible="false" />
+    <undefined name="Unknown" offset="0x21C" visible="false" />
+    <undefined name="Unknown" offset="0x220" visible="false" />
+    <undefined name="Unknown" offset="0x224" visible="false" />
+    <undefined name="Unknown" offset="0x228" visible="false" />
+    <undefined name="Unknown" offset="0x22C" visible="false" />
+    <undefined name="Unknown" offset="0x230" visible="false" />
+    <undefined name="Unknown" offset="0x234" visible="false" />
+    <undefined name="Unknown" offset="0x238" visible="false" />
+    <undefined name="Unknown" offset="0x23C" visible="false" />
+    <undefined name="Unknown" offset="0x240" visible="false" />
+    <undefined name="Unknown" offset="0x244" visible="false" />
+    <undefined name="Unknown" offset="0x248" visible="false" />
+    <undefined name="Unknown" offset="0x24C" visible="false" />
+    <undefined name="Unknown" offset="0x250" visible="false" />
+    <undefined name="Unknown" offset="0x254" visible="false" />
+    <undefined name="Unknown" offset="0x258" visible="false" />
+    <undefined name="Unknown" offset="0x25C" visible="false" />
+    <undefined name="Unknown" offset="0x260" visible="false" />
+    <undefined name="Unknown" offset="0x264" visible="false" />
+    <undefined name="Unknown" offset="0x268" visible="false" />
+    <undefined name="Unknown" offset="0x26C" visible="false" />
+    <undefined name="Unknown" offset="0x270" visible="false" />
+    <undefined name="Unknown" offset="0x274" visible="false" />
+    <undefined name="Unknown" offset="0x278" visible="false" />
+    <undefined name="Unknown" offset="0x27C" visible="false" />
+    <undefined name="Unknown" offset="0x280" visible="false" />
+  </reflexive>
+  <reflexive name="grenades" offset="0x118" visible="true" entrySize="0x24">
+    <int16 name="maximum count" offset="0x0" visible="true" />
+    <int16 name="mp spawn default" offset="0x2" visible="true" />
+    <tagRef name="throwing effect" offset="0x4" visible="true" />
+    <tagRef name="hud interface" offset="0xC" visible="true" />
+    <tagRef name="equipment" offset="0x14" visible="true" />
+    <tagRef name="projectile" offset="0x1C" visible="true" />
+  </reflexive>
+  <reflexive name="rasterizer data" offset="0x120" visible="true" entrySize="0x124">
+    <comment title="function textures">Used internally by the rasterizer. (Do not change unless you know what you're doing!)</comment>
+    <tagRef name="distance attenuation" offset="0x0" visible="true" />
+    <tagRef name="vector normalization" offset="0x8" visible="true" />
+    <tagRef name="atmospheric fog density" offset="0x10" visible="true" />
+    <tagRef name="planar fog density" offset="0x18" visible="true" />
+    <tagRef name="linear corner fade" offset="0x20" visible="true" description="used for shadows" />
+    <tagRef name="active camouflage distortion" offset="0x28" visible="true" />
+    <tagRef name="glow" offset="0x30" visible="true" />
+    <undefined name="Unknown" offset="0x38" visible="false" />
+    <undefined name="Unknown" offset="0x3C" visible="false" />
+    <undefined name="Unknown" offset="0x40" visible="false" />
+    <undefined name="Unknown" offset="0x44" visible="false" />
+    <undefined name="Unknown" offset="0x48" visible="false" />
+    <undefined name="Unknown" offset="0x4C" visible="false" />
+    <undefined name="Unknown" offset="0x50" visible="false" />
+    <undefined name="Unknown" offset="0x54" visible="false" />
+    <undefined name="Unknown" offset="0x58" visible="false" />
+    <undefined name="Unknown" offset="0x5C" visible="false" />
+    <undefined name="Unknown" offset="0x60" visible="false" />
+    <undefined name="Unknown" offset="0x64" visible="false" />
+    <undefined name="Unknown" offset="0x68" visible="false" />
+    <undefined name="Unknown" offset="0x6C" visible="false" />
+    <undefined name="Unknown" offset="0x70" visible="false" />
+    <comment title="default textures">Used internally by the rasterizer - additive, multiplicative, detail, vector. (Do not change ever, period.)</comment>
+    <tagRef name="default 2D" offset="0x74" visible="true" />
+    <tagRef name="default 3D" offset="0x7C" visible="true" />
+    <tagRef name="default cube map" offset="0x84" visible="true" />
+    <comment title="experimental textures">Used internally by the rasterizer. (Used by Bernie's experimental shaders.)</comment>
+    <tagRef name="test 0" offset="0x8C" visible="true" />
+    <tagRef name="test 1" offset="0x94" visible="true" />
+    <tagRef name="test 2" offset="0x9C" visible="true" />
+    <tagRef name="test 3" offset="0xA4" visible="true" />
+    <comment title="video effect textures">Used in cinematics.</comment>
+    <tagRef name="video scanline map" offset="0xAC" visible="true" />
+    <tagRef name="video noise map" offset="0xB4" visible="true" />
+    <undefined name="Unknown" offset="0xBC" visible="false" />
+    <undefined name="Unknown" offset="0xC0" visible="false" />
+    <undefined name="Unknown" offset="0xC4" visible="false" />
+    <undefined name="Unknown" offset="0xC8" visible="false" />
+    <undefined name="Unknown" offset="0xCC" visible="false" />
+    <undefined name="Unknown" offset="0xD0" visible="false" />
+    <undefined name="Unknown" offset="0xD4" visible="false" />
+    <undefined name="Unknown" offset="0xD8" visible="false" />
+    <undefined name="Unknown" offset="0xDC" visible="false" />
+    <undefined name="Unknown" offset="0xE0" visible="false" />
+    <undefined name="Unknown" offset="0xE4" visible="false" />
+    <undefined name="Unknown" offset="0xE8" visible="false" />
+    <undefined name="Unknown" offset="0xEC" visible="false" />
+    <comment title="active camouflage" />
+    <bitfield16 name="flags" offset="0xF0" visible="true">
+      <bit name="tint edge density" index="0" />
+    </bitfield16>
+    <int16 name="Unknown" offset="0xF2" visible="false" />
+    <float32 name="refraction amount" offset="0xF4" visible="true" description="pixels" />
+    <float32 name="distance falloff" offset="0xF8" visible="true" />
+    <colorf name="tint color" offset="0xFC" format="rgb" visible="true" />
+    <float32 name="hyper-stealth refraction" offset="0x108" visible="true" description="pixels" />
+    <float32 name="hyper-stealth distance falloff" offset="0x10C" visible="true" />
+    <colorf name="hyper-stealth tint color" offset="0x110" format="rgb" visible="true" />
+    <comment title="PC textures">The PC can't use 3D textures, so we use this instead.</comment>
+    <tagRef name="distance attenuation 2D" offset="0x11C" visible="true" description="the pc can't use 3d textures, so we use this instead" />
+  </reflexive>
+  <reflexive name="interface bitmaps" offset="0x128" visible="true" entrySize="0xB0">
+    <tagRef name="font system" offset="0x0" visible="true" />
+    <tagRef name="font terminal" offset="0x8" visible="true" />
+    <tagRef name="screen color table" offset="0x10" visible="true" />
+    <tagRef name="hud color table" offset="0x18" visible="true" />
+    <tagRef name="editor color table" offset="0x20" visible="true" />
+    <tagRef name="dialog color table" offset="0x28" visible="true" />
+    <tagRef name="hud globals" offset="0x30" visible="true" />
+    <tagRef name="motion sensor sweep bitmap" offset="0x38" visible="true" />
+    <tagRef name="motion sensor sweep bitmap mask" offset="0x40" visible="true" />
+    <tagRef name="multiplayer hud bitmap" offset="0x48" visible="true" />
+    <tagRef name="localization" offset="0x50" visible="true" />
+    <tagRef name="hud digits definition" offset="0x58" visible="true" />
+    <tagRef name="motion sensor blip bitmap" offset="0x60" visible="true" />
+    <tagRef name="interface goo map1" offset="0x68" visible="true" />
+    <tagRef name="interface goo map2" offset="0x70" visible="true" />
+    <tagRef name="interface goo map3" offset="0x78" visible="true" />
+    <undefined name="Unknown" offset="0x80" visible="false" />
+    <undefined name="Unknown" offset="0x84" visible="false" />
+    <undefined name="Unknown" offset="0x88" visible="false" />
+    <undefined name="Unknown" offset="0x8C" visible="false" />
+    <undefined name="Unknown" offset="0x90" visible="false" />
+    <undefined name="Unknown" offset="0x94" visible="false" />
+    <undefined name="Unknown" offset="0x98" visible="false" />
+    <undefined name="Unknown" offset="0x9C" visible="false" />
+    <undefined name="Unknown" offset="0xA0" visible="false" />
+    <undefined name="Unknown" offset="0xA4" visible="false" />
+    <undefined name="Unknown" offset="0xA8" visible="false" />
+    <undefined name="Unknown" offset="0xAC" visible="false" />
+  </reflexive>
+  <reflexive name="weapon list (update _weapon_list enum in game_globals.h)" offset="0x130" visible="true" entrySize="0x8" entryname="0x0">
+    <tagRef name="weapon" offset="0x0" visible="true" />
+  </reflexive>
+  <reflexive name="cheat powerups" offset="0x138" visible="true" entrySize="0x8" entryname="0x0">
+    <tagRef name="powerup" offset="0x0" visible="true" />
+  </reflexive>
+  <reflexive name="multiplayer information" offset="0x140" visible="true" entrySize="0x70">
+    <tagRef name="flag" offset="0x0" visible="true" />
+    <tagRef name="unit" offset="0x8" visible="true" />
+    <reflexive name="vehicles" offset="0x10" visible="true" entrySize="0x8" entryname="0x0">
+      <tagRef name="vehicle" offset="0x0" visible="true" />
+    </reflexive>
+    <tagRef name="hill shader" offset="0x18" visible="true" />
+    <tagRef name="flag shader" offset="0x20" visible="true" />
+    <tagRef name="ball" offset="0x28" visible="true" />
+    <reflexive name="sounds" offset="0x30" visible="true" entrySize="0x8" entryname="0x0">
+      <tagRef name="sound" offset="0x0" visible="true" />
+    </reflexive>
+    <undefined name="Unknown" offset="0x38" visible="false" />
+    <undefined name="Unknown" offset="0x3C" visible="false" />
+    <undefined name="Unknown" offset="0x40" visible="false" />
+    <undefined name="Unknown" offset="0x44" visible="false" />
+    <undefined name="Unknown" offset="0x48" visible="false" />
+    <undefined name="Unknown" offset="0x4C" visible="false" />
+    <undefined name="Unknown" offset="0x50" visible="false" />
+    <undefined name="Unknown" offset="0x54" visible="false" />
+    <undefined name="Unknown" offset="0x58" visible="false" />
+    <undefined name="Unknown" offset="0x5C" visible="false" />
+    <undefined name="Unknown" offset="0x60" visible="false" />
+    <undefined name="Unknown" offset="0x64" visible="false" />
+    <undefined name="Unknown" offset="0x68" visible="false" />
+    <undefined name="Unknown" offset="0x6C" visible="false" />
+  </reflexive>
+  <reflexive name="player information" offset="0x148" visible="true" entrySize="0xE4">
+    <tagRef name="unit" offset="0x0" visible="true" />
+    <undefined name="Unknown" offset="0x8" visible="false" />
+    <undefined name="Unknown" offset="0xC" visible="false" />
+    <undefined name="Unknown" offset="0x10" visible="false" />
+    <undefined name="Unknown" offset="0x14" visible="false" />
+    <undefined name="Unknown" offset="0x18" visible="false" />
+    <undefined name="Unknown" offset="0x1C" visible="false" />
+    <undefined name="Unknown" offset="0x20" visible="false" />
+    <float32 name="walking speed" offset="0x24" visible="true" description="world units per second" />
+    <float32 name="&amp;quot;double speed&amp;quot; multiplier" offset="0x28" visible="true" description="[1.0,+inf]" />
+    <float32 name="run forward" offset="0x2C" visible="true" description="world units per second" />
+    <float32 name="run backward" offset="0x30" visible="true" description="world units per second" />
+    <float32 name="run sideways" offset="0x34" visible="true" description="world units per second" />
+    <float32 name="run acceleration" offset="0x38" visible="true" description="world units per second squared" />
+    <float32 name="sneak forward" offset="0x3C" visible="true" description="world units per second" />
+    <float32 name="sneak backward" offset="0x40" visible="true" description="world units per second" />
+    <float32 name="sneak sideways" offset="0x44" visible="true" description="world units per second" />
+    <float32 name="sneak acceleration" offset="0x48" visible="true" description="world units per second squared" />
+    <float32 name="airborne acceleration" offset="0x4C" visible="true" description="world units per second squared" />
+    <float32 name="speed multiplier" offset="0x50" visible="true" description=" multiplayer only" />
+    <undefined name="Unknown" offset="0x54" visible="false" />
+    <undefined name="Unknown" offset="0x58" visible="false" />
+    <undefined name="Unknown" offset="0x5C" visible="false" />
+    <float32 name="grenade origin x" offset="0x60" visible="true" />
+    <float32 name="grenade origin y" offset="0x64" visible="true" />
+    <float32 name="grenade origin z" offset="0x68" visible="true" />
+    <undefined name="Unknown" offset="0x6C" visible="false" />
+    <undefined name="Unknown" offset="0x70" visible="false" />
+    <undefined name="Unknown" offset="0x74" visible="false" />
+    <float32 name="stun movement penalty" offset="0x78" visible="true" description="1.0 prevents moving while stunned" />
+    <float32 name="stun turning penalty" offset="0x7C" visible="true" description="1.0 prevents turning while stunned" />
+    <float32 name="stun jumping penalty" offset="0x80" visible="true" description="1.0 prevents jumping while stunned" />
+    <float32 name="minimum stun time" offset="0x84" visible="true" description="all stunning damage will last for at least this long" />
+    <float32 name="maximum stun time" offset="0x88" visible="true" description="no stunning damage will last for longer than this" />
+    <undefined name="Unknown" offset="0x8C" visible="false" />
+    <undefined name="Unknown" offset="0x90" visible="false" />
+    <float32 name="first person idle time" offset="0x94" visible="true" description="seconds min" />
+    <float32 name="first person idle time" offset="0x98" visible="true" description="seconds max" />
+    <float32 name="first person skip fraction" offset="0x9C" visible="true" description="[0,1]" />
+    <undefined name="Unknown" offset="0xA0" visible="false" />
+    <undefined name="Unknown" offset="0xA4" visible="false" />
+    <undefined name="Unknown" offset="0xA8" visible="false" />
+    <undefined name="Unknown" offset="0xAC" visible="false" />
+    <tagRef name="coop respawn effect" offset="0xB0" visible="true" />
+    <undefined name="Unknown" offset="0xB8" visible="false" />
+    <undefined name="Unknown" offset="0xBC" visible="false" />
+    <undefined name="Unknown" offset="0xC0" visible="false" />
+    <undefined name="Unknown" offset="0xC4" visible="false" />
+    <undefined name="Unknown" offset="0xC8" visible="false" />
+    <undefined name="Unknown" offset="0xCC" visible="false" />
+    <undefined name="Unknown" offset="0xD0" visible="false" />
+    <undefined name="Unknown" offset="0xD4" visible="false" />
+    <undefined name="Unknown" offset="0xD8" visible="false" />
+    <undefined name="Unknown" offset="0xDC" visible="false" />
+    <undefined name="Unknown" offset="0xE0" visible="false" />
+  </reflexive>
+  <reflexive name="first person interface" offset="0x150" visible="true" entrySize="0x90">
+    <tagRef name="first person hands" offset="0x0" visible="true" />
+    <tagRef name="base bitmap" offset="0x8" visible="true" />
+    <tagRef name="shield meter" offset="0x10" visible="true" />
+    <uint16 name="shield meter origin x" offset="0x18" visible="true" />
+    <uint16 name="shield meter origin y" offset="0x1A" visible="true" />
+    <tagRef name="body meter" offset="0x1C" visible="true" />
+    <uint16 name="body meter origin x" offset="0x24" visible="true" />
+    <uint16 name="body meter origin y" offset="0x26" visible="true" />
+    <tagRef name="night-vision OFF-&gt;ON effect" offset="0x28" visible="true" />
+    <tagRef name="night-vision ON-&gt;OFF effect" offset="0x30" visible="true" />
+    <undefined name="Unknown" offset="0x38" visible="false" />
+    <undefined name="Unknown" offset="0x3C" visible="false" />
+    <undefined name="Unknown" offset="0x40" visible="false" />
+    <undefined name="Unknown" offset="0x44" visible="false" />
+    <undefined name="Unknown" offset="0x48" visible="false" />
+    <undefined name="Unknown" offset="0x4C" visible="false" />
+    <undefined name="Unknown" offset="0x50" visible="false" />
+    <undefined name="Unknown" offset="0x54" visible="false" />
+    <undefined name="Unknown" offset="0x58" visible="false" />
+    <undefined name="Unknown" offset="0x5C" visible="false" />
+    <undefined name="Unknown" offset="0x60" visible="false" />
+    <undefined name="Unknown" offset="0x64" visible="false" />
+    <undefined name="Unknown" offset="0x68" visible="false" />
+    <undefined name="Unknown" offset="0x6C" visible="false" />
+    <undefined name="Unknown" offset="0x70" visible="false" />
+    <undefined name="Unknown" offset="0x74" visible="false" />
+    <undefined name="Unknown" offset="0x78" visible="false" />
+    <undefined name="Unknown" offset="0x7C" visible="false" />
+    <undefined name="Unknown" offset="0x80" visible="false" />
+    <undefined name="Unknown" offset="0x84" visible="false" />
+    <undefined name="Unknown" offset="0x88" visible="false" />
+    <undefined name="Unknown" offset="0x8C" visible="false" />
+  </reflexive>
+  <reflexive name="falling damage" offset="0x158" visible="true" entrySize="0x68">
+    <undefined name="Unknown" offset="0x0" visible="false" />
+    <undefined name="Unknown" offset="0x4" visible="false" />
+    <float32 name="harmful falling distance" offset="0x8" visible="true" description="world units min" />
+    <float32 name="harmful falling distance" offset="0xC" visible="true" description="world units max" />
+    <tagRef name="falling damage" offset="0x10" visible="true" />
+    <undefined name="Unknown" offset="0x18" visible="false" />
+    <undefined name="Unknown" offset="0x1C" visible="false" />
+    <float32 name="maximum falling distance" offset="0x20" visible="true" description="world units" />
+    <tagRef name="distance damage" offset="0x24" visible="true" />
+    <tagRef name="vehicle environemtn collision damage effect" offset="0x2C" visible="true" />
+    <tagRef name="vehicle killed unit damage effect" offset="0x34" visible="true" />
+    <tagRef name="vehicle collision damage" offset="0x3C" visible="true" />
+    <tagRef name="flaming death damage" offset="0x44" visible="true" />
+    <undefined name="Unknown" offset="0x4C" visible="false" />
+    <undefined name="Unknown" offset="0x50" visible="false" />
+    <undefined name="Unknown" offset="0x54" visible="false" />
+    <undefined name="Unknown" offset="0x58" visible="false" />
+    <undefined name="Unknown" offset="0x5C" visible="false" />
+    <undefined name="Unknown" offset="0x60" visible="false" />
+    <undefined name="Unknown" offset="0x64" visible="false" />
+  </reflexive>
+  <reflexive name="materials" offset="0x160" visible="true" entrySize="0x358">
+    <undefined name="Unknown" offset="0x0" visible="false" />
+    <undefined name="Unknown" offset="0x4" visible="false" />
+    <undefined name="Unknown" offset="0x8" visible="false" />
+    <undefined name="Unknown" offset="0xC" visible="false" />
+    <undefined name="Unknown" offset="0x10" visible="false" />
+    <undefined name="Unknown" offset="0x14" visible="false" />
+    <undefined name="Unknown" offset="0x18" visible="false" />
+    <undefined name="Unknown" offset="0x1C" visible="false" />
+    <undefined name="Unknown" offset="0x20" visible="false" />
+    <undefined name="Unknown" offset="0x24" visible="false" />
+    <undefined name="Unknown" offset="0x28" visible="false" />
+    <undefined name="Unknown" offset="0x2C" visible="false" />
+    <undefined name="Unknown" offset="0x30" visible="false" />
+    <undefined name="Unknown" offset="0x34" visible="false" />
+    <undefined name="Unknown" offset="0x38" visible="false" />
+    <undefined name="Unknown" offset="0x3C" visible="false" />
+    <undefined name="Unknown" offset="0x40" visible="false" />
+    <undefined name="Unknown" offset="0x44" visible="false" />
+    <undefined name="Unknown" offset="0x48" visible="false" />
+    <undefined name="Unknown" offset="0x4C" visible="false" />
+    <undefined name="Unknown" offset="0x50" visible="false" />
+    <undefined name="Unknown" offset="0x54" visible="false" />
+    <undefined name="Unknown" offset="0x58" visible="false" />
+    <undefined name="Unknown" offset="0x5C" visible="false" />
+    <undefined name="Unknown" offset="0x60" visible="false" />
+    <undefined name="Unknown" offset="0x64" visible="false" />
+    <undefined name="Unknown" offset="0x68" visible="false" />
+    <undefined name="Unknown" offset="0x6C" visible="false" />
+    <undefined name="Unknown" offset="0x70" visible="false" />
+    <undefined name="Unknown" offset="0x74" visible="false" />
+    <undefined name="Unknown" offset="0x78" visible="false" />
+    <undefined name="Unknown" offset="0x7C" visible="false" />
+    <undefined name="Unknown" offset="0x80" visible="false" />
+    <undefined name="Unknown" offset="0x84" visible="false" />
+    <undefined name="Unknown" offset="0x88" visible="false" />
+    <undefined name="Unknown" offset="0x8C" visible="false" />
+    <undefined name="Unknown" offset="0x90" visible="false" />
+    <comment title="vehicle terrain parameters">the following fields modify the way a vehicle drives over terrain of this material type.</comment>
+    <float32 name="ground friction scale" offset="0x94" visible="true" description="fraction of original velocity parallel to the ground after one tick" />
+    <float32 name="ground friction normal k1 scale" offset="0x98" visible="true" description="cosine of angle at which friction falls off" />
+    <float32 name="ground friction normal k0 scale" offset="0x9C" visible="true" description="cosine of angle at which friction is zero" />
+    <float32 name="ground depth scale" offset="0xA0" visible="true" description="depth a point mass rests in the ground" />
+    <float32 name="ground damp fraction scale" offset="0xA4" visible="true" description="fraction of original velocity perpendicular to the ground after one tick" />
+    <undefined name="Unknown" offset="0xA8" visible="false" />
+    <undefined name="Unknown" offset="0xAC" visible="false" />
+    <undefined name="Unknown" offset="0xB0" visible="false" />
+    <undefined name="Unknown" offset="0xB4" visible="false" />
+    <undefined name="Unknown" offset="0xB8" visible="false" />
+    <undefined name="Unknown" offset="0xBC" visible="false" />
+    <undefined name="Unknown" offset="0xC0" visible="false" />
+    <undefined name="Unknown" offset="0xC4" visible="false" />
+    <undefined name="Unknown" offset="0xC8" visible="false" />
+    <undefined name="Unknown" offset="0xCC" visible="false" />
+    <undefined name="Unknown" offset="0xD0" visible="false" />
+    <undefined name="Unknown" offset="0xD4" visible="false" />
+    <undefined name="Unknown" offset="0xD8" visible="false" />
+    <undefined name="Unknown" offset="0xDC" visible="false" />
+    <undefined name="Unknown" offset="0xE0" visible="false" />
+    <undefined name="Unknown" offset="0xE4" visible="false" />
+    <undefined name="Unknown" offset="0xE8" visible="false" />
+    <undefined name="Unknown" offset="0xEC" visible="false" />
+    <undefined name="Unknown" offset="0xF0" visible="false" />
+    <undefined name="Unknown" offset="0xF4" visible="false" />
+    <undefined name="Unknown" offset="0xF8" visible="false" />
+    <undefined name="Unknown" offset="0xFC" visible="false" />
+    <undefined name="Unknown" offset="0x100" visible="false" />
+    <undefined name="Unknown" offset="0x104" visible="false" />
+    <undefined name="Unknown" offset="0x108" visible="false" />
+    <undefined name="Unknown" offset="0x10C" visible="false" />
+    <undefined name="Unknown" offset="0x110" visible="false" />
+    <undefined name="Unknown" offset="0x114" visible="false" />
+    <undefined name="Unknown" offset="0x118" visible="false" />
+    <undefined name="Unknown" offset="0x11C" visible="false" />
+    <undefined name="Unknown" offset="0x120" visible="false" />
+    <undefined name="Unknown" offset="0x124" visible="false" />
+    <undefined name="Unknown" offset="0x128" visible="false" />
+    <undefined name="Unknown" offset="0x12C" visible="false" />
+    <undefined name="Unknown" offset="0x130" visible="false" />
+    <undefined name="Unknown" offset="0x134" visible="false" />
+    <undefined name="Unknown" offset="0x138" visible="false" />
+    <undefined name="Unknown" offset="0x13C" visible="false" />
+    <undefined name="Unknown" offset="0x140" visible="false" />
+    <undefined name="Unknown" offset="0x144" visible="false" />
+    <undefined name="Unknown" offset="0x148" visible="false" />
+    <undefined name="Unknown" offset="0x14C" visible="false" />
+    <undefined name="Unknown" offset="0x150" visible="false" />
+    <undefined name="Unknown" offset="0x154" visible="false" />
+    <undefined name="Unknown" offset="0x158" visible="false" />
+    <undefined name="Unknown" offset="0x15C" visible="false" />
+    <undefined name="Unknown" offset="0x160" visible="false" />
+    <undefined name="Unknown" offset="0x164" visible="false" />
+    <undefined name="Unknown" offset="0x168" visible="false" />
+    <undefined name="Unknown" offset="0x16C" visible="false" />
+    <undefined name="Unknown" offset="0x170" visible="false" />
+    <undefined name="Unknown" offset="0x174" visible="false" />
+    <undefined name="Unknown" offset="0x178" visible="false" />
+    <undefined name="Unknown" offset="0x17C" visible="false" />
+    <undefined name="Unknown" offset="0x180" visible="false" />
+    <undefined name="Unknown" offset="0x184" visible="false" />
+    <undefined name="Unknown" offset="0x188" visible="false" />
+    <undefined name="Unknown" offset="0x18C" visible="false" />
+    <undefined name="Unknown" offset="0x190" visible="false" />
+    <undefined name="Unknown" offset="0x194" visible="false" />
+    <undefined name="Unknown" offset="0x198" visible="false" />
+    <undefined name="Unknown" offset="0x19C" visible="false" />
+    <undefined name="Unknown" offset="0x1A0" visible="false" />
+    <undefined name="Unknown" offset="0x1A4" visible="false" />
+    <undefined name="Unknown" offset="0x1A8" visible="false" />
+    <undefined name="Unknown" offset="0x1AC" visible="false" />
+    <undefined name="Unknown" offset="0x1B0" visible="false" />
+    <undefined name="Unknown" offset="0x1B4" visible="false" />
+    <undefined name="Unknown" offset="0x1B8" visible="false" />
+    <undefined name="Unknown" offset="0x1BC" visible="false" />
+    <undefined name="Unknown" offset="0x1C0" visible="false" />
+    <undefined name="Unknown" offset="0x1C4" visible="false" />
+    <undefined name="Unknown" offset="0x1C8" visible="false" />
+    <undefined name="Unknown" offset="0x1CC" visible="false" />
+    <undefined name="Unknown" offset="0x1D0" visible="false" />
+    <undefined name="Unknown" offset="0x1D4" visible="false" />
+    <undefined name="Unknown" offset="0x1D8" visible="false" />
+    <undefined name="Unknown" offset="0x1DC" visible="false" />
+    <undefined name="Unknown" offset="0x1E0" visible="false" />
+    <undefined name="Unknown" offset="0x1E4" visible="false" />
+    <undefined name="Unknown" offset="0x1E8" visible="false" />
+    <undefined name="Unknown" offset="0x1EC" visible="false" />
+    <undefined name="Unknown" offset="0x1F0" visible="false" />
+    <undefined name="Unknown" offset="0x1F4" visible="false" />
+    <undefined name="Unknown" offset="0x1F8" visible="false" />
+    <undefined name="Unknown" offset="0x1FC" visible="false" />
+    <undefined name="Unknown" offset="0x200" visible="false" />
+    <undefined name="Unknown" offset="0x204" visible="false" />
+    <undefined name="Unknown" offset="0x208" visible="false" />
+    <undefined name="Unknown" offset="0x20C" visible="false" />
+    <undefined name="Unknown" offset="0x210" visible="false" />
+    <undefined name="Unknown" offset="0x214" visible="false" />
+    <undefined name="Unknown" offset="0x218" visible="false" />
+    <undefined name="Unknown" offset="0x21C" visible="false" />
+    <undefined name="Unknown" offset="0x220" visible="false" />
+    <undefined name="Unknown" offset="0x224" visible="false" />
+    <undefined name="Unknown" offset="0x228" visible="false" />
+    <undefined name="Unknown" offset="0x22C" visible="false" />
+    <undefined name="Unknown" offset="0x230" visible="false" />
+    <undefined name="Unknown" offset="0x234" visible="false" />
+    <undefined name="Unknown" offset="0x238" visible="false" />
+    <undefined name="Unknown" offset="0x23C" visible="false" />
+    <undefined name="Unknown" offset="0x240" visible="false" />
+    <undefined name="Unknown" offset="0x244" visible="false" />
+    <undefined name="Unknown" offset="0x248" visible="false" />
+    <undefined name="Unknown" offset="0x24C" visible="false" />
+    <undefined name="Unknown" offset="0x250" visible="false" />
+    <undefined name="Unknown" offset="0x254" visible="false" />
+    <undefined name="Unknown" offset="0x258" visible="false" />
+    <undefined name="Unknown" offset="0x25C" visible="false" />
+    <undefined name="Unknown" offset="0x260" visible="false" />
+    <undefined name="Unknown" offset="0x264" visible="false" />
+    <undefined name="Unknown" offset="0x268" visible="false" />
+    <undefined name="Unknown" offset="0x26C" visible="false" />
+    <undefined name="Unknown" offset="0x270" visible="false" />
+    <undefined name="Unknown" offset="0x274" visible="false" />
+    <undefined name="Unknown" offset="0x278" visible="false" />
+    <undefined name="Unknown" offset="0x27C" visible="false" />
+    <undefined name="Unknown" offset="0x280" visible="false" />
+    <undefined name="Unknown" offset="0x284" visible="false" />
+    <undefined name="Unknown" offset="0x288" visible="false" />
+    <undefined name="Unknown" offset="0x28C" visible="false" />
+    <undefined name="Unknown" offset="0x290" visible="false" />
+    <undefined name="Unknown" offset="0x294" visible="false" />
+    <undefined name="Unknown" offset="0x298" visible="false" />
+    <undefined name="Unknown" offset="0x29C" visible="false" />
+    <undefined name="Unknown" offset="0x2A0" visible="false" />
+    <undefined name="Unknown" offset="0x2A4" visible="false" />
+    <undefined name="Unknown" offset="0x2A8" visible="false" />
+    <undefined name="Unknown" offset="0x2AC" visible="false" />
+    <undefined name="Unknown" offset="0x2B0" visible="false" />
+    <undefined name="Unknown" offset="0x2B4" visible="false" />
+    <undefined name="Unknown" offset="0x2B8" visible="false" />
+    <undefined name="Unknown" offset="0x2BC" visible="false" />
+    <undefined name="Unknown" offset="0x2C0" visible="false" />
+    <undefined name="Unknown" offset="0x2C4" visible="false" />
+    <undefined name="Unknown" offset="0x2C8" visible="false" />
+    <undefined name="Unknown" offset="0x2CC" visible="false" />
+    <undefined name="Unknown" offset="0x2D0" visible="false" />
+    <comment title="breakable surface parameters" />
+    <float32 name="maximum vitality" offset="0x2D4" visible="true" />
+    <undefined name="Unknown" offset="0x2D8" visible="false" />
+    <undefined name="Unknown" offset="0x2DC" visible="false" />
+    <undefined name="Unknown" offset="0x2E0" visible="false" />
+    <tagRef name="effect" offset="0x2E4" visible="true" />
+    <tagRef name="sound" offset="0x2EC" visible="true" />
+    <undefined name="Unknown" offset="0x2F4" visible="false" />
+    <undefined name="Unknown" offset="0x2F8" visible="false" />
+    <undefined name="Unknown" offset="0x2FC" visible="false" />
+    <undefined name="Unknown" offset="0x300" visible="false" />
+    <undefined name="Unknown" offset="0x304" visible="false" />
+    <undefined name="Unknown" offset="0x308" visible="false" />
+    <reflexive name="particle effects" offset="0x30C" visible="true" entrySize="0x78" entryname="0x0">
+      <tagRef name="particle type" offset="0x0" visible="true" />
+      <bitfield32 name="flags" offset="0x8" visible="true">
+        <bit name="interpolate color in hsv" index="0" />
+        <bit name="...more colors" index="1" />
+      </bitfield32>
+      <float32 name="density" offset="0xC" visible="true" description="world units" />
+      <float32 name="velocity scale" offset="0x10" visible="true" description="scales initial velocity min" />
+      <float32 name="velocity scale" offset="0x14" visible="true" description="scales initial velocity max" />
+      <undefined name="Unknown" offset="0x18" visible="false" />
+      <degree name="angular velocity" offset="0x1C" visible="true" description="degrees per second min" />
+      <degree name="angular velocity" offset="0x20" visible="true" description="degrees per second max" />
+      <undefined name="Unknown" offset="0x24" visible="false" />
+      <undefined name="Unknown" offset="0x28" visible="false" />
+      <float32 name="radius" offset="0x2C" visible="true" description="particle radius min" />
+      <float32 name="radius" offset="0x30" visible="true" description="particle radius max" />
+      <undefined name="Unknown" offset="0x34" visible="false" />
+      <undefined name="Unknown" offset="0x38" visible="false" />
+      <colorf name="tint lower bound" offset="0x3C" format="argb" visible="true" />
+      <colorf name="tint upper bound" offset="0x4C" format="argb" visible="true" />
+      <undefined name="Unknown" offset="0x5C" visible="false" />
+      <undefined name="Unknown" offset="0x60" visible="false" />
+      <undefined name="Unknown" offset="0x64" visible="false" />
+      <undefined name="Unknown" offset="0x68" visible="false" />
+      <undefined name="Unknown" offset="0x6C" visible="false" />
+      <undefined name="Unknown" offset="0x70" visible="false" />
+      <undefined name="Unknown" offset="0x74" visible="false" />
+    </reflexive>
+    <undefined name="Unknown" offset="0x314" visible="false" />
+    <undefined name="Unknown" offset="0x318" visible="false" />
+    <undefined name="Unknown" offset="0x31C" visible="false" />
+    <undefined name="Unknown" offset="0x320" visible="false" />
+    <undefined name="Unknown" offset="0x324" visible="false" />
+    <undefined name="Unknown" offset="0x328" visible="false" />
+    <undefined name="Unknown" offset="0x32C" visible="false" />
+    <undefined name="Unknown" offset="0x330" visible="false" />
+    <undefined name="Unknown" offset="0x334" visible="false" />
+    <undefined name="Unknown" offset="0x338" visible="false" />
+    <undefined name="Unknown" offset="0x33C" visible="false" />
+    <undefined name="Unknown" offset="0x340" visible="false" />
+    <undefined name="Unknown" offset="0x344" visible="false" />
+    <undefined name="Unknown" offset="0x348" visible="false" />
+    <undefined name="Unknown" offset="0x34C" visible="false" />
+    <tagRef name="melee hit sound" offset="0x350" visible="true" />
+  </reflexive>
+  <reflexive name="playlist members" offset="0x168" visible="true" entrySize="0x94">
+    <ascii name="map name" offset="0x0" length="0x20" visible="true" />
+    <ascii name="game variant" offset="0x20" length="0x20" visible="true" />
+    <int32 name="minimum experience" offset="0x40" visible="true" />
+    <int32 name="maximum experience" offset="0x44" visible="true" />
+    <int32 name="minimum player count" offset="0x48" visible="true" />
+    <int32 name="maximum player count" offset="0x4C" visible="true" />
+    <int32 name="rating" offset="0x50" visible="true" />
+    <undefined name="Unknown" offset="0x54" visible="false" />
+    <undefined name="Unknown" offset="0x58" visible="false" />
+    <undefined name="Unknown" offset="0x5C" visible="false" />
+    <undefined name="Unknown" offset="0x60" visible="false" />
+    <undefined name="Unknown" offset="0x64" visible="false" />
+    <undefined name="Unknown" offset="0x68" visible="false" />
+    <undefined name="Unknown" offset="0x6C" visible="false" />
+    <undefined name="Unknown" offset="0x70" visible="false" />
+    <undefined name="Unknown" offset="0x74" visible="false" />
+    <undefined name="Unknown" offset="0x78" visible="false" />
+    <undefined name="Unknown" offset="0x7C" visible="false" />
+    <undefined name="Unknown" offset="0x80" visible="false" />
+    <undefined name="Unknown" offset="0x84" visible="false" />
+    <undefined name="Unknown" offset="0x88" visible="false" />
+    <undefined name="Unknown" offset="0x8C" visible="false" />
+    <undefined name="Unknown" offset="0x90" visible="false" />
+  </reflexive>
+</plugin>

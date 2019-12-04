@@ -1,0 +1,67 @@
+<plugin>
+  <ascii name="attachment marker name" offset="0x0" length="0x20" visible="true" description="the marker name where the antenna should be attached" />
+  <tagRef name="bitmaps" offset="0x20" visible="true" />
+  <tagRef name="physics" offset="0x28" visible="true" />
+  <undefined name="Unknown" offset="0x30" visible="false" />
+  <undefined name="Unknown" offset="0x34" visible="false" />
+  <undefined name="Unknown" offset="0x38" visible="false" />
+  <undefined name="Unknown" offset="0x3C" visible="false" />
+  <undefined name="Unknown" offset="0x40" visible="false" />
+  <undefined name="Unknown" offset="0x44" visible="false" />
+  <undefined name="Unknown" offset="0x48" visible="false" />
+  <undefined name="Unknown" offset="0x4C" visible="false" />
+  <undefined name="Unknown" offset="0x50" visible="false" />
+  <undefined name="Unknown" offset="0x54" visible="false" />
+  <undefined name="Unknown" offset="0x58" visible="false" />
+  <undefined name="Unknown" offset="0x5C" visible="false" />
+  <undefined name="Unknown" offset="0x60" visible="false" />
+  <undefined name="Unknown" offset="0x64" visible="false" />
+  <undefined name="Unknown" offset="0x68" visible="false" />
+  <undefined name="Unknown" offset="0x6C" visible="false" />
+  <undefined name="Unknown" offset="0x70" visible="false" />
+  <undefined name="Unknown" offset="0x74" visible="false" />
+  <undefined name="Unknown" offset="0x78" visible="false" />
+  <undefined name="Unknown" offset="0x7C" visible="false" />
+  <float32 name="spring strength coefficient" offset="0x80" visible="true" description="strength of the spring (larger values make the spring stronger)" />
+  <float32 name="falloff pixels" offset="0x84" visible="true" />
+  <float32 name="cutoff pixels" offset="0x88" visible="true" />
+  <undefined name="Unknown" offset="0x8C" visible="false" />
+  <undefined name="Unknown" offset="0x90" visible="false" />
+  <undefined name="Unknown" offset="0x94" visible="false" />
+  <undefined name="Unknown" offset="0x98" visible="false" />
+  <undefined name="Unknown" offset="0x9C" visible="false" />
+  <undefined name="Unknown" offset="0xA0" visible="false" />
+  <undefined name="Unknown" offset="0xA4" visible="false" />
+  <undefined name="Unknown" offset="0xA8" visible="false" />
+  <undefined name="Unknown" offset="0xAC" visible="false" />
+  <undefined name="Unknown" offset="0xB0" visible="false" />
+  <reflexive name="vertices" offset="0xB4" visible="true" entrySize="0x80">
+    <float32 name="spring strength coefficient" offset="0x0" visible="true" description="strength of the spring (larger values make the spring stronger)" />
+    <undefined name="Unknown" offset="0x4" visible="false" />
+    <undefined name="Unknown" offset="0x8" visible="false" />
+    <undefined name="Unknown" offset="0xC" visible="false" />
+    <undefined name="Unknown" offset="0x10" visible="false" />
+    <undefined name="Unknown" offset="0x14" visible="false" />
+    <undefined name="Unknown" offset="0x18" visible="false" />
+    <degree name="angles" offset="0x1C" visible="true" description="direction toward next vertex y" />
+    <degree name="angles" offset="0x20" visible="true" description="direction toward next vertex p" />
+    <float32 name="length" offset="0x24" visible="true" description="distance between this vertex and the next" />
+    <int16 name="sequence index" offset="0x28" visible="true" description="bitmap group sequence index for this vertex's texture" />
+    <int16 name="Unknown" offset="0x2A" visible="false" />
+    <colorf name="color" offset="0x2C" format="argb" visible="true" description="color at this vertex" />
+    <colorf name="LOD color" offset="0x3C" format="argb" visible="true" description="color at this vertex for the low-LOD line primitives" />
+    <undefined name="Unknown" offset="0x4C" visible="false" />
+    <undefined name="Unknown" offset="0x50" visible="false" />
+    <undefined name="Unknown" offset="0x54" visible="false" />
+    <undefined name="Unknown" offset="0x58" visible="false" />
+    <undefined name="Unknown" offset="0x5C" visible="false" />
+    <undefined name="Unknown" offset="0x60" visible="false" />
+    <undefined name="Unknown" offset="0x64" visible="false" />
+    <undefined name="Unknown" offset="0x68" visible="false" />
+    <undefined name="Unknown" offset="0x6C" visible="false" />
+    <undefined name="Unknown" offset="0x70" visible="false" />
+    <undefined name="Unknown" offset="0x74" visible="false" />
+    <undefined name="Unknown" offset="0x78" visible="false" />
+    <undefined name="Unknown" offset="0x7C" visible="false" />
+  </reflexive>
+</plugin>

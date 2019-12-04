@@ -1,0 +1,11 @@
+<plugin class="sgp!" headersize="72">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <tagRef name="Unknown" offset="0" visible="True" />
+  <tagRef name="Unknown" offset="16" visible="True" />
+  <undefined name="Unknown" offset="32" visible="True" />
+  <undefined name="Unknown" offset="36" visible="True" />
+  <tagRef name="Unknown" offset="40" visible="True" />
+  <tagRef name="Unknown" offset="56" visible="True" />
+</plugin>

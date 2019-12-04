@@ -1,0 +1,37 @@
+<plugin class="rasg" headersize="164">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Created layout of plugin</revision>
+    <revision author="-DeToX-" version="0.2">Mapped out most of the tag</revision>
+  </revisions>
+  <struct name="Default Presets" offset="0" visible="True" size="20">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <tagRef name="Preset Bitmap" offset="4" visible="True" />
+  </struct>
+  <undefined name="Unknown" offset="8" visible="False" />
+  <struct name="Preset Rasterizers" offset="12" visible="True" size="16">
+    <tagRef name="Preset Rasterizer" offset="0" visible="True" />
+  </struct>
+  <undefined name="Unknown" offset="20" visible="False" />
+  <tagRef name="Vertex Shader Simple" offset="24" visible="True" />
+  <tagRef name="Pixel Shader Simple" offset="40" visible="True" />
+  <struct name="pixl/vrtx Shaders" offset="56" visible="True" size="32">
+    <tagRef name="Vertex Shader" offset="0" visible="True" />
+    <tagRef name="Pixel Shader" offset="16" visible="True" />
+  </struct>
+  <undefined name="Unknown" offset="64" visible="False" />
+  <undefined name="Unknown" offset="68" visible="False" />
+  <undefined name="Unknown" offset="72" visible="False" />
+  <undefined name="Unknown" offset="76" visible="False" />
+  <undefined name="Unknown" offset="80" visible="False" />
+  <undefined name="Unknown" offset="84" visible="False" />
+  <tagRef name="Active Camo Distortion" offset="88" visible="True" />
+  <tagRef name="Perf" offset="104" visible="True" />
+  <tagRef name="Shield Impact Settings" offset="120" visible="True" />
+  <undefined name="Unknown" offset="136" visible="False" />
+  <undefined name="Unknown" offset="140" visible="False" />
+  <undefined name="Unknown" offset="144" visible="False" />
+  <undefined name="Unknown" offset="148" visible="False" />
+  <undefined name="Unknown" offset="152" visible="False" />
+  <undefined name="Unknown" offset="156" visible="False" />
+  <undefined name="Unknown" offset="160" visible="False" />
+</plugin>

@@ -1,0 +1,37 @@
+<plugin>
+  <revisions />
+  <struct name="Unknown3" offset="0x0" visible="False" size="0x38">
+    <stringID name="Unknown" offset="0x0" visible="False" />
+    <undefined name="Unknown" offset="0xC" visible="False" />
+    <struct name="Unknown8" offset="0x18" visible="False" size="0x48">
+      <undefined name="Unknown" offset="0x0" visible="False" />
+      <undefined name="Unknown" offset="0x4" visible="False" />
+    </struct>
+    <struct name="Unknown24" offset="0x20" visible="False" size="0x30" />
+    <struct name="Unknown34" offset="0x28" visible="False" size="0x40" />
+    <struct name="Unknown47" offset="0x30" visible="False" size="0x28">
+      <tagRef name="Unknown" offset="0x0" visible="False" />
+      <struct name="Unknown50" offset="0x8" visible="False" size="0x10">
+        <tagRef name="Unknown" offset="0x0" visible="False" />
+      </struct>
+      <struct name="Unknown57" offset="0x20" visible="False" size="0x14">
+        <struct name="Unknown58" offset="0x0" visible="False" size="0x1C">
+          <struct name="Unknown59" offset="0x0" visible="False" size="0x10">
+            <undefined name="Unknown" offset="0x0" visible="False" />
+            <struct name="Unknown61" offset="0x4" visible="False" size="0x1" />
+          </struct>
+          <struct name="Unknown66" offset="0x8" visible="False" size="0x4" />
+          <struct name="Unknown69" offset="0x10" visible="False" size="0x4">
+            <undefined name="Unknown" offset="0x0" visible="False" />
+          </struct>
+          <undefined name="Unknown" offset="0x18" visible="False" />
+        </struct>
+        <struct name="Unknown74" offset="0x8" visible="False" size="0x10">
+          <undefined name="Unknown" offset="0x0" visible="False" />
+          <struct name="Unknown76" offset="0x4" visible="False" size="0x1" />
+        </struct>
+        <undefined name="Unknown" offset="0x10" visible="False" />
+      </struct>
+    </struct>
+  </struct>
+</plugin>

@@ -1,0 +1,315 @@
+<plugin class="chgd" headersize="240">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <struct name="Globals" offset="0" visible="True" size="520">
+    <enum32 name="Biped" offset="0" visible="True">
+      <option name="Biped A" value="0" />
+      <option name="Biped B" value="1" />
+      <option name="Biped C" value="2" />
+    </enum32>
+    <int8 name="unknown" offset="4" visible="False" />
+    <int8 name="Red A" offset="5" visible="True" />
+    <int8 name="Green A" offset="6" visible="True" />
+    <int8 name="Blue A" offset="7" visible="True" />
+    <int8 name="unknown" offset="8" visible="False" />
+    <int8 name="Red B" offset="9" visible="True" />
+    <int8 name="Green B" offset="10" visible="True" />
+    <int8 name="Blue B" offset="11" visible="True" />
+    <int8 name="unknown" offset="12" visible="False" />
+    <int8 name="Red C" offset="13" visible="True" />
+    <int8 name="Green C" offset="14" visible="True" />
+    <int8 name="Blue C" offset="15" visible="True" />
+    <int8 name="unknown" offset="16" visible="False" />
+    <int8 name="Red D" offset="17" visible="True" />
+    <int8 name="Green D" offset="18" visible="True" />
+    <int8 name="Blue D" offset="19" visible="True" />
+    <int8 name="unknown" offset="20" visible="False" />
+    <int8 name="Red E" offset="21" visible="True" />
+    <int8 name="Green E" offset="22" visible="True" />
+    <int8 name="Blue E" offset="23" visible="True" />
+    <int8 name="unknown" offset="24" visible="False" />
+    <int8 name="Red F" offset="25" visible="True" />
+    <int8 name="Green F" offset="26" visible="True" />
+    <int8 name="Blue F" offset="27" visible="True" />
+    <int8 name="unknown" offset="28" visible="False" />
+    <int8 name="Red G" offset="29" visible="True" />
+    <int8 name="Green G" offset="30" visible="True" />
+    <int8 name="Blue G" offset="31" visible="True" />
+    <int8 name="unknown" offset="32" visible="False" />
+    <int8 name="Red H" offset="33" visible="True" />
+    <int8 name="Green H" offset="34" visible="True" />
+    <int8 name="Blue H" offset="35" visible="True" />
+    <int8 name="unknown" offset="36" visible="False" />
+    <int8 name="Red I" offset="37" visible="True" />
+    <int8 name="Green I" offset="38" visible="True" />
+    <int8 name="Blue I" offset="39" visible="True" />
+    <int8 name="unknown" offset="40" visible="False" />
+    <int8 name="Red J" offset="41" visible="True" />
+    <int8 name="Green J" offset="42" visible="True" />
+    <int8 name="Blue J" offset="43" visible="True" />
+    <int8 name="unknown" offset="44" visible="False" />
+    <int8 name="Red K" offset="45" visible="True" />
+    <int8 name="Green K" offset="46" visible="True" />
+    <int8 name="Blue K" offset="47" visible="True" />
+    <int8 name="unknown" offset="48" visible="False" />
+    <int8 name="Red L" offset="49" visible="True" />
+    <int8 name="Green L" offset="50" visible="True" />
+    <int8 name="Blue L" offset="51" visible="True" />
+    <int8 name="unknown" offset="52" visible="False" />
+    <int8 name="Red M" offset="53" visible="True" />
+    <int8 name="Green M" offset="54" visible="True" />
+    <int8 name="Blue M" offset="55" visible="True" />
+    <int8 name="unknown" offset="56" visible="False" />
+    <int8 name="Red N" offset="57" visible="True" />
+    <int8 name="Green N" offset="58" visible="True" />
+    <int8 name="Blue N" offset="59" visible="True" />
+    <int8 name="unknown" offset="60" visible="False" />
+    <int8 name="Red O" offset="61" visible="True" />
+    <int8 name="Green O" offset="62" visible="True" />
+    <int8 name="Blue O" offset="63" visible="True" />
+    <int8 name="unknown" offset="64" visible="False" />
+    <int8 name="Red P" offset="65" visible="True" />
+    <int8 name="Green P" offset="66" visible="True" />
+    <int8 name="Blue P" offset="67" visible="True" />
+    <int8 name="unknown" offset="68" visible="False" />
+    <int8 name="Red Q" offset="69" visible="True" />
+    <int8 name="Green Q" offset="70" visible="True" />
+    <int8 name="Blue Q" offset="71" visible="True" />
+    <int8 name="unknown" offset="72" visible="False" />
+    <int8 name="Red R" offset="73" visible="True" />
+    <int8 name="Green R" offset="74" visible="True" />
+    <int8 name="Blue R" offset="75" visible="True" />
+    <int8 name="unknown" offset="76" visible="False" />
+    <int8 name="Red S" offset="77" visible="True" />
+    <int8 name="Green S" offset="78" visible="True" />
+    <int8 name="Blue S" offset="79" visible="True" />
+    <int8 name="unknown" offset="80" visible="False" />
+    <int8 name="Red T" offset="81" visible="True" />
+    <int8 name="Green T" offset="82" visible="True" />
+    <int8 name="Blue T" offset="83" visible="True" />
+    <int8 name="unknown" offset="84" visible="False" />
+    <int8 name="Red U" offset="85" visible="True" />
+    <int8 name="Green U" offset="86" visible="True" />
+    <int8 name="Blue U" offset="87" visible="True" />
+    <int8 name="unknown" offset="88" visible="False" />
+    <int8 name="Red V" offset="89" visible="True" />
+    <int8 name="Green V" offset="90" visible="True" />
+    <int8 name="Blue V" offset="91" visible="True" />
+    <int8 name="unknown" offset="92" visible="False" />
+    <int8 name="Red W" offset="93" visible="True" />
+    <int8 name="Green W" offset="94" visible="True" />
+    <int8 name="Blue W" offset="95" visible="True" />
+    <int8 name="unknown" offset="96" visible="False" />
+    <int8 name="Red X" offset="97" visible="True" />
+    <int8 name="Green X" offset="98" visible="True" />
+    <int8 name="Blue X" offset="99" visible="True" />
+    <int8 name="unknown" offset="100" visible="False" />
+    <int8 name="Red Y" offset="101" visible="True" />
+    <int8 name="Green Y" offset="102" visible="True" />
+    <int8 name="Blue Y" offset="103" visible="True" />
+    <int8 name="unknown" offset="104" visible="False" />
+    <int8 name="Red Z" offset="105" visible="True" />
+    <int8 name="Green Z" offset="106" visible="True" />
+    <int8 name="Blue Z" offset="107" visible="True" />
+    <int8 name="unknown" offset="108" visible="False" />
+    <int8 name="Red 0" offset="109" visible="True" />
+    <int8 name="Gree 0" offset="110" visible="True" />
+    <int8 name="Blue 0" offset="111" visible="True" />
+    <int8 name="unknown" offset="112" visible="False" />
+    <int8 name="Red 1" offset="113" visible="True" />
+    <int8 name="Green 1" offset="114" visible="True" />
+    <int8 name="Blue 1" offset="115" visible="True" />
+    <struct name="Screen Attributes" offset="116" visible="True" size="96" label="Name">
+      <stringID name="Name" offset="0" visible="True" />
+      <float32 name="Warp A" offset="4" visible="True" />
+      <float32 name="Warp B" offset="8" visible="True" />
+      <float32 name="Warp C" offset="12" visible="True" />
+      <int32 name="Resolution Width" offset="16" visible="True" />
+      <int32 name="Resolution Height" offset="20" visible="True" />
+      <realPoint2D name="Motion Sensor Offset" offset="24" visible="True" />
+      <float32 name="Motion Sensor Radius" offset="32" visible="True" />
+      <float32 name="Motion Sensor Scale" offset="36" visible="True" />
+      <float32 name="Warp D" offset="40" visible="True" />
+      <float32 name="Warp E" offset="44" visible="True" />
+      <float32 name="Hud Width" offset="48" visible="True" />
+      <float32 name="Hud Height" offset="52" visible="True" />
+      <float32 name="Notification Offset Y" offset="56" visible="True" />
+      <float32 name="Action Offset Y" offset="60" visible="True" />
+      <undefined name="Unknown" offset="64" visible="False" />
+      <undefined name="Unknown" offset="68" visible="False" />
+      <undefined name="Unknown" offset="72" visible="False" />
+      <undefined name="Unknown" offset="76" visible="False" />
+      <undefined name="Unknown" offset="80" visible="False" />
+      <undefined name="Unknown" offset="84" visible="False" />
+      <undefined name="Unknown" offset="88" visible="False" />
+      <undefined name="Unknown" offset="92" visible="False" />
+    </struct>
+    <struct name="Biped HUD Sounds" offset="128" visible="True" size="40">
+      <tagRef name="Biped A Resource" offset="0" visible="True" />
+      <tagRef name="Biped B Resource" offset="24" visible="True" />
+    </struct>
+    <undefined name="Unknown" offset="140" visible="False" />
+    <undefined name="Unknown" offset="144" visible="False" />
+    <undefined name="Unknown" offset="148" visible="False" />
+    <undefined name="Unknown" offset="152" visible="False" />
+    <tagRef name="Grenade A Swap Sound" offset="156" visible="True" />
+    <tagRef name="Grenade B Swap Sound" offset="172" visible="True" />
+    <tagRef name="Grenade C Swap Sound" offset="188" visible="True" />
+    <tagRef name="Grenade D Swap Sound" offset="204" visible="True" />
+    <tagRef name="Shield Damage Noise" offset="220" visible="True" />
+    <tagRef name="Shield Damage Noise" offset="236" visible="True" />
+    <tagRef name="Directional Arrow" offset="252" visible="True" />
+    <tagRef name="Waypoint" offset="268" visible="True" />
+    <tagRef name="Score Board UI" offset="284" visible="True" />
+    <tagRef name="Meta Game Score Board UI" offset="300" visible="True" />
+    <tagRef name="Save Film UI" offset="316" visible="True" />
+    <tagRef name="Forge HUD" offset="332" visible="True" />
+    <tagRef name="HUD Help Unicode" offset="348" visible="True" />
+    <tagRef name="Game Medals" offset="364" visible="True" />
+    <struct name="Unknown 3" offset="380" visible="False" size="4">
+      <undefined name="Unknown" offset="0" visible="False" />
+    </struct>
+    <tagRef name="Medal Animation" offset="392" visible="True" />
+    <tagRef name="Cortana Screen Effect" offset="408" visible="True" />
+    <undefined name="Unknown" offset="424" visible="False" />
+    <undefined name="Unknown" offset="428" visible="False" />
+    <undefined name="Unknown" offset="432" visible="False" />
+    <undefined name="Unknown" offset="436" visible="False" />
+    <undefined name="Unknown" offset="440" visible="False" />
+    <undefined name="Unknown" offset="444" visible="False" />
+    <undefined name="Unknown" offset="448" visible="False" />
+    <undefined name="Unknown" offset="452" visible="False" />
+    <undefined name="Unknown" offset="456" visible="False" />
+    <undefined name="Unknown" offset="460" visible="False" />
+    <undefined name="Unknown" offset="464" visible="False" />
+    <undefined name="Unknown" offset="468" visible="False" />
+    <undefined name="Unknown" offset="472" visible="False" />
+    <undefined name="Unknown" offset="476" visible="False" />
+    <undefined name="Unknown" offset="480" visible="False" />
+    <undefined name="Unknown" offset="484" visible="False" />
+    <float32 name="Grenade Scematics Spacing" offset="488" visible="True" />
+    <float32 name="Single Wield Equitment Scematic Y" offset="492" visible="True" />
+    <float32 name="Multi Wield Equitment Scematic Y" offset="496" visible="True" />
+    <undefined name="Unknown" offset="500" visible="False" />
+    <undefined name="Unknown" offset="504" visible="False" />
+    <float32 name="ScoreBoard Placement Y" offset="508" visible="True" />
+    <undefined name="Unknown" offset="512" visible="False" />
+    <float32 name="Waypoint Scale" offset="516" visible="True" />
+  </struct>
+  <struct name="Templates" offset="12" visible="True" size="32">
+    <tagRef name="Vertex Shader" offset="0" visible="True" />
+    <tagRef name="Pixel Shader" offset="16" visible="True" />
+  </struct>
+  <struct name="Unknown 2" offset="24" visible="False" size="64">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="12" visible="False" />
+    <undefined name="Unknown" offset="16" visible="False" />
+    <undefined name="Unknown" offset="20" visible="False" />
+    <undefined name="Unknown" offset="24" visible="False" />
+    <undefined name="Unknown" offset="28" visible="False" />
+    <undefined name="Unknown" offset="32" visible="False" />
+    <undefined name="Unknown" offset="36" visible="False" />
+    <undefined name="Unknown" offset="40" visible="False" />
+    <undefined name="Unknown" offset="44" visible="False" />
+    <undefined name="Unknown" offset="48" visible="False" />
+    <undefined name="Unknown" offset="52" visible="False" />
+    <undefined name="Unknown" offset="56" visible="False" />
+    <undefined name="Unknown" offset="60" visible="False" />
+  </struct>
+  <struct name="Unknown 3" offset="36" visible="False" size="16">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <struct name="Unknown 4" offset="4" visible="False" size="228">
+      <undefined name="Unknown" offset="0" visible="False" />
+      <undefined name="Unknown" offset="4" visible="False" />
+      <undefined name="Unknown" offset="8" visible="False" />
+      <undefined name="Unknown" offset="12" visible="False" />
+      <undefined name="Unknown" offset="16" visible="False" />
+      <undefined name="Unknown" offset="20" visible="False" />
+      <undefined name="Unknown" offset="24" visible="False" />
+      <undefined name="Unknown" offset="28" visible="False" />
+      <undefined name="Unknown" offset="32" visible="False" />
+      <undefined name="Unknown" offset="36" visible="False" />
+      <undefined name="Unknown" offset="40" visible="False" />
+      <undefined name="Unknown" offset="44" visible="False" />
+      <undefined name="Unknown" offset="48" visible="False" />
+      <undefined name="Unknown" offset="52" visible="False" />
+      <undefined name="Unknown" offset="56" visible="False" />
+      <undefined name="Unknown" offset="60" visible="False" />
+      <undefined name="Unknown" offset="64" visible="False" />
+      <undefined name="Unknown" offset="68" visible="False" />
+      <undefined name="Unknown" offset="72" visible="False" />
+      <undefined name="Unknown" offset="76" visible="False" />
+      <undefined name="Unknown" offset="80" visible="False" />
+      <undefined name="Unknown" offset="84" visible="False" />
+      <undefined name="Unknown" offset="88" visible="False" />
+      <undefined name="Unknown" offset="92" visible="False" />
+      <undefined name="Unknown" offset="96" visible="False" />
+      <undefined name="Unknown" offset="100" visible="False" />
+      <undefined name="Unknown" offset="104" visible="False" />
+      <undefined name="Unknown" offset="108" visible="False" />
+      <undefined name="Unknown" offset="112" visible="False" />
+      <undefined name="Unknown" offset="116" visible="False" />
+      <undefined name="Unknown" offset="120" visible="False" />
+      <undefined name="Unknown" offset="124" visible="False" />
+      <undefined name="Unknown" offset="128" visible="False" />
+      <undefined name="Unknown" offset="132" visible="False" />
+      <undefined name="Unknown" offset="136" visible="False" />
+      <undefined name="Unknown" offset="140" visible="False" />
+      <undefined name="Unknown" offset="144" visible="False" />
+      <undefined name="Unknown" offset="148" visible="False" />
+      <undefined name="Unknown" offset="152" visible="False" />
+      <undefined name="Unknown" offset="156" visible="False" />
+      <undefined name="Unknown" offset="160" visible="False" />
+      <undefined name="Unknown" offset="164" visible="False" />
+      <undefined name="Unknown" offset="168" visible="False" />
+      <undefined name="Unknown" offset="172" visible="False" />
+      <undefined name="Unknown" offset="176" visible="False" />
+      <undefined name="Unknown" offset="180" visible="False" />
+      <undefined name="Unknown" offset="184" visible="False" />
+      <undefined name="Unknown" offset="188" visible="False" />
+      <undefined name="Unknown" offset="192" visible="False" />
+      <undefined name="Unknown" offset="196" visible="False" />
+      <undefined name="Unknown" offset="200" visible="False" />
+      <undefined name="Unknown" offset="204" visible="False" />
+      <undefined name="Unknown" offset="208" visible="False" />
+      <undefined name="Unknown" offset="212" visible="False" />
+      <undefined name="Unknown" offset="216" visible="False" />
+      <undefined name="Unknown" offset="220" visible="False" />
+      <undefined name="Unknown" offset="224" visible="False" />
+    </struct>
+  </struct>
+  <struct name="Unknown 4" offset="48" visible="False" size="20">
+    <float32 name="Unknown" offset="0" visible="False" />
+    <int16 name="Unknown" offset="4" visible="False" />
+    <int16 name="Unknown" offset="6" visible="False" />
+    <int16 name="Unknown" offset="8" visible="False" />
+    <int16 name="Unknown" offset="10" visible="False" />
+    <float32 name="Unknown" offset="12" visible="False" />
+    <int16 name="Unknown" offset="16" visible="False" />
+    <int16 name="Unknown" offset="18" visible="False" />
+  </struct>
+  <tagRef name="Start Menu Emblems UI" offset="60" visible="True" />
+  <tagRef name="Campaign Metals" offset="76" visible="True" />
+  <tagRef name="Metal Animation" offset="92" visible="True" />
+  <undefined name="Unknown" offset="108" visible="False" />
+  <undefined name="Unknown" offset="112" visible="False" />
+  <undefined name="Unknown" offset="116" visible="False" />
+  <undefined name="Unknown" offset="120" visible="False" />
+  <undefined name="Unknown" offset="124" visible="False" />
+  <undefined name="Unknown" offset="128" visible="False" />
+  <tagRef name="Unit Damage Grid" offset="132" visible="True" />
+  <float32 name="Micro Texture Tile Amount" offset="148" visible="True" />
+  <float32 name="Medium Sensor Blip Scale" offset="152" visible="True" />
+  <float32 name="Small Sensor Blip Scale" offset="156" visible="True" />
+  <float32 name="Large Sensor Blip Scale" offset="160" visible="True" />
+  <float32 name="Sensor Blip Glow Amount" offset="164" visible="True" />
+  <float32 name="Sensor Blip Glow Radius" offset="168" visible="True" />
+  <float32 name="Sensor Blip Glow Opacity" offset="172" visible="True" />
+  <tagRef name="Motion Sensor Blip" offset="176" visible="True" />
+  <tagRef name="Birthday Party Effect" offset="192" visible="True" />
+  <tagRef name="Campaign Flood Mask" offset="208" visible="True" />
+  <tagRef name="Campaign Flood Mask Tile" offset="224" visible="True" />
+</plugin>

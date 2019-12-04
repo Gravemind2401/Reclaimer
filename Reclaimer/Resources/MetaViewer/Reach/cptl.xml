@@ -1,0 +1,35 @@
+<plugin class="cptl" headersize="104">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <struct name="Unknown 0" offset="0" visible="True" size="80">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="12" visible="False" />
+    <undefined name="Unknown" offset="16" visible="False" />
+    <undefined name="Unknown" offset="20" visible="False" />
+    <undefined name="Unknown" offset="24" visible="False" />
+    <undefined name="Unknown" offset="28" visible="False" />
+    <undefined name="Unknown" offset="32" visible="False" />
+    <undefined name="Alpha" offset="36" visible="True" />
+    <undefined name="Unknown" offset="52" visible="False" />
+    <undefined name="Unknown" offset="56" visible="False" />
+    <undefined name="Unknown" offset="60" visible="False" />
+    <undefined name="Unknown" offset="64" visible="False" />
+    <undefined name="Unknown" offset="68" visible="False" />
+    <undefined name="Unknown" offset="72" visible="False" />
+    <undefined name="Unknown" offset="76" visible="False" />
+  </struct>
+  <struct name="Unknown 1" offset="12" visible="True" size="16">
+    <tagRef name="Unknown" offset="0" visible="True" />
+  </struct>
+  <tagRef name="Unknown" offset="24" visible="True" />
+  <tagRef name="Unknown" offset="40" visible="True" />
+  <undefined name="Unknown" offset="56" visible="False" />
+  <undefined name="Unknown" offset="60" visible="False" />
+  <undefined name="Unknown" offset="64" visible="False" />
+  <undefined name="Unknown" offset="68" visible="False" />
+  <tagRef name="Unknown" offset="72" visible="True" />
+  <tagRef name="Unknown" offset="88" visible="True" />
+</plugin>

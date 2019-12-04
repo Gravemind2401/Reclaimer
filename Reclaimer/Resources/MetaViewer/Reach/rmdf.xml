@@ -1,0 +1,100 @@
+<plugin class="rmdf" headersize="348">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <tagRef name="Unknown" offset="0" visible="True" />
+  <struct name="Unknown 0" offset="16" visible="True" size="24">
+    <undefined name="Unknown" offset="0" visible="True" />
+    <struct name="Unknown 1" offset="4" visible="True" size="28">
+      <undefined name="Unknown" offset="0" visible="True" />
+      <tagRef name="Unknown" offset="4" visible="True" />
+      <undefined name="Unknown" offset="20" visible="True" />
+      <undefined name="Unknown" offset="24" visible="True" />
+    </struct>
+    <undefined name="Unknown" offset="16" visible="True" />
+    <undefined name="Unknown" offset="20" visible="True" />
+  </struct>
+  <struct name="Unknown 1" offset="28" visible="True" size="16">
+    <undefined name="Unknown" offset="0" visible="True" />
+    <struct name="Unknown 2" offset="4" visible="True" size="28">
+      <undefined name="Unknown" offset="0" visible="True" />
+      <struct name="Unknown 3" offset="4" visible="True" size="4">
+        <undefined name="Unknown" offset="0" visible="True" />
+      </struct>
+      <struct name="Unknown 4" offset="16" visible="True" size="4">
+        <undefined name="Unknown" offset="0" visible="True" />
+      </struct>
+    </struct>
+  </struct>
+  <struct name="Unknown 2" offset="40" visible="True" size="4">
+    <undefined name="Unknown" offset="0" visible="True" />
+  </struct>
+  <tagRef name="Unknown" offset="52" visible="True" />
+  <tagRef name="Unknown" offset="68" visible="True" />
+  <undefined name="Unknown" offset="84" visible="True" />
+  <undefined name="Unknown" offset="88" visible="True" />
+  <undefined name="Unknown" offset="92" visible="True" />
+  <undefined name="Unknown" offset="96" visible="True" />
+  <undefined name="Unknown" offset="100" visible="True" />
+  <undefined name="Unknown" offset="104" visible="True" />
+  <undefined name="Unknown" offset="108" visible="True" />
+  <undefined name="Unknown" offset="112" visible="True" />
+  <undefined name="Unknown" offset="116" visible="True" />
+  <undefined name="Unknown" offset="120" visible="True" />
+  <undefined name="Unknown" offset="124" visible="True" />
+  <undefined name="Unknown" offset="128" visible="True" />
+  <undefined name="Unknown" offset="132" visible="True" />
+  <undefined name="Unknown" offset="136" visible="True" />
+  <undefined name="Unknown" offset="140" visible="True" />
+  <undefined name="Unknown" offset="144" visible="True" />
+  <undefined name="Unknown" offset="148" visible="True" />
+  <undefined name="Unknown" offset="152" visible="True" />
+  <undefined name="Unknown" offset="156" visible="True" />
+  <undefined name="Unknown" offset="160" visible="True" />
+  <undefined name="Unknown" offset="164" visible="True" />
+  <undefined name="Unknown" offset="168" visible="True" />
+  <undefined name="Unknown" offset="172" visible="True" />
+  <undefined name="Unknown" offset="176" visible="True" />
+  <undefined name="Unknown" offset="180" visible="True" />
+  <undefined name="Unknown" offset="184" visible="True" />
+  <undefined name="Unknown" offset="188" visible="True" />
+  <undefined name="Unknown" offset="192" visible="True" />
+  <undefined name="Unknown" offset="196" visible="True" />
+  <undefined name="Unknown" offset="200" visible="True" />
+  <undefined name="Unknown" offset="204" visible="True" />
+  <undefined name="Unknown" offset="208" visible="True" />
+  <undefined name="Unknown" offset="212" visible="True" />
+  <undefined name="Unknown" offset="216" visible="True" />
+  <undefined name="Unknown" offset="220" visible="True" />
+  <undefined name="Unknown" offset="224" visible="True" />
+  <undefined name="Unknown" offset="228" visible="True" />
+  <undefined name="Unknown" offset="232" visible="True" />
+  <undefined name="Unknown" offset="236" visible="True" />
+  <undefined name="Unknown" offset="240" visible="True" />
+  <undefined name="Unknown" offset="244" visible="True" />
+  <undefined name="Unknown" offset="248" visible="True" />
+  <undefined name="Unknown" offset="252" visible="True" />
+  <undefined name="Unknown" offset="256" visible="True" />
+  <undefined name="Unknown" offset="260" visible="True" />
+  <undefined name="Unknown" offset="264" visible="True" />
+  <undefined name="Unknown" offset="268" visible="True" />
+  <undefined name="Unknown" offset="272" visible="True" />
+  <undefined name="Unknown" offset="276" visible="True" />
+  <undefined name="Unknown" offset="280" visible="True" />
+  <undefined name="Unknown" offset="284" visible="True" />
+  <undefined name="Unknown" offset="288" visible="True" />
+  <undefined name="Unknown" offset="292" visible="True" />
+  <undefined name="Unknown" offset="296" visible="True" />
+  <undefined name="Unknown" offset="300" visible="True" />
+  <undefined name="Unknown" offset="304" visible="True" />
+  <undefined name="Unknown" offset="308" visible="True" />
+  <undefined name="Unknown" offset="312" visible="True" />
+  <undefined name="Unknown" offset="316" visible="True" />
+  <undefined name="Unknown" offset="320" visible="True" />
+  <undefined name="Unknown" offset="324" visible="True" />
+  <undefined name="Unknown" offset="328" visible="True" />
+  <undefined name="Unknown" offset="332" visible="True" />
+  <undefined name="Unknown" offset="336" visible="True" />
+  <undefined name="Unknown" offset="340" visible="True" />
+  <undefined name="Unknown" offset="344" visible="True" />
+</plugin>

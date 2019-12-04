@@ -1,0 +1,74 @@
+<plugin>
+  <revisions />
+  <undefined name="Unknown" offset="0x1C" visible="False" />
+  <stringID name="Unknown" offset="0x30" visible="False" />
+  <tagRef name="Object Properties" offset="0x34" visible="True" />
+  <tagRef name="Unused" offset="0x3C" visible="False" />
+  <tagRef name="Unused" offset="0x4C" visible="False" />
+  <tagRef name="Material Effect" offset="0x54" visible="True" />
+  <struct name="Unknown27" offset="0x64" visible="False" size="0x20">
+    <stringID name="Unknown" offset="0x4" visible="False" />
+    <stringID name="Unknown" offset="0x8" visible="False" />
+    <struct name="Unknown27.0" offset="0x14" visible="False" size="0x1" />
+  </struct>
+  <struct name="Attachments46" offset="0x94" visible="True" size="0x18">
+    <tagRef name="Type" offset="0x0" visible="True" />
+    <stringID name="Marker" offset="0x8" visible="True" />
+    <stringID name="Unknown" offset="0x10" visible="False" />
+  </struct>
+  <struct name="Widgets54" offset="0x9C" visible="True" size="0x8">
+    <tagRef name="Reference" offset="0x0" visible="True" />
+  </struct>
+  <struct name="Unknown59" offset="0xAC" visible="False" size="0x10">
+    <struct name="Unknown61" offset="0x8" visible="False" size="0x28">
+      <stringID name="Unknown" offset="0x24" visible="False" />
+    </struct>
+  </struct>
+  <struct name="Predicted Resource73" offset="0xB4" visible="True" size="0x8" />
+  <enum16 name="Detonation Timer Starts" offset="0xC0" visible="True">
+    <option name="Immediately" value="0x0" />
+    <option name="After first bounce" value="0x1" />
+    <option name="When at rest" value="0x2" />
+  </enum16>
+  <enum16 name="Impact Noise" offset="0xC2" visible="True">
+    <option name="Silent" value="0x0" />
+    <option name="Medium" value="0x1" />
+    <option name="Loud" value="0x2" />
+    <option name="Shout" value="0x3" />
+    <option name="Quiet" value="0x4" />
+  </enum16>
+  <undefined name="Unknown" offset="0xE4" visible="False" />
+  <tagRef name="Detonation Start" offset="0xE8" visible="True" />
+  <tagRef name="Airborne Detonation" offset="0xF0" visible="True" />
+  <tagRef name="Standard Detonation" offset="0xF8" visible="True" />
+  <tagRef name="Explosion Damage" offset="0x100" visible="True" />
+  <tagRef name="Attached Explosion Damage" offset="0x108" visible="True" />
+  <tagRef name="Super Detonation" offset="0x110" visible="True" />
+  <tagRef name="Super Detonation Damage" offset="0x118" visible="True" />
+  <tagRef name="Round Explode" offset="0x120" visible="True" />
+  <undefined name="Unknown" offset="0x128" visible="False" />
+  <tagRef name="Attached Super Detonation Damage" offset="0x12C" visible="True" />
+  <tagRef name="Fly By" offset="0x138" visible="True" />
+  <tagRef name="Impact Effect" offset="0x140" visible="True" />
+  <tagRef name="Impact Damage" offset="0x148" visible="True" />
+  <tagRef name="Boarding Damage" offset="0x154" visible="True" />
+  <tagRef name="Boarding Damage" offset="0x15C" visible="True" />
+  <undefined name="Unknown" offset="0x184" visible="False" />
+  <undefined name="Unknown" offset="0x194" visible="False" />
+  <struct name="Material Responses144" offset="0x19C" visible="True" size="0x58">
+    <enum16 name="Default Response" offset="0x2" visible="True">
+      <option name="Disappear" value="0x0" />
+      <option name="Detonate" value="0x1" />
+      <option name="Reflect" value="0x2" />
+      <option name="Overpenetrate" value="0x3" />
+      <option name="Attach" value="0x4" />
+    </enum16>
+    <tagRef name="Default Effect" offset="0x4" visible="True" />
+    <stringID name="Surface Type" offset="0xC" visible="True" />
+    <enum16 name="Unknown" offset="0x14" visible="False" />
+    <enum16 name="Unknown" offset="0x16" visible="False" />
+    <tagRef name="Unused" offset="0x2C" visible="False" />
+    <undefined name="Unknown" offset="0x38" visible="False" />
+    <tagRef name="Unused" offset="0x40" visible="False" />
+  </struct>
+</plugin>

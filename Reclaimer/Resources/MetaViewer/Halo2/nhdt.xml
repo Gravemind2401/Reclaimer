@@ -1,0 +1,999 @@
+<plugin>
+  <revisions />
+  <tagRef name="DO NOT USE" offset="0x0" visible="True" />
+  <struct name="Bitmap Widgets" offset="0x8" visible="True" size="0x64">
+    <stringID name="Name" offset="0x0" visible="True" />
+    <enum8 name="Input 1" offset="0x4" visible="True">
+      <option name="BASIC Zero" value="0x0" />
+      <option name="BASIC One" value="0x1" />
+      <option name="BASIC Time" value="0x2" />
+      <option name="BASIC Global HUD Fade" value="0x3" />
+      <option name="..." value="0x4" />
+      <option name="..." value="0x5" />
+      <option name="..." value="0x6" />
+      <option name="..." value="0x7" />
+      <option name="..." value="0x8" />
+      <option name="..." value="0x9" />
+      <option name="..." value="0xA" />
+      <option name="..." value="0xB" />
+      <option name="..." value="0xC" />
+      <option name="..." value="0xD" />
+      <option name="..." value="0xE" />
+      <option name="..." value="0xF" />
+      <option name="UNIT Sheild" value="0x10" />
+      <option name="UNIT Body" value="0x11" />
+      <option name="UNIT AutoAimed" value="0x12" />
+      <option name="UNIT Has No Grenades" value="0x13" />
+      <option name="UNIT Frag Grenade Count" value="0x14" />
+      <option name="UNIT Plasma Grenade Count" value="0x15" />
+      <option name="UNIT Time On DPL Sheild" value="0x16" />
+      <option name="UNIT Zoom Fraction" value="0x17" />
+      <option name="UNIT Camo Value" value="0x18" />
+      <option name="..." value="0x19" />
+      <option name="..." value="0x1A" />
+      <option name="..." value="0x1B" />
+      <option name="..." value="0x1C" />
+      <option name="..." value="0x1D" />
+      <option name="..." value="0x1E" />
+      <option name="..." value="0x1F" />
+      <option name="..." value="0x20" />
+      <option name="PARENT Sheild" value="0x21" />
+      <option name="PARENT Body" value="0x22" />
+      <option name="..." value="0x23" />
+      <option name="..." value="0x24" />
+      <option name="..." value="0x25" />
+      <option name="..." value="0x26" />
+      <option name="..." value="0x27" />
+      <option name="..." value="0x28" />
+      <option name="..." value="0x29" />
+      <option name="..." value="0x2A" />
+      <option name="..." value="0x2B" />
+      <option name="..." value="0x2C" />
+      <option name="..." value="0x2D" />
+      <option name="..." value="0x2E" />
+      <option name="..." value="0x2F" />
+      <option name="..." value="0x30" />
+      <option name="WEAPON Clip Ammo" value="0x31" />
+      <option name="WEAPON Heat" value="0x28" />
+      <option name="WEAPON Battery" value="0x33" />
+      <option name="WEAPON Total Ammo" value="0x34" />
+      <option name="WEAPON Barrel Spin" value="0x35" />
+      <option name="WEAPON Overheated" value="0x36" />
+      <option name="WEAPON Clip Ammo Fraction" value="0x37" />
+      <option name="WEAPON Time On Overheat" value="0x38" />
+      <option name="WEAPON Battery Fraction" value="0x39" />
+      <option name="WEAPON Locking Fraction" value="0x3A" />
+      <option name="..." value="0x3B" />
+      <option name="..." value="0x3C" />
+      <option name="..." value="0x3D" />
+      <option name="..." value="0x3E" />
+      <option name="..." value="0x3F" />
+      <option name="..." value="0x40" />
+      <option name="..." value="0x41" />
+      <option name="User Score Fraction" value="0x42" />
+      <option name="Other User Score Fraction" value="0x43" />
+      <option name="User Winning" value="0x44" />
+      <option name="Bomb Arming Amount" value="0x45" />
+    </enum8>
+    <enum8 name="Input 2" offset="0x5" visible="True">
+      <option name="BASIC Zero" value="0x0" />
+      <option name="BASIC One" value="0x1" />
+      <option name="BASIC Time" value="0x2" />
+      <option name="BASIC Global HUD Fade" value="0x3" />
+      <option name="..." value="0x4" />
+      <option name="..." value="0x5" />
+      <option name="..." value="0x6" />
+      <option name="..." value="0x7" />
+      <option name="..." value="0x8" />
+      <option name="..." value="0x9" />
+      <option name="..." value="0xA" />
+      <option name="..." value="0xB" />
+      <option name="..." value="0xC" />
+      <option name="..." value="0xD" />
+      <option name="..." value="0xE" />
+      <option name="..." value="0xF" />
+      <option name="UNIT Sheild" value="0x10" />
+      <option name="UNIT Body" value="0x11" />
+      <option name="UNIT AutoAimed" value="0x12" />
+      <option name="UNIT Has No Grenades" value="0x13" />
+      <option name="UNIT Frag Grenade Count" value="0x14" />
+      <option name="UNIT Plasma Grenade Count" value="0x15" />
+      <option name="UNIT Time On DPL Sheild" value="0x16" />
+      <option name="UNIT Zoom Fraction" value="0x17" />
+      <option name="UNIT Camo Value" value="0x18" />
+      <option name="..." value="0x19" />
+      <option name="..." value="0x1A" />
+      <option name="..." value="0x1B" />
+      <option name="..." value="0x1C" />
+      <option name="..." value="0x1D" />
+      <option name="..." value="0x1E" />
+      <option name="..." value="0x1F" />
+      <option name="..." value="0x20" />
+      <option name="PARENT Sheild" value="0x21" />
+      <option name="PARENT Body" value="0x22" />
+      <option name="..." value="0x23" />
+      <option name="..." value="0x24" />
+      <option name="..." value="0x25" />
+      <option name="..." value="0x26" />
+      <option name="..." value="0x27" />
+      <option name="..." value="0x28" />
+      <option name="..." value="0x29" />
+      <option name="..." value="0x2A" />
+      <option name="..." value="0x2B" />
+      <option name="..." value="0x2C" />
+      <option name="..." value="0x2D" />
+      <option name="..." value="0x2E" />
+      <option name="..." value="0x2F" />
+      <option name="..." value="0x30" />
+      <option name="WEAPON Clip Ammo" value="0x31" />
+      <option name="WEAPON Heat" value="0x28" />
+      <option name="WEAPON Battery" value="0x33" />
+      <option name="WEAPON Total Ammo" value="0x34" />
+      <option name="WEAPON Barrel Spin" value="0x35" />
+      <option name="WEAPON Overheated" value="0x36" />
+      <option name="WEAPON Clip Ammo Fraction" value="0x37" />
+      <option name="WEAPON Time On Overheat" value="0x38" />
+      <option name="WEAPON Battery Fraction" value="0x39" />
+      <option name="WEAPON Locking Fraction" value="0x3A" />
+      <option name="..." value="0x3B" />
+      <option name="..." value="0x3C" />
+      <option name="..." value="0x3D" />
+      <option name="..." value="0x3E" />
+      <option name="..." value="0x3F" />
+      <option name="..." value="0x40" />
+      <option name="..." value="0x41" />
+      <option name="User Score Fraction" value="0x42" />
+      <option name="Other User Score Fraction" value="0x43" />
+      <option name="User Winning" value="0x44" />
+      <option name="Bomb Arming Amount" value="0x45" />
+    </enum8>
+    <enum8 name="Input 3" offset="0x6" visible="True">
+      <option name="BASIC Zero" value="0x0" />
+      <option name="BASIC One" value="0x1" />
+      <option name="BASIC Time" value="0x2" />
+      <option name="BASIC Global HUD Fade" value="0x3" />
+      <option name="..." value="0x4" />
+      <option name="..." value="0x5" />
+      <option name="..." value="0x6" />
+      <option name="..." value="0x7" />
+      <option name="..." value="0x8" />
+      <option name="..." value="0x9" />
+      <option name="..." value="0xA" />
+      <option name="..." value="0xB" />
+      <option name="..." value="0xC" />
+      <option name="..." value="0xD" />
+      <option name="..." value="0xE" />
+      <option name="..." value="0xF" />
+      <option name="UNIT Sheild" value="0x10" />
+      <option name="UNIT Body" value="0x11" />
+      <option name="UNIT AutoAimed" value="0x12" />
+      <option name="UNIT Has No Grenades" value="0x13" />
+      <option name="UNIT Frag Grenade Count" value="0x14" />
+      <option name="UNIT Plasma Grenade Count" value="0x15" />
+      <option name="UNIT Time On DPL Sheild" value="0x16" />
+      <option name="UNIT Zoom Fraction" value="0x17" />
+      <option name="UNIT Camo Value" value="0x18" />
+      <option name="..." value="0x19" />
+      <option name="..." value="0x1A" />
+      <option name="..." value="0x1B" />
+      <option name="..." value="0x1C" />
+      <option name="..." value="0x1D" />
+      <option name="..." value="0x1E" />
+      <option name="..." value="0x1F" />
+      <option name="..." value="0x20" />
+      <option name="PARENT Sheild" value="0x21" />
+      <option name="PARENT Body" value="0x22" />
+      <option name="..." value="0x23" />
+      <option name="..." value="0x24" />
+      <option name="..." value="0x25" />
+      <option name="..." value="0x26" />
+      <option name="..." value="0x27" />
+      <option name="..." value="0x28" />
+      <option name="..." value="0x29" />
+      <option name="..." value="0x2A" />
+      <option name="..." value="0x2B" />
+      <option name="..." value="0x2C" />
+      <option name="..." value="0x2D" />
+      <option name="..." value="0x2E" />
+      <option name="..." value="0x2F" />
+      <option name="..." value="0x30" />
+      <option name="WEAPON Clip Ammo" value="0x31" />
+      <option name="WEAPON Heat" value="0x28" />
+      <option name="WEAPON Battery" value="0x33" />
+      <option name="WEAPON Total Ammo" value="0x34" />
+      <option name="WEAPON Barrel Spin" value="0x35" />
+      <option name="WEAPON Overheated" value="0x36" />
+      <option name="WEAPON Clip Ammo Fraction" value="0x37" />
+      <option name="WEAPON Time On Overheat" value="0x38" />
+      <option name="WEAPON Battery Fraction" value="0x39" />
+      <option name="WEAPON Locking Fraction" value="0x3A" />
+      <option name="..." value="0x3B" />
+      <option name="..." value="0x3C" />
+      <option name="..." value="0x3D" />
+      <option name="..." value="0x3E" />
+      <option name="..." value="0x3F" />
+      <option name="..." value="0x40" />
+      <option name="..." value="0x41" />
+      <option name="User Score Fraction" value="0x42" />
+      <option name="Other User Score Fraction" value="0x43" />
+      <option name="User Winning" value="0x44" />
+      <option name="Bomb Arming Amount" value="0x45" />
+    </enum8>
+    <enum8 name="Input 4" offset="0x7" visible="True">
+      <option name="BASIC Zero" value="0x0" />
+      <option name="BASIC One" value="0x1" />
+      <option name="BASIC Time" value="0x2" />
+      <option name="BASIC Global HUD Fade" value="0x3" />
+      <option name="..." value="0x4" />
+      <option name="..." value="0x5" />
+      <option name="..." value="0x6" />
+      <option name="..." value="0x7" />
+      <option name="..." value="0x8" />
+      <option name="..." value="0x9" />
+      <option name="..." value="0xA" />
+      <option name="..." value="0xB" />
+      <option name="..." value="0xC" />
+      <option name="..." value="0xD" />
+      <option name="..." value="0xE" />
+      <option name="..." value="0xF" />
+      <option name="UNIT Sheild" value="0x10" />
+      <option name="UNIT Body" value="0x11" />
+      <option name="UNIT AutoAimed" value="0x12" />
+      <option name="UNIT Has No Grenades" value="0x13" />
+      <option name="UNIT Frag Grenade Count" value="0x14" />
+      <option name="UNIT Plasma Grenade Count" value="0x15" />
+      <option name="UNIT Time On DPL Sheild" value="0x16" />
+      <option name="UNIT Zoom Fraction" value="0x17" />
+      <option name="UNIT Camo Value" value="0x18" />
+      <option name="..." value="0x19" />
+      <option name="..." value="0x1A" />
+      <option name="..." value="0x1B" />
+      <option name="..." value="0x1C" />
+      <option name="..." value="0x1D" />
+      <option name="..." value="0x1E" />
+      <option name="..." value="0x1F" />
+      <option name="..." value="0x20" />
+      <option name="PARENT Sheild" value="0x21" />
+      <option name="PARENT Body" value="0x22" />
+      <option name="..." value="0x23" />
+      <option name="..." value="0x24" />
+      <option name="..." value="0x25" />
+      <option name="..." value="0x26" />
+      <option name="..." value="0x27" />
+      <option name="..." value="0x28" />
+      <option name="..." value="0x29" />
+      <option name="..." value="0x2A" />
+      <option name="..." value="0x2B" />
+      <option name="..." value="0x2C" />
+      <option name="..." value="0x2D" />
+      <option name="..." value="0x2E" />
+      <option name="..." value="0x2F" />
+      <option name="..." value="0x30" />
+      <option name="WEAPON Clip Ammo" value="0x31" />
+      <option name="WEAPON Heat" value="0x28" />
+      <option name="WEAPON Battery" value="0x33" />
+      <option name="WEAPON Total Ammo" value="0x34" />
+      <option name="WEAPON Barrel Spin" value="0x35" />
+      <option name="WEAPON Overheated" value="0x36" />
+      <option name="WEAPON Clip Ammo Fraction" value="0x37" />
+      <option name="WEAPON Time On Overheat" value="0x38" />
+      <option name="WEAPON Battery Fraction" value="0x39" />
+      <option name="WEAPON Locking Fraction" value="0x3A" />
+      <option name="..." value="0x3B" />
+      <option name="..." value="0x3C" />
+      <option name="..." value="0x3D" />
+      <option name="..." value="0x3E" />
+      <option name="..." value="0x3F" />
+      <option name="..." value="0x40" />
+      <option name="..." value="0x41" />
+      <option name="User Score Fraction" value="0x42" />
+      <option name="Other User Score Fraction" value="0x43" />
+      <option name="User Winning" value="0x44" />
+      <option name="Bomb Arming Amount" value="0x45" />
+    </enum8>
+    <int16 name="Age Cutoff" offset="0x16" visible="True" />
+    <int16 name="Clip Cutoff" offset="0x18" visible="True" />
+    <int16 name="Total Cutoff" offset="0x1A" visible="True" />
+    <enum16 name="Anchor" offset="0x1C" visible="True">
+      <option name="Health And Sheild" value="0x0" />
+      <option name="Weapon HUD" value="0x1" />
+      <option name="Motion Sensor" value="0x2" />
+      <option name="Scoreboard" value="0x3" />
+      <option name="Crosshair" value="0x4" />
+      <option name="Lock-on Target" value="0x5" />
+    </enum16>
+    <tagRef name="Bitmap" offset="0x20" visible="True" />
+    <tagRef name="Shader" offset="0x28" visible="True" />
+    <int16 name="Fullscreen Offset X" offset="0x34" visible="True" />
+    <int16 name="Fullscreen Offset Y" offset="0x36" visible="True" />
+    <int16 name="Halfscreen Offset X" offset="0x38" visible="True" />
+    <int16 name="Halfscreen Offset Y" offset="0x3A" visible="True" />
+    <int16 name="Quarterscreen Offset X" offset="0x3C" visible="True" />
+    <int16 name="Quarterscreen Offset Y" offset="0x3E" visible="True" />
+    <struct name="Effect" offset="0x58" visible="True" size="0x68">
+      <stringID name="Input Name" offset="0x4" visible="True" />
+      <stringID name="Range Name" offset="0x8" visible="True" />
+      <struct name="Function" offset="0x10" visible="True" size="0x1" />
+      <stringID name="Input Name" offset="0x18" visible="True" />
+      <stringID name="Range Name" offset="0x1C" visible="True" />
+      <struct name="Function" offset="0x24" visible="True" size="0x1" />
+      <stringID name="Input Name" offset="0x2C" visible="True" />
+      <stringID name="Range Name" offset="0x30" visible="True" />
+      <struct name="Function" offset="0x38" visible="True" size="0x1" />
+      <stringID name="Input Name" offset="0x40" visible="True" />
+      <stringID name="Range Name" offset="0x44" visible="True" />
+      <struct name="Function" offset="0x4C" visible="True" size="0x1" />
+      <stringID name="Input Name" offset="0x54" visible="True" />
+      <stringID name="Range Name" offset="0x58" visible="True" />
+      <struct name="Function" offset="0x60" visible="True" size="0x1" />
+    </struct>
+    <enum32 name="Special HUD Type" offset="0x60" visible="True">
+      <option name="Unspecial" value="0x0" />
+      <option name="S.B. Player Emblem" value="0x1" />
+      <option name="S.B. Other Player Emblem" value="0x2" />
+      <option name="S.B. Player Score Meter" value="0x3" />
+      <option name="S.B. Other Player Score Meter" value="0x4" />
+      <option name="Unit Sheild Meter" value="0x5" />
+      <option name="Motion Sensor" value="0x6" />
+      <option name="Territory Meter" value="0x7" />
+    </enum32>
+  </struct>
+  <struct name="Numerical Elements" offset="0x10" visible="True" size="0x54">
+    <stringID name="Name" offset="0x0" visible="True" />
+    <enum8 name="Input 1" offset="0x4" visible="True">
+      <option name="BASIC Zero" value="0x0" />
+      <option name="BASIC One" value="0x1" />
+      <option name="BASIC Time" value="0x2" />
+      <option name="BASIC Global HUD Fade" value="0x3" />
+      <option name="..." value="0x4" />
+      <option name="..." value="0x5" />
+      <option name="..." value="0x6" />
+      <option name="..." value="0x7" />
+      <option name="..." value="0x8" />
+      <option name="..." value="0x9" />
+      <option name="..." value="0xA" />
+      <option name="..." value="0xB" />
+      <option name="..." value="0xC" />
+      <option name="..." value="0xD" />
+      <option name="..." value="0xE" />
+      <option name="..." value="0xF" />
+      <option name="UNIT Sheild" value="0x10" />
+      <option name="UNIT Body" value="0x11" />
+      <option name="UNIT AutoAimed" value="0x12" />
+      <option name="UNIT Has No Grenades" value="0x13" />
+      <option name="UNIT Frag Grenade Count" value="0x14" />
+      <option name="UNIT Plasma Grenade Count" value="0x15" />
+      <option name="UNIT Time On DPL Sheild" value="0x16" />
+      <option name="UNIT Zoom Fraction" value="0x17" />
+      <option name="UNIT Camo Value" value="0x18" />
+      <option name="..." value="0x19" />
+      <option name="..." value="0x1A" />
+      <option name="..." value="0x1B" />
+      <option name="..." value="0x1C" />
+      <option name="..." value="0x1D" />
+      <option name="..." value="0x1E" />
+      <option name="..." value="0x1F" />
+      <option name="..." value="0x20" />
+      <option name="PARENT Sheild" value="0x21" />
+      <option name="PARENT Body" value="0x22" />
+      <option name="..." value="0x23" />
+      <option name="..." value="0x24" />
+      <option name="..." value="0x25" />
+      <option name="..." value="0x26" />
+      <option name="..." value="0x27" />
+      <option name="..." value="0x28" />
+      <option name="..." value="0x29" />
+      <option name="..." value="0x2A" />
+      <option name="..." value="0x2B" />
+      <option name="..." value="0x2C" />
+      <option name="..." value="0x2D" />
+      <option name="..." value="0x2E" />
+      <option name="..." value="0x2F" />
+      <option name="..." value="0x30" />
+      <option name="WEAPON Clip Ammo" value="0x31" />
+      <option name="WEAPON Heat" value="0x28" />
+      <option name="WEAPON Battery" value="0x33" />
+      <option name="WEAPON Total Ammo" value="0x34" />
+      <option name="WEAPON Barrel Spin" value="0x35" />
+      <option name="WEAPON Overheated" value="0x36" />
+      <option name="WEAPON Clip Ammo Fraction" value="0x37" />
+      <option name="WEAPON Time On Overheat" value="0x38" />
+      <option name="WEAPON Battery Fraction" value="0x39" />
+      <option name="WEAPON Locking Fraction" value="0x3A" />
+      <option name="..." value="0x3B" />
+      <option name="..." value="0x3C" />
+      <option name="..." value="0x3D" />
+      <option name="..." value="0x3E" />
+      <option name="..." value="0x3F" />
+      <option name="..." value="0x40" />
+      <option name="..." value="0x41" />
+      <option name="User Score Fraction" value="0x42" />
+      <option name="Other User Score Fraction" value="0x43" />
+      <option name="User Winning" value="0x44" />
+      <option name="Bomb Arming Amount" value="0x45" />
+    </enum8>
+    <enum8 name="Input 2" offset="0x5" visible="True">
+      <option name="BASIC Zero" value="0x0" />
+      <option name="BASIC One" value="0x1" />
+      <option name="BASIC Time" value="0x2" />
+      <option name="BASIC Global HUD Fade" value="0x3" />
+      <option name="..." value="0x4" />
+      <option name="..." value="0x5" />
+      <option name="..." value="0x6" />
+      <option name="..." value="0x7" />
+      <option name="..." value="0x8" />
+      <option name="..." value="0x9" />
+      <option name="..." value="0xA" />
+      <option name="..." value="0xB" />
+      <option name="..." value="0xC" />
+      <option name="..." value="0xD" />
+      <option name="..." value="0xE" />
+      <option name="..." value="0xF" />
+      <option name="UNIT Sheild" value="0x10" />
+      <option name="UNIT Body" value="0x11" />
+      <option name="UNIT AutoAimed" value="0x12" />
+      <option name="UNIT Has No Grenades" value="0x13" />
+      <option name="UNIT Frag Grenade Count" value="0x14" />
+      <option name="UNIT Plasma Grenade Count" value="0x15" />
+      <option name="UNIT Time On DPL Sheild" value="0x16" />
+      <option name="UNIT Zoom Fraction" value="0x17" />
+      <option name="UNIT Camo Value" value="0x18" />
+      <option name="..." value="0x19" />
+      <option name="..." value="0x1A" />
+      <option name="..." value="0x1B" />
+      <option name="..." value="0x1C" />
+      <option name="..." value="0x1D" />
+      <option name="..." value="0x1E" />
+      <option name="..." value="0x1F" />
+      <option name="..." value="0x20" />
+      <option name="PARENT Sheild" value="0x21" />
+      <option name="PARENT Body" value="0x22" />
+      <option name="..." value="0x23" />
+      <option name="..." value="0x24" />
+      <option name="..." value="0x25" />
+      <option name="..." value="0x26" />
+      <option name="..." value="0x27" />
+      <option name="..." value="0x28" />
+      <option name="..." value="0x29" />
+      <option name="..." value="0x2A" />
+      <option name="..." value="0x2B" />
+      <option name="..." value="0x2C" />
+      <option name="..." value="0x2D" />
+      <option name="..." value="0x2E" />
+      <option name="..." value="0x2F" />
+      <option name="..." value="0x30" />
+      <option name="WEAPON Clip Ammo" value="0x31" />
+      <option name="WEAPON Heat" value="0x28" />
+      <option name="WEAPON Battery" value="0x33" />
+      <option name="WEAPON Total Ammo" value="0x34" />
+      <option name="WEAPON Barrel Spin" value="0x35" />
+      <option name="WEAPON Overheated" value="0x36" />
+      <option name="WEAPON Clip Ammo Fraction" value="0x37" />
+      <option name="WEAPON Time On Overheat" value="0x38" />
+      <option name="WEAPON Battery Fraction" value="0x39" />
+      <option name="WEAPON Locking Fraction" value="0x3A" />
+      <option name="..." value="0x3B" />
+      <option name="..." value="0x3C" />
+      <option name="..." value="0x3D" />
+      <option name="..." value="0x3E" />
+      <option name="..." value="0x3F" />
+      <option name="..." value="0x40" />
+      <option name="..." value="0x41" />
+      <option name="User Score Fraction" value="0x42" />
+      <option name="Other User Score Fraction" value="0x43" />
+      <option name="User Winning" value="0x44" />
+      <option name="Bomb Arming Amount" value="0x45" />
+    </enum8>
+    <enum8 name="Input 3" offset="0x6" visible="True">
+      <option name="BASIC Zero" value="0x0" />
+      <option name="BASIC One" value="0x1" />
+      <option name="BASIC Time" value="0x2" />
+      <option name="BASIC Global HUD Fade" value="0x3" />
+      <option name="..." value="0x4" />
+      <option name="..." value="0x5" />
+      <option name="..." value="0x6" />
+      <option name="..." value="0x7" />
+      <option name="..." value="0x8" />
+      <option name="..." value="0x9" />
+      <option name="..." value="0xA" />
+      <option name="..." value="0xB" />
+      <option name="..." value="0xC" />
+      <option name="..." value="0xD" />
+      <option name="..." value="0xE" />
+      <option name="..." value="0xF" />
+      <option name="UNIT Sheild" value="0x10" />
+      <option name="UNIT Body" value="0x11" />
+      <option name="UNIT AutoAimed" value="0x12" />
+      <option name="UNIT Has No Grenades" value="0x13" />
+      <option name="UNIT Frag Grenade Count" value="0x14" />
+      <option name="UNIT Plasma Grenade Count" value="0x15" />
+      <option name="UNIT Time On DPL Sheild" value="0x16" />
+      <option name="UNIT Zoom Fraction" value="0x17" />
+      <option name="UNIT Camo Value" value="0x18" />
+      <option name="..." value="0x19" />
+      <option name="..." value="0x1A" />
+      <option name="..." value="0x1B" />
+      <option name="..." value="0x1C" />
+      <option name="..." value="0x1D" />
+      <option name="..." value="0x1E" />
+      <option name="..." value="0x1F" />
+      <option name="..." value="0x20" />
+      <option name="PARENT Sheild" value="0x21" />
+      <option name="PARENT Body" value="0x22" />
+      <option name="..." value="0x23" />
+      <option name="..." value="0x24" />
+      <option name="..." value="0x25" />
+      <option name="..." value="0x26" />
+      <option name="..." value="0x27" />
+      <option name="..." value="0x28" />
+      <option name="..." value="0x29" />
+      <option name="..." value="0x2A" />
+      <option name="..." value="0x2B" />
+      <option name="..." value="0x2C" />
+      <option name="..." value="0x2D" />
+      <option name="..." value="0x2E" />
+      <option name="..." value="0x2F" />
+      <option name="..." value="0x30" />
+      <option name="WEAPON Clip Ammo" value="0x31" />
+      <option name="WEAPON Heat" value="0x28" />
+      <option name="WEAPON Battery" value="0x33" />
+      <option name="WEAPON Total Ammo" value="0x34" />
+      <option name="WEAPON Barrel Spin" value="0x35" />
+      <option name="WEAPON Overheated" value="0x36" />
+      <option name="WEAPON Clip Ammo Fraction" value="0x37" />
+      <option name="WEAPON Time On Overheat" value="0x38" />
+      <option name="WEAPON Battery Fraction" value="0x39" />
+      <option name="WEAPON Locking Fraction" value="0x3A" />
+      <option name="..." value="0x3B" />
+      <option name="..." value="0x3C" />
+      <option name="..." value="0x3D" />
+      <option name="..." value="0x3E" />
+      <option name="..." value="0x3F" />
+      <option name="..." value="0x40" />
+      <option name="..." value="0x41" />
+      <option name="User Score Fraction" value="0x42" />
+      <option name="Other User Score Fraction" value="0x43" />
+      <option name="User Winning" value="0x44" />
+      <option name="Bomb Arming Amount" value="0x45" />
+    </enum8>
+    <enum8 name="Input 4" offset="0x7" visible="True">
+      <option name="BASIC Zero" value="0x0" />
+      <option name="BASIC One" value="0x1" />
+      <option name="BASIC Time" value="0x2" />
+      <option name="BASIC Global HUD Fade" value="0x3" />
+      <option name="..." value="0x4" />
+      <option name="..." value="0x5" />
+      <option name="..." value="0x6" />
+      <option name="..." value="0x7" />
+      <option name="..." value="0x8" />
+      <option name="..." value="0x9" />
+      <option name="..." value="0xA" />
+      <option name="..." value="0xB" />
+      <option name="..." value="0xC" />
+      <option name="..." value="0xD" />
+      <option name="..." value="0xE" />
+      <option name="..." value="0xF" />
+      <option name="UNIT Sheild" value="0x10" />
+      <option name="UNIT Body" value="0x11" />
+      <option name="UNIT AutoAimed" value="0x12" />
+      <option name="UNIT Has No Grenades" value="0x13" />
+      <option name="UNIT Frag Grenade Count" value="0x14" />
+      <option name="UNIT Plasma Grenade Count" value="0x15" />
+      <option name="UNIT Time On DPL Sheild" value="0x16" />
+      <option name="UNIT Zoom Fraction" value="0x17" />
+      <option name="UNIT Camo Value" value="0x18" />
+      <option name="..." value="0x19" />
+      <option name="..." value="0x1A" />
+      <option name="..." value="0x1B" />
+      <option name="..." value="0x1C" />
+      <option name="..." value="0x1D" />
+      <option name="..." value="0x1E" />
+      <option name="..." value="0x1F" />
+      <option name="..." value="0x20" />
+      <option name="PARENT Sheild" value="0x21" />
+      <option name="PARENT Body" value="0x22" />
+      <option name="..." value="0x23" />
+      <option name="..." value="0x24" />
+      <option name="..." value="0x25" />
+      <option name="..." value="0x26" />
+      <option name="..." value="0x27" />
+      <option name="..." value="0x28" />
+      <option name="..." value="0x29" />
+      <option name="..." value="0x2A" />
+      <option name="..." value="0x2B" />
+      <option name="..." value="0x2C" />
+      <option name="..." value="0x2D" />
+      <option name="..." value="0x2E" />
+      <option name="..." value="0x2F" />
+      <option name="..." value="0x30" />
+      <option name="WEAPON Clip Ammo" value="0x31" />
+      <option name="WEAPON Heat" value="0x28" />
+      <option name="WEAPON Battery" value="0x33" />
+      <option name="WEAPON Total Ammo" value="0x34" />
+      <option name="WEAPON Barrel Spin" value="0x35" />
+      <option name="WEAPON Overheated" value="0x36" />
+      <option name="WEAPON Clip Ammo Fraction" value="0x37" />
+      <option name="WEAPON Time On Overheat" value="0x38" />
+      <option name="WEAPON Battery Fraction" value="0x39" />
+      <option name="WEAPON Locking Fraction" value="0x3A" />
+      <option name="..." value="0x3B" />
+      <option name="..." value="0x3C" />
+      <option name="..." value="0x3D" />
+      <option name="..." value="0x3E" />
+      <option name="..." value="0x3F" />
+      <option name="..." value="0x40" />
+      <option name="..." value="0x41" />
+      <option name="User Score Fraction" value="0x42" />
+      <option name="Other User Score Fraction" value="0x43" />
+      <option name="User Winning" value="0x44" />
+      <option name="Bomb Arming Amount" value="0x45" />
+    </enum8>
+    <int16 name="Age Cutoff" offset="0x16" visible="True" />
+    <int16 name="Clip Cutoff" offset="0x18" visible="True" />
+    <int16 name="Total Cutoff" offset="0x1A" visible="True" />
+    <enum16 name="Anchor" offset="0x1C" visible="True">
+      <option name="Health And Sheild" value="0x0" />
+      <option name="Weapon HUD" value="0x1" />
+      <option name="Motion Sensor" value="0x2" />
+      <option name="Scoreboard" value="0x3" />
+      <option name="Crosshair" value="0x4" />
+      <option name="Lock-on Target" value="0x5" />
+    </enum16>
+    <tagRef name="Shader" offset="0x20" visible="True" />
+    <stringID name="String" offset="0x28" visible="True" />
+    <enum16 name="Justification" offset="0x2C" visible="True">
+      <option name="Left" value="0x0" />
+      <option name="Center" value="0x1" />
+      <option name="Right" value="0x2" />
+    </enum16>
+    <enum16 name="Fullscreen Font Index" offset="0x2E" visible="True">
+      <option name="Default" value="0x0" />
+      <option name="Number Font" value="0x1" />
+    </enum16>
+    <enum16 name="Halfscreen Font Index" offset="0x30" visible="True">
+      <option name="Default" value="0x0" />
+      <option name="Number Font" value="0x1" />
+    </enum16>
+    <enum16 name="Quarterscreen Font Index" offset="0x32" visible="True">
+      <option name="Default" value="0x0" />
+      <option name="Number Font" value="0x1" />
+    </enum16>
+    <int16 name="Fullscreen Offset X" offset="0x40" visible="True" />
+    <int16 name="Fullscreen Offset Y" offset="0x42" visible="True" />
+    <int16 name="Halfscreen Offset X" offset="0x44" visible="True" />
+    <int16 name="Halfscreen Offset Y" offset="0x46" visible="True" />
+    <int16 name="Quarterscreen Offset X" offset="0x48" visible="True" />
+    <int16 name="Quarterscreen Offset Y" offset="0x4A" visible="True" />
+    <struct name="Effect" offset="0x4C" visible="True" size="0x68">
+      <stringID name="Input Name" offset="0x4" visible="True" />
+      <stringID name="Range Name" offset="0x8" visible="True" />
+      <struct name="Function" offset="0x10" visible="True" size="0x1" />
+      <stringID name="Input Name" offset="0x18" visible="True" />
+      <stringID name="Range Name" offset="0x1C" visible="True" />
+      <struct name="Function" offset="0x24" visible="True" size="0x1" />
+      <stringID name="Input Name" offset="0x2C" visible="True" />
+      <stringID name="Range Name" offset="0x30" visible="True" />
+      <struct name="Function" offset="0x38" visible="True" size="0x1" />
+      <stringID name="Input Name" offset="0x40" visible="True" />
+      <stringID name="Range Name" offset="0x44" visible="True" />
+      <struct name="Function" offset="0x4C" visible="True" size="0x1" />
+      <stringID name="Input Name" offset="0x54" visible="True" />
+      <stringID name="Range Name" offset="0x58" visible="True" />
+      <struct name="Function" offset="0x60" visible="True" size="0x1" />
+    </struct>
+  </struct>
+  <int16 name="Low Clip Cutoff" offset="0x18" visible="True" />
+  <int16 name="Low Ammo Cutoff" offset="0x1A" visible="True" />
+  <struct name="Unknown98" offset="0x20" visible="True" size="0x50">
+    <stringID name="Name" offset="0x0" visible="True" />
+    <enum8 name="Input 1" offset="0x4" visible="True">
+      <option name="BASIC Zero" value="0x0" />
+      <option name="BASIC One" value="0x1" />
+      <option name="BASIC Time" value="0x2" />
+      <option name="BASIC Global HUD Fade" value="0x3" />
+      <option name="..." value="0x4" />
+      <option name="..." value="0x5" />
+      <option name="..." value="0x6" />
+      <option name="..." value="0x7" />
+      <option name="..." value="0x8" />
+      <option name="..." value="0x9" />
+      <option name="..." value="0xA" />
+      <option name="..." value="0xB" />
+      <option name="..." value="0xC" />
+      <option name="..." value="0xD" />
+      <option name="..." value="0xE" />
+      <option name="..." value="0xF" />
+      <option name="UNIT Sheild" value="0x10" />
+      <option name="UNIT Body" value="0x11" />
+      <option name="UNIT AutoAimed" value="0x12" />
+      <option name="UNIT Has No Grenades" value="0x13" />
+      <option name="UNIT Frag Grenade Count" value="0x14" />
+      <option name="UNIT Plasma Grenade Count" value="0x15" />
+      <option name="UNIT Time On DPL Sheild" value="0x16" />
+      <option name="UNIT Zoom Fraction" value="0x17" />
+      <option name="UNIT Camo Value" value="0x18" />
+      <option name="..." value="0x19" />
+      <option name="..." value="0x1A" />
+      <option name="..." value="0x1B" />
+      <option name="..." value="0x1C" />
+      <option name="..." value="0x1D" />
+      <option name="..." value="0x1E" />
+      <option name="..." value="0x1F" />
+      <option name="..." value="0x20" />
+      <option name="PARENT Sheild" value="0x21" />
+      <option name="PARENT Body" value="0x22" />
+      <option name="..." value="0x23" />
+      <option name="..." value="0x24" />
+      <option name="..." value="0x25" />
+      <option name="..." value="0x26" />
+      <option name="..." value="0x27" />
+      <option name="..." value="0x28" />
+      <option name="..." value="0x29" />
+      <option name="..." value="0x2A" />
+      <option name="..." value="0x2B" />
+      <option name="..." value="0x2C" />
+      <option name="..." value="0x2D" />
+      <option name="..." value="0x2E" />
+      <option name="..." value="0x2F" />
+      <option name="..." value="0x30" />
+      <option name="WEAPON Clip Ammo" value="0x31" />
+      <option name="WEAPON Heat" value="0x28" />
+      <option name="WEAPON Battery" value="0x33" />
+      <option name="WEAPON Total Ammo" value="0x34" />
+      <option name="WEAPON Barrel Spin" value="0x35" />
+      <option name="WEAPON Overheated" value="0x36" />
+      <option name="WEAPON Clip Ammo Fraction" value="0x37" />
+      <option name="WEAPON Time On Overheat" value="0x38" />
+      <option name="WEAPON Battery Fraction" value="0x39" />
+      <option name="WEAPON Locking Fraction" value="0x3A" />
+      <option name="..." value="0x3B" />
+      <option name="..." value="0x3C" />
+      <option name="..." value="0x3D" />
+      <option name="..." value="0x3E" />
+      <option name="..." value="0x3F" />
+      <option name="..." value="0x40" />
+      <option name="..." value="0x41" />
+      <option name="User Score Fraction" value="0x42" />
+      <option name="Other User Score Fraction" value="0x43" />
+      <option name="User Winning" value="0x44" />
+      <option name="Bomb Arming Amount" value="0x45" />
+    </enum8>
+    <enum8 name="Input 2" offset="0x5" visible="True">
+      <option name="BASIC Zero" value="0x0" />
+      <option name="BASIC One" value="0x1" />
+      <option name="BASIC Time" value="0x2" />
+      <option name="BASIC Global HUD Fade" value="0x3" />
+      <option name="..." value="0x4" />
+      <option name="..." value="0x5" />
+      <option name="..." value="0x6" />
+      <option name="..." value="0x7" />
+      <option name="..." value="0x8" />
+      <option name="..." value="0x9" />
+      <option name="..." value="0xA" />
+      <option name="..." value="0xB" />
+      <option name="..." value="0xC" />
+      <option name="..." value="0xD" />
+      <option name="..." value="0xE" />
+      <option name="..." value="0xF" />
+      <option name="UNIT Sheild" value="0x10" />
+      <option name="UNIT Body" value="0x11" />
+      <option name="UNIT AutoAimed" value="0x12" />
+      <option name="UNIT Has No Grenades" value="0x13" />
+      <option name="UNIT Frag Grenade Count" value="0x14" />
+      <option name="UNIT Plasma Grenade Count" value="0x15" />
+      <option name="UNIT Time On DPL Sheild" value="0x16" />
+      <option name="UNIT Zoom Fraction" value="0x17" />
+      <option name="UNIT Camo Value" value="0x18" />
+      <option name="..." value="0x19" />
+      <option name="..." value="0x1A" />
+      <option name="..." value="0x1B" />
+      <option name="..." value="0x1C" />
+      <option name="..." value="0x1D" />
+      <option name="..." value="0x1E" />
+      <option name="..." value="0x1F" />
+      <option name="..." value="0x20" />
+      <option name="PARENT Sheild" value="0x21" />
+      <option name="PARENT Body" value="0x22" />
+      <option name="..." value="0x23" />
+      <option name="..." value="0x24" />
+      <option name="..." value="0x25" />
+      <option name="..." value="0x26" />
+      <option name="..." value="0x27" />
+      <option name="..." value="0x28" />
+      <option name="..." value="0x29" />
+      <option name="..." value="0x2A" />
+      <option name="..." value="0x2B" />
+      <option name="..." value="0x2C" />
+      <option name="..." value="0x2D" />
+      <option name="..." value="0x2E" />
+      <option name="..." value="0x2F" />
+      <option name="..." value="0x30" />
+      <option name="WEAPON Clip Ammo" value="0x31" />
+      <option name="WEAPON Heat" value="0x28" />
+      <option name="WEAPON Battery" value="0x33" />
+      <option name="WEAPON Total Ammo" value="0x34" />
+      <option name="WEAPON Barrel Spin" value="0x35" />
+      <option name="WEAPON Overheated" value="0x36" />
+      <option name="WEAPON Clip Ammo Fraction" value="0x37" />
+      <option name="WEAPON Time On Overheat" value="0x38" />
+      <option name="WEAPON Battery Fraction" value="0x39" />
+      <option name="WEAPON Locking Fraction" value="0x3A" />
+      <option name="..." value="0x3B" />
+      <option name="..." value="0x3C" />
+      <option name="..." value="0x3D" />
+      <option name="..." value="0x3E" />
+      <option name="..." value="0x3F" />
+      <option name="..." value="0x40" />
+      <option name="..." value="0x41" />
+      <option name="User Score Fraction" value="0x42" />
+      <option name="Other User Score Fraction" value="0x43" />
+      <option name="User Winning" value="0x44" />
+      <option name="Bomb Arming Amount" value="0x45" />
+    </enum8>
+    <enum8 name="Input 3" offset="0x6" visible="True">
+      <option name="BASIC Zero" value="0x0" />
+      <option name="BASIC One" value="0x1" />
+      <option name="BASIC Time" value="0x2" />
+      <option name="BASIC Global HUD Fade" value="0x3" />
+      <option name="..." value="0x4" />
+      <option name="..." value="0x5" />
+      <option name="..." value="0x6" />
+      <option name="..." value="0x7" />
+      <option name="..." value="0x8" />
+      <option name="..." value="0x9" />
+      <option name="..." value="0xA" />
+      <option name="..." value="0xB" />
+      <option name="..." value="0xC" />
+      <option name="..." value="0xD" />
+      <option name="..." value="0xE" />
+      <option name="..." value="0xF" />
+      <option name="UNIT Sheild" value="0x10" />
+      <option name="UNIT Body" value="0x11" />
+      <option name="UNIT AutoAimed" value="0x12" />
+      <option name="UNIT Has No Grenades" value="0x13" />
+      <option name="UNIT Frag Grenade Count" value="0x14" />
+      <option name="UNIT Plasma Grenade Count" value="0x15" />
+      <option name="UNIT Time On DPL Sheild" value="0x16" />
+      <option name="UNIT Zoom Fraction" value="0x17" />
+      <option name="UNIT Camo Value" value="0x18" />
+      <option name="..." value="0x19" />
+      <option name="..." value="0x1A" />
+      <option name="..." value="0x1B" />
+      <option name="..." value="0x1C" />
+      <option name="..." value="0x1D" />
+      <option name="..." value="0x1E" />
+      <option name="..." value="0x1F" />
+      <option name="..." value="0x20" />
+      <option name="PARENT Sheild" value="0x21" />
+      <option name="PARENT Body" value="0x22" />
+      <option name="..." value="0x23" />
+      <option name="..." value="0x24" />
+      <option name="..." value="0x25" />
+      <option name="..." value="0x26" />
+      <option name="..." value="0x27" />
+      <option name="..." value="0x28" />
+      <option name="..." value="0x29" />
+      <option name="..." value="0x2A" />
+      <option name="..." value="0x2B" />
+      <option name="..." value="0x2C" />
+      <option name="..." value="0x2D" />
+      <option name="..." value="0x2E" />
+      <option name="..." value="0x2F" />
+      <option name="..." value="0x30" />
+      <option name="WEAPON Clip Ammo" value="0x31" />
+      <option name="WEAPON Heat" value="0x28" />
+      <option name="WEAPON Battery" value="0x33" />
+      <option name="WEAPON Total Ammo" value="0x34" />
+      <option name="WEAPON Barrel Spin" value="0x35" />
+      <option name="WEAPON Overheated" value="0x36" />
+      <option name="WEAPON Clip Ammo Fraction" value="0x37" />
+      <option name="WEAPON Time On Overheat" value="0x38" />
+      <option name="WEAPON Battery Fraction" value="0x39" />
+      <option name="WEAPON Locking Fraction" value="0x3A" />
+      <option name="..." value="0x3B" />
+      <option name="..." value="0x3C" />
+      <option name="..." value="0x3D" />
+      <option name="..." value="0x3E" />
+      <option name="..." value="0x3F" />
+      <option name="..." value="0x40" />
+      <option name="..." value="0x41" />
+      <option name="User Score Fraction" value="0x42" />
+      <option name="Other User Score Fraction" value="0x43" />
+      <option name="User Winning" value="0x44" />
+      <option name="Bomb Arming Amount" value="0x45" />
+    </enum8>
+    <enum8 name="Input 4" offset="0x7" visible="True">
+      <option name="BASIC Zero" value="0x0" />
+      <option name="BASIC One" value="0x1" />
+      <option name="BASIC Time" value="0x2" />
+      <option name="BASIC Global HUD Fade" value="0x3" />
+      <option name="..." value="0x4" />
+      <option name="..." value="0x5" />
+      <option name="..." value="0x6" />
+      <option name="..." value="0x7" />
+      <option name="..." value="0x8" />
+      <option name="..." value="0x9" />
+      <option name="..." value="0xA" />
+      <option name="..." value="0xB" />
+      <option name="..." value="0xC" />
+      <option name="..." value="0xD" />
+      <option name="..." value="0xE" />
+      <option name="..." value="0xF" />
+      <option name="UNIT Sheild" value="0x10" />
+      <option name="UNIT Body" value="0x11" />
+      <option name="UNIT AutoAimed" value="0x12" />
+      <option name="UNIT Has No Grenades" value="0x13" />
+      <option name="UNIT Frag Grenade Count" value="0x14" />
+      <option name="UNIT Plasma Grenade Count" value="0x15" />
+      <option name="UNIT Time On DPL Sheild" value="0x16" />
+      <option name="UNIT Zoom Fraction" value="0x17" />
+      <option name="UNIT Camo Value" value="0x18" />
+      <option name="..." value="0x19" />
+      <option name="..." value="0x1A" />
+      <option name="..." value="0x1B" />
+      <option name="..." value="0x1C" />
+      <option name="..." value="0x1D" />
+      <option name="..." value="0x1E" />
+      <option name="..." value="0x1F" />
+      <option name="..." value="0x20" />
+      <option name="PARENT Sheild" value="0x21" />
+      <option name="PARENT Body" value="0x22" />
+      <option name="..." value="0x23" />
+      <option name="..." value="0x24" />
+      <option name="..." value="0x25" />
+      <option name="..." value="0x26" />
+      <option name="..." value="0x27" />
+      <option name="..." value="0x28" />
+      <option name="..." value="0x29" />
+      <option name="..." value="0x2A" />
+      <option name="..." value="0x2B" />
+      <option name="..." value="0x2C" />
+      <option name="..." value="0x2D" />
+      <option name="..." value="0x2E" />
+      <option name="..." value="0x2F" />
+      <option name="..." value="0x30" />
+      <option name="WEAPON Clip Ammo" value="0x31" />
+      <option name="WEAPON Heat" value="0x28" />
+      <option name="WEAPON Battery" value="0x33" />
+      <option name="WEAPON Total Ammo" value="0x34" />
+      <option name="WEAPON Barrel Spin" value="0x35" />
+      <option name="WEAPON Overheated" value="0x36" />
+      <option name="WEAPON Clip Ammo Fraction" value="0x37" />
+      <option name="WEAPON Time On Overheat" value="0x38" />
+      <option name="WEAPON Battery Fraction" value="0x39" />
+      <option name="WEAPON Locking Fraction" value="0x3A" />
+      <option name="..." value="0x3B" />
+      <option name="..." value="0x3C" />
+      <option name="..." value="0x3D" />
+      <option name="..." value="0x3E" />
+      <option name="..." value="0x3F" />
+      <option name="..." value="0x40" />
+      <option name="..." value="0x41" />
+      <option name="User Score Fraction" value="0x42" />
+      <option name="Other User Score Fraction" value="0x43" />
+      <option name="User Winning" value="0x44" />
+      <option name="Bomb Arming Amount" value="0x45" />
+    </enum8>
+    <int16 name="Age Cutoff" offset="0x16" visible="True" />
+    <int16 name="Clip Cutoff" offset="0x18" visible="True" />
+    <int16 name="Total Cutoff" offset="0x1A" visible="True" />
+    <enum16 name="Anchor" offset="0x1C" visible="True">
+      <option name="Health And Sheild" value="0x0" />
+      <option name="Weapon HUD" value="0x1" />
+      <option name="Motion Sensor" value="0x2" />
+      <option name="Scoreboard" value="0x3" />
+      <option name="Crosshair" value="0x4" />
+      <option name="Lock-on Target" value="0x5" />
+    </enum16>
+    <tagRef name="Bitmap" offset="0x20" visible="True" />
+    <tagRef name="Fullscreen Effect" offset="0x28" visible="True" />
+    <tagRef name="Halfscreen Effect" offset="0x30" visible="True" />
+    <tagRef name="Quarterscreen Effect" offset="0x38" visible="True" />
+    <int16 name="Fullscreen Offset X" offset="0x44" visible="True" />
+    <int16 name="Fullscreen Offset Y" offset="0x46" visible="True" />
+    <int16 name="Halfscreen Offset X" offset="0x48" visible="True" />
+    <int16 name="Halfscreen Offset Y" offset="0x4A" visible="True" />
+    <int16 name="Quarterscreen Offset X" offset="0x4C" visible="True" />
+    <int16 name="Quarterscreen Offset Y" offset="0x4E" visible="True" />
+  </struct>
+</plugin>

@@ -1,0 +1,30 @@
+<plugin class="wsdt" headersize="12">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <struct name="Unknown 0" offset="0" visible="True" size="56">
+    <struct name="Unknown 1" offset="0" visible="True" size="12">
+      <struct name="Unknown 2" offset="0" visible="True" size="8">
+        <undefined name="Unknown" offset="0" visible="True" />
+        <undefined name="Unknown" offset="4" visible="True" />
+      </struct>
+    </struct>
+    <struct name="Unknown 2" offset="12" visible="True" size="12">
+      <struct name="Unknown 3" offset="0" visible="True" size="8">
+        <undefined name="Unknown" offset="0" visible="True" />
+        <undefined name="Unknown" offset="4" visible="True" />
+      </struct>
+    </struct>
+    <struct name="Unknown 3" offset="24" visible="True" size="12">
+      <struct name="Unknown 4" offset="0" visible="True" size="8">
+        <undefined name="Unknown" offset="0" visible="True" />
+        <undefined name="Unknown" offset="4" visible="True" />
+      </struct>
+    </struct>
+    <undefined name="Unknown" offset="36" visible="True" />
+    <undefined name="Unknown" offset="40" visible="True" />
+    <undefined name="Unknown" offset="44" visible="True" />
+    <undefined name="Unknown" offset="48" visible="True" />
+    <undefined name="Unknown" offset="52" visible="True" />
+  </struct>
+</plugin>

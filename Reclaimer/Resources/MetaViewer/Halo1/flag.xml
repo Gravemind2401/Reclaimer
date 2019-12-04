@@ -1,0 +1,36 @@
+<plugin>
+  <bitfield32 name="flags" offset="0x0" visible="true">
+  </bitfield32>
+  <enum16 name="trailing edge shape" offset="0x4" visible="true">
+    <option name="flat" value="0x0" />
+    <option name="concave triangular" value="0x1" />
+    <option name="convex triangular" value="0x2" />
+    <option name="trapezoid, short top" value="0x3" />
+    <option name="trapezoid, short bottom" value="0x4" />
+  </enum16>
+  <int16 name="trailing edge shape offset" offset="0x6" visible="true" description="zero places the shape exactly on the trailing edge, positive numbers push it off the edge" />
+  <enum16 name="attached edge shape" offset="0x8" visible="true">
+    <option name="flat" value="0x0" />
+    <option name="concave triangular" value="0x1" />
+  </enum16>
+  <int16 name="Unknown" offset="0xA" visible="false" />
+  <int16 name="width" offset="0xC" visible="true" description="flag size from attached to trailing edge" />
+  <int16 name="height" offset="0xE" visible="true" description="flag size along the direction of attachment (should be odd)" />
+  <float32 name="cell width" offset="0x10" visible="true" description="width of the cell between each pair of vertices" />
+  <float32 name="cell height" offset="0x14" visible="true" description="height of the cell between each pair of vertices" />
+  <tagRef name="red flag shader^" offset="0x18" visible="true" />
+  <tagRef name="physics" offset="0x20" visible="true" />
+  <float32 name="wind noise" offset="0x28" visible="true" description="world units per second^2" />
+  <undefined name="Unknown" offset="0x2C" visible="false" />
+  <undefined name="Unknown" offset="0x30" visible="false" />
+  <tagRef name="blue flag shader^" offset="0x34" visible="true" />
+  <reflexive name="attachment points" offset="0x3C" visible="true" entrySize="0x34" entryname="0x14" description="attachment points determine where the flag is attached">
+    <int16 name="height_to_next_attachment" offset="0x0" visible="true" description="flag vertices between this attachment point and the next" />
+    <int16 name="Unknown" offset="0x2" visible="false" />
+    <undefined name="Unknown" offset="0x4" visible="false" />
+    <undefined name="Unknown" offset="0x8" visible="false" />
+    <undefined name="Unknown" offset="0xC" visible="false" />
+    <undefined name="Unknown" offset="0x10" visible="false" />
+    <ascii name="marker name" offset="0x14" length="0x20" visible="true" />
+  </reflexive>
+</plugin>

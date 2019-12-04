@@ -1,0 +1,21 @@
+<plugin>
+  <revisions />
+  <struct name="Volumes" offset="0x8" visible="True" size="0x98">
+    <tagRef name="Bitmap" offset="0x4" visible="True" />
+    <int32 name="Sprite Count" offset="0xC" visible="True" />
+    <struct name="Offset" offset="0x10" visible="True" size="0x1" />
+    <struct name="Radius" offset="0x18" visible="True" size="0x1" />
+    <struct name="Brightness" offset="0x20" visible="True" size="0x1" />
+    <struct name="Color" offset="0x28" visible="True" size="0x1" />
+    <struct name="Facing" offset="0x30" visible="True" size="0x1" />
+    <struct name="Aspect" offset="0x38" visible="True" size="0x1C">
+      <struct name="Along-Axis Scale" offset="0x0" visible="True" size="0x1" />
+      <struct name="Away-From-Axis Scale" offset="0x8" visible="True" size="0x1" />
+    </struct>
+    <int32 name="DEPRECATED X-Buffer Length" offset="0x48" visible="True" />
+    <int32 name="X-Buffer Spacing" offset="0x4C" visible="True" />
+    <int32 name="X-Buffer Min Iterations" offset="0x50" visible="True" />
+    <int32 name="X-Buffer Max Iterations" offset="0x54" visible="True" />
+    <struct name="" offset="0x60" visible="True" size="0x8" />
+  </struct>
+</plugin>

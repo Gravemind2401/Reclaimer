@@ -1,0 +1,107 @@
+<plugin>
+  <float32 name="radius" offset="0x0" visible="true" description="positive uses old inferior physics, negative uses new improved physics" />
+  <float32 name="moment scale" offset="0x4" visible="true" />
+  <float32 name="mass" offset="0x8" visible="true" />
+  <float32 name="center of mass* x" offset="0xC" visible="true" />
+  <float32 name="center of mass* y" offset="0x10" visible="true" />
+  <float32 name="center of mass* z" offset="0x14" visible="true" />
+  <float32 name="density" offset="0x18" visible="true" />
+  <float32 name="gravity scale" offset="0x1C" visible="true" />
+  <float32 name="ground friction" offset="0x20" visible="true" />
+  <float32 name="ground depth" offset="0x24" visible="true" />
+  <float32 name="ground damp fraction" offset="0x28" visible="true" />
+  <float32 name="ground normal k1" offset="0x2C" visible="true" />
+  <float32 name="ground normal k0" offset="0x30" visible="true" />
+  <undefined name="Unknown" offset="0x34" visible="false" />
+  <float32 name="water friction" offset="0x38" visible="true" />
+  <float32 name="water depth" offset="0x3C" visible="true" />
+  <float32 name="water density" offset="0x40" visible="true" />
+  <undefined name="Unknown" offset="0x44" visible="false" />
+  <float32 name="air friction" offset="0x48" visible="true" />
+  <undefined name="Unknown" offset="0x4C" visible="false" />
+  <float32 name="xx moment" offset="0x50" visible="true" />
+  <float32 name="yy moment" offset="0x54" visible="true" />
+  <float32 name="zz moment" offset="0x58" visible="true" />
+  <reflexive name="inertial matrix and inverse" offset="0x5C" visible="true" entrySize="0x24">
+    <float32 name="yy+zz    -xy     -zx i" offset="0x0" visible="true" />
+    <float32 name="yy+zz    -xy     -zx j" offset="0x4" visible="true" />
+    <float32 name="yy+zz    -xy     -zx k" offset="0x8" visible="true" />
+    <float32 name=" -xy    zz+xx    -yz i" offset="0xC" visible="true" />
+    <float32 name=" -xy    zz+xx    -yz j" offset="0x10" visible="true" />
+    <float32 name=" -xy    zz+xx    -yz k" offset="0x14" visible="true" />
+    <float32 name=" -zx     -yz    xx+yy i" offset="0x18" visible="true" />
+    <float32 name=" -zx     -yz    xx+yy j" offset="0x1C" visible="true" />
+    <float32 name=" -zx     -yz    xx+yy k" offset="0x20" visible="true" />
+  </reflexive>
+  <reflexive name="powered mass points" offset="0x64" visible="true" entrySize="0x80" entryname="0x0">
+    <ascii name="name" offset="0x0" length="0x20" visible="true" />
+    <bitfield32 name="flags" offset="0x20" visible="true">
+      <bit name="ground friction" index="0" />
+      <bit name="water friction" index="1" />
+      <bit name="air friction" index="2" />
+      <bit name="water lift" index="3" />
+      <bit name="air lift" index="4" />
+      <bit name="thrust" index="5" />
+      <bit name="antigrav" index="6" />
+    </bitfield32>
+    <float32 name="antigrav strength" offset="0x24" visible="true" />
+    <float32 name="antigrav offset" offset="0x28" visible="true" />
+    <float32 name="antigrav height" offset="0x2C" visible="true" />
+    <float32 name="antigrav damp fraction" offset="0x30" visible="true" />
+    <float32 name="antigrav normal k1" offset="0x34" visible="true" />
+    <float32 name="antigrav normal k0" offset="0x38" visible="true" />
+    <undefined name="Unknown" offset="0x3C" visible="false" />
+    <undefined name="Unknown" offset="0x40" visible="false" />
+    <undefined name="Unknown" offset="0x44" visible="false" />
+    <undefined name="Unknown" offset="0x48" visible="false" />
+    <undefined name="Unknown" offset="0x4C" visible="false" />
+    <undefined name="Unknown" offset="0x50" visible="false" />
+    <undefined name="Unknown" offset="0x54" visible="false" />
+    <undefined name="Unknown" offset="0x58" visible="false" />
+    <undefined name="Unknown" offset="0x5C" visible="false" />
+    <undefined name="Unknown" offset="0x60" visible="false" />
+    <undefined name="Unknown" offset="0x64" visible="false" />
+    <undefined name="Unknown" offset="0x68" visible="false" />
+    <undefined name="Unknown" offset="0x6C" visible="false" />
+    <undefined name="Unknown" offset="0x70" visible="false" />
+    <undefined name="Unknown" offset="0x74" visible="false" />
+    <undefined name="Unknown" offset="0x78" visible="false" />
+    <undefined name="Unknown" offset="0x7C" visible="false" />
+  </reflexive>
+  <reflexive name="mass points" offset="0x6C" visible="true" entrySize="0x80" entryname="0x0">
+    <ascii name="name" offset="0x0" length="0x20" visible="true" />
+    <int16 name="powered mass point index" offset="0x20" visible="true" />
+    <int16 name="model node" offset="0x22" visible="true" />
+    <bitfield32 name="flags" offset="0x24" visible="true">
+      <bit name="metallic" index="0" />
+    </bitfield32>
+    <float32 name="relative mass" offset="0x28" visible="true" />
+    <float32 name="mass" offset="0x2C" visible="true" />
+    <float32 name="relative density" offset="0x30" visible="true" />
+    <float32 name="density" offset="0x34" visible="true" />
+    <float32 name="position x" offset="0x38" visible="true" />
+    <float32 name="position y" offset="0x3C" visible="true" />
+    <float32 name="position z" offset="0x40" visible="true" />
+    <float32 name="forward i" offset="0x44" visible="true" />
+    <float32 name="forward j" offset="0x48" visible="true" />
+    <float32 name="forward k" offset="0x4C" visible="true" />
+    <float32 name="up i" offset="0x50" visible="true" />
+    <float32 name="up j" offset="0x54" visible="true" />
+    <float32 name="up k" offset="0x58" visible="true" />
+    <enum16 name="friction type" offset="0x5C" visible="true">
+      <option name="point" value="0x0" />
+      <option name="forward" value="0x1" />
+      <option name="left" value="0x2" />
+      <option name="up" value="0x3" />
+    </enum16>
+    <int16 name="Unknown" offset="0x5E" visible="false" />
+    <float32 name="friction parallel scale" offset="0x60" visible="true" />
+    <float32 name="friction perpendicular scale" offset="0x64" visible="true" />
+    <float32 name="radius" offset="0x68" visible="true" />
+    <undefined name="Unknown" offset="0x6C" visible="false" />
+    <undefined name="Unknown" offset="0x70" visible="false" />
+    <undefined name="Unknown" offset="0x74" visible="false" />
+    <undefined name="Unknown" offset="0x78" visible="false" />
+    <undefined name="Unknown" offset="0x7C" visible="false" />
+  </reflexive>
+</plugin>

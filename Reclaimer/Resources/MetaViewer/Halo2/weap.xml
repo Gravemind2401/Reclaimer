@@ -1,0 +1,345 @@
+<plugin>
+  <revisions />
+  <enum32 name="Lightmap Shadow Mode" offset="0x18" visible="True">
+    <option name="Default" value="0x0" />
+    <option name="Never" value="0x1" />
+    <option name="Always" value="0x2" />
+  </enum32>
+  <enum32 name="Sweetener Size" offset="0x1C" visible="True">
+    <option name="Small" value="0x0" />
+    <option name="Medium" value="0x1" />
+    <option name="Large" value="0x2" />
+  </enum32>
+  <stringID name="Default Model Variant" offset="0x30" visible="True" />
+  <tagRef name="Model" offset="0x34" visible="True" />
+  <tagRef name="Crate Object" offset="0x3C" visible="True" />
+  <tagRef name="Modifier Shader" offset="0x44" visible="True" />
+  <tagRef name="Creation Effect" offset="0x4C" visible="True" />
+  <tagRef name="Material Effects" offset="0x54" visible="True" />
+  <struct name="Ai Properties" offset="0x5C" visible="True" size="0x10">
+    <stringID name="Type Name" offset="0x4" visible="True" />
+    <enum32 name="Size" offset="0x8" visible="True">
+      <option name="Default" value="0x0" />
+      <option name="Tiny" value="0x1" />
+      <option name="Small" value="0x2" />
+      <option name="Medium" value="0x3" />
+      <option name="Large" value="0x4" />
+      <option name="Huge" value="0x5" />
+      <option name="Immobile" value="0x6" />
+    </enum32>
+    <enum32 name="Leap Jump Speed" offset="0xC" visible="True">
+      <option name="None" value="0x0" />
+      <option name="Down" value="0x1" />
+      <option name="Step" value="0x2" />
+      <option name="Crouch" value="0x3" />
+      <option name="Stand" value="0x4" />
+      <option name="Storey" value="0x5" />
+      <option name="Tower" value="0x6" />
+      <option name="Infinite" value="0x7" />
+    </enum32>
+  </struct>
+  <struct name="Functions" offset="0x64" visible="True" size="0x20">
+    <stringID name="Import Name" offset="0x4" visible="True" />
+    <stringID name="Export Name" offset="0x8" visible="True" />
+    <stringID name="Turn Off With" offset="0xC" visible="True" />
+    <struct name="Function Type (Graph)" offset="0x14" visible="True" size="0x1" />
+    <stringID name="Scale By" offset="0x1C" visible="True" />
+  </struct>
+  <int16 name="Hud Text Message Index" offset="0x90" visible="True" />
+  <struct name="Attachments" offset="0x94" visible="True" size="0x18">
+    <tagRef name="Type" offset="0x0" visible="True" />
+    <stringID name="Marker" offset="0x8" visible="True" />
+    <stringID name="Change Color" offset="0xC" visible="True" />
+    <stringID name="Primary Scale" offset="0x10" visible="True" />
+    <stringID name="Secondary Scale" offset="0x14" visible="True" />
+  </struct>
+  <struct name="Widgets" offset="0x9C" visible="True" size="0x8">
+    <tagRef name="Type" offset="0x0" visible="True" />
+  </struct>
+  <struct name="Old Functions" offset="0xA4" visible="True" size="0x8" />
+  <struct name="Change Colors" offset="0xAC" visible="True" size="0x10">
+    <struct name="Initial Permutations" offset="0x0" visible="True" size="0x20">
+      <stringID name="Variant Name" offset="0x1C" visible="True" />
+    </struct>
+    <struct name="Functions" offset="0x8" visible="True" size="0x20">
+      <stringID name="Darken By" offset="0x1C" visible="True" />
+      <stringID name="Scale By" offset="0x20" visible="True" />
+    </struct>
+  </struct>
+  <struct name="Predicted Resource" offset="0xB4" visible="True" size="0x8">
+    <int16 name="Type" offset="0x0" visible="True" />
+    <int16 name="Resource Index" offset="0x2" visible="True" />
+  </struct>
+  <int16 name="Old Message Index" offset="0xC0" visible="True" />
+  <int16 name="Sort Order" offset="0xC2" visible="True" />
+  <stringID name="Pickup" offset="0xCC" visible="True" />
+  <stringID name="Swap" offset="0xD0" visible="True" />
+  <stringID name="Pickup or Dual Wield" offset="0xD4" visible="True" />
+  <stringID name="Swap or Dual Wield" offset="0xD8" visible="True" />
+  <stringID name="Dual Wield Only" offset="0xDC" visible="True" />
+  <stringID name="Picked Up" offset="0xE0" visible="True" />
+  <stringID name="Ammo Singular" offset="0xE4" visible="True" />
+  <stringID name="Ammo Plural" offset="0xE8" visible="True" />
+  <stringID name="Switched To" offset="0xEC" visible="True" />
+  <stringID name="Swap AI" offset="0xF0" visible="True" />
+  <tagRef name="unused" offset="0xF4" visible="True" />
+  <tagRef name="Collision Sound" offset="0xFC" visible="True" />
+  <struct name="Predicted Bitmaps" offset="0x104" visible="True" size="0x8">
+    <tagRef name="Bitmap" offset="0x0" visible="True" />
+  </struct>
+  <tagRef name="Detonation Damage Effect" offset="0x10C" visible="True" />
+  <tagRef name="Deonating Effect" offset="0x11C" visible="True" />
+  <tagRef name="Detonation Effect" offset="0x124" visible="True" />
+  <enum32 name="Secondary Trigger Mode" offset="0x130" visible="True">
+    <option name="Normal" value="0x0" />
+    <option name="Slaved To Primary" value="0x1" />
+    <option name="Inhibits Primary" value="0x2" />
+    <option name="Loads Alternate Ammunition" value="0x3" />
+    <option name="Loads Multiple Primary Ammunition" value="0x4" />
+  </enum32>
+  <tagRef name="Ready Effect" offset="0x140" visible="True" />
+  <tagRef name="Ready Damage Effect" offset="0x148" visible="True" />
+  <tagRef name="Overheated" offset="0x16C" visible="True" />
+  <tagRef name="Overheated Damage Effect" offset="0x174" visible="True" />
+  <tagRef name="Detonation" offset="0x17C" visible="True" />
+  <tagRef name="Detonation Damage Effect" offset="0x184" visible="True" />
+  <tagRef name="Player Melee Damage" offset="0x18C" visible="True" />
+  <tagRef name="Player Melee Response" offset="0x194" visible="True" />
+  <tagRef name="1st Hit Melee Damage" offset="0x1BC" visible="True" />
+  <tagRef name="1st Hit Melee Response Damage" offset="0x1C4" visible="True" />
+  <tagRef name="2nd Hit Melee Damage" offset="0x1CC" visible="True" />
+  <tagRef name="2nd Hit Melee Response Damage" offset="0x1D4" visible="True" />
+  <tagRef name="3rd Hit Melee Damage" offset="0x1DC" visible="True" />
+  <tagRef name="3rd Hit Melee Response" offset="0x1E4" visible="True" />
+  <tagRef name="Lunge Melee Damage" offset="0x1EC" visible="True" />
+  <tagRef name="Lunge Melee Response" offset="0x1F4" visible="True" />
+  <enum16 name="Melee Damage Reporting Type" offset="0x1FC" visible="True">
+    <option name="The Guardians" value="0x0" />
+    <option name="Falling Damage" value="0x1" />
+    <option name="Generic Collision Damage" value="0x2" />
+    <option name="Generic Melee Damage" value="0x3" />
+    <option name="Generic Explosion" value="0x4" />
+    <option name="Magnum Pistol" value="0x5" />
+    <option name="Plasma Pistol" value="0x6" />
+    <option name="Needler" value="0x7" />
+    <option name="SMG" value="0x8" />
+    <option name="Plasma Rifle" value="0x9" />
+    <option name="Battle Rifle" value="0xA" />
+    <option name="Carbine" value="0xB" />
+    <option name="Shotgun" value="0xC" />
+    <option name="Sniper Rifle" value="0xD" />
+    <option name="Beam Rifle" value="0xE" />
+    <option name="Rocket Launcher" value="0xF" />
+    <option name="Flak Cannon" value="0x10" />
+    <option name="Brute Shot" value="0x11" />
+    <option name="Disintegrator" value="0x12" />
+    <option name="Brute Plasma Rifle" value="0x13" />
+    <option name="Energy Sword" value="0x14" />
+    <option name="Frag Grenade" value="0x15" />
+    <option name="Plasma Grenade" value="0x16" />
+    <option name="Flag Melee Damage" value="0x17" />
+    <option name="Bomb Melee Damage" value="0x18" />
+    <option name="Bomb Explosion Damage" value="0x19" />
+    <option name="Ball Melee Damage" value="0x1A" />
+    <option name="Human Turret" value="0x1B" />
+    <option name="Plasma Turret" value="0x1C" />
+    <option name="Banshee" value="0x1D" />
+    <option name="Ghost" value="0x1E" />
+    <option name="Mongoose" value="0x1F" />
+    <option name="Scorpion" value="0x20" />
+    <option name="Spectre Driver" value="0x21" />
+    <option name="Spectre Gunner" value="0x22" />
+    <option name="Warthog Driver" value="0x23" />
+    <option name="Warthog Gunner" value="0x24" />
+    <option name="Wraith" value="0x25" />
+    <option name="Tank" value="0x26" />
+    <option name="Sentinal Beam" value="0x27" />
+    <option name="Sentinal RPG" value="0x28" />
+    <option name="Teleporter" value="0x29" />
+  </enum16>
+  <int16 name="Magnification Levels" offset="0x1FE" visible="True" />
+  <enum32 name="Movement Penalized" offset="0x21C" visible="True">
+    <option name="Always" value="0x0" />
+    <option name="When Zoomed" value="0x1" />
+    <option name="When Zoomed or Reloading" value="0x2" />
+  </enum32>
+  <tagRef name="Weapon Power-on Effect" offset="0x244" visible="True" />
+  <tagRef name="Weapon Power-off Effect" offset="0x24C" visible="True" />
+  <tagRef name="Pickup Sound" offset="0x264" visible="True" />
+  <tagRef name="Zoom-In Sound" offset="0x26C" visible="True" />
+  <tagRef name="Zoom-Out Sound" offset="0x274" visible="True" />
+  <stringID name="Handle Node" offset="0x284" visible="True" />
+  <stringID name="Weapon Class" offset="0x288" visible="True" />
+  <stringID name="Weapon Name" offset="0x28C" visible="True" />
+  <enum16 name="Multiplayer Weapon Type" offset="0x290" visible="True">
+    <option name="None" value="0x0" />
+    <option name="CTF Flag" value="0x1" />
+    <option name="Oddball Ball" value="0x2" />
+    <option name="Headhunter Head" value="0x3" />
+    <option name="Juggernaught Powerup" value="0x4" />
+  </enum16>
+  <enum16 name="Weapon Type" offset="0x292" visible="True">
+    <option name="Undefined" value="0x0" />
+    <option name="Shotgun" value="0x1" />
+    <option name="Needler" value="0x2" />
+    <option name="Plasma Pistol" value="0x3" />
+    <option name="Plasma Rifle" value="0x4" />
+    <option name="Rocket Launcher" value="0x5" />
+  </enum16>
+  <enum32 name="Tracking Type" offset="0x296" visible="True" />
+  <struct name="First Person" offset="0x2A8" visible="True" size="0x10">
+    <tagRef name="First Person Model" offset="0x0" visible="True" />
+    <tagRef name="First Person Animations" offset="0x8" visible="True" />
+  </struct>
+  <tagRef name="New HUD Interface" offset="0x2B0" visible="True" />
+  <struct name="Predicted Resource" offset="0x2B8" visible="True" size="0x8">
+    <tagRef name="Resource" offset="0x0" visible="True" />
+  </struct>
+  <struct name="Magazine" offset="0x2C0" visible="True" size="0x5C">
+    <int16 name="Rounds Recharged Per Second" offset="0x4" visible="True" />
+    <int16 name="Rounds Total Initial" offset="0x6" visible="True" />
+    <int16 name="Rounds Total Maximum" offset="0x8" visible="True" />
+    <int16 name="Rounds Total Loaded Maximum" offset="0xA" visible="True" />
+    <int32 name="Max Rounds Held" offset="0xC" visible="True" />
+    <int16 name="Rounds Reloaded" offset="0x14" visible="True" />
+    <tagRef name="Reloading Effect" offset="0x34" visible="True" />
+    <tagRef name="Reloading Damage Effect" offset="0x3C" visible="True" />
+    <tagRef name="Chambering Effect" offset="0x44" visible="True" />
+    <tagRef name="Chambering Damage Effect" offset="0x4C" visible="True" />
+    <struct name="Magazines" offset="0x54" visible="True" size="0xC">
+      <int16 name="Rounds" offset="0x0" visible="True" />
+      <tagRef name="Equipment" offset="0x4" visible="True" />
+    </struct>
+  </struct>
+  <struct name="New Triggers" offset="0x2C8" visible="True" size="0x40">
+    <enum16 name="Button Used" offset="0x4" visible="True">
+      <option name="Right Trigger" value="0x0" />
+      <option name="Left Trigger" value="0x1" />
+      <option name="Melee Attack (SP Only)" value="0x2" />
+      <option name="Automated Fire (Unassigned)" value="0x3" />
+    </enum16>
+    <enum16 name="Behavior" offset="0x6" visible="True">
+      <option name="Spew" value="0x0" />
+      <option name="Latch" value="0x1" />
+      <option name="1-Latch 2-Autofire" value="0x2" />
+      <option name="Charge" value="0x3" />
+      <option name="1-Latch 2-Zoom" value="0x4" />
+      <option name="1-Latch 2-Lockon" value="0x5" />
+    </enum16>
+    <int16 name="Primary Barrel" offset="0x8" visible="True" />
+    <int16 name="Secondary Barrel" offset="0xA" visible="True" />
+    <enum32 name="Prediction" offset="0xC" visible="True">
+      <option name="None" value="0x0" />
+      <option name="Spew" value="0x1" />
+      <option name="Charge" value="0x2" />
+    </enum32>
+    <enum32 name="Secondary Action" offset="0x18" visible="True">
+      <option name="Fire" value="0x0" />
+      <option name="Charge" value="0x1" />
+      <option name="Track" value="0x2" />
+      <option name="Fire Other" value="0x3" />
+    </enum32>
+    <enum32 name="Overcharged Action" offset="0x24" visible="True">
+      <option name="None" value="0x0" />
+      <option name="Explode" value="0x1" />
+      <option name="Discharge" value="0x2" />
+    </enum32>
+    <tagRef name="Charging Effect" offset="0x30" visible="True" />
+    <tagRef name="Charging Damage Effect" offset="0x38" visible="True" />
+  </struct>
+  <struct name="Barrels" offset="0x2D0" visible="True" size="0xEC">
+    <int16 name="Shots Per Fire Lower" offset="0x1C" visible="True" />
+    <int16 name="Shots Per Fire Upper" offset="0x1E" visible="True" />
+    <int16 name="Magazine" offset="0x28" visible="True" />
+    <int16 name="Rounds per Shot" offset="0x2A" visible="True" />
+    <int16 name="Minimum Rounds Loaded" offset="0x2C" visible="True" />
+    <int16 name="Rounds Between Tracers" offset="0x2E" visible="True" />
+    <stringID name="Optional Barrel Marker Name" offset="0x30" visible="True" />
+    <enum16 name="Prediction Type" offset="0x34" visible="True">
+      <option name="None" value="0x0" />
+      <option name="Continuous" value="0x1" />
+      <option name="Instant" value="0x2" />
+    </enum16>
+    <enum16 name="Firing Noise" offset="0x36" visible="True">
+      <option name="Silent" value="0x0" />
+      <option name="Medium" value="0x1" />
+      <option name="Loud" value="0x2" />
+      <option name="Shout" value="0x3" />
+      <option name="Quiet" value="0x4" />
+    </enum16>
+    <enum16 name="Distribution Function" offset="0x68" visible="True">
+      <option name="Point" value="0x0" />
+      <option name="Horizontal Fan" value="0x1" />
+    </enum16>
+    <int16 name="Projectiles per Shot" offset="0x6A" visible="True" />
+    <enum32 name="Damage Reporting Type" offset="0x88" visible="True">
+      <option name="The Guardians" value="0x0" />
+      <option name="Falling Damage" value="0x1" />
+      <option name="Generic Collision Damage" value="0x2" />
+      <option name="Generic Melee Damage" value="0x3" />
+      <option name="Generic Explosion" value="0x4" />
+      <option name="Magnum Pistol" value="0x5" />
+      <option name="Plasma Pistol" value="0x6" />
+      <option name="Needler" value="0x7" />
+      <option name="SMG" value="0x8" />
+      <option name="Plasma Rifle" value="0x9" />
+      <option name="Battle Rifle" value="0xA" />
+      <option name="Carbine" value="0xB" />
+      <option name="Shotgun" value="0xC" />
+      <option name="Sniper Rifle" value="0xD" />
+      <option name="Beam Rifle" value="0xE" />
+      <option name="Rocket Launcher" value="0xF" />
+      <option name="Flak Cannon" value="0x10" />
+      <option name="Brute Shot" value="0x11" />
+      <option name="Disintegrator" value="0x12" />
+      <option name="Brute Plasma Rifle" value="0x13" />
+      <option name="Energy Sword" value="0x14" />
+      <option name="Frag Grenade" value="0x15" />
+      <option name="Plasma Grenade" value="0x16" />
+      <option name="Flag Melee Damage" value="0x17" />
+      <option name="Bomb Melee Damage" value="0x18" />
+      <option name="Bomb Explosion Damage" value="0x19" />
+      <option name="Ball Melee Damage" value="0x1A" />
+      <option name="Human Turret" value="0x1B" />
+      <option name="Plasma Turret" value="0x1C" />
+      <option name="Banshee" value="0x1D" />
+      <option name="Ghost" value="0x1E" />
+      <option name="Mongoose" value="0x1F" />
+      <option name="Scorpion" value="0x20" />
+      <option name="Spectre Driver" value="0x21" />
+      <option name="Spectre Gunner" value="0x22" />
+      <option name="Warthog Driver" value="0x23" />
+      <option name="Warthog Gunner" value="0x24" />
+      <option name="Wraith" value="0x25" />
+      <option name="Tank" value="0x26" />
+      <option name="Sentinal Beam" value="0x27" />
+      <option name="Sentinal RPG" value="0x28" />
+      <option name="Teleporter" value="0x29" />
+    </enum32>
+    <tagRef name="Projectile" offset="0x8C" visible="True" />
+    <tagRef name="Damage Effect" offset="0x94" visible="True" />
+    <enum32 name="Angle Change Function" offset="0xC0" visible="True">
+      <option name="Linear" value="0x0" />
+      <option name="Early" value="0x1" />
+      <option name="Very Early" value="0x2" />
+      <option name="Late" value="0x3" />
+      <option name="Very Late" value="0x4" />
+      <option name="Cosine" value="0x5" />
+      <option name="Zero" value="0x6" />
+      <option name="One" value="0x7" />
+    </enum32>
+    <struct name="Firing Effects" offset="0xE4" visible="True" size="0x34">
+      <int16 name="Shot Count Lower Bound" offset="0x0" visible="True" />
+      <int16 name="Shot Count Upper Bound" offset="0x2" visible="True" />
+      <tagRef name="Firing Effect" offset="0x4" visible="True" />
+      <tagRef name="Misfire Effect" offset="0xC" visible="True" />
+      <tagRef name="Empty Effect" offset="0x14" visible="True" />
+      <tagRef name="Firing Damage" offset="0x1C" visible="True" />
+      <tagRef name="Misfire Damage" offset="0x24" visible="True" />
+      <tagRef name="Empty Damage" offset="0x2C" visible="True" />
+    </struct>
+  </struct>
+  <tagRef name="Deployed Vehicle" offset="0x2F0" visible="True" />
+  <tagRef name="Aged Effect" offset="0x2F8" visible="True" />
+  <tagRef name="Aged Weapon" offset="0x300" visible="True" />
+</plugin>

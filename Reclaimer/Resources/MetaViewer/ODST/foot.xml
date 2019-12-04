@@ -1,0 +1,24 @@
+<plugin class="foot" headersize="12">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <struct name="Unknown 0" offset="0" visible="False" size="36">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <struct name="Unknown 1" offset="12" visible="False" size="44">
+      <tagRef name="Unknown" offset="0" visible="False" />
+      <tagRef name="Unknown" offset="16" visible="False" />
+      <stringID name="Unknown" offset="32" visible="False" />
+      <stringID name="Unknown" offset="36" visible="False" />
+      <undefined name="Unknown" offset="40" visible="False" />
+    </struct>
+    <struct name="Unknown 2" offset="24" visible="False" size="44">
+      <tagRef name="Unknown" offset="0" visible="False" />
+      <tagRef name="Unknown" offset="16" visible="False" />
+      <stringID name="Unknown" offset="32" visible="False" />
+      <stringID name="Unknown" offset="36" visible="False" />
+      <undefined name="Unknown" offset="40" visible="False" />
+    </struct>
+  </struct>
+</plugin>

@@ -1,0 +1,4 @@
+<plugin>
+  <revisions />
+  <tagRef name="Noise Map" offset="0x14" visible="True" />
+</plugin>

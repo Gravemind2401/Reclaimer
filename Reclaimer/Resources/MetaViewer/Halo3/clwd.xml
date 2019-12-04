@@ -1,0 +1,50 @@
+<plugin class="clwd" headersize="148">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Created layout of plugin</revision>
+    <revision author="DarkShallFall" version="0.2">Labeled most of the tag</revision>
+  </revisions>
+  <bitmask32 name="Flags" offset="0" visible="True">
+    <option name="Doesn't Use Wind" value="0" />
+    <option name="Uses Grid Attach Top" value="1" />
+  </bitmask32>
+  <undefined name="Marker Attachment Name" offset="4" visible="True" />
+  <undefined name="Unknown" offset="8" visible="False" />
+  <tagRef name="Shader" offset="12" visible="True" />
+  <int16 name="Grid X Dimension" offset="28" visible="True" />
+  <float32 name="Grid Y Dimension" offset="32" visible="True" />
+  <float32 name="Grid Spacing X" offset="36" visible="True" />
+  <float32 name="Grid Spacing Y" offset="40" visible="True" />
+  <enum16 name="Integration Type" offset="44" visible="True" />
+  <undefined name="Unknown1" offset="48" visible="False" />
+  <undefined name="Unknown2" offset="52" visible="False" />
+  <float32 name="Weight" offset="56" visible="True" />
+  <float32 name="Drag" offset="60" visible="True" />
+  <float32 name="Wind Scale" offset="64" visible="True" />
+  <float32 name="Wind Flappiness Scale" offset="68" visible="True" />
+  <float32 name="Longest Rod" offset="72" visible="True" />
+  <undefined name="Unknown" offset="76" visible="False" />
+  <undefined name="Unknown" offset="80" visible="False" />
+  <undefined name="Unknown" offset="84" visible="False" />
+  <undefined name="Unknown" offset="88" visible="False" />
+  <undefined name="Unknown" offset="92" visible="False" />
+  <undefined name="Unknown" offset="96" visible="False" />
+  <struct name="Vertices" offset="100" visible="True" size="20">
+    <float32 name="Initial Position X" offset="0" visible="True" />
+    <float32 name="Initial Position Y" offset="4" visible="True" />
+    <float32 name="Initial Position Z" offset="8" visible="True" />
+    <float32 name="UV i" offset="12" visible="True" />
+    <float32 name="UV j" offset="16" visible="True" />
+  </struct>
+  <undefined name="Unknown" offset="108" visible="False" />
+  <struct name="Indices" offset="112" visible="True" size="2">
+    <int16 name="Index" offset="0" visible="True" />
+  </struct>
+  <undefined name="Unknown" offset="120" visible="False" />
+  <undefined name="Unknown" offset="124" visible="False" />
+  <undefined name="Unknown" offset="128" visible="False" />
+  <undefined name="Unknown" offset="132" visible="False" />
+  <struct name="Strip Indices" offset="136" visible="True" size="1">
+    <int16 name="Index" offset="0" visible="True" />
+  </struct>
+  <undefined name="Unknown" offset="144" visible="False" />
+</plugin>

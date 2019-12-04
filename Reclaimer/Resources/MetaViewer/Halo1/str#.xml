@@ -1,0 +1,5 @@
+<plugin>
+  <reflexive name="string references" offset="0x0" visible="true" entrySize="0x8">
+    <dataref name="string" offset="0x0" visible="true" />
+  </reflexive>
+</plugin>

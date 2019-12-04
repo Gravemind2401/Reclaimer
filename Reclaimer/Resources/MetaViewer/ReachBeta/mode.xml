@@ -1,0 +1,267 @@
+<plugin class="mode" headersize="600">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+    <revision author="Gravemind2401" version="0.12">Updated some things.</revision>
+  </revisions>
+  <stringID name="Model Name" offset="0" visible="True" />
+  <bitmask32 name="Flags" offset="4" visible="True">
+    <option name="Attach to bipeds?" value="18" />
+  </bitmask32>
+  <int16 name="Unknown" offset="8" visible="False" />
+  <int16 name="Unknown" offset="10" visible="False" />
+  <struct name="Regions" offset="12" visible="True" size="16" label="Name">
+    <stringID name="Name" offset="0" visible="True" />
+    <struct name="Permutation" offset="4" visible="True" size="24" label="Name">
+      <stringID name="Name" offset="0" visible="True" />
+      <int16 name="Model Part Index" offset="4" visible="True" />
+      <int16 name="Mesh count?" offset="6" visible="False" />
+      <int16 name="Unknown" offset="8" visible="False" />
+      <int16 name="Unknown" offset="10" visible="False" />
+      <int16 name="Unknown" offset="12" visible="False" />
+      <int16 name="Unknown" offset="14" visible="False" />
+      <int16 name="Unknown" offset="16" visible="False" />
+      <int16 name="Unknown" offset="18" visible="False" />
+      <int16 name="Unknown" offset="20" visible="False" />
+      <int16 name="Unknown" offset="22" visible="False" />
+    </struct>
+  </struct>
+  <undefined name="Unknown" offset="24" visible="False" />
+  <int32 name="Extras Index" offset="28" visible="True" />
+  <struct name="More Regions" offset="32" visible="True" size="60" label="Name">
+    <stringID name="Name" offset="0" visible="True" />
+    <int32 name="Node Index" offset="4" visible="True" />
+    <float32 name="Unknown" offset="8" visible="False" />
+    <float32 name="Unknown" offset="12" visible="False" />
+    <float32 name="Unknown" offset="16" visible="False" />
+    <float32 name="Unknown" offset="20" visible="False" />
+    <float32 name="Unknown" offset="24" visible="False" />
+    <float32 name="Unknown" offset="28" visible="False" />
+    <float32 name="Unknown" offset="32" visible="False" />
+    <float32 name="Unknown" offset="36" visible="False" />
+    <float32 name="Unknown" offset="40" visible="False" />
+    <float32 name="Unknown" offset="44" visible="False" />
+    <float32 name="Unknown" offset="48" visible="False" />
+    <float32 name="Unknown" offset="52" visible="False" />
+    <float32 name="Unknown" offset="56" visible="False" />
+  </struct>
+  <undefined name="Unknown" offset="44" visible="False" />
+  <struct name="Nodes" offset="48" visible="True" size="96" label="Name">
+    <stringID name="Name" offset="0" visible="True" />
+    <int16 name="Parent Node Index" offset="4" visible="True" />
+    <int16 name="First Child Index" offset="6" visible="True" />
+    <int16 name="Next Sibling Index" offset="8" visible="True" />
+    <int16 name="Unknown" offset="10" visible="False" />
+    <realPoint3D name="Position" offset="12" visible="True" />
+    <realVector4D name="Rotation" offset="24" visible="True" />
+    <float32 name="Scale" offset="40" visible="True" />
+    <realVector3D name="Skew-x" offset="44" visible="True" />
+    <realVector3D name="Skew-y" offset="56" visible="True" />
+    <realVector3D name="Skew-z" offset="68" visible="True" />
+    <realPoint3D name="Center" offset="80" visible="True" />
+    <float32 name="Distance from Parent" offset="92" visible="True" />
+  </struct>
+  <struct name="Marker Groups" offset="60" visible="True" size="16" label="Name">
+    <stringID name="Name" offset="0" visible="True" />
+    <struct name="Markers" offset="4" visible="True" size="48">
+      <int8 name="Unknown" offset="0" visible="True" />
+      <int8 name="Permutation index" offset="1" visible="True" />
+      <int8 name="Parent Bone index" offset="2" visible="True" />
+      <int8 name="Unknown" offset="3" visible="False" />
+      <realPoint3D name="Position" offset="4" visible="True" />
+      <realVector4D name="Rotation" offset="16" visible="True" />
+      <undefined name="Unknown" offset="32" visible="False" />
+      <undefined name="Unknown" offset="36" visible="False" />
+      <undefined name="Unknown" offset="40" visible="False" />
+      <undefined name="Unknown" offset="44" visible="False" />
+    </struct>
+  </struct>
+  <struct name="Shaders" offset="72" visible="True" size="44" label="Shader">
+    <tagRef name="Shader" offset="0" visible="True" />
+    <undefined name="Unknown" offset="16" visible="False" />
+    <undefined name="Unknown" offset="20" visible="False" />
+    <undefined name="Unknown" offset="24" visible="False" />
+    <undefined name="Unknown" offset="28" visible="False" />
+    <undefined name="Unknown" offset="32" visible="False" />
+    <undefined name="Unknown" offset="36" visible="False" />
+    <int8 name="Unknown" offset="40" visible="False" />
+    <int8 name="Unknown" offset="41" visible="False" />
+    <int8 name="Unknown" offset="42" visible="False" />
+    <int8 name="Unknown" offset="43" visible="False" />
+  </struct>
+  <undefined name="Unknown" offset="84" visible="False" />
+  <undefined name="Unknown" offset="88" visible="False" />
+  <undefined name="Unknown" offset="92" visible="False" />
+  <undefined name="Unknown" offset="96" visible="False" />
+  <undefined name="Unknown" offset="100" visible="False" />
+  <struct name="Model Parts" offset="104" visible="True" size="92">
+    <struct name="Submeshes" offset="0" visible="True" size="24">
+      <int16 name="Shader Index" offset="0" visible="True" />
+      <int16 name="Unknown" offset="2" visible="False" />
+      <int32 name="Face Start" offset="4" visible="True" />
+      <int32 name="Face Length" offset="8" visible="True" />
+      <int16 name="Subset Index" offset="12" visible="True" />
+      <int16 name="Subset Count" offset="14" visible="True" />
+      <enum16 name="Flags" offset="16" visible="True" />
+      <int16 name="Unknown" offset="18" visible="False" />
+      <uint16 name="Vertex Count" offset="20" visible="True" />
+      <int16 name="Unknown" offset="22" visible="False" />
+    </struct>
+    <struct name="Subsets" offset="12" visible="True" size="16">
+      <int32 name="Face Start" offset="0" visible="True" />
+      <int32 name="Face Length" offset="4" visible="True" />
+      <uint16 name="Submesh Parent" offset="8" visible="True" />
+      <uint16 name="Vertex Count" offset="10" visible="True" />
+      <undefined name="Unknown" offset="12" visible="False" />
+    </struct>
+    <int16 name="Unknown" offset="24" visible="False" />
+    <undefined name="Unknown" offset="26" visible="False" />
+    <int16 name="Unknown" offset="30" visible="False" />
+    <int32 name="Raw ID" offset="32" visible="True" />
+    <undefined name="Unknown" offset="36" visible="False" />
+    <int8 name="Unknown" offset="40" visible="False" />
+    <int8 name="Import Index" offset="41" visible="False" />
+    <int16 name="Unknown" offset="42" visible="False" />
+    <int16 name="Unknown" offset="44" visible="False" />
+    <int8 name="Unknown" offset="46" visible="False" />
+    <int8 name="Vertex Format" offset="47" visible="True" />
+    <int8 name="Padding Format" offset="48" visible="True" />
+    <undefined name="Unknown" offset="60" visible="False" />
+    <undefined name="Unknown" offset="64" visible="False" />
+    <undefined name="Unknown" offset="68" visible="False" />
+    <undefined name="Unknown" offset="72" visible="False" />
+    <undefined name="Unknown" offset="76" visible="False" />
+    <undefined name="Unknown" offset="80" visible="False" />
+    <undefined name="Unknown" offset="84" visible="False" />
+    <undefined name="Unknown" offset="88" visible="False" />
+  </struct>
+  <struct name="Bounding Box" offset="116" visible="True" size="52">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <realBounds name="X Bounds" offset="4" visible="True" />
+    <realBounds name="Y Bounds" offset="12" visible="True" />
+    <realBounds name="Z Bounds" offset="20" visible="True" />
+    <realBounds name="U Bounds" offset="28" visible="True" />
+    <realBounds name="V Bounds" offset="36" visible="True" />
+    <undefined name="Unknown" offset="44" visible="False" />
+    <undefined name="Unknown" offset="48" visible="False" />
+  </struct>
+  <undefined name="Unknown" offset="128" visible="False" />
+  <undefined name="Unknown" offset="132" visible="False" />
+  <undefined name="Unknown" offset="136" visible="False" />
+  <undefined name="Unknown" offset="140" visible="False" />
+  <undefined name="Unknown" offset="144" visible="False" />
+  <undefined name="Unknown" offset="148" visible="False" />
+  <undefined name="Unknown" offset="152" visible="False" />
+  <undefined name="Unknown" offset="156" visible="False" />
+  <undefined name="Unknown" offset="160" visible="False" />
+  <undefined name="Unknown" offset="164" visible="False" />
+  <undefined name="Unknown" offset="168" visible="False" />
+  <undefined name="Unknown" offset="172" visible="False" />
+  <struct name="Node Map Groups" offset="176" visible="True" size="12">
+    <struct name="Node Maps" offset="0" visible="True" size="1">
+      <int8 name="Node Index" offset="0" visible="True" />
+    </struct>
+  </struct>
+  <undefined name="Unknown" offset="188" visible="False" />
+  <undefined name="Unknown" offset="192" visible="False" />
+  <undefined name="Unknown" offset="196" visible="False" />
+  <undefined name="Unknown" offset="200" visible="False" />
+  <undefined name="Unknown" offset="204" visible="False" />
+  <undefined name="Unknown" offset="208" visible="False" />
+  <undefined name="Unknown" offset="212" visible="False" />
+  <undefined name="Unknown" offset="216" visible="False" />
+  <undefined name="Unknown" offset="220" visible="False" />
+  <undefined name="Unknown" offset="224" visible="False" />
+  <undefined name="Unknown" offset="228" visible="False" />
+  <undefined name="Unknown" offset="232" visible="False" />
+  <rawID name="Raw ID" offset="236" visible="True" />
+  <undefined name="Unknown" offset="240" visible="False" />
+  <undefined name="Unknown" offset="244" visible="False" />
+  <undefined name="Unknown" offset="248" visible="True" />
+  <undefined name="Unknown" offset="252" visible="False" />
+  <undefined name="Unknown" offset="256" visible="False" />
+  <undefined name="Unknown" offset="260" visible="False" />
+  <undefined name="Unknown" offset="264" visible="False" />
+  <undefined name="Unknown" offset="268" visible="False" />
+  <undefined name="Unknown" offset="272" visible="False" />
+  <undefined name="Unknown" offset="276" visible="False" />
+  <undefined name="Unknown" offset="280" visible="False" />
+  <undefined name="Unknown" offset="284" visible="False" />
+  <undefined name="Unknown" offset="288" visible="False" />
+  <undefined name="Unknown" offset="292" visible="False" />
+  <undefined name="Unknown" offset="296" visible="False" />
+  <undefined name="Unknown" offset="300" visible="False" />
+  <undefined name="Unknown" offset="304" visible="False" />
+  <undefined name="Unknown" offset="308" visible="False" />
+  <undefined name="Unknown" offset="312" visible="False" />
+  <undefined name="Unknown" offset="316" visible="False" />
+  <undefined name="Unknown" offset="320" visible="False" />
+  <undefined name="Unknown" offset="324" visible="False" />
+  <undefined name="Unknown" offset="328" visible="False" />
+  <undefined name="Unknown" offset="332" visible="False" />
+  <undefined name="Unknown" offset="336" visible="False" />
+  <undefined name="Unknown" offset="340" visible="False" />
+  <undefined name="Unknown" offset="344" visible="False" />
+  <undefined name="Unknown" offset="348" visible="False" />
+  <undefined name="Unknown" offset="352" visible="False" />
+  <undefined name="Unknown" offset="356" visible="False" />
+  <undefined name="Unknown" offset="360" visible="False" />
+  <undefined name="Unknown" offset="364" visible="False" />
+  <undefined name="Unknown" offset="368" visible="False" />
+  <undefined name="Unknown" offset="372" visible="False" />
+  <undefined name="Unknown" offset="376" visible="False" />
+  <undefined name="Unknown" offset="380" visible="False" />
+  <undefined name="Unknown" offset="384" visible="False" />
+  <undefined name="Unknown" offset="388" visible="False" />
+  <undefined name="Unknown" offset="392" visible="False" />
+  <undefined name="Unknown" offset="396" visible="False" />
+  <undefined name="Unknown" offset="400" visible="False" />
+  <undefined name="Unknown" offset="404" visible="False" />
+  <undefined name="Unknown" offset="408" visible="False" />
+  <undefined name="Unknown" offset="412" visible="False" />
+  <undefined name="Unknown" offset="416" visible="False" />
+  <undefined name="Unknown" offset="420" visible="False" />
+  <undefined name="Unknown" offset="424" visible="False" />
+  <undefined name="Unknown" offset="428" visible="False" />
+  <undefined name="Unknown" offset="432" visible="False" />
+  <undefined name="Unknown" offset="436" visible="False" />
+  <undefined name="Unknown" offset="440" visible="False" />
+  <undefined name="Unknown" offset="444" visible="False" />
+  <undefined name="Unknown" offset="448" visible="False" />
+  <undefined name="Unknown" offset="452" visible="False" />
+  <undefined name="Unknown" offset="456" visible="False" />
+  <undefined name="Unknown" offset="460" visible="False" />
+  <undefined name="Unknown" offset="464" visible="False" />
+  <undefined name="Unknown" offset="468" visible="False" />
+  <undefined name="Unknown" offset="472" visible="False" />
+  <undefined name="Unknown" offset="476" visible="False" />
+  <undefined name="Unknown" offset="480" visible="False" />
+  <undefined name="Unknown" offset="484" visible="False" />
+  <undefined name="Unknown" offset="488" visible="False" />
+  <undefined name="Unknown" offset="492" visible="False" />
+  <undefined name="Unknown" offset="496" visible="False" />
+  <undefined name="Unknown" offset="500" visible="False" />
+  <undefined name="Unknown" offset="504" visible="False" />
+  <undefined name="Unknown" offset="508" visible="False" />
+  <undefined name="Unknown" offset="512" visible="False" />
+  <undefined name="Unknown" offset="516" visible="False" />
+  <undefined name="Unknown" offset="520" visible="False" />
+  <undefined name="Unknown" offset="524" visible="False" />
+  <undefined name="Unknown" offset="528" visible="False" />
+  <undefined name="Unknown" offset="532" visible="False" />
+  <undefined name="Unknown" offset="536" visible="False" />
+  <undefined name="Unknown" offset="540" visible="False" />
+  <undefined name="Unknown" offset="544" visible="False" />
+  <undefined name="Unknown" offset="548" visible="False" />
+  <undefined name="Unknown" offset="552" visible="False" />
+  <undefined name="Unknown" offset="556" visible="False" />
+  <undefined name="Unknown" offset="560" visible="False" />
+  <undefined name="Unknown" offset="564" visible="False" />
+  <undefined name="Unknown" offset="568" visible="False" />
+  <undefined name="Unknown" offset="572" visible="False" />
+  <undefined name="Unknown" offset="576" visible="False" />
+  <undefined name="Unknown" offset="580" visible="False" />
+  <undefined name="Unknown" offset="584" visible="False" />
+  <undefined name="Unknown" offset="588" visible="False" />
+  <undefined name="Unknown" offset="592" visible="False" />
+  <undefined name="Unknown" offset="596" visible="False" />
+</plugin>

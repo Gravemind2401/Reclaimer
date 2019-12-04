@@ -1,0 +1,675 @@
+<plugin class="chdt" headersize="40">
+  <revisions>
+    <revision author="-DeToX-" version="0.01">Created layout of plugin</revision>
+    <revision author="-DeToX-" version="0.1">Fixed up the layout, mapped out some values..</revision>
+    <revision author="DarkShallFall" version="0.5">More unknowns and types.</revision>
+    <revision author="DarkShallFall" version="0.8">Plugin getting close to complete. A little more effort and we will be there.</revision>
+  </revisions>
+  <struct name="Collection" offset="0" visible="True" size="80" label="Name">
+    <stringID name="Name" offset="0" visible="True" />
+    <int16 name="Unknown" offset="4" visible="False" />
+    <int16 name="Unknown" offset="6" visible="False" />
+    <struct name="Render States" offset="8" visible="True" size="40">
+      <bitmask32 name="Render If" offset="0" visible="True">
+        <option name="Biped 1" value="0" />
+        <option name="Biped 2" value="1" />
+        <option name="Biped 3" value="2" />
+      </bitmask32>
+      <bitmask32 name="Render If" offset="4" visible="True">
+        <option name="unknown" value="0" />
+        <option name="Talking Disabled" value="22" />
+        <option name="Tap To Talk" value="23" />
+        <option name="Not Talking" value="25" />
+        <option name="Talking" value="26" />
+      </bitmask32>
+      <bitmask32 name="Render If" offset="8" visible="True">
+        <option name="unknown" value="0" />
+      </bitmask32>
+      <bitmask32 name="Render If" offset="12" visible="True">
+        <option name="unknown" value="0" />
+      </bitmask32>
+      <bitmask32 name="Render If" offset="16" visible="True">
+        <option name="unknown" value="0" />
+        <option name="Scope Level 1" value="1" />
+        <option name="Scope Level 2" value="2" />
+      </bitmask32>
+      <bitmask32 name="Render If" offset="20" visible="True">
+        <option name="Grenade A" value="2" />
+        <option name="Grenade B" value="3" />
+        <option name="Grenade C" value="4" />
+        <option name="Grenade D" value="5" />
+      </bitmask32>
+      <bitmask32 name="Render If" offset="24" visible="True">
+        <option name="Primary Weapon" value="0" />
+        <option name="Secondary Weapon" value="1" />
+        <option name="BackPack" value="2" />
+        <option name="Pickup Ammo" value="17" />
+      </bitmask32>
+      <bitmask32 name="Render If" offset="28" visible="True">
+        <option name="Missile Locked" value="1" />
+        <option name="Missile Locking" value="2" />
+        <option name="Plasma Locked On" value="23" />
+      </bitmask32>
+      <bitmask32 name="Render If" offset="34" visible="True">
+        <option name="Clip Warning" value="0" />
+      </bitmask32>
+      <bitmask32 name="Render If" offset="36" visible="True">
+        <option name="unknown" value="0" />
+      </bitmask32>
+    </struct>
+    <struct name="Scale and Location" offset="20" visible="True" size="28">
+      <enum16 name="Anchor" offset="0" visible="True">
+        <option name="Top Left" value="0" />
+        <option name="Top Right" value="1" />
+        <option name="Scoreboard A" value="2" />
+        <option name="Motion Sensor" value="3" />
+        <option name="Crosshair" value="4" />
+        <option name="Top Edge" value="5" />
+        <option name="Grenade A" value="6" />
+        <option name="Grenade B" value="7" />
+        <option name="Grenade C" value="8" />
+        <option name="Grenade D" value="9" />
+        <option name="Scoreboard B" value="10" />
+        <option name="Scoreboard C" value="11" />
+        <option name="Health and Shield" value="12" />
+        <option name="Bottom Edge" value="13" />
+        <option name="Equipment" value="15" />
+        <option name="GameType" value="23" />
+        <option name="Meta Game 1" value="31" />
+        <option name="Meta Game 2" value="32" />
+        <option name="Meta Game 3" value="33" />
+        <option name="Meta Game 4" value="34" />
+        <option name="Meta Game 5" value="35" />
+      </enum16>
+      <float32 name="Y Mirror Offset" offset="4" visible="True" />
+      <float32 name="X Mirror Offset" offset="8" visible="True" />
+      <float32 name="Y Offset" offset="12" visible="True" />
+      <float32 name="X Offset" offset="16" visible="True" />
+      <float32 name="Y Scale" offset="20" visible="True" />
+      <float32 name="X Scale" offset="24" visible="True" />
+    </struct>
+    <struct name="Animations" offset="32" visible="True" size="120">
+      <enum32 name="Triggered By Input" offset="0" visible="True">
+        <option name="False" value="0" />
+        <option name="True" value="1" />
+      </enum32>
+      <tagRef name="Animation 1" offset="4" visible="True" />
+      <enum32 name="Triggered By Input" offset="20" visible="True">
+        <option name="False" value="0" />
+        <option name="True" value="1" />
+      </enum32>
+      <tagRef name="Animation 2" offset="24" visible="True" />
+      <enum32 name="Triggered By Input" offset="40" visible="True">
+        <option name="False" value="0" />
+        <option name="True" value="1" />
+      </enum32>
+      <tagRef name="Animation 3" offset="44" visible="True" />
+      <enum32 name="Triggered By Input" offset="60" visible="True">
+        <option name="False" value="0" />
+        <option name="True" value="1" />
+      </enum32>
+      <tagRef name="Animation 4" offset="64" visible="True" />
+      <enum32 name="Triggered By Input" offset="8" visible="True">
+        <option name="False" value="0" />
+        <option name="True" value="1" />
+      </enum32>
+      <tagRef name="Animation 5" offset="84" visible="True" />
+      <enum32 name="Triggered By Input" offset="100" visible="True">
+        <option name="False" value="0" />
+        <option name="True" value="1" />
+      </enum32>
+      <tagRef name="Animation 6" offset="104" visible="True" />
+    </struct>
+    <struct name="Functions" offset="44" visible="True" size="64">
+      <bitmask16 name="Shader Flags" offset="0" visible="True">
+        <option name="Enabled" value="0" />
+        <option name="Function 1" value="1" />
+        <option name="Function 2" value="2" />
+        <option name="Function 3" value="3" />
+        <option name="Function 4" value="4" />
+        <option name="Function 5" value="5" />
+        <option name="Function 6" value="6" />
+        <option name="Function 7" value="7" />
+        <option name="Function 8" value="8" />
+        <option name="Function 9" value="9" />
+        <option name="Function 10" value="10" />
+        <option name="Function 11" value="11" />
+        <option name="Function 12" value="12" />
+        <option name="Function 13" value="13" />
+        <option name="Function 14" value="14" />
+        <option name="Function 15" value="15" />
+      </bitmask16>
+      <enum32 name="Input" offset="2" visible="True">
+        <option name="Zero" value="0" />
+        <option name="One" value="1" />
+        <option name="Time" value="2" />
+        <option name="Fade" value="3" />
+        <option name="Unit Shield" value="4" />
+        <option name="unknown5" value="5" />
+        <option name="Clip Ammo Fraction" value="6" />
+        <option name="Total Ammo Fraction" value="7" />
+        <option name="Overheat" value="8" />
+        <option name="Battery Fraction" value="9" />
+        <option name="Pickup" value="10" />
+        <option name="Auto Aimed" value="11" />
+        <option name="Grenade" value="12" />
+        <option name="Grenade Fraction" value="13" />
+        <option name="Charge Fraction" value="14" />
+        <option name="1st Place Score" value="15" />
+        <option name="2nd Place Score" value="16" />
+        <option name="Score To Win" value="17" />
+        <option name="Arming Fraction" value="18" />
+        <option name="unknown19" value="19" />
+        <option name="unknown20" value="20" />
+        <option name="unknown21" value="21" />
+        <option name="unknown22" value="22" />
+        <option name="unknown23" value="23" />
+        <option name="unknown24" value="24" />
+        <option name="unknown25" value="25" />
+        <option name="Yaw" value="26" />
+        <option name="Pitch" value="27" />
+        <option name="Distance" value="28" />
+        <option name="unknown29" value="29" />
+        <option name="Budget Meter" value="30" />
+        <option name="Budget Counter" value="31" />
+        <option name="Film Total Time" value="32" />
+        <option name="Film Current Time" value="33" />
+        <option name="Unknown" value="34" />
+        <option name="Unknown" value="35" />
+        <option name="Film Timeline" value="36" />
+        <option name="Unknown37" value="37" />
+        <option name="Unknown38" value="38" />
+        <option name="MetaGame Time" value="39" />
+        <option name="MetaGame Score +" value="40" />
+        <option name="MetaGame Score" value="41" />
+        <option name="Unknown42" value="42" />
+        <option name="Unknown43" value="43" />
+        <option name="Unknown44" value="44" />
+        <option name="MetaGame Modifier" value="45" />
+        <option name="Unknown46" value="46" />
+        <option name="Unknown47" value="47" />
+        <option name="Unknown48" value="48" />
+        <option name="Unknown49" value="49" />
+        <option name="Unknown50" value="50" />
+        <option name="Unknown51" value="51" />
+        <option name="MetaGame Score -" value="52" />
+      </enum32>
+      <int16 name="Unknown" offset="6" visible="False" />
+      <int8 name="Red 1" offset="9" visible="True" />
+      <int8 name="Green 1" offset="10" visible="True" />
+      <int8 name="Blue 1" offset="11" visible="True" />
+      <int8 name="Red 2" offset="13" visible="True" />
+      <int8 name="Green 2" offset="14" visible="True" />
+      <int8 name="Blue 2" offset="15" visible="True" />
+      <int8 name="Red 3" offset="17" visible="True" />
+      <int8 name="Green 3" offset="18" visible="True" />
+      <int8 name="Blue 3" offset="19" visible="True" />
+      <int8 name="Red 4" offset="21" visible="True" />
+      <int8 name="Green 4" offset="22" visible="True" />
+      <int8 name="Blue 4" offset="23" visible="True" />
+      <float32 name="Opacity 1" offset="24" visible="True" />
+      <float32 name="Opacity 2" offset="28" visible="True" />
+      <float32 name="Opacity 3" offset="32" visible="True" />
+      <float32 name="Opacity 4" offset="36" visible="True" />
+      <int16 name="Shader Index 1" offset="40" visible="True" />
+      <int16 name="Shader Index 2" offset="42" visible="True" />
+      <int16 name="Shader Index 3" offset="44" visible="True" />
+      <int16 name="Shader Index 4" offset="46" visible="True" />
+      <int16 name="Shader Index 5" offset="48" visible="True" />
+      <int16 name="Shader Index 6" offset="50" visible="True" />
+      <int16 name="Shader Index 7" offset="52" visible="True" />
+      <int16 name="Shader Index 8" offset="54" visible="True" />
+      <int16 name="Shader Index 9" offset="56" visible="True" />
+      <int16 name="Shader Index 10" offset="58" visible="True" />
+      <int16 name="Shader Index 11" offset="60" visible="True" />
+      <int16 name="Shader Index 12" offset="62" visible="True" />
+    </struct>
+    <struct name="Bitmap Widgets" offset="56" visible="True" size="84" label="Name">
+      <stringID name="Name" offset="0" visible="True" />
+      <int32 name="Unknown" offset="4" visible="False" />
+      <struct name="Render States" offset="8" visible="True" size="40">
+        <bitmask32 name="Render If" offset="0" visible="True">
+          <option name="Biped 1" value="0" />
+          <option name="Biped 2" value="1" />
+          <option name="Biped 3" value="2" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="4" visible="True">
+          <option name="unknown" value="0" />
+          <option name="Talking Disabled" value="22" />
+          <option name="Tap To Talk" value="23" />
+          <option name="Not Talking" value="25" />
+          <option name="Talking" value="26" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="8" visible="True">
+          <option name="unknown" value="0" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="12" visible="True">
+          <option name="unknown" value="0" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="16" visible="True">
+          <option name="unknown" value="0" />
+          <option name="Scope Level 1" value="1" />
+          <option name="Scope Level 2" value="2" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="20" visible="True">
+          <option name="Grenade A" value="2" />
+          <option name="Grenade B" value="3" />
+          <option name="Grenade C" value="4" />
+          <option name="Grenade D" value="5" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="24" visible="True">
+          <option name="Primary Weapon" value="0" />
+          <option name="Secondary Weapon" value="1" />
+          <option name="BackPack" value="2" />
+          <option name="Pickup Ammo" value="17" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="28" visible="True">
+          <option name="Missile Locked" value="1" />
+          <option name="Missile Locking" value="2" />
+          <option name="Plasma Locked On" value="23" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="34" visible="True">
+          <option name="Clip Warning" value="0" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="36" visible="True">
+          <option name="unknown" value="0" />
+        </bitmask32>
+      </struct>
+      <struct name="Scale and Location" offset="20" visible="True" size="28">
+        <enum16 name="Anchor" offset="0" visible="True">
+          <option name="Grenade Scematics" value="0" />
+          <option name="Weapon Scematics" value="1" />
+          <option name="Scoreboard" value="2" />
+          <option name="Motion Sensor" value="3" />
+          <option name="Crosshair" value="4" />
+          <option name="Health and Shield" value="12" />
+          <option name="GameType" value="23" />
+        </enum16>
+        <float32 name="Y Mirror Offset" offset="4" visible="True" />
+        <float32 name="X Mirror Offset" offset="8" visible="True" />
+        <float32 name="Y Offset" offset="12" visible="True" />
+        <float32 name="X Offset" offset="16" visible="True" />
+        <float32 name="Y Scale" offset="20" visible="True" />
+        <float32 name="X Scale" offset="24" visible="True" />
+      </struct>
+      <struct name="Animations" offset="32" visible="True" size="120">
+        <enum32 name="Triggered By Input" offset="0" visible="True">
+          <option name="False" value="0" />
+          <option name="True" value="1" />
+        </enum32>
+        <tagRef name="Animation 1" offset="4" visible="True" />
+        <enum32 name="Triggered By Input" offset="20" visible="True">
+          <option name="False" value="0" />
+          <option name="True" value="1" />
+        </enum32>
+        <tagRef name="Animation 2" offset="24" visible="True" />
+        <enum32 name="Triggered By Input" offset="40" visible="True">
+          <option name="False" value="0" />
+          <option name="True" value="1" />
+        </enum32>
+        <tagRef name="Animation 3" offset="44" visible="True" />
+        <enum32 name="Triggered By Input" offset="60" visible="True">
+          <option name="False" value="0" />
+          <option name="True" value="1" />
+        </enum32>
+        <tagRef name="Animation 4" offset="64" visible="True" />
+        <enum32 name="Triggered By Input" offset="8" visible="True">
+          <option name="False" value="0" />
+          <option name="True" value="1" />
+        </enum32>
+        <tagRef name="Animation 5" offset="84" visible="True" />
+        <enum32 name="Triggered By Input" offset="100" visible="True">
+          <option name="False" value="0" />
+          <option name="True" value="1" />
+        </enum32>
+        <tagRef name="Animation 6" offset="104" visible="True" />
+      </struct>
+      <struct name="Functions" offset="44" visible="True" size="64">
+        <bitmask16 name="Shader Flags" offset="0" visible="True">
+          <option name="Enabled" value="0" />
+          <option name="Function 1" value="1" />
+          <option name="Function 2" value="2" />
+          <option name="Function 3" value="3" />
+          <option name="Function 4" value="4" />
+          <option name="Function 5" value="5" />
+          <option name="Function 6" value="6" />
+          <option name="Function 7" value="7" />
+          <option name="Function 8" value="8" />
+          <option name="Function 9" value="9" />
+          <option name="Function 10" value="10" />
+          <option name="Function 11" value="11" />
+          <option name="Function 12" value="12" />
+          <option name="Function 13" value="13" />
+          <option name="Function 14" value="14" />
+          <option name="Function 15" value="15" />
+        </bitmask16>
+        <enum32 name="Input" offset="2" visible="True">
+          <option name="Zero" value="0" />
+          <option name="One" value="1" />
+          <option name="Time" value="2" />
+          <option name="Fade" value="3" />
+          <option name="Unit Shield" value="4" />
+          <option name="unknown5" value="5" />
+          <option name="Clip Ammo Fraction" value="6" />
+          <option name="Total Ammo Fraction" value="7" />
+          <option name="Overheat" value="8" />
+          <option name="Battery Fraction" value="9" />
+          <option name="Pickup" value="10" />
+          <option name="Auto Aimed" value="11" />
+          <option name="Grenade" value="12" />
+          <option name="Grenade Fraction" value="13" />
+          <option name="Charge Fraction" value="14" />
+          <option name="1st Place Score" value="15" />
+          <option name="2nd Place Score" value="16" />
+          <option name="Score To Win" value="17" />
+          <option name="Arming Fraction" value="18" />
+          <option name="unknown19" value="19" />
+          <option name="unknown20" value="20" />
+          <option name="unknown21" value="21" />
+          <option name="unknown22" value="22" />
+          <option name="unknown23" value="23" />
+          <option name="unknown24" value="24" />
+          <option name="unknown25" value="25" />
+          <option name="Yaw" value="26" />
+          <option name="Pitch" value="27" />
+          <option name="Distance" value="28" />
+          <option name="unknown29" value="29" />
+          <option name="Budget Meter" value="30" />
+          <option name="Budget Counter" value="31" />
+          <option name="Film Total Time" value="32" />
+          <option name="Film Current Time" value="33" />
+          <option name="Unknown" value="34" />
+          <option name="Unknown" value="35" />
+          <option name="Film Timeline" value="36" />
+          <option name="Unknown37" value="37" />
+          <option name="Unknown38" value="38" />
+          <option name="MetaGame Time" value="39" />
+          <option name="MetaGame Score +" value="40" />
+          <option name="MetaGame Score" value="41" />
+          <option name="Unknown42" value="42" />
+          <option name="Unknown43" value="43" />
+          <option name="Unknown44" value="44" />
+          <option name="MetaGame Modifier" value="45" />
+          <option name="Unknown46" value="46" />
+          <option name="Unknown47" value="47" />
+          <option name="Unknown48" value="48" />
+          <option name="Unknown49" value="49" />
+          <option name="Unknown50" value="50" />
+          <option name="Unknown51" value="51" />
+          <option name="MetaGame Score -" value="52" />
+        </enum32>
+        <int16 name="Unknown" offset="6" visible="False" />
+        <int8 name="Red 1" offset="9" visible="True" />
+        <int8 name="Green 1" offset="10" visible="True" />
+        <int8 name="Blue 1" offset="11" visible="True" />
+        <int8 name="Red 2" offset="13" visible="True" />
+        <int8 name="Green 2" offset="14" visible="True" />
+        <int8 name="Blue 2" offset="15" visible="True" />
+        <int8 name="Red 3" offset="17" visible="True" />
+        <int8 name="Green 3" offset="18" visible="True" />
+        <int8 name="Blue 3" offset="19" visible="True" />
+        <int8 name="Red 4" offset="21" visible="True" />
+        <int8 name="Green 4" offset="22" visible="True" />
+        <int8 name="Blue 4" offset="23" visible="True" />
+        <float32 name="Opacity 1" offset="24" visible="True" />
+        <float32 name="Opacity 2" offset="28" visible="True" />
+        <float32 name="Opacity 3" offset="32" visible="True" />
+        <float32 name="Opacity 4" offset="36" visible="True" />
+        <int16 name="Shader Index 1" offset="40" visible="True" />
+        <int16 name="Shader Index 2" offset="42" visible="True" />
+        <int16 name="Shader Index 3" offset="44" visible="True" />
+        <int16 name="Shader Index 4" offset="46" visible="True" />
+        <int16 name="Shader Index 5" offset="48" visible="True" />
+        <int16 name="Shader Index 6" offset="50" visible="True" />
+        <int16 name="Shader Index 7" offset="52" visible="True" />
+        <int16 name="Shader Index 8" offset="54" visible="True" />
+        <int16 name="Shader Index 9" offset="56" visible="True" />
+        <int16 name="Shader Index 10" offset="58" visible="True" />
+        <int16 name="Shader Index 11" offset="60" visible="True" />
+        <int16 name="Shader Index 12" offset="62" visible="True" />
+      </struct>
+      <int32 name="Piece" offset="56" visible="True" />
+      <bitmask16 name="Bitmap Modifiers" offset="60" visible="True">
+        <option name="Mirror Horizontally" value="0" />
+        <option name="Mirror Vertically" value="1" />
+        <option name="Stretch Edges" value="2" />
+      </bitmask16>
+      <tagRef name="Bitmap" offset="64" visible="True" />
+      <int8 name="Bitmap Sprite Index" offset="80" visible="True" />
+    </struct>
+    <struct name="Numerical Elements" offset="68" visible="True" size="68" label="Name">
+      <stringID name="Name" offset="0" visible="True" />
+      <int32 name="Unknown" offset="4" visible="False" />
+      <struct name="Render States" offset="8" visible="True" size="40">
+        <bitmask32 name="Render If" offset="0" visible="True">
+          <option name="Biped 1" value="0" />
+          <option name="Biped 2" value="1" />
+          <option name="Biped 3" value="2" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="4" visible="True">
+          <option name="unknown" value="0" />
+          <option name="Talking Disabled" value="22" />
+          <option name="Tap To Talk" value="23" />
+          <option name="Not Talking" value="25" />
+          <option name="Talking" value="26" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="8" visible="True">
+          <option name="unknown" value="0" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="12" visible="True">
+          <option name="unknown" value="0" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="16" visible="True">
+          <option name="unknown" value="0" />
+          <option name="Scope Level 1" value="1" />
+          <option name="Scope Level 2" value="2" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="20" visible="True">
+          <option name="Grenade A" value="2" />
+          <option name="Grenade B" value="3" />
+          <option name="Grenade C" value="4" />
+          <option name="Grenade D" value="5" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="24" visible="True">
+          <option name="Primary Weapon" value="0" />
+          <option name="Secondary Weapon" value="1" />
+          <option name="BackPack" value="2" />
+          <option name="Pickup Ammo" value="17" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="28" visible="True">
+          <option name="Missile Locked" value="1" />
+          <option name="Missile Locking" value="2" />
+          <option name="Plasma Locked On" value="23" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="34" visible="True">
+          <option name="Clip Warning" value="0" />
+        </bitmask32>
+        <bitmask32 name="Render If" offset="36" visible="True">
+          <option name="unknown" value="0" />
+        </bitmask32>
+      </struct>
+      <struct name="Scale and Location" offset="20" visible="True" size="28">
+        <enum16 name="Anchor" offset="0" visible="True">
+          <option name="Grenade Scematics" value="0" />
+          <option name="Weapon Scematics" value="1" />
+          <option name="Scoreboard" value="2" />
+          <option name="Motion Sensor" value="3" />
+          <option name="Crosshair" value="4" />
+          <option name="Health and Shield" value="12" />
+          <option name="Welcome" value="23" />
+          <option name="GameType" value="26725" />
+        </enum16>
+        <float32 name="Y Mirror Offset" offset="4" visible="True" />
+        <float32 name="X Mirror Offset" offset="8" visible="True" />
+        <float32 name="Y Offset" offset="12" visible="True" />
+        <float32 name="X Offset" offset="16" visible="True" />
+        <float32 name="Y Scale" offset="20" visible="True" />
+        <float32 name="X Scale" offset="24" visible="True" />
+      </struct>
+      <struct name="Animations" offset="32" visible="False" size="120">
+        <enum32 name="Triggered By Input" offset="0" visible="True">
+          <option name="False" value="0" />
+          <option name="True" value="1" />
+        </enum32>
+        <tagRef name="Animation 1" offset="4" visible="True" />
+        <enum32 name="Triggered By Input" offset="20" visible="True">
+          <option name="False" value="0" />
+          <option name="True" value="1" />
+        </enum32>
+        <tagRef name="Animation 2" offset="24" visible="True" />
+        <enum32 name="Triggered By Input" offset="40" visible="True">
+          <option name="False" value="0" />
+          <option name="True" value="1" />
+        </enum32>
+        <tagRef name="Animation 3" offset="44" visible="True" />
+        <enum32 name="Triggered By Input" offset="60" visible="True">
+          <option name="False" value="0" />
+          <option name="True" value="1" />
+        </enum32>
+        <tagRef name="Animation 4" offset="64" visible="True" />
+        <enum32 name="Triggered By Input" offset="8" visible="True">
+          <option name="False" value="0" />
+          <option name="True" value="1" />
+        </enum32>
+        <tagRef name="Animation 5" offset="84" visible="True" />
+        <enum32 name="Triggered By Input" offset="100" visible="True">
+          <option name="False" value="0" />
+          <option name="True" value="1" />
+        </enum32>
+        <tagRef name="Animation 6" offset="104" visible="True" />
+      </struct>
+      <struct name="Functions" offset="44" visible="True" size="64">
+        <bitmask16 name="Shader Flags" offset="0" visible="True">
+          <option name="Enabled" value="0" />
+          <option name="Function 1" value="1" />
+          <option name="Function 2" value="2" />
+          <option name="Function 3" value="3" />
+          <option name="Function 4" value="4" />
+          <option name="Function 5" value="5" />
+          <option name="Function 6" value="6" />
+          <option name="Function 7" value="7" />
+          <option name="Function 8" value="8" />
+          <option name="Function 9" value="9" />
+          <option name="Function 10" value="10" />
+          <option name="Function 11" value="11" />
+          <option name="Function 12" value="12" />
+          <option name="Function 13" value="13" />
+          <option name="Function 14" value="14" />
+          <option name="Function 15" value="15" />
+        </bitmask16>
+        <bitmask16 name="Shader Flags" offset="0" visible="True">
+          <option name="Enabled" value="0" />
+          <option name="Function 1" value="1" />
+          <option name="Function 2" value="2" />
+          <option name="Function 3" value="3" />
+          <option name="Function 4" value="4" />
+          <option name="Function 5" value="5" />
+          <option name="Function 6" value="6" />
+          <option name="Function 7" value="7" />
+          <option name="Function 8" value="8" />
+          <option name="Function 9" value="9" />
+          <option name="Function 10" value="10" />
+          <option name="Function 11" value="11" />
+          <option name="Function 12" value="12" />
+          <option name="Function 13" value="13" />
+          <option name="Function 14" value="14" />
+          <option name="Function 15" value="15" />
+        </bitmask16>
+        <enum32 name="Input" offset="2" visible="True">
+          <option name="Zero" value="0" />
+          <option name="One" value="1" />
+          <option name="Time" value="2" />
+          <option name="Fade" value="3" />
+          <option name="Unit Shield" value="4" />
+          <option name="unknown5" value="5" />
+          <option name="Clip Ammo Fraction" value="6" />
+          <option name="Total Ammo Fraction" value="7" />
+          <option name="Overheat" value="8" />
+          <option name="Battery Fraction" value="9" />
+          <option name="Pickup" value="10" />
+          <option name="Auto Aimed" value="11" />
+          <option name="Grenade" value="12" />
+          <option name="Grenade Fraction" value="13" />
+          <option name="Charge Fraction" value="14" />
+          <option name="1st Place Score" value="15" />
+          <option name="2nd Place Score" value="16" />
+          <option name="Score To Win" value="17" />
+          <option name="Arming Fraction" value="18" />
+          <option name="unknown19" value="19" />
+          <option name="unknown20" value="20" />
+          <option name="unknown21" value="21" />
+          <option name="unknown22" value="22" />
+          <option name="unknown23" value="23" />
+          <option name="unknown24" value="24" />
+          <option name="unknown25" value="25" />
+          <option name="Yaw" value="26" />
+          <option name="Pitch" value="27" />
+          <option name="Distance" value="28" />
+          <option name="unknown29" value="29" />
+          <option name="Budget Meter" value="30" />
+          <option name="Budget Counter" value="31" />
+          <option name="Film Total Time" value="32" />
+          <option name="Film Current Time" value="33" />
+          <option name="Film Timeline" value="36" />
+          <option name="MetaGame Time" value="39" />
+          <option name="MetaGame Score +" value="40" />
+          <option name="MetaGame Score" value="41" />
+          <option name="MetaGame Modifier" value="45" />
+          <option name="MetaGame Score -" value="52" />
+        </enum32>
+        <int16 name="Unknown" offset="6" visible="False" />
+        <int8 name="Red 1" offset="9" visible="True" />
+        <int8 name="Green 1" offset="10" visible="True" />
+        <int8 name="Blue 1" offset="11" visible="True" />
+        <int8 name="Red 2" offset="13" visible="True" />
+        <int8 name="Green 2" offset="14" visible="True" />
+        <int8 name="Blue 2" offset="15" visible="True" />
+        <int8 name="Red 3" offset="17" visible="True" />
+        <int8 name="Green 3" offset="18" visible="True" />
+        <int8 name="Blue 3" offset="19" visible="True" />
+        <int8 name="Red 4" offset="21" visible="True" />
+        <int8 name="Green 4" offset="22" visible="True" />
+        <int8 name="Blue 4" offset="23" visible="True" />
+        <float32 name="Opacity 1" offset="24" visible="True" />
+        <float32 name="Opacity 2" offset="28" visible="True" />
+        <float32 name="Opacity 3" offset="32" visible="True" />
+        <float32 name="Opacity 4" offset="36" visible="True" />
+        <int16 name="Shader Index 1" offset="40" visible="True" />
+        <int16 name="Shader Index 2" offset="42" visible="True" />
+        <int16 name="Shader Index 3" offset="44" visible="True" />
+        <int16 name="Shader Index 4" offset="46" visible="True" />
+        <int16 name="Shader Index 5" offset="48" visible="True" />
+        <int16 name="Shader Index 6" offset="50" visible="True" />
+        <int16 name="Shader Index 7" offset="52" visible="True" />
+        <int16 name="Shader Index 8" offset="54" visible="True" />
+        <int16 name="Shader Index 9" offset="56" visible="True" />
+        <int16 name="Shader Index 10" offset="58" visible="True" />
+        <int16 name="Shader Index 11" offset="60" visible="True" />
+        <int16 name="Shader Index 12" offset="62" visible="True" />
+      </struct>
+      <int32 name="Piece" offset="56" visible="True" />
+      <bitmask16 name="Numerical Modifiers" offset="60" visible="True">
+        <option name="String Is An Number" value="0" />
+        <option name="Force 2 Digit" value="1" />
+        <option name="Force 3 Digit" value="2" />
+        <option name="Add + At Beginning" value="3" />
+        <option name="Add M At End" value="4" />
+        <option name="Add 2 Digit Decimal" value="5" />
+        <option name="Add 3 Digit Decimal" value="6" />
+        <option name="Add 5 Digit Decimal" value="7" />
+        <option name="Only A Number" value="8" />
+        <option name="Add X At End" value="9" />
+        <option name="Number Is In []" value="10" />
+        <option name=": At End" value="11" />
+        <option name=": At 100" value="12" />
+        <option name="$ At Beginning" value="13" />
+        <option name="- At Beginning" value="14" />
+        <option name="Unused" value="15" />
+      </bitmask16>
+      <int16 name="Font Index" offset="62" visible="True" />
+      <stringID name="String" offset="64" visible="True" />
+    </struct>
+  </struct>
+  <int32 name="Clip Warning" offset="12" visible="True" />
+  <int32 name="Illumination Warning" offset="20" visible="True" />
+</plugin>

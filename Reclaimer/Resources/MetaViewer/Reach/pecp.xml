@@ -1,0 +1,17 @@
+<plugin class="pecp" headersize="52">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <tagRef name="Unknown" offset="0" visible="True" />
+  <undefined name="Unknown" offset="16" visible="False" />
+  <undefined name="Unknown" offset="20" visible="False" />
+  <undefined name="Unknown" offset="24" visible="False" />
+  <undefined name="Unknown" offset="28" visible="False" />
+  <undefined name="Unknown" offset="32" visible="False" />
+  <undefined name="Unknown" offset="36" visible="False" />
+  <struct name="Unknown 0" offset="40" visible="False" size="10">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <int16 name="Unknown" offset="8" visible="False" />
+  </struct>
+</plugin>

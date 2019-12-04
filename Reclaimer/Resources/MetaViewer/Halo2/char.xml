@@ -1,0 +1,159 @@
+<plugin>
+  <revisions />
+  <tagRef name="Parent Gunner" offset="0x4" visible="True" />
+  <tagRef name="Unit" offset="0xC" visible="True" />
+  <tagRef name="Creature" offset="0x14" visible="True" />
+  <tagRef name="Style" offset="0x1C" visible="True" />
+  <tagRef name="Major Character" offset="0x24" visible="True" />
+  <struct name="Variation" offset="0x2C" visible="True" size="0xC">
+    <stringID name="Permutation" offset="0x0" visible="True" />
+    <undefined name="Unknown" offset="0x4" visible="False" />
+    <stringID name="Base permutation" offset="0x8" visible="True" />
+  </struct>
+  <struct name="General Properties" offset="0x34" visible="True" size="0xC">
+    <enum32 name="Type" offset="4" visible="True">
+      <option name="Elite" value="0" />
+      <option name="Jackal" value="1" />
+      <option name="Grunt" value="2" />
+      <option name="Hunter" value="3" />
+      <option name="Engineer" value="4" />
+      <option name="Assassin" value="5" />
+      <option name="Player" value="6" />
+      <option name="Marine" value="7" />
+      <option name="Crew" value="8" />
+      <option name="Combat Form" value="9" />
+      <option name="Infection Form" value="10" />
+      <option name="Carrier Form" value="11" />
+      <option name="Monitor" value="12" />
+      <option name="Sentinal" value="13" />
+      <option name="None" value="14" />
+      <option name="Mounted Weapon" value="15" />
+      <option name="Brute" value="16" />
+      <option name="Prophet" value="17" />
+      <option name="Bugger" value="18" />
+      <option name="Juggernaut" value="19" />
+    </enum32>
+  </struct>
+  <struct name="Character Stats" offset="0x3C" visible="True" size="0x70">
+    <undefined name="Unknown" offset="0x6C" visible="True" />
+  </struct>
+  <struct name="Placement Properties" offset="0x44" visible="True" size="0x34" />
+  <struct name="Perception Properties" offset="0x4C" visible="True" size="0x34" />
+  <struct name="Look Properties" offset="0x54" visible="True" size="0x50" />
+  <struct name="Movement Properties" offset="0x5C" visible="True" size="0x24">
+    <enum16 name="Obstacle Leap Min Size" offset="16" visible="True">
+      <option name="None" value="0" />
+      <option name="Tiny" value="1" />
+      <option name="Small" value="2" />
+      <option name="Medium" value="3" />
+      <option name="Large" value="4" />
+      <option name="Huge" value="5" />
+      <option name="Immobile" value="6" />
+    </enum16>
+    <enum16 name="Obstacle Leap Max Size" offset="18" visible="True">
+      <option name="None" value="0" />
+      <option name="Tiny" value="1" />
+      <option name="Small" value="2" />
+      <option name="Medium" value="3" />
+      <option name="Large" value="4" />
+      <option name="Huge" value="5" />
+      <option name="Immobile" value="6" />
+    </enum16>
+    <enum16 name="Obstacle Ignore Size" offset="20" visible="True">
+      <option name="None" value="0" />
+      <option name="Tiny" value="1" />
+      <option name="Small" value="2" />
+      <option name="Medium" value="3" />
+      <option name="Large" value="4" />
+      <option name="Huge" value="5" />
+      <option name="Immobile" value="6" />
+    </enum16>
+    <enum16 name="Obstacle Smashable Size" offset="22" visible="True">
+      <option name="None" value="0" />
+      <option name="Tiny" value="1" />
+      <option name="Small" value="2" />
+      <option name="Medium" value="3" />
+      <option name="Large" value="4" />
+      <option name="Huge" value="5" />
+      <option name="Immobile" value="6" />
+    </enum16>
+    <enum32 name="Jump Height" offset="24" visible="True">
+      <option name="NONE" value="0" />
+      <option name="Down" value="1" />
+      <option name="Step" value="2" />
+      <option name="Crouch" value="3" />
+      <option name="Stand" value="4" />
+      <option name="Storey" value="5" />
+      <option name="Tower" value="6" />
+      <option name="Infinte" value="7" />
+    </enum32>
+  </struct>
+  <struct name="Swarm Properties" offset="0x64" visible="True" size="0x28">
+    <undefined name="Scatter Killed Count" offset="0x0" visible="True" />
+  </struct>
+  <struct name="Ready Properties" offset="0x6C" visible="True" size="0x8" />
+  <struct name="Engage Properties" offset="0x74" visible="True" size="0x10" />
+  <struct name="Charge Properties" offset="0x7C" visible="True" size="0x40">
+    <tagRef name="Berserk Weapon" offset="0x38" visible="True" />
+  </struct>
+  <struct name="Evasion Properties" offset="0x84" visible="True" size="0x14" />
+  <struct name="Cover Properties" offset="0x8C" visible="True" size="0x40" />
+  <struct name="Retreat Properties" offset="0x94" visible="True" size="0x4C">
+    <tagRef name="Backup Weapon" offset="0x44" visible="True" />
+  </struct>
+  <struct name="Search Properties" offset="0x9C" visible="True" size="0x14" />
+  <struct name="Pre-Search Properties" offset="0xA4" visible="True" size="0x24" />
+  <struct name="Idle Properties" offset="0xAC" visible="True" size="0xC" />
+  <struct name="Vocalization Properties" offset="0xB4" visible="True" size="0x8" />
+  <struct name="Boarding Properties" offset="0xBC" visible="True" size="0x10" />
+  <struct name="Boss Properties" offset="0xC4" visible="True" size="0xC" />
+  <struct name="Weapons Properties" offset="0xCC" visible="True" size="0xCC">
+    <tagRef name="Weapon" offset="0x4" visible="True" />
+    <enum32 name="Special Fire Mode" offset="120" visible="True">
+      <option name="None" value="0x0" />
+      <option name="Overcharge" value="0x1" />
+      <option name="Secondary Trigger" value="0x2" />
+    </enum32>
+    <enum32 name="Special Fire Situation" offset="120" visible="True">
+      <option name="Never" value="0x0" />
+      <option name="Enemy Visible" value="0x1" />
+      <option name="Enemy out of Sight" value="0x2" />
+      <option name="Strafing" value="0x3" />
+    </enum32>
+    <int16 name="Drop Weapon Ammo" offset="148" visible="True" />
+    <int16 name="To" offset="150" visible="False" />
+    <tagRef name="Weapon Melee Damage" offset="0xC4" visible="True" />
+  </struct>
+  <struct name="Weapon Associations" offset="0xD4" visible="True" size="0x10">
+    <tagRef name="Weapon" offset="0x0" visible="True" />
+    <struct name="Weapon Firing Associations" offset="0x8" visible="True" size="0x40" />
+  </struct>
+  <struct name="Grenades Properties" offset="0xDC" visible="True" size="0x3C">
+    <enum32 name="Grenade Type" offset="0x4" visible="True">
+      <option name="Human Fragmentation" value="0x0" />
+      <option name="Covenant Plasma" value="0x1" />
+    </enum32>
+    <enum16 name="Trajectory Type" offset="0x8" visible="True">
+      <option name="Toss" value="0x0" />
+      <option name="Lob" value="0x1" />
+      <option name="Bounce" value="0x2" />
+    </enum16>
+    <int16 name="Minimum Enemy Count" offset="10" visible="True" />
+    <uint16 name="Grenade Count" offset="52" visible="True" />
+    <uint16 name="To" offset="54" visible="True" />
+  </struct>
+  <struct name="Vehicle Associations" offset="0xE4" visible="True" size="0xB4">
+    <tagRef name="Vehicle" offset="0x0" visible="True" />
+    <tagRef name="Style" offset="0x8" visible="True" />
+    <enum16 name="Obstacle Ignore Size" offset="0xB0" visible="True">
+      <option name="None" value="0" />
+      <option name="Tiny" value="1" />
+      <option name="Small" value="2" />
+      <option name="Medium" value="3" />
+      <option name="Large" value="4" />
+      <option name="Huge" value="5" />
+      <option name="Inmobile" value="6" />
+    </enum16>
+    <int16 name="Unknown" offset="0xB2" visible="False" />
+  </struct>
+</plugin>

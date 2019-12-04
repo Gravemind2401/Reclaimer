@@ -1,0 +1,21 @@
+<plugin>
+  <undefined name="Unknown" offset="0x0" visible="false" />
+  <int16 name="priority" offset="0x4" visible="true" description="when multiple listeners are in different sound environments in split screen, the combined environment will be the one with the highest priority." />
+  <int16 name="Unknown" offset="0x6" visible="false" />
+  <float32 name="room intensity" offset="0x8" visible="true" description="intensity of the room effect" />
+  <float32 name="room intensity hf" offset="0xC" visible="true" description="intensity of the room effect above the reference high frequency" />
+  <float32 name="room rolloff (0 to 10)" offset="0x10" visible="true" description="how quickly the room effect rolls off, from 0.0 to 10.0" />
+  <float32 name="decay time (.1 to 20)" offset="0x14" visible="true" description="seconds" />
+  <float32 name="decay hf ratio (.1 to 2)" offset="0x18" visible="true" />
+  <float32 name="reflections intensity" offset="0x1C" visible="true" />
+  <float32 name="reflections delay (0 to .3)" offset="0x20" visible="true" description="seconds" />
+  <float32 name="reverb intensity" offset="0x24" visible="true" />
+  <float32 name="reverb delay (0 to .1)" offset="0x28" visible="true" description="seconds" />
+  <float32 name="diffusion" offset="0x2C" visible="true" />
+  <float32 name="density" offset="0x30" visible="true" />
+  <float32 name="hf reference(20 to 20,000)" offset="0x34" visible="true" description="for hf values, what frequency defines hf, from 20 to 20,000" />
+  <undefined name="Unknown" offset="0x38" visible="false" />
+  <undefined name="Unknown" offset="0x3C" visible="false" />
+  <undefined name="Unknown" offset="0x40" visible="false" />
+  <undefined name="Unknown" offset="0x44" visible="false" />
+</plugin>

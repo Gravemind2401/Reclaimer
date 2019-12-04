@@ -1,0 +1,4 @@
+<plugin>
+  <revisions />
+  <struct name="Control Points" offset="0x4" visible="True" size="0x1C" />
+</plugin>

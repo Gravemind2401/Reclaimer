@@ -1,0 +1,81 @@
+<plugin>
+  <bitfield32 name="flags" offset="0x0" visible="true">
+    <bit name="deafening to AIs#when used as a background stereo track, causes nearby AIs to be unable to hear" index="0" />
+    <bit name="not a loop#this is a collection of permutations strung together that should play once then stop." index="1" />
+    <bit name="stops music#all other music loops will stop when this one starts." index="2" />
+  </bitfield32>
+  <comment title="when scale is ZERO">as the sound's input scale changes from zero to one, these modifiers move between the two values specified here. the sound will play using the current scale modifier multiplied by the value specified below. (0 values are ignored.)</comment>
+  <float32 name="detail sound period" offset="0x4" visible="true" />
+  <undefined name="Unknown" offset="0x8" visible="false" />
+  <undefined name="Unknown" offset="0xC" visible="false" />
+  <comment title="when scale is ONE">as the sound's input scale changes from zero to one, these modifiers move between the two values specified here. the sound will play using the current scale modifier multiplied by the value specified below. (0 values are ignored.)</comment>
+  <float32 name="detail sound period" offset="0x10" visible="true" />
+  <undefined name="Unknown" offset="0x14" visible="false" />
+  <undefined name="Unknown" offset="0x18" visible="false" />
+  <undefined name="Unknown" offset="0x1C" visible="false" />
+  <undefined name="Unknown" offset="0x20" visible="false" />
+  <undefined name="Unknown" offset="0x24" visible="false" />
+  <undefined name="Unknown" offset="0x28" visible="false" />
+  <tagRef name="continuous damage effect" offset="0x2C" visible="true" />
+  <reflexive name="tracks" offset="0x34" visible="true" entrySize="0x78" entryname="0x38" description="tracks play in parallel and loop continuously for the duration of the looping sound.">
+    <bitfield32 name="flags" offset="0x0" visible="true">
+      <bit name="fade in at start#the loop sound should fade in while the start sound is playing." index="0" />
+      <bit name="fade out at stop#the loop sound should fade out while the stop sound is playing." index="1" />
+      <bit name="fade in alternate#when the sound changes to the alternate version,  ." index="2" />
+    </bitfield32>
+    <float32 name="gain" offset="0x4" visible="true" />
+    <float32 name="fade in duration" offset="0x8" visible="true" description="seconds" />
+    <float32 name="fade out duration" offset="0xC" visible="true" description="seconds" />
+    <undefined name="Unknown" offset="0x10" visible="false" />
+    <undefined name="Unknown" offset="0x14" visible="false" />
+    <undefined name="Unknown" offset="0x18" visible="false" />
+    <undefined name="Unknown" offset="0x1C" visible="false" />
+    <undefined name="Unknown" offset="0x20" visible="false" />
+    <undefined name="Unknown" offset="0x24" visible="false" />
+    <undefined name="Unknown" offset="0x28" visible="false" />
+    <undefined name="Unknown" offset="0x2C" visible="false" />
+    <tagRef name="start" offset="0x30" visible="true" />
+    <tagRef name="loop" offset="0x38" visible="true" />
+    <tagRef name="end" offset="0x40" visible="true" />
+    <undefined name="Unknown" offset="0x48" visible="false" />
+    <undefined name="Unknown" offset="0x4C" visible="false" />
+    <undefined name="Unknown" offset="0x50" visible="false" />
+    <undefined name="Unknown" offset="0x54" visible="false" />
+    <undefined name="Unknown" offset="0x58" visible="false" />
+    <undefined name="Unknown" offset="0x5C" visible="false" />
+    <undefined name="Unknown" offset="0x60" visible="false" />
+    <undefined name="Unknown" offset="0x64" visible="false" />
+    <tagRef name="alternate loop" offset="0x68" visible="true" />
+    <tagRef name="alternate end" offset="0x70" visible="true" />
+  </reflexive>
+  <reflexive name="detail sounds" offset="0x3C" visible="true" entrySize="0x60" entryname="0x0" description="detail sounds play at random throughout the duration of the looping sound.">
+    <tagRef name="sound" offset="0x0" visible="true" />
+    <comment title="frequency of play" />
+    <float32 name="random period bounds" offset="0x8" visible="true" description="the time between successive playings of this sound will be randomly selected from this range. min" />
+    <float32 name="random period bounds" offset="0xC" visible="true" description="the time between successive playings of this sound will be randomly selected from this range. max" />
+    <float32 name="gain" offset="0x10" visible="true" />
+    <bitfield32 name="flags" offset="0x14" visible="true">
+      <bit name="don't play with alternate" index="0" />
+      <bit name="don't play without alternate" index="1" />
+    </bitfield32>
+    <undefined name="Unknown" offset="0x18" visible="false" />
+    <undefined name="Unknown" offset="0x1C" visible="false" />
+    <undefined name="Unknown" offset="0x20" visible="false" />
+    <undefined name="Unknown" offset="0x24" visible="false" />
+    <undefined name="Unknown" offset="0x28" visible="false" />
+    <undefined name="Unknown" offset="0x2C" visible="false" />
+    <undefined name="Unknown" offset="0x30" visible="false" />
+    <undefined name="Unknown" offset="0x34" visible="false" />
+    <undefined name="Unknown" offset="0x38" visible="false" />
+    <undefined name="Unknown" offset="0x3C" visible="false" />
+    <undefined name="Unknown" offset="0x40" visible="false" />
+    <undefined name="Unknown" offset="0x44" visible="false" />
+    <comment title="random spatialization">if the sound specified above is not stereo it will be randomly spatialized according to the following constraints. if both lower and upper bounds are zero for any of the following fields, the sound's position will be randomly selected from all possible directions or distances.</comment>
+    <degree name="yaw bounds" offset="0x48" visible="true" description="the sound's position along the horizon will be randomly selected from this range. min" />
+    <degree name="yaw bounds" offset="0x4C" visible="true" description="the sound's position along the horizon will be randomly selected from this range. max" />
+    <degree name="pitch bounds" offset="0x50" visible="true" description="the sound's position above (positive values) or below (negative values) the horizon will be randomly selected from this range. min" />
+    <degree name="pitch bounds" offset="0x54" visible="true" description="the sound's position above (positive values) or below (negative values) the horizon will be randomly selected from this range. max" />
+    <float32 name="distance bounds" offset="0x58" visible="true" description="the sound's distance (from its spatialized looping sound or from the listener if the looping sound is stereo) will be randomly selected from this range. min" />
+    <float32 name="distance bounds" offset="0x5C" visible="true" description="the sound's distance (from its spatialized looping sound or from the listener if the looping sound is stereo) will be randomly selected from this range. max" />
+  </reflexive>
+</plugin>

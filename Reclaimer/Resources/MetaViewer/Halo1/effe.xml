@@ -1,0 +1,195 @@
+<plugin>
+  <bitfield32 name="flags" offset="0x0" visible="true">
+    <bit name="deleted when attachment deactivates" index="0" />
+    <bit name="required for gameplay (cannot optimize out)" index="1" />
+  </bitfield32>
+  <int16 name="loop start event index" offset="0x4" visible="true" />
+  <int16 name="loop stop event index" offset="0x6" visible="true" />
+  <undefined name="Unknown" offset="0x8" visible="false" />
+  <undefined name="Unknown" offset="0xC" visible="false" />
+  <undefined name="Unknown" offset="0x10" visible="false" />
+  <undefined name="Unknown" offset="0x14" visible="false" />
+  <undefined name="Unknown" offset="0x18" visible="false" />
+  <undefined name="Unknown" offset="0x1C" visible="false" />
+  <undefined name="Unknown" offset="0x20" visible="false" />
+  <undefined name="Unknown" offset="0x24" visible="false" />
+  <reflexive name="locations" offset="0x28" visible="true" entrySize="0x20" entryname="0x0">
+    <ascii name="marker name" offset="0x0" length="0x20" visible="true" />
+  </reflexive>
+  <reflexive name="events" offset="0x30" visible="true" entrySize="0x3C">
+    <undefined name="Unknown" offset="0x0" visible="false" />
+    <float32 name="skip fraction" offset="0x4" visible="true" description="chance that this event will be skipped entirely" />
+    <float32 name="delay bounds" offset="0x8" visible="true" description="delay before this event takes place min" />
+    <float32 name="delay bounds" offset="0xC" visible="true" description="delay before this event takes place max" />
+    <float32 name="duration bounds" offset="0x10" visible="true" description="duration of this event min" />
+    <float32 name="duration bounds" offset="0x14" visible="true" description="duration of this event max" />
+    <undefined name="Unknown" offset="0x18" visible="false" />
+    <undefined name="Unknown" offset="0x1C" visible="false" />
+    <undefined name="Unknown" offset="0x20" visible="false" />
+    <undefined name="Unknown" offset="0x24" visible="false" />
+    <undefined name="Unknown" offset="0x28" visible="false" />
+    <reflexive name="parts" offset="0x2C" visible="true" entrySize="0x60" entryname="0x18">
+      <enum16 name="create in" offset="0x0" visible="true">
+        <option name="any environment" value="0x0" />
+        <option name="air only" value="0x1" />
+        <option name="water only" value="0x2" />
+        <option name="space only" value="0x3" />
+      </enum16>
+      <enum16 name="create in" offset="0x2" visible="true">
+        <option name="either mode" value="0x0" />
+        <option name="violent mode only" value="0x1" />
+        <option name="nonviolent mode only" value="0x2" />
+      </enum16>
+      <int16 name="location index" offset="0x4" visible="true" />
+      <bitfield16 name="flags" offset="0x6" visible="true">
+        <bit name="face down regardless of location (decals)" index="0" />
+      </bitfield16>
+      <undefined name="Unknown" offset="0x8" visible="false" />
+      <undefined name="Unknown" offset="0xC" visible="false" />
+      <undefined name="Unknown" offset="0x10" visible="false" />
+      <undefined name="Unknown" offset="0x14" visible="false" />
+      <tagRef name="type" offset="0x18" visible="true" />
+      <undefined name="Unknown" offset="0x20" visible="false" />
+      <undefined name="Unknown" offset="0x24" visible="false" />
+      <undefined name="Unknown" offset="0x28" visible="false" />
+      <undefined name="Unknown" offset="0x2C" visible="false" />
+      <undefined name="Unknown" offset="0x30" visible="false" />
+      <undefined name="Unknown" offset="0x34" visible="false" />
+      <float32 name="velocity bounds" offset="0x38" visible="true" description="initial velocity along the location's forward min" />
+      <float32 name="velocity bounds" offset="0x3C" visible="true" description="initial velocity along the location's forward max" />
+      <degree name="velocity cone angle" offset="0x40" visible="true" description="initial velocity will be inside the cone defined by this angle." />
+      <degree name="angular velocity bounds" offset="0x44" visible="true" description="degrees per second min" />
+      <degree name="angular velocity bounds" offset="0x48" visible="true" description="degrees per second max" />
+      <float32 name="radius modifier bounds min" offset="0x4C" visible="true" />
+      <float32 name="radius modifier bounds max" offset="0x50" visible="true" />
+      <undefined name="Unknown" offset="0x54" visible="false" />
+      <comment title="SCALE MODIFIERS" />
+      <bitfield32 name="A scales values:" offset="0x58" visible="true">
+        <bit name="velocity" index="0" />
+        <bit name="velocity delta" index="1" />
+        <bit name="velocity cone angle" index="2" />
+        <bit name="angular velocity" index="3" />
+        <bit name="angular velocity delta" index="4" />
+        <bit name="type-specific scale" index="5" />
+      </bitfield32>
+      <bitfield32 name="B scales values:" offset="0x5C" visible="true">
+        <bit name="velocity" index="0" />
+        <bit name="velocity delta" index="1" />
+        <bit name="velocity cone angle" index="2" />
+        <bit name="angular velocity" index="3" />
+        <bit name="angular velocity delta" index="4" />
+        <bit name="type-specific scale" index="5" />
+      </bitfield32>
+    </reflexive>
+    <reflexive name="particles" offset="0x34" visible="true" entrySize="0xE0" entryname="0x54">
+      <enum16 name="create in" offset="0x0" visible="true">
+        <option name="any environment" value="0x0" />
+        <option name="air only" value="0x1" />
+        <option name="water only" value="0x2" />
+        <option name="space only" value="0x3" />
+      </enum16>
+      <enum16 name="create in" offset="0x2" visible="true">
+        <option name="either mode" value="0x0" />
+        <option name="violent mode only" value="0x1" />
+        <option name="nonviolent mode only" value="0x2" />
+      </enum16>
+      <enum16 name="create" offset="0x4" visible="true">
+        <option name="independent of camera mode" value="0x0" />
+        <option name="only in first person" value="0x1" />
+        <option name="only in third person" value="0x2" />
+        <option name="in first person if possible" value="0x3" />
+      </enum16>
+      <int16 name="Unknown" offset="0x6" visible="false" />
+      <int16 name="location index" offset="0x8" visible="true" />
+      <int16 name="Unknown" offset="0xA" visible="false" />
+      <degree name="relative direction" offset="0xC" visible="true" description="particle initial velocity direction relative to the location's forward y" />
+      <degree name="relative direction" offset="0x10" visible="true" description="particle initial velocity direction relative to the location's forward p" />
+      <float32 name="relative offset" offset="0x14" visible="true" description="particle initial position offset relative to the locatin's forward i" />
+      <float32 name="relative offset" offset="0x18" visible="true" description="particle initial position offset relative to the locatin's forward j" />
+      <float32 name="relative offset" offset="0x1C" visible="true" description="particle initial position offset relative to the locatin's forward k" />
+      <undefined name="Unknown" offset="0x20" visible="false" />
+      <undefined name="Unknown" offset="0x24" visible="false" />
+      <undefined name="Unknown" offset="0x28" visible="false" />
+      <undefined name="Unknown" offset="0x2C" visible="false" />
+      <undefined name="Unknown" offset="0x30" visible="false" />
+      <undefined name="Unknown" offset="0x34" visible="false" />
+      <undefined name="Unknown" offset="0x38" visible="false" />
+      <undefined name="Unknown" offset="0x3C" visible="false" />
+      <undefined name="Unknown" offset="0x40" visible="false" />
+      <undefined name="Unknown" offset="0x44" visible="false" />
+      <undefined name="Unknown" offset="0x48" visible="false" />
+      <undefined name="Unknown" offset="0x4C" visible="false" />
+      <undefined name="Unknown" offset="0x50" visible="false" />
+      <tagRef name="particle type" offset="0x54" visible="true" />
+      <bitfield32 name="flags" offset="0x5C" visible="true">
+        <bit name="stay attached to marker" index="0" />
+        <bit name="random initial angle" index="1" />
+        <bit name="tint from object color" index="2" />
+        <bit name="interpolate tint as HSV" index="3" />
+        <bit name="... across the long hue path" index="4" />
+      </bitfield32>
+      <enum16 name="distribution function#describes how the part creations are distributed over the event duration" offset="0x60" visible="true">
+        <option name="start" value="0x0" />
+        <option name="end" value="0x1" />
+        <option name="constant" value="0x2" />
+        <option name="buildup" value="0x3" />
+        <option name="falloff" value="0x4" />
+        <option name="buildup and falloff" value="0x5" />
+      </enum16>
+      <int16 name="Unknown" offset="0x62" visible="false" />
+      <uint16 name="count" offset="0x64" visible="true" description="number of particles created min" />
+      <uint16 name="count" offset="0x66" visible="true" description="number of particles created max" />
+      <float32 name="distribution radius" offset="0x68" visible="true" description="initial distance from the location's origin min" />
+      <float32 name="distribution radius" offset="0x6C" visible="true" description="initial distance from the location's origin max" />
+      <undefined name="Unknown" offset="0x70" visible="false" />
+      <undefined name="Unknown" offset="0x74" visible="false" />
+      <undefined name="Unknown" offset="0x78" visible="false" />
+      <float32 name="velocity" offset="0x7C" visible="true" description="initial velocity along the specified direction min" />
+      <float32 name="velocity" offset="0x80" visible="true" description="initial velocity along the specified direction max" />
+      <degree name="velocity cone angle" offset="0x84" visible="true" description="particle initial velocities will be inside the cone defined by this angle and the specified direction" />
+      <degree name="angular velocity" offset="0x88" visible="true" description="degrees per second min" />
+      <degree name="angular velocity" offset="0x8C" visible="true" description="degrees per second max" />
+      <undefined name="Unknown" offset="0x90" visible="false" />
+      <undefined name="Unknown" offset="0x94" visible="false" />
+      <float32 name="radius" offset="0x98" visible="true" description="particle radius min" />
+      <float32 name="radius" offset="0x9C" visible="true" description="particle radius max" />
+      <undefined name="Unknown" offset="0xA0" visible="false" />
+      <undefined name="Unknown" offset="0xA4" visible="false" />
+      <colorf name="tint lower bound" offset="0xA8" format="argb" visible="true" />
+      <colorf name="tint upper bound" offset="0xB8" format="argb" visible="true" />
+      <undefined name="Unknown" offset="0xC8" visible="false" />
+      <undefined name="Unknown" offset="0xCC" visible="false" />
+      <undefined name="Unknown" offset="0xD0" visible="false" />
+      <undefined name="Unknown" offset="0xD4" visible="false" />
+      <comment title="SCALE MODIFIERS" />
+      <bitfield32 name="A scales values:" offset="0xD8" visible="true">
+        <bit name="velocity" index="0" />
+        <bit name="velocity delta" index="1" />
+        <bit name="velocity cone angle" index="2" />
+        <bit name="angular velocity" index="3" />
+        <bit name="angular velocity delta" index="4" />
+        <bit name="count" index="5" />
+        <bit name="count delta" index="6" />
+        <bit name="distribution radius" index="7" />
+        <bit name="distribution radius delta" index="8" />
+        <bit name="particle radius" index="9" />
+        <bit name="particle radius delta" index="10" />
+        <bit name="tint" index="11" />
+      </bitfield32>
+      <bitfield32 name="B scales values:" offset="0xDC" visible="true">
+        <bit name="velocity" index="0" />
+        <bit name="velocity delta" index="1" />
+        <bit name="velocity cone angle" index="2" />
+        <bit name="angular velocity" index="3" />
+        <bit name="angular velocity delta" index="4" />
+        <bit name="count" index="5" />
+        <bit name="count delta" index="6" />
+        <bit name="distribution radius" index="7" />
+        <bit name="distribution radius delta" index="8" />
+        <bit name="particle radius" index="9" />
+        <bit name="particle radius delta" index="10" />
+        <bit name="tint" index="11" />
+      </bitfield32>
+    </reflexive>
+  </reflexive>
+</plugin>

@@ -1,0 +1,21 @@
+<plugin class="styl" headersize="92">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Created layout of plugin</revision>
+  </revisions>
+  <string name="Name" offset="0" visible="True" length="32" />
+  <undefined name="Unknown" offset="32" visible="False" />
+  <undefined name="Unknown" offset="36" visible="False" />
+  <undefined name="Unknown" offset="40" visible="False" />
+  <undefined name="Unknown" offset="44" visible="False" />
+  <undefined name="Unknown" offset="48" visible="False" />
+  <undefined name="Unknown" offset="52" visible="False" />
+  <undefined name="Unknown" offset="56" visible="False" />
+  <undefined name="Unknown" offset="60" visible="False" />
+  <undefined name="Unknown" offset="64" visible="False" />
+  <struct name="Unknown 0" offset="68" visible="False" size="4">
+    <undefined name="Unknown" offset="0" visible="False" />
+  </struct>
+  <struct name="Actions" offset="80" visible="False" size="32">
+    <string name="Action Name" offset="0" visible="True" length="32" />
+  </struct>
+</plugin>

@@ -1,0 +1,8 @@
+<plugin>
+  <revisions />
+  <struct name="Item Permutations" offset="0x0" visible="True" size="0x10">
+    <tagRef name="Item" offset="0x4" visible="True" />
+    <stringID name="Variant Name" offset="0xC" visible="True" />
+  </struct>
+  <uint32 name="Unused Spawn Time   (in seconds, 0 = default)" offset="0x8" visible="True" />
+</plugin>

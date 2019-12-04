@@ -1,0 +1,68 @@
+<plugin class="ligh" headersize="204">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+    <revision author="Snipe" version="0.6">Like A Boss!</revision>
+    <revision author="Lord Zedd" version="0.61">Brightness, merged a couple values from my own research.</revision>
+  </revisions>
+  <bitmask16 name="Unknown" offset="0" visible="True">
+    <option name="Test" value="0" />
+    <option name="Test" value="1" />
+    <option name="A" value="2" />
+    <option name="Test" value="3" />
+    <option name="Test" value="4" />
+    <option name="Test" value="5" />
+    <option name="Test" value="6" />
+    <option name="Test" value="7" />
+    <option name="Illuminates" value="8" />
+    <option name="Unknown 1p effect" value="9" />
+    <option name="Test" value="10" />
+    <option name="Test" value="11" />
+    <option name="Test" value="12" />
+    <option name="Test" value="13" />
+    <option name="Test" value="14" />
+    <option name="Test" value="15" />
+  </bitmask16>
+  <int16 name="Unknown" offset="2" visible="False" />
+  <enum16 name="Form" offset="4" visible="True">
+    <option name="Sphere" value="0" />
+    <option name="Cone" value="1" />
+  </enum16>
+  <int16 name="Unknown" offset="6" visible="False" />
+  <float32 name="Light Range" offset="8" visible="True" />
+  <float32 name="Max Intensity Range" offset="12" visible="True" />
+  <undefined name="Unknown" offset="16" visible="False" />
+  <float32 name="No Illu Frustum Light Scale Modifier" offset="20" visible="True" />
+  <float32 name="No Illu Frustum Light Height Stretch" offset="24" visible="True" />
+  <float32 name="Frustum Light Scale" offset="28" visible="True" />
+  <float32 name="Frustum Light Falloff" offset="32" visible="True" />
+  <float32 name="Frustum Light Spread" offset="36" visible="True" />
+  <float32 name="Unknown" offset="40" visible="False" />
+  <float32 name="Frustum Minimum View Distance" offset="44" visible="True" />
+  <float32 name="Unknown" offset="48" visible="False" />
+  <float32 name="Unknown" offset="52" visible="False" />
+  <int16 name="Unknown" offset="56" visible="False" />
+  <int16 name="Unknown" offset="58" visible="False" />
+  <int16 name="Unknown" offset="60" visible="False" />
+  <int16 name="Unknown" offset="62" visible="False" />
+  <undefined name="Unknown" offset="64" visible="False" />
+  <undefined name="Unknown" offset="68" visible="False" />
+  <uint32 name="Name? (SID)" offset="92" visible="True" />
+  <int32 name="Unknown" offset="96" visible="False" />
+  <undefined name="Unknown" offset="100" visible="False" />
+  <undefined name="Unknown" offset="104" visible="False" />
+  <tagRef name="Projected Frustum Bitmap" offset="128" visible="True" />
+  <float32 name="Unknown" offset="144" visible="False" />
+  <float32 name="Unknown" offset="148" visible="False" />
+  <int8 name="Unknown (Affects Fade)" offset="152" visible="True" />
+  <int8 name="Unknown (Affects Fade)" offset="153" visible="True" />
+  <int16 name="Unknown" offset="154" visible="False" />
+  <tagRef name="Lens Flare" offset="156" visible="True" />
+  <float32 name="Radius 1?" offset="172" visible="True" />
+  <float32 name="Radius 2?" offset="176" visible="True" />
+  <float32 name="Radius 3?" offset="180" visible="True" />
+  <float32 name="Unknown" offset="184" visible="False" />
+  <undefined name="Unknown" offset="188" visible="False" />
+  <undefined name="Unknown" offset="192" visible="False" />
+  <undefined name="Unknown" offset="196" visible="False" />
+  <undefined name="Unknown" offset="200" visible="False" />
+</plugin>

@@ -1,0 +1,26 @@
+<plugin class="snd!" headersize="32">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Created layout of plugin</revision>
+    <revision author="-DeToX-" version="0.125">Labelled Raw Identifier</revision>
+    <revision author="Gravemind2401" version="0.5">Mapped some values.</revision>
+  </revisions>
+  <bitmask16 name="Flags" offset="0" visible="True" />
+  <int8 name="Sound Class" offset="2" visible="True" />
+  <enum8 name="Sample Rate" offset="3" visible="True" />
+  <enum8 name="Encoding" offset="4" visible="True">
+    <option name="XMA" value="0" />
+  </enum8>
+  <int8 name="Codex Index" offset="5" visible="True" />
+  <int16 name="Playback Index" offset="6" visible="True" />
+  <int16 name="Something about dialogue" offset="8" visible="False" />
+  <int16 name="Unknown" offset="10" visible="False" />
+  <int16 name="First Pitch Range Index" offset="12" visible="True" />
+  <int8 name="Pitch Range Index" offset="14" visible="True" />
+  <int8 name="Scale Index" offset="15" visible="True" />
+  <int8 name="Promotion Index" offset="16" visible="True" />
+  <int8 name="Custom Playback Index" offset="17" visible="True" />
+  <int16 name="Extra Info Index" offset="18" visible="True" />
+  <int32 name="Unknown" offset="20" visible="False" />
+  <rawID name="Raw ID" offset="24" visible="True" />
+  <int32 name="Max Playtime" offset="28" visible="True" />
+</plugin>

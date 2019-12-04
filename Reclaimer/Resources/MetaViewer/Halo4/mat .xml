@@ -1,0 +1,75 @@
+﻿<plugin class="mat " headersize="68">
+	<tagRef name="Material Shader" offset="0" visible="True" />
+	<undefined name="Unknown" offset="16" visible="True" />
+	<undefined name="Unknown" offset="20" visible="True" />
+	<undefined name="Unknown" offset="24" visible="True" />
+	<struct name="Shader Properties" offset="28" visible="True" size="140">
+		<struct name="Shader Maps" offset="0" visible="True" size="24">
+			<tagRef name="Bitmap" offset="0" visible="True" />
+			<int8 name="Bitmap Type" offset="16" visible="True" />
+			<int8 name="Unknown" offset="17" visible="True" />
+			<int8 name="Unknown" offset="18" visible="True" />
+			<int8 name="Tiling Index" offset="19" visible="True" />
+			<int8 name="Unknown" offset="20" visible="True" />
+			<int8 name="Unknown" offset="21" visible="True" />
+			<int8 name="Unknown" offset="22" visible="True" />
+			<int8 name="Unknown" offset="23" visible="True" />
+		</struct>
+		<struct name="Tiling" offset="12" visible="True" size="16">
+			<float32 name="U Tiling" offset="0" visible="True" />
+			<float32 name="V Tiling" offset="4" visible="True" />
+			<float32 name="Unknown" offset="8" visible="True" />
+			<float32 name="Unknown" offset="12" visible="True" />
+		</struct>
+		<struct name="Unknown 3" offset="24" visible="True" size="16">
+			<float32 name="Unknown" offset="0" visible="True" />
+			<float32 name="Unknown" offset="4" visible="True" />
+			<float32 name="Unknown" offset="8" visible="True" />
+			<float32 name="Unknown" offset="12" visible="True" />
+		</struct>
+		<struct name="Unknown 4" offset="36" visible="True" size="16">
+			<undefined name="Unknown" offset="0" visible="True" />
+			<undefined name="Unknown" offset="4" visible="True" />
+			<undefined name="Unknown" offset="8" visible="True" />
+			<undefined name="Unknown" offset="12" visible="True" />
+		</struct>
+		<undefined name="Unknown" offset="48" visible="True" />
+		<undefined name="Unknown" offset="52" visible="True" />
+		<undefined name="Unknown" offset="56" visible="True" />
+		<undefined name="Unknown" offset="60" visible="True" />
+		<undefined name="Unknown" offset="64" visible="True" />
+		<undefined name="Unknown" offset="68" visible="True" />
+		<undefined name="Unknown" offset="72" visible="True" />
+		<struct name="Unknown 5" offset="76" visible="True" size="36">
+			<undefined name="Unknown" offset="0" visible="True" />
+			<undefined name="Unknown" offset="4" visible="True" />
+			<undefined name="Unknown" offset="8" visible="True" />
+			<undefined name="Unknown" offset="12" visible="True" />
+			<undefined name="Unknown" offset="16" visible="True" />
+			<undefined name="Unknown" offset="20" visible="True" />
+			<undefined name="Unknown" offset="24" visible="True" />
+			<undefined name="Unknown" offset="28" visible="True" />
+			<undefined name="Unknown" offset="32" visible="True" />
+		</struct>
+		<struct name="Unknown 6" offset="88" visible="True" size="4">
+			<undefined name="Unknown" offset="0" visible="True" />
+		</struct>
+		<undefined name="Unknown" offset="100" visible="True" />
+		<undefined name="Unknown" offset="104" visible="True" />
+		<undefined name="Unknown" offset="108" visible="True" />
+		<undefined name="Unknown" offset="112" visible="True" />
+		<undefined name="Unknown" offset="116" visible="True" />
+		<undefined name="Unknown" offset="120" visible="True" />
+		<undefined name="Unknown" offset="124" visible="True" />
+		<undefined name="Unknown" offset="128" visible="True" />
+		<undefined name="Unknown" offset="132" visible="True" />
+		<undefined name="Unknown" offset="136" visible="True" />
+	</struct>
+	<undefined name="Unknown" offset="40" visible="True" />
+	<undefined name="Unknown" offset="44" visible="True" />
+	<undefined name="Unknown" offset="48" visible="True" />
+	<undefined name="Unknown" offset="52" visible="True" />
+	<undefined name="Unknown" offset="56" visible="True" />
+	<undefined name="Unknown" offset="60" visible="True" />
+	<undefined name="Unknown" offset="64" visible="True" />
+</plugin>

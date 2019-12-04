@@ -1,0 +1,38 @@
+<plugin class="rmt2" headersize="132">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <tagRef name="Unknown" offset="0" visible="True" />
+  <tagRef name="Unknown" offset="16" visible="True" />
+  <undefined name="Unknown" offset="32" visible="True" />
+  <struct name="Unknown 0" offset="36" visible="True" size="2">
+    <int16 name="Unknown" offset="0" visible="True" />
+  </struct>
+  <struct name="Unknown 1" offset="48" visible="True" size="28">
+    <undefined name="Unknown" offset="0" visible="True" />
+    <undefined name="Unknown" offset="4" visible="True" />
+    <undefined name="Unknown" offset="8" visible="True" />
+    <undefined name="Unknown" offset="12" visible="True" />
+    <undefined name="Unknown" offset="16" visible="True" />
+    <undefined name="Unknown" offset="20" visible="True" />
+    <undefined name="Unknown" offset="24" visible="True" />
+  </struct>
+  <struct name="Unknown 2" offset="60" visible="True" size="4">
+    <undefined name="Unknown" offset="0" visible="True" />
+  </struct>
+  <struct name="Info" offset="72" visible="True" size="4">
+    <stringID name="Type" offset="0" visible="True" />
+  </struct>
+  <struct name="Unknown 4" offset="84" visible="True" size="4">
+    <undefined name="Unknown" offset="0" visible="True" />
+  </struct>
+  <struct name="Unknown 5" offset="96" visible="True" size="4">
+    <undefined name="Unknown" offset="0" visible="True" />
+  </struct>
+  <struct name="Unknown 6" offset="108" visible="True" size="4">
+    <stringID name="Unknown" offset="0" visible="True" />
+  </struct>
+  <undefined name="Unknown" offset="120" visible="True" />
+  <undefined name="Unknown" offset="124" visible="True" />
+  <undefined name="Unknown" offset="128" visible="True" />
+</plugin>

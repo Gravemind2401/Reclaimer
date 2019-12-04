@@ -1,0 +1,9 @@
+<plugin>
+  <revisions />
+  <tagRef name="Globals" offset="0x0" visible="True" />
+  <struct name="Collection" offset="0x8" visible="True" size="0x8">
+    <tagRef name="Game Shell" offset="0x0" visible="True" />
+  </struct>
+  <tagRef name="Gametype Collection" offset="0x10" visible="True" />
+  <tagRef name="Unicode Strings" offset="0x18" visible="True" />
+</plugin>

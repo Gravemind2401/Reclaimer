@@ -1,0 +1,11 @@
+<plugin class="wgtz" headersize="60">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <tagRef name="Unknown" offset="0" visible="False" />
+  <tagRef name="Unknown" offset="16" visible="False" />
+  <tagRef name="Unknown" offset="32" visible="False" />
+  <struct name="Unknown 0" offset="48" visible="False" size="16">
+    <tagRef name="Unknown" offset="0" visible="False" />
+  </struct>
+</plugin>

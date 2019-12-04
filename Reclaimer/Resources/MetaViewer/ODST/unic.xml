@@ -1,0 +1,29 @@
+<plugin class="unic" headersize="80">
+  <revisions>
+    <revision author="-DeToX-" version="1.0">Completely Mapped The Plugin</revision>
+  </revisions>
+  <uint16 name="English String Index" offset="32" visible="True" />
+  <uint16 name="English String Count" offset="34" visible="True" />
+  <uint16 name="Japanese String Index" offset="36" visible="True" />
+  <uint16 name="Japanese String Count" offset="38" visible="True" />
+  <uint16 name="German String Index" offset="40" visible="True" />
+  <uint16 name="German String Count" offset="42" visible="True" />
+  <uint16 name="French String Index" offset="44" visible="True" />
+  <uint16 name="French String Count" offset="46" visible="True" />
+  <uint16 name="Spanish String Index" offset="48" visible="True" />
+  <uint16 name="Spanish String Count" offset="50" visible="True" />
+  <uint16 name="Latin American Spanish String Index" offset="52" visible="True" />
+  <uint16 name="Latin American Spanish String Count" offset="54" visible="True" />
+  <uint16 name="Italian String Index" offset="56" visible="True" />
+  <uint16 name="Italian String Count" offset="58" visible="True" />
+  <uint16 name="Korean String Index" offset="60" visible="True" />
+  <uint16 name="Korean String Count" offset="62" visible="True" />
+  <uint16 name="Chinese String Index" offset="64" visible="True" />
+  <uint16 name="Chinese String Count" offset="66" visible="True" />
+  <uint16 name="Unknown0 String Index" offset="68" visible="True" />
+  <uint16 name="Unknown0 String Count" offset="70" visible="True" />
+  <uint16 name="Portuguese String Index" offset="72" visible="True" />
+  <uint16 name="Portuguese String Count" offset="74" visible="True" />
+  <uint16 name="Unknown1 String Index" offset="76" visible="True" />
+  <uint16 name="Unknown1 String Count" offset="78" visible="True" />
+</plugin>

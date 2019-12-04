@@ -1,0 +1,219 @@
+<plugin class="proj" headersize="816">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <undefined name="Unknown" offset="0" visible="False" />
+  <undefined name="Unknown" offset="4" visible="False" />
+  <undefined name="Unknown" offset="8" visible="False" />
+  <undefined name="Unknown" offset="12" visible="False" />
+  <undefined name="Unknown" offset="16" visible="False" />
+  <undefined name="Unknown" offset="20" visible="False" />
+  <undefined name="Unknown" offset="24" visible="False" />
+  <undefined name="Unknown" offset="28" visible="False" />
+  <undefined name="Unknown" offset="32" visible="False" />
+  <undefined name="Unknown" offset="36" visible="False" />
+  <undefined name="Unknown" offset="40" visible="False" />
+  <undefined name="Unknown" offset="44" visible="False" />
+  <undefined name="Unknown" offset="48" visible="False" />
+  <undefined name="Unknown" offset="52" visible="False" />
+  <undefined name="Unknown" offset="56" visible="False" />
+  <undefined name="Unknown" offset="60" visible="False" />
+  <undefined name="Unknown" offset="64" visible="False" />
+  <undefined name="Unknown" offset="68" visible="False" />
+  <undefined name="Unknown" offset="72" visible="False" />
+  <undefined name="Unknown" offset="76" visible="False" />
+  <tagRef name="Unknown" offset="80" visible="False" />
+  <undefined name="Unknown" offset="96" visible="False" />
+  <undefined name="Unknown" offset="100" visible="False" />
+  <undefined name="Unknown" offset="104" visible="False" />
+  <undefined name="Unknown" offset="108" visible="False" />
+  <undefined name="Unknown" offset="112" visible="False" />
+  <undefined name="Unknown" offset="116" visible="False" />
+  <undefined name="Unknown" offset="120" visible="False" />
+  <undefined name="Unknown" offset="124" visible="False" />
+  <undefined name="Unknown" offset="128" visible="False" />
+  <undefined name="Unknown" offset="132" visible="False" />
+  <undefined name="Unknown" offset="136" visible="False" />
+  <undefined name="Unknown" offset="140" visible="False" />
+  <undefined name="Unknown" offset="144" visible="False" />
+  <undefined name="Unknown" offset="148" visible="False" />
+  <undefined name="Unknown" offset="152" visible="False" />
+  <undefined name="Unknown" offset="156" visible="False" />
+  <undefined name="Unknown" offset="160" visible="False" />
+  <undefined name="Unknown" offset="164" visible="False" />
+  <undefined name="Unknown" offset="168" visible="False" />
+  <tagRef name="Unknown" offset="172" visible="False" />
+  <undefined name="Unknown" offset="188" visible="False" />
+  <undefined name="Unknown" offset="192" visible="False" />
+  <undefined name="Unknown" offset="196" visible="False" />
+  <undefined name="Unknown" offset="200" visible="False" />
+  <undefined name="Unknown" offset="204" visible="False" />
+  <undefined name="Unknown" offset="208" visible="False" />
+  <undefined name="Unknown" offset="212" visible="False" />
+  <struct name="Unknown 0" offset="216" visible="False" size="60">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="12" visible="False" />
+    <undefined name="Unknown" offset="16" visible="False" />
+    <undefined name="Unknown" offset="20" visible="False" />
+    <undefined name="Unknown" offset="44" visible="False" />
+    <undefined name="Unknown" offset="48" visible="False" />
+    <undefined name="Unknown" offset="52" visible="False" />
+    <undefined name="Unknown" offset="56" visible="False" />
+  </struct>
+  <undefined name="Unknown" offset="228" visible="False" />
+  <struct name="Unknown 1" offset="232" visible="False" size="32">
+    <tagRef name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="16" visible="False" />
+    <undefined name="Unknown" offset="20" visible="False" />
+    <undefined name="Unknown" offset="24" visible="False" />
+    <undefined name="Unknown" offset="28" visible="False" />
+  </struct>
+  <undefined name="Unknown" offset="244" visible="False" />
+  <undefined name="Unknown" offset="248" visible="False" />
+  <undefined name="Unknown" offset="252" visible="False" />
+  <struct name="Unknown 2" offset="256" visible="False" size="16">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="12" visible="False" />
+  </struct>
+  <struct name="Unknown 3" offset="268" visible="False" size="24">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <struct name="Unknown 4" offset="12" visible="False" size="40">
+      <undefined name="Unknown" offset="0" visible="False" />
+      <undefined name="Unknown" offset="4" visible="False" />
+      <undefined name="Unknown" offset="8" visible="False" />
+      <undefined name="Unknown" offset="12" visible="False" />
+      <undefined name="Unknown" offset="16" visible="False" />
+      <undefined name="Unknown" offset="20" visible="False" />
+      <undefined name="Unknown" offset="24" visible="False" />
+      <undefined name="Unknown" offset="28" visible="False" />
+      <undefined name="Unknown" offset="32" visible="False" />
+      <undefined name="Unknown" offset="36" visible="False" />
+    </struct>
+  </struct>
+  <undefined name="Unknown" offset="280" visible="False" />
+  <undefined name="Unknown" offset="284" visible="False" />
+  <undefined name="Unknown" offset="288" visible="False" />
+  <undefined name="Unknown" offset="292" visible="False" />
+  <undefined name="Unknown" offset="296" visible="False" />
+  <undefined name="Unknown" offset="300" visible="False" />
+  <undefined name="Unknown" offset="304" visible="False" />
+  <undefined name="Unknown" offset="308" visible="False" />
+  <undefined name="Unknown" offset="312" visible="False" />
+  <undefined name="Unknown" offset="316" visible="False" />
+  <undefined name="Unknown" offset="320" visible="False" />
+  <undefined name="Unknown" offset="324" visible="False" />
+  <undefined name="Unknown" offset="328" visible="False" />
+  <undefined name="Unknown" offset="332" visible="False" />
+  <undefined name="Unknown" offset="336" visible="False" />
+  <undefined name="Unknown" offset="340" visible="False" />
+  <undefined name="Unknown" offset="344" visible="False" />
+  <undefined name="Unknown" offset="348" visible="False" />
+  <undefined name="Unknown" offset="352" visible="False" />
+  <undefined name="Unknown" offset="356" visible="False" />
+  <undefined name="Unknown" offset="360" visible="False" />
+  <undefined name="Unknown" offset="364" visible="False" />
+  <undefined name="Unknown" offset="368" visible="False" />
+  <undefined name="Unknown" offset="372" visible="False" />
+  <undefined name="Unknown" offset="376" visible="False" />
+  <undefined name="Unknown" offset="380" visible="False" />
+  <undefined name="Unknown" offset="384" visible="False" />
+  <tagRef name="Unknown" offset="388" visible="False" />
+  <tagRef name="Unknown" offset="404" visible="False" />
+  <tagRef name="Unknown" offset="420" visible="False" />
+  <tagRef name="Unknown" offset="436" visible="False" />
+  <tagRef name="Unknown" offset="452" visible="False" />
+  <tagRef name="Unknown" offset="468" visible="False" />
+  <tagRef name="Unknown" offset="484" visible="False" />
+  <undefined name="Unknown" offset="500" visible="False" />
+  <undefined name="Unknown" offset="504" visible="False" />
+  <undefined name="Unknown" offset="508" visible="False" />
+  <undefined name="Unknown" offset="512" visible="False" />
+  <undefined name="Unknown" offset="516" visible="False" />
+  <tagRef name="Unknown" offset="520" visible="False" />
+  <undefined name="Unknown" offset="536" visible="False" />
+  <tagRef name="Unknown" offset="540" visible="False" />
+  <tagRef name="Unknown" offset="556" visible="False" />
+  <undefined name="Unknown" offset="572" visible="False" />
+  <tagRef name="Unknown" offset="576" visible="False" />
+  <undefined name="Unknown" offset="592" visible="False" />
+  <undefined name="Unknown" offset="596" visible="False" />
+  <undefined name="Unknown" offset="600" visible="False" />
+  <undefined name="Unknown" offset="604" visible="False" />
+  <tagRef name="Unknown" offset="608" visible="False" />
+  <undefined name="Unknown" offset="624" visible="False" />
+  <tagRef name="Unknown" offset="628" visible="False" />
+  <tagRef name="Unknown" offset="644" visible="False" />
+  <undefined name="Unknown" offset="660" visible="False" />
+  <undefined name="Unknown" offset="664" visible="False" />
+  <undefined name="Unknown" offset="668" visible="False" />
+  <undefined name="Unknown" offset="672" visible="False" />
+  <undefined name="Unknown" offset="676" visible="False" />
+  <undefined name="Unknown" offset="680" visible="False" />
+  <undefined name="Unknown" offset="684" visible="False" />
+  <undefined name="Unknown" offset="688" visible="False" />
+  <undefined name="Unknown" offset="692" visible="False" />
+  <undefined name="Unknown" offset="696" visible="False" />
+  <undefined name="Unknown" offset="700" visible="False" />
+  <undefined name="Unknown" offset="704" visible="False" />
+  <undefined name="Unknown" offset="708" visible="False" />
+  <undefined name="Unknown" offset="712" visible="False" />
+  <undefined name="Unknown" offset="716" visible="False" />
+  <undefined name="Unknown" offset="720" visible="False" />
+  <undefined name="Unknown" offset="724" visible="False" />
+  <undefined name="Unknown" offset="728" visible="False" />
+  <undefined name="Unknown" offset="732" visible="False" />
+  <undefined name="Unknown" offset="736" visible="False" />
+  <struct name="Unknown 4" offset="740" visible="False" size="60">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="12" visible="False" />
+    <undefined name="Unknown" offset="16" visible="False" />
+    <undefined name="Unknown" offset="20" visible="False" />
+    <undefined name="Unknown" offset="24" visible="False" />
+    <undefined name="Unknown" offset="28" visible="False" />
+    <undefined name="Unknown" offset="32" visible="False" />
+    <undefined name="Unknown" offset="36" visible="False" />
+    <undefined name="Unknown" offset="40" visible="False" />
+    <undefined name="Unknown" offset="44" visible="False" />
+    <undefined name="Unknown" offset="48" visible="False" />
+    <undefined name="Unknown" offset="52" visible="False" />
+    <undefined name="Unknown" offset="56" visible="False" />
+  </struct>
+  <struct name="Unknown 5" offset="752" visible="False" size="52">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="12" visible="False" />
+    <undefined name="Unknown" offset="16" visible="False" />
+    <undefined name="Unknown" offset="20" visible="False" />
+    <undefined name="Unknown" offset="24" visible="False" />
+    <undefined name="Unknown" offset="28" visible="False" />
+    <undefined name="Unknown" offset="32" visible="False" />
+    <undefined name="Unknown" offset="36" visible="False" />
+    <undefined name="Unknown" offset="40" visible="False" />
+    <undefined name="Unknown" offset="44" visible="False" />
+    <undefined name="Unknown" offset="48" visible="False" />
+  </struct>
+  <undefined name="Unknown" offset="764" visible="False" />
+  <undefined name="Unknown" offset="768" visible="False" />
+  <undefined name="Unknown" offset="772" visible="False" />
+  <undefined name="Unknown" offset="776" visible="False" />
+  <undefined name="Unknown" offset="780" visible="False" />
+  <undefined name="Unknown" offset="784" visible="False" />
+  <struct name="Unknown 6" offset="788" visible="False" size="12">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+  </struct>
+  <undefined name="Unknown" offset="800" visible="False" />
+  <undefined name="Unknown" offset="804" visible="False" />
+  <undefined name="Unknown" offset="808" visible="False" />
+  <undefined name="Unknown" offset="812" visible="False" />
+</plugin>

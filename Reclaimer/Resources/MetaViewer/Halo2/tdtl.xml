@@ -1,0 +1,36 @@
+<plugin>
+  <revisions />
+  <enum16 name="Type" offset="0x2" visible="True">
+    <option name="Standard" value="0x0" />
+    <option name="Weapon To Projectile" value="0x1" />
+    <option name="Projectile From Weapon" value="0x2" />
+  </enum16>
+  <stringID name="Attachment Marker Name" offset="0x4" visible="True" />
+  <struct name="Arcs" offset="0x68" visible="True" size="0xEC">
+    <enum16 name="Sprite Count" offset="0x2" visible="True">
+      <option name="4 Sprites" value="0x0" />
+      <option name="8 Sprites" value="0x1" />
+      <option name="16 Sprites" value="0x2" />
+      <option name="32 Sprites" value="0x3" />
+      <option name="64 Sprites" value="0x4" />
+      <option name="128 Sprites" value="0x5" />
+      <option name="256 Sprites" value="0x6" />
+    </enum16>
+    <int16 name="Instances" offset="0x8" visible="True" />
+    <tagRef name="Material Effects" offset="0x1C" visible="True" />
+    <tagRef name="Bitmap" offset="0x24" visible="True" />
+    <struct name="Horizontal Range" offset="0x34" visible="True" size="0x1" />
+    <struct name="Vertical Range" offset="0x3C" visible="True" size="0x1" />
+    <struct name="Roughness" offset="0x48" visible="True" size="0x1" />
+    <struct name="Cores" offset="0xD4" visible="True" size="0x38">
+      <int16 name="Bitmap Index" offset="0x0" visible="True" />
+      <struct name="Thickness" offset="0x10" visible="True" size="0x1" />
+      <struct name="Color" offset="0x18" visible="True" size="0x1" />
+      <struct name="Brightness/Time" offset="0x20" visible="True" size="0x1" />
+      <struct name="Brightness/Facing" offset="0x28" visible="True" size="0x1" />
+      <struct name="Along-Axis Scale" offset="0x30" visible="True" size="0x1" />
+    </struct>
+    <struct name="Range-Collision Scale" offset="0xDC" visible="True" size="0x1" />
+    <struct name="Brightness-Collision Scale" offset="0xE4" visible="True" size="0x1" />
+  </struct>
+</plugin>

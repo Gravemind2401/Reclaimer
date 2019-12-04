@@ -1,0 +1,13 @@
+<plugin class="scmb" headersize="24">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <struct name="Unknown 0" offset="0" visible="True" size="24">
+    <tagRef name="Sound" offset="0" visible="True" />
+    <undefined name="Unknown" offset="16" visible="True" />
+    <undefined name="Unknown" offset="20" visible="True" />
+  </struct>
+  <undefined name="Unknown" offset="12" visible="True" />
+  <undefined name="Unknown" offset="16" visible="True" />
+  <undefined name="Unknown" offset="20" visible="True" />
+</plugin>

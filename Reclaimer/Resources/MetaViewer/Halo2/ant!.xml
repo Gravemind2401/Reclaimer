@@ -1,0 +1,9 @@
+<plugin>
+  <revisions />
+  <stringID name="Attachment Marker Name" offset="0x0" visible="True" />
+  <tagRef name="Bitmap" offset="0x4" visible="True" />
+  <tagRef name="Physics" offset="0xC" visible="True" />
+  <struct name="Vertices" offset="0x98" visible="True" size="0x80">
+    <int32 name="Sequence index" offset="0x28" visible="True" />
+  </struct>
+</plugin>

@@ -1,0 +1,19 @@
+<plugin class="gldf" headersize="116">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <undefined name="Unknown" offset="0" visible="True" />
+  <undefined name="Unknown" offset="4" visible="True" />
+  <undefined name="Unknown" offset="8" visible="True" />
+  <undefined name="Unknown" offset="12" visible="True" />
+  <undefined name="Unknown" offset="36" visible="True" />
+  <undefined name="Unknown" offset="40" visible="True" />
+  <undefined name="Unknown" offset="44" visible="True" />
+  <undefined name="Unknown" offset="48" visible="True" />
+  <undefined name="Unknown" offset="72" visible="True" />
+  <undefined name="Unknown" offset="76" visible="True" />
+  <undefined name="Unknown" offset="80" visible="True" />
+  <undefined name="Unknown" offset="84" visible="True" />
+  <undefined name="Unknown" offset="108" visible="True" />
+  <undefined name="Unknown" offset="112" visible="True" />
+</plugin>

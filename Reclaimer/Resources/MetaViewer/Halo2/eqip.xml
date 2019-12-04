@@ -1,0 +1,107 @@
+<plugin>
+  <revisions />
+  <enum32 name="Lightmap Shadow Mode" offset="0x18" visible="True">
+    <option name="Default" value="0x0" />
+    <option name="Never" value="0x1" />
+    <option name="Always" value="0x2" />
+  </enum32>
+  <enum32 name="Sweetener Size" offset="0x1C" visible="True">
+    <option name="Small" value="0x0" />
+    <option name="Medium" value="0x1" />
+    <option name="Large" value="0x2" />
+  </enum32>
+  <stringID name="Default Model Variant" offset="0x30" visible="True" />
+  <tagRef name="Model" offset="0x34" visible="True" />
+  <tagRef name="Crate Object" offset="0x3C" visible="True" />
+  <tagRef name="Modifier Shader" offset="0x44" visible="True" />
+  <tagRef name="Creation Effect" offset="0x4C" visible="True" />
+  <tagRef name="Material Effects" offset="0x54" visible="True" />
+  <struct name="Ai Properties" offset="0x5C" visible="True" size="0x10">
+    <stringID name="Type Name" offset="0x4" visible="True" />
+    <enum32 name="Size" offset="0x8" visible="True">
+      <option name="Default" value="0x0" />
+      <option name="Tiny" value="0x1" />
+      <option name="Small" value="0x2" />
+      <option name="Medium" value="0x3" />
+      <option name="Large" value="0x4" />
+      <option name="Huge" value="0x5" />
+      <option name="Immobile" value="0x6" />
+    </enum32>
+    <enum32 name="Leap Jump Speed" offset="0xC" visible="True">
+      <option name="None" value="0x0" />
+      <option name="Down" value="0x1" />
+      <option name="Step" value="0x2" />
+      <option name="Crouch" value="0x3" />
+      <option name="Stand" value="0x4" />
+      <option name="Storey" value="0x5" />
+      <option name="Tower" value="0x6" />
+      <option name="Infinite" value="0x7" />
+    </enum32>
+  </struct>
+  <struct name="Functions" offset="0x64" visible="True" size="0x20">
+    <stringID name="Import Name" offset="0x4" visible="True" />
+    <stringID name="Export Name" offset="0x8" visible="True" />
+    <stringID name="Turn Off With" offset="0xC" visible="True" />
+    <struct name="Function Type (Graph)" offset="0x14" visible="True" size="0x1" />
+    <stringID name="Scale By" offset="0x1C" visible="True" />
+  </struct>
+  <int16 name="Hud Text Message Index" offset="0x90" visible="True" />
+  <struct name="Attachments" offset="0x94" visible="True" size="0x18">
+    <tagRef name="Type" offset="0x0" visible="True" />
+    <stringID name="Marker" offset="0x8" visible="True" />
+    <stringID name="Change Color" offset="0xC" visible="True" />
+    <stringID name="Primary Scale" offset="0x10" visible="True" />
+    <stringID name="Secondary Scale" offset="0x14" visible="True" />
+  </struct>
+  <struct name="Widgets" offset="0x9C" visible="True" size="0x8">
+    <tagRef name="Type" offset="0x0" visible="True" />
+  </struct>
+  <struct name="Old Functions" offset="0xA4" visible="True" size="0x8" />
+  <struct name="Change Colors" offset="0xAC" visible="True" size="0x10">
+    <struct name="Initial Permutations" offset="0x0" visible="True" size="0x20">
+      <stringID name="Variant Name" offset="0x1C" visible="True" />
+    </struct>
+    <struct name="Functions" offset="0x8" visible="True" size="0x20">
+      <stringID name="Darken By" offset="0x1C" visible="True" />
+      <stringID name="Scale By" offset="0x20" visible="True" />
+    </struct>
+  </struct>
+  <struct name="Predicted Resource" offset="0xB4" visible="True" size="0x8">
+    <int16 name="Type" offset="0x0" visible="True" />
+    <int16 name="Resource Index" offset="0x2" visible="True" />
+  </struct>
+  <int16 name="Old Message Index" offset="0xC0" visible="True" />
+  <int16 name="Sort Order" offset="0xC2" visible="True" />
+  <stringID name="Pickup" offset="0xCC" visible="True" />
+  <stringID name="Swap" offset="0xD0" visible="True" />
+  <stringID name="Pickup or Dual Wield" offset="0xD4" visible="True" />
+  <stringID name="Swap or Dual Wield" offset="0xD8" visible="True" />
+  <stringID name="Dual Wield Only" offset="0xDC" visible="True" />
+  <stringID name="Picked Up" offset="0xE0" visible="True" />
+  <stringID name="Ammo Singular" offset="0xE4" visible="True" />
+  <stringID name="Ammo Plural" offset="0xE8" visible="True" />
+  <stringID name="Switched To" offset="0xEC" visible="True" />
+  <stringID name="Swap AI" offset="0xF0" visible="True" />
+  <tagRef name="unused" offset="0xF4" visible="True" />
+  <tagRef name="Collision Sound" offset="0xFC" visible="True" />
+  <struct name="Predicted Bitmaps" offset="0x104" visible="True" size="0x8">
+    <tagRef name="Bitmap" offset="0x0" visible="True" />
+  </struct>
+  <tagRef name="Detonation Damage Effect" offset="0x10C" visible="True" />
+  <tagRef name="Deonating Effect" offset="0x11C" visible="True" />
+  <tagRef name="Detonation Effect" offset="0x124" visible="True" />
+  <enum16 name="Powerup Type" offset="0x12C" visible="True">
+    <option name="None" value="0x0" />
+    <option name="Double Speed" value="0x1" />
+    <option name="Oversheild" value="0x2" />
+    <option name="Active Camouflage" value="0x3" />
+    <option name="Full-Spectrum Vision" value="0x4" />
+    <option name="Health" value="0x5" />
+    <option name="Grenade" value="0x6" />
+  </enum16>
+  <enum16 name="Grenade Type" offset="0x12E" visible="True">
+    <option name="Human Fragmentation" value="0x0" />
+    <option name="Covenant Plasma" value="0x1" />
+  </enum16>
+  <tagRef name="Pickup Sound" offset="0x134" visible="True" />
+</plugin>

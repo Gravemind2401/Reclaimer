@@ -1,0 +1,6 @@
+<plugin>
+  <reflexive name="colors" offset="0x0" visible="true" entrySize="0x30" entryname="0x0">
+    <ascii name="name" offset="0x0" length="0x20" visible="true" />
+    <colorf name="color" offset="0x20" format="argb" visible="true" />
+  </reflexive>
+</plugin>

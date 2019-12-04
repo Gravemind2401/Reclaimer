@@ -1,0 +1,101 @@
+<plugin>
+  <comment title="decal">A 'compound decal' is a chain of decals which are instantiated simultaneously. Compound decals are created by choosing a &lt;next_decal_in_chain&gt; below. NOTE: Do not attempt to create a circularly linked decal chain, i.e. A-&gt;B-&gt;C-&gt;A! Also, do not reference a decal from an effect if it is not the 'head' of the chain; for example an effect should not instantiate decal B if the chain was A-&gt;B-&gt;C. Compound decals can have seperate bitmaps, seperate framebuffer blend functions, and can be drawn in seperate layers. In addition, each decal in the chain can either inherit its parent's &lt;radius&gt;, rotation, &lt;color&gt;, &lt;fade&gt;, and &lt;sequence&gt; - or it can randomly choose its own. This behavior is controlled by the 'geometry_inherited_by_next_decal_in_chain' flag, below. 
+
+The decal &lt;type&gt; (or layer) determines the drawing order of the decal with respect to the rest of the environment. Decals in the primary layer are drawn after the environment diffuse texture, hence they affect the already-lit texture of the surface. Decals in the secondary layer are drawn immediately after decals in the primary layer, so they 'cover up' the primary decals. Decals in the 'light' layer are drawn before the environment diffuse texture, hence they affect the accumulated diffuse light and only indirectly affect the lit texture.</comment>
+  <bitfield16 name="flags" offset="0x0" visible="true">
+    <bit name="geometry inherited by next decal in chain" index="0" />
+    <bit name="interpolate color in hsv" index="1" />
+    <bit name="...more colors" index="2" />
+    <bit name="no random rotation" index="3" />
+    <bit name="water effect" index="4" />
+    <bit name="SAPIEN- snap to axis" index="5" />
+    <bit name="SAPIEN- incremental counter" index="6" />
+    <bit name="animation loop" index="7" />
+    <bit name="preserve aspect" index="8" />
+  </bitfield16>
+  <enum16 name="type#controls how the decal wraps onto surface geometry" offset="0x2" visible="true">
+    <option name="scratch" value="0x0" />
+    <option name="splatter" value="0x1" />
+    <option name="burn" value="0x2" />
+    <option name="painted sign" value="0x3" />
+  </enum16>
+  <enum16 name="layer" offset="0x4" visible="true">
+    <option name="primary" value="0x0" />
+    <option name="secondary" value="0x1" />
+    <option name="light" value="0x2" />
+    <option name="alpha-tested" value="0x3" />
+    <option name="water" value="0x4" />
+  </enum16>
+  <int16 name="Unknown" offset="0x6" visible="false" />
+  <tagRef name="next decal in chain" offset="0x8" visible="true" />
+  <comment title="radius and color" />
+  <float32 name="radius" offset="0x10" visible="true" description="0 defaults to 0.125 min" />
+  <float32 name="radius" offset="0x14" visible="true" description="0 defaults to 0.125 max" />
+  <undefined name="Unknown" offset="0x18" visible="false" />
+  <undefined name="Unknown" offset="0x1C" visible="false" />
+  <undefined name="Unknown" offset="0x20" visible="false" />
+  <float32 name="intensity" offset="0x24" visible="true" description="1 is fully visible, 0 is invisible min" />
+  <float32 name="intensity" offset="0x28" visible="true" description="1 is fully visible, 0 is invisible max" />
+  <colorf name="color lower bounds" offset="0x2C" format="rgb" visible="true" />
+  <colorf name="color upper bounds" offset="0x38" format="rgb" visible="true" />
+  <undefined name="Unknown" offset="0x44" visible="false" />
+  <undefined name="Unknown" offset="0x48" visible="false" />
+  <undefined name="Unknown" offset="0x4C" visible="false" />
+  <comment title="animation" />
+  <int16 name="animation loop frame" offset="0x50" visible="true" />
+  <int16 name="animation speed" offset="0x52" visible="true" description="[1,120] ticks per frame" />
+  <undefined name="Unknown" offset="0x54" visible="false" />
+  <undefined name="Unknown" offset="0x58" visible="false" />
+  <undefined name="Unknown" offset="0x5C" visible="false" />
+  <undefined name="Unknown" offset="0x60" visible="false" />
+  <undefined name="Unknown" offset="0x64" visible="false" />
+  <undefined name="Unknown" offset="0x68" visible="false" />
+  <undefined name="Unknown" offset="0x6C" visible="false" />
+  <float32 name="lifetime" offset="0x70" visible="true" description="seconds min" />
+  <float32 name="lifetime" offset="0x74" visible="true" description="seconds max" />
+  <float32 name="decay time" offset="0x78" visible="true" description="seconds min" />
+  <float32 name="decay time" offset="0x7C" visible="true" description="seconds max" />
+  <undefined name="Unknown" offset="0x80" visible="false" />
+  <undefined name="Unknown" offset="0x84" visible="false" />
+  <undefined name="Unknown" offset="0x88" visible="false" />
+  <comment title="shader" />
+  <undefined name="Unknown" offset="0x8C" visible="false" />
+  <undefined name="Unknown" offset="0x90" visible="false" />
+  <undefined name="Unknown" offset="0x94" visible="false" />
+  <undefined name="Unknown" offset="0x98" visible="false" />
+  <undefined name="Unknown" offset="0x9C" visible="false" />
+  <undefined name="Unknown" offset="0xA0" visible="false" />
+  <undefined name="Unknown" offset="0xA4" visible="false" />
+  <undefined name="Unknown" offset="0xA8" visible="false" />
+  <undefined name="Unknown" offset="0xAC" visible="false" />
+  <undefined name="Unknown" offset="0xB0" visible="false" />
+  <int16 name="Unknown" offset="0xB4" visible="false" />
+  <int16 name="Unknown" offset="0xB6" visible="false" />
+  <enum16 name="framebuffer blend function" offset="0xB8" visible="true">
+    <option name="alpha blend" value="0x0" />
+    <option name="multiply" value="0x1" />
+    <option name="double multiply" value="0x2" />
+    <option name="add" value="0x3" />
+    <option name="subtract" value="0x4" />
+    <option name="component min" value="0x5" />
+    <option name="component max" value="0x6" />
+    <option name="alpha-multiply add" value="0x7" />
+  </enum16>
+  <int16 name="Unknown" offset="0xBA" visible="false" />
+  <undefined name="Unknown" offset="0xBC" visible="false" />
+  <undefined name="Unknown" offset="0xC0" visible="false" />
+  <undefined name="Unknown" offset="0xC4" visible="false" />
+  <undefined name="Unknown" offset="0xC8" visible="false" />
+  <undefined name="Unknown" offset="0xCC" visible="false" />
+  <tagRef name="map" offset="0xD0" visible="true" />
+  <undefined name="Unknown" offset="0xD8" visible="false" />
+  <undefined name="Unknown" offset="0xDC" visible="false" />
+  <undefined name="Unknown" offset="0xE0" visible="false" />
+  <undefined name="Unknown" offset="0xE4" visible="false" />
+  <undefined name="Unknown" offset="0xE8" visible="false" />
+  <comment title="sprite info" />
+  <float32 name="maximum sprite extent" offset="0xEC" visible="true" description="pixels*" />
+  <undefined name="Unknown" offset="0xF0" visible="false" />
+  <undefined name="Unknown" offset="0xF4" visible="false" />
+  <undefined name="Unknown" offset="0xF8" visible="false" />
+</plugin>

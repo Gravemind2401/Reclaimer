@@ -1,0 +1,44 @@
+<plugin class="sefc" headersize="16">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <undefined name="Unknown" offset="0" visible="False" />
+  <struct name="Unknown 0" offset="4" visible="False" size="236">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="32" visible="False" />
+    <undefined name="Unknown" offset="36" visible="False" />
+    <undefined name="Unknown" offset="80" visible="False" />
+    <undefined name="Unknown" offset="84" visible="False" />
+    <undefined name="Unknown" offset="108" visible="False" />
+    <undefined name="Unknown" offset="112" visible="False" />
+    <undefined name="Unknown" offset="116" visible="False" />
+    <undefined name="Unknown" offset="120" visible="False" />
+    <undefined name="Unknown" offset="124" visible="False" />
+    <undefined name="Unknown" offset="128" visible="False" />
+    <undefined name="Unknown" offset="132" visible="False" />
+    <undefined name="Unknown" offset="136" visible="False" />
+    <undefined name="Unknown" offset="140" visible="False" />
+    <undefined name="Unknown" offset="144" visible="False" />
+    <undefined name="Unknown" offset="148" visible="False" />
+    <undefined name="Unknown" offset="152" visible="False" />
+    <undefined name="Unknown" offset="156" visible="False" />
+    <undefined name="Unknown" offset="160" visible="False" />
+    <undefined name="Unknown" offset="164" visible="False" />
+    <undefined name="Unknown" offset="168" visible="False" />
+    <undefined name="Unknown" offset="172" visible="False" />
+    <undefined name="Unknown" offset="176" visible="False" />
+    <undefined name="Unknown" offset="180" visible="False" />
+    <undefined name="Unknown" offset="184" visible="False" />
+    <undefined name="Unknown" offset="188" visible="False" />
+    <undefined name="Unknown" offset="192" visible="False" />
+    <undefined name="Unknown" offset="196" visible="False" />
+    <undefined name="Unknown" offset="200" visible="False" />
+    <undefined name="Unknown" offset="204" visible="False" />
+    <undefined name="Unknown" offset="208" visible="False" />
+    <undefined name="Unknown" offset="212" visible="False" />
+    <undefined name="Unknown" offset="216" visible="False" />
+    <tagRef name="Unknown" offset="220" visible="False" />
+  </struct>
+</plugin>

@@ -1,0 +1,29 @@
+<plugin class="lst3" headersize="112">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <undefined name="Unknown" offset="0" visible="False" />
+  <stringID name="Name" offset="4" visible="True" />
+  <undefined name="Unknown" offset="8" visible="False" />
+  <undefined name="Unknown" offset="12" visible="False" />
+  <undefined name="Unknown" offset="16" visible="False" />
+  <undefined name="Unknown" offset="20" visible="False" />
+  <undefined name="Unknown" offset="24" visible="False" />
+  <tagRef name="Unknown" offset="28" visible="False" />
+  <undefined name="Unknown" offset="44" visible="False" />
+  <tagRef name="Unknown" offset="48" visible="False" />
+  <undefined name="Unknown" offset="64" visible="False" />
+  <struct name="Unknown 0" offset="68" visible="False" size="48">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="12" visible="False" />
+    <undefined name="Unknown" offset="16" visible="False" />
+    <undefined name="Unknown" offset="20" visible="False" />
+    <undefined name="Unknown" offset="24" visible="False" />
+    <tagRef name="Unknown" offset="28" visible="False" />
+    <undefined name="Unknown" offset="44" visible="False" />
+  </struct>
+  <tagRef name="Unknown" offset="80" visible="False" />
+  <tagRef name="Unknown" offset="96" visible="False" />
+</plugin>

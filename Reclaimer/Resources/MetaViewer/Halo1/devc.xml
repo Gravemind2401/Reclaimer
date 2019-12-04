@@ -1,0 +1,12 @@
+<plugin>
+  <enum16 name="device type*" offset="0x0" visible="true">
+    <option name="mouse and keyboard" value="0x0" />
+    <option name="joysticks/gamepads/etc..." value="0x1" />
+    <option name="full profile definition" value="0x2" />
+  </enum16>
+  <bitfield16 name="flags*" offset="0x2" visible="true">
+    <bit name="unused" index="0" />
+  </bitfield16>
+  <dataref name="device id" offset="0x4" visible="true" />
+  <dataref name="profile" offset="0xC" visible="true" />
+</plugin>

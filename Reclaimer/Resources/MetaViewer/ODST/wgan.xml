@@ -1,0 +1,21 @@
+<plugin class="wgan" headersize="136">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <undefined name="Unknown" offset="0" visible="False" />
+  <undefined name="Unknown" offset="4" visible="False" />
+  <tagRef name="Unknown" offset="8" visible="False" />
+  <tagRef name="Unknown" offset="24" visible="False" />
+  <tagRef name="Unknown" offset="40" visible="False" />
+  <tagRef name="Unknown" offset="56" visible="False" />
+  <tagRef name="Unknown" offset="72" visible="False" />
+  <undefined name="Unknown" offset="88" visible="False" />
+  <undefined name="Unknown" offset="92" visible="False" />
+  <undefined name="Unknown" offset="96" visible="False" />
+  <undefined name="Unknown" offset="100" visible="False" />
+  <tagRef name="Unknown" offset="104" visible="False" />
+  <undefined name="Unknown" offset="120" visible="False" />
+  <undefined name="Unknown" offset="124" visible="False" />
+  <undefined name="Unknown" offset="128" visible="False" />
+  <undefined name="Unknown" offset="132" visible="False" />
+</plugin>

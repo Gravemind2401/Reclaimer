@@ -1,0 +1,182 @@
+<plugin>
+  <bitfield32 name="flags" offset="0x0" visible="true">
+    <bit name="can animate backwards" index="0" />
+    <bit name="animation stops at rest" index="1" />
+    <bit name="animation starts on random frame" index="2" />
+    <bit name="animate once per frame" index="3" />
+    <bit name="dies at rest" index="4" />
+    <bit name="dies on contact with structure" index="5" />
+    <bit name="tint from diffuse texture" index="6" />
+    <bit name="dies on contact with water" index="7" />
+    <bit name="dies on contact with air" index="8" />
+    <bit name="self-illuminated#don't cast world-lights onto this particle" index="9" />
+    <bit name="random horizontal mirroring" index="10" />
+    <bit name="random vertical mirroring" index="11" />
+  </bitfield32>
+  <tagRef name="bitmap" offset="0x4" visible="true" />
+  <tagRef name="physics" offset="0xC" visible="true" />
+  <tagRef name="marty traded his kids for this" offset="0x14" visible="true" />
+  <undefined name="Unknown" offset="0x1C" visible="false" />
+  <float32 name="lifespan" offset="0x20" visible="true" description="seconds min" />
+  <float32 name="lifespan" offset="0x24" visible="true" description="seconds max" />
+  <float32 name="fade in time" offset="0x28" visible="true" />
+  <float32 name="fade out time" offset="0x2C" visible="true" />
+  <tagRef name="collision effect" offset="0x30" visible="true" />
+  <tagRef name="death effect" offset="0x38" visible="true" />
+  <float32 name="minimum size" offset="0x40" visible="true" description="in the distance, don't get any smaller than this size on the screen" />
+  <undefined name="Unknown" offset="0x44" visible="false" />
+  <undefined name="Unknown" offset="0x48" visible="false" />
+  <float32 name="radius animation" offset="0x4C" visible="true" description="when created, the radius is multiplied by the first number. at the end of the lifetime, the radius is multiplied by the second number. min" />
+  <float32 name="radius animation" offset="0x50" visible="true" description="when created, the radius is multiplied by the first number. at the end of the lifetime, the radius is multiplied by the second number. max" />
+  <undefined name="Unknown" offset="0x54" visible="false" />
+  <float32 name="animation rate" offset="0x58" visible="true" description="rate at which the particle animates min" />
+  <float32 name="animation rate" offset="0x5C" visible="true" description="rate at which the particle animates max" />
+  <float32 name="contact deterioration" offset="0x60" visible="true" description="the decrease in the frame rate caused by a collision" />
+  <float32 name="fade start size" offset="0x64" visible="true" description="begin fading the particle out when it's smaller than this size on the screen" />
+  <float32 name="fade end size" offset="0x68" visible="true" description="kill the particle when it's smaller than this size on the screen" />
+  <undefined name="Unknown" offset="0x6C" visible="false" />
+  <int16 name="first sequence index" offset="0x70" visible="true" description="the index of the first sequence in the bitmap group used by this particle" />
+  <int16 name="initial sequence count" offset="0x72" visible="true" />
+  <int16 name="looping sequence count" offset="0x74" visible="true" />
+  <int16 name="final sequence count" offset="0x76" visible="true" />
+  <undefined name="Unknown" offset="0x78" visible="false" />
+  <undefined name="Unknown" offset="0x7C" visible="false" />
+  <undefined name="Unknown" offset="0x80" visible="false" />
+  <enum16 name="orientation" offset="0x84" visible="true">
+    <option name="screen facing" value="0x0" />
+    <option name="parallel to direction" value="0x1" />
+    <option name="perpendicular to direction" value="0x2" />
+  </enum16>
+  <int16 name="Unknown" offset="0x86" visible="false" />
+  <undefined name="Unknown" offset="0x88" visible="false" />
+  <undefined name="Unknown" offset="0x8C" visible="false" />
+  <undefined name="Unknown" offset="0x90" visible="false" />
+  <undefined name="Unknown" offset="0x94" visible="false" />
+  <undefined name="Unknown" offset="0x98" visible="false" />
+  <undefined name="Unknown" offset="0x9C" visible="false" />
+  <undefined name="Unknown" offset="0xA0" visible="false" />
+  <undefined name="Unknown" offset="0xA4" visible="false" />
+  <undefined name="Unknown" offset="0xA8" visible="false" />
+  <undefined name="Unknown" offset="0xAC" visible="false" />
+  <bitfield16 name="shader flags" offset="0xB0" visible="true">
+    <bit name="sort bias" index="0" />
+    <bit name="nonlinear tint" index="1" />
+    <bit name="don't overdraw fp weapon" index="2" />
+  </bitfield16>
+  <enum16 name="framebuffer blend function" offset="0xB2" visible="true">
+    <option name="alpha blend" value="0x0" />
+    <option name="multiply" value="0x1" />
+    <option name="double multiply" value="0x2" />
+    <option name="add" value="0x3" />
+    <option name="subtract" value="0x4" />
+    <option name="component min" value="0x5" />
+    <option name="component max" value="0x6" />
+    <option name="alpha-multiply add" value="0x7" />
+  </enum16>
+  <enum16 name="framebuffer fade mode" offset="0xB4" visible="true">
+    <option name="none" value="0x0" />
+    <option name="fade when perpendicular" value="0x1" />
+    <option name="fade when parallel" value="0x2" />
+  </enum16>
+  <bitfield16 name="map flags" offset="0xB6" visible="true">
+    <bit name="unfiltered" index="0" />
+  </bitfield16>
+  <undefined name="Unknown" offset="0xB8" visible="false" />
+  <undefined name="Unknown" offset="0xBC" visible="false" />
+  <undefined name="Unknown" offset="0xC0" visible="false" />
+  <undefined name="Unknown" offset="0xC4" visible="false" />
+  <undefined name="Unknown" offset="0xC8" visible="false" />
+  <undefined name="Unknown" offset="0xCC" visible="false" />
+  <undefined name="Unknown" offset="0xD0" visible="false" />
+  <comment title="Secondary Map">Optional multitextured second map</comment>
+  <tagRef name="bitmap" offset="0xD4" visible="true" />
+  <enum16 name="anchor" offset="0xDC" visible="true">
+    <option name="with primary" value="0x0" />
+    <option name="with screen space" value="0x1" />
+    <option name="zsprite" value="0x2" />
+  </enum16>
+  <bitfield16 name="flags" offset="0xDE" visible="true">
+    <bit name="unfiltered" index="0" />
+  </bitfield16>
+  <enum16 name="u-animation source" offset="0xE0" visible="true">
+    <option name="none" value="0x0" />
+    <option name="A out" value="0x1" />
+    <option name="B out" value="0x2" />
+    <option name="C out" value="0x3" />
+    <option name="D out" value="0x4" />
+  </enum16>
+  <enum16 name="u-animation function" offset="0xE2" visible="true">
+    <option name="one" value="0x0" />
+    <option name="zero" value="0x1" />
+    <option name="cosine" value="0x2" />
+    <option name="cosine (variable period)" value="0x3" />
+    <option name="diagonal wave" value="0x4" />
+    <option name="diagonal wave (variable period)" value="0x5" />
+    <option name="slide" value="0x6" />
+    <option name="slide (variable period)" value="0x7" />
+    <option name="noise" value="0x8" />
+    <option name="jitter" value="0x9" />
+    <option name="wander" value="0xA" />
+    <option name="spark" value="0xB" />
+  </enum16>
+  <float32 name="u-animation period" offset="0xE4" visible="true" description="0 defaults to 1" />
+  <float32 name="u-animation phase" offset="0xE8" visible="true" />
+  <float32 name="u-animation scale" offset="0xEC" visible="true" description="0 defaults to 1" />
+  <enum16 name="v-animation source" offset="0xF0" visible="true">
+    <option name="none" value="0x0" />
+    <option name="A out" value="0x1" />
+    <option name="B out" value="0x2" />
+    <option name="C out" value="0x3" />
+    <option name="D out" value="0x4" />
+  </enum16>
+  <enum16 name="v-animation function" offset="0xF2" visible="true">
+    <option name="one" value="0x0" />
+    <option name="zero" value="0x1" />
+    <option name="cosine" value="0x2" />
+    <option name="cosine (variable period)" value="0x3" />
+    <option name="diagonal wave" value="0x4" />
+    <option name="diagonal wave (variable period)" value="0x5" />
+    <option name="slide" value="0x6" />
+    <option name="slide (variable period)" value="0x7" />
+    <option name="noise" value="0x8" />
+    <option name="jitter" value="0x9" />
+    <option name="wander" value="0xA" />
+    <option name="spark" value="0xB" />
+  </enum16>
+  <float32 name="v-animation period" offset="0xF4" visible="true" description="0 defaults to 1" />
+  <float32 name="v-animation phase" offset="0xF8" visible="true" />
+  <float32 name="v-animation scale" offset="0xFC" visible="true" description="0 defaults to 1" />
+  <enum16 name="rotation-animation source" offset="0x100" visible="true">
+    <option name="none" value="0x0" />
+    <option name="A out" value="0x1" />
+    <option name="B out" value="0x2" />
+    <option name="C out" value="0x3" />
+    <option name="D out" value="0x4" />
+  </enum16>
+  <enum16 name="rotation-animation function" offset="0x102" visible="true">
+    <option name="one" value="0x0" />
+    <option name="zero" value="0x1" />
+    <option name="cosine" value="0x2" />
+    <option name="cosine (variable period)" value="0x3" />
+    <option name="diagonal wave" value="0x4" />
+    <option name="diagonal wave (variable period)" value="0x5" />
+    <option name="slide" value="0x6" />
+    <option name="slide (variable period)" value="0x7" />
+    <option name="noise" value="0x8" />
+    <option name="jitter" value="0x9" />
+    <option name="wander" value="0xA" />
+    <option name="spark" value="0xB" />
+  </enum16>
+  <float32 name="rotation-animation period" offset="0x104" visible="true" description="0 defaults to 1" />
+  <float32 name="rotation-animation phase" offset="0x108" visible="true" />
+  <float32 name="rotation-animation scale" offset="0x10C" visible="true" description="0 defaults to 360" />
+  <float32 name="rotation-animation center x" offset="0x110" visible="true" />
+  <float32 name="rotation-animation center y" offset="0x114" visible="true" />
+  <undefined name="Unknown" offset="0x118" visible="false" />
+  <float32 name="zsprite radius scale" offset="0x11C" visible="true" />
+  <undefined name="Unknown" offset="0x120" visible="false" />
+  <undefined name="Unknown" offset="0x124" visible="false" />
+  <undefined name="Unknown" offset="0x128" visible="false" />
+  <undefined name="Unknown" offset="0x12C" visible="false" />
+  <undefined name="Unknown" offset="0x130" visible="false" />
+</plugin>

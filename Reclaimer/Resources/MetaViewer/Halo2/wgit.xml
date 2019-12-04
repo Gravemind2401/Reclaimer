@@ -1,0 +1,100 @@
+<plugin>
+  <revisions />
+  <int16 name="Back ground blur (blur=0 noblur=37)" offset="0x0" visible="True" />
+  <int16 name="Unused" offset="0x2" visible="False" />
+  <int16 name="Menu ID" offset="0x4" visible="True" />
+  <tagRef name="Unic" offset="0x18" visible="True" />
+  <struct name="Menu Content" offset="0x20" visible="True" size="0x4C">
+    <int16 name="Unused" offset="0x0" visible="False" />
+    <int16 name="Transition Type" offset="0x2" visible="True" />
+    <struct name="Buttons 1" offset="0x4" visible="True" size="0x3C">
+      <int16 name="Unused" offset="0x0" visible="False" />
+      <int16 name="Unused" offset="0x2" visible="False" />
+      <int16 name="Button Transition type (bitmask)" offset="0x4" visible="True" />
+      <int16 name="Unused" offset="0x6" visible="False" />
+      <int16 name="Unused" offset="0x8" visible="False" />
+      <int16 name="Font Type" offset="0xA" visible="True" />
+      <int16 name="Bitmap Placement Positive Coord Y" offset="0x1C" visible="True" />
+      <int16 name="Bitmap Placement Positive Coord X" offset="0x1E" visible="True" />
+      <int16 name="Text Placement Negative Coord Y" offset="0x20" visible="True" />
+      <int16 name="Text Placement Negative Coord X" offset="0x22" visible="True" />
+      <tagRef name="Bitm" offset="0x24" visible="True" />
+      <int16 name="Unknown" offset="0x34" visible="True" />
+      <int16 name="Unused" offset="0x36" visible="False" />
+      <int16 name="Unknown" offset="0x38" visible="True" />
+      <int16 name="Unused" offset="0x3A" visible="False" />
+    </struct>
+    <struct name="Buttons 2" offset="0xC" visible="True" size="0x18">
+      <enum16 name="Buttons loop" offset="0x8" visible="True">
+        <option name="Yes" value="0x1" />
+        <option name="No" value="0x0" />
+      </enum16>
+      <int16 name="Unused" offset="0x4" visible="False" />
+      <int16 name="Button Type (Palette [skin])" offset="0x8" visible="True" />
+      <int16 name="Number of visibles buttons" offset="0xC" visible="True" />
+      <int16 name="Buttons Placement Coord X" offset="0x10" visible="True" />
+      <int16 name="Buttons Placement Coord Y" offset="0x12" visible="True" />
+      <int16 name="Transition Type? (bitmask)" offset="0x14" visible="False" />
+      <int16 name="Variation?" offset="0x16" visible="False" />
+    </struct>
+    <struct name="Text strings" offset="0x1C" visible="True" size="0x2C">
+      <int16 name="Transtion type (bitmask)" offset="0x4" visible="True" />
+      <int16 name="Variation?" offset="0x6" visible="True" />
+      <int16 name="Unused" offset="0x8" visible="False" />
+      <int16 name="Font Type" offset="0xA" visible="True" />
+      <int16 name="Text Placement coord Y from Top" offset="0x1C" visible="True" />
+      <int16 name="Text Placement coord X from Right" offset="0x1E" visible="True" />
+      <int16 name="Text Placement coord Y from Bottom" offset="0x20" visible="False" />
+      <int16 name="Text Placement coord X from Left" offset="0x22" visible="False" />
+      <stringID name="String name" offset="0x24" visible="True" />
+      <uint32 name="Unknown" offset="0x28" visible="True" />
+    </struct>
+    <struct name="UI bitmaps" offset="0x24" visible="True" size="0x38">
+      <int16 name="unknown" offset="0x0" visible="True" />
+      <int16 name="Unused" offset="0x2" visible="False" />
+      <int16 name="Transition type (bitmask)" offset="0x4" visible="True" />
+      <int16 name="Variation?" offset="0x6" visible="True" />
+      <enum16 name="Alpha transparence" offset="0x8" visible="True">
+        <option name="Normal" value="0x0" />
+        <option name="Inverted" value="0x1" />
+      </enum16>
+      <int16 name="Xbox live bitmap setting" offset="0xA" visible="True" />
+      <int16 name="Bitmap Placement coord X" offset="0xC" visible="True" />
+      <int16 name="Bitmap Placement coord Y" offset="0xE" visible="True" />
+      <tagRef name="bitm" offset="0x18" visible="True" />
+      <int16 name="Bitmap Layer Level" offset="0x20" visible="True" />
+      <int16 name="Unused" offset="0x22" visible="False" />
+      <int16 name="Coord X for ?" offset="0x28" visible="True" />
+      <int16 name="Coord Y for ?" offset="0x2A" visible="True" />
+    </struct>
+    <struct name="ModelsScript Objects: Scenery/Bipeds...)" offset="0x2C" visible="True" size="0x4C">
+      <int16 name="Unused" offset="0x0" visible="False" />
+      <int16 name="Unused" offset="0x2" visible="False" />
+      <int16 name="Transition type (bitmask)" offset="0x4" visible="True" />
+      <int16 name="Variation?" offset="0x6" visible="True" />
+      <int16 name="Unknown" offset="0x8" visible="True" />
+      <int16 name="Unused" offset="0xA" visible="False" />
+      <struct name="Script Object" offset="0xC" visible="True" size="0x20" />
+      <struct name="Unknown" offset="0x14" visible="True" size="0x20" />
+    </struct>
+    <struct name="Variable Buttons" offset="0x44" visible="True" size="0x18">
+      <tagRef name="Skin" offset="0x4" visible="True" />
+      <int16 name="Coord X" offset="0xC" visible="True" />
+      <int16 name="Coord Y" offset="0xE" visible="True" />
+      <int16 name="Coord X" offset="0x14" visible="True" />
+      <int16 name="Coord Y" offset="0x16" visible="True" />
+    </struct>
+  </struct>
+  <int16 name="Font Type" offset="0x28" visible="True" />
+  <int16 name="Unused" offset="0x2A" visible="False" />
+  <stringID name="Header Title Text String" offset="0x2C" visible="True" />
+  <struct name="Descriptions/Help Text" offset="0x30" visible="True" size="0xC">
+    <stringID name="Text Strings" offset="0x0" visible="True" />
+    <struct name="Notification messages" offset="0x4" visible="True" size="0x4">
+      <stringID name="Text Strings" offset="0x0" visible="True" />
+    </struct>
+  </struct>
+  <struct name="Prededicated Resources: Bitmap tags" offset="0x38" visible="True" size="0x8">
+    <tagRef name="Bitm" offset="0x0" visible="True" />
+  </struct>
+</plugin>

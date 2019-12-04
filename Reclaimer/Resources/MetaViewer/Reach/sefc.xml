@@ -1,0 +1,46 @@
+<plugin class="sefc" headersize="16">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+    <revision author="DarkShallFall" version="0.1">named most of the screen effects, and added some extra offsets to view extra things i found</revision>
+  </revisions>
+  <int32 name="Unknown" offset="0" visible="False" />
+  <struct name="Screen Effects" offset="4" visible="True" size="240">
+    <int32 name="Unknown" offset="0" visible="False" />
+    <int32 name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="32" visible="False" />
+    <undefined name="Unknown" offset="36" visible="False" />
+    <undefined name="Unknown" offset="80" visible="False" />
+    <undefined name="Unknown" offset="84" visible="False" />
+    <float32 name="Bright Light" offset="108" visible="True" />
+    <float32 name="Dark Light" offset="112" visible="True" />
+    <float32 name="Sky Green" offset="116" visible="True" />
+    <float32 name="Sky Red" offset="120" visible="True" />
+    <float32 name="Saturation" offset="124" visible="True" />
+    <float32 name="Color Range" offset="128" visible="True" />
+    <float32 name="Light Intensity" offset="132" visible="True" />
+    <float32 name="Darkness" offset="136" visible="True" />
+    <float32 name="Brightness" offset="140" visible="True" />
+    <float32 name="Screen Grains Black" offset="144" visible="True" />
+    <float32 name="Screen Grains White" offset="148" visible="True" />
+    <float32 name="Red" offset="152" visible="True" />
+    <float32 name="Green" offset="156" visible="True" />
+    <float32 name="Blue" offset="160" visible="True" />
+    <float32 name="Cyan" offset="164" visible="True" />
+    <float32 name="Violet" offset="168" visible="True" />
+    <float32 name="Lime Green" offset="172" visible="True" />
+    <float32 name="Holograph" offset="176" visible="True" />
+    <undefined name="Unknown" offset="180" visible="False" />
+    <undefined name="Unknown" offset="184" visible="False" />
+    <undefined name="Unknown" offset="188" visible="False" />
+    <undefined name="Unknown" offset="192" visible="False" />
+    <float32 name="Blur X" offset="196" visible="True" />
+    <float32 name="Blur Y" offset="200" visible="True" />
+    <undefined name="Unknown" offset="204" visible="False" />
+    <float32 name="Hud Transparency" offset="208" visible="True" />
+    <float32 name="Screen Zoom In" offset="212" visible="True" />
+    <float32 name="Screen Zoom Out" offset="216" visible="True" />
+    <float32 name="Screen Shake" offset="220" visible="True" />
+    <tagRef name="Unknown" offset="224" visible="True" />
+  </struct>
+</plugin>

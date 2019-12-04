@@ -1,0 +1,15 @@
+<plugin>
+  <revisions />
+  <struct name="Internal Matrix" offset="0x5C" visible="True" size="0x24" />
+  <struct name="Mass Points" offset="0x64" visible="True" size="0x3C" />
+  <struct name="Mass Points" offset="0x6C" visible="True" size="0x80">
+    <int16 name="Model Node" offset="0x20" visible="True" />
+    <int16 name="Powered Mass Point" offset="0x22" visible="True" />
+    <enum32 name="friction type" offset="0x5C" visible="True">
+      <option name="point" value="0x0" />
+      <option name="forward" value="0x1" />
+      <option name="left" value="0x2" />
+      <option name="up" value="0x3" />
+    </enum32>
+  </struct>
+</plugin>

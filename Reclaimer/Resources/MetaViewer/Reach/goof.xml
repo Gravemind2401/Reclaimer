@@ -1,0 +1,18 @@
+<plugin class="goof" headersize="16">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <undefined name="Unknown" offset="0" visible="False" />
+  <struct name="Unknown 0" offset="4" visible="False" size="20">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <struct name="Unknown 1" offset="8" visible="True" size="60">
+      <tagRef name="Sub Forum" offset="0" visible="True" />
+      <tagRef name="Unknown" offset="16" visible="False" />
+      <undefined name="Unknown" offset="32" visible="False" />
+      <float32 name="Group Name" offset="36" visible="True" />
+      <float32 name="Group Description" offset="40" visible="True" />
+      <tagRef name="Editing Value" offset="44" visible="True" />
+    </struct>
+  </struct>
+</plugin>

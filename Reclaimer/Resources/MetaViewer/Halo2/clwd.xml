@@ -1,0 +1,20 @@
+<plugin>
+  <revisions />
+  <stringID name="Marker Attachment Name" offset="0x4" visible="True" />
+  <tagRef name="Shader" offset="0x8" visible="True" />
+  <int16 name="Grid X Dimension" offset="0x10" visible="True" />
+  <int16 name="Grid Y Dimension" offset="0x12" visible="True" />
+  <enum16 name="Integration Type" offset="0x1C" visible="True" />
+  <int16 name="Number Iterations" offset="0x1C" visible="True" />
+  <struct name="Vertices" offset="0x4C" visible="True" size="0x14" />
+  <struct name="Indices" offset="0x54" visible="True" size="0x2">
+    <int16 name="Index" offset="0x0" visible="True" />
+  </struct>
+  <struct name="Strip Indices" offset="0x5C" visible="True" size="0x2">
+    <int16 name="Index" offset="0x0" visible="True" />
+  </struct>
+  <struct name="Links" offset="0x64" visible="True" size="0x10">
+    <int16 name="Index 1" offset="0x4" visible="True" />
+    <int16 name="Index 2" offset="0x6" visible="True" />
+  </struct>
+</plugin>

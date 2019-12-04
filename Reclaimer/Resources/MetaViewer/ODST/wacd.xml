@@ -1,0 +1,57 @@
+<plugin class="wacd" headersize="640">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <tagRef name="Unknown" offset="0" visible="False" />
+  <tagRef name="Unknown" offset="16" visible="False" />
+  <tagRef name="Unknown" offset="32" visible="False" />
+  <tagRef name="Unknown" offset="48" visible="False" />
+  <tagRef name="Unknown" offset="64" visible="False" />
+  <tagRef name="Unknown" offset="80" visible="False" />
+  <tagRef name="Unknown" offset="96" visible="False" />
+  <tagRef name="Unknown" offset="112" visible="False" />
+  <tagRef name="Unknown" offset="128" visible="False" />
+  <tagRef name="Unknown" offset="144" visible="False" />
+  <tagRef name="Unknown" offset="160" visible="False" />
+  <tagRef name="Unknown" offset="176" visible="False" />
+  <tagRef name="Unknown" offset="192" visible="False" />
+  <tagRef name="Unknown" offset="208" visible="False" />
+  <tagRef name="Unknown" offset="224" visible="False" />
+  <tagRef name="Unknown" offset="240" visible="False" />
+  <tagRef name="Unknown" offset="256" visible="False" />
+  <tagRef name="Unknown" offset="272" visible="False" />
+  <tagRef name="Unknown" offset="288" visible="False" />
+  <tagRef name="Unknown" offset="304" visible="False" />
+  <tagRef name="Unknown" offset="320" visible="False" />
+  <tagRef name="Unknown" offset="336" visible="False" />
+  <undefined name="Unknown" offset="352" visible="False" />
+  <undefined name="Unknown" offset="356" visible="False" />
+  <undefined name="Unknown" offset="360" visible="False" />
+  <undefined name="Unknown" offset="364" visible="False" />
+  <undefined name="Unknown" offset="368" visible="False" />
+  <undefined name="Unknown" offset="372" visible="False" />
+  <undefined name="Unknown" offset="376" visible="False" />
+  <undefined name="Unknown" offset="380" visible="False" />
+  <undefined name="Unknown" offset="384" visible="False" />
+  <undefined name="Unknown" offset="388" visible="False" />
+  <undefined name="Unknown" offset="392" visible="False" />
+  <undefined name="Unknown" offset="396" visible="False" />
+  <undefined name="Unknown" offset="400" visible="False" />
+  <undefined name="Unknown" offset="404" visible="False" />
+  <undefined name="Unknown" offset="408" visible="False" />
+  <undefined name="Unknown" offset="412" visible="False" />
+  <tagRef name="Unknown" offset="416" visible="False" />
+  <tagRef name="Unknown" offset="432" visible="False" />
+  <tagRef name="Unknown" offset="448" visible="False" />
+  <tagRef name="Unknown" offset="464" visible="False" />
+  <tagRef name="Unknown" offset="480" visible="False" />
+  <tagRef name="Unknown" offset="496" visible="False" />
+  <tagRef name="Unknown" offset="512" visible="False" />
+  <tagRef name="Unknown" offset="528" visible="False" />
+  <tagRef name="Unknown" offset="544" visible="False" />
+  <tagRef name="Unknown" offset="560" visible="False" />
+  <tagRef name="Unknown" offset="576" visible="False" />
+  <tagRef name="Unknown" offset="592" visible="False" />
+  <tagRef name="Unknown" offset="608" visible="False" />
+  <tagRef name="Unknown" offset="624" visible="False" />
+</plugin>

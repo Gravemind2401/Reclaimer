@@ -1,0 +1,54 @@
+<plugin>
+  <enum16 name="collection type" offset="0x0" visible="true">
+    <option name="screen-facing" value="0x0" />
+    <option name="viewer-facing" value="0x1" />
+  </enum16>
+  <int16 name="Unknown" offset="0x2" visible="false" />
+  <float32 name="global z offset" offset="0x4" visible="true" description="applied to all detail objects of in this collection so they don't float above the ground" />
+  <undefined name="Unknown" offset="0x8" visible="false" />
+  <undefined name="Unknown" offset="0xC" visible="false" />
+  <undefined name="Unknown" offset="0x10" visible="false" />
+  <undefined name="Unknown" offset="0x14" visible="false" />
+  <undefined name="Unknown" offset="0x18" visible="false" />
+  <undefined name="Unknown" offset="0x1C" visible="false" />
+  <undefined name="Unknown" offset="0x20" visible="false" />
+  <undefined name="Unknown" offset="0x24" visible="false" />
+  <undefined name="Unknown" offset="0x28" visible="false" />
+  <undefined name="Unknown" offset="0x2C" visible="false" />
+  <undefined name="Unknown" offset="0x30" visible="false" />
+  <tagRef name="sprite plate" offset="0x34" visible="true" />
+  <reflexive name="types" offset="0x3C" visible="true" entrySize="0x60" entryname="0x0">
+    <ascii name="name" offset="0x0" length="0x20" visible="true" />
+    <int8 name="sequence index" offset="0x20" visible="true" description="[0,15]" />
+    <bitfield8 name="type flags" offset="0x21" visible="true">
+      <bit name="unused" index="0" />
+      <bit name="unused" index="1" />
+      <bit name="interpolate color in hsv" index="2" />
+      <bit name="...more colors" index="3" />
+    </bitfield8>
+    <int16 name="Unknown" offset="0x22" visible="false" />
+    <float32 name="color override factor" offset="0x24" visible="true" description="[0,1]" />
+    <undefined name="Unknown" offset="0x28" visible="false" />
+    <undefined name="Unknown" offset="0x2C" visible="false" />
+    <float32 name="near fade distance" offset="0x30" visible="true" description="world units" />
+    <float32 name="far fade distance" offset="0x34" visible="true" description="world units" />
+    <float32 name="size" offset="0x38" visible="true" description="world units per pixel" />
+    <undefined name="Unknown" offset="0x3C" visible="false" />
+    <colorf name="minimum color" offset="0x40" format="rgb" visible="true" description="[0,1]" />
+    <colorf name="maximum color" offset="0x4C" format="rgb" visible="true" description="[0,1]" />
+    <color32 name="ambient color" offset="0x58" format="argb" visible="true" description="[0,255]" />
+    <undefined name="Unknown" offset="0x5C" visible="false" />
+  </reflexive>
+  <undefined name="Unknown" offset="0x44" visible="false" />
+  <undefined name="Unknown" offset="0x48" visible="false" />
+  <undefined name="Unknown" offset="0x4C" visible="false" />
+  <undefined name="Unknown" offset="0x50" visible="false" />
+  <undefined name="Unknown" offset="0x54" visible="false" />
+  <undefined name="Unknown" offset="0x58" visible="false" />
+  <undefined name="Unknown" offset="0x5C" visible="false" />
+  <undefined name="Unknown" offset="0x60" visible="false" />
+  <undefined name="Unknown" offset="0x64" visible="false" />
+  <undefined name="Unknown" offset="0x68" visible="false" />
+  <undefined name="Unknown" offset="0x6C" visible="false" />
+  <undefined name="Unknown" offset="0x70" visible="false" />
+</plugin>

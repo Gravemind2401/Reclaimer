@@ -1,0 +1,408 @@
+<plugin class="cpgd" headersize="192">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+    <revision author="Lord Zedd" version="0.85">Lookin' good.</revision>
+    <revision author="Bfixer117" version="0.86">added drop down boxes for helment</revision>
+  </revisions>
+  <struct name="Helmet Listing" offset="0" visible="True" size="40">
+    <int32 name="Name SID" offset="0" visible="True" />
+    <enum32 name="Name SID (mainmenu only)" offset="0" visible="True">
+      <option name="Default" value="16049" />
+      <option name="CQC" value="16057" />
+      <option name="ODST" value="16065" />
+      <option name="HAZOP" value="16073" />
+      <option name="EOD (BASE)" value="16081" />
+      <option name="OPERATOR" value="16089" />
+      <option name="GRENADIER" value="16097" />
+      <option name="AIR ASSAULT" value="16105" />
+      <option name="SCOUT" value="16113" />
+      <option name="EVA" value="16121" />
+      <option name="JFO" value="16129" />
+      <option name="COMMANDO" value="16137" />
+      <option name="EVA [C]" value="16212" />
+      <option name="MJOLNIR MK, V" value="16145" />
+      <option name="PILOT" value="16153" />
+      <option name="RECON" value="16204" />
+      <option name="MJOLNIR MK, VI" value="16172" />
+      <option name="GUNGNIR" value="16196" />
+      <option name="SECURITY" value="16164" />
+      <option name="MILITARY POLICE" value="16180" />
+      <option name="CQB" value="16188" />
+    </enum32>
+    <int32 name="Description SID" offset="4" visible="True" />
+    <enum32 name="Description SID (mainmenu)" offset="4" visible="True">
+      <option name="Default" value="16050" />
+      <option name="CQC" value="16058" />
+      <option name="ODST" value="16066" />
+      <option name="HAZOP" value="16074" />
+      <option name="EOD (BASE)" value="16082" />
+      <option name="OPERATOR" value="16090" />
+      <option name="GRENADIER" value="16098" />
+      <option name="AIR ASSAULT" value="16106" />
+      <option name="SCOUT" value="16114" />
+      <option name="EVA" value="16122" />
+      <option name="JFO" value="16130" />
+      <option name="COMMANDO" value="16138" />
+      <option name="EVA [C]" value="16213" />
+      <option name="MJOLNIR MK, V" value="16146" />
+      <option name="PILOT" value="16154" />
+      <option name="RECON" value="16205" />
+      <option name="MJOLNIR MK, VI" value="16173" />
+      <option name="GUNGNIR" value="16197" />
+      <option name="SECURITY" value="16165" />
+      <option name="MILITARY POLICE" value="16181" />
+      <option name="CQB" value="16189" />
+    </enum32>
+    <tagRef name="Unknown" offset="8" visible="False" />
+    <int32 name="Icon" offset="24" visible="True" />
+    <enum32 name="Icon" offset="24" visible="True">
+      <option name="Default" value="0" />
+      <option name="CQC" value="1" />
+      <option name="ODST" value="2" />
+      <option name="HAZOP" value="3" />
+      <option name="EOD" value="4" />
+      <option name="OPERATOR" value="5" />
+      <option name="GRENADIER" value="6" />
+      <option name="AIR ASSAULT" value="7" />
+      <option name="SCOUT" value="8" />
+      <option name="EVA" value="9" />
+      <option name="JFO" value="10" />
+      <option name="COMMANDO" value="11" />
+      <option name="EVA [C]" value="12" />
+      <option name="MJOLNIR MK, V" value="13" />
+      <option name="PILOT" value="14" />
+      <option name="RECON" value="18" />
+      <option name="MJOLNIR MK, VI" value="16" />
+      <option name="GUNGNIR" value="17" />
+      <option name="SECURITY" value="15" />
+      <option name="MILITARY POLICE" value="19" />
+      <option name="CQB" value="20" />
+    </enum32>
+    <struct name="Entry" offset="28" visible="True" size="4">
+      <int16 name="Entry" offset="0" visible="True" />
+      <enum16 name="Entry" offset="0" visible="True">
+        <option name="Default (BASE)" value="0" />
+        <option name="Default (UA)" value="1" />
+        <option name="Default(UN/HUL)" value="2" />
+        <option name="CQC (BASE)" value="3" />
+        <option name="CQC (CBRN)" value="4" />
+        <option name="CQC (UA/HUL)" value="5" />
+        <option name="ODST (BASE)" value="6" />
+        <option name="ODST (UN/CNM)" value="7" />
+        <option name="ODST (CBRN/HUL)" value="8" />
+        <option name="HAZOP (BASE)" value="9" />
+        <option name="HAZOP (CBRN/HUL)" value="10" />
+        <option name="HAZOP (CNM-I)" value="11" />
+        <option name="EOD (BASE)" value="12" />
+        <option name="EOD (CNM)" value="13" />
+        <option name="EOD UN/HUL)" value="14" />
+        <option name="OPERATOR (BASE)" value="15" />
+        <option name="OPERATOR (UA/HUL)" value="16" />
+        <option name="OPERATOR (CNM)" value="17" />
+        <option name="GRENADIER (BASE)" value="18" />
+        <option name="GRENADIER (UA)" value="19" />
+        <option name="GRENADIER (UN/FC)" value="20" />
+        <option name="AIR ASSAULT  (BASE)" value="21" />
+        <option name="AIR ASSAULT  (UA/CNM)" value="22" />
+        <option name="AIR ASSAULT (FC-I)" value="23" />
+        <option name="SCOUT (BASE)" value="24" />
+        <option name="SCOUT (HU/'RS)" value="25" />
+        <option name="SCOUT (CBRN/CNM)" value="26" />
+        <option name="EVA (BASE)" value="27" />
+        <option name="EVA (CNM)" value="28" />
+        <option name="EVA (UA/HUL [3])" value="29" />
+        <option name="JFO (BASE)" value="30" />
+        <option name="JFO (HUL-I)" value="31" />
+        <option name="JFO (UA)" value="32" />
+        <option name="COMMANDO (BASE)" value="33" />
+        <option name="COMMANDO (CBRN/CNM)" value="34" />
+        <option name="COMMANDO (UA/FC-I [2])" value="35" />
+        <option name="EVA [SKULL] (BASE)" value="61" />
+        <option name="EVA [SKULL] CMN)" value="62" />
+        <option name="EVA [SKULL] (UA/HUL [3])" value="63" />
+        <option name="MJOLNIR MK. V (BASE)" value="36" />
+        <option name="MJOLNIR MK. V (CMN)" value="37" />
+        <option name="MJOLNIR MK. V (UA)" value="38" />
+        <option name="PILOT (BASE)" value="39" />
+        <option name="PILOT (HUL [3] )" value="40" />
+        <option name="PILOT (UA/HUL [3] )" value="41" />
+        <option name="PILOT (HAUNTED)" value="42" />
+        <option name="RECON (BASE)" value="58" />
+        <option name="RECON (HUL)" value="59" />
+        <option name="RECON (EXTRA SLOT)" value="60" />
+        <option name="MJOLNIR MK. VI (BASE)" value="46" />
+        <option name="MJOLNIR MK. VI (FC-I[2] )" value="47" />
+        <option name="MJOLNIR MK. VI (UA/HUL-I )" value="48" />
+        <option name="GUNGNIR (BASE)" value="55" />
+        <option name="GUNGNIR (HU/RS)" value="56" />
+        <option name="GUNGNIR (CBRN)" value="57" />
+        <option name="SECURITY (BASE)" value="43" />
+        <option name="SECURITY (UA/HUL)" value="44" />
+        <option name="SECURITY (CBRN/CNM)" value="45" />
+        <option name="MILITARY POLICE (BASE)" value="49" />
+        <option name="MILITARY POLICE (CBRN/HU/RS)" value="50" />
+        <option name="MILITARY POLICE (HU/RS/CNM" value="51" />
+        <option name="CQB (BASE)" value="52" />
+        <option name="CQB (HU/RS/CNM)" value="53" />
+        <option name="CQB (UA/HUL)" value="54" />
+      </enum16>
+    </struct>
+  </struct>
+  <struct name="Left Shoulder Listing" offset="12" visible="True" size="40">
+    <int32 name="Name SID" offset="0" visible="True" />
+    <int32 name="Description SID" offset="4" visible="True" />
+    <tagRef name="Unknown" offset="8" visible="False" />
+    <int32 name="Icon" offset="24" visible="True" />
+    <struct name="Entry" offset="28" visible="True" size="4">
+      <int16 name="Entry" offset="0" visible="True" />
+    </struct>
+  </struct>
+  <struct name="Right Shoulder Listing" offset="24" visible="True" size="40">
+    <int32 name="Name SID" offset="0" visible="True" />
+    <int32 name="Description SID" offset="4" visible="True" />
+    <tagRef name="Unknown" offset="8" visible="False" />
+    <int32 name="Icon" offset="24" visible="True" />
+    <struct name="Entry" offset="28" visible="True" size="4">
+      <int16 name="Entry" offset="0" visible="True" />
+    </struct>
+  </struct>
+  <struct name="Chest Listing" offset="36" visible="True" size="40">
+    <int32 name="Name SID" offset="0" visible="True" />
+    <int32 name="Description SID" offset="4" visible="True" />
+    <tagRef name="Unknown" offset="8" visible="False" />
+    <int32 name="Icon" offset="24" visible="True" />
+    <struct name="Entry" offset="28" visible="True" size="4">
+      <int16 name="Entry" offset="0" visible="True" />
+    </struct>
+  </struct>
+  <struct name="Wrist Listing" offset="48" visible="True" size="40">
+    <int32 name="Name SID" offset="0" visible="True" />
+    <int32 name="Description SID" offset="4" visible="True" />
+    <tagRef name="Unknown" offset="8" visible="False" />
+    <int32 name="Icon" offset="24" visible="True" />
+    <struct name="Entry" offset="28" visible="True" size="4">
+      <int16 name="Entry" offset="0" visible="True" />
+    </struct>
+  </struct>
+  <struct name="Leg Utility Listing" offset="60" visible="True" size="40">
+    <int32 name="Name SID" offset="0" visible="True" />
+    <int32 name="Description SID" offset="4" visible="True" />
+    <tagRef name="Unknown" offset="8" visible="False" />
+    <int32 name="Icon" offset="24" visible="True" />
+    <struct name="Entry" offset="28" visible="True" size="4">
+      <int16 name="Entry" offset="0" visible="True" />
+    </struct>
+  </struct>
+  <struct name="Visor Color Listing" offset="72" visible="True" size="40">
+    <int32 name="Name SID" offset="0" visible="True" />
+    <int32 name="Description SID" offset="4" visible="True" />
+    <tagRef name="Unknown" offset="8" visible="False" />
+    <int32 name="Icon" offset="24" visible="True" />
+    <struct name="Entry" offset="28" visible="True" size="4">
+      <int16 name="Entry" offset="0" visible="True" />
+      <enum16 name="Entry" offset="0" visible="True">
+        <option name="Default" value="151" />
+        <option name="Silver" value="152" />
+        <option name="Blue" value="153" />
+        <option name="Black" value="154" />
+        <option name="Gold" value="155" />
+      </enum16>
+    </struct>
+  </struct>
+  <struct name="Knee Guard Listing" offset="84" visible="True" size="40">
+    <int32 name="Name SID" offset="0" visible="True" />
+    <int32 name="Description SID" offset="4" visible="True" />
+    <tagRef name="Unknown" offset="8" visible="False" />
+    <int32 name="Icon" offset="24" visible="True" />
+    <struct name="Entry" offset="28" visible="True" size="4">
+      <int16 name="Entry" offset="0" visible="True" />
+      <enum16 name="Entry" offset="0" visible="True">
+        <option name="Default" value="132" />
+        <option name="FJ/PARA" value="133" />
+        <option name="GUNGNIR" value="134" />
+        <option name="GRENADIER" value="135" />
+      </enum16>
+    </struct>
+  </struct>
+  <struct name="Armor Effect Listing" offset="96" visible="True" size="40">
+    <int32 name="Name SID" offset="0" visible="True" />
+    <int32 name="Description SID" offset="4" visible="True" />
+    <tagRef name="Unknown" offset="8" visible="False" />
+    <int32 name="Icon" offset="24" visible="True" />
+    <struct name="Entry" offset="28" visible="True" size="4">
+      <int16 name="Entry" offset="0" visible="True" />
+      <enum16 name="Entry" offset="0" visible="True">
+        <option name="Default" value="136" />
+        <option name="Legenday Flame" value="137" />
+        <option name="Blue Flame" value="138" />
+        <option name="Birthday Party" value="142" />
+        <option name="Heart Attack" value="139" />
+        <option name="Pestilence" value="141" />
+        <option name="Inclement Weather" value="140" />
+      </enum16>
+    </struct>
+  </struct>
+  <struct name="Elite Armor Listing" offset="108" visible="True" size="40">
+    <int32 name="Name SID" offset="0" visible="True" />
+    <int32 name="Description SID" offset="4" visible="True" />
+    <tagRef name="Unknown" offset="8" visible="False" />
+    <int32 name="Icon" offset="24" visible="True" />
+    <struct name="Entry" offset="28" visible="True" size="4">
+      <int16 name="Entry" offset="0" visible="True" />
+    </struct>
+  </struct>
+  <struct name="Unknown/Unused" offset="120" visible="False" size="40">
+    <int32 name="Name SID" offset="0" visible="True" />
+    <int32 name="Description SID" offset="4" visible="True" />
+    <tagRef name="Unknown" offset="8" visible="False" />
+    <int32 name="Icon" offset="24" visible="True" />
+    <struct name="Entry" offset="28" visible="True" size="4">
+      <int16 name="Entry" offset="0" visible="True" />
+    </struct>
+  </struct>
+  <struct name="Unknown/Unused" offset="132" visible="False" size="40">
+    <int32 name="Name SID" offset="0" visible="True" />
+    <int32 name="Description SID" offset="4" visible="True" />
+    <tagRef name="Unknown" offset="8" visible="False" />
+    <int32 name="Icon" offset="24" visible="True" />
+    <struct name="Entry" offset="28" visible="True" size="4">
+      <int16 name="Entry" offset="0" visible="True" />
+    </struct>
+  </struct>
+  <struct name="Firefight Voice Listing" offset="144" visible="True" size="40">
+    <int32 name="Name SID" offset="0" visible="True" />
+    <int32 name="Description SID" offset="4" visible="True" />
+    <tagRef name="Unknown" offset="8" visible="False" />
+    <int32 name="Icon" offset="24" visible="True" />
+    <struct name="Entry" offset="28" visible="True" size="4">
+      <int16 name="Entry" offset="0" visible="True" />
+    </struct>
+  </struct>
+  <struct name="Entries" offset="156" visible="True" size="188">
+    <int32 name="Name 1 SID" offset="0" visible="True" />
+    <int32 name="Name 2 SID" offset="4" visible="True" />
+    <int32 name="Description SID" offset="8" visible="True" />
+    <int8 name="Flag?" offset="12" visible="False" />
+    <enum8 name="Flag?" offset="12" visible="True">
+      <option name="None" value="0" />
+      <option name="Variant Available at Start" value="1" />
+      <option name="Default Variant" value="2" />
+      <option name="Default Helmet" value="3" />
+      <option name="Special" value="5" />
+      <option name="Progress" value="9" />
+      <option name="Default Elite" value="11" />
+      <option name="Unlocked Externally" value="12" />
+      <option name="Unlocked Externally - Elite" value="13" />
+      <option name="Unused Entry" value="28" />
+    </enum8>
+    <int8 name="Unknown" offset="13" visible="False" />
+    <int8 name="Unknown" offset="14" visible="False" />
+    <int8 name="Unknown" offset="15" visible="False" />
+    <tagRef name="Unknown" offset="16" visible="False" />
+    <int32 name="Icon" offset="32" visible="True" />
+    <int32 name="Price" offset="36" visible="True" />
+    <struct name="Armor Piece Info" offset="40" visible="True" size="8">
+      <int8 name="Category" offset="0" visible="True" />
+      <enum8 name="Category" offset="0" visible="True">
+        <option name="Helmet" value="0" />
+        <option name="Left Shoulder" value="1" />
+        <option name="Right Shoulder" value="2" />
+        <option name="Chest" value="3" />
+        <option name="Wrist" value="4" />
+        <option name="Leg Utility" value="5" />
+        <option name="Knee Guards" value="6" />
+        <option name="Elite Armor" value="7" />
+      </enum8>
+      <int32 name="ID" offset="4" visible="True" />
+    </struct>
+    <struct name="Armor Effect Info" offset="52" visible="True" size="8">
+      <int8 name="Unknown" offset="0" visible="True" />
+      <int32 name="ID" offset="4" visible="True" />
+    </struct>
+    <struct name="Visor Color Info" offset="64" visible="True" size="4">
+      <int32 name="ID" offset="0" visible="True" />
+    </struct>
+    <struct name="Unknown/Unused" offset="76" visible="False" size="4">
+      <int32 name="Unknown" offset="0" visible="False" />
+    </struct>
+    <struct name="FF Voice Info" offset="88" visible="True" size="4">
+      <int32 name="ID" offset="0" visible="True" />
+    </struct>
+    <struct name="Viewable At Rank..." offset="100" visible="True" size="4">
+      <enum8 name="Rank" offset="0" visible="True">
+        <option name="Recruit" value="0" />
+        <option name="Corporal" value="1" />
+        <option name="Sergeant" value="2" />
+        <option name="Warrant Officer" value="3" />
+        <option name="Captain" value="4" />
+        <option name="Major" value="5" />
+        <option name="Lt. Colonel" value="6" />
+        <option name="Commander" value="7" />
+        <option name="Colonel" value="8" />
+        <option name="Brigadier" value="9" />
+        <option name="General" value="10" />
+        <option name="Field Marshall" value="11" />
+        <option name="Hero" value="12" />
+        <option name="Legend" value="13" />
+        <option name="Mythic" value="14" />
+        <option name="Noble" value="15" />
+        <option name="Eclipse" value="16" />
+        <option name="Nova" value="17" />
+        <option name="Forerunner" value="18" />
+        <option name="Reclaimer" value="19" />
+        <option name="Inheritor" value="20" />
+      </enum8>
+    </struct>
+    <struct name="Viewable After... Is Purchased" offset="112" visible="True" size="4">
+      <int16 name="Required Entry" offset="0" visible="True" />
+    </struct>
+    <undefined name="Unknown" offset="124" visible="False" />
+    <struct name="DLC Lock A" offset="128" visible="True" size="4">
+      <int32 name="Unknown" offset="0" visible="True" />
+    </struct>
+    <undefined name="Unknown" offset="140" visible="False" />
+    <struct name="Purchasable At Rank..." offset="144" visible="True" size="4">
+      <enum8 name="Rank" offset="0" visible="True">
+        <option name="Recruit" value="0" />
+        <option name="Corporal" value="1" />
+        <option name="Sergeant" value="2" />
+        <option name="Warrant Officer" value="3" />
+        <option name="Captain" value="4" />
+        <option name="Major" value="5" />
+        <option name="Lt. Colonel" value="6" />
+        <option name="Commander" value="7" />
+        <option name="Colonel" value="8" />
+        <option name="Brigadier" value="9" />
+        <option name="General" value="10" />
+        <option name="Field Marshall" value="11" />
+        <option name="Hero" value="12" />
+        <option name="Legend" value="13" />
+        <option name="Mythic" value="14" />
+        <option name="Noble" value="15" />
+        <option name="Eclipse" value="16" />
+        <option name="Nova" value="17" />
+        <option name="Forerunner" value="18" />
+        <option name="Reclaimer" value="19" />
+        <option name="Inheritor" value="20" />
+      </enum8>
+    </struct>
+    <struct name="Purchasable After... Is Purchased" offset="156" visible="True" size="4">
+      <int16 name="Required Entry" offset="0" visible="True" />
+    </struct>
+    <int32 name="Unknown" offset="168" visible="False" />
+    <struct name="DLC Lock B" offset="172" visible="True" size="4">
+      <int32 name="Unknown" offset="0" visible="True" />
+    </struct>
+    <int32 name="Unknown" offset="184" visible="False" />
+  </struct>
+  <struct name="DLC Unlocks" offset="168" visible="True" size="12">
+    <struct name="Entry" offset="0" visible="True" size="4">
+      <int16 name="Entry" offset="0" visible="True" />
+    </struct>
+  </struct>
+  <struct name="Waypoint Unlocks" offset="180" visible="True" size="12">
+    <struct name="Entry" offset="0" visible="True" size="4">
+      <int16 name="Entry" offset="0" visible="True" />
+    </struct>
+  </struct>
+</plugin>

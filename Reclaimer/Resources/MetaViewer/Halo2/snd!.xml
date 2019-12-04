@@ -1,0 +1,21 @@
+<plugin>
+  <revisions />
+  <int16 name="Sound Class" offset="0x2" visible="True" />
+  <enum8 name="Format" offset="0x4" visible="True">
+    <option name="Mono 22050kbps" value="0x0" />
+    <option name="Stero 44100kbps" value="0x1" />
+    <option name="WMA Specific" value="0x2" />
+  </enum8>
+  <enum8 name="Compression" offset="0x4" visible="True">
+    <option name="None" value="0x0" />
+    <option name="XBox ADPCM" value="0x1" />
+    <option name="ima adpcm?" value="0x2" />
+    <option name="ogg?" value="0x3" />
+    <option name="WMA" value="0x4" />
+  </enum8>
+  <int16 name="Index to Sound Properties" offset="0x6" visible="True" />
+  <int16 name="Index to Sound Premutations" offset="0x8" visible="True" />
+  <int16 name="Not Index :D" offset="0x6" visible="True" />
+  <int16 name="Index to Combat Dialog Raw" offset="0x8" visible="True" />
+  <int32 name="Not Index :D" offset="0x10" visible="False" />
+</plugin>

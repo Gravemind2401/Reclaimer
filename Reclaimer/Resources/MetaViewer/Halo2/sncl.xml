@@ -1,0 +1,14 @@
+<plugin>
+  <revisions />
+  <struct name="Sound Classes" offset="0x0" visible="True" size="0x5C">
+    <int16 name="Max Sounds Per Tag" offset="0x0" visible="True" />
+    <int16 name="Max Sounds Per Object" offset="0x2" visible="True" />
+    <int32 name="Preemption Time" offset="0x4" visible="True" />
+    <int16 name="Priority" offset="0xC" visible="True" />
+    <enum16 name="Cache Miss Mode" offset="0xE" visible="True" />
+    <enum32 name="Stereo Playback Type" offset="0x4C" visible="True">
+      <option name="First Person" value="0x0" />
+      <option name="Ambient" value="0x1" />
+    </enum32>
+  </struct>
+</plugin>

@@ -1,0 +1,22 @@
+<plugin class="airs" headersize="12">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+    <revision author="Lord Zedd" version="0.9">The hell is that last structure for?</revision>
+  </revisions>
+  <struct name="Airstrike" offset="0" visible="True" size="76">
+    <float32 name="Spread" offset="0" visible="True" />
+    <float32 name="Unknown" offset="4" visible="True" />
+    <float32 name="Initial Shot Delay" offset="8" visible="True" />
+    <float32 name="Time Armed" offset="12" visible="True" />
+    <float32 name="Recharge Time (seconds)" offset="16" visible="True" />
+    <float32 name="Delay Between Shot" offset="20" visible="True" />
+    <int32 name="Total Shots Fired" offset="24" visible="True" />
+    <int32 name="Ammo Count" offset="28" visible="True" />
+    <tagRef name="Airstrike Firing Controller" offset="32" visible="True" />
+    <struct name="Unknown 1" offset="48" visible="True" size="8">
+      <undefined name="Unknown" offset="0" visible="True" />
+      <undefined name="Unknown" offset="4" visible="True" />
+    </struct>
+    <tagRef name="Affected Weapon" offset="60" visible="True" />
+  </struct>
+</plugin>

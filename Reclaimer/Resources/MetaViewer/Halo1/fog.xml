@@ -1,0 +1,106 @@
+<plugin>
+  <comment title="FLAGS">Setting &lt;atmosphere dominant&gt; prevents polygon popping when the atmospheric fog maximum density (in the sky tag) is 1 and the atmospheric fog opaque distance is less than the diameter of the map. However, this flag will cause artifacts when the camera goes below the fog plane - so it should only be used when the fog plane is close to the ground.</comment>
+  <bitfield32 name="flags" offset="0x0" visible="true">
+    <bit name="is water" index="0" />
+    <bit name="atmosphere dominant" index="1" />
+    <bit name="fog screen only" index="2" />
+  </bitfield32>
+  <undefined name="Unknown" offset="0x4" visible="false" />
+  <undefined name="Unknown" offset="0x8" visible="false" />
+  <undefined name="Unknown" offset="0xC" visible="false" />
+  <undefined name="Unknown" offset="0x10" visible="false" />
+  <undefined name="Unknown" offset="0x14" visible="false" />
+  <undefined name="Unknown" offset="0x18" visible="false" />
+  <undefined name="Unknown" offset="0x1C" visible="false" />
+  <undefined name="Unknown" offset="0x20" visible="false" />
+  <undefined name="Unknown" offset="0x24" visible="false" />
+  <undefined name="Unknown" offset="0x28" visible="false" />
+  <undefined name="Unknown" offset="0x2C" visible="false" />
+  <undefined name="Unknown" offset="0x30" visible="false" />
+  <undefined name="Unknown" offset="0x34" visible="false" />
+  <undefined name="Unknown" offset="0x38" visible="false" />
+  <undefined name="Unknown" offset="0x3C" visible="false" />
+  <undefined name="Unknown" offset="0x40" visible="false" />
+  <undefined name="Unknown" offset="0x44" visible="false" />
+  <undefined name="Unknown" offset="0x48" visible="false" />
+  <undefined name="Unknown" offset="0x4C" visible="false" />
+  <undefined name="Unknown" offset="0x50" visible="false" />
+  <comment title="DENSITY" />
+  <undefined name="Unknown" offset="0x54" visible="false" />
+  <float32 name="maximum density" offset="0x58" visible="true" description="planar fog density is clamped to this value" />
+  <undefined name="Unknown" offset="0x5C" visible="false" />
+  <float32 name="opaque distance" offset="0x60" visible="true" description="the fog becomes opaque at this distance from the viewer" />
+  <undefined name="Unknown" offset="0x64" visible="false" />
+  <float32 name="opaque depth" offset="0x68" visible="true" description="the fog becomes opaque at this distance from its surface" />
+  <undefined name="Unknown" offset="0x6C" visible="false" />
+  <undefined name="Unknown" offset="0x70" visible="false" />
+  <float32 name="distance to water plane" offset="0x74" visible="true" description="the fog becomes water at this distance from its surface" />
+  <comment title="COLOR" />
+  <colorf name="color" offset="0x78" format="rgb" visible="true" />
+  <comment title="SCREEN LAYERS" />
+  <bitfield16 name="flags" offset="0x84" visible="true">
+    <bit name="no environment multipass" index="0" />
+    <bit name="no model multipass" index="1" />
+    <bit name="no texture-based falloff" index="2" />
+  </bitfield16>
+  <int16 name="layer count" offset="0x86" visible="true" description="0 layers disables the effect" />
+  <float32 name="distance gradient" offset="0x88" visible="true" description="world units min" />
+  <float32 name="distance gradient" offset="0x8C" visible="true" description="world units max" />
+  <float32 name="density gradient" offset="0x90" visible="true" description="[0,1] min" />
+  <float32 name="density gradient" offset="0x94" visible="true" description="[0,1] max" />
+  <float32 name="start distance from fog plane" offset="0x98" visible="true" description="do NOT set this to the same value as maximum_depth" />
+  <undefined name="Unknown" offset="0x9C" visible="false" />
+  <uint8 name="color" offset="0xA0" visible="true" description="0 defaults to planar fog color Alpha" />
+  <color24 name="color" offset="0xA1" format="rgb" visible="true" description="0 defaults to planar fog color" />
+  <float32 name="rotation multiplier" offset="0xA4" visible="true" description="[0,1]" />
+  <float32 name="strafing multiplier" offset="0xA8" visible="true" description="[0,1]" />
+  <float32 name="zoom multiplier" offset="0xAC" visible="true" description="[0,1]" />
+  <undefined name="Unknown" offset="0xB0" visible="false" />
+  <undefined name="Unknown" offset="0xB4" visible="false" />
+  <float32 name="map scale" offset="0xB8" visible="true" description="0 defaults to 1" />
+  <tagRef name="map" offset="0xBC" visible="true" />
+  <comment title="SCREEN LAYER ANIMATION" />
+  <float32 name="animation period" offset="0xC4" visible="true" description="seconds" />
+  <undefined name="Unknown" offset="0xC8" visible="false" />
+  <float32 name="wind velocity" offset="0xCC" visible="true" description="world units per second min" />
+  <float32 name="wind velocity" offset="0xD0" visible="true" description="world units per second max" />
+  <float32 name="wind period" offset="0xD4" visible="true" description="0 defaults to 1 min" />
+  <float32 name="wind period" offset="0xD8" visible="true" description="0 defaults to 1 max" />
+  <float32 name="wind acceleration weight" offset="0xDC" visible="true" description="[0,1]" />
+  <float32 name="wind perpendicular weight" offset="0xE0" visible="true" description="[0,1]" />
+  <undefined name="Unknown" offset="0xE4" visible="false" />
+  <undefined name="Unknown" offset="0xE8" visible="false" />
+  <comment title="SOUND" />
+  <tagRef name="background sound" offset="0xEC" visible="true" />
+  <tagRef name="sound environment" offset="0xF4" visible="true" />
+  <undefined name="Unknown" offset="0xFC" visible="false" />
+  <undefined name="Unknown" offset="0x100" visible="false" />
+  <undefined name="Unknown" offset="0x104" visible="false" />
+  <undefined name="Unknown" offset="0x108" visible="false" />
+  <undefined name="Unknown" offset="0x10C" visible="false" />
+  <undefined name="Unknown" offset="0x110" visible="false" />
+  <undefined name="Unknown" offset="0x114" visible="false" />
+  <undefined name="Unknown" offset="0x118" visible="false" />
+  <undefined name="Unknown" offset="0x11C" visible="false" />
+  <undefined name="Unknown" offset="0x120" visible="false" />
+  <undefined name="Unknown" offset="0x124" visible="false" />
+  <undefined name="Unknown" offset="0x128" visible="false" />
+  <undefined name="Unknown" offset="0x12C" visible="false" />
+  <undefined name="Unknown" offset="0x130" visible="false" />
+  <undefined name="Unknown" offset="0x134" visible="false" />
+  <undefined name="Unknown" offset="0x138" visible="false" />
+  <undefined name="Unknown" offset="0x13C" visible="false" />
+  <undefined name="Unknown" offset="0x140" visible="false" />
+  <undefined name="Unknown" offset="0x144" visible="false" />
+  <undefined name="Unknown" offset="0x148" visible="false" />
+  <undefined name="Unknown" offset="0x14C" visible="false" />
+  <undefined name="Unknown" offset="0x150" visible="false" />
+  <undefined name="Unknown" offset="0x154" visible="false" />
+  <undefined name="Unknown" offset="0x158" visible="false" />
+  <undefined name="Unknown" offset="0x15C" visible="false" />
+  <undefined name="Unknown" offset="0x160" visible="false" />
+  <undefined name="Unknown" offset="0x164" visible="false" />
+  <undefined name="Unknown" offset="0x168" visible="false" />
+  <undefined name="Unknown" offset="0x16C" visible="false" />
+  <undefined name="Unknown" offset="0x170" visible="false" />
+</plugin>

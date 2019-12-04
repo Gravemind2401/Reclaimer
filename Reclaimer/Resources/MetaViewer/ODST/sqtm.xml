@@ -1,0 +1,41 @@
+<plugin class="sqtm" headersize="16">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <undefined name="Unknown" offset="0" visible="False" />
+  <struct name="Unknown 0" offset="4" visible="False" size="96">
+    <stringID name="Name" offset="0" visible="True" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="12" visible="False" />
+    <undefined name="Unknown" offset="16" visible="False" />
+    <struct name="Characters" offset="20" visible="False" size="32">
+      <undefined name="Unknown" offset="0" visible="False" />
+      <undefined name="Unknown" offset="4" visible="False" />
+      <undefined name="Unknown" offset="8" visible="False" />
+      <tagRef name="Character" offset="12" visible="True" />
+      <undefined name="Unknown" offset="28" visible="False" />
+    </struct>
+    <struct name="Unknown 2" offset="32" visible="False" size="32">
+      <undefined name="Unknown" offset="0" visible="False" />
+      <undefined name="Unknown" offset="4" visible="False" />
+      <undefined name="Unknown" offset="8" visible="False" />
+      <tagRef name="Unknown" offset="12" visible="False" />
+      <undefined name="Unknown" offset="28" visible="False" />
+    </struct>
+    <struct name="Weapons" offset="44" visible="True" size="32">
+      <undefined name="Unknown" offset="0" visible="False" />
+      <undefined name="Unknown" offset="4" visible="False" />
+      <undefined name="Unknown" offset="8" visible="False" />
+      <tagRef name="Weapon" offset="12" visible="True" />
+      <undefined name="Unknown" offset="28" visible="False" />
+    </struct>
+    <undefined name="Unknown" offset="56" visible="False" />
+    <undefined name="Unknown" offset="60" visible="False" />
+    <undefined name="Unknown" offset="64" visible="False" />
+    <undefined name="Unknown" offset="68" visible="False" />
+    <tagRef name="Vehicle" offset="72" visible="True" />
+    <undefined name="Unknown" offset="88" visible="False" />
+    <undefined name="Unknown" offset="92" visible="False" />
+  </struct>
+</plugin>

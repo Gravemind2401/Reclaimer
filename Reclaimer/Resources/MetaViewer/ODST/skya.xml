@@ -1,0 +1,65 @@
+<plugin class="skya" headersize="76">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Created layout of plugin</revision>
+    <revision author="-DeToX-" version="0.12">Names some values.</revision>
+  </revisions>
+  <undefined name="Unknown" offset="0" visible="False" />
+  <undefined name="Unknown" offset="4" visible="False" />
+  <undefined name="Unknown" offset="8" visible="False" />
+  <tagRef name="Fog Bitmap" offset="12" visible="True" />
+  <undefined name="Unknown" offset="20" visible="False" />
+  <undefined name="Unknown" offset="24" visible="False" />
+  <undefined name="Unknown" offset="28" visible="False" />
+  <undefined name="Unknown" offset="32" visible="False" />
+  <undefined name="Unknown" offset="36" visible="False" />
+  <undefined name="Unknown" offset="40" visible="False" />
+  <undefined name="Unknown" offset="44" visible="False" />
+  <undefined name="Unknown" offset="48" visible="False" />
+  <struct name="Atmosphere Properties" offset="52" visible="True" size="164">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <stringID name="Name" offset="4" visible="True" />
+    <float32 name="Light Source Y" offset="8" visible="True" />
+    <float32 name="Light Source X" offset="12" visible="True" />
+    <float32 name="Fog Color Red" offset="16" visible="True" />
+    <float32 name="Fog Color Green" offset="20" visible="True" />
+    <float32 name="Fog Color Blue" offset="24" visible="True" />
+    <float32 name="Brightness" offset="28" visible="True" />
+    <float32 name="Fog Gradient Threshold?" offset="32" visible="False" />
+    <float32 name="Light Intensity" offset="36" visible="False" />
+    <float32 name="Sky invisiblility Through Fog" offset="40" visible="True" />
+    <undefined name="Unknown" offset="44" visible="False" />
+    <undefined name="Unknown" offset="48" visible="False" />
+    <float32 name="Light Source Spread" offset="52" visible="True" />
+    <undefined name="Unknown" offset="56" visible="False" />
+    <float32 name="Fog Intensity" offset="60" visible="False" />
+    <undefined name="Unknown" offset="64" visible="False" />
+    <float32 name="Tint Cyan?" offset="68" visible="True" />
+    <float32 name="Tint Magenta?" offset="72" visible="True" />
+    <float32 name="Tint Yellow?" offset="76" visible="True" />
+    <float32 name="Fog Intensity Cyan?" offset="80" visible="True" />
+    <float32 name="Fog Intensity Magenta?" offset="84" visible="True" />
+    <float32 name="Fog Intensity Yellow?" offset="88" visible="True" />
+    <float32 name="Background Color Red" offset="92" visible="True" />
+    <float32 name="Background Color Green" offset="96" visible="True" />
+    <float32 name="Background Color Blue" offset="100" visible="True" />
+    <float32 name="Tint Red?" offset="104" visible="True" />
+    <float32 name="Tint2 Green?" offset="108" visible="True" />
+    <float32 name="Tint2 Blue?" offset="112" visible="True" />
+    <float32 name="Fog Intensity2" offset="116" visible="True" />
+    <float32 name="Start Distance?" offset="120" visible="True" />
+    <float32 name="End Distance?" offset="124" visible="True" />
+    <float32 name="Fog Velocity X" offset="128" visible="True" />
+    <float32 name="Fog Velocity Y" offset="132" visible="True" />
+    <float32 name="Fog Velocity Z" offset="136" visible="True" />
+    <tagRef name="Weather Effect" offset="140" visible="True" />
+    <undefined name="Unknown" offset="156" visible="False" />
+    <undefined name="Unknown" offset="160" visible="False" />
+  </struct>
+  <struct name="Unknown3" offset="64" visible="False" size="20">
+    <undefined name="Unknown" offset="0" visible="False" />
+    <undefined name="Unknown" offset="4" visible="False" />
+    <undefined name="Unknown" offset="8" visible="False" />
+    <undefined name="Unknown" offset="12" visible="False" />
+    <undefined name="Unknown" offset="16" visible="False" />
+  </struct>
+</plugin>

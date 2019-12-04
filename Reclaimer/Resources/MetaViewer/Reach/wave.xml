@@ -1,0 +1,17 @@
+<plugin class="wave" headersize="12">
+  <revisions>
+    <revision author="DarkShallFall" version="0,1">Mapped plugin structure a new.</revision>
+    <revision author="Snipe" version="0,2">Mapped plugin structure a new.</revision>
+  </revisions>
+  <struct name="Firefight Squad" offset="0" visible="True" size="36">
+    <tagRef name="Spawned Squads" offset="0" visible="True" />
+    <undefined name="Unknown" offset="16" visible="True" />
+    <undefined name="Unknown" offset="20" visible="True" />
+    <undefined name="Unknown" offset="24" visible="True" />
+    <int8 name="Unknown" offset="28" visible="True" />
+    <int8 name="Unknown" offset="29" visible="True" />
+    <int8 name="Affects # Spawned 1" offset="30" visible="True" />
+    <int8 name="Affects # Spawned 2" offset="31" visible="True" />
+    <undefined name="Unknown" offset="32" visible="True" />
+  </struct>
+</plugin>

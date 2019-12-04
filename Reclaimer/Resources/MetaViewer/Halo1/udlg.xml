@@ -1,0 +1,546 @@
+<plugin>
+  <int16 name="Unknown" offset="0x0" visible="false" />
+  <int16 name="Unknown" offset="0x2" visible="false" />
+  <undefined name="Unknown" offset="0x4" visible="false" />
+  <undefined name="Unknown" offset="0x8" visible="false" />
+  <undefined name="Unknown" offset="0xC" visible="false" />
+  <comment title="idle">vocalizations generated at intervals when nothing else is happening.</comment>
+  <tagRef name="idle noncombat" offset="0x10" visible="true" description="played randomly and intermittently whenever we aren't in combat" />
+  <tagRef name="idle combat" offset="0x18" visible="true" description="played randomly and intermittently whenever we're in combat" />
+  <tagRef name="idle flee" offset="0x20" visible="true" description="played continuously while we are fleeing" />
+  <undefined name="Unknown" offset="0x28" visible="false" />
+  <undefined name="Unknown" offset="0x2C" visible="false" />
+  <undefined name="Unknown" offset="0x30" visible="false" />
+  <undefined name="Unknown" offset="0x34" visible="false" />
+  <undefined name="Unknown" offset="0x38" visible="false" />
+  <undefined name="Unknown" offset="0x3C" visible="false" />
+  <undefined name="Unknown" offset="0x40" visible="false" />
+  <undefined name="Unknown" offset="0x44" visible="false" />
+  <undefined name="Unknown" offset="0x48" visible="false" />
+  <undefined name="Unknown" offset="0x4C" visible="false" />
+  <undefined name="Unknown" offset="0x50" visible="false" />
+  <undefined name="Unknown" offset="0x54" visible="false" />
+  <comment title="involuntary">vocalizations generated automatically when damaged; interrupt everything except scripted dialogue.</comment>
+  <tagRef name="pain body minor" offset="0x58" visible="true" description="took body damage" />
+  <tagRef name="pain body major" offset="0x60" visible="true" description="took a significant amount of body damage" />
+  <tagRef name="pain shield" offset="0x68" visible="true" description="took shield damage" />
+  <tagRef name="pain falling" offset="0x70" visible="true" description="took damage from falling" />
+  <tagRef name="scream fear" offset="0x78" visible="true" description="screaming in fear (falling to your death, explosive stuck to you)" />
+  <tagRef name="scream pain" offset="0x80" visible="true" description="screaming in pain (being flamed)" />
+  <tagRef name="maimed limb" offset="0x88" visible="true" description="limb body part (arm or leg) was destroyed" />
+  <tagRef name="maimed head" offset="0x90" visible="true" description="head body part was destroyed" />
+  <tagRef name="death quiet" offset="0x98" visible="true" description="died from minor damage, or was unprepared" />
+  <tagRef name="death violent" offset="0xA0" visible="true" description="died from violent trauma" />
+  <tagRef name="death falling" offset="0xA8" visible="true" description="died from falling" />
+  <tagRef name="death agonizing" offset="0xB0" visible="true" description="died in a horribly painful fashion (burnt to death)" />
+  <tagRef name="death instant" offset="0xB8" visible="true" description="died instantly" />
+  <tagRef name="death flying" offset="0xC0" visible="true" description="died and was blown up into the air" />
+  <undefined name="Unknown" offset="0xC8" visible="false" />
+  <undefined name="Unknown" offset="0xCC" visible="false" />
+  <undefined name="Unknown" offset="0xD0" visible="false" />
+  <undefined name="Unknown" offset="0xD4" visible="false" />
+  <comment title="hurting people" />
+  <tagRef name="damaged friend" offset="0xD8" visible="true" description="hurt a friendly AI" />
+  <tagRef name="damaged friend player" offset="0xE0" visible="true" description="hurt a friendly player" />
+  <tagRef name="damaged enemy" offset="0xE8" visible="true" description="hurt an enemy" />
+  <tagRef name="damaged enemy cm" offset="0xF0" visible="true" description=" comment to friend" />
+  <undefined name="Unknown" offset="0xF8" visible="false" />
+  <undefined name="Unknown" offset="0xFC" visible="false" />
+  <undefined name="Unknown" offset="0x100" visible="false" />
+  <undefined name="Unknown" offset="0x104" visible="false" />
+  <undefined name="Unknown" offset="0x108" visible="false" />
+  <undefined name="Unknown" offset="0x10C" visible="false" />
+  <undefined name="Unknown" offset="0x110" visible="false" />
+  <undefined name="Unknown" offset="0x114" visible="false" />
+  <undefined name="Unknown" offset="0x118" visible="false" />
+  <undefined name="Unknown" offset="0x11C" visible="false" />
+  <undefined name="Unknown" offset="0x120" visible="false" />
+  <undefined name="Unknown" offset="0x124" visible="false" />
+  <undefined name="Unknown" offset="0x128" visible="false" />
+  <undefined name="Unknown" offset="0x12C" visible="false" />
+  <undefined name="Unknown" offset="0x130" visible="false" />
+  <undefined name="Unknown" offset="0x134" visible="false" />
+  <comment title="being hurt" />
+  <tagRef name="hurt friend" offset="0x138" visible="true" description="hurt by a friendly AI" />
+  <tagRef name="hurt friend re" offset="0x140" visible="true" description=" response from that friend" />
+  <tagRef name="hurt friend player" offset="0x148" visible="true" description="hurt by a friendly player" />
+  <tagRef name="hurt enemy" offset="0x150" visible="true" description="hurt by an enemy" />
+  <tagRef name="hurt enemy re" offset="0x158" visible="true" description=" response from the enemy that hurt us ('you like that?')" />
+  <tagRef name="hurt enemy cm" offset="0x160" visible="true" description=" comment from a friend of ours" />
+  <tagRef name="hurt enemy bullet" offset="0x168" visible="true" description="hurt by an enemy with bullets" />
+  <tagRef name="hurt enemy needler" offset="0x170" visible="true" description="hurt by an enemy with needles" />
+  <tagRef name="hurt enemy plasma" offset="0x178" visible="true" description="hurt by an enemy with a plasma bolt" />
+  <tagRef name="hurt enemy sniper" offset="0x180" visible="true" description="hurt by an enemy with a sniper weapon" />
+  <tagRef name="hurt enemy grenade" offset="0x188" visible="true" description="a grenade is stuck to us" />
+  <tagRef name="hurt enemy explosion" offset="0x190" visible="true" description="hurt by an enemy with an explosive weapon" />
+  <tagRef name="hurt enemy melee" offset="0x198" visible="true" description="hurt by an enemy with a melee weapon" />
+  <tagRef name="hurt enemy flame" offset="0x1A0" visible="true" description="hurt by an enemy with flamethrower" />
+  <tagRef name="hurt enemy shotgun" offset="0x1A8" visible="true" description="hurt by an enemy with a shotgun" />
+  <tagRef name="hurt enemy vehicle" offset="0x1B0" visible="true" description="hurt by an enemy with a vehicle" />
+  <tagRef name="hurt enemy mountedweapon" offset="0x1B8" visible="true" description="hurt by an enemy with a fixed weapon" />
+  <undefined name="Unknown" offset="0x1C0" visible="false" />
+  <undefined name="Unknown" offset="0x1C4" visible="false" />
+  <undefined name="Unknown" offset="0x1C8" visible="false" />
+  <undefined name="Unknown" offset="0x1CC" visible="false" />
+  <undefined name="Unknown" offset="0x1D0" visible="false" />
+  <undefined name="Unknown" offset="0x1D4" visible="false" />
+  <undefined name="Unknown" offset="0x1D8" visible="false" />
+  <undefined name="Unknown" offset="0x1DC" visible="false" />
+  <undefined name="Unknown" offset="0x1E0" visible="false" />
+  <undefined name="Unknown" offset="0x1E4" visible="false" />
+  <undefined name="Unknown" offset="0x1E8" visible="false" />
+  <undefined name="Unknown" offset="0x1EC" visible="false" />
+  <comment title="killing people" />
+  <tagRef name="killed friend" offset="0x1F0" visible="true" description="killed a friendly AI" />
+  <tagRef name="killed friend cm" offset="0x1F8" visible="true" description=" comment from a friend" />
+  <tagRef name="killed friend player" offset="0x200" visible="true" description="killed a friendly player" />
+  <tagRef name="killed friend player cm" offset="0x208" visible="true" description=" comment from a friend" />
+  <tagRef name="killed enemy" offset="0x210" visible="true" description="killed an enemy" />
+  <tagRef name="killed enemy cm" offset="0x218" visible="true" description=" comment from a friend" />
+  <tagRef name="killed enemy player" offset="0x220" visible="true" description="killed an enemy player" />
+  <tagRef name="killed enemy player cm" offset="0x228" visible="true" description=" comment from a friend" />
+  <tagRef name="killed enemy covenant" offset="0x230" visible="true" description="killed an enemy covenant" />
+  <tagRef name="killed enemy covenant cm" offset="0x238" visible="true" description=" comment from a friend" />
+  <tagRef name="killed enemy floodcombat" offset="0x240" visible="true" description="killed an enemy flood combat form" />
+  <tagRef name="killed enemy floodcombat cm" offset="0x248" visible="true" description=" comment from a friend" />
+  <tagRef name="killed enemy floodcarrier" offset="0x250" visible="true" description="killed an enemy flood carrier form" />
+  <tagRef name="killed enemy floodcarrier cm" offset="0x258" visible="true" description=" comment from a friend" />
+  <tagRef name="killed enemy sentinel" offset="0x260" visible="true" description="killed an enemy sentinel" />
+  <tagRef name="killed enemy sentinel cm" offset="0x268" visible="true" description=" comment from a friend" />
+  <tagRef name="killed enemy bullet" offset="0x270" visible="true" description="killed an enemy with bullets" />
+  <tagRef name="killed enemy needler" offset="0x278" visible="true" description="killed an enemy with needles" />
+  <tagRef name="killed enemy plasma" offset="0x280" visible="true" description="killed an enemy with a plasma bolt" />
+  <tagRef name="killed enemy sniper" offset="0x288" visible="true" description="killed an enemy with a sniper weapon" />
+  <tagRef name="killed enemy grenade" offset="0x290" visible="true" description="killed an enemy with a grenade" />
+  <tagRef name="killed enemy explosion" offset="0x298" visible="true" description="killed an enemy with an explosive weapon" />
+  <tagRef name="killed enemy melee" offset="0x2A0" visible="true" description="killed an enemy with a melee weapon" />
+  <tagRef name="killed enemy flame" offset="0x2A8" visible="true" description="killed an enemy with flamethrower" />
+  <tagRef name="killed enemy shotgun" offset="0x2B0" visible="true" description="killed an enemy with a shotgun" />
+  <tagRef name="killed enemy vehicle" offset="0x2B8" visible="true" description="killed an enemy by hitting them with a vehicle" />
+  <tagRef name="killed enemy mountedweapon" offset="0x2C0" visible="true" description="killed an enemy with a fixed weapon" />
+  <tagRef name="killing spree" offset="0x2C8" visible="true" description="we are on a killing spree" />
+  <undefined name="Unknown" offset="0x2D0" visible="false" />
+  <undefined name="Unknown" offset="0x2D4" visible="false" />
+  <undefined name="Unknown" offset="0x2D8" visible="false" />
+  <undefined name="Unknown" offset="0x2DC" visible="false" />
+  <undefined name="Unknown" offset="0x2E0" visible="false" />
+  <undefined name="Unknown" offset="0x2E4" visible="false" />
+  <undefined name="Unknown" offset="0x2E8" visible="false" />
+  <undefined name="Unknown" offset="0x2EC" visible="false" />
+  <undefined name="Unknown" offset="0x2F0" visible="false" />
+  <undefined name="Unknown" offset="0x2F4" visible="false" />
+  <undefined name="Unknown" offset="0x2F8" visible="false" />
+  <undefined name="Unknown" offset="0x2FC" visible="false" />
+  <comment title="player kill responses">responses to a friendly player killing an enemy nearby</comment>
+  <tagRef name="player kill cm" offset="0x300" visible="true" description="response to the player killing an enemy" />
+  <tagRef name="player kill bullet cm" offset="0x308" visible="true" description="response to the player killing an enemy with bullets" />
+  <tagRef name="player kill needler cm" offset="0x310" visible="true" description="response to the player killing an enemy with needles" />
+  <tagRef name="player kill plasma cm" offset="0x318" visible="true" description="response to the player killing an enemy with a plasma bolt" />
+  <tagRef name="player kill sniper cm" offset="0x320" visible="true" description="response to the player killing an enemy with a sniper weapon" />
+  <tagRef name="anyone kill grenade cm" offset="0x328" visible="true" description="response to _anyone_ killing an enemy with a grenade" />
+  <tagRef name="player kill explosion cm" offset="0x330" visible="true" description="response to the player killing an enemy with an explosive weapon" />
+  <tagRef name="player kill melee cm" offset="0x338" visible="true" description="response to the player killing an enemy with a melee weapon" />
+  <tagRef name="player kill flame cm" offset="0x340" visible="true" description="response to the player killing an enemy with flamethrower" />
+  <tagRef name="player kill shotgun cm" offset="0x348" visible="true" description="response to the player killing an enemy with a shotgun" />
+  <tagRef name="player kill vehicle cm" offset="0x350" visible="true" description="response to the player killing an enemy by hitting them with a vehicle" />
+  <tagRef name="player kill mountedweapon cm" offset="0x358" visible="true" description="response to the player killing an enemy with a fixed weapon" />
+  <tagRef name="player killling spree cm" offset="0x360" visible="true" description="response to the player going on a killing spree" />
+  <undefined name="Unknown" offset="0x368" visible="false" />
+  <undefined name="Unknown" offset="0x36C" visible="false" />
+  <undefined name="Unknown" offset="0x370" visible="false" />
+  <undefined name="Unknown" offset="0x374" visible="false" />
+  <undefined name="Unknown" offset="0x378" visible="false" />
+  <undefined name="Unknown" offset="0x37C" visible="false" />
+  <undefined name="Unknown" offset="0x380" visible="false" />
+  <undefined name="Unknown" offset="0x384" visible="false" />
+  <undefined name="Unknown" offset="0x388" visible="false" />
+  <undefined name="Unknown" offset="0x38C" visible="false" />
+  <undefined name="Unknown" offset="0x390" visible="false" />
+  <undefined name="Unknown" offset="0x394" visible="false" />
+  <comment title="friends dying" />
+  <tagRef name="friend died" offset="0x398" visible="true" description="a friendly AI died" />
+  <tagRef name="friend player died" offset="0x3A0" visible="true" description="a friendly player died" />
+  <tagRef name="friend killed by friend" offset="0x3A8" visible="true" description="a friend died from friendly fire" />
+  <tagRef name="friend killed by friendly player" offset="0x3B0" visible="true" description=" friend died from player's friendly fire" />
+  <tagRef name="friend killed by enemy" offset="0x3B8" visible="true" description="a friend died from enemy fire" />
+  <tagRef name="friend killed by enemy player" offset="0x3C0" visible="true" description=" friend died from an enemy player" />
+  <tagRef name="friend killed by covenant" offset="0x3C8" visible="true" description="a friend died from covenant fire" />
+  <tagRef name="friend killed by flood" offset="0x3D0" visible="true" description="a friend died from the flood" />
+  <tagRef name="friend killed by sentinel" offset="0x3D8" visible="true" description="a friend died from sentinel fire" />
+  <tagRef name="friend betrayed" offset="0x3E0" visible="true" description="a friend was deliberately killed by an ally that we don't trust (e.g. player killed a marine)" />
+  <undefined name="Unknown" offset="0x3E8" visible="false" />
+  <undefined name="Unknown" offset="0x3EC" visible="false" />
+  <undefined name="Unknown" offset="0x3F0" visible="false" />
+  <undefined name="Unknown" offset="0x3F4" visible="false" />
+  <undefined name="Unknown" offset="0x3F8" visible="false" />
+  <undefined name="Unknown" offset="0x3FC" visible="false" />
+  <undefined name="Unknown" offset="0x400" visible="false" />
+  <undefined name="Unknown" offset="0x404" visible="false" />
+  <comment title="shouting">vocalizations that can be played even if a friend is talking</comment>
+  <tagRef name="new combat alone" offset="0x408" visible="true" description="see an enemy and we have not previously been in combat" />
+  <tagRef name="new enemy recent combat" offset="0x410" visible="true" description="see a new enemy and we have recently been in combat" />
+  <tagRef name="old enemy sighted" offset="0x418" visible="true" description="see an enemy that we are currently looking for" />
+  <tagRef name="unexpected enemy" offset="0x420" visible="true" description="unexpectedly encounters enemy (behind or to the side)" />
+  <tagRef name="dead friend found" offset="0x428" visible="true" description="unexpectedly finds a dead body of a friend" />
+  <tagRef name="alliance broken" offset="0x430" visible="true" description="we decide that a former ally is now a traitor" />
+  <tagRef name="alliance reformed" offset="0x438" visible="true" description="we forgive a traitor and make him our friend again" />
+  <tagRef name="grenade throwing" offset="0x440" visible="true" description="throwing a grenade" />
+  <tagRef name="grenade sighted" offset="0x448" visible="true" description="see an enemy grenade" />
+  <tagRef name="grenade startle" offset="0x450" visible="true" description="alerted by a grenade bouncing near us" />
+  <tagRef name="grenade danger enemy" offset="0x458" visible="true" description="in danger from an enemy grenade" />
+  <tagRef name="grenade danger self" offset="0x460" visible="true" description="in danger from your own grenade" />
+  <tagRef name="grenade danger friend" offset="0x468" visible="true" description="in danger from a friendly grenade (not our own)" />
+  <undefined name="Unknown" offset="0x470" visible="false" />
+  <undefined name="Unknown" offset="0x474" visible="false" />
+  <undefined name="Unknown" offset="0x478" visible="false" />
+  <undefined name="Unknown" offset="0x47C" visible="false" />
+  <undefined name="Unknown" offset="0x480" visible="false" />
+  <undefined name="Unknown" offset="0x484" visible="false" />
+  <undefined name="Unknown" offset="0x488" visible="false" />
+  <undefined name="Unknown" offset="0x48C" visible="false" />
+  <comment title="group communication">vocalizations that require friends</comment>
+  <tagRef name="new combat group re" offset="0x490" visible="true" description="reply to a nearby friend who alerted us to an enemy" />
+  <tagRef name="new combat nearby re" offset="0x498" visible="true" description="reply to a distant friend who alerted us to an enemy" />
+  <tagRef name="alert friend" offset="0x4A0" visible="true" description="alert a friend who is in a noncombat state" />
+  <tagRef name="alert friend re" offset="0x4A8" visible="true" description="alerted by a friend when in a noncombat state" />
+  <tagRef name="alert lost contact" offset="0x4B0" visible="true" description="alert friends that target was not at expected location" />
+  <tagRef name="alert lost contact re" offset="0x4B8" visible="true" description=" response" />
+  <tagRef name="blocked" offset="0x4C0" visible="true" description="friend is blocking us from moving or firing" />
+  <tagRef name="blocked re" offset="0x4C8" visible="true" description=" response" />
+  <tagRef name="search start" offset="0x4D0" visible="true" description="starting to search" />
+  <tagRef name="search query" offset="0x4D8" visible="true" description="asking searchers whether they have found anything" />
+  <tagRef name="search query re" offset="0x4E0" visible="true" description=" response" />
+  <tagRef name="search report" offset="0x4E8" visible="true" description="searcher reporting that an area is clear" />
+  <tagRef name="search abandon" offset="0x4F0" visible="true" description="searcher giving up on search" />
+  <tagRef name="search group abandon" offset="0x4F8" visible="true" description="search coordinator giving up on search" />
+  <tagRef name="group uncover" offset="0x500" visible="true" description="starting to uncover target with friend" />
+  <tagRef name="group uncover re" offset="0x508" visible="true" description=" response" />
+  <tagRef name="advance" offset="0x510" visible="true" description="our platoon starts to attack or advance" />
+  <tagRef name="advance re" offset="0x518" visible="true" description=" response" />
+  <tagRef name="retreat" offset="0x520" visible="true" description="our platoon starts to defend or retreat" />
+  <tagRef name="retreat re" offset="0x528" visible="true" description=" response" />
+  <tagRef name="cover" offset="0x530" visible="true" description="telling friends to seek cover" />
+  <undefined name="Unknown" offset="0x538" visible="false" />
+  <undefined name="Unknown" offset="0x53C" visible="false" />
+  <undefined name="Unknown" offset="0x540" visible="false" />
+  <undefined name="Unknown" offset="0x544" visible="false" />
+  <undefined name="Unknown" offset="0x548" visible="false" />
+  <undefined name="Unknown" offset="0x54C" visible="false" />
+  <undefined name="Unknown" offset="0x550" visible="false" />
+  <undefined name="Unknown" offset="0x554" visible="false" />
+  <undefined name="Unknown" offset="0x558" visible="false" />
+  <undefined name="Unknown" offset="0x55C" visible="false" />
+  <undefined name="Unknown" offset="0x560" visible="false" />
+  <undefined name="Unknown" offset="0x564" visible="false" />
+  <undefined name="Unknown" offset="0x568" visible="false" />
+  <undefined name="Unknown" offset="0x56C" visible="false" />
+  <undefined name="Unknown" offset="0x570" visible="false" />
+  <undefined name="Unknown" offset="0x574" visible="false" />
+  <comment title="actions">vocalizations that don't require friends</comment>
+  <tagRef name="sighted friend player" offset="0x578" visible="true" description="sighted a new friendly player" />
+  <tagRef name="shooting" offset="0x580" visible="true" description="shooting at an enemy" />
+  <tagRef name="shooting vehicle" offset="0x588" visible="true" description="shooting from a vehicle at an enemy" />
+  <tagRef name="shooting berserk" offset="0x590" visible="true" description="shooting at an enemy while berserk" />
+  <tagRef name="shooting group" offset="0x598" visible="true" description="shooting at a group of enemies" />
+  <tagRef name="shooting traitor" offset="0x5A0" visible="true" description="shooting at a traitorous player" />
+  <tagRef name="taunt" offset="0x5A8" visible="true" description="taunting the enemy" />
+  <tagRef name="taunt re" offset="0x5B0" visible="true" description=" response" />
+  <tagRef name="flee" offset="0x5B8" visible="true" description="fleeing in panic" />
+  <tagRef name="flee re" offset="0x5C0" visible="true" description=" response" />
+  <tagRef name="flee leader died" offset="0x5C8" visible="true" description="fleeing in panic because our leaders are all dead" />
+  <tagRef name="attempted flee" offset="0x5D0" visible="true" description="unable to flee because a leader is nearby" />
+  <tagRef name="attempted flee re" offset="0x5D8" visible="true" description="unable to flee because a leader is nearby - response" />
+  <tagRef name="lost contact" offset="0x5E0" visible="true" description="target was not at expected location" />
+  <tagRef name="hiding finished" offset="0x5E8" visible="true" description="stops hiding and pursues target" />
+  <tagRef name="vehicle entry" offset="0x5F0" visible="true" description="enters vehicle" />
+  <tagRef name="vehicle exit" offset="0x5F8" visible="true" description="exits vehicle" />
+  <tagRef name="vehicle woohoo" offset="0x600" visible="true" description="excited while in vehicle (big air, etc)" />
+  <tagRef name="vehicle scared" offset="0x608" visible="true" description="scared while in vehicle (imminent crash)" />
+  <tagRef name="vehicle collision" offset="0x610" visible="true" description="riding in a vehicle and the driver collides with something" />
+  <tagRef name="partially sighted" offset="0x618" visible="true" description="saw something suspicious but not sure it was an enemy" />
+  <tagRef name="nothing there" offset="0x620" visible="true" description="decided that a suspicious sighting was nothing after all" />
+  <tagRef name="pleading" offset="0x628" visible="true" description="pleading for the player to spare our pitiable lives" />
+  <undefined name="Unknown" offset="0x630" visible="false" />
+  <undefined name="Unknown" offset="0x634" visible="false" />
+  <undefined name="Unknown" offset="0x638" visible="false" />
+  <undefined name="Unknown" offset="0x63C" visible="false" />
+  <undefined name="Unknown" offset="0x640" visible="false" />
+  <undefined name="Unknown" offset="0x644" visible="false" />
+  <undefined name="Unknown" offset="0x648" visible="false" />
+  <undefined name="Unknown" offset="0x64C" visible="false" />
+  <undefined name="Unknown" offset="0x650" visible="false" />
+  <undefined name="Unknown" offset="0x654" visible="false" />
+  <undefined name="Unknown" offset="0x658" visible="false" />
+  <undefined name="Unknown" offset="0x65C" visible="false" />
+  <undefined name="Unknown" offset="0x660" visible="false" />
+  <undefined name="Unknown" offset="0x664" visible="false" />
+  <undefined name="Unknown" offset="0x668" visible="false" />
+  <undefined name="Unknown" offset="0x66C" visible="false" />
+  <undefined name="Unknown" offset="0x670" visible="false" />
+  <undefined name="Unknown" offset="0x674" visible="false" />
+  <undefined name="Unknown" offset="0x678" visible="false" />
+  <undefined name="Unknown" offset="0x67C" visible="false" />
+  <undefined name="Unknown" offset="0x680" visible="false" />
+  <undefined name="Unknown" offset="0x684" visible="false" />
+  <undefined name="Unknown" offset="0x688" visible="false" />
+  <undefined name="Unknown" offset="0x68C" visible="false" />
+  <comment title="exclamations">vocalizations that interrupt our talking</comment>
+  <tagRef name="surprise" offset="0x690" visible="true" description="surprised by an enemy, noise, body or weapon impact" />
+  <tagRef name="berserk" offset="0x698" visible="true" description="went berserk" />
+  <tagRef name="melee attack" offset="0x6A0" visible="true" description="attacked an enemy in melee" />
+  <tagRef name="dive" offset="0x6A8" visible="true" description="dove away from danger or into cover" />
+  <tagRef name="uncover exclamation" offset="0x6B0" visible="true" description="leapt out of corner to uncover a suspected target" />
+  <tagRef name="leap attack" offset="0x6B8" visible="true" description="begin a leap attack" />
+  <tagRef name="resurrection" offset="0x6C0" visible="true" description="arise and return to life" />
+  <undefined name="Unknown" offset="0x6C8" visible="false" />
+  <undefined name="Unknown" offset="0x6CC" visible="false" />
+  <undefined name="Unknown" offset="0x6D0" visible="false" />
+  <undefined name="Unknown" offset="0x6D4" visible="false" />
+  <undefined name="Unknown" offset="0x6D8" visible="false" />
+  <undefined name="Unknown" offset="0x6DC" visible="false" />
+  <undefined name="Unknown" offset="0x6E0" visible="false" />
+  <undefined name="Unknown" offset="0x6E4" visible="false" />
+  <undefined name="Unknown" offset="0x6E8" visible="false" />
+  <undefined name="Unknown" offset="0x6EC" visible="false" />
+  <undefined name="Unknown" offset="0x6F0" visible="false" />
+  <undefined name="Unknown" offset="0x6F4" visible="false" />
+  <undefined name="Unknown" offset="0x6F8" visible="false" />
+  <undefined name="Unknown" offset="0x6FC" visible="false" />
+  <undefined name="Unknown" offset="0x700" visible="false" />
+  <undefined name="Unknown" offset="0x704" visible="false" />
+  <comment title="post-combat actions">vocalizations that immediately follow combat</comment>
+  <tagRef name="celebration" offset="0x708" visible="true" description="all enemies defeated" />
+  <tagRef name="check body enemy" offset="0x710" visible="true" description="post-combat checking an enemy's dead body" />
+  <tagRef name="check body friend" offset="0x718" visible="true" description="post-combat checking a friend's dead body" />
+  <tagRef name="shooting dead enemy" offset="0x720" visible="true" description="post-combat shooting an enemy's dead body" />
+  <tagRef name="shooting dead enemy player" offset="0x728" visible="true" description="post-combat shooting an enemy player's dead body" />
+  <undefined name="Unknown" offset="0x730" visible="false" />
+  <undefined name="Unknown" offset="0x734" visible="false" />
+  <undefined name="Unknown" offset="0x738" visible="false" />
+  <undefined name="Unknown" offset="0x73C" visible="false" />
+  <undefined name="Unknown" offset="0x740" visible="false" />
+  <undefined name="Unknown" offset="0x744" visible="false" />
+  <undefined name="Unknown" offset="0x748" visible="false" />
+  <undefined name="Unknown" offset="0x74C" visible="false" />
+  <undefined name="Unknown" offset="0x750" visible="false" />
+  <undefined name="Unknown" offset="0x754" visible="false" />
+  <undefined name="Unknown" offset="0x758" visible="false" />
+  <undefined name="Unknown" offset="0x75C" visible="false" />
+  <undefined name="Unknown" offset="0x760" visible="false" />
+  <undefined name="Unknown" offset="0x764" visible="false" />
+  <undefined name="Unknown" offset="0x768" visible="false" />
+  <undefined name="Unknown" offset="0x76C" visible="false" />
+  <comment title="post-combat chatter">vocalizations that immediately follow combat</comment>
+  <tagRef name="alone" offset="0x770" visible="true" description="post-combat all friends killed" />
+  <tagRef name="unscathed" offset="0x778" visible="true" description="post-combat we were not hurt" />
+  <tagRef name="seriously wounded" offset="0x780" visible="true" description="post-combat we were badly hurt" />
+  <tagRef name="seriously wounded re" offset="0x788" visible="true" description="post-combat replying to a friend who was badly hurt" />
+  <tagRef name="massacre" offset="0x790" visible="true" description="post-combat our friends took heavy casualties" />
+  <tagRef name="massacre re" offset="0x798" visible="true" description=" our friends took heavy casualties" />
+  <tagRef name="rout" offset="0x7A0" visible="true" description="post-combat our friends kicked alien ass" />
+  <tagRef name="rout re" offset="0x7A8" visible="true" description=" our friends kicked alien ass" />
+  <undefined name="Unknown" offset="0x7B0" visible="false" />
+  <undefined name="Unknown" offset="0x7B4" visible="false" />
+  <undefined name="Unknown" offset="0x7B8" visible="false" />
+  <undefined name="Unknown" offset="0x7BC" visible="false" />
+  <undefined name="Unknown" offset="0x7C0" visible="false" />
+  <undefined name="Unknown" offset="0x7C4" visible="false" />
+  <undefined name="Unknown" offset="0x7C8" visible="false" />
+  <undefined name="Unknown" offset="0x7CC" visible="false" />
+  <undefined name="Unknown" offset="0x7D0" visible="false" />
+  <undefined name="Unknown" offset="0x7D4" visible="false" />
+  <undefined name="Unknown" offset="0x7D8" visible="false" />
+  <undefined name="Unknown" offset="0x7DC" visible="false" />
+  <undefined name="Unknown" offset="0x7E0" visible="false" />
+  <undefined name="Unknown" offset="0x7E4" visible="false" />
+  <undefined name="Unknown" offset="0x7E8" visible="false" />
+  <undefined name="Unknown" offset="0x7EC" visible="false" />
+  <undefined name="Unknown" offset="0x7F0" visible="false" />
+  <undefined name="Unknown" offset="0x7F4" visible="false" />
+  <undefined name="Unknown" offset="0x7F8" visible="false" />
+  <undefined name="Unknown" offset="0x7FC" visible="false" />
+  <undefined name="Unknown" offset="0x800" visible="false" />
+  <undefined name="Unknown" offset="0x804" visible="false" />
+  <undefined name="Unknown" offset="0x808" visible="false" />
+  <undefined name="Unknown" offset="0x80C" visible="false" />
+  <undefined name="Unknown" offset="0x810" visible="false" />
+  <undefined name="Unknown" offset="0x814" visible="false" />
+  <undefined name="Unknown" offset="0x818" visible="false" />
+  <undefined name="Unknown" offset="0x81C" visible="false" />
+  <undefined name="Unknown" offset="0x820" visible="false" />
+  <undefined name="Unknown" offset="0x824" visible="false" />
+  <undefined name="Unknown" offset="0x828" visible="false" />
+  <undefined name="Unknown" offset="0x82C" visible="false" />
+  <undefined name="Unknown" offset="0x830" visible="false" />
+  <undefined name="Unknown" offset="0x834" visible="false" />
+  <undefined name="Unknown" offset="0x838" visible="false" />
+  <undefined name="Unknown" offset="0x83C" visible="false" />
+  <undefined name="Unknown" offset="0x840" visible="false" />
+  <undefined name="Unknown" offset="0x844" visible="false" />
+  <undefined name="Unknown" offset="0x848" visible="false" />
+  <undefined name="Unknown" offset="0x84C" visible="false" />
+  <undefined name="Unknown" offset="0x850" visible="false" />
+  <undefined name="Unknown" offset="0x854" visible="false" />
+  <undefined name="Unknown" offset="0x858" visible="false" />
+  <undefined name="Unknown" offset="0x85C" visible="false" />
+  <undefined name="Unknown" offset="0x860" visible="false" />
+  <undefined name="Unknown" offset="0x864" visible="false" />
+  <undefined name="Unknown" offset="0x868" visible="false" />
+  <undefined name="Unknown" offset="0x86C" visible="false" />
+  <undefined name="Unknown" offset="0x870" visible="false" />
+  <undefined name="Unknown" offset="0x874" visible="false" />
+  <undefined name="Unknown" offset="0x878" visible="false" />
+  <undefined name="Unknown" offset="0x87C" visible="false" />
+  <undefined name="Unknown" offset="0x880" visible="false" />
+  <undefined name="Unknown" offset="0x884" visible="false" />
+  <undefined name="Unknown" offset="0x888" visible="false" />
+  <undefined name="Unknown" offset="0x88C" visible="false" />
+  <undefined name="Unknown" offset="0x890" visible="false" />
+  <undefined name="Unknown" offset="0x894" visible="false" />
+  <undefined name="Unknown" offset="0x898" visible="false" />
+  <undefined name="Unknown" offset="0x89C" visible="false" />
+  <undefined name="Unknown" offset="0x8A0" visible="false" />
+  <undefined name="Unknown" offset="0x8A4" visible="false" />
+  <undefined name="Unknown" offset="0x8A8" visible="false" />
+  <undefined name="Unknown" offset="0x8AC" visible="false" />
+  <undefined name="Unknown" offset="0x8B0" visible="false" />
+  <undefined name="Unknown" offset="0x8B4" visible="false" />
+  <undefined name="Unknown" offset="0x8B8" visible="false" />
+  <undefined name="Unknown" offset="0x8BC" visible="false" />
+  <undefined name="Unknown" offset="0x8C0" visible="false" />
+  <undefined name="Unknown" offset="0x8C4" visible="false" />
+  <undefined name="Unknown" offset="0x8C8" visible="false" />
+  <undefined name="Unknown" offset="0x8CC" visible="false" />
+  <undefined name="Unknown" offset="0x8D0" visible="false" />
+  <undefined name="Unknown" offset="0x8D4" visible="false" />
+  <undefined name="Unknown" offset="0x8D8" visible="false" />
+  <undefined name="Unknown" offset="0x8DC" visible="false" />
+  <undefined name="Unknown" offset="0x8E0" visible="false" />
+  <undefined name="Unknown" offset="0x8E4" visible="false" />
+  <undefined name="Unknown" offset="0x8E8" visible="false" />
+  <undefined name="Unknown" offset="0x8EC" visible="false" />
+  <undefined name="Unknown" offset="0x8F0" visible="false" />
+  <undefined name="Unknown" offset="0x8F4" visible="false" />
+  <undefined name="Unknown" offset="0x8F8" visible="false" />
+  <undefined name="Unknown" offset="0x8FC" visible="false" />
+  <undefined name="Unknown" offset="0x900" visible="false" />
+  <undefined name="Unknown" offset="0x904" visible="false" />
+  <undefined name="Unknown" offset="0x908" visible="false" />
+  <undefined name="Unknown" offset="0x90C" visible="false" />
+  <undefined name="Unknown" offset="0x910" visible="false" />
+  <undefined name="Unknown" offset="0x914" visible="false" />
+  <undefined name="Unknown" offset="0x918" visible="false" />
+  <undefined name="Unknown" offset="0x91C" visible="false" />
+  <undefined name="Unknown" offset="0x920" visible="false" />
+  <undefined name="Unknown" offset="0x924" visible="false" />
+  <undefined name="Unknown" offset="0x928" visible="false" />
+  <undefined name="Unknown" offset="0x92C" visible="false" />
+  <undefined name="Unknown" offset="0x930" visible="false" />
+  <undefined name="Unknown" offset="0x934" visible="false" />
+  <undefined name="Unknown" offset="0x938" visible="false" />
+  <undefined name="Unknown" offset="0x93C" visible="false" />
+  <undefined name="Unknown" offset="0x940" visible="false" />
+  <undefined name="Unknown" offset="0x944" visible="false" />
+  <undefined name="Unknown" offset="0x948" visible="false" />
+  <undefined name="Unknown" offset="0x94C" visible="false" />
+  <undefined name="Unknown" offset="0x950" visible="false" />
+  <undefined name="Unknown" offset="0x954" visible="false" />
+  <undefined name="Unknown" offset="0x958" visible="false" />
+  <undefined name="Unknown" offset="0x95C" visible="false" />
+  <undefined name="Unknown" offset="0x960" visible="false" />
+  <undefined name="Unknown" offset="0x964" visible="false" />
+  <undefined name="Unknown" offset="0x968" visible="false" />
+  <undefined name="Unknown" offset="0x96C" visible="false" />
+  <undefined name="Unknown" offset="0x970" visible="false" />
+  <undefined name="Unknown" offset="0x974" visible="false" />
+  <undefined name="Unknown" offset="0x978" visible="false" />
+  <undefined name="Unknown" offset="0x97C" visible="false" />
+  <undefined name="Unknown" offset="0x980" visible="false" />
+  <undefined name="Unknown" offset="0x984" visible="false" />
+  <undefined name="Unknown" offset="0x988" visible="false" />
+  <undefined name="Unknown" offset="0x98C" visible="false" />
+  <undefined name="Unknown" offset="0x990" visible="false" />
+  <undefined name="Unknown" offset="0x994" visible="false" />
+  <undefined name="Unknown" offset="0x998" visible="false" />
+  <undefined name="Unknown" offset="0x99C" visible="false" />
+  <undefined name="Unknown" offset="0x9A0" visible="false" />
+  <undefined name="Unknown" offset="0x9A4" visible="false" />
+  <undefined name="Unknown" offset="0x9A8" visible="false" />
+  <undefined name="Unknown" offset="0x9AC" visible="false" />
+  <undefined name="Unknown" offset="0x9B0" visible="false" />
+  <undefined name="Unknown" offset="0x9B4" visible="false" />
+  <undefined name="Unknown" offset="0x9B8" visible="false" />
+  <undefined name="Unknown" offset="0x9BC" visible="false" />
+  <undefined name="Unknown" offset="0x9C0" visible="false" />
+  <undefined name="Unknown" offset="0x9C4" visible="false" />
+  <undefined name="Unknown" offset="0x9C8" visible="false" />
+  <undefined name="Unknown" offset="0x9CC" visible="false" />
+  <undefined name="Unknown" offset="0x9D0" visible="false" />
+  <undefined name="Unknown" offset="0x9D4" visible="false" />
+  <undefined name="Unknown" offset="0x9D8" visible="false" />
+  <undefined name="Unknown" offset="0x9DC" visible="false" />
+  <undefined name="Unknown" offset="0x9E0" visible="false" />
+  <undefined name="Unknown" offset="0x9E4" visible="false" />
+  <undefined name="Unknown" offset="0x9E8" visible="false" />
+  <undefined name="Unknown" offset="0x9EC" visible="false" />
+  <undefined name="Unknown" offset="0x9F0" visible="false" />
+  <undefined name="Unknown" offset="0x9F4" visible="false" />
+  <undefined name="Unknown" offset="0x9F8" visible="false" />
+  <undefined name="Unknown" offset="0x9FC" visible="false" />
+  <undefined name="Unknown" offset="0xA00" visible="false" />
+  <undefined name="Unknown" offset="0xA04" visible="false" />
+  <undefined name="Unknown" offset="0xA08" visible="false" />
+  <undefined name="Unknown" offset="0xA0C" visible="false" />
+  <undefined name="Unknown" offset="0xA10" visible="false" />
+  <undefined name="Unknown" offset="0xA14" visible="false" />
+  <undefined name="Unknown" offset="0xA18" visible="false" />
+  <undefined name="Unknown" offset="0xA1C" visible="false" />
+  <undefined name="Unknown" offset="0xA20" visible="false" />
+  <undefined name="Unknown" offset="0xA24" visible="false" />
+  <undefined name="Unknown" offset="0xA28" visible="false" />
+  <undefined name="Unknown" offset="0xA2C" visible="false" />
+  <undefined name="Unknown" offset="0xA30" visible="false" />
+  <undefined name="Unknown" offset="0xA34" visible="false" />
+  <undefined name="Unknown" offset="0xA38" visible="false" />
+  <undefined name="Unknown" offset="0xA3C" visible="false" />
+  <undefined name="Unknown" offset="0xA40" visible="false" />
+  <undefined name="Unknown" offset="0xA44" visible="false" />
+  <undefined name="Unknown" offset="0xA48" visible="false" />
+  <undefined name="Unknown" offset="0xA4C" visible="false" />
+  <undefined name="Unknown" offset="0xA50" visible="false" />
+  <undefined name="Unknown" offset="0xA54" visible="false" />
+  <undefined name="Unknown" offset="0xA58" visible="false" />
+  <undefined name="Unknown" offset="0xA5C" visible="false" />
+  <undefined name="Unknown" offset="0xA60" visible="false" />
+  <undefined name="Unknown" offset="0xA64" visible="false" />
+  <undefined name="Unknown" offset="0xA68" visible="false" />
+  <undefined name="Unknown" offset="0xA6C" visible="false" />
+  <undefined name="Unknown" offset="0xA70" visible="false" />
+  <undefined name="Unknown" offset="0xA74" visible="false" />
+  <undefined name="Unknown" offset="0xA78" visible="false" />
+  <undefined name="Unknown" offset="0xA7C" visible="false" />
+  <undefined name="Unknown" offset="0xA80" visible="false" />
+  <undefined name="Unknown" offset="0xA84" visible="false" />
+  <undefined name="Unknown" offset="0xA88" visible="false" />
+  <undefined name="Unknown" offset="0xA8C" visible="false" />
+  <undefined name="Unknown" offset="0xA90" visible="false" />
+  <undefined name="Unknown" offset="0xA94" visible="false" />
+  <undefined name="Unknown" offset="0xA98" visible="false" />
+  <undefined name="Unknown" offset="0xA9C" visible="false" />
+  <undefined name="Unknown" offset="0xAA0" visible="false" />
+  <undefined name="Unknown" offset="0xAA4" visible="false" />
+  <undefined name="Unknown" offset="0xAA8" visible="false" />
+  <undefined name="Unknown" offset="0xAAC" visible="false" />
+  <undefined name="Unknown" offset="0xAB0" visible="false" />
+  <undefined name="Unknown" offset="0xAB4" visible="false" />
+  <undefined name="Unknown" offset="0xAB8" visible="false" />
+  <undefined name="Unknown" offset="0xABC" visible="false" />
+  <undefined name="Unknown" offset="0xAC0" visible="false" />
+  <undefined name="Unknown" offset="0xAC4" visible="false" />
+  <undefined name="Unknown" offset="0xAC8" visible="false" />
+  <undefined name="Unknown" offset="0xACC" visible="false" />
+  <undefined name="Unknown" offset="0xAD0" visible="false" />
+  <undefined name="Unknown" offset="0xAD4" visible="false" />
+  <undefined name="Unknown" offset="0xAD8" visible="false" />
+  <undefined name="Unknown" offset="0xADC" visible="false" />
+</plugin>

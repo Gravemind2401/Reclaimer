@@ -1,0 +1,358 @@
+<plugin>
+  <comment title="radiosity properties" />
+  <bitfield16 name="flags" offset="0x0" visible="true">
+    <bit name="simple parameterization#lightmap texture parametrization should correspond to diffuse texture parametrization" index="0" />
+    <bit name="ignore normals#light independent of normals (trees)" index="1" />
+    <bit name="transparent lit" index="2" />
+  </bitfield16>
+  <enum16 name="detail level#affects the density of tesselation (high means slow)." offset="0x2" visible="true">
+    <option name="high" value="0x0" />
+    <option name="medium" value="0x1" />
+    <option name="low" value="0x2" />
+    <option name="turd" value="0x3" />
+  </enum16>
+  <float32 name="power" offset="0x4" visible="true" description="power of emitted light from 0 to infinity" />
+  <colorf name="color of emitted light" offset="0x8" format="rgb" visible="true" />
+  <colorf name="tint color" offset="0x14" format="rgb" visible="true" description="light passing through this surface (if it's transparent) will be tinted this color." />
+  <comment title="physics properties" />
+  <bitfield16 name="flags" offset="0x20" visible="true">
+  </bitfield16>
+  <enum16 name="material type" offset="0x22" visible="true">
+    <option name="dirt" value="0x0" />
+    <option name="sand" value="0x1" />
+    <option name="stone" value="0x2" />
+    <option name="snow" value="0x3" />
+    <option name="wood" value="0x4" />
+    <option name="metal (hollow)" value="0x5" />
+    <option name="metal (thin)" value="0x6" />
+    <option name="metal (thick)" value="0x7" />
+    <option name="rubber" value="0x8" />
+    <option name="glass" value="0x9" />
+    <option name="force field" value="0xA" />
+    <option name="grunt" value="0xB" />
+    <option name="hunter armor" value="0xC" />
+    <option name="hunter skin" value="0xD" />
+    <option name="elite" value="0xE" />
+    <option name="jackal" value="0xF" />
+    <option name="jackal energy shield" value="0x10" />
+    <option name="engineer skin" value="0x11" />
+    <option name="engineer force field" value="0x12" />
+    <option name="flood combat form" value="0x13" />
+    <option name="flood carrier form" value="0x14" />
+    <option name="cyborg armor" value="0x15" />
+    <option name="cyborg energy shield" value="0x16" />
+    <option name="human armor" value="0x17" />
+    <option name="human skin" value="0x18" />
+    <option name="sentinel" value="0x19" />
+    <option name="monitor" value="0x1A" />
+    <option name="plastic" value="0x1B" />
+    <option name="water" value="0x1C" />
+    <option name="leaves" value="0x1D" />
+    <option name="elite energy shield" value="0x1E" />
+    <option name="ice" value="0x1F" />
+    <option name="hunter shield" value="0x20" />
+  </enum16>
+  <int16 name="Unknown" offset="0x24" visible="false" />
+  <int16 name="Unknown" offset="0x26" visible="false" />
+  <comment title="environment shader">Setting &lt;true atmospheric fog&gt; enables per-pixel atmospheric fog (for models) but disables point/spot lights, planar fog, and the ability to control the atmospheric fog density for this shader.</comment>
+  <bitfield16 name="flags" offset="0x28" visible="true">
+    <bit name="alpha-tested" index="0" />
+    <bit name="bump map is specular mask" index="1" />
+    <bit name="true atmospheric fog" index="2" />
+  </bitfield16>
+  <comment title="environment shader type">Controls how diffuse maps are combined:
+
+NORMAL:
+Secondary detail map alpha controls blend between primary and secondary detail map. Specular mask is alpha of blended primary and secondary detail map alpha multiplied by alpha of micro detail map.
+
+BLENDED:
+Base map alpha controls blend between primary and secondary detail map. Specular mask is alpha of blended primary and secondary detail map alpha multiplied by alpha of micro detail map.
+
+BLENDED BASE SPECULAR:
+Same as BLENDED, except specular mask is alpha is base map times alpha of micro detail map.</comment>
+  <enum16 name="type" offset="0x2A" visible="true">
+    <option name="normal" value="0x0" />
+    <option name="blended" value="0x1" />
+    <option name="blended base specular" value="0x2" />
+  </enum16>
+  <comment title="lens flares" />
+  <float32 name="lens flare spacing" offset="0x2C" visible="true" description="0 places a single lens flare" />
+  <tagRef name="lens flare" offset="0x30" visible="true" />
+  <undefined name="Unknown" offset="0x38" visible="false" />
+  <undefined name="Unknown" offset="0x3C" visible="false" />
+  <undefined name="Unknown" offset="0x40" visible="false" />
+  <undefined name="Unknown" offset="0x44" visible="false" />
+  <undefined name="Unknown" offset="0x48" visible="false" />
+  <undefined name="Unknown" offset="0x4C" visible="false" />
+  <undefined name="Unknown" offset="0x50" visible="false" />
+  <undefined name="Unknown" offset="0x54" visible="false" />
+  <undefined name="Unknown" offset="0x58" visible="false" />
+  <undefined name="Unknown" offset="0x5C" visible="false" />
+  <undefined name="Unknown" offset="0x60" visible="false" />
+  <comment title="diffuse properties" />
+  <bitfield16 name="flags" offset="0x64" visible="true">
+    <bit name="rescale detail maps" index="0" />
+    <bit name="rescale bump map" index="1" />
+  </bitfield16>
+  <int16 name="Unknown" offset="0x66" visible="false" />
+  <undefined name="Unknown" offset="0x68" visible="false" />
+  <undefined name="Unknown" offset="0x6C" visible="false" />
+  <undefined name="Unknown" offset="0x70" visible="false" />
+  <undefined name="Unknown" offset="0x74" visible="false" />
+  <undefined name="Unknown" offset="0x78" visible="false" />
+  <undefined name="Unknown" offset="0x7C" visible="false" />
+  <tagRef name="base map" offset="0x80" visible="true" />
+  <undefined name="Unknown" offset="0x88" visible="false" />
+  <undefined name="Unknown" offset="0x8C" visible="false" />
+  <undefined name="Unknown" offset="0x90" visible="false" />
+  <undefined name="Unknown" offset="0x94" visible="false" />
+  <undefined name="Unknown" offset="0x98" visible="false" />
+  <undefined name="Unknown" offset="0x9C" visible="false" />
+  <enum16 name="detail map function#affects primary and secondary detail maps" offset="0xA0" visible="true">
+    <option name="double/biased multiply" value="0x0" />
+    <option name="multiply" value="0x1" />
+    <option name="double/biased add" value="0x2" />
+  </enum16>
+  <int16 name="Unknown" offset="0xA2" visible="false" />
+  <float32 name="primary detail map scale" offset="0xA4" visible="true" description="0 defaults to 1" />
+  <tagRef name="primary detail map" offset="0xA8" visible="true" />
+  <float32 name="secondary detail map scale" offset="0xB0" visible="true" description="0 defaults to 1" />
+  <tagRef name="secondary detail map" offset="0xB4" visible="true" />
+  <undefined name="Unknown" offset="0xBC" visible="false" />
+  <undefined name="Unknown" offset="0xC0" visible="false" />
+  <undefined name="Unknown" offset="0xC4" visible="false" />
+  <undefined name="Unknown" offset="0xC8" visible="false" />
+  <undefined name="Unknown" offset="0xCC" visible="false" />
+  <undefined name="Unknown" offset="0xD0" visible="false" />
+  <enum16 name="micro detail map function" offset="0xD4" visible="true">
+    <option name="double/biased multiply" value="0x0" />
+    <option name="multiply" value="0x1" />
+    <option name="double/biased add" value="0x2" />
+  </enum16>
+  <int16 name="Unknown" offset="0xD6" visible="false" />
+  <float32 name="micro detail map scale" offset="0xD8" visible="true" description="0 defaults to 1" />
+  <tagRef name="micro detail map" offset="0xDC" visible="true" />
+  <colorf name="material color" offset="0xE4" format="rgb" visible="true" description="modulates incoming diffuse light, including lightmaps, but excluding self-illumination and specular effects" />
+  <undefined name="Unknown" offset="0xF0" visible="false" />
+  <undefined name="Unknown" offset="0xF4" visible="false" />
+  <undefined name="Unknown" offset="0xF8" visible="false" />
+  <comment title="bump properties">Perforated (alpha-tested) shaders use alpha in bump map.</comment>
+  <float32 name="bump map scale" offset="0xFC" visible="true" />
+  <tagRef name="bump map" offset="0x100" visible="true" />
+  <undefined name="Unknown" offset="0x108" visible="false" />
+  <undefined name="Unknown" offset="0x10C" visible="false" />
+  <undefined name="Unknown" offset="0x110" visible="false" />
+  <undefined name="Unknown" offset="0x114" visible="false" />
+  <undefined name="Unknown" offset="0x118" visible="false" />
+  <undefined name="Unknown" offset="0x11C" visible="false" />
+  <comment title="texture scrolling animation">Scrolls all 2D maps simultaneously.</comment>
+  <enum16 name="u-animation function" offset="0x120" visible="true">
+    <option name="one" value="0x0" />
+    <option name="zero" value="0x1" />
+    <option name="cosine" value="0x2" />
+    <option name="cosine (variable period)" value="0x3" />
+    <option name="diagonal wave" value="0x4" />
+    <option name="diagonal wave (variable period)" value="0x5" />
+    <option name="slide" value="0x6" />
+    <option name="slide (variable period)" value="0x7" />
+    <option name="noise" value="0x8" />
+    <option name="jitter" value="0x9" />
+    <option name="wander" value="0xA" />
+    <option name="spark" value="0xB" />
+  </enum16>
+  <int16 name="Unknown" offset="0x122" visible="false" />
+  <float32 name="u-animation period" offset="0x124" visible="true" description="seconds" />
+  <float32 name="u-animation scale" offset="0x128" visible="true" description="base map repeats" />
+  <enum16 name="v-animation function" offset="0x12C" visible="true">
+    <option name="one" value="0x0" />
+    <option name="zero" value="0x1" />
+    <option name="cosine" value="0x2" />
+    <option name="cosine (variable period)" value="0x3" />
+    <option name="diagonal wave" value="0x4" />
+    <option name="diagonal wave (variable period)" value="0x5" />
+    <option name="slide" value="0x6" />
+    <option name="slide (variable period)" value="0x7" />
+    <option name="noise" value="0x8" />
+    <option name="jitter" value="0x9" />
+    <option name="wander" value="0xA" />
+    <option name="spark" value="0xB" />
+  </enum16>
+  <int16 name="Unknown" offset="0x12E" visible="false" />
+  <float32 name="v-animation period" offset="0x130" visible="true" description="seconds" />
+  <float32 name="v-animation scale" offset="0x134" visible="true" description="base map repeats" />
+  <undefined name="Unknown" offset="0x138" visible="false" />
+  <undefined name="Unknown" offset="0x13C" visible="false" />
+  <undefined name="Unknown" offset="0x140" visible="false" />
+  <undefined name="Unknown" offset="0x144" visible="false" />
+  <undefined name="Unknown" offset="0x148" visible="false" />
+  <undefined name="Unknown" offset="0x14C" visible="false" />
+  <comment title="self-illumination properties">There are three self-illumination effects which are added together. Each effect has an &lt;on color&gt;, used when the shader is active, and an &lt;off color&gt;, used when the shader is not active. The self-illumination map is used as follows:
+* RED: primary mask
+* GREEN: secondary mask
+* BLUE: plasma mask
+* ALPHA: plasma animation reference
+
+Each effect also has an animation &lt;function&gt;, &lt;period&gt; and &lt;phase&gt;, used when the shader is active. The primary and secondary effects simply modulate the &lt;on color&gt; by the animation value to produce an animation color, and then blend between the animation color and the &lt;off color&gt; based on the shader's activation level, and finally modulate by the mask.
+
+The plasma shader compares the animation value with the alpha channel of the map (the plasma animation reference) and produces a high value when they are similar and a dark value when they are different. This value modulates the &lt;plasma on color&gt; to produce a plasma animation color, and the rest proceeds just like the primary and secondary effects.</comment>
+  <bitfield16 name="flags" offset="0x150" visible="true">
+    <bit name="unfiltered" index="0" />
+  </bitfield16>
+  <int16 name="Unknown" offset="0x152" visible="false" />
+  <undefined name="Unknown" offset="0x154" visible="false" />
+  <undefined name="Unknown" offset="0x158" visible="false" />
+  <undefined name="Unknown" offset="0x15C" visible="false" />
+  <undefined name="Unknown" offset="0x160" visible="false" />
+  <undefined name="Unknown" offset="0x164" visible="false" />
+  <undefined name="Unknown" offset="0x168" visible="false" />
+  <colorf name="primary on color" offset="0x16C" format="rgb" visible="true" />
+  <colorf name="primary off color" offset="0x178" format="rgb" visible="true" />
+  <enum16 name="primary animation function" offset="0x184" visible="true">
+    <option name="one" value="0x0" />
+    <option name="zero" value="0x1" />
+    <option name="cosine" value="0x2" />
+    <option name="cosine (variable period)" value="0x3" />
+    <option name="diagonal wave" value="0x4" />
+    <option name="diagonal wave (variable period)" value="0x5" />
+    <option name="slide" value="0x6" />
+    <option name="slide (variable period)" value="0x7" />
+    <option name="noise" value="0x8" />
+    <option name="jitter" value="0x9" />
+    <option name="wander" value="0xA" />
+    <option name="spark" value="0xB" />
+  </enum16>
+  <int16 name="Unknown" offset="0x186" visible="false" />
+  <float32 name="primary animation period" offset="0x188" visible="true" description="0 defaults to 1" />
+  <float32 name="primary animation phase" offset="0x18C" visible="true" description="seconds" />
+  <undefined name="Unknown" offset="0x190" visible="false" />
+  <undefined name="Unknown" offset="0x194" visible="false" />
+  <undefined name="Unknown" offset="0x198" visible="false" />
+  <undefined name="Unknown" offset="0x19C" visible="false" />
+  <undefined name="Unknown" offset="0x1A0" visible="false" />
+  <undefined name="Unknown" offset="0x1A4" visible="false" />
+  <colorf name="secondary on color" offset="0x1A8" format="rgb" visible="true" />
+  <colorf name="secondary off color" offset="0x1B4" format="rgb" visible="true" />
+  <enum16 name="secondary animation function" offset="0x1C0" visible="true">
+    <option name="one" value="0x0" />
+    <option name="zero" value="0x1" />
+    <option name="cosine" value="0x2" />
+    <option name="cosine (variable period)" value="0x3" />
+    <option name="diagonal wave" value="0x4" />
+    <option name="diagonal wave (variable period)" value="0x5" />
+    <option name="slide" value="0x6" />
+    <option name="slide (variable period)" value="0x7" />
+    <option name="noise" value="0x8" />
+    <option name="jitter" value="0x9" />
+    <option name="wander" value="0xA" />
+    <option name="spark" value="0xB" />
+  </enum16>
+  <int16 name="Unknown" offset="0x1C2" visible="false" />
+  <float32 name="secondary animation period" offset="0x1C4" visible="true" description="0 defaults to 1" />
+  <float32 name="secondary animation phase" offset="0x1C8" visible="true" description="seconds" />
+  <undefined name="Unknown" offset="0x1CC" visible="false" />
+  <undefined name="Unknown" offset="0x1D0" visible="false" />
+  <undefined name="Unknown" offset="0x1D4" visible="false" />
+  <undefined name="Unknown" offset="0x1D8" visible="false" />
+  <undefined name="Unknown" offset="0x1DC" visible="false" />
+  <undefined name="Unknown" offset="0x1E0" visible="false" />
+  <colorf name="plasma on color" offset="0x1E4" format="rgb" visible="true" />
+  <colorf name="plasma off color" offset="0x1F0" format="rgb" visible="true" />
+  <enum16 name="plasma animation function" offset="0x1FC" visible="true">
+    <option name="one" value="0x0" />
+    <option name="zero" value="0x1" />
+    <option name="cosine" value="0x2" />
+    <option name="cosine (variable period)" value="0x3" />
+    <option name="diagonal wave" value="0x4" />
+    <option name="diagonal wave (variable period)" value="0x5" />
+    <option name="slide" value="0x6" />
+    <option name="slide (variable period)" value="0x7" />
+    <option name="noise" value="0x8" />
+    <option name="jitter" value="0x9" />
+    <option name="wander" value="0xA" />
+    <option name="spark" value="0xB" />
+  </enum16>
+  <int16 name="Unknown" offset="0x1FE" visible="false" />
+  <float32 name="plasma animation period" offset="0x200" visible="true" description="0 defaults to 1" />
+  <float32 name="plasma animation phase" offset="0x204" visible="true" description="seconds" />
+  <undefined name="Unknown" offset="0x208" visible="false" />
+  <undefined name="Unknown" offset="0x20C" visible="false" />
+  <undefined name="Unknown" offset="0x210" visible="false" />
+  <undefined name="Unknown" offset="0x214" visible="false" />
+  <undefined name="Unknown" offset="0x218" visible="false" />
+  <undefined name="Unknown" offset="0x21C" visible="false" />
+  <float32 name="map scale" offset="0x220" visible="true" description="0 defaults to 1" />
+  <tagRef name="map" offset="0x224" visible="true" />
+  <undefined name="Unknown" offset="0x22C" visible="false" />
+  <undefined name="Unknown" offset="0x230" visible="false" />
+  <undefined name="Unknown" offset="0x234" visible="false" />
+  <undefined name="Unknown" offset="0x238" visible="false" />
+  <undefined name="Unknown" offset="0x23C" visible="false" />
+  <undefined name="Unknown" offset="0x240" visible="false" />
+  <comment title="specular properties">Controls dynamic specular highlights. The highlight is modulated by &lt;brightness&gt; as well as a blend between &lt;perpendicular color&gt; and &lt;parallel color&gt;.
+
+Set &lt;brightness&gt; to zero to disable.</comment>
+  <bitfield16 name="flags" offset="0x244" visible="true">
+    <bit name="overbright" index="0" />
+    <bit name="extra-shiny" index="1" />
+    <bit name="lightmap is specular" index="2" />
+  </bitfield16>
+  <int16 name="Unknown" offset="0x246" visible="false" />
+  <undefined name="Unknown" offset="0x248" visible="false" />
+  <undefined name="Unknown" offset="0x24C" visible="false" />
+  <undefined name="Unknown" offset="0x250" visible="false" />
+  <undefined name="Unknown" offset="0x254" visible="false" />
+  <float32 name="brightness" offset="0x258" visible="true" description="0 is no specular hilights" />
+  <undefined name="Unknown" offset="0x25C" visible="false" />
+  <undefined name="Unknown" offset="0x260" visible="false" />
+  <undefined name="Unknown" offset="0x264" visible="false" />
+  <undefined name="Unknown" offset="0x268" visible="false" />
+  <undefined name="Unknown" offset="0x26C" visible="false" />
+  <colorf name="perpendicular color" offset="0x270" format="rgb" visible="true" description="hilight color when viewed perpendicularly" />
+  <colorf name="parallel color" offset="0x27C" format="rgb" visible="true" description="hilight color when viewed at a glancing angle" />
+  <undefined name="Unknown" offset="0x288" visible="false" />
+  <undefined name="Unknown" offset="0x28C" visible="false" />
+  <undefined name="Unknown" offset="0x290" visible="false" />
+  <undefined name="Unknown" offset="0x294" visible="false" />
+  <comment title="reflection properties">Controls environment cube map reflections. The color of the cube map is "tinted" by a blend between &lt;perpendicular color&gt; and &lt;parallel color&gt; from the SPECULAR PROPERTIES above, and then modulated by a blend between &lt;perpendicular brightness&gt; and &lt;parallel brightness&gt;.
+
+BUMPED CUBE MAP:
+This type of reflection uses the shader's bump map (if it exists) to affect the reflection, as well as the perpendicular and parallel brightness (i.e. the "fresnel" effect).
+
+FLAT CUBE MAP:
+This is the fastest type of reflection. The bump map is used to attenuate the fresnel effect, but the reflection image itself is not bumped.
+
+Clear &lt;reflection cube map&gt; or set both &lt;perpendicular brightness&gt; and &lt;parallel brightness&gt; to zero to disable.</comment>
+  <bitfield16 name="flags" offset="0x298" visible="true">
+    <bit name="dynamic mirror" index="0" />
+  </bitfield16>
+  <enum16 name="type" offset="0x29A" visible="true">
+    <option name="bumped cube-map" value="0x0" />
+    <option name="flat cube-map" value="0x1" />
+    <option name="bumped radiosity" value="0x2" />
+  </enum16>
+  <float32 name="lightmap brightness scale" offset="0x29C" visible="true" description="reflection brightness when lightmap brightness is 1" />
+  <undefined name="Unknown" offset="0x2A0" visible="false" />
+  <undefined name="Unknown" offset="0x2A4" visible="false" />
+  <undefined name="Unknown" offset="0x2A8" visible="false" />
+  <undefined name="Unknown" offset="0x2AC" visible="false" />
+  <undefined name="Unknown" offset="0x2B0" visible="false" />
+  <undefined name="Unknown" offset="0x2B4" visible="false" />
+  <undefined name="Unknown" offset="0x2B8" visible="false" />
+  <float32 name="perpendicular brightness" offset="0x2BC" visible="true" description="brightness when viewed perpendicularly" />
+  <float32 name="parallel brightness" offset="0x2C0" visible="true" description="brightness when viewed at a glancing angle" />
+  <undefined name="Unknown" offset="0x2C4" visible="false" />
+  <undefined name="Unknown" offset="0x2C8" visible="false" />
+  <undefined name="Unknown" offset="0x2CC" visible="false" />
+  <undefined name="Unknown" offset="0x2D0" visible="false" />
+  <undefined name="Unknown" offset="0x2D4" visible="false" />
+  <undefined name="Unknown" offset="0x2D8" visible="false" />
+  <undefined name="Unknown" offset="0x2DC" visible="false" />
+  <undefined name="Unknown" offset="0x2E0" visible="false" />
+  <undefined name="Unknown" offset="0x2E4" visible="false" />
+  <undefined name="Unknown" offset="0x2E8" visible="false" />
+  <tagRef name="reflection cube map" offset="0x2EC" visible="true" />
+  <undefined name="Unknown" offset="0x2F4" visible="false" />
+  <undefined name="Unknown" offset="0x2F8" visible="false" />
+  <undefined name="Unknown" offset="0x2FC" visible="false" />
+  <undefined name="Unknown" offset="0x300" visible="false" />
+</plugin>

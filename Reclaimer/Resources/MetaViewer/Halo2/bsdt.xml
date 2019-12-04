@@ -1,0 +1,272 @@
+<plugin>
+  <revisions />
+  <tagRef name="Effect" offset="0x4" visible="True" />
+  <tagRef name="Sound" offset="0xC" visible="True" />
+  <struct name="Particle Systems" offset="0x30" visible="True" size="0x38">
+    <tagRef name="Particle" offset="0x0" visible="True" />
+    <int16 name="Location" offset="0x8" visible="True" />
+    <enum16 name="Coordinate System" offset="0xA" visible="True">
+      <option name="World" value="0x0" />
+      <option name="Local" value="0x1" />
+      <option name="Parent" value="0x2" />
+    </enum16>
+    <enum16 name="Environment" offset="0xC" visible="True">
+      <option name="Any Environment" value="0x0" />
+      <option name="Air Only" value="0x1" />
+      <option name="Water Only" value="0x2" />
+      <option name="Space Only" value="0x3" />
+    </enum16>
+    <enum16 name="Disposition" offset="0xE" visible="True">
+      <option name="Either Mode" value="0x0" />
+      <option name="Violent Mode Only" value="0x1" />
+      <option name="NonViolent Mode Only" value="0x2" />
+    </enum16>
+    <enum16 name="Camera Mode" offset="0x10" visible="True">
+      <option name="Independant Of Camera Mode" value="0x0" />
+      <option name="Only In 1st Person" value="0x1" />
+      <option name="Only In 3rd Person" value="0x2" />
+      <option name="Both 1st And 3rd" value="0x3" />
+    </enum16>
+    <int16 name="Sort Bias" offset="0x12" visible="True" />
+    <struct name="Emitters" offset="0x30" visible="True" size="0xB8">
+      <tagRef name="Particle Physics" offset="0x0" visible="True" />
+      <enum32 name="Output Modifier" offset="0x8" visible="True">
+        <option name="" value="0x0" />
+        <option name="Plus" value="0x1" />
+        <option name="Times" value="0x2" />
+      </enum32>
+      <enum32 name="Output Modifier" offset="0xC" visible="True">
+        <option name="Particle Age" value="0x0" />
+        <option name="Particle Emit Time" value="0x1" />
+        <option name="Particle Random 1" value="0x2" />
+        <option name="Particle Random 2" value="0x3" />
+        <option name="Emitter Age" value="0x4" />
+        <option name="Emitter Random 1" value="0x5" />
+        <option name="Emitter Random 2" value="0x6" />
+        <option name="System LOD" value="0x7" />
+        <option name="Game Time" value="0x8" />
+        <option name="Effect A Scale" value="0x9" />
+        <option name="Effect B Scale" value="0xA" />
+        <option name="Particle Rotation" value="0xB" />
+        <option name="Explosion Animation" value="0xC" />
+        <option name="Explosion Rotation" value="0xD" />
+        <option name="Particle Random 3" value="0xE" />
+        <option name="Particle Random 4" value="0xF" />
+        <option name="Location Random" value="0x10" />
+      </enum32>
+      <struct name="Particle Emission Rate" offset="0x10" visible="True" size="0x1" />
+      <enum32 name="Output Modifier" offset="0x18" visible="True">
+        <option name="" value="0x0" />
+        <option name="Plus" value="0x1" />
+        <option name="Times" value="0x2" />
+      </enum32>
+      <enum32 name="Output Modifier" offset="0x1C" visible="True">
+        <option name="Particle Age" value="0x0" />
+        <option name="Particle Emit Time" value="0x1" />
+        <option name="Particle Random 1" value="0x2" />
+        <option name="Particle Random 2" value="0x3" />
+        <option name="Emitter Age" value="0x4" />
+        <option name="Emitter Random 1" value="0x5" />
+        <option name="Emitter Random 2" value="0x6" />
+        <option name="System LOD" value="0x7" />
+        <option name="Game Time" value="0x8" />
+        <option name="Effect A Scale" value="0x9" />
+        <option name="Effect B Scale" value="0xA" />
+        <option name="Particle Rotation" value="0xB" />
+        <option name="Explosion Animation" value="0xC" />
+        <option name="Explosion Rotation" value="0xD" />
+        <option name="Particle Random 3" value="0xE" />
+        <option name="Particle Random 4" value="0xF" />
+        <option name="Location Random" value="0x10" />
+      </enum32>
+      <struct name="Particle Lifespan (sec)" offset="0x20" visible="True" size="0x1" />
+      <enum32 name="Output Modifier" offset="0x28" visible="True">
+        <option name="" value="0x0" />
+        <option name="Plus" value="0x1" />
+        <option name="Times" value="0x2" />
+      </enum32>
+      <enum32 name="Output Modifier" offset="0x2C" visible="True">
+        <option name="Particle Age" value="0x0" />
+        <option name="Particle Emit Time" value="0x1" />
+        <option name="Particle Random 1" value="0x2" />
+        <option name="Particle Random 2" value="0x3" />
+        <option name="Emitter Age" value="0x4" />
+        <option name="Emitter Random 1" value="0x5" />
+        <option name="Emitter Random 2" value="0x6" />
+        <option name="System LOD" value="0x7" />
+        <option name="Game Time" value="0x8" />
+        <option name="Effect A Scale" value="0x9" />
+        <option name="Effect B Scale" value="0xA" />
+        <option name="Particle Rotation" value="0xB" />
+        <option name="Explosion Animation" value="0xC" />
+        <option name="Explosion Rotation" value="0xD" />
+        <option name="Particle Random 3" value="0xE" />
+        <option name="Particle Random 4" value="0xF" />
+        <option name="Location Random" value="0x10" />
+      </enum32>
+      <struct name="Particle Velocity (World Units Per Sec)" offset="0x30" visible="True" size="0x1" />
+      <enum32 name="Output Modifier" offset="0x38" visible="True">
+        <option name="" value="0x0" />
+        <option name="Plus" value="0x1" />
+        <option name="Times" value="0x2" />
+      </enum32>
+      <enum32 name="Output Modifier" offset="0x3C" visible="True">
+        <option name="Particle Age" value="0x0" />
+        <option name="Particle Emit Time" value="0x1" />
+        <option name="Particle Random 1" value="0x2" />
+        <option name="Particle Random 2" value="0x3" />
+        <option name="Emitter Age" value="0x4" />
+        <option name="Emitter Random 1" value="0x5" />
+        <option name="Emitter Random 2" value="0x6" />
+        <option name="System LOD" value="0x7" />
+        <option name="Game Time" value="0x8" />
+        <option name="Effect A Scale" value="0x9" />
+        <option name="Effect B Scale" value="0xA" />
+        <option name="Particle Rotation" value="0xB" />
+        <option name="Explosion Animation" value="0xC" />
+        <option name="Explosion Rotation" value="0xD" />
+        <option name="Particle Random 3" value="0xE" />
+        <option name="Particle Random 4" value="0xF" />
+        <option name="Location Random" value="0x10" />
+      </enum32>
+      <struct name="Particle Angular Velocity (Degrees Per Sec)" offset="0x40" visible="True" size="0x1" />
+      <enum32 name="Output Modifier" offset="0x48" visible="True">
+        <option name="" value="0x0" />
+        <option name="Plus" value="0x1" />
+        <option name="Times" value="0x2" />
+      </enum32>
+      <enum32 name="Output Modifier" offset="0x4C" visible="True">
+        <option name="Particle Age" value="0x0" />
+        <option name="Particle Emit Time" value="0x1" />
+        <option name="Particle Random 1" value="0x2" />
+        <option name="Particle Random 2" value="0x3" />
+        <option name="Emitter Age" value="0x4" />
+        <option name="Emitter Random 1" value="0x5" />
+        <option name="Emitter Random 2" value="0x6" />
+        <option name="System LOD" value="0x7" />
+        <option name="Game Time" value="0x8" />
+        <option name="Effect A Scale" value="0x9" />
+        <option name="Effect B Scale" value="0xA" />
+        <option name="Particle Rotation" value="0xB" />
+        <option name="Explosion Animation" value="0xC" />
+        <option name="Explosion Rotation" value="0xD" />
+        <option name="Particle Random 3" value="0xE" />
+        <option name="Particle Random 4" value="0xF" />
+        <option name="Location Random" value="0x10" />
+      </enum32>
+      <struct name="Particle Size (World Units)" offset="0x50" visible="True" size="0x1" />
+      <enum32 name="Output Modifier" offset="0x58" visible="True">
+        <option name="" value="0x0" />
+        <option name="Plus" value="0x1" />
+        <option name="Times" value="0x2" />
+      </enum32>
+      <enum32 name="Output Modifier" offset="0x5C" visible="True">
+        <option name="Particle Age" value="0x0" />
+        <option name="Particle Emit Time" value="0x1" />
+        <option name="Particle Random 1" value="0x2" />
+        <option name="Particle Random 2" value="0x3" />
+        <option name="Emitter Age" value="0x4" />
+        <option name="Emitter Random 1" value="0x5" />
+        <option name="Emitter Random 2" value="0x6" />
+        <option name="System LOD" value="0x7" />
+        <option name="Game Time" value="0x8" />
+        <option name="Effect A Scale" value="0x9" />
+        <option name="Effect B Scale" value="0xA" />
+        <option name="Particle Rotation" value="0xB" />
+        <option name="Explosion Animation" value="0xC" />
+        <option name="Explosion Rotation" value="0xD" />
+        <option name="Particle Random 3" value="0xE" />
+        <option name="Particle Random 4" value="0xF" />
+        <option name="Location Random" value="0x10" />
+      </enum32>
+      <struct name="Particle Tint" offset="0x60" visible="True" size="0x1" />
+      <enum32 name="Output Modifier" offset="0x68" visible="True">
+        <option name="" value="0x0" />
+        <option name="Plus" value="0x1" />
+        <option name="Times" value="0x2" />
+      </enum32>
+      <enum32 name="Output Modifier" offset="0x6C" visible="True">
+        <option name="Particle Age" value="0x0" />
+        <option name="Particle Emit Time" value="0x1" />
+        <option name="Particle Random 1" value="0x2" />
+        <option name="Particle Random 2" value="0x3" />
+        <option name="Emitter Age" value="0x4" />
+        <option name="Emitter Random 1" value="0x5" />
+        <option name="Emitter Random 2" value="0x6" />
+        <option name="System LOD" value="0x7" />
+        <option name="Game Time" value="0x8" />
+        <option name="Effect A Scale" value="0x9" />
+        <option name="Effect B Scale" value="0xA" />
+        <option name="Particle Rotation" value="0xB" />
+        <option name="Explosion Animation" value="0xC" />
+        <option name="Explosion Rotation" value="0xD" />
+        <option name="Particle Random 3" value="0xE" />
+        <option name="Particle Random 4" value="0xF" />
+        <option name="Location Random" value="0x10" />
+      </enum32>
+      <struct name="Particle Alpha" offset="0x70" visible="True" size="0x1" />
+      <enum32 name="Emission Shape" offset="0x78" visible="True">
+        <option name="Sprayer" value="0x0" />
+        <option name="Disc" value="0x1" />
+        <option name="Globe" value="0x2" />
+        <option name="Implode" value="0x3" />
+        <option name="Tube" value="0x4" />
+        <option name="Halo" value="0x5" />
+        <option name="Impact Contour" value="0x6" />
+        <option name="Impact Area" value="0x7" />
+        <option name="Debris" value="0x8" />
+        <option name="Line" value="0x9" />
+      </enum32>
+      <enum32 name="Output Modifier" offset="0x7C" visible="True">
+        <option name="" value="0x0" />
+        <option name="Plus" value="0x1" />
+        <option name="Times" value="0x2" />
+      </enum32>
+      <enum32 name="Output Modifier" offset="0x80" visible="True">
+        <option name="Particle Age" value="0x0" />
+        <option name="Particle Emit Time" value="0x1" />
+        <option name="Particle Random 1" value="0x2" />
+        <option name="Particle Random 2" value="0x3" />
+        <option name="Emitter Age" value="0x4" />
+        <option name="Emitter Random 1" value="0x5" />
+        <option name="Emitter Random 2" value="0x6" />
+        <option name="System LOD" value="0x7" />
+        <option name="Game Time" value="0x8" />
+        <option name="Effect A Scale" value="0x9" />
+        <option name="Effect B Scale" value="0xA" />
+        <option name="Particle Rotation" value="0xB" />
+        <option name="Explosion Animation" value="0xC" />
+        <option name="Explosion Rotation" value="0xD" />
+        <option name="Particle Random 3" value="0xE" />
+        <option name="Particle Random 4" value="0xF" />
+        <option name="Location Random" value="0x10" />
+      </enum32>
+      <struct name="Emission Radius (World Units)" offset="0x84" visible="True" size="0x1" />
+      <enum32 name="Output Modifier" offset="0x8C" visible="True">
+        <option name="" value="0x0" />
+        <option name="Plus" value="0x1" />
+        <option name="Times" value="0x2" />
+      </enum32>
+      <enum32 name="Output Modifier" offset="0x90" visible="True">
+        <option name="Particle Age" value="0x0" />
+        <option name="Particle Emit Time" value="0x1" />
+        <option name="Particle Random 1" value="0x2" />
+        <option name="Particle Random 2" value="0x3" />
+        <option name="Emitter Age" value="0x4" />
+        <option name="Emitter Random 1" value="0x5" />
+        <option name="Emitter Random 2" value="0x6" />
+        <option name="System LOD" value="0x7" />
+        <option name="Game Time" value="0x8" />
+        <option name="Effect A Scale" value="0x9" />
+        <option name="Effect B Scale" value="0xA" />
+        <option name="Particle Rotation" value="0xB" />
+        <option name="Explosion Animation" value="0xC" />
+        <option name="Explosion Rotation" value="0xD" />
+        <option name="Particle Random 3" value="0xE" />
+        <option name="Particle Random 4" value="0xF" />
+        <option name="Location Random" value="0x10" />
+      </enum32>
+      <struct name="Emission Angle (Degrees)" offset="0x94" visible="True" size="0x1" />
+    </struct>
+  </struct>
+</plugin>

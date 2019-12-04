@@ -1,0 +1,63 @@
+<plugin class="dctr" headersize="256">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+    <revision author="Snipe" version="0.7">Mapped most of the plugin.</revision>
+  </revisions>
+  <tagRef name="Lod Model 1" offset="0" visible="True" />
+  <tagRef name="Lod Model 2" offset="16" visible="True" />
+  <tagRef name="Lod Model 3" offset="32" visible="True" />
+  <tagRef name="Lod Model 4" offset="48" visible="True" />
+  <struct name="Parts" offset="64" visible="False" size="4">
+    <stringID name="Name" offset="0" visible="True" />
+    <uint32 name="Name POKE" offset="0" visible="True" />
+  </struct>
+  <int32 name="Unknown" offset="76" visible="False" />
+  <tagRef name="Texture" offset="80" visible="True" />
+  <int16 name="Affects Visibility" offset="96" visible="True" />
+  <int16 name="Unknown" offset="98" visible="False" />
+  <undefined name="Unknown" offset="112" visible="False" />
+  <undefined name="Unknown" offset="116" visible="False" />
+  <undefined name="Unknown" offset="120" visible="False" />
+  <undefined name="Unknown" offset="124" visible="False" />
+  <undefined name="Unknown" offset="128" visible="False" />
+  <float32 name="Brightness (Base)" offset="132" visible="True" />
+  <float32 name="Brightness (Shadow)" offset="136" visible="True" />
+  <undefined name="Unknown" offset="140" visible="False" />
+  <undefined name="Unknown" offset="144" visible="False" />
+  <undefined name="Unknown" offset="148" visible="False" />
+  <undefined name="Unknown" offset="152" visible="False" />
+  <undefined name="Unknown" offset="156" visible="False" />
+  <undefined name="Unknown" offset="160" visible="False" />
+  <undefined name="Unknown" offset="164" visible="False" />
+  <undefined name="Unknown" offset="168" visible="False" />
+  <undefined name="Unknown" offset="172" visible="False" />
+  <enum16 name="Is Visible? (Can Crash Xbox!)" offset="176" visible="True">
+    <option name="Yes" value="0" />
+    <option name="No" value="1" />
+  </enum16>
+  <enum16 name="Lod Type" offset="178" visible="True">
+    <option name="1 Model" value="0" />
+    <option name="2 Models" value="1" />
+    <option name="3 Models" value="2" />
+    <option name="4 Models" value="3" />
+  </enum16>
+  <float32 name="Lod 1 ...?" offset="180" visible="False" />
+  <float32 name="Lod 1 ...?" offset="184" visible="False" />
+  <float32 name="Lod 1 Activation Distance (negative)" offset="188" visible="True" />
+  <float32 name="Lod 1 Range" offset="192" visible="True" />
+  <float32 name="Lod 2 ...?" offset="196" visible="False" />
+  <float32 name="Lod 2 ...?" offset="200" visible="False" />
+  <float32 name="Lod 2 Activation Distance (negative)" offset="204" visible="True" />
+  <float32 name="Lod 2 Range" offset="208" visible="True" />
+  <float32 name="Lod 3 ...?" offset="212" visible="False" />
+  <float32 name="Lod 3 ...?" offset="216" visible="False" />
+  <float32 name="Lod 3 Activation Distance (negative)" offset="220" visible="True" />
+  <float32 name="Lod 3 Range" offset="224" visible="True" />
+  <float32 name="Lod 4 ...?" offset="228" visible="False" />
+  <float32 name="Lod 4 ...?" offset="232" visible="False" />
+  <float32 name="Lod 4 Activation Distance (negative)" offset="236" visible="True" />
+  <float32 name="Lod 4 Range" offset="240" visible="True" />
+  <undefined name="Unknown" offset="244" visible="False" />
+  <undefined name="Unknown" offset="248" visible="False" />
+  <undefined name="Unknown" offset="252" visible="False" />
+</plugin>

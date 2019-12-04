@@ -1,0 +1,96 @@
+<plugin>
+  <revisions />
+  <enum16 name="Side Effect" offset="0x10" visible="True">
+    <option name="None" value="0x0" />
+    <option name="Harmless" value="0x1" />
+    <option name="Lethal To The Unsuspecting" value="0x2" />
+    <option name="Emp" value="0x3" />
+  </enum16>
+  <enum16 name="Category" offset="0x12" visible="True">
+    <option name="None" value="0x0" />
+    <option name="Falling" value="0x1" />
+    <option name="Bullet" value="0x2" />
+    <option name="Grenade" value="0x3" />
+    <option name="High Explosive" value="0x4" />
+    <option name="Sniper" value="0x5" />
+    <option name="Melee" value="0x6" />
+    <option name="Flame" value="0x7" />
+    <option name="Mounted Weapon" value="0x8" />
+    <option name="Vehicle" value="0x9" />
+    <option name="Plasma" value="0xA" />
+    <option name="Needle" value="0xB" />
+    <option name="Shotgun" value="0xC" />
+  </enum16>
+  <stringID name="General Damage" offset="0x50" visible="True" />
+  <stringID name="Specific Damage" offset="0x54" visible="True" />
+  <struct name="Player Responses" offset="0x6C" visible="True" size="0x4C">
+    <enum16 name="Response Type" offset="0x0" visible="True">
+      <option name="Sheilded" value="0x0" />
+      <option name="UnSheiled" value="0x1" />
+      <option name="All" value="0x2" />
+    </enum16>
+    <enum32 name="Screen Flash Type" offset="0x2" visible="True">
+      <option name="None" value="0x0" />
+      <option name="Lighten" value="0x1" />
+      <option name="Darken" value="0x2" />
+      <option name="Max" value="0x3" />
+      <option name="Min" value="0x4" />
+      <option name="Invert" value="0x5" />
+      <option name="Tint" value="0x6" />
+    </enum32>
+    <enum16 name="Screen Flash Priority" offset="0x6" visible="True">
+      <option name="Low" value="0x0" />
+      <option name="Medium" value="0x1" />
+      <option name="High" value="0x2" />
+    </enum16>
+    <enum32 name="Screen Flash Fade Function" offset="0xC" visible="True">
+      <option name="Linear" value="0x0" />
+      <option name="Late" value="0x1" />
+      <option name="Very Late" value="0x2" />
+      <option name="Early" value="0x3" />
+      <option name="Very Early" value="0x4" />
+      <option name="Cosine" value="0x5" />
+      <option name="Zero" value="0x6" />
+      <option name="One" value="0x7" />
+    </enum32>
+    <struct name="Low Frequency Vibration" offset="0x28" visible="True" size="0x1" />
+    <struct name="High Frequency Vibration" offset="0x34" visible="True" size="0x1" />
+    <stringID name="Sound Effect Name" offset="0x3C" visible="True" />
+    <struct name="Sound Effect" offset="0x44" visible="True" size="0xC" />
+  </struct>
+  <enum32 name="Temporary Camera Impulse Fade Function" offset="0x78" visible="True">
+    <option name="Linear" value="0x0" />
+    <option name="Late" value="0x1" />
+    <option name="Very Late" value="0x2" />
+    <option name="Early" value="0x3" />
+    <option name="Very Early" value="0x4" />
+    <option name="Cosine" value="0x5" />
+    <option name="Zero" value="0x6" />
+    <option name="One" value="0x7" />
+  </enum32>
+  <enum32 name="Camera Shaking Falloff Function" offset="0x90" visible="True">
+    <option name="Linear" value="0x0" />
+    <option name="Late" value="0x1" />
+    <option name="Very Late" value="0x2" />
+    <option name="Early" value="0x3" />
+    <option name="Very Early" value="0x4" />
+    <option name="Cosine" value="0x5" />
+    <option name="Zero" value="0x6" />
+    <option name="One" value="0x7" />
+  </enum32>
+  <enum32 name="Camera Shaking Wobble Function" offset="0x9C" visible="True">
+    <option name="One" value="0x0" />
+    <option name="Zero" value="0x1" />
+    <option name="Cosine" value="0x2" />
+    <option name="Cosine (Variable Period)" value="0x3" />
+    <option name="Diagonal Wave" value="0x4" />
+    <option name="Diagonal Wave (Variable Period)" value="0x5" />
+    <option name="Slide" value="0x6" />
+    <option name="Slide (Variable Period)" value="0x7" />
+    <option name="Noise" value="0x8" />
+    <option name="Jitter" value="0x9" />
+    <option name="Wander" value="0xA" />
+    <option name="Spark" value="0xB" />
+  </enum32>
+  <tagRef name="Sound" offset="0xA8" visible="True" />
+</plugin>

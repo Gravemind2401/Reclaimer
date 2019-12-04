@@ -1,0 +1,33 @@
+<plugin class="cust" headersize="24">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <struct name="Unknown 0" offset="0" visible="True" size="8">
+    <int32 name="Unknown" offset="0" visible="False" />
+    <int16 name="Unknown" offset="4" visible="False" />
+  </struct>
+  <struct name="Unknown 1" offset="12" visible="True" size="72">
+    <struct name="Unknown 2" offset="0" visible="True" size="8">
+      <int32 name="Unknown" offset="0" visible="False" />
+      <int32 name="Unknown" offset="4" visible="False" />
+    </struct>
+    <int32 name="Unknown" offset="12" visible="False" />
+    <int32 name="Unknown" offset="16" visible="False" />
+    <int32 name="Unknown" offset="20" visible="False" />
+    <struct name="Unknown 3" offset="24" visible="True" size="8">
+      <int32 name="Unknown" offset="0" visible="False" />
+      <int32 name="Unknown" offset="4" visible="False" />
+    </struct>
+    <struct name="Unknown 4" offset="36" visible="True" size="20">
+      <int32 name="Unknown" offset="0" visible="False" />
+      <tagRef name="Unknown" offset="4" visible="False" />
+    </struct>
+    <int32 name="Unknown" offset="48" visible="False" />
+    <int32 name="Unknown" offset="52" visible="False" />
+    <int32 name="Unknown" offset="56" visible="False" />
+    <struct name="Unknown 5" offset="60" visible="True" size="20">
+      <int32 name="Unknown" offset="0" visible="True" />
+      <undefined name="Alpha" offset="4" visible="True" />
+    </struct>
+  </struct>
+</plugin>

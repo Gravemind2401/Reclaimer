@@ -1,0 +1,651 @@
+<plugin>
+  <enum16 name="widget type" offset="0x0" visible="true">
+    <option name="container" value="0x0" />
+    <option name="text box" value="0x1" />
+    <option name="spinner list" value="0x2" />
+    <option name="column list" value="0x3" />
+    <option name="game model (not implemented)" value="0x4" />
+    <option name="movie (not implemented)" value="0x5" />
+    <option name="custom (not implemented)" value="0x6" />
+  </enum16>
+  <enum16 name="controller index" offset="0x2" visible="true">
+    <option name="player 1" value="0x0" />
+    <option name="player 2" value="0x1" />
+    <option name="player 3" value="0x2" />
+    <option name="player 4" value="0x3" />
+    <option name="any player" value="0x4" />
+  </enum16>
+  <ascii name="name" offset="0x4" length="0x20" visible="true" />
+  <uint16 name="bounds top" offset="0x24" visible="true" />
+  <uint16 name="bounds left" offset="0x26" visible="true" />
+  <uint16 name="bounds bottom" offset="0x28" visible="true" />
+  <uint16 name="bounds right" offset="0x2A" visible="true" />
+  <bitfield32 name="flags" offset="0x2C" visible="true">
+    <bit name="pass unhandled events to focused child" index="0" />
+    <bit name="pause game time" index="1" />
+    <bit name="flash background bitmap" index="2" />
+    <bit name="dpad up/down tabs thru children" index="3" />
+    <bit name="dpad left/right tabs thru children" index="4" />
+    <bit name="dpad up/down tabs thru list items" index="5" />
+    <bit name="dpad left/right tabs thru list items" index="6" />
+    <bit name="dont focus a specific child widget" index="7" />
+    <bit name="pass unhandled events to all children" index="8" />
+    <bit name="render regardless of controller index" index="9" />
+    <bit name="pass handled events to all children" index="10" />
+    <bit name="return to main menu if no history" index="11" />
+    <bit name="always use tag controller index" index="12" />
+    <bit name="always use nifty render fx" index="13" />
+    <bit name="don't push history" index="14" />
+    <bit name="force handle mouse" index="15" />
+  </bitfield32>
+  <int32 name="milliseconds to auto close" offset="0x30" visible="true" description="&lt;=0 to never auto-close" />
+  <int32 name="milliseconds auto close fade time" offset="0x34" visible="true" description="&lt;= 0 for immediate close" />
+  <tagRef name="background bitmap" offset="0x38" visible="true" />
+  <comment title="game data input fxns">These functions use current game data to modify the appearance of
+the widget. These functions are called every time the widget is
+rendered.</comment>
+  <reflexive name="game data inputs" offset="0x40" visible="true" entrySize="0x24">
+    <enum16 name="function" offset="0x0" visible="true">
+      <option name="NULL" value="0x0" />
+      <option name="player settings menu update desc" value="0x1" />
+      <option name="unused" value="0x2" />
+      <option name="playlist settings menu update desc" value="0x3" />
+      <option name="gametype select menu update desc" value="0x4" />
+      <option name="multiplayer type menu update desc" value="0x5" />
+      <option name="solo level select update" value="0x6" />
+      <option name="difficulty menu update desc" value="0x7" />
+      <option name="build number (textbox only)" value="0x8" />
+      <option name="server list update" value="0x9" />
+      <option name="network pregame status update" value="0xA" />
+      <option name="splitscreen pregame status update" value="0xB" />
+      <option name="net/splitscreen prejoin players" value="0xC" />
+      <option name="mp profile list update" value="0xD" />
+      <option name="3wide player profile list update" value="0xE" />
+      <option name="plyr prof edit-select menu upd8" value="0xF" />
+      <option name="player profile small menu update" value="0x10" />
+      <option name="game settings lists text update" value="0x11" />
+      <option name="solo game objective text" value="0x12" />
+      <option name="color picker update" value="0x13" />
+      <option name="game settings lists pic update" value="0x14" />
+      <option name="main menu fake animate" value="0x15" />
+      <option name="mp level select update" value="0x16" />
+      <option name="get active plyr profile name" value="0x17" />
+      <option name="get edit plyr profile name" value="0x18" />
+      <option name="get edit game settings name" value="0x19" />
+      <option name="get active plyr profile color" value="0x1A" />
+      <option name="mp set textbox map name" value="0x1B" />
+      <option name="mp set textbox game ruleset" value="0x1C" />
+      <option name="mp set textbox teams noteams" value="0x1D" />
+      <option name="mp set textbox score limit" value="0x1E" />
+      <option name="mp set textbox score limit type" value="0x1F" />
+      <option name="mp set bitmap for map" value="0x20" />
+      <option name="mp set bitmap for ruleset" value="0x21" />
+      <option name="mp set textbox # of players" value="0x22" />
+      <option name="mp edit profile set rule text" value="0x23" />
+      <option name="system link status check" value="0x24" />
+      <option name="mp game directions" value="0x25" />
+      <option name="teams/no teams bitmap update" value="0x26" />
+      <option name="warn if diff. will nuke saved game" value="0x27" />
+      <option name="dim if no net cable" value="0x28" />
+      <option name="pause game set textbox inverted" value="0x29" />
+      <option name="dim unless two controllers" value="0x2A" />
+      <option name="controls update menu" value="0x2B" />
+      <option name="video menu update" value="0x2C" />
+      <option name="gamespy screen update" value="0x2D" />
+      <option name="common button bar update" value="0x2E" />
+      <option name="gamepad update menu" value="0x2F" />
+      <option name="server settings update" value="0x30" />
+      <option name="audio_menu_update" value="0x31" />
+      <option name="mp prof vehicles update" value="0x32" />
+      <option name="solo map list update" value="0x33" />
+      <option name="mp map list update" value="0x34" />
+      <option name="gt select list update" value="0x35" />
+      <option name="gt edit list update" value="0x36" />
+      <option name="load game list update" value="0x37" />
+      <option name="checking for updates" value="0x38" />
+      <option name="direct ip connect update" value="0x39" />
+      <option name="network settings update" value="0x3A" />
+    </enum16>
+    <int16 name="Unknown" offset="0x2" visible="false" />
+    <undefined name="Unknown" offset="0x4" visible="false" />
+    <undefined name="Unknown" offset="0x8" visible="false" />
+    <undefined name="Unknown" offset="0xC" visible="false" />
+    <undefined name="Unknown" offset="0x10" visible="false" />
+    <undefined name="Unknown" offset="0x14" visible="false" />
+    <undefined name="Unknown" offset="0x18" visible="false" />
+    <undefined name="Unknown" offset="0x1C" visible="false" />
+    <undefined name="Unknown" offset="0x20" visible="false" />
+  </reflexive>
+  <comment title="event handlers">These allow actions to be tied to certain ui events.
+The event handler is run every time the widget receives the specified event.
+By default, the 'back' and 'B' buttons will take you to the previous screen.</comment>
+  <reflexive name="event handlers" offset="0x48" visible="true" entrySize="0x38">
+    <bitfield32 name="flags" offset="0x0" visible="true">
+      <bit name="close current widget" index="0" />
+      <bit name="close other widget" index="1" />
+      <bit name="close all widgets" index="2" />
+      <bit name="open widget" index="3" />
+      <bit name="reload self" index="4" />
+      <bit name="reload other widget" index="5" />
+      <bit name="give focus to widget" index="6" />
+      <bit name="run function" index="7" />
+      <bit name="replace self w/ widget" index="8" />
+      <bit name="go back to previous widget" index="9" />
+      <bit name="run scenario script" index="10" />
+      <bit name="try to branch on failure" index="11" />
+    </bitfield32>
+    <enum16 name="event type" offset="0x4" visible="true">
+      <option name="A button" value="0x0" />
+      <option name="B button" value="0x1" />
+      <option name="X button" value="0x2" />
+      <option name="Y button" value="0x3" />
+      <option name="black button" value="0x4" />
+      <option name="white button" value="0x5" />
+      <option name="left trigger" value="0x6" />
+      <option name="right trigger" value="0x7" />
+      <option name="dpad up" value="0x8" />
+      <option name="dpad down" value="0x9" />
+      <option name="dpad left" value="0xA" />
+      <option name="dpad right" value="0xB" />
+      <option name="start button" value="0xC" />
+      <option name="back button" value="0xD" />
+      <option name="left thumb" value="0xE" />
+      <option name="right thumb" value="0xF" />
+      <option name="left analog stick up" value="0x10" />
+      <option name="left analog stick down" value="0x11" />
+      <option name="left analog stick left" value="0x12" />
+      <option name="left analog stick right" value="0x13" />
+      <option name="left analog stick up" value="0x14" />
+      <option name="right analog stick down" value="0x15" />
+      <option name="right analog stick left" value="0x16" />
+      <option name="right analog stick right" value="0x17" />
+      <option name="created" value="0x18" />
+      <option name="deleted" value="0x19" />
+      <option name="get focus" value="0x1A" />
+      <option name="lose focus" value="0x1B" />
+      <option name="left mouse" value="0x1C" />
+      <option name="middle mouse" value="0x1D" />
+      <option name="right mouse" value="0x1E" />
+      <option name="double click" value="0x1F" />
+      <option name="custom activation" value="0x20" />
+      <option name="post-render" value="0x21" />
+    </enum16>
+    <enum16 name="function" offset="0x6" visible="true">
+      <option name="NULL" value="0x0" />
+      <option name="list goto next item" value="0x1" />
+      <option name="list goto previous item" value="0x2" />
+      <option name="unused" value="0x3" />
+      <option name="unused" value="0x4" />
+      <option name="initialize sp level list solo" value="0x5" />
+      <option name="initialize sp level list coop" value="0x6" />
+      <option name="dispose sp level list" value="0x7" />
+      <option name="solo level set map" value="0x8" />
+      <option name="set difficulty" value="0x9" />
+      <option name="start new game" value="0xA" />
+      <option name="pause game restart at checkpoint" value="0xB" />
+      <option name="pause game restart level" value="0xC" />
+      <option name="pause game return to main menu" value="0xD" />
+      <option name="clear multiplayer player joins" value="0xE" />
+      <option name="join controller to mp game" value="0xF" />
+      <option name="initialize net game server list" value="0x10" />
+      <option name="start network game server" value="0x11" />
+      <option name="dispose net game server list" value="0x12" />
+      <option name="shutdown network game" value="0x13" />
+      <option name="net game join from server list" value="0x14" />
+      <option name="split screen game initialize" value="0x15" />
+      <option name="coop game initialize" value="0x16" />
+      <option name="main menu intialize" value="0x17" />
+      <option name="mp type menu initialize" value="0x18" />
+      <option name="pick play stage for quick start" value="0x19" />
+      <option name="mp level list initialize" value="0x1A" />
+      <option name="mp level list dispose" value="0x1B" />
+      <option name="mp level select" value="0x1C" />
+      <option name="mp profiles list initialize" value="0x1D" />
+      <option name="mp profiles list dispose" value="0x1E" />
+      <option name="mp profile set for game" value="0x1F" />
+      <option name="swap player team" value="0x20" />
+      <option name="net game join player" value="0x21" />
+      <option name="player profile list initialize" value="0x22" />
+      <option name="player profile list dispose" value="0x23" />
+      <option name="3wide plyr prof set for game" value="0x24" />
+      <option name="1wide plyr prof set for game" value="0x25" />
+      <option name="mp profile begin editing" value="0x26" />
+      <option name="mp profile end editing" value="0x27" />
+      <option name="mp profile set game engine" value="0x28" />
+      <option name="mp profile change name" value="0x29" />
+      <option name="mp profile set ctf rules" value="0x2A" />
+      <option name="mp profile set koth rules" value="0x2B" />
+      <option name="mp profile set slayer rules" value="0x2C" />
+      <option name="mp profile set oddball rules" value="0x2D" />
+      <option name="mp profile set racing rules" value="0x2E" />
+      <option name="mp profile set player options" value="0x2F" />
+      <option name="mp profile set item options" value="0x30" />
+      <option name="mp profile set indicator opts" value="0x31" />
+      <option name="mp profile init game engine" value="0x32" />
+      <option name="mp profile init name" value="0x33" />
+      <option name="mp profile init ctf rules" value="0x34" />
+      <option name="mp profile init koth rules" value="0x35" />
+      <option name="mp profile init slayer rules" value="0x36" />
+      <option name="mp profile init oddball rules" value="0x37" />
+      <option name="mp profile init racing rules" value="0x38" />
+      <option name="mp profile init player opts" value="0x39" />
+      <option name="mp profile init item options" value="0x3A" />
+      <option name="mp profile init indicator opts" value="0x3B" />
+      <option name="mp profile save changes" value="0x3C" />
+      <option name="color picker menu initialize" value="0x3D" />
+      <option name="color picker menu dispose" value="0x3E" />
+      <option name="color picker select color" value="0x3F" />
+      <option name="player profile begin editing" value="0x40" />
+      <option name="player profile end editing" value="0x41" />
+      <option name="player profile change name" value="0x42" />
+      <option name="player profile save changes" value="0x43" />
+      <option name="plyr prf init cntl settings" value="0x44" />
+      <option name="plyr prf init adv cntl set" value="0x45" />
+      <option name="plyr prf save cntl settings" value="0x46" />
+      <option name="plyr prf save adv cntl set" value="0x47" />
+      <option name="mp game player quit" value="0x48" />
+      <option name="main menu switch to solo game" value="0x49" />
+      <option name="request del player profile" value="0x4A" />
+      <option name="request del playlist profile" value="0x4B" />
+      <option name="final del player profile" value="0x4C" />
+      <option name="final del playlist profile" value="0x4D" />
+      <option name="cancel profile delete" value="0x4E" />
+      <option name="create&amp;edit playlist profile" value="0x4F" />
+      <option name="create&amp;edit player profile" value="0x50" />
+      <option name="net game speed start" value="0x51" />
+      <option name="net game delay start" value="0x52" />
+      <option name="net server accept conx" value="0x53" />
+      <option name="net server defer start" value="0x54" />
+      <option name="net server allow start" value="0x55" />
+      <option name="disable if no xdemos" value="0x56" />
+      <option name="run xdemos" value="0x57" />
+      <option name="sp reset controller choices" value="0x58" />
+      <option name="sp set p1 controller choice" value="0x59" />
+      <option name="sp set p2 controller choice" value="0x5A" />
+      <option name="error if no network connection" value="0x5B" />
+      <option name="start server if none advertised" value="0x5C" />
+      <option name="net game unjoin player" value="0x5D" />
+      <option name="close if not editing profile" value="0x5E" />
+      <option name="exit to xbox dashboard" value="0x5F" />
+      <option name="new campaign chosen" value="0x60" />
+      <option name="new campaign decision" value="0x61" />
+      <option name="pop history stack once" value="0x62" />
+      <option name="difficulty menu init" value="0x63" />
+      <option name="begin music fade out" value="0x64" />
+      <option name="new game if no plyr profiles" value="0x65" />
+      <option name="exit gracefully to xbox dashboard" value="0x66" />
+      <option name="pause game invert pitch" value="0x67" />
+      <option name="start new coop game" value="0x68" />
+      <option name="pause game invert spinner get" value="0x69" />
+      <option name="pause game invert spinner set" value="0x6A" />
+      <option name="main menu quit game" value="0x6B" />
+      <option name="mouse - emit ACCEPT event" value="0x6C" />
+      <option name="mouse - emit BACK event" value="0x6D" />
+      <option name="mouse - emit DPAD LEFT event" value="0x6E" />
+      <option name="mouse - emit DPAD RIGHT event" value="0x6F" />
+      <option name="mouse spinner 3wide click" value="0x70" />
+      <option name="controls screen init" value="0x71" />
+      <option name="video screen init" value="0x72" />
+      <option name="controls begin binding" value="0x73" />
+      <option name="gamespy screen init" value="0x74" />
+      <option name="gamespy screen dispose" value="0x75" />
+      <option name="gamespy select header" value="0x76" />
+      <option name="gamespy select item" value="0x77" />
+      <option name="gamespy select button" value="0x78" />
+      <option name="plr prof init mouse set" value="0x79" />
+      <option name="plr prof change mouse set" value="0x7A" />
+      <option name="plr prof init audio set" value="0x7B" />
+      <option name="plr prof change audio set" value="0x7C" />
+      <option name="plr prof change video set" value="0x7D" />
+      <option name="controls screen dispose" value="0x7E" />
+      <option name="controls screen change set" value="0x7F" />
+      <option name="mouse - emit X event" value="0x80" />
+      <option name="gamepad screen init" value="0x81" />
+      <option name="gamepad screen dispose" value="0x82" />
+      <option name="gamepad screen change gamepads" value="0x83" />
+      <option name="gamepad screen select item" value="0x84" />
+      <option name="mouse screen defaults" value="0x85" />
+      <option name="audio screen defaults" value="0x86" />
+      <option name="video screen defaults" value="0x87" />
+      <option name="controls screen defaults" value="0x88" />
+      <option name="profile set edit begin" value="0x89" />
+      <option name="profile manager delete" value="0x8A" />
+      <option name="profile manager select" value="0x8B" />
+      <option name="gamespy dismiss error" value="0x8C" />
+      <option name="server settings init" value="0x8D" />
+      <option name="ss edit server name" value="0x8E" />
+      <option name="ss edit server password" value="0x8F" />
+      <option name="ss start game" value="0x90" />
+      <option name="video test dialog init" value="0x91" />
+      <option name="video test dialog dispose" value="0x92" />
+      <option name="video test dialog accept" value="0x93" />
+      <option name="gamespy dismiss filters" value="0x94" />
+      <option name="gamespy update filter settings" value="0x95" />
+      <option name="gamespy back handler" value="0x96" />
+      <option name="mouse spinner 1wide click" value="0x97" />
+      <option name="controls back handler" value="0x98" />
+      <option name="controls advanced launch" value="0x99" />
+      <option name="controls advanced ok" value="0x9A" />
+      <option name="mp pause menu open" value="0x9B" />
+      <option name="mp game options open" value="0x9C" />
+      <option name="mp choose team" value="0x9D" />
+      <option name="mp prof init vehicle options" value="0x9E" />
+      <option name="mp prof save vehicle options" value="0x9F" />
+      <option name="single prev cl item activated" value="0xA0" />
+      <option name="mp prof init teamplay options" value="0xA1" />
+      <option name="mp prof save teamplay options" value="0xA2" />
+      <option name="mp game options choose" value="0xA3" />
+      <option name="emit custom activation event" value="0xA4" />
+      <option name="plr prof cancel audio set" value="0xA5" />
+      <option name="plr prof init network options" value="0xA6" />
+      <option name="plr prof save network options" value="0xA7" />
+      <option name="credits post render" value="0xA8" />
+      <option name="difficulty item select" value="0xA9" />
+      <option name="credits initialize" value="0xAA" />
+      <option name="credits dispose" value="0xAB" />
+      <option name="gamespy get patch" value="0xAC" />
+      <option name="video screen dispose" value="0xAD" />
+      <option name="campaign menu init" value="0xAE" />
+      <option name="campaign menu continue" value="0xAF" />
+      <option name="load game menu init" value="0xB0" />
+      <option name="load game menu dispose" value="0xB1" />
+      <option name="load game menu activated" value="0xB2" />
+      <option name="solo menu save checkpoint" value="0xB3" />
+      <option name="mp type set mode" value="0xB4" />
+      <option name="checking for updates ok" value="0xB5" />
+      <option name="checking for updates dismiss" value="0xB6" />
+      <option name="direct ip connect init" value="0xB7" />
+      <option name="direct ip connect go" value="0xB8" />
+      <option name="direct ip edit field" value="0xB9" />
+      <option name="network settings edit a port" value="0xBA" />
+      <option name="network settings defaults" value="0xBB" />
+      <option name="load game menu delete request" value="0xBC" />
+      <option name="load game menu delete finish" value="0xBD" />
+    </enum16>
+    <tagRef name="widget tag" offset="0x8" visible="true" />
+    <tagRef name="sound effect" offset="0x10" visible="true" />
+    <ascii name="script" offset="0x18" length="0x20" visible="true" />
+  </reflexive>
+  <comment title="search-and-replace">These are used to run a search-and-replace on the specified
+word in the text-box text, replacing all occurrences of the word
+with the output of the replace-function. These are invoked each
+time the text box is rendered (after any game data input functions
+have been run). The searching is case-sensitive.</comment>
+  <reflexive name="search and replace functions" offset="0x50" visible="true" entrySize="0x22">
+    <ascii name="search string" offset="0x0" length="0x20" visible="true" />
+    <enum16 name="replace function" offset="0x20" visible="true">
+      <option name="NULL" value="0x0" />
+      <option name="widget's controller" value="0x1" />
+      <option name="build number" value="0x2" />
+      <option name="pid" value="0x3" />
+    </enum16>
+  </reflexive>
+  <undefined name="Unknown" offset="0x58" visible="false" />
+  <undefined name="Unknown" offset="0x5C" visible="false" />
+  <undefined name="Unknown" offset="0x60" visible="false" />
+  <undefined name="Unknown" offset="0x64" visible="false" />
+  <undefined name="Unknown" offset="0x68" visible="false" />
+  <undefined name="Unknown" offset="0x6C" visible="false" />
+  <undefined name="Unknown" offset="0x70" visible="false" />
+  <undefined name="Unknown" offset="0x74" visible="false" />
+  <undefined name="Unknown" offset="0x78" visible="false" />
+  <undefined name="Unknown" offset="0x7C" visible="false" />
+  <undefined name="Unknown" offset="0x80" visible="false" />
+  <undefined name="Unknown" offset="0x84" visible="false" />
+  <undefined name="Unknown" offset="0x88" visible="false" />
+  <undefined name="Unknown" offset="0x8C" visible="false" />
+  <undefined name="Unknown" offset="0x90" visible="false" />
+  <undefined name="Unknown" offset="0x94" visible="false" />
+  <undefined name="Unknown" offset="0x98" visible="false" />
+  <undefined name="Unknown" offset="0x9C" visible="false" />
+  <undefined name="Unknown" offset="0xA0" visible="false" />
+  <undefined name="Unknown" offset="0xA4" visible="false" />
+  <undefined name="Unknown" offset="0xA8" visible="false" />
+  <undefined name="Unknown" offset="0xAC" visible="false" />
+  <undefined name="Unknown" offset="0xB0" visible="false" />
+  <undefined name="Unknown" offset="0xB4" visible="false" />
+  <undefined name="Unknown" offset="0xB8" visible="false" />
+  <undefined name="Unknown" offset="0xBC" visible="false" />
+  <undefined name="Unknown" offset="0xC0" visible="false" />
+  <undefined name="Unknown" offset="0xC4" visible="false" />
+  <undefined name="Unknown" offset="0xC8" visible="false" />
+  <undefined name="Unknown" offset="0xCC" visible="false" />
+  <undefined name="Unknown" offset="0xD0" visible="false" />
+  <undefined name="Unknown" offset="0xD4" visible="false" />
+  <comment title="text box">parameters specific to text box widgets
+NOTE: the string list tag can also be used for lists whose items come from a string list tag</comment>
+  <tagRef name="text label unicode strings list" offset="0xD8" visible="true" />
+  <tagRef name="text font" offset="0xE0" visible="true" />
+  <colorf name="text color" offset="0xE8" format="argb" visible="true" />
+  <enum16 name="justification" offset="0xF8" visible="true">
+    <option name="left justify" value="0x0" />
+    <option name="right justify" value="0x1" />
+    <option name="center justify" value="0x2" />
+  </enum16>
+  <bitfield32 name="flags" offset="0xFA" visible="true">
+    <bit name="editable" index="0" />
+    <bit name="password" index="1" />
+    <bit name="flashing" index="2" />
+    <bit name="don't do that weird focus test" index="3" />
+  </bitfield32>
+  <undefined name="Unknown" offset="0xFE" visible="false" />
+  <undefined name="Unknown" offset="0x102" visible="false" />
+  <undefined name="Unknown" offset="0x106" visible="false" />
+  <comment title="more text box parameters">blah blah blah</comment>
+  <int16 name="string list index" offset="0x10A" visible="true" description="default is 0" />
+  <int16 name="horiz offset" offset="0x10C" visible="true" description="offsets text position in its bounding area" />
+  <int16 name="vert offset" offset="0x10E" visible="true" description="offsets the text position in its bounding area" />
+  <undefined name="Unknown" offset="0x110" visible="false" />
+  <undefined name="Unknown" offset="0x114" visible="false" />
+  <undefined name="Unknown" offset="0x118" visible="false" />
+  <undefined name="Unknown" offset="0x11C" visible="false" />
+  <undefined name="Unknown" offset="0x120" visible="false" />
+  <undefined name="Unknown" offset="0x124" visible="false" />
+  <int16 name="Unknown" offset="0x128" visible="false" />
+  <comment title="list items">These options affect list items for both spinner and column lists
+* child widgets are used to define the visible list items
+* for lists with code-generated list items, the child widgets are used
+  as templated for visible list item placement
+IMPORTANT: for list widgets, the ONLY thing you can have as child widgets are the list item widgets!</comment>
+  <int16 name="Unknown" offset="0x12A" visible="false" />
+  <bitfield32 name="flags" offset="0x12C" visible="true">
+    <bit name="list items generated in code" index="0" />
+    <bit name="list items from string list tag" index="1" />
+    <bit name="list items only one tooltip" index="2" />
+    <bit name="list single preview no scroll" index="3" />
+  </bitfield32>
+  <comment title="spinner list">parameters specific to spinner list widgets
+child widgets are the list items</comment>
+  <tagRef name="list header bitmap" offset="0x130" visible="true" />
+  <tagRef name="list footer bitmap" offset="0x138" visible="true" />
+  <uint16 name="header bounds top" offset="0x140" visible="true" />
+  <uint16 name="header bounds left" offset="0x142" visible="true" />
+  <uint16 name="header bounds bottom" offset="0x144" visible="true" />
+  <uint16 name="header bounds right" offset="0x146" visible="true" />
+  <uint16 name="footer bounds top" offset="0x148" visible="true" />
+  <uint16 name="footer bounds left" offset="0x14A" visible="true" />
+  <uint16 name="footer bounds bottom" offset="0x14C" visible="true" />
+  <uint16 name="footer bounds right" offset="0x14E" visible="true" />
+  <undefined name="Unknown" offset="0x150" visible="false" />
+  <undefined name="Unknown" offset="0x154" visible="false" />
+  <undefined name="Unknown" offset="0x158" visible="false" />
+  <undefined name="Unknown" offset="0x15C" visible="false" />
+  <undefined name="Unknown" offset="0x160" visible="false" />
+  <undefined name="Unknown" offset="0x164" visible="false" />
+  <undefined name="Unknown" offset="0x168" visible="false" />
+  <undefined name="Unknown" offset="0x16C" visible="false" />
+  <comment title="column list">parameters specific to column list widgets
+child widgets are the list items</comment>
+  <tagRef name="extended description widget" offset="0x170" visible="true" />
+  <undefined name="Unknown" offset="0x178" visible="false" />
+  <undefined name="Unknown" offset="0x17C" visible="false" />
+  <undefined name="Unknown" offset="0x180" visible="false" />
+  <undefined name="Unknown" offset="0x184" visible="false" />
+  <undefined name="Unknown" offset="0x188" visible="false" />
+  <undefined name="Unknown" offset="0x18C" visible="false" />
+  <undefined name="Unknown" offset="0x190" visible="false" />
+  <undefined name="Unknown" offset="0x194" visible="false" />
+  <undefined name="Unknown" offset="0x198" visible="false" />
+  <undefined name="Unknown" offset="0x19C" visible="false" />
+  <undefined name="Unknown" offset="0x1A0" visible="false" />
+  <undefined name="Unknown" offset="0x1A4" visible="false" />
+  <undefined name="Unknown" offset="0x1A8" visible="false" />
+  <undefined name="Unknown" offset="0x1AC" visible="false" />
+  <undefined name="Unknown" offset="0x1B0" visible="false" />
+  <undefined name="Unknown" offset="0x1B4" visible="false" />
+  <undefined name="Unknown" offset="0x1B8" visible="false" />
+  <undefined name="Unknown" offset="0x1BC" visible="false" />
+  <undefined name="Unknown" offset="0x1C0" visible="false" />
+  <undefined name="Unknown" offset="0x1C4" visible="false" />
+  <undefined name="Unknown" offset="0x1C8" visible="false" />
+  <undefined name="Unknown" offset="0x1CC" visible="false" />
+  <undefined name="Unknown" offset="0x1D0" visible="false" />
+  <undefined name="Unknown" offset="0x1D4" visible="false" />
+  <undefined name="Unknown" offset="0x1D8" visible="false" />
+  <undefined name="Unknown" offset="0x1DC" visible="false" />
+  <undefined name="Unknown" offset="0x1E0" visible="false" />
+  <undefined name="Unknown" offset="0x1E4" visible="false" />
+  <undefined name="Unknown" offset="0x1E8" visible="false" />
+  <undefined name="Unknown" offset="0x1EC" visible="false" />
+  <undefined name="Unknown" offset="0x1F0" visible="false" />
+  <undefined name="Unknown" offset="0x1F4" visible="false" />
+  <undefined name="Unknown" offset="0x1F8" visible="false" />
+  <undefined name="Unknown" offset="0x1FC" visible="false" />
+  <undefined name="Unknown" offset="0x200" visible="false" />
+  <undefined name="Unknown" offset="0x204" visible="false" />
+  <undefined name="Unknown" offset="0x208" visible="false" />
+  <undefined name="Unknown" offset="0x20C" visible="false" />
+  <undefined name="Unknown" offset="0x210" visible="false" />
+  <undefined name="Unknown" offset="0x214" visible="false" />
+  <undefined name="Unknown" offset="0x218" visible="false" />
+  <undefined name="Unknown" offset="0x21C" visible="false" />
+  <undefined name="Unknown" offset="0x220" visible="false" />
+  <undefined name="Unknown" offset="0x224" visible="false" />
+  <undefined name="Unknown" offset="0x228" visible="false" />
+  <undefined name="Unknown" offset="0x22C" visible="false" />
+  <undefined name="Unknown" offset="0x230" visible="false" />
+  <undefined name="Unknown" offset="0x234" visible="false" />
+  <undefined name="Unknown" offset="0x238" visible="false" />
+  <undefined name="Unknown" offset="0x23C" visible="false" />
+  <undefined name="Unknown" offset="0x240" visible="false" />
+  <undefined name="Unknown" offset="0x244" visible="false" />
+  <undefined name="Unknown" offset="0x248" visible="false" />
+  <undefined name="Unknown" offset="0x24C" visible="false" />
+  <undefined name="Unknown" offset="0x250" visible="false" />
+  <undefined name="Unknown" offset="0x254" visible="false" />
+  <undefined name="Unknown" offset="0x258" visible="false" />
+  <undefined name="Unknown" offset="0x25C" visible="false" />
+  <undefined name="Unknown" offset="0x260" visible="false" />
+  <undefined name="Unknown" offset="0x264" visible="false" />
+  <undefined name="Unknown" offset="0x268" visible="false" />
+  <undefined name="Unknown" offset="0x26C" visible="false" />
+  <undefined name="Unknown" offset="0x270" visible="false" />
+  <undefined name="Unknown" offset="0x274" visible="false" />
+  <undefined name="Unknown" offset="0x278" visible="false" />
+  <undefined name="Unknown" offset="0x27C" visible="false" />
+  <undefined name="Unknown" offset="0x280" visible="false" />
+  <undefined name="Unknown" offset="0x284" visible="false" />
+  <undefined name="Unknown" offset="0x288" visible="false" />
+  <undefined name="Unknown" offset="0x28C" visible="false" />
+  <undefined name="Unknown" offset="0x290" visible="false" />
+  <undefined name="Unknown" offset="0x294" visible="false" />
+  <comment title="conditional widgets">use this to attach widgets that are loaded only
+if some internal criteria is met while processing a widget event</comment>
+  <reflexive name="conditional widgets" offset="0x298" visible="true" entrySize="0x48">
+    <tagRef name="widget tag" offset="0x0" visible="true" />
+    <ascii name="name (unused)" offset="0x8" length="0x20" visible="true" />
+    <bitfield32 name="flags" offset="0x28" visible="true">
+      <bit name="load if event handler function fails" index="0" />
+    </bitfield32>
+    <int16 name="custom controller index (unused)" offset="0x2C" visible="true" />
+    <int16 name="Unknown" offset="0x2E" visible="false" />
+    <undefined name="Unknown" offset="0x30" visible="false" />
+    <undefined name="Unknown" offset="0x34" visible="false" />
+    <undefined name="Unknown" offset="0x38" visible="false" />
+    <undefined name="Unknown" offset="0x3C" visible="false" />
+    <undefined name="Unknown" offset="0x40" visible="false" />
+    <undefined name="Unknown" offset="0x44" visible="false" />
+  </reflexive>
+  <undefined name="Unknown" offset="0x2A0" visible="false" />
+  <undefined name="Unknown" offset="0x2A4" visible="false" />
+  <undefined name="Unknown" offset="0x2A8" visible="false" />
+  <undefined name="Unknown" offset="0x2AC" visible="false" />
+  <undefined name="Unknown" offset="0x2B0" visible="false" />
+  <undefined name="Unknown" offset="0x2B4" visible="false" />
+  <undefined name="Unknown" offset="0x2B8" visible="false" />
+  <undefined name="Unknown" offset="0x2BC" visible="false" />
+  <undefined name="Unknown" offset="0x2C0" visible="false" />
+  <undefined name="Unknown" offset="0x2C4" visible="false" />
+  <undefined name="Unknown" offset="0x2C8" visible="false" />
+  <undefined name="Unknown" offset="0x2CC" visible="false" />
+  <undefined name="Unknown" offset="0x2D0" visible="false" />
+  <undefined name="Unknown" offset="0x2D4" visible="false" />
+  <undefined name="Unknown" offset="0x2D8" visible="false" />
+  <undefined name="Unknown" offset="0x2DC" visible="false" />
+  <undefined name="Unknown" offset="0x2E0" visible="false" />
+  <undefined name="Unknown" offset="0x2E4" visible="false" />
+  <undefined name="Unknown" offset="0x2E8" visible="false" />
+  <undefined name="Unknown" offset="0x2EC" visible="false" />
+  <undefined name="Unknown" offset="0x2F0" visible="false" />
+  <undefined name="Unknown" offset="0x2F4" visible="false" />
+  <undefined name="Unknown" offset="0x2F8" visible="false" />
+  <undefined name="Unknown" offset="0x2FC" visible="false" />
+  <undefined name="Unknown" offset="0x300" visible="false" />
+  <undefined name="Unknown" offset="0x304" visible="false" />
+  <undefined name="Unknown" offset="0x308" visible="false" />
+  <undefined name="Unknown" offset="0x30C" visible="false" />
+  <undefined name="Unknown" offset="0x310" visible="false" />
+  <undefined name="Unknown" offset="0x314" visible="false" />
+  <undefined name="Unknown" offset="0x318" visible="false" />
+  <undefined name="Unknown" offset="0x31C" visible="false" />
+  <undefined name="Unknown" offset="0x320" visible="false" />
+  <undefined name="Unknown" offset="0x324" visible="false" />
+  <undefined name="Unknown" offset="0x328" visible="false" />
+  <undefined name="Unknown" offset="0x32C" visible="false" />
+  <undefined name="Unknown" offset="0x330" visible="false" />
+  <undefined name="Unknown" offset="0x334" visible="false" />
+  <undefined name="Unknown" offset="0x338" visible="false" />
+  <undefined name="Unknown" offset="0x33C" visible="false" />
+  <undefined name="Unknown" offset="0x340" visible="false" />
+  <undefined name="Unknown" offset="0x344" visible="false" />
+  <undefined name="Unknown" offset="0x348" visible="false" />
+  <undefined name="Unknown" offset="0x34C" visible="false" />
+  <undefined name="Unknown" offset="0x350" visible="false" />
+  <undefined name="Unknown" offset="0x354" visible="false" />
+  <undefined name="Unknown" offset="0x358" visible="false" />
+  <undefined name="Unknown" offset="0x35C" visible="false" />
+  <undefined name="Unknown" offset="0x360" visible="false" />
+  <undefined name="Unknown" offset="0x364" visible="false" />
+  <undefined name="Unknown" offset="0x368" visible="false" />
+  <undefined name="Unknown" offset="0x36C" visible="false" />
+  <undefined name="Unknown" offset="0x370" visible="false" />
+  <undefined name="Unknown" offset="0x374" visible="false" />
+  <undefined name="Unknown" offset="0x378" visible="false" />
+  <undefined name="Unknown" offset="0x37C" visible="false" />
+  <undefined name="Unknown" offset="0x380" visible="false" />
+  <undefined name="Unknown" offset="0x384" visible="false" />
+  <undefined name="Unknown" offset="0x388" visible="false" />
+  <undefined name="Unknown" offset="0x38C" visible="false" />
+  <undefined name="Unknown" offset="0x390" visible="false" />
+  <undefined name="Unknown" offset="0x394" visible="false" />
+  <undefined name="Unknown" offset="0x398" visible="false" />
+  <undefined name="Unknown" offset="0x39C" visible="false" />
+  <comment title="child widgets">use this to attach widgets that are loaded as 'children'
+of this widget (children are always loaded as part of the parent widget)</comment>
+  <reflexive name="child widgets" offset="0x3A0" visible="true" entrySize="0x48">
+    <tagRef name="widget tag" offset="0x0" visible="true" />
+    <ascii name="name (unused)" offset="0x8" length="0x20" visible="true" />
+    <bitfield32 name="flags" offset="0x28" visible="true">
+      <bit name="use custom controller index" index="0" />
+    </bitfield32>
+    <int16 name="custom controller index" offset="0x2C" visible="true" />
+    <int16 name="vertical offset" offset="0x2E" visible="true" />
+    <int16 name="horizontal offset" offset="0x30" visible="true" />
+    <int16 name="Unknown" offset="0x32" visible="false" />
+    <undefined name="Unknown" offset="0x34" visible="false" />
+    <undefined name="Unknown" offset="0x38" visible="false" />
+    <undefined name="Unknown" offset="0x3C" visible="false" />
+    <undefined name="Unknown" offset="0x40" visible="false" />
+    <undefined name="Unknown" offset="0x44" visible="false" />
+  </reflexive>
+</plugin>

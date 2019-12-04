@@ -1,0 +1,68 @@
+<plugin>
+  <tagRef name="model" offset="0x0" visible="true" />
+  <tagRef name="animation_graph" offset="0x8" visible="true" />
+  <undefined name="Unknown" offset="0x10" visible="false" />
+  <undefined name="Unknown" offset="0x14" visible="false" />
+  <undefined name="Unknown" offset="0x18" visible="false" />
+  <undefined name="Unknown" offset="0x1C" visible="false" />
+  <undefined name="Unknown" offset="0x20" visible="false" />
+  <undefined name="Unknown" offset="0x24" visible="false" />
+  <colorf name="indoor ambient radiosity color" offset="0x28" format="rgb" visible="true" description="the indoor ambient light color" />
+  <float32 name="indoor ambient radiosity power" offset="0x34" visible="true" description="the indoor ambient light power from 0 to infinity" />
+  <colorf name="outdoor ambient radiosity color" offset="0x38" format="rgb" visible="true" description="the outdoor ambient light color" />
+  <float32 name="outdoor ambient radiosity power" offset="0x44" visible="true" description="the outdoor ambient light power from 0 to infinity" />
+  <colorf name="outdoor fog color" offset="0x48" format="rgb" visible="true" />
+  <undefined name="Unknown" offset="0x54" visible="false" />
+  <undefined name="Unknown" offset="0x58" visible="false" />
+  <float32 name="outdoor fog maximum density" offset="0x5C" visible="true" description="density at opaque distance - 0 defaults to 1" />
+  <float32 name="outdoor fog start distance" offset="0x60" visible="true" description="below this distance there is no fog" />
+  <float32 name="outdoor fog opaque distance" offset="0x64" visible="true" description="beyond this distance surfaces are completely fogged" />
+  <colorf name="indoor fog color" offset="0x68" format="rgb" visible="true" />
+  <undefined name="Unknown" offset="0x74" visible="false" />
+  <undefined name="Unknown" offset="0x78" visible="false" />
+  <float32 name="indoor fog maximum density" offset="0x7C" visible="true" description="density at opaque distance - 0 defaults to 1" />
+  <float32 name="indoor fog start distance" offset="0x80" visible="true" description="below this distance there is no fog" />
+  <float32 name="indoor fog opaque distance" offset="0x84" visible="true" description="beyond this distance surfaces are completely fogged" />
+  <tagRef name="indoor fog screen" offset="0x88" visible="true" description="used for FOG SCREEN only; not used for planar fog" />
+  <undefined name="Unknown" offset="0x90" visible="false" />
+  <reflexive name="shader functions" offset="0x94" visible="true" entrySize="0x24" entryname="0x4">
+    <undefined name="Unknown" offset="0x0" visible="false" />
+    <ascii name="global function name" offset="0x4" length="0x20" visible="true" description="the global function that controls this shader value" />
+  </reflexive>
+  <reflexive name="animations" offset="0x9C" visible="true" entrySize="0x24">
+    <int16 name="animation index" offset="0x0" visible="true" description="the index of the animation in the animation graph" />
+    <int16 name="Unknown" offset="0x2" visible="false" />
+    <float32 name="period" offset="0x4" visible="true" description="seconds" />
+    <undefined name="Unknown" offset="0x8" visible="false" />
+    <undefined name="Unknown" offset="0xC" visible="false" />
+    <undefined name="Unknown" offset="0x10" visible="false" />
+    <undefined name="Unknown" offset="0x14" visible="false" />
+    <undefined name="Unknown" offset="0x18" visible="false" />
+    <undefined name="Unknown" offset="0x1C" visible="false" />
+    <undefined name="Unknown" offset="0x20" visible="false" />
+  </reflexive>
+  <reflexive name="lights" offset="0xA4" visible="true" entrySize="0x6C">
+    <comment title="LENS FLARE" />
+    <tagRef name="lens flare" offset="0x0" visible="true" />
+    <ascii name="lens flare marker name" offset="0x8" length="0x20" visible="true" description="the lens flare for this light will be attached to the specified marker in the model" />
+    <undefined name="Unknown" offset="0x28" visible="false" />
+    <undefined name="Unknown" offset="0x2C" visible="false" />
+    <undefined name="Unknown" offset="0x30" visible="false" />
+    <undefined name="Unknown" offset="0x34" visible="false" />
+    <undefined name="Unknown" offset="0x38" visible="false" />
+    <undefined name="Unknown" offset="0x3C" visible="false" />
+    <undefined name="Unknown" offset="0x40" visible="false" />
+    <comment title="RADIOSITY">these parameters control how the light illuminates the world.</comment>
+    <bitfield32 name="flags" offset="0x44" visible="true">
+      <bit name="affects exteriors" index="0" />
+      <bit name="affects interiors" index="1" />
+    </bitfield32>
+    <colorf name="color" offset="0x48" format="rgb" visible="true" description="light color" />
+    <float32 name="power" offset="0x54" visible="true" description="light power from 0 to infinity" />
+    <float32 name="test distance" offset="0x58" visible="true" description="the length of the ray for shadow testing." />
+    <undefined name="Unknown" offset="0x5C" visible="false" />
+    <degree name="direction" offset="0x60" visible="true" description="direction toward the light source in the sky. y" />
+    <degree name="direction" offset="0x64" visible="true" description="direction toward the light source in the sky. p" />
+    <degree name="diameter" offset="0x68" visible="true" description="angular diameter of the light source in the sky." />
+  </reflexive>
+</plugin>

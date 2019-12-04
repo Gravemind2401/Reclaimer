@@ -1,0 +1,158 @@
+<plugin class="cisc" headersize="92">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+    <revision author="Lord Zedd" version="0.25">Generator Errors fixed, various names.</revision>
+  </revisions>
+  <int32 name="Name" offset="0" visible="True" />
+  <int32 name="Unknown" offset="4" visible="False" />
+  <undefined name="Unknown" offset="8" visible="False" />
+  <struct name="Resources" offset="32" visible="True" size="92">
+    <int32 name="Name 1" offset="0" visible="True" />
+    <int32 name="Name 2" offset="4" visible="True" />
+    <int32 name="Variant SID" offset="8" visible="True" />
+    <stringID name="Variant SID" offset="8" visible="True" />
+    <tagRef name="Animations" offset="12" visible="True" />
+    <tagRef name="Resource" offset="28" visible="True" />
+    <uint32 name="Unknown" offset="44" visible="False" />
+    <uint32 name="Unknown" offset="48" visible="False" />
+    <int32 name="Unknown" offset="52" visible="False" />
+    <undefined name="Unknown" offset="56" visible="False" />
+    <struct name="Works Like..." offset="80" visible="True" size="32">
+      <int16 name="Unknown" offset="0" visible="False" />
+      <int32 name="Unknown" offset="4" visible="False" />
+      <int32 name="Unknown" offset="8" visible="False" />
+      <int32 name="Unknown" offset="12" visible="False" />
+      <tagRef name="Object" offset="16" visible="True" />
+    </struct>
+  </struct>
+  <struct name="Scenes" offset="44" visible="True" size="208">
+    <int32 name="Unknown" offset="20" visible="False" />
+    <float32 name="Unknown" offset="24" visible="False" />
+    <float32 name="Unknown" offset="28" visible="False" />
+    <undefined name="Unknown" offset="32" visible="False" />
+    <undefined name="Unknown" offset="34" visible="False" />
+    <undefined name="Unknown" offset="36" visible="False" />
+    <struct name="Lighting" offset="40" visible="True" size="28">
+      <int32 name="Unknown" offset="0" visible="False" />
+      <tagRef name="Unknown" offset="4" visible="True" />
+      <int32 name="Unknown" offset="20" visible="False" />
+      <int32 name="Unknown" offset="24" visible="False" />
+    </struct>
+    <undefined name="Unknown" offset="52" visible="False" />
+    <undefined name="Unknown" offset="56" visible="False" />
+    <undefined name="Unknown" offset="60" visible="False" />
+    <struct name="Sounds/Voices" offset="64" visible="True" size="60">
+      <tagRef name="Unknown" offset="0" visible="True" />
+      <tagRef name="Unknown" offset="16" visible="True" />
+      <int32 name="Unknown" offset="32" visible="False" />
+      <float32 name="Unknown" offset="36" visible="False" />
+      <int32 name="Unknown" offset="40" visible="False" />
+      <undefined name="Unknown" offset="44" visible="False" />
+      <int32 name="Unknown" offset="48" visible="False" />
+      <int32 name="Unknown" offset="52" visible="False" />
+      <int32 name="Unknown" offset="56" visible="False" />
+    </struct>
+    <struct name="Background Audio" offset="76" visible="True" size="24">
+      <int32 name="Unknown" offset="0" visible="False" />
+      <tagRef name="Unknown" offset="4" visible="True" />
+      <int32 name="Unknown" offset="20" visible="False" />
+    </struct>
+    <struct name="Effects" offset="88" visible="True" size="40">
+      <undefined name="Unknown" offset="0" visible="False" />
+      <tagRef name="Unknown" offset="4" visible="True" />
+      <int32 name="Unknown" offset="20" visible="False" />
+      <int32 name="Unknown" offset="24" visible="False" />
+      <tagRef name="Unknown" offset="28" visible="True" />
+    </struct>
+    <struct name="Unknown 6" offset="100" visible="False" size="20">
+      <int32 name="Unknown" offset="0" visible="False" />
+      <int32 name="Unknown" offset="4" visible="False" />
+      <struct name="Unknown 6" offset="8" visible="False" size="32">
+        <undefined name="Unknown" offset="0" visible="False" />
+        <int32 name="Unknown" offset="4" visible="False" />
+        <float32 name="Unknown" offset="8" visible="False" />
+        <int32 name="Unknown" offset="12" visible="False" />
+        <int32 name="Unknown" offset="16" visible="False" />
+        <int32 name="Unknown" offset="20" visible="False" />
+        <float32 name="Unknown" offset="24" visible="False" />
+        <float32 name="Unknown" offset="28" visible="False" />
+      </struct>
+    </struct>
+    <struct name="Screen Effects" offset="112" visible="True" size="24">
+      <tagRef name="Effect" offset="0" visible="True" />
+      <undefined name="Unknown" offset="16" visible="False" />
+      <int32 name="Unknown" offset="20" visible="False" />
+    </struct>
+    <struct name="Scripts" offset="124" visible="True" size="36">
+      <int8 name="Unknown" offset="0" visible="False" />
+      <int32 name="Unknown" offset="4" visible="False" />
+      <uint32 name="Unknown" offset="28" visible="False" />
+      <int32 name="Unknown" offset="32" visible="False" />
+    </struct>
+    <struct name="Unknown 10" offset="136" visible="False" size="20">
+      <undefined name="Unknown" offset="0" visible="False" />
+      <undefined name="Unknown" offset="4" visible="False" />
+      <undefined name="Unknown" offset="8" visible="False" />
+      <undefined name="Unknown" offset="12" visible="False" />
+      <undefined name="Unknown" offset="16" visible="False" />
+    </struct>
+    <struct name="Unknown 10" offset="136" visible="False" size="20">
+      <int32 name="Unknown" offset="0" visible="False" />
+      <int32 name="Unknown" offset="4" visible="False" />
+      <int16 name="Unknown" offset="8" visible="False" />
+      <int16 name="Unknown" offset="10" visible="False" />
+      <int16 name="Unknown" offset="12" visible="False" />
+      <int16 name="Unknown" offset="14" visible="False" />
+      <float32 name="Unknown" offset="16" visible="False" />
+    </struct>
+    <int32 name="Unknown" offset="168" visible="False" />
+    <undefined name="Unknown" offset="172" visible="False" />
+    <undefined name="Unknown" offset="176" visible="False" />
+    <undefined name="Unknown" offset="180" visible="False" />
+    <struct name="Camera Frames" offset="184" visible="True" size="36">
+      <float32 name="X" offset="0" visible="True" />
+      <float32 name="Y" offset="4" visible="True" />
+      <float32 name="Z" offset="8" visible="True" />
+      <float32 name="Unknown" offset="12" visible="True" />
+      <float32 name="Unknown" offset="16" visible="True" />
+      <float32 name="Unknown" offset="20" visible="True" />
+      <float32 name="Unknown" offset="24" visible="True" />
+      <float32 name="Unknown" offset="28" visible="True" />
+      <float32 name="Unknown" offset="32" visible="True" />
+    </struct>
+    <struct name="FOV Frames" offset="196" visible="True" size="28">
+      <int32 name="Frame #" offset="0" visible="True" />
+      <float32 name="FOV" offset="4" visible="True" />
+      <int32 name="Unknown" offset="8" visible="True" />
+      <float32 name="Unknown" offset="12" visible="True" />
+      <float32 name="Unknown" offset="16" visible="True" />
+      <float32 name="Unknown" offset="20" visible="True" />
+      <float32 name="Unknown" offset="24" visible="True" />
+    </struct>
+  </struct>
+  <struct name="Unknown 2" offset="56" visible="False" size="20">
+    <int32 name="Unknown" offset="0" visible="False" />
+    <int32 name="Unknown" offset="4" visible="False" />
+    <struct name="Scenes" offset="8" visible="False" size="12">
+      <struct name="Unknown 4" offset="0" visible="False" size="64">
+        <int32 name="Unknown" offset="0" visible="False" />
+        <float32 name="Unknown" offset="4" visible="False" />
+        <float32 name="Unknown" offset="8" visible="False" />
+        <float32 name="Unknown" offset="12" visible="False" />
+        <float32 name="Unknown" offset="16" visible="False" />
+        <float32 name="Unknown" offset="20" visible="False" />
+        <float32 name="Unknown" offset="24" visible="False" />
+        <float32 name="Unknown" offset="28" visible="False" />
+        <float32 name="Unknown" offset="32" visible="False" />
+        <float32 name="Unknown" offset="36" visible="False" />
+        <float32 name="Unknown" offset="40" visible="False" />
+        <undefined name="Unknown" offset="44" visible="False" />
+        <undefined name="Unknown" offset="48" visible="False" />
+        <undefined name="Unknown" offset="52" visible="False" />
+        <undefined name="Unknown" offset="56" visible="False" />
+        <undefined name="Unknown" offset="60" visible="False" />
+      </struct>
+    </struct>
+  </struct>
+  <int32 name="Unknown" offset="88" visible="False" />
+</plugin>

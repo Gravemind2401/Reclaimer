@@ -1,0 +1,184 @@
+<plugin class="scn3" headersize="168">
+  <revisions>
+    <revision author="-DeToX-" version="0.1">Mapped plugin structure a new.</revision>
+    <revision author="DarkShallFall" version="0.1">Widgets, Bitmaps, Animations, Y and X offsets, layers, blending, and model.</revision>
+    <revision author="-DeToX-" version="0.12">X and Y Scale</revision>
+  </revisions>
+  <int32 name="Unknown" offset="0" visible="False" />
+  <stringID name="String" offset="4" visible="True" />
+  <int16 name="Unknown" offset="8" visible="False" />
+  <int16 name="Unknown" offset="10" visible="False" />
+  <int16 name="Unknown" offset="12" visible="False" />
+  <int16 name="Unknown" offset="14" visible="False" />
+  <int16 name="Unknown" offset="16" visible="False" />
+  <int16 name="Unknown" offset="18" visible="False" />
+  <int16 name="Unknown" offset="20" visible="False" />
+  <int16 name="Unknown" offset="22" visible="False" />
+  <int16 name="Unknown" offset="24" visible="False" />
+  <int16 name="Unknown" offset="26" visible="False" />
+  <tagRef name="Unknown" offset="28" visible="False" />
+  <tagRef name="Unknown" offset="44" visible="False" />
+  <tagRef name="Unknown" offset="60" visible="False" />
+  <stringID name="String" offset="76" visible="True" />
+  <struct name="Unknown 0" offset="80" visible="False" size="16">
+    <tagRef name="Unknown" offset="0" visible="False" />
+  </struct>
+  <struct name="Unknown 1" offset="92" visible="True" size="108">
+    <tagRef name="Unknown" offset="0" visible="False" />
+    <int32 name="Unknown" offset="16" visible="False" />
+    <int16 name="Unknown" offset="20" visible="False" />
+    <int16 name="Unknown" offset="22" visible="False" />
+    <undefined name="Unknown" offset="24" visible="False" />
+    <undefined name="Unknown" offset="28" visible="False" />
+    <undefined name="Unknown" offset="32" visible="False" />
+    <undefined name="Unknown" offset="36" visible="False" />
+    <undefined name="Unknown" offset="40" visible="False" />
+    <tagRef name="Unknown" offset="44" visible="False" />
+    <struct name="List" offset="60" visible="True" size="128">
+      <tagRef name="List" offset="0" visible="False" />
+      <int32 name="Unknown" offset="16" visible="False" />
+      <stringID name="String" offset="20" visible="True" />
+      <int16 name="Unknown" offset="24" visible="False" />
+      <int16 name="Unknown" offset="26" visible="False" />
+      <int16 name="Unknown" offset="28" visible="False" />
+      <int16 name="Unknown" offset="30" visible="False" />
+      <undefined name="Unknown" offset="32" visible="False" />
+      <int16 name="Unknown" offset="36" visible="False" />
+      <int16 name="Unknown" offset="38" visible="False" />
+      <undefined name="Unknown" offset="40" visible="False" />
+      <tagRef name="Unknown" offset="44" visible="False" />
+      <int16 name="Unknown" offset="60" visible="False" />
+      <int16 name="Unknown" offset="62" visible="False" />
+      <tagRef name="Unknown" offset="64" visible="False" />
+      <undefined name="Unknown" offset="80" visible="False" />
+      <struct name="Unknown 3" offset="84" visible="False" size="48">
+        <int32 name="Unknown" offset="0" visible="False" />
+        <undefined name="Unknown" offset="4" visible="False" />
+        <undefined name="Unknown" offset="8" visible="False" />
+        <int16 name="Position In List" offset="12" visible="False" />
+        <int16 name="Unknown" offset="14" visible="False" />
+        <undefined name="Unknown" offset="16" visible="False" />
+        <undefined name="Unknown" offset="20" visible="False" />
+        <undefined name="Unknown" offset="24" visible="False" />
+        <tagRef name="Unknown" offset="28" visible="False" />
+        <undefined name="Unknown" offset="44" visible="False" />
+      </struct>
+      <tagRef name="Unknown" offset="96" visible="False" />
+      <tagRef name="Unknown" offset="112" visible="False" />
+    </struct>
+    <struct name="Unknown 3" offset="72" visible="True" size="76">
+      <tagRef name="Unknown" offset="0" visible="False" />
+      <tagRef name="Unknown" offset="16" visible="False" />
+      <undefined name="Unknown" offset="32" visible="False" />
+      <undefined name="Unknown" offset="36" visible="False" />
+      <undefined name="Unknown" offset="40" visible="False" />
+      <tagRef name="Unknown" offset="44" visible="False" />
+      <undefined name="Unknown" offset="60" visible="False" />
+      <stringID name="String" offset="64" visible="True" />
+      <stringID name="String" offset="68" visible="True" />
+      <undefined name="Unknown" offset="72" visible="False" />
+    </struct>
+    <struct name="Widget" offset="84" visible="False" size="108">
+      <int32 name="Unknown" offset="0" visible="False" />
+      <int32 name="Unknown" offset="4" visible="False" />
+      <int32 name="Unknown" offset="8" visible="False" />
+      <int32 name="Unknown" offset="12" visible="False" />
+      <int32 name="Unknown" offset="16" visible="False" />
+      <int16 name="Unknown" offset="20" visible="False" />
+      <int32 name="Unknown" offset="22" visible="False" />
+      <int16 name="Layer" offset="26" visible="False" />
+      <int16 name="Y Offset" offset="28" visible="False" />
+      <int16 name="X Offset" offset="30" visible="False" />
+      <int16 name="Y Scale" offset="32" visible="False" />
+      <int16 name="X Scale" offset="34" visible="False" />
+      <int16 name="Unknown" offset="36" visible="False" />
+      <int16 name="Unknown" offset="38" visible="False" />
+      <int16 name="Unknown" offset="40" visible="False" />
+      <int16 name="Unknown" offset="42" visible="False" />
+      <int16 name="Unknown" offset="44" visible="False" />
+      <int16 name="Unknown" offset="46" visible="False" />
+      <int16 name="Unknown" offset="48" visible="False" />
+      <int16 name="Unknown" offset="50" visible="False" />
+      <tagRef name="Animation" offset="52" visible="False" />
+      <tagRef name="Bitmap" offset="60" visible="False" />
+      <int8 name="Unknown" offset="76" visible="False" />
+      <undefined name="Unknown" offset="80" visible="False" />
+      <undefined name="Unknown" offset="84" visible="False" />
+      <undefined name="Unknown" offset="88" visible="False" />
+      <enum16 name="Blending" offset="92" visible="False">
+        <option name="ARGB Channel" value="0" />
+        <option name="unknown" value="1" />
+        <option name="unknown" value="2" />
+        <option name="Alpha" value="3" />
+        <option name="Overlay" value="4" />
+        <option name="unknown" value="5" />
+        <option name="unknown" value="6" />
+        <option name="unknown" value="7" />
+        <option name="unknown" value="8" />
+        <option name="unknown" value="9" />
+        <option name="Inverted Alpha" value="10" />
+      </enum16>
+      <undefined name="Unknown" offset="96" visible="False" />
+      <undefined name="Unknown" offset="100" visible="False" />
+      <undefined name="Unknown" offset="104" visible="False" />
+    </struct>
+    <struct name="Model" offset="96" visible="False" size="72">
+      <tagRef name="Model" offset="0" visible="False" />
+      <undefined name="Unknown" offset="16" visible="False" />
+      <undefined name="Unknown" offset="20" visible="False" />
+      <undefined name="Unknown" offset="24" visible="False" />
+      <undefined name="Unknown" offset="28" visible="False" />
+      <undefined name="Unknown" offset="32" visible="False" />
+      <undefined name="Unknown" offset="36" visible="False" />
+      <undefined name="Unknown" offset="40" visible="False" />
+      <tagRef name="Unknown" offset="44" visible="False" />
+      <struct name="Unknown 6" offset="60" visible="False" size="60">
+        <undefined name="Unknown" offset="0" visible="False" />
+        <undefined name="Unknown" offset="4" visible="False" />
+        <undefined name="Unknown" offset="8" visible="False" />
+        <undefined name="Unknown" offset="12" visible="False" />
+        <undefined name="Unknown" offset="16" visible="False" />
+        <undefined name="Unknown" offset="20" visible="False" />
+        <undefined name="Unknown" offset="24" visible="False" />
+        <undefined name="Unknown" offset="28" visible="False" />
+        <undefined name="Unknown" offset="32" visible="False" />
+        <struct name="Unknown 7" offset="36" visible="False" size="80">
+          <undefined name="Unknown" offset="0" visible="False" />
+          <undefined name="Unknown" offset="4" visible="False" />
+          <undefined name="Unknown" offset="8" visible="False" />
+          <undefined name="Unknown" offset="12" visible="False" />
+          <undefined name="Unknown" offset="16" visible="False" />
+          <undefined name="Unknown" offset="20" visible="False" />
+          <undefined name="Unknown" offset="24" visible="False" />
+          <undefined name="Unknown" offset="28" visible="False" />
+          <undefined name="Unknown" offset="32" visible="False" />
+          <undefined name="Unknown" offset="36" visible="False" />
+          <undefined name="Unknown" offset="40" visible="False" />
+          <undefined name="Unknown" offset="44" visible="False" />
+          <undefined name="Unknown" offset="48" visible="False" />
+          <undefined name="Unknown" offset="52" visible="False" />
+          <undefined name="Unknown" offset="56" visible="False" />
+          <undefined name="Unknown" offset="60" visible="False" />
+          <undefined name="Unknown" offset="64" visible="False" />
+          <undefined name="Unknown" offset="68" visible="False" />
+          <undefined name="Unknown" offset="72" visible="False" />
+          <undefined name="Unknown" offset="76" visible="False" />
+        </struct>
+        <struct name="Unknown 8" offset="48" visible="False" size="20">
+          <undefined name="Unknown" offset="0" visible="False" />
+          <undefined name="Unknown" offset="4" visible="False" />
+          <undefined name="Unknown" offset="8" visible="False" />
+          <undefined name="Unknown" offset="12" visible="False" />
+          <undefined name="Unknown" offset="16" visible="False" />
+        </struct>
+      </struct>
+    </struct>
+  </struct>
+  <struct name="Unknown 2" offset="104" visible="False" size="16">
+    <tagRef name="Unknown" offset="0" visible="False" />
+  </struct>
+  <tagRef name="Unknown" offset="116" visible="False" />
+  <string name="Script Title" offset="132" visible="False" length="32" />
+  <int16 name="Script Index" offset="164" visible="False" />
+  <int16 name="Unknown" offset="166" visible="False" />
+</plugin>

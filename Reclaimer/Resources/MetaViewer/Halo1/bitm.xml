@@ -1,0 +1,157 @@
+<plugin>
+  <comment title="type">Type controls bitmap 'geometry'. All dimensions must be a power of two except for SPRITES and INTERFACE BITMAPS:
+
+* 2D TEXTURES: Ordinary, 2D textures will be generated.
+* 3D TEXTURES: Volume textures will be generated from each sequence of 2D texture 'slices'.
+* CUBE MAPS: Cube maps will be generated from each consecutive set of six 2D textures in each sequence, all faces of a cube map must be square and the same size.
+* SPRITES: Sprite texture pages will be generated.
+* INTERFACE BITMAPS: Similar to 2D TEXTURES, but without mipmaps and without the power of two restriction.</comment>
+  <enum16 name="type" offset="0x0" visible="true">
+    <option name="2D textures" value="0x0" />
+    <option name="3D textures" value="0x1" />
+    <option name="cube maps" value="0x2" />
+    <option name="sprites" value="0x3" />
+    <option name="interface bitmaps" value="0x4" />
+  </enum16>
+  <comment title="format">Format controls how pixels will be stored internally:
+
+* COMPRESSED WITH COLOR-KEY TRANSPARENCY: DXT1 compression, uses 4 bits per pixel. 4x4 blocks of pixels are reduced to 2 colors and interpolated, alpha channel uses color-key transparency instead of alpha from the plate (all zero-alpha pixels also have zero-color).
+* COMPRESSED WITH EXPLICIT ALPHA: DXT2/3 compression, uses 8 bits per pixel. Same as DXT1 without the color key transparency, alpha channel uses alpha from plate quantized down to 4 bits per pixel.
+* COMPRESSED WITH INTERPOLATED ALPHA: DXT4/5 compression, uses 8 bits per pixel. Same as DXT2/3, except alpha is smoother. Better for smooth alpha gradients, worse for noisy alpha.
+* 16-BIT COLOR: Uses 16 bits per pixel. Depending on the alpha channel, bitmaps are quantized to either r5g6b5 (no alpha), a1r5g5b5 (1-bit alpha), or a4r4g4b4 (&gt;1-bit alpha).
+* 32-BIT COLOR: Uses 32 bits per pixel. Very high quality, can have alpha at no added cost. This format takes up the most memory, however. Bitmap formats are x8r8g8b8 and a8r8g8b.
+* MONOCHROME: Uses either 8 or 16 bits per pixel. Bitmap formats are a8 (alpha), y8 (intensity), ay8 (combined alpha-intensity) and a8y8 (separate alpha-intensity).
+
+Note: Height maps (a.k.a. bump maps) should use 32-bit color; this is internally converted to a palettized format which takes less memory.</comment>
+  <enum16 name="format" offset="0x2" visible="true">
+    <option name="compressed with color-key transparency" value="0x0" />
+    <option name="compressed with explicit alpha" value="0x1" />
+    <option name="compressed with interpolated alpha" value="0x2" />
+    <option name="16-bit color" value="0x3" />
+    <option name="32-bit color" value="0x4" />
+    <option name="monochrome" value="0x5" />
+  </enum16>
+  <comment title="usage">Usage controls how mipmaps are generated:
+
+* ALPHA BLEND: Pixels with zero alpha are ignored in mipmaps, to prevent bleeding the transparent color.
+* DEFAULT: Downsampling works normally, as in Photoshop.
+* HEIGHT MAP: The bitmap (normally grayscale) is a height map which gets converted to a bump map. Uses &lt;bump height&gt; below. Alpha is passed through unmodified.
+* DETAIL MAP: Mipmap color fades to gray, controlled by &lt;detail fade factor&gt; below. Alpha fades to white.
+* LIGHT MAP: Generates no mipmaps. Do not use!
+* VECTOR MAP: Used mostly for special effects; pixels are treated as XYZ vectors and normalized after downsampling. Alpha is passed through unmodified.</comment>
+  <enum16 name="usage" offset="0x4" visible="true">
+    <option name="alpha-blend" value="0x0" />
+    <option name="default" value="0x1" />
+    <option name="height map" value="0x2" />
+    <option name="detail map" value="0x3" />
+    <option name="light map" value="0x4" />
+    <option name="vector map" value="0x5" />
+  </enum16>
+  <bitfield16 name="flags" offset="0x6" visible="true">
+    <bit name="enable diffusion dithering" index="0" />
+    <bit name="disable height map compression" index="1" />
+    <bit name="uniform sprite sequences" index="2" />
+    <bit name="filthy sprite bug fix" index="3" />
+  </bitfield16>
+  <comment title="post-processing">These properties control how mipmaps are post-processed.</comment>
+  <float32 name="detail fade factor" offset="0x8" visible="true" description="0 means fade to gray by last mipmap, 1 means fade to gray by first mipmap" />
+  <float32 name="sharpen amount" offset="0xC" visible="true" description="sharpens mipmap after downsampling" />
+  <float32 name="bump height" offset="0x10" visible="true" description="the apparent height of the bump map above the triangle it is textured onto, in texture repeats (i.e., 1.0 would be as high as the texture is wide)" />
+  <comment title="sprite processing">When creating a sprite group, specify the number and size of textures that the group is allowed to occupy. During importing, you'll receive feedback about how well the alloted space was used.</comment>
+  <enum16 name="sprite budget size" offset="0x14" visible="true">
+    <option name="32x32" value="0x0" />
+    <option name="64x64" value="0x1" />
+    <option name="128x128" value="0x2" />
+    <option name="256x256" value="0x3" />
+    <option name="512x512" value="0x4" />
+  </enum16>
+  <int16 name="sprite budget count" offset="0x16" visible="true" />
+  <comment title="color plate">The original TIFF file used to import the bitmap group.</comment>
+  <int16 name="color plate width" offset="0x18" visible="true" description="pixels" />
+  <int16 name="color plate height" offset="0x1A" visible="true" description="pixels" />
+  <dataref name="compressed color plate data" offset="0x1C" visible="true" />
+  <comment title="processed pixel data">Pixel data after being processed by the tool.</comment>
+  <dataref name="processed pixel data" offset="0x24" visible="true" />
+  <comment title="miscellaneous" />
+  <float32 name="blur filter size" offset="0x2C" visible="true" description="blurs the bitmap before generating mipmaps" />
+  <float32 name="alpha bias" offset="0x30" visible="true" description="affects alpha mipmap generation" />
+  <int16 name="mipmap count" offset="0x34" visible="true" description="0 defaults to all levels" />
+  <comment title="...more sprite processing">Sprite usage controls the background color of sprite plates.</comment>
+  <enum16 name="sprite usage" offset="0x36" visible="true">
+    <option name="blend/add/subtract/max" value="0x0" />
+    <option name="multiply/min" value="0x1" />
+    <option name="double multiply" value="0x2" />
+  </enum16>
+  <int16 name="sprite spacing" offset="0x38" visible="true" />
+  <int16 name="Unknown" offset="0x3A" visible="false" />
+  <reflexive name="sequences" offset="0x3C" visible="true" entrySize="0x3C" entryname="0x0">
+    <ascii name="name" offset="0x0" length="0x20" visible="true" />
+    <int16 name="first bitmap index" offset="0x20" visible="true" />
+    <int16 name="bitmap count" offset="0x22" visible="true" />
+    <undefined name="Unknown" offset="0x24" visible="false" />
+    <undefined name="Unknown" offset="0x28" visible="false" />
+    <undefined name="Unknown" offset="0x2C" visible="false" />
+    <undefined name="Unknown" offset="0x30" visible="false" />
+    <reflexive name="sprites" offset="0x34" visible="true" entrySize="0x20">
+      <int16 name="bitmap index" offset="0x0" visible="true" />
+      <int16 name="Unknown" offset="0x2" visible="false" />
+      <undefined name="Unknown" offset="0x4" visible="false" />
+      <float32 name="left" offset="0x8" visible="true" />
+      <float32 name="right" offset="0xC" visible="true" />
+      <float32 name="top" offset="0x10" visible="true" />
+      <float32 name="bottom" offset="0x14" visible="true" />
+      <float32 name="registration point* x" offset="0x18" visible="true" />
+      <float32 name="registration point* y" offset="0x1C" visible="true" />
+    </reflexive>
+  </reflexive>
+  <reflexive name="bitmaps" offset="0x44" visible="true" entrySize="0x30">
+    <ascii name="signature" offset="0x0" length="0x4" />
+    <int16 name="width" offset="0x4" visible="true" description="pixels" />
+    <int16 name="height" offset="0x6" visible="true" description="pixels" />
+    <int16 name="depth" offset="0x8" visible="true" description="depth is 1 for 2D textures and cube maps" />
+    <enum16 name="type*#determines bitmap 'geometry'" offset="0xA" visible="true">
+      <option name="2D texture" value="0x0" />
+      <option name="3D texture" value="0x1" />
+      <option name="cube map" value="0x2" />
+      <option name="white" value="0x3" />
+    </enum16>
+    <enum16 name="format*#determines how pixels are represented internally" offset="0xC" visible="true">
+      <option name="a8" value="0x0" />
+      <option name="y8" value="0x1" />
+      <option name="ay8" value="0x2" />
+      <option name="a8y8" value="0x3" />
+      <option name="unused1" value="0x4" />
+      <option name="unused2" value="0x5" />
+      <option name="r5g6b5" value="0x6" />
+      <option name="unused3" value="0x7" />
+      <option name="a1r5g5b5" value="0x8" />
+      <option name="a4r4g4b4" value="0x9" />
+      <option name="x8r8g8b8" value="0xA" />
+      <option name="a8r8g8b8" value="0xB" />
+      <option name="unused4" value="0xC" />
+      <option name="unused5" value="0xD" />
+      <option name="dxt1" value="0xE" />
+      <option name="dxt3" value="0xF" />
+      <option name="dxt5" value="0x10" />
+      <option name="p8-bump" value="0x11" />
+    </enum16>
+    <bitfield16 name="flags*" offset="0xE" visible="true">
+      <bit name="power of two dimensions" index="0" />
+      <bit name="compressed" index="1" />
+      <bit name="palettized" index="2" />
+      <bit name="swizzled" index="3" />
+      <bit name="linear" index="4" />
+      <bit name="v16u16" index="5" />
+    </bitfield16>
+    <uint16 name="registration point* x" offset="0x10" visible="true" />
+    <uint16 name="registration point* y" offset="0x12" visible="true" />
+    <int16 name="mipmap count" offset="0x14" visible="true" />
+    <int16 name="Unknown" offset="0x16" visible="false" />
+    <int32 name="pixels offset" offset="0x18" visible="true" />
+    <undefined name="Unknown" offset="0x1C" visible="false" />
+    <undefined name="Unknown" offset="0x20" visible="false" />
+    <undefined name="Unknown" offset="0x24" visible="false" />
+    <undefined name="Unknown" offset="0x28" visible="false" />
+    <undefined name="Unknown" offset="0x2C" visible="false" />
+  </reflexive>
+</plugin>

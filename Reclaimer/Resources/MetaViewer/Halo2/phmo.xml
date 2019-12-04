@@ -1,0 +1,208 @@
+<plugin>
+  <revisions />
+  <undefined name="" offset="0x0" visible="True" />
+  <undefined name="" offset="0x14" visible="True" />
+  <undefined name="" offset="0x18" visible="True" />
+  <undefined name="" offset="0x1C" visible="True" />
+  <undefined name="" offset="0x20" visible="True" />
+  <undefined name="" offset="0x24" visible="True" />
+  <struct name="Lift Properties" offset="0x28" visible="True" size="0x68">
+    <stringID name="Name" offset="0x8" visible="True" />
+    <stringID name="Unknown" offset="0xC" visible="False" />
+  </struct>
+  <struct name="Unknown9" offset="0x30" visible="False" size="0x18">
+    <struct name="Unknown10" offset="0x8" visible="False" size="0xC" />
+    <stringID name="" offset="0x10" visible="True" />
+    <stringID name="" offset="0x14" visible="True" />
+  </struct>
+  <struct name="Phmo Variations" offset="0x38" visible="True" size="0x90">
+    <int16 name="index" offset="0x0" visible="True" />
+    <enum16 name="Unknown" offset="0x4" visible="True" />
+    <int16 name="Unknown" offset="0x6" visible="True" />
+    <undefined name="Unknown" offset="0x8" visible="False" />
+    <undefined name="Unknown" offset="0xC" visible="False" />
+    <undefined name="Unknown" offset="0x10" visible="False" />
+    <undefined name="Unknown" offset="0x14" visible="False" />
+    <undefined name="Unknown" offset="0x18" visible="False" />
+    <undefined name="Unknown" offset="0x1C" visible="False" />
+    <undefined name="Unknown" offset="0x38" visible="False" />
+    <undefined name="Unknown" offset="0x40" visible="False" />
+    <undefined name="Unknown" offset="0x44" visible="False" />
+    <undefined name="Unknown" offset="0x48" visible="False" />
+    <undefined name="Moment of Inertia about X axis" offset="0x50" visible="False" />
+    <undefined name="Unknown" offset="0x54" visible="False" />
+    <undefined name="Unknown" offset="0x58" visible="False" />
+    <undefined name="Unknown" offset="0x60" visible="False" />
+    <undefined name="Moment of Inertia about Y axis" offset="0x64" visible="False" />
+    <undefined name="Unknown" offset="0x68" visible="False" />
+    <undefined name="Unknown" offset="0x70" visible="False" />
+    <undefined name="Unknown" offset="0x74" visible="False" />
+    <undefined name="Moment of Inertia about Z axis" offset="0x78" visible="False" />
+    <undefined name="Unknown" offset="0x7C" visible="False" />
+    <undefined name="Unknown" offset="0x84" visible="False" />
+    <undefined name="Unknown" offset="0x88" visible="False" />
+  </struct>
+  <struct name="Materials" offset="0x40" visible="False" size="0xC">
+    <stringID name="Material Base" offset="0x0" visible="False" />
+    <stringID name="Material" offset="0x4" visible="False" />
+    <stringID name="Unknown" offset="0x8" visible="False" />
+  </struct>
+  <struct name="Unknown48" offset="0x48" visible="False" size="0x80">
+    <stringID name="Unknown" offset="0x0" visible="False" />
+    <undefined name="Unknown" offset="0x4" visible="False" />
+    <undefined name="Unknown" offset="0x14" visible="False" />
+    <undefined name="Unknown" offset="0x1C" visible="False" />
+    <undefined name="Unknown" offset="0x20" visible="False" />
+    <undefined name="Unknown" offset="0x24" visible="False" />
+    <undefined name="Unknown" offset="0x28" visible="False" />
+    <undefined name="Unknown" offset="0x30" visible="False" />
+    <undefined name="Unknown" offset="0x34" visible="False" />
+    <undefined name="Unknown" offset="0x3C" visible="False" />
+    <undefined name="Unknown" offset="0x70" visible="False" />
+    <undefined name="Unknown" offset="0x74" visible="False" />
+    <undefined name="Unknown" offset="0x78" visible="False" />
+  </struct>
+  <struct name="Powered Mass Point" offset="0x58" visible="False" size="0x50">
+    <stringID name="Name" offset="0x0" visible="False" />
+    <undefined name="Unknown" offset="0x1C" visible="False" />
+    <undefined name="Unknown" offset="0x20" visible="False" />
+    <undefined name="Unknown" offset="0x24" visible="False" />
+    <undefined name="Unknown" offset="0x28" visible="False" />
+    <undefined name="Unknown" offset="0x38" visible="False" />
+  </struct>
+  <struct name="Mass Points" offset="0x60" visible="True" size="0x90">
+    <stringID name="Physics ID" offset="0x0" visible="False" />
+    <undefined name="Unknown" offset="0x4" visible="False" />
+    <undefined name="Volume" offset="0x14" visible="False" />
+    <undefined name="Unknown" offset="0x1C" visible="False" />
+    <undefined name="Unknown" offset="0x20" visible="False" />
+    <undefined name="Unknown" offset="0x24" visible="False" />
+    <undefined name="Unknown" offset="0x28" visible="False" />
+    <undefined name="Unknown" offset="0x3C" visible="False" />
+    <undefined name="Unknown" offset="0x40" visible="False" />
+    <undefined name="Unknown" offset="0x44" visible="False" />
+    <undefined name="Unknown" offset="0x4C" visible="False" />
+    <undefined name="Unknown" offset="0x50" visible="False" />
+    <undefined name="Unknown" offset="0x54" visible="False" />
+    <undefined name="Unknown" offset="0x58" visible="False" />
+    <undefined name="Unknown" offset="0x60" visible="False" />
+    <undefined name="Unknown" offset="0x64" visible="False" />
+    <undefined name="Unknown" offset="0x68" visible="False" />
+    <undefined name="Unknown" offset="0x70" visible="False" />
+    <undefined name="Unknown" offset="0x74" visible="False" />
+    <undefined name="Unknown" offset="0x78" visible="False" />
+    <undefined name="Unknown" offset="0x80" visible="False" />
+    <undefined name="Unknown" offset="0x84" visible="False" />
+    <undefined name="Unknown" offset="0x88" visible="False" />
+  </struct>
+  <struct name="Vehicle Parts" offset="0x70" visible="True" size="0x100">
+    <stringID name="Physics ID" offset="0x0" visible="True" />
+    <undefined name="Unknown" offset="0x14" visible="False" />
+    <undefined name="Unknown" offset="0x1C" visible="False" />
+    <undefined name="Unknown" offset="0x20" visible="False" />
+    <undefined name="Unknown" offset="0x24" visible="False" />
+    <undefined name="Unknown" offset="0x28" visible="False" />
+    <undefined name="Unknown" offset="0x30" visible="False" />
+    <undefined name="Unknown" offset="0x34" visible="False" />
+    <undefined name="Unknown" offset="0x38" visible="False" />
+    <undefined name="Unknown" offset="0x40" visible="False" />
+    <undefined name="Unknown" offset="0x44" visible="False" />
+    <undefined name="Unknown" offset="0x48" visible="False" />
+    <undefined name="Unknown" offset="0x50" visible="False" />
+    <undefined name="Unknown" offset="0x54" visible="False" />
+    <undefined name="Unknown" offset="0x58" visible="False" />
+    <undefined name="Unknown" offset="0x60" visible="False" />
+    <undefined name="Unknown" offset="0x64" visible="False" />
+    <undefined name="Unknown" offset="0x68" visible="False" />
+    <undefined name="Unknown" offset="0x6C" visible="False" />
+    <undefined name="Unknown" offset="0x70" visible="False" />
+    <undefined name="Unknown" offset="0x74" visible="False" />
+    <undefined name="Unknown" offset="0x78" visible="False" />
+    <undefined name="Unknown" offset="0x7C" visible="False" />
+    <undefined name="Unknown" offset="0x80" visible="False" />
+    <undefined name="Unknown" offset="0x84" visible="False" />
+    <undefined name="Unknown" offset="0x88" visible="False" />
+    <undefined name="Unknown" offset="0x8C" visible="False" />
+    <undefined name="Unknown" offset="0x90" visible="False" />
+    <undefined name="Unknown" offset="0x94" visible="False" />
+    <undefined name="Unknown" offset="0x98" visible="False" />
+    <undefined name="Unknown" offset="0x9C" visible="False" />
+    <undefined name="Unknown" offset="0xA0" visible="False" />
+    <undefined name="Unknown" offset="0xA4" visible="False" />
+    <undefined name="Unknown" offset="0xA8" visible="False" />
+    <undefined name="Unknown" offset="0xAC" visible="False" />
+    <undefined name="Unknown" offset="0xB0" visible="False" />
+    <undefined name="Unknown" offset="0xB4" visible="False" />
+    <undefined name="Unknown" offset="0xB8" visible="False" />
+    <undefined name="Unknown" offset="0xBC" visible="False" />
+    <undefined name="Unknown" offset="0xC0" visible="False" />
+    <undefined name="Unknown" offset="0xC4" visible="False" />
+    <undefined name="Unknown" offset="0xC8" visible="False" />
+    <undefined name="Unknown" offset="0xCC" visible="False" />
+    <undefined name="Unknown" offset="0xD0" visible="False" />
+    <undefined name="Unknown" offset="0xD4" visible="False" />
+    <undefined name="Unknown" offset="0xD8" visible="False" />
+    <undefined name="Unknown" offset="0xDC" visible="False" />
+    <undefined name="Unknown" offset="0xE0" visible="False" />
+    <undefined name="Unknown" offset="0xE4" visible="False" />
+    <undefined name="Unknown" offset="0xE8" visible="False" />
+    <undefined name="Unknown" offset="0xEC" visible="False" />
+    <undefined name="Unknown" offset="0xF0" visible="False" />
+    <undefined name="Unknown" offset="0xF4" visible="False" />
+    <undefined name="Unknown" offset="0xF8" visible="False" />
+    <undefined name="Unknown" offset="0xFC" visible="False" />
+  </struct>
+  <struct name="Scalers" offset="0x78" visible="False" size="0x30" />
+  <struct name="Planes" offset="0x80" visible="True" size="0x10" />
+  <struct name="Unknown223" offset="0x90" visible="False" size="0x38">
+    <undefined name="Unknown" offset="0x0" visible="False" />
+    <undefined name="Unknown" offset="0x4" visible="False" />
+    <undefined name="Unknown" offset="0xC" visible="False" />
+    <undefined name="Unknown" offset="0x10" visible="False" />
+    <undefined name="Unknown" offset="0x14" visible="False" />
+    <undefined name="Unknown" offset="0x18" visible="False" />
+    <undefined name="Unknown" offset="0x20" visible="False" />
+    <undefined name="Unknown" offset="0x28" visible="False" />
+    <undefined name="Unknown" offset="0x30" visible="False" />
+  </struct>
+  <struct name="Unknown239" offset="0x98" visible="False" size="0x8">
+    <undefined name="Unknown" offset="0x0" visible="False" />
+  </struct>
+  <struct name="Unknown243" offset="0xA0" visible="False" size="0x18">
+    <undefined name="Unknown" offset="0x0" visible="False" />
+    <undefined name="Unknown" offset="0x4" visible="False" />
+    <undefined name="Unknown" offset="0xC" visible="False" />
+    <undefined name="Unknown" offset="0x10" visible="False" />
+    <undefined name="Unknown" offset="0x14" visible="False" />
+  </struct>
+  <struct name="Unknown253" offset="0xA8" visible="False" size="0x1" />
+  <struct name="Unknown25" offset="0xB8" visible="False" size="0x94">
+    <stringID name="Unknown" offset="0x0" visible="False" />
+  </struct>
+  <struct name="Damage Permutations" offset="0xC0" visible="True" size="0xC">
+    <stringID name="Part" offset="0x0" visible="True" />
+    <struct name="Damage Levels" offset="0x4" visible="True" size="0xC">
+      <stringID name="Level of Damage" offset="0x0" visible="True" />
+      <struct name="Phmo Variation" offset="0x4" visible="True" size="0x2">
+        <int16 name="Phmo Variation Chunk#" offset="0x0" visible="True" />
+      </struct>
+    </struct>
+  </struct>
+  <struct name="Bones" offset="0xC8" visible="False" size="0xC">
+    <stringID name="Bone" offset="0x0" visible="False" />
+    <int16 name="Parent" offset="0x4" visible="True" />
+    <int16 name="Child" offset="0x6" visible="True" />
+    <int16 name="Next Sibling" offset="0x8" visible="True" />
+    <int16 name="Final Sibling?" offset="0xA" visible="True" />
+  </struct>
+  <struct name="Hinges" offset="0xE8" visible="True" size="0x84">
+    <stringID name="Name" offset="0x0" visible="True" />
+    <int16 name="Start Permutation" offset="0x4" visible="True" />
+    <int16 name="End Permutation" offset="0x6" visible="True" />
+    <undefined name="Unknown" offset="0x8" visible="False" />
+  </struct>
+  <struct name="Unknown268" offset="0xF0" visible="False" size="0x78">
+    <stringID name="Unknown" offset="0x0" visible="False" />
+  </struct>
+  <struct name="Unknown264" offset="0x108" visible="False" size="0x20" />
+</plugin>

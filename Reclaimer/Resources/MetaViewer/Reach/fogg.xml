@@ -1,0 +1,49 @@
+<plugin class="fogg" headersize="188">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <undefined name="Unknown" offset="0" visible="False" />
+  <undefined name="Map Fog" offset="4" visible="True" />
+  <undefined name="Unknown" offset="8" visible="False" />
+  <undefined name="Unknown" offset="12" visible="False" />
+  <undefined name="Distance Fog" offset="16" visible="True" />
+  <undefined name="Thick Fog" offset="20" visible="True" />
+  <undefined name="Heavy Fog" offset="24" visible="True" />
+  <undefined name="Fog Color Pink" offset="28" visible="True" />
+  <undefined name="Fog Color Green" offset="32" visible="True" />
+  <undefined name="Fog Color Blue" offset="36" visible="True" />
+  <undefined name="Unknown" offset="40" visible="False" />
+  <undefined name="Sky Fog" offset="44" visible="True" />
+  <undefined name="FOG Intensity" offset="48" visible="True" />
+  <undefined name="Fog Radious" offset="52" visible="True" />
+  <undefined name="Light Fog" offset="56" visible="True" />
+  <undefined name="Fog Red" offset="60" visible="True" />
+  <undefined name="Fog Light Green" offset="64" visible="True" />
+  <undefined name="Fog Dark Blue" offset="68" visible="True" />
+  <undefined name="Unknown" offset="72" visible="False" />
+  <undefined name="Sky Brightnesss" offset="76" visible="True" />
+  <undefined name="Sky Brightness 2" offset="80" visible="True" />
+  <undefined name="Sky Brightness 3" offset="84" visible="True" />
+  <undefined name="Fog Red 2" offset="88" visible="True" />
+  <undefined name="Fog Light Green 2" offset="92" visible="True" />
+  <undefined name="Fog Dark Blue 2" offset="96" visible="True" />
+  <undefined name="Unknown" offset="100" visible="False" />
+  <undefined name="Unknown" offset="104" visible="False" />
+  <undefined name="Unknown" offset="108" visible="False" />
+  <undefined name="Unknown" offset="112" visible="False" />
+  <undefined name="Unknown" offset="116" visible="False" />
+  <undefined name="Unknown" offset="120" visible="False" />
+  <undefined name="Unknown" offset="124" visible="False" />
+  <undefined name="Unknown" offset="128" visible="False" />
+  <undefined name="Unknown" offset="132" visible="False" />
+  <undefined name="Unknown" offset="136" visible="False" />
+  <undefined name="Unknown" offset="140" visible="False" />
+  <undefined name="Unknown" offset="144" visible="False" />
+  <undefined name="Unknown" offset="148" visible="False" />
+  <undefined name="Unknown" offset="152" visible="False" />
+  <undefined name="Unknown" offset="156" visible="False" />
+  <undefined name="Unknown" offset="160" visible="False" />
+  <undefined name="Unknown" offset="164" visible="False" />
+  <undefined name="Unknown" offset="168" visible="False" />
+  <tagRef name="Unknown" offset="172" visible="True" />
+</plugin>

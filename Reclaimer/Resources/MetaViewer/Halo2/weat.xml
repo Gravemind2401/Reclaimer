@@ -1,0 +1,35 @@
+<plugin>
+  <revisions />
+  <struct name="Particle System" offset="0x0" visible="True" size="0x8C">
+    <tagRef name="Sprites" offset="0x0" visible="True" />
+    <int32 name="Maximum Number Of Particles" offset="0x2C" visible="False" />
+    <uint32 name="Block Offset" offset="0x40" visible="True" />
+    <uint32 name="Block Size" offset="0x44" visible="True" />
+    <uint32 name="Section Data Size" offset="0x48" visible="True" />
+    <uint32 name="Resource Data Size" offset="0x4C" visible="True" />
+    <struct name="Resources" offset="0x50" visible="True" size="0x10">
+      <enum32 name="Type" offset="0x0" visible="False" />
+      <int16 name="Primary Locator" offset="0x4" visible="False" />
+      <int16 name="Secondary Locator" offset="0x6" visible="False" />
+      <uint32 name="Resource Data Size" offset="0x8" visible="True" />
+      <uint32 name="Resource Data Offset" offset="0xC" visible="True" />
+    </struct>
+    <int32 name="Owner ID" offset="0x58" visible="False" />
+    <uint32 name="Owner Tag Section Offset" offset="0x5C" visible="False" />
+    <enum32 name="Type" offset="0x6C" visible="False">
+      <option name="Generic" value="0x0" />
+      <option name="Snow" value="0x1" />
+      <option name="Rain" value="0x2" />
+      <option name="Rain Splash" value="0x3" />
+      <option name="Bugs" value="0x4" />
+      <option name="Sand Storm" value="0x5" />
+      <option name="Debris" value="0x6" />
+      <option name="Bubbles" value="0x7" />
+    </enum32>
+  </struct>
+  <struct name="Background Plates" offset="0x8" visible="False" size="0x3A8">
+    <tagRef name="Texture 0" offset="0x0" visible="True" />
+    <tagRef name="Texture 1" offset="0x8" visible="True" />
+    <tagRef name="Texture 2" offset="0x10" visible="True" />
+  </struct>
+</plugin>

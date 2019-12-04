@@ -1,0 +1,244 @@
+<plugin>
+  <reflexive name="OBJECTS" offset="0x0" visible="true" entrySize="0x14">
+    <int16 name="animation index" offset="0x0" visible="true" />
+    <enum16 name="function" offset="0x2" visible="true">
+      <option name="A out" value="0x0" />
+      <option name="B out" value="0x1" />
+      <option name="C out" value="0x2" />
+      <option name="D out" value="0x3" />
+    </enum16>
+    <enum16 name="function controls" offset="0x4" visible="true">
+      <option name="frame" value="0x0" />
+      <option name="scale" value="0x1" />
+    </enum16>
+    <int16 name="Unknown" offset="0x6" visible="false" />
+    <undefined name="Unknown" offset="0x8" visible="false" />
+    <undefined name="Unknown" offset="0xC" visible="false" />
+    <undefined name="Unknown" offset="0x10" visible="false" />
+  </reflexive>
+  <reflexive name="UNITS" offset="0x8" visible="true" entrySize="0x58" entryname="0x0">
+    <ascii name="label" offset="0x0" length="0x20" visible="true" />
+    <comment title="looking screen bounds" />
+    <degree name="right yaw per frame" offset="0x20" visible="true" />
+    <degree name="left yaw per frame" offset="0x24" visible="true" />
+    <int16 name="right frame count" offset="0x28" visible="true" />
+    <int16 name="left frame count" offset="0x2A" visible="true" />
+    <degree name="down pitch per frame" offset="0x2C" visible="true" />
+    <degree name="up pitch per frame" offset="0x30" visible="true" />
+    <int16 name="down pitch frame count" offset="0x34" visible="true" />
+    <int16 name="up pitch frame count" offset="0x36" visible="true" />
+    <undefined name="Unknown" offset="0x38" visible="false" />
+    <undefined name="Unknown" offset="0x3C" visible="false" />
+    <reflexive name="animations" offset="0x40" visible="true" entrySize="0x2">
+      <int16 name="animation index" offset="0x0" visible="true" />
+    </reflexive>
+    <reflexive name="ik points" offset="0x48" visible="true" entrySize="0x40">
+      <ascii name="marker" offset="0x0" length="0x20" visible="true" description="the marker name on the object being attached" />
+      <ascii name="attach to marker" offset="0x20" length="0x20" visible="true" description="the marker name object (weapon, vehicle, etc.) the above marker is being attached to" />
+    </reflexive>
+    <reflexive name="weapons" offset="0x50" visible="true" entrySize="0xB0" entryname="0x0">
+      <ascii name="name" offset="0x0" length="0x20" visible="true" />
+      <ascii name="grip marker" offset="0x20" length="0x20" visible="true" description="the marker name on the weapon to which the hand is attached (leave blank to use origin)" />
+      <ascii name="hand marker" offset="0x40" length="0x20" visible="true" description="the marker name on the unit to which the weapon is attached" />
+      <comment title="aiming screen bounds" />
+      <degree name="right yaw per frame" offset="0x60" visible="true" />
+      <degree name="left yaw per frame" offset="0x64" visible="true" />
+      <int16 name="right frame count" offset="0x68" visible="true" />
+      <int16 name="left frame count" offset="0x6A" visible="true" />
+      <degree name="down pitch per frame" offset="0x6C" visible="true" />
+      <degree name="up pitch per frame" offset="0x70" visible="true" />
+      <int16 name="down pitch frame count" offset="0x74" visible="true" />
+      <int16 name="up pitch frame count" offset="0x76" visible="true" />
+      <undefined name="Unknown" offset="0x78" visible="false" />
+      <undefined name="Unknown" offset="0x7C" visible="false" />
+      <undefined name="Unknown" offset="0x80" visible="false" />
+      <undefined name="Unknown" offset="0x84" visible="false" />
+      <undefined name="Unknown" offset="0x88" visible="false" />
+      <undefined name="Unknown" offset="0x8C" visible="false" />
+      <undefined name="Unknown" offset="0x90" visible="false" />
+      <undefined name="Unknown" offset="0x94" visible="false" />
+      <reflexive name="animations" offset="0x98" visible="true" entrySize="0x2">
+        <int16 name="animation index" offset="0x0" visible="true" />
+      </reflexive>
+      <reflexive name="ik points" offset="0xA0" visible="true" entrySize="0x40">
+        <ascii name="marker" offset="0x0" length="0x20" visible="true" description="the marker name on the object being attached" />
+        <ascii name="attach to marker" offset="0x20" length="0x20" visible="true" description="the marker name object (weapon, vehicle, etc.) the above marker is being attached to" />
+      </reflexive>
+      <reflexive name="weapon types" offset="0xA8" visible="true" entrySize="0x38" entryname="0x0">
+        <ascii name="label" offset="0x0" length="0x20" visible="true" />
+        <undefined name="Unknown" offset="0x20" visible="false" />
+        <undefined name="Unknown" offset="0x24" visible="false" />
+        <undefined name="Unknown" offset="0x28" visible="false" />
+        <undefined name="Unknown" offset="0x2C" visible="false" />
+        <reflexive name="animations" offset="0x30" visible="true" entrySize="0x2">
+          <int16 name="animation index" offset="0x0" visible="true" />
+        </reflexive>
+      </reflexive>
+    </reflexive>
+  </reflexive>
+  <reflexive name="WEAPONS" offset="0x10" visible="true" entrySize="0x18">
+    <undefined name="Unknown" offset="0x0" visible="false" />
+    <undefined name="Unknown" offset="0x4" visible="false" />
+    <undefined name="Unknown" offset="0x8" visible="false" />
+    <undefined name="Unknown" offset="0xC" visible="false" />
+    <reflexive name="animations" offset="0x10" visible="true" entrySize="0x2">
+      <int16 name="animation index" offset="0x0" visible="true" />
+    </reflexive>
+  </reflexive>
+  <reflexive name="VEHICLES" offset="0x18" visible="true" entrySize="0x6C">
+    <comment title="steering screen" />
+    <degree name="right yaw per frame" offset="0x0" visible="true" />
+    <degree name="left yaw per frame" offset="0x4" visible="true" />
+    <int16 name="right frame count" offset="0x8" visible="true" />
+    <int16 name="left frame count" offset="0xA" visible="true" />
+    <degree name="down pitch per frame" offset="0xC" visible="true" />
+    <degree name="up pitch per frame" offset="0x10" visible="true" />
+    <int16 name="down pitch frame count" offset="0x14" visible="true" />
+    <int16 name="up pitch frame count" offset="0x16" visible="true" />
+    <undefined name="Unknown" offset="0x18" visible="false" />
+    <undefined name="Unknown" offset="0x1C" visible="false" />
+    <undefined name="Unknown" offset="0x20" visible="false" />
+    <undefined name="Unknown" offset="0x24" visible="false" />
+    <undefined name="Unknown" offset="0x28" visible="false" />
+    <undefined name="Unknown" offset="0x2C" visible="false" />
+    <undefined name="Unknown" offset="0x30" visible="false" />
+    <undefined name="Unknown" offset="0x34" visible="false" />
+    <undefined name="Unknown" offset="0x38" visible="false" />
+    <undefined name="Unknown" offset="0x3C" visible="false" />
+    <undefined name="Unknown" offset="0x40" visible="false" />
+    <undefined name="Unknown" offset="0x44" visible="false" />
+    <undefined name="Unknown" offset="0x48" visible="false" />
+    <undefined name="Unknown" offset="0x4C" visible="false" />
+    <undefined name="Unknown" offset="0x50" visible="false" />
+    <undefined name="Unknown" offset="0x54" visible="false" />
+    <undefined name="Unknown" offset="0x58" visible="false" />
+    <reflexive name="animations" offset="0x5C" visible="true" entrySize="0x2">
+      <int16 name="animation index" offset="0x0" visible="true" />
+    </reflexive>
+    <reflexive name="suspension animations" offset="0x64" visible="true" entrySize="0x14">
+      <int16 name="mass point index" offset="0x0" visible="true" />
+      <int16 name="animation^ index" offset="0x2" visible="true" />
+      <float32 name="full extension ground_depth" offset="0x4" visible="true" />
+      <float32 name="full compression ground_depth" offset="0x8" visible="true" />
+      <undefined name="Unknown" offset="0xC" visible="false" />
+      <undefined name="Unknown" offset="0x10" visible="false" />
+    </reflexive>
+  </reflexive>
+  <reflexive name="DEVICES" offset="0x20" visible="true" entrySize="0x5C">
+    <undefined name="Unknown" offset="0x0" visible="false" />
+    <undefined name="Unknown" offset="0x4" visible="false" />
+    <undefined name="Unknown" offset="0x8" visible="false" />
+    <undefined name="Unknown" offset="0xC" visible="false" />
+    <undefined name="Unknown" offset="0x10" visible="false" />
+    <undefined name="Unknown" offset="0x14" visible="false" />
+    <undefined name="Unknown" offset="0x18" visible="false" />
+    <undefined name="Unknown" offset="0x1C" visible="false" />
+    <undefined name="Unknown" offset="0x20" visible="false" />
+    <undefined name="Unknown" offset="0x24" visible="false" />
+    <undefined name="Unknown" offset="0x28" visible="false" />
+    <undefined name="Unknown" offset="0x2C" visible="false" />
+    <undefined name="Unknown" offset="0x30" visible="false" />
+    <undefined name="Unknown" offset="0x34" visible="false" />
+    <undefined name="Unknown" offset="0x38" visible="false" />
+    <undefined name="Unknown" offset="0x3C" visible="false" />
+    <undefined name="Unknown" offset="0x40" visible="false" />
+    <undefined name="Unknown" offset="0x44" visible="false" />
+    <undefined name="Unknown" offset="0x48" visible="false" />
+    <undefined name="Unknown" offset="0x4C" visible="false" />
+    <undefined name="Unknown" offset="0x50" visible="false" />
+    <reflexive name="animations" offset="0x54" visible="true" entrySize="0x2">
+      <int16 name="animation index" offset="0x0" visible="true" />
+    </reflexive>
+  </reflexive>
+  <reflexive name="UNIT DAMAGE" offset="0x28" visible="true" entrySize="0x2">
+    <int16 name="animation^ index" offset="0x0" visible="true" />
+  </reflexive>
+  <reflexive name="FIRST PERSON WEAPONS" offset="0x30" visible="true" entrySize="0x18">
+    <undefined name="Unknown" offset="0x0" visible="false" />
+    <undefined name="Unknown" offset="0x4" visible="false" />
+    <undefined name="Unknown" offset="0x8" visible="false" />
+    <undefined name="Unknown" offset="0xC" visible="false" />
+    <reflexive name="animations" offset="0x10" visible="true" entrySize="0x2">
+      <int16 name="animation index" offset="0x0" visible="true" />
+    </reflexive>
+  </reflexive>
+  <reflexive name="sound references" offset="0x38" visible="true" entrySize="0xC" entryname="0x0">
+    <tagRef name="sound" offset="0x0" visible="true" />
+    <undefined name="Unknown" offset="0x8" visible="false" />
+  </reflexive>
+  <float32 name="limp body node radius" offset="0x40" visible="true" description="0 uses 0.04 default" />
+  <bitfield16 name="flags" offset="0x44" visible="true">
+    <bit name="compress all animations" index="0" />
+    <bit name="force idle compression" index="1" />
+  </bitfield16>
+  <int16 name="Unknown" offset="0x46" visible="false" />
+  <reflexive name="nodes" offset="0x48" visible="true" entrySize="0x40" entryname="0x0">
+    <ascii name="name" offset="0x0" length="0x20" visible="true" />
+    <int16 name="next sibling node index* index" offset="0x20" visible="true" />
+    <int16 name="first child node index* index" offset="0x22" visible="true" />
+    <int16 name="parent node index* index" offset="0x24" visible="true" />
+    <int16 name="Unknown" offset="0x26" visible="false" />
+    <bitfield32 name="Node joint flags" offset="0x28" visible="true">
+      <bit name="ball-socket" index="0" />
+      <bit name="hinge" index="1" />
+      <bit name="no movement" index="2" />
+    </bitfield32>
+    <float32 name="base vector* i" offset="0x2C" visible="true" />
+    <float32 name="base vector* j" offset="0x30" visible="true" />
+    <float32 name="base vector* k" offset="0x34" visible="true" />
+    <float32 name="vector range" offset="0x38" visible="true" />
+    <undefined name="Unknown" offset="0x3C" visible="false" />
+  </reflexive>
+  <reflexive name="animations" offset="0x50" visible="true" entrySize="0x90" entryname="0x0">
+    <ascii name="name*" offset="0x0" length="0x20" visible="true" />
+    <enum16 name="type*" offset="0x20" visible="true">
+      <option name="base" value="0x0" />
+      <option name="overlay" value="0x1" />
+      <option name="replacement" value="0x2" />
+    </enum16>
+    <int16 name="frame count" offset="0x22" visible="true" />
+    <int16 name="frame size" offset="0x24" visible="true" />
+    <enum16 name="frame info type*" offset="0x26" visible="true">
+      <option name="none" value="0x0" />
+      <option name="dx,dy" value="0x1" />
+      <option name="dx,dy,dyaw" value="0x2" />
+      <option name="dx,dy,dz,dyaw" value="0x3" />
+    </enum16>
+    <int32 name="node list checksum" offset="0x28" visible="true" />
+    <int16 name="node count" offset="0x2C" visible="true" />
+    <int16 name="loop frame index" offset="0x2E" visible="true" />
+    <float32 name="weight" offset="0x30" visible="true" />
+    <int16 name="key frame index" offset="0x34" visible="true" />
+    <int16 name="second key frame index" offset="0x36" visible="true" />
+    <int16 name="next animation* index" offset="0x38" visible="true" />
+    <bitfield16 name="flags*" offset="0x3A" visible="true">
+      <bit name="compressed data" index="0" />
+      <bit name="world relative" index="1" />
+      <bit name="25Hz (PAL)" index="2" />
+    </bitfield16>
+    <int16 name="sound index" offset="0x3C" visible="true" />
+    <int16 name="sound frame index" offset="0x3E" visible="true" />
+    <int8 name="left foot frame index" offset="0x40" visible="true" />
+    <int8 name="right foot frame index" offset="0x41" visible="true" />
+    <int16 name="Unknown" offset="0x42" visible="false" />
+    <undefined name="Unknown" offset="0x44" visible="false" />
+    <dataref name="frame info" offset="0x48" visible="true" />
+    <comment title="ARRAY node trans. flag data*" />
+    <int32 name="" offset="0x50" visible="true" />
+    <int32 name="" offset="0x54" visible="true" />
+    <undefined name="Unknown" offset="0x58" visible="false" />
+    <undefined name="Unknown" offset="0x5C" visible="false" />
+    <comment title="ARRAY node rotation flag data*" />
+    <int32 name="" offset="0x60" visible="true" />
+    <int32 name="" offset="0x64" visible="true" />
+    <undefined name="Unknown" offset="0x68" visible="false" />
+    <undefined name="Unknown" offset="0x6C" visible="false" />
+    <comment title="ARRAY node scale flag data*" />
+    <int32 name="" offset="0x70" visible="true" />
+    <int32 name="" offset="0x74" visible="true" />
+    <undefined name="Unknown" offset="0x78" visible="false" />
+    <int32 name="offset to compressed data" offset="0x7C" visible="true" description="bytes*" />
+    <dataref name="default data" offset="0x80" visible="true" />
+    <dataref name="frame data" offset="0x88" visible="true" />
+  </reflexive>
+</plugin>

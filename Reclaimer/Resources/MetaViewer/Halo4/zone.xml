@@ -1,0 +1,36 @@
+<plugin class="zone" headersize="532">
+  <revisions>
+    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
+  </revisions>
+  <struct name="Raw Entry Table" offset="88" visible="True" size="68">
+    <tagRef name="Tag" offset="0" visible="True" />
+    <uint16 name="Salt" offset="16" visible="True" />
+    <int8 name="Resource Type Index" offset="18" visible="True" />
+    <int8 name="Flags" offset="19" visible="True" />
+    <int32 name="Fixup Length" offset="20" visible="True" />
+    <int16 name="Unknown" offset="24" visible="True" />
+    <int16 name="Locations Index" offset="26" visible="True" />
+    <int32 name="Unknown" offset="28" visible="True" />
+    <struct name="Fixups" offset="32" visible="True" size="8">
+		<int32 name="Block Offset" offset="0" visible="True" />
+		<int32 name="Address" offset="4" visible="True" mask="0xFFFFFFF" />
+	</struct>
+    <struct name="Definitions" offset="44" visible="True" size="8">
+		<int32 name="Offset" offset="0" visible="True" mask="0xFFFFFFF" />
+		<int32 name="Type Index" offset="4" visible="True" />
+	</struct>
+    <struct name="Fixup Location" offset="56" visible="True" size="4">
+		<int32 name="Offset" offset="0" visible="True" />
+	</struct>
+  </struct>
+  <int32 name="Unknown" offset="316" visible="True" />
+  <int32 name="Unknown" offset="320" visible="True" />
+  <int32 name="Unknown" offset="324" visible="True" />
+  <int32 name="Unknown" offset="328" visible="True" />
+  <int32 name="Unknown" offset="332" visible="True" />
+  <int32 name="Unknown" offset="336" visible="True" />
+  <int32 name="Unknown" offset="340" visible="True" />
+  <int32 name="Unknown" offset="344" visible="True" />
+  <int32 name="Unknown" offset="348" visible="True" />
+  <int32 name="Unknown" offset="352" visible="True" />
+</plugin>

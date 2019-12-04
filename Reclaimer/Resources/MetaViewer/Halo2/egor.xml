@@ -1,0 +1,48 @@
+<plugin>
+  <revisions />
+  <tagRef name="Shader" offset="0x40" visible="True" />
+  <struct name="Pass References" offset="0x88" visible="True" size="0xAC">
+    <int16 name="Layer Pass Index" offset="0x8" visible="True" />
+    <int16 name="If Primary Equals 0 And Secondary Equals 0" offset="0xA" visible="True" />
+    <int16 name="If Primary Greater Than 0 And Secondary Equals 0" offset="0xC" visible="True" />
+    <int16 name="If Primary Equals 0 And Secondary Greater Than 0" offset="0xE" visible="True" />
+    <int16 name="If Primary Greater Than 0 And Secondary Greater Than 0" offset="0x10" visible="True" />
+    <enum16 name="Stage 0 Mode" offset="0x50" visible="True">
+      <option name="Default" value="0x0" />
+      <option name="Viewport Normalized" value="0x1" />
+      <option name="Viewport Relative" value="0x2" />
+      <option name="Frame Buffer Relative" value="0x3" />
+      <option name="Zero" value="0x4" />
+    </enum16>
+    <enum16 name="Stage 1 Mode" offset="0x52" visible="True">
+      <option name="Default" value="0x0" />
+      <option name="Viewport Normalized" value="0x1" />
+      <option name="Viewport Relative" value="0x2" />
+      <option name="Frame Buffer Relative" value="0x3" />
+      <option name="Zero" value="0x4" />
+    </enum16>
+    <enum16 name="Stage 2 Mode" offset="0x54" visible="True">
+      <option name="Default" value="0x0" />
+      <option name="Viewport Normalized" value="0x1" />
+      <option name="Viewport Relative" value="0x2" />
+      <option name="Frame Buffer Relative" value="0x3" />
+      <option name="Zero" value="0x4" />
+    </enum16>
+    <enum16 name="Stage 3 Mode" offset="0x56" visible="True">
+      <option name="Default" value="0x0" />
+      <option name="Viewport Normalized" value="0x1" />
+      <option name="Viewport Relative" value="0x2" />
+      <option name="Frame Buffer Relative" value="0x3" />
+      <option name="Zero" value="0x4" />
+    </enum16>
+    <struct name="Advanced Control" offset="0x58" visible="True" size="0x0" />
+    <enum32 name="Target" offset="0x60" visible="True">
+      <option name="Frame Buffer" value="0x0" />
+      <option name="Texaccum" value="0x1" />
+      <option name="Texaccum Small" value="0x2" />
+      <option name="Texaccum Tiny" value="0x3" />
+      <option name="Copy FB To Texaccum" value="0x4" />
+    </enum32>
+    <struct name="Convolution" offset="0xA4" visible="True" size="0x5C" />
+  </struct>
+</plugin>
