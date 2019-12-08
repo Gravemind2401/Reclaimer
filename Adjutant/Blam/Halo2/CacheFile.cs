@@ -169,7 +169,8 @@ namespace Adjutant.Blam.Halo2
 
                     items.Add(i, item);
 
-                    if (CacheFactory.SystemClasses.Contains(item.ClassCode))
+                    //Halo2Vista multiplayer maps have two ugh! tags
+                    if (CacheFactory.SystemClasses.Contains(item.ClassCode) && !sysItems.ContainsKey(item.ClassCode))
                         sysItems.Add(item.ClassCode, item);
                 }
 
