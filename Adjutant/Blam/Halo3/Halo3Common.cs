@@ -61,6 +61,12 @@ namespace Adjutant.Blam.Halo3
             for (int i = 0; i < shaders.Count; i++)
             {
                 var tag = shaders[i].ShaderReference.Tag;
+                if (tag == null)
+                {
+                    yield return null;
+                    continue;
+                }
+
                 var material = new GeometryMaterial
                 {
                     Name = Utils.GetFileName(tag.FullPath)
