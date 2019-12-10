@@ -39,7 +39,7 @@ namespace Reclaimer.Plugins
 
             var ofd = new Microsoft.Win32.OpenFileDialog
             {
-                Filter = "Halo Map Files|*.map",
+                Filter = "Halo Map Files|*.map;*.yelo",
                 Multiselect = true,
                 CheckFileExists = true
             };
@@ -56,7 +56,7 @@ namespace Reclaimer.Plugins
 
         public override bool SupportsFileExtension(string extension)
         {
-            return extension.ToLower() == "map";
+            return extension.ToLower() == "map" || extension.ToLower() == "yelo";
         }
 
         public override void OpenPhysicalFile(string fileName)
