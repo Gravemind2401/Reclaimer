@@ -81,6 +81,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_85BAAE0DB76196343267BDCA51C05246"
+        "OwnerKey" = "8:_88B9804753D269BC5A57368C7807E91E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_88B9804753D269BC5A57368C7807E91E"
         "OwnerKey" = "8:_F415CDE9BD3846E6B8E5B36DB40736D4"
         "MsmSig" = "8:_UNDEFINED"
@@ -113,12 +119,6 @@
         {
         "MsmKey" = "8:_A7959754FCF6FB807DC6E17DF034C68A"
         "OwnerKey" = "8:_2A9E57871B8CAAEA8ED2315DD2E43C28"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B69EFEDFA82B80A1E8BAA9B6046D3D81"
-        "OwnerKey" = "8:_88B9804753D269BC5A57368C7807E91E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -178,6 +178,12 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B69EFEDFA82B80A1E8BAA9B6046D3D81"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_7E0B3BCEA6CC1139C650E449FCFF7A20"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -232,13 +238,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B69EFEDFA82B80A1E8BAA9B6046D3D81"
+        "OwnerKey" = "8:_8DC4DFB4265BE822F550B1EED194B45A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8DC4DFB4265BE822F550B1EED194B45A"
+        "OwnerKey" = "8:_85BAAE0DB76196343267BDCA51C05246"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -555,11 +561,42 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_85BAAE0DB76196343267BDCA51C05246"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.IO.Endian, Version=1.0.62.287, Culture=neutral, PublicKeyToken=4c1f0321ae9dcf07, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_85BAAE0DB76196343267BDCA51C05246"
+                    {
+                    "Name" = "8:System.IO.Endian.DLL"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.IO.Endian.DLL"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_CFD6E818CB474C0B97D0387E639CC05D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_88B9804753D269BC5A57368C7807E91E"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Adjutant, Version=5.0.134.848, Culture=neutral, PublicKeyToken=10f296c5c79ce69a, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Adjutant, Version=5.0.135.849, Culture=neutral, PublicKeyToken=10f296c5c79ce69a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_88B9804753D269BC5A57368C7807E91E"
@@ -683,7 +720,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.IO.Endian, Version=1.0.62.282, Culture=neutral, PublicKeyToken=4c1f0321ae9dcf07, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:System.IO.Endian, Version=1.0.62.287, Culture=neutral, PublicKeyToken=4c1f0321ae9dcf07, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_B69EFEDFA82B80A1E8BAA9B6046D3D81"
@@ -890,15 +927,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Reclaimer"
-        "ProductCode" = "8:{6514F95B-6DBE-484F-A6C5-22BD2F1AAB99}"
-        "PackageCode" = "8:{0F35BBAC-4D5A-4086-AB39-332036C3A386}"
+        "ProductCode" = "8:{A90C4F82-E705-4BE5-8DC7-CB7806F74D2E}"
+        "PackageCode" = "8:{6F13138A-7A16-4534-A8C4-93A3CFE5B84D}"
         "UpgradeCode" = "8:{FBBE75A5-B290-459D-AFEE-4B97449AE820}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.111"
+        "ProductVersion" = "8:1.0.112"
         "Manufacturer" = "8:Gravemind2401"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
