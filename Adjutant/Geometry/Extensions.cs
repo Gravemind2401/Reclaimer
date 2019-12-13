@@ -564,7 +564,7 @@ namespace Adjutant.Geometry
                     sw.WriteLine(model.Materials.Count);
                     foreach (var mat in model.Materials)
                     {
-                        sw.WriteLine(mat.Name);
+                        sw.WriteLine(mat?.Name ?? "unused");
                         sw.WriteLine("<none>"); //unknown
                     }
 
