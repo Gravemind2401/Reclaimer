@@ -30,6 +30,7 @@ namespace Adjutant.Geometry
         short NextSiblingIndex { get; }
         IRealVector3D Position { get; }
         IRealVector4D Rotation { get; }
+        Matrix4x4 OffsetTransform { get; }
     }
 
     public interface IGeometryMarkerGroup

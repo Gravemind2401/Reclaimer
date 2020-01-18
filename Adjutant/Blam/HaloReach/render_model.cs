@@ -254,6 +254,8 @@ namespace Adjutant.Blam.HaloReach
 
         IRealVector4D IGeometryNode.Rotation => Rotation;
 
+        Matrix4x4 IGeometryNode.OffsetTransform => Transform;
+
         #endregion
     }
 

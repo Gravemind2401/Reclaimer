@@ -337,6 +337,8 @@ namespace Adjutant.Blam.Halo1
 
         IRealVector4D IGeometryNode.Rotation => Rotation.Conjugate;
 
+        Matrix4x4 IGeometryNode.OffsetTransform => Matrix4x4.Identity;
+
         #endregion
     }
 

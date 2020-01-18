@@ -63,6 +63,7 @@ namespace Adjutant.Geometry
         public short NextSiblingIndex { get; set; }
         public IRealVector3D Position { get; set; }
         public IRealVector4D Rotation { get; set; }
+        public Matrix4x4 OffsetTransform { get; set; }
 
         public override string ToString() => Name;
     }

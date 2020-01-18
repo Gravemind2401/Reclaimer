@@ -363,7 +363,7 @@ namespace Adjutant.Blam.Halo2
         public float TransformScale { get; set; }
 
         [Offset(44)]
-        public Matrix4x4 TransformMatrix { get; set; }
+        public Matrix4x4 Transform { get; set; }
 
         [Offset(92)]
         public float DistanceFromParent { get; set; }
@@ -377,6 +377,8 @@ namespace Adjutant.Blam.Halo2
         IRealVector3D IGeometryNode.Position => Position;
 
         IRealVector4D IGeometryNode.Rotation => Rotation;
+
+        Matrix4x4 IGeometryNode.OffsetTransform => Transform;
 
         #endregion
     }
