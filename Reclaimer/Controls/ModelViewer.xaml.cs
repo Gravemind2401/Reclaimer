@@ -2,6 +2,7 @@
 using Adjutant.Utilities;
 using Microsoft.Win32;
 using Reclaimer.Models;
+using Reclaimer.Plugins;
 using Reclaimer.Utilities;
 using Studio.Controls;
 using System;
@@ -33,6 +34,15 @@ namespace Reclaimer.Controls
     {
         private static readonly string[] AllLods = new[] { "Highest", "High", "Medium", "Low", "Lowest" };
         private static readonly DiffuseMaterial ErrorMaterial;
+
+        private static readonly ExportFormat[] ExportFormats = new[]
+        {
+            new ExportFormat("amf",         "amf",  "AMF Files"),
+            new ExportFormat("jms",         "jms",  "JMS Files"),
+            new ExportFormat("objnomtl",    "obj",  "OBJ Files"),
+            new ExportFormat("obj",         "obj",  "OBJ Files with materials"),
+            new ExportFormat("collada",     "dae",  "COLLADA Files"),
+        };
 
         #region Dependency Properties
         private static readonly DependencyPropertyKey AvailableLodsPropertyKey =
@@ -389,21 +399,31 @@ namespace Reclaimer.Controls
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
+            var filter = string.Join("|", ExportFormats.Select(f => $"{f.Description}|*.{f.Extension}"));
+
             var sfd = new SaveFileDialog
             {
                 OverwritePrompt = true,
                 FileName = model.Name,
-                Filter = "AMF Files|*.amf|JMS Files|*.jms",
+                Filter = filter,
                 AddExtension = true
             };
 
             if (sfd.ShowDialog() != true)
                 return;
 
-            if (sfd.FilterIndex == 1)
+            var option = ExportFormats[sfd.FilterIndex - 1];
+
+            if (option.FormatId == "amf")
                 model.WriteAMF(sfd.FileName);
-            else
+            else if (option.FormatId == "jms")
                 model.WriteJMS(sfd.FileName);
+            else
+            {
+                var context = new Assimp.AssimpContext();
+                var scene = model.CreateAssimpScene(context);
+                context.ExportFile(scene, sfd.FileName, option.FormatId);
+            }
         }
         #endregion
 
@@ -431,5 +451,19 @@ namespace Reclaimer.Controls
             GC.Collect();
         }
         #endregion
+
+        private struct ExportFormat
+        {
+            public string FormatId { get; }
+            public string Extension { get; }
+            public string Description { get; }
+
+            public ExportFormat(string formatId, string extension, string description)
+            {
+                FormatId = formatId;
+                Extension = extension;
+                Description = description;
+            }
+        }
     }
 }

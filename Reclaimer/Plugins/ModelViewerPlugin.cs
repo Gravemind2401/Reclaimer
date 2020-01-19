@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Common;
+using Adjutant.Geometry;
 using Adjutant.Utilities;
 using Reclaimer.Utilities;
 using Reclaimer.Windows;
@@ -40,6 +41,253 @@ namespace Reclaimer.Plugins
             {
                 LogError($"Error loading model: {args.FileName}", e);
             }
+        }
+    }
+
+    public static class ModelViewerExtensions
+    {
+        public static Assimp.Vector2D ToAssimp2D(this IXMVector v)
+        {
+            return new Assimp.Vector2D(v.X, v.Y);
+        }
+
+        public static Assimp.Vector3D ToAssimp3D(this IXMVector v)
+        {
+            return new Assimp.Vector3D(v.X, v.Y, v.Z);
+        }
+
+        public static Assimp.Vector3D ToAssimp3D(this IXMVector v, float scale)
+        {
+            return new Assimp.Vector3D(v.X * scale, v.Y * scale, v.Z * scale);
+        }
+
+        public static Assimp.Vector3D ToAssimpUV(this IXMVector v)
+        {
+            return new Assimp.Vector3D(v.X, 1f - v.Y, v.Z);
+        }
+
+        public static Assimp.Matrix4x4 ToAssimp4x4(this System.Numerics.Matrix4x4 m)
+        {
+            return new Assimp.Matrix4x4
+            {
+                A1 = m.M11,
+                A2 = m.M21,
+                A3 = m.M31,
+                A4 = m.M41,
+                B1 = m.M12,
+                B2 = m.M22,
+                B3 = m.M32,
+                B4 = m.M42,
+                C1 = m.M13,
+                C2 = m.M23,
+                C3 = m.M33,
+                C4 = m.M43,
+                D1 = m.M14,
+                D2 = m.M24,
+                D3 = m.M34,
+                D4 = m.M44,
+            };
+        }
+
+        public static System.Numerics.Matrix4x4 ToNumeric4x4(this Assimp.Matrix4x4 m)
+        {
+            return new System.Numerics.Matrix4x4
+            {
+                M11 = m.A1,
+                M12 = m.B1,
+                M13 = m.C1,
+                M14 = m.D1,
+                M21 = m.A2,
+                M22 = m.B2,
+                M23 = m.C2,
+                M24 = m.D2,
+                M31 = m.A3,
+                M32 = m.B3,
+                M33 = m.C3,
+                M34 = m.D3,
+                M41 = m.A4,
+                M42 = m.B4,
+                M43 = m.C4,
+                M44 = m.D4
+            };
+        }
+
+        public static Assimp.Scene CreateAssimpScene(this IGeometryModel model, Assimp.AssimpContext context)
+        {
+            const int scale = 100;
+
+            var scene = new Assimp.Scene();
+            scene.RootNode = new Assimp.Node(model.Name);
+
+            //Assimp is Y-up in meters by default - this forces it to export as Z-up in inches
+            scene.RootNode.Transform = (CoordinateSystem.HaloCEX * 0.0254f).ToAssimp4x4();
+
+            #region Nodes
+            var allNodes = new List<Assimp.Node>();
+            foreach (var node in model.Nodes)
+            {
+                var result = new Assimp.Node(node.Name);
+
+                var q = new System.Numerics.Quaternion(node.Rotation.X, node.Rotation.Y, node.Rotation.Z, node.Rotation.W);
+                var mat = System.Numerics.Matrix4x4.CreateFromQuaternion(q);
+                mat.Translation = new System.Numerics.Vector3(node.Position.X * scale, node.Position.Y * scale, node.Position.Z * scale);
+                result.Transform = mat.ToAssimp4x4();
+
+                allNodes.Add(result);
+            }
+
+            for (int i = 0; i < model.Nodes.Count; i++)
+            {
+                var node = model.Nodes[i];
+                if (node.ParentIndex >= 0)
+                    allNodes[node.ParentIndex].Children.Add(allNodes[i]);
+                else scene.RootNode.Children.Add(allNodes[i]);
+            }
+            #endregion
+
+            var meshLookup = new List<int>();
+
+            #region Meshes
+            for (int i = 0; i < model.Meshes.Count; i++)
+            {
+                meshLookup.Add(scene.MeshCount);
+
+                var geom = model.Meshes[i];
+                foreach (var sub in geom.Submeshes)
+                {
+                    var m = new Assimp.Mesh($"mesh{i:D3}");
+
+                    var indices = geom.Indicies.Skip(sub.IndexStart).Take(sub.IndexLength);
+
+                    var minIndex = indices.Min();
+                    var maxIndex = indices.Max();
+                    var vertCount = maxIndex - minIndex + 1;
+
+                    if (geom.IndexFormat == IndexFormat.Stripped)
+                        indices = indices.Unstrip();
+
+                    indices = indices.Select(x => x - minIndex);
+                    var vertices = geom.Vertices.Skip(minIndex).Take(vertCount);
+
+                    if (geom.BoundsIndex >= 0)
+                        vertices = vertices.Select(v => (IVertex)new CompressedVertex(v, model.Bounds[geom.BoundsIndex.Value]));
+
+                    int vIndex = -1;
+                    var boneLookup = new Dictionary<int, Assimp.Bone>();
+                    foreach (var v in vertices)
+                    {
+                        vIndex++;
+
+                        if (v.Position.Count > 0)
+                            m.Vertices.Add(v.Position[0].ToAssimp3D(scale));
+
+                        if (v.Normal.Count > 0)
+                            m.Normals.Add(v.Normal[0].ToAssimp3D());
+
+                        if (v.TexCoords.Count > 0)
+                            m.TextureCoordinateChannels[0].Add(v.TexCoords[0].ToAssimpUV());
+
+                        if (geom.VertexWeights == VertexWeights.None && !geom.NodeIndex.HasValue)
+                            continue;
+
+                        #region Vertex Weights
+                        var weights = new List<Tuple<int, float>>(4);
+
+                        if (geom.NodeIndex.HasValue)
+                            weights.Add(Tuple.Create<int, float>(geom.NodeIndex.Value, 1));
+                        else if (geom.VertexWeights == VertexWeights.Skinned)
+                        {
+                            var ind = v.BlendIndices[0];
+                            var wt = v.BlendWeight[0];
+
+                            if (wt.X > 0)
+                                weights.Add(Tuple.Create((int)ind.X, wt.X));
+                            if (wt.Y > 0)
+                                weights.Add(Tuple.Create((int)ind.Y, wt.Y));
+                            if (wt.Z > 0)
+                                weights.Add(Tuple.Create((int)ind.Z, wt.Z));
+                            if (wt.W > 0)
+                                weights.Add(Tuple.Create((int)ind.W, wt.W));
+                        }
+
+                        foreach (var val in weights)
+                        {
+                            Assimp.Bone b;
+                            if (boneLookup.ContainsKey(val.Item1))
+                                b = boneLookup[val.Item1];
+                            else
+                            {
+                                var t = model.Nodes[val.Item1].OffsetTransform;
+                                t.M41 *= scale;
+                                t.M42 *= scale;
+                                t.M43 *= scale;
+
+                                b = new Assimp.Bone
+                                {
+                                    Name = model.Nodes[val.Item1].Name,
+                                    OffsetMatrix = t.ToAssimp4x4()
+                                };
+
+                                m.Bones.Add(b);
+                                boneLookup.Add(val.Item1, b);
+                            }
+
+                            b.VertexWeights.Add(new Assimp.VertexWeight(vIndex, val.Item2));
+                        }
+                        #endregion
+                    }
+
+                    m.SetIndices(indices.ToArray(), 3);
+                    m.MaterialIndex = sub.MaterialIndex;
+
+                    scene.Meshes.Add(m);
+                }
+            }
+            #endregion
+
+            #region Regions
+            foreach (var reg in model.Regions)
+            {
+                var regNode = new Assimp.Node(reg.Name);
+                foreach (var perm in reg.Permutations)
+                {
+                    var permNode = new Assimp.Node(perm.Name);
+                    var meshStart = meshLookup[perm.MeshIndex];
+                    var meshCount = model.Meshes[perm.MeshIndex].Submeshes.Count;
+
+                    permNode.MeshIndices.AddRange(Enumerable.Range(meshStart, meshCount));
+                    regNode.Children.Add(permNode);
+                }
+                scene.RootNode.Children.Add(regNode);
+            }
+            #endregion
+
+            #region Materials
+            foreach (var mat in model.Materials)
+            {
+                var m = new Assimp.Material { Name = mat.Name };
+
+                //prevent max from making every material super shiny
+                m.ColorEmissive = m.ColorReflective = m.ColorSpecular = new Assimp.Color4D(0, 0, 0, 1);
+                m.ColorDiffuse = m.ColorTransparent = new Assimp.Color4D(1);
+
+                //max only seems to care about diffuse
+                var dif = mat.Submaterials.FirstOrDefault(s => s.Usage == MaterialUsage.Diffuse);
+                if (dif != null)
+                {
+                    m.TextureDiffuse = new Assimp.TextureSlot
+                    {
+                        BlendFactor = 1,
+                        FilePath = dif.Bitmap.Name + ".tif",
+                        TextureType = Assimp.TextureType.Diffuse
+                    };
+                }
+
+                scene.Materials.Add(m);
+            } 
+            #endregion
+
+            return scene;
         }
     }
 }
