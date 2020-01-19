@@ -28,6 +28,13 @@ namespace Adjutant.Blam.Halo2
 
         [Offset(54)]
         public TagReference BitmapReference2 { get; set; }
+
+        public IEnumerable<TagReference> EnumerateBitmapReferences()
+        {
+            yield return DiffuseBitmapReference;
+            yield return IllumBitmapReference;
+            yield return BitmapReference2;
+        }
     }
 
     [FixedSize(124)]

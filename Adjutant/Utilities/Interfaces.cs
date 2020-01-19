@@ -20,5 +20,6 @@ namespace Adjutant.Utilities
     {
         int LodCount { get; }
         IGeometryModel ReadGeometry(int lod);
+        IEnumerable<IBitmap> GetAllBitmaps();
     }
 }

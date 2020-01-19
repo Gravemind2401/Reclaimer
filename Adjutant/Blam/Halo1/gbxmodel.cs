@@ -243,6 +243,24 @@ namespace Adjutant.Blam.Halo1
             }
         }
 
+        public IEnumerable<IBitmap> GetAllBitmaps()
+        {
+            var complete = new List<int>();
+
+            using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
+            {
+                foreach (var s in Shaders)
+                {
+                    var bitmTag = Halo1Common.GetShaderDiffuse(s.ShaderReference, reader);
+                    if (bitmTag == null || complete.Contains(bitmTag.Id))
+                        continue;
+
+                    complete.Add(bitmTag.Id);
+                    yield return bitmTag.ReadMetadata<bitmap>();
+                }
+            }
+        }
+
         #endregion
     }
 
