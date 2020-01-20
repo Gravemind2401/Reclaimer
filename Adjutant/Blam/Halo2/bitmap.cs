@@ -58,6 +58,8 @@ namespace Adjutant.Blam.Halo2
 
         string IBitmap.Name => item.FullPath;
 
+        string IBitmap.Class => item.ClassName;
+
         int IBitmap.SubmapCount => Bitmaps.Count;
 
         CubemapLayout IBitmap.CubeLayout => Halo2CubeLayout;

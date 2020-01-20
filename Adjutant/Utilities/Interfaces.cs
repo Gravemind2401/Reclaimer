@@ -11,6 +11,7 @@ namespace Adjutant.Utilities
     public interface IBitmap
     {
         string Name { get; }
+        string Class { get; }
         int SubmapCount { get; }
         CubemapLayout CubeLayout { get; }
         DdsImage ToDds(int index);

@@ -87,6 +87,8 @@ namespace Adjutant.Blam.HaloReach
 
         string IBitmap.Name => item.FullPath;
 
+        string IBitmap.Class => item.ClassName;
+
         int IBitmap.SubmapCount => Bitmaps.Count;
 
         CubemapLayout IBitmap.CubeLayout => HaloReachCubeLayout;

@@ -44,6 +44,8 @@ namespace Adjutant.Saber3D.Halo1X
 
         string IBitmap.Name => item.Name;
 
+        string IBitmap.Class => item.ItemType.ToString();
+
         int IBitmap.SubmapCount => 1;
 
         CubemapLayout IBitmap.CubeLayout => new CubemapLayout
