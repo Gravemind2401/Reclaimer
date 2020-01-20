@@ -19,6 +19,8 @@ namespace Adjutant.Utilities
 
     public interface IRenderGeometry
     {
+        string Name { get; }
+        string Class { get; }
         int LodCount { get; }
         IGeometryModel ReadGeometry(int lod);
         IEnumerable<IBitmap> GetAllBitmaps();

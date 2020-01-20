@@ -42,6 +42,10 @@ namespace Adjutant.Blam.Halo2
 
         #region IRenderGeometry
 
+        string IRenderGeometry.Name => item.FullPath;
+
+        string IRenderGeometry.Class => item.ClassName;
+
         int IRenderGeometry.LodCount => 1;
 
         public IGeometryModel ReadGeometry(int lod)

@@ -50,6 +50,10 @@ namespace Adjutant.Blam.Halo1
 
         #region IRenderGeometry
 
+        string IRenderGeometry.Name => item.FullPath;
+
+        string IRenderGeometry.Class => item.ClassName;
+
         int IRenderGeometry.LodCount => Regions.SelectMany(r => r.Permutations).Max(p => p.LodCount);
 
         public IGeometryModel ReadGeometry(int lod)

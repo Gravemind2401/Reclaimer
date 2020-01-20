@@ -15,10 +15,12 @@ namespace Adjutant.Blam.Halo3
     public class render_model : IRenderGeometry
     {
         private readonly ICacheFile cache;
+        private readonly IIndexItem item;
 
-        public render_model(ICacheFile cache)
+        public render_model(ICacheFile cache, IIndexItem item)
         {
             this.cache = cache;
+            this.item = item;
         }
 
         [Offset(0)]
@@ -60,6 +62,10 @@ namespace Adjutant.Blam.Halo3
         public override string ToString() => Name;
 
         #region IRenderGeometry
+
+        string IRenderGeometry.Name => item.FullPath;
+
+        string IRenderGeometry.Class => item.ClassName;
 
         int IRenderGeometry.LodCount => 1;
 
