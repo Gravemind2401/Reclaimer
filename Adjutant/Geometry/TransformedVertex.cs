@@ -14,9 +14,9 @@ namespace Adjutant.Geometry
 
         public IReadOnlyList<IXMVector> Position { get; }
         public IReadOnlyList<IXMVector> TexCoords { get; }
-        public IReadOnlyList<IXMVector> Normal { get; }
-        public IReadOnlyList<IXMVector> Binormal { get; }
-        public IReadOnlyList<IXMVector> Tangent { get; }
+        public IReadOnlyList<IXMVector> Normal => source.Normal;
+        public IReadOnlyList<IXMVector> Binormal => source.Binormal;
+        public IReadOnlyList<IXMVector> Tangent => source.Tangent;
         public IReadOnlyList<IXMVector> BlendIndices => source.BlendIndices;
         public IReadOnlyList<IXMVector> BlendWeight => source.BlendWeight;
         public IReadOnlyList<IXMVector> Color => source.Color;
@@ -31,9 +31,6 @@ namespace Adjutant.Geometry
 
             Position = source.Position.Select(v => (IXMVector)new TransformedVector3D(v, transform3D, true)).ToArray();
             TexCoords = source.TexCoords.Select(v => (IXMVector)new TransformedVector2D(v, transform2D, true)).ToArray();
-            Normal = source.Normal.Select(v => (IXMVector)new TransformedVector3D(v, transform3D, false)).ToArray();
-            Binormal = source.Binormal.Select(v => (IXMVector)new TransformedVector3D(v, transform3D, false)).ToArray();
-            Tangent = source.Tangent.Select(v => (IXMVector)new TransformedVector3D(v, transform3D, false)).ToArray();
         }
     }
 }
