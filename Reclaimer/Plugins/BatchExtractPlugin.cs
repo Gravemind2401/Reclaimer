@@ -189,6 +189,7 @@ namespace Reclaimer.Plugins
             }
         }
 
+        #region Images
         private void SaveImage(IIndexItem tag)
         {
             IBitmap bitmap;
@@ -213,10 +214,17 @@ namespace Reclaimer.Plugins
                 default: return;
             }
 
+            SaveImage(bitmap, Settings.DataFolder);
+
+            LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
+        }
+
+        private void SaveImage(IBitmap bitmap, string baseDir)
+        {
             for (int i = 0; i < bitmap.SubmapCount; i++)
             {
                 var dds = bitmap.ToDds(i);
-                var fileName = MakePath(tag, Settings.DataFolder);
+                var fileName = MakePath(bitmap.Class, bitmap.Name, baseDir);
                 var ext = "." + Settings.BitmapFormat.ToString().ToLower();
 
                 if (bitmap.SubmapCount > 1)
@@ -240,8 +248,6 @@ namespace Reclaimer.Plugins
                 else if (Settings.BitmapMode == BitmapMode.MixedIsolate)
                     WriteImageMixedIsolate(dds, fileName, ext, format, bitmap.CubeLayout);
             }
-
-            LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
         }
 
         private void WriteImageIsolateAlpha(DdsImage image, string fileName, string extension, ImageFormat format, CubemapLayout layout)
@@ -270,6 +276,7 @@ namespace Reclaimer.Plugins
                 WriteImageIsolateAll(image, fileName, extension, format, layout);
             else WriteImageIsolateAlpha(image, fileName, extension, format, layout);
         }
+        #endregion
 
         private void SaveModel(IIndexItem tag)
         {
@@ -295,25 +302,31 @@ namespace Reclaimer.Plugins
                 default: return;
             }
 
-            var fileName = MakePath(tag, Settings.DataFolder) + ".amf";
-            geometry.ReadGeometry(0).WriteAMF(fileName);
+            SaveModel(geometry, Settings.DataFolder);
+
             LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
         }
 
-        private string MakePath(IIndexItem tag, string baseDirectory)
+        private void SaveModel(IRenderGeometry geometry, string baseDir)
+        {
+            var fileName = MakePath(geometry.Class, geometry.Name, baseDir) + ".amf";
+            geometry.ReadGeometry(0).WriteAMF(fileName);
+        }
+
+        private string MakePath(string tagClass, string tagPath, string baseDirectory)
         {
             switch (Settings.FolderMode)
             {
                 case FolderMode.Hierarchy:
-                    baseDirectory = Path.Combine(baseDirectory, tag.FullPath);
+                    baseDirectory = Path.Combine(baseDirectory, tagPath);
                     break;
 
                 case FolderMode.Hybrid:
-                    baseDirectory = Path.Combine(baseDirectory, tag.ClassName, tag.FullPath);
+                    baseDirectory = Path.Combine(baseDirectory, tagClass, tagPath);
                     break;
 
                 case FolderMode.TagClass:
-                    baseDirectory = Path.Combine(baseDirectory, tag.ClassName);
+                    baseDirectory = Path.Combine(baseDirectory, tagClass);
                     break;
             }
 
