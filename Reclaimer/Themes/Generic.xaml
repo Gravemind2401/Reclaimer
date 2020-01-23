@@ -10,7 +10,9 @@
                 <ControlTemplate TargetType="c:Renderer">
                     <Grid Background="{TemplateBinding Background}">
                         <Grid Background="Transparent" IsHitTestVisible="False">
-                            <Viewport3D x:Name="PART_Viewport">
+                            <Viewport3D x:Name="PART_Viewport"
+                                        IsHitTestVisible="False"
+                                        RenderOptions.EdgeMode="Aliased">
                                 <Viewport3D.Camera>
                                     <PerspectiveCamera
                                         Position="{Binding Position, RelativeSource={RelativeSource TemplatedParent}}"

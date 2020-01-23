@@ -50,7 +50,7 @@ namespace Reclaimer.Utilities
         public static void TransitionTo(this Window prev, Window next)
         {
             //if we try to close window A then show and drag window B we get the error 'Can only call DragMove when primary mouse button is down.'
-            //this is a workaround to ensure window A has closed before windo B attempts to show and drag
+            //this is a workaround to ensure window A has closed before window B attempts to show and drag
             prev.Closed += (s, e) =>
             {
                 next.Show();
