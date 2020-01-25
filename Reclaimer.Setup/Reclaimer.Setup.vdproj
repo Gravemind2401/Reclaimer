@@ -21,6 +21,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_33683239D5D0DB5AB3F116E35360DBFE"
+        "OwnerKey" = "8:_F415CDE9BD3846E6B8E5B36DB40736D4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_635435B8A0E041B1BFE3CFA10E5934B5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -238,6 +244,12 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_33683239D5D0DB5AB3F116E35360DBFE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_8DC4DFB4265BE822F550B1EED194B45A"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -380,6 +392,37 @@
                     }
                 }
             "SourcePath" = "8:Prism.Wpf.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_CFD6E818CB474C0B97D0387E639CC05D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_33683239D5D0DB5AB3F116E35360DBFE"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:AssimpNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_33683239D5D0DB5AB3F116E35360DBFE"
+                    {
+                    "Name" = "8:AssimpNet.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:AssimpNet.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_CFD6E818CB474C0B97D0387E639CC05D"
@@ -720,7 +763,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.IO.Endian, Version=1.0.62.287, Culture=neutral, PublicKeyToken=4c1f0321ae9dcf07, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:System.IO.Endian, Version=1.0.66.288, Culture=neutral, PublicKeyToken=4c1f0321ae9dcf07, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_B69EFEDFA82B80A1E8BAA9B6046D3D81"
@@ -927,15 +970,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Reclaimer"
-        "ProductCode" = "8:{A90C4F82-E705-4BE5-8DC7-CB7806F74D2E}"
-        "PackageCode" = "8:{6F13138A-7A16-4534-A8C4-93A3CFE5B84D}"
+        "ProductCode" = "8:{967549E5-0492-4B9B-BC1E-FE098D56916A}"
+        "PackageCode" = "8:{C3BAFF2C-2D10-4030-A21B-C2B05BB54AF3}"
         "UpgradeCode" = "8:{FBBE75A5-B290-459D-AFEE-4B97449AE820}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.112"
+        "ProductVersion" = "8:1.0.118"
         "Manufacturer" = "8:Gravemind2401"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
