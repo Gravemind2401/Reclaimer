@@ -15,6 +15,7 @@ namespace Adjutant.Tests.Blam.Halo4
         private const string BetaFolder = @"Y:\Halo\Halo4Beta";
         private const string RetailSPFolder = @"Y:\Halo\Halo4Retail\Campaign\maps";
         private const string RetailMPFolder = @"Y:\Halo\Halo4Retail\Multiplayer\maps";
+        private const string DLCFolder = @"Y:\Halo\Halo4Retail\maps";
 
         [DataRow("mainmenu")]
         [DataRow("ca_gore_valley")]
@@ -63,6 +64,19 @@ namespace Adjutant.Tests.Blam.Halo4
         public void Halo4Multiplayer(string map)
         {
             TestMap(RetailMPFolder, map);
+        }
+
+        [DataRow("dlc_forge_island")]
+        [DataRow("Castle\\ca_basin")]
+        [DataRow("Castle\\ca_highrise")]
+        [DataRow("Castle\\ca_spiderweb")]
+        [DataRow("Crimson\\dlc_dejewel")]
+        [DataRow("Crimson\\dlc_dejunkyard")]
+        [DataRow("Crimson\\zd_02_grind")]
+        [DataTestMethod]
+        public void Halo4DLC(string map)
+        {
+            TestMap(DLCFolder, map);
         }
 
         private void TestMap(string folder, string map)
