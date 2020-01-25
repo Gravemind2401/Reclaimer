@@ -24,8 +24,8 @@
             </ToolBar>
         </ToolBarTray>
         <Grid DockPanel.Dock="Top" Background="{DynamicResource Environment.CommandBar.Gradient}">
-            <studio:SearchControl x:Name="txtSearch" x:FieldModifier="private"
-                    Margin="0,2" WatermarkText="Search Tags" LiveSearchEnabled="True"
+            <studio:SearchControl x:Name="txtSearch" x:FieldModifier="private" Margin="0,2" 
+                    WatermarkText="Search Tags" LiveSearchEnabled="True" LiveSearchDelay="500"
                     SearchAccepted="txtSearch_SearchChanged" SearchCanceled="txtSearch_SearchChanged" />
         </Grid>
         <TreeView x:Name="tv"

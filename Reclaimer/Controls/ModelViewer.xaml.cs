@@ -13,6 +13,7 @@ using System.Drawing.Dds;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -32,6 +33,9 @@ namespace Reclaimer.Controls
     /// </summary>
     public partial class ModelViewer : IDisposable
     {
+        private delegate bool GetDataFolder(out string dataFolder);
+        private delegate void SaveImage(IBitmap bitmap, string baseDir);
+
         private static readonly string[] AllLods = new[] { "Highest", "High", "Medium", "Low", "Lowest" };
         private static readonly DiffuseMaterial ErrorMaterial;
 
@@ -80,6 +84,8 @@ namespace Reclaimer.Controls
 
         public TabModel TabModel { get; }
         public ObservableCollection<TreeItemModel> TreeViewItems { get; }
+
+        public Action<string> LogOutput { get; set; }
 
         static ModelViewer()
         {
@@ -406,6 +412,7 @@ namespace Reclaimer.Controls
                 OverwritePrompt = true,
                 FileName = model.Name,
                 Filter = filter,
+                FilterIndex = 1 + ExportFormats.TakeWhile(f => f.FormatId != ModelViewerPlugin.Settings.DefaultSaveFormat).Count(),
                 AddExtension = true
             };
 
@@ -424,6 +431,32 @@ namespace Reclaimer.Controls
                 var scene = model.CreateAssimpScene(context);
                 context.ExportFile(scene, sfd.FileName, option.FormatId);
             }
+
+            ModelViewerPlugin.Settings.DefaultSaveFormat = option.FormatId;
+        }
+
+        private void btnSaveBitmaps_Click(object sender, RoutedEventArgs e)
+        {
+            var getFolder = Substrate.GetExportFunction<GetDataFolder>("Reclaimer.Plugins.BatchExtractPlugin.GetDataFolder");
+
+            string folder;
+            if (!getFolder(out folder))
+                return;
+
+            Substrate.ShowOutput();
+
+            Task.Run(() =>
+            {
+                var saveImage = Substrate.GetExportFunction<SaveImage>("Reclaimer.Plugins.BatchExtractPlugin.SaveImage");
+
+                foreach (var bitm in geometry.GetAllBitmaps())
+                {
+                    saveImage(bitm, folder);
+                    LogOutput($"Extracted {bitm.Name}.{bitm.Class}");
+                }
+
+                LogOutput($"Recursive bitmap extract complete for {geometry.Name}.{geometry.Class}");
+            });
         }
         #endregion
 

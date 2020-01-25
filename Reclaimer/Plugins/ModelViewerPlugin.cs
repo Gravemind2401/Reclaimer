@@ -16,6 +16,18 @@ namespace Reclaimer.Plugins
     {
         public override string Name => "Model Viewer";
 
+        internal static ModelViewerSettings Settings;
+
+        public override void Initialise()
+        {
+            Settings = LoadSettings<ModelViewerSettings>();
+        }
+
+        public override void Suspend()
+        {
+            SaveSettings(Settings);
+        }
+
         public override bool CanOpenFile(OpenFileArgs args)
         {
             return args.File.Any(i => i is IRenderGeometry);
@@ -30,7 +42,7 @@ namespace Reclaimer.Plugins
 
             try
             {
-                var viewer = new Controls.ModelViewer();
+                var viewer = new Controls.ModelViewer { LogOutput = LogOutput };
                 viewer.LoadGeometry(model, $"{args.FileName}");
 
                 container.AddItem(viewer.TabModel);
@@ -41,6 +53,18 @@ namespace Reclaimer.Plugins
             {
                 LogError($"Error loading model: {args.FileName}", e);
             }
+        }
+    }
+
+    internal class ModelViewerSettings
+    {
+        public string DefaultSaveFormat { get; set; }
+        public string MaterialExtension { get; set; }
+
+        public ModelViewerSettings()
+        {
+            DefaultSaveFormat = "amf";
+            MaterialExtension = "tif";
         }
     }
 
@@ -278,7 +302,7 @@ namespace Reclaimer.Plugins
                     m.TextureDiffuse = new Assimp.TextureSlot
                     {
                         BlendFactor = 1,
-                        FilePath = dif.Bitmap.Name + ".tif",
+                        FilePath = $"{dif.Bitmap.Name}.{ModelViewerPlugin.Settings.MaterialExtension}",
                         TextureType = Assimp.TextureType.Diffuse
                     };
                 }

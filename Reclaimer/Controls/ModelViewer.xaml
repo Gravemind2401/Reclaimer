@@ -62,8 +62,12 @@
                     <ContentControl Template="{StaticResource ic_CheckboxList_16x}" />
                 </Button>
                 <Separator />
+                <Button Click="btnSaveBitmaps_Click"
+                        ToolTip="Save Bitmaps">
+                    <ContentControl Template="{StaticResource ic_ImageStack_16x}" />
+                </Button>
                 <Button Click="btnSave_Click"
-                        ToolTip="Save">
+                        ToolTip="Save Model">
                     <ContentControl Template="{StaticResource ic_Save_16x}" />
                 </Button>
             </ToolBar>
