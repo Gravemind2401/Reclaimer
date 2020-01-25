@@ -83,6 +83,25 @@ namespace Reclaimer.Plugins
             SaveSettings(Settings);
         }
 
+        [ExportFunction]
+        private bool GetDataFolder(out string dataFolder)
+        {
+            dataFolder = Settings.DataFolder;
+            if (Settings.PromptForFolder)
+            {
+                var fsd = new FolderSelectDialog();
+                if (!string.IsNullOrEmpty(Settings.DataFolder))
+                    fsd.InitialDirectory = Settings.DataFolder;
+
+                if (!fsd.ShowDialog())
+                    return false;
+
+                Settings.DataFolder = dataFolder = fsd.SelectedPath;
+            }
+
+            return true;
+        }
+
         private void OnMenuItemClick(string key)
         {
             if (!isBusy)
@@ -97,17 +116,11 @@ namespace Reclaimer.Plugins
 
         private void OnContextItemClick(string key, OpenFileArgs context)
         {
-            var folder = Settings.DataFolder;
-            if (Settings.PromptForFolder && !isBusy)
+            if (!isBusy)
             {
-                var fsd = new FolderSelectDialog();
-                if (!string.IsNullOrEmpty(Settings.DataFolder))
-                    fsd.InitialDirectory = Settings.DataFolder;
-
-                if (!fsd.ShowDialog())
+                string folder;
+                if (!GetDataFolder(out folder))
                     return;
-
-                Settings.DataFolder = folder = fsd.SelectedPath;
             }
 
             var node = context.File.OfType<TreeItemModel>().FirstOrDefault();
@@ -219,6 +232,7 @@ namespace Reclaimer.Plugins
             LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
         }
 
+        [ExportFunction]
         private void SaveImage(IBitmap bitmap, string baseDir)
         {
             for (int i = 0; i < bitmap.SubmapCount; i++)
@@ -307,6 +321,7 @@ namespace Reclaimer.Plugins
             LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
         }
 
+        [ExportFunction]
         private void SaveModel(IRenderGeometry geometry, string baseDir)
         {
             var fileName = MakePath(geometry.Class, geometry.Name, baseDir) + ".amf";

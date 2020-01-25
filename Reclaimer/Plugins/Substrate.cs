@@ -25,12 +25,19 @@ namespace Reclaimer.Plugins
 
         private static readonly DefaultPlugin defaultPlugin = new DefaultPlugin();
         private static readonly Dictionary<string, Plugin> plugins = new Dictionary<string, Plugin>();
+        private static readonly Dictionary<string, Tuple<Plugin, MethodInfo>> exportFunctions = new Dictionary<string, Tuple<Plugin, MethodInfo>>();
 
         private static IEnumerable<Plugin> FindPlugins(Assembly assembly)
         {
             return assembly.GetExportedTypes()
                 .Where(t => t.IsSubclassOf(typeof(Plugin)))
                 .Select(t => Activator.CreateInstance(t) as Plugin);
+        }
+
+        private static IEnumerable<MethodInfo> FindExportFunctions(Plugin plugin)
+        {
+            return plugin.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .Where(m => m.CustomAttributes.Any(a => a.AttributeType == typeof(ExportFunctionAttribute)));
         }
 
         internal static event EventHandler<LogEventArgs> Log;
@@ -81,6 +88,16 @@ namespace Reclaimer.Plugins
                 {
                     plugins.Add(p.Key, p);
                     p.Initialise();
+
+                    foreach (var m in FindExportFunctions(p))
+                    {
+                        var attr = m.GetCustomAttribute<ExportFunctionAttribute>();
+                        var funcName = string.IsNullOrWhiteSpace(attr.Name) ? m.Name : attr.Name;
+                        var key = $"{p.Key}.{funcName}";
+
+                        if (!exportFunctions.ContainsKey(key))
+                            exportFunctions.Add($"{p.Key}.{funcName}", Tuple.Create(p, m));
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -167,6 +184,39 @@ namespace Reclaimer.Plugins
         #endregion
 
         #region Public
+        /// <summary>
+        /// Gets a list of available function keys.
+        /// </summary>
+        public static IEnumerable<string> GetExportFunctionKeys()
+        {
+            return exportFunctions.Keys.OrderBy(s => s);
+        }
+
+        /// <summary>
+        /// Returns an exported function using the specified key.
+        /// </summary>
+        /// <typeparam name="T">The type of delegate to return.</typeparam>
+        /// <param name="key">The function identifier.</param>
+        public static T GetExportFunction<T>(string key) where T : class
+        {
+            if (!typeof(T).IsSubclassOf(typeof(Delegate)))
+                return null;
+
+            if (!exportFunctions.ContainsKey(key))
+                return null;
+
+            var t = exportFunctions[key];
+
+            try
+            {
+                return t.Item2.CreateDelegate(typeof(T), t.Item1) as T;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Gets the directory path that plugin assemblies are loaded from.
         /// </summary>
@@ -262,7 +312,7 @@ namespace Reclaimer.Plugins
         {
             if (Controls.OutputViewer.Instance.Parent != null)
                 return;
-            
+
             AddTool(Controls.OutputViewer.Instance, GetHostWindow(), Dock.Bottom, new GridLength(250));
         }
 
@@ -282,7 +332,7 @@ namespace Reclaimer.Plugins
                 host = Application.Current.MainWindow as ITabContentHost;
             else host = Window.GetWindow(element) as ITabContentHost ?? Application.Current.MainWindow as ITabContentHost;
             return host;
-        } 
+        }
         #endregion
     }
 
