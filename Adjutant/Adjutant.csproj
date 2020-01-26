@@ -92,7 +92,10 @@
     <Compile Include="Blam\Halo4\CacheFile.cs" />
     <Compile Include="Blam\Halo4\cache_file_resource_gestalt.cs" />
     <Compile Include="Blam\Halo4\cache_file_resource_layout_table.cs" />
+    <Compile Include="Blam\Halo4\Halo4Common.cs" />
     <Compile Include="Blam\Halo4\HeaderAddressTranslator.cs" />
+    <Compile Include="Blam\Halo4\material.cs" />
+    <Compile Include="Blam\Halo4\render_model.cs" />
     <Compile Include="Blam\Halo4\ResourceIdentifier.cs" />
     <Compile Include="Blam\Halo4\TagAddressTranslator.cs" />
     <Compile Include="Blam\Halo5\Enums.cs" />
@@ -208,6 +211,7 @@
     <Content Include="Resources\Halo3VertexBuffer.xml" />
     <Content Include="Resources\Halo5Classes.xml" />
     <Content Include="Resources\HaloReachVertexBuffer.xml" />
+    <Content Include="Resources\Halo4VertexBuffer.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

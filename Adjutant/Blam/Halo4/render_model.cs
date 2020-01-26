@@ -10,7 +10,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.HaloReach
+namespace Adjutant.Blam.Halo4
 {
     public class render_model : IRenderGeometry
     {
@@ -47,17 +47,20 @@ namespace Adjutant.Blam.HaloReach
         [Offset(72)]
         public BlockCollection<ShaderBlock> Shaders { get; set; }
 
-        [Offset(104)]
+        [Offset(312, MaxVersion = (int)CacheType.Halo4Retail)]
+        [Offset(104, MinVersion = (int)CacheType.Halo4Retail)]
         public BlockCollection<SectionBlock> Sections { get; set; }
 
-        [Offset(116)]
+        [Offset(336, MaxVersion = (int)CacheType.Halo4Retail)]
+        [Offset(128, MinVersion = (int)CacheType.Halo4Retail)]
         public BlockCollection<BoundingBoxBlock> BoundingBoxes { get; set; }
 
-        [Offset(176)]
+        [Offset(396, MaxVersion = (int)CacheType.Halo4Retail)]
+        [Offset(188, MinVersion = (int)CacheType.Halo4Retail)]
         public BlockCollection<NodeMapBlock> NodeMaps { get; set; }
 
-        [Offset(236, MaxVersion = (int)CacheType.HaloReachRetail)]
-        [Offset(248, MinVersion = (int)CacheType.HaloReachRetail)]
+        [Offset(444, MaxVersion = (int)CacheType.Halo4Retail)]
+        [Offset(248, MinVersion = (int)CacheType.Halo4Retail)]
         public ResourceIdentifier ResourcePointer { get; set; }
 
         public override string ToString() => Name;
@@ -80,7 +83,7 @@ namespace Adjutant.Blam.HaloReach
             model.Nodes.AddRange(Nodes);
             model.MarkerGroups.AddRange(MarkerGroups);
             model.Bounds.AddRange(BoundingBoxes);
-            model.Materials.AddRange(HaloReachCommon.GetMaterials(Shaders));
+            model.Materials.AddRange(Halo4Common.GetMaterials(Shaders));
 
             foreach (var region in Regions)
             {
@@ -97,7 +100,7 @@ namespace Adjutant.Blam.HaloReach
                     model.Regions.Add(gRegion);
             }
 
-            model.Meshes.AddRange(HaloReachCommon.GetMeshes(cache, ResourcePointer, Sections, s => 0));
+            model.Meshes.AddRange(Halo4Common.GetMeshes(cache, ResourcePointer, Sections, s => 0));
 
             CreateInstanceMeshes(model);
 
@@ -171,7 +174,7 @@ namespace Adjutant.Blam.HaloReach
 
             foreach (var s in Shaders)
             {
-                var rmsh = s.ShaderReference.Tag?.ReadMetadata<shader>();
+                var rmsh = s.MaterialReference.Tag?.ReadMetadata<material>();
                 if (rmsh == null) continue;
 
                 foreach (var map in rmsh.ShaderProperties.SelectMany(p => p.ShaderMaps))
@@ -206,7 +209,7 @@ namespace Adjutant.Blam.HaloReach
         public override string ToString() => Name;
     }
 
-    [FixedSize(24)]
+    [FixedSize(28)]
     public class PermutationBlock
     {
         [Offset(0)]
@@ -239,7 +242,7 @@ namespace Adjutant.Blam.HaloReach
         public override string ToString() => Name;
     }
 
-    [FixedSize(96)]
+    [FixedSize(48)]
     public class NodeBlock : IGeometryNode
     {
         [Offset(0)]
@@ -340,12 +343,12 @@ namespace Adjutant.Blam.HaloReach
     public class ShaderBlock
     {
         [Offset(0)]
-        public TagReference ShaderReference { get; set; }
+        public TagReference MaterialReference { get; set; }
 
-        public override string ToString() => ShaderReference.Tag?.FullPath;
+        public override string ToString() => MaterialReference.Tag?.FullPath;
     }
 
-    [FixedSize(92)]
+    [FixedSize(112)]
     public class SectionBlock
     {
         [Offset(0)]
@@ -360,19 +363,19 @@ namespace Adjutant.Blam.HaloReach
         [Offset(30)]
         public short UnknownIndex { get; set; }
 
-        [Offset(40)]
+        [Offset(42)]
         public short IndexBufferIndex { get; set; }
 
-        [Offset(45)]
+        [Offset(47)]
         public byte TransparentNodesPerVertex { get; set; }
 
-        [Offset(46)]
+        [Offset(48)]
         public byte NodeIndex { get; set; }
 
-        [Offset(47)]
+        [Offset(49)]
         public byte VertexFormat { get; set; }
 
-        [Offset(48)]
+        [Offset(50)]
         public byte OpaqueNodesPerVertex { get; set; }
     }
 

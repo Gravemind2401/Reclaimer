@@ -40,6 +40,9 @@ namespace Adjutant.Blam.Halo4
 
         [Offset(44)]
         public BlockCollection<ResourceDefinitionFixupBlock> ResourceDefinitionFixups { get; set; }
+
+        [Offset(56)]
+        public BlockCollection<int> FixupOffsets { get; set; }
     }
 
     [FixedSize(8)]
