@@ -15,7 +15,7 @@ namespace Adjutant.Tests.Blam.Halo4
         private const string BetaFolder = @"Y:\Halo\Halo4Beta";
         private const string RetailSPFolder = @"Y:\Halo\Halo4Retail\Campaign\maps";
         private const string RetailMPFolder = @"Y:\Halo\Halo4Retail\Multiplayer\maps";
-        private const string DLCFolder = @"Y:\Halo\Halo4Retail\maps";
+        private const string DLCFolder = @"Y:\Halo\Halo4Retail\DLC";
 
         [DataRow("mainmenu")]
         [DataRow("ca_gore_valley")]
@@ -100,28 +100,28 @@ namespace Adjutant.Tests.Blam.Halo4
                 return true;
             });
 
-            //var t2 = Task.Run(() =>
-            //{
-            //    var models = cache.TagIndex.Where(i => i.ClassCode == "mode")
-            //    .Select(i => i.ReadMetadata<render_model>())
-            //    .ToList();
+            var t2 = Task.Run(() =>
+            {
+                var models = cache.TagIndex.Where(i => i.ClassCode == "mode")
+                .Select(i => i.ReadMetadata<render_model>())
+                .ToList();
 
-            //    return true;
-            //});
+                return true;
+            });
 
-            //var t3 = Task.Run(() =>
-            //{
-            //    var bsps = cache.TagIndex.Where(i => i.ClassCode == "sbsp")
-            //    .Select(i => i.ReadMetadata<scenario_structure_bsp>())
-            //    .ToList();
+            var t3 = Task.Run(() =>
+            {
+                var bsps = cache.TagIndex.Where(i => i.ClassCode == "sbsp")
+                .Select(i => i.ReadMetadata<scenario_structure_bsp>())
+                .ToList();
 
-            //    return true;
-            //});
+                return true;
+            });
 
             Assert.IsTrue(t0.GetAwaiter().GetResult());
             Assert.IsTrue(t1.GetAwaiter().GetResult());
-            //Assert.IsTrue(t2.GetAwaiter().GetResult());
-            //Assert.IsTrue(t3.GetAwaiter().GetResult());
+            Assert.IsTrue(t2.GetAwaiter().GetResult());
+            Assert.IsTrue(t3.GetAwaiter().GetResult());
         }
     }
 }
