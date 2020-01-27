@@ -93,7 +93,7 @@ namespace Adjutant.Blam.Halo4
                     {
                         Name = p.Name,
                         MeshIndex = p.SectionIndex,
-                        MeshCount = 1
+                        MeshCount = p.SectionCount
                     }));
 
                 if (gRegion.Permutations.Any())

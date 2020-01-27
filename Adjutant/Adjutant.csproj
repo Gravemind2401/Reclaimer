@@ -97,6 +97,10 @@
     <Compile Include="Blam\Halo4\material.cs" />
     <Compile Include="Blam\Halo4\render_model.cs" />
     <Compile Include="Blam\Halo4\ResourceIdentifier.cs" />
+    <Compile Include="Blam\Halo4\scenario.cs" />
+    <Compile Include="Blam\Halo4\scenario_lightmap.cs" />
+    <Compile Include="Blam\Halo4\scenario_lightmap_bsp_data.cs" />
+    <Compile Include="Blam\Halo4\scenario_structure_bsp.cs" />
     <Compile Include="Blam\Halo4\TagAddressTranslator.cs" />
     <Compile Include="Blam\Halo5\Enums.cs" />
     <Compile Include="Blam\Halo5\Module.cs" />

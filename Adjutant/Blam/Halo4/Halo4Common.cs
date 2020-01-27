@@ -59,8 +59,8 @@ namespace Adjutant.Blam.Halo4
                 }
 
                 var subMaterials = new List<ISubmaterial>();
-                var map = shader.ShaderProperties[0].ShaderMaps[0];
-                var bitmTag = map.BitmapReference.Tag;
+                var map = shader.ShaderProperties.FirstOrDefault()?.ShaderMaps.FirstOrDefault();
+                var bitmTag = map?.BitmapReference.Tag;
                 if (bitmTag == null)
                     continue;
 
