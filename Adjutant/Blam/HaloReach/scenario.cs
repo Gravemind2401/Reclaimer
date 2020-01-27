@@ -19,8 +19,7 @@ namespace Adjutant.Blam.HaloReach
         public TagReference ScenarioLightmapReference { get; set; }
     }
 
-    [FixedSize(168, MaxVersion = (int)CacheType.Halo3Retail)]
-    [FixedSize(172, MinVersion = (int)CacheType.Halo3Retail)]
+    [FixedSize(172)]
     public class StructureBspBlock
     {
         [Offset(0)]

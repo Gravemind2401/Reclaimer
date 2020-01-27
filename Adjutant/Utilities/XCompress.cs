@@ -9,7 +9,7 @@ namespace Adjutant.Utilities
 {
     public static class XCompress
     {
-        private static bool Is64Bit => Environment.Is64BitProcess;
+        private static readonly bool Is64Bit = Environment.Is64BitProcess;
 
         public enum XMemCodecType
         {
