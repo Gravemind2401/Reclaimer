@@ -25,6 +25,7 @@
                     SearchAccepted="txtSearch_SearchChanged" SearchCanceled="txtSearch_SearchChanged" />
         </Grid>
         <TreeView x:Name="tv"
+                  IsTextSearchEnabled="True" TextSearch.TextPath="Header"
                   VirtualizingStackPanel.IsVirtualizing="True"
                   VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
                   VirtualizingStackPanel.VirtualizationMode="Recycling">
@@ -32,6 +33,8 @@
                 <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
                     <Setter Property="ContextMenu" Value="{StaticResource TreeItemContextMenu}" />
                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsTextSearchEnabled" Value="{Binding IsExpanded}" />
+                    <Setter Property="TextSearch.TextPath" Value="Header" />
                     <EventSetter Event="MouseDoubleClick" Handler="TreeItemMouseDoubleClick" />
                     <EventSetter Event="ContextMenuOpening" Handler="TreeItemContextMenuOpening" />
                     <EventSetter Event="PreviewMouseRightButtonDown" Handler="TreeItemPreviewMouseRightButtonDown" />
