@@ -240,6 +240,10 @@ namespace Reclaimer.Controls
                     case CacheType.HaloReachRetail:
                         yield return item.ReadMetadata<Adjutant.Blam.HaloReach.render_model>();
                         break;
+                    case CacheType.Halo4Beta:
+                    case CacheType.Halo4Retail:
+                        yield return item.ReadMetadata<Adjutant.Blam.Halo4.render_model>();
+                        break;
                 }
             }
             else if(item.ClassCode == "sbsp")
@@ -261,6 +265,10 @@ namespace Reclaimer.Controls
                     case CacheType.HaloReachBeta:
                     case CacheType.HaloReachRetail:
                         yield return item.ReadMetadata<Adjutant.Blam.HaloReach.scenario_structure_bsp>();
+                        break;
+                    case CacheType.Halo4Beta:
+                    case CacheType.Halo4Retail:
+                        yield return item.ReadMetadata<Adjutant.Blam.Halo4.scenario_structure_bsp>();
                         break;
                 }
             }

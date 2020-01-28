@@ -169,15 +169,23 @@ namespace Reclaimer.Controls
                     }
 
                     Model3DGroup permGroup;
-                    if (tGroup.Children.Count > 0)
+                    if (tGroup.Children.Count == 0 && perm.MeshCount == 1)
+                        permGroup = meshes[perm.MeshIndex];
+                    else
                     {
                         permGroup = new Model3DGroup();
-                        (permGroup.Transform = tGroup).Freeze();
+                        for (int i = 0; i < perm.MeshCount; i++)
+                        {
+                            if (tGroup.Children.Count > 0)
+                            {
+                                (permGroup.Transform = tGroup).Freeze();
 
-                        permGroup.Children.Add(meshes[perm.MeshIndex]);
-                        permGroup.Freeze();
+                                permGroup.Children.Add(meshes[perm.MeshIndex + i]);
+                                permGroup.Freeze();
+                            }
+                            else permGroup.Children.Add(meshes[perm.MeshIndex + i]);
+                        }
                     }
-                    else permGroup = meshes[perm.MeshIndex];
 
                     permNode.Tag = permGroup;
                     modelGroup.Children.Add(permGroup);
@@ -234,7 +242,8 @@ namespace Reclaimer.Controls
         private IEnumerable<Model3DGroup> GetMeshes(IGeometryModel model)
         {
             var indexes = model.Regions.SelectMany(r => r.Permutations)
-                .Select(p => p.MeshIndex).Distinct().ToList();
+                .SelectMany(p => Enumerable.Range(p.MeshIndex, p.MeshCount))
+                .Distinct().ToList();
 
             var materials = GetMaterials(model).ToList();
 
