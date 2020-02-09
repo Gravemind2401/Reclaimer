@@ -41,6 +41,26 @@ namespace Adjutant.Blam.Common
             }
         }
 
+        private static Dictionary<string, CacheType> cacheTypeLookup;
+        internal static IReadOnlyDictionary<string, CacheType> CacheTypeLookup
+        {
+            get
+            {
+                if (cacheTypeLookup == null)
+                {
+                    cacheTypeLookup = new Dictionary<string, CacheType>();
+
+                    foreach (var fi in typeof(CacheType).GetFields().Where(f => f.FieldType == typeof(CacheType)))
+                    {
+                        foreach (BuildStringAttribute attr in fi.GetCustomAttributes(typeof(BuildStringAttribute), false))
+                            cacheTypeLookup.Add(attr.BuildString, (CacheType)fi.GetValue(null));
+                    }
+                }
+
+                return cacheTypeLookup;
+            }
+        }
+
         internal static readonly string[] SystemClasses = new[] { "scnr", "ugh!", "play", "zone" };
 
         private static Dictionary<string, string> ReadClassXml(string xml)
@@ -133,14 +153,8 @@ namespace Adjutant.Blam.Common
             if (buildString == null)
                 throw new ArgumentNullException(nameof(buildString));
 
-            foreach (var fi in typeof(CacheType).GetFields().Where(f => f.FieldType == typeof(CacheType)))
-            {
-                foreach (BuildStringAttribute attr in fi.GetCustomAttributes(typeof(BuildStringAttribute), false))
-                {
-                    if (attr.BuildString == buildString)
-                        return (CacheType)fi.GetValue(null);
-                }
-            }
+            if (CacheTypeLookup.ContainsKey(buildString))
+                return CacheTypeLookup[buildString];
 
             return CacheType.Unknown;
         }
