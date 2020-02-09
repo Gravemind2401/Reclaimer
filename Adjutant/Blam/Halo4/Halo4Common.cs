@@ -87,7 +87,7 @@ namespace Adjutant.Blam.Halo4
             }
         }
 
-        public static IEnumerable<GeometryMesh> GetMeshes(ICacheFile cache, ResourceIdentifier resourcePointer, IList<SectionBlock> sections, Func<SectionBlock, short?> boundsIndex)
+        public static IEnumerable<GeometryMesh> GetMeshes(ICacheFile cache, ResourceIdentifier resourcePointer, IList<SectionBlock> sections, Func<SectionBlock, short?> boundsIndex, Func<int, int, int> mapNode = null)
         {
             VertexBufferInfo[] vertexBufferInfo;
             IndexBufferInfo[] indexBufferInfo;
@@ -120,8 +120,10 @@ namespace Adjutant.Blam.Halo4
                 var lookup = doc.FirstChild.ChildNodes.Cast<XmlNode>()
                     .ToDictionary(n => Convert.ToInt32(n.Attributes["type"].Value, 16));
 
+                var sectionIndex = -1;
                 foreach (var section in sections)
                 {
+                    sectionIndex++;
                     if (section.VertexBufferIndex < 0 || section.IndexBufferIndex < 0)
                     {
                         yield return new GeometryMesh();
@@ -163,10 +165,25 @@ namespace Adjutant.Blam.Halo4
 
                     var address = entry.ResourceFixups[section.VertexBufferIndex].Offset & 0x0FFFFFFF;
                     reader.Seek(address, SeekOrigin.Begin);
+
                     for (int i = 0; i < vInfo.VertexCount; i++)
                     {
                         var vert = new XmlVertex(reader, node);
                         mesh.Vertices[i] = vert;
+                    }
+
+                    if (mapNode != null && (skinType == VertexWeights.Skinned || skinType == VertexWeights.Rigid))
+                    {
+                        foreach (var v in mesh.Vertices)
+                        {
+                            foreach (var bi in v.BlendIndices)
+                            {
+                                bi.X = mapNode(sectionIndex, (int)bi.X);
+                                bi.Y = mapNode(sectionIndex, (int)bi.Y);
+                                bi.Z = mapNode(sectionIndex, (int)bi.Z);
+                                bi.W = mapNode(sectionIndex, (int)bi.W);
+                            }
+                        }
                     }
 
                     var totalIndices = section.Submeshes.Sum(s => s.IndexLength);

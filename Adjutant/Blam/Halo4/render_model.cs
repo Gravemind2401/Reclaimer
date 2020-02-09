@@ -100,7 +100,7 @@ namespace Adjutant.Blam.Halo4
                     model.Regions.Add(gRegion);
             }
 
-            model.Meshes.AddRange(Halo4Common.GetMeshes(cache, ResourcePointer, Sections, s => 0));
+            model.Meshes.AddRange(Halo4Common.GetMeshes(cache, ResourcePointer, Sections, s => 0, (si, i) => NodeMaps[si].Indices[i]));
 
             CreateInstanceMeshes(model);
 

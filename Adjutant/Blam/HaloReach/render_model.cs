@@ -97,7 +97,7 @@ namespace Adjutant.Blam.HaloReach
                     model.Regions.Add(gRegion);
             }
 
-            model.Meshes.AddRange(HaloReachCommon.GetMeshes(cache, ResourcePointer, Sections, s => 0));
+            model.Meshes.AddRange(HaloReachCommon.GetMeshes(cache, ResourcePointer, Sections, s => 0, (si, i) => NodeMaps[si].Indices[i]));
 
             CreateInstanceMeshes(model);
 
