@@ -242,7 +242,7 @@ namespace Adjutant.Blam.Halo4
         public override string ToString() => Name;
     }
 
-    [FixedSize(48)]
+    [FixedSize(112)]
     public class NodeBlock : IGeometryNode
     {
         [Offset(0)]
