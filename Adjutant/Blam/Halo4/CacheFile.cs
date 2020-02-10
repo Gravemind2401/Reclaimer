@@ -383,6 +383,7 @@ namespace Adjutant.Blam.Halo4
             {
                 lock (cacheLock)
                 {
+                    lazy = metadataCache as Lazy<T>;
                     if (lazy != null)
                         return lazy.Value;
                     else
