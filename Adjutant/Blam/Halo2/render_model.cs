@@ -185,6 +185,9 @@ namespace Adjutant.Blam.Halo2
                 var nodes = Enumerable.Range(0, 4).Select(i => section.NodesPerVertex > i ? reader.ReadByte() : 0).ToList();
                 var weights = Enumerable.Range(0, 4).Select(i => section.NodesPerVertex > i ? reader.ReadByte() / (float)byte.MaxValue : 0).ToList();
 
+                if (section.NodesPerVertex == 1 && weights.Sum() == 0)
+                    weights[0] = 1;
+
                 vert.BlendIndices = new RealVector4D(nodes[0], nodes[1], nodes[2], nodes[3]);
                 vert.BlendWeight = new RealVector4D(weights[0], weights[1], weights[2], weights[3]);
             }
