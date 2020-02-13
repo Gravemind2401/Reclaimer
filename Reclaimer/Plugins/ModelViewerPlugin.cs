@@ -277,7 +277,7 @@ namespace Reclaimer.Plugins
                 {
                     var permNode = new Assimp.Node(perm.Name);
                     var meshStart = meshLookup[perm.MeshIndex];
-                    var meshCount = model.Meshes[perm.MeshIndex].Submeshes.Count;
+                    var meshCount = Enumerable.Range(perm.MeshIndex, perm.MeshCount).Sum(i => model.Meshes[i].Submeshes.Count);
 
                     permNode.MeshIndices.AddRange(Enumerable.Range(meshStart, meshCount));
                     regNode.Children.Add(permNode);
