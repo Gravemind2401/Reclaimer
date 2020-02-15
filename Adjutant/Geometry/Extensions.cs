@@ -76,6 +76,120 @@ namespace Adjutant.Geometry
             };
         }
 
+        private class MultiMesh : IGeometryMesh
+        {
+            private readonly IGeometryModel model;
+            private readonly int meshIndex;
+            private readonly int meshCount;
+
+            private IEnumerable<IGeometryMesh> AllMeshes => model.Meshes.Skip(meshIndex).Take(meshCount);
+
+            public MultiMesh(IGeometryModel model, int meshIndex, int meshCount)
+            {
+                if (model == null)
+                    throw new ArgumentNullException(nameof(model));
+
+                if (meshIndex < 0 || meshIndex >= model.Meshes.Count)
+                    throw new ArgumentOutOfRangeException(nameof(meshIndex));
+
+                if (meshCount < 1 || meshIndex + meshCount > model.Meshes.Count)
+                    throw new ArgumentOutOfRangeException(nameof(meshCount));
+
+                this.model = model;
+                this.meshIndex = meshIndex;
+                this.meshCount = meshCount;
+            }
+
+            public short? BoundsIndex => model.Meshes[meshIndex].BoundsIndex;
+
+            public byte? NodeIndex => model.Meshes[meshIndex].NodeIndex;
+
+            public IndexFormat IndexFormat => meshCount > 1 ? IndexFormat.Triangles : model.Meshes[meshIndex].IndexFormat;
+
+            public VertexWeights VertexWeights => model.Meshes[meshIndex].VertexWeights;
+
+            private List<GeometrySubmesh> mergedSubmeshes;
+            public IReadOnlyList<IGeometrySubmesh> Submeshes
+            {
+                get
+                {
+                    if (meshCount == 1)
+                        return model.Meshes[meshIndex].Submeshes;
+
+                    if (mergedSubmeshes == null)
+                    {
+                        mergedSubmeshes = new List<GeometrySubmesh>();
+
+                        var offset = 0;
+                        foreach (var mesh in AllMeshes)
+                        {
+                            foreach (var sm in mesh.Submeshes)
+                            {
+                                IEnumerable<int> indices = mesh.Indicies.Skip(sm.IndexStart).Take(sm.IndexLength);
+                                if (mesh.IndexFormat == IndexFormat.Stripped)
+                                    indices = indices.Unstrip();
+
+                                var newSubmesh = new GeometrySubmesh
+                                {
+                                    MaterialIndex = sm.MaterialIndex,
+                                    IndexStart = offset,
+                                    IndexLength = indices.Count()
+                                };
+
+                                mergedSubmeshes.Add(newSubmesh);
+                                offset += newSubmesh.IndexLength;
+                            }
+                        }
+                    }
+
+                    return mergedSubmeshes;
+                }
+            }
+
+            private List<int> mergedIndices;
+            public IReadOnlyList<int> Indicies
+            {
+                get
+                {
+                    if (meshCount == 1)
+                        return model.Meshes[meshIndex].Indicies;
+
+                    if (mergedIndices == null)
+                    {
+                        mergedIndices = new List<int>();
+
+                        var offset = 0;
+                        foreach (var mesh in AllMeshes)
+                        {
+                            IEnumerable<int> indices = mesh.IndexFormat == IndexFormat.Stripped
+                                ? mesh.Indicies.Unstrip()
+                                : mesh.Indicies;
+
+                            mergedIndices.AddRange(indices.Select(i => offset + i));
+                            offset += mesh.Vertices.Count;
+                        }
+                    }
+
+                    return mergedIndices;
+                }
+            }
+
+            private List<IVertex> mergedVertices;
+            public IReadOnlyList<IVertex> Vertices
+            {
+                get
+                {
+                    if (meshCount == 1)
+                        return model.Meshes[meshIndex].Vertices;
+
+                    if (mergedVertices == null)
+                        mergedVertices = AllMeshes.SelectMany(m => m.Vertices).ToList();
+
+                    return mergedVertices;
+                }
+            }
+        }
+
         public static void WriteAMF(this IGeometryModel model, string fileName)
         {
             if (!Directory.GetParent(fileName).Exists) Directory.GetParent(fileName).Create();
@@ -92,6 +206,11 @@ namespace Adjutant.Geometry
                     .Select(r => new { r.Name, Permutations = r.Permutations.Where(p => model.Meshes[p.MeshIndex].Submeshes.Count > 0).ToList() })
                     .Where(r => r.Permutations.Count > 0)
                     .ToList();
+
+                var fauxMeshes = validRegions.SelectMany(r => r.Permutations)
+                    .Where(p => p.MeshCount > 1)
+                    .GroupBy(p => p.MeshIndex)
+                    .ToDictionary(g => g.Key, g => new MultiMesh(model, g.Key, g.First().MeshCount));
 
                 #region Address Lists
                 var headerAddressList = new List<long>();
@@ -201,7 +320,9 @@ namespace Adjutant.Geometry
                     permValueList.Add(bw.BaseStream.Position);
                     foreach (var perm in region.Permutations)
                     {
-                        var part = model.Meshes[perm.MeshIndex];
+                        var part = fauxMeshes.ContainsKey(perm.MeshCount)
+                            ? fauxMeshes[perm.MeshIndex]
+                            : model.Meshes[perm.MeshIndex];
 
                         bw.WriteStringNullTerminated(perm.Name);
                         bw.Write((byte)part.VertexWeights);
@@ -258,7 +379,10 @@ namespace Adjutant.Geometry
                 {
                     foreach (var perm in region.Permutations)
                     {
-                        var part = model.Meshes[perm.MeshIndex];
+                        var part = fauxMeshes.ContainsKey(perm.MeshCount)
+                            ? fauxMeshes[perm.MeshIndex]
+                            : model.Meshes[perm.MeshIndex];
+
                         var scale1 = perm.Transform.IsIdentity && perm.TransformScale == 1 ? scale : 1;
 
                         long address;
@@ -344,7 +468,9 @@ namespace Adjutant.Geometry
                 {
                     foreach (var perm in region.Permutations)
                     {
-                        var part = model.Meshes[perm.MeshIndex];
+                        var part = fauxMeshes.ContainsKey(perm.MeshCount)
+                            ? fauxMeshes[perm.MeshIndex]
+                            : model.Meshes[perm.MeshIndex];
 
                         long address;
                         if (dupeDic.TryGetValue(perm.MeshIndex, out address))
@@ -379,7 +505,9 @@ namespace Adjutant.Geometry
                     {
                         meshValueList.Add(bw.BaseStream.Position);
 
-                        var part = model.Meshes[perm.MeshIndex];
+                        var part = fauxMeshes.ContainsKey(perm.MeshCount)
+                            ? fauxMeshes[perm.MeshIndex]
+                            : model.Meshes[perm.MeshIndex];
 
                         int currentPosition = 0;
                         foreach (var mesh in part.Submeshes)
@@ -619,7 +747,7 @@ namespace Adjutant.Geometry
                             sw.WriteLine(float1, 1 - tex.Y);
                             sw.WriteLine(float1, 0f);
                         }
-                    } 
+                    }
                     #endregion
 
                     #region Triangles
