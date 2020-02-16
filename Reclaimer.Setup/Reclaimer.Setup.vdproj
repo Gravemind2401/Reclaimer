@@ -21,6 +21,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_30A32A9CFB094E0D9160F466A322A132"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_33683239D5D0DB5AB3F116E35360DBFE"
         "OwnerKey" = "8:_F415CDE9BD3846E6B8E5B36DB40736D4"
         "MsmSig" = "8:_UNDEFINED"
@@ -41,12 +47,6 @@
         {
         "MsmKey" = "8:_66DBD4C1931E98CF91A3C0DF4AEECED2"
         "OwnerKey" = "8:_F415CDE9BD3846E6B8E5B36DB40736D4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_705C546649F24DC98F185B14AEFE1053"
-        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -89,6 +89,12 @@
         {
         "MsmKey" = "8:_85BAAE0DB76196343267BDCA51C05246"
         "OwnerKey" = "8:_88B9804753D269BC5A57368C7807E91E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_85BAAE0DB76196343267BDCA51C05246"
+        "OwnerKey" = "8:_F415CDE9BD3846E6B8E5B36DB40736D4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -173,6 +179,12 @@
         {
         "MsmKey" = "8:_C43A209BFA92135D7D25550A340C25B7"
         "OwnerKey" = "8:_F415CDE9BD3846E6B8E5B36DB40736D4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CDB8F0B30CC84727B564B4773E9F1202"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -409,6 +421,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_30A32A9CFB094E0D9160F466A322A132"
+            {
+            "SourcePath" = "8:xcompress64.dll"
+            "TargetName" = "8:xcompress64.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_CFD6E818CB474C0B97D0387E639CC05D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_33683239D5D0DB5AB3F116E35360DBFE"
             {
             "AssemblyRegister" = "3:1"
@@ -491,26 +523,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_705C546649F24DC98F185B14AEFE1053"
-            {
-            "SourcePath" = "8:xcompress.dll"
-            "TargetName" = "8:xcompress.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_CFD6E818CB474C0B97D0387E639CC05D"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_70E53020A75AECFAEF1E2501B3B0D028"
             {
             "AssemblyRegister" = "3:1"
@@ -577,7 +589,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Studio, Version=1.0.69.849, Culture=neutral, PublicKeyToken=55a4186af9c33fa3, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Studio, Version=1.0.69.852, Culture=neutral, PublicKeyToken=55a4186af9c33fa3, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_7E0B3BCEA6CC1139C650E449FCFF7A20"
@@ -608,16 +620,16 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.IO.Endian, Version=1.0.62.287, Culture=neutral, PublicKeyToken=4c1f0321ae9dcf07, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:System.IO.Endian, Version=1.0.63.283, Culture=neutral, PublicKeyToken=4c1f0321ae9dcf07, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_85BAAE0DB76196343267BDCA51C05246"
                     {
-                    "Name" = "8:System.IO.Endian.DLL"
+                    "Name" = "8:System.IO.Endian.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:System.IO.Endian.DLL"
+            "SourcePath" = "8:System.IO.Endian.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_CFD6E818CB474C0B97D0387E639CC05D"
@@ -639,7 +651,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Adjutant, Version=5.0.135.849, Culture=neutral, PublicKeyToken=10f296c5c79ce69a, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Adjutant, Version=5.0.142.868, Culture=neutral, PublicKeyToken=10f296c5c79ce69a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_88B9804753D269BC5A57368C7807E91E"
@@ -701,7 +713,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Drawing.Dds, Version=1.0.22.168, Culture=neutral, PublicKeyToken=dc89101f2b7a08f7, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:System.Drawing.Dds, Version=1.0.23.172, Culture=neutral, PublicKeyToken=dc89101f2b7a08f7, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_8DC4DFB4265BE822F550B1EED194B45A"
@@ -763,7 +775,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.IO.Endian, Version=1.0.66.288, Culture=neutral, PublicKeyToken=4c1f0321ae9dcf07, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:System.IO.Endian, Version=1.0.62.282, Culture=neutral, PublicKeyToken=4c1f0321ae9dcf07, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_B69EFEDFA82B80A1E8BAA9B6046D3D81"
@@ -914,6 +926,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CDB8F0B30CC84727B564B4773E9F1202"
+            {
+            "SourcePath" = "8:xcompress32.dll"
+            "TargetName" = "8:xcompress32.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_CFD6E818CB474C0B97D0387E639CC05D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
         }
         "FileType"
         {
@@ -970,15 +1002,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Reclaimer"
-        "ProductCode" = "8:{967549E5-0492-4B9B-BC1E-FE098D56916A}"
-        "PackageCode" = "8:{C3BAFF2C-2D10-4030-A21B-C2B05BB54AF3}"
+        "ProductCode" = "8:{0887467F-15AE-40EB-9A70-F97C806C1B11}"
+        "PackageCode" = "8:{5C363092-D3CC-4056-B63B-3CD747F1B62B}"
         "UpgradeCode" = "8:{FBBE75A5-B290-459D-AFEE-4B97449AE820}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.118"
+        "ProductVersion" = "8:1.1.128"
         "Manufacturer" = "8:Gravemind2401"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
