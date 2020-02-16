@@ -14,10 +14,15 @@ namespace ExamplePlugin
 
         private PluginSettings Settings { get; set; }
 
+        private delegate int ForeignFunction(string param0, int param1);
+        private ForeignFunction NotALocalFunction;
+
         public override void Initialise()
         {
             Settings = LoadSettings<PluginSettings>();
             LogOutput("Loaded example settings");
+
+            NotALocalFunction = Substrate.GetSharedFunction<ForeignFunction>("PluginNamespace.PluginClass.FunctionName");
         }
 
         public override IEnumerable<PluginMenuItem> GetMenuItems()
@@ -68,6 +73,12 @@ namespace ExamplePlugin
         {
             SaveSettings(Settings);
             LogOutput("Saved example settings");
+        }
+
+        [SharedFunction]
+        public void OtherPluginsCanUseMe(string message)
+        {
+            LogOutput($"Shared Function Message: {message}");
         }
 
         private class PluginSettings
