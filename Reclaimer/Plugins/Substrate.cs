@@ -25,7 +25,7 @@ namespace Reclaimer.Plugins
 
         private static readonly DefaultPlugin defaultPlugin = new DefaultPlugin();
         private static readonly Dictionary<string, Plugin> plugins = new Dictionary<string, Plugin>();
-        private static readonly Dictionary<string, Tuple<Plugin, MethodInfo>> exportFunctions = new Dictionary<string, Tuple<Plugin, MethodInfo>>();
+        private static readonly Dictionary<string, Tuple<Plugin, MethodInfo>> sharedFunctions = new Dictionary<string, Tuple<Plugin, MethodInfo>>();
 
         private static IEnumerable<Plugin> FindPlugins(Assembly assembly)
         {
@@ -37,7 +37,7 @@ namespace Reclaimer.Plugins
         private static IEnumerable<MethodInfo> FindExportFunctions(Plugin plugin)
         {
             return plugin.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Where(m => m.CustomAttributes.Any(a => a.AttributeType == typeof(ExportFunctionAttribute)));
+                .Where(m => m.CustomAttributes.Any(a => a.AttributeType == typeof(SharedFunctionAttribute)));
         }
 
         internal static event EventHandler<LogEventArgs> Log;
@@ -91,12 +91,12 @@ namespace Reclaimer.Plugins
 
                     foreach (var m in FindExportFunctions(p))
                     {
-                        var attr = m.GetCustomAttribute<ExportFunctionAttribute>();
+                        var attr = m.GetCustomAttribute<SharedFunctionAttribute>();
                         var funcName = string.IsNullOrWhiteSpace(attr.Name) ? m.Name : attr.Name;
                         var key = $"{p.Key}.{funcName}";
 
-                        if (!exportFunctions.ContainsKey(key))
-                            exportFunctions.Add($"{p.Key}.{funcName}", Tuple.Create(p, m));
+                        if (!sharedFunctions.ContainsKey(key))
+                            sharedFunctions.Add($"{p.Key}.{funcName}", Tuple.Create(p, m));
                     }
                 }
                 catch (Exception ex)
@@ -187,25 +187,25 @@ namespace Reclaimer.Plugins
         /// <summary>
         /// Gets a list of available function keys.
         /// </summary>
-        public static IEnumerable<string> GetExportFunctionKeys()
+        public static IEnumerable<string> GetSharedFunctionKeys()
         {
-            return exportFunctions.Keys.OrderBy(s => s);
+            return sharedFunctions.Keys.OrderBy(s => s);
         }
 
         /// <summary>
-        /// Returns an exported function using the specified key.
+        /// Returns a shared function using the specified key.
         /// </summary>
         /// <typeparam name="T">The type of delegate to return.</typeparam>
         /// <param name="key">The function identifier.</param>
-        public static T GetExportFunction<T>(string key) where T : class
+        public static T GetSharedFunction<T>(string key) where T : class
         {
             if (!typeof(T).IsSubclassOf(typeof(Delegate)))
                 return null;
 
-            if (!exportFunctions.ContainsKey(key))
+            if (!sharedFunctions.ContainsKey(key))
                 return null;
 
-            var t = exportFunctions[key];
+            var t = sharedFunctions[key];
 
             try
             {

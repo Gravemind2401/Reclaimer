@@ -83,7 +83,7 @@ namespace Reclaimer.Plugins
             SaveSettings(Settings);
         }
 
-        [ExportFunction]
+        [SharedFunction]
         private bool GetDataFolder(out string dataFolder)
         {
             dataFolder = Settings.DataFolder;
@@ -232,7 +232,7 @@ namespace Reclaimer.Plugins
             LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
         }
 
-        [ExportFunction]
+        [SharedFunction]
         private void SaveImage(IBitmap bitmap, string baseDir)
         {
             for (int i = 0; i < bitmap.SubmapCount; i++)
@@ -321,7 +321,7 @@ namespace Reclaimer.Plugins
             LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
         }
 
-        [ExportFunction]
+        [SharedFunction]
         private void SaveModel(IRenderGeometry geometry, string baseDir)
         {
             var fileName = MakePath(geometry.Class, geometry.Name, baseDir) + ".amf";

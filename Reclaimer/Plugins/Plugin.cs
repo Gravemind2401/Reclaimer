@@ -231,10 +231,10 @@ namespace Reclaimer.Plugins
     /// Specifies that a plugin function should be made available for use by other plugins.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public sealed class ExportFunctionAttribute : Attribute
+    public sealed class SharedFunctionAttribute : Attribute
     {
         /// <summary>
-        /// The name of the exported function. If not specified, the source function name is used.
+        /// The name of the shared function. If not specified, the source function name is used.
         /// </summary>
         public string Name { get; set; }
     }

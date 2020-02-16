@@ -435,7 +435,7 @@ namespace Reclaimer.Controls
 
         private void btnSaveBitmaps_Click(object sender, RoutedEventArgs e)
         {
-            var getFolder = Substrate.GetExportFunction<GetDataFolder>("Reclaimer.Plugins.BatchExtractPlugin.GetDataFolder");
+            var getFolder = Substrate.GetSharedFunction<GetDataFolder>("Reclaimer.Plugins.BatchExtractPlugin.GetDataFolder");
 
             string folder;
             if (!getFolder(out folder))
@@ -445,7 +445,7 @@ namespace Reclaimer.Controls
 
             Task.Run(() =>
             {
-                var saveImage = Substrate.GetExportFunction<SaveImage>("Reclaimer.Plugins.BatchExtractPlugin.SaveImage");
+                var saveImage = Substrate.GetSharedFunction<SaveImage>("Reclaimer.Plugins.BatchExtractPlugin.SaveImage");
 
                 foreach (var bitm in geometry.GetAllBitmaps())
                 {
