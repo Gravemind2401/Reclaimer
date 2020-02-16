@@ -27,7 +27,7 @@ namespace Reclaimer.Plugins
         private bool isBusy;
         private CancellationTokenSource tokenSource;
 
-        private delegate void WriteModelFile(IGeometryModel model, string fileName);
+        private delegate void WriteModelFile(IGeometryModel model, string fileName, string formatId);
         private WriteModelFile writeModelFileFunc;
 
         public override string Name => "Batch Extractor";
@@ -332,7 +332,7 @@ namespace Reclaimer.Plugins
         private void SaveModel(IRenderGeometry geometry, string baseDir)
         {
             var fileName = MakePath(geometry.Class, geometry.Name, baseDir);
-            writeModelFileFunc?.Invoke(geometry.ReadGeometry(0), fileName);
+            writeModelFileFunc?.Invoke(geometry.ReadGeometry(0), fileName, Settings.ModelFormat);
         }
 
         private string MakePath(string tagClass, string tagPath, string baseDirectory)
@@ -374,7 +374,7 @@ namespace Reclaimer.Plugins
             public FolderMode FolderMode { get; set; }
             public BitmapFormat BitmapFormat { get; set; }
             public BitmapMode BitmapMode { get; set; }
-            //public ModelFormat ModelFormat { get; set; }
+            public string ModelFormat { get; set; }
 
             public BatchExtractSettings()
             {
@@ -384,7 +384,7 @@ namespace Reclaimer.Plugins
                 FolderMode = FolderMode.Hierarchy;
                 BitmapFormat = BitmapFormat.TIF;
                 BitmapMode = BitmapMode.Default;
-                //ModelFormat = ModelFormat.AMF;
+                ModelFormat = "amf";
             }
         }
 
@@ -410,10 +410,5 @@ namespace Reclaimer.Plugins
             TIF,
             PNG
         }
-
-        //private enum ModelFormat
-        //{
-        //    AMF
-        //}
     }
 }

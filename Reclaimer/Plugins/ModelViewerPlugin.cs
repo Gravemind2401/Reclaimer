@@ -76,8 +76,6 @@ namespace Reclaimer.Plugins
         public static string GetFormatDescription(string formatId) => ExportFormats.FirstOrDefault(f => f.FormatId == formatId.ToLower()).Description;
 
         [SharedFunction]
-        public static void WriteModelFile(IGeometryModel model, string fileName) => WriteModelFile(model, fileName, null);
-
         public static void WriteModelFile(IGeometryModel model, string fileName, string formatId)
         {
             if (model == null)
@@ -87,6 +85,8 @@ namespace Reclaimer.Plugins
                 throw new ArgumentNullException(nameof(fileName));
 
             formatId = (formatId ?? Settings.DefaultSaveFormat).ToLower();
+            if (!ExportFormats.Any(f => f.FormatId == formatId))
+                throw new ArgumentException($"{formatId} is not a supported format.", nameof(formatId));
 
             var ext = "." + GetFormatDescription(formatId);
             if (!fileName.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
