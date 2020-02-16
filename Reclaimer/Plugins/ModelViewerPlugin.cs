@@ -88,7 +88,7 @@ namespace Reclaimer.Plugins
             if (!ExportFormats.Any(f => f.FormatId == formatId))
                 throw new ArgumentException($"{formatId} is not a supported format.", nameof(formatId));
 
-            var ext = "." + GetFormatDescription(formatId);
+            var ext = "." + GetFormatExtension(formatId);
             if (!fileName.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
                 fileName += ext;
 
