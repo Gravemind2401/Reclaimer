@@ -54,6 +54,63 @@ namespace Reclaimer.Plugins
                 LogError($"Error loading model: {args.FileName}", e);
             }
         }
+
+        #region Model Exports
+
+        private static readonly ExportFormat[] ExportFormats = new[]
+        {
+            new ExportFormat("amf",         "amf",  "AMF Files"),
+            new ExportFormat("jms",         "jms",  "JMS Files"),
+            new ExportFormat("objnomtl",    "obj",  "OBJ Files"),
+            new ExportFormat("obj",         "obj",  "OBJ Files with materials"),
+            new ExportFormat("collada",     "dae",  "COLLADA Files"),
+        };
+
+        public static IEnumerable<string> GetExportFormats() => ExportFormats.Select(f => f.FormatId);
+
+        public static string GetFormatExtension(string formatId) => ExportFormats.FirstOrDefault(f => f.FormatId == formatId.ToLower()).Extension;
+
+        public static string GetFormatDescription(string formatId) => ExportFormats.FirstOrDefault(f => f.FormatId == formatId.ToLower()).Description;
+
+        public static void WriteModelFile(IGeometryModel model, string fileName) => WriteModelFile(model, fileName, null);
+
+        public static void WriteModelFile(IGeometryModel model, string fileName, string formatId)
+        {
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
+
+            if (string.IsNullOrWhiteSpace(fileName))
+                throw new ArgumentNullException(nameof(fileName));
+
+            formatId = (formatId ?? Settings.DefaultSaveFormat).ToLower();
+
+            if (formatId == "amf")
+                model.WriteAMF(fileName);
+            else if (formatId == "jms")
+                model.WriteJMS(fileName);
+            else
+            {
+                var context = new Assimp.AssimpContext();
+                var scene = model.CreateAssimpScene(context);
+                context.ExportFile(scene, fileName, formatId);
+            }
+        }
+
+        private struct ExportFormat
+        {
+            public string FormatId { get; }
+            public string Extension { get; }
+            public string Description { get; }
+
+            public ExportFormat(string formatId, string extension, string description)
+            {
+                FormatId = formatId;
+                Extension = extension;
+                Description = description;
+            }
+        } 
+
+        #endregion
     }
 
     internal class ModelViewerSettings
