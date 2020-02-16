@@ -36,7 +36,7 @@ namespace Reclaimer.Plugins
 
         private static IEnumerable<MethodInfo> FindExportFunctions(Plugin plugin)
         {
-            return plugin.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+            return plugin.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
                 .Where(m => m.CustomAttributes.Any(a => a.AttributeType == typeof(SharedFunctionAttribute)));
         }
 
@@ -209,7 +209,7 @@ namespace Reclaimer.Plugins
 
             try
             {
-                return t.Item2.CreateDelegate(typeof(T), t.Item1) as T;
+                return t.Item2.CreateDelegate(typeof(T), t.Item2.IsStatic ? null : t.Item1) as T;
             }
             catch
             {

@@ -66,12 +66,16 @@ namespace Reclaimer.Plugins
             new ExportFormat("collada",     "dae",  "COLLADA Files"),
         };
 
+        [SharedFunction]
         public static IEnumerable<string> GetExportFormats() => ExportFormats.Select(f => f.FormatId);
 
+        [SharedFunction]
         public static string GetFormatExtension(string formatId) => ExportFormats.FirstOrDefault(f => f.FormatId == formatId.ToLower()).Extension;
 
+        [SharedFunction]
         public static string GetFormatDescription(string formatId) => ExportFormats.FirstOrDefault(f => f.FormatId == formatId.ToLower()).Description;
 
+        [SharedFunction]
         public static void WriteModelFile(IGeometryModel model, string fileName) => WriteModelFile(model, fileName, null);
 
         public static void WriteModelFile(IGeometryModel model, string fileName, string formatId)
