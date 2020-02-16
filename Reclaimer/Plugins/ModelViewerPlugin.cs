@@ -88,6 +88,10 @@ namespace Reclaimer.Plugins
 
             formatId = (formatId ?? Settings.DefaultSaveFormat).ToLower();
 
+            var ext = "." + GetFormatDescription(formatId);
+            if (!fileName.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
+                fileName += ext;
+
             if (formatId == "amf")
                 model.WriteAMF(fileName);
             else if (formatId == "jms")

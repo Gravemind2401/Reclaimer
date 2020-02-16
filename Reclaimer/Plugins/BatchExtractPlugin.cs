@@ -27,6 +27,9 @@ namespace Reclaimer.Plugins
         private bool isBusy;
         private CancellationTokenSource tokenSource;
 
+        private delegate void WriteModelFile(IGeometryModel model, string fileName);
+        private WriteModelFile writeModelFileFunc;
+
         public override string Name => "Batch Extractor";
 
         private BatchExtractSettings Settings { get; set; }
@@ -50,6 +53,7 @@ namespace Reclaimer.Plugins
         {
             Settings = LoadSettings<BatchExtractSettings>();
             Settings.DataFolder = Settings.DataFolder.PatternReplace(":plugins:", Substrate.PluginsDirectory);
+            writeModelFileFunc = Substrate.GetSharedFunction<WriteModelFile>("Reclaimer.Plugins.ModelViewerPlugin.WriteModelFile");
         }
 
         public override IEnumerable<PluginMenuItem> GetMenuItems()
@@ -190,8 +194,11 @@ namespace Reclaimer.Plugins
                     case "mode":
                     case "mod2":
                     case "sbsp":
-                        SaveModel(tag);
-                        counter.Extracted++;
+                        if (writeModelFileFunc != null)
+                        {
+                            SaveModel(tag);
+                            counter.Extracted++;
+                        }
                         break;
                 }
             }
@@ -324,8 +331,8 @@ namespace Reclaimer.Plugins
         [SharedFunction]
         private void SaveModel(IRenderGeometry geometry, string baseDir)
         {
-            var fileName = MakePath(geometry.Class, geometry.Name, baseDir) + ".amf";
-            geometry.ReadGeometry(0).WriteAMF(fileName);
+            var fileName = MakePath(geometry.Class, geometry.Name, baseDir);
+            writeModelFileFunc?.Invoke(geometry.ReadGeometry(0), fileName);
         }
 
         private string MakePath(string tagClass, string tagPath, string baseDirectory)
@@ -367,7 +374,7 @@ namespace Reclaimer.Plugins
             public FolderMode FolderMode { get; set; }
             public BitmapFormat BitmapFormat { get; set; }
             public BitmapMode BitmapMode { get; set; }
-            public ModelFormat ModelFormat { get; set; }
+            //public ModelFormat ModelFormat { get; set; }
 
             public BatchExtractSettings()
             {
@@ -377,7 +384,7 @@ namespace Reclaimer.Plugins
                 FolderMode = FolderMode.Hierarchy;
                 BitmapFormat = BitmapFormat.TIF;
                 BitmapMode = BitmapMode.Default;
-                ModelFormat = ModelFormat.AMF;
+                //ModelFormat = ModelFormat.AMF;
             }
         }
 
@@ -404,9 +411,9 @@ namespace Reclaimer.Plugins
             PNG
         }
 
-        private enum ModelFormat
-        {
-            AMF
-        }
+        //private enum ModelFormat
+        //{
+        //    AMF
+        //}
     }
 }
