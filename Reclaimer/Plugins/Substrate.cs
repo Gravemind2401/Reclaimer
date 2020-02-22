@@ -306,6 +306,15 @@ namespace Reclaimer.Plugins
         }
 
         /// <summary>
+        /// Displays a <see cref="MessageBox"/> using the application name as the title, an OK button and an error icon.
+        /// </summary>
+        /// <param name="message"></param>
+        public static void ShowErrorMessage(string message)
+        {
+            MessageBox.Show(message, Application.Current.MainWindow.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        /// <summary>
         /// Displays the output tool if it is not already visible.
         /// </summary>
         public static void ShowOutput()

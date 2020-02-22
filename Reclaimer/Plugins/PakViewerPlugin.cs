@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,11 +63,18 @@ namespace Reclaimer.Plugins
         {
             LogOutput($"Loading pak file: {fileName}");
 
-            var pv = new Controls.PakViewer();
-            pv.LoadPak(fileName);
-            Substrate.AddTool(pv.TabModel, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
+            try
+            {
+                var pv = new Controls.PakViewer();
+                pv.LoadPak(fileName);
+                Substrate.AddTool(pv.TabModel, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
 
-            LogOutput($"Loaded pak file: {fileName}");
+                LogOutput($"Loaded pak file: {fileName}");
+            }
+            catch (Exception ex)
+            {
+                Substrate.ShowErrorMessage($"Unable to load {Path.GetFileName(fileName)}:{Environment.NewLine}{ex.Message}");
+            }
         }
     }
 

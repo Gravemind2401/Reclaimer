@@ -1,6 +1,7 @@
 ﻿using Studio.Controls;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,11 +64,18 @@ namespace Reclaimer.Plugins
         {
             LogOutput($"Loading map file: {fileName}");
 
-            var mv = new Controls.MapViewer();
-            mv.LoadMap(fileName);
-            Substrate.AddTool(mv.TabModel, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
+            try
+            {
+                var mv = new Controls.MapViewer();
+                mv.LoadMap(fileName);
+                Substrate.AddTool(mv.TabModel, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
 
-            LogOutput($"Loaded map file: {fileName}");
+                LogOutput($"Loaded map file: {fileName}");
+            }
+            catch (Exception ex)
+            {
+                Substrate.ShowErrorMessage($"Unable to load {Path.GetFileName(fileName)}:{Environment.NewLine}{ex.Message}");
+            }
         }
     }
 

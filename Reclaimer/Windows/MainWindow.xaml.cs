@@ -28,6 +28,8 @@ namespace Reclaimer.Windows
         DockContainerModel ITabContentHost.DockContainer => Model;
         DocumentPanelModel ITabContentHost.DocumentPanel => DocPanel;
 
+        public string AppVersion => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+
         public DockContainerModel Model { get; }
         private DocumentPanelModel DocPanel { get; }
 

@@ -47,7 +47,13 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Menu Grid.Row="0" Grid.ColumnSpan="2" x:Name="menu">
+
+        <Menu Grid.Row="0" x:Name="menu">
+            <Menu.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <DockPanel HorizontalAlignment="Stretch" LastChildFill="False" />
+                </ItemsPanelTemplate>
+            </Menu.ItemsPanel>
             <MenuItem Header="File" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
             <MenuItem Header="Edit" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
             <MenuItem Header="View">
@@ -56,6 +62,7 @@
             <MenuItem Header="Tools" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
             <MenuItem Header="Themes" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
             <MenuItem Header="Help" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
+            <MenuItem Header="{Binding AppVersion, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, FallbackValue='0.0.0.0'}" DockPanel.Dock="Right" IsEnabled="False" />
         </Menu>
 
         <s:DockContainer Grid.Row="1" 
