@@ -58,6 +58,7 @@
             <MenuItem Header="Edit" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
             <MenuItem Header="View">
                 <MenuItem Header="Output" Click="menuOutput_Click" />
+                <MenuItem Header="App Directory" Click="menuAppDir_Click" />
             </MenuItem>
             <MenuItem Header="Tools" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
             <MenuItem Header="Themes" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />

@@ -27,13 +27,20 @@ namespace Reclaimer
         {
             Instance = this;
             DispatcherUnhandledException += App_DispatcherUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
 
         private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            if (System.Diagnostics.Debugger.IsAttached)
-                System.Diagnostics.Debugger.Break();
+            LogUnhandledException(e.Exception);
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var ex = e.ExceptionObject as Exception;
+            if (ex != null)
+                LogUnhandledException(ex);
         }
 
         private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
@@ -135,6 +142,15 @@ namespace Reclaimer
 
                 MainWindow.Activate();
             });
+        }
+
+        private void LogUnhandledException(Exception ex)
+        {
+            if (System.Diagnostics.Debugger.IsAttached)
+                System.Diagnostics.Debugger.Break();
+
+            var fileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "crash.txt");
+            File.WriteAllText(fileName, ex.ToString());
         }
 
         #region Themes

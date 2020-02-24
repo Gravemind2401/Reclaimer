@@ -48,6 +48,11 @@ namespace Reclaimer.Windows
             Substrate.ShowOutput();
         }
 
+        private void menuAppDir_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(AppDomain.CurrentDomain.BaseDirectory);
+        }
+
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
             //add initial menu items
