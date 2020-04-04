@@ -42,7 +42,7 @@ namespace Reclaimer.Plugins
 
             try
             {
-                var viewer = new Controls.ModelViewer { LogOutput = LogOutput };
+                var viewer = new Controls.ModelViewer { LogOutput = LogOutput, LogError = LogError };
                 viewer.LoadGeometry(model, $"{args.FileName}");
 
                 container.AddItem(viewer.TabModel);
@@ -116,7 +116,7 @@ namespace Reclaimer.Plugins
                 Extension = extension;
                 Description = description;
             }
-        } 
+        }
 
         #endregion
     }
@@ -155,22 +155,24 @@ namespace Reclaimer.Plugins
             return new Assimp.Vector3D(v.X, 1f - v.Y, v.Z);
         }
 
-        public static Assimp.Matrix4x4 ToAssimp4x4(this System.Numerics.Matrix4x4 m)
+        public static Assimp.Matrix4x4 ToAssimp4x4(this System.Numerics.Matrix4x4 m) => m.ToAssimp4x4(1f);
+
+        public static Assimp.Matrix4x4 ToAssimp4x4(this System.Numerics.Matrix4x4 m, float offsetScale)
         {
             return new Assimp.Matrix4x4
             {
                 A1 = m.M11,
                 A2 = m.M21,
                 A3 = m.M31,
-                A4 = m.M41,
+                A4 = m.M41 * offsetScale,
                 B1 = m.M12,
                 B2 = m.M22,
                 B3 = m.M32,
-                B4 = m.M42,
+                B4 = m.M42 * offsetScale,
                 C1 = m.M13,
                 C2 = m.M23,
                 C3 = m.M33,
-                C4 = m.M43,
+                C4 = m.M43 * offsetScale,
                 D1 = m.M14,
                 D2 = m.M24,
                 D3 = m.M34,
@@ -239,9 +241,15 @@ namespace Reclaimer.Plugins
             #region Meshes
             for (int i = 0; i < model.Meshes.Count; i++)
             {
+                var geom = model.Meshes[i];
+                if (geom.Submeshes.Count == 0)
+                {
+                    meshLookup.Add(-1);
+                    continue;
+                }
+
                 meshLookup.Add(scene.MeshCount);
 
-                var geom = model.Meshes[i];
                 foreach (var sub in geom.Submeshes)
                 {
                     var m = new Assimp.Mesh($"mesh{i:D3}");
@@ -340,14 +348,22 @@ namespace Reclaimer.Plugins
                 var regNode = new Assimp.Node(reg.Name);
                 foreach (var perm in reg.Permutations)
                 {
-                    var permNode = new Assimp.Node(perm.Name);
                     var meshStart = meshLookup[perm.MeshIndex];
-                    var meshCount = Enumerable.Range(perm.MeshIndex, perm.MeshCount).Sum(i => model.Meshes[i].Submeshes.Count);
+                    if (meshStart < 0)
+                        continue;
 
+                    var permNode = new Assimp.Node(perm.Name);
+                    if (perm.TransformScale != 1 || !perm.Transform.IsIdentity)
+                        permNode.Transform = Assimp.Matrix4x4.FromScaling(new Assimp.Vector3D(perm.TransformScale)) * perm.Transform.ToAssimp4x4(scale);
+
+                    var meshCount = Enumerable.Range(perm.MeshIndex, perm.MeshCount).Sum(i => model.Meshes[i].Submeshes.Count);
                     permNode.MeshIndices.AddRange(Enumerable.Range(meshStart, meshCount));
+
                     regNode.Children.Add(permNode);
                 }
-                scene.RootNode.Children.Add(regNode);
+
+                if (regNode.ChildCount > 0)
+                    scene.RootNode.Children.Add(regNode);
             }
             #endregion
 
@@ -373,7 +389,7 @@ namespace Reclaimer.Plugins
                 }
 
                 scene.Materials.Add(m);
-            } 
+            }
             #endregion
 
             return scene;

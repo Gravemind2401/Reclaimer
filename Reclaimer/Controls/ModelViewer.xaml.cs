@@ -78,6 +78,8 @@ namespace Reclaimer.Controls
 
         public Action<string> LogOutput { get; set; }
 
+        public Action<string, Exception> LogError { get; set; }
+
         static ModelViewer()
         {
             (ErrorMaterial = new DiffuseMaterial(Brushes.Gold)).Freeze();
@@ -449,8 +451,15 @@ namespace Reclaimer.Controls
 
                 foreach (var bitm in geometry.GetAllBitmaps())
                 {
-                    saveImage(bitm, folder);
-                    LogOutput($"Extracted {bitm.Name}.{bitm.Class}");
+                    try
+                    {
+                        saveImage(bitm, folder);
+                        LogOutput($"Extracted {bitm.Name}.{bitm.Class}");
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError($"Error extracting {bitm.Name}.{bitm.Class}", ex);
+                    }
                 }
 
                 LogOutput($"Recursive bitmap extract complete for {geometry.Name}.{geometry.Class}");
