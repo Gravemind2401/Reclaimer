@@ -43,7 +43,7 @@ namespace Adjutant.Utilities
             DXN_mono_alpha
         }
 
-        private static KnownTextureFormat AsKnown(this Enum format)
+        private static KnownTextureFormat AsKnown(this object format)
         {
             var name = format.ToString();
             KnownTextureFormat common;
@@ -120,6 +120,23 @@ namespace Adjutant.Utilities
                     return 4;
 
                 default: return 2;
+            }
+        }
+
+        private static int GetTileSize(KnownTextureFormat format)
+        {
+            switch (format)
+            {
+                case KnownTextureFormat.A8:
+                case KnownTextureFormat.Y8:
+                case KnownTextureFormat.AY8:
+                case KnownTextureFormat.A8Y8:
+                case KnownTextureFormat.A8R8G8B8:
+                case KnownTextureFormat.A4R4G4B4:
+                case KnownTextureFormat.R5G6B5:
+                    return 1;
+
+                default: return 128;
             }
         }
 
@@ -249,15 +266,31 @@ namespace Adjutant.Utilities
         #region Xbox 360
 
         /* https://github.com/gdkchan/MESTool/blob/master/MESTool/Program.cs */
-        public static byte[] XTextureScramble(byte[] data, int width, int height, int blockSize, int texelPitch)
+        public static byte[] XTextureScramble(byte[] data, int width, int height, object format)
         {
-            return XTextureScramble(data, width, height, blockSize, texelPitch, false);
+            return XTextureScramble(data, width, height, format, false);
         }
 
-        public static byte[] XTextureScramble(byte[] data, int width, int height, int blockSize, int texelPitch, bool toLinear)
+        public static byte[] XTextureScramble(byte[] data, int width, int height, object format, bool toLinear)
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
+
+            var knownFormat = format.AsKnown();
+            if (knownFormat == KnownTextureFormat.Unknown)
+                throw new ArgumentException("Could not translate to a known texture format.", nameof(format));
+
+            var blockSize = GetLinearBlockSize(knownFormat);
+            var texelPitch = GetLinearTexelPitch(knownFormat);
+            var bpp = GetBpp(knownFormat);
+            var tileSize = GetTileSize(knownFormat);
+
+            width = (int)Math.Ceiling((float)width / tileSize) * tileSize;
+            height = (int)Math.Ceiling((float)height / tileSize) * tileSize;
+
+            var expectedSize = width * height * bpp;
+            if (expectedSize > data.Length)
+                Array.Resize(ref data, expectedSize);
 
             var output = new byte[data.Length];
 

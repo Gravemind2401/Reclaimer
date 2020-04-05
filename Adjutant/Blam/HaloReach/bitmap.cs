@@ -112,14 +112,11 @@ namespace Adjutant.Blam.HaloReach
 
             if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
             {
-                var blockSize = submap.BitmapFormat.LinearBlockSize();
-                var texelPitch = submap.BitmapFormat.LinearTexelPitch();
-
                 var virtualHeight = submap.BitmapType == TextureType.CubeMap
                     ? submap.Height * 6
                     : submap.Height;
 
-                data = TextureUtils.XTextureScramble(data, submap.Width, virtualHeight, blockSize, texelPitch, false);
+                data = TextureUtils.XTextureScramble(data, submap.Width, virtualHeight, submap.BitmapFormat, false);
             }
 
             DdsImage dds;
