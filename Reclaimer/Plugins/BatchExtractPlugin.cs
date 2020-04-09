@@ -28,7 +28,7 @@ namespace Reclaimer.Plugins
         private CancellationTokenSource tokenSource;
 
         private delegate void WriteModelFile(IGeometryModel model, string fileName, string formatId);
-        private WriteModelFile writeModelFileFunc;
+        private Lazy<WriteModelFile> writeModelFileFunc;
 
         public override string Name => "Batch Extractor";
 
@@ -53,7 +53,7 @@ namespace Reclaimer.Plugins
         {
             Settings = LoadSettings<BatchExtractSettings>();
             Settings.DataFolder = Settings.DataFolder.PatternReplace(":plugins:", Substrate.PluginsDirectory);
-            writeModelFileFunc = Substrate.GetSharedFunction<WriteModelFile>("Reclaimer.Plugins.ModelViewerPlugin.WriteModelFile");
+            writeModelFileFunc = new Lazy<WriteModelFile>(() => Substrate.GetSharedFunction<WriteModelFile>("Reclaimer.Plugins.ModelViewerPlugin.WriteModelFile"));
         }
 
         public override IEnumerable<PluginMenuItem> GetMenuItems()
@@ -194,7 +194,7 @@ namespace Reclaimer.Plugins
                     case "mode":
                     case "mod2":
                     case "sbsp":
-                        if (writeModelFileFunc != null)
+                        if (writeModelFileFunc.Value != null)
                         {
                             SaveModel(tag);
                             counter.Extracted++;
@@ -332,7 +332,7 @@ namespace Reclaimer.Plugins
         private void SaveModel(IRenderGeometry geometry, string baseDir)
         {
             var fileName = MakePath(geometry.Class, geometry.Name, baseDir);
-            writeModelFileFunc?.Invoke(geometry.ReadGeometry(0), fileName, Settings.ModelFormat);
+            writeModelFileFunc.Value?.Invoke(geometry.ReadGeometry(0), fileName, Settings.ModelFormat);
         }
 
         private string MakePath(string tagClass, string tagPath, string baseDirectory)
