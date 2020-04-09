@@ -111,7 +111,10 @@ namespace Adjutant.Utilities
                 case KnownTextureFormat.DXN_mono_alpha:
                     return 16;
 
+                case KnownTextureFormat.A8:
                 case KnownTextureFormat.AY8:
+                case KnownTextureFormat.P8:
+                case KnownTextureFormat.P8_bump:
                 case KnownTextureFormat.Y8:
                     return 1;
 
@@ -127,16 +130,20 @@ namespace Adjutant.Utilities
         {
             switch (format)
             {
-                case KnownTextureFormat.A8:
-                case KnownTextureFormat.Y8:
-                case KnownTextureFormat.AY8:
-                case KnownTextureFormat.A8Y8:
-                case KnownTextureFormat.A8R8G8B8:
-                case KnownTextureFormat.A4R4G4B4:
-                case KnownTextureFormat.R5G6B5:
-                    return 1;
+                case KnownTextureFormat.DXT5a_mono:
+                case KnownTextureFormat.DXT5a_alpha:
+                case KnownTextureFormat.DXT1:
+                case KnownTextureFormat.CTX1:
+                case KnownTextureFormat.DXT5a:
+                case KnownTextureFormat.DXT3a_alpha:
+                case KnownTextureFormat.DXT3a_mono:
+                case KnownTextureFormat.DXT3:
+                case KnownTextureFormat.DXT5:
+                case KnownTextureFormat.DXN:
+                case KnownTextureFormat.DXN_mono_alpha:
+                    return 128;
 
-                default: return 128;
+                default: return 1;
             }
         }
 

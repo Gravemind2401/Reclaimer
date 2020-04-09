@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Gravemind2401")]
 [assembly: AssemblyProduct("Adjutant")]
-[assembly: AssemblyCopyright("Copyright © Gravemind2401 2018 - 2019")]
+[assembly: AssemblyCopyright("Copyright © Gravemind2401 2018 - 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(true)]
@@ -34,5 +34,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("5.1.154.918")]
-[assembly: AssemblyFileVersion("5.1.154.918")]
+[assembly: AssemblyVersion("5.1.155.921")]
+[assembly: AssemblyFileVersion("5.1.155.921")]
