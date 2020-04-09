@@ -370,14 +370,14 @@ namespace Reclaimer.Plugins
             #region Materials
             foreach (var mat in model.Materials)
             {
-                var m = new Assimp.Material { Name = mat.Name };
+                var m = new Assimp.Material { Name = mat?.Name ?? "unused" };
 
                 //prevent max from making every material super shiny
                 m.ColorEmissive = m.ColorReflective = m.ColorSpecular = new Assimp.Color4D(0, 0, 0, 1);
                 m.ColorDiffuse = m.ColorTransparent = new Assimp.Color4D(1);
 
                 //max only seems to care about diffuse
-                var dif = mat.Submaterials.FirstOrDefault(s => s.Usage == MaterialUsage.Diffuse);
+                var dif = mat?.Submaterials.FirstOrDefault(s => s.Usage == MaterialUsage.Diffuse);
                 if (dif != null)
                 {
                     m.TextureDiffuse = new Assimp.TextureSlot
