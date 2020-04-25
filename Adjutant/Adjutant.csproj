@@ -92,6 +92,8 @@
     <Compile Include="Blam\Halo3\scenario_lightmap_bsp_data.cs" />
     <Compile Include="Blam\Halo3\scenario_structure_bsp.cs" />
     <Compile Include="Blam\Halo3\shader.cs" />
+    <Compile Include="Blam\Halo3\sound.cs" />
+    <Compile Include="Blam\Halo3\sound_cache_file_gestalt.cs" />
     <Compile Include="Blam\Halo3\TagAddressTranslator.cs" />
     <Compile Include="Blam\Common\XmlVertex.cs" />
     <Compile Include="Blam\Halo4\bitmap.cs" />

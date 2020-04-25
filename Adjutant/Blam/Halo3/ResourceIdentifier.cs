@@ -118,6 +118,67 @@ namespace Adjutant.Blam.Halo3
             }
         }
 
+        public byte[] ReadSoundData()
+        {
+            var directory = Directory.GetParent(cache.FileName).FullName;
+            var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
+            var resourceLayoutTable = cache.TagIndex.GetGlobalTag("play").ReadMetadata<cache_file_resource_layout_table>();
+            var entry = resourceGestalt.ResourceEntries[ResourceIndex];
+
+            if (entry.SegmentIndex < 0)
+                throw new InvalidOperationException("Data not found");
+
+            var segment = resourceLayoutTable.Segments[entry.SegmentIndex];
+            var soundInfo = resourceLayoutTable.SoundInfo[segment.SoundRawIndex];
+            var page1 = resourceLayoutTable.Pages[segment.RequiredPageIndex];
+            var page2 = resourceLayoutTable.Pages[segment.OptionalPageIndex];
+
+            if (page1.CompressedSize != page1.DecompressedSize || page2.CompressedSize != page2.DecompressedSize)
+                throw new NotSupportedException("Compressed sound data");
+
+            if (soundInfo.SoundPermutationInfo.Count > 1)
+                throw new NotSupportedException("Segmented sound data");
+
+            var totalSize = page1.CompressedSize > 0 ? page1.CompressedSize : page2.CompressedSize;
+            var size1 = totalSize - soundInfo.RawSize;
+            var size2 = totalSize - size1;
+
+            var output = new byte[totalSize];
+            if (page1.CompressedSize > 0 && size1 > 0)
+            {
+                var temp = ReadSoundData(directory, resourceLayoutTable, page1, size1);
+                Array.Copy(temp, segment.RequiredPageOffset, output, 0, size1);
+            }
+
+            if (page2.CompressedSize > 0 && size2 > 0)
+            {
+                var temp = ReadSoundData(directory, resourceLayoutTable, page2, size2);
+                Array.Copy(temp, segment.RequiredPageOffset, output, size1, size2);
+            }
+
+            return output;
+        }
+
+        private byte[] ReadSoundData(string directory, cache_file_resource_layout_table resourceLayoutTable, PageBlock page, int size)
+        {
+            var targetFile = cache.FileName;
+            if (page.CacheIndex >= 0)
+            {
+                var mapName = Utils.GetFileName(resourceLayoutTable.SharedCaches[page.CacheIndex].FileName);
+                targetFile = Path.Combine(directory, mapName);
+            }
+
+            using (var fs = new FileStream(targetFile, FileMode.Open, FileAccess.Read))
+            using (var reader = new EndianReader(fs, ByteOrder.BigEndian))
+            {
+                reader.Seek(1136, SeekOrigin.Begin);
+                var dataTableAddress = reader.ReadInt32();
+
+                reader.Seek(dataTableAddress + page.DataOffset, SeekOrigin.Begin);
+                return reader.ReadBytes(Math.Max(page.CompressedSize, size));
+            }
+        }
+
         public override string ToString() => Value.ToString(CultureInfo.CurrentCulture);
 
         #region Equality Operators
