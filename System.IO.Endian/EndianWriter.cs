@@ -492,7 +492,20 @@ namespace System.IO.Endian
 
         /// <summary>
         /// Writes a fixed-length string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
+        /// </summary>
+        /// <param name="value">The string value to write.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public virtual void WriteStringFixedLength(string value)
+        {
+            WriteStringFixedLength(value, value.Length);
+        }
+
+        /// <summary>
+        /// Writes a fixed-length string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
         /// If the string is shorter than the specified length it will be padded with white-space.
+        /// If the string is longer than the specified length it will be truncated.
         /// </summary>
         /// <param name="value">The string value to write.</param>
         /// <param name="length">The number of characters to write.</param>
@@ -507,6 +520,7 @@ namespace System.IO.Endian
         /// <summary>
         /// Writes a fixed-length string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
         /// If the string is shorter than the specified length it will be padded using the specified character.
+        /// If the string is longer than the specified length it will be truncated.
         /// </summary>
         /// <param name="value">The string value to write.</param>
         /// <param name="length">The number of characters to write.</param>
@@ -533,7 +547,7 @@ namespace System.IO.Endian
         }
 
         /// <summary>
-        /// Writes a length-prefixed or null-terminated string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
+        /// Writes a null-terminated string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
         /// </summary>
         /// <param name="value">The string value to write.</param>
         /// <exception cref="ArgumentNullException" />

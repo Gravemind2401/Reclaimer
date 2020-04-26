@@ -35,19 +35,23 @@ namespace System.IO.Endian
 
         public static void DumpAssembly(double? version)
         {
-            var fileName = $"{nameof(DynamicReader<T>)}.{TypeArg.Name}_{version}.dll";
+            try
+            {
+                var fileName = $"{nameof(DynamicReader<T>)}.{TypeArg.Name}_{version}.dll";
 
-            var asmName = new AssemblyName(nameof(DynamicReader<T>));
-            var asmBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(asmName, AssemblyBuilderAccess.Save);
-            var modBuilder = asmBuilder.DefineDynamicModule(nameof(DynamicReader<T>), fileName);
-            var typBuilder = modBuilder.DefineType($"{nameof(DynamicReader<T>)}.GeneratedClass", TypeAttributes.Public);
+                var asmName = new AssemblyName(nameof(DynamicReader<T>));
+                var asmBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(asmName, AssemblyBuilderAccess.Save);
+                var modBuilder = asmBuilder.DefineDynamicModule(nameof(DynamicReader<T>), fileName);
+                var typBuilder = modBuilder.DefineType($"{nameof(DynamicReader<T>)}.GeneratedClass", TypeAttributes.Public);
 
-            var metBuilder = typBuilder.DefineMethod("DynamicRead", MethodAttributes.Public | MethodAttributes.Static, TypeArg, ReadArgs);
+                var metBuilder = typBuilder.DefineMethod("DynamicRead", MethodAttributes.Public | MethodAttributes.Static, TypeArg, ReadArgs);
 
-            var il = metBuilder.GetILGenerator();
-            GenerateRead(il, version);
-            typBuilder.CreateType();
-            asmBuilder.Save(fileName);
+                var il = metBuilder.GetILGenerator();
+                GenerateRead(il, version);
+                typBuilder.CreateType();
+                asmBuilder.Save(fileName);
+            }
+            catch { }
         }
 
         private static DynamicRead GenerateReadMethod(double? version)
@@ -226,6 +230,7 @@ namespace System.IO.Endian
             }
             il.Emit(OpCodes.Callvirt, typeof(Stream).GetProperty(nameof(Stream.Position)).GetSetMethod());
         }
+
         private static void EmitStringRead(ILGenerator il, PropertyInfo prop, ByteOrder? order)
         {
             var lenPrefixed = Utils.GetCustomAttribute<LengthPrefixedAttribute>(prop);
