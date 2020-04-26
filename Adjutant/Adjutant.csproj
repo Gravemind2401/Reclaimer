@@ -58,6 +58,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Audio\GameSound.cs" />
+    <Compile Include="Audio\IFormatHeader.cs" />
+    <Compile Include="Audio\XmaHeader.cs" />
     <Compile Include="Blam\Common\CacheFactory.cs" />
     <Compile Include="Blam\Common\Enums.cs" />
     <Compile Include="Blam\Common\Extensions.cs" />
@@ -193,6 +196,7 @@
     <Compile Include="Utilities\Interfaces.cs" />
     <Compile Include="Utilities\MurMur3.cs" />
     <Compile Include="Blam\Common\StringId.cs" />
+    <Compile Include="Utilities\SoundUtils.cs" />
     <Compile Include="Utilities\TextureUtils.cs" />
     <Compile Include="Utilities\Utils.cs" />
     <Compile Include="Utilities\IAddressTranslator.cs" />

@@ -23,7 +23,7 @@ namespace Adjutant.Blam.Halo3
         public BlockCollection<SoundPermutation> SoundPermutations { get; set; }
 
         [Offset(148)]
-        public BlockCollection<RawChunk> RawChunks { get; set; }
+        public BlockCollection<DataBlock> DataBlocks { get; set; }
     }
 
     [FixedSize(3)]
@@ -37,6 +37,22 @@ namespace Adjutant.Blam.Halo3
 
         [Offset(2)]
         public byte Flags { get; set; }
+
+        public byte ChannelCount
+        {
+            get
+            {
+                switch (SoundType)
+                {
+                    case SoundType.Mono:
+                        return 1;
+                    case SoundType.Stereo:
+                        return 2;
+                    default:
+                        throw new NotSupportedException("Sound type not supported");
+                }
+            }
+        }
     }
 
     [FixedSize(4)]
@@ -63,10 +79,12 @@ namespace Adjutant.Blam.Halo3
         public short FirstRuntimePermFlagIndex { get; set; }
 
         [Offset(8)]
-        public short EncodedPermData { get; set; }
+        public short EncodedPermutationData { get; set; }
 
         [Offset(10)]
         public short FirstPermutation { get; set; }
+
+        public int PermutationCount => (EncodedPermutationData >> 4) & 63;
     }
 
     [FixedSize(16)]
@@ -88,17 +106,17 @@ namespace Adjutant.Blam.Halo3
         public short LanguageNeutralTime { get; set; }
 
         [Offset(8)]
-        public int RawChunkIndex { get; set; }
+        public int BlockIndex { get; set; }
 
         [Offset(12)]
-        public short ChunkCount { get; set; }
+        public short BlockCount { get; set; }
 
         [Offset(14)]
         public short EncodedPermIndex { get; set; }
     }
 
     [FixedSize(20)]
-    public class RawChunk
+    public class DataBlock
     {
         [Offset(0)]
         public int FileOffset { get; set; }

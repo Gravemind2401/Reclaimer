@@ -1,4 +1,5 @@
-﻿using Adjutant.Geometry;
+﻿using Adjutant.Audio;
+using Adjutant.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Dds;
@@ -24,5 +25,12 @@ namespace Adjutant.Utilities
         int LodCount { get; }
         IGeometryModel ReadGeometry(int lod);
         IEnumerable<IBitmap> GetAllBitmaps();
+    }
+
+    public interface ISoundContainer
+    {
+        string Name { get; }
+        string Class { get; }
+        GameSound ReadData();
     }
 }
