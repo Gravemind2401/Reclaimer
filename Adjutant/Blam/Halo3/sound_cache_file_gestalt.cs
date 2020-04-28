@@ -30,10 +30,10 @@ namespace Adjutant.Blam.Halo3
     public class Codec
     {
         [Offset(0)]
-        public byte Unknown { get; set; }
+        public SampleRate SampleRate { get; set; }
 
         [Offset(1)]
-        public SoundType SoundType { get; set; }
+        public Encoding Encoding { get; set; }
 
         [Offset(2)]
         public byte Flags { get; set; }
@@ -42,14 +42,14 @@ namespace Adjutant.Blam.Halo3
         {
             get
             {
-                switch (SoundType)
+                switch (Encoding)
                 {
-                    case SoundType.Mono:
+                    case Encoding.Mono:
                         return 1;
-                    case SoundType.Stereo:
+                    case Encoding.Stereo:
                         return 2;
                     default:
-                        throw new NotSupportedException("Sound type not supported");
+                        throw new NotSupportedException("Encoding not supported");
                 }
             }
         }
@@ -82,7 +82,7 @@ namespace Adjutant.Blam.Halo3
         public short EncodedPermutationData { get; set; }
 
         [Offset(10)]
-        public short FirstPermutation { get; set; }
+        public short FirstPermutationIndex { get; set; }
 
         public int PermutationCount => (EncodedPermutationData >> 4) & 63;
     }
@@ -122,7 +122,9 @@ namespace Adjutant.Blam.Halo3
         public int FileOffset { get; set; }
 
         [Offset(4)]
-        public short Flags { get; set; }
+        public byte Flags { get; set; }
+
+        //byte here that belongs to size (24bit)
 
         [Offset(6)]
         [StoreType(typeof(ushort))]
@@ -138,11 +140,19 @@ namespace Adjutant.Blam.Halo3
         public int Unknown1 { get; set; }
     }
 
-    public enum SoundType : byte
+
+    public enum SampleRate : byte
+    {
+        x22050Hz = 0,
+        x44100Hz = 1,
+        x32000Hz = 2
+    }
+
+    public enum Encoding : byte
     {
         Mono = 0,
         Stereo = 1,
-        Unknown2 = 2, //2 and 3 probably surround stereo
-        Unknown3 = 3
+        Surround = 2,
+        Surround5_1 = 3
     }
 }

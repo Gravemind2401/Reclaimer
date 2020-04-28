@@ -53,21 +53,21 @@ namespace Adjutant.Blam.Halo4
     public class SegmentBlock
     {
         [Offset(0)]
-        public int RequiredPageOffset { get; set; }
+        public int PrimaryPageOffset { get; set; }
 
         [Offset(4)]
-        public int OptionalPageOffset { get; set; }
+        public int SecondaryPageOffset { get; set; }
 
         [Offset(8)]
-        public int OptionalPageOffset2 { get; set; }
+        public int TertiaryPageOffset { get; set; }
 
         [Offset(12)]
-        public short RequiredPageIndex { get; set; }
+        public short PrimaryPageIndex { get; set; }
 
         [Offset(14)]
-        public short OptionalPageIndex { get; set; }
+        public short SecondaryPageIndex { get; set; }
 
         [Offset(16)]
-        public short OptionalPageIndex2 { get; set; }
+        public short TertiaryPageIndex { get; set; }
     }
 }

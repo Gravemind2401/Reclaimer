@@ -54,8 +54,8 @@ namespace Adjutant.Blam.HaloReach
                 throw new InvalidOperationException("Data not found");
 
             var segment = resourceLayoutTable.Segments[entry.SegmentIndex];
-            var pageIndex = segment.OptionalPageIndex >= 0 ? segment.OptionalPageIndex : segment.RequiredPageIndex;
-            var chunkOffset = segment.OptionalPageOffset >= 0 ? segment.OptionalPageOffset : segment.RequiredPageOffset;
+            var pageIndex = segment.SecondaryPageIndex >= 0 ? segment.SecondaryPageIndex : segment.PrimaryPageIndex;
+            var chunkOffset = segment.SecondaryPageOffset >= 0 ? segment.SecondaryPageOffset : segment.PrimaryPageOffset;
 
             if (pageIndex < 0 || chunkOffset < 0)
                 throw new InvalidOperationException("Data not found");
@@ -63,8 +63,8 @@ namespace Adjutant.Blam.HaloReach
             var page = resourceLayoutTable.Pages[pageIndex];
             if (page.DataOffset < 0)
             {
-                pageIndex = segment.RequiredPageIndex;
-                chunkOffset = segment.RequiredPageOffset;
+                pageIndex = segment.PrimaryPageIndex;
+                chunkOffset = segment.PrimaryPageOffset;
                 page = resourceLayoutTable.Pages[pageIndex];
             }
 

@@ -96,12 +96,12 @@ namespace Adjutant.Blam.Halo3
 
             for (int i = 0; i < playback.PermutationCount; i++)
             {
-                var perm = resourceGestalt.SoundPermutations[playback.FirstPermutation + i];
+                var perm = resourceGestalt.SoundPermutations[playback.FirstPermutationIndex + i];
                 var name = resourceGestalt.SoundNames[perm.NameIndex].Name;
 
                 byte[] permData;
 
-                if (perm.BlockCount == 1)
+                if (playback.PermutationCount == 1)
                 {
                     //skip the array copy
                     permData = sourceData;
@@ -132,11 +132,5 @@ namespace Adjutant.Blam.Halo3
         }
 
         #endregion
-    }
-
-    public enum SampleRate : byte
-    {
-        x22050Hz = 0,
-        x44100Hz = 1
     }
 }

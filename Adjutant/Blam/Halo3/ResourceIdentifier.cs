@@ -58,8 +58,8 @@ namespace Adjutant.Blam.Halo3
                 throw new InvalidOperationException("Data not found");
 
             var segment = resourceLayoutTable.Segments[entry.SegmentIndex];
-            var pageIndex = segment.OptionalPageIndex >= 0 ? segment.OptionalPageIndex : segment.RequiredPageIndex;
-            var chunkOffset = segment.OptionalPageOffset >= 0 ? segment.OptionalPageOffset : segment.RequiredPageOffset;
+            var pageIndex = segment.SecondaryPageIndex >= 0 ? segment.SecondaryPageIndex : segment.PrimaryPageIndex;
+            var chunkOffset = segment.SecondaryPageOffset >= 0 ? segment.SecondaryPageOffset : segment.PrimaryPageOffset;
 
             if (pageIndex < 0 || chunkOffset < 0)
                 throw new InvalidOperationException("Data not found");
@@ -67,8 +67,8 @@ namespace Adjutant.Blam.Halo3
             var page = resourceLayoutTable.Pages[pageIndex];
             if (page.DataOffset < 0)
             {
-                pageIndex = segment.RequiredPageIndex;
-                chunkOffset = segment.RequiredPageOffset;
+                pageIndex = segment.PrimaryPageIndex;
+                chunkOffset = segment.PrimaryPageOffset;
                 page = resourceLayoutTable.Pages[pageIndex];
             }
 
@@ -129,31 +129,28 @@ namespace Adjutant.Blam.Halo3
                 throw new InvalidOperationException("Data not found");
 
             var segment = resourceLayoutTable.Segments[entry.SegmentIndex];
-            var soundInfo = resourceLayoutTable.SoundInfo[segment.SoundRawIndex];
-            var page1 = resourceLayoutTable.Pages[segment.RequiredPageIndex];
-            var page2 = resourceLayoutTable.Pages[segment.OptionalPageIndex];
+            var size1 = resourceLayoutTable.SizeGroups[segment.PrimarySizeIndex];
+            var size2 = resourceLayoutTable.SizeGroups[segment.SecondarySizeIndex];
+            var page1 = resourceLayoutTable.Pages[segment.PrimaryPageIndex];
+            var page2 = resourceLayoutTable.Pages[segment.SecondaryPageIndex];
 
             if (page1.CompressedSize != page1.DecompressedSize || page2.CompressedSize != page2.DecompressedSize)
                 throw new NotSupportedException("Compressed sound data");
 
-            if (soundInfo.SoundPermutationInfo.Count > 1)
+            if (size2.Sizes.Count > 1)
                 throw new NotSupportedException("Segmented sound data");
 
-            var totalSize = page1.CompressedSize > 0 ? page1.CompressedSize : page2.CompressedSize;
-            var size1 = totalSize - soundInfo.RawSize;
-            var size2 = totalSize - size1;
-
-            var output = new byte[totalSize];
-            if (page1.CompressedSize > 0 && size1 > 0)
+            var output = new byte[size1.TotalSize + size2.TotalSize];
+            if (page1.CompressedSize > 0 && size1.TotalSize > 0)
             {
-                var temp = ReadSoundData(directory, resourceLayoutTable, page1, size1);
-                Array.Copy(temp, segment.RequiredPageOffset, output, 0, size1);
+                var temp = ReadSoundData(directory, resourceLayoutTable, page1, size1.TotalSize);
+                Array.Copy(temp, segment.PrimaryPageOffset, output, 0, size1.TotalSize);
             }
 
-            if (page2.CompressedSize > 0 && size2 > 0)
+            if (page2.CompressedSize > 0 && size2.TotalSize > 0)
             {
-                var temp = ReadSoundData(directory, resourceLayoutTable, page2, size2);
-                Array.Copy(temp, segment.RequiredPageOffset, output, size1, size2);
+                var temp = ReadSoundData(directory, resourceLayoutTable, page2, size2.TotalSize);
+                Array.Copy(temp, segment.PrimaryPageOffset, output, size1.TotalSize, size2.TotalSize);
             }
 
             return output;

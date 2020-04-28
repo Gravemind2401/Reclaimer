@@ -17,7 +17,7 @@ namespace Adjutant.Blam.HaloReach
         public BlockCollection<PageBlock> Pages { get; set; }
 
         [Offset(36)]
-        public BlockCollection<SoundInfoBlock> SoundInfo { get; set; }
+        public BlockCollection<SizeGroupBlock> SizeGroups { get; set; }
 
         [Offset(48)]
         public BlockCollection<SegmentBlock> Segments { get; set; }
@@ -53,41 +53,41 @@ namespace Adjutant.Blam.HaloReach
     }
 
     [FixedSize(16)]
-    public class SoundInfoBlock
+    public class SizeGroupBlock
     {
         [Offset(0)]
-        public int RawSize { get; set; }
+        public int TotalSize { get; set; }
 
         [Offset(4)]
-        public BlockCollection<SoundPermutationInfoBlock> SoundPermutationInfo { get; set; }
+        public BlockCollection<SizeBlock> Sizes { get; set; }
     }
 
     [FixedSize(16)]
-    public class SoundPermutationInfoBlock
+    public class SizeBlock
     {
         [Offset(4)]
-        public int PermutationSize { get; set; }
+        public int DataSize { get; set; }
     }
 
     [FixedSize(16)]
     public class SegmentBlock
     {
         [Offset(0)]
-        public short RequiredPageIndex { get; set; }
+        public short PrimaryPageIndex { get; set; }
 
         [Offset(2)]
-        public short OptionalPageIndex { get; set; }
+        public short SecondaryPageIndex { get; set; }
 
         [Offset(4)]
-        public int RequiredPageOffset { get; set; }
+        public int PrimaryPageOffset { get; set; }
 
         [Offset(8)]
-        public int OptionalPageOffset { get; set; }
+        public int SecondaryPageOffset { get; set; }
 
         [Offset(12)]
-        public short SoundIndex { get; set; }
+        public short PrimarySizeIndex { get; set; }
 
         [Offset(14)]
-        public short SoundDataIndex { get; set; }
+        public short SecondarySizeIndex { get; set; }
     }
 }

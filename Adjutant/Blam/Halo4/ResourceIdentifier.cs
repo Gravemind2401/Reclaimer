@@ -54,8 +54,8 @@ namespace Adjutant.Blam.Halo4
                 throw new InvalidOperationException("Data not found");
 
             var segment = resourceLayoutTable.Segments[entry.SegmentIndex];
-            var pageIndex = segment.OptionalPageIndex2 >= 0 ? segment.OptionalPageIndex2 : segment.OptionalPageIndex >= 0 ? segment.OptionalPageIndex : segment.RequiredPageIndex;
-            var chunkOffset = segment.OptionalPageOffset2 >= 0 ? segment.OptionalPageOffset2 : segment.OptionalPageOffset >= 0 ? segment.OptionalPageOffset : segment.RequiredPageOffset;
+            var pageIndex = segment.TertiaryPageIndex >= 0 ? segment.TertiaryPageIndex : segment.SecondaryPageIndex >= 0 ? segment.SecondaryPageIndex : segment.PrimaryPageIndex;
+            var chunkOffset = segment.TertiaryPageOffset >= 0 ? segment.TertiaryPageOffset : segment.SecondaryPageOffset >= 0 ? segment.SecondaryPageOffset : segment.PrimaryPageOffset;
 
             if (pageIndex < 0 || chunkOffset < 0)
                 throw new InvalidOperationException("Data not found");
@@ -63,8 +63,8 @@ namespace Adjutant.Blam.Halo4
             var page = resourceLayoutTable.Pages[pageIndex];
             if (page.DataOffset < 0)
             {
-                pageIndex = segment.RequiredPageIndex;
-                chunkOffset = segment.RequiredPageOffset;
+                pageIndex = segment.PrimaryPageIndex;
+                chunkOffset = segment.PrimaryPageOffset;
                 page = resourceLayoutTable.Pages[pageIndex];
             }
 
