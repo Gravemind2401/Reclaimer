@@ -16,13 +16,16 @@ namespace Adjutant.Blam.Halo3
         [Offset(36)]
         public BlockCollection<SoundName> SoundNames { get; set; }
 
-        [Offset(60)]
+        [Offset(60, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(72, MinVersion = (int)CacheType.Halo3ODST)]
         public BlockCollection<Playback> Playbacks { get; set; }
 
-        [Offset(72)]
+        [Offset(72, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(84, MinVersion = (int)CacheType.Halo3ODST)]
         public BlockCollection<SoundPermutation> SoundPermutations { get; set; }
 
-        [Offset(148)]
+        [Offset(148, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(160, MinVersion = (int)CacheType.Halo3ODST)]
         public BlockCollection<DataBlock> DataBlocks { get; set; }
     }
 
