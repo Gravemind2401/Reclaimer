@@ -150,7 +150,7 @@ namespace Adjutant.Blam.Halo3
             if (page2.CompressedSize > 0 && size2.TotalSize > 0)
             {
                 var temp = ReadSoundData(directory, resourceLayoutTable, page2, size2.TotalSize);
-                Array.Copy(temp, segment.PrimaryPageOffset, output, size1.TotalSize, size2.TotalSize);
+                Array.Copy(temp, segment.SecondaryPageOffset, output, size1.TotalSize, size2.TotalSize);
             }
 
             return output;

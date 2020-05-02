@@ -73,8 +73,6 @@ namespace Adjutant.Blam.Halo3
         [Offset(28)]
         public int MaxPlaytime { get; set; }
 
-        private int SampleRateInt => SampleRate == SampleRate.x22050Hz ? 22050 : 44100;
-
         #region ISoundContainer
 
         string ISoundContainer.Name => item.FullPath;
@@ -91,7 +89,7 @@ namespace Adjutant.Blam.Halo3
             var result = new GameSound
             {
                 Name = item.FileName(),
-                FormatHeader = new XmaHeader(SampleRateInt, codec.ChannelCount)
+                FormatHeader = new XmaHeader(codec.SampleRateInt, codec.ChannelCounts)
             };
 
             for (int i = 0; i < playback.PermutationCount; i++)

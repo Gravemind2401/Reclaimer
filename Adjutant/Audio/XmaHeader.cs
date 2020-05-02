@@ -17,15 +17,22 @@ namespace Adjutant.Audio
         public short BitsPerSample { get; set; }
         public List<XmaStreamInfo> Streams { get; }
 
-        public XmaHeader(int sampleRate, byte channelCount)
+        public XmaHeader(int sampleRate, byte[] channelCounts)
         {
+            if (channelCounts == null)
+                throw new ArgumentNullException(nameof(channelCounts));
+
             BitsPerSample = 16;
             Streams = new List<XmaStreamInfo>();
-            Streams.Add(new XmaStreamInfo
+
+            foreach (var channelCount in channelCounts)
             {
-                SampleRate = sampleRate,
-                ChannelCount = channelCount
-            });
+                Streams.Add(new XmaStreamInfo
+                {
+                    SampleRate = sampleRate,
+                    ChannelCount = channelCount
+                });
+            }
         }
 
         public byte[] GetBytes()

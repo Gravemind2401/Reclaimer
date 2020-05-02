@@ -38,16 +38,38 @@ namespace Adjutant.Blam.Halo3
         [Offset(2)]
         public byte Flags { get; set; }
 
-        public byte ChannelCount
+        public int SampleRateInt
+        {
+            get
+            {
+                switch (SampleRate)
+                {
+                    case SampleRate.x22050Hz:
+                        return 22050;
+                    case SampleRate.x32000Hz:
+                        return 32000;
+                    case SampleRate.x44100Hz:
+                        return 44100;
+                    default:
+                        throw new NotSupportedException("Sample Rate not supported");
+                }
+            }
+        }
+
+        public byte[] ChannelCounts
         {
             get
             {
                 switch (Encoding)
                 {
                     case Encoding.Mono:
-                        return 1;
+                        return new byte[] { 1 };
                     case Encoding.Stereo:
-                        return 2;
+                        return new byte[] { 2 };
+                    case Encoding.Surround:
+                        return new byte[] { 2, 2 };
+                    case Encoding.Surround5_1:
+                        return new byte[] { 2, 2, 2 };
                     default:
                         throw new NotSupportedException("Encoding not supported");
                 }
@@ -82,7 +104,8 @@ namespace Adjutant.Blam.Halo3
         public short EncodedPermutationData { get; set; }
 
         [Offset(10)]
-        public short FirstPermutationIndex { get; set; }
+        [StoreType(typeof(ushort))]
+        public int FirstPermutationIndex { get; set; }
 
         public int PermutationCount => (EncodedPermutationData >> 4) & 63;
     }
