@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Adjutant.Audio;
 using Adjutant.Blam.Common;
 
-namespace Adjutant.Blam.Halo3
+namespace Adjutant.Blam.HaloReach
 {
     public class sound : ISoundContainer
     {
@@ -39,38 +39,8 @@ namespace Adjutant.Blam.Halo3
         [Offset(6)]
         public short PlaybackIndex { get; set; }
 
-        [Offset(8)]
-        public short DialogueUnknown { get; set; }
-
-        [Offset(10)]
-        public short Unknown0 { get; set; }
-
-        [Offset(12)]
-        public short PitchRangeIndex1 { get; set; }
-
-        [Offset(14)]
-        public byte PitchRangeIndex2 { get; set; }
-
-        [Offset(15)]
-        public byte ScaleIndex { get; set; }
-
-        [Offset(16)]
-        public byte PromotionIndex { get; set; }
-
-        [Offset(17)]
-        public byte CustomPlaybackIndex { get; set; }
-
-        [Offset(18)]
-        public short ExtraInfoIndex { get; set; }
-
-        [Offset(20)]
-        public int Unknown1 { get; set; }
-
-        [Offset(24)]
-        public ResourceIdentifier ResourceIdentifier { get; set; }
-
         [Offset(28)]
-        public int MaxPlaytime { get; set; }
+        public ResourceIdentifier ResourceIdentifier { get; set; }
 
         #region ISoundContainer
 

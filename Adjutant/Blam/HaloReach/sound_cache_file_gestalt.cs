@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo3
+namespace Adjutant.Blam.HaloReach
 {
     public enum SampleRate : byte
     {
@@ -31,16 +31,13 @@ namespace Adjutant.Blam.Halo3
         [Offset(36)]
         public BlockCollection<SoundName> SoundNames { get; set; }
 
-        [Offset(60, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(72, MinVersion = (int)CacheType.Halo3ODST)]
+        [Offset(72)]
         public BlockCollection<Playback> Playbacks { get; set; }
 
-        [Offset(72, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(84, MinVersion = (int)CacheType.Halo3ODST)]
+        [Offset(84)]
         public BlockCollection<SoundPermutation> SoundPermutations { get; set; }
 
-        [Offset(148, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(160, MinVersion = (int)CacheType.Halo3ODST)]
+        [Offset(172)]
         public BlockCollection<DataBlock> DataBlocks { get; set; }
     }
 
@@ -128,7 +125,8 @@ namespace Adjutant.Blam.Halo3
         public int PermutationCount => (EncodedPermutationData >> 4) & 63;
     }
 
-    [FixedSize(16)]
+    [FixedSize(16, MaxVersion = (int)CacheType.HaloReachRetail)]
+    [FixedSize(20, MinVersion = (int)CacheType.HaloReachRetail)]
     public class SoundPermutation
     {
         [Offset(0)]
