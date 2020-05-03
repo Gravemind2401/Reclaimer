@@ -160,6 +160,7 @@
     <Compile Include="Plugins\ModelViewerPlugin.cs" />
     <Compile Include="Plugins\PakViewerPlugin.cs" />
     <Compile Include="Plugins\Plugin.cs" />
+    <Compile Include="Plugins\SoundExtractorPlugin.cs" />
     <Compile Include="Plugins\Substrate.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Utilities\CoreTemplateSelector.cs" />

@@ -1,4 +1,5 @@
-﻿using Adjutant.Blam.Common;
+﻿using Adjutant.Audio;
+using Adjutant.Blam.Common;
 using Adjutant.Geometry;
 using Adjutant.Utilities;
 using Reclaimer.Models;
@@ -20,7 +21,7 @@ namespace Reclaimer.Plugins
 {
     public class BatchExtractPlugin : Plugin
     {
-        private const string supportedTags = "bitm,mode,mod2,sbsp";
+        private const string supportedTags = "bitm,mode,mod2,sbsp,snd!";
 
         private readonly ConcurrentQueue<IIndexItem> extractionQueue = new ConcurrentQueue<IIndexItem>();
 
@@ -29,6 +30,9 @@ namespace Reclaimer.Plugins
 
         private delegate void WriteModelFile(IGeometryModel model, string fileName, string formatId);
         private Lazy<WriteModelFile> writeModelFileFunc;
+
+        private delegate void WriteSoundFile(GameSound sound, string directory);
+        private Lazy<WriteSoundFile> writeSoundFileFunc;
 
         public override string Name => "Batch Extractor";
 
@@ -54,6 +58,7 @@ namespace Reclaimer.Plugins
             Settings = LoadSettings<BatchExtractSettings>();
             Settings.DataFolder = Settings.DataFolder.PatternReplace(":plugins:", Substrate.PluginsDirectory);
             writeModelFileFunc = new Lazy<WriteModelFile>(() => Substrate.GetSharedFunction<WriteModelFile>("Reclaimer.Plugins.ModelViewerPlugin.WriteModelFile"));
+            writeSoundFileFunc = new Lazy<WriteSoundFile>(() => Substrate.GetSharedFunction<WriteSoundFile>("Reclaimer.Plugins.SoundExtractorPlugin.WriteSoundFile"));
         }
 
         public override IEnumerable<PluginMenuItem> GetMenuItems()
@@ -200,6 +205,14 @@ namespace Reclaimer.Plugins
                             counter.Extracted++;
                         }
                         break;
+
+                    case "snd!":
+                        if (writeSoundFileFunc.Value != null)
+                        {
+                            SaveSound(tag);
+                            counter.Extracted++;
+                        }
+                        break;
                 }
             }
             catch (Exception e)
@@ -309,6 +322,7 @@ namespace Reclaimer.Plugins
         }
         #endregion
 
+        #region Models
         private void SaveModel(IIndexItem tag)
         {
             IRenderGeometry geometry;
@@ -354,6 +368,40 @@ namespace Reclaimer.Plugins
             var fileName = MakePath(geometry.Class, geometry.Name, baseDir);
             writeModelFileFunc.Value?.Invoke(geometry.ReadGeometry(0), fileName, Settings.ModelFormat);
         }
+        #endregion
+
+        #region Sounds
+        private void SaveSound(IIndexItem tag)
+        {
+            ISoundContainer container;
+            switch (tag.CacheFile.CacheType)
+            {
+                case CacheType.Halo3Beta:
+                case CacheType.Halo3Retail:
+                case CacheType.Halo3ODST:
+                    container = tag.ReadMetadata<Adjutant.Blam.Halo3.sound>();
+                    break;
+
+                case CacheType.HaloReachBeta:
+                case CacheType.HaloReachRetail:
+                    container = tag.ReadMetadata<Adjutant.Blam.HaloReach.sound>();
+                    break;
+
+                default: return;
+            }
+
+            SaveSound(container, Settings.DataFolder);
+
+            LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
+        }
+
+        [SharedFunction]
+        private void SaveSound(ISoundContainer sound, string baseDir)
+        {
+            var dir = Path.GetDirectoryName(MakePath(sound.Class, sound.Name, baseDir));
+            writeSoundFileFunc.Value?.Invoke(sound.ReadData(), dir);
+        } 
+        #endregion
 
         private string MakePath(string tagClass, string tagPath, string baseDirectory)
         {
