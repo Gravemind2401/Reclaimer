@@ -28,10 +28,13 @@ namespace Reclaimer.Plugins
         private bool isBusy;
         private CancellationTokenSource tokenSource;
 
+        private delegate string GetModelExtension(string formatId);
+        private Lazy<GetModelExtension> getModelExtensionFunc;
+
         private delegate void WriteModelFile(IGeometryModel model, string fileName, string formatId);
         private Lazy<WriteModelFile> writeModelFileFunc;
 
-        private delegate void WriteSoundFile(GameSound sound, string directory);
+        private delegate bool WriteSoundFile(GameSound sound, string directory, bool overwrite);
         private Lazy<WriteSoundFile> writeSoundFileFunc;
 
         public override string Name => "Batch Extractor";
@@ -57,6 +60,7 @@ namespace Reclaimer.Plugins
         {
             Settings = LoadSettings<BatchExtractSettings>();
             Settings.DataFolder = Settings.DataFolder.PatternReplace(":plugins:", Substrate.PluginsDirectory);
+            getModelExtensionFunc = new Lazy<GetModelExtension>(() => Substrate.GetSharedFunction<GetModelExtension>("Reclaimer.Plugins.ModelViewerPlugin.GetFormatExtension"));
             writeModelFileFunc = new Lazy<WriteModelFile>(() => Substrate.GetSharedFunction<WriteModelFile>("Reclaimer.Plugins.ModelViewerPlugin.WriteModelFile"));
             writeSoundFileFunc = new Lazy<WriteSoundFile>(() => Substrate.GetSharedFunction<WriteSoundFile>("Reclaimer.Plugins.SoundExtractorPlugin.WriteSoundFile"));
         }
@@ -192,8 +196,8 @@ namespace Reclaimer.Plugins
                 switch (tag.ClassCode)
                 {
                     case "bitm":
-                        SaveImage(tag);
-                        counter.Extracted++;
+                        if (SaveImage(tag))
+                            counter.Extracted++;
                         break;
 
                     case "mode":
@@ -201,16 +205,16 @@ namespace Reclaimer.Plugins
                     case "sbsp":
                         if (writeModelFileFunc.Value != null)
                         {
-                            SaveModel(tag);
-                            counter.Extracted++;
+                            if (SaveModel(tag))
+                                counter.Extracted++;
                         }
                         break;
 
                     case "snd!":
                         if (writeSoundFileFunc.Value != null)
                         {
-                            SaveSound(tag);
-                            counter.Extracted++;
+                            if (SaveSound(tag))
+                                counter.Extracted++;
                         }
                         break;
                 }
@@ -223,7 +227,7 @@ namespace Reclaimer.Plugins
         }
 
         #region Images
-        private void SaveImage(IIndexItem tag)
+        private bool SaveImage(IIndexItem tag)
         {
             IBitmap bitmap;
             switch (tag.CacheFile.CacheType)
@@ -254,20 +258,24 @@ namespace Reclaimer.Plugins
                     bitmap = tag.ReadMetadata<Adjutant.Blam.Halo4.bitmap>();
                     break;
 
-                default: return;
+                default: return false;
             }
 
-            SaveImage(bitmap, Settings.DataFolder);
+            if (SaveImage(bitmap, Settings.DataFolder))
+            {
+                LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
+                return true;
+            }
 
-            LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
+            return false;
         }
 
         [SharedFunction]
-        private void SaveImage(IBitmap bitmap, string baseDir)
+        private bool SaveImage(IBitmap bitmap, string baseDir)
         {
+            var extracted = 0;
             for (int i = 0; i < bitmap.SubmapCount; i++)
             {
-                var dds = bitmap.ToDds(i);
                 var fileName = MakePath(bitmap.Class, bitmap.Name, baseDir);
                 var ext = "." + Settings.BitmapFormat.ToString().ToLower();
 
@@ -276,54 +284,75 @@ namespace Reclaimer.Plugins
 
                 if (Settings.BitmapFormat == BitmapFormat.DDS)
                 {
-                    dds.WriteToDisk(fileName + ext);
+                    if (Settings.OverwriteExisting || !File.Exists(fileName + ext))
+                    {
+                        bitmap.ToDds(i).WriteToDisk(fileName + ext);
+                        extracted++;
+                    }
                     continue;
                 }
 
+                var outputs = new List<Tuple<string, DecompressOptions>>();
+
                 var format = Settings.BitmapFormat == BitmapFormat.PNG ? ImageFormat.Png : ImageFormat.Tiff;
                 if (Settings.BitmapMode == BitmapMode.Default)
-                    dds.WriteToDisk(fileName + ext, format);
+                    outputs.Add(Tuple.Create(fileName + ext, DecompressOptions.Default));
                 else if (Settings.BitmapMode == BitmapMode.Bgr24)
-                    dds.WriteToDisk(fileName + ext, format, DecompressOptions.Bgr24);
+                    outputs.Add(Tuple.Create(fileName + ext, DecompressOptions.Bgr24));
                 else if (Settings.BitmapMode == BitmapMode.IsolateAlpha)
-                    WriteImageIsolateAlpha(dds, fileName, ext, format, bitmap.CubeLayout);
+                    outputs.AddRange(GetParamsIsolateAlpha(fileName, ext));
                 else if (Settings.BitmapMode == BitmapMode.IsolateAll)
-                    WriteImageIsolateAll(dds, fileName, ext, format, bitmap.CubeLayout);
+                    outputs.AddRange(GetParamsIsolateAll(fileName, ext));
                 else if (Settings.BitmapMode == BitmapMode.MixedIsolate)
-                    WriteImageMixedIsolate(dds, fileName, ext, format, bitmap.CubeLayout);
+                    outputs.AddRange(GetParamsMixedIsolate(fileName, ext));
+
+                DdsImage dds = null;
+                foreach (var param in outputs)
+                {
+                    if (!Settings.OverwriteExisting && File.Exists(param.Item1))
+                        continue;
+
+                    if (dds == null)
+                        dds = bitmap.ToDds(i);
+
+                    dds.WriteToDisk(param.Item1, format, param.Item2, bitmap.CubeLayout);
+                    extracted++;
+                }
             }
+
+            return extracted > 0;
         }
 
-        private void WriteImageIsolateAlpha(DdsImage image, string fileName, string extension, ImageFormat format, CubemapLayout layout)
+        private IEnumerable<Tuple<string, DecompressOptions>> GetParamsIsolateAlpha(string fileName, string extension)
         {
-            image.WriteToDisk($"{fileName}_hue{extension}", format, DecompressOptions.Bgr24);
-            image.WriteToDisk($"{fileName}_alpha{extension}", format, DecompressOptions.Bgr24 | DecompressOptions.AlphaChannelOnly);
+            yield return Tuple.Create($"{fileName}_hue{extension}", DecompressOptions.Bgr24);
+            yield return Tuple.Create($"{fileName}_alpha{extension}", DecompressOptions.Bgr24 | DecompressOptions.AlphaChannelOnly);
         }
 
-        private void WriteImageIsolateAll(DdsImage image, string fileName, string extension, ImageFormat format, CubemapLayout layout)
+        private IEnumerable<Tuple<string, DecompressOptions>> GetParamsIsolateAll(string fileName, string extension)
         {
-            var options = DecompressOptions.Bgr24;
-            image.WriteToDisk($"{fileName}_blue{extension}", format, options | DecompressOptions.BlueChannelOnly);
-            image.WriteToDisk($"{fileName}_green{extension}", format, options | DecompressOptions.GreenChannelOnly);
-            image.WriteToDisk($"{fileName}_red{extension}", format, options | DecompressOptions.RedChannelOnly);
-            image.WriteToDisk($"{fileName}_alpha{extension}", format, options | DecompressOptions.AlphaChannelOnly);
+            var bgr24 = DecompressOptions.Bgr24;
+            yield return Tuple.Create($"{fileName}_blue{extension}", bgr24 | DecompressOptions.BlueChannelOnly);
+            yield return Tuple.Create($"{fileName}_green{extension}", bgr24 | DecompressOptions.GreenChannelOnly);
+            yield return Tuple.Create($"{fileName}_red{extension}", bgr24 | DecompressOptions.RedChannelOnly);
+            yield return Tuple.Create($"{fileName}_alpha{extension}", bgr24 | DecompressOptions.AlphaChannelOnly);
         }
 
         private static readonly string[] shouldIsolate = new[] { "([_ ]multi)$", "([_ ]multipurpose)$", "([_ ]cc)$" };
-        private void WriteImageMixedIsolate(DdsImage image, string fileName, string extension, ImageFormat format, CubemapLayout layout)
+        private IEnumerable<Tuple<string, DecompressOptions>> GetParamsMixedIsolate(string fileName, string extension)
         {
             var imageName = fileName.Split('\\').Last();
             if (imageName.EndsWith("]"))
                 imageName = imageName.Substring(0, imageName.LastIndexOf('['));
 
             if (shouldIsolate.Any(s => Regex.IsMatch(imageName, s, RegexOptions.IgnoreCase)))
-                WriteImageIsolateAll(image, fileName, extension, format, layout);
-            else WriteImageIsolateAlpha(image, fileName, extension, format, layout);
+                return GetParamsIsolateAll(fileName, extension);
+            else return GetParamsIsolateAlpha(fileName, extension);
         }
         #endregion
 
         #region Models
-        private void SaveModel(IIndexItem tag)
+        private bool SaveModel(IIndexItem tag)
         {
             IRenderGeometry geometry;
             switch (tag.CacheFile.CacheType)
@@ -354,24 +383,34 @@ namespace Reclaimer.Plugins
                     geometry = tag.ClassCode == "sbsp" ? (IRenderGeometry)tag.ReadMetadata<Adjutant.Blam.Halo4.scenario_structure_bsp>() : tag.ReadMetadata<Adjutant.Blam.Halo4.render_model>();
                     break;
 
-                default: return;
+                default: return false;
             }
 
-            SaveModel(geometry, Settings.DataFolder);
+            if (SaveModel(geometry, Settings.DataFolder))
+            {
+                LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
+                return true;
+            }
 
-            LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
+            return false;
         }
 
         [SharedFunction]
-        private void SaveModel(IRenderGeometry geometry, string baseDir)
+        private bool SaveModel(IRenderGeometry geometry, string baseDir)
         {
             var fileName = MakePath(geometry.Class, geometry.Name, baseDir);
+            var ext = getModelExtensionFunc?.Value(Settings.ModelFormat);
+
+            if (!Settings.OverwriteExisting && File.Exists($"{fileName}.{ext}"))
+                return false;
+
             writeModelFileFunc.Value?.Invoke(geometry.ReadGeometry(0), fileName, Settings.ModelFormat);
+            return true;
         }
         #endregion
 
         #region Sounds
-        private void SaveSound(IIndexItem tag)
+        private bool SaveSound(IIndexItem tag)
         {
             ISoundContainer container;
             switch (tag.CacheFile.CacheType)
@@ -387,20 +426,24 @@ namespace Reclaimer.Plugins
                     container = tag.ReadMetadata<Adjutant.Blam.HaloReach.sound>();
                     break;
 
-                default: return;
+                default: return false;
             }
 
-            SaveSound(container, Settings.DataFolder);
+            if (SaveSound(container, Settings.DataFolder))
+            {
+                LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
+                return true;
+            }
 
-            LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
+            return false;
         }
 
         [SharedFunction]
-        private void SaveSound(ISoundContainer sound, string baseDir)
+        private bool SaveSound(ISoundContainer sound, string baseDir)
         {
             var dir = Path.GetDirectoryName(MakePath(sound.Class, sound.Name, baseDir));
-            writeSoundFileFunc.Value?.Invoke(sound.ReadData(), dir);
-        } 
+            return writeSoundFileFunc.Value?.Invoke(sound.ReadData(), dir, Settings.OverwriteExisting) ?? false;
+        }
         #endregion
 
         private string MakePath(string tagClass, string tagPath, string baseDirectory)

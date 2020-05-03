@@ -30,13 +30,18 @@ namespace Reclaimer.Plugins
         }
 
         [SharedFunction]
-        public static void WriteSoundFile(GameSound sound, string directory)
+        public static bool WriteSoundFile(GameSound sound, string directory, bool overwrite)
         {
+            var extracted = 0;
+
             var ext = "." + Settings.OutputExtension;
             for (int i = 0; i < sound.Permutations.Count; i++)
             {
                 var permutation = sound.Permutations[i];
                 var targetFile = Path.Combine(directory, string.Format(Settings.OutputNameFormat, sound.Name, permutation.Name, i) + ext);
+
+                if (!overwrite && File.Exists(targetFile))
+                    continue;
 
                 var process = new Process
                 {
@@ -59,7 +64,10 @@ namespace Reclaimer.Plugins
                 SoundUtils.WriteRiffData(inputStream, sound.FormatHeader, permutation.SoundData);
 
                 process.WaitForExit();
+                extracted++;
             }
+
+            return extracted > 0;
         }
 
         private class SoundExtractorSettings
