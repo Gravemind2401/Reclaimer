@@ -231,6 +231,16 @@ namespace Reclaimer.Plugins
                     bitmap = tag.ReadMetadata<Adjutant.Blam.Halo3.bitmap>();
                     break;
 
+                case CacheType.HaloReachBeta:
+                case CacheType.HaloReachRetail:
+                    bitmap = tag.ReadMetadata<Adjutant.Blam.HaloReach.bitmap>();
+                    break;
+
+                case CacheType.Halo4Beta:
+                case CacheType.Halo4Retail:
+                    bitmap = tag.ReadMetadata<Adjutant.Blam.Halo4.bitmap>();
+                    break;
+
                 default: return;
             }
 
@@ -318,6 +328,16 @@ namespace Reclaimer.Plugins
                 case CacheType.Halo3Retail:
                 case CacheType.Halo3ODST:
                     geometry = tag.ClassCode == "sbsp" ? (IRenderGeometry)tag.ReadMetadata<Adjutant.Blam.Halo3.scenario_structure_bsp>() : tag.ReadMetadata<Adjutant.Blam.Halo3.render_model>();
+                    break;
+
+                case CacheType.HaloReachBeta:
+                case CacheType.HaloReachRetail:
+                    geometry = tag.ClassCode == "sbsp" ? (IRenderGeometry)tag.ReadMetadata<Adjutant.Blam.HaloReach.scenario_structure_bsp>() : tag.ReadMetadata<Adjutant.Blam.HaloReach.render_model>();
+                    break;
+
+                case CacheType.Halo4Beta:
+                case CacheType.Halo4Retail:
+                    geometry = tag.ClassCode == "sbsp" ? (IRenderGeometry)tag.ReadMetadata<Adjutant.Blam.Halo4.scenario_structure_bsp>() : tag.ReadMetadata<Adjutant.Blam.Halo4.render_model>();
                     break;
 
                 default: return;
