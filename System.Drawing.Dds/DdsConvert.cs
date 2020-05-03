@@ -76,18 +76,40 @@ namespace System.Drawing.Dds
         /// <param name="format">The image format to write with.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="NotSupportedException" />
-        public void WriteToDisk(string fileName, ImageFormat format) => WriteToDisk(fileName, format, DecompressOptions.Default);
+        public void WriteToDisk(string fileName, ImageFormat format) => WriteToDisk(fileName, format, DecompressOptions.Default, CubemapLayout.NonCubemap);
 
         /// <summary>
-        /// Decompresses any compressed pixel data and saves the image to a file on disk using a standard image format,
-        /// optionally unwrapping cubemap images.
+        /// Decompresses any compressed pixel data and saves the image to a file on disk using a standard image format
+        /// using the specified decompression options and a non-cubemap layout.
         /// </summary>
         /// <param name="fileName">The full path of the file to write.</param>
         /// <param name="format">The image format to write with.</param>
-        /// <param name="unwrapCubemap">True to unwrap a cubemap. False to output each tile horizontally.</param>
+        /// <param name="options">Options to use when decompressing the image.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="NotSupportedException" />
-        public void WriteToDisk(string fileName, ImageFormat format, DecompressOptions options)
+        public void WriteToDisk(string fileName, ImageFormat format, DecompressOptions options) => WriteToDisk(fileName, format, options, CubemapLayout.NonCubemap);
+
+        /// <summary>
+        /// Decompresses any compressed pixel data and saves the image to a file on disk using a standard image format
+        /// using the default decompression options the specified cubemap layout.
+        /// </summary>
+        /// <param name="fileName">The full path of the file to write.</param>
+        /// <param name="format">The image format to write with.</param>
+        /// <param name="layout">The layout of the cubemap. Has no effect if the DDS cubemap flags are not set.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="NotSupportedException" />
+        public void WriteToDisk(string fileName, ImageFormat format, CubemapLayout layout) => WriteToDisk(fileName, format, DecompressOptions.Default, layout);
+
+        /// <summary>
+        /// Decompresses any compressed pixel data and saves the image to a file on disk using a standard image format.
+        /// </summary>
+        /// <param name="fileName">The full path of the file to write.</param>
+        /// <param name="format">The image format to write with.</param>
+        /// <param name="options">Options to use when decompressing the image.</param>
+        /// <param name="layout">The layout of the cubemap. Has no effect if the DDS cubemap flags are not set.</param>
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="NotSupportedException" />
+        public void WriteToDisk(string fileName, ImageFormat format, DecompressOptions options, CubemapLayout layout)
         {
             if (fileName == null)
                 throw new ArgumentNullException(nameof(fileName));
@@ -101,7 +123,7 @@ namespace System.Drawing.Dds
                 Directory.CreateDirectory(dir);
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-                WriteToStream(fs, format, options);
+                WriteToStream(fs, format, options, layout);
         }
         #endregion
 
