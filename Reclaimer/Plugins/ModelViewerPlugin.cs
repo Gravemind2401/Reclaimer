@@ -152,7 +152,7 @@ namespace Reclaimer.Plugins
 
         public static Assimp.Vector3D ToAssimpUV(this IXMVector v)
         {
-            return new Assimp.Vector3D(v.X, 1f - v.Y, v.Z);
+            return new Assimp.Vector3D(v.X, 1f - v.Y, 0f);
         }
 
         public static Assimp.Matrix4x4 ToAssimp4x4(this System.Numerics.Matrix4x4 m) => m.ToAssimp4x4(1f);
@@ -207,17 +207,21 @@ namespace Reclaimer.Plugins
         {
             const int scale = 100;
 
+            //either Assimp or collada has issues when there is a name conflict
+            const string bonePrefix = "~";
+            const string geomPrefix = "-";
+
             var scene = new Assimp.Scene();
             scene.RootNode = new Assimp.Node(model.Name);
 
-            //Assimp is Y-up in meters by default - this forces it to export as Z-up in inches
+            //Assimp is Y-up in inches by default - this forces it to export as Z-up in meters
             scene.RootNode.Transform = (CoordinateSystem.HaloCEX * 0.0254f).ToAssimp4x4();
 
             #region Nodes
             var allNodes = new List<Assimp.Node>();
             foreach (var node in model.Nodes)
             {
-                var result = new Assimp.Node(node.Name);
+                var result = new Assimp.Node($"{bonePrefix}{node.Name}");
 
                 var q = new System.Numerics.Quaternion(node.Rotation.X, node.Rotation.Y, node.Rotation.Z, node.Rotation.W);
                 var mat = System.Numerics.Matrix4x4.CreateFromQuaternion(q);
@@ -345,14 +349,14 @@ namespace Reclaimer.Plugins
             #region Regions
             foreach (var reg in model.Regions)
             {
-                var regNode = new Assimp.Node(reg.Name);
+                var regNode = new Assimp.Node($"{geomPrefix}{reg.Name}");
                 foreach (var perm in reg.Permutations)
                 {
                     var meshStart = meshLookup[perm.MeshIndex];
                     if (meshStart < 0)
                         continue;
 
-                    var permNode = new Assimp.Node(perm.Name);
+                    var permNode = new Assimp.Node($"{geomPrefix}{perm.Name}");
                     if (perm.TransformScale != 1 || !perm.Transform.IsIdentity)
                         permNode.Transform = Assimp.Matrix4x4.FromScaling(new Assimp.Vector3D(perm.TransformScale)) * perm.Transform.ToAssimp4x4(scale);
 
