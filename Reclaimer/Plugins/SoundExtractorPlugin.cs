@@ -21,7 +21,10 @@ namespace Reclaimer.Plugins
             Settings = LoadSettings<SoundExtractorSettings>();
 
             if (!File.Exists(Settings.FFmpegPath))
+            {
+                SaveSettings(Settings);
                 throw new FileNotFoundException("FFmpeg is required for sound extraction but was not found.");
+            }
         }
 
         public override void Suspend()

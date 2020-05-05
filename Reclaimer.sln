@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Studio", "..\Studio\Studio\
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Reclaimer.Setup", "Reclaimer.Setup\Reclaimer.Setup.vdproj", "{00227FE4-8DDA-411F-BFD5-297B94C92C28}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.IO.Endian", "..\System.IO.Endian\System.IO.Endian\System.IO.Endian.csproj", "{06A312C3-C3EC-447D-B7B7-F50E47A886D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{5F4C3814-8097-4869-B5E2-4C21EF45CEB2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{00227FE4-8DDA-411F-BFD5-297B94C92C28}.Debug|Any CPU.ActiveCfg = Debug
 		{00227FE4-8DDA-411F-BFD5-297B94C92C28}.Release|Any CPU.ActiveCfg = Release
+		{06A312C3-C3EC-447D-B7B7-F50E47A886D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06A312C3-C3EC-447D-B7B7-F50E47A886D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06A312C3-C3EC-447D-B7B7-F50E47A886D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06A312C3-C3EC-447D-B7B7-F50E47A886D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
