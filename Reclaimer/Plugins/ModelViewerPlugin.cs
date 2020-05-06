@@ -325,7 +325,7 @@ namespace Reclaimer.Plugins
 
                                 b = new Assimp.Bone
                                 {
-                                    Name = model.Nodes[val.Item1].Name,
+                                    Name = bonePrefix + model.Nodes[val.Item1].Name,
                                     OffsetMatrix = t.ToAssimp4x4()
                                 };
 
