@@ -1,8 +1,5 @@
-﻿using Adjutant.Blam.Common;
-using Adjutant.Geometry;
+﻿using Adjutant.Geometry;
 using Adjutant.Utilities;
-using Reclaimer.Utilities;
-using Reclaimer.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,11 +122,13 @@ namespace Reclaimer.Plugins
     {
         public string DefaultSaveFormat { get; set; }
         public string MaterialExtension { get; set; }
+        public float AssimpScale { get; set; }
 
         public ModelViewerSettings()
         {
             DefaultSaveFormat = "amf";
             MaterialExtension = "tif";
+            AssimpScale = 0.0254f;
         }
     }
 
@@ -215,7 +214,7 @@ namespace Reclaimer.Plugins
             scene.RootNode = new Assimp.Node(model.Name);
 
             //Assimp is Y-up in inches by default - this forces it to export as Z-up in meters
-            scene.RootNode.Transform = (CoordinateSystem.HaloCEX * 0.0254f).ToAssimp4x4();
+            scene.RootNode.Transform = (CoordinateSystem.HaloCEX * ModelViewerPlugin.Settings.AssimpScale).ToAssimp4x4();
 
             #region Nodes
             var allNodes = new List<Assimp.Node>();
