@@ -79,6 +79,7 @@ namespace Reclaimer.Controls
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             Substrate.Log += Substrate_Log;
+            Substrate.EmptyLog += Substrate_EmptyLog;
             txtOutput.CaretIndex = txtOutput.Text.Length;
             txtOutput.ScrollToEnd();
         }
@@ -86,6 +87,7 @@ namespace Reclaimer.Controls
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
             Substrate.Log -= Substrate_Log;
+            Substrate.EmptyLog -= Substrate_EmptyLog;
         }
 
         private void cmbPlugins_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -109,7 +111,13 @@ namespace Reclaimer.Controls
 
         private void btnClearAll_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var p in Substrate.AllPlugins)
+            var key = cmbPlugins.SelectedValue as string;
+
+            var selection = key == string.Empty
+                ? Substrate.AllPlugins
+                : new[] { Substrate.GetPlugin(key) };
+
+            foreach (var p in selection)
                 p.ClearLog();
 
             cmbPlugins_SelectionChanged(null, null);
@@ -130,6 +138,23 @@ namespace Reclaimer.Controls
 
                     if (txtOutput.CaretIndex == txtOutput.Text.Length)
                         txtOutput.ScrollToEnd();
+                });
+            }
+            catch (TaskCanceledException) { }
+        }
+
+        private async void Substrate_EmptyLog(object sender, LogEventArgs e)
+        {
+            try
+            {
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    var key = cmbPlugins.SelectedValue as string;
+
+                    if (key != string.Empty && key != e.Source.Key)
+                        return;
+
+                    cmbPlugins_SelectionChanged(null, null);
                 });
             }
             catch (TaskCanceledException) { }

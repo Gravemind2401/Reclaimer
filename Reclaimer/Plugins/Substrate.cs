@@ -41,6 +41,7 @@ namespace Reclaimer.Plugins
         }
 
         internal static event EventHandler<LogEventArgs> Log;
+        internal static event EventHandler<LogEventArgs> EmptyLog;
 
         internal static Dictionary<string, string> DefaultHandlers { get; set; }
 
@@ -142,6 +143,8 @@ namespace Reclaimer.Plugins
         internal static void LogError(string message, Exception e) => defaultPlugin.LogError(message, e);
 
         internal static void LogOutput(Plugin source, LogEntry entry) => Log?.Invoke(source, new LogEventArgs(source, entry));
+
+        internal static void ClearLogOutput(Plugin source) => EmptyLog?.Invoke(source, new LogEventArgs(source, default(LogEntry)));
 
         internal static Plugin GetDefaultHandler(OpenFileArgs args)
         {

@@ -224,6 +224,7 @@ namespace Reclaimer.Plugins
         protected internal void ClearLog()
         {
             logEntries.Clear();
+            Substrate.ClearLogOutput(this);
         }
     }
 
