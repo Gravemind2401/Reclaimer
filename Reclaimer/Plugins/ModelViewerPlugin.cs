@@ -95,9 +95,11 @@ namespace Reclaimer.Plugins
                 model.WriteJMS(fileName);
             else
             {
-                var context = new Assimp.AssimpContext();
-                var scene = model.CreateAssimpScene(context);
-                context.ExportFile(scene, fileName, formatId);
+                using (var context = new Assimp.AssimpContext())
+                {
+                    var scene = model.CreateAssimpScene(context);
+                    context.ExportFile(scene, fileName, formatId);
+                }
             }
         }
 

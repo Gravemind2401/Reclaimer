@@ -15,15 +15,17 @@ namespace Reclaimer.Plugins
         public override string Name => "Sound Extractor";
 
         private static SoundExtractorSettings Settings;
+        private static SoundExtractorPlugin Instance;
 
         public override void Initialise()
         {
+            Instance = this;
             Settings = LoadSettings<SoundExtractorSettings>();
 
-            if (!File.Exists(Settings.FFmpegPath))
+            if (!Settings.NoConversion && !File.Exists(Settings.FFmpegPath))
             {
                 SaveSettings(Settings);
-                throw new FileNotFoundException("FFmpeg is required for sound extraction but was not found.");
+                throw new FileNotFoundException("FFmpeg is required for sound conversion but was not found.");
             }
         }
 
@@ -46,31 +48,51 @@ namespace Reclaimer.Plugins
                 if (!overwrite && File.Exists(targetFile))
                     continue;
 
-                var process = new Process
+                if (Settings.NoConversion)
                 {
-                    StartInfo =
+                    using (var fs = new FileStream(targetFile, FileMode.Create, FileAccess.Write))
+                        SoundUtils.WriteRiffData(fs, sound.FormatHeader, permutation.SoundData);
+                }
+                else
+                {
+                    var process = new Process
                     {
-                        FileName = Settings.FFmpegPath,
-                        Arguments = $"-y -i - {targetFile}",
-                        UseShellExecute = false,
-                        CreateNoWindow = true,
-                        RedirectStandardInput = true,
-                        RedirectStandardError = true
-                    },
-                    EnableRaisingEvents = true
-                };
+                        StartInfo =
+                        {
+                            FileName = Settings.FFmpegPath,
+                            Arguments = $"-y -i - {targetFile}",
+                            UseShellExecute = false,
+                            CreateNoWindow = true,
+                            RedirectStandardInput = true,
+                            RedirectStandardError = true
+                        },
+                        EnableRaisingEvents = true
+                    };
 
-                process.Start();
-                process.BeginErrorReadLine();
+                    if (Settings.LogFFmpegOutput)
+                    {
+                        Instance.ClearLog();
+                        process.ErrorDataReceived += Process_ErrorDataReceived;
+                    }
 
-                var inputStream = process.StandardInput.BaseStream;
-                SoundUtils.WriteRiffData(inputStream, sound.FormatHeader, permutation.SoundData);
+                    process.Start();
+                    process.BeginErrorReadLine();
 
-                process.WaitForExit();
+                    var inputStream = process.StandardInput.BaseStream;
+                    SoundUtils.WriteRiffData(inputStream, sound.FormatHeader, permutation.SoundData);
+
+                    process.WaitForExit();
+                }
+
                 extracted++;
             }
 
             return extracted > 0;
+        }
+
+        private static void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            Instance.LogOutput(e.Data);
         }
 
         private class SoundExtractorSettings
@@ -78,6 +100,9 @@ namespace Reclaimer.Plugins
             public string FFmpegPath { get; set; }
             public string OutputExtension { get; set; }
             public string OutputNameFormat { get; set; }
+            public bool LogFFmpegOutput { get; set; }
+
+            internal bool NoConversion => OutputExtension.Equals("xma", StringComparison.OrdinalIgnoreCase);
 
             public SoundExtractorSettings()
             {
@@ -85,6 +110,7 @@ namespace Reclaimer.Plugins
                 FFmpegPath = Path.Combine(".", relative, "ffmpeg", "ffmpeg.exe");
                 OutputExtension = "wav";
                 OutputNameFormat = "{0}[{1}]";
+                LogFFmpegOutput = false;
             }
         }
     }
