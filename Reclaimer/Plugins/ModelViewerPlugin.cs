@@ -90,9 +90,9 @@ namespace Reclaimer.Plugins
                 fileName += ext;
 
             if (formatId == "amf")
-                model.WriteAMF(fileName);
+                model.WriteAMF(fileName, Settings.GeometryScale);
             else if (formatId == "jms")
-                model.WriteJMS(fileName);
+                model.WriteJMS(fileName, Settings.GeometryScale);
             else
             {
                 using (var context = new Assimp.AssimpContext())
@@ -124,12 +124,14 @@ namespace Reclaimer.Plugins
     {
         public string DefaultSaveFormat { get; set; }
         public string MaterialExtension { get; set; }
+        public float GeometryScale { get; set; }
         public float AssimpScale { get; set; }
 
         public ModelViewerSettings()
         {
             DefaultSaveFormat = "amf";
             MaterialExtension = "tif";
+            GeometryScale = 100f;
             AssimpScale = 0.0254f;
         }
     }
@@ -206,7 +208,7 @@ namespace Reclaimer.Plugins
 
         public static Assimp.Scene CreateAssimpScene(this IGeometryModel model, Assimp.AssimpContext context)
         {
-            const int scale = 100;
+            var scale = ModelViewerPlugin.Settings.GeometryScale;
 
             //either Assimp or collada has issues when there is a name conflict
             const string bonePrefix = "~";
