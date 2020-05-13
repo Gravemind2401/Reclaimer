@@ -61,7 +61,7 @@ namespace Adjutant.Blam.Halo1
 
             using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
             {
-                var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.HaloCE };
+                var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
 
                 var group = new GeometryMarkerGroup();
                 group.Markers.AddRange(Markers);

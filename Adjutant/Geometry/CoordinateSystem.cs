@@ -21,11 +21,6 @@ namespace Adjutant.Geometry
         public static Matrix4x4 Default => @default;
 
         /// <summary>
-        /// Returns the coordinate system of Halo 1 games.
-        /// </summary>
-        public static Matrix4x4 HaloCE => haloCE;
-
-        /// <summary>
         /// Returns the coordinate system of Halo CE Anniversary.
         /// </summary>
         public static Matrix4x4 HaloCEX => haloCEX;
@@ -36,8 +31,6 @@ namespace Adjutant.Geometry
         public static Matrix4x4 HaloWars => haloWars;
 
         private static readonly Matrix4x4 @default = Matrix4x4.Identity;
-
-        private static readonly Matrix4x4 haloCE = Matrix4x4.Identity * 100f;
 
         private static readonly Matrix4x4 haloCEX =
             new Matrix4x4(

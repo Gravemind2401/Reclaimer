@@ -190,12 +190,10 @@ namespace Adjutant.Geometry
             }
         }
 
-        public static void WriteAMF(this IGeometryModel model, string fileName)
+        public static void WriteAMF(this IGeometryModel model, string fileName, float scale)
         {
             if (!Directory.GetParent(fileName).Exists) Directory.GetParent(fileName).Create();
             if (!fileName.EndsWith(".amf", StringComparison.CurrentCultureIgnoreCase)) fileName += ".amf";
-
-            const int scale = 100;
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             using (var bw = new EndianWriter(fs, ByteOrder.LittleEndian))
@@ -654,9 +652,8 @@ namespace Adjutant.Geometry
             }
         }
 
-        public static void WriteJMS(this IGeometryModel model, string fileName)
+        public static void WriteJMS(this IGeometryModel model, string fileName, float scale)
         {
-            const float scale = 100f;
             const string float4 = "{0:F6}\t{1:F6}\t{2:F6}\t{3:F6}";
             const string float3 = "{0:F6}\t{1:F6}\t{2:F6}";
             const string float1 = "{0:F6}";
