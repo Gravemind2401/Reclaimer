@@ -117,6 +117,7 @@
     <Compile Include="Blam\Halo5\Module.cs" />
     <Compile Include="Blam\HaloReach\bitmap.cs" />
     <Compile Include="Blam\HaloReach\CacheFile.cs" />
+    <Compile Include="Blam\MccHaloReach\CacheFile.cs" />
     <Compile Include="Blam\HaloReach\cache_file_resource_gestalt.cs" />
     <Compile Include="Blam\HaloReach\cache_file_resource_layout_table.cs" />
     <Compile Include="Blam\HaloReach\HaloReachCommon.cs" />
@@ -132,6 +133,8 @@
     <Compile Include="Blam\HaloReach\sound.cs" />
     <Compile Include="Blam\HaloReach\sound_cache_file_gestalt.cs" />
     <Compile Include="Blam\HaloReach\TagAddressTranslator.cs" />
+    <Compile Include="Blam\MccHaloReach\HeaderAddressTranslator.cs" />
+    <Compile Include="Blam\MccHaloReach\TagAddressTranslator.cs" />
     <Compile Include="Geometry\CoordinateSystem.cs" />
     <Compile Include="Geometry\Enums.cs" />
     <Compile Include="Geometry\Extensions.cs" />
@@ -198,6 +201,7 @@
     <Compile Include="Utilities\Interfaces.cs" />
     <Compile Include="Utilities\MurMur3.cs" />
     <Compile Include="Blam\Common\StringId.cs" />
+    <Compile Include="Utilities\Pointer64.cs" />
     <Compile Include="Utilities\SoundUtils.cs" />
     <Compile Include="Utilities\TextureUtils.cs" />
     <Compile Include="Utilities\Utils.cs" />

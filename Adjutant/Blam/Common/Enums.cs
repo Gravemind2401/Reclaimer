@@ -100,7 +100,13 @@ namespace Adjutant.Blam.Common
         [BuildString("21522.13.10.17.1936.main")] //TU08
         Halo4Retail,
 
-        Halo5Forge
+        [CacheGeneration(4)]
+        [BuildString("Jun 24 2019 00:36:03")] //flight 1
+        [BuildString("Jul 30 2019 14:17:16")] //flight 2
+        [BuildString("Oct 24 2019 15:56:32")] //release
+        [BuildString("Jan 30 2020 16:55:25")] //update 1
+        [BuildString("Mar 24 2020 12:10:36")] //update 2
+        MccHaloReach
     }
 
     public enum Language

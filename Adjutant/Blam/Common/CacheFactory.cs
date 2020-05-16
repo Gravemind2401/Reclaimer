@@ -105,6 +105,9 @@ namespace Adjutant.Blam.Common
                 case CacheType.Halo4Retail:
                     return new Halo4.CacheFile(fileName);
 
+                case CacheType.MccHaloReach:
+                    return new MccHaloReach.CacheFile(fileName);
+
                 default: throw Exceptions.NotAValidMapFile(fileName);
             }
         }
@@ -139,12 +142,18 @@ namespace Adjutant.Blam.Common
                     else if (version == -1) buildAddress = 300; //Halo2 Vista
                     else throw Exceptions.NotAValidMapFile(fileName);
                 }
+                else if (reader.ByteOrder == ByteOrder.LittleEndian)
+                    buildAddress = 288;
                 else buildAddress = 284;
 
                 reader.Seek(buildAddress, SeekOrigin.Begin);
                 var buildString = reader.ReadNullTerminatedString(32);
+                System.Diagnostics.Debug.WriteLine($"Found build string {buildString ?? "\\0"}");
 
-                return GetCacheTypeByBuild(buildString);
+                var cacheType = GetCacheTypeByBuild(buildString);
+                System.Diagnostics.Debug.WriteLine($"Resolved CacheType {cacheType}");
+
+                return cacheType;
             }
         }
 
