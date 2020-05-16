@@ -83,6 +83,8 @@ namespace System.IO.Endian
         {
             var typeOrder = Utils.GetAttributeForVersion<ByteOrderAttribute>(TypeArg, version);
 
+            EmitDebugOutput(il, $"[Read type '{TypeArg.Name}' [v{version?.ToString() ?? "NULL"}]]");
+
             var begin = il.DeclareLocal(typeof(long));
             il.Emit(OpCodes.Ldarg_0); //reader
             il.Emit(OpCodes.Callvirt, typeof(EndianReader).GetProperty(nameof(EndianReader.BaseStream)).GetGetMethod());
@@ -94,6 +96,8 @@ namespace System.IO.Endian
             {
                 var offset = Utils.GetAttributeForVersion<OffsetAttribute>(prop, version);
                 if (offset == null) continue;
+
+                EmitDebugOutput(il, $"[Read property '{prop.Name}']");
 
                 EmitSeek(il, begin, offset.Offset);
 
@@ -115,7 +119,7 @@ namespace System.IO.Endian
                 if (storeType.Equals(typeof(string)))
                     EmitStringRead(il, prop, propOrder?.ByteOrder ?? typeOrder?.ByteOrder);
                 else if (storeType.IsPrimitive || storeType.Equals(typeof(Guid)))
-                    EmitPrimitiveRead(il, storeType, propOrder?.ByteOrder ?? typeOrder?.ByteOrder);
+                    EmitPrimitiveRead(il, prop, storeType, propOrder?.ByteOrder ?? typeOrder?.ByteOrder);
                 else
                 {
                     var method = (from m in typeof(EndianReader).GetMethods()
@@ -125,6 +129,8 @@ namespace System.IO.Endian
                                   where (version.HasValue && p.Length == 1 && p[0].ParameterType == typeof(double))
                                   || (!version.HasValue && p.Length == 0)
                                   select m).Single().MakeGenericMethod(prop.PropertyType);
+
+                    EmitDebugOutput(il, prop, method);
 
                     il.Emit(OpCodes.Ldarg_0); //reader
                     if (version.HasValue)
@@ -212,8 +218,22 @@ namespace System.IO.Endian
             il.Emit(OpCodes.Call, typeof(Type).GetMethod(nameof(Type.GetTypeFromHandle), new[] { typeof(RuntimeTypeHandle) }));
         }
 
+        private static void EmitDebugOutput(ILGenerator il, long offset) => EmitDebugOutput(il, $"Stream.Position = localOrigin + {offset}");
+
+        private static void EmitDebugOutput(ILGenerator il, PropertyInfo prop, MethodInfo method) => EmitDebugOutput(il, $"{prop.DeclaringType.Name}.{prop.Name} = {method.Name}()");
+
+        private static void EmitDebugOutput(ILGenerator il, string output)
+        {
+            if (!Debugger.IsAttached)
+                return;
+
+            il.Emit(OpCodes.Ldstr, output);
+            il.Emit(OpCodes.Call, typeof(Debug).GetMethod(nameof(Debug.WriteLine), new[] { typeof(string) }));
+        }
+
         private static void EmitSeek(ILGenerator il, LocalBuilder begin, long offset)
         {
+            EmitDebugOutput(il, offset);
             il.Emit(OpCodes.Ldarg_0); //reader
             il.Emit(OpCodes.Callvirt, typeof(EndianReader).GetProperty(nameof(EndianReader.BaseStream)).GetGetMethod());
             il.Emit(OpCodes.Ldloc_S, begin);
@@ -243,9 +263,15 @@ namespace System.IO.Endian
             il.Emit(OpCodes.Ldarg_0); //reader
 
             MethodInfo method = null;
+            Action<MethodInfo> SetMethod = (value) =>
+            {
+                method = value;
+                EmitDebugOutput(il, prop, method);
+            };
+
             if (lenPrefixed != null)
             {
-                method = typeof(EndianReader).GetMethod(nameof(EndianReader.ReadString), order.HasValue ? new[] { typeof(ByteOrder) } : Type.EmptyTypes);
+                SetMethod(typeof(EndianReader).GetMethod(nameof(EndianReader.ReadString), order.HasValue ? new[] { typeof(ByteOrder) } : Type.EmptyTypes));
                 if (order.HasValue)
                     il.Emit(OpCodes.Ldc_I4, (int)order.Value);
             }
@@ -255,7 +281,7 @@ namespace System.IO.Endian
                 if (lenPrefixed != null)
                     throw Exceptions.StringTypeOverlap(prop.Name);
 
-                method = typeof(EndianReader).GetMethod(nameof(EndianReader.ReadString), new[] { typeof(int), typeof(bool) });
+                SetMethod(typeof(EndianReader).GetMethod(nameof(EndianReader.ReadString), new[] { typeof(int), typeof(bool) }));
                 il.Emit(OpCodes.Ldc_I4, fixedLen.Length);
                 il.Emit(OpCodes.Ldc_I4, Convert.ToInt32(fixedLen.Trim));
             }
@@ -267,16 +293,16 @@ namespace System.IO.Endian
 
                 if (nullTerm.HasLength)
                 {
-                    method = typeof(EndianReader).GetMethod(nameof(EndianReader.ReadNullTerminatedString), new[] { typeof(int) });
+                    SetMethod(typeof(EndianReader).GetMethod(nameof(EndianReader.ReadNullTerminatedString), new[] { typeof(int) }));
                     il.Emit(OpCodes.Ldc_I4, nullTerm.Length);
                 }
-                else method = typeof(EndianReader).GetMethod(nameof(EndianReader.ReadNullTerminatedString), Type.EmptyTypes);
+                else SetMethod(typeof(EndianReader).GetMethod(nameof(EndianReader.ReadNullTerminatedString), Type.EmptyTypes));
             }
 
             il.Emit(OpCodes.Callvirt, method);
         }
 
-        private static void EmitPrimitiveRead(ILGenerator il, Type type, ByteOrder? order)
+        private static void EmitPrimitiveRead(ILGenerator il, PropertyInfo prop, Type type, ByteOrder? order)
         {
             var primitiveMethod = (from m in typeof(EndianReader).GetMethods()
                                    where m.Name.StartsWith(nameof(EndianReader.Read), StringComparison.Ordinal)
@@ -291,9 +317,12 @@ namespace System.IO.Endian
             if (primitiveMethod == null)
                 throw Exceptions.MissingPrimitiveReadMethod(type.Name);
 
+            EmitDebugOutput(il, prop, primitiveMethod);
+
             il.Emit(OpCodes.Ldarg_0); //reader
             if (order.HasValue && !type.Equals(typeof(byte)) && !type.Equals(typeof(sbyte)))
                 il.Emit(OpCodes.Ldc_I4, (int)order.Value);
+
             il.Emit(OpCodes.Callvirt, primitiveMethod);
         }
     }
