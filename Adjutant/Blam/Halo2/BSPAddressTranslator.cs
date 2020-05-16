@@ -24,14 +24,14 @@ namespace Adjutant.Blam.Halo2
             data = bspData;
         }
 
-        public int GetAddress(int pointer)
+        public long GetAddress(long pointer)
         {
-            return pointer - Magic;
+            return (int)pointer - Magic;
         }
 
-        public int GetPointer(int address)
+        public long GetPointer(long address)
         {
-            return address + Magic;
+            return (int)address + Magic;
         }
     }
 }

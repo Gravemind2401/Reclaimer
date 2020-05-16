@@ -29,9 +29,9 @@ namespace Adjutant.Blam.Halo1
             TagAddress = reader.ReadInt32();
         }
 
-        public int GetAddress(int pointer)
+        public long GetAddress(long pointer)
         {
-            return TagAddress + pointer;
+            return TagAddress + (int)pointer;
         }
     }
 }

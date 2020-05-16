@@ -35,7 +35,7 @@ namespace Adjutant.Utilities
         }
 
         public int Value => _value;
-        public int Address => translator?.GetAddress(_value) ?? default(int);
+        public long Address => translator?.GetAddress(_value) ?? default(long);
 
         public override string ToString() => Value.ToString(CultureInfo.CurrentCulture);
 
@@ -76,7 +76,7 @@ namespace Adjutant.Utilities
 
         #endregion
 
-        public static implicit operator int(Pointer pointer)
+        public static implicit operator long(Pointer pointer)
         {
             return pointer.Address;
         }

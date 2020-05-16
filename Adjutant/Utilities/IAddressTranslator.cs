@@ -8,6 +8,6 @@ namespace Adjutant.Utilities
 {
     public interface IAddressTranslator
     {
-        int GetAddress(int pointer);
+        long GetAddress(long pointer);
     }
 }
