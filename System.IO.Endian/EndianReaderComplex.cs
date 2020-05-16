@@ -15,6 +15,8 @@ namespace System.IO.Endian
         private static readonly ConcurrentDictionary<string, ConstructorInfo> ctorCache = new ConcurrentDictionary<string, ConstructorInfo>();
         private static readonly ConcurrentDictionary<ConstructorInfo, Type[]> ctorParamCache = new ConcurrentDictionary<ConstructorInfo, Type[]>();
 
+        public static void SetDebugMode(bool enabled) => DynamicReader.SetDebugMode(enabled);
+
         public bool DynamicReadEnabled { get; set; }
 
         #region ReadObject Overloads

@@ -11,6 +11,16 @@ using System.Threading.Tasks;
 
 namespace System.IO.Endian
 {
+    internal static class DynamicReader
+    {
+        public static bool DebugMode { get; private set; }
+
+        public static void SetDebugMode(bool enabled)
+        {
+            DebugMode = enabled;
+        }
+    }
+
     internal static class DynamicReader<T>
     {
         private delegate T DynamicRead(EndianReader reader, T instance);
@@ -35,6 +45,9 @@ namespace System.IO.Endian
 
         public static void DumpAssembly(double? version)
         {
+            if (!DynamicReader.DebugMode || !Debugger.IsAttached)
+                return;
+
             try
             {
                 var fileName = $"{nameof(DynamicReader<T>)}.{TypeArg.Name}_{version}.dll";
@@ -56,8 +69,7 @@ namespace System.IO.Endian
 
         private static DynamicRead GenerateReadMethod(double? version)
         {
-            if (Debugger.IsAttached)
-                DumpAssembly(version);
+            DumpAssembly(version);
 
             var method = new DynamicMethod($"Deserialize<{TypeArg.Name}>[{version}]", TypeArg, ReadArgs, typeof(DynamicReader<T>));
 
@@ -111,6 +123,30 @@ namespace System.IO.Endian
                 if (storeType.IsEnum)
                     storeType = storeType.GetEnumUnderlyingType();
 
+                OpCode? castOp = null;
+                if (storeType != prop.PropertyType)
+                {
+                    if (prop.PropertyType == typeof(sbyte))
+                        castOp = OpCodes.Conv_I1;
+                    else if (prop.PropertyType == typeof(byte))
+                        castOp = OpCodes.Conv_U1;
+                    else if (prop.PropertyType == typeof(short))
+                        castOp = OpCodes.Conv_I2;
+                    else if (prop.PropertyType == typeof(ushort))
+                        castOp = OpCodes.Conv_U2;
+                    else if (prop.PropertyType == typeof(int))
+                        castOp = OpCodes.Conv_I4;
+                    else if (prop.PropertyType == typeof(uint))
+                        castOp = OpCodes.Conv_U4;
+                    else if (prop.PropertyType == typeof(long))
+                        castOp = OpCodes.Conv_I8;
+                    else if (prop.PropertyType == typeof(ulong))
+                        castOp = OpCodes.Conv_U8;
+
+                    if (castOp.HasValue)
+                        EmitDebugOutput(il, $"<{castOp.Value.Name}>");
+                }
+
                 if (TypeArg.IsValueType)
                     il.Emit(OpCodes.Ldarga_S, (byte)1);
                 else il.Emit(OpCodes.Ldarg_1); // instance
@@ -143,6 +179,9 @@ namespace System.IO.Endian
                     var ctor = nullableType.GetConstructor(new[] { nullableType.GetGenericArguments()[0] });
                     il.Emit(OpCodes.Newobj, ctor);
                 }
+
+                if (castOp.HasValue)
+                    il.Emit(castOp.Value);
 
                 var setter = prop.GetSetMethod();
 
@@ -224,7 +263,7 @@ namespace System.IO.Endian
 
         private static void EmitDebugOutput(ILGenerator il, string output)
         {
-            if (!Debugger.IsAttached)
+            if (!DynamicReader.DebugMode || !Debugger.IsAttached)
                 return;
 
             il.Emit(OpCodes.Ldstr, output);
