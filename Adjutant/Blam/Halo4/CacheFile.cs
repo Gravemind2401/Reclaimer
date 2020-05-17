@@ -21,8 +21,9 @@ namespace Adjutant.Blam.Halo4
         public int HeaderSize => 122880;
 
         public string FileName { get; }
-        public string BuildString => Header?.BuildString;
-        public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
+        public ByteOrder ByteOrder { get; }
+        public string BuildString { get; }
+        public CacheType CacheType { get; }
 
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
@@ -31,19 +32,21 @@ namespace Adjutant.Blam.Halo4
         public HeaderAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
 
-        public CacheFile(string fileName)
+        public CacheFile(CacheDetail detail)
         {
-            if (!File.Exists(fileName))
-                throw Exceptions.FileNotFound(fileName);
+            if (!File.Exists(detail.FileName))
+                throw Exceptions.FileNotFound(detail.FileName);
 
-            var version = (int)CacheFactory.GetCacheTypeByFile(fileName);
+            FileName = detail.FileName;
+            ByteOrder = detail.ByteOrder;
+            BuildString = detail.BuildString;
+            CacheType = detail.CacheType;
 
-            FileName = fileName;
             HeaderTranslator = new HeaderAddressTranslator(this);
             MetadataTranslator = new TagAddressTranslator(this);
 
             using (var reader = CreateReader(HeaderTranslator))
-                Header = reader.ReadObject<CacheHeader>(version);
+                Header = reader.ReadObject<CacheHeader>((int)CacheType);
 
             //change IndexPointer to use MetadataTranslator instead of HeaderTranslator
             Header.IndexPointer = new Pointer(Header.IndexPointer.Value, MetadataTranslator);

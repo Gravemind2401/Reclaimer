@@ -106,7 +106,7 @@ namespace Adjutant.Blam.HaloReach
 
             var data = resource.ReadData();
 
-            if (cache.CacheType < CacheType.MccHaloReach)
+            if (cache.ByteOrder == ByteOrder.BigEndian)
             {
                 var bpp = submap.BitmapFormat.Bpp();
                 for (int i = 0; i < data.Length - 1; i += bpp)

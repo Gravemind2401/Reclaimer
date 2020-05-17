@@ -1,4 +1,5 @@
-﻿using Adjutant.Blam.Halo3;
+﻿using Adjutant.Blam.Common;
+using Adjutant.Blam.Halo3;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
@@ -112,7 +113,8 @@ namespace Adjutant.Tests.Blam.Halo3
 
         private void TestMap(string folder, string map)
         {
-            var cache = new Adjutant.Blam.Halo3.CacheFile(Path.Combine(folder, $"{map}.map"));
+            var detail = CacheDetail.FromFile(Path.Combine(folder, $"{map}.map"));
+            var cache = new Adjutant.Blam.Halo3.CacheFile(detail);
 
             var t0 = Task.Run(() =>
             {

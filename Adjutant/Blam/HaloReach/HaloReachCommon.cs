@@ -164,7 +164,7 @@ namespace Adjutant.Blam.HaloReach
             }
 
             using (var ms = new MemoryStream(resourcePointer.ReadData()))
-            using (var reader = new EndianReader(ms, ByteOrder.BigEndian))
+            using (var reader = new EndianReader(ms, cache.ByteOrder))
             {
                 var doc = new XmlDocument();
                 doc.LoadXml(Adjutant.Properties.Resources.HaloReachVertexBuffer);

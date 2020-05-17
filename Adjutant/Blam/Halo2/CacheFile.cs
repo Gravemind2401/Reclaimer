@@ -18,8 +18,9 @@ namespace Adjutant.Blam.Halo2
         public const string SinglePlayerSharedMap = "single_player_shared.map";
 
         public string FileName { get; }
-        public string BuildString => Header?.BuildString;
-        public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
+        public ByteOrder ByteOrder { get; }
+        public string BuildString { get; }
+        public CacheType CacheType { get; }
 
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
@@ -28,12 +29,16 @@ namespace Adjutant.Blam.Halo2
         public HeaderAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
 
-        public CacheFile(string fileName)
+        public CacheFile(CacheDetail detail)
         {
-            if (!File.Exists(fileName))
-                throw Exceptions.FileNotFound(fileName);
+            if (!File.Exists(detail.FileName))
+                throw Exceptions.FileNotFound(detail.FileName);
 
-            FileName = fileName;
+            FileName = detail.FileName;
+            ByteOrder = detail.ByteOrder;
+            BuildString = detail.BuildString;
+            CacheType = detail.CacheType;
+
             HeaderTranslator = new HeaderAddressTranslator(this);
             MetadataTranslator = new TagAddressTranslator(this);
 

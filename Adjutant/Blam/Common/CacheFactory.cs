@@ -13,10 +13,6 @@ namespace Adjutant.Blam.Common
 {
     public static class CacheFactory
     {
-        //when read using little endian
-        internal const int LittleHeader = 0x68656164;
-        internal const int BigHeader = 0x64616568;
-
         private static Dictionary<string, string> halo1Classes;
         internal static IReadOnlyDictionary<string, string> Halo1Classes
         {
@@ -41,26 +37,6 @@ namespace Adjutant.Blam.Common
             }
         }
 
-        private static Dictionary<string, CacheType> cacheTypeLookup;
-        internal static IReadOnlyDictionary<string, CacheType> CacheTypeLookup
-        {
-            get
-            {
-                if (cacheTypeLookup == null)
-                {
-                    cacheTypeLookup = new Dictionary<string, CacheType>();
-
-                    foreach (var fi in typeof(CacheType).GetFields().Where(f => f.FieldType == typeof(CacheType)))
-                    {
-                        foreach (BuildStringAttribute attr in fi.GetCustomAttributes(typeof(BuildStringAttribute), false))
-                            cacheTypeLookup.Add(attr.BuildString, (CacheType)fi.GetValue(null));
-                    }
-                }
-
-                return cacheTypeLookup;
-            }
-        }
-
         internal static readonly string[] SystemClasses = new[] { "scnr", "ugh!", "play", "zone" };
 
         private static Dictionary<string, string> ReadClassXml(string xml)
@@ -80,92 +56,37 @@ namespace Adjutant.Blam.Common
             if (!File.Exists(fileName))
                 throw Exceptions.FileNotFound(fileName);
 
-            switch (GetCacheTypeByFile(fileName))
+            var detail = CacheDetail.FromFile(fileName);
+            switch (detail.CacheType)
             {
                 case CacheType.Halo1Xbox:
                 case CacheType.Halo1PC:
                 case CacheType.Halo1CE:
                 case CacheType.Halo1AE:
-                    return new Halo1.CacheFile(fileName);
+                    return new Halo1.CacheFile(detail);
 
                 case CacheType.Halo2Xbox:
                 case CacheType.Halo2Vista:
-                    return new Halo2.CacheFile(fileName);
+                    return new Halo2.CacheFile(detail);
 
                 case CacheType.Halo3Beta:
                 case CacheType.Halo3Retail:
                 case CacheType.Halo3ODST:
-                    return new Halo3.CacheFile(fileName);
+                    return new Halo3.CacheFile(detail);
 
                 case CacheType.HaloReachBeta:
                 case CacheType.HaloReachRetail:
-                    return new HaloReach.CacheFile(fileName);
+                    return new HaloReach.CacheFile(detail);
 
                 case CacheType.Halo4Beta:
                 case CacheType.Halo4Retail:
-                    return new Halo4.CacheFile(fileName);
+                    return new Halo4.CacheFile(detail);
 
                 case CacheType.MccHaloReach:
-                    return new MccHaloReach.CacheFile(fileName);
+                    return new MccHaloReach.CacheFile(detail);
 
                 default: throw Exceptions.NotAValidMapFile(fileName);
             }
-        }
-
-        public static CacheType GetCacheTypeByFile(string fileName)
-        {
-            if (fileName == null)
-                throw new ArgumentNullException(nameof(fileName));
-
-            if (!File.Exists(fileName))
-                throw Exceptions.FileNotFound(fileName);
-
-            using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
-            using (var reader = new EndianReader(fs, ByteOrder.LittleEndian))
-            {
-                var header = reader.ReadInt32();
-                if (header == BigHeader)
-                    reader.ByteOrder = ByteOrder.BigEndian;
-                else if (header != LittleHeader)
-                    throw Exceptions.NotAValidMapFile(fileName);
-
-                var version = reader.ReadInt32();
-
-                int buildAddress;
-                if (new[] { 5, 7, 609 }.Contains(version)) // Halo1 Xbox, PC, CE
-                    buildAddress = 64;
-                else if (version == 8)
-                {
-                    reader.Seek(36, SeekOrigin.Begin);
-                    version = reader.ReadInt32();
-                    if (version == 0) buildAddress = 288; //Halo2 Xbox
-                    else if (version == -1) buildAddress = 300; //Halo2 Vista
-                    else throw Exceptions.NotAValidMapFile(fileName);
-                }
-                else if (reader.ByteOrder == ByteOrder.LittleEndian)
-                    buildAddress = 288;
-                else buildAddress = 284;
-
-                reader.Seek(buildAddress, SeekOrigin.Begin);
-                var buildString = reader.ReadNullTerminatedString(32);
-                System.Diagnostics.Debug.WriteLine($"Found build string {buildString ?? "\\0"}");
-
-                var cacheType = GetCacheTypeByBuild(buildString);
-                System.Diagnostics.Debug.WriteLine($"Resolved CacheType {cacheType}");
-
-                return cacheType;
-            }
-        }
-
-        public static CacheType GetCacheTypeByBuild(string buildString)
-        {
-            if (buildString == null)
-                throw new ArgumentNullException(nameof(buildString));
-
-            if (CacheTypeLookup.ContainsKey(buildString))
-                return CacheTypeLookup[buildString];
-
-            return CacheType.Unknown;
         }
 
         public static int GetCacheGeneration(this CacheType cacheType)
@@ -177,19 +98,12 @@ namespace Adjutant.Blam.Common
         public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator)
         {
             var fs = new FileStream(cache.FileName, FileMode.Open, FileAccess.Read);
-            var reader = new DependencyReader(fs, ByteOrder.LittleEndian);
-
-            var header = reader.PeekInt32();
-            if (header == BigHeader)
-                reader.ByteOrder = ByteOrder.BigEndian;
-            else if (header != LittleHeader)
-                throw Exceptions.NotAValidMapFile(cache.FileName);
+            var reader = new DependencyReader(fs, cache.ByteOrder);
 
             reader.RegisterInstance(cache);
             reader.RegisterInstance(translator);
 
-            //build string will be null during initialisation, preventing a CacheType from being determined
-            if (cache.BuildString != null && cache.CacheType >= CacheType.Halo2Xbox)
+            if (cache.CacheType >= CacheType.Halo2Xbox)
             {
                 reader.RegisterType(() => new Matrix4x4
                 {

@@ -14,8 +14,9 @@ namespace Adjutant.Blam.Halo3
     public class CacheFile : ICacheFile
     {
         public string FileName { get; }
-        public string BuildString => Header?.BuildString;
-        public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
+        public ByteOrder ByteOrder { get; }
+        public string BuildString { get; }
+        public CacheType CacheType { get; }
 
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
@@ -24,19 +25,21 @@ namespace Adjutant.Blam.Halo3
         public HeaderAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
 
-        public CacheFile(string fileName)
+        public CacheFile(CacheDetail detail)
         {
-            if (!File.Exists(fileName))
-                throw Exceptions.FileNotFound(fileName);
+            if (!File.Exists(detail.FileName))
+                throw Exceptions.FileNotFound(detail.FileName);
 
-            var version = (int)CacheFactory.GetCacheTypeByFile(fileName);
+            FileName = detail.FileName;
+            ByteOrder = detail.ByteOrder;
+            BuildString = detail.BuildString;
+            CacheType = detail.CacheType;
 
-            FileName = fileName;
             HeaderTranslator = new HeaderAddressTranslator(this);
             MetadataTranslator = new TagAddressTranslator(this);
 
             using (var reader = CreateReader(HeaderTranslator))
-                Header = reader.ReadObject<CacheHeader>(version);
+                Header = reader.ReadObject<CacheHeader>((int)CacheType);
 
             //change IndexPointer to use MetadataTranslator instead of HeaderTranslator
             Header.IndexPointer = new Pointer(Header.IndexPointer.Value, MetadataTranslator);
@@ -53,8 +56,10 @@ namespace Adjutant.Blam.Halo3
 
             Task.Factory.StartNew(() =>
             {
+                if (CacheType > CacheType.Halo3Beta)
+                    TagIndex.GetGlobalTag("play").ReadMetadata<cache_file_resource_layout_table>();
+
                 TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
-                TagIndex.GetGlobalTag("play").ReadMetadata<cache_file_resource_layout_table>();
                 TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
             });
         }

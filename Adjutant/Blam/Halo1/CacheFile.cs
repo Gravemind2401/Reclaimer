@@ -16,20 +16,25 @@ namespace Adjutant.Blam.Halo1
         public const string BitmapsMap = "bitmaps.map";
 
         public string FileName { get; }
-        public string BuildString => Header?.BuildString;
-        public CacheType CacheType => CacheFactory.GetCacheTypeByBuild(BuildString);
+        public ByteOrder ByteOrder { get; }
+        public string BuildString { get; }
+        public CacheType CacheType { get; }
 
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
 
         public TagAddressTranslator AddressTranslator { get; }
 
-        public CacheFile(string fileName)
+        public CacheFile(CacheDetail detail)
         {
-            if (!File.Exists(fileName))
-                throw Exceptions.FileNotFound(fileName);
+            if (!File.Exists(detail.FileName))
+                throw Exceptions.FileNotFound(detail.FileName);
 
-            FileName = fileName;
+            FileName = detail.FileName;
+            ByteOrder = detail.ByteOrder;
+            BuildString = detail.BuildString;
+            CacheType = detail.CacheType;
+
             AddressTranslator = new TagAddressTranslator(this);
 
             using (var reader = CreateReader(AddressTranslator))
@@ -42,16 +47,10 @@ namespace Adjutant.Blam.Halo1
             }
         }
 
-        private DependencyReader CreateReader(string fileName, IAddressTranslator translator, bool headerCheck)
+        private DependencyReader CreateReader(string fileName, IAddressTranslator translator)
         {
             var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-            var reader = new DependencyReader(fs, ByteOrder.LittleEndian);
-
-            var header = reader.PeekInt32();
-            if (header == CacheFactory.BigHeader)
-                reader.ByteOrder = ByteOrder.BigEndian;
-            else if (headerCheck && header != CacheFactory.LittleHeader)
-                throw Exceptions.NotAValidMapFile(fileName);
+            var reader = new DependencyReader(fs, ByteOrder);
 
             reader.RegisterInstance<CacheFile>(this);
             reader.RegisterInstance<ICacheFile>(this);
@@ -67,7 +66,7 @@ namespace Adjutant.Blam.Halo1
             if (translator == null)
                 throw new ArgumentNullException(nameof(translator));
 
-            return CreateReader(FileName, translator, true);
+            return CreateReader(FileName, translator);
         }
 
         internal DependencyReader CreateBitmapsReader()
@@ -75,7 +74,7 @@ namespace Adjutant.Blam.Halo1
             var folder = Directory.GetParent(FileName).FullName;
             var bitmapsMap = Path.Combine(folder, BitmapsMap);
 
-            return CreateReader(bitmapsMap, null, false);
+            return CreateReader(bitmapsMap, null);
         }
 
         #region ICacheFile

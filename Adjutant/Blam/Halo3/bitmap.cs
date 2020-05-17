@@ -102,9 +102,12 @@ namespace Adjutant.Blam.Halo3
 
             var data = resource.ReadData();
 
-            var bpp = submap.BitmapFormat.Bpp();
-            for (int i = 0; i < data.Length - 1; i += bpp)
-                Array.Reverse(data, i, bpp);
+            if (cache.ByteOrder == ByteOrder.BigEndian)
+            {
+                var bpp = submap.BitmapFormat.Bpp();
+                for (int i = 0; i < data.Length - 1; i += bpp)
+                    Array.Reverse(data, i, bpp);
+            }
 
             if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
             {

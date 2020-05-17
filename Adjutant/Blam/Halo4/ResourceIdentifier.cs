@@ -78,7 +78,7 @@ namespace Adjutant.Blam.Halo4
             byte[] compressed, decompressed;
 
             using (var fs = new FileStream(targetFile, FileMode.Open, FileAccess.Read))
-            using (var reader = new EndianReader(fs, ByteOrder.BigEndian))
+            using (var reader = new EndianReader(fs, cache.ByteOrder))
             {
                 reader.Seek(1152, SeekOrigin.Begin);
                 var dataTableAddress = reader.ReadInt32();

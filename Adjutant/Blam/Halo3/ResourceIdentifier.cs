@@ -82,7 +82,7 @@ namespace Adjutant.Blam.Halo3
             byte[] compressed, decompressed;
 
             using (var fs = new FileStream(targetFile, FileMode.Open, FileAccess.Read))
-            using (var reader = new EndianReader(fs, ByteOrder.BigEndian))
+            using (var reader = new EndianReader(fs, cache.ByteOrder))
             {
                 reader.Seek(1136, SeekOrigin.Begin);
                 var dataTableAddress = reader.ReadInt32();
@@ -166,7 +166,7 @@ namespace Adjutant.Blam.Halo3
             }
 
             using (var fs = new FileStream(targetFile, FileMode.Open, FileAccess.Read))
-            using (var reader = new EndianReader(fs, ByteOrder.BigEndian))
+            using (var reader = new EndianReader(fs, cache.ByteOrder))
             {
                 reader.Seek(1136, SeekOrigin.Begin);
                 var dataTableAddress = reader.ReadInt32();
