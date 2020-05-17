@@ -106,9 +106,12 @@ namespace Adjutant.Blam.HaloReach
 
             var data = resource.ReadData();
 
-            var bpp = submap.BitmapFormat.Bpp();
-            for (int i = 0; i < data.Length - 1; i += bpp)
-                Array.Reverse(data, i, bpp);
+            if (cache.CacheType < CacheType.MccHaloReach)
+            {
+                var bpp = submap.BitmapFormat.Bpp();
+                for (int i = 0; i < data.Length - 1; i += bpp)
+                    Array.Reverse(data, i, bpp);
+            }
 
             if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
             {

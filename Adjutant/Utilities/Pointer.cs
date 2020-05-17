@@ -12,17 +12,27 @@ namespace Adjutant.Utilities
     {
         private readonly int _value;
         private readonly IAddressTranslator translator;
+        private readonly IPointerExpander expander;
 
         public Pointer(int value, IAddressTranslator translator)
+            : this(value, translator, null)
+        { }
+
+        public Pointer(int value, IAddressTranslator translator, IPointerExpander expander)
         {
             if (translator == null)
                 throw new ArgumentNullException(nameof(translator));
 
             this._value = value;
             this.translator = translator;
+            this.expander = expander;
         }
 
         public Pointer(DependencyReader reader, IAddressTranslator translator)
+            : this(reader, translator, null)
+        { }
+
+        public Pointer(DependencyReader reader, IAddressTranslator translator, IPointerExpander expander)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
@@ -32,10 +42,11 @@ namespace Adjutant.Utilities
 
             this._value = reader.ReadInt32();
             this.translator = translator;
+            this.expander = expander;
         }
 
         public int Value => _value;
-        public long Address => translator?.GetAddress(_value) ?? default(long);
+        public long Address => translator?.GetAddress(expander?.Expand(_value) ?? _value) ?? default(long);
 
         public override string ToString() => Value.ToString(CultureInfo.CurrentCulture);
 

@@ -80,8 +80,17 @@ namespace Adjutant.Blam.HaloReach
             using (var fs = new FileStream(targetFile, FileMode.Open, FileAccess.Read))
             using (var reader = new EndianReader(fs, ByteOrder.BigEndian))
             {
-                reader.Seek(1136, SeekOrigin.Begin);
-                var dataTableAddress = reader.ReadInt32();
+                long dataTableAddress;
+                if (cache.CacheType >= CacheType.MccHaloReach)
+                {
+                    reader.Seek(1208, SeekOrigin.Begin);
+                    dataTableAddress = reader.ReadUInt32(ByteOrder.LittleEndian);
+                }
+                else
+                {
+                    reader.Seek(1136, SeekOrigin.Begin);
+                    dataTableAddress = reader.ReadUInt32();
+                }
 
                 reader.Seek(dataTableAddress + page.DataOffset, SeekOrigin.Begin);
                 compressed = reader.ReadBytes(page.CompressedSize);

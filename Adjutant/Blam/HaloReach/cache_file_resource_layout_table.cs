@@ -19,7 +19,8 @@ namespace Adjutant.Blam.HaloReach
         [Offset(36)]
         public BlockCollection<SizeGroupBlock> SizeGroups { get; set; }
 
-        [Offset(48)]
+        [Offset(48, MaxVersion = (int)CacheType.MccHaloReach)]
+        [Offset(60, MinVersion = (int)CacheType.MccHaloReach)]
         public BlockCollection<SegmentBlock> Segments { get; set; }
     }
 

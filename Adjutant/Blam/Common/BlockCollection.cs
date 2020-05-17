@@ -17,6 +17,10 @@ namespace Adjutant.Blam.Common
         public Pointer Pointer { get; }
 
         public BlockCollection(DependencyReader reader, ICacheFile cache, IAddressTranslator translator)
+            : this(reader, cache, translator, null)
+        { }
+        
+        public BlockCollection(DependencyReader reader, ICacheFile cache, IAddressTranslator translator, IPointerExpander expander)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
@@ -25,7 +29,7 @@ namespace Adjutant.Blam.Common
                 throw new ArgumentNullException(nameof(translator));
 
             var count = reader.ReadInt32();
-            Pointer = new Pointer(reader.ReadInt32(), translator);
+            Pointer = new Pointer(reader.ReadInt32(), translator, expander);
 
             if (count == 0)
                 return;

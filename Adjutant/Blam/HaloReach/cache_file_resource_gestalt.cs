@@ -11,13 +11,16 @@ namespace Adjutant.Blam.HaloReach
 {
     public class cache_file_resource_gestalt
     {
-        [Offset(88)]
+        [Offset(88, MaxVersion = (int)CacheType.MccHaloReach)]
+        [Offset(100, MinVersion = (int)CacheType.MccHaloReach)]
         public BlockCollection<ResourceEntryBlock> ResourceEntries { get; set; }
 
-        [Offset(316)]
+        [Offset(316, MaxVersion = (int)CacheType.MccHaloReach)]
+        [Offset(328, MinVersion = (int)CacheType.MccHaloReach)]
         public int FixupDataSize { get; set; }
 
-        [Offset(328)]
+        [Offset(328, MaxVersion = (int)CacheType.MccHaloReach)]
+        [Offset(340, MinVersion = (int)CacheType.MccHaloReach)]
         public Pointer FixupDataPointer { get; set; }
     }
 

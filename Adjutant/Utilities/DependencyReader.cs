@@ -111,7 +111,7 @@ namespace Adjutant.Utilities
             if (ctorLookup.ContainsKey(type))
                 return ctorLookup[type];
 
-            foreach (var constructor in type.GetConstructors())
+            foreach (var constructor in type.GetConstructors().OrderByDescending(c => c.GetParameters().Length))
             {
                 var info = constructor.GetParameters();
                 if (info.Any() && info.All(i => CanConstruct(i.ParameterType)))

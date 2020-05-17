@@ -77,6 +77,14 @@ namespace Adjutant.Blam.Common
         [BuildString("11860.10.07.24.0147.omaha_relea")]
         HaloReachRetail,
 
+        [CacheGeneration(3)]
+        [BuildString("Jun 24 2019 00:36:03")] //flight 1
+        [BuildString("Jul 30 2019 14:17:16")] //flight 2
+        [BuildString("Oct 24 2019 15:56:32")] //release
+        [BuildString("Jan 30 2020 16:55:25")] //update 1
+        [BuildString("Mar 24 2020 12:10:36")] //update 2
+        MccHaloReach,
+
         [CacheGeneration(4)]
         [BuildString("14064.12.05.05.1011.beta")]
         Halo4Beta,
@@ -98,15 +106,7 @@ namespace Adjutant.Blam.Common
         [BuildString("21401.13.04.23.1849.main")] //TU06
         [BuildString("21501.13.08.06.2311.main")] //TU07
         [BuildString("21522.13.10.17.1936.main")] //TU08
-        Halo4Retail,
-
-        [CacheGeneration(4)]
-        [BuildString("Jun 24 2019 00:36:03")] //flight 1
-        [BuildString("Jul 30 2019 14:17:16")] //flight 2
-        [BuildString("Oct 24 2019 15:56:32")] //release
-        [BuildString("Jan 30 2020 16:55:25")] //update 1
-        [BuildString("Mar 24 2020 12:10:36")] //update 2
-        MccHaloReach
+        Halo4Retail
     }
 
     public enum Language

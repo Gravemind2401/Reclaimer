@@ -26,6 +26,8 @@ namespace Adjutant.Blam.MccHaloReach
         public HeaderAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
 
+        public PointerExpander PointerExpander { get; }
+
         public CacheFile(string fileName)
         {
             if (!File.Exists(fileName))
@@ -36,6 +38,7 @@ namespace Adjutant.Blam.MccHaloReach
             FileName = fileName;
             HeaderTranslator = new HeaderAddressTranslator(this);
             MetadataTranslator = new TagAddressTranslator(this);
+            PointerExpander = new PointerExpander(this);
 
             using (var reader = CreateReader(HeaderTranslator))
                 Header = reader.ReadObject<CacheHeader>(version);
@@ -55,6 +58,13 @@ namespace Adjutant.Blam.MccHaloReach
         }
 
         public DependencyReader CreateReader(IAddressTranslator translator) => CacheFactory.CreateReader(this, translator);
+
+        public DependencyReader CreateReader(IAddressTranslator translator, IPointerExpander expander)
+        {
+            var reader = CreateReader(translator);
+            reader.RegisterInstance(expander);
+            return reader;
+        }
 
         #region ICacheFile
 
@@ -120,12 +130,6 @@ namespace Adjutant.Blam.MccHaloReach
 
         [Offset(1216)]
         public int LocaleModifier { get; set; }
-
-        [Offset(1224)]
-        public long DataTableAddress { get; set; }
-
-        [Offset(1244)]
-        public int DataTableSize { get; set; }
     }
 
     [FixedSize(48)]
@@ -137,7 +141,7 @@ namespace Adjutant.Blam.MccHaloReach
 
         internal Dictionary<int, string> Filenames { get; }
         internal List<TagClass> Classes { get; }
-        
+
         [Offset(0)]
         public int TagClassCount { get; set; }
 
@@ -168,7 +172,7 @@ namespace Adjutant.Blam.MccHaloReach
             if (items.Any())
                 throw new InvalidOperationException();
 
-            using (var reader = cache.CreateReader(cache.MetadataTranslator))
+            using (var reader = cache.CreateReader(cache.MetadataTranslator, cache.PointerExpander))
             {
                 reader.Seek(TagClassDataPointer.Address, SeekOrigin.Begin);
                 Classes.AddRange(reader.ReadEnumerable<TagClass>(TagClassCount));
@@ -331,7 +335,7 @@ namespace Adjutant.Blam.MccHaloReach
             if (metadataCache?.GetType() == typeof(T))
                 return (T)metadataCache;
 
-            using (var reader = cache.CreateReader(cache.MetadataTranslator))
+            using (var reader = cache.CreateReader(cache.MetadataTranslator, cache.PointerExpander))
             {
                 reader.RegisterInstance<IIndexItem>(this);
 
