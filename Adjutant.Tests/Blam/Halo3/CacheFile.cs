@@ -113,8 +113,7 @@ namespace Adjutant.Tests.Blam.Halo3
 
         private void TestMap(string folder, string map)
         {
-            var detail = CacheDetail.FromFile(Path.Combine(folder, $"{map}.map"));
-            var cache = new Adjutant.Blam.Halo3.CacheFile(detail);
+            var cache = new Adjutant.Blam.Halo3.CacheFile(Path.Combine(folder, $"{map}.map"));
 
             var t0 = Task.Run(() =>
             {

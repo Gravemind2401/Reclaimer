@@ -25,7 +25,9 @@ namespace Adjutant.Blam.Halo1
 
         public TagAddressTranslator AddressTranslator { get; }
 
-        public CacheFile(CacheDetail detail)
+        public CacheFile(string fileName) : this(CacheDetail.FromFile(fileName)) { }
+
+        internal CacheFile(CacheDetail detail)
         {
             if (!File.Exists(detail.FileName))
                 throw Exceptions.FileNotFound(detail.FileName);

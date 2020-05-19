@@ -33,7 +33,9 @@ namespace Adjutant.Blam.HaloReach
         public HeaderAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
 
-        public CacheFile(CacheDetail detail)
+        public CacheFile(string fileName) : this(CacheDetail.FromFile(fileName)) { }
+
+        internal CacheFile(CacheDetail detail)
         {
             if (!File.Exists(detail.FileName))
                 throw Exceptions.FileNotFound(detail.FileName);

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Common
 {
-    public struct CacheDetail
+    internal struct CacheDetail
     {
         //when read using little endian
         internal const int LittleHeader = 0x68656164;

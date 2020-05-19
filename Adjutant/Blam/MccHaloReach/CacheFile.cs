@@ -29,7 +29,9 @@ namespace Adjutant.Blam.MccHaloReach
 
         public PointerExpander PointerExpander { get; }
 
-        public CacheFile(CacheDetail detail)
+        public CacheFile(string fileName) : this(CacheDetail.FromFile(fileName)) { }
+
+        internal CacheFile(CacheDetail detail)
         {
             if (!File.Exists(detail.FileName))
                 throw Exceptions.FileNotFound(detail.FileName);

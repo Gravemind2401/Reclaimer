@@ -56,8 +56,7 @@ namespace Adjutant.Tests.Blam.Halo2
 
         private void TestMap(string map)
         {
-            var detail = CacheDetail.FromFile(Path.Combine(MapsFolder, $"{map}.map"));
-            var cache = new Adjutant.Blam.Halo2.CacheFile(detail);
+            var cache = new Adjutant.Blam.Halo2.CacheFile(Path.Combine(MapsFolder, $"{map}.map"));
 
             var t1 = Task.Run(() =>
             {

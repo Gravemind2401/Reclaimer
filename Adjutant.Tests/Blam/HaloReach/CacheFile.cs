@@ -77,8 +77,7 @@ namespace Adjutant.Tests.Blam.HaloReach
 
         private void TestMap(string folder, string map)
         {
-            var detail = CacheDetail.FromFile(Path.Combine(folder, $"{map}.map"));
-            var cache = new Adjutant.Blam.HaloReach.CacheFile(detail);
+            var cache = new Adjutant.Blam.HaloReach.CacheFile(Path.Combine(folder, $"{map}.map"));
 
             var t0 = Task.Run(() =>
             {
