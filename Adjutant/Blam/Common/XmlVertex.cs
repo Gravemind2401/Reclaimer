@@ -11,6 +11,26 @@ using System.Xml;
 
 namespace Adjutant.Blam.Common
 {
+    public static class XmlVertexField
+    {
+        public const string Type = "type";
+        public const string Stream = "stream";
+        public const string Offset = "offset";
+        public const string Usage = "usage";
+    }
+
+    public static class XmlVertexUsage
+    {
+        public const string Position = "position";
+        public const string TexCoords = "texcoords";
+        public const string Normal = "normal";
+        public const string Binormal = "binormal";
+        public const string Tangent = "tangent";
+        public const string BlendIndices = "blendindices";
+        public const string BlendWeight = "blendweight";
+        public const string Color = "color";
+    }
+
     public class XmlVertex : IVertex
     {
         private readonly List<IXMVector> positions = new List<IXMVector>();
@@ -39,40 +59,47 @@ namespace Adjutant.Blam.Common
             if (node == null)
                 throw new ArgumentNullException(nameof(node));
 
+            var origin = reader.BaseStream.Position;
+
             foreach (XmlNode child in node.ChildNodes)
             {
-                var stream = int.Parse(child.Attributes["stream"].Value, CultureInfo.InvariantCulture);
+                if (child.NodeType == XmlNodeType.Comment)
+                    continue;
+
+                var stream = int.Parse(child.Attributes[XmlVertexField.Stream].Value, CultureInfo.InvariantCulture);
                 if (stream > 0) throw new NotSupportedException();
 
-                var offset = Convert.ToInt32(child.Attributes["offset"].Value, 16);
-                var type = (VectorType)Enum.Parse(typeof(VectorType), child.Attributes["type"].Value, true);
-                var usage = child.Attributes["usage"].Value;
+                var offset = Convert.ToInt32(child.Attributes[XmlVertexField.Offset].Value, 16);
+                var type = (VectorType)Enum.Parse(typeof(VectorType), child.Attributes[XmlVertexField.Type].Value, true);
+                var usage = child.Attributes[XmlVertexField.Usage].Value;
 
+                reader.Seek(origin + offset, System.IO.SeekOrigin.Begin);
                 var value = ReadValue(type, reader);
+
                 switch (usage)
                 {
-                    case "position":
+                    case XmlVertexUsage.Position:
                         positions.Add(value);
                         break;
-                    case "texcoords":
+                    case XmlVertexUsage.TexCoords:
                         texcoords.Add(value);
                         break;
-                    case "normal":
+                    case XmlVertexUsage.Normal:
                         normals.Add(value);
                         break;
-                    case "binormal":
+                    case XmlVertexUsage.Binormal:
                         binormals.Add(value);
                         break;
-                    case "tangent":
+                    case XmlVertexUsage.Tangent:
                         tangents.Add(value);
                         break;
-                    case "blendindices":
+                    case XmlVertexUsage.BlendIndices:
                         blendindices.Add(value);
                         break;
-                    case "blendweight":
+                    case XmlVertexUsage.BlendWeight:
                         blendweights.Add(value);
                         break;
-                    case "color":
+                    case XmlVertexUsage.Color:
                         colors.Add(value);
                         break;
                     default:

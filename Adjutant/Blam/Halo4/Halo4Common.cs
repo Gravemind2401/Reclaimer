@@ -118,7 +118,7 @@ namespace Adjutant.Blam.Halo4
                 doc.LoadXml(Adjutant.Properties.Resources.Halo4VertexBuffer);
 
                 var lookup = doc.FirstChild.ChildNodes.Cast<XmlNode>()
-                    .ToDictionary(n => Convert.ToInt32(n.Attributes["type"].Value, 16));
+                    .ToDictionary(n => Convert.ToInt32(n.Attributes[XmlVertexField.Type].Value, 16));
 
                 var sectionIndex = -1;
                 foreach (var section in sections)
@@ -136,12 +136,12 @@ namespace Adjutant.Blam.Halo4
 
                     Func<XmlNode, string, bool> hasUsage = (n, u) =>
                     {
-                        return n.ChildNodes.Cast<XmlNode>().Any(c => c.Attributes?["usage"]?.Value == u);
+                        return n.ChildNodes.Cast<XmlNode>().Any(c => c.Attributes?[XmlVertexField.Usage]?.Value == u);
                     };
 
                     var skinType = VertexWeights.None;
-                    if (hasUsage(node, "blendindices"))
-                        skinType = hasUsage(node, "blendweight") ? VertexWeights.Skinned : VertexWeights.Rigid;
+                    if (hasUsage(node, XmlVertexUsage.BlendIndices))
+                        skinType = hasUsage(node, XmlVertexUsage.BlendWeight) ? VertexWeights.Skinned : VertexWeights.Rigid;
                     else if (section.NodeIndex < byte.MaxValue)
                         skinType = VertexWeights.Rigid;
 
