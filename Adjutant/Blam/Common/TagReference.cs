@@ -30,14 +30,14 @@ namespace Adjutant.Blam.Common
 
             this.cache = cache;
 
-            if (cache.CacheType >= CacheType.Halo3Beta)
-                reader.Seek(14, SeekOrigin.Current);
-            else if (cache.CacheType >= CacheType.Halo2Xbox)
+            if (cache.CacheType.GetCacheGeneration() == 2)
                 reader.Seek(4, SeekOrigin.Current);
             else
                 reader.Seek(12, SeekOrigin.Current);
 
-            tagId = reader.ReadInt16();
+            var temp = reader.ReadInt32();
+
+            tagId = (short)(temp & ushort.MaxValue);
         }
 
         public override string ToString() => Tag?.ToString();
