@@ -80,7 +80,8 @@ namespace Adjutant.Blam.HaloReach
                 }
 
                 var subMaterials = new List<ISubmaterial>();
-                var template = shader.ShaderProperties[0].TemplateReference.Tag.ReadMetadata<render_method_template>();
+                var props = shader.ShaderProperties[0];
+                var template = props.TemplateReference.Tag.ReadMetadata<render_method_template>();
                 for (int j = 0; j < template.Usages.Count; j++)
                 {
                     var usage = template.Usages[j].Value;
@@ -88,14 +89,14 @@ namespace Adjutant.Blam.HaloReach
                     if (!entry.HasValue)
                         continue;
 
-                    var map = shader.ShaderProperties[0].ShaderMaps[j];
+                    var map = props.ShaderMaps[j];
                     var bitmTag = map.BitmapReference.Tag;
                     if (bitmTag == null)
                         continue;
 
-                    var tile = map.TilingIndex == byte.MaxValue
+                    var tile = map.TilingIndex >= props.TilingData.Count
                         ? (RealVector4D?)null
-                        : shader.ShaderProperties[0].TilingData[map.TilingIndex];
+                        : props.TilingData[map.TilingIndex];
 
                     subMaterials.Add(new SubMaterial
                     {
@@ -121,10 +122,10 @@ namespace Adjutant.Blam.HaloReach
                     material.TintColours.Add(new TintColour
                     {
                         Usage = tintLookup[template.Arguments[j].Value],
-                        R = (byte)(shader.ShaderProperties[0].TilingData[j].X * byte.MaxValue),
-                        G = (byte)(shader.ShaderProperties[0].TilingData[j].Y * byte.MaxValue),
-                        B = (byte)(shader.ShaderProperties[0].TilingData[j].Z * byte.MaxValue),
-                        A = (byte)(shader.ShaderProperties[0].TilingData[j].W * byte.MaxValue),
+                        R = (byte)(props.TilingData[j].X * byte.MaxValue),
+                        G = (byte)(props.TilingData[j].Y * byte.MaxValue),
+                        B = (byte)(props.TilingData[j].Z * byte.MaxValue),
+                        A = (byte)(props.TilingData[j].W * byte.MaxValue),
                     });
                 }
 
@@ -188,7 +189,7 @@ namespace Adjutant.Blam.HaloReach
 
                     Func<XmlNode, string, bool> hasUsage = (n, u) =>
                     {
-                        return n.ChildNodes.Cast<XmlNode>().Any(c => c.Attributes["usage"]?.Value == u);
+                        return n.ChildNodes.Cast<XmlNode>().Any(c => c.Attributes?["usage"]?.Value == u);
                     };
 
                     var skinType = VertexWeights.None;

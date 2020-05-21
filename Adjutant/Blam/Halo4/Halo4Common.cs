@@ -136,7 +136,7 @@ namespace Adjutant.Blam.Halo4
 
                     Func<XmlNode, string, bool> hasUsage = (n, u) =>
                     {
-                        return n.ChildNodes.Cast<XmlNode>().Any(c => c.Attributes["usage"]?.Value == u);
+                        return n.ChildNodes.Cast<XmlNode>().Any(c => c.Attributes?["usage"]?.Value == u);
                     };
 
                     var skinType = VertexWeights.None;
