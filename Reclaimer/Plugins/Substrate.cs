@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Reclaimer.Models;
+using Reclaimer.Utilities;
 using Reclaimer.Windows;
 using Studio.Controls;
 using System;
@@ -42,6 +43,7 @@ namespace Reclaimer.Plugins
 
         internal static event EventHandler<LogEventArgs> Log;
         internal static event EventHandler<LogEventArgs> EmptyLog;
+        internal static event EventHandler RecentsUpdated;
 
         internal static Dictionary<string, string> DefaultHandlers { get; set; }
 
@@ -104,6 +106,18 @@ namespace Reclaimer.Plugins
                 {
                     plugins.Remove(p.Key);
                     LogError($"Could not load plugin {p.Key} [{p.Name}]", ex);
+                }
+            }
+
+            foreach (var p in AllPlugins)
+            {
+                try
+                {
+                    p.PostInitialise();
+                }
+                catch (Exception ex)
+                {
+                    LogError($"Failed post-initialise for plugin {p.Key} [{p.Name}]", ex);
                 }
             }
         }
@@ -263,6 +277,24 @@ namespace Reclaimer.Plugins
         public static IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
         {
             return AllPlugins.SelectMany(p => p.GetContextItems(context));
+        }
+
+        /// <summary>
+        /// Adds an entry to the recent files menu.
+        /// </summary>
+        /// <param name="fileName">The full path of the file to add.</param>
+        public static void AddRecentFile(string fileName)
+        {
+            if (!File.Exists(fileName))
+                throw Exceptions.FileNotFound(fileName);
+
+            App.Settings.RecentFiles.RemoveAll(s => s.Equals(fileName, StringComparison.OrdinalIgnoreCase));
+            App.Settings.RecentFiles.Insert(0, fileName);
+
+            while (App.Settings.RecentFiles.Count > 10)
+                App.Settings.RecentFiles.RemoveAt(10);
+
+            RecentsUpdated?.Invoke(typeof(Substrate), EventArgs.Empty);
         }
 
         /// <summary>

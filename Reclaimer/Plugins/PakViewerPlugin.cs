@@ -68,6 +68,7 @@ namespace Reclaimer.Plugins
                 var pv = new Controls.PakViewer();
                 pv.LoadPak(fileName);
                 Substrate.AddTool(pv.TabModel, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
+                Substrate.AddRecentFile(fileName);
 
                 LogOutput($"Loaded pak file: {fileName}");
             }

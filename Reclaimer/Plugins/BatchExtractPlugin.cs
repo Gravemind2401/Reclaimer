@@ -32,10 +32,10 @@ namespace Reclaimer.Plugins
         private Lazy<GetModelExtension> getModelExtensionFunc;
 
         private delegate void WriteModelFile(IGeometryModel model, string fileName, string formatId);
-        private Lazy<WriteModelFile> writeModelFileFunc;
+        private WriteModelFile writeModelFileFunc;
 
         private delegate bool WriteSoundFile(GameSound sound, string directory, bool overwrite);
-        private Lazy<WriteSoundFile> writeSoundFileFunc;
+        private WriteSoundFile writeSoundFileFunc;
 
         public override string Name => "Batch Extractor";
 
@@ -61,8 +61,12 @@ namespace Reclaimer.Plugins
             Settings = LoadSettings<BatchExtractSettings>();
             Settings.DataFolder = Settings.DataFolder.PatternReplace(":plugins:", Substrate.PluginsDirectory);
             getModelExtensionFunc = new Lazy<GetModelExtension>(() => Substrate.GetSharedFunction<GetModelExtension>("Reclaimer.Plugins.ModelViewerPlugin.GetFormatExtension"));
-            writeModelFileFunc = new Lazy<WriteModelFile>(() => Substrate.GetSharedFunction<WriteModelFile>("Reclaimer.Plugins.ModelViewerPlugin.WriteModelFile"));
-            writeSoundFileFunc = new Lazy<WriteSoundFile>(() => Substrate.GetSharedFunction<WriteSoundFile>("Reclaimer.Plugins.SoundExtractorPlugin.WriteSoundFile"));
+        }
+
+        public override void PostInitialise()
+        {
+            writeModelFileFunc = Substrate.GetSharedFunction<WriteModelFile>("Reclaimer.Plugins.ModelViewerPlugin.WriteModelFile");
+            writeSoundFileFunc = Substrate.GetSharedFunction<WriteSoundFile>("Reclaimer.Plugins.SoundExtractorPlugin.WriteSoundFile");
         }
 
         public override IEnumerable<PluginMenuItem> GetMenuItems()
@@ -203,7 +207,7 @@ namespace Reclaimer.Plugins
                     case "mode":
                     case "mod2":
                     case "sbsp":
-                        if (writeModelFileFunc.Value != null)
+                        if (writeModelFileFunc != null)
                         {
                             if (SaveModel(tag))
                                 counter.Extracted++;
@@ -211,7 +215,7 @@ namespace Reclaimer.Plugins
                         break;
 
                     case "snd!":
-                        if (writeSoundFileFunc.Value != null)
+                        if (writeSoundFileFunc != null)
                         {
                             if (SaveSound(tag))
                                 counter.Extracted++;
@@ -404,7 +408,7 @@ namespace Reclaimer.Plugins
             if (!Settings.OverwriteExisting && File.Exists($"{fileName}.{ext}"))
                 return false;
 
-            writeModelFileFunc.Value?.Invoke(geometry.ReadGeometry(0), fileName, Settings.ModelFormat);
+            writeModelFileFunc?.Invoke(geometry.ReadGeometry(0), fileName, Settings.ModelFormat);
             return true;
         }
         #endregion
@@ -442,7 +446,7 @@ namespace Reclaimer.Plugins
         private bool SaveSound(ISoundContainer sound, string baseDir)
         {
             var dir = Path.GetDirectoryName(MakePath(sound.Class, sound.Name, baseDir));
-            return writeSoundFileFunc.Value?.Invoke(sound.ReadData(), dir, Settings.OverwriteExisting) ?? false;
+            return writeSoundFileFunc?.Invoke(sound.ReadData(), dir, Settings.OverwriteExisting) ?? false;
         }
         #endregion
 

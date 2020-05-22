@@ -112,10 +112,18 @@ namespace Reclaimer.Plugins
         public abstract string Name { get; }
 
         /// <summary>
-        /// When overidden in a derived class, performs any initialisation required by the plugin.
-        /// This method is called by the <see cref="Substrate"/> when the plugin is first loaded.
+        /// <para>When overidden in a derived class, performs any initialisation required by the plugin.</para>
+        /// <para>Any initialisation that does not depend on another plugin should be done here.</para>
+        /// <para>This method is called by the <see cref="Substrate"/> when the plugin is first loaded.</para>
         /// </summary>
         public virtual void Initialise() { }
+
+        /// <summary>
+        /// <para>When overidden in a derived class, performs any additional initialisation required by the plugin.</para>
+        /// <para>Any initialisation that depends on another plugin should be done here.</para>
+        /// <para>This method is called by the <see cref="Substrate"/> after all plugins have been loaded.</para>
+        /// </summary>
+        public virtual void PostInitialise() { }
 
         /// <summary>
         /// When overidden in a derived class, performs any cleanup required by the plugin.

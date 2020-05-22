@@ -1,5 +1,6 @@
 ﻿using Adjutant.Geometry;
 using Adjutant.Utilities;
+using Reclaimer.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,14 +55,18 @@ namespace Reclaimer.Plugins
 
         #region Model Exports
 
-        private static readonly ExportFormat[] ExportFormats = new[]
+        private static readonly ExportFormat[] StandardFormats = new[]
         {
-            new ExportFormat("amf",         "amf",  "AMF Files"),
-            new ExportFormat("jms",         "jms",  "JMS Files"),
+            new ExportFormat("amf",         "amf",  "AMF Files", (model, fileName) => model.WriteAMF(fileName, Settings.GeometryScale)),
+            new ExportFormat("jms",         "jms",  "JMS Files", (model, fileName) => model.WriteJMS(fileName, Settings.GeometryScale)),
             new ExportFormat("objnomtl",    "obj",  "OBJ Files"),
             new ExportFormat("obj",         "obj",  "OBJ Files with materials"),
             new ExportFormat("collada",     "dae",  "COLLADA Files"),
         };
+
+        private static Dictionary<string, ExportFormat> UserFormats = new Dictionary<string, ExportFormat>();
+
+        private static IEnumerable<ExportFormat> ExportFormats => UserFormats.Values.Concat(StandardFormats);
 
         [SharedFunction]
         public static IEnumerable<string> GetExportFormats() => ExportFormats.Select(f => f.FormatId);
@@ -71,6 +76,27 @@ namespace Reclaimer.Plugins
 
         [SharedFunction]
         public static string GetFormatDescription(string formatId) => ExportFormats.FirstOrDefault(f => f.FormatId == formatId.ToLower()).Description;
+
+        [SharedFunction]
+        public static void RegisterExportFormat(string formatId, string extension, string description, Action<IGeometryModel, string> exportFunction)
+        {
+            if (string.IsNullOrWhiteSpace(formatId))
+                throw Exceptions.MissingStringParameter(nameof(formatId));
+
+            if (string.IsNullOrWhiteSpace(extension))
+                throw Exceptions.MissingStringParameter(nameof(extension));
+
+            if (exportFunction == null)
+                throw new ArgumentNullException(nameof(exportFunction));
+
+            formatId = formatId.ToLower();
+            extension = extension.ToLower();
+
+            if (UserFormats.ContainsKey(formatId))
+                throw new ArgumentException("An format the same ID has already been added.", nameof(formatId));
+
+            UserFormats.Add(formatId, new ExportFormat(formatId, extension, description, exportFunction));
+        }
 
         [SharedFunction]
         public static void WriteModelFile(IGeometryModel model, string fileName, string formatId)
@@ -89,10 +115,10 @@ namespace Reclaimer.Plugins
             if (!fileName.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
                 fileName += ext;
 
-            if (formatId == "amf")
-                model.WriteAMF(fileName, Settings.GeometryScale);
-            else if (formatId == "jms")
-                model.WriteJMS(fileName, Settings.GeometryScale);
+            var format = ExportFormats.First(f => f.FormatId == formatId);
+
+            if (format.ExportFunction != null)
+                format.ExportFunction(model, fileName);
             else
             {
                 using (var context = new Assimp.AssimpContext())
@@ -108,12 +134,14 @@ namespace Reclaimer.Plugins
             public string FormatId { get; }
             public string Extension { get; }
             public string Description { get; }
+            public Action<IGeometryModel, string> ExportFunction { get; }
 
-            public ExportFormat(string formatId, string extension, string description)
+            public ExportFormat(string formatId, string extension, string description, Action<IGeometryModel, string> exportFunction = null)
             {
                 FormatId = formatId;
                 Extension = extension;
                 Description = description;
+                ExportFunction = exportFunction;
             }
         }
 

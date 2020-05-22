@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -33,6 +34,15 @@ namespace Reclaimer.Utilities
                 if (predicate(item)) match = index++;
 
             return match;
+        }
+
+        public static IEnumerable<string> SplitPath(this DirectoryInfo directory)
+        {
+            while (directory != null)
+            {
+                yield return directory.Name;
+                directory = directory.Parent;
+            }
         }
 
         /// <summary>

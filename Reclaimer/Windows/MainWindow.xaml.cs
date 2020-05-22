@@ -1,7 +1,6 @@
 ﻿using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,10 +12,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Studio.Controls;
 using Reclaimer.Plugins;
 using Reclaimer.Models;
+using Reclaimer.Utilities;
+using System.IO;
 
 namespace Reclaimer.Windows
 {
@@ -28,10 +28,15 @@ namespace Reclaimer.Windows
         DockContainerModel ITabContentHost.DockContainer => Model;
         DocumentPanelModel ITabContentHost.DocumentPanel => DocPanel;
 
+#if DEBUG
+        public string AppVersion => "DEBUG";
+#else
         public string AppVersion => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+#endif
 
         public DockContainerModel Model { get; }
         private DocumentPanelModel DocPanel { get; }
+        private MenuItem RecentsMenuItem { get; }
 
         public MainWindow()
         {
@@ -39,8 +44,10 @@ namespace Reclaimer.Windows
 
             Model = new DockContainerModel();
             Model.Content = DocPanel = new DocumentPanelModel();
+            RecentsMenuItem = new MenuItem { Header = "Recent Files" };
 
             Substrate.LoadPlugins();
+            Substrate.RecentsUpdated += Substrate_RecentsUpdated;
         }
 
         private void menuOutput_Click(object sender, RoutedEventArgs e)
@@ -65,6 +72,8 @@ namespace Reclaimer.Windows
                     AddMenuItem(plugin, item);
             }
 
+            RefreshRecents();
+
             var themeRoot = GetMenuItem("Themes");
             foreach (var theme in App.Themes)
             {
@@ -83,6 +92,12 @@ namespace Reclaimer.Windows
                 App.Settings.WindowState = WindowState;
         }
 
+        private void Substrate_RecentsUpdated(object sender, EventArgs e)
+        {
+            App.Settings.Save();
+            RefreshRecents();
+        }
+
         private void ThemeMenuItem_Click(object sender, RoutedEventArgs e)
         {
             App.SetTheme((sender as MenuItem).Tag as string);
@@ -99,6 +114,52 @@ namespace Reclaimer.Windows
             var root = GetRoot(menuItem);
             if (!menu.Items.Contains(root))
                 menu.Items.Add(root);
+        }
+
+        private void RefreshRecents()
+        {
+            const int maxChars = 60;
+
+            RecentsMenuItem.Items.Clear();
+            fileMenu.Items.Remove(RecentsMenuItem);
+
+            foreach (var fileName in App.Settings.RecentFiles.Where(s => File.Exists(s)))
+            {
+                var displayName = fileName;
+                if (displayName.Length > maxChars)
+                {
+                    var name = Path.GetFileName(fileName);
+                    var dir = Directory.GetParent(fileName);
+                    var drive = dir.Root.FullName;
+                    var tally = drive.Length + name.Length;
+
+                    var parts = dir.SplitPath()
+                        .TakeWhile(s =>
+                        {
+                            if (tally + s.Length > maxChars)
+                                return false;
+
+                            tally += s.Length;
+                            return true;
+                        }).Reverse().ToArray();
+
+                    displayName = Path.Combine(parts);
+                    displayName = Path.Combine(drive, "...", displayName, name);
+                }
+
+                var item = new MenuItem { Header = displayName, Tag = fileName };
+                RecentsMenuItem.Items.Add(item);
+                item.Click += RecentsItem_Click;
+            }
+
+            if (RecentsMenuItem.HasItems)
+                fileMenu.Items.Add(RecentsMenuItem);
+        }
+
+        private void RecentsItem_Click(object sender, RoutedEventArgs e)
+        {
+            var fileName = (sender as MenuItem)?.Tag as string;
+            Substrate.HandlePhysicalFile(fileName);
         }
 
         private void CustomMenuItem_Click(object sender, RoutedEventArgs e)

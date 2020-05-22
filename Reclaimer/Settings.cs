@@ -33,11 +33,14 @@ namespace Reclaimer
         //will initially be read in as JObjects
         public Dictionary<string, object> PluginSettings { get; set; }
 
+        public List<string> RecentFiles { get; set; }
+
         public Settings()
         {
             Theme = App.Themes.First();
             DefaultHandlers = new Dictionary<string, string>();
             PluginSettings = new Dictionary<string, object>();
+            RecentFiles = new List<string>();
         }
 
         public static Settings FromFile()
