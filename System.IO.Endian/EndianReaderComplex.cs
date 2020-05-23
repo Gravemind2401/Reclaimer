@@ -208,7 +208,11 @@ namespace System.IO.Endian
         private object DynamicRead(object instance, Type type, double? version)
         {
             if (instance == null)
+            {
+                var originalPosition = BaseStream.Position;
                 instance = CreateInstance(type, version);
+                BaseStream.Position = originalPosition; //in case the constructor moved it
+            }
 
             var read = typeof(DynamicReader<>).MakeGenericType(type)
                 .GetMethod("Read", BindingFlags.Static | BindingFlags.Public);
@@ -472,11 +476,11 @@ namespace System.IO.Endian
                 return ReadStandardValue(type);
 
             var typeKey = Utils.CurrentCulture($"{type.FullName}:{version}");
+            var originalPosition = BaseStream.Position;
 
             if (instance == null)
                 instance = CreateInstance(type, version);
 
-            var originalPosition = BaseStream.Position;
             using (var reader = CreateVirtualReader())
             {
                 if (!version.HasValue)
