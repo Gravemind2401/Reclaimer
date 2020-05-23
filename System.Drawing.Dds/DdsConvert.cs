@@ -29,7 +29,7 @@ namespace System.Drawing.Dds
             { DxgiFormat.BC4_SNorm, DecompressBC4 },
             { DxgiFormat.BC5_Typeless, DecompressBC5 },
             { DxgiFormat.BC5_UNorm, DecompressBC5 },
-            { DxgiFormat.BC5_SNorm, DecompressBC5 },
+            { DxgiFormat.BC5_SNorm, DecompressBC5Signed },
             { DxgiFormat.B5G6R5_UNorm, DecompressB5G6R5 },
             { DxgiFormat.B5G5R5A1_UNorm, DecompressB5G5R5A1 },
             { DxgiFormat.P8, DecompressY8 },
@@ -43,6 +43,7 @@ namespace System.Drawing.Dds
             { XboxFormat.CTX1, DecompressCTX1 },
             { XboxFormat.DXN, DecompressDXN },
             { XboxFormat.DXN_mono_alpha, DecompressDXN_mono_alpha },
+            { XboxFormat.DXN_SNorm, DecompressDXNSigned },
             { XboxFormat.DXT3a_scalar, DecompressDXT3a_scalar },
             { XboxFormat.DXT3a_mono, DecompressDXT3a_mono },
             { XboxFormat.DXT3a_alpha, DecompressDXT3a_alpha },
@@ -64,7 +65,7 @@ namespace System.Drawing.Dds
             { FourCC.BC4S, DecompressBC4 },
             { FourCC.ATI1, DecompressBC4 },
             { FourCC.BC5U, DecompressBC5 },
-            { FourCC.BC5S, DecompressBC5 },
+            { FourCC.BC5S, DecompressBC5Signed },
             { FourCC.ATI2, DecompressBC5 },
         };
 
@@ -642,6 +643,82 @@ namespace System.Drawing.Dds
 
             return output;
         }
+
+        internal static byte[] DecompressBC5Signed(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+            var rPalette = new sbyte[8];
+            var gPalette = new sbyte[8];
+
+            const int bytesPerBlock = 16;
+            var xBlocks = width / 4;
+            var yBlocks = height / 4;
+
+            for (int yBlock = 0; yBlock < yBlocks; yBlock++)
+            {
+                for (int xBlock = 0; xBlock < xBlocks; xBlock++)
+                {
+                    var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
+
+                    rPalette[0] = unchecked((sbyte)data[srcIndex]);
+                    rPalette[1] = unchecked((sbyte)data[srcIndex + 1]);
+
+                    var gradients = rPalette[0] > rPalette[1] ? 7f : 5f;
+                    for (int i = 1; i < gradients; i++)
+                        rPalette[i + 1] = Lerp(rPalette[0], rPalette[1], i / gradients);
+
+                    if (rPalette[0] <= rPalette[1])
+                    {
+                        rPalette[6] = sbyte.MinValue;
+                        rPalette[7] = sbyte.MaxValue;
+                    }
+
+                    gPalette[0] = unchecked((sbyte)data[srcIndex + 8]);
+                    gPalette[1] = unchecked((sbyte)data[srcIndex + 9]);
+
+                    gradients = gPalette[0] > gPalette[1] ? 7f : 5f;
+                    for (int i = 1; i < gradients; i++)
+                        gPalette[i + 1] = Lerp(gPalette[0], gPalette[1], i / gradients);
+
+                    if (gPalette[0] <= gPalette[1])
+                    {
+                        gPalette[6] = sbyte.MinValue;
+                        gPalette[7] = sbyte.MaxValue;
+                    }
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        for (int j = 0; j < 4; j++)
+                        {
+                            var pixelIndex = i * 4 + j;
+
+                            var rStart = srcIndex + (pixelIndex < 8 ? 2 : 5);
+                            var rIndexBits = (data[rStart + 2] << 16) | (data[rStart + 1] << 8) | data[rStart];
+
+                            var gStart = srcIndex + (pixelIndex < 8 ? 10 : 13);
+                            var gIndexBits = (data[gStart + 2] << 16) | (data[gStart + 1] << 8) | data[gStart];
+
+                            var destX = xBlock * 4 + j;
+                            var destY = yBlock * 4 + i;
+
+                            var destIndex = (destY * width + destX) * bpp;
+                            var shift = (pixelIndex % 8) * 3;
+
+                            var rIndex = (byte)((rIndexBits >> shift) & 0x7);
+                            var gIndex = (byte)((gIndexBits >> shift) & 0x7);
+
+                            output[destIndex] = unchecked((byte)sbyte.MinValue); //opening a BC5_SNorm dds in visual studio treats the blue channel as -1f, so we may as well too
+                            output[destIndex + 1] = Lerp(byte.MinValue, byte.MaxValue, (gPalette[gIndex] - sbyte.MinValue) / 255f);
+                            output[destIndex + 2] = Lerp(byte.MinValue, byte.MaxValue, (rPalette[rIndex] - sbyte.MinValue) / 255f);
+                            if (!bgr24) output[destIndex + 3] = byte.MaxValue;
+                        }
+                    }
+                }
+            }
+
+            return output;
+        }
         #endregion
 
         #region Xbox Decompression Methods
@@ -764,6 +841,16 @@ namespace System.Drawing.Dds
         {
             var bpp = bgr24 ? 3 : 4;
             data = DecompressBC5(data, height, width, bgr24);
+            for (int i = 0; i < data.Length; i += bpp)
+                data[i] = CalculateZVector(data[i + 2], data[i + 1]);
+
+            return data;
+        }
+
+        internal static byte[] DecompressDXNSigned(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            data = DecompressBC5Signed(data, height, width, bgr24);
             for (int i = 0; i < data.Length; i += bpp)
                 data[i] = CalculateZVector(data[i + 2], data[i + 1]);
 

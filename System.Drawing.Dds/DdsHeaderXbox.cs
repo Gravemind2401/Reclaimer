@@ -27,6 +27,7 @@ namespace System.Drawing.Dds
         CTX1,
         DXN,
         DXN_mono_alpha,
+        DXN_SNorm,
         DXT3a_scalar,
         DXT3a_mono,
         DXT3a_alpha,
