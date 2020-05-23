@@ -46,6 +46,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0" x:Name="menu">
@@ -80,5 +81,22 @@
                         ContentTemplateSelector="{StaticResource coreTemplateSelector}" />
             </Grid>
         </s:DockContainer>
+
+        <StatusBar Grid.Row="2" DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}">
+            <StatusBarItem HorizontalAlignment="Left" Content="{Binding CurrentStatus}" />
+
+            <StatusBar.Style>
+                <Style TargetType="StatusBar" BasedOn="{StaticResource {x:Type StatusBar}}">
+                    <Setter Property="Background" Value="{DynamicResource Environment.StatusBar.DefaultBackground}" />
+                    <Setter Property="Foreground" Value="{DynamicResource Environment.StatusBar.DefaultForeground}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsBusy}" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource Environment.StatusBar.DebuggingBackground}" />
+                            <Setter Property="Foreground" Value="{DynamicResource Environment.StatusBar.DebuggingForeground}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StatusBar.Style>
+        </StatusBar>
     </Grid>
 </metro:MetroWindow>

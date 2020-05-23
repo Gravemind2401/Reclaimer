@@ -40,7 +40,14 @@ namespace Reclaimer.Plugins
 
             try
             {
-                var viewer = new Controls.ModelViewer { LogOutput = LogOutput, LogError = LogError };
+                var viewer = new Controls.ModelViewer
+                {
+                    LogOutput = LogOutput,
+                    LogError = LogError,
+                    SetStatus = SetWorkingStatus,
+                    ClearStatus = ClearWorkingStatus
+                };
+
                 viewer.LoadGeometry(model, $"{args.FileName}");
 
                 container.AddItem(viewer.TabModel);

@@ -1,4 +1,5 @@
-﻿using Reclaimer.Windows;
+﻿using Reclaimer.Utilities;
+using Reclaimer.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,6 +107,22 @@ namespace Reclaimer.Plugins
 
         internal virtual string Key => GetType().FullName;
 
+        internal DateTime WorkingStatusTime { get; private set; }
+
+        private string workingStatus;
+        internal string WorkingStatus
+        {
+            get { return workingStatus; }
+            private set
+            {
+                if (workingStatus != value)
+                {
+                    workingStatus = value;
+                    WorkingStatusTime = DateTime.Now;
+                }
+            }
+        }
+
         /// <summary>
         /// The name of the plugin.
         /// </summary>
@@ -149,6 +166,28 @@ namespace Reclaimer.Plugins
         protected void SaveSettings<T>(T settings) where T : new()
         {
             Substrate.SavePluginSettings(Key, settings);
+        }
+
+        /// <summary>
+        /// Updates the working status that appears in the statusbar.
+        /// </summary>
+        /// <param name="status">The status to display.</param>
+        protected void SetWorkingStatus(string status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                throw Exceptions.MissingStringParameter(nameof(status));
+
+            WorkingStatus = status;
+            Substrate.RaiseWorkingStatusChanged(this);
+        }
+
+        /// <summary>
+        /// Removes this plugin's working status from the status bar.
+        /// </summary>
+        protected void ClearWorkingStatus()
+        {
+            WorkingStatus = null;
+            Substrate.RaiseWorkingStatusChanged(this);
         }
 
         /// <summary>

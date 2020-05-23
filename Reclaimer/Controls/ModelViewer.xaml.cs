@@ -34,7 +34,7 @@ namespace Reclaimer.Controls
     public partial class ModelViewer : IDisposable
     {
         private delegate bool GetDataFolder(out string dataFolder);
-        private delegate void SaveImage(IBitmap bitmap, string baseDir);
+        private delegate bool SaveImage(IBitmap bitmap, string baseDir);
 
         private static readonly string[] AllLods = new[] { "Highest", "High", "Medium", "Low", "Lowest" };
         private static readonly DiffuseMaterial ErrorMaterial;
@@ -77,8 +77,9 @@ namespace Reclaimer.Controls
         public ObservableCollection<TreeItemModel> TreeViewItems { get; }
 
         public Action<string> LogOutput { get; set; }
-
         public Action<string, Exception> LogError { get; set; }
+        public Action<string> SetStatus { get; set; }
+        public Action ClearStatus { get; set; }
 
         static ModelViewer()
         {
@@ -443,8 +444,6 @@ namespace Reclaimer.Controls
             if (!getFolder(out folder))
                 return;
 
-            Substrate.ShowOutput();
-
             Task.Run(() =>
             {
                 var saveImage = Substrate.GetSharedFunction<SaveImage>("Reclaimer.Plugins.BatchExtractPlugin.SaveImage");
@@ -453,6 +452,7 @@ namespace Reclaimer.Controls
                 {
                     try
                     {
+                        SetStatus($"Extracting {bitm.Name}");
                         saveImage(bitm, folder);
                         LogOutput($"Extracted {bitm.Name}.{bitm.Class}");
                     }
@@ -462,6 +462,7 @@ namespace Reclaimer.Controls
                     }
                 }
 
+                ClearStatus();
                 LogOutput($"Recursive bitmap extract complete for {geometry.Name}.{geometry.Class}");
             });
         }

@@ -87,6 +87,7 @@ namespace Reclaimer.Windows
         private void btnSetDefault_Click(object sender, RoutedEventArgs e)
         {
             App.Settings.DefaultHandlers[args.FileTypeKey] = SelectedPlugin.Key;
+            App.Settings.Save();
             LoadList(FileHandlers.Select(t => t.Item1).ToList(), args);
         }
     }

@@ -25,6 +25,26 @@ namespace Reclaimer.Windows
     /// </summary>
     public partial class MainWindow : MetroWindow, ITabContentHost
     {
+        #region Dependency Properties
+        public static readonly DependencyProperty IsBusyProperty =
+            DependencyProperty.Register(nameof(IsBusy), typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
+        public static readonly DependencyProperty CurrentStatusProperty =
+            DependencyProperty.Register(nameof(CurrentStatus), typeof(string), typeof(MainWindow), new PropertyMetadata("Ready"));
+
+        public bool IsBusy
+        {
+            get { return (bool)GetValue(IsBusyProperty); }
+            set { SetValue(IsBusyProperty, value); }
+        }
+
+        public string CurrentStatus
+        {
+            get { return (string)GetValue(CurrentStatusProperty); }
+            set { SetValue(CurrentStatusProperty, value); }
+        }
+        #endregion
+
         DockContainerModel ITabContentHost.DockContainer => Model;
         DocumentPanelModel ITabContentHost.DocumentPanel => DocPanel;
 
@@ -47,7 +67,9 @@ namespace Reclaimer.Windows
             RecentsMenuItem = new MenuItem { Header = "Recent Files" };
 
             Substrate.LoadPlugins();
-            Substrate.RecentsUpdated += Substrate_RecentsUpdated;
+
+            Substrate.StatusChanged += Substrate_StatusChanged;
+            Substrate.RecentsChanged += Substrate_RecentsChanged;
         }
 
         private void menuOutput_Click(object sender, RoutedEventArgs e)
@@ -92,7 +114,24 @@ namespace Reclaimer.Windows
                 App.Settings.WindowState = WindowState;
         }
 
-        private void Substrate_RecentsUpdated(object sender, EventArgs e)
+        private void Substrate_StatusChanged(object sender, StatusChangedArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (e.Status == null)
+                {
+                    ClearValue(CurrentStatusProperty);
+                    IsBusy = false;
+                }
+                else
+                {
+                    CurrentStatus = $"{e.PluginName}: {e.Status}";
+                    IsBusy = true;
+                }
+            });
+        }
+
+        private void Substrate_RecentsChanged(object sender, EventArgs e)
         {
             App.Settings.Save();
             RefreshRecents();

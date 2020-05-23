@@ -41,9 +41,10 @@ namespace Reclaimer.Plugins
                 .Where(m => m.CustomAttributes.Any(a => a.AttributeType == typeof(SharedFunctionAttribute)));
         }
 
+        internal static event EventHandler RecentsChanged;
         internal static event EventHandler<LogEventArgs> Log;
         internal static event EventHandler<LogEventArgs> EmptyLog;
-        internal static event EventHandler RecentsUpdated;
+        internal static event EventHandler<StatusChangedArgs> StatusChanged;
 
         internal static Dictionary<string, string> DefaultHandlers { get; set; }
 
@@ -159,6 +160,21 @@ namespace Reclaimer.Plugins
         internal static void LogOutput(Plugin source, LogEntry entry) => Log?.Invoke(source, new LogEventArgs(source, entry));
 
         internal static void ClearLogOutput(Plugin source) => EmptyLog?.Invoke(source, new LogEventArgs(source, default(LogEntry)));
+
+        internal static void RaiseWorkingStatusChanged(Plugin source)
+        {
+            if (source.WorkingStatus != null)
+                StatusChanged?.Invoke(typeof(Substrate), new StatusChangedArgs(source.Name, source.WorkingStatus));
+            else
+            {
+                var mostRecent = AllPlugins
+                    .Where(p => p.WorkingStatus != null)
+                    .OrderByDescending(p => p.WorkingStatusTime)
+                    .FirstOrDefault();
+
+                StatusChanged?.Invoke(typeof(Substrate), new StatusChangedArgs(mostRecent?.Name, mostRecent?.WorkingStatus));
+            }
+        }
 
         internal static Plugin GetDefaultHandler(OpenFileArgs args)
         {
@@ -294,7 +310,7 @@ namespace Reclaimer.Plugins
             while (App.Settings.RecentFiles.Count > 10)
                 App.Settings.RecentFiles.RemoveAt(10);
 
-            RecentsUpdated?.Invoke(typeof(Substrate), EventArgs.Empty);
+            RecentsChanged?.Invoke(typeof(Substrate), EventArgs.Empty);
         }
 
         /// <summary>
@@ -441,6 +457,18 @@ namespace Reclaimer.Plugins
         {
             Source = source;
             Entry = entry;
+        }
+    }
+
+    internal class StatusChangedArgs : EventArgs
+    {
+        public string PluginName { get; }
+        public string Status { get; }
+
+        public StatusChangedArgs(string pluginName, string status)
+        {
+            PluginName = pluginName;
+            Status = status;
         }
     }
 }

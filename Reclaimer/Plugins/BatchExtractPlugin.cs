@@ -152,7 +152,6 @@ namespace Reclaimer.Plugins
 
             if (isBusy) return;
 
-            Substrate.ShowOutput();
             tokenSource = new CancellationTokenSource();
             isBusy = true;
 
@@ -171,7 +170,10 @@ namespace Reclaimer.Plugins
                         break;
 
                     if (item != null)
+                    {
+                        SetWorkingStatus($"Extracting {item.FullPath}");
                         Extract(item, counter);
+                    }
                 }
 
                 var span = DateTime.Now - start;
@@ -180,6 +182,7 @@ namespace Reclaimer.Plugins
                 tokenSource.Dispose();
                 tokenSource = null;
                 isBusy = false;
+                ClearWorkingStatus();
             }, tokenSource.Token);
         }
 
