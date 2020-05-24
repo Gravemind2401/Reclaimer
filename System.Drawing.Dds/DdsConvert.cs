@@ -901,6 +901,11 @@ namespace System.Drawing.Dds
         }
         #endregion
 
+        private static sbyte Lerp(sbyte p1, sbyte p2, float fraction)
+        {
+            return (sbyte)((p1 * (1 - fraction)) + (p2 * fraction));
+        }
+
         private static byte Lerp(byte p1, byte p2, float fraction)
         {
             return (byte)((p1 * (1 - fraction)) + (p2 * fraction));
