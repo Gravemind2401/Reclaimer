@@ -207,17 +207,14 @@ namespace System.IO.Endian
 
         private object DynamicRead(object instance, Type type, double? version)
         {
+            var originalPosition = BaseStream.Position;
             if (instance == null)
-            {
-                var originalPosition = BaseStream.Position;
                 instance = CreateInstance(type, version);
-                BaseStream.Position = originalPosition; //in case the constructor moved it
-            }
 
             var read = typeof(DynamicReader<>).MakeGenericType(type)
                 .GetMethod("Read", BindingFlags.Static | BindingFlags.Public);
 
-            return read.Invoke(null, new object[] { this, version, instance });
+            return read.Invoke(null, new object[] { this, version, instance, originalPosition });
         }
 
         /// <summary>

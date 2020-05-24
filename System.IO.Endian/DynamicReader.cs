@@ -23,24 +23,24 @@ namespace System.IO.Endian
 
     internal static class DynamicReader<T>
     {
-        private delegate T DynamicRead(EndianReader reader, T instance);
+        private delegate T DynamicRead(EndianReader reader, T instance, long origin);
 
         private static readonly Type TypeArg = typeof(T);
-        private static readonly Type[] ReadArgs = new[] { typeof(EndianReader), typeof(T) };
+        private static readonly Type[] ReadArgs = new[] { typeof(EndianReader), typeof(T), typeof(long) };
 
         private static DynamicRead Unversioned;
         private static readonly ConcurrentDictionary<double, DynamicRead> VersionLookup = new ConcurrentDictionary<double, DynamicRead>();
 
-        public static T Read(EndianReader reader, double? version, T instance)
+        public static T Read(EndianReader reader, double? version, T instance, long origin)
         {
             if (TypeArg.IsPrimitive)
                 return instance;
 
             if (version.HasValue && VersionLookup.ContainsKey(version.Value))
-                return VersionLookup[version.Value](reader, instance);
+                return VersionLookup[version.Value](reader, instance, origin);
             else if (Unversioned != null)
-                return Unversioned(reader, instance);
-            else return GenerateReadMethod(version)(reader, instance);
+                return Unversioned(reader, instance, origin);
+            else return GenerateReadMethod(version)(reader, instance, origin);
         }
 
         public static void DumpAssembly(double? version)
@@ -97,12 +97,6 @@ namespace System.IO.Endian
 
             EmitDebugOutput(il, $"[Read type '{TypeArg.Name}' [v{version?.ToString() ?? "NULL"}]]");
 
-            var begin = il.DeclareLocal(typeof(long));
-            il.Emit(OpCodes.Ldarg_0); //reader
-            il.Emit(OpCodes.Callvirt, typeof(EndianReader).GetProperty(nameof(EndianReader.BaseStream)).GetGetMethod());
-            il.Emit(OpCodes.Callvirt, typeof(Stream).GetProperty(nameof(Stream.Position)).GetGetMethod());
-            il.Emit(OpCodes.Stloc_S, begin);
-
             #region Read Properties
             foreach (var prop in GetProperties(TypeArg, version))
             {
@@ -111,7 +105,7 @@ namespace System.IO.Endian
 
                 EmitDebugOutput(il, $"[Read property '{prop.Name}']");
 
-                EmitSeek(il, begin, offset.Offset);
+                EmitSeek(il, offset.Offset);
 
                 var storeType = Utils.GetAttributeForVersion<StoreTypeAttribute>(prop, version)?.StoreType ?? prop.PropertyType;
                 var isNullable = storeType.IsGenericType && storeType.GetGenericTypeDefinition().Equals(typeof(Nullable<>));
@@ -222,7 +216,7 @@ namespace System.IO.Endian
 
                     il.Emit(OpCodes.Ldarg_0); //reader
                     il.Emit(OpCodes.Callvirt, typeof(EndianReader).GetProperty(nameof(EndianReader.BaseStream)).GetGetMethod());
-                    il.Emit(OpCodes.Ldloc_S, begin);
+                    il.Emit(OpCodes.Ldarg_2); //begin
                     il.Emit(OpCodes.Ldloc_S, temp);
                     il.Emit(OpCodes.Unbox_Any, typeof(long));
                     il.Emit(OpCodes.Add);
@@ -231,7 +225,7 @@ namespace System.IO.Endian
                 {
                     il.Emit(OpCodes.Ldarg_0); //reader
                     il.Emit(OpCodes.Callvirt, typeof(EndianReader).GetProperty(nameof(EndianReader.BaseStream)).GetGetMethod());
-                    il.Emit(OpCodes.Ldloc_S, begin);
+                    il.Emit(OpCodes.Ldarg_2); //begin
                     il.Emit(OpCodes.Ldarg_1);
                     il.Emit(OpCodes.Callvirt, lengthProp.GetGetMethod());
                     il.Emit(OpCodes.Add);
@@ -245,7 +239,7 @@ namespace System.IO.Endian
 
             var fixedSize = Utils.GetAttributeForVersion<FixedSizeAttribute>(TypeArg, version);
             if (fixedSize != null)
-                EmitSeek(il, begin, fixedSize.Size);
+                EmitSeek(il, fixedSize.Size);
 
             il.Emit(OpCodes.Ldarg_1);
             il.Emit(OpCodes.Ret);
@@ -270,12 +264,12 @@ namespace System.IO.Endian
             il.Emit(OpCodes.Call, typeof(Debug).GetMethod(nameof(Debug.WriteLine), new[] { typeof(string) }));
         }
 
-        private static void EmitSeek(ILGenerator il, LocalBuilder begin, long offset)
+        private static void EmitSeek(ILGenerator il, long offset)
         {
             EmitDebugOutput(il, offset);
             il.Emit(OpCodes.Ldarg_0); //reader
             il.Emit(OpCodes.Callvirt, typeof(EndianReader).GetProperty(nameof(EndianReader.BaseStream)).GetGetMethod());
-            il.Emit(OpCodes.Ldloc_S, begin);
+            il.Emit(OpCodes.Ldarg_2); //begin
             if (offset != 0)
             {
                 if (offset > int.MaxValue)
