@@ -169,5 +169,24 @@ namespace Adjutant.Properties {
                 return ResourceManager.GetString("HaloReachVertexBuffer", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;stringDefinitions&gt;
+        ///  &lt;stringIDs id=&quot;U0&quot; indexBits=&quot;17&quot; namespaceBits=&quot;8&quot; lengthBits=&quot;7&quot;&gt;
+        ///    &lt;namespace id=&quot;0x0&quot; min=&quot;0x4C9&quot; startIndex=&quot;0x173C&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x1&quot; startIndex=&quot;0x4C9&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x2&quot; startIndex=&quot;0xB2E&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x3&quot; startIndex=&quot;0xC07&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x4&quot; startIndex=&quot;0xC71&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x5&quot; startIndex=&quot;0xD4A&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x6&quot; startIndex=&quot;0xD70&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x7&quot; startIndex=&quot;0 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MccHaloReachStrings {
+            get {
+                return ResourceManager.GetString("MccHaloReachStrings", resourceCulture);
+            }
+        }
     }
 }

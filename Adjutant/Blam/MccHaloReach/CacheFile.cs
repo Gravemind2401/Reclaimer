@@ -235,6 +235,7 @@ namespace Adjutant.Blam.MccHaloReach
     public class StringIndex : IStringIndex
     {
         private readonly CacheFile cache;
+        private readonly StringIdTranslator translator;
         private readonly string[] items;
 
         public StringIndex(CacheFile cache)
@@ -244,6 +245,20 @@ namespace Adjutant.Blam.MccHaloReach
 
             this.cache = cache;
             items = new string[cache.Header.StringCount];
+
+            var xml = Adjutant.Properties.Resources.MccHaloReachStrings;
+            switch (cache.BuildString)
+            {
+                case "Oct 24 2019 15:56:32":
+                    translator = new StringIdTranslator(xml, "U0");
+                    break;
+                case "Jan 30 2020 16:55:25":
+                    translator = new StringIdTranslator(xml, "U1");
+                    break;
+                default:
+                    translator = new StringIdTranslator(xml, "U2");
+                    break;
+            }
         }
 
         internal void ReadItems()
@@ -270,13 +285,7 @@ namespace Adjutant.Blam.MccHaloReach
 
         public int StringCount => items.Length;
 
-        public string this[int id]
-        {
-            get
-            {
-                return items[id];
-            }
-        }
+        public string this[int id] => items[translator.GetStringIndex(id)];
 
         public IEnumerator<string> GetEnumerator() => items.AsEnumerable().GetEnumerator();
 

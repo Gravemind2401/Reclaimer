@@ -123,7 +123,9 @@ namespace Adjutant.Blam.HaloReach
             }
 
             DdsImage dds;
-            if (dxgiLookup.ContainsKey(submap.BitmapFormat))
+            if (cache.CacheType >= CacheType.MccHaloReach && submap.BitmapFormat == TextureFormat.DXN)
+                dds = new DdsImage(submap.Height, submap.Width, XboxFormat.DXN_SNorm, DxgiTextureType.Texture2D, data);
+            else if (dxgiLookup.ContainsKey(submap.BitmapFormat))
                 dds = new DdsImage(submap.Height, submap.Width, dxgiLookup[submap.BitmapFormat], DxgiTextureType.Texture2D, data);
             else if (xboxLookup.ContainsKey(submap.BitmapFormat))
                 dds = new DdsImage(submap.Height, submap.Width, xboxLookup[submap.BitmapFormat], DxgiTextureType.Texture2D, data);

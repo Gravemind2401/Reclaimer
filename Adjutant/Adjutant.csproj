@@ -69,6 +69,7 @@
     <Compile Include="Blam\Common\IStringIndex.cs" />
     <Compile Include="Blam\Common\ITagIndex.cs" />
     <Compile Include="Blam\Common\IIndexItem.cs" />
+    <Compile Include="Blam\Common\StringIdTranslator.cs" />
     <Compile Include="Blam\Halo1\BitmapsAddressTranslator.cs" />
     <Compile Include="Blam\Halo1\CompressedVertex.cs" />
     <Compile Include="Blam\Halo1\Halo1Common.cs" />
@@ -235,6 +236,7 @@
     <Content Include="Resources\Halo2Classes.xml" />
     <Content Include="Resources\Halo3VertexBuffer.xml" />
     <Content Include="Resources\Halo5Classes.xml" />
+    <Content Include="Resources\MccHaloReachStrings.xml" />
     <Content Include="Resources\HaloReachVertexBuffer.xml" />
     <Content Include="Resources\Halo4VertexBuffer.xml" />
   </ItemGroup>
