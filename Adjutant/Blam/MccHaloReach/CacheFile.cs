@@ -60,6 +60,13 @@ namespace Adjutant.Blam.MccHaloReach
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
             }
+
+            Task.Factory.StartNew(() =>
+            {
+                TagIndex.GetGlobalTag("zone").ReadMetadata<HaloReach.cache_file_resource_gestalt>();
+                TagIndex.GetGlobalTag("play").ReadMetadata<HaloReach.cache_file_resource_layout_table>();
+                TagIndex.GetGlobalTag("scnr").ReadMetadata<HaloReach.scenario>();
+            });
         }
 
         public DependencyReader CreateReader(IAddressTranslator translator) => CacheFactory.CreateReader(this, translator);
@@ -308,6 +315,7 @@ namespace Adjutant.Blam.MccHaloReach
         private readonly CacheFile cache;
         ICacheFile IIndexItem.CacheFile => cache;
 
+        private readonly object cacheLock = new object();
         private object metadataCache;
 
         public IndexItem(CacheFile cache, int index)
@@ -337,20 +345,33 @@ namespace Adjutant.Blam.MccHaloReach
 
         public T ReadMetadata<T>()
         {
-            if (metadataCache?.GetType() == typeof(T))
-                return (T)metadataCache;
+            var lazy = metadataCache as Lazy<T>;
+            if (lazy != null)
+                return lazy.Value;
+            else if (CacheFactory.SystemClasses.Contains(ClassCode))
+            {
+                lock (cacheLock)
+                {
+                    lazy = metadataCache as Lazy<T>;
+                    if (lazy != null)
+                        return lazy.Value;
+                    else
+                        metadataCache = lazy = new Lazy<T>(() => ReadMetadataInternal<T>());
+                }
 
+                return lazy.Value;
+            }
+            else return ReadMetadataInternal<T>();
+        }
+
+        private T ReadMetadataInternal<T>()
+        {
             using (var reader = cache.CreateReader(cache.MetadataTranslator, cache.PointerExpander))
             {
                 reader.RegisterInstance<IIndexItem>(this);
 
                 reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
-                var result = (T)reader.ReadObject(typeof(T), (int)cache.CacheType);
-
-                if (CacheFactory.SystemClasses.Contains(ClassCode))
-                    metadataCache = result;
-
-                return result;
+                return (T)reader.ReadObject(typeof(T), (int)cache.CacheType);
             }
         }
 
