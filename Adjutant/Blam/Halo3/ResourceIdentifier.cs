@@ -12,6 +12,13 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Halo3
 {
+    public enum PageType
+    {
+        Auto,
+        Primary,
+        Secondary
+    }
+
     public struct ResourceIdentifier
     {
         private const string shared_map = "shared.map";
@@ -44,12 +51,11 @@ namespace Adjutant.Blam.Halo3
 
         public int ResourceIndex => identifier & ushort.MaxValue;
 
-        public byte[] ReadData()
+        public byte[] ReadData(PageType mode)
         {
             if (cache.CacheType == CacheType.Halo3Beta)
-                return ReadDataHalo3Beta();
+                return ReadDataHalo3Beta(mode);
 
-            var directory = Directory.GetParent(cache.FileName).FullName;
             var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
             var resourceLayoutTable = cache.TagIndex.GetGlobalTag("play").ReadMetadata<cache_file_resource_layout_table>();
             var entry = resourceGestalt.ResourceEntries[ResourceIndex];
@@ -58,14 +64,16 @@ namespace Adjutant.Blam.Halo3
                 throw new InvalidOperationException("Data not found");
 
             var segment = resourceLayoutTable.Segments[entry.SegmentIndex];
-            var pageIndex = segment.SecondaryPageIndex >= 0 ? segment.SecondaryPageIndex : segment.PrimaryPageIndex;
-            var chunkOffset = segment.SecondaryPageOffset >= 0 ? segment.SecondaryPageOffset : segment.PrimaryPageOffset;
+            var useSecondary = mode == PageType.Secondary || (mode == PageType.Auto && segment.SecondaryPageIndex >= 0);
+
+            var pageIndex = useSecondary ? segment.SecondaryPageIndex : segment.PrimaryPageIndex;
+            var chunkOffset = useSecondary ? segment.SecondaryPageOffset : segment.PrimaryPageOffset;
 
             if (pageIndex < 0 || chunkOffset < 0)
                 throw new InvalidOperationException("Data not found");
 
             var page = resourceLayoutTable.Pages[pageIndex];
-            if (page.DataOffset < 0)
+            if (mode == PageType.Auto && page.DataOffset < 0)
             {
                 pageIndex = segment.PrimaryPageIndex;
                 chunkOffset = segment.PrimaryPageOffset;
@@ -75,6 +83,7 @@ namespace Adjutant.Blam.Halo3
             var targetFile = cache.FileName;
             if (page.CacheIndex >= 0)
             {
+                var directory = Directory.GetParent(cache.FileName).FullName;
                 var mapName = Utils.GetFileName(resourceLayoutTable.SharedCaches[page.CacheIndex].FileName);
                 targetFile = Path.Combine(directory, mapName);
             }
@@ -99,14 +108,16 @@ namespace Adjutant.Blam.Halo3
             return decompressed.Skip(chunkOffset).ToArray();
         }
 
-        private byte[] ReadDataHalo3Beta()
+        private byte[] ReadDataHalo3Beta(PageType mode)
         {
             var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
             var directory = Directory.GetParent(cache.FileName).FullName;
             var entry = resourceGestalt.ResourceEntries[ResourceIndex];
 
-            var address = entry.OptionalOffset > 0 ? entry.OptionalOffset : entry.RequiredOffset;
-            var size = entry.OptionalSize > 0 ? entry.OptionalSize : entry.RequiredSize;
+            var useSecondary = mode == PageType.Secondary || (mode == PageType.Auto && entry.SecondarOffset > 0);
+
+            var address = useSecondary ? entry.SecondarOffset : entry.PrimaryOffset;
+            var size = useSecondary ? entry.SecondarSize : entry.PrimarySize;
 
             var targetFile = entry.CacheIndex == -1 ? cache.FileName : Path.Combine(directory, shared_map);
 

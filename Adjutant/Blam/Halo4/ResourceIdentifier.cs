@@ -12,6 +12,14 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Halo4
 {
+    public enum PageType
+    {
+        Auto,
+        Primary,
+        Secondary,
+        Tertiary
+    }
+
     public struct ResourceIdentifier
     {
         private readonly ICacheFile cache;
@@ -42,26 +50,28 @@ namespace Adjutant.Blam.Halo4
 
         public int ResourceIndex => identifier & ushort.MaxValue;
 
-        public byte[] ReadData()
+        public byte[] ReadData(PageType mode)
         {
             var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
             var resourceLayoutTable = cache.TagIndex.GetGlobalTag("play").ReadMetadata<cache_file_resource_layout_table>();
 
-            var directory = Directory.GetParent(cache.FileName).FullName;
             var entry = resourceGestalt.ResourceEntries[ResourceIndex];
 
             if (entry.SegmentIndex < 0)
                 throw new InvalidOperationException("Data not found");
 
             var segment = resourceLayoutTable.Segments[entry.SegmentIndex];
-            var pageIndex = segment.TertiaryPageIndex >= 0 ? segment.TertiaryPageIndex : segment.SecondaryPageIndex >= 0 ? segment.SecondaryPageIndex : segment.PrimaryPageIndex;
-            var chunkOffset = segment.TertiaryPageOffset >= 0 ? segment.TertiaryPageOffset : segment.SecondaryPageOffset >= 0 ? segment.SecondaryPageOffset : segment.PrimaryPageOffset;
+            var useTertiary = mode == PageType.Tertiary || (mode == PageType.Auto && segment.TertiaryPageIndex >= 0);
+            var useSecondary = mode == PageType.Secondary || (mode == PageType.Auto && segment.SecondaryPageIndex >= 0);
+
+            var pageIndex = useTertiary ? segment.TertiaryPageIndex : useSecondary ? segment.SecondaryPageIndex : segment.PrimaryPageIndex;
+            var chunkOffset = useTertiary ? segment.TertiaryPageOffset : useSecondary ? segment.SecondaryPageOffset : segment.PrimaryPageOffset;
 
             if (pageIndex < 0 || chunkOffset < 0)
                 throw new InvalidOperationException("Data not found");
 
             var page = resourceLayoutTable.Pages[pageIndex];
-            if (page.DataOffset < 0)
+            if (mode == PageType.Auto && page.DataOffset < 0)
             {
                 pageIndex = segment.PrimaryPageIndex;
                 chunkOffset = segment.PrimaryPageOffset;
@@ -71,6 +81,7 @@ namespace Adjutant.Blam.Halo4
             var targetFile = cache.FileName;
             if (page.CacheIndex >= 0)
             {
+                var directory = Directory.GetParent(cache.FileName).FullName;
                 var mapName = Utils.GetFileName(resourceLayoutTable.SharedCaches[page.CacheIndex].FileName);
                 targetFile = Path.Combine(directory, mapName);
             }

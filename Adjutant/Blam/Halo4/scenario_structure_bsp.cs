@@ -117,7 +117,7 @@ namespace Adjutant.Blam.Halo4
                 var entry = resourceGestalt.ResourceEntries[InstancesResourcePointer.ResourceIndex];
                 var address = entry.ResourceFixups[entry.ResourceFixups.Count - 10].Offset & 0x0FFFFFFF;
 
-                using (var ms = new MemoryStream(InstancesResourcePointer.ReadData()))
+                using (var ms = new MemoryStream(InstancesResourcePointer.ReadData(PageType.Auto)))
                 using (var reader = new EndianReader(ms, cache.ByteOrder))
                 {
                     var blockSize = cache.CacheType == CacheType.Halo4Beta ? 164 : 148;

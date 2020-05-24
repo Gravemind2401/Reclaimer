@@ -111,7 +111,7 @@ namespace Adjutant.Blam.Halo4
                 //4x 12 byte structs here
             }
 
-            using (var ms = new MemoryStream(resourcePointer.ReadData()))
+            using (var ms = new MemoryStream(resourcePointer.ReadData(PageType.Auto)))
             using (var reader = new EndianReader(ms, cache.ByteOrder))
             {
                 var doc = new XmlDocument();

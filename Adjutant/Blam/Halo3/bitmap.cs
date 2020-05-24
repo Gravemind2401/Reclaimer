@@ -100,7 +100,7 @@ namespace Adjutant.Blam.Halo3
                 ? InterleavedResources[submap.InterleavedIndex].ResourcePointer
                 : Resources[index].ResourcePointer;
 
-            var data = resource.ReadData();
+            var data = resource.ReadData(PageType.Auto);
 
             if (cache.ByteOrder == ByteOrder.BigEndian)
             {

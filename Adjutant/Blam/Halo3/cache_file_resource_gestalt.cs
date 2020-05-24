@@ -56,11 +56,11 @@ namespace Adjutant.Blam.Halo3
 
         [Offset(40)]
         [VersionSpecific((int)CacheType.Halo3Beta)]
-        public int RequiredOffset { get; set; }
+        public int PrimaryOffset { get; set; }
 
         [Offset(44)]
         [VersionSpecific((int)CacheType.Halo3Beta)]
-        public int RequiredSize { get; set; }
+        public int PrimarySize { get; set; }
 
         [Offset(52)]
         [VersionSpecific((int)CacheType.Halo3Beta)]
@@ -68,11 +68,11 @@ namespace Adjutant.Blam.Halo3
 
         [Offset(56)]
         [VersionSpecific((int)CacheType.Halo3Beta)]
-        public int OptionalOffset { get; set; }
+        public int SecondarOffset { get; set; }
 
         [Offset(60)]
         [VersionSpecific((int)CacheType.Halo3Beta)]
-        public int OptionalSize { get; set; }
+        public int SecondarSize { get; set; }
 
         [Offset(72, MaxVersion = (int)CacheType.Halo3Retail)]
         [Offset(40, MinVersion = (int)CacheType.Halo3Retail)]
