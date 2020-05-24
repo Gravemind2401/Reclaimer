@@ -1,4 +1,5 @@
 ﻿using Adjutant.Utilities;
+using Reclaimer.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,22 +20,28 @@ namespace Reclaimer.Plugins
         public override void OpenFile(OpenFileArgs args)
         {
             var bitm = args.File.OfType<IBitmap>().FirstOrDefault();
-            var container = args.TargetWindow.DocumentPanel;
+            DisplayBitmap(args.TargetWindow, bitm, args.FileName);
+        }
 
-            LogOutput($"Loading image: {args.FileName}");
+        [SharedFunction]
+        public void DisplayBitmap(ITabContentHost targetWindow, IBitmap bitmap, string fileName)
+        {
+            var container = targetWindow.DocumentPanel;
+
+            LogOutput($"Loading image: {fileName}");
 
             try
             {
                 var viewer = new Controls.BitmapViewer();
-                viewer.LoadImage(bitm, args.FileName);
+                viewer.LoadImage(bitmap, fileName);
 
                 container.AddItem(viewer.TabModel);
 
-                LogOutput($"Loaded image: {args.FileName}");
+                LogOutput($"Loaded image: {fileName}");
             }
             catch (Exception e)
             {
-                LogError($"Error loading image: {args.FileName}", e);
+                LogError($"Error loading image: {fileName}", e);
             }
         }
     }

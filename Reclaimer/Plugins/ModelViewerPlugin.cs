@@ -1,6 +1,7 @@
 ﻿using Adjutant.Geometry;
 using Adjutant.Utilities;
 using Reclaimer.Utilities;
+using Reclaimer.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,9 +35,15 @@ namespace Reclaimer.Plugins
         public override void OpenFile(OpenFileArgs args)
         {
             var model = args.File.OfType<IRenderGeometry>().FirstOrDefault();
-            var container = args.TargetWindow.DocumentPanel;
+            DisplayModel(args.TargetWindow, model, args.FileName);
+        }
 
-            LogOutput($"Loading model: {args.FileName}");
+        [SharedFunction]
+        public void DisplayModel(ITabContentHost targetWindow, IRenderGeometry model, string fileName)
+        {
+            var container = targetWindow.DocumentPanel;
+
+            LogOutput($"Loading model: {fileName}");
 
             try
             {
@@ -48,15 +55,15 @@ namespace Reclaimer.Plugins
                     ClearStatus = ClearWorkingStatus
                 };
 
-                viewer.LoadGeometry(model, $"{args.FileName}");
+                viewer.LoadGeometry(model, $"{fileName}");
 
                 container.AddItem(viewer.TabModel);
 
-                LogOutput($"Loaded model: {args.FileName}");
+                LogOutput($"Loaded model: {fileName}");
             }
             catch (Exception e)
             {
-                LogError($"Error loading model: {args.FileName}", e);
+                LogError($"Error loading model: {fileName}", e);
             }
         }
 
