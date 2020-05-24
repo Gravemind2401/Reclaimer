@@ -247,6 +247,7 @@ namespace Adjutant.Blam.Halo4
     public class StringIndex : IStringIndex
     {
         private readonly CacheFile cache;
+        private readonly StringIdTranslator translator;
         private readonly string[] items;
 
         public StringIndex(CacheFile cache)
@@ -256,6 +257,12 @@ namespace Adjutant.Blam.Halo4
 
             this.cache = cache;
             items = new string[cache.Header.StringCount];
+
+            var xml = Adjutant.Properties.Resources.Halo4Strings;
+            if (cache.CacheType == CacheType.Halo4Beta)
+                translator = new StringIdTranslator(xml, "beta");
+            else
+                translator = new StringIdTranslator(xml, "retail");
         }
 
         internal void ReadItems()
@@ -284,37 +291,7 @@ namespace Adjutant.Blam.Halo4
 
         public int StringCount => items.Length;
 
-        public string this[int id]
-        {
-            get
-            {
-                try
-                {
-                    if (cache.CacheType == CacheType.Halo4Beta)
-                    {
-                        if (id > 3662803) return items[id - 3662803];
-                        else if (id > 260655) return items[id - 260655];
-                        else if (id > 1488) return items[id + 5937];
-                    }
-                    else if (cache.CacheType == CacheType.Halo4Retail)
-                    {
-                        if (cache.BuildString == "16531.12.07.05.0200.main")
-                        {
-                            if (id > 1568) return items[id + 6520];
-                        }
-                        else
-                        {
-                            if (id > 7331943) return items[id - 7331943];
-                            else if (id > 522703) return items[id - 522703];
-                            else if (id > 1584) return items[id + 6796];
-                        }
-                    }
-
-                    return items[id];
-                }
-                catch { return "#error"; }
-            }
-        }
+        public string this[int id] => items[translator.GetStringIndex(id)];
 
         public IEnumerator<string> GetEnumerator() => items.AsEnumerable().GetEnumerator();
 

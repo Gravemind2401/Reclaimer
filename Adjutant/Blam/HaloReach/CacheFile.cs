@@ -147,7 +147,7 @@ namespace Adjutant.Blam.HaloReach
 
         internal Dictionary<int, string> Filenames { get; }
         internal List<TagClass> Classes { get; }
-        
+
         [Offset(0)]
         public int TagClassCount { get; set; }
 
@@ -243,6 +243,7 @@ namespace Adjutant.Blam.HaloReach
     public class StringIndex : IStringIndex
     {
         private readonly CacheFile cache;
+        private readonly StringIdTranslator translator;
         private readonly string[] items;
 
         public StringIndex(CacheFile cache)
@@ -252,6 +253,13 @@ namespace Adjutant.Blam.HaloReach
 
             this.cache = cache;
             items = new string[cache.Header.StringCount];
+
+            var xml = Adjutant.Properties.Resources.HaloReachStrings;
+            if (cache.CacheType == CacheType.HaloReachBeta)
+                translator = new StringIdTranslator(xml, "beta");
+            else
+                translator = new StringIdTranslator(xml, "retail");
+
         }
 
         internal void ReadItems()
@@ -280,27 +288,7 @@ namespace Adjutant.Blam.HaloReach
 
         public int StringCount => items.Length;
 
-        public string this[int id]
-        {
-            get
-            {
-                if (cache.CacheType == CacheType.HaloReachBeta)
-                {
-                    if (id > 584958) return items[id - 584958];
-                    else if (id > 64412) return items[id - 64412];
-                    else if (id > 1123) return items[id + 3983];
-                }
-                else if (cache.CacheType == CacheType.HaloReachRetail)
-                {
-                    if (id > 1829344) return items[id - 1829344];
-                    else if (id > 1174139) return items[id - 1174139];
-                    else if (id > 129874) return items[id - 129874];
-                    else if (id > 1123) return items[id + 4604];
-                }
-
-                return items[id];
-            }
-        }
+        public string this[int id] => items[translator.GetStringIndex(id)];
 
         public IEnumerator<string> GetEnumerator() => items.AsEnumerable().GetEnumerator();
 

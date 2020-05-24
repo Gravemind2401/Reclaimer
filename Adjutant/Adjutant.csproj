@@ -234,8 +234,11 @@
   <ItemGroup>
     <Content Include="Resources\Halo1Classes.xml" />
     <Content Include="Resources\Halo2Classes.xml" />
+    <Content Include="Resources\Halo4Strings.xml" />
     <Content Include="Resources\Halo3VertexBuffer.xml" />
     <Content Include="Resources\Halo5Classes.xml" />
+    <Content Include="Resources\Halo3Strings.xml" />
+    <Content Include="Resources\HaloReachStrings.xml" />
     <Content Include="Resources\MccHaloReachStrings.xml" />
     <Content Include="Resources\HaloReachVertexBuffer.xml" />
     <Content Include="Resources\Halo4VertexBuffer.xml" />
