@@ -78,12 +78,15 @@ namespace Adjutant.Blam.Common
                 case CacheType.HaloReachRetail:
                     return new HaloReach.CacheFile(detail);
 
+                case CacheType.MccHaloReach:
+                    return new MccHaloReach.CacheFile(detail);
+
                 case CacheType.Halo4Beta:
                 case CacheType.Halo4Retail:
                     return new Halo4.CacheFile(detail);
 
-                case CacheType.MccHaloReach:
-                    return new MccHaloReach.CacheFile(detail);
+                case CacheType.MccHalo2X:
+                    return new MccHalo2X.CacheFile(detail);
 
                 default: throw Exceptions.NotAValidMapFile(fileName);
             }

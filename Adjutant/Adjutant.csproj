@@ -119,6 +119,10 @@
     <Compile Include="Blam\Halo5\Module.cs" />
     <Compile Include="Blam\HaloReach\bitmap.cs" />
     <Compile Include="Blam\HaloReach\CacheFile.cs" />
+    <Compile Include="Blam\MccHalo2X\CacheFile.cs" />
+    <Compile Include="Blam\MccHalo2X\HeaderAddressTranslator.cs" />
+    <Compile Include="Blam\MccHalo2X\PointerExpander.cs" />
+    <Compile Include="Blam\MccHalo2X\TagAddressTranslator.cs" />
     <Compile Include="Blam\MccHaloReach\CacheFile.cs" />
     <Compile Include="Blam\HaloReach\cache_file_resource_gestalt.cs" />
     <Compile Include="Blam\HaloReach\cache_file_resource_layout_table.cs" />
@@ -239,6 +243,7 @@
     <Content Include="Resources\Halo5Classes.xml" />
     <Content Include="Resources\Halo3Strings.xml" />
     <Content Include="Resources\HaloReachStrings.xml" />
+    <Content Include="Resources\MccHalo2XStrings.xml" />
     <Content Include="Resources\MccHaloReachStrings.xml" />
     <Content Include="Resources\HaloReachVertexBuffer.xml" />
     <Content Include="Resources\Halo4VertexBuffer.xml" />

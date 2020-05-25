@@ -106,7 +106,13 @@ namespace Adjutant.Blam.Common
         [BuildString("21401.13.04.23.1849.main")] //TU06
         [BuildString("21501.13.08.06.2311.main")] //TU07
         [BuildString("21522.13.10.17.1936.main")] //TU08
-        Halo4Retail
+        Halo4Retail,
+
+        [CacheGeneration(4)]
+        [BuildString("Apr  9 2020 01:36:04")]
+        [BuildString("Apr 13 2020 02:24:30")]
+        [BuildString("May 10 2020 21:14:00")]
+        MccHalo2X,
     }
 
     public enum Language

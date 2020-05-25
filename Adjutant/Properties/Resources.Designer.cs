@@ -230,6 +230,25 @@ namespace Adjutant.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;stringDefinitions&gt;
+        ///  &lt;stringIDs id=&quot;U0&quot; indexBits=&quot;19&quot; namespaceBits=&quot;8&quot; lengthBits=&quot;5&quot;&gt;
+        ///    &lt;namespace id=&quot;0x0&quot; min=&quot;0x633&quot; startIndex=&quot;0x210C&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x1&quot; startIndex=&quot;0x633&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x2&quot; startIndex=&quot;0xEC9&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x3&quot; startIndex=&quot;0xFD4&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x4&quot; startIndex=&quot;0x1061&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x5&quot; startIndex=&quot;0x1159&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x6&quot; startIndex=&quot;0x11A4&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x7&quot; startIndex=&quot;0x11CF&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x8&quot; sta [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MccHalo2XStrings {
+            get {
+                return ResourceManager.GetString("MccHalo2XStrings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;stringDefinitions&gt;
         ///  &lt;stringIDs id=&quot;U0&quot; indexBits=&quot;17&quot; namespaceBits=&quot;8&quot; lengthBits=&quot;7&quot;&gt;
         ///    &lt;namespace id=&quot;0x0&quot; min=&quot;0x4C9&quot; startIndex=&quot;0x173C&quot; /&gt;
         ///    &lt;namespace id=&quot;0x1&quot; startIndex=&quot;0x4C9&quot; /&gt;

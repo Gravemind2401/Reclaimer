@@ -177,7 +177,8 @@ namespace Adjutant.Blam.Halo4
         public RealVector2D RegPoint { get; set; }
     }
 
-    [FixedSize(44)]
+    [FixedSize(44, MaxVersion = (int)CacheType.MccHalo2X)]
+    [FixedSize(48, MinVersion = (int)CacheType.MccHalo2X)]
     public class BitmapDataBlock
     {
         [Offset(0)]
