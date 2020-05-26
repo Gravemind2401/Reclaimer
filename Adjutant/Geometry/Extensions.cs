@@ -318,7 +318,7 @@ namespace Adjutant.Geometry
                     permValueList.Add(bw.BaseStream.Position);
                     foreach (var perm in region.Permutations)
                     {
-                        var part = fauxMeshes.ContainsKey(perm.MeshCount)
+                        var part = fauxMeshes.ContainsKey(perm.MeshIndex)
                             ? fauxMeshes[perm.MeshIndex]
                             : model.Meshes[perm.MeshIndex];
 
@@ -377,7 +377,7 @@ namespace Adjutant.Geometry
                 {
                     foreach (var perm in region.Permutations)
                     {
-                        var part = fauxMeshes.ContainsKey(perm.MeshCount)
+                        var part = fauxMeshes.ContainsKey(perm.MeshIndex)
                             ? fauxMeshes[perm.MeshIndex]
                             : model.Meshes[perm.MeshIndex];
 
@@ -466,7 +466,7 @@ namespace Adjutant.Geometry
                 {
                     foreach (var perm in region.Permutations)
                     {
-                        var part = fauxMeshes.ContainsKey(perm.MeshCount)
+                        var part = fauxMeshes.ContainsKey(perm.MeshIndex)
                             ? fauxMeshes[perm.MeshIndex]
                             : model.Meshes[perm.MeshIndex];
 
@@ -503,7 +503,7 @@ namespace Adjutant.Geometry
                     {
                         meshValueList.Add(bw.BaseStream.Position);
 
-                        var part = fauxMeshes.ContainsKey(perm.MeshCount)
+                        var part = fauxMeshes.ContainsKey(perm.MeshIndex)
                             ? fauxMeshes[perm.MeshIndex]
                             : model.Meshes[perm.MeshIndex];
 
