@@ -37,5 +37,10 @@ namespace Adjutant.Utilities
 
             return null;
         }
+
+        public static TValue ValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key)
+        {
+            return dic.ContainsKey(key) ? dic[key] : default(TValue);
+        }
     }
 }

@@ -58,11 +58,9 @@ namespace Adjutant.Blam.Halo3
 
             Task.Factory.StartNew(() =>
             {
-                if (CacheType > CacheType.Halo3Beta)
-                    TagIndex.GetGlobalTag("play").ReadMetadata<cache_file_resource_layout_table>();
-
-                TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
-                TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
+                TagIndex.GetGlobalTag("play")?.ReadMetadata<cache_file_resource_layout_table>();
+                TagIndex.GetGlobalTag("zone")?.ReadMetadata<cache_file_resource_gestalt>();
+                TagIndex.GetGlobalTag("scnr")?.ReadMetadata<scenario>();
             });
         }
 
@@ -239,7 +237,7 @@ namespace Adjutant.Blam.Halo3
             }
         }
 
-        public IndexItem GetGlobalTag(string classCode) => sysItems[classCode];
+        public IndexItem GetGlobalTag(string classCode) => sysItems.ValueOrDefault(classCode);
 
         public IndexItem this[int index] => items[index];
 

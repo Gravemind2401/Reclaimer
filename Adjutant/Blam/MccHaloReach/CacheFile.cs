@@ -63,9 +63,9 @@ namespace Adjutant.Blam.MccHaloReach
 
             Task.Factory.StartNew(() =>
             {
-                TagIndex.GetGlobalTag("zone").ReadMetadata<HaloReach.cache_file_resource_gestalt>();
-                TagIndex.GetGlobalTag("play").ReadMetadata<HaloReach.cache_file_resource_layout_table>();
-                TagIndex.GetGlobalTag("scnr").ReadMetadata<HaloReach.scenario>();
+                TagIndex.GetGlobalTag("zone")?.ReadMetadata<HaloReach.cache_file_resource_gestalt>();
+                TagIndex.GetGlobalTag("play")?.ReadMetadata<HaloReach.cache_file_resource_layout_table>();
+                TagIndex.GetGlobalTag("scnr")?.ReadMetadata<HaloReach.scenario>();
             });
         }
 
@@ -223,7 +223,7 @@ namespace Adjutant.Blam.MccHaloReach
             }
         }
 
-        public IndexItem GetGlobalTag(string classCode) => sysItems[classCode];
+        public IndexItem GetGlobalTag(string classCode) => sysItems.ValueOrDefault(classCode);
 
         public IndexItem this[int index] => items[index];
 

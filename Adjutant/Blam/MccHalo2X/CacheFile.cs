@@ -63,9 +63,9 @@ namespace Adjutant.Blam.MccHalo2X
 
             Task.Factory.StartNew(() =>
             {
-                TagIndex.GetGlobalTag("zone").ReadMetadata<Halo4.cache_file_resource_gestalt>();
-                TagIndex.GetGlobalTag("play").ReadMetadata<Halo4.cache_file_resource_layout_table>();
-                TagIndex.GetGlobalTag("scnr").ReadMetadata<Halo4.scenario>();
+                TagIndex.GetGlobalTag("zone")?.ReadMetadata<Halo4.cache_file_resource_gestalt>();
+                TagIndex.GetGlobalTag("play")?.ReadMetadata<Halo4.cache_file_resource_layout_table>();
+                TagIndex.GetGlobalTag("scnr")?.ReadMetadata<Halo4.scenario>();
             });
         }
 
@@ -238,7 +238,7 @@ namespace Adjutant.Blam.MccHalo2X
             }
         }
 
-        public IndexItem GetGlobalTag(string classCode) => sysItems[classCode];
+        public IndexItem GetGlobalTag(string classCode) => sysItems.ValueOrDefault(classCode);
 
         public IndexItem this[int index] => items[index];
 
