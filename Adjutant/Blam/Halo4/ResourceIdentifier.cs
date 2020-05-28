@@ -86,38 +86,44 @@ namespace Adjutant.Blam.Halo4
                 targetFile = Path.Combine(directory, mapName);
             }
 
-            byte[] compressed, decompressed;
-
             using (var fs = new FileStream(targetFile, FileMode.Open, FileAccess.Read))
             using (var reader = new EndianReader(fs, cache.ByteOrder))
             {
                 reader.Seek(cache.CacheType >= CacheType.MccHalo2X ? 1216 : 1152, SeekOrigin.Begin);
                 var dataTableAddress = reader.ReadUInt32();
-
                 reader.Seek(dataTableAddress + page.DataOffset, SeekOrigin.Begin);
-                compressed = reader.ReadBytes(page.CompressedSize);
+
+                if (cache.CacheType <= CacheType.Halo4Beta)
+                {
+                    using (var ds = new DeflateStream(fs, CompressionMode.Decompress))
+                    using (var reader2 = new BinaryReader(ds))
+                    {
+                        reader2.ReadBytes(chunkOffset);
+                        return reader2.ReadBytes(page.DecompressedSize - chunkOffset);
+                    }
+                }
+                else
+                {
+                    var compressed = reader.ReadBytes(page.CompressedSize);
+                    var decompressed = new byte[page.DecompressedSize];
+
+                    int startSize = page.CompressedSize;
+                    int endSize = page.DecompressedSize;
+                    int decompressionContext = 0;
+                    XCompress.XMemCreateDecompressionContext(XCompress.XMemCodecType.LZX, 0, 0, ref decompressionContext);
+                    XCompress.XMemResetDecompressionContext(decompressionContext);
+                    XCompress.XMemDecompressStream(decompressionContext, decompressed, ref endSize, compressed, ref startSize);
+                    XCompress.XMemDestroyDecompressionContext(decompressionContext);
+
+                    if (chunkOffset == 0)
+                        return decompressed;
+
+                    var result = new byte[page.DecompressedSize - chunkOffset];
+                    Array.Copy(decompressed, chunkOffset, result, 0, result.Length);
+                    return result;
+                }
             }
 
-            if (cache.CacheType <= CacheType.Halo4Beta)
-            {
-                using (var ms = new MemoryStream(compressed))
-                using (var stream = new DeflateStream(ms, CompressionMode.Decompress))
-                using (var br = new BinaryReader(stream))
-                    decompressed = br.ReadBytes(page.DecompressedSize);
-            }
-            else
-            {
-                decompressed = new byte[page.DecompressedSize];
-                int startSize = page.CompressedSize;
-                int endSize = page.DecompressedSize;
-                int decompressionContext = 0;
-                XCompress.XMemCreateDecompressionContext(XCompress.XMemCodecType.LZX, 0, 0, ref decompressionContext);
-                XCompress.XMemResetDecompressionContext(decompressionContext);
-                XCompress.XMemDecompressStream(decompressionContext, decompressed, ref endSize, compressed, ref startSize);
-                XCompress.XMemDestroyDecompressionContext(decompressionContext);
-            }
-
-            return decompressed.Skip(chunkOffset).ToArray();
         }
 
         public override string ToString() => Value.ToString(CultureInfo.CurrentCulture);

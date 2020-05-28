@@ -84,24 +84,20 @@ namespace Adjutant.Blam.HaloReach
                 targetFile = Path.Combine(directory, mapName);
             }
 
-            byte[] compressed, decompressed;
-
             using (var fs = new FileStream(targetFile, FileMode.Open, FileAccess.Read))
             using (var reader = new EndianReader(fs, cache.ByteOrder))
             {
                 reader.Seek(cache.CacheType >= CacheType.MccHaloReach ? 1208 : 1136, SeekOrigin.Begin);
                 var dataTableAddress = reader.ReadUInt32();
-
                 reader.Seek(dataTableAddress + page.DataOffset, SeekOrigin.Begin);
-                compressed = reader.ReadBytes(page.CompressedSize);
+
+                using (var ds = new DeflateStream(fs, CompressionMode.Decompress))
+                using (var reader2 = new BinaryReader(ds))
+                {
+                    reader2.ReadBytes(chunkOffset);
+                    return reader2.ReadBytes(page.DecompressedSize - chunkOffset);
+                }
             }
-
-            using (var ms = new MemoryStream(compressed))
-            using (var stream = new DeflateStream(ms, CompressionMode.Decompress))
-            using (var br = new BinaryReader(stream))
-                decompressed = br.ReadBytes(page.DecompressedSize);
-
-            return decompressed.Skip(chunkOffset).ToArray();
         }
 
         public byte[] ReadSoundData()
