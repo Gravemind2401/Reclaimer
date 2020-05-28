@@ -16,31 +16,31 @@ namespace Adjutant.Spatial
     /// </summary>
     public struct UInt16N2 : IXMVector
     {
-        private ushort x, y;
+        private UInt16N x, y;
 
         public float X
         {
-            get { return x / (float)ushort.MaxValue; }
-            set { x = (ushort)(Utils.Clamp(value, 0, 1) * ushort.MaxValue); }
+            get { return x.Value; }
+            set { x = new UInt16N(value); }
         }
 
         public float Y
         {
-            get { return y / (float)ushort.MaxValue; }
-            set { y = (ushort)(Utils.Clamp(value, 0, 1) * ushort.MaxValue); }
+            get { return y.Value; }
+            set { y = new UInt16N(value); }
         }
 
         [CLSCompliant(false)]
         public UInt16N2(ushort x, ushort y)
         {
-            this.x = x;
-            this.y = y;
+            this.x = new UInt16N(x);
+            this.y = new UInt16N(y);
         }
 
         public UInt16N2(float x, float y)
         {
-            this.x = (ushort)(Utils.Clamp(x, 0, 1) * ushort.MaxValue);
-            this.y = (ushort)(Utils.Clamp(y, 0, 1) * ushort.MaxValue);
+            this.x = new UInt16N(x);
+            this.y = new UInt16N(y);
         }
 
         public float Length => (float)Math.Sqrt(X * X + Y * Y);

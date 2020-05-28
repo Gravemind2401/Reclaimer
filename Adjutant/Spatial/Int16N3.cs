@@ -11,38 +11,38 @@ namespace Adjutant.Spatial
 {
     public struct Int16N3 : IXMVector
     {
-        private short x, y, z;
+        private Int16N x, y, z;
 
         public float X
         {
-            get { return (x + short.MaxValue) / (float)ushort.MaxValue; }
-            set { x = (short)(value * ushort.MaxValue - short.MaxValue); }
+            get { return x.Value; }
+            set { x = new Int16N(value); }
         }
 
         public float Y
         {
-            get { return (y + short.MaxValue) / (float)ushort.MaxValue; }
-            set { y = (short)(value * ushort.MaxValue - short.MaxValue); }
+            get { return y.Value; }
+            set { y = new Int16N(value); }
         }
 
         public float Z
         {
-            get { return (z + short.MaxValue) / (float)ushort.MaxValue; }
-            set { z = (short)(value * ushort.MaxValue - short.MaxValue); }
+            get { return z.Value; }
+            set { z = new Int16N(value); }
         }
 
         public Int16N3(short x, short y, short z)
         {
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            this.x = new Int16N(x);
+            this.y = new Int16N(y);
+            this.z = new Int16N(z);
         }
 
         public Int16N3(float x, float y, float z)
         {
-            this.x = (short)(x * ushort.MaxValue - short.MaxValue);
-            this.y = (short)(y * ushort.MaxValue - short.MaxValue);
-            this.z = (short)(z * ushort.MaxValue - short.MaxValue);
+            this.x = new Int16N(x);
+            this.y = new Int16N(y);
+            this.z = new Int16N(z);
         }
 
         public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z);

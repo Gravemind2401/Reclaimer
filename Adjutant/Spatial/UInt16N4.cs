@@ -16,47 +16,47 @@ namespace Adjutant.Spatial
     /// </summary>
     public struct UInt16N4 : IXMVector
     {
-        private ushort x, y, z, w;
+        private UInt16N x, y, z, w;
 
         public float X
         {
-            get { return x / (float)ushort.MaxValue; }
-            set { x = (ushort)(Utils.Clamp(value, 0, 1) * ushort.MaxValue); }
+            get { return x.Value; }
+            set { x = new UInt16N(value); }
         }
 
         public float Y
         {
-            get { return y / (float)ushort.MaxValue; }
-            set { y = (ushort)(Utils.Clamp(value, 0, 1) * ushort.MaxValue); }
+            get { return y.Value; }
+            set { y = new UInt16N(value); }
         }
 
         public float Z
         {
-            get { return z / (float)ushort.MaxValue; }
-            set { z = (ushort)(Utils.Clamp(value, 0, 1) * ushort.MaxValue); }
+            get { return z.Value; }
+            set { z = new UInt16N(value); }
         }
 
         public float W
         {
-            get { return w / (float)ushort.MaxValue; }
-            set { w = (ushort)(Utils.Clamp(value, 0, 1) * ushort.MaxValue); }
+            get { return w.Value; }
+            set { w = new UInt16N(value); }
         }
 
         [CLSCompliant(false)]
         public UInt16N4(ushort x, ushort y, ushort z, ushort w)
         {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.w = w;
+            this.x = new UInt16N(x);
+            this.y = new UInt16N(y);
+            this.z = new UInt16N(z);
+            this.w = new UInt16N(w);
         }
 
         public UInt16N4(float x, float y, float z, float w)
         {
-            this.x = (ushort)(Utils.Clamp(x, 0, 1) * ushort.MaxValue);
-            this.y = (ushort)(Utils.Clamp(y, 0, 1) * ushort.MaxValue);
-            this.z = (ushort)(Utils.Clamp(z, 0, 1) * ushort.MaxValue);
-            this.w = (ushort)(Utils.Clamp(w, 0, 1) * ushort.MaxValue);
+            this.x = new UInt16N(x);
+            this.y = new UInt16N(y);
+            this.z = new UInt16N(z);
+            this.w = new UInt16N(w);
         }
 
         public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z + W * W);
