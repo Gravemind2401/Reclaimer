@@ -68,12 +68,16 @@ namespace Adjutant.Blam.Halo4
                     ? (RealVector4D?)null
                     : shader.ShaderProperties[0].TilingData[map.TilingIndex];
 
-                subMaterials.Add(new SubMaterial
+                try
                 {
-                    Usage = MaterialUsage.Diffuse,
-                    Bitmap = bitmTag.ReadMetadata<bitmap>(),
-                    Tiling = new RealVector2D(tile?.X ?? 1, tile?.Y ?? 1)
-                });
+                    subMaterials.Add(new SubMaterial
+                    {
+                        Usage = MaterialUsage.Diffuse,
+                        Bitmap = bitmTag.ReadMetadata<bitmap>(),
+                        Tiling = new RealVector2D(tile?.X ?? 1, tile?.Y ?? 1)
+                    });
+                }
+                catch { }
 
                 if (subMaterials.Count == 0)
                 {

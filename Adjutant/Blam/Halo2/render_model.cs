@@ -128,7 +128,7 @@ namespace Adjutant.Blam.Halo2
                         var vert = new Vertex();
 
                         reader.Seek(baseAddress + vertexResource.Offset + i * vertexSize, SeekOrigin.Begin);
-                        vert.Position = new Int16N3(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16());
+                        vert.Position = new UInt16N4((ushort)(reader.ReadInt16() - short.MinValue), (ushort)(reader.ReadInt16() - short.MinValue), (ushort)(reader.ReadInt16() - short.MinValue), 0);
                         ReadBlendData(reader, section, mesh, vert, nodeMap);
 
                         mesh.Vertices[i] = vert;
@@ -139,7 +139,7 @@ namespace Adjutant.Blam.Halo2
                         var vert = (Vertex)mesh.Vertices[i];
 
                         reader.Seek(baseAddress + uvResource.Offset + i * 4, SeekOrigin.Begin);
-                        vert.TexCoords = new Int16N2(reader.ReadInt16(), reader.ReadInt16());
+                        vert.TexCoords = new UInt16N2((ushort)(reader.ReadInt16() - short.MinValue), (ushort)(reader.ReadInt16() - short.MinValue));
                     }
 
                     for (int i = 0; i < section.VertexCount; i++)

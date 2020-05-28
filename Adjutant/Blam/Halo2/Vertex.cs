@@ -10,9 +10,9 @@ namespace Adjutant.Blam.Halo2
 {
     public class Vertex : IVertex
     {
-        public Int16N3 Position { get; set; }
+        public UInt16N4 Position { get; set; }
 
-        public Int16N2 TexCoords { get; set; }
+        public UInt16N2 TexCoords { get; set; }
 
         public HenDN3 Normal { get; set; }
 
