@@ -171,6 +171,8 @@
     <Compile Include="Saber3D\Common\IPakItem.cs" />
     <Compile Include="Saber3D\Halo1X\PakFile.cs" />
     <Compile Include="Saber3D\Halo1X\Texture.cs" />
+    <Compile Include="Spatial\Int16N.cs" />
+    <Compile Include="Spatial\UInt16N.cs" />
     <Compile Include="Utilities\AesHelper.cs" />
     <Compile Include="Utilities\DependencyReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -245,6 +247,9 @@
     <Content Include="Resources\HaloReachStrings.xml" />
     <Content Include="Resources\MccHalo2XStrings.xml" />
     <Content Include="Resources\MccHaloReachStrings.xml" />
+    <Content Include="Resources\MccHaloReachVertexBuffer.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Resources\HaloReachVertexBuffer.xml" />
     <Content Include="Resources\Halo4VertexBuffer.xml" />
   </ItemGroup>

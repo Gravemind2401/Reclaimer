@@ -15,7 +15,8 @@ namespace Adjutant.Blam.HaloReach
         public BlockCollection<StructureBspBlock> StructureBsps { get; set; }
 
         [Offset(1828, MaxVersion = (int)CacheType.HaloReachRetail)]
-        [Offset(1844, MinVersion = (int)CacheType.HaloReachRetail)]
+        [Offset(1844, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
+        [Offset(1856, MinVersion = (int)CacheType.MccHaloReach)]
         public TagReference ScenarioLightmapReference { get; set; }
     }
 

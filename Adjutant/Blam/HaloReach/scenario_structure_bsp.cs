@@ -27,44 +27,43 @@ namespace Adjutant.Blam.HaloReach
             this.item = item;
         }
 
-        [Offset(236)]
+        [Offset(236, MaxVersion = (int)CacheType.MccHaloReach)]
+        [Offset(240, MinVersion = (int)CacheType.MccHaloReach)]
         public RealBounds XBounds { get; set; }
 
-        [Offset(244)]
+        [Offset(244, MaxVersion = (int)CacheType.MccHaloReach)]
+        [Offset(248, MinVersion = (int)CacheType.MccHaloReach)]
         public RealBounds YBounds { get; set; }
 
-        [Offset(252)]
+        [Offset(252, MaxVersion = (int)CacheType.MccHaloReach)]
+        [Offset(256, MinVersion = (int)CacheType.MccHaloReach)]
         public RealBounds ZBounds { get; set; }
-
-        [Offset(308)]
+        
+        [Offset(308, MaxVersion = (int)CacheType.MccHaloReach)]
+        [Offset(312, MinVersion = (int)CacheType.MccHaloReach)]
         public BlockCollection<ClusterBlock> Clusters { get; set; }
 
-        [Offset(320)]
+        [Offset(320, MaxVersion = (int)CacheType.MccHaloReach)]
+        [Offset(324, MinVersion = (int)CacheType.MccHaloReach)]
         public BlockCollection<ShaderBlock> Shaders { get; set; }
 
         [Offset(620, MaxVersion = (int)CacheType.HaloReachRetail)]
-        [Offset(608, MinVersion = (int)CacheType.HaloReachRetail)]
+        [Offset(608, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
+        [Offset(612, MinVersion = (int)CacheType.MccHaloReach)]
         public BlockCollection<BspGeometryInstanceBlock> GeometryInstances { get; set; }
 
-        [Offset(796)]
-        public ResourceIdentifier ResourcePointer1 { get; set; }
-
-        [Offset(976)]
-        public ResourceIdentifier ResourcePointer2 { get; set; }
-
         [Offset(1112, MaxVersion = (int)CacheType.HaloReachRetail)]
-        [Offset(1100, MinVersion = (int)CacheType.HaloReachRetail)]
+        [Offset(1100, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
+        [Offset(1128, MinVersion = (int)CacheType.MccHaloReach)]
         public BlockCollection<SectionBlock> Sections { get; set; }
 
         [Offset(1124, MaxVersion = (int)CacheType.HaloReachRetail)]
-        [Offset(1112, MinVersion = (int)CacheType.HaloReachRetail)]
+        [Offset(1112, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
+        [Offset(1140, MinVersion = (int)CacheType.MccHaloReach)]
         public BlockCollection<BoundingBoxBlock> BoundingBoxes { get; set; }
 
-        [Offset(1244)]
-        public ResourceIdentifier ResourcePointer3 { get; set; }
-
-        [Offset(1296)]
-        [VersionSpecific((int)CacheType.HaloReachRetail)]
+        [Offset(1296, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
+        [Offset(1336, MinVersion = (int)CacheType.MccHaloReach)]
         public ResourceIdentifier InstancesResourcePointer { get; set; }
 
         #region IRenderGeometry
@@ -103,7 +102,7 @@ namespace Adjutant.Blam.HaloReach
             );
             model.Regions.Add(clusterRegion);
 
-            if (cache.CacheType == CacheType.HaloReachRetail && !loadedInstances)
+            if (cache.CacheType >= CacheType.HaloReachRetail && !loadedInstances)
             {
                 var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
                 var entry = resourceGestalt.ResourceEntries[InstancesResourcePointer.ResourceIndex];
