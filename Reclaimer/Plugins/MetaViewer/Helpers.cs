@@ -25,6 +25,7 @@ namespace Reclaimer.Plugins.MetaViewer
     {
         [MetaValueTypeAlias("struct")]
         [MetaValueTypeAlias("reflexive")]
+        [MetaValueTypeAlias("tagblock")]
         Structure,
 
         StructureGroup,

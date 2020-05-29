@@ -23,8 +23,8 @@ namespace Reclaimer.Plugins.MetaViewer
             set { SetProperty(ref blockCount, value); }
         }
 
-        private int blockAddress;
-        public int BlockAddress
+        private long blockAddress;
+        public long BlockAddress
         {
             get { return blockAddress; }
             set { SetProperty(ref blockAddress, value); }

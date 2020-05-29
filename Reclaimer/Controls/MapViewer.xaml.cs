@@ -211,6 +211,7 @@ namespace Reclaimer.Controls
                         break;
                     case CacheType.HaloReachBeta:
                     case CacheType.HaloReachRetail:
+                    case CacheType.MccHaloReach:
                         yield return item.ReadMetadata<Adjutant.Blam.HaloReach.bitmap>();
                         break;
                     case CacheType.Halo4Beta:
@@ -238,6 +239,7 @@ namespace Reclaimer.Controls
                         break;
                     case CacheType.HaloReachBeta:
                     case CacheType.HaloReachRetail:
+                    case CacheType.MccHaloReach:
                         yield return item.ReadMetadata<Adjutant.Blam.HaloReach.render_model>();
                         break;
                     case CacheType.Halo4Beta:
@@ -264,6 +266,7 @@ namespace Reclaimer.Controls
                         break;
                     case CacheType.HaloReachBeta:
                     case CacheType.HaloReachRetail:
+                    case CacheType.MccHaloReach:
                         yield return item.ReadMetadata<Adjutant.Blam.HaloReach.scenario_structure_bsp>();
                         break;
                     case CacheType.Halo4Beta:
