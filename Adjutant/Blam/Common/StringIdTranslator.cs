@@ -21,7 +21,7 @@ namespace Adjutant.Blam.Common
             var doc = new XmlDocument();
             doc.LoadXml(xml);
 
-            return doc.FirstChild.ChildNodes.OfType<XmlNode>();
+            return doc.DocumentElement.ChildNodes.OfType<XmlNode>();
         }
 
         public StringIdTranslator(string xml)

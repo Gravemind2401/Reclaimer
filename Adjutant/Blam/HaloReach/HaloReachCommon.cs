@@ -170,7 +170,7 @@ namespace Adjutant.Blam.HaloReach
                 var doc = new XmlDocument();
                 doc.LoadXml(cache.CacheType >= CacheType.MccHaloReach ? Adjutant.Properties.Resources.MccHaloReachVertexBuffer : Adjutant.Properties.Resources.HaloReachVertexBuffer);
 
-                var lookup = doc.FirstChild.ChildNodes.Cast<XmlNode>()
+                var lookup = doc.DocumentElement.ChildNodes.Cast<XmlNode>()
                     .ToDictionary(n => Convert.ToInt32(n.Attributes[XmlVertexField.Type].Value, 16));
 
                 var sectionIndex = -1;

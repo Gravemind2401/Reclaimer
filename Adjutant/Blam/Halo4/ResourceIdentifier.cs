@@ -123,7 +123,6 @@ namespace Adjutant.Blam.Halo4
                     return result;
                 }
             }
-
         }
 
         public override string ToString() => Value.ToString(CultureInfo.CurrentCulture);
