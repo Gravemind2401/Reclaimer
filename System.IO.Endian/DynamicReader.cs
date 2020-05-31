@@ -38,7 +38,7 @@ namespace System.IO.Endian
 
             if (version.HasValue && VersionLookup.ContainsKey(version.Value))
                 return VersionLookup[version.Value](reader, instance, origin);
-            else if (Unversioned != null)
+            else if (!version.HasValue && Unversioned != null)
                 return Unversioned(reader, instance, origin);
             else return GenerateReadMethod(version)(reader, instance, origin);
         }
@@ -97,95 +97,49 @@ namespace System.IO.Endian
 
             EmitDebugOutput(il, $"[Read type '{TypeArg.Name}' [v{version?.ToString() ?? "NULL"}]]");
 
-            #region Read Properties
-            foreach (var prop in GetProperties(TypeArg, version))
+            #region Version Property Check
+            if (!version.HasValue)
             {
-                var offset = Utils.GetAttributeForVersion<OffsetAttribute>(prop, version);
-                if (offset == null) continue;
+                var versionProps = TypeArg.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                    .Where(p => Attribute.IsDefined(p, typeof(VersionNumberAttribute)))
+                    .ToList();
 
-                EmitDebugOutput(il, $"[Read property '{prop.Name}']");
-
-                EmitSeek(il, offset.Offset);
-
-                var storeType = Utils.GetAttributeForVersion<StoreTypeAttribute>(prop, version)?.StoreType ?? prop.PropertyType;
-                var isNullable = storeType.IsGenericType && storeType.GetGenericTypeDefinition().Equals(typeof(Nullable<>));
-                var nullableType = isNullable ? storeType : null;
-
-                if (isNullable)
-                    storeType = storeType.GetGenericArguments()[0];
-
-                if (storeType.IsEnum)
-                    storeType = storeType.GetEnumUnderlyingType();
-
-                OpCode? castOp = null;
-                if (storeType != prop.PropertyType)
+                if (versionProps.Count > 1)
+                    throw Exceptions.MultipleVersionsSpecified(TypeArg.Name);
+                else if (versionProps.Count == 1)
                 {
-                    if (prop.PropertyType == typeof(sbyte))
-                        castOp = OpCodes.Conv_I1;
-                    else if (prop.PropertyType == typeof(byte))
-                        castOp = OpCodes.Conv_U1;
-                    else if (prop.PropertyType == typeof(short))
-                        castOp = OpCodes.Conv_I2;
-                    else if (prop.PropertyType == typeof(ushort))
-                        castOp = OpCodes.Conv_U2;
-                    else if (prop.PropertyType == typeof(int))
-                        castOp = OpCodes.Conv_I4;
-                    else if (prop.PropertyType == typeof(uint))
-                        castOp = OpCodes.Conv_U4;
-                    else if (prop.PropertyType == typeof(long))
-                        castOp = OpCodes.Conv_I8;
-                    else if (prop.PropertyType == typeof(ulong))
-                        castOp = OpCodes.Conv_U8;
+                    var prop = versionProps[0];
+                    EmitDebugOutput(il, $"[Read version property: {prop.Name}]");
+                    EmitPropertyRead(il, version, typeOrder, prop);
 
-                    if (castOp.HasValue)
-                        EmitDebugOutput(il, $"<{castOp.Value.Name}>");
-                }
+                    var exitLabel = il.DefineLabel();
+                    var temp = EmitTryConvert(il, prop, typeof(double?), exitLabel);
 
-                if (TypeArg.IsValueType)
-                    il.Emit(OpCodes.Ldarga_S, (byte)1);
-                else il.Emit(OpCodes.Ldarg_1); // instance
-
-                var propOrder = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
-                if (storeType.Equals(typeof(string)))
-                    EmitStringRead(il, prop, propOrder?.ByteOrder ?? typeOrder?.ByteOrder);
-                else if (storeType.IsPrimitive || storeType.Equals(typeof(Guid)))
-                    EmitPrimitiveRead(il, prop, storeType, propOrder?.ByteOrder ?? typeOrder?.ByteOrder);
-                else
-                {
-                    var method = (from m in typeof(EndianReader).GetMethods()
-                                  where m.Name == nameof(EndianReader.ReadObject)
-                                  && m.IsGenericMethodDefinition
-                                  let p = m.GetParameters()
-                                  where (version.HasValue && p.Length == 1 && p[0].ParameterType == typeof(double))
-                                  || (!version.HasValue && p.Length == 0)
-                                  select m).Single().MakeGenericMethod(prop.PropertyType);
-
-                    EmitDebugOutput(il, prop, method);
+                    var method = typeof(DynamicReader<>)
+                        .MakeGenericType(typeof(T))
+                        .GetMethod(nameof(Read), BindingFlags.Public | BindingFlags.Static);
 
                     il.Emit(OpCodes.Ldarg_0); //reader
-                    if (version.HasValue)
-                        il.Emit(OpCodes.Ldc_R8, version.Value);
-                    il.Emit(OpCodes.Callvirt, method);
+                    il.Emit(OpCodes.Ldloc_S, temp); //version
+                    il.Emit(OpCodes.Ldarg_1); //instance
+                    il.Emit(OpCodes.Ldarg_2); //begin
+                    il.Emit(OpCodes.Call, method);
+                    il.Emit(OpCodes.Ret);
+
+                    il.MarkLabel(exitLabel);
+
+                    il.Emit(OpCodes.Ldarg_1); //instance
+                    il.Emit(OpCodes.Ret);
+
+                    return;
                 }
-
-                if (isNullable)
-                {
-                    var ctor = nullableType.GetConstructor(new[] { nullableType.GetGenericArguments()[0] });
-                    il.Emit(OpCodes.Newobj, ctor);
-                }
-
-                if (castOp.HasValue)
-                    il.Emit(castOp.Value);
-
-                var setter = prop.GetSetMethod();
-
-                if (TypeArg.IsValueType)
-                    il.Emit(OpCodes.Call, setter);
-                else il.Emit(OpCodes.Callvirt, setter);
             }
             #endregion
 
-            #region DataLength Check
+            foreach (var prop in GetProperties(TypeArg, version))
+                EmitPropertyRead(il, version, typeOrder, prop);
+
+            #region DataLength Property Check
             var lengthProps = TypeArg.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                     .Where(p => Attribute.IsDefined(p, typeof(DataLengthAttribute)))
                     .Where(p => Utils.GetAttributeForVersion<DataLengthAttribute>(p, version) != null);
@@ -197,39 +151,13 @@ namespace System.IO.Endian
             if (lengthProp != null)
             {
                 var endLenCheck = il.DefineLabel();
+                var temp = EmitTryConvert(il, lengthProp, typeof(long), endLenCheck);
 
-                if (!lengthProp.PropertyType.Equals(typeof(long)))
-                {
-                    var temp = il.DeclareLocal(typeof(object));
-                    il.Emit(OpCodes.Ldarg_1);
-                    il.Emit(OpCodes.Callvirt, lengthProp.GetGetMethod());
-                    if (lengthProp.PropertyType.IsValueType)
-                        il.Emit(OpCodes.Box, lengthProp.PropertyType);
-                    il.Emit(OpCodes.Stloc_S, temp);
-
-                    var tryConvert = typeof(Utils).GetMethod(nameof(Utils.TryConvert), BindingFlags.Static | BindingFlags.NonPublic);
-                    il.Emit(OpCodes.Ldloca_S, temp);
-                    EmitTypeOf(il, lengthProp.PropertyType);
-                    EmitTypeOf(il, typeof(long));
-                    il.Emit(OpCodes.Call, tryConvert);
-                    il.Emit(OpCodes.Brfalse_S, endLenCheck);
-
-                    il.Emit(OpCodes.Ldarg_0); //reader
-                    il.Emit(OpCodes.Callvirt, typeof(EndianReader).GetProperty(nameof(EndianReader.BaseStream)).GetGetMethod());
-                    il.Emit(OpCodes.Ldarg_2); //begin
-                    il.Emit(OpCodes.Ldloc_S, temp);
-                    il.Emit(OpCodes.Unbox_Any, typeof(long));
-                    il.Emit(OpCodes.Add);
-                }
-                else
-                {
-                    il.Emit(OpCodes.Ldarg_0); //reader
-                    il.Emit(OpCodes.Callvirt, typeof(EndianReader).GetProperty(nameof(EndianReader.BaseStream)).GetGetMethod());
-                    il.Emit(OpCodes.Ldarg_2); //begin
-                    il.Emit(OpCodes.Ldarg_1);
-                    il.Emit(OpCodes.Callvirt, lengthProp.GetGetMethod());
-                    il.Emit(OpCodes.Add);
-                }
+                il.Emit(OpCodes.Ldarg_0); //reader
+                il.Emit(OpCodes.Callvirt, typeof(EndianReader).GetProperty(nameof(EndianReader.BaseStream)).GetGetMethod());
+                il.Emit(OpCodes.Ldarg_2); //begin
+                il.Emit(OpCodes.Ldloc_S, temp);
+                il.Emit(OpCodes.Add);
 
                 il.Emit(OpCodes.Callvirt, typeof(Stream).GetProperty(nameof(Stream.Position)).GetSetMethod());
 
@@ -243,6 +171,93 @@ namespace System.IO.Endian
 
             il.Emit(OpCodes.Ldarg_1);
             il.Emit(OpCodes.Ret);
+        }
+
+        private static void EmitPropertyRead(ILGenerator il, double? version, ByteOrderAttribute typeOrder, PropertyInfo prop)
+        {
+            var offset = Utils.GetAttributeForVersion<OffsetAttribute>(prop, version);
+            if (offset == null) return;
+
+            EmitDebugOutput(il, $"[Read property '{prop.Name}']");
+
+            EmitSeek(il, offset.Offset);
+
+            var storeType = Utils.GetAttributeForVersion<StoreTypeAttribute>(prop, version)?.StoreType ?? prop.PropertyType;
+            var isNullable = storeType.IsGenericType && storeType.GetGenericTypeDefinition().Equals(typeof(Nullable<>));
+            var nullableType = isNullable ? storeType : null;
+
+            if (isNullable)
+                storeType = storeType.GetGenericArguments()[0];
+
+            if (storeType.IsEnum)
+                storeType = storeType.GetEnumUnderlyingType();
+
+            OpCode? castOp = null;
+            if (storeType != prop.PropertyType)
+            {
+                if (prop.PropertyType == typeof(sbyte))
+                    castOp = OpCodes.Conv_I1;
+                else if (prop.PropertyType == typeof(byte))
+                    castOp = OpCodes.Conv_U1;
+                else if (prop.PropertyType == typeof(short))
+                    castOp = OpCodes.Conv_I2;
+                else if (prop.PropertyType == typeof(ushort))
+                    castOp = OpCodes.Conv_U2;
+                else if (prop.PropertyType == typeof(int))
+                    castOp = OpCodes.Conv_I4;
+                else if (prop.PropertyType == typeof(uint))
+                    castOp = OpCodes.Conv_U4;
+                else if (prop.PropertyType == typeof(long))
+                    castOp = OpCodes.Conv_I8;
+                else if (prop.PropertyType == typeof(ulong))
+                    castOp = OpCodes.Conv_U8;
+
+                if (castOp.HasValue)
+                    EmitDebugOutput(il, $"<{castOp.Value.Name}>");
+            }
+
+            if (TypeArg.IsValueType)
+                il.Emit(OpCodes.Ldarga_S, (byte)1);
+            else il.Emit(OpCodes.Ldarg_1); // instance
+
+            var propOrder = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
+            if (storeType.Equals(typeof(string)))
+                EmitStringRead(il, prop, propOrder?.ByteOrder ?? typeOrder?.ByteOrder);
+            else if (storeType.IsPrimitive || storeType.Equals(typeof(Guid)))
+                EmitPrimitiveRead(il, prop, storeType, propOrder?.ByteOrder ?? typeOrder?.ByteOrder);
+            else
+            {
+                var method = (from m in typeof(EndianReader).GetMethods()
+                              where m.Name == nameof(EndianReader.ReadObject)
+                              && m.IsGenericMethodDefinition
+                              let p = m.GetParameters()
+                              where (version.HasValue && p.Length == 1 && p[0].ParameterType == typeof(double))
+                              || (!version.HasValue && p.Length == 0)
+                              select m).Single().MakeGenericMethod(prop.PropertyType);
+
+                EmitDebugOutput(il, prop, method);
+
+                il.Emit(OpCodes.Ldarg_0); //reader
+                if (version.HasValue)
+                    il.Emit(OpCodes.Ldc_R8, version.Value);
+                il.Emit(OpCodes.Callvirt, method);
+            }
+
+            if (isNullable)
+            {
+                var ctor = nullableType.GetConstructor(new[] { nullableType.GetGenericArguments()[0] });
+                il.Emit(OpCodes.Newobj, ctor);
+            }
+
+            if (castOp.HasValue)
+                il.Emit(castOp.Value);
+
+            var setter = prop.GetSetMethod();
+
+            if (TypeArg.IsValueType)
+                il.Emit(OpCodes.Call, setter);
+            else il.Emit(OpCodes.Callvirt, setter);
+
         }
 
         private static void EmitTypeOf(ILGenerator il, Type type)
@@ -262,6 +277,34 @@ namespace System.IO.Endian
 
             il.Emit(OpCodes.Ldstr, output);
             il.Emit(OpCodes.Call, typeof(Debug).GetMethod(nameof(Debug.WriteLine), new[] { typeof(string) }));
+        }
+
+        private static LocalBuilder EmitTryConvert(ILGenerator il, PropertyInfo prop, Type toType, Label exitLabel)
+        {
+            var result = il.DeclareLocal(toType);
+            il.Emit(OpCodes.Call, typeof(Activator).GetMethods().First(mi => mi.Name == nameof(Activator.CreateInstance) && mi.IsGenericMethodDefinition).MakeGenericMethod(toType));
+            il.Emit(OpCodes.Stloc_S, result);
+
+            var temp = il.DeclareLocal(typeof(object));
+            il.Emit(OpCodes.Ldarg_1); //instance
+            il.Emit(OpCodes.Callvirt, prop.GetGetMethod());
+            if (prop.PropertyType.IsValueType)
+                il.Emit(OpCodes.Box, prop.PropertyType);
+            il.Emit(OpCodes.Stloc_S, temp);
+
+            var tryConvert = typeof(Utils).GetMethod(nameof(Utils.TryConvert), BindingFlags.Static | BindingFlags.NonPublic);
+            il.Emit(OpCodes.Ldloca_S, temp);
+            EmitTypeOf(il, prop.PropertyType);
+            EmitTypeOf(il, toType);
+            il.Emit(OpCodes.Call, tryConvert);
+            il.Emit(OpCodes.Brfalse_S, exitLabel);
+
+            il.Emit(OpCodes.Ldloc_S, temp);
+            if (toType.IsValueType)
+                il.Emit(OpCodes.Unbox_Any, toType);
+            il.Emit(OpCodes.Stloc_S, result);
+
+            return result;
         }
 
         private static void EmitSeek(ILGenerator il, long offset)

@@ -145,6 +145,19 @@ namespace System.IO.Endian
             if (value?.GetType() == toType)
                 return true;
 
+            if (fromType.IsEnum)
+            {
+                fromType = fromType.GetEnumUnderlyingType();
+                value = Convert.ChangeType(value, fromType);
+            }
+
+            if (toType.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
+            {
+                var nullableType = toType.GetGenericArguments().Single();
+                if (TryConvert(ref value, fromType, nullableType))
+                    fromType = nullableType;
+            }
+
             var converter = TypeDescriptor.GetConverter(fromType);
             if (converter.CanConvertTo(toType))
             {
