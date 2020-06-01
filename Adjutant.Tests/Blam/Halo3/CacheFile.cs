@@ -119,6 +119,7 @@ namespace Adjutant.Tests.Blam.Halo3
             {
                 var gestalt = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "zone")?.ReadMetadata<cache_file_resource_gestalt>();
                 var layoutTable = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "play")?.ReadMetadata<cache_file_resource_layout_table>();
+                var soundGestalt = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "ugh!")?.ReadMetadata<sound_cache_file_gestalt>();
 
                 return true;
             });
@@ -145,6 +146,15 @@ namespace Adjutant.Tests.Blam.Halo3
             {
                 var bsps = cache.TagIndex.Where(i => i.ClassCode == "sbsp")
                 .Select(i => i.ReadMetadata<scenario_structure_bsp>())
+                .ToList();
+
+                return true;
+            });
+
+            var t4 = Task.Run(() =>
+            {
+                var bsps = cache.TagIndex.Where(i => i.ClassCode == "snd!")
+                .Select(i => i.ReadMetadata<sound>())
                 .ToList();
 
                 return true;

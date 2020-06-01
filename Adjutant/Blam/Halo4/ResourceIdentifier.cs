@@ -102,6 +102,15 @@ namespace Adjutant.Blam.Halo4
                         return reader2.ReadBytes(page.DecompressedSize - chunkOffset);
                     }
                 }
+                else if (cache.CacheType > CacheType.Halo4Retail)
+                {
+                    using (var ds = new DeflateStream(fs, CompressionMode.Decompress))
+                    using (var reader2 = new BinaryReader(ds))
+                    {
+                        reader2.ReadBytes(chunkOffset);
+                        return reader2.ReadBytes(page.DecompressedSize - chunkOffset);
+                    }
+                }
                 else
                 {
                     var compressed = reader.ReadBytes(page.CompressedSize);
