@@ -164,6 +164,7 @@ namespace Adjutant.Tests.Blam.Halo3
             Assert.IsTrue(t1.GetAwaiter().GetResult());
             Assert.IsTrue(t2.GetAwaiter().GetResult());
             Assert.IsTrue(t3.GetAwaiter().GetResult());
+            Assert.IsTrue(t4.GetAwaiter().GetResult());
         }
     }
 }
