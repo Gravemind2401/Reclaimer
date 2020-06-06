@@ -46,6 +46,10 @@
     <AssemblyOriginatorKeyFile>Adjutant.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotNetZip, Version=1.13.8.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetZip.1.13.8\lib\net40\DotNetZip.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -116,7 +120,10 @@
     <Compile Include="Blam\Halo4\scenario_structure_bsp.cs" />
     <Compile Include="Blam\Halo4\TagAddressTranslator.cs" />
     <Compile Include="Blam\Halo5\Enums.cs" />
+    <Compile Include="Blam\Halo5\MetadataDefinition.cs" />
     <Compile Include="Blam\Halo5\Module.cs" />
+    <Compile Include="Blam\Halo5\ModuleItem.cs" />
+    <Compile Include="Blam\Halo5\TagHeader.cs" />
     <Compile Include="Blam\HaloReach\bitmap.cs" />
     <Compile Include="Blam\HaloReach\CacheFile.cs" />
     <Compile Include="Blam\MccHalo2X\CacheFile.cs" />
@@ -236,6 +243,7 @@
   <ItemGroup>
     <None Include="Adjutant.snk" />
     <None Include="Adjutant.ruleset" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Halo1Classes.xml" />

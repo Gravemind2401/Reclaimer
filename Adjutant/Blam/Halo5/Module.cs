@@ -11,7 +11,7 @@ namespace Adjutant.Blam.Halo5
 {
     public class Module
     {
-        private const int ModuleHeader = 0x64686f6d;
+        internal const int ModuleHeader = 0x64686f6d;
 
         public string FileName { get; }
 
@@ -40,7 +40,7 @@ namespace Adjutant.Blam.Halo5
                 var origin = reader.BaseStream.Position;
                 Strings = new Dictionary<int, string>();
                 while (reader.BaseStream.Position < origin + Header.StringsSize)
-                    Strings.Add((int)reader.BaseStream.Position, reader.ReadNullTerminatedString());
+                    Strings.Add((int)(reader.BaseStream.Position - origin), reader.ReadNullTerminatedString());
 
                 Resources = new List<int>(Header.ResourceCount);
                 for (int i = 0; i < Header.ResourceCount; i++)
@@ -110,123 +110,6 @@ namespace Adjutant.Blam.Halo5
 
         [Offset(36)]
         public int BlockCount { get; set; }
-    }
-
-    [FixedSize(88)]
-    public class ModuleItem
-    {
-        private readonly Module module;
-
-        [Offset(0)]
-        public int NameOffset { get; set; }
-
-        [Offset(4)]
-        public int ParentIndex { get; set; }
-
-        [Offset(8)]
-        public int ResourceCount { get; set; }
-
-        [Offset(12)]
-        public int ResourceIndex { get; set; }
-
-        [Offset(16)]
-        public int BlockCount { get; set; }
-
-        [Offset(20)]
-        public int BlockIndex { get; set; }
-
-        [Offset(24)]
-        public long DataOffset { get; set; }
-
-        [Offset(32)]
-        [StoreType(typeof(uint))]
-        public long TotalCompressedSize { get; set; }
-
-        [Offset(36)]
-        [StoreType(typeof(uint))]
-        public long TotalUncompressedSize { get; set; }
-
-        [Offset(43)]
-        public FileEntryFlags Flags { get; set; }
-
-        [Offset(44)]
-        public int GlobalTagId { get; set; }
-
-        [Offset(48)]
-        public long AssetId { get; set; }
-
-        [Offset(56)]
-        public long AssetChecksum { get; set; }
-
-        [Offset(64)]
-        [ByteOrder(ByteOrder.BigEndian)]
-        public int ClassId { get; set; }
-
-        [Offset(68)]
-        [StoreType(typeof(uint))]
-        public long UncompressedHeaderSize { get; set; }
-
-        [Offset(72)]
-        [StoreType(typeof(uint))]
-        public long UncompressedTagDataSize { get; set; }
-
-        [Offset(76)]
-        [StoreType(typeof(uint))]
-        public long UncompressedResourceDataSize { get; set; }
-
-        [Offset(80)]
-        public short HeaderBlockCount { get; set; }
-
-        [Offset(82)]
-        public short TagDataBlockCount { get; set; }
-
-        [Offset(84)]
-        public short ResourceBlockCount { get; set; }
-
-        public string ClassCode => (ClassId == -1) ? null : Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId));
-
-        public ModuleItem(Module module)
-        {
-            this.module = module;
-        }
-
-        private Block GetImpliedBlock()
-        {
-            return new Block
-            {
-                CompressedOffset = 0,
-                CompressedSize = TotalCompressedSize,
-                UncompressedOffset = 0,
-                UncompressedSize = TotalUncompressedSize,
-                Compressed = TotalUncompressedSize > TotalCompressedSize ? 1 : 0
-            };
-        }
-
-        public DependencyReader CreateReader()
-        {
-            using (var reader = module.CreateReader())
-            {
-                IEnumerable<Block> blocks;
-                if (BlockCount > 0)
-                    blocks = module.Blocks.Skip(BlockIndex).Take(BlockCount);
-                else
-                {
-                    if (TotalUncompressedSize == TotalCompressedSize)
-                        return (DependencyReader)reader.CreateVirtualReader(module.DataAddress + DataOffset);
-                    else blocks = Enumerable.Repeat(GetImpliedBlock(), 1);
-                }
-
-                var decompressed = new MemoryStream((int)blocks.Sum(b => b.UncompressedSize));
-                foreach (var block in blocks)
-                {
-                    reader.Seek(module.DataAddress + DataOffset + block.CompressedOffset, SeekOrigin.Begin);
-                    decompressed.Write(reader.ReadBytes((int)block.UncompressedSize), 0, (int)block.UncompressedSize);
-                }
-
-                decompressed.Position = 0;
-                return module.CreateReader(decompressed);
-            }
-        }
     }
 
     [FixedSize(20, MaxVersion = (int)ModuleType.Halo5Forge)]
