@@ -18,22 +18,67 @@ namespace Adjutant.Blam.Halo5
         public ModuleType ModuleType => Header.Version;
         public ModuleHeader Header { get; }
 
+        public List<ModuleItem> Items { get; }
+        public Dictionary<int, string> Strings { get; }
+        public List<int> Resources { get; }
+        public List<Block> Blocks { get; }
+
+        public long DataAddress { get; }
+
+        public Module(string fileName)
+        {
+            FileName = fileName;
+
+            using (var reader = CreateReader())
+            {
+                Header = reader.ReadObject<ModuleHeader>();
+
+                Items = new List<ModuleItem>(Header.ItemCount);
+                for (int i = 0; i < Header.ItemCount; i++)
+                    Items.Add(reader.ReadObject<ModuleItem>((int)Header.Version));
+
+                var origin = reader.BaseStream.Position;
+                Strings = new Dictionary<int, string>();
+                while (reader.BaseStream.Position < origin + Header.StringsSize)
+                    Strings.Add((int)reader.BaseStream.Position, reader.ReadNullTerminatedString());
+
+                Resources = new List<int>(Header.ResourceCount);
+                for (int i = 0; i < Header.ResourceCount; i++)
+                    Resources.Add(reader.ReadInt32());
+
+                Blocks = new List<Block>(Header.BlockCount);
+                for (int i = 0; i < Header.BlockCount; i++)
+                    Blocks.Add(reader.ReadObject<Block>((int)Header.Version));
+
+                DataAddress = reader.BaseStream.Position;
+            }
+        }
+
         public DependencyReader CreateReader()
         {
             var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read);
-            var reader = new DependencyReader(fs, ByteOrder.LittleEndian);
+            return CreateReader(fs);
+        }
 
-            var header = reader.PeekInt32();
+        internal DependencyReader CreateReader(Stream stream)
+        {
+            var reader = new DependencyReader(stream, ByteOrder.LittleEndian);
 
-            if (header != ModuleHeader)
-                throw Exceptions.NotAValidMapFile(FileName);
+            //verify header when reading a module file
+            if (stream is FileStream)
+            {
+                var header = reader.PeekInt32();
+
+                if (header != ModuleHeader)
+                    throw Exceptions.NotAValidMapFile(FileName);
+            }
 
             reader.RegisterInstance(this);
 
             return reader;
         }
     }
-    
+
     [FixedSize(48, MaxVersion = (int)ModuleType.Halo5Forge)]
     [FixedSize(56, MinVersion = (int)ModuleType.Halo5Forge)]
     public class ModuleHeader
@@ -138,11 +183,49 @@ namespace Adjutant.Blam.Halo5
         [Offset(84)]
         public short ResourceBlockCount { get; set; }
 
-        public string ClassCode => (ClassId == -1) ? null : Encoding.ASCII.GetString(BitConverter.GetBytes(ClassId));
+        public string ClassCode => (ClassId == -1) ? null : Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId));
 
         public ModuleItem(Module module)
         {
             this.module = module;
+        }
+
+        private Block GetImpliedBlock()
+        {
+            return new Block
+            {
+                CompressedOffset = 0,
+                CompressedSize = TotalCompressedSize,
+                UncompressedOffset = 0,
+                UncompressedSize = TotalUncompressedSize,
+                Compressed = TotalUncompressedSize > TotalCompressedSize ? 1 : 0
+            };
+        }
+
+        public DependencyReader CreateReader()
+        {
+            using (var reader = module.CreateReader())
+            {
+                IEnumerable<Block> blocks;
+                if (BlockCount > 0)
+                    blocks = module.Blocks.Skip(BlockIndex).Take(BlockCount);
+                else
+                {
+                    if (TotalUncompressedSize == TotalCompressedSize)
+                        return (DependencyReader)reader.CreateVirtualReader(module.DataAddress + DataOffset);
+                    else blocks = Enumerable.Repeat(GetImpliedBlock(), 1);
+                }
+
+                var decompressed = new MemoryStream((int)blocks.Sum(b => b.UncompressedSize));
+                foreach (var block in blocks)
+                {
+                    reader.Seek(module.DataAddress + DataOffset + block.CompressedOffset, SeekOrigin.Begin);
+                    decompressed.Write(reader.ReadBytes((int)block.UncompressedSize), 0, (int)block.UncompressedSize);
+                }
+
+                decompressed.Position = 0;
+                return module.CreateReader(decompressed);
+            }
         }
     }
 
