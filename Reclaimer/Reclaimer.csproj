@@ -116,6 +116,9 @@
     <Compile Include="Controls\BitmapViewer.xaml.cs">
       <DependentUpon>BitmapViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ModuleViewer.xaml.cs">
+      <DependentUpon>ModuleViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MetaViewer.xaml.cs">
       <DependentUpon>MetaViewer.xaml</DependentUpon>
     </Compile>
@@ -136,6 +139,7 @@
     <Compile Include="InstanceManager.cs" />
     <Compile Include="Plugins\BatchExtractPlugin.cs" />
     <Compile Include="Plugins\BitmapViewerPlugin.cs" />
+    <Compile Include="Plugins\ModuleViewerPlugin.cs" />
     <Compile Include="Plugins\MapViewerPlugin.cs" />
     <Compile Include="Models\DockContainerModel.cs" />
     <Compile Include="Models\DocumentPanelModel.cs" />
@@ -185,6 +189,10 @@
     <Page Include="Controls\BitmapViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ModuleViewer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\MetaViewer.xaml">
       <SubType>Designer</SubType>

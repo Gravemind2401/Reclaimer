@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="Reclaimer.Controls.ModuleViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Reclaimer.Controls"
+             xmlns:m="clr-namespace:Reclaimer.Models"
+             xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
+             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <ContextMenu x:Key="TreeItemContextMenu" 
+                     ItemsSource="{Binding ContextItems, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+    </UserControl.Resources>
+    <DockPanel>
+        <ToolBarTray DockPanel.Dock="Top" IsLocked="True" HorizontalAlignment="Stretch">
+            <ToolBar Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ToolBarTray}}">
+                <Button Click="btnCollapseAll_Click" ToolTip="Collapse all">
+                    <ContentControl Template="{StaticResource ic_CollapseGroup_16x}" />
+                </Button>
+                <Separator />
+                <ToggleButton IsChecked="{Binding HierarchyView}" ToolTip="Toggle folder hierarchy">
+                    <ContentControl Template="{StaticResource ic_Hierarchy_16x}" />
+                </ToggleButton>
+                <Button ToolBar.OverflowMode="Always">
+                    test
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+        <Grid DockPanel.Dock="Top" Background="{DynamicResource Environment.CommandBar.Gradient}">
+            <studio:SearchControl x:Name="txtSearch" x:FieldModifier="private" Margin="0,2" 
+                    WatermarkText="Search Tags" LiveSearchEnabled="True" LiveSearchDelay="500"
+                    SearchAccepted="txtSearch_SearchChanged" SearchCanceled="txtSearch_SearchChanged" />
+        </Grid>
+        <TreeView x:Name="tv"
+                  IsTextSearchEnabled="True" TextSearch.TextPath="Header"
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
+                  VirtualizingStackPanel.VirtualizationMode="Recycling">
+            <TreeView.Resources>
+                <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                    <Setter Property="ContextMenu" Value="{StaticResource TreeItemContextMenu}" />
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsTextSearchEnabled" Value="{Binding IsExpanded}" />
+                    <Setter Property="TextSearch.TextPath" Value="Header" />
+                    <EventSetter Event="MouseDoubleClick" Handler="TreeItemMouseDoubleClick" />
+                    <EventSetter Event="ContextMenuOpening" Handler="TreeItemContextMenuOpening" />
+                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="TreeItemPreviewMouseRightButtonDown" />
+                </Style>
+            </TreeView.Resources>
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate DataType="m:TreeItemModel" ItemsSource="{Binding Items}">
+                    <StackPanel Orientation="Horizontal">
+                        <ContentControl x:Name="iconHost" Margin="0,2,5,1" Focusable="False" />
+                        <TextBlock Text="{Binding Header}" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding HasItems, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
+                            <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_Folder_16x}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
+                            <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_FolderOpen_16x}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding HasItems, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="False">
+                            <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_Document_16x}" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+    </DockPanel>
+</UserControl>
