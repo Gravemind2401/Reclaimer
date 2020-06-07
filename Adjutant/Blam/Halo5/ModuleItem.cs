@@ -83,7 +83,31 @@ namespace Adjutant.Blam.Halo5
 
         public string ClassCode => (ClassId == -1) ? null : Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId));
 
-        public string FullPath => module.Strings[NameOffset];
+        private string fileName => module.Strings[NameOffset];
+
+        public string FullPath
+        {
+            get
+            {
+                if (AssetId < 0)
+                    return fileName;
+
+                var len = fileName.LastIndexOf('.') - 1;
+                return fileName.Substring(0, len);
+            }
+        }
+
+        public string ClassName
+        {
+            get
+            {
+                if (AssetId < 0)
+                    return null;
+
+                var index = fileName.LastIndexOf('.') - 1;
+                return fileName.Substring(index, fileName.Length - index);
+            }
+        }
 
         public ModuleItem(Module module)
         {
@@ -107,6 +131,12 @@ namespace Adjutant.Blam.Halo5
 
         public DependencyReader CreateReader()
         {
+            Func<DependencyReader, DependencyReader> register = (r) =>
+            {
+                r.RegisterInstance(this);
+                return r;
+            };
+
             using (var reader = module.CreateReader())
             {
                 IEnumerable<Block> blocks;
@@ -115,7 +145,7 @@ namespace Adjutant.Blam.Halo5
                 else
                 {
                     if (TotalUncompressedSize == TotalCompressedSize)
-                        return (DependencyReader)reader.CreateVirtualReader(module.DataAddress + DataOffset);
+                        return register((DependencyReader)reader.CreateVirtualReader(module.DataAddress + DataOffset));
                     else blocks = Enumerable.Repeat(GetImpliedBlock(), 1);
                 }
 
@@ -134,7 +164,30 @@ namespace Adjutant.Blam.Halo5
                 }
 
                 decompressed.Position = 0;
-                return module.CreateReader(decompressed);
+                return register(module.CreateReader(decompressed));
+            }
+        }
+
+        public T ReadMetadata<T>()
+        {
+            using (var reader = CreateReader())
+            {
+                var header = new MetadataHeader(reader);
+
+                reader.Seek(header.Header.HeaderSize, SeekOrigin.Begin);
+                var result = reader.ReadObject<T>();
+
+                var blockProps = typeof(T).GetProperties()
+                    .Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(BlockCollection<>));
+
+                foreach (var prop in blockProps)
+                {
+                    var collection = prop.GetValue(result) as IBlockCollection;
+                    var offset = OffsetAttribute.ValueFor(prop);
+                    collection.LoadBlocks(0, offset, reader);
+                }
+
+                return result;
             }
         }
 

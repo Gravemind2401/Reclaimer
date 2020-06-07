@@ -137,14 +137,14 @@ namespace Adjutant.Blam.Halo5
     [FixedSize(8)]
     public class StringId
     {
-        private readonly MetadataDefinition meta;
+        private readonly MetadataHeader meta;
 
         [Offset(4)]
         public int StringOffset { get; set; }
 
         public string Value => meta.GetStringByOffset(StringOffset);
 
-        public StringId(MetadataDefinition meta)
+        public StringId(MetadataHeader meta)
         {
             if (meta == null)
                 throw new ArgumentNullException(nameof(meta));
@@ -153,20 +153,5 @@ namespace Adjutant.Blam.Halo5
         }
 
         public override string ToString() => Value ?? "[invalid string]";
-    }
-
-    public enum DataBlockSection : short
-    {
-        Header = 0,
-        TagData = 1,
-        ResourceData = 2
-    }
-
-    public enum StructureType : short
-    {
-        Main = 0,
-        TagBlock = 1,
-        Resource = 2,
-        Custom = 3
     }
 }

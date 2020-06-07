@@ -119,8 +119,10 @@
     <Compile Include="Blam\Halo4\scenario_lightmap_bsp_data.cs" />
     <Compile Include="Blam\Halo4\scenario_structure_bsp.cs" />
     <Compile Include="Blam\Halo4\TagAddressTranslator.cs" />
+    <Compile Include="Blam\Halo5\bitmap.cs" />
+    <Compile Include="Blam\Halo5\BlockCollection.cs" />
     <Compile Include="Blam\Halo5\Enums.cs" />
-    <Compile Include="Blam\Halo5\MetadataDefinition.cs" />
+    <Compile Include="Blam\Halo5\MetadataHeader.cs" />
     <Compile Include="Blam\Halo5\Module.cs" />
     <Compile Include="Blam\Halo5\ModuleItem.cs" />
     <Compile Include="Blam\Halo5\TagHeader.cs" />

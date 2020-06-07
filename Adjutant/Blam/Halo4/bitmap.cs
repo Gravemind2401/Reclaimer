@@ -67,7 +67,7 @@ namespace Adjutant.Blam.Halo4
             { TextureFormat.Y8, XboxFormat.Y8 }
         };
 
-        private static readonly CubemapLayout HaloReachCubeLayout = new CubemapLayout
+        private static readonly CubemapLayout Halo4CubeLayout = new CubemapLayout
         {
             Face1 = CubemapFace.Right,
             Face2 = CubemapFace.Left,
@@ -87,7 +87,7 @@ namespace Adjutant.Blam.Halo4
 
         int IBitmap.SubmapCount => Bitmaps.Count;
 
-        CubemapLayout IBitmap.CubeLayout => HaloReachCubeLayout;
+        CubemapLayout IBitmap.CubeLayout => Halo4CubeLayout;
 
         public DdsImage ToDds(int index)
         {
