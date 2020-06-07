@@ -89,10 +89,10 @@ namespace Adjutant.Blam.Halo5
         {
             get
             {
-                if (AssetId < 0)
+                if (GlobalTagId == -1)
                     return fileName;
 
-                var len = fileName.LastIndexOf('.') - 1;
+                var len = fileName.LastIndexOf('.');
                 return fileName.Substring(0, len);
             }
         }
@@ -101,10 +101,10 @@ namespace Adjutant.Blam.Halo5
         {
             get
             {
-                if (AssetId < 0)
+                if (GlobalTagId == -1)
                     return null;
 
-                var index = fileName.LastIndexOf('.') - 1;
+                var index = fileName.LastIndexOf('.') + 1;
                 return fileName.Substring(index, fileName.Length - index);
             }
         }
