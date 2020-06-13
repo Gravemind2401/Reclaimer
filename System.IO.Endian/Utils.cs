@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -173,6 +174,24 @@ namespace System.IO.Endian
             }
 
             return false;
+        }
+
+        internal static PropertyInfo PropertyFromExpression<TSource, TProperty>(Expression<Func<TSource, TProperty>> expr)
+        {
+            var type = typeof(TSource);
+
+            var member = expr.Body as MemberExpression;
+            if (member == null)
+                throw new ArgumentException("Expression does not refer to a property");
+
+            var propInfo = member.Member as PropertyInfo;
+            if (propInfo == null)
+                throw new ArgumentException("Expression does not refer to a property");
+
+            if (type != propInfo.ReflectedType && !type.IsSubclassOf(propInfo.ReflectedType))
+                throw new ArgumentException("Property does not belong to type");
+
+            return propInfo;
         }
     }
 }

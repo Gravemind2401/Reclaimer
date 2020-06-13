@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -79,6 +81,22 @@ namespace System.IO.Endian
                 throw Exceptions.ParamMustBePositive(nameof(size), size);
 
             Size = size;
+        }
+
+        /// <summary>
+        /// Gets the value of the <see cref="FixedSizeAttribute"/> for a particular type, with no specific version.
+        /// </summary>
+        /// <param name="type">The type to check.</param>
+        public static long ValueFor(Type type) => ValueFor(type, null);
+
+        /// <summary>
+        /// Gets the value of the <see cref="FixedSizeAttribute"/> for a particular type, given a particular version.
+        /// </summary>
+        /// <param name="type">The type to check.</param>
+        /// <param name="version">The version to check.</param>
+        public static long ValueFor(Type type, double? version)
+        {
+            return Utils.GetAttributeForVersion<FixedSizeAttribute>(type, version).Size;
         }
     }
 
@@ -198,6 +216,36 @@ namespace System.IO.Endian
                 throw Exceptions.ParamMustBeNonNegative(nameof(offset), offset);
 
             Offset = offset;
+        }
+
+        /// <summary>
+        /// Gets the value of the <see cref="OffsetAttribute"/> for a particular property, with no specific version.
+        /// </summary>
+        /// <param name="expression">An expression referencing the property to check.</param>
+        public static long ValueFor<TSource, TProperty>(Expression<Func<TSource, TProperty>> expression) => ValueFor(Utils.PropertyFromExpression(expression), null);
+
+        /// <summary>
+        /// Gets the value of the <see cref="OffsetAttribute"/> for a particular property, given a particular version.
+        /// </summary>
+        /// <param name="expression">An expression referencing the property to check.</param>
+        /// <param name="version">The version to check.</param>
+        public static long ValueFor<TSource, TProperty>(Expression<Func<TSource, TProperty>> expression, double? version) => ValueFor(Utils.PropertyFromExpression(expression), version);
+
+        /// <summary>
+        /// Gets the value of the <see cref="OffsetAttribute"/> for a particular property, with no specific version.
+        /// </summary>
+        /// <param name="prop">The property to check.</param>
+        public static long ValueFor(PropertyInfo prop) => ValueFor(prop, null);
+
+        /// <summary>
+        /// Gets the value of the <see cref="OffsetAttribute"/> for a particular property, given a particular version.
+        /// </summary>
+        /// <param name="prop">The property to check.</param>
+        /// <param name="version">The version to check.</param>
+        public static long ValueFor(PropertyInfo prop, double? version)
+        {
+            var attr = Utils.GetAttributeForVersion<OffsetAttribute>(prop, version);
+            return attr.Offset;
         }
     }
 
