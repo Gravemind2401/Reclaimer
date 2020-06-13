@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
+using System.Drawing.Dds.Bc7;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -30,6 +31,8 @@ namespace System.Drawing.Dds
             { DxgiFormat.BC5_Typeless, DecompressBC5 },
             { DxgiFormat.BC5_UNorm, DecompressBC5 },
             { DxgiFormat.BC5_SNorm, DecompressBC5Signed },
+            { DxgiFormat.BC7_Typeless, DecompressBC7 },
+            { DxgiFormat.BC7_UNorm, DecompressBC7 },
             { DxgiFormat.B5G6R5_UNorm, DecompressB5G6R5 },
             { DxgiFormat.B5G5R5A1_UNorm, DecompressB5G5R5A1 },
             { DxgiFormat.P8, DecompressY8 },
@@ -719,6 +722,188 @@ namespace System.Drawing.Dds
 
             return output;
         }
+
+        internal static byte[] DecompressBC7(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+
+            const int bytesPerBlock = 16;
+            var xBlocks = width / 4;
+            var yBlocks = height / 4;
+
+            var reader = new BitReader(data);
+            for (int yBlock = 0; yBlock < yBlocks; yBlock++)
+            {
+                for (int xBlock = 0; xBlock < xBlocks; xBlock++)
+                {
+                    var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
+                    reader.Position = srcIndex * 8;
+
+                    int mode = 0;
+                    for (mode = 0; mode < 8; mode++)
+                    {
+                        if (reader.ReadBit() == 1)
+                            break;
+                    }
+
+                    if (mode > 7)
+                        continue;
+
+                    var info = Bc7Helper.BlocksTypes[mode];
+
+                    var partitionIndex = reader.ReadBits(info.PartitionBits);
+                    var rotation = reader.ReadBits(info.RotationBits);
+                    var indexMode = reader.ReadBits(info.IndexModeBits);
+
+                    var endpoints = new BgraColour[info.SubsetCount * 2];
+                    int channels = info.AlphaBits > 0 ? 4 : 3;
+
+                    for (int i = 2; i >= 0; i--) // R, G, B
+                    {
+                        for (int j = 0; j < endpoints.Length; j++)
+                            endpoints[j][i] = reader.ReadBits(info.ColourBits);
+                    }
+
+                    if (info.AlphaBits > 0)
+                    {
+                        for (int i = 0; i < endpoints.Length; i++)
+                            endpoints[i].a = reader.ReadBits(info.AlphaBits);
+                    }
+
+                    //P-bit is a shared LSB across each channel. each endpoint may have its
+                    //own P-bit or a P-bit may be shared between both endpoints of a subset
+                    if (info.PBitMode != PBitMode.None)
+                    {
+                        for (int i = 0; i < info.SubsetCount; i++)
+                        {
+                            var p1 = reader.ReadBit();
+                            var p2 = info.PBitMode == PBitMode.Shared ? p1 : reader.ReadBit();
+
+                            for (int c = 0; c < channels; c++)
+                            {
+                                endpoints[i * 2][c] = (byte)((endpoints[i * 2][c] << 1) | p1);
+                                endpoints[i * 2 + 1][c] = (byte)((endpoints[i * 2 + 1][c] << 1) | p2);
+                            }
+                        }
+                    }
+
+                    var palette0 = new BgraColour[info.SubsetCount, 1 << info.Index0Bits];
+                    var palette1 = new BgraColour[info.SubsetCount, 1 << info.Index1Bits];
+
+                    for (int i = 0; i < info.SubsetCount; i++)
+                    {
+                        for (int c = 0; c < channels; c++)
+                        {
+                            var channelBits = c < 3 ? info.ColourBits : info.AlphaBits;
+                            if (info.PBitMode != PBitMode.None) channelBits++;
+
+                            int e0 = endpoints[i * 2][c];
+                            int e1 = endpoints[i * 2 + 1][c];
+
+                            //shift left until the MSB of the endpoint value is in the leftmost bit of the byte
+                            //then copy the X highest bits into the X lowest bits where X is (8 - # of colour bits)
+                            e0 = ((e0 << (8 - channelBits)) | (e0 >> (2 * channelBits - 8)));
+                            e1 = ((e1 << (8 - channelBits)) | (e1 >> (2 * channelBits - 8)));
+
+                            for (int j = 0; j < palette0.GetLength(1); j++)
+                                palette0[i, j][c] = Bc7Helper.Interpolate(e0, e1, j, info.Index0Bits);
+
+                            if (info.Index1Bits > 0)
+                            {
+                                for (int j = 0; j < palette1.GetLength(1); j++)
+                                    palette1[i, j][c] = Bc7Helper.Interpolate(e0, e1, j, info.Index1Bits);
+                            }
+                        }
+                    }
+
+                    var fixups = new byte[] { 0, Bc7Helper.FixUpTable[info.SubsetCount - 1, partitionIndex, 1], Bc7Helper.FixUpTable[info.SubsetCount - 1, partitionIndex, 2] };
+                    var indices0 = new byte[16];
+                    var indices1 = new byte[16];
+
+                    //get the index bits
+                    for (int i = 0; i < 16; i++)
+                    {
+                        var subset = Bc7Helper.PartitionTable[info.SubsetCount - 1, partitionIndex, i];
+                        indices0[i] = reader.ReadBits((byte)(i == fixups[subset] ? info.Index0Bits - 1 : info.Index0Bits));
+                    }
+
+                    //there is only a second set of indices in modes 4 and 5.
+                    //in both of these cases there is only one subset, which 
+                    //means the fixup table and partition table will be all zeroes.
+                    //this means only index 0 will be detected as a fixup index
+                    //which is what we want for these modes, including with indices0.
+                    if (info.Index1Bits > 0)
+                    {
+                        for (int i = 0; i < 16; i++)
+                        {
+                            var subset = Bc7Helper.PartitionTable[info.SubsetCount - 1, partitionIndex, i];
+                            indices1[i] = reader.ReadBits((byte)(i == fixups[subset] ? info.Index1Bits - 1 : info.Index1Bits));
+                        }
+                    }
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        for (int j = 0; j < 4; j++)
+                        {
+                            var pixelIndex = i * 4 + j;
+
+                            var destX = xBlock * 4 + j;
+                            var destY = yBlock * 4 + i;
+
+                            var destIndex = (destY * width + destX) * bpp;
+
+                            var subsetIndex = Bc7Helper.PartitionTable[info.SubsetCount - 1, partitionIndex, pixelIndex];
+
+                            var colourPalette = indexMode == 0 ? palette0 : palette1;
+                            var colourIndex = indexMode == 0 ? indices0[pixelIndex] : indices1[pixelIndex];
+                            var result = colourPalette[subsetIndex, colourIndex];
+
+                            if (info.Index1Bits > 0)
+                            {
+                                var alphaPalette = indexMode == 0 ? palette1 : palette0;
+                                var alphaIndex = indexMode == 0 ? indices1[pixelIndex] : indices0[pixelIndex];
+
+                                result.a = alphaPalette[subsetIndex, alphaIndex].a;
+                            }
+                            else if (info.AlphaBits == 0)
+                                result.a = byte.MaxValue;
+
+                            byte temp;
+                            switch (rotation)
+                            {
+                                case 0: // no rotation
+                                    break;
+                                case 1: // swap A+R
+                                    temp = result.a;
+                                    result.a = result.r;
+                                    result.r = temp;
+                                    break;
+                                case 2: //swap A+G
+                                    temp = result.a;
+                                    result.a = result.g;
+                                    result.g = temp;
+                                    break;
+                                case 3: //swap A+B
+                                    temp = result.a;
+                                    result.a = result.b;
+                                    result.b = temp;
+                                    break;
+                            }
+
+                            result.Copy(output, destIndex, bgr24);
+
+                            if (!bgr24) output[destIndex + 3] = byte.MaxValue;
+                        }
+                    }
+
+                    if (reader.Position != (srcIndex + 16) * 8)
+                        System.Diagnostics.Debugger.Break();
+                }
+            }
+
+            return output;
+        }
         #endregion
 
         #region Xbox Decompression Methods
@@ -1122,6 +1307,32 @@ namespace System.Drawing.Dds
     {
         public byte b, g, r, a;
 
+        public byte this[int index]
+        {
+            get
+            {
+                switch (index)
+                {
+                    case 0: return b;
+                    case 1: return g;
+                    case 2: return r;
+                    case 3: return a;
+                    default: throw new ArgumentOutOfRangeException(nameof(index));
+                }
+            }
+            set
+            {
+                switch (index)
+                {
+                    case 0: b = value; break;
+                    case 1: g = value; break;
+                    case 2: r = value; break;
+                    case 3: a = value; break;
+                    default: throw new ArgumentOutOfRangeException(nameof(index));
+                }
+            }
+        }
+
         public IEnumerable<byte> AsEnumerable(bool bgr24)
         {
             yield return b;
@@ -1183,6 +1394,11 @@ namespace System.Drawing.Dds
                 r = (byte)((0xFF / RMask) * ((value >> 8) & RMask)),
                 a = (byte)((0xFF / AMask) * ((value >> 12) & AMask)),
             };
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{{ {0,3}, {1,3}, {2,3}, {3,3} }} #{0:X2}{1:X2}{2:X2}{3:X2}", b, g, r, a);
         }
     }
 }
