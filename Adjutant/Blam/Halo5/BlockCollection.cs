@@ -31,7 +31,7 @@ namespace Adjutant.Blam.Halo5
 
         void IBlockCollection.LoadBlocks(int currentBlock, long collectionOffset, DependencyReader itemReader) => LoadBlocks(currentBlock, collectionOffset, itemReader);
 
-        internal void LoadBlocks(int currentBlock, long collectionOffset, DependencyReader itemReader)
+        internal void LoadBlocks(int currentBlock, long collectionOffset, DependencyReader reader)
         {
             if (blockCount == 0)
                 return;
@@ -42,11 +42,21 @@ namespace Adjutant.Blam.Halo5
 
             var block = metadata.DataBlocks[structdef.TargetIndex];
 
-            using (var reader = itemReader.CreateVirtualReader(metadata.Header.HeaderSize))
+            reader.Seek(block.Offset, SeekOrigin.Begin);
+            for (int i = 0; i < blockCount; i++)
+                Add(reader.ReadObject<T>());
+
+            var blockProps = typeof(T).GetProperties()
+                .Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(BlockCollection<>));
+
+            foreach (var item in this)
             {
-                reader.Seek(block.Offset, SeekOrigin.Begin);
-                for (int i = 0; i < blockCount; i++)
-                    Add(reader.ReadObject<T>());
+                foreach (var prop in blockProps)
+                {
+                    var collection = prop.GetValue(item) as IBlockCollection;
+                    var offset = OffsetAttribute.ValueFor(prop);
+                    collection.LoadBlocks(structdef.TargetIndex, offset, reader);
+                }
             }
         }
     }

@@ -125,6 +125,8 @@
     <Compile Include="Blam\Halo5\MetadataHeader.cs" />
     <Compile Include="Blam\Halo5\Module.cs" />
     <Compile Include="Blam\Halo5\ModuleItem.cs" />
+    <Compile Include="Blam\Halo5\render_model.cs" />
+    <Compile Include="Blam\Halo5\StringId.cs" />
     <Compile Include="Blam\Halo5\TagHeader.cs" />
     <Compile Include="Blam\HaloReach\bitmap.cs" />
     <Compile Include="Blam\HaloReach\CacheFile.cs" />

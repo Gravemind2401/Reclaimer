@@ -143,11 +143,7 @@ namespace Adjutant.Blam.Halo5
                 if (BlockCount > 0)
                     blocks = module.Blocks.Skip(BlockIndex).Take(BlockCount);
                 else
-                {
-                    if (TotalUncompressedSize == TotalCompressedSize)
-                        return register((DependencyReader)reader.CreateVirtualReader(module.DataAddress + DataOffset));
-                    else blocks = Enumerable.Repeat(GetImpliedBlock(), 1);
-                }
+                    blocks = Enumerable.Repeat(GetImpliedBlock(), 1);
 
                 var decompressed = new MemoryStream((int)blocks.Sum(b => b.UncompressedSize));
                 foreach (var block in blocks)
@@ -173,21 +169,25 @@ namespace Adjutant.Blam.Halo5
             using (var reader = CreateReader())
             {
                 var header = new MetadataHeader(reader);
-
-                reader.Seek(header.Header.HeaderSize, SeekOrigin.Begin);
-                var result = reader.ReadObject<T>();
-
-                var blockProps = typeof(T).GetProperties()
-                    .Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(BlockCollection<>));
-
-                foreach (var prop in blockProps)
+                using (var vreader = (DependencyReader)reader.CreateVirtualReader(header.Header.HeaderSize))
                 {
-                    var collection = prop.GetValue(result) as IBlockCollection;
-                    var offset = OffsetAttribute.ValueFor(prop);
-                    collection.LoadBlocks(0, offset, reader);
-                }
+                    var mainBlock = header.StructureDefinitions.First(s => s.Type == StructureType.Main).TargetIndex;
 
-                return result;
+                    vreader.Seek(header.DataBlocks[mainBlock].Offset, SeekOrigin.Begin);
+                    var result = vreader.ReadObject<T>();
+
+                    var blockProps = typeof(T).GetProperties()
+                        .Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(BlockCollection<>));
+
+                    foreach (var prop in blockProps)
+                    {
+                        var collection = prop.GetValue(result) as IBlockCollection;
+                        var offset = OffsetAttribute.ValueFor(prop);
+                        collection.LoadBlocks(mainBlock, offset, vreader);
+                    }
+
+                    return result;
+                }
             }
         }
 

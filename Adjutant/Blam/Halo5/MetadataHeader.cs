@@ -21,9 +21,9 @@ namespace Adjutant.Blam.Halo5
 
         public List<TagStructureDefinition> StructureDefinitions { get; }
 
-        public List<DataReference> DataReferences { get; }
+        public List<DataBlockReference> DataReferences { get; }
 
-        public List<TagReference> TagReferences { get; }
+        public List<TagBlockReference> TagReferences { get; }
 
         public List<StringId> StringIds { get; }
 
@@ -35,8 +35,8 @@ namespace Adjutant.Blam.Halo5
             Dependencies = reader.ReadEnumerable<TagDependency>(Header.DependencyCount).ToList();
             DataBlocks = reader.ReadEnumerable<DataBlock>(Header.DataBlockCount).ToList();
             StructureDefinitions = reader.ReadEnumerable<TagStructureDefinition>(Header.TagStructureCount).ToList();
-            DataReferences = reader.ReadEnumerable<DataReference>(Header.DataReferenceCount).ToList();
-            TagReferences = reader.ReadEnumerable<TagReference>(Header.TagReferenceCount).ToList();
+            DataReferences = reader.ReadEnumerable<DataBlockReference>(Header.DataReferenceCount).ToList();
+            TagReferences = reader.ReadEnumerable<TagBlockReference>(Header.TagReferenceCount).ToList();
             StringIds = reader.ReadEnumerable<StringId>(Header.StringIdCount).ToList();
 
             stringTable = new List<string>(StringIds.Count);
@@ -66,22 +66,6 @@ namespace Adjutant.Blam.Halo5
             if (stringsByHash.ContainsKey(hash))
                 return stringTable[stringsByHash[hash]];
             else return null;
-        }
-    }
-
-    public struct StringHash
-    {
-        private readonly MetadataHeader header;
-        
-        [CLSCompliant(false)]
-        public uint Hash { get; }
-
-        public string Value => header.GetStringByHash(Hash);
-
-        public StringHash(DependencyReader reader, MetadataHeader header)
-        {
-            this.header = header;
-            Hash = reader.ReadUInt32();
         }
     }
 }

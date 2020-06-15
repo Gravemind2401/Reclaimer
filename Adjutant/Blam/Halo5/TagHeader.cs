@@ -103,7 +103,7 @@ namespace Adjutant.Blam.Halo5
     }
 
     [FixedSize(20)]
-    public class DataReference
+    public class DataBlockReference
     {
         [Offset(0)]
         public int ParentStructureIndex { get; set; }
@@ -119,7 +119,7 @@ namespace Adjutant.Blam.Halo5
     }
 
     [FixedSize(16)]
-    public class TagReference
+    public class TagBlockReference
     {
         [Offset(0)]
         public int FieldBlock { get; set; }
@@ -132,26 +132,5 @@ namespace Adjutant.Blam.Halo5
 
         [Offset(12)]
         public int DependencyIndex { get; set; }
-    }
-
-    [FixedSize(8)]
-    public class StringId
-    {
-        private readonly MetadataHeader meta;
-
-        [Offset(4)]
-        public int StringOffset { get; set; }
-
-        public string Value => meta.GetStringByOffset(StringOffset);
-
-        public StringId(MetadataHeader meta)
-        {
-            if (meta == null)
-                throw new ArgumentNullException(nameof(meta));
-
-            this.meta = meta;
-        }
-
-        public override string ToString() => Value ?? "[invalid string]";
     }
 }

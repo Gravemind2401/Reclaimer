@@ -26,7 +26,7 @@ namespace Adjutant.Blam.Halo5
         }
 
         [Offset(240)]
-        public BlockCollection<BitmapData> Bitmaps { get; set; }
+        public BlockCollection<BitmapDataBlock> Bitmaps { get; set; }
 
         #region IBitmap
 
@@ -35,6 +35,7 @@ namespace Adjutant.Blam.Halo5
             { TextureFormat.DXT1, DxgiFormat.BC1_UNorm },
             { TextureFormat.DXT3, DxgiFormat.BC2_UNorm },
             { TextureFormat.DXT5, DxgiFormat.BC3_UNorm },
+            { TextureFormat.BC7_unorm, DxgiFormat.BC7_UNorm },
             { TextureFormat.A8R8G8B8, DxgiFormat.B8G8R8A8_UNorm },
             { TextureFormat.X8R8G8B8, DxgiFormat.B8G8R8X8_UNorm },
             { TextureFormat.R5G6B5, DxgiFormat.B5G6R5_UNorm },
@@ -53,7 +54,7 @@ namespace Adjutant.Blam.Halo5
             { TextureFormat.BC4_unorm, XboxFormat.DXT5a_scalar },
             { TextureFormat.DXT5a_mono, XboxFormat.DXT5a_mono },
             { TextureFormat.DXT5a_alpha, XboxFormat.DXT5a_alpha },
-            { TextureFormat.DXN, XboxFormat.DXN },
+            { TextureFormat.DXN, XboxFormat.DXN_SNorm },
             { TextureFormat.DXN_mono_alpha, XboxFormat.DXN_mono_alpha },
             { TextureFormat.Y8, XboxFormat.Y8 }
         };
@@ -105,7 +106,7 @@ namespace Adjutant.Blam.Halo5
     }
 
     [FixedSize(40)]
-    public class BitmapData
+    public class BitmapDataBlock
     {
         [Offset(0)]
         public short Width { get; set; }
