@@ -60,7 +60,7 @@ namespace Reclaimer.Plugins
                         StartInfo =
                         {
                             FileName = Settings.FFmpegPath,
-                            Arguments = $"-y -i - {targetFile}",
+                            Arguments = $"-y -i - \"{targetFile}\"",
                             UseShellExecute = false,
                             CreateNoWindow = true,
                             RedirectStandardInput = true,
