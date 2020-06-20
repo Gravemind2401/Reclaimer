@@ -26,9 +26,9 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         public StringValue(XmlNode node, ModuleItem item, MetadataHeader header, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, reader, baseAddress, offset)
         {
-            if (ValueType == MetaValueType._field_string_id)
+            if (FieldDefinition.ValueType == MetaValueType.StringId)
                 Length = -1;
-            else Length = CalculateSize(node);
+            else Length = FieldDefinition.Size;
 
             ReadValue(reader);
         }
@@ -41,7 +41,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                if (ValueType == MetaValueType._field_string_id)
+                if (FieldDefinition.ValueType == MetaValueType.StringId)
                 {
                     var hash = new StringHash(reader, header);
                     Value = hash.Value;
@@ -57,7 +57,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         {
             writer.Seek(ValueAddress, SeekOrigin.Begin);
 
-            if (ValueType == MetaValueType._field_string_id)
+            if (FieldDefinition.ValueType == MetaValueType.StringId)
                 throw new NotImplementedException();
             else
                 writer.WriteStringFixedLength(Value, Length);

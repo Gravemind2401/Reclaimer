@@ -35,35 +35,25 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                switch (ValueType)
+                switch (FieldDefinition.ValueType)
                 {
-                    case MetaValueType._field_char_integer:
-                    case MetaValueType._field_byte_integer:
+                    case MetaValueType.Byte:
                         Value = reader.ReadByte();
                         break;
-                    case MetaValueType._field_word_integer:
-                    case MetaValueType._field_short_integer:
+                    case MetaValueType.Int16:
                         Value = reader.ReadInt16();
                         break;
-                    case MetaValueType._field_dword_integer:
-                    case MetaValueType._field_long_integer:
+                    case MetaValueType.Int32:
                         Value = reader.ReadInt32();
                         break;
-                    case MetaValueType._field_int64_integer:
+                    case MetaValueType.Int64:
                         Value = reader.ReadInt64();
                         break;
-                    case MetaValueType._field_short_block_index:
-                        Value = reader.ReadUInt16();
-                        break;
-                    case MetaValueType._field_long_block_index:
-                        Value = reader.ReadUInt32();
-                        break;
-                    case MetaValueType._field_real:
-                    case MetaValueType._field_real_fraction:
-                    case MetaValueType._field_angle:
+                    case MetaValueType.Float32:
                         Value = reader.ReadSingle();
                         break;
 
+                    case MetaValueType.Undefined:
                     default:
                         Value = reader.ReadInt32();
                         break;
@@ -78,36 +68,25 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         {
             writer.Seek(ValueAddress, SeekOrigin.Begin);
 
-            switch (ValueType)
+            switch (FieldDefinition.ValueType)
             {
-                case MetaValueType._field_char_integer:
-                case MetaValueType._field_byte_integer:
+                case MetaValueType.Byte:
                     writer.Write((byte)Value);
                     break;
-                case MetaValueType._field_word_integer:
-                case MetaValueType._field_short_integer:
+                case MetaValueType.Int16:
                     writer.Write((short)Value);
                     break;
-                case MetaValueType._field_dword_integer:
-                case MetaValueType._field_long_integer:
+                case MetaValueType.Int32:
                     writer.Write((int)Value);
                     break;
-                case MetaValueType._field_int64_integer:
-                case MetaValueType._field_qword_integer:
+                case MetaValueType.Int64:
                     writer.Write((long)Value);
                     break;
-                case MetaValueType._field_short_block_index:
-                    writer.Write((ushort)Value);
-                    break;
-                case MetaValueType._field_long_block_index:
-                    writer.Write((uint)Value);
-                    break;
-                case MetaValueType._field_real:
-                case MetaValueType._field_real_fraction:
-                case MetaValueType._field_angle:
+                case MetaValueType.Float32:
                     writer.Write((float)Value);
                     break;
 
+                case MetaValueType.Undefined:
                 default:
                     writer.Write((int)Value);
                     break;

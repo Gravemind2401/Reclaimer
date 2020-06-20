@@ -148,6 +148,7 @@
     <Compile Include="Plugins\MetaViewer\Halo5\Helpers.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\MetaValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\MetaViewerPlugin.cs" />
+    <Compile Include="Plugins\MetaViewer\Halo5\MultiValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\SimpleValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\StringValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\StructureValue.cs" />
@@ -4685,6 +4686,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Plugins\Meta Viewer\Reach\____.xml</TargetPath>
     </ContentWithTargetPath>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\MetaViewer\Halo5FieldDefinitions.xml">
+      <SubType>Designer</SubType>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />

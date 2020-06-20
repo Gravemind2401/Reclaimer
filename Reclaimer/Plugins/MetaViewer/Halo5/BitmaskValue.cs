@@ -39,18 +39,17 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                switch (ValueType)
+                switch (FieldDefinition.ValueType)
                 {
-                    case MetaValueType._field_byte_flags:
+                    case MetaValueType.Bitmask8:
                         Value = reader.ReadByte();
                         break;
 
-                    case MetaValueType._field_word_flags:
+                    case MetaValueType.Bitmask16:
                         Value = reader.ReadInt16();
                         break;
 
-                    case MetaValueType._field_long_flags:
-                    case MetaValueType._field_long_block_flags:
+                    case MetaValueType.Bitmask32:
                         Value = reader.ReadInt32();
                         break;
 
@@ -81,17 +80,17 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         {
             writer.Seek(ValueAddress, SeekOrigin.Begin);
 
-            switch (ValueType)
+            switch (FieldDefinition.ValueType)
             {
-                case MetaValueType._field_byte_flags:
+                case MetaValueType.Bitmask8:
                     writer.Write((byte)Value);
                     break;
 
-                case MetaValueType._field_word_flags:
+                case MetaValueType.Bitmask16:
                     writer.Write((short)Value);
                     break;
 
-                case MetaValueType._field_long_flags:
+                case MetaValueType.Bitmask32:
                     writer.Write(Value);
                     break;
             }

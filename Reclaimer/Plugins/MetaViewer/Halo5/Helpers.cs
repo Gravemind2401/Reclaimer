@@ -7,72 +7,118 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Xml;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo5
 {
     public enum MetaValueType
     {
-        _field_block_64,
-        _field_struct,
-        _field_array,
+        Undefined,
+        TagReference,
+        Structure,
+        Array,
+        StringId,
+        String,
+        Comment,
+        Padding,
+        Int64,
+        Int32,
+        Int16,
+        Byte,
+        Bitmask32,
+        Bitmask16,
+        Bitmask8,
+        Enum32,
+        Enum16,
+        Enum8,
+        Float32
 
-        _field_pageable_resource_64,
-        _field_tag_reference_64,
-        _field_data_64,
+        // DataReference, Angle, Euler Angle, Color, maybe block index
+    }
 
-        _field_string_id,
-        _field_string,
-        _field_long_string,
+    public struct FieldDefinition
+    {
+        private static readonly Dictionary<string, FieldDefinition> cache = new Dictionary<string, FieldDefinition>();
 
-        _field_explanation,
-        _field_custom,
-        _field_tag,
-        _field_pad,
-        _field_skip,
+        public static FieldDefinition GetDefinition(XmlNode node)
+        {
+            if (cache.Count == 0)
+            {
+                var doc = new XmlDocument();
+                doc.LoadXml(Reclaimer.Properties.Resources.Halo5FieldDefinitions);
 
-        _field_int64_integer,
-        _field_qword_integer,
-        _field_long_integer,
-        _field_dword_integer,
-        _field_word_integer,
-        _field_short_integer,
-        _field_byte_integer,
-        _field_char_integer,
-        _field_custom_long_block_index,
-        _field_custom_short_block_index,
-        _field_long_block_index,
-        _field_short_block_index,
+                foreach (XmlNode def in doc.DocumentElement.ChildNodes)
+                    cache.Add(def.Name.ToLowerInvariant(), new FieldDefinition(def));
+            }
 
-        _field_long_flags,
-        _field_word_flags,
-        _field_byte_flags,
-        _field_long_block_flags,
+            var key = node.Name.ToLowerInvariant();
+            if (!cache.ContainsKey(key))
+                throw new NotSupportedException();
 
-        _field_long_enum,
-        _field_short_enum,
-        _field_char_enum,
+            var result = cache[key];
+            if (result.Size >= 0)
+                return result;
+            else if (result.Size == -1)
+            {
+                var totalSize = node.GetIntAttribute("length") ?? 0;
+                return new FieldDefinition(result, totalSize);
+            }
+            else if (result.Size == -2)
+            {
+                var totalSize = node.ChildNodes.OfType<XmlNode>()
+                    .Sum(n => GetDefinition(n).Size);
+                return new FieldDefinition(result, totalSize);
+            }
+            else
+            {
+                System.Diagnostics.Debugger.Break();
+                return result;
+            }
+        }
 
-        _field_rgb_color,
-        
-        _field_point_2d,
+        public string FieldType { get; }
+        public MetaValueType ValueType { get; }
+        public int Size { get; }
+        public int Components { get; }
+        public AxesDefinition Axes { get; }
 
-        _field_angle_bounds,
-        _field_real_bounds,
-        _field_fraction_bounds,
-        _field_short_integer_bounds,
-        _field_real_point_2d,
-        _field_real_euler_angles_2d,
-        _field_real_point_3d,
-        _field_real_vector_3d,
-        _field_real_quaternion,
-        _field_real_plane_3d,
-        _field_real_euler_angles_3d,
-        _field_real_rgb_color,
-        _field_real_argb_color,
+        private FieldDefinition(FieldDefinition copyFrom, int newSize)
+        {
+            FieldType = copyFrom.FieldType;
+            ValueType = copyFrom.ValueType;
+            Size = newSize;
+            Components = copyFrom.Components;
+            Axes = copyFrom.Axes;
+        }
 
-        _field_real,
-        _field_real_fraction,
-        _field_angle,
+        private FieldDefinition(XmlNode node)
+        {
+            FieldType = node.Name;
+            ValueType = node.GetEnumAttribute<MetaValueType>("meta-type") ?? MetaValueType.Undefined;
+
+            var sizeStr = node.GetStringAttribute("size")?.ToLowerInvariant();
+            if (sizeStr == "length")
+                Size = -1;
+            else if (sizeStr == "sum")
+                Size = -2;
+            else if (sizeStr == "?")
+                Size = -3;
+            else Size = node.GetIntAttribute("size") ?? 0;
+
+            Components = node.GetIntAttribute("components") ?? 1;
+            Axes = node.GetEnumAttribute<AxesDefinition>("axes") ?? AxesDefinition.None;
+        }
+
+        public override string ToString() => FieldType;
+    }
+
+    public enum AxesDefinition
+    {
+        None,
+        Point,
+        Vector,
+        Bounds,
+        Color
     }
 
     public class ShowInvisiblesConverter : IMultiValueConverter
@@ -98,8 +144,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             if (meta == null || !int.TryParse(parameter?.ToString(), out index))
                 return Visibility.Collapsed;
 
-            var isVisible = false;
-            return isVisible ? Visibility.Visible : Visibility.Collapsed;
+            return index < meta.FieldDefinition.Components ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -135,6 +180,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                 return element.FindResource("CommentTemplate") as DataTemplate;
             else if (meta is StructureValue)
                 return element.FindResource("StructureTemplate") as DataTemplate;
+            else if (meta is MultiValue)
+                return element.FindResource("MultiValueTemplate") as DataTemplate;
             else if (element.Tag as string == "content")
             {
                 if (meta is StringValue)

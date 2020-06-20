@@ -43,6 +43,19 @@ namespace Reclaimer.Plugins.MetaViewer
             else return null;
         }
 
+        public static TEnum? GetEnumAttribute<TEnum>(this XmlNode node, params string[] possibleNames) where TEnum : struct
+        {
+            var attr = FindAttribute(node, possibleNames);
+            if (attr == null) return null;
+
+            TEnum enumVal;
+            var strVal = attr.Value;
+
+            if (Enum.TryParse(strVal, true, out enumVal))
+                return enumVal;
+            else return null;
+        }
+
         public static XmlAttribute FindAttribute(this XmlNode node, params string[] possibleNames)
         {
             return node.Attributes.Cast<XmlAttribute>().FirstOrDefault(a => possibleNames.Any(s => s.ToUpper() == a.Name.ToUpper()));

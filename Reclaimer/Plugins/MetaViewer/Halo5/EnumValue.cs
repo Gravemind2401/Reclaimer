@@ -37,17 +37,17 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                switch (ValueType)
+                switch (FieldDefinition.ValueType)
                 {
-                    case MetaValueType._field_char_enum:
+                    case MetaValueType.Enum8:
                         Value = reader.ReadByte();
                         break;
 
-                    case MetaValueType._field_short_enum:
+                    case MetaValueType.Enum16:
                         Value = reader.ReadInt16();
                         break;
 
-                    case MetaValueType._field_long_enum:
+                    case MetaValueType.Enum32:
                         Value = reader.ReadInt32();
                         break;
 
@@ -78,17 +78,17 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         {
             writer.Seek(ValueAddress, SeekOrigin.Begin);
 
-            switch (ValueType)
+            switch (FieldDefinition.ValueType)
             {
-                case MetaValueType._field_char_enum:
+                case MetaValueType.Enum8:
                     writer.Write((byte)Value);
                     break;
 
-                case MetaValueType._field_short_enum:
+                case MetaValueType.Enum16:
                     writer.Write((short)Value);
                     break;
 
-                case MetaValueType._field_long_enum:
+                case MetaValueType.Enum32:
                     writer.Write(Value);
                     break;
             }
