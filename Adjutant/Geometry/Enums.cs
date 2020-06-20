@@ -15,8 +15,14 @@ namespace Adjutant.Geometry
 
     public enum IndexFormat
     {
-        Triangles = 3,
-        Stripped = 5
+        Default = 0,
+        LineList = 1,
+        LineStrip = 2,
+        TriangleList = 3,
+        TrianglePatch = 4,
+        TriangleStrip = 5,
+        QuadList = 6,
+        RectList = 7
     }
 
     [Flags]

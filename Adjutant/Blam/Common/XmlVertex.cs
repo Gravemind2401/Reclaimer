@@ -73,7 +73,7 @@ namespace Adjutant.Blam.Common
                 var type = (VectorType)Enum.Parse(typeof(VectorType), child.Attributes[XmlVertexField.Type].Value, true);
                 var usage = child.Attributes[XmlVertexField.Usage].Value;
 
-                reader.Seek(origin + offset, System.IO.SeekOrigin.Begin);
+                reader.BaseStream.Position = origin + offset;
                 var value = ReadValue(type, reader);
 
                 switch (usage)

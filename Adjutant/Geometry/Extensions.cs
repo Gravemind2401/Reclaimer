@@ -104,7 +104,7 @@ namespace Adjutant.Geometry
 
             public byte? NodeIndex => model.Meshes[meshIndex].NodeIndex;
 
-            public IndexFormat IndexFormat => meshCount > 1 ? IndexFormat.Triangles : model.Meshes[meshIndex].IndexFormat;
+            public IndexFormat IndexFormat => meshCount > 1 ? IndexFormat.TriangleList : model.Meshes[meshIndex].IndexFormat;
 
             public VertexWeights VertexWeights => model.Meshes[meshIndex].VertexWeights;
 
@@ -126,7 +126,7 @@ namespace Adjutant.Geometry
                             foreach (var sm in mesh.Submeshes)
                             {
                                 IEnumerable<int> indices = mesh.Indicies.Skip(sm.IndexStart).Take(sm.IndexLength);
-                                if (mesh.IndexFormat == IndexFormat.Stripped)
+                                if (mesh.IndexFormat == IndexFormat.TriangleStrip)
                                     indices = indices.Unstrip();
 
                                 var newSubmesh = new GeometrySubmesh
@@ -161,7 +161,7 @@ namespace Adjutant.Geometry
                         var offset = 0;
                         foreach (var mesh in AllMeshes)
                         {
-                            IEnumerable<int> indices = mesh.IndexFormat == IndexFormat.Stripped
+                            IEnumerable<int> indices = mesh.IndexFormat == IndexFormat.TriangleStrip
                                 ? mesh.Indicies.Unstrip()
                                 : mesh.Indicies;
 
@@ -334,7 +334,7 @@ namespace Adjutant.Geometry
                         foreach (var submesh in part.Submeshes)
                         {
                             var indices = part.Indicies.Skip(submesh.IndexStart).Take(submesh.IndexLength);
-                            if (part.IndexFormat == IndexFormat.Stripped)
+                            if (part.IndexFormat == IndexFormat.TriangleStrip)
                                 indices = Unstrip(indices);
 
                             count += indices.Count() / 3;
@@ -483,7 +483,7 @@ namespace Adjutant.Geometry
                         foreach (var submesh in part.Submeshes)
                         {
                             var indices = part.Indicies.Skip(submesh.IndexStart).Take(submesh.IndexLength);
-                            if (part.IndexFormat == IndexFormat.Stripped)
+                            if (part.IndexFormat == IndexFormat.TriangleStrip)
                                 indices = Unstrip(indices);
 
                             foreach (var index in indices)
@@ -511,7 +511,7 @@ namespace Adjutant.Geometry
                         foreach (var mesh in part.Submeshes)
                         {
                             var indices = part.Indicies.Skip(mesh.IndexStart).Take(mesh.IndexLength);
-                            if (part.IndexFormat == IndexFormat.Stripped)
+                            if (part.IndexFormat == IndexFormat.TriangleStrip)
                                 indices = Unstrip(indices);
 
                             var faceCount = indices.Count() / 3;
@@ -751,7 +751,7 @@ namespace Adjutant.Geometry
                     var totalEdges = allPerms.SelectMany(p =>
                     {
                         var mesh = model.Meshes[p.MeshIndex];
-                        if (mesh.IndexFormat == IndexFormat.Triangles)
+                        if (mesh.IndexFormat == IndexFormat.TriangleList)
                             return mesh.Indicies;
                         else return mesh.Submeshes.SelectMany(s => mesh.Indicies.Skip(s.IndexStart).Take(s.IndexLength).Unstrip());
                     }).Count();
@@ -765,7 +765,7 @@ namespace Adjutant.Geometry
                         foreach (var sub in mesh.Submeshes)
                         {
                             var temp = mesh.Indicies.Skip(sub.IndexStart).Take(sub.IndexLength);
-                            if (mesh.IndexFormat == IndexFormat.Stripped)
+                            if (mesh.IndexFormat == IndexFormat.TriangleStrip)
                                 temp = temp.Unstrip();
 
                             var indices = temp.ToList();
