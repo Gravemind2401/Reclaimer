@@ -1,4 +1,4 @@
-﻿using Adjutant.Blam.Common;
+﻿using Adjutant.Blam.Halo5;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Reclaimer.Plugins.MetaViewer
+namespace Reclaimer.Plugins.MetaViewer.Halo5
 {
     public class EnumValue : MetaValue
     {
@@ -22,8 +22,8 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public ObservableCollection<Tuple<int, string>> Options { get; }
 
-        public EnumValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
-            : base(node, cache, baseAddress, reader)
+        public EnumValue(XmlNode node, ModuleItem item, MetadataHeader header, EndianReader reader, long baseAddress, int offset)
+            : base(node, item, header, reader, baseAddress, offset)
         {
             Options = new ObservableCollection<Tuple<int, string>>();
             ReadValue(reader);
@@ -39,15 +39,15 @@ namespace Reclaimer.Plugins.MetaViewer
 
                 switch (ValueType)
                 {
-                    case MetaValueType.Enum8:
+                    case MetaValueType._field_char_enum:
                         Value = reader.ReadByte();
                         break;
 
-                    case MetaValueType.Enum16:
+                    case MetaValueType._field_short_enum:
                         Value = reader.ReadInt16();
                         break;
 
-                    case MetaValueType.Enum32:
+                    case MetaValueType._field_long_enum:
                         Value = reader.ReadInt32();
                         break;
 
@@ -58,16 +58,14 @@ namespace Reclaimer.Plugins.MetaViewer
 
                 if (!Options.Any())
                 {
+                    int index = 0;
                     foreach (XmlNode n in node.ChildNodes)
                     {
-                        if (n.Name.ToUpper() != "OPTION")
+                        if (n.Name.ToUpperInvariant() != "ITEM")
                             continue;
 
-                        var val = GetIntAttribute(n, "value");
                         var label = GetStringAttribute(n, "name");
-
-                        if (val >= 0)
-                            Options.Add(Tuple.Create(val.Value, label));
+                        Options.Add(Tuple.Create(index++, label));
                     }
                 }
 
@@ -82,15 +80,15 @@ namespace Reclaimer.Plugins.MetaViewer
 
             switch (ValueType)
             {
-                case MetaValueType.Enum8:
+                case MetaValueType._field_char_enum:
                     writer.Write((byte)Value);
                     break;
 
-                case MetaValueType.Enum16:
+                case MetaValueType._field_short_enum:
                     writer.Write((short)Value);
                     break;
 
-                case MetaValueType.Enum32:
+                case MetaValueType._field_long_enum:
                     writer.Write(Value);
                     break;
             }

@@ -309,7 +309,7 @@ namespace Reclaimer.Plugins
                     var maxIndex = indices.Max();
                     var vertCount = maxIndex - minIndex + 1;
 
-                    if (geom.IndexFormat == IndexFormat.Stripped)
+                    if (geom.IndexFormat == IndexFormat.TriangleStrip)
                         indices = indices.Unstrip();
 
                     indices = indices.Select(x => x - minIndex);

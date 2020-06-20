@@ -116,6 +116,9 @@
     <Compile Include="Controls\BitmapViewer.xaml.cs">
       <DependentUpon>BitmapViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MetaViewerHalo5.xaml.cs">
+      <DependentUpon>MetaViewerHalo5.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ModuleViewer.xaml.cs">
       <DependentUpon>ModuleViewer.xaml</DependentUpon>
     </Compile>
@@ -139,6 +142,15 @@
     <Compile Include="InstanceManager.cs" />
     <Compile Include="Plugins\BatchExtractPlugin.cs" />
     <Compile Include="Plugins\BitmapViewerPlugin.cs" />
+    <Compile Include="Plugins\MetaViewer\Halo5\BitmaskValue.cs" />
+    <Compile Include="Plugins\MetaViewer\Halo5\CommentValue.cs" />
+    <Compile Include="Plugins\MetaViewer\Halo5\EnumValue.cs" />
+    <Compile Include="Plugins\MetaViewer\Halo5\Helpers.cs" />
+    <Compile Include="Plugins\MetaViewer\Halo5\MetaValue.cs" />
+    <Compile Include="Plugins\MetaViewer\Halo5\MetaViewerPlugin.cs" />
+    <Compile Include="Plugins\MetaViewer\Halo5\SimpleValue.cs" />
+    <Compile Include="Plugins\MetaViewer\Halo5\StringValue.cs" />
+    <Compile Include="Plugins\MetaViewer\Halo5\StructureValue.cs" />
     <Compile Include="Plugins\ModuleViewerPlugin.cs" />
     <Compile Include="Plugins\MapViewerPlugin.cs" />
     <Compile Include="Models\DockContainerModel.cs" />
@@ -189,6 +201,10 @@
     <Page Include="Controls\BitmapViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\MetaViewerHalo5.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\ModuleViewer.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -1,4 +1,4 @@
-﻿using Adjutant.Blam.Common;
+﻿using Adjutant.Blam.Halo5;
 using Prism.Mvvm;
 using Reclaimer.Utilities;
 using System;
@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Reclaimer.Plugins.MetaViewer
+namespace Reclaimer.Plugins.MetaViewer.Halo5
 {
     public class BitmaskValue : MetaValue
     {
@@ -24,8 +24,8 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public ObservableCollection<BitValue> Options { get; }
 
-        public BitmaskValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
-            : base(node, cache, baseAddress, reader)
+        public BitmaskValue(XmlNode node, ModuleItem item, MetadataHeader header, EndianReader reader, long baseAddress, int offset)
+            : base(node, item, header, reader, baseAddress, offset)
         {
             Options = new ObservableCollection<BitValue>();
             ReadValue(reader);
@@ -41,15 +41,16 @@ namespace Reclaimer.Plugins.MetaViewer
 
                 switch (ValueType)
                 {
-                    case MetaValueType.Bitmask8:
+                    case MetaValueType._field_byte_flags:
                         Value = reader.ReadByte();
                         break;
 
-                    case MetaValueType.Bitmask16:
+                    case MetaValueType._field_word_flags:
                         Value = reader.ReadInt16();
                         break;
 
-                    case MetaValueType.Bitmask32:
+                    case MetaValueType._field_long_flags:
+                    case MetaValueType._field_long_block_flags:
                         Value = reader.ReadInt32();
                         break;
 
@@ -60,16 +61,14 @@ namespace Reclaimer.Plugins.MetaViewer
 
                 if (!Options.Any())
                 {
+                    int index = 0;
                     foreach (XmlNode n in node.ChildNodes)
                     {
-                        if (n.Name.ToUpper() != "OPTION" && n.Name.ToUpper() != "BIT")
+                        if (n.Name.ToUpperInvariant() != "ITEM")
                             continue;
 
-                        var val = GetIntAttribute(n, "index");
                         var label = GetStringAttribute(n, "name");
-
-                        if (val >= 0)
-                            Options.Add(new BitValue(this, label, val.Value));
+                        Options.Add(new BitValue(this, label, index++));
                     }
                 }
 
@@ -84,15 +83,15 @@ namespace Reclaimer.Plugins.MetaViewer
 
             switch (ValueType)
             {
-                case MetaValueType.Enum8:
+                case MetaValueType._field_byte_flags:
                     writer.Write((byte)Value);
                     break;
 
-                case MetaValueType.Enum16:
+                case MetaValueType._field_word_flags:
                     writer.Write((short)Value);
                     break;
 
-                case MetaValueType.Enum32:
+                case MetaValueType._field_long_flags:
                     writer.Write(Value);
                     break;
             }

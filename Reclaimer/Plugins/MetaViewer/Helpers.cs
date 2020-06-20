@@ -28,8 +28,6 @@ namespace Reclaimer.Plugins.MetaViewer
         [MetaValueTypeAlias("tagblock")]
         Structure,
 
-        StructureGroup,
-
         [MetaValueTypeAlias("tagreference")]
         TagRef,
 

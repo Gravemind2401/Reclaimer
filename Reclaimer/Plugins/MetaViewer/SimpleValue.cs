@@ -46,8 +46,6 @@ namespace Reclaimer.Plugins.MetaViewer
                     case MetaValueType.UInt64: Value = reader.ReadUInt64(); break;
                     case MetaValueType.Float32: Value = reader.ReadSingle(); break;
 
-                    case MetaValueType.Comment: Value = node.InnerText; break;
-
                     case MetaValueType.Undefined:
                     default:
                         Value = reader.ReadInt32();
@@ -73,8 +71,6 @@ namespace Reclaimer.Plugins.MetaViewer
                 case MetaValueType.UInt32: writer.Write((uint)Value); break;
                 case MetaValueType.UInt64: writer.Write((ulong)Value); break;
                 case MetaValueType.Float32: writer.Write((float)Value); break;
-
-                case MetaValueType.Comment: Value = node.InnerText; break;
 
                 case MetaValueType.Undefined:
                 default:
