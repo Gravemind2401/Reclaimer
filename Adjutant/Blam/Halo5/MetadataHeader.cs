@@ -27,6 +27,8 @@ namespace Adjutant.Blam.Halo5
 
         public List<StringId> StringIds { get; }
 
+        public int SectionCount => DataBlocks.Max(b => b.Section) + 1;
+
         public MetadataHeader(DependencyReader reader)
         {
             reader.RegisterInstance(this);
@@ -49,9 +51,26 @@ namespace Adjutant.Blam.Halo5
                 var relative = reader.BaseStream.Position - startPos;
                 var currentValue = reader.ReadNullTerminatedString();
                 stringsByOffset.Add((int)relative, stringTable.Count);
-                stringsByHash.Add(MurMur3.Hash32(currentValue), stringTable.Count);
+
+                var hash = MurMur3.Hash32(currentValue);
+                if(!stringsByHash.ContainsKey(hash))
+                    stringsByHash.Add(hash, stringTable.Count);
+
                 stringTable.Add(currentValue);
             }
+        }
+
+        public int GetSectionOffset(int section)
+        {
+            if (section < 0 || section >= SectionCount)
+                throw new ArgumentOutOfRangeException(nameof(section));
+
+            //treat 0 as being the header
+            if (section == 0)
+                return 0;
+
+            var totalPrevious = DataBlocks.Where(b => b.Section < section).Sum(b => b.Size);
+            return Header.HeaderSize + totalPrevious;
         }
 
         internal string GetStringByOffset(int offset)

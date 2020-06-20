@@ -39,7 +39,7 @@ namespace Adjutant.Blam.Halo5
 
         public string Value => header.GetStringByHash(Hash);
 
-        public StringHash(DependencyReader reader, MetadataHeader header)
+        public StringHash(EndianReader reader, MetadataHeader header)
         {
             this.header = header;
             Hash = reader.ReadUInt32();

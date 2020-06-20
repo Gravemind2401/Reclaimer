@@ -13,7 +13,7 @@ namespace Adjutant.Blam.Halo5
     [FixedSize(88)]
     public class ModuleItem
     {
-        private readonly Module module;
+        public Module Module { get; }
 
         [Offset(0)]
         public int NameOffset { get; set; }
@@ -83,7 +83,7 @@ namespace Adjutant.Blam.Halo5
 
         public string ClassCode => (ClassId == -1) ? null : Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId));
 
-        private string fileName => module.Strings[NameOffset];
+        private string fileName => Module.Strings[NameOffset];
 
         public string FullPath
         {
@@ -114,7 +114,7 @@ namespace Adjutant.Blam.Halo5
             if (module == null)
                 throw new ArgumentNullException(nameof(module));
 
-            this.module = module;
+            Module = module;
         }
 
         private Block GetImpliedBlock()
@@ -137,18 +137,18 @@ namespace Adjutant.Blam.Halo5
                 return r;
             };
 
-            using (var reader = module.CreateReader())
+            using (var reader = Module.CreateReader())
             {
                 IEnumerable<Block> blocks;
                 if (BlockCount > 0)
-                    blocks = module.Blocks.Skip(BlockIndex).Take(BlockCount);
+                    blocks = Module.Blocks.Skip(BlockIndex).Take(BlockCount);
                 else
                     blocks = Enumerable.Repeat(GetImpliedBlock(), 1);
 
                 var decompressed = new MemoryStream((int)blocks.Sum(b => b.UncompressedSize));
                 foreach (var block in blocks)
                 {
-                    reader.Seek(module.DataAddress + DataOffset + block.CompressedOffset, SeekOrigin.Begin);
+                    reader.Seek(Module.DataAddress + DataOffset + block.CompressedOffset, SeekOrigin.Begin);
 
                     if (block.Compressed == 0)
                         decompressed.Write(reader.ReadBytes((int)block.UncompressedSize), 0, (int)block.UncompressedSize);
@@ -160,7 +160,7 @@ namespace Adjutant.Blam.Halo5
                 }
 
                 decompressed.Position = 0;
-                return register(module.CreateReader(decompressed));
+                return register(Module.CreateReader(decompressed));
             }
         }
 
