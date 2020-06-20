@@ -103,7 +103,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                 RaisePropertyChanged(nameof(BlockIndex));
                 RaisePropertyChanged(nameof(HasChildren));
 
-                var entryOffset = GetIntAttribute(node, "entryName", "entryOffset", "label");
+                var entryOffset = node.GetIntAttribute("entryName", "entryOffset", "label");
                 var entry = Children.FirstOrDefault(c => c.Offset == entryOffset);
 
                 BlockLabels = Enumerable.Range(0, Math.Min(BlockCount, 100)).Select(i => $"Block {i:D2}");

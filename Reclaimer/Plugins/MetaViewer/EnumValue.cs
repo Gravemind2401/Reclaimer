@@ -63,8 +63,8 @@ namespace Reclaimer.Plugins.MetaViewer
                         if (n.Name.ToUpper() != "OPTION")
                             continue;
 
-                        var val = GetIntAttribute(n, "value");
-                        var label = GetStringAttribute(n, "name");
+                        var val = n.GetIntAttribute("value");
+                        var label = n.GetStringAttribute("name");
 
                         if (val >= 0)
                             Options.Add(Tuple.Create(val.Value, label));

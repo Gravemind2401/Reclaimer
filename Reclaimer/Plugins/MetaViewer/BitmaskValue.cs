@@ -65,8 +65,8 @@ namespace Reclaimer.Plugins.MetaViewer
                         if (n.Name.ToUpper() != "OPTION" && n.Name.ToUpper() != "BIT")
                             continue;
 
-                        var val = GetIntAttribute(n, "index");
-                        var label = GetStringAttribute(n, "name");
+                        var val = n.GetIntAttribute("index");
+                        var label = n.GetStringAttribute("name");
 
                         if (val >= 0)
                             Options.Add(new BitValue(this, label, val.Value));

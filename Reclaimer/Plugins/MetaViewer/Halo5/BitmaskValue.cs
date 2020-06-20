@@ -67,7 +67,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                         if (n.Name.ToUpperInvariant() != "ITEM")
                             continue;
 
-                        var label = GetStringAttribute(n, "name");
+                        var label = n.GetStringAttribute("name");
                         Options.Add(new BitValue(this, label, index++));
                     }
                 }

@@ -63,7 +63,7 @@ namespace Reclaimer.Plugins.MetaViewer
         public StructureValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
             : base(node, cache, baseAddress, reader)
         {
-            BlockSize = GetIntAttribute(node, "entrySize", "size") ?? 0;
+            BlockSize = node.GetIntAttribute("entrySize", "size") ?? 0;
             Children = new ObservableCollection<MetaValue>();
             IsExpanded = true;
             ReadValue(reader);
@@ -94,7 +94,7 @@ namespace Reclaimer.Plugins.MetaViewer
                 RaisePropertyChanged(nameof(BlockIndex));
                 RaisePropertyChanged(nameof(HasChildren));
 
-                var entryOffset = GetIntAttribute(node, "entryName", "entryOffset", "label");
+                var entryOffset = node.GetIntAttribute("entryName", "entryOffset", "label");
                 var entry = Children.FirstOrDefault(c => c.Offset == entryOffset);
 
                 if (entry == null)

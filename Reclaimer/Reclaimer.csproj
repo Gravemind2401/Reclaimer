@@ -151,6 +151,7 @@
     <Compile Include="Plugins\MetaViewer\Halo5\SimpleValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\StringValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\StructureValue.cs" />
+    <Compile Include="Plugins\MetaViewer\XmlExtensions.cs" />
     <Compile Include="Plugins\ModuleViewerPlugin.cs" />
     <Compile Include="Plugins\MapViewerPlugin.cs" />
     <Compile Include="Models\DockContainerModel.cs" />

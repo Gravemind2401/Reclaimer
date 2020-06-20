@@ -20,7 +20,7 @@ namespace Reclaimer.Plugins.MetaViewer
         public CommentValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
             : base(node, cache, baseAddress, reader)
         {
-            Title = GetStringAttribute(node, "title", "name");
+            Title = node.GetStringAttribute("title", "name");
             Body = node.InnerText;
         }
 

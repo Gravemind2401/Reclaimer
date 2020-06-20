@@ -52,9 +52,9 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             Offset = offset;
 
             Name = node.Attributes["name"]?.Value;
-            Description = GetStringAttribute(node, "description", "desc");
-            ToolTip = GetStringAttribute(node, "tooltip");
-            IsVisible = true;// GetBoolAttribute(node, "visible") ?? false;
+            Description = node.GetStringAttribute("description", "desc");
+            ToolTip = node.GetStringAttribute("tooltip");
+            IsVisible = true;// node.GetBoolAttribute("visible") ?? false;
 
             ValueType = GetMetaValueType(node.Name);
         }
@@ -106,44 +106,6 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         public abstract void ReadValue(EndianReader reader);
 
         public abstract void WriteValue(EndianWriter writer);
-
-        protected static string GetStringAttribute(XmlNode node, params string[] possibleNames)
-        {
-            return FindAttribute(node, possibleNames)?.Value;
-        }
-
-        protected static int? GetIntAttribute(XmlNode node, params string[] possibleNames)
-        {
-            var attr = FindAttribute(node, possibleNames);
-            if (attr == null) return null;
-
-            int intVal;
-            var strVal = attr.Value;
-
-            if (int.TryParse(strVal, out intVal))
-                return intVal;
-            else if (int.TryParse(strVal.Substring(2), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out intVal))
-                return intVal;
-            else return null;
-        }
-
-        protected static bool? GetBoolAttribute(XmlNode node, params string[] possibleNames)
-        {
-            var attr = FindAttribute(node, possibleNames);
-            if (attr == null) return null;
-
-            bool boolVal;
-            var strVal = attr.Value;
-
-            if (bool.TryParse(strVal, out boolVal))
-                return boolVal;
-            else return null;
-        }
-
-        protected static XmlAttribute FindAttribute(XmlNode node, params string[] possibleNames)
-        {
-            return node.Attributes.Cast<XmlAttribute>().FirstOrDefault(a => possibleNames.Any(s => s.ToUpper() == a.Name.ToUpper()));
-        }
 
         protected static MetaValueType GetMetaValueType(string typeName)
         {

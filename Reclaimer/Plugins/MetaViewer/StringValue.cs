@@ -26,7 +26,7 @@ namespace Reclaimer.Plugins.MetaViewer
         public StringValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
             : base(node, cache, baseAddress, reader)
         {
-            Length = GetIntAttribute(node, "length", "maxlength", "size") ?? 0;
+            Length = node.GetIntAttribute("length", "maxlength", "size") ?? 0;
             ReadValue(reader);
         }
 
