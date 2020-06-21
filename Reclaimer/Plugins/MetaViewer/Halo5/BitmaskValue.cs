@@ -23,8 +23,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
         public ObservableCollection<BitValue> Options { get; }
 
-        public BitmaskValue(XmlNode node, ModuleItem item, MetadataHeader header, EndianReader reader, long baseAddress, int offset)
-            : base(node, item, header, reader, baseAddress, offset)
+        public BitmaskValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
+            : base(node, item, header, host, reader, baseAddress, offset)
         {
             Options = new ObservableCollection<BitValue>();
             ReadValue(reader);

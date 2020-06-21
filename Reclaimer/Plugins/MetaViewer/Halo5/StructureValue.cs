@@ -59,8 +59,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         public bool HasChildren => Children.Any();
         public ObservableCollection<MetaValueBase> Children { get; }
 
-        public StructureValue(XmlNode node, ModuleItem item, MetadataHeader header, EndianReader reader, long baseAddress, int offset)
-            : base(node, item, header, reader, baseAddress, offset)
+        public StructureValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
+            : base(node, item, header, host, reader, baseAddress, offset)
         {
             BlockSize = node.ChildNodes.OfType<XmlNode>().Sum(n => FieldDefinition.GetHalo5Definition(n).Size);
             Children = new ObservableCollection<MetaValueBase>();
@@ -85,8 +85,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                     return;
                 }
 
-                var currentBlock = header.DataBlocks.First(b => header.GetSectionOffset(b.Section) + b.Offset - header.Header.HeaderSize == BaseAddress);
-                var structdef = header.StructureDefinitions.First(s => s.FieldBlock == header.DataBlocks.IndexOf(currentBlock) && s.FieldOffset == Offset);
+                var adjustedOffset = (BaseAddress - host.Offset) + Offset;
+                var structdef = header.StructureDefinitions.First(s => s.FieldBlock == header.DataBlocks.IndexOf(host) && s.FieldOffset == adjustedOffset);
 
                 var block = header.DataBlocks[structdef.TargetIndex];
                 BlockAddress = header.GetSectionOffset(block.Section) + block.Offset - header.Header.HeaderSize;
@@ -96,7 +96,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                 foreach (XmlNode n in node.ChildNodes)
                 {
                     var def = FieldDefinition.GetHalo5Definition(n);
-                    Children.Add(GetMetaValue(n, item, header, reader, BlockAddress, offset));
+                    Children.Add(GetMetaValue(n, item, header, block, reader, BlockAddress, offset));
                     offset += def.Size;
                 }
 

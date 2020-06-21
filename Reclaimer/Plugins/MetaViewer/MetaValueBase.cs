@@ -107,39 +107,39 @@ namespace Reclaimer.Plugins.MetaViewer
             }
         }
 
-        public static MetaValueBase GetMetaValue(XmlNode node, ModuleItem item, MetadataHeader header, EndianReader reader, long baseAddress, int offset)
+        public static MetaValueBase GetMetaValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
         {
             reader.Seek(baseAddress, SeekOrigin.Begin);
 
             var def = FieldDefinition.GetHalo5Definition(node);
 
             if (def.Components > 1 && def.ValueType == MetaValueType.Float32)
-                return new Halo5.MultiValue(node, item, header, reader, baseAddress, offset);
+                return new Halo5.MultiValue(node, item, header, host, reader, baseAddress, offset);
 
             switch (def.ValueType)
             {
                 case MetaValueType.Structure:
-                    return new Halo5.StructureValue(node, item, header, reader, baseAddress, offset);
+                    return new Halo5.StructureValue(node, item, header, host, reader, baseAddress, offset);
 
                 case MetaValueType.StringId:
                 case MetaValueType.String:
-                    return new Halo5.StringValue(node, item, header, reader, baseAddress, offset);
+                    return new Halo5.StringValue(node, item, header, host, reader, baseAddress, offset);
 
                 case MetaValueType.Comment:
-                    return new Halo5.CommentValue(node, item, header, reader, baseAddress, offset);
+                    return new Halo5.CommentValue(node, item, header, host, reader, baseAddress, offset);
 
                 case MetaValueType.Bitmask32:
                 case MetaValueType.Bitmask16:
                 case MetaValueType.Bitmask8:
-                    return new Halo5.BitmaskValue(node, item, header, reader, baseAddress, offset);
+                    return new Halo5.BitmaskValue(node, item, header, host, reader, baseAddress, offset);
 
                 case MetaValueType.Enum32:
                 case MetaValueType.Enum16:
                 case MetaValueType.Enum8:
-                    return new Halo5.EnumValue(node, item, header, reader, baseAddress, offset);
+                    return new Halo5.EnumValue(node, item, header, host, reader, baseAddress, offset);
 
                 default:
-                    return new Halo5.SimpleValue(node, item, header, reader, baseAddress, offset);
+                    return new Halo5.SimpleValue(node, item, header, host, reader, baseAddress, offset);
             }
         }
     }

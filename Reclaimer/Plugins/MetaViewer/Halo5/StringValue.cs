@@ -23,8 +23,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             set { SetMetaProperty(ref _value, value); }
         }
 
-        public StringValue(XmlNode node, ModuleItem item, MetadataHeader header, EndianReader reader, long baseAddress, int offset)
-            : base(node, item, header, reader, baseAddress, offset)
+        public StringValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
+            : base(node, item, header, host, reader, baseAddress, offset)
         {
             if (FieldDefinition.ValueType == MetaValueType.StringId)
                 Length = -1;

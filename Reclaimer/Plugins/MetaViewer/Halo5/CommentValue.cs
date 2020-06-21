@@ -14,8 +14,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         public string Title { get; }
         public string Body { get; }
 
-        public CommentValue(XmlNode node, ModuleItem item, MetadataHeader header, EndianReader reader, long baseAddress, int offset)
-            : base(node, item, header, reader, baseAddress, offset)
+        public CommentValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
+            : base(node, item, header, host, reader, baseAddress, offset)
         {
             Title = node.GetStringAttribute("title", "name");
             Body = node.InnerText;
