@@ -104,9 +104,26 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                 RaisePropertyChanged(nameof(HasChildren));
 
                 var entryOffset = node.GetIntAttribute("entryName", "entryOffset", "label");
-                var entry = Children.FirstOrDefault(c => c.Offset == entryOffset);
+                var isExplicit = entryOffset.HasValue;
+                entryOffset = entryOffset ?? 0;
 
-                BlockLabels = Enumerable.Range(0, Math.Min(BlockCount, 100)).Select(i => $"Block {i:D2}");
+                var entry = Children.FirstOrDefault(c => c.Offset == entryOffset);
+                if ((isExplicit && entry is SimpleValue) || entry is StringValue /*|| entry is TagReferenceValue*/)
+                {
+                    var labels = new List<string>();
+                    for (int i = BlockCount - 1; i >= 0; i--) //end at 0 so the first entry is displayed when done
+                    {
+                        entry.BaseAddress = BlockAddress + i * BlockSize;
+                        entry.ReadValue(reader);
+
+                        if (entry.EntryString == null)
+                            labels.Insert(0, $"Block {i:D2}");
+                        else
+                            labels.Insert(0, $"{i:D2} : {entry.EntryString}");
+                    }
+                    BlockLabels = labels;
+                }
+                else BlockLabels = Enumerable.Range(0, BlockCount).Select(i => $"Block {i:D2}");
             }
             catch { IsEnabled = false; }
         }

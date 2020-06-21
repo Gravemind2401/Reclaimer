@@ -44,16 +44,18 @@ namespace Reclaimer.Plugins.MetaViewer
 
     public struct FieldDefinition
     {
-        private static readonly Dictionary<string, string> aliasLookup = new Dictionary<string, string>();
-        private static readonly Dictionary<string, FieldDefinition> cache = new Dictionary<string, FieldDefinition>();
+        private static readonly Dictionary<string, string> h3aliasLookup = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> h5aliasLookup = new Dictionary<string, string>();
+        private static readonly Dictionary<string, FieldDefinition> h3cache = new Dictionary<string, FieldDefinition>();
+        private static readonly Dictionary<string, FieldDefinition> h5cache = new Dictionary<string, FieldDefinition>();
 
         private static readonly FieldDefinition UndefinedDefinition = new FieldDefinition("undefined", MetaValueType.Undefined, 4, 1, AxesDefinition.None);
 
-        public static FieldDefinition GetHalo3Definition(XmlNode node) => GetDefinition(node, Properties.Resources.Halo3FieldDefinitions);
+        public static FieldDefinition GetHalo3Definition(XmlNode node) => GetDefinition(node, Properties.Resources.Halo3FieldDefinitions, h3aliasLookup, h3cache);
 
-        public static FieldDefinition GetHalo5Definition(XmlNode node) => GetDefinition(node, Properties.Resources.Halo5FieldDefinitions);
+        public static FieldDefinition GetHalo5Definition(XmlNode node) => GetDefinition(node, Properties.Resources.Halo5FieldDefinitions, h5aliasLookup, h5cache);
 
-        private static FieldDefinition GetDefinition(XmlNode node, string definitionXml)
+        private static FieldDefinition GetDefinition(XmlNode node, string definitionXml, Dictionary<string, string> aliasLookup, Dictionary<string, FieldDefinition> cache)
         {
             if (cache.Count == 0)
             {
@@ -95,7 +97,7 @@ namespace Reclaimer.Plugins.MetaViewer
             else if (result.Size == -2)
             {
                 var totalSize = node.ChildNodes.OfType<XmlNode>()
-                    .Sum(n => GetDefinition(n, definitionXml).Size);
+                    .Sum(n => GetDefinition(n, definitionXml, aliasLookup, cache).Size);
                 return new FieldDefinition(result, totalSize);
             }
             else
