@@ -12,7 +12,7 @@ using Reclaimer.Utilities;
 using System.Runtime.CompilerServices;
 using Prism.Mvvm;
 
-namespace Reclaimer.Plugins.MetaViewer
+namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
     public abstract class MetaValue : BindableBase
     {
@@ -53,6 +53,9 @@ namespace Reclaimer.Plugins.MetaViewer
             Offset = node.GetIntAttribute("offset") ?? 0;
             ToolTip = node.GetStringAttribute("tooltip");
             IsVisible = node.GetBoolAttribute("visible") ?? false;
+
+            if (FieldDefinition.ValueType == MetaValueType.Revisions)
+                IsVisible = false;
 
             FieldDefinition = FieldDefinition.GetDefinition(node);
         }

@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Reclaimer.Plugins.MetaViewer
+namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
     public class TagReferenceValue : MetaValue
     {

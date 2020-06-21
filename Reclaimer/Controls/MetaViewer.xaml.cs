@@ -1,6 +1,7 @@
 ﻿using Adjutant.Blam.Common;
 using Reclaimer.Models;
 using Reclaimer.Plugins.MetaViewer;
+using Reclaimer.Plugins.MetaViewer.Halo3;
 using Reclaimer.Utilities;
 using Studio.Controls;
 using System;

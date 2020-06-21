@@ -173,7 +173,7 @@ namespace Reclaimer.Plugins.MetaViewer
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var meta = value as MetaValue;
+            var meta = value as Halo3.MetaValue;
             int index;
 
             if (meta == null || !int.TryParse(parameter?.ToString(), out index))
@@ -206,26 +206,26 @@ namespace Reclaimer.Plugins.MetaViewer
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
             var element = container as FrameworkElement;
-            var meta = item as MetaValue;
+            var meta = item as Halo3.MetaValue;
 
             if (element == null || meta == null)
                 return base.SelectTemplate(item, container);
 
-            if (meta is CommentValue)
+            if (meta is Halo3.CommentValue)
                 return element.FindResource("CommentTemplate") as DataTemplate;
-            else if (meta is StructureValue)
+            else if (meta is Halo3.StructureValue)
                 return element.FindResource("StructureTemplate") as DataTemplate;
-            else if (meta is MultiValue)
+            else if (meta is Halo3.MultiValue)
                 return element.FindResource("MultiValueTemplate") as DataTemplate;
             else if (element.Tag as string == "content")
             {
-                if (meta is StringValue)
+                if (meta is Halo3.StringValue)
                     return element.FindResource("StringContent") as DataTemplate;
-                else if (meta is EnumValue)
+                else if (meta is Halo3.EnumValue)
                     return element.FindResource("EnumContent") as DataTemplate;
-                else if (meta is BitmaskValue)
+                else if (meta is Halo3.BitmaskValue)
                     return element.FindResource("BitmaskContent") as DataTemplate;
-                else if (meta is TagReferenceValue)
+                else if (meta is Halo3.TagReferenceValue)
                     return element.FindResource("TagReferenceContent") as DataTemplate;
                 else
                     return element.FindResource("DefaultContent") as DataTemplate;
