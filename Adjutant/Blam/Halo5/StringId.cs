@@ -49,5 +49,7 @@ namespace Adjutant.Blam.Halo5
         {
             return stringHash.Value;
         }
+
+        public override string ToString() => Value ?? "[invalid string]";
     }
 }
