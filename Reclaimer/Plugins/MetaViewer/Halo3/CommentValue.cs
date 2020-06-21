@@ -1,9 +1,6 @@
 ﻿using Adjutant.Blam.Common;
-using Reclaimer.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.IO.Endian;
 using System.Linq;
 using System.Text;
@@ -17,8 +14,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         public string Title { get; }
         public string Body { get; }
 
-        public CommentValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
-            : base(node, cache, baseAddress, reader)
+        public CommentValue(XmlNode node, ICacheFile cache, EndianReader reader, long baseAddress)
+            : base(node, cache, reader, baseAddress)
         {
             Title = node.GetStringAttribute("title", "name");
             Body = node.InnerText;

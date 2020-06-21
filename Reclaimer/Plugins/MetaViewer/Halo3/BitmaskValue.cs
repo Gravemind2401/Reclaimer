@@ -1,6 +1,5 @@
 ﻿using Adjutant.Blam.Common;
 using Prism.Mvvm;
-using Reclaimer.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,8 +23,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         public ObservableCollection<BitValue> Options { get; }
 
-        public BitmaskValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
-            : base(node, cache, baseAddress, reader)
+        public BitmaskValue(XmlNode node, ICacheFile cache, EndianReader reader, long baseAddress)
+            : base(node, cache, reader, baseAddress)
         {
             Options = new ObservableCollection<BitValue>();
             ReadValue(reader);

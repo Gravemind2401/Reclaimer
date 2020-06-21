@@ -23,8 +23,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             set { SetMetaProperty(ref _value, value); }
         }
 
-        public StringValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
-            : base(node, cache, baseAddress, reader)
+        public StringValue(XmlNode node, ICacheFile cache, EndianReader reader, long baseAddress)
+            : base(node, cache, reader, baseAddress)
         {
             Length = node.GetIntAttribute("length", "maxlength", "size") ?? 0;
             ReadValue(reader);

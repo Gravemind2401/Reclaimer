@@ -8,6 +8,7 @@ using Adjutant.Blam.Common;
 using System.IO;
 using System.Xml;
 using System.Text.RegularExpressions;
+using Adjutant.Blam.Halo5;
 
 namespace Reclaimer.Plugins.MetaViewer
 {
@@ -33,22 +34,42 @@ namespace Reclaimer.Plugins.MetaViewer
             if (!match.Success) return false;
 
             CacheType cacheType;
-            if (!Enum.TryParse(match.Groups[1].Value, out cacheType))
-                return false;
+            if (Enum.TryParse(match.Groups[1].Value, out cacheType))
+            {
+                var item = args.File.OfType<IIndexItem>().FirstOrDefault();
+                if (item == null) return false;
 
-            var item = args.File.OfType<IIndexItem>().FirstOrDefault();
-            if (item == null) return false;
+                var xml = GetDefinitionPath(item);
+                return File.Exists(xml);
+            }
 
-            var xml = GetDefinitionPath(item);
-            return File.Exists(xml);
+            ModuleType moduleType;
+            if (Enum.TryParse(match.Groups[1].Value, out moduleType))
+            {
+                var item = args.File.OfType<ModuleItem>().FirstOrDefault();
+                if (item == null) return false;
+
+                var xml = GetDefinitionPath(item);
+                return File.Exists(xml);
+            }
+
+            return false;
         }
 
         public override void OpenFile(OpenFileArgs args)
         {
-            var item = args.File.OfType<IIndexItem>().FirstOrDefault();
-
             var viewer = new Controls.MetaViewer();
-            viewer.LoadMetadata(item, GetDefinitionPath(item));
+
+            if (args.File.Any(i => i is IIndexItem))
+            {
+                var item = args.File.OfType<IIndexItem>().FirstOrDefault();
+                viewer.LoadMetadata(item, GetDefinitionPath(item));
+            }
+            else if (args.File.Any(i => i is ModuleItem))
+            {
+                var item = args.File.OfType<ModuleItem>().FirstOrDefault();
+                viewer.LoadMetadata(item, GetDefinitionPath(item));
+            }
 
             var container = args.TargetWindow.DocumentPanel;
             container.AddItem(viewer.TabModel);
@@ -58,6 +79,12 @@ namespace Reclaimer.Plugins.MetaViewer
         {
             var xmlName = string.Join("_", item.ClassCode.Split(Path.GetInvalidFileNameChars())).PadRight(4);
             return Path.Combine(Substrate.PluginsDirectory, "Meta Viewer", PluginFolder(item.CacheFile.CacheType), $"{xmlName}.xml");
+        }
+
+        private string GetDefinitionPath(ModuleItem item)
+        {
+            var xmlName = string.Join("_", item.ClassCode.Split(Path.GetInvalidFileNameChars())).PadRight(4);
+            return Path.Combine(Substrate.PluginsDirectory, "Meta Viewer", PluginFolder(item.Module.ModuleType), $"({xmlName}){item.ClassName}.xml");
         }
 
         private string PluginFolder(CacheType cacheType)
@@ -93,6 +120,18 @@ namespace Reclaimer.Plugins.MetaViewer
                 case CacheType.Halo4Beta:
                 case CacheType.Halo4Retail:
                     return "Halo4";
+
+                default: throw new NotSupportedException();
+            }
+        }
+
+        private string PluginFolder(ModuleType moduleType)
+        {
+            switch (moduleType)
+            {
+                case ModuleType.Halo5Server:
+                case ModuleType.Halo5Forge:
+                    return "Halo5";
 
                 default: throw new NotSupportedException();
             }

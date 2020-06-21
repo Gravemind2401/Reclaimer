@@ -37,8 +37,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         public ObservableCollection<string> ClassOptions { get; }
         public ObservableCollection<IIndexItem> TagOptions { get; }
 
-        public TagReferenceValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
-            : base(node, cache, baseAddress, reader)
+        public TagReferenceValue(XmlNode node, ICacheFile cache, EndianReader reader, long baseAddress)
+            : base(node, cache, reader, baseAddress)
         {
             var allClasses = cache.TagIndex
                 .Select(i => i.ClassName)

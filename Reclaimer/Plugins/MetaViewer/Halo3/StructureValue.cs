@@ -12,7 +12,7 @@ using System.Xml;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
-    public class StructureValue : MetaValue
+    public class StructureValue : MetaValue, IExpandable
     {
         public int BlockSize { get; }
 
@@ -58,13 +58,13 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         }
 
         public bool HasChildren => Children.Any();
-        public ObservableCollection<MetaValue> Children { get; }
+        public ObservableCollection<MetaValueBase> Children { get; }
 
-        public StructureValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
-            : base(node, cache, baseAddress, reader)
+        public StructureValue(XmlNode node, ICacheFile cache, EndianReader reader, long baseAddress)
+            : base(node, cache, reader, baseAddress)
         {
             BlockSize = node.GetIntAttribute("entrySize", "size") ?? 0;
-            Children = new ObservableCollection<MetaValue>();
+            Children = new ObservableCollection<MetaValueBase>();
             IsExpanded = true;
             ReadValue(reader);
         }
@@ -89,7 +89,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
                 blockIndex = 0;
                 foreach (XmlNode n in node.ChildNodes)
-                    Children.Add(MetaValue.GetValue(n, cache, BlockAddress));
+                    Children.Add(GetMetaValue(n, cache, BlockAddress));
 
                 RaisePropertyChanged(nameof(BlockIndex));
                 RaisePropertyChanged(nameof(HasChildren));

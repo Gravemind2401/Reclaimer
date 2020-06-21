@@ -42,8 +42,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         public string[] Labels { get; }
 
-        public MultiValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
-            : base(node, cache, baseAddress, reader)
+        public MultiValue(XmlNode node, ICacheFile cache, EndianReader reader, long baseAddress)
+            : base(node, cache, reader, baseAddress)
         {
             if (FieldDefinition.Axes == AxesDefinition.Point)
                 Labels = new[] { "x", "y", "z", "w" };

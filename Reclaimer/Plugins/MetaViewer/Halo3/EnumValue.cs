@@ -22,8 +22,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         public ObservableCollection<Tuple<int, string>> Options { get; }
 
-        public EnumValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
-            : base(node, cache, baseAddress, reader)
+        public EnumValue(XmlNode node, ICacheFile cache, EndianReader reader, long baseAddress)
+            : base(node, cache, reader, baseAddress)
         {
             Options = new ObservableCollection<Tuple<int, string>>();
             ReadValue(reader);

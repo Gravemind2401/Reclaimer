@@ -1,6 +1,5 @@
 ﻿using Adjutant.Blam.Halo5;
 using Prism.Mvvm;
-using Reclaimer.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -16,25 +17,29 @@ namespace Reclaimer.Plugins.MetaViewer
         Undefined,
         Revisions,
         Structure,
+        Array,
         TagReference,
         StringId,
         String,
-        Bitmask8,
-        Bitmask16,
-        Bitmask32,
         Comment,
-        Float32,
-        SByte,
-        Int16,
-        Int32,
+        Padding,
         Int64,
-        Byte,
-        UInt16,
-        UInt32,
+        Int32,
+        Int16,
+        SByte,
         UInt64,
-        Enum8,
-        Enum16,
+        UInt32,
+        UInt16,
+        Byte,
+        Bitmask32,
+        Bitmask16,
+        Bitmask8,
         Enum32,
+        Enum16,
+        Enum8,
+        Float32
+
+        // DataReference, Angle, Euler Angle, Color, maybe block index
     }
 
     public struct FieldDefinition
@@ -44,19 +49,23 @@ namespace Reclaimer.Plugins.MetaViewer
 
         private static readonly FieldDefinition UndefinedDefinition = new FieldDefinition("undefined", MetaValueType.Undefined, 4, 1, AxesDefinition.None);
 
-        public static FieldDefinition GetDefinition(XmlNode node)
+        public static FieldDefinition GetHalo3Definition(XmlNode node) => GetDefinition(node, Properties.Resources.Halo3FieldDefinitions);
+
+        public static FieldDefinition GetHalo5Definition(XmlNode node) => GetDefinition(node, Properties.Resources.Halo5FieldDefinitions);
+
+        private static FieldDefinition GetDefinition(XmlNode node, string definitionXml)
         {
             if (cache.Count == 0)
             {
                 var doc = new XmlDocument();
-                doc.LoadXml(Reclaimer.Properties.Resources.Halo3FieldDefinitions);
+                doc.LoadXml(definitionXml);
 
                 foreach (XmlNode def in doc.DocumentElement.ChildNodes)
                 {
                     var defName = def.Name.ToLowerInvariant();
                     cache.Add(defName, new FieldDefinition(def));
 
-                    foreach(XmlNode child in def.ChildNodes)
+                    foreach (XmlNode child in def.ChildNodes)
                     {
                         if (child.Name.ToLowerInvariant() != "alias")
                             continue;
@@ -86,7 +95,7 @@ namespace Reclaimer.Plugins.MetaViewer
             else if (result.Size == -2)
             {
                 var totalSize = node.ChildNodes.OfType<XmlNode>()
-                    .Sum(n => GetDefinition(n).Size);
+                    .Sum(n => GetDefinition(n, definitionXml).Size);
                 return new FieldDefinition(result, totalSize);
             }
             else
@@ -150,6 +159,12 @@ namespace Reclaimer.Plugins.MetaViewer
         Color
     }
 
+    public interface IExpandable
+    {
+        bool IsExpanded { get; set; }
+        ObservableCollection<MetaValueBase> Children { get; }
+    }
+
     public class ShowInvisiblesConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
@@ -173,7 +188,7 @@ namespace Reclaimer.Plugins.MetaViewer
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var meta = value as Halo3.MetaValue;
+            var meta = value as MetaValueBase;
             int index;
 
             if (meta == null || !int.TryParse(parameter?.ToString(), out index))
@@ -206,29 +221,41 @@ namespace Reclaimer.Plugins.MetaViewer
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
             var element = container as FrameworkElement;
-            var meta = item as Halo3.MetaValue;
+            var meta = item as MetaValueBase;
 
             if (element == null || meta == null)
                 return base.SelectTemplate(item, container);
 
-            if (meta is Halo3.CommentValue)
+            if (meta.FieldDefinition.ValueType == MetaValueType.Comment)
                 return element.FindResource("CommentTemplate") as DataTemplate;
-            else if (meta is Halo3.StructureValue)
+            else if (meta.FieldDefinition.ValueType == MetaValueType.Structure)
                 return element.FindResource("StructureTemplate") as DataTemplate;
-            else if (meta is Halo3.MultiValue)
+            else if (meta.FieldDefinition.Components > 1)
                 return element.FindResource("MultiValueTemplate") as DataTemplate;
             else if (element.Tag as string == "content")
             {
-                if (meta is Halo3.StringValue)
-                    return element.FindResource("StringContent") as DataTemplate;
-                else if (meta is Halo3.EnumValue)
-                    return element.FindResource("EnumContent") as DataTemplate;
-                else if (meta is Halo3.BitmaskValue)
-                    return element.FindResource("BitmaskContent") as DataTemplate;
-                else if (meta is Halo3.TagReferenceValue)
-                    return element.FindResource("TagReferenceContent") as DataTemplate;
-                else
-                    return element.FindResource("DefaultContent") as DataTemplate;
+                switch (meta.FieldDefinition.ValueType)
+                {
+                    case MetaValueType.String:
+                    case MetaValueType.StringId:
+                        return element.FindResource("StringContent") as DataTemplate;
+
+                    case MetaValueType.Enum8:
+                    case MetaValueType.Enum16:
+                    case MetaValueType.Enum32:
+                        return element.FindResource("EnumContent") as DataTemplate;
+
+                    case MetaValueType.Bitmask8:
+                    case MetaValueType.Bitmask16:
+                    case MetaValueType.Bitmask32:
+                        return element.FindResource("BitmaskContent") as DataTemplate;
+
+                    case MetaValueType.TagReference:
+                        return element.FindResource("TagReferenceContent") as DataTemplate;
+
+                    default:
+                        return element.FindResource("DefaultContent") as DataTemplate;
+                }
             }
             else return element.FindResource("SingleValueTemplate") as DataTemplate;
         }
