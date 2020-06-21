@@ -27,7 +27,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public long BaseAddress { get; internal set; }
 
-        public MetaValueType ValueType { get; }
+        public FieldDefinition FieldDefinition { get; }
         public long ValueAddress => BaseAddress + Offset;
 
         private bool isEnabled;
@@ -54,7 +54,7 @@ namespace Reclaimer.Plugins.MetaViewer
             ToolTip = node.GetStringAttribute("tooltip");
             IsVisible = node.GetBoolAttribute("visible") ?? false;
 
-            ValueType = GetMetaValueType(node.Name);
+            FieldDefinition = FieldDefinition.GetDefinition(node);
         }
 
         protected bool SetMetaProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
@@ -70,7 +70,12 @@ namespace Reclaimer.Plugins.MetaViewer
             {
                 reader.Seek(baseAddress, SeekOrigin.Begin);
 
-                switch (GetMetaValueType(node.Name))
+                var def = FieldDefinition.GetDefinition(node);
+
+                if (def.Components > 1 && def.ValueType == MetaValueType.Float32)
+                    return new MultiValue(node, cache, baseAddress, reader);
+
+                switch (def.ValueType)
                 {
                     case MetaValueType.Structure:
                         return new StructureValue(node, cache, baseAddress, reader);
@@ -79,9 +84,10 @@ namespace Reclaimer.Plugins.MetaViewer
                     case MetaValueType.StringId:
                         return new StringValue(node, cache, baseAddress, reader);
 
-                    case MetaValueType.TagRef:
+                    case MetaValueType.TagReference:
                         return new TagReferenceValue(node, cache, baseAddress, reader);
 
+                    case MetaValueType.Revisions:
                     case MetaValueType.Comment:
                         return new CommentValue(node, cache, baseAddress, reader);
 
@@ -95,17 +101,6 @@ namespace Reclaimer.Plugins.MetaViewer
                     case MetaValueType.Enum32:
                         return new EnumValue(node, cache, baseAddress, reader);
 
-                    //case MetaValueType.ShortBounds:
-                    //case MetaValueType.ShortPoint2D:
-                    case MetaValueType.RealBounds:
-                    case MetaValueType.RealPoint2D:
-                    case MetaValueType.RealPoint3D:
-                    case MetaValueType.RealPoint4D:
-                    case MetaValueType.RealVector2D:
-                    case MetaValueType.RealVector3D:
-                    case MetaValueType.RealVector4D:
-                        return new MultiValue(node, cache, baseAddress, reader);
-
                     default: return new SimpleValue(node, cache, baseAddress, reader);
                 }
             }
@@ -114,39 +109,5 @@ namespace Reclaimer.Plugins.MetaViewer
         public abstract void ReadValue(EndianReader reader);
 
         public abstract void WriteValue(EndianWriter writer);
-
-        private static readonly Dictionary<string, MetaValueType> typeLookup = new Dictionary<string, MetaValueType>();
-        protected static MetaValueType GetMetaValueType(string typeName)
-        {
-            if (typeName == null)
-                throw new ArgumentNullException(nameof(typeName));
-
-            typeName = typeName.ToUpper();
-            if (typeLookup.ContainsKey(typeName))
-                return typeLookup[typeName];
-
-            var result = MetaValueType.Undefined;
-            if (Enum.TryParse(typeName, true, out result))
-            {
-                typeLookup.Add(typeName, result);
-                return result;
-            }
-
-            foreach (var fi in typeof(MetaValueType).GetFields().Where(f => f.FieldType == typeof(MetaValueType)))
-            {
-                foreach (MetaValueTypeAliasAttribute attr in fi.GetCustomAttributes(typeof(MetaValueTypeAliasAttribute), false))
-                {
-                    if (attr.Alias.ToUpper() == typeName)
-                    {
-                        result = (MetaValueType)fi.GetValue(null);
-                        typeLookup.Add(typeName, result);
-                        return result;
-                    }
-                }
-            }
-
-            typeLookup.Add(typeName, MetaValueType.Undefined);
-            return MetaValueType.Undefined;
-        }
     }
 }

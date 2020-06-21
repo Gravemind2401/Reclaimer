@@ -38,8 +38,8 @@ namespace Reclaimer.Plugins.MetaViewer
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                if (ValueType == MetaValueType.String)
-                    Value = reader.ReadNullTerminatedString();
+                if (FieldDefinition.ValueType == MetaValueType.String)
+                    Value = reader.ReadNullTerminatedString(Length);
                 else
                 {
                     var id = cache.CacheType < CacheType.Halo3Beta ? reader.ReadInt16() : reader.ReadInt32();
@@ -55,7 +55,7 @@ namespace Reclaimer.Plugins.MetaViewer
         {
             writer.Seek(ValueAddress, SeekOrigin.Begin);
 
-            if (ValueType == MetaValueType.String)
+            if (FieldDefinition.ValueType == MetaValueType.String)
                 writer.WriteStringFixedLength(Value, Length);
             else
                 throw new NotImplementedException();

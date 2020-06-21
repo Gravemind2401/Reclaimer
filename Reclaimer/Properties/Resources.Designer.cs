@@ -63,16 +63,45 @@ namespace Reclaimer.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
         ///&lt;fieldDefinitions&gt;
-        ///  &lt;_field_tag_reference_64 size=&quot;32&quot; meta-type=&quot;tagReference&quot; /&gt;
-        ///  &lt;_field_block_64 size=&quot;28&quot; meta-type=&quot;structure&quot; /&gt;
-        ///  &lt;_field_data_64 size=&quot;28&quot; meta-type=&quot;&quot; /&gt;
-        ///  &lt;_field_pageable_resource_64 size=&quot;16&quot; meta-type=&quot;&quot; /&gt;
+        ///  &lt;revisions size=&quot;0&quot; valueType=&quot;revisions&quot; /&gt;
         ///
-        ///  &lt;_field_struct size=&quot;sum&quot; meta-type=&quot;array&quot; /&gt;
-        ///  &lt;_field_array size=&quot;sum&quot; meta-type=&quot;array&quot; /&gt;
+        ///  &lt;structure size=&quot;12&quot; valueType=&quot;structure&quot;&gt;
+        ///    &lt;alias name=&quot;struct&quot; /&gt;
+        ///    &lt;alias name=&quot;reflexive&quot; /&gt;
+        ///    &lt;alias name=&quot;tagBlock&quot; /&gt;
+        ///  &lt;/structure&gt;
         ///
-        ///  &lt;_field_string_id size=&quot;4&quot; meta-type=&quot;stringId&quot; /&gt;
-        ///  &lt;_field_string size=&quot;32&quot; meta-type=&quot;string&quot; /&gt;
+        ///  &lt;tagReference size=&quot;16&quot; valueType=&quot;tagReference&quot;&gt;
+        ///    &lt;alias name=&quot;tagRef&quot; /&gt;
+        ///  &lt;/tagReference&gt;
+        ///  
+        ///  &lt;stringId size=&quot;4&quot; valueType=&quot;stringId&quot; /&gt;
+        ///
+        ///  &lt;string size=&quot;length&quot; valueType=&quot;string&quot;&gt;
+        ///    &lt;alias name=&quot;ascii&quot; /&gt;
+        ///  &lt;/string&gt;
+        ///
+        ///  &lt; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Halo3FieldDefinitions {
+            get {
+                return ResourceManager.GetString("Halo3FieldDefinitions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;fieldDefinitions&gt;
+        ///  &lt;_field_tag_reference_64 size=&quot;32&quot; valueType=&quot;tagReference&quot; /&gt;
+        ///  &lt;_field_block_64 size=&quot;28&quot; valueType=&quot;structure&quot; /&gt;
+        ///  &lt;_field_data_64 size=&quot;28&quot; valueType=&quot;&quot; /&gt;
+        ///  &lt;_field_pageable_resource_64 size=&quot;16&quot; valueType=&quot;&quot; /&gt;
+        ///
+        ///  &lt;_field_struct size=&quot;sum&quot; valueType=&quot;array&quot; /&gt;
+        ///  &lt;_field_array size=&quot;sum&quot; valueType=&quot;array&quot; /&gt;
+        ///
+        ///  &lt;_field_string_id size=&quot;4&quot; valueType=&quot;stringId&quot; /&gt;
+        ///  &lt;_field_string size=&quot;32&quot; valueType=&quot;string&quot; /&gt;
         ///  &lt;_field_long_strin [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Halo5FieldDefinitions {

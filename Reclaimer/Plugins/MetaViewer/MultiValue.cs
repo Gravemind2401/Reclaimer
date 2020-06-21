@@ -45,15 +45,11 @@ namespace Reclaimer.Plugins.MetaViewer
         public MultiValue(XmlNode node, ICacheFile cache, long baseAddress, EndianReader reader)
             : base(node, cache, baseAddress, reader)
         {
-            if (ValueType == MetaValueType.RealPoint2D
-                || ValueType == MetaValueType.RealPoint3D
-                || ValueType == MetaValueType.RealPoint4D)
+            if (FieldDefinition.Axes == AxesDefinition.Point)
                 Labels = new[] { "x", "y", "z", "w" };
-            else if (ValueType == MetaValueType.RealVector2D
-                || ValueType == MetaValueType.RealVector3D
-                || ValueType == MetaValueType.RealVector4D)
+            else if (FieldDefinition.Axes == AxesDefinition.Vector)
                 Labels = new[] { "i", "j", "k", "w" };
-            else if (ValueType == MetaValueType.RealBounds)
+            else if (FieldDefinition.Axes == AxesDefinition.Bounds)
                 Labels = new[] { "min", "max", string.Empty, string.Empty };
 
             ReadValue(reader);
@@ -70,13 +66,10 @@ namespace Reclaimer.Plugins.MetaViewer
                 Value1 = reader.ReadSingle();
                 Value2 = reader.ReadSingle();
 
-                if (ValueType == MetaValueType.RealPoint3D
-                    || ValueType == MetaValueType.RealPoint4D
-                    || ValueType == MetaValueType.RealVector3D
-                    || ValueType == MetaValueType.RealVector4D)
+                if (FieldDefinition.Components > 2)
                     Value3 = reader.ReadSingle();
 
-                if (ValueType == MetaValueType.RealVector4D || ValueType == MetaValueType.RealVector4D)
+                if (FieldDefinition.Components > 3)
                     Value4 = reader.ReadSingle();
 
                 IsDirty = false;
@@ -91,13 +84,10 @@ namespace Reclaimer.Plugins.MetaViewer
             writer.Write(Value1);
             writer.Write(Value2);
 
-            if (ValueType == MetaValueType.RealPoint3D
-                || ValueType == MetaValueType.RealPoint4D
-                || ValueType == MetaValueType.RealVector3D
-                || ValueType == MetaValueType.RealVector4D)
+            if (FieldDefinition.Components > 2)
                 writer.Write(Value3);
 
-            if (ValueType == MetaValueType.RealVector4D || ValueType == MetaValueType.RealVector4D)
+            if (FieldDefinition.Components > 3)
                 writer.Write(Value4);
 
             IsDirty = false;

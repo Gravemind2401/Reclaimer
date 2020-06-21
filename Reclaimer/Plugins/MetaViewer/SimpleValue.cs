@@ -35,12 +35,13 @@ namespace Reclaimer.Plugins.MetaViewer
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                switch (ValueType)
+                switch (FieldDefinition.ValueType)
                 {
-                    case MetaValueType.Int8: Value = reader.ReadByte(); break;
+                    case MetaValueType.SByte: Value = reader.ReadSByte(); break;
                     case MetaValueType.Int16: Value = reader.ReadInt16(); break;
                     case MetaValueType.Int32: Value = reader.ReadInt32(); break;
                     case MetaValueType.Int64: Value = reader.ReadInt64(); break;
+                    case MetaValueType.Byte: Value = reader.ReadByte(); break;
                     case MetaValueType.UInt16: Value = reader.ReadUInt16(); break;
                     case MetaValueType.UInt32: Value = reader.ReadUInt32(); break;
                     case MetaValueType.UInt64: Value = reader.ReadUInt64(); break;
@@ -61,12 +62,13 @@ namespace Reclaimer.Plugins.MetaViewer
         {
             writer.Seek(ValueAddress, SeekOrigin.Begin);
 
-            switch (ValueType)
+            switch (FieldDefinition.ValueType)
             {
-                case MetaValueType.Int8: writer.Write((byte)Value); break;
+                case MetaValueType.SByte: writer.Write((sbyte)Value); break;
                 case MetaValueType.Int16: writer.Write((short)Value); break;
                 case MetaValueType.Int32: writer.Write((int)Value); break;
                 case MetaValueType.Int64: writer.Write((long)Value); break;
+                case MetaValueType.Byte: writer.Write((byte)Value); break;
                 case MetaValueType.UInt16: writer.Write((ushort)Value); break;
                 case MetaValueType.UInt32: writer.Write((uint)Value); break;
                 case MetaValueType.UInt64: writer.Write((ulong)Value); break;

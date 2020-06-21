@@ -39,7 +39,7 @@ namespace Reclaimer.Plugins.MetaViewer
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                switch (ValueType)
+                switch (FieldDefinition.ValueType)
                 {
                     case MetaValueType.Bitmask8:
                         Value = reader.ReadByte();
@@ -65,7 +65,7 @@ namespace Reclaimer.Plugins.MetaViewer
                         if (n.Name.ToUpper() != "OPTION" && n.Name.ToUpper() != "BIT")
                             continue;
 
-                        var val = n.GetIntAttribute("index");
+                        var val = n.GetIntAttribute("index", "value");
                         var label = n.GetStringAttribute("name");
 
                         if (val >= 0)
@@ -82,7 +82,7 @@ namespace Reclaimer.Plugins.MetaViewer
         {
             writer.Seek(ValueAddress, SeekOrigin.Begin);
 
-            switch (ValueType)
+            switch (FieldDefinition.ValueType)
             {
                 case MetaValueType.Enum8:
                     writer.Write((byte)Value);

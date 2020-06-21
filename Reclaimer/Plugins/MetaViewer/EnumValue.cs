@@ -37,7 +37,7 @@ namespace Reclaimer.Plugins.MetaViewer
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                switch (ValueType)
+                switch (FieldDefinition.ValueType)
                 {
                     case MetaValueType.Enum8:
                         Value = reader.ReadByte();
@@ -80,7 +80,7 @@ namespace Reclaimer.Plugins.MetaViewer
         {
             writer.Seek(ValueAddress, SeekOrigin.Begin);
 
-            switch (ValueType)
+            switch (FieldDefinition.ValueType)
             {
                 case MetaValueType.Enum8:
                     writer.Write((byte)Value);

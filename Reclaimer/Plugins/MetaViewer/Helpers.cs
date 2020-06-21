@@ -7,116 +7,147 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Xml;
 
 namespace Reclaimer.Plugins.MetaViewer
 {
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
-    internal class MetaValueTypeAliasAttribute : Attribute
-    {
-        public string Alias { get; }
-
-        public MetaValueTypeAliasAttribute(string alias)
-        {
-            Alias = alias;
-        }
-    }
-
     public enum MetaValueType
     {
-        [MetaValueTypeAlias("struct")]
-        [MetaValueTypeAlias("reflexive")]
-        [MetaValueTypeAlias("tagblock")]
+        Undefined,
+        Revisions,
         Structure,
-
-        [MetaValueTypeAlias("tagreference")]
-        TagRef,
-
+        TagReference,
         StringId,
-
-        [MetaValueTypeAlias("ascii")]
         String,
-
-        [MetaValueTypeAlias("bitfield8")]
         Bitmask8,
-
-        [MetaValueTypeAlias("bitfield16")]
         Bitmask16,
-
-        [MetaValueTypeAlias("bitfield32")]
         Bitmask32,
-
         Comment,
-
-        DataRef,
-
-        [MetaValueTypeAlias("float")]
         Float32,
-
-        [MetaValueTypeAlias("sbyte")]
-        Int8,
-
-        [MetaValueTypeAlias("short")]
+        SByte,
         Int16,
-
-        [MetaValueTypeAlias("int")]
         Int32,
-
-        [MetaValueTypeAlias("long")]
         Int64,
-
-        [MetaValueTypeAlias("byte")]
-        UInt8,
-
-        [MetaValueTypeAlias("ushort")]
+        Byte,
         UInt16,
-
-        [MetaValueTypeAlias("uint")]
         UInt32,
-
-        [MetaValueTypeAlias("ulong")]
         UInt64,
-
-        RawID,
-
         Enum8,
         Enum16,
         Enum32,
+    }
 
-        Undefined,
+    public struct FieldDefinition
+    {
+        private static readonly Dictionary<string, string> aliasLookup = new Dictionary<string, string>();
+        private static readonly Dictionary<string, FieldDefinition> cache = new Dictionary<string, FieldDefinition>();
 
-        //ShortBounds,
+        private static readonly FieldDefinition UndefinedDefinition = new FieldDefinition("undefined", MetaValueType.Undefined, 4, 1, AxesDefinition.None);
 
-        [MetaValueTypeAlias("bounds")]
-        RealBounds,
+        public static FieldDefinition GetDefinition(XmlNode node)
+        {
+            if (cache.Count == 0)
+            {
+                var doc = new XmlDocument();
+                doc.LoadXml(Reclaimer.Properties.Resources.Halo3FieldDefinitions);
 
-        //ShortPoint2D,
+                foreach (XmlNode def in doc.DocumentElement.ChildNodes)
+                {
+                    var defName = def.Name.ToLowerInvariant();
+                    cache.Add(defName, new FieldDefinition(def));
 
-        [MetaValueTypeAlias("point2")]
-        [MetaValueTypeAlias("point2d")]
-        RealPoint2D,
+                    foreach(XmlNode child in def.ChildNodes)
+                    {
+                        if (child.Name.ToLowerInvariant() != "alias")
+                            continue;
 
-        [MetaValueTypeAlias("point3")]
-        [MetaValueTypeAlias("point3d")]
-        RealPoint3D,
+                        var alias = child.GetStringAttribute("name")?.ToLowerInvariant();
+                        if (!string.IsNullOrEmpty(alias) && !aliasLookup.ContainsKey(alias))
+                            aliasLookup.Add(alias, defName);
+                    }
+                }
+            }
 
-        [MetaValueTypeAlias("point4")]
-        [MetaValueTypeAlias("point4d")]
-        RealPoint4D,
+            var key = node.Name.ToLowerInvariant();
+            if (aliasLookup.ContainsKey(key))
+                key = aliasLookup[key];
 
-        [MetaValueTypeAlias("vector2")]
-        [MetaValueTypeAlias("vector2d")]
-        RealVector2D,
+            if (!cache.ContainsKey(key))
+                return UndefinedDefinition;
 
-        [MetaValueTypeAlias("vector3")]
-        [MetaValueTypeAlias("vector3d")]
-        RealVector3D,
+            var result = cache[key];
+            if (result.Size >= 0)
+                return result;
+            else if (result.Size == -1)
+            {
+                var totalSize = node.GetIntAttribute("length", "maxlength", "size") ?? 0;
+                return new FieldDefinition(result, totalSize);
+            }
+            else if (result.Size == -2)
+            {
+                var totalSize = node.ChildNodes.OfType<XmlNode>()
+                    .Sum(n => GetDefinition(n).Size);
+                return new FieldDefinition(result, totalSize);
+            }
+            else
+            {
+                System.Diagnostics.Debugger.Break();
+                return result;
+            }
+        }
 
-        [MetaValueTypeAlias("vector4")]
-        [MetaValueTypeAlias("vector4d")]
-        RealVector4D,
+        public string FieldType { get; }
+        public MetaValueType ValueType { get; }
+        public int Size { get; }
+        public int Components { get; }
+        public AxesDefinition Axes { get; }
 
-        Colour32RGB,
-        Colour32ARGB,
+        private FieldDefinition(string fieldType, MetaValueType valueType, int size, int components, AxesDefinition axes)
+        {
+            FieldType = fieldType;
+            ValueType = valueType;
+            Size = size;
+            Components = components;
+            Axes = AxesDefinition.None;
+        }
+
+        private FieldDefinition(FieldDefinition copyFrom, int newSize)
+        {
+            FieldType = copyFrom.FieldType;
+            ValueType = copyFrom.ValueType;
+            Size = newSize;
+            Components = copyFrom.Components;
+            Axes = copyFrom.Axes;
+        }
+
+        private FieldDefinition(XmlNode node)
+        {
+            FieldType = node.Name;
+            ValueType = node.GetEnumAttribute<MetaValueType>("valueType") ?? MetaValueType.Undefined;
+
+            var sizeStr = node.GetStringAttribute("size")?.ToLowerInvariant();
+            if (sizeStr == "length")
+                Size = -1;
+            else if (sizeStr == "sum")
+                Size = -2;
+            else if (sizeStr == "?")
+                Size = -3;
+            else Size = node.GetIntAttribute("size") ?? 0;
+
+            Components = node.GetIntAttribute("components") ?? 1;
+            Axes = node.GetEnumAttribute<AxesDefinition>("axes") ?? AxesDefinition.None;
+        }
+
+        public override string ToString() => FieldType;
+    }
+
+    public enum AxesDefinition
+    {
+        None,
+        Point,
+        Vector,
+        Bounds,
+        Color
     }
 
     public class ShowInvisiblesConverter : IMultiValueConverter
@@ -148,27 +179,7 @@ namespace Reclaimer.Plugins.MetaViewer
             if (meta == null || !int.TryParse(parameter?.ToString(), out index))
                 return Visibility.Collapsed;
 
-            var isVisible = false;
-            switch (meta.ValueType)
-            {
-                case MetaValueType.RealBounds:
-                case MetaValueType.RealPoint2D:
-                case MetaValueType.RealVector2D:
-                    isVisible = index < 2;
-                    break;
-
-                case MetaValueType.RealPoint3D:
-                case MetaValueType.RealVector3D:
-                    isVisible = index < 3;
-                    break;
-
-                case MetaValueType.RealPoint4D:
-                case MetaValueType.RealVector4D:
-                    isVisible = index < 4;
-                    break;
-            }
-
-            return isVisible ? Visibility.Visible : Visibility.Collapsed;
+            return index < meta.FieldDefinition.Components ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
