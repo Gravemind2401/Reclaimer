@@ -124,7 +124,7 @@ namespace Adjutant.Blam.Halo1
 
                     model.Meshes.Add(new GeometryMesh
                     {
-                        IndexFormat = IndexFormat.Triangles,
+                        IndexFormat = IndexFormat.TriangleList,
                         VertexWeights = VertexWeights.None,
                         Indicies = localIndices.ToArray(),
                         Vertices = vertices.ToArray(),

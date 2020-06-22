@@ -169,7 +169,7 @@ namespace Adjutant.Blam.Halo1
 
                 yield return new GeometryMesh
                 {
-                    IndexFormat = IndexFormat.Stripped,
+                    IndexFormat = IndexFormat.TriangleStrip,
                     VertexWeights = VertexWeights.Skinned,
                     Indicies = indices.ToArray(),
                     Vertices = vertices.ToArray(),
@@ -238,7 +238,7 @@ namespace Adjutant.Blam.Halo1
 
                 yield return new GeometryMesh
                 {
-                    IndexFormat = IndexFormat.Stripped,
+                    IndexFormat = IndexFormat.TriangleStrip,
                     VertexWeights = VertexWeights.Skinned,
                     Indicies = indices.ToArray(),
                     Vertices = vertices.ToArray(),
