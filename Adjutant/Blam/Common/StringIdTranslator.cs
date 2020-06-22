@@ -58,8 +58,8 @@ namespace Adjutant.Blam.Common
             var index = stringId & ((1 << indexBits) - 1);
             var id = (stringId >> indexBits) & ((1 << namespaceBits) - 1);
 
-            if (!namespaces.ContainsKey(id))
-                System.Diagnostics.Debugger.Break();
+            while (!namespaces.ContainsKey(id) && id > 0)
+                id--;
 
             var ns = namespaces[id];
             return index < ns.Min ? index : index - ns.Min + ns.Start;

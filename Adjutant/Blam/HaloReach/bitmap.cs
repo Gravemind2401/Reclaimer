@@ -211,6 +211,7 @@ namespace Adjutant.Blam.HaloReach
 
         [Offset(10, MaxVersion = (int)CacheType.HaloReachRetail)]
         [Offset(6, MinVersion = (int)CacheType.HaloReachRetail)]
+        [StoreType(typeof(byte))]
         public TextureType BitmapType { get; set; }
 
         [Offset(12, MaxVersion = (int)CacheType.HaloReachRetail)]
