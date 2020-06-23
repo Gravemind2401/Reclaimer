@@ -172,8 +172,6 @@ namespace Adjutant.Blam.Halo5
 
                 using (var vreader = (DependencyReader)reader.CreateVirtualReader(header.Header.HeaderSize))
                 {
-                    vreader.RegisterType(() => new StringHash(vreader, header));
-
                     var mainBlock = header.StructureDefinitions.First(s => s.Type == StructureType.Main).TargetIndex;
 
                     vreader.Seek(header.DataBlocks[mainBlock].Offset, SeekOrigin.Begin);

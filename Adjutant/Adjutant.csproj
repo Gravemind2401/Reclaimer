@@ -122,12 +122,14 @@
     <Compile Include="Blam\Halo5\bitmap.cs" />
     <Compile Include="Blam\Halo5\BlockCollection.cs" />
     <Compile Include="Blam\Halo5\Enums.cs" />
+    <Compile Include="Blam\Halo5\material.cs" />
     <Compile Include="Blam\Halo5\MetadataHeader.cs" />
     <Compile Include="Blam\Halo5\Module.cs" />
     <Compile Include="Blam\Halo5\ModuleItem.cs" />
     <Compile Include="Blam\Halo5\render_model.cs" />
     <Compile Include="Blam\Halo5\StringId.cs" />
     <Compile Include="Blam\Halo5\TagHeader.cs" />
+    <Compile Include="Blam\Halo5\TagReference.cs" />
     <Compile Include="Blam\HaloReach\bitmap.cs" />
     <Compile Include="Blam\HaloReach\CacheFile.cs" />
     <Compile Include="Blam\MccHalo2X\CacheFile.cs" />

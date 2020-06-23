@@ -19,6 +19,7 @@ namespace Adjutant.Blam.Halo5
         public ModuleHeader Header { get; }
 
         public List<ModuleItem> Items { get; }
+        public Dictionary<int, ModuleItem> ItemsById { get; }
         public Dictionary<int, string> Strings { get; }
         public List<int> Resources { get; }
         public List<Block> Blocks { get; }
@@ -34,8 +35,14 @@ namespace Adjutant.Blam.Halo5
                 Header = reader.ReadObject<ModuleHeader>();
 
                 Items = new List<ModuleItem>(Header.ItemCount);
+                ItemsById = new Dictionary<int, ModuleItem>();
                 for (int i = 0; i < Header.ItemCount; i++)
-                    Items.Add(reader.ReadObject<ModuleItem>((int)Header.Version));
+                {
+                    var item = reader.ReadObject<ModuleItem>((int)Header.Version);
+                    Items.Add(item);
+                    if (item.GlobalTagId != -1)
+                        ItemsById.Add(item.GlobalTagId, item);
+                }
 
                 var origin = reader.BaseStream.Position;
                 Strings = new Dictionary<int, string>();

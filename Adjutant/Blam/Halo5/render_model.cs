@@ -332,10 +332,10 @@ namespace Adjutant.Blam.Halo5
     [FixedSize(32)]
     public class MaterialBlock
     {
-        //[Offset(0)]
-        //public TagReference MaterialReference { get; set; }
+        [Offset(0)]
+        public TagReference MaterialReference { get; set; }
 
-        //public override string ToString() => MaterialReference.Tag?.FullPath;
+        public override string ToString() => MaterialReference.Tag?.FullPath;
     }
 
     [FixedSize(128)]

@@ -62,7 +62,10 @@ namespace Adjutant.Blam.Halo4
                 var map = shader.ShaderProperties.FirstOrDefault()?.ShaderMaps.FirstOrDefault();
                 var bitmTag = map?.BitmapReference.Tag;
                 if (bitmTag == null)
+                {
+                    yield return material;
                     continue;
+                }
 
                 var tile = map.TilingIndex == byte.MaxValue
                     ? (RealVector4D?)null
