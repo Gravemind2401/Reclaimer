@@ -32,6 +32,14 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
+        <Style TargetType="ComboBoxItem" x:Key="ComboBoxOption">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsVisible}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
         <DataTemplate x:Key="DefaultContent">
             <TextBox Width="100" IsReadOnly="True" Text="{Binding Value}" />
         </DataTemplate>
@@ -62,12 +70,15 @@
         <DataTemplate x:Key="TagReferenceContent">
             <StackPanel Orientation="Horizontal">
                 <ComboBox Width="180" IsEnabled="False"
+                      ItemContainerStyle="{StaticResource ComboBoxOption}"
+                      DisplayMemberPath="Label"
                       ItemsSource="{Binding ClassOptions}"
-                      SelectedValue="{Binding SelectedClass}" />
+                      SelectedItem="{Binding SelectedClass}" />
                 <ComboBox Width="400" Margin="5,0" IsEnabled="False"
+                      ItemContainerStyle="{StaticResource ComboBoxOption}"
+                      DisplayMemberPath="Label"
                       ItemsSource="{Binding TagOptions}"
-                      SelectedValuePath="Id" DisplayMemberPath="FullPath"
-                      SelectedValue="{Binding Value}" />
+                      SelectedItem="{Binding SelectedItem}" />
             </StackPanel>
         </DataTemplate>
 

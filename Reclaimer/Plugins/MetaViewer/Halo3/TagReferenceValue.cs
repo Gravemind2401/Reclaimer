@@ -14,15 +14,17 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
     public class TagReferenceValue : MetaValue
     {
-        private int _value;
-        public int Value
+        private TagReference referenceValue;
+
+        private ComboBoxItem<IIndexItem> selectedItem;
+        public ComboBoxItem<IIndexItem> SelectedItem
         {
-            get { return _value; }
-            set { SetMetaProperty(ref _value, value); }
+            get { return selectedItem; }
+            set { SetMetaProperty(ref selectedItem, value); }
         }
 
-        private string selectedClass;
-        public string SelectedClass
+        private ComboBoxItem selectedClass;
+        public ComboBoxItem SelectedClass
         {
             get { return selectedClass; }
             set
@@ -32,21 +34,21 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             }
         }
 
-        public override string EntryString => Utils.GetFileName(cache.TagIndex[Value].FullPath);
+        public override string EntryString => Utils.GetFileName(SelectedItem?.Context?.FullPath);
 
-        public ObservableCollection<string> ClassOptions { get; }
-        public ObservableCollection<IIndexItem> TagOptions { get; }
+        public ObservableCollection<ComboBoxItem> ClassOptions { get; }
+        public ObservableCollection<ComboBoxItem<IIndexItem>> TagOptions { get; }
 
         public TagReferenceValue(XmlNode node, ICacheFile cache, EndianReader reader, long baseAddress)
             : base(node, cache, reader, baseAddress)
         {
             var allClasses = cache.TagIndex
-                .Select(i => i.ClassName)
+                .Select(i => new ComboBoxItem(i.ClassName))
                 .Distinct()
-                .OrderBy(s => s);
+                .OrderBy(s => s.Label);
 
-            ClassOptions = new ObservableCollection<string>(allClasses);
-            TagOptions = new ObservableCollection<IIndexItem>();
+            ClassOptions = new ObservableCollection<ComboBoxItem>(allClasses);
+            TagOptions = new ObservableCollection<ComboBoxItem<IIndexItem>>();
 
             ReadValue(reader);
         }
@@ -55,14 +57,14 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         {
             TagOptions.Clear();
             var classTags = from t in cache.TagIndex
-                            where t.ClassName == SelectedClass
+                            where t.ClassName == SelectedClass.Label
                             orderby t.FullPath
                             select t;
 
             foreach (var t in classTags)
-                TagOptions.Add(t);
+                TagOptions.Add(new ComboBoxItem<IIndexItem>(t.FullPath, t));
 
-            Value = (short)TagOptions.First().Id;
+            SelectedItem = TagOptions.First();
         }
 
         public override void ReadValue(EndianReader reader)
@@ -73,16 +75,9 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                if (cache.CacheType >= CacheType.Halo3Beta)
-                    reader.Seek(14, SeekOrigin.Current);
-                else if (cache.CacheType >= CacheType.Halo2Xbox)
-                    reader.Seek(4, SeekOrigin.Current);
-                else
-                    reader.Seek(12, SeekOrigin.Current);
-
-                var tagId = reader.ReadInt16();
-                SelectedClass = cache.TagIndex[tagId].ClassName;
-                Value = tagId;
+                referenceValue = new TagReference(cache, reader);
+                SelectedClass = ClassOptions.FirstOrDefault(i => i.Label == referenceValue.Tag?.ClassName);
+                SelectedItem = TagOptions.FirstOrDefault(i => i.Context != null && i.Context == referenceValue.Tag);
 
                 IsDirty = false;
             }

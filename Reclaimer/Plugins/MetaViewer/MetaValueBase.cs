@@ -125,6 +125,9 @@ namespace Reclaimer.Plugins.MetaViewer
                 case MetaValueType.String:
                     return new Halo5.StringValue(node, item, header, host, reader, baseAddress, offset);
 
+                case MetaValueType.TagReference:
+                    return new Halo5.TagReferenceValue(node, item, header, host, reader, baseAddress, offset);
+
                 case MetaValueType.Comment:
                     return new Halo5.CommentValue(node, item, header, host, reader, baseAddress, offset);
 

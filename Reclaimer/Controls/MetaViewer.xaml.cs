@@ -122,13 +122,15 @@ namespace Reclaimer.Controls
                 var header = new MetadataHeader(tagReader);
                 using (var reader = tagReader.CreateVirtualReader(header.Header.HeaderSize))
                 {
-                    var mainBlock = header.StructureDefinitions.First(s => s.Type == StructureType.Main).TargetIndex;
+                    var rootIndex = header.StructureDefinitions.First(s => s.Type == StructureType.Main).TargetIndex;
+                    var mainBlock = header.DataBlocks[rootIndex];
+
                     foreach (XmlNode n in doc.DocumentElement.ChildNodes)
                     {
                         try
                         {
                             var def = FieldDefinition.GetHalo5Definition(n);
-                            var meta = MetaValueBase.GetMetaValue(n, tag, header, reader, header.DataBlocks[mainBlock].Offset, offset);
+                            var meta = MetaValueBase.GetMetaValue(n, tag, header, mainBlock, reader, mainBlock.Offset, offset);
                             Metadata.Add(meta);
                             offset += def.Size;
                         }

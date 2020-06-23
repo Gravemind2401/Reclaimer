@@ -108,7 +108,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                 entryOffset = entryOffset ?? 0;
 
                 var entry = Children.FirstOrDefault(c => c.Offset == entryOffset);
-                if ((isExplicit && entry is SimpleValue) || entry is StringValue /*|| entry is TagReferenceValue*/)
+                if ((isExplicit && entry is SimpleValue) || entry is StringValue || entry is TagReferenceValue)
                 {
                     var labels = new List<string>();
                     for (int i = BlockCount - 1; i >= 0; i--) //end at 0 so the first entry is displayed when done

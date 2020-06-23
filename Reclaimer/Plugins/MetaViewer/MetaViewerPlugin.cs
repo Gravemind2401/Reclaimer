@@ -83,7 +83,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
         private string GetDefinitionPath(ModuleItem item)
         {
-            var xmlName = string.Join("_", item.ClassCode.Split(Path.GetInvalidFileNameChars())).PadRight(4);
+            var xmlName = string.Join("_", item.ClassCode.Split(Path.GetInvalidFileNameChars())).Trim();
             return Path.Combine(Substrate.PluginsDirectory, "Meta Viewer", PluginFolder(item.Module.ModuleType), $"({xmlName}){item.ClassName}.xml");
         }
 

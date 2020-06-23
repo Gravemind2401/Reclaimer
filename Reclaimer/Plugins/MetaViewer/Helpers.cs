@@ -167,6 +167,43 @@ namespace Reclaimer.Plugins.MetaViewer
         ObservableCollection<MetaValueBase> Children { get; }
     }
 
+    public class ComboBoxItem
+    {
+        public string Label { get; }
+        public bool IsVisible { get; }
+
+        public ComboBoxItem(string label)
+            : this(label, true)
+        {
+
+        }
+
+        public ComboBoxItem(string label, bool isVisible)
+        {
+            Label = label;
+            IsVisible = IsVisible;
+        }
+
+        public override string ToString() => Label;
+    }
+
+    public class ComboBoxItem<T> : ComboBoxItem
+    {
+        public T Context { get; }
+
+        public ComboBoxItem(string label, T context)
+            : this(label, context, true)
+        {
+
+        }
+
+        public ComboBoxItem(string label, T context, bool isVisible)
+            : base(label, isVisible)
+        {
+            Context = context;
+        }
+    }
+
     public class ShowInvisiblesConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
