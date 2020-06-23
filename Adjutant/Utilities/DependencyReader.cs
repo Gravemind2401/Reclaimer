@@ -87,7 +87,7 @@ namespace Adjutant.Utilities
                     args.Add(registeredTypes[p.ParameterType]());
                 else if (registeredInstances.ContainsKey(p.ParameterType))
                     args.Add(registeredInstances[p.ParameterType]);
-                else if (p.ParameterType == typeof(DependencyReader))
+                else if (CanCastTo(p.ParameterType))
                     args.Add(this);
                 else
                 {
@@ -101,9 +101,14 @@ namespace Adjutant.Utilities
             return constructor.Invoke(args.ToArray());
         }
 
+        private bool CanCastTo(Type type)
+        {
+            return typeof(DependencyReader).IsSubclassOf(type) || typeof(DependencyReader) == type;
+        }
+
         private bool CanConstruct(Type type)
         {
-            return type == typeof(DependencyReader) || registeredTypes.ContainsKey(type) || registeredInstances.ContainsKey(type) || FindConstructor(type) != null;
+            return CanCastTo(type) || registeredTypes.ContainsKey(type) || registeredInstances.ContainsKey(type) || FindConstructor(type) != null;
         }
 
         private ConstructorInfo FindConstructor(Type type)

@@ -20,7 +20,7 @@ namespace Adjutant.Blam.Common
         public int TagId => tagId;
         public IIndexItem Tag => TagId >= 0 ? cache.TagIndex[TagId] : null;
 
-        public TagReference(ICacheFile cache, DependencyReader reader)
+        public TagReference(ICacheFile cache, EndianReader reader)
         {
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
