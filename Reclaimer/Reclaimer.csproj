@@ -147,6 +147,7 @@
     <Compile Include="Plugins\MetaViewer\Halo5\MultiValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\SimpleValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\StringValue.cs" />
+    <Compile Include="Plugins\MetaViewer\Halo5\ArrayValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\StructureValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\TagReferenceValue.cs" />
     <Compile Include="Plugins\MetaViewer\MetaValueBase.cs" />

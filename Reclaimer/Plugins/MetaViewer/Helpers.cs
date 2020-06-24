@@ -164,7 +164,7 @@ namespace Reclaimer.Plugins.MetaViewer
     public interface IExpandable
     {
         bool IsExpanded { get; set; }
-        ObservableCollection<MetaValueBase> Children { get; }
+        IEnumerable<MetaValueBase> Children { get; }
     }
 
     public class ComboBoxItem
@@ -269,6 +269,8 @@ namespace Reclaimer.Plugins.MetaViewer
                 return element.FindResource("CommentTemplate") as DataTemplate;
             else if (meta.FieldDefinition.ValueType == MetaValueType.Structure)
                 return element.FindResource("StructureTemplate") as DataTemplate;
+            else if (meta.FieldDefinition.ValueType == MetaValueType.Array)
+                return element.FindResource("ArrayTemplate") as DataTemplate;
             else if (meta.FieldDefinition.Components > 1)
                 return element.FindResource("MultiValueTemplate") as DataTemplate;
             else if (element.Tag as string == "content")

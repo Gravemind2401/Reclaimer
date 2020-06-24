@@ -57,13 +57,15 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         }
 
         public bool HasChildren => Children.Any();
-        public ObservableCollection<MetaValueBase> Children { get; }
+        public ObservableCollection<MetaValue> Children { get; }
+
+        IEnumerable<MetaValueBase> IExpandable.Children => Children;
 
         public StructureValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, host, reader, baseAddress, offset)
         {
             BlockSize = node.ChildNodes.OfType<XmlNode>().Sum(n => FieldDefinition.GetHalo5Definition(n).Size);
-            Children = new ObservableCollection<MetaValueBase>();
+            Children = new ObservableCollection<MetaValue>();
             IsExpanded = true;
             ReadValue(reader);
         }

@@ -65,7 +65,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public abstract void WriteValue(EndianWriter writer);
 
-        public static MetaValueBase GetMetaValue(XmlNode node, ICacheFile cache, long baseAddress)
+        public static Halo3.MetaValue GetMetaValue(XmlNode node, ICacheFile cache, long baseAddress)
         {
             using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
             {
@@ -107,7 +107,7 @@ namespace Reclaimer.Plugins.MetaViewer
             }
         }
 
-        public static MetaValueBase GetMetaValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
+        public static Halo5.MetaValue GetMetaValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
         {
             reader.Seek(baseAddress, SeekOrigin.Begin);
 
@@ -120,6 +120,9 @@ namespace Reclaimer.Plugins.MetaViewer
             {
                 case MetaValueType.Structure:
                     return new Halo5.StructureValue(node, item, header, host, reader, baseAddress, offset);
+
+                case MetaValueType.Array:
+                    return new Halo5.ArrayValue(node, item, header, host, reader, baseAddress, offset);
 
                 case MetaValueType.StringId:
                 case MetaValueType.String:

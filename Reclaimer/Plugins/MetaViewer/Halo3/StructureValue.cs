@@ -58,13 +58,15 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         }
 
         public bool HasChildren => Children.Any();
-        public ObservableCollection<MetaValueBase> Children { get; }
+        public ObservableCollection<MetaValue> Children { get; }
+
+        IEnumerable<MetaValueBase> IExpandable.Children => Children;
 
         public StructureValue(XmlNode node, ICacheFile cache, EndianReader reader, long baseAddress)
             : base(node, cache, reader, baseAddress)
         {
             BlockSize = node.GetIntAttribute("entrySize", "size") ?? 0;
-            Children = new ObservableCollection<MetaValueBase>();
+            Children = new ObservableCollection<MetaValue>();
             IsExpanded = true;
             ReadValue(reader);
         }

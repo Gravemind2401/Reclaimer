@@ -218,6 +218,48 @@
                 </Grid>
             </Border>
         </DataTemplate>
+
+        <DataTemplate x:Key="ArrayTemplate">
+            <Border Margin="1,25,1,1" BorderThickness="0"
+                    IsEnabled="{Binding IsEnabled}">
+                <Border.Visibility>
+                    <MultiBinding Converter="{StaticResource invisConverter}">
+                        <Binding Path="IsVisible" />
+                        <Binding Path="ShowInvisibles" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=local:MetaViewer}" />
+                    </MultiBinding>
+                </Border.Visibility>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MinWidth="10" MaxWidth="10" />
+                        <ColumnDefinition MinWidth="205" MaxWidth="205" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Border Grid.Row="0" Grid.ColumnSpan="3" Background="{DynamicResource Environment.CommandBar.Gradient}" />
+                    <Border Grid.Column="0" Grid.Row="1" Background="{DynamicResource Environment.CommandBar.Gradient}" />
+                    <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal">
+                        <ToggleButton Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}"
+                                      VerticalAlignment="Center" Margin="3"
+                                      IsChecked="{Binding IsExpanded}">
+                            <ContentControl Template="{StaticResource ic_Expander_16x}" />
+                        </ToggleButton>
+                        <Label FontSize="14" FontWeight="Bold">
+                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                        </Label>
+                    </StackPanel>
+                    <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
+                          Visibility="{Binding IsExpanded, Converter={StaticResource boolToVisConverter}}">
+                        <ItemsControl Margin="5,5,0,0" ItemsSource="{Binding Children}"
+                                      Visibility="{Binding HasChildren, Converter={StaticResource boolToVisConverter}}"
+                                      ItemTemplateSelector="{StaticResource templateSelector}">
+                        </ItemsControl>
+                    </Grid>
+                </Grid>
+            </Border>
+        </DataTemplate>
     </UserControl.Resources>
 
     <DockPanel>
