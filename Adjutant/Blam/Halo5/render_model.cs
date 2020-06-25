@@ -77,6 +77,7 @@ namespace Adjutant.Blam.Halo5
             model.Nodes.AddRange(Nodes);
             model.MarkerGroups.AddRange(MarkerGroups);
             model.Bounds.AddRange(BoundingBoxes);
+            model.Materials.AddRange(Halo5Common.GetMaterials(Materials));
 
             foreach (var region in Regions)
             {
@@ -92,6 +93,9 @@ namespace Adjutant.Blam.Halo5
                 if (gRegion.Permutations.Any())
                     model.Regions.Add(gRegion);
             }
+
+            Func<int, int, int> mapNodeFunc = null;
+            model.Meshes.AddRange(Halo5Common.GetMeshes(module, item, Sections, lod, s => 0, mapNodeFunc));
 
             CreateInstanceMeshes(model, lod);
 

@@ -63,9 +63,12 @@ namespace Adjutant.Blam.HaloReach
         public BlockCollection<SizeBlock> Sizes { get; set; }
     }
 
-    [FixedSize(16)]
+    [FixedSize(8)]
     public class SizeBlock
     {
+        [Offset(0)]
+        public int Offset { get; set; }
+
         [Offset(4)]
         public int DataSize { get; set; }
     }

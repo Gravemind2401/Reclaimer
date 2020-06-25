@@ -122,6 +122,7 @@
     <Compile Include="Blam\Halo5\bitmap.cs" />
     <Compile Include="Blam\Halo5\BlockCollection.cs" />
     <Compile Include="Blam\Halo5\Enums.cs" />
+    <Compile Include="Blam\Halo5\Halo5Common.cs" />
     <Compile Include="Blam\Halo5\material.cs" />
     <Compile Include="Blam\Halo5\MetadataHeader.cs" />
     <Compile Include="Blam\Halo5\Module.cs" />
@@ -256,6 +257,9 @@
     <Content Include="Resources\Halo2Classes.xml" />
     <Content Include="Resources\Halo4Strings.xml" />
     <Content Include="Resources\Halo3VertexBuffer.xml" />
+    <Content Include="Resources\Halo5VertexBuffer.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Resources\Halo5Classes.xml" />
     <Content Include="Resources\Halo3Strings.xml" />
     <Content Include="Resources\HaloReachStrings.xml" />
@@ -264,7 +268,9 @@
     <Content Include="Resources\MccHaloReachVertexBuffer.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Resources\HaloReachVertexBuffer.xml" />
+    <Content Include="Resources\HaloReachVertexBuffer.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Resources\Halo4VertexBuffer.xml" />
   </ItemGroup>
   <ItemGroup>
