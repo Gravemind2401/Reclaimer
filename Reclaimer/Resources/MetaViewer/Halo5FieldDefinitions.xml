@@ -44,7 +44,7 @@
 
   <_field_point_2d size="4" valueType="" components="2" axes="point" />
 
-  <_field_angle_bounds size="?" valueType="" components="2" axes="bounds" />
+  <_field_angle_bounds size="8" valueType="float32" components="2" axes="bounds" />
   <_field_real_bounds size="8" valueType="float32" components="2" axes="bounds" />
   <_field_fraction_bounds size="?" valueType="" components="2" axes="bounds" />
   <_field_short_integer_bounds size="4" valueType="int16" components="2" axes="bounds" />

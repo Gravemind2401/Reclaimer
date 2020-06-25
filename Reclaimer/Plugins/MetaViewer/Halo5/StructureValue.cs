@@ -105,11 +105,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                 RaisePropertyChanged(nameof(BlockIndex));
                 RaisePropertyChanged(nameof(HasChildren));
 
-                var entryOffset = node.GetIntAttribute("entryName", "entryOffset", "label");
-                var isExplicit = entryOffset.HasValue;
-                entryOffset = entryOffset ?? 0;
+                var entry = Children.FirstOrDefault(c => c.IsBlockName);
+                var isExplicit = entry != null;
 
-                var entry = Children.FirstOrDefault(c => c.Offset == entryOffset);
+                entry = entry ?? Children.First();
                 if ((isExplicit && entry is SimpleValue) || entry is StringValue || entry is TagReferenceValue)
                 {
                     var labels = new List<string>();

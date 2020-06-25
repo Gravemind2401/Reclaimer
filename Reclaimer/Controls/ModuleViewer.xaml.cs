@@ -197,8 +197,16 @@ namespace Reclaimer.Controls
         {
             yield return item;
 
-            if (item.ClassCode == "bitm")
-                yield return item.ReadMetadata<bitmap>();
+            object meta = null;
+            try
+            {
+                if (item.ClassCode == "bitm")
+                    meta = item.ReadMetadata<bitmap>();
+            }
+            catch { }
+
+            if (meta != null)
+                yield return meta;
         }
 
         #region Event Handlers

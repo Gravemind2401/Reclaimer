@@ -107,7 +107,7 @@ namespace Reclaimer.Plugins.MetaViewer
             }
         }
 
-        public string FieldType { get; }
+        public string FieldTypeName { get; }
         public MetaValueType ValueType { get; }
         public int Size { get; }
         public int Components { get; }
@@ -115,7 +115,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
         private FieldDefinition(string fieldType, MetaValueType valueType, int size, int components, AxesDefinition axes)
         {
-            FieldType = fieldType;
+            FieldTypeName = fieldType;
             ValueType = valueType;
             Size = size;
             Components = components;
@@ -124,7 +124,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
         private FieldDefinition(FieldDefinition copyFrom, int newSize)
         {
-            FieldType = copyFrom.FieldType;
+            FieldTypeName = copyFrom.FieldTypeName;
             ValueType = copyFrom.ValueType;
             Size = newSize;
             Components = copyFrom.Components;
@@ -133,7 +133,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
         private FieldDefinition(XmlNode node)
         {
-            FieldType = node.Name;
+            FieldTypeName = node.Name;
             ValueType = node.GetEnumAttribute<MetaValueType>("valueType") ?? MetaValueType.Undefined;
 
             var sizeStr = node.GetStringAttribute("size")?.ToLowerInvariant();
@@ -149,7 +149,7 @@ namespace Reclaimer.Plugins.MetaViewer
             Axes = node.GetEnumAttribute<AxesDefinition>("axes") ?? AxesDefinition.None;
         }
 
-        public override string ToString() => FieldType;
+        public override string ToString() => FieldTypeName;
     }
 
     public enum AxesDefinition

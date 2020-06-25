@@ -14,8 +14,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 {
     public class TagReferenceValue : MetaValue
     {
-        private readonly ComboBoxItem externalClassOption = new ComboBoxItem("external", false);
-        private readonly ComboBoxItem<ModuleItem> externalTagOption = new ComboBoxItem<ModuleItem>("[[external reference]]", null, false);
+        private static readonly ComboBoxItem externalClassOption = new ComboBoxItem("external", false);
+        private static readonly ComboBoxItem<ModuleItem> externalTagOption = new ComboBoxItem<ModuleItem>("[[external reference]]", null, false);
 
         private TagReference referenceValue;
 
@@ -45,9 +45,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         public TagReferenceValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, host, reader, baseAddress, offset)
         {
-            var allClasses = item.Module.Items
-                .Select(i => new ComboBoxItem(i.ClassName))
-                .Distinct()
+            var allClasses = item.Module.Classes
+                .Select(p => new ComboBoxItem(p.Value))
                 .OrderBy(s => s.Label);
 
             ClassOptions = new ObservableCollection<ComboBoxItem>(allClasses);
