@@ -19,6 +19,7 @@ namespace Adjutant.Blam.Halo5
         public ModuleHeader Header { get; }
 
         public List<ModuleItem> Items { get; }
+        public Dictionary<string, string> Classes { get; }
         public Dictionary<int, ModuleItem> ItemsById { get; }
         public Dictionary<int, string> Strings { get; }
         public List<int> Resources { get; }
@@ -58,6 +59,10 @@ namespace Adjutant.Blam.Halo5
                     Blocks.Add(reader.ReadObject<Block>((int)Header.Version));
 
                 DataAddress = reader.BaseStream.Position;
+
+                Classes = Items.Where(i => i.ClassCode != null)
+                    .GroupBy(i => i.ClassCode)
+                    .ToDictionary(g => g.Key, g => g.First().ClassName);
             }
         }
 
