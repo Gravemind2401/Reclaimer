@@ -181,7 +181,7 @@ namespace Reclaimer.Controls
 
         private void ExportImage(bool allChannels)
         {
-            var filter = "TIF Files|*.tif|PNG Files|*.png";
+            var filter = "TIF Files|*.tif|PNG Files|*.png|JPEG Files|*.jpeg";
             if (allChannels)
                 filter += "|DDS Files|*.dds";
 
@@ -201,7 +201,7 @@ namespace Reclaimer.Controls
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
-            if (sfd.FilterIndex == 3)
+            if (sfd.FilterIndex == 4)
             {
                 var dds = bitmap.ToDds(0);
                 dds.WriteToDisk(sfd.FileName);
@@ -210,9 +210,21 @@ namespace Reclaimer.Controls
 
             using (var fs = new FileStream(sfd.FileName, FileMode.Create))
             {
-                var encoder = sfd.FilterIndex == 1
-                    ? (BitmapEncoder)new TiffBitmapEncoder()
-                    : new PngBitmapEncoder();
+                BitmapEncoder encoder;
+                switch (sfd.FilterIndex)
+                {
+                    case 1:
+                        encoder = new TiffBitmapEncoder();
+                        break;
+                    case 2:
+                        encoder = new PngBitmapEncoder();
+                        break;
+                    case 3:
+                        encoder = new JpegBitmapEncoder();
+                        break;
+                    default:
+                        throw new InvalidOperationException();
+                }
 
                 var src = allChannels ? dds.ToBitmapSource() : ImageSource;
                 encoder.Frames.Add(BitmapFrame.Create(src));
