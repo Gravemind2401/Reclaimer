@@ -18,7 +18,7 @@ namespace Adjutant.Blam.Halo5
         private readonly int classId;
 
         public int TagId => globalTagId;
-        public ModuleItem Tag => module.ItemsById.ValueOrDefault(globalTagId);
+        public ModuleItem Tag => module.GetItemById(globalTagId);
 
         public string ClassCode => (classId == -1) ? null : Encoding.UTF8.GetString(BitConverter.GetBytes(classId));
 

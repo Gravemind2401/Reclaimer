@@ -13,21 +13,24 @@ namespace Adjutant.Blam.Halo5
     {
         internal const int ModuleHeader = 0x64686f6d;
 
+        private readonly TagIndex tagIndex;
+        private readonly List<Module> linkedModules;
+
         public string FileName { get; }
 
         public ModuleType ModuleType => Header.Version;
         public ModuleHeader Header { get; }
 
         public List<ModuleItem> Items { get; }
-        public Dictionary<string, string> Classes { get; }
-        public Dictionary<int, ModuleItem> ItemsById { get; }
         public Dictionary<int, string> Strings { get; }
         public List<int> Resources { get; }
         public List<Block> Blocks { get; }
 
         public long DataAddress { get; }
 
-        public Module(string fileName)
+        public Module(string fileName) : this(fileName, null) { }
+
+        private Module(string fileName, Module parentModule)
         {
             FileName = fileName;
 
@@ -36,14 +39,8 @@ namespace Adjutant.Blam.Halo5
                 Header = reader.ReadObject<ModuleHeader>();
 
                 Items = new List<ModuleItem>(Header.ItemCount);
-                ItemsById = new Dictionary<int, ModuleItem>();
                 for (int i = 0; i < Header.ItemCount; i++)
-                {
-                    var item = reader.ReadObject<ModuleItem>((int)Header.Version);
-                    Items.Add(item);
-                    if (item.GlobalTagId != -1)
-                        ItemsById.Add(item.GlobalTagId, item);
-                }
+                    Items.Add(reader.ReadObject<ModuleItem>((int)Header.Version));
 
                 var origin = reader.BaseStream.Position;
                 Strings = new Dictionary<int, string>();
@@ -60,9 +57,8 @@ namespace Adjutant.Blam.Halo5
 
                 DataAddress = reader.BaseStream.Position;
 
-                Classes = Items.Where(i => i.ClassCode != null)
-                    .GroupBy(i => i.ClassCode)
-                    .ToDictionary(g => g.Key, g => g.First().ClassName);
+                tagIndex = parentModule?.tagIndex ?? new TagIndex(Items);
+                linkedModules = parentModule?.linkedModules ?? new List<Module>(Enumerable.Repeat(this, 1));
             }
         }
 
@@ -88,6 +84,61 @@ namespace Adjutant.Blam.Halo5
             reader.RegisterInstance(this);
 
             return reader;
+        }
+
+        public void AddLinkedModule(string fileName)
+        {
+            if (!linkedModules.Any(m => m.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase)))
+            {
+                var module = new Module(fileName, this);
+                linkedModules.Add(module);
+                tagIndex.ImportTags(module.Items);
+            }
+        }
+
+        public IEnumerable<TagClass> GetTagClasses() => tagIndex.Classes.Values;
+
+        public ModuleItem GetItemById(int id) => tagIndex.ItemsById.ValueOrDefault(id);
+
+        public IEnumerable<ModuleItem> GetItemsByClass(string classCode)
+        {
+            return tagIndex.ItemsByClass.ContainsKey(classCode) 
+                ? tagIndex.ItemsByClass[classCode] 
+                : Enumerable.Empty<ModuleItem>();
+        }
+
+        private class TagIndex
+        {
+            public Dictionary<string, TagClass> Classes { get; }
+            public Dictionary<int, ModuleItem> ItemsById { get; }
+            public Dictionary<string, List<ModuleItem>> ItemsByClass { get; }
+
+            public TagIndex(IEnumerable<ModuleItem> items)
+            {
+                Classes = new Dictionary<string, TagClass>();
+                ItemsById = new Dictionary<int, ModuleItem>();
+                ItemsByClass = new Dictionary<string, List<ModuleItem>>();
+
+                ImportTags(items);
+            }
+
+            public void ImportTags(IEnumerable<ModuleItem> items)
+            {
+                foreach (var item in items.Where(i => i.GlobalTagId != -1))
+                {
+                    if (!Classes.ContainsKey(item.ClassCode))
+                    {
+                        Classes.Add(item.ClassCode, new TagClass(item.ClassCode, item.ClassName));
+                        ItemsByClass.Add(item.ClassCode, new List<ModuleItem>());
+                    }
+
+                    if (!ItemsById.ContainsKey(item.GlobalTagId))
+                    {
+                        ItemsById.Add(item.GlobalTagId, item);
+                        ItemsByClass[item.ClassCode].Add(item);
+                    }
+                }
+            }
         }
     }
 
@@ -151,5 +202,17 @@ namespace Adjutant.Blam.Halo5
         [Offset(16, MaxVersion = (int)ModuleType.Halo5Forge)]
         [Offset(24, MinVersion = (int)ModuleType.Halo5Forge)]
         public int Compressed { get; set; }
+    }
+
+    public class TagClass
+    {
+        public string ClassCode { get; }
+        public string ClassName { get; }
+
+        public TagClass(string code, string name)
+        {
+            ClassCode = code;
+            ClassName = name;
+        }
     }
 }
