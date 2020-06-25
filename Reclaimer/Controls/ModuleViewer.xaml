@@ -21,8 +21,9 @@
                 <ToggleButton IsChecked="{Binding HierarchyView}" ToolTip="Toggle folder hierarchy">
                     <ContentControl Template="{StaticResource ic_Hierarchy_16x}" />
                 </ToggleButton>
-                <Button ToolBar.OverflowMode="Always">
-                    test
+                <Separator />
+                <Button Click="btnAddLink_Click" ToolTip="Add linked module">
+                    <ContentControl Template="{StaticResource ic_AddLink_16x}" />
                 </Button>
             </ToolBar>
         </ToolBarTray>

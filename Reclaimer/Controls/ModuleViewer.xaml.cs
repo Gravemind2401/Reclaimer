@@ -89,7 +89,8 @@ namespace Reclaimer.Controls
         private void BuildClassTree(string filter)
         {
             var result = new List<TreeItemModel>();
-            var classGroups = module.Items
+            var classGroups = module.GetTagClasses()
+                .SelectMany(c => module.GetItemsByClass(c.ClassCode))
                 .Where(i => FilterTag(filter, i))
                 .GroupBy(i => i.ClassName);
 
@@ -202,6 +203,8 @@ namespace Reclaimer.Controls
             {
                 if (item.ClassCode == "bitm")
                     meta = item.ReadMetadata<bitmap>();
+                else if (item.ClassCode == "mode")
+                    meta = item.ReadMetadata<render_model>();
             }
             catch { }
 
@@ -216,6 +219,28 @@ namespace Reclaimer.Controls
 
             foreach (var node in nodes)
                 RecursiveCollapseNode(node);
+        }
+
+        private void btnAddLink_Click(object sender, RoutedEventArgs e)
+        {
+            var ofd = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Halo Module Files|*.module",
+                Multiselect = true,
+                CheckFileExists = true
+            };
+
+            if (!string.IsNullOrEmpty(ModuleViewerPlugin.Settings.ModuleFolder))
+                ofd.InitialDirectory = ModuleViewerPlugin.Settings.ModuleFolder;
+
+            if (ofd.ShowDialog() != true)
+                return;
+
+            foreach (var fileName in ofd.FileNames)
+                module.AddLinkedModule(fileName);
+
+            txtSearch.Clear();
+            BuildTagTree(txtSearch.Text);
         }
 
         private void txtSearch_SearchChanged(object sender, RoutedEventArgs e)

@@ -14,7 +14,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 {
     public class TagReferenceValue : MetaValue
     {
-        private static readonly ComboBoxItem externalClassOption = new ComboBoxItem("external", false);
+        private static readonly ComboBoxItem<TagClass> externalClassOption = new ComboBoxItem<TagClass>("external", new TagClass(null, null), false);
         private static readonly ComboBoxItem<ModuleItem> externalTagOption = new ComboBoxItem<ModuleItem>("[[external reference]]", null, false);
 
         private TagReference referenceValue;
@@ -26,8 +26,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             set { SetMetaProperty(ref selectedItem, value); }
         }
 
-        private ComboBoxItem selectedClass;
-        public ComboBoxItem SelectedClass
+        private ComboBoxItem<TagClass> selectedClass;
+        public ComboBoxItem<TagClass> SelectedClass
         {
             get { return selectedClass; }
             set
@@ -39,17 +39,17 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
         public override string EntryString => Utils.GetFileName(SelectedItem?.Label);
 
-        public ObservableCollection<ComboBoxItem> ClassOptions { get; }
+        public ObservableCollection<ComboBoxItem<TagClass>> ClassOptions { get; }
         public ObservableCollection<ComboBoxItem<ModuleItem>> TagOptions { get; }
 
         public TagReferenceValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, host, reader, baseAddress, offset)
         {
-            var allClasses = item.Module.Classes
-                .Select(p => new ComboBoxItem(p.Value))
+            var allClasses = item.Module.GetTagClasses()
+                .Select(t => new ComboBoxItem<TagClass>(t.ClassName, t))
                 .OrderBy(s => s.Label);
 
-            ClassOptions = new ObservableCollection<ComboBoxItem>(allClasses);
+            ClassOptions = new ObservableCollection<ComboBoxItem<TagClass>>(allClasses);
             TagOptions = new ObservableCollection<ComboBoxItem<ModuleItem>>();
 
             ClassOptions.Insert(0, externalClassOption);
@@ -63,8 +63,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             TagOptions.Clear();
             TagOptions.Insert(0, externalTagOption);
 
-            var classTags = from t in item.Module.Items
-                            where t.ClassName == SelectedClass.Label
+            var classTags = from t in item.Module.GetItemsByClass(SelectedClass.Context.ClassCode)
                             orderby t.FullPath
                             select t;
 
