@@ -15,6 +15,9 @@ namespace System.Drawing.Dds
 {
     public partial class DdsImage
     {
+        private const int bcBlockWidth = 4;
+        private const int bcBlockHeight = 4;
+
         private delegate byte[] Decompress(byte[] data, int height, int width, bool bgr24);
 
         private static readonly Dictionary<DxgiFormat, Decompress> decompressMethodsDxgi = new Dictionary<DxgiFormat, Decompress>
@@ -370,8 +373,8 @@ namespace System.Drawing.Dds
             var palette = new BgraColour[4];
 
             const int bytesPerBlock = 8;
-            var xBlocks = width / 4;
-            var yBlocks = height / 4;
+            var xBlocks = (int)Math.Ceiling(width / (float)bcBlockWidth);
+            var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
             for (int yBlock = 0; yBlock < yBlocks; yBlock++)
             {
@@ -403,6 +406,9 @@ namespace System.Drawing.Dds
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
 
+                            if (destX >= width || destY >= height)
+                                continue;
+
                             var destIndex = (destY * width + destX) * bpp;
                             var pIndex = (byte)((indexBits >> j * 2) & 0x3);
                             palette[pIndex].Copy(output, destIndex, bgr24);
@@ -421,8 +427,8 @@ namespace System.Drawing.Dds
             var palette = new BgraColour[4];
 
             const int bytesPerBlock = 16;
-            var xBlocks = width / 4;
-            var yBlocks = height / 4;
+            var xBlocks = (int)Math.Ceiling(width / (float)bcBlockWidth);
+            var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
             for (int yBlock = 0; yBlock < yBlocks; yBlock++)
             {
@@ -443,6 +449,9 @@ namespace System.Drawing.Dds
                         {
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
+
+                            if (destX >= width || destY >= height)
+                                continue;
 
                             var destIndex = (destY * width + destX) * bpp;
                             var pIndex = (byte)((indexBits >> j * 2) & 0x3);
@@ -466,8 +475,8 @@ namespace System.Drawing.Dds
             var alphaPalette = new byte[8];
 
             const int bytesPerBlock = 16;
-            var xBlocks = width / 4;
-            var yBlocks = height / 4;
+            var xBlocks = (int)Math.Ceiling(width / (float)bcBlockWidth);
+            var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
             for (int yBlock = 0; yBlock < yBlocks; yBlock++)
             {
@@ -498,12 +507,15 @@ namespace System.Drawing.Dds
                         var rgbIndexBits = data[srcIndex + 12 + i];
                         for (int j = 0; j < 4; j++)
                         {
+                            var destX = xBlock * 4 + j;
+                            var destY = yBlock * 4 + i;
+
+                            if (destX >= width || destY >= height)
+                                continue;
+
                             var pixelIndex = i * 4 + j;
                             var alphaStart = srcIndex + (pixelIndex < 8 ? 2 : 5);
                             var alphaIndexBits = (data[alphaStart + 2] << 16) | (data[alphaStart + 1] << 8) | data[alphaStart];
-
-                            var destX = xBlock * 4 + j;
-                            var destY = yBlock * 4 + i;
 
                             var destIndex = (destY * width + destX) * bpp;
                             var pIndex = (byte)((rgbIndexBits >> j * 2) & 0x3);
@@ -526,8 +538,8 @@ namespace System.Drawing.Dds
             var palette = new byte[8];
 
             const int bytesPerBlock = 8;
-            var xBlocks = width / 4;
-            var yBlocks = height / 4;
+            var xBlocks = (int)Math.Ceiling(width / (float)bcBlockWidth);
+            var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
             for (int yBlock = 0; yBlock < yBlocks; yBlock++)
             {
@@ -551,12 +563,15 @@ namespace System.Drawing.Dds
                     {
                         for (int j = 0; j < 4; j++)
                         {
+                            var destX = xBlock * 4 + j;
+                            var destY = yBlock * 4 + i;
+
+                            if (destX >= width || destY >= height)
+                                continue;
+
                             var pixelIndex = i * 4 + j;
                             var pStart = srcIndex + (pixelIndex < 8 ? 2 : 5);
                             var pIndexBits = (data[pStart + 2] << 16) | (data[pStart + 1] << 8) | data[pStart];
-
-                            var destX = xBlock * 4 + j;
-                            var destY = yBlock * 4 + i;
 
                             var destIndex = (destY * width + destX) * bpp;
                             var pIndex = (byte)((pIndexBits >> (pixelIndex % 8) * 3) & 0x7);
@@ -579,8 +594,8 @@ namespace System.Drawing.Dds
             var gPalette = new byte[8];
 
             const int bytesPerBlock = 16;
-            var xBlocks = width / 4;
-            var yBlocks = height / 4;
+            var xBlocks = (int)Math.Ceiling(width / (float)bcBlockWidth);
+            var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
             for (int yBlock = 0; yBlock < yBlocks; yBlock++)
             {
@@ -618,6 +633,12 @@ namespace System.Drawing.Dds
                     {
                         for (int j = 0; j < 4; j++)
                         {
+                            var destX = xBlock * 4 + j;
+                            var destY = yBlock * 4 + i;
+
+                            if (destX >= width || destY >= height)
+                                continue;
+
                             var pixelIndex = i * 4 + j;
 
                             var rStart = srcIndex + (pixelIndex < 8 ? 2 : 5);
@@ -625,9 +646,6 @@ namespace System.Drawing.Dds
 
                             var gStart = srcIndex + (pixelIndex < 8 ? 10 : 13);
                             var gIndexBits = (data[gStart + 2] << 16) | (data[gStart + 1] << 8) | data[gStart];
-
-                            var destX = xBlock * 4 + j;
-                            var destY = yBlock * 4 + i;
 
                             var destIndex = (destY * width + destX) * bpp;
                             var shift = (pixelIndex % 8) * 3;
@@ -655,8 +673,8 @@ namespace System.Drawing.Dds
             var gPalette = new sbyte[8];
 
             const int bytesPerBlock = 16;
-            var xBlocks = width / 4;
-            var yBlocks = height / 4;
+            var xBlocks = (int)Math.Ceiling(width / (float)bcBlockWidth);
+            var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
             for (int yBlock = 0; yBlock < yBlocks; yBlock++)
             {
@@ -694,6 +712,12 @@ namespace System.Drawing.Dds
                     {
                         for (int j = 0; j < 4; j++)
                         {
+                            var destX = xBlock * 4 + j;
+                            var destY = yBlock * 4 + i;
+
+                            if (destX >= width || destY >= height)
+                                continue;
+
                             var pixelIndex = i * 4 + j;
 
                             var rStart = srcIndex + (pixelIndex < 8 ? 2 : 5);
@@ -701,9 +725,6 @@ namespace System.Drawing.Dds
 
                             var gStart = srcIndex + (pixelIndex < 8 ? 10 : 13);
                             var gIndexBits = (data[gStart + 2] << 16) | (data[gStart + 1] << 8) | data[gStart];
-
-                            var destX = xBlock * 4 + j;
-                            var destY = yBlock * 4 + i;
 
                             var destIndex = (destY * width + destX) * bpp;
                             var shift = (pixelIndex % 8) * 3;
@@ -729,8 +750,8 @@ namespace System.Drawing.Dds
             var output = new byte[width * height * bpp];
 
             const int bytesPerBlock = 16;
-            var xBlocks = width / 4;
-            var yBlocks = height / 4;
+            var xBlocks = (int)Math.Ceiling(width / (float)bcBlockWidth);
+            var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
             var reader = new BitReader(data);
             for (int yBlock = 0; yBlock < yBlocks; yBlock++)
@@ -846,11 +867,13 @@ namespace System.Drawing.Dds
                     {
                         for (int j = 0; j < 4; j++)
                         {
-                            var pixelIndex = i * 4 + j;
-
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
 
+                            if (destX >= width || destY >= height)
+                                continue;
+
+                            var pixelIndex = i * 4 + j;
                             var destIndex = (destY * width + destX) * bpp;
 
                             var subsetIndex = Bc7Helper.PartitionTable[info.SubsetCount - 1, partitionIndex, pixelIndex];
