@@ -113,14 +113,14 @@ namespace Adjutant.Blam.HaloReach
                     Array.Reverse(data, i, bpp);
             }
 
-            if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
-            {
-                var virtualHeight = submap.BitmapType == TextureType.CubeMap
-                    ? submap.Height * 6
-                    : submap.Height;
+            int virtualWidth, virtualHeight;
+            TextureUtils.GetVirtualSize(submap.BitmapFormat, submap.Width, submap.Height, submap.FaceCount, out virtualWidth, out virtualHeight);
 
-                data = TextureUtils.XTextureScramble(data, submap.Width, virtualHeight, submap.BitmapFormat, false);
-            }
+            if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
+                data = TextureUtils.XTextureScramble(data, virtualWidth, virtualHeight, submap.BitmapFormat, false);
+
+            if (virtualWidth > submap.Width || virtualHeight > submap.Height)
+                data = TextureUtils.ApplyCrop(data, submap.BitmapFormat, submap.FaceCount, virtualWidth, virtualHeight, submap.Width, submap.Height * submap.FaceCount);
 
             DdsImage dds;
             if (cache.CacheType >= CacheType.MccHaloReach && submap.BitmapFormat == TextureFormat.DXN)
@@ -249,6 +249,8 @@ namespace Adjutant.Blam.HaloReach
         [Offset(28, MaxVersion = (int)CacheType.HaloReachRetail)]
         [Offset(24, MinVersion = (int)CacheType.HaloReachRetail)]
         public byte PixelsSize { get; set; }
+
+        public int FaceCount => BitmapType == TextureType.CubeMap ? 6 : 1;
     }
 
     [FixedSize(8)]

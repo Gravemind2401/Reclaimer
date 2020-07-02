@@ -71,6 +71,7 @@ namespace Adjutant.Utilities
             }
         }
 
+        //the width and height in pixels of each compressed block
         private static int GetLinearBlockSize(KnownTextureFormat format)
         {
             switch (format)
@@ -92,6 +93,7 @@ namespace Adjutant.Utilities
             }
         }
 
+        //the size in bytes of each compressed block
         private static int GetLinearTexelPitch(KnownTextureFormat format)
         {
             switch (format)
@@ -126,10 +128,23 @@ namespace Adjutant.Utilities
             }
         }
 
+        //on xbox 360 these texture formats must have dimensions that are multiples of these values.
+        //if the bitmap dimensions are not multiples they are rounded up and cropped when displayed.
         private static int GetTileSize(KnownTextureFormat format)
         {
             switch (format)
             {
+                case KnownTextureFormat.A8:
+                case KnownTextureFormat.Y8:
+                case KnownTextureFormat.AY8:
+                case KnownTextureFormat.A8Y8:
+                case KnownTextureFormat.A8R8G8B8:
+                case KnownTextureFormat.X8R8G8B8:
+                case KnownTextureFormat.A4R4G4B4:
+                case KnownTextureFormat.R5G6B5:
+                case KnownTextureFormat.U8V8:
+                    return 32;
+
                 case KnownTextureFormat.DXT5a_mono:
                 case KnownTextureFormat.DXT5a_alpha:
                 case KnownTextureFormat.DXT1:
@@ -161,6 +176,57 @@ namespace Adjutant.Utilities
         public static int LinearTexelPitch(this Blam.Halo3.TextureFormat format) => GetLinearTexelPitch(format.AsKnown());
         public static int LinearTexelPitch(this Blam.HaloReach.TextureFormat format) => GetLinearTexelPitch(format.AsKnown());
         public static int LinearTexelPitch(this Blam.Halo4.TextureFormat format) => GetLinearTexelPitch(format.AsKnown());
+
+        //round up to the nearst valid size, accounting for block sizes and tile sizes
+        public static void GetVirtualSize(object format, int width, int height, int faces, out int virtualWidth, out int virtualHeight)
+        {
+            var knownFormat = format.AsKnown();
+            if (knownFormat == KnownTextureFormat.Unknown)
+                throw new ArgumentException("Could not translate to a known texture format.", nameof(format));
+
+            double blockSize = GetLinearBlockSize(knownFormat);
+            double tileSize = GetTileSize(knownFormat);
+
+            virtualWidth = (int)(Math.Ceiling(width / tileSize) * tileSize);
+            virtualHeight = (int)(Math.Ceiling(height / tileSize) * tileSize) * faces;
+
+            virtualWidth = (int)(Math.Ceiling(virtualWidth / blockSize) * blockSize);
+            virtualHeight = (int)(Math.Ceiling(virtualHeight / blockSize) * blockSize);
+        }
+
+        public static byte[] ApplyCrop(byte[] data, object format, int faces, int inWidth, int inHeight, int outWidth, int outHeight)
+        {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
+            if (outWidth >= inWidth && outHeight >= inHeight)
+                return data;
+
+            var knownFormat = format.AsKnown();
+            if (knownFormat == KnownTextureFormat.Unknown)
+                throw new ArgumentException("Could not translate to a known texture format.", nameof(format));
+
+            var bpp = GetBpp(knownFormat);
+            double blockLen = GetLinearBlockSize(knownFormat);
+            var blockSize = GetLinearTexelPitch(knownFormat);
+
+            var inRows = (int)Math.Ceiling(inHeight / blockLen) / faces;
+            var outRows = (int)Math.Ceiling(outHeight / blockLen) / faces;
+            var inStride = (int)Math.Ceiling(inWidth / blockLen) * blockSize;
+            var outStride = (int)Math.Ceiling(outWidth / blockLen) * blockSize;
+
+            var output = new byte[outRows * outStride * faces];
+            for (int f = 0; f < faces; f++)
+            {
+                var srcTileStart = inRows * inStride * f;
+                var destTileStart = outRows * outStride * f;
+
+                for (int s = 0; s < outRows; s++)
+                    Array.Copy(data, srcTileStart + inStride * s, output, destTileStart + outStride * s, outStride);
+            }
+
+            return output;
+        }
 
         #endregion
 

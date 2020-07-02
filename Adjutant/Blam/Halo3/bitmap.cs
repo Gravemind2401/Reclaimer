@@ -109,14 +109,14 @@ namespace Adjutant.Blam.Halo3
                     Array.Reverse(data, i, bpp);
             }
 
-            if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
-            {
-                var virtualHeight = submap.BitmapType == TextureType.CubeMap
-                    ? submap.Height * 6
-                    : submap.Height;
+            int virtualWidth, virtualHeight;
+            TextureUtils.GetVirtualSize(submap.BitmapFormat, submap.Width, submap.Height, submap.FaceCount, out virtualWidth, out virtualHeight);
 
-                data = TextureUtils.XTextureScramble(data, submap.Width, virtualHeight, submap.BitmapFormat, false);
-            }
+            if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
+                data = TextureUtils.XTextureScramble(data, virtualWidth, virtualHeight, submap.BitmapFormat, false);
+
+            if (virtualWidth > submap.Width || virtualHeight > submap.Height)
+                data = TextureUtils.ApplyCrop(data, submap.BitmapFormat, submap.FaceCount, virtualWidth, virtualHeight, submap.Width, submap.Height * submap.FaceCount);
 
             DdsImage dds;
             if (dxgiLookup.ContainsKey(submap.BitmapFormat))
@@ -225,6 +225,8 @@ namespace Adjutant.Blam.Halo3
 
         [Offset(28)]
         public byte PixelsSize { get; set; }
+
+        public int FaceCount => BitmapType == TextureType.CubeMap ? 6 : 1;
     }
 
     [FixedSize(8)]
