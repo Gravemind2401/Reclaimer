@@ -145,6 +145,7 @@
     <Compile Include="Plugins\MetaViewer\Halo5\EnumValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\MetaValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\MultiValue.cs" />
+    <Compile Include="Plugins\MetaViewer\Halo5\NameHelper.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\SimpleValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\StringValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\ArrayValue.cs" />

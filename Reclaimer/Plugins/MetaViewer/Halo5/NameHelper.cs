@@ -1,0 +1,40 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Reclaimer.Plugins.MetaViewer.Halo5
+{
+    public class NameHelper
+    {
+        //^*~!&#
+        private const string specialChars = "^:#";
+
+        public string Name { get; }
+        public string ToolTip { get; }
+        public string Description { get; }
+        public bool IsBlockName { get; }
+
+        public NameHelper(string value)
+        {
+            IsBlockName = value.StartsWith("^");
+            Name = value.Split(specialChars.ToArray(), StringSplitOptions.RemoveEmptyEntries)[0];
+            Description = GetSection(':', value);
+            ToolTip = GetSection('#', value);
+        }
+
+        private string GetSection(char separator, string value)
+        {
+            var start = value.IndexOf(separator);
+            if (start < 0)
+                return null;
+
+            var end = value.IndexOfAny(specialChars.ToArray(), start + 1);
+            if (end < 0)
+                end = value.Length;
+
+            return value.Substring(start + 1, end - (start + 1));
+        }
+    }
+}

@@ -50,18 +50,19 @@
         </DataTemplate>
 
         <DataTemplate x:Key="EnumContent">
-            <ComboBox Width="180" IsEnabled="False"
+            <ComboBox Width="180" IsEnabled="True"
                       ItemsSource="{Binding Options}"
                       SelectedValuePath="Item1" DisplayMemberPath="Item2"
                       SelectedValue="{Binding Value}" />
         </DataTemplate>
 
         <DataTemplate x:Key="BitmaskContent">
-            <ListBox Width="180" MaxHeight="260" IsEnabled="False" 
+            <ListBox Width="180" MaxHeight="260"
                      ItemsSource="{Binding Options}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding Name}" />
+                        <CheckBox IsEnabled="False" IsChecked="{Binding IsChecked}" Content="{Binding Name}" 
+                                  ToolTip="{Binding ToolTip}" ToolTipService.ShowOnDisabled="True" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
@@ -77,6 +78,8 @@
                 <ComboBox Width="400" Margin="5,0" IsEnabled="False"
                       ItemContainerStyle="{StaticResource ComboBoxOption}"
                       DisplayMemberPath="Label"
+                      ToolTip="{Binding SelectedItem.Label}"
+                      ToolTipService.ShowOnDisabled="True"
                       ItemsSource="{Binding TagOptions}"
                       SelectedItem="{Binding SelectedItem}" />
             </StackPanel>
@@ -126,7 +129,7 @@
         <DataTemplate x:Key="MultiValueTemplate">
             <DataTemplate.Resources>
                 <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
-                    <Setter Property="Width" Value="20" />
+                    <Setter Property="MinWidth" Value="20" />
                 </Style>
                 <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                     <Setter Property="Width" Value="100" />

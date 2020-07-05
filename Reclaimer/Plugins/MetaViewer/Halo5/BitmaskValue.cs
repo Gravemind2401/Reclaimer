@@ -106,8 +106,11 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         public class BitValue : BindableBase
         {
             private readonly BitmaskValue parent;
+            private readonly NameHelper nameHelper;
 
-            public string Name { get; }
+            public string Name => nameHelper.Name;
+            public string ToolTip => nameHelper.ToolTip;
+
             public int Index { get; }
             public int Mask { get; }
 
@@ -131,7 +134,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             public BitValue(BitmaskValue parent, string name, int index)
             {
                 this.parent = parent;
-                Name = name;
+                nameHelper = new NameHelper(name);
                 Index = index;
                 Mask = (int)Math.Pow(2, Index);
                 Refresh();

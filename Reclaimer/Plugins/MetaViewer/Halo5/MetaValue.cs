@@ -14,15 +14,16 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         //^*~!&#
         private const string specialChars = "^:#";
 
+        private readonly NameHelper nameHelper;
+
         protected readonly ModuleItem item;
         protected readonly MetadataHeader header;
         protected readonly DataBlock host;
 
-        public override string Name { get; }
-        public override string ToolTip { get; }
-        public override string Description { get; }
-
-        public bool IsBlockName { get; }
+        public override string Name => nameHelper.Name;
+        public override string ToolTip => nameHelper.ToolTip;
+        public override string Description => nameHelper.Description;
+        public bool IsBlockName => nameHelper.IsBlockName;
 
         public override int Offset { get; }
         public override bool IsVisible { get; }
@@ -38,42 +39,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
             FieldDefinition = FieldDefinition.GetHalo5Definition(node);
 
-            var rawName = node.GetStringAttribute("name");
-            Name = GetName(rawName);
-            Description = GetDescription(rawName);
-            ToolTip = GetTooltip(rawName);
-
-            IsBlockName = rawName.Contains('^');
+            nameHelper = new NameHelper(node.GetStringAttribute("name"));
 
             Offset = offset;
             IsVisible = FieldDefinition.ValueType != MetaValueType.Padding;
-        }
-
-        private string GetName(string value)
-        {
-            return value.Split(specialChars.ToArray()).First();
-        }
-
-        private string GetDescription(string value)
-        {
-            var start = value.IndexOf(':');
-            if (start < 0)
-                return null;
-
-            var end = value.IndexOf('#');
-            if (end < 0)
-                end = value.Length;
-
-            return value.Substring(start + 1, end - (start + 1));
-        }
-
-        private string GetTooltip(string value)
-        {
-            var start = value.IndexOf('#');
-            if (start < 0)
-                return null;
-
-            return value.Substring(start + 1);
         }
     }
 }
