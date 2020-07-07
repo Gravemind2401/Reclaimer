@@ -290,11 +290,12 @@ namespace Reclaimer.Controls
                 ContextItems.Add(OpenContextItem);
                 ContextItems.Add(OpenWithContextItem);
 
-                if (moduleItem.Module.FindLinkedTagSources(moduleItem.GlobalTagId).Any())
+                var instances = moduleItem.Module.FindAlternateTagInstances(moduleItem.GlobalTagId).ToList();
+                if (instances.Count > 1)
                 {
-                    foreach (var module in moduleItem.Module.FindLinkedTagSources(moduleItem.GlobalTagId))
+                    foreach (var instance in instances)
                     {
-                        var item = new MenuItem { Header = Utils.GetFileNameWithoutExtension(module.FileName), Tag = module.GetItemById(moduleItem.GlobalTagId) };
+                        var item = new MenuItem { Header = Utils.GetFileNameWithoutExtension(instance.Module.FileName), Tag = instance };
                         OpenFromContextItem.Items.Add(item);
                     }
 
