@@ -96,9 +96,9 @@ namespace Adjutant.Blam.Halo5
             }
         }
 
-        public IEnumerable<Module> FindLinkedTagSources(int globalTagId)
+        public IEnumerable<ModuleItem> FindAlternateTagInstances(int globalTagId)
         {
-            return linkedModules.Where(m => m != this && m.tagIndex.ItemsById.ContainsKey(globalTagId));
+            return tagIndex.InstancesById.ValueOrDefault(globalTagId);
         }
 
         public IEnumerable<TagClass> GetTagClasses() => tagIndex.Classes.Values;
@@ -117,12 +117,14 @@ namespace Adjutant.Blam.Halo5
             public Dictionary<string, TagClass> Classes { get; }
             public Dictionary<int, ModuleItem> ItemsById { get; }
             public Dictionary<string, List<ModuleItem>> ItemsByClass { get; }
+            public Dictionary<int, List<ModuleItem>> InstancesById { get; }
 
             public TagIndex(IEnumerable<ModuleItem> items)
             {
                 Classes = new Dictionary<string, TagClass>();
                 ItemsById = new Dictionary<int, ModuleItem>();
                 ItemsByClass = new Dictionary<string, List<ModuleItem>>();
+                InstancesById = new Dictionary<int, List<ModuleItem>>();
 
                 ImportTags(items);
             }
@@ -141,7 +143,11 @@ namespace Adjutant.Blam.Halo5
                     {
                         ItemsById.Add(item.GlobalTagId, item);
                         ItemsByClass[item.ClassCode].Add(item);
+                        InstancesById.Add(item.GlobalTagId, new List<ModuleItem> { item });
                     }
+
+                    if (!InstancesById[item.GlobalTagId].Any(i => i.Module.FileName == item.Module.FileName))
+                        InstancesById[item.GlobalTagId].Add(item);
                 }
             }
         }
