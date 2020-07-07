@@ -31,6 +31,7 @@ namespace Reclaimer.Controls
     {
         private readonly MenuItem OpenContextItem;
         private readonly MenuItem OpenWithContextItem;
+        private readonly MenuItem OpenFromContextItem;
         private readonly Separator ContextSeparator;
 
         private Module module;
@@ -60,6 +61,7 @@ namespace Reclaimer.Controls
 
             OpenContextItem = new MenuItem { Header = "Open" };
             OpenWithContextItem = new MenuItem { Header = "Open With..." };
+            OpenFromContextItem = new MenuItem { Header = "Open From..." };
             ContextSeparator = new Separator();
 
             TabModel = new TabModel(this, TabItemType.Tool);
@@ -188,7 +190,11 @@ namespace Reclaimer.Controls
             if (node.HasItems) //folder
                 return new OpenFileArgs(node.Header, $"Blam.{module.ModuleType}.*", node);
 
-            var item = node.Tag as ModuleItem;
+            return GetSelectedArgs(node.Tag as ModuleItem);
+        }
+
+        private OpenFileArgs GetSelectedArgs(ModuleItem item)
+        {
             var fileName = $"{item.FullPath}.{item.ClassName}";
             var fileKey = $"Blam.{module.ModuleType}.{item.ClassCode}";
             return new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), GetFileFormats(item).ToArray());
@@ -269,17 +275,31 @@ namespace Reclaimer.Controls
 
         private void TreeItemContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            foreach (MenuItem item in ContextItems.Where(i => i is MenuItem))
+            foreach (var item in ContextItems.OfType<MenuItem>().Concat(OpenFromContextItem.Items.OfType<MenuItem>()))
                 item.Click -= ContextItem_Click;
 
             var menu = (sender as ContextMenu);
             var node = tv.SelectedItem as TreeItemModel;
 
             ContextItems.Clear();
-            if (node.Tag is ModuleItem)
+            OpenFromContextItem.Items.Clear();
+
+            var moduleItem = node.Tag as ModuleItem;
+            if (moduleItem != null)
             {
                 ContextItems.Add(OpenContextItem);
                 ContextItems.Add(OpenWithContextItem);
+
+                if (moduleItem.Module.FindLinkedTagSources(moduleItem.GlobalTagId).Any())
+                {
+                    foreach (var module in moduleItem.Module.FindLinkedTagSources(moduleItem.GlobalTagId))
+                    {
+                        var item = new MenuItem { Header = Utils.GetFileNameWithoutExtension(module.FileName), Tag = module.GetItemById(moduleItem.GlobalTagId) };
+                        OpenFromContextItem.Items.Add(item);
+                    }
+
+                    ContextItems.Add(OpenFromContextItem);
+                }
             }
 
             var customItems = Substrate.GetContextItems(GetSelectedArgs());
@@ -290,7 +310,7 @@ namespace Reclaimer.Controls
             foreach (var item in customItems)
                 ContextItems.Add(new MenuItem { Header = item.Path, Tag = item });
 
-            foreach (MenuItem item in ContextItems.Where(i => i is MenuItem))
+            foreach (var item in ContextItems.OfType<MenuItem>().Concat(OpenFromContextItem.Items.OfType<MenuItem>()))
                 item.Click += ContextItem_Click;
 
             if (!ContextItems.Any())
@@ -299,11 +319,17 @@ namespace Reclaimer.Controls
 
         private void ContextItem_Click(object sender, RoutedEventArgs e)
         {
+            var item = sender as MenuItem;
+            if (item == null)
+                return;
+
             var args = GetSelectedArgs();
             if (sender == OpenContextItem)
                 Substrate.OpenWithDefault(args);
             else if (sender == OpenWithContextItem)
                 Substrate.OpenWithPrompt(args);
+            else if (OpenFromContextItem.Items.Contains(item))
+                Substrate.OpenWithPrompt(GetSelectedArgs(item.Tag as ModuleItem));
             else ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(args);
         }
         #endregion
