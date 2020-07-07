@@ -96,6 +96,11 @@ namespace Adjutant.Blam.Halo5
             }
         }
 
+        public IEnumerable<Module> FindLinkedTagSources(int globalTagId)
+        {
+            return linkedModules.Where(m => m != this && m.tagIndex.ItemsById.ContainsKey(globalTagId));
+        }
+
         public IEnumerable<TagClass> GetTagClasses() => tagIndex.Classes.Values;
 
         public ModuleItem GetItemById(int id) => tagIndex.ItemsById.ValueOrDefault(id);
