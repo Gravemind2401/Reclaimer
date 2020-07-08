@@ -165,6 +165,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_C24CD333421A99C7F0289EEF59B4DD6A"
+        "OwnerKey" = "8:_C65EB60B5A00F717FBEA48700D1BEA62"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C24CD333421A99C7F0289EEF59B4DD6A"
+        "OwnerKey" = "8:_F415CDE9BD3846E6B8E5B36DB40736D4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_C65EB60B5A00F717FBEA48700D1BEA62"
         "OwnerKey" = "8:_F415CDE9BD3846E6B8E5B36DB40736D4"
         "MsmSig" = "8:_UNDEFINED"
@@ -275,6 +287,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_7CC9FB6958065391FD5C1246E029BC59"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_C24CD333421A99C7F0289EEF59B4DD6A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -456,7 +474,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Drawing.Dds, Version=1.0.23.169, Culture=neutral, PublicKeyToken=dc89101f2b7a08f7, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:System.Drawing.Dds, Version=1.1.26.261, Culture=neutral, PublicKeyToken=dc89101f2b7a08f7, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_29DBF821275E8BCD68354B6F04D06F8B"
@@ -826,7 +844,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.IO.Endian, Version=1.0.64.284, Culture=neutral, PublicKeyToken=4c1f0321ae9dcf07, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:System.IO.Endian, Version=1.0.70.312, Culture=neutral, PublicKeyToken=4c1f0321ae9dcf07, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_BEAD7D5156AB9ED8E5BBEDD57CD3B6CA"
@@ -853,11 +871,42 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C24CD333421A99C7F0289EEF59B4DD6A"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:DotNetZip, Version=1.13.8.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_C24CD333421A99C7F0289EEF59B4DD6A"
+                    {
+                    "Name" = "8:DotNetZip.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:DotNetZip.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_CFD6E818CB474C0B97D0387E639CC05D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C65EB60B5A00F717FBEA48700D1BEA62"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Adjutant, Version=5.2.162.944, Culture=neutral, PublicKeyToken=10f296c5c79ce69a, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Adjutant, Version=5.4.202.1289, Culture=neutral, PublicKeyToken=10f296c5c79ce69a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C65EB60B5A00F717FBEA48700D1BEA62"
@@ -1066,15 +1115,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Reclaimer"
-        "ProductCode" = "8:{FA58E3AD-F987-4C90-85B5-7D3512743697}"
-        "PackageCode" = "8:{B0D9EEF4-643C-4947-B7C1-8A0C02F46528}"
+        "ProductCode" = "8:{3707D912-216B-4602-A53C-CE0FFA239857}"
+        "PackageCode" = "8:{CDD773D1-C2A4-4633-A997-11444EB712E1}"
         "UpgradeCode" = "8:{FBBE75A5-B290-459D-AFEE-4B97449AE820}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.2.152"
+        "ProductVersion" = "8:1.4.175"
         "Manufacturer" = "8:Gravemind2401"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
