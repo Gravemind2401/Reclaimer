@@ -113,8 +113,19 @@ namespace Reclaimer.Plugins.MetaViewer
 
             var def = FieldDefinition.GetHalo5Definition(node);
 
-            if (def.Components > 1 && def.ValueType == MetaValueType.Float32)
-                return new Halo5.MultiValue(node, item, header, host, reader, baseAddress, offset);
+            if (def.Size < 0)
+                System.Diagnostics.Debugger.Break();
+
+            if (def.Components > 1)
+            {
+                switch (def.ValueType)
+                {
+                    case MetaValueType.Float32:
+                        return new Halo5.MultiValue<float>(node, item, header, host, reader, baseAddress, offset);
+                    case MetaValueType.Int16:
+                        return new Halo5.MultiValue<short>(node, item, header, host, reader, baseAddress, offset);
+                }
+            }
 
             switch (def.ValueType)
             {

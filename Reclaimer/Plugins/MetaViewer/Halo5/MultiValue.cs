@@ -10,31 +10,31 @@ using System.Xml;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo5
 {
-    public class MultiValue : MetaValue
+    public class MultiValue<T> : MetaValue where T : struct
     {
-        private float value1;
-        public float Value1
+        private T value1;
+        public T Value1
         {
             get { return value1; }
             set { SetMetaProperty(ref value1, value); }
         }
 
-        private float value2;
-        public float Value2
+        private T value2;
+        public T Value2
         {
             get { return value2; }
             set { SetMetaProperty(ref value2, value); }
         }
 
-        private float value3;
-        public float Value3
+        private T value3;
+        public T Value3
         {
             get { return value3; }
             set { SetMetaProperty(ref value3, value); }
         }
 
-        private float value4;
-        public float Value4
+        private T value4;
+        public T Value4
         {
             get { return value4; }
             set { SetMetaProperty(ref value4, value); }
@@ -63,14 +63,14 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                Value1 = reader.ReadSingle();
-                Value2 = reader.ReadSingle();
+                Value1 = reader.ReadObject<T>();
+                Value2 = reader.ReadObject<T>();
 
                 if (FieldDefinition.Components > 2)
-                    Value3 = reader.ReadSingle();
+                    Value3 = reader.ReadObject<T>();
 
                 if (FieldDefinition.Components > 3)
-                    Value4 = reader.ReadSingle();
+                    Value4 = reader.ReadObject<T>();
 
                 IsDirty = false;
             }
@@ -81,14 +81,14 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         {
             writer.Seek(ValueAddress, SeekOrigin.Begin);
 
-            writer.Write(Value1);
-            writer.Write(Value2);
+            writer.WriteObject(Value1);
+            writer.WriteObject(Value2);
 
             if (FieldDefinition.Components > 2)
-                writer.Write(Value3);
+                writer.WriteObject(Value3);
 
             if (FieldDefinition.Components > 3)
-                writer.Write(Value4);
+                writer.WriteObject(Value4);
 
             IsDirty = false;
         }

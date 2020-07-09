@@ -42,7 +42,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             nameHelper = new NameHelper(node.GetStringAttribute("name"));
 
             Offset = offset;
-            IsVisible = FieldDefinition.ValueType != MetaValueType.Padding;
+            IsVisible = !FieldDefinition.Hidden;
         }
     }
 }

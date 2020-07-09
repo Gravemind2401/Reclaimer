@@ -49,7 +49,7 @@ namespace Reclaimer.Plugins.MetaViewer
         private static readonly Dictionary<string, FieldDefinition> h3cache = new Dictionary<string, FieldDefinition>();
         private static readonly Dictionary<string, FieldDefinition> h5cache = new Dictionary<string, FieldDefinition>();
 
-        private static readonly FieldDefinition UndefinedDefinition = new FieldDefinition("undefined", MetaValueType.Undefined, 4, 1, AxesDefinition.None);
+        private static readonly FieldDefinition UndefinedDefinition = new FieldDefinition("undefined", MetaValueType.Undefined, 4, 1, AxesDefinition.None, true);
 
         public static FieldDefinition GetHalo3Definition(XmlNode node) => GetDefinition(node, Properties.Resources.Halo3FieldDefinitions, h3aliasLookup, h3cache);
 
@@ -112,14 +112,16 @@ namespace Reclaimer.Plugins.MetaViewer
         public int Size { get; }
         public int Components { get; }
         public AxesDefinition Axes { get; }
+        public bool Hidden { get; }
 
-        private FieldDefinition(string fieldType, MetaValueType valueType, int size, int components, AxesDefinition axes)
+        private FieldDefinition(string fieldType, MetaValueType valueType, int size, int components, AxesDefinition axes, bool hidden)
         {
             FieldTypeName = fieldType;
             ValueType = valueType;
             Size = size;
             Components = components;
             Axes = AxesDefinition.None;
+            Hidden = hidden;
         }
 
         private FieldDefinition(FieldDefinition copyFrom, int newSize)
@@ -129,6 +131,7 @@ namespace Reclaimer.Plugins.MetaViewer
             Size = newSize;
             Components = copyFrom.Components;
             Axes = copyFrom.Axes;
+            Hidden = copyFrom.Hidden;
         }
 
         private FieldDefinition(XmlNode node)
@@ -147,6 +150,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
             Components = node.GetIntAttribute("components") ?? 1;
             Axes = node.GetEnumAttribute<AxesDefinition>("axes") ?? AxesDefinition.None;
+            Hidden = node.GetBoolAttribute("hidden") ?? false;
         }
 
         public override string ToString() => FieldTypeName;
