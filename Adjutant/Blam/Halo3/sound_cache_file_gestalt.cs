@@ -33,7 +33,7 @@ namespace Adjutant.Blam.Halo3
 
         [Offset(60, MaxVersion = (int)CacheType.Halo3ODST)]
         [Offset(72, MinVersion = (int)CacheType.Halo3ODST)]
-        public BlockCollection<Playback> Playbacks { get; set; }
+        public BlockCollection<PitchRange> PitchRanges { get; set; }
 
         [Offset(72, MaxVersion = (int)CacheType.Halo3ODST)]
         [Offset(84, MinVersion = (int)CacheType.Halo3ODST)]
@@ -54,7 +54,7 @@ namespace Adjutant.Blam.Halo3
         public Encoding Encoding { get; set; }
 
         [Offset(2)]
-        public byte Flags { get; set; }
+        public byte CompressionCodec { get; set; }
 
         public int SampleRateInt
         {
@@ -103,7 +103,7 @@ namespace Adjutant.Blam.Halo3
     }
 
     [FixedSize(12)]
-    public class Playback
+    public class PitchRange
     {
         [Offset(0)]
         [StoreType(typeof(ushort))]
@@ -113,19 +113,19 @@ namespace Adjutant.Blam.Halo3
         public short ParametersIndex { get; set; }
 
         [Offset(4)]
-        public short Unknown { get; set; }
+        public short EncodedPermDataIndex { get; set; }
 
         [Offset(6)]
-        public short FirstRuntimePermFlagIndex { get; set; }
+        public short EncodedRuntimePermFlagIndex { get; set; }
 
         [Offset(8)]
-        public short EncodedPermutationData { get; set; }
+        public short EncodedPermutationCount { get; set; }
 
         [Offset(10)]
         [StoreType(typeof(ushort))]
         public int FirstPermutationIndex { get; set; }
 
-        public int PermutationCount => (EncodedPermutationData >> 4) & 63;
+        public int PermutationCount => (EncodedPermutationCount >> 4) & 63;
     }
 
     [FixedSize(16)]

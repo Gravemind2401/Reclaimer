@@ -31,13 +31,10 @@ namespace Adjutant.Blam.Halo3
         public SampleRate SampleRate { get; set; }
 
         [Offset(4)]
-        public byte Encoding { get; set; }
-
-        [Offset(5)]
-        public byte CodecIndex { get; set; }
+        public short CodecIndex { get; set; }
 
         [Offset(6)]
-        public short PlaybackIndex { get; set; }
+        public short PitchRangeIndex { get; set; }
 
         [Offset(8)]
         public short DialogueUnknown { get; set; }
@@ -46,13 +43,10 @@ namespace Adjutant.Blam.Halo3
         public short Unknown0 { get; set; }
 
         [Offset(12)]
-        public short PitchRangeIndex1 { get; set; }
+        public short PlaybackParamsIndex { get; set; }
 
         [Offset(14)]
-        public byte PitchRangeIndex2 { get; set; }
-
-        [Offset(15)]
-        public byte ScaleIndex { get; set; }
+        public short ScaleIndex { get; set; }
 
         [Offset(16)]
         public byte PromotionIndex { get; set; }
@@ -64,13 +58,10 @@ namespace Adjutant.Blam.Halo3
         public short ExtraInfoIndex { get; set; }
 
         [Offset(20)]
-        public int Unknown1 { get; set; }
+        public int MaxPlaytime { get; set; }
 
         [Offset(24)]
         public ResourceIdentifier ResourceIdentifier { get; set; }
-
-        [Offset(28)]
-        public int MaxPlaytime { get; set; }
 
         #region ISoundContainer
 
@@ -81,7 +72,7 @@ namespace Adjutant.Blam.Halo3
         public GameSound ReadData()
         {
             var resourceGestalt = cache.TagIndex.GetGlobalTag("ugh!").ReadMetadata<sound_cache_file_gestalt>();
-            var playback = resourceGestalt.Playbacks[PlaybackIndex];
+            var playback = resourceGestalt.PitchRanges[PitchRangeIndex];
             var codec = resourceGestalt.Codecs[CodecIndex];
             var sourceData = ResourceIdentifier.ReadSoundData();
 
