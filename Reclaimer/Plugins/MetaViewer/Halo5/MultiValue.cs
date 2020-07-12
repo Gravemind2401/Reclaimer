@@ -45,12 +45,28 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         public MultiValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, host, reader, baseAddress, offset)
         {
-            if (FieldDefinition.Axes == AxesDefinition.Point)
+            switch (FieldDefinition.Axes)
+            {
+                case AxesDefinition.Point:
                 Labels = new[] { "x", "y", "z", "w" };
-            else if (FieldDefinition.Axes == AxesDefinition.Vector)
-                Labels = new[] { "i", "j", "k", "w" };
-            else if (FieldDefinition.Axes == AxesDefinition.Bounds)
-                Labels = new[] { "min", "max", string.Empty, string.Empty };
+                    break;
+                case AxesDefinition.Vector:
+                case AxesDefinition.Angle:
+                    Labels = new[] { "i", "j", "k", "w" };
+                    break;
+                case AxesDefinition.Bounds:
+                    Labels = new[] { "min", "max", string.Empty, string.Empty };
+                    break;
+                case AxesDefinition.Color:
+                    Labels = new[] { "r", "g", "b", "a" };
+                    break;
+                case AxesDefinition.Plane:
+                    Labels = new[] { "i", "j", "k", "d" };
+                    break;
+                default:
+                    Labels = new[] { "a", "b", "c", "d" };
+                    break;
+            }
 
             ReadValue(reader);
         }

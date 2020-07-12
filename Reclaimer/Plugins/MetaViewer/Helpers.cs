@@ -89,21 +89,21 @@ namespace Reclaimer.Plugins.MetaViewer
             var result = cache[key];
             if (result.Size >= 0)
                 return result;
-            else if (result.Size == -1)
+            else if (result.Size == -1) //length
             {
                 var totalSize = node.GetIntAttribute("length", "maxlength", "size") ?? 0;
                 return new FieldDefinition(result, totalSize);
             }
-            else if (result.Size == -2)
+            else if (result.Size == -2) //sum
             {
                 var totalSize = node.ChildNodes.OfType<XmlNode>()
                     .Sum(n => GetDefinition(n, definitionXml, aliasLookup, cache).Size);
                 return new FieldDefinition(result, totalSize);
             }
-            else
+            else //unknown
             {
                 System.Diagnostics.Debugger.Break();
-                return result;
+                return new FieldDefinition(result, -1);
             }
         }
 
@@ -144,7 +144,7 @@ namespace Reclaimer.Plugins.MetaViewer
                 Size = -1;
             else if (sizeStr == "sum")
                 Size = -2;
-            else if (sizeStr == "?")
+            else if (sizeStr == "?" || sizeStr == null)
                 Size = -3;
             else Size = node.GetIntAttribute("size") ?? 0;
 
@@ -162,7 +162,9 @@ namespace Reclaimer.Plugins.MetaViewer
         Point,
         Vector,
         Bounds,
-        Color
+        Color,
+        Angle,
+        Plane
     }
 
     public interface IExpandable

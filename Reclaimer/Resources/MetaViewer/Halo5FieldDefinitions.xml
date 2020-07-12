@@ -29,40 +29,50 @@
   <_field_byte_integer size="1" valueType="byte" />
   <_field_char_integer size="1" valueType="byte" />
   
-  <_field_custom_long_block_index size="?" valueType="" />
-  <_field_custom_short_block_index size="?" valueType="" />
+  <_field_custom_long_block_index size="4" valueType="int32" />
+  <_field_custom_short_block_index size="2" valueType="int16" />
   <_field_long_block_index size="4" valueType="int32" />
   <_field_short_block_index size="2" valueType="int16" />
 
   <_field_long_flags size="4" valueType="bitmask32" />
   <_field_word_flags size="2" valueType="bitmask16" />
   <_field_byte_flags size="1" valueType="bitmask8" />
-  <_field_long_block_flags size="4" valueType="" />
+  <_field_long_block_flags size="4" valueType="bitmask32" />
 
   <_field_long_enum size="4" valueType="enum32" />
   <_field_short_enum size="2" valueType="enum16" />
   <_field_char_enum size="1" valueType="enum8" />
 
-  <_field_point_2d size="4" valueType="int16" components="2" axes="point" />
-
-  <_field_angle_bounds size="8" valueType="float32" components="2" axes="bounds" />
-  <_field_real_bounds size="8" valueType="float32" components="2" axes="bounds" />
-  <_field_fraction_bounds size="?" valueType="" components="2" axes="bounds" />
-  <_field_short_integer_bounds size="4" valueType="int16" components="2" axes="bounds" />
-  
-  <_field_real_point_2d size="8" valueType="float32" components="2" axes="point" />
-  <_field_real_euler_angles_2d size="8" valueType="" />
-  <_field_real_point_3d size="12" valueType="float32" components="3" axes="point" />
-  <_field_real_vector_3d size="12" valueType="float32" components="3" axes="vector" />
-  <_field_real_quaternion size="16" valueType="float32" components="4" axes="vector" />
-  <_field_real_plane_3d size="12" valueType="" />
-  <_field_real_euler_angles_3d size="12" valueType="" />
-  
-  <_field_rgb_color size="?" valueType="" components="3" axes="color" />
-  <_field_real_rgb_color size="12" valueType="" components="3" axes="color" />
-  <_field_real_argb_color size="16" valueType="" components="4" axes="color" />
-
   <_field_real size="4" valueType="float32" />
   <_field_real_fraction size="4" valueType="float32" />
   <_field_angle size="4" valueType="float32" />
+
+  <_field_short_integer_bounds size="4" valueType="int16" components="2" axes="bounds" />
+  <_field_real_bounds size="8" valueType="float32" components="2" axes="bounds" />
+  <_field_fraction_bounds size="8" valueType="float32" components="2" axes="bounds" />
+  <_field_angle_bounds size="8" valueType="float32" components="2" axes="bounds" />
+  
+  <_field_point_2d size="4" valueType="int16" components="2" axes="point" />
+
+  <_field_real_point_2d size="8" valueType="float32" components="2" axes="point" />
+  <_field_real_point_3d size="12" valueType="float32" components="3" axes="point" />
+  
+  <_field_real_vector_2d />
+  <_field_real_vector_3d size="12" valueType="float32" components="3" axes="vector" />
+  
+  <_field_real_quaternion size="16" valueType="float32" components="4" axes="vector" />
+  
+  <_field_real_plane_2d />
+  <_field_real_plane_3d size="16" valueType="float32" components="4" axes="plane" />
+  
+  <_field_rectangle_2d />
+  
+  <_field_real_euler_angles_2d size="8" valueType="float32" components="3" axes="angle" />
+  <_field_real_euler_angles_3d size="12" valueType="float32" components="4" axes="angle" />
+  
+  <_field_rgb_color size="4" valueType="byte" components="4" axes="color" />
+  <_field_real_rgb_color size="12" valueType="float32" components="3" axes="color" />
+  <_field_real_argb_color size="16" valueType="float32" components="4" axes="color" />
+  <_field_real_hsv_color />
+  <_field_real_ahsv_color />
 </fieldDefinitions>

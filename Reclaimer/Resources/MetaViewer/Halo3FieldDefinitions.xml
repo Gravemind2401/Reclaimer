@@ -74,8 +74,13 @@
     <alias name="float" />
   </float32>
 
+  <shortBounds size="4" valueType="int16" components="2" axes="bounds">
+    <alias name="range16" />
+  </shortBounds>
+
   <realBounds size="8" valueType="float32" components="2" axes="bounds">
     <alias name="bounds" />
+    <alias name="rangef" />
   </realBounds>
 
   <realPoint2 size="8" valueType="float32" components="2" axes="point">
