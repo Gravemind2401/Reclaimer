@@ -10,7 +10,7 @@ using Adjutant.Blam.Common;
 
 namespace Adjutant.Blam.Halo2
 {
-    public class sound //: ISoundContainer
+    public class sound : ISoundContainer
     {
         private readonly ICacheFile cache;
         private readonly IIndexItem item;
@@ -74,6 +74,69 @@ namespace Adjutant.Blam.Halo2
                 }
             }
         }
+
+        #region ISoundContainer
+
+        string ISoundContainer.Name => item.FullPath;
+
+        string ISoundContainer.Class => item.ClassName;
+
+        public GameSound ReadData()
+        {
+            var channels = (byte)(Encoding + 1);
+            if (CompressionCodec != CompressionCodec.XboxAdpcm || channels > 2)
+                throw new NotSupportedException("Unsupported Codec/Encoding");
+
+            var resourceGestalt = cache.TagIndex.GetGlobalTag("ugh!").ReadMetadata<sound_cache_file_gestalt>();
+            var pitchRange = resourceGestalt.PitchRanges[PitchRangeIndex];
+
+            var result = new GameSound
+            {
+                Name = item.FileName(),
+                FormatHeader = new XboxAdpcmHeader(SampleRateInt, channels)
+            };
+
+            for (int i = 0; i < pitchRange.PermutationCount; i++)
+            {
+                var perm = resourceGestalt.SoundPermutations[pitchRange.FirstPermutationIndex + i];
+                var name = resourceGestalt.SoundNames[perm.NameIndex].Name;
+
+                byte[] permData;
+
+                if (pitchRange.PermutationCount == 1)
+                {
+                    //skip the array copy
+                    var block = resourceGestalt.SoundPermutationChunks[perm.BlockIndex];
+                    permData = block.DataPointer.ReadData(block.DataSize);
+                }
+                else
+                {
+                    var blocks = Enumerable.Range(perm.BlockIndex, perm.BlockCount)
+                        .Select(x => resourceGestalt.SoundPermutationChunks[x])
+                        .ToList();
+
+                    permData = new byte[blocks.Sum(b => b.DataSize)];
+                    var offset = 0;
+                    foreach (var block in blocks)
+                    {
+                        var sourceData = block.DataPointer.ReadData(block.DataSize);
+
+                        Array.Copy(sourceData, 0, permData, offset, sourceData.Length);
+                        offset += sourceData.Length;
+                    }
+                }
+
+                result.Permutations.Add(new GameSoundPermutation
+                {
+                    Name = name,
+                    SoundData = permData
+                });
+            }
+
+            return result;
+        }
+
+        #endregion
     }
 
     public enum SampleRate : byte

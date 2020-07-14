@@ -253,6 +253,7 @@ namespace Adjutant.Blam.Halo2
         private readonly CacheFile cache;
         ICacheFile IIndexItem.CacheFile => cache;
 
+        private readonly object cacheLock = new object();
         private object metadataCache;
 
         public IndexItem(CacheFile cache)
@@ -290,9 +291,27 @@ namespace Adjutant.Blam.Halo2
 
         public T ReadMetadata<T>()
         {
-            if (metadataCache?.GetType() == typeof(T))
-                return (T)metadataCache;
+            var lazy = metadataCache as Lazy<T>;
+            if (lazy != null)
+                return lazy.Value;
+            else if (CacheFactory.SystemClasses.Contains(ClassCode))
+            {
+                lock (cacheLock)
+                {
+                    lazy = metadataCache as Lazy<T>;
+                    if (lazy != null)
+                        return lazy.Value;
+                    else
+                        metadataCache = lazy = new Lazy<T>(() => ReadMetadataInternal<T>());
+                }
 
+                return lazy.Value;
+            }
+            else return ReadMetadataInternal<T>();
+        }
+
+        private T ReadMetadataInternal<T>()
+        {
             long address;
             DependencyReader reader;
 

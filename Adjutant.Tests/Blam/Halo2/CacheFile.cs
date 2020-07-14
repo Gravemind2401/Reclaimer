@@ -85,9 +85,19 @@ namespace Adjutant.Tests.Blam.Halo2
                 return true;
             });
 
+            var t4 = Task.Run(() =>
+            {
+                var bsps = cache.TagIndex.Where(i => i.ClassCode == "snd!")
+                .Select(i => i.ReadMetadata<sound>())
+                .ToList();
+
+                return true;
+            });
+
             Assert.IsTrue(t1.GetAwaiter().GetResult());
             Assert.IsTrue(t2.GetAwaiter().GetResult());
             Assert.IsTrue(t3.GetAwaiter().GetResult());
+            Assert.IsTrue(t4.GetAwaiter().GetResult());
         }
     }
 }

@@ -8,27 +8,25 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Audio
 {
-    public class XboxAdpcmHeader : IFormatHeader
+    public class PcmHeader : IFormatHeader
     {
-        const short formatId = 0x0069;
+        const short formatId = 0x0001;
 
-        public int Length => 20;
+        public int Length => 16;
 
         public short ChannelCount { get; }
         public int SampleRate { get; }
         public int ByteRate { get; }
         public short BlockAlign { get; }
         public short BitsPerSample { get; }
-        public int ExtraData { get; }
 
-        public XboxAdpcmHeader(int sampleRate, byte channelCount)
+        public PcmHeader(int sampleRate, byte channelCount)
         {
             ChannelCount = channelCount;
             SampleRate = sampleRate;
-            BlockAlign = (short)(36 * ChannelCount);
-            ByteRate = SampleRate * BlockAlign >> 6;
-            BitsPerSample = 4;
-            ExtraData = 0x00400002;
+            BlockAlign = (short)(2 * ChannelCount);
+            BitsPerSample = 16;
+            ByteRate = ChannelCount * SampleRate * (BitsPerSample / 8);
         }
 
         public byte[] GetBytes()
@@ -44,7 +42,6 @@ namespace Adjutant.Audio
                 sw.Write(ByteRate);
                 sw.Write(BlockAlign);
                 sw.Write(BitsPerSample);
-                sw.Write(ExtraData);
             }
 
             return buffer;

@@ -86,16 +86,9 @@ namespace Adjutant.Blam.Halo2
     public class SoundPermutationChunk
     {
         [Offset(0)]
-        public int FileOffset { get; set; }
+        public DataPointer DataPointer { get; set; }
 
         [Offset(4)]
-        public short Flags { get; set; }
-
-        [Offset(6)]
-        [StoreType(typeof(ushort))]
-        public int Size { get; set; }
-
-        [Offset(8)]
-        public int RuntimeIndex { get; set; }
+        public int DataSize { get; set; }
     }
 }
