@@ -288,7 +288,7 @@ namespace Adjutant.Blam.Halo2
         public int HeaderSize { get; set; }
 
         [Offset(56)]
-        public BlockCollection<SectionResourceBlock> Resources { get; set; }
+        public BlockCollection<ResourceInfoBlock> Resources { get; set; }
     }
 
     [FixedSize(200)]

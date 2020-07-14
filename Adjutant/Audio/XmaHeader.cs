@@ -35,6 +35,7 @@ namespace Adjutant.Audio
             }
         }
 
+        //fields below with a fixed value are not used by ffmpeg
         public byte[] GetBytes()
         {
             var buffer = new byte[Length];
@@ -44,21 +45,21 @@ namespace Adjutant.Audio
             {
                 sw.Write(formatId);
                 sw.Write(BitsPerSample);
-                sw.Write((short)0);
-                sw.Write((short)0);
+                sw.Write((short)0); //encode options
+                sw.Write((short)0); //largest skip
                 sw.Write((short)Streams.Count);
-                sw.Write((byte)0);
-                sw.Write((byte)3);
+                sw.Write((byte)0); //loops
+                sw.Write((byte)3); //encoder version
 
                 foreach (var s in Streams)
                 {
-                    sw.Write(0);
+                    sw.Write(0); //bytes per second
                     sw.Write(s.SampleRate);
-                    sw.Write(0);
-                    sw.Write(0);
-                    sw.Write((byte)0);
+                    sw.Write(0); //loop start
+                    sw.Write(0); //loop end
+                    sw.Write((byte)0); //subframe loop data
                     sw.Write(s.ChannelCount);
-                    sw.Write((short)2);
+                    sw.Write((short)2); //channel mask: L, R, C, LFE, LSur, RSur, LB, RB
                 }
             }
 

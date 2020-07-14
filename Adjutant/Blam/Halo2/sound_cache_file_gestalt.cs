@@ -20,7 +20,7 @@ namespace Adjutant.Blam.Halo2
         public BlockCollection<SoundPermutation> SoundPermutations { get; set; }
 
         [Offset(64)]
-        public BlockCollection<DataBlock> DataBlocks { get; set; }
+        public BlockCollection<SoundPermutationChunk> SoundPermutationChunks { get; set; }
     }
 
     [FixedSize(4)]
@@ -28,6 +28,8 @@ namespace Adjutant.Blam.Halo2
     {
         [Offset(0)]
         public StringId Name { get; set; }
+
+        public override string ToString() => Name;
     }
 
     [FixedSize(12)]
@@ -81,7 +83,7 @@ namespace Adjutant.Blam.Halo2
     }
 
     [FixedSize(12)]
-    public class DataBlock
+    public class SoundPermutationChunk
     {
         [Offset(0)]
         public int FileOffset { get; set; }

@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="Audio\GameSound.cs" />
     <Compile Include="Audio\IFormatHeader.cs" />
+    <Compile Include="Audio\XboxAdpcmHeader.cs" />
     <Compile Include="Audio\XmaHeader.cs" />
     <Compile Include="Blam\Common\CacheDetail.cs" />
     <Compile Include="Blam\Common\CacheFactory.cs" />

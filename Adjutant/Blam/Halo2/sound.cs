@@ -31,7 +31,7 @@ namespace Adjutant.Blam.Halo2
         public SampleRate SampleRate { get; set; }
 
         [Offset(4)]
-        public byte Encoding { get; set; }
+        public Encoding Encoding { get; set; }
 
         [Offset(5)]
         public CompressionCodec CompressionCodec { get; set; }
@@ -87,8 +87,7 @@ namespace Adjutant.Blam.Halo2
     {
         Mono = 0,
         Stereo = 1,
-        Surround = 2,
-        Surround5_1 = 3
+        Codec = 2,
     }
 
     public enum CompressionCodec : byte

@@ -273,7 +273,7 @@ namespace Adjutant.Blam.Halo2
         [Offset(12)]
         public int MetaSize { get; set; }
 
-        public string ClassCode => Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId).Reverse().ToArray());
+        public string ClassCode => System.Text.Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId).Reverse().ToArray());
 
         public string ClassName
         {

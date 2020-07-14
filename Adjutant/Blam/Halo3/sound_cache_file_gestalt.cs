@@ -41,7 +41,7 @@ namespace Adjutant.Blam.Halo3
 
         [Offset(148, MaxVersion = (int)CacheType.Halo3ODST)]
         [Offset(160, MinVersion = (int)CacheType.Halo3ODST)]
-        public BlockCollection<DataBlock> DataBlocks { get; set; }
+        public BlockCollection<SoundPermutationChunk> SoundPermutationChunk { get; set; }
     }
 
     [FixedSize(3)]
@@ -157,7 +157,7 @@ namespace Adjutant.Blam.Halo3
     }
 
     [FixedSize(20)]
-    public class DataBlock
+    public class SoundPermutationChunk
     {
         [Offset(0)]
         public int FileOffset { get; set; }

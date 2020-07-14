@@ -4,12 +4,29 @@ using Adjutant.Spatial;
 using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO.Endian;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Halo2
 {
+    [FixedSize(16)]
+    public class ResourceInfoBlock
+    {
+        [Offset(4)]
+        public short Type0 { get; set; }
+
+        [Offset(6)]
+        public short Type1 { get; set; }
+
+        [Offset(8)]
+        public int Size { get; set; }
+
+        [Offset(12)]
+        public int Offset { get; set; }
+    }
+
     internal static class Halo2Common
     {
         public static IEnumerable<GeometryMaterial> GetMaterials(IEnumerable<ShaderBlock> shaderBlocks)

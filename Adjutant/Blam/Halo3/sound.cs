@@ -72,7 +72,7 @@ namespace Adjutant.Blam.Halo3
         public GameSound ReadData()
         {
             var resourceGestalt = cache.TagIndex.GetGlobalTag("ugh!").ReadMetadata<sound_cache_file_gestalt>();
-            var playback = resourceGestalt.PitchRanges[PitchRangeIndex];
+            var pitchRange = resourceGestalt.PitchRanges[PitchRangeIndex];
             var codec = resourceGestalt.Codecs[CodecIndex];
             var sourceData = ResourceIdentifier.ReadSoundData();
 
@@ -82,14 +82,14 @@ namespace Adjutant.Blam.Halo3
                 FormatHeader = new XmaHeader(codec.SampleRateInt, codec.ChannelCounts)
             };
 
-            for (int i = 0; i < playback.PermutationCount; i++)
+            for (int i = 0; i < pitchRange.PermutationCount; i++)
             {
-                var perm = resourceGestalt.SoundPermutations[playback.FirstPermutationIndex + i];
+                var perm = resourceGestalt.SoundPermutations[pitchRange.FirstPermutationIndex + i];
                 var name = resourceGestalt.SoundNames[perm.NameIndex].Name;
 
                 byte[] permData;
 
-                if (playback.PermutationCount == 1)
+                if (pitchRange.PermutationCount == 1)
                 {
                     //skip the array copy
                     permData = sourceData;
@@ -97,7 +97,7 @@ namespace Adjutant.Blam.Halo3
                 else
                 {
                     var blocks = Enumerable.Range(perm.BlockIndex, perm.BlockCount)
-                        .Select(x => resourceGestalt.DataBlocks[x])
+                        .Select(x => resourceGestalt.SoundPermutationChunk[x])
                         .ToList();
 
                     permData = new byte[blocks.Sum(b => b.Size)];
