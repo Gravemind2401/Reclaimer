@@ -10,6 +10,8 @@ namespace Adjutant.Audio
     {
         public string Name { get; set; }
 
+        public string DefaultExtension { get; set; }
+
         public IFormatHeader FormatHeader { get; set; }
 
         public List<GameSoundPermutation> Permutations { get; set; }

@@ -79,7 +79,8 @@ namespace Adjutant.Blam.Halo3
             var result = new GameSound
             {
                 Name = item.FileName(),
-                FormatHeader = new XmaHeader(codec.SampleRateInt, codec.ChannelCounts)
+                FormatHeader = new XmaHeader(codec.SampleRateInt, codec.ChannelCounts),
+                DefaultExtension = "xma"
             };
 
             for (int i = 0; i < pitchRange.PermutationCount; i++)

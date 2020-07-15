@@ -93,7 +93,8 @@ namespace Adjutant.Blam.Halo2
             var result = new GameSound
             {
                 Name = item.FileName(),
-                FormatHeader = new XboxAdpcmHeader(SampleRateInt, channels)
+                FormatHeader = new XboxAdpcmHeader(SampleRateInt, channels),
+                DefaultExtension = "wav"
             };
 
             for (int i = 0; i < pitchRange.PermutationCount; i++)
