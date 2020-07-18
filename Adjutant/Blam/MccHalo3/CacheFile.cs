@@ -9,12 +9,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.MccHaloReach
+namespace Adjutant.Blam.MccHalo3
 {
     public class CacheFile : ICacheFile
     {
-        public int HeaderSize => 40960;
-
         public string FileName { get; }
         public ByteOrder ByteOrder { get; }
         public string BuildString { get; }
@@ -61,12 +59,12 @@ namespace Adjutant.Blam.MccHaloReach
                 StringIndex.ReadItems();
             }
 
-            Task.Factory.StartNew(() =>
-            {
-                TagIndex.GetGlobalTag("zone")?.ReadMetadata<HaloReach.cache_file_resource_gestalt>();
-                TagIndex.GetGlobalTag("play")?.ReadMetadata<HaloReach.cache_file_resource_layout_table>();
-                TagIndex.GetGlobalTag("scnr")?.ReadMetadata<HaloReach.scenario>();
-            });
+            //Task.Factory.StartNew(() =>
+            //{
+            //    TagIndex.GetGlobalTag("play")?.ReadMetadata<Halo3.cache_file_resource_layout_table>();
+            //    TagIndex.GetGlobalTag("zone")?.ReadMetadata<Halo3.cache_file_resource_gestalt>();
+            //    TagIndex.GetGlobalTag("scnr")?.ReadMetadata<Halo3.scenario>();
+            //});
         }
 
         public DependencyReader CreateReader(IAddressTranslator translator) => CacheFactory.CreateReader(this, translator);
@@ -87,11 +85,11 @@ namespace Adjutant.Blam.MccHaloReach
         #endregion
     }
 
-    [FixedSize(40960)]
+    [FixedSize(12288)]
     public class CacheHeader
     {
         [Offset(8)]
-        public long FileSize { get; set; }
+        public int FileSize { get; set; }
 
         [Offset(16)]
         public Pointer64 IndexPointer { get; set; }
@@ -103,61 +101,51 @@ namespace Adjutant.Blam.MccHaloReach
         [NullTerminated(Length = 32)]
         public string BuildString { get; set; }
 
-        [Offset(348, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(336, MinVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(348)]
         public int StringCount { get; set; }
 
-        [Offset(352, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(340, MinVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(352)]
         public int StringTableSize { get; set; }
 
-        [Offset(356, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(344, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public Pointer StringTableIndexPointer { get; set; }
+        [Offset(356)]
+        public Pointer StringTableIndexPointer { get; set; } //actually an address
 
-        [Offset(360, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(348, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public Pointer StringTablePointer { get; set; }
+        [Offset(360)]
+        public Pointer StringTablePointer { get; set; } //actually an address
 
-        [Offset(444, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(440, MinVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(444)]
         [NullTerminated(Length = 256)]
         public string ScenarioName { get; set; }
 
-        [Offset(704, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(700, MinVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(704)]
         public int FileCount { get; set; }
 
-        [Offset(708, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(704, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public Pointer FileTablePointer { get; set; }
+        [Offset(708)]
+        public Pointer FileTablePointer { get; set; } //actually an address
 
-        [Offset(712, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(708, MinVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(712)]
         public int FileTableSize { get; set; }
 
-        [Offset(716, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(712, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public Pointer FileTableIndexPointer { get; set; }
+        [Offset(716)]
+        public Pointer FileTableIndexPointer { get; set; } //actually an address
 
-        [Offset(760, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(752, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public long VirtualBaseAddress { get; set; }
+        [Offset(760)]
+        public int VirtualBaseAddress { get; set; }
 
-        [Offset(1208, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(1200, MinVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(1208)]
         public int ResourceModifier { get; set; }
 
-        [Offset(1212, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(1204, MinVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(1212)]
         public int TagModifier { get; set; }
 
-        [Offset(1216, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(1208, MinVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(1216)]
         public int LocaleModifier { get; set; }
+
+        [Offset(1232)]
+        public int ResourceDataSize { get; set; }
     }
 
-    [FixedSize(76)]
+    [FixedSize(72)]
     public class TagIndex : ITagIndex<IndexItem>
     {
         private readonly CacheFile cache;
@@ -205,7 +193,7 @@ namespace Adjutant.Blam.MccHaloReach
                 reader.Seek(TagDataPointer.Address, SeekOrigin.Begin);
                 for (int i = 0; i < TagCount; i++)
                 {
-                    //every Reach map has an empty tag
+                    //every Halo3 map has an empty tag
                     var item = reader.ReadObject(new IndexItem(cache, i));
                     if (item.ClassIndex < 0) continue;
 
@@ -215,11 +203,10 @@ namespace Adjutant.Blam.MccHaloReach
                         sysItems.Add(item.ClassCode, item);
                 }
 
-                reader.Seek(cache.Header.FileTableIndexPointer.Address, SeekOrigin.Begin);
+                reader.Seek(cache.Header.FileTableIndexPointer.Value, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<int>(TagCount).ToArray();
 
-                reader.Seek(cache.Header.FileTablePointer.Address, SeekOrigin.Begin);
-                using (var tempReader = reader.CreateVirtualReader())
+                using (var tempReader = reader.CreateVirtualReader(cache.Header.FileTablePointer.Value))
                 {
                     for (int i = 0; i < TagCount; i++)
                     {
@@ -259,30 +246,18 @@ namespace Adjutant.Blam.MccHaloReach
             this.cache = cache;
             items = new string[cache.Header.StringCount];
 
-            var xml = Adjutant.Properties.Resources.MccHaloReachStrings;
-            switch (cache.BuildString)
-            {
-                case "Oct 24 2019 15:56:32":
-                    translator = new StringIdTranslator(xml, "U0");
-                    break;
-                case "Jan 30 2020 16:55:25":
-                    translator = new StringIdTranslator(xml, "U1");
-                    break;
-                default:
-                    translator = new StringIdTranslator(xml, "U2");
-                    break;
-            }
+            var xml = Adjutant.Properties.Resources.MccHalo3Strings;
+            translator = new StringIdTranslator(xml);
         }
 
         internal void ReadItems()
         {
             using (var reader = cache.CreateReader(cache.HeaderTranslator))
             {
-                reader.Seek(cache.Header.StringTableIndexPointer.Address, SeekOrigin.Begin);
+                reader.Seek(cache.Header.StringTableIndexPointer.Value, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<int>(cache.Header.StringCount).ToArray();
 
-                reader.Seek(cache.Header.StringTablePointer.Address, SeekOrigin.Begin);
-                using (var tempReader = reader.CreateVirtualReader())
+                using (var tempReader = reader.CreateVirtualReader(cache.Header.StringTablePointer.Value))
                 {
                     for (int i = 0; i < cache.Header.StringCount; i++)
                     {

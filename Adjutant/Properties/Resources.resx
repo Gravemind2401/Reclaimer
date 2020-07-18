@@ -151,6 +151,9 @@
   <data name="MccHalo2XStrings" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\mcchalo2xstrings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="MccHalo3Strings" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\mcchalo3strings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="MccHaloReachStrings" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\mcchaloreachstrings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

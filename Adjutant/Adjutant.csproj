@@ -141,6 +141,10 @@
     <Compile Include="Blam\MccHalo2X\HeaderAddressTranslator.cs" />
     <Compile Include="Blam\MccHalo2X\PointerExpander.cs" />
     <Compile Include="Blam\MccHalo2X\TagAddressTranslator.cs" />
+    <Compile Include="Blam\MccHalo3\CacheFile.cs" />
+    <Compile Include="Blam\MccHalo3\HeaderAddressTranslator.cs" />
+    <Compile Include="Blam\MccHalo3\PointerExpander.cs" />
+    <Compile Include="Blam\MccHalo3\TagAddressTranslator.cs" />
     <Compile Include="Blam\MccHaloReach\CacheFile.cs" />
     <Compile Include="Blam\HaloReach\cache_file_resource_gestalt.cs" />
     <Compile Include="Blam\HaloReach\cache_file_resource_layout_table.cs" />
@@ -261,6 +265,7 @@
   <ItemGroup>
     <Content Include="Resources\Halo1Classes.xml" />
     <Content Include="Resources\Halo2Classes.xml" />
+    <Content Include="Resources\MccHalo3Strings.xml" />
     <Content Include="Resources\Halo4Strings.xml" />
     <Content Include="Resources\Halo3VertexBuffer.xml" />
     <Content Include="Resources\Halo5VertexBuffer.xml">

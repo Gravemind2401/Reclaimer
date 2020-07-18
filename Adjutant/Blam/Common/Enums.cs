@@ -66,6 +66,12 @@ namespace Adjutant.Blam.Common
         Halo3Retail,
 
         [CacheGeneration(3)]
+        [BuildString("Jun  4 2020 20:29:31")] //flight 1
+        [BuildString("Jun 21 2020 16:34:20")] //flight 1 update
+        [BuildString("Jun 25 2020 15:02:49")] //release
+        MccHalo3,
+
+        [CacheGeneration(3)]
         [BuildString("13895.09.04.27.2201.atlas_relea")]
         Halo3ODST,
 

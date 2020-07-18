@@ -74,11 +74,15 @@ namespace Adjutant.Blam.Common
                 case CacheType.Halo3ODST:
                     return new Halo3.CacheFile(detail);
 
+                case CacheType.MccHalo3:
+                    return new MccHalo3.CacheFile(detail);
+
                 case CacheType.HaloReachBeta:
                 case CacheType.HaloReachRetail:
                     return new HaloReach.CacheFile(detail);
 
                 case CacheType.MccHaloReach:
+                case CacheType.MccHaloReachU3:
                     return new MccHaloReach.CacheFile(detail);
 
                 case CacheType.Halo4Beta:
