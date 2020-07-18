@@ -1,4 +1,5 @@
-﻿<stringDefinitions>
+﻿<!-- https://github.com/XboxChaos/Assembly/tree/dev/src/Blamite/Formats -->
+<stringDefinitions>
   <stringIDs id="beta" indexBits="16" namespaceBits="8" lengthBits="8">
     <namespace id="0x0" min="0x464" startIndex="0x13F3" />
     <namespace id="0x1" startIndex="0x464" />

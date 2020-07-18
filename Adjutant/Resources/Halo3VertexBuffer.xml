@@ -1,3 +1,4 @@
+<!-- https://github.com/XboxChaos/Assembly/tree/dev/src/Blamite/Formats -->
 <VertexDefinitions>
   <vertex type="0x00" name="s_world_vertex">
     <value stream="0" offset="0x0" type="Float32_3" usage="position" usageIndex="0" />
