@@ -237,38 +237,7 @@ namespace Reclaimer.Plugins
         private bool SaveImage(IIndexItem tag)
         {
             IBitmap bitmap;
-            switch (tag.CacheFile.CacheType)
-            {
-                case CacheType.Halo1PC:
-                case CacheType.Halo1CE:
-                    bitmap = tag.ReadMetadata<Adjutant.Blam.Halo1.bitmap>();
-                    break;
-
-                case CacheType.Halo2Xbox:
-                case CacheType.Halo2Vista:
-                    bitmap = tag.ReadMetadata<Adjutant.Blam.Halo2.bitmap>();
-                    break;
-
-                case CacheType.Halo3Beta:
-                case CacheType.Halo3Retail:
-                case CacheType.Halo3ODST:
-                    bitmap = tag.ReadMetadata<Adjutant.Blam.Halo3.bitmap>();
-                    break;
-
-                case CacheType.HaloReachBeta:
-                case CacheType.HaloReachRetail:
-                    bitmap = tag.ReadMetadata<Adjutant.Blam.HaloReach.bitmap>();
-                    break;
-
-                case CacheType.Halo4Beta:
-                case CacheType.Halo4Retail:
-                    bitmap = tag.ReadMetadata<Adjutant.Blam.Halo4.bitmap>();
-                    break;
-
-                default: return false;
-            }
-
-            if (SaveImage(bitmap, Settings.DataFolder))
+            if (ContentFactory.TryGetBitmapContent(tag, out bitmap) &&SaveImage(bitmap, Settings.DataFolder))
             {
                 LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
                 return true;
@@ -301,7 +270,14 @@ namespace Reclaimer.Plugins
 
                 var outputs = new List<Tuple<string, DecompressOptions>>();
 
-                var format = Settings.BitmapFormat == BitmapFormat.PNG ? ImageFormat.Png : ImageFormat.Tiff;
+                ImageFormat format; ;
+                if (Settings.BitmapFormat == BitmapFormat.PNG)
+                    format = ImageFormat.Png;
+                else if (Settings.BitmapFormat == BitmapFormat.TIF)
+                    format = ImageFormat.Tiff;
+                else //if (Settings.BitmapFormat == BitmapFormat.JPEG)
+                    format = ImageFormat.Jpeg;
+
                 if (Settings.BitmapMode == BitmapMode.Default)
                     outputs.Add(Tuple.Create(fileName + ext, DecompressOptions.Default));
                 else if (Settings.BitmapMode == BitmapMode.Bgr24)
@@ -362,38 +338,7 @@ namespace Reclaimer.Plugins
         private bool SaveModel(IIndexItem tag)
         {
             IRenderGeometry geometry;
-            switch (tag.CacheFile.CacheType)
-            {
-                case CacheType.Halo1PC:
-                case CacheType.Halo1CE:
-                    geometry = tag.ClassCode == "sbsp" ? (IRenderGeometry)tag.ReadMetadata<Adjutant.Blam.Halo1.scenario_structure_bsp>() : tag.ReadMetadata<Adjutant.Blam.Halo1.gbxmodel>();
-                    break;
-
-                case CacheType.Halo2Xbox:
-                case CacheType.Halo2Vista:
-                    geometry = tag.ClassCode == "sbsp" ? (IRenderGeometry)tag.ReadMetadata<Adjutant.Blam.Halo2.scenario_structure_bsp>() : tag.ReadMetadata<Adjutant.Blam.Halo2.render_model>();
-                    break;
-
-                case CacheType.Halo3Beta:
-                case CacheType.Halo3Retail:
-                case CacheType.Halo3ODST:
-                    geometry = tag.ClassCode == "sbsp" ? (IRenderGeometry)tag.ReadMetadata<Adjutant.Blam.Halo3.scenario_structure_bsp>() : tag.ReadMetadata<Adjutant.Blam.Halo3.render_model>();
-                    break;
-
-                case CacheType.HaloReachBeta:
-                case CacheType.HaloReachRetail:
-                    geometry = tag.ClassCode == "sbsp" ? (IRenderGeometry)tag.ReadMetadata<Adjutant.Blam.HaloReach.scenario_structure_bsp>() : tag.ReadMetadata<Adjutant.Blam.HaloReach.render_model>();
-                    break;
-
-                case CacheType.Halo4Beta:
-                case CacheType.Halo4Retail:
-                    geometry = tag.ClassCode == "sbsp" ? (IRenderGeometry)tag.ReadMetadata<Adjutant.Blam.Halo4.scenario_structure_bsp>() : tag.ReadMetadata<Adjutant.Blam.Halo4.render_model>();
-                    break;
-
-                default: return false;
-            }
-
-            if (SaveModel(geometry, Settings.DataFolder))
+            if (ContentFactory.TryGetGeometryContent(tag, out geometry) && SaveModel(geometry, Settings.DataFolder))
             {
                 LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
                 return true;
@@ -420,23 +365,7 @@ namespace Reclaimer.Plugins
         private bool SaveSound(IIndexItem tag)
         {
             ISoundContainer container;
-            switch (tag.CacheFile.CacheType)
-            {
-                case CacheType.Halo3Beta:
-                case CacheType.Halo3Retail:
-                case CacheType.Halo3ODST:
-                    container = tag.ReadMetadata<Adjutant.Blam.Halo3.sound>();
-                    break;
-
-                case CacheType.HaloReachBeta:
-                case CacheType.HaloReachRetail:
-                    container = tag.ReadMetadata<Adjutant.Blam.HaloReach.sound>();
-                    break;
-
-                default: return false;
-            }
-
-            if (SaveSound(container, Settings.DataFolder))
+            if (ContentFactory.TryGetSoundContent(tag, out container) && SaveSound(container, Settings.DataFolder))
             {
                 LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
                 return true;
@@ -526,7 +455,8 @@ namespace Reclaimer.Plugins
         {
             DDS,
             TIF,
-            PNG
+            PNG,
+            JPEG
         }
     }
 }

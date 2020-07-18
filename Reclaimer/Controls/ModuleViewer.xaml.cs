@@ -204,18 +204,12 @@ namespace Reclaimer.Controls
         {
             yield return item;
 
-            object meta = null;
-            try
-            {
-                if (item.ClassCode == "bitm")
-                    meta = item.ReadMetadata<bitmap>();
-                else if (item.ClassCode == "mode")
-                    meta = item.ReadMetadata<render_model>();
-            }
-            catch { }
+            object content;
+            try { ContentFactory.TryGetPrimaryContent(item, out content); }
+            catch { content = null; }
 
-            if (meta != null)
-                yield return meta;
+            if (content != null)
+                yield return content;
         }
 
         #region Event Handlers

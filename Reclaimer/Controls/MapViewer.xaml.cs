@@ -193,88 +193,9 @@ namespace Reclaimer.Controls
         {
             yield return item;
 
-            if (item.ClassCode == "bitm")
-            {
-                switch (item.CacheFile.CacheType)
-                {
-                    case CacheType.Halo1CE:
-                    case CacheType.Halo1PC:
-                        yield return item.ReadMetadata<Adjutant.Blam.Halo1.bitmap>();
-                        break;
-                    case CacheType.Halo2Xbox:
-                        yield return item.ReadMetadata<Adjutant.Blam.Halo2.bitmap>();
-                        break;
-                    case CacheType.Halo3Beta:
-                    case CacheType.Halo3Retail:
-                    case CacheType.Halo3ODST:
-                        yield return item.ReadMetadata<Adjutant.Blam.Halo3.bitmap>();
-                        break;
-                    case CacheType.HaloReachBeta:
-                    case CacheType.HaloReachRetail:
-                    case CacheType.MccHaloReach:
-                        yield return item.ReadMetadata<Adjutant.Blam.HaloReach.bitmap>();
-                        break;
-                    case CacheType.Halo4Beta:
-                    case CacheType.Halo4Retail:
-                        yield return item.ReadMetadata<Adjutant.Blam.Halo4.bitmap>();
-                        break;
-                    default: throw Exceptions.TagClassNotSupported(item);
-                }
-            }
-            else if (item.ClassCode == "mod2" || item.ClassCode == "mode")
-            {
-                switch (item.CacheFile.CacheType)
-                {
-                    case CacheType.Halo1CE:
-                    case CacheType.Halo1PC:
-                        yield return item.ReadMetadata<Adjutant.Blam.Halo1.gbxmodel>();
-                        break;
-                    case CacheType.Halo2Xbox:
-                        yield return item.ReadMetadata<Adjutant.Blam.Halo2.render_model>();
-                        break;
-                    case CacheType.Halo3Beta:
-                    case CacheType.Halo3Retail:
-                    case CacheType.Halo3ODST:
-                        yield return item.ReadMetadata<Adjutant.Blam.Halo3.render_model>();
-                        break;
-                    case CacheType.HaloReachBeta:
-                    case CacheType.HaloReachRetail:
-                    case CacheType.MccHaloReach:
-                        yield return item.ReadMetadata<Adjutant.Blam.HaloReach.render_model>();
-                        break;
-                    case CacheType.Halo4Beta:
-                    case CacheType.Halo4Retail:
-                        yield return item.ReadMetadata<Adjutant.Blam.Halo4.render_model>();
-                        break;
-                }
-            }
-            else if(item.ClassCode == "sbsp")
-            {
-                switch (item.CacheFile.CacheType)
-                {
-                    case CacheType.Halo1CE:
-                    case CacheType.Halo1PC:
-                        yield return item.ReadMetadata<Adjutant.Blam.Halo1.scenario_structure_bsp>();
-                        break;
-                    case CacheType.Halo2Xbox:
-                        yield return item.ReadMetadata<Adjutant.Blam.Halo2.scenario_structure_bsp>();
-                        break;
-                    case CacheType.Halo3Beta:
-                    case CacheType.Halo3Retail:
-                    case CacheType.Halo3ODST:
-                        yield return item.ReadMetadata<Adjutant.Blam.Halo3.scenario_structure_bsp>();
-                        break;
-                    case CacheType.HaloReachBeta:
-                    case CacheType.HaloReachRetail:
-                    case CacheType.MccHaloReach:
-                        yield return item.ReadMetadata<Adjutant.Blam.HaloReach.scenario_structure_bsp>();
-                        break;
-                    case CacheType.Halo4Beta:
-                    case CacheType.Halo4Retail:
-                        yield return item.ReadMetadata<Adjutant.Blam.Halo4.scenario_structure_bsp>();
-                        break;
-                }
-            }
+            object content;
+            if (ContentFactory.TryGetPrimaryContent(item, out content))
+                yield return content;
         }
 
         #region Event Handlers

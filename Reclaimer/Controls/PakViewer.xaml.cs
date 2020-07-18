@@ -2,12 +2,10 @@
 using Reclaimer.Models;
 using Reclaimer.Plugins;
 using Reclaimer.Utilities;
-using Reclaimer.Windows;
 using Studio.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -118,8 +116,9 @@ namespace Reclaimer.Controls
         {
             yield return item;
 
-            if (item.ItemType == PakItemType.Textures)
-                yield return new Adjutant.Saber3D.Halo1X.Texture((Adjutant.Saber3D.Halo1X.PakItem)item);
+            object content;
+            if (ContentFactory.TryGetPrimaryContent(item, out content))
+                yield return content;
         }
 
         #region Event Handlers
