@@ -87,7 +87,18 @@ namespace Adjutant.Blam.HaloReach
             using (var fs = new FileStream(targetFile, FileMode.Open, FileAccess.Read))
             using (var reader = new EndianReader(fs, cache.ByteOrder))
             {
-                reader.Seek(cache.CacheType >= CacheType.MccHaloReach ? 1208 : 1136, SeekOrigin.Begin);
+                switch (cache.CacheType)
+                {
+                    case CacheType.MccHaloReach:
+                        reader.Seek(1208, SeekOrigin.Begin);
+                        break;
+                    case CacheType.MccHaloReachU3:
+                        reader.Seek(1200, SeekOrigin.Begin);
+                        break;
+                    default:
+                        reader.Seek(1136, SeekOrigin.Begin); //xbox
+                        break;
+                }
                 var dataTableAddress = reader.ReadUInt32();
                 reader.Seek(dataTableAddress + page.DataOffset, SeekOrigin.Begin);
 

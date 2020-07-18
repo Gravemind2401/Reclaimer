@@ -103,44 +103,57 @@ namespace Adjutant.Blam.MccHaloReach
         [NullTerminated(Length = 32)]
         public string BuildString { get; set; }
 
-        [Offset(348)]
+        [Offset(348, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(336, MinVersion = (int)CacheType.MccHaloReachU3)]
         public int StringCount { get; set; }
 
-        [Offset(352)]
+        [Offset(352, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(340, MinVersion = (int)CacheType.MccHaloReachU3)]
         public int StringTableSize { get; set; }
 
-        [Offset(356)]
+        [Offset(356, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(344, MinVersion = (int)CacheType.MccHaloReachU3)]
         public Pointer StringTableIndexPointer { get; set; }
 
-        [Offset(360)]
+        [Offset(360, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(348, MinVersion = (int)CacheType.MccHaloReachU3)]
         public Pointer StringTablePointer { get; set; }
 
-        [Offset(444)]
+        [Offset(444, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(440, MinVersion = (int)CacheType.MccHaloReachU3)]
         [NullTerminated(Length = 256)]
         public string ScenarioName { get; set; }
 
-        [Offset(704)]
+        [Offset(704, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(700, MinVersion = (int)CacheType.MccHaloReachU3)]
         public int FileCount { get; set; }
 
-        [Offset(708)]
+        [Offset(708, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(704, MinVersion = (int)CacheType.MccHaloReachU3)]
         public Pointer FileTablePointer { get; set; }
 
-        [Offset(712)]
+        [Offset(712, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(708, MinVersion = (int)CacheType.MccHaloReachU3)]
         public int FileTableSize { get; set; }
 
-        [Offset(716)]
+        [Offset(716, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(712, MinVersion = (int)CacheType.MccHaloReachU3)]
         public Pointer FileTableIndexPointer { get; set; }
 
-        [Offset(760)]
+        [Offset(760, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(752, MinVersion = (int)CacheType.MccHaloReachU3)]
         public long VirtualBaseAddress { get; set; }
 
-        [Offset(1208)]
+        [Offset(1208, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(1200, MinVersion = (int)CacheType.MccHaloReachU3)]
         public int ResourceModifier { get; set; }
 
-        [Offset(1212)]
+        [Offset(1212, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(1204, MinVersion = (int)CacheType.MccHaloReachU3)]
         public int TagModifier { get; set; }
 
-        [Offset(1216)]
+        [Offset(1216, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(1208, MinVersion = (int)CacheType.MccHaloReachU3)]
         public int LocaleModifier { get; set; }
     }
 

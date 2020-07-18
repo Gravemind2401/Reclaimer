@@ -85,6 +85,10 @@ namespace Adjutant.Blam.Common
         [BuildString("Mar 24 2020 12:10:36")] //update 2
         MccHaloReach,
 
+        [CacheGeneration(3)]
+        [BuildString("Jun  5 2020 10:40:14")] //update 3
+        MccHaloReachU3,
+
         [CacheGeneration(4)]
         [BuildString("14064.12.05.05.1011.beta")]
         Halo4Beta,
