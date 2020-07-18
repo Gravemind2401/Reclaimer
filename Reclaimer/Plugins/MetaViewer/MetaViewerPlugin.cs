@@ -115,6 +115,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
                 case CacheType.HaloReachRetail:
                 case CacheType.MccHaloReach:
+                case CacheType.MccHaloReachU3:
                     return "Reach";
 
                 case CacheType.Halo4Beta:
