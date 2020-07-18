@@ -39,7 +39,7 @@ namespace Reclaimer.Plugins
         {
             var extracted = 0;
 
-            var ext = "." + Settings.OutputExtension;
+            var ext = "." + (Settings.NoConversion ? sound.DefaultExtension : Settings.OutputExtension);
             for (int i = 0; i < sound.Permutations.Count; i++)
             {
                 var permutation = sound.Permutations[i];
@@ -102,7 +102,7 @@ namespace Reclaimer.Plugins
             public string OutputNameFormat { get; set; }
             public bool LogFFmpegOutput { get; set; }
 
-            internal bool NoConversion => OutputExtension.Equals("xma", StringComparison.OrdinalIgnoreCase);
+            internal bool NoConversion => string.IsNullOrWhiteSpace(OutputExtension);
 
             public SoundExtractorSettings()
             {
