@@ -99,6 +99,7 @@ namespace Adjutant.Blam.HaloReach
                         reader.Seek(1136, SeekOrigin.Begin); //xbox
                         break;
                 }
+
                 var dataTableAddress = reader.ReadUInt32();
                 reader.Seek(dataTableAddress + page.DataOffset, SeekOrigin.Begin);
 

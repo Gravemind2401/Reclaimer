@@ -168,7 +168,7 @@ namespace Adjutant.Blam.Halo3
             using (var reader = new EndianReader(ms, cache.ByteOrder))
             {
                 var doc = new XmlDocument();
-                doc.LoadXml(Adjutant.Properties.Resources.Halo3VertexBuffer);
+                doc.LoadXml(cache.CacheType == CacheType.MccHalo3 ? Adjutant.Properties.Resources.MccHalo3VertexBuffer : Adjutant.Properties.Resources.Halo3VertexBuffer);
 
                 var lookup = doc.DocumentElement.ChildNodes.Cast<XmlNode>()
                     .ToDictionary(n => Convert.ToInt32(n.Attributes[XmlVertexField.Type].Value, 16));

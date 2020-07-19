@@ -72,6 +72,7 @@
     <Compile Include="Blam\Halo4\CacheFile.cs" />
     <Compile Include="Blam\Halo5\Module.cs" />
     <Compile Include="Blam\MccHalo2X\CacheFile.cs" />
+    <Compile Include="Blam\MccHalo3\CacheFile.cs" />
     <Compile Include="Blam\MccHaloReach\CacheFile.cs" />
     <Compile Include="Blam\HaloReach\CacheFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

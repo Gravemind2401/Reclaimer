@@ -59,12 +59,12 @@ namespace Adjutant.Blam.MccHalo3
                 StringIndex.ReadItems();
             }
 
-            //Task.Factory.StartNew(() =>
-            //{
-            //    TagIndex.GetGlobalTag("play")?.ReadMetadata<Halo3.cache_file_resource_layout_table>();
-            //    TagIndex.GetGlobalTag("zone")?.ReadMetadata<Halo3.cache_file_resource_gestalt>();
-            //    TagIndex.GetGlobalTag("scnr")?.ReadMetadata<Halo3.scenario>();
-            //});
+            Task.Factory.StartNew(() =>
+            {
+                TagIndex.GetGlobalTag("play")?.ReadMetadata<Halo3.cache_file_resource_layout_table>();
+                TagIndex.GetGlobalTag("zone")?.ReadMetadata<Halo3.cache_file_resource_gestalt>();
+                TagIndex.GetGlobalTag("scnr")?.ReadMetadata<Halo3.scenario>();
+            });
         }
 
         public DependencyReader CreateReader(IAddressTranslator translator) => CacheFactory.CreateReader(this, translator);
@@ -108,10 +108,10 @@ namespace Adjutant.Blam.MccHalo3
         public int StringTableSize { get; set; }
 
         [Offset(356)]
-        public Pointer StringTableIndexPointer { get; set; } //actually an address
+        public int StringTableIndexAddress { get; set; }
 
         [Offset(360)]
-        public Pointer StringTablePointer { get; set; } //actually an address
+        public int StringTableAddress { get; set; }
 
         [Offset(444)]
         [NullTerminated(Length = 256)]
@@ -121,16 +121,16 @@ namespace Adjutant.Blam.MccHalo3
         public int FileCount { get; set; }
 
         [Offset(708)]
-        public Pointer FileTablePointer { get; set; } //actually an address
+        public int FileTableAddress { get; set; }
 
         [Offset(712)]
         public int FileTableSize { get; set; }
 
         [Offset(716)]
-        public Pointer FileTableIndexPointer { get; set; } //actually an address
+        public int FileTableIndexAddress { get; set; }
 
         [Offset(760)]
-        public int VirtualBaseAddress { get; set; }
+        public long VirtualBaseAddress { get; set; }
 
         [Offset(1208)]
         public int ResourceModifier { get; set; }
@@ -203,10 +203,10 @@ namespace Adjutant.Blam.MccHalo3
                         sysItems.Add(item.ClassCode, item);
                 }
 
-                reader.Seek(cache.Header.FileTableIndexPointer.Value, SeekOrigin.Begin);
+                reader.Seek(cache.Header.FileTableIndexAddress, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<int>(TagCount).ToArray();
 
-                using (var tempReader = reader.CreateVirtualReader(cache.Header.FileTablePointer.Value))
+                using (var tempReader = reader.CreateVirtualReader(cache.Header.FileTableAddress))
                 {
                     for (int i = 0; i < TagCount; i++)
                     {
@@ -254,10 +254,10 @@ namespace Adjutant.Blam.MccHalo3
         {
             using (var reader = cache.CreateReader(cache.HeaderTranslator))
             {
-                reader.Seek(cache.Header.StringTableIndexPointer.Value, SeekOrigin.Begin);
+                reader.Seek(cache.Header.StringTableIndexAddress, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<int>(cache.Header.StringCount).ToArray();
 
-                using (var tempReader = reader.CreateVirtualReader(cache.Header.StringTablePointer.Value))
+                using (var tempReader = reader.CreateVirtualReader(cache.Header.StringTableAddress))
                 {
                     for (int i = 0; i < cache.Header.StringCount; i++)
                     {
@@ -367,7 +367,12 @@ namespace Adjutant.Blam.MccHalo3
             {
                 reader.RegisterInstance<IIndexItem>(this);
 
-                reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
+                // hack to redirect any play tag reads to the start of the zone tag when there is no play tag
+                if (ClassCode == "play" && MetaPointer.Value == 0)
+                    reader.Seek(cache.TagIndex.GetGlobalTag("zone").MetaPointer.Address + 28, SeekOrigin.Begin);
+                else
+                    reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
+
                 return (T)reader.ReadObject(typeof(T), (int)cache.CacheType);
             }
         }

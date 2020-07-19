@@ -276,6 +276,9 @@
     <Content Include="Resources\HaloReachStrings.xml" />
     <Content Include="Resources\MccHalo2XStrings.xml" />
     <Content Include="Resources\MccHaloReachStrings.xml" />
+    <Content Include="Resources\MccHalo3VertexBuffer.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Resources\MccHaloReachVertexBuffer.xml">
       <SubType>Designer</SubType>
     </Content>

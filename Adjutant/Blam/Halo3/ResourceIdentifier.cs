@@ -91,15 +91,39 @@ namespace Adjutant.Blam.Halo3
             using (var fs = new FileStream(targetFile, FileMode.Open, FileAccess.Read))
             using (var reader = new EndianReader(fs, cache.ByteOrder))
             {
-                reader.Seek(1136, SeekOrigin.Begin);
-                var dataTableAddress = reader.ReadInt32();
+                int dataTableAddress;
+                switch (cache.CacheType)
+                {
+                    case CacheType.MccHalo3:
+                        if (page.CacheIndex >= 0)
+                            dataTableAddress = 12288; //header size
+                        else
+                        {
+                            reader.Seek(1208, SeekOrigin.Begin);
+                            dataTableAddress = reader.ReadInt32();
+                        }
+                        break;
+                    default:
+                        reader.Seek(1136, SeekOrigin.Begin); //xbox
+                        dataTableAddress = reader.ReadInt32();
+                        break;
+                }
+
                 reader.Seek(dataTableAddress + page.DataOffset, SeekOrigin.Begin);
 
-                using (var ds = new DeflateStream(fs, CompressionMode.Decompress))
-                using (var reader2 = new BinaryReader(ds))
+                if (page.CompressedSize < page.DecompressedSize)
                 {
-                    reader2.ReadBytes(chunkOffset);
-                    return reader2.ReadBytes(page.DecompressedSize - chunkOffset);
+                    using (var ds = new DeflateStream(fs, CompressionMode.Decompress))
+                    using (var reader2 = new BinaryReader(ds))
+                    {
+                        reader2.ReadBytes(chunkOffset);
+                        return reader2.ReadBytes(page.DecompressedSize - chunkOffset);
+                    }
+                }
+                else
+                {
+                    reader.Seek(chunkOffset, SeekOrigin.Current);
+                    return reader.ReadBytes(page.DecompressedSize);
                 }
             }
         }
@@ -110,10 +134,10 @@ namespace Adjutant.Blam.Halo3
             var directory = Directory.GetParent(cache.FileName).FullName;
             var entry = resourceGestalt.ResourceEntries[ResourceIndex];
 
-            var useSecondary = mode == PageType.Secondary || (mode == PageType.Auto && entry.SecondarOffset > 0);
+            var useSecondary = mode == PageType.Secondary || (mode == PageType.Auto && entry.SecondaryOffset > 0);
 
-            var address = useSecondary ? entry.SecondarOffset : entry.PrimaryOffset;
-            var size = useSecondary ? entry.SecondarSize : entry.PrimarySize;
+            var address = useSecondary ? entry.SecondaryOffset : entry.PrimaryOffset;
+            var size = useSecondary ? entry.SecondarySize : entry.PrimarySize;
 
             var targetFile = entry.CacheIndex == -1 ? cache.FileName : Path.Combine(directory, shared_map);
 

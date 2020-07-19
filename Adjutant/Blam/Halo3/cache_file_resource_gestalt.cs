@@ -12,15 +12,21 @@ namespace Adjutant.Blam.Halo3
     public class cache_file_resource_gestalt
     {
         [Offset(36, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(88, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(88, MinVersion = (int)CacheType.Halo3Retail, MaxVersion = (int)CacheType.MccHalo3)]
+        [Offset(100, MinVersion = (int)CacheType.MccHalo3, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(88, MinVersion = (int)CacheType.Halo3ODST)]
         public BlockCollection<ResourceEntryBlock> ResourceEntries { get; set; }
 
         [Offset(132, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(316, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(316, MinVersion = (int)CacheType.Halo3Retail, MaxVersion = (int)CacheType.MccHalo3)]
+        [Offset(328, MinVersion = (int)CacheType.MccHalo3, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(316, MinVersion = (int)CacheType.Halo3ODST)]
         public int FixupDataSize { get; set; }
 
         [Offset(144, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(328, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(328, MinVersion = (int)CacheType.Halo3Retail, MaxVersion = (int)CacheType.MccHalo3)]
+        [Offset(340, MinVersion = (int)CacheType.MccHalo3, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(328, MinVersion = (int)CacheType.Halo3ODST)]
         public Pointer FixupDataPointer { get; set; }
     }
 
@@ -68,11 +74,11 @@ namespace Adjutant.Blam.Halo3
 
         [Offset(56)]
         [VersionSpecific((int)CacheType.Halo3Beta)]
-        public int SecondarOffset { get; set; }
+        public int SecondaryOffset { get; set; }
 
         [Offset(60)]
         [VersionSpecific((int)CacheType.Halo3Beta)]
-        public int SecondarSize { get; set; }
+        public int SecondarySize { get; set; }
 
         [Offset(72, MaxVersion = (int)CacheType.Halo3Retail)]
         [Offset(40, MinVersion = (int)CacheType.Halo3Retail)]

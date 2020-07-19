@@ -19,7 +19,9 @@ namespace Adjutant.Blam.Halo3
         [Offset(36)]
         public BlockCollection<SizeGroupBlock> SizeGroups { get; set; }
 
-        [Offset(48)]
+        [Offset(48, MaxVersion = (int)CacheType.MccHalo3)]
+        [Offset(60, MinVersion = (int)CacheType.MccHalo3, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(48, MinVersion = (int)CacheType.Halo3ODST)]
         public BlockCollection<SegmentBlock> Segments { get; set; }
     }
 

@@ -119,7 +119,9 @@ namespace Adjutant.Blam.Halo3
                 data = TextureUtils.ApplyCrop(data, submap.BitmapFormat, submap.FaceCount, virtualWidth, virtualHeight, submap.Width, submap.Height * submap.FaceCount);
 
             DdsImage dds;
-            if (dxgiLookup.ContainsKey(submap.BitmapFormat))
+            if (cache.CacheType == CacheType.MccHalo3 && submap.BitmapFormat == TextureFormat.DXN)
+                dds = new DdsImage(submap.Height, submap.Width, XboxFormat.DXN_SNorm, DxgiTextureType.Texture2D, data);
+            else if (dxgiLookup.ContainsKey(submap.BitmapFormat))
                 dds = new DdsImage(submap.Height, submap.Width, dxgiLookup[submap.BitmapFormat], DxgiTextureType.Texture2D, data);
             else if (xboxLookup.ContainsKey(submap.BitmapFormat))
                 dds = new DdsImage(submap.Height, submap.Width, xboxLookup[submap.BitmapFormat], DxgiTextureType.Texture2D, data);
@@ -177,7 +179,8 @@ namespace Adjutant.Blam.Halo3
         public RealVector2D RegPoint { get; set; }
     }
 
-    [FixedSize(48)]
+    [FixedSize(48, MaxVersion = (int)CacheType.MccHalo3)]
+    [FixedSize(56, MinVersion = (int)CacheType.MccHalo3)]
     public class BitmapDataBlock
     {
         [Offset(0)]

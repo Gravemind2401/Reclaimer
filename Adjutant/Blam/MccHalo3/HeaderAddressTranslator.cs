@@ -12,7 +12,7 @@ namespace Adjutant.Blam.MccHalo3
     {
         private readonly CacheFile cache;
 
-        private int Magic => cache.Header.StringTableIndexPointer.Value - 12288; //size of header
+        private int Magic => cache.Header.StringTableIndexAddress - 12288; //size of header
 
         public HeaderAddressTranslator(CacheFile cache)
         {

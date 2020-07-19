@@ -11,7 +11,7 @@ namespace Adjutant.Blam.MccHalo3
     public class TagAddressTranslator : IAddressTranslator
     {
         private readonly CacheFile cache;
-        private int Magic => cache.Header.VirtualBaseAddress - (cache.Header.TagDataAddress + cache.Header.TagModifier);
+        private long Magic => cache.Header.VirtualBaseAddress - (cache.Header.TagDataAddress + cache.Header.TagModifier);
 
         public TagAddressTranslator(CacheFile cache)
         {
@@ -20,12 +20,12 @@ namespace Adjutant.Blam.MccHalo3
 
         public long GetAddress(long pointer)
         {
-            return (int)pointer - Magic;
+            return pointer - Magic;
         }
 
         public long GetPointer(long address)
         {
-            return (int)address + Magic;
+            return address + Magic;
         }
     }
 }
