@@ -53,6 +53,18 @@ namespace Adjutant.Geometry
         IReadOnlyList<IGeometryMesh> IGeometryModel.Meshes => Meshes;
 
         #endregion
+
+        public void Dispose()
+        {
+            Nodes.Clear();
+            MarkerGroups.Clear();
+            Regions.Clear();
+            Materials.Clear();
+            Bounds.Clear();
+            foreach (var mesh in Meshes)
+                mesh.Dispose();
+            Meshes.Clear();
+        }
     }
 
     public class GeometryNode : IGeometryNode
@@ -161,6 +173,13 @@ namespace Adjutant.Geometry
         IReadOnlyList<IGeometrySubmesh> IGeometryMesh.Submeshes => Submeshes; 
 
         #endregion
+
+        public void Dispose()
+        {
+            Vertices = null;
+            Indicies = null;
+            Submeshes.Clear();
+        }
     }
 
     public class GeometrySubmesh : IGeometrySubmesh

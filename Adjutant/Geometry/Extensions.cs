@@ -188,6 +188,13 @@ namespace Adjutant.Geometry
                     return mergedVertices;
                 }
             }
+
+            public void Dispose()
+            {
+                mergedIndices.Clear();
+                mergedVertices.Clear();
+                mergedSubmeshes.Clear();
+            }
         }
 
         public static void WriteAMF(this IGeometryModel model, string fileName, float scale)

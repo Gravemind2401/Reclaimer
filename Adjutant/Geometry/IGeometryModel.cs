@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Geometry
 {
-    public interface IGeometryModel
+    public interface IGeometryModel : IDisposable
     {
         Matrix4x4 CoordinateSystem { get; }
 
@@ -64,7 +64,7 @@ namespace Adjutant.Geometry
         IRealVector4D Rotation { get; }
     }
 
-    public interface IGeometryMesh
+    public interface IGeometryMesh : IDisposable
     {
         VertexWeights VertexWeights { get; }
         IndexFormat IndexFormat { get; }
