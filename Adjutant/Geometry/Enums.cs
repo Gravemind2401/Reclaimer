@@ -28,9 +28,10 @@ namespace Adjutant.Geometry
     [Flags]
     public enum MaterialFlags
     {
-        Transparent,
-        ColourChange,
-        TerrainBlend
+        None = 0,
+        Transparent = 1,
+        ColourChange = 2,
+        TerrainBlend = 4
     }
 
     public enum MaterialUsage

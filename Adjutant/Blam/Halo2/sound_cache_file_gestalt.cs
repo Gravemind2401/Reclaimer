@@ -88,7 +88,13 @@ namespace Adjutant.Blam.Halo2
         [Offset(0)]
         public DataPointer DataPointer { get; set; }
 
+        private int dataSize; //maybe 24-bit, maybe 29 with 3 flags, maybe even just 16-bit
+
         [Offset(4)]
-        public int DataSize { get; set; }
+        public int DataSize
+        {
+            get { return dataSize; }
+            set { dataSize = value & 0x00FFFFFF; }
+        }
     }
 }
