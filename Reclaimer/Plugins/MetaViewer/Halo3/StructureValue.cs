@@ -65,7 +65,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         public StructureValue(XmlNode node, ICacheFile cache, EndianReader reader, long baseAddress)
             : base(node, cache, reader, baseAddress)
         {
-            BlockSize = node.GetIntAttribute("entrySize", "size") ?? 0;
+            BlockSize = node.GetIntAttribute("elementSize", "entrySize", "size") ?? 0;
             Children = new ObservableCollection<MetaValue>();
             IsExpanded = true;
             ReadValue(reader);

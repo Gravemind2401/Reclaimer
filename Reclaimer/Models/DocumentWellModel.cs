@@ -40,8 +40,6 @@ namespace Reclaimer.Models
                 Height = e.VisualBounds.Height
             };
 
-            model.Host = wnd;
-
             if (ParentContainer != null && ParentContainer.IsRafted && !ParentContainer.AllTabs.Any())
                 ParentContainer.Host.TransitionTo(wnd);
             else

@@ -68,5 +68,10 @@ namespace Reclaimer.Utilities
             };
             prev.Close();
         }
+
+        public static TValue ValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key)
+        {
+            return dic.ContainsKey(key) ? dic[key] : default(TValue);
+        }
     }
 }

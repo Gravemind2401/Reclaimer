@@ -33,7 +33,7 @@ namespace Reclaimer.Windows
         {
             InitializeComponent();
 
-            Model = new DockContainerModel();
+            Model = new DockContainerModel { Host = this };
             Model.Content = DocPanel = new DocumentPanelModel();
         }
 
@@ -43,6 +43,7 @@ namespace Reclaimer.Windows
 
             Model = container;
             DocPanel = panel;
+            Model.Host = this;
         }
 
         private void RaftedWindow_Closed(object sender, EventArgs e)
