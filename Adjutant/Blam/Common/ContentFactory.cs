@@ -57,6 +57,9 @@ namespace Adjutant.Blam.Common
         {
             content = null;
 
+            if (item == null)
+                return false;
+
             if (item.ClassCode != bitmap)
                 return false;
 
@@ -95,6 +98,9 @@ namespace Adjutant.Blam.Common
         public static bool TryGetGeometryContent(IIndexItem item, out IRenderGeometry content)
         {
             content = null;
+
+            if (item == null)
+                return false;
 
             if (item.ClassCode == gbxmodel || item.ClassCode == render_model)
             {
@@ -164,6 +170,9 @@ namespace Adjutant.Blam.Common
         public static bool TryGetSoundContent(IIndexItem item, out ISoundContainer content)
         {
             content = null;
+
+            if (item == null)
+                return false;
 
             if (item.ClassCode != sound)
                 return false;
