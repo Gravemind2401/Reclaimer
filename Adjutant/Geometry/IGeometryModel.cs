@@ -66,6 +66,8 @@ namespace Adjutant.Geometry
 
     public interface IGeometryMesh : IDisposable
     {
+        bool IsInstancing { get; }
+
         VertexWeights VertexWeights { get; }
         IndexFormat IndexFormat { get; }
 

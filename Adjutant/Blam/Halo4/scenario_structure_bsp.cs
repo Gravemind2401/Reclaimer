@@ -168,10 +168,11 @@ namespace Adjutant.Blam.Halo4
                 model.Regions.Add(sectionRegion);
             }
 
-            model.Meshes.AddRange(Halo4Common.GetMeshes(cache, lightmapData.ResourcePointer, lightmapData.Sections, (s) =>
+            model.Meshes.AddRange(Halo4Common.GetMeshes(cache, lightmapData.ResourcePointer, lightmapData.Sections, (s, m) =>
             {
                 var index = (short)lightmapData.Sections.IndexOf(s);
-                return index >= lightmapData.BoundingBoxes.Count ? (short?)null : index;
+                m.BoundsIndex = index >= lightmapData.BoundingBoxes.Count ? (short?)null : index;
+                m.IsInstancing = index < lightmapData.BoundingBoxes.Count;
             }));
 
             return model;

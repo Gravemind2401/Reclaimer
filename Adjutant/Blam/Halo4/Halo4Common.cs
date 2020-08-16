@@ -94,7 +94,7 @@ namespace Adjutant.Blam.Halo4
             }
         }
 
-        public static IEnumerable<GeometryMesh> GetMeshes(ICacheFile cache, ResourceIdentifier resourcePointer, IList<SectionBlock> sections, Func<SectionBlock, short?> boundsIndex, Func<int, int, int> mapNode = null)
+        public static IEnumerable<GeometryMesh> GetMeshes(ICacheFile cache, ResourceIdentifier resourcePointer, IList<SectionBlock> sections, Action<SectionBlock, GeometryMesh> setProps, Func<int, int, int> mapNode = null)
         {
             VertexBufferInfo[] vertexBufferInfo;
             IndexBufferInfo[] indexBufferInfo;
@@ -157,9 +157,10 @@ namespace Adjutant.Blam.Halo4
                         IndexFormat = iInfo.IndexFormat,
                         Vertices = new IVertex[vInfo.VertexCount],
                         VertexWeights = skinType,
-                        NodeIndex = section.NodeIndex == byte.MaxValue ? (byte?)null : section.NodeIndex,
-                        BoundsIndex = boundsIndex(section)
+                        NodeIndex = section.NodeIndex == byte.MaxValue ? (byte?)null : section.NodeIndex
                     };
+
+                    setProps(section, mesh);
 
                     mesh.Submeshes.AddRange(
                         section.Submeshes.Select(s => new GeometrySubmesh

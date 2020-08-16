@@ -149,6 +149,8 @@ namespace Adjutant.Geometry
 
     public class GeometryMesh : IGeometryMesh
     {
+        public bool IsInstancing { get; set; }
+
         public VertexWeights VertexWeights { get; set; }
         public IndexFormat IndexFormat { get; set; }
 

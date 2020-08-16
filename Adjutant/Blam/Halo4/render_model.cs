@@ -104,7 +104,7 @@ namespace Adjutant.Blam.Halo4
             if (Flags.HasFlag(ModelFlags.UseLocalNodes))
                 mapNodeFunc = (si, i) => NodeMaps[si].Indices[i];
 
-            model.Meshes.AddRange(Halo4Common.GetMeshes(cache, ResourcePointer, Sections, s => 0, mapNodeFunc));
+            model.Meshes.AddRange(Halo4Common.GetMeshes(cache, ResourcePointer, Sections, (s, m) => m.BoundsIndex = 0, mapNodeFunc));
 
             CreateInstanceMeshes(model);
 

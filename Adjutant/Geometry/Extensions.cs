@@ -100,6 +100,8 @@ namespace Adjutant.Geometry
                 this.meshCount = meshCount;
             }
 
+            public bool IsInstancing => false;
+
             public short? BoundsIndex => model.Meshes[meshIndex].BoundsIndex;
 
             public byte? NodeIndex => model.Meshes[meshIndex].NodeIndex;

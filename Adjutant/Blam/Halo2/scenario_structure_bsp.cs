@@ -171,7 +171,7 @@ namespace Adjutant.Blam.Halo2
                     reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
                     var submeshes = reader.ReadEnumerable<SubmeshDataBlock>(submeshResource.Size / 72).ToList();
 
-                    var mesh = new GeometryMesh();
+                    var mesh = new GeometryMesh { IsInstancing = true };
 
                     if (section.FaceCount * 3 == sectionInfo.IndexCount)
                         mesh.IndexFormat = IndexFormat.TriangleList;

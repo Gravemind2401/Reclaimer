@@ -141,10 +141,11 @@ namespace Adjutant.Blam.HaloReach
                 model.Regions.Add(sectionRegion);
             }
 
-            model.Meshes.AddRange(HaloReachCommon.GetMeshes(cache, lightmapData.ResourcePointer, lightmapData.Sections, (s) =>
+            model.Meshes.AddRange(HaloReachCommon.GetMeshes(cache, lightmapData.ResourcePointer, lightmapData.Sections, (s, m) =>
             {
                 var index = (short)lightmapData.Sections.IndexOf(s);
-                return index >= BoundingBoxes.Count ? (short?)null : index;
+                m.BoundsIndex = index >= BoundingBoxes.Count ? (short?)null : index;
+                m.IsInstancing = index < BoundingBoxes.Count;
             }));
 
             return model;
