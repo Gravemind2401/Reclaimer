@@ -59,6 +59,8 @@ namespace Adjutant.Blam.Halo5
             { TextureFormat.Y8, XboxFormat.Y8 }
         };
 
+        int IBitmap.Id => item.GlobalTagId;
+
         string IBitmap.Name => item.FullPath;
 
         string IBitmap.Class => item.ClassName;

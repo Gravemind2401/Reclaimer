@@ -85,6 +85,8 @@ namespace Adjutant.Blam.HaloReach
             Orientation6 = RotateFlipType.Rotate180FlipNone
         };
 
+        int IBitmap.Id => item.Id;
+
         string IBitmap.Name => item.FullPath;
 
         string IBitmap.Class => item.ClassName;

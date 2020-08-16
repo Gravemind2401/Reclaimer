@@ -11,6 +11,7 @@ namespace Adjutant.Utilities
 {
     public interface IBitmap
     {
+        int Id { get; }
         string Name { get; }
         string Class { get; }
         int SubmapCount { get; }

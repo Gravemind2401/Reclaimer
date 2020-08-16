@@ -42,6 +42,8 @@ namespace Adjutant.Saber3D.Halo1X
             { TextureFormat.DXN, XboxFormat.DXN }
         };
 
+        int IBitmap.Id => item.Address;
+
         string IBitmap.Name => item.Name;
 
         string IBitmap.Class => item.ItemType.ToString();
