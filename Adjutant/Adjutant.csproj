@@ -67,6 +67,7 @@
     <Compile Include="Audio\PcmHeader.cs" />
     <Compile Include="Audio\XboxAdpcmHeader.cs" />
     <Compile Include="Audio\XmaHeader.cs" />
+    <Compile Include="Blam\Common\TagBlock.cs" />
     <Compile Include="Blam\Common\CacheDetail.cs" />
     <Compile Include="Blam\Common\CacheFactory.cs" />
     <Compile Include="Blam\Common\Enums.cs" />
