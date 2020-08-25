@@ -62,8 +62,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         IEnumerable<MetaValueBase> IExpandable.Children => Children;
 
-        public StructureValue(XmlNode node, ICacheFile cache, EndianReader reader, long baseAddress)
-            : base(node, cache, reader, baseAddress)
+        public StructureValue(XmlNode node, MetaContext context, EndianReader reader, long baseAddress)
+            : base(node, context, reader, baseAddress)
         {
             BlockSize = node.GetIntAttribute("elementSize", "entrySize", "size") ?? 0;
             Children = new ObservableCollection<MetaValue>();
@@ -81,7 +81,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
                 BlockCount = reader.ReadInt32();
-                BlockAddress = new Pointer(reader.ReadInt32(), cache.DefaultAddressTranslator).Address;
+                BlockAddress = new Pointer(reader.ReadInt32(), context.Cache.DefaultAddressTranslator).Address;
 
                 if (BlockCount <= 0 || BlockAddress + BlockCount * BlockSize > reader.BaseStream.Length)
                 {
@@ -91,7 +91,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
                 blockIndex = 0;
                 foreach (XmlNode n in node.ChildNodes)
-                    Children.Add(GetMetaValue(n, cache, BlockAddress));
+                    Children.Add(GetMetaValue(n, context, BlockAddress));
 
                 RaisePropertyChanged(nameof(BlockIndex));
                 RaisePropertyChanged(nameof(HasChildren));
@@ -131,7 +131,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             if (BlockCount <= 0)
                 return;
 
-            using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
+            using (var reader = context.Cache.CreateReader(context.Cache.DefaultAddressTranslator))
             {
                 foreach (var c in Children)
                 {

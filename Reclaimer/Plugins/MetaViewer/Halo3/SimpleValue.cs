@@ -21,8 +21,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             set { SetMetaProperty(ref _value, value); }
         }
 
-        public SimpleValue(XmlNode node, ICacheFile cache, EndianReader reader, long baseAddress)
-            : base(node, cache, reader, baseAddress)
+        public SimpleValue(XmlNode node, MetaContext context, EndianReader reader, long baseAddress)
+            : base(node, context, reader, baseAddress)
         {
             ReadValue(reader);
         }

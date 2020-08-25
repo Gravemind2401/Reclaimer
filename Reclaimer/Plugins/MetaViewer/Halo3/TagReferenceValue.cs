@@ -39,10 +39,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         public ObservableCollection<ComboBoxItem> ClassOptions { get; }
         public ObservableCollection<ComboBoxItem<IIndexItem>> TagOptions { get; }
 
-        public TagReferenceValue(XmlNode node, ICacheFile cache, EndianReader reader, long baseAddress)
-            : base(node, cache, reader, baseAddress)
+        public TagReferenceValue(XmlNode node, MetaContext context, EndianReader reader, long baseAddress)
+            : base(node, context, reader, baseAddress)
         {
-            var allClasses = cache.TagIndex
+            var allClasses = context.Cache.TagIndex
                 .Select(i => new ComboBoxItem(i.ClassName))
                 .Distinct()
                 .OrderBy(s => s.Label);
@@ -56,7 +56,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         private void OnClassChanged()
         {
             TagOptions.Clear();
-            var classTags = from t in cache.TagIndex
+            var classTags = from t in context.Cache.TagIndex
                             where t.ClassName == SelectedClass.Label
                             orderby t.FullPath
                             select t;
@@ -75,7 +75,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                referenceValue = new TagReference(cache, reader);
+                referenceValue = new TagReference(context.Cache, reader);
                 SelectedClass = ClassOptions.FirstOrDefault(i => i.Label == referenceValue.Tag?.ClassName);
                 SelectedItem = TagOptions.FirstOrDefault(i => i.Context != null && i.Context == referenceValue.Tag);
 

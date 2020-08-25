@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Reclaimer.Utilities;
 using System.Runtime.CompilerServices;
 using Prism.Mvvm;
 using Adjutant.Blam.Common;
@@ -65,44 +64,44 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public abstract void WriteValue(EndianWriter writer);
 
-        public static Halo3.MetaValue GetMetaValue(XmlNode node, ICacheFile cache, long baseAddress)
+        public static Halo3.MetaValue GetMetaValue(XmlNode node, Halo3.MetaContext context, long baseAddress)
         {
-            using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
+            using (var reader = context.Cache.CreateReader(context.Cache.DefaultAddressTranslator))
             {
                 reader.Seek(baseAddress, SeekOrigin.Begin);
 
                 var def = FieldDefinition.GetHalo3Definition(node);
 
                 if (def.Components > 1 && def.ValueType == MetaValueType.Float32)
-                    return new Halo3.MultiValue(node, cache, reader, baseAddress);
+                    return new Halo3.MultiValue(node, context, reader, baseAddress);
 
                 switch (def.ValueType)
                 {
                     case MetaValueType.Structure:
-                        return new Halo3.StructureValue(node, cache, reader, baseAddress);
+                        return new Halo3.StructureValue(node, context, reader, baseAddress);
 
                     case MetaValueType.String:
                     case MetaValueType.StringId:
-                        return new Halo3.StringValue(node, cache, reader, baseAddress);
+                        return new Halo3.StringValue(node, context, reader, baseAddress);
 
                     case MetaValueType.TagReference:
-                        return new Halo3.TagReferenceValue(node, cache, reader, baseAddress);
+                        return new Halo3.TagReferenceValue(node, context, reader, baseAddress);
 
                     case MetaValueType.Revisions:
                     case MetaValueType.Comment:
-                        return new Halo3.CommentValue(node, cache, reader, baseAddress);
+                        return new Halo3.CommentValue(node, context, reader, baseAddress);
 
                     case MetaValueType.Bitmask8:
                     case MetaValueType.Bitmask16:
                     case MetaValueType.Bitmask32:
-                        return new Halo3.BitmaskValue(node, cache, reader, baseAddress);
+                        return new Halo3.BitmaskValue(node, context, reader, baseAddress);
 
                     case MetaValueType.Enum8:
                     case MetaValueType.Enum16:
                     case MetaValueType.Enum32:
-                        return new Halo3.EnumValue(node, cache, reader, baseAddress);
+                        return new Halo3.EnumValue(node, context, reader, baseAddress);
 
-                    default: return new Halo3.SimpleValue(node, cache, reader, baseAddress);
+                    default: return new Halo3.SimpleValue(node, context, reader, baseAddress);
                 }
             }
         }

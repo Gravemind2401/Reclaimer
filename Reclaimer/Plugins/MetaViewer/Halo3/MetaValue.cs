@@ -11,14 +11,14 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
     public abstract class MetaValue : MetaValueBase
     {
-        protected readonly ICacheFile cache;
+        protected readonly MetaContext context;
 
         public override FieldDefinition FieldDefinition { get; }
 
-        protected MetaValue(XmlNode node, ICacheFile cache, EndianReader reader, long baseAddress)
+        protected MetaValue(XmlNode node, MetaContext context, EndianReader reader, long baseAddress)
             : base(node, baseAddress)
         {
-            this.cache = cache;
+            this.context = context;
             FieldDefinition = FieldDefinition.GetHalo3Definition(node);
         }
     }

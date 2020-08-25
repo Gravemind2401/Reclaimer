@@ -139,6 +139,7 @@
     <Compile Include="InstanceManager.cs" />
     <Compile Include="Plugins\BatchExtractPlugin.cs" />
     <Compile Include="Plugins\BitmapViewerPlugin.cs" />
+    <Compile Include="Plugins\MetaViewer\Halo3\MetaContext.cs" />
     <Compile Include="Plugins\MetaViewer\Halo3\MetaValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\BitmaskValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\CommentValue.cs" />

@@ -23,8 +23,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             set { SetMetaProperty(ref _value, value); }
         }
 
-        public StringValue(XmlNode node, ICacheFile cache, EndianReader reader, long baseAddress)
-            : base(node, cache, reader, baseAddress)
+        public StringValue(XmlNode node, MetaContext context, EndianReader reader, long baseAddress)
+            : base(node, context, reader, baseAddress)
         {
             Length = node.GetIntAttribute("length", "maxlength", "size") ?? 0;
             ReadValue(reader);
@@ -42,8 +42,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                     Value = reader.ReadNullTerminatedString(Length);
                 else
                 {
-                    var id = cache.CacheType < CacheType.Halo3Beta ? reader.ReadInt16() : reader.ReadInt32();
-                    Value = cache.StringIndex[id];
+                    var id = context.Cache.CacheType < CacheType.Halo3Beta ? reader.ReadInt16() : reader.ReadInt32();
+                    Value = context.Cache.StringIndex[id];
                 }
 
                 IsDirty = false;

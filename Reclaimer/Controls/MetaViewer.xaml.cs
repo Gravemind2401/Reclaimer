@@ -47,6 +47,8 @@ namespace Reclaimer.Controls
         private object item;
         private string fileName;
 
+        private Plugins.MetaViewer.Halo3.MetaContext context;
+
         public TabModel TabModel { get; }
         public ObservableCollection<MetaValueBase> Metadata { get; }
 
@@ -94,6 +96,8 @@ namespace Reclaimer.Controls
             var tag = item as IIndexItem;
             Metadata.Clear();
 
+            context = new Plugins.MetaViewer.Halo3.MetaContext(tag.CacheFile, tag);
+
             var doc = new XmlDocument();
             doc.Load(fileName);
 
@@ -101,7 +105,7 @@ namespace Reclaimer.Controls
             {
                 try
                 {
-                    var meta = MetaValueBase.GetMetaValue(n, tag.CacheFile, tag.MetaPointer.Address);
+                    var meta = MetaValueBase.GetMetaValue(n, context, tag.MetaPointer.Address);
                     Metadata.Add(meta);
                 }
                 catch { }
