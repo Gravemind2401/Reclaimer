@@ -281,15 +281,23 @@ namespace System.IO.Endian
             if (!target.IsOpen)
                 throw new ArgumentException("Target stream is closed.");
 
-            var origin = target.Position;
-
-            foreach (var patch in changes)
+            if (!target.changes.Any())
             {
-                target.Position = patch.Key;
-                target.Write(patch.Value, 0, patch.Value.Length);
+                foreach (var patch in changes)
+                    target.changes.Add(patch.Key, patch.Value);
             }
+            else
+            {
+                var origin = target.Position;
 
-            target.Position = origin;
+                foreach (var patch in changes)
+                {
+                    target.Position = patch.Key;
+                    target.Write(patch.Value, 0, patch.Value.Length);
+                }
+
+                target.Position = origin;
+            }
         }
 
         /// <summary>
