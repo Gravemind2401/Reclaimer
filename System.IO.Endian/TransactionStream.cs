@@ -268,6 +268,31 @@ namespace System.IO.Endian
         }
 
         /// <summary>
+        /// Copies all pending changes to another <see cref="TransactionStream"/>, overwriting any conflicts.
+        /// </summary>
+        /// <param name="target">
+        /// The <see cref="TransactionStream"/> to copy the changes to.
+        /// </param>
+        public void CopyChanges(TransactionStream target)
+        {
+            if (target == null)
+                throw new ArgumentNullException(nameof(target));
+
+            if (!target.IsOpen)
+                throw new ArgumentException("Target stream is closed.");
+
+            var origin = target.Position;
+
+            foreach (var patch in changes)
+            {
+                target.Position = patch.Key;
+                target.Write(patch.Value, 0, patch.Value.Length);
+            }
+
+            target.Position = origin;
+        }
+
+        /// <summary>
         /// Discard all pending changes and revert to the original data.
         /// </summary>
         public void DiscardChanges()
