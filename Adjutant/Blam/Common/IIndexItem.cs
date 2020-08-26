@@ -12,6 +12,7 @@ namespace Adjutant.Blam.Common
         ICacheFile CacheFile { get; }
 
         int Id { get; }
+        int ClassId { get; }
         Pointer MetaPointer { get; }
         string FullPath { get; }
         string ClassCode { get; }

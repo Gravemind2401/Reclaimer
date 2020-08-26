@@ -299,6 +299,9 @@ namespace Adjutant.Blam.HaloReach
     public class TagClass
     {
         [Offset(0)]
+        public int ClassId { get; set; }
+
+        [Offset(0)]
         [FixedLength(4)]
         public string ClassCode { get; set; }
 
@@ -344,6 +347,8 @@ namespace Adjutant.Blam.HaloReach
 
         [Offset(4)]
         public Pointer MetaPointer { get; set; }
+
+        public int ClassId => cache.TagIndex.Classes[ClassIndex].ClassId;
 
         public string ClassCode => cache.TagIndex.Classes[ClassIndex].ClassCode;
 

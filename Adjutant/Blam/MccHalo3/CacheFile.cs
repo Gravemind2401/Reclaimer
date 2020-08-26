@@ -284,7 +284,6 @@ namespace Adjutant.Blam.MccHalo3
     public class TagClass
     {
         [Offset(0)]
-        [ByteOrder(ByteOrder.BigEndian)]
         public int ClassId { get; set; }
 
         [Offset(4)]
@@ -298,7 +297,21 @@ namespace Adjutant.Blam.MccHalo3
         [Offset(12)]
         public StringId ClassName { get; set; }
 
-        public string ClassCode => Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId));
+        private string classCode;
+        public string ClassCode
+        {
+            get
+            {
+                if (classCode == null)
+                {
+                    var bits = BitConverter.GetBytes(ClassId);
+                    Array.Reverse(bits);
+                    classCode = Encoding.UTF8.GetString(bits);
+                }
+
+                return classCode;
+            }
+        }
 
         public override string ToString()
         {
@@ -331,6 +344,8 @@ namespace Adjutant.Blam.MccHalo3
 
         [Offset(4)]
         public Pointer MetaPointer { get; set; }
+
+        public int ClassId => cache.TagIndex.Classes[ClassIndex].ClassId;
 
         public string ClassCode => cache.TagIndex.Classes[ClassIndex].ClassCode;
 

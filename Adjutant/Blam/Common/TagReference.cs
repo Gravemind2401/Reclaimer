@@ -14,11 +14,21 @@ namespace Adjutant.Blam.Common
     [FixedSize(16, MinVersion = (int)CacheType.Halo3Beta)]
     public struct TagReference
     {
-        private readonly ICacheFile cache;
-        private readonly short tagId;
+        public static TagReference NullReference { get; } = new TagReference(null, -1, -1);
 
-        public int TagId => tagId;
-        public IIndexItem Tag => TagId >= 0 ? cache.TagIndex[TagId] : null;
+        private readonly ICacheFile cache;
+        private readonly int classId;
+        private readonly int tagId;
+
+        public int TagId => tagId & ushort.MaxValue;
+        public IIndexItem Tag => TagId >= 0 ? cache?.TagIndex[TagId] : null;
+
+        public TagReference(ICacheFile cache, int classId, int tagId)
+        {
+            this.cache = cache;
+            this.classId = classId;
+            this.tagId = tagId;
+        }
 
         public TagReference(ICacheFile cache, EndianReader reader)
         {
@@ -30,14 +40,25 @@ namespace Adjutant.Blam.Common
 
             this.cache = cache;
 
-            if (cache.CacheType.GetCacheGeneration() == 2)
-                reader.Seek(4, SeekOrigin.Current);
-            else
-                reader.Seek(12, SeekOrigin.Current);
+            classId = reader.ReadInt32();
 
-            var temp = reader.ReadInt32();
+            if (cache.CacheType.GetCacheGeneration() != 2)
+                reader.Seek(8, SeekOrigin.Current);
 
-            tagId = (short)(temp & ushort.MaxValue);
+            tagId = reader.ReadInt32();
+        }
+
+        public void Write(EndianWriter writer)
+        {
+            writer.Write(classId);
+
+            if (cache.CacheType.GetCacheGeneration() != 2)
+            {
+                writer.Write(0);
+                writer.Write(0);
+            }
+
+            writer.Write(tagId);
         }
 
         public override string ToString() => Tag?.ToString();

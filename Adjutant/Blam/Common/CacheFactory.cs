@@ -105,7 +105,12 @@ namespace Adjutant.Blam.Common
         public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator)
         {
             var fs = new FileStream(cache.FileName, FileMode.Open, FileAccess.Read);
-            var reader = new DependencyReader(fs, cache.ByteOrder);
+            return CreateReader(cache, translator, fs);
+        }
+
+        public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator, Stream stream)
+        {
+            var reader = new DependencyReader(stream, cache.ByteOrder);
 
             reader.RegisterInstance(cache);
             reader.RegisterInstance(translator);
