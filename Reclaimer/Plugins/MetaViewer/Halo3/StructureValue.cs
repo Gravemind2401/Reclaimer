@@ -69,11 +69,11 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             Children = new ObservableCollection<MetaValue>();
             IsExpanded = true;
             ReadValue(reader);
-            IsReady = true;
         }
 
         public override void ReadValue(EndianReader reader)
         {
+            IsBusy = true;
             IsEnabled = true;
 
             try
@@ -120,6 +120,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 else BlockLabels = Enumerable.Range(0, BlockCount).Select(i => $"Block {i:D2}");
             }
             catch { IsEnabled = false; }
+
+            IsBusy = false;
         }
 
         public override void WriteValue(EndianWriter writer)

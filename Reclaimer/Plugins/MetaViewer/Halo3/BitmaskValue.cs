@@ -28,11 +28,11 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         {
             Options = new ObservableCollection<BitValue>();
             ReadValue(reader);
-            IsReady = true;
         }
 
         public override void ReadValue(EndianReader reader)
         {
+            IsBusy = true;
             IsEnabled = true;
 
             try
@@ -76,6 +76,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 IsDirty = false;
             }
             catch { IsEnabled = false; }
+
+            IsBusy = false;
         }
 
         public override void WriteValue(EndianWriter writer)

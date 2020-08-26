@@ -38,7 +38,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public virtual string EntryString => null;
 
-        public bool IsReady { get; protected set; }
+        public bool IsBusy { get; protected set; }
         public bool IsDirty { get; protected set; }
 
         protected MetaValueBase(XmlNode node, long baseAddress)
@@ -60,7 +60,7 @@ namespace Reclaimer.Plugins.MetaViewer
             if (changed)
             {
                 IsDirty = true;
-                if (IsReady && MetaValidationRule.Validate(FieldDefinition, value))
+                if (!IsBusy && MetaValidationRule.Validate(FieldDefinition, value))
                     OnMetaPropertyChanged(propertyName);
             }
             return changed;

@@ -51,7 +51,6 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             TagOptions = new ObservableCollection<ComboBoxItem<IIndexItem>>();
 
             ReadValue(reader);
-            IsReady = true;
         }
 
         private void OnClassChanged()
@@ -70,6 +69,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         public override void ReadValue(EndianReader reader)
         {
+            IsBusy = true;
             IsEnabled = true;
 
             try
@@ -83,6 +83,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 IsDirty = false;
             }
             catch { IsEnabled = false; }
+
+            IsBusy = false;
         }
 
         public override void WriteValue(EndianWriter writer)
