@@ -69,6 +69,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             Children = new ObservableCollection<MetaValue>();
             IsExpanded = true;
             ReadValue(reader);
+            IsReady = true;
         }
 
         public override void ReadValue(EndianReader reader)
@@ -131,7 +132,11 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             if (BlockCount <= 0)
                 return;
 
-            using (var reader = context.Cache.CreateReader(context.Cache.DefaultAddressTranslator))
+            var fs = new FileStream(context.Cache.FileName, FileMode.Open, FileAccess.Read);
+            var tran = new TransactionStream(fs);
+            context.Transaction.CopyChanges(tran);
+
+            using (var reader = context.Cache.CreateReader(context.Cache.DefaultAddressTranslator, tran))
             {
                 foreach (var c in Children)
                 {

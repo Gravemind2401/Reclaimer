@@ -53,6 +53,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 Labels = new[] { "min", "max", string.Empty, string.Empty };
 
             ReadValue(reader);
+            IsReady = true;
         }
 
         public override void ReadValue(EndianReader reader)

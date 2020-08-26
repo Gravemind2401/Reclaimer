@@ -41,7 +41,15 @@
         </Style>
 
         <DataTemplate x:Key="DefaultContent">
-            <TextBox Width="100" IsReadOnly="True" Text="{Binding Value}" />
+            <TextBox Width="100">
+                <TextBox.Text>
+                    <Binding Path="Value" ValidatesOnExceptions="True">
+                        <Binding.ValidationRules>
+                            <mv:MetaValidationRule />
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
         </DataTemplate>
 
         <DataTemplate x:Key="StringContent">
@@ -61,7 +69,7 @@
                      ItemsSource="{Binding Options}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <CheckBox IsEnabled="False" IsChecked="{Binding IsChecked}" Content="{Binding Name}" 
+                        <CheckBox IsChecked="{Binding IsChecked}" Content="{Binding Name}" 
                                   ToolTip="{Binding ToolTip}" ToolTipService.ShowOnDisabled="True" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -133,7 +141,7 @@
                 </Style>
                 <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                     <Setter Property="Width" Value="100" />
-                    <Setter Property="IsReadOnly" Value="True" />
+                    <!--<Setter Property="IsReadOnly" Value="True" />-->
                 </Style>
             </DataTemplate.Resources>
 
@@ -155,19 +163,51 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <StackPanel Orientation="Horizontal" Visibility="{Binding Converter={StaticResource fieldVisConverter}, ConverterParameter=0}">
                         <Label Content="{Binding Labels[0]}" />
-                        <TextBox Text="{Binding Value1}" />
+                        <TextBox>
+                            <TextBox.Text>
+                                <Binding Path="Value1" ValidatesOnExceptions="True">
+                                    <Binding.ValidationRules>
+                                        <mv:MetaValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Visibility="{Binding Converter={StaticResource fieldVisConverter}, ConverterParameter=1}">
                         <Label Content="{Binding Labels[1]}" />
-                        <TextBox Text="{Binding Value2}" />
+                        <TextBox>
+                            <TextBox.Text>
+                                <Binding Path="Value2" ValidatesOnExceptions="True">
+                                    <Binding.ValidationRules>
+                                        <mv:MetaValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Visibility="{Binding Converter={StaticResource fieldVisConverter}, ConverterParameter=2}">
                         <Label Content="{Binding Labels[2]}" />
-                        <TextBox Text="{Binding Value3}" />
+                        <TextBox>
+                            <TextBox.Text>
+                                <Binding Path="Value3" ValidatesOnExceptions="True">
+                                    <Binding.ValidationRules>
+                                        <mv:MetaValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Visibility="{Binding Converter={StaticResource fieldVisConverter}, ConverterParameter=3}">
                         <Label Content="{Binding Labels[3]}" />
-                        <TextBox Text="{Binding Value4}" />
+                        <TextBox>
+                            <TextBox.Text>
+                                <Binding Path="Value4" ValidatesOnExceptions="True">
+                                    <Binding.ValidationRules>
+                                        <mv:MetaValidationRule />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
                     </StackPanel>
                 </StackPanel>
                 <Label Grid.Column="2">

@@ -96,6 +96,7 @@ namespace Reclaimer.Controls
             var tag = item as IIndexItem;
             Metadata.Clear();
 
+            context?.Transaction?.Dispose();
             context = new Plugins.MetaViewer.Halo3.MetaContext(tag.CacheFile, tag);
 
             var doc = new XmlDocument();

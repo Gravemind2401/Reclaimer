@@ -13,11 +13,14 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
     {
         public ICacheFile Cache { get; }
         public IIndexItem IndexItem { get; }
+        public TransactionStream Transaction { get; }
 
         public MetaContext(ICacheFile cache, IIndexItem indexItem)
         {
             Cache = cache;
             IndexItem = indexItem;
+
+            Transaction = new TransactionStream(new MemoryStream());
         }
     }
 }

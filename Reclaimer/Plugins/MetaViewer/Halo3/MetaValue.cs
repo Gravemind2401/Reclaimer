@@ -21,5 +21,11 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             this.context = context;
             FieldDefinition = FieldDefinition.GetHalo3Definition(node);
         }
+
+        protected override void OnMetaPropertyChanged(string propertyName)
+        {
+            using (var writer = new EndianWriter(context.Transaction, context.Cache.ByteOrder, new UTF8Encoding(), true))
+                WriteValue(writer);
+        }
     }
 }

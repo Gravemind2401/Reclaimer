@@ -28,6 +28,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         {
             Length = node.GetIntAttribute("length", "maxlength", "size") ?? 0;
             ReadValue(reader);
+            IsReady = true;
         }
 
         public override void ReadValue(EndianReader reader)

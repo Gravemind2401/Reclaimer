@@ -19,6 +19,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         {
             Title = node.GetStringAttribute("title", "name");
             Body = node.InnerText;
+            IsReady = true;
         }
 
         public override void ReadValue(EndianReader reader)

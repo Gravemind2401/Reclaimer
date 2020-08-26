@@ -38,6 +38,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public virtual string EntryString => null;
 
+        public bool IsReady { get; protected set; }
         public bool IsDirty { get; protected set; }
 
         protected MetaValueBase(XmlNode node, long baseAddress)
@@ -56,9 +57,16 @@ namespace Reclaimer.Plugins.MetaViewer
         protected bool SetMetaProperty<T>(ref T property, T value, [CallerMemberName] string propertyName = null)
         {
             var changed = SetProperty(ref property, value, propertyName);
-            if (changed) IsDirty = true;
+            if (changed)
+            {
+                IsDirty = true;
+                if (IsReady && MetaValidationRule.Validate(FieldDefinition, value))
+                    OnMetaPropertyChanged(propertyName);
+            }
             return changed;
         }
+
+        protected virtual void OnMetaPropertyChanged(string propertyName) { }
 
         public abstract void ReadValue(EndianReader reader);
 
@@ -66,7 +74,11 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public static Halo3.MetaValue GetMetaValue(XmlNode node, Halo3.MetaContext context, long baseAddress)
         {
-            using (var reader = context.Cache.CreateReader(context.Cache.DefaultAddressTranslator))
+            var fs = new FileStream(context.Cache.FileName, FileMode.Open, FileAccess.Read);
+            var tran = new TransactionStream(fs);
+            context.Transaction.CopyChanges(tran);
+
+            using (var reader = context.Cache.CreateReader(context.Cache.DefaultAddressTranslator, tran))
             {
                 reader.Seek(baseAddress, SeekOrigin.Begin);
 

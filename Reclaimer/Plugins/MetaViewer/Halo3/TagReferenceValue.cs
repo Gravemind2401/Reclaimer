@@ -51,6 +51,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             TagOptions = new ObservableCollection<ComboBoxItem<IIndexItem>>();
 
             ReadValue(reader);
+            IsReady = true;
         }
 
         private void OnClassChanged()

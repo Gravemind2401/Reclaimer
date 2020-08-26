@@ -27,6 +27,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         {
             Options = new ObservableCollection<Tuple<int, string>>();
             ReadValue(reader);
+            IsReady = true;
         }
 
         public override void ReadValue(EndianReader reader)
