@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:Reclaimer.Controls"
              xmlns:mv="clr-namespace:Reclaimer.Plugins.MetaViewer"
              xmlns:u="clr-namespace:Studio.Utilities;assembly=Studio"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
              mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
     
@@ -15,6 +16,14 @@
         <mv:CommentVisibilityConverter x:Key="commentVisConverter" />
         <mv:MetaValueTemplateSelector x:Key="templateSelector" />
         <u:VisibilityConverter x:Key="boolToVisConverter" />
+
+        <Thickness x:Key="containerMargin">1,25,1,1</Thickness>
+        <sys:Double x:Key="pageWidth">600</sys:Double>
+        <sys:Double x:Key="nameColWidthS">180</sys:Double>
+        <sys:Double x:Key="nameColWidth">200</sys:Double>
+        <sys:Double x:Key="valueColWidthS">100</sys:Double>
+        <sys:Double x:Key="valueColWidthM">180</sys:Double>
+        <sys:Double x:Key="valueColWidthL">400</sys:Double>
 
         <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
             <Setter Property="VerticalAlignment" Value="Top" />
@@ -41,7 +50,7 @@
         </Style>
 
         <DataTemplate x:Key="DefaultContent">
-            <TextBox Width="100">
+            <TextBox Width="{StaticResource valueColWidthS}">
                 <TextBox.Text>
                     <Binding Path="Value" ValidatesOnExceptions="True">
                         <Binding.ValidationRules>
@@ -53,18 +62,18 @@
         </DataTemplate>
 
         <DataTemplate x:Key="StringContent">
-            <TextBox Width="180" MaxLength="{Binding Length}"
+            <TextBox Width="{StaticResource valueColWidthM}" MaxLength="{Binding Length}"
                      IsReadOnly="True" Text="{Binding Value}" />
         </DataTemplate>
 
         <DataTemplate x:Key="EnumContent">
-            <ComboBox Width="180" ItemsSource="{Binding Options}"
+            <ComboBox Width="{StaticResource valueColWidthM}" ItemsSource="{Binding Options}"
                       SelectedValuePath="Item1" DisplayMemberPath="Item2"
                       SelectedValue="{Binding Value}" />
         </DataTemplate>
 
         <DataTemplate x:Key="BitmaskContent">
-            <ListBox Width="180" MaxHeight="260"
+            <ListBox Width="{StaticResource valueColWidthM}" MaxHeight="260"
                      ItemsSource="{Binding Options}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -77,12 +86,12 @@
 
         <DataTemplate x:Key="TagReferenceContent">
             <StackPanel Orientation="Horizontal">
-                <ComboBox Width="180"
+                <ComboBox Width="{StaticResource valueColWidthM}"
                       ItemContainerStyle="{StaticResource ComboBoxOption}"
                       DisplayMemberPath="Label"
                       ItemsSource="{Binding ClassOptions}"
                       SelectedItem="{Binding SelectedClass}" />
-                <ComboBox Width="400" Margin="5,0"
+                <ComboBox Width="{StaticResource valueColWidthL}" Margin="5,0"
                       ItemContainerStyle="{StaticResource ComboBoxOption}"
                       DisplayMemberPath="Label"
                       ToolTip="{Binding SelectedItem.Label}"
@@ -93,7 +102,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="CommentTemplate">
-            <Border Margin="1,25,1,1" Width="600" 
+            <Border Margin="{StaticResource containerMargin}"
+                    Width="{StaticResource pageWidth}" 
                     BorderThickness="1" HorizontalAlignment="Left"
                     BorderBrush="{DynamicResource TextBoxDisabledBorderBrush}"
                     Background="{DynamicResource TextBoxDisabledBackground}">
@@ -118,7 +128,7 @@
                     </MultiBinding>
                 </Grid.Visibility>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition MinWidth="{StaticResource nameColWidth}" MaxWidth="{StaticResource nameColWidth}" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
@@ -139,7 +149,7 @@
                     <Setter Property="MinWidth" Value="20" />
                 </Style>
                 <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-                    <Setter Property="Width" Value="100" />
+                    <Setter Property="Width" Value="{StaticResource valueColWidthS}" />
                 </Style>
             </DataTemplate.Resources>
 
@@ -151,11 +161,11 @@
                     </MultiBinding>
                 </Grid.Visibility>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="180" />
+                    <ColumnDefinition MinWidth="{StaticResource nameColWidthS}" MaxWidth="{StaticResource nameColWidthS}" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Width="180">
+                <Label Grid.Column="0" Width="{StaticResource nameColWidthS}">
                     <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                 </Label>
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
@@ -215,7 +225,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="StructureTemplate">
-            <Border Margin="1,25,1,1" BorderThickness="0"
+            <Border Margin="{StaticResource containerMargin}" BorderThickness="0"
                     IsEnabled="{Binding IsEnabled}">
                 <Border.Visibility>
                     <MultiBinding Converter="{StaticResource invisConverter}">
@@ -230,7 +240,7 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition MinWidth="10" MaxWidth="10" />
-                        <ColumnDefinition MinWidth="205" MaxWidth="205" />
+                        <ColumnDefinition MinWidth="{StaticResource nameColWidth}" MaxWidth="{StaticResource nameColWidth}" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Border Grid.Row="0" Grid.ColumnSpan="3" Background="{DynamicResource Environment.CommandBar.Gradient}" />
@@ -245,7 +255,8 @@
                             <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                         </Label>
                     </StackPanel>
-                    <ComboBox Grid.Row="0" Grid.Column="2" Width="180"
+                    <ComboBox Grid.Row="0" Grid.Column="2" Margin="5,0,0,0"
+                              Width="{StaticResource valueColWidthM}"
                               VerticalAlignment="Center" HorizontalAlignment="Left"
                               Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}"
                               ItemsSource="{Binding BlockLabels}" SelectedIndex="{Binding BlockIndex}" />
@@ -261,7 +272,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ArrayTemplate">
-            <Border Margin="1,25,1,1" BorderThickness="0"
+            <Border Margin="{StaticResource containerMargin}" BorderThickness="0"
                     IsEnabled="{Binding IsEnabled}">
                 <Border.Visibility>
                     <MultiBinding Converter="{StaticResource invisConverter}">
@@ -276,7 +287,7 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition MinWidth="10" MaxWidth="10" />
-                        <ColumnDefinition MinWidth="205" MaxWidth="205" />
+                        <ColumnDefinition MinWidth="{StaticResource nameColWidth}" MaxWidth="{StaticResource nameColWidth}" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Border Grid.Row="0" Grid.ColumnSpan="3" Background="{DynamicResource Environment.CommandBar.Gradient}" />
