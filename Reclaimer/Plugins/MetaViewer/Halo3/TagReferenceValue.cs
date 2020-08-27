@@ -43,9 +43,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             : base(node, context, reader, baseAddress)
         {
             var allClasses = context.Cache.TagIndex
-                .Select(i => new ComboBoxItem(i.ClassName))
+                .Select(i => i.ClassName)
                 .Distinct()
-                .OrderBy(s => s.Label);
+                .OrderBy(s => s)
+                .Select(s => new ComboBoxItem(s));
 
             ClassOptions = new ObservableCollection<ComboBoxItem>(allClasses);
             TagOptions = new ObservableCollection<ComboBoxItem<IIndexItem>>();
@@ -89,7 +90,14 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         public override void WriteValue(EndianWriter writer)
         {
-            throw new NotImplementedException();
+            if (SelectedItem == null) //null during class transition
+                return;
+
+            var tag = SelectedItem.Context;
+            referenceValue = new TagReference(context.Cache, tag.ClassId, tag.Id);
+
+            writer.Seek(ValueAddress, SeekOrigin.Begin);
+            referenceValue.Write(writer);
         }
     }
 }

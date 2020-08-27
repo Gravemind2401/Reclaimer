@@ -187,7 +187,7 @@ namespace Reclaimer.Plugins.MetaViewer
         public ComboBoxItem(string label, bool isVisible)
         {
             Label = label;
-            IsVisible = IsVisible;
+            IsVisible = isVisible;
         }
 
         public override string ToString() => Label;

@@ -58,8 +58,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="EnumContent">
-            <ComboBox Width="180" IsEnabled="True"
-                      ItemsSource="{Binding Options}"
+            <ComboBox Width="180" ItemsSource="{Binding Options}"
                       SelectedValuePath="Item1" DisplayMemberPath="Item2"
                       SelectedValue="{Binding Value}" />
         </DataTemplate>
@@ -78,12 +77,12 @@
 
         <DataTemplate x:Key="TagReferenceContent">
             <StackPanel Orientation="Horizontal">
-                <ComboBox Width="180" IsEnabled="False"
+                <ComboBox Width="180"
                       ItemContainerStyle="{StaticResource ComboBoxOption}"
                       DisplayMemberPath="Label"
                       ItemsSource="{Binding ClassOptions}"
                       SelectedItem="{Binding SelectedClass}" />
-                <ComboBox Width="400" Margin="5,0" IsEnabled="False"
+                <ComboBox Width="400" Margin="5,0"
                       ItemContainerStyle="{StaticResource ComboBoxOption}"
                       DisplayMemberPath="Label"
                       ToolTip="{Binding SelectedItem.Label}"
@@ -141,7 +140,6 @@
                 </Style>
                 <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                     <Setter Property="Width" Value="100" />
-                    <!--<Setter Property="IsReadOnly" Value="True" />-->
                 </Style>
             </DataTemplate.Resources>
 
