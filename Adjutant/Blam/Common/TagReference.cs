@@ -20,7 +20,7 @@ namespace Adjutant.Blam.Common
         private readonly int classId;
         private readonly int tagId;
 
-        public int TagId => tagId & ushort.MaxValue;
+        public int TagId => (short)(tagId & ushort.MaxValue);
         public IIndexItem Tag => TagId >= 0 ? cache?.TagIndex[TagId] : null;
 
         public TagReference(ICacheFile cache, int classId, int tagId)
