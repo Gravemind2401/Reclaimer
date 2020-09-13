@@ -22,5 +22,12 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
             Transaction = new TransactionStream(new MemoryStream());
         }
+
+        public MetaContext(ICacheFile cache, IIndexItem indexItem, TransactionStream transaction)
+        {
+            Cache = cache;
+            IndexItem = indexItem;
+            Transaction = transaction;
+        }
     }
 }
