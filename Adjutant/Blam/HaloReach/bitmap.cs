@@ -116,7 +116,12 @@ namespace Adjutant.Blam.HaloReach
             }
 
             int virtualWidth, virtualHeight;
-            TextureUtils.GetVirtualSize(submap.BitmapFormat, submap.Width, submap.Height, submap.FaceCount, out virtualWidth, out virtualHeight);
+            if (cache.CacheType == CacheType.MccHaloReach || cache.CacheType == CacheType.MccHaloReachU3)
+            {
+                virtualWidth = submap.Width;
+                virtualHeight = submap.Height * submap.FaceCount;
+            }
+            else TextureUtils.GetVirtualSize(submap.BitmapFormat, submap.Width, submap.Height, submap.FaceCount, out virtualWidth, out virtualHeight);
 
             if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
                 data = TextureUtils.XTextureScramble(data, virtualWidth, virtualHeight, submap.BitmapFormat, false);
