@@ -23,7 +23,7 @@ namespace Reclaimer.Plugins
     {
         private const string supportedTags = "bitm,mode,mod2,sbsp,snd!";
 
-        private readonly ConcurrentQueue<IIndexItem> extractionQueue = new ConcurrentQueue<IIndexItem>();
+        private ConcurrentQueue<IIndexItem> extractionQueue = new ConcurrentQueue<IIndexItem>();
 
         private bool isBusy;
         private CancellationTokenSource tokenSource;
@@ -129,6 +129,8 @@ namespace Reclaimer.Plugins
 
             if (!tokenSource.IsCancellationRequested)
                 tokenSource.Cancel();
+
+            extractionQueue = new ConcurrentQueue<IIndexItem>();
         }
 
         private void OnContextItemClick(string key, OpenFileArgs context)
