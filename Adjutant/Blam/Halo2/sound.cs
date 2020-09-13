@@ -104,7 +104,7 @@ namespace Adjutant.Blam.Halo2
 
                 byte[] permData;
 
-                if (pitchRange.PermutationCount == 1)
+                if (perm.BlockCount == 1)
                 {
                     //skip the array copy
                     var block = resourceGestalt.SoundPermutationChunks[perm.BlockIndex];
