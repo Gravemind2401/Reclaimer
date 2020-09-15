@@ -721,6 +721,8 @@ namespace Adjutant.Geometry
                         sw.WriteLine(region.Name);
 
                     #region Vertices
+                    var emptyVector = new RealVector3D();
+
                     sw.WriteLine(allPerms.SelectMany(p => model.Meshes.Skip(p.MeshIndex).Take(p.MeshCount)).Sum(m => m.Vertices.Count));
                     foreach (var perm in allPerms)
                     {
@@ -731,13 +733,13 @@ namespace Adjutant.Geometry
                             if (mesh.BoundsIndex >= 0)
                                 decompressed = new CompressedVertex(vert, model.Bounds[mesh.BoundsIndex.Value]);
 
-                            var pos = decompressed.Position.FirstOrDefault();
-                            var norm = vert.Normal.FirstOrDefault();
-                            var tex = decompressed.TexCoords.FirstOrDefault();
-                            var weights = decompressed.BlendWeight.FirstOrDefault();
-                            var nodes = decompressed.BlendIndices.FirstOrDefault();
+                            var pos = decompressed.Position.FirstOrDefault() ?? emptyVector;
+                            var norm = vert.Normal.FirstOrDefault() ?? emptyVector;
+                            var tex = decompressed.TexCoords.FirstOrDefault() ?? emptyVector;
+                            var weights = decompressed.BlendWeight.FirstOrDefault() ?? emptyVector;
+                            var nodes = decompressed.BlendIndices.FirstOrDefault() ?? emptyVector;
 
-                            var node1 = nodes?.X ?? 0;
+                            var node1 = nodes.X;
                             if (mesh.NodeIndex < byte.MaxValue)
                                 node1 = mesh.NodeIndex.Value;
 
@@ -746,8 +748,8 @@ namespace Adjutant.Geometry
                             sw.WriteLine(float3, pos.X * scale, pos.Y * scale, pos.Z * scale);
                             sw.WriteLine(float3, norm.X, norm.Y, norm.Z);
 
-                            sw.WriteLine(nodes?.Y ?? 0);
-                            sw.WriteLine(float1, weights?.Y ?? 0);
+                            sw.WriteLine(nodes.Y);
+                            sw.WriteLine(float1, weights.Y);
 
                             sw.WriteLine(float1, tex.X);
                             sw.WriteLine(float1, 1 - tex.Y);

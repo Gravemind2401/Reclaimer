@@ -87,7 +87,7 @@
     <value stream="2" offset="0x0" type="UInt16_2" usage="position" usageIndex="2" />
   </vertex>
   <vertex type="0x10" name="s_tiny_position_vertex">
-    <value stream="0" offset="0x0" type="Int16_N4" usage="position" usageIndex="0" />
+    <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
   </vertex>
   <vertex type="0x11" name="s_patchy_fog_vertex">
     <value stream="0" offset="0x0" type="Float32_4" usage="position" usageIndex="0" />

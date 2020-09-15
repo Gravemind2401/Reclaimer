@@ -192,7 +192,8 @@ namespace Adjutant.Blam.HaloReach
     }
 
     [FixedSize(48, MaxVersion = (int)CacheType.HaloReachRetail)]
-    [FixedSize(44, MinVersion = (int)CacheType.HaloReachRetail)]
+    [FixedSize(44, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
+    [FixedSize(56, MinVersion = (int)CacheType.MccHaloReach)]
     public class BitmapDataBlock
     {
         [Offset(0)]
