@@ -296,12 +296,15 @@ namespace Reclaimer.Controls
                         var verts = mesh.Vertices.Skip(vertStart).Take(vertLength);
                         var positions = verts.Select(v => new Point3D(v.Position[0].X, v.Position[0].Y, v.Position[0].Z));
 
-                        var texcoords = verts.Select(v => new Point(v.TexCoords[0].X, v.TexCoords[0].Y)).ToArray();
-                        if (!texMatrix.IsIdentity) texMatrix.Transform(texcoords);
-
                         (geom.Positions = new Point3DCollection(positions)).Freeze();
-                        (geom.TextureCoordinates = new PointCollection(texcoords)).Freeze();
                         (geom.TriangleIndices = new Int32Collection(indices.Select(j => j - vertStart))).Freeze();
+
+                        if (mesh.Vertices[0].TexCoords.Count > 0)
+                        {
+                            var texcoords = verts.Select(v => new Point(v.TexCoords[0].X, v.TexCoords[0].Y)).ToArray();
+                            if (!texMatrix.IsIdentity) texMatrix.Transform(texcoords);
+                            (geom.TextureCoordinates = new PointCollection(texcoords)).Freeze();
+                        }
 
                         if (mesh.Vertices[0].Normal.Count > 0)
                         {
