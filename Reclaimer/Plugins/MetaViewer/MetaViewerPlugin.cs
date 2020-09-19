@@ -58,7 +58,12 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public override void OpenFile(OpenFileArgs args)
         {
+            var tabId = $"{Key}::{args.FileName}";
+            if (Substrate.ShowTabById(tabId))
+                return;
+
             var viewer = new Controls.MetaViewer();
+            viewer.TabModel.ContentId = tabId;
 
             if (args.File.Any(i => i is IIndexItem))
             {

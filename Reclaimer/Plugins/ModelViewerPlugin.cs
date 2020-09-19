@@ -41,6 +41,10 @@ namespace Reclaimer.Plugins
         [SharedFunction]
         public void DisplayModel(ITabContentHost targetWindow, IRenderGeometry model, string fileName)
         {
+            var tabId = $"{Key}::{fileName}";
+            if (Substrate.ShowTabById(tabId))
+                return;
+
             var container = targetWindow.DocumentPanel;
 
             LogOutput($"Loading model: {fileName}");
@@ -55,6 +59,7 @@ namespace Reclaimer.Plugins
                     ClearStatus = ClearWorkingStatus
                 };
 
+                viewer.TabModel.ContentId = tabId;
                 viewer.LoadGeometry(model, $"{fileName}");
 
                 container.AddItem(viewer.TabModel);

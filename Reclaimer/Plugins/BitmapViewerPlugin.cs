@@ -26,6 +26,10 @@ namespace Reclaimer.Plugins
         [SharedFunction]
         public void DisplayBitmap(ITabContentHost targetWindow, IBitmap bitmap, string fileName)
         {
+            var tabId = $"{Key}::{bitmap.Id}::{fileName}";
+            if (Substrate.ShowTabById(tabId))
+                return;
+
             var container = targetWindow.DocumentPanel;
 
             LogOutput($"Loading image: {fileName}");
@@ -33,6 +37,7 @@ namespace Reclaimer.Plugins
             try
             {
                 var viewer = new Controls.BitmapViewer();
+                viewer.TabModel.ContentId = tabId;
                 viewer.LoadImage(bitmap, fileName);
 
                 container.AddItem(viewer.TabModel);

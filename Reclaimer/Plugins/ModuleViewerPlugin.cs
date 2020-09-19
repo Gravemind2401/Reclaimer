@@ -62,11 +62,16 @@ namespace Reclaimer.Plugins
 
         public override void OpenPhysicalFile(string fileName)
         {
+            var tabId = $"{Key}::{fileName}";
+            if (Substrate.ShowTabById(tabId))
+                return;
+
             LogOutput($"Loading module file: {fileName}");
 
             try
             {
                 var mv = new Controls.ModuleViewer();
+                mv.TabModel.ContentId = tabId;
                 mv.LoadModule(fileName);
                 Substrate.AddTool(mv.TabModel, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
                 Substrate.AddRecentFile(fileName);

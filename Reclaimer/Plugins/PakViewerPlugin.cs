@@ -61,11 +61,16 @@ namespace Reclaimer.Plugins
 
         public override void OpenPhysicalFile(string fileName)
         {
+            var tabId = $"{Key}::{fileName}";
+            if (Substrate.ShowTabById(tabId))
+                return;
+
             LogOutput($"Loading pak file: {fileName}");
 
             try
             {
                 var pv = new Controls.PakViewer();
+                pv.TabModel.ContentId = tabId;
                 pv.LoadPak(fileName);
                 Substrate.AddTool(pv.TabModel, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
                 Substrate.AddRecentFile(fileName);

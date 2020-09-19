@@ -393,6 +393,39 @@ namespace Reclaimer.Plugins
             else host = Window.GetWindow(element) as ITabContentHost ?? Application.Current.MainWindow as ITabContentHost;
             return host;
         }
+
+        /// <summary>
+        /// Finds the <see cref="TabModel"/> with the specified <paramref name="contentId"/> and, if a tab was found, gives it focus.
+        /// </summary>
+        /// <param name="contentId">The ContentId of the <see cref="TabModel"/> to show.</param>
+        /// <returns>true if a tab with a matching ID was found, otherwise false.</returns>
+        public static bool ShowTabById(string contentId)
+        {
+            var hosts = Application.Current.Windows.OfType<ITabContentHost>();
+
+            var tab = hosts.SelectMany(h => h.DockContainer.AllTabs)
+                .FirstOrDefault(t => t.ContentId == contentId);
+
+            if (tab == null)
+                return false;
+
+            var well = tab.Parent as TabWellModelBase;
+            if (well != null)
+            {
+                var currentIndex = well.Children.IndexOf(tab);
+                if (currentIndex > 0)
+                    well.Children.Move(currentIndex, 0);
+
+                well.SelectedItem = tab;
+                well.IsActive = true;
+            }
+
+            var container = tab.Parent as DockContainerModel;
+            if (container != null)
+                container.SelectedDockItem = tab;
+
+            return true;
+        }
         #endregion
     }
 

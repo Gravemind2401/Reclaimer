@@ -17,6 +17,12 @@ namespace Reclaimer.Models
             get { return parent; }
             internal set { SetProperty(ref parent, value); }
         }
+        private string contentId;
+        public string ContentId
+        {
+            get { return contentId; }
+            set { SetProperty(ref contentId, value); }
+        }
 
         private bool isPinned;
         public bool IsPinned

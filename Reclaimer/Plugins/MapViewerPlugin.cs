@@ -62,11 +62,16 @@ namespace Reclaimer.Plugins
 
         public override void OpenPhysicalFile(string fileName)
         {
+            var tabId = $"{Key}::{fileName}";
+            if (Substrate.ShowTabById(tabId))
+                return;
+
             LogOutput($"Loading map file: {fileName}");
 
             try
             {
                 var mv = new Controls.MapViewer();
+                mv.TabModel.ContentId = tabId;
                 mv.LoadMap(fileName);
                 Substrate.AddTool(mv.TabModel, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
                 Substrate.AddRecentFile(fileName);
