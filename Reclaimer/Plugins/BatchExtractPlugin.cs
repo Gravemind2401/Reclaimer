@@ -5,8 +5,10 @@ using Adjutant.Utilities;
 using Reclaimer.Models;
 using Reclaimer.Utilities;
 using System;
+using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing.Dds;
 using System.Drawing.Imaging;
 using System.IO;
@@ -417,7 +419,9 @@ namespace Reclaimer.Plugins
 
         private class BatchExtractSettings
         {
+            [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
             public string DataFolder { get; set; }
+
             public bool PromptForFolder { get; set; }
             public bool OverwriteExisting { get; set; }
             public FolderMode FolderMode { get; set; }

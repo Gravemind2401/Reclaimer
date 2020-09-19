@@ -1,7 +1,10 @@
 ﻿using Adjutant.Audio;
 using Adjutant.Utilities;
+using Reclaimer.Utilities;
 using System;
+using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -97,7 +100,9 @@ namespace Reclaimer.Plugins
 
         private class SoundExtractorSettings
         {
+            [Editor(typeof(BrowseFileEditor), typeof(PropertyValueEditor))]
             public string FFmpegPath { get; set; }
+
             public string OutputExtension { get; set; }
             public string OutputNameFormat { get; set; }
             public bool LogFFmpegOutput { get; set; }

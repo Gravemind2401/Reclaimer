@@ -61,7 +61,9 @@
                 <MenuItem Header="Output" Click="menuOutput_Click" />
                 <MenuItem Header="App Directory" Click="menuAppDir_Click" />
             </MenuItem>
-            <MenuItem Header="Tools" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
+            <MenuItem Header="Tools">
+                <MenuItem Header="Settings" Click="menuSettings_Click" />
+            </MenuItem>
             <MenuItem Header="Themes" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
             <MenuItem Header="Help" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
             <MenuItem Header="{Binding AppVersion, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, FallbackValue='0.0.0.0'}" DockPanel.Dock="Right" IsEnabled="False" />

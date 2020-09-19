@@ -109,6 +109,8 @@ namespace Reclaimer.Plugins
 
         internal DateTime WorkingStatusTime { get; private set; }
 
+        protected internal object settings { get; private set; }
+
         private string workingStatus;
         internal string WorkingStatus
         {
@@ -155,7 +157,9 @@ namespace Reclaimer.Plugins
         /// <typeparam name="T">The type used to store the settings.</typeparam>
         protected T LoadSettings<T>() where T : new()
         {
-            return Substrate.GetPluginSettings<T>(Key);
+            var result = Substrate.GetPluginSettings<T>(Key);
+            settings = result;
+            return result;
         }
 
         /// <summary>

@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Reclaimer.Utilities;
+using System;
+using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -86,6 +89,7 @@ namespace Reclaimer.Plugins
 
     internal class PakViewerSettings
     {
+        [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
         public string PakFolder { get; set; }
     }
 }

@@ -1,6 +1,9 @@
-﻿using Studio.Controls;
+﻿using Reclaimer.Utilities;
+using Studio.Controls;
 using System;
+using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -87,7 +90,9 @@ namespace Reclaimer.Plugins
 
     internal class MapViewerSettings
     {
+        [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
         public string MapFolder { get; set; }
+
         public bool HierarchyView { get; set; }
     }
 }

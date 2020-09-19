@@ -81,6 +81,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Activities.Presentation" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -134,7 +135,11 @@
     <Compile Include="Controls\PakViewer.xaml.cs">
       <DependentUpon>PakViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PropertyGrid.cs" />
     <Compile Include="Controls\Renderer.cs" />
+    <Compile Include="Controls\SettingViewer.xaml.cs">
+      <DependentUpon>SettingViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ZoomPanel.cs" />
     <Compile Include="InstanceManager.cs" />
     <Compile Include="Plugins\BatchExtractPlugin.cs" />
@@ -182,10 +187,12 @@
     <Compile Include="Plugins\SoundExtractorPlugin.cs" />
     <Compile Include="Plugins\Substrate.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Utilities\BrowseFileEditor.cs" />
     <Compile Include="Utilities\CoreTemplateSelector.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\FolderSelectDialog.cs" />
+    <Compile Include="Utilities\BrowseFolderEditor.cs" />
     <Compile Include="Utilities\GridLengthConverter.cs" />
     <Compile Include="Utilities\RadToDegConverter.cs" />
     <Compile Include="Utilities\ToStringConverter.cs" />
@@ -228,6 +235,10 @@
     <Page Include="Controls\PakViewer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\SettingViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Dark.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -82,6 +82,17 @@ namespace Reclaimer.Windows
             System.Diagnostics.Process.Start(AppDomain.CurrentDomain.BaseDirectory);
         }
 
+        private void menuSettings_Click(object sender, RoutedEventArgs e)
+        {
+            const string tabId = "Reclaimer::Settings";
+            if (Substrate.ShowTabById(tabId))
+                return;
+
+            var settings = new Controls.SettingViewer();
+            settings.TabModel.ContentId = tabId;
+            Substrate.AddTool(settings.TabModel, this, Dock.Right, new GridLength(350));
+        }
+
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
             //add initial menu items

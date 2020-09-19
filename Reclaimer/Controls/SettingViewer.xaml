@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="Reclaimer.Controls.SettingViewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Reclaimer.Controls"
+             xmlns:m="clr-namespace:Reclaimer.Models"
+             xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
+             xmlns:pe='clr-namespace:System.Activities.Presentation.PropertyEditing;assembly=System.Activities.Presentation'
+             Loaded="UserControl_Loaded"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" Background="{DynamicResource Environment.CommandBar.Gradient}">
+            <ComboBox x:Name="txtSearch" x:FieldModifier="private"
+                      Margin="0,2" DisplayMemberPath="Name"
+                      SelectionChanged="txtSearch_SelectionChanged" />
+        </Grid>
+        <local:WpfPropertyGrid x:Name="propGrid" x:FieldModifier="private"
+                               TypeLabelVisible="False" ToolbarVisible="False" />
+    </DockPanel>
+</UserControl>
