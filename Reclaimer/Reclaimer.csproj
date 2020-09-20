@@ -142,6 +142,7 @@
     </Compile>
     <Compile Include="Controls\ZoomPanel.cs" />
     <Compile Include="InstanceManager.cs" />
+    <Compile Include="Models\MaskedGeometryModel.cs" />
     <Compile Include="Plugins\BatchExtractPlugin.cs" />
     <Compile Include="Plugins\BitmapViewerPlugin.cs" />
     <Compile Include="Plugins\MetaViewer\Halo3\MetaContext.cs" />

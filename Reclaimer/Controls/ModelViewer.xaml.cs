@@ -409,7 +409,7 @@ namespace Reclaimer.Controls
                 item.IsChecked = false;
         }
 
-        private void btnSave_Click(object sender, RoutedEventArgs e)
+        public bool PromptFileSave(out string fileName, out string formatId)
         {
             var exportFormats = ModelViewerPlugin.GetExportFormats()
                 .Select(f => new
@@ -431,15 +431,50 @@ namespace Reclaimer.Controls
             };
 
             if (sfd.ShowDialog() != true)
-                return;
+            {
+                fileName = formatId = null;
+                return false;
+            }
 
-            var option = exportFormats[sfd.FilterIndex - 1];
-
-            ModelViewerPlugin.WriteModelFile(model, sfd.FileName, option.FormatId);
-            ModelViewerPlugin.Settings.DefaultSaveFormat = option.FormatId;
+            fileName = sfd.FileName;
+            formatId = exportFormats[sfd.FilterIndex - 1].FormatId;
+            ModelViewerPlugin.Settings.DefaultSaveFormat = formatId;
+            return true;
         }
 
-        private void btnSaveBitmaps_Click(object sender, RoutedEventArgs e)
+        private void btnExportAll_Click(object sender, RoutedEventArgs e)
+        {
+            string fileName, formatId;
+            if (!PromptFileSave(out fileName, out formatId))
+                return;
+
+            ModelViewerPlugin.WriteModelFile(model, fileName, formatId);
+        }
+
+        private void btnExportSelected_Click(object sender, RoutedEventArgs e)
+        {
+            string fileName, formatId;
+            if (!PromptFileSave(out fileName, out formatId))
+                return;
+
+            var selectedPerms = new List<IGeometryPermutation>();
+            foreach (var parent in TreeViewItems.Zip(model.Regions, (a, b) => new { Node = a, Region = b }))
+            {
+                if (parent.Node.IsChecked == false)
+                    continue;
+
+                foreach (var child in parent.Node.Items.Zip(parent.Region.Permutations, (a, b) => new { Node = a, Permutation = b }))
+                {
+                    if (child.Node.IsChecked == true)
+                        selectedPerms.Add(child.Permutation);
+                }
+            }
+
+            var masked = new MaskedGeometryModel(model, selectedPerms);
+            ModelViewerPlugin.WriteModelFile(masked, fileName, formatId);
+        }
+
+        private void btnExportBitmaps_Click(object sender, RoutedEventArgs e)
         {
             var getFolder = Substrate.GetSharedFunction<GetDataFolder>("Reclaimer.Plugins.BatchExtractPlugin.GetDataFolder");
 
