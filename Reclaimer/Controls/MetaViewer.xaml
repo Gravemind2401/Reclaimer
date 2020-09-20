@@ -27,6 +27,17 @@
 
         <Style TargetType="Label" BasedOn="{StaticResource {x:Type Label}}">
             <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Foreground" Value="{DynamicResource CommonControls.TextBox.Text}" />
+        </Style>
+
+        <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+            <Setter Property="Foreground" Value="{DynamicResource CommonControls.TextBox.Text}" />
+            
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="{DynamicResource CommonControls.TextBox.TextDisabled}" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
@@ -39,6 +50,22 @@
 
         <Style TargetType="ListBox" BasedOn="{StaticResource {x:Type ListBox}}">
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="2,1" />
+
+            <Setter Property="Foreground" Value="{DynamicResource CommonControls.TextBox.Text}" />
+            <Setter Property="Background" Value="{DynamicResource CommonControls.TextBox.Background}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CommonControls.TextBox.Border}" />
+
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="{DynamicResource CommonControls.TextBox.TextDisabled}" />
+                    <Setter Property="Background" Value="{DynamicResource CommonControls.TextBox.BackgroundDisabled}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource CommonControls.TextBox.BorderDisabled}" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style TargetType="ComboBoxItem" x:Key="ComboBoxOption">

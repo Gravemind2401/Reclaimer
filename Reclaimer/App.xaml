@@ -48,6 +48,7 @@
                             <Setter Property="DockCommand" Value="{Binding DockCommand}" />
                             <Setter Property="s:SplitPanel.MinSize" Value="{Binding MinPanelSize}" />
                             <Setter Property="s:SplitPanel.DesiredSize" Value="{Binding PanelSize}" />
+                            <Setter Property="Background" Value="{DynamicResource TreeView.Background}" />
                             <Setter Property="ContentTemplate">
                                 <Setter.Value>
                                     <DataTemplate>
