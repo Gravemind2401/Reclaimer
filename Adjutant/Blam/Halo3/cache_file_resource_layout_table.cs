@@ -21,7 +21,8 @@ namespace Adjutant.Blam.Halo3
 
         [Offset(48, MaxVersion = (int)CacheType.MccHalo3)]
         [Offset(60, MinVersion = (int)CacheType.MccHalo3, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(48, MinVersion = (int)CacheType.Halo3ODST)]
+        [Offset(48, MinVersion = (int)CacheType.Halo3ODST, MaxVersion = (int)CacheType.MccHalo3ODST)]
+        [Offset(60, MinVersion = (int)CacheType.MccHalo3ODST)]
         public BlockCollection<SegmentBlock> Segments { get; set; }
     }
 

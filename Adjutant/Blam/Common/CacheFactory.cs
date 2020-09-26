@@ -75,6 +75,7 @@ namespace Adjutant.Blam.Common
                     return new Halo3.CacheFile(detail);
 
                 case CacheType.MccHalo3:
+                case CacheType.MccHalo3ODST:
                     return new MccHalo3.CacheFile(detail);
 
                 case CacheType.HaloReachBeta:

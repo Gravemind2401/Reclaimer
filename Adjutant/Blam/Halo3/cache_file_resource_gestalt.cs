@@ -14,19 +14,22 @@ namespace Adjutant.Blam.Halo3
         [Offset(36, MaxVersion = (int)CacheType.Halo3Retail)]
         [Offset(88, MinVersion = (int)CacheType.Halo3Retail, MaxVersion = (int)CacheType.MccHalo3)]
         [Offset(100, MinVersion = (int)CacheType.MccHalo3, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(88, MinVersion = (int)CacheType.Halo3ODST)]
+        [Offset(88, MinVersion = (int)CacheType.Halo3ODST, MaxVersion = (int)CacheType.MccHalo3ODST)]
+        [Offset(100, MinVersion = (int)CacheType.MccHalo3ODST)]
         public BlockCollection<ResourceEntryBlock> ResourceEntries { get; set; }
 
         [Offset(132, MaxVersion = (int)CacheType.Halo3Retail)]
         [Offset(316, MinVersion = (int)CacheType.Halo3Retail, MaxVersion = (int)CacheType.MccHalo3)]
         [Offset(328, MinVersion = (int)CacheType.MccHalo3, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(316, MinVersion = (int)CacheType.Halo3ODST)]
+        [Offset(316, MinVersion = (int)CacheType.Halo3ODST, MaxVersion = (int)CacheType.MccHalo3ODST)]
+        [Offset(328, MinVersion = (int)CacheType.MccHalo3ODST)]
         public int FixupDataSize { get; set; }
 
         [Offset(144, MaxVersion = (int)CacheType.Halo3Retail)]
         [Offset(328, MinVersion = (int)CacheType.Halo3Retail, MaxVersion = (int)CacheType.MccHalo3)]
         [Offset(340, MinVersion = (int)CacheType.MccHalo3, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(328, MinVersion = (int)CacheType.Halo3ODST)]
+        [Offset(328, MinVersion = (int)CacheType.Halo3ODST, MaxVersion = (int)CacheType.MccHalo3ODST)]
+        [Offset(340, MinVersion = (int)CacheType.MccHalo3ODST)]
         public Pointer FixupDataPointer { get; set; }
     }
 

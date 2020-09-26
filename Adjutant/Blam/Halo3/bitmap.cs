@@ -111,8 +111,10 @@ namespace Adjutant.Blam.Halo3
                     Array.Reverse(data, i, bpp);
             }
 
+            var isMcc = cache.CacheType == CacheType.MccHalo3 || cache.CacheType == CacheType.MccHalo3ODST;
+
             int virtualWidth, virtualHeight;
-            if (cache.CacheType == CacheType.MccHalo3)
+            if (isMcc)
             {
                 virtualWidth = submap.Width;
                 virtualHeight = submap.Height * submap.FaceCount;
@@ -126,7 +128,7 @@ namespace Adjutant.Blam.Halo3
                 data = TextureUtils.ApplyCrop(data, submap.BitmapFormat, submap.FaceCount, virtualWidth, virtualHeight, submap.Width, submap.Height * submap.FaceCount);
 
             DdsImage dds;
-            if (cache.CacheType == CacheType.MccHalo3 && submap.BitmapFormat == TextureFormat.DXN)
+            if (isMcc && submap.BitmapFormat == TextureFormat.DXN)
                 dds = new DdsImage(submap.Height, submap.Width, XboxFormat.DXN_SNorm, DxgiTextureType.Texture2D, data);
             else if (dxgiLookup.ContainsKey(submap.BitmapFormat))
                 dds = new DdsImage(submap.Height, submap.Width, dxgiLookup[submap.BitmapFormat], DxgiTextureType.Texture2D, data);
@@ -187,7 +189,9 @@ namespace Adjutant.Blam.Halo3
     }
 
     [FixedSize(48, MaxVersion = (int)CacheType.MccHalo3)]
-    [FixedSize(56, MinVersion = (int)CacheType.MccHalo3)]
+    [FixedSize(56, MinVersion = (int)CacheType.MccHalo3, MaxVersion = (int)CacheType.Halo3ODST)]
+    [FixedSize(48, MinVersion = (int)CacheType.Halo3ODST, MaxVersion = (int)CacheType.MccHalo3ODST)]
+    [FixedSize(56, MinVersion = (int)CacheType.MccHalo3ODST)]
     public class BitmapDataBlock
     {
         [Offset(0)]

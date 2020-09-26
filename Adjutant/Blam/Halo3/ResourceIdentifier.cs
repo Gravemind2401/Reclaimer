@@ -95,6 +95,7 @@ namespace Adjutant.Blam.Halo3
                 switch (cache.CacheType)
                 {
                     case CacheType.MccHalo3:
+                    case CacheType.MccHalo3ODST:
                         if (page.CacheIndex >= 0)
                             dataTableAddress = 12288; //header size
                         else

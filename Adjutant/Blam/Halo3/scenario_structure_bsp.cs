@@ -161,7 +161,8 @@ namespace Adjutant.Blam.Halo3
     [FixedSize(236, MaxVersion = (int)CacheType.Halo3Retail)]
     [FixedSize(220, MinVersion = (int)CacheType.Halo3Retail, MaxVersion = (int)CacheType.MccHalo3)]
     [FixedSize(280, MinVersion = (int)CacheType.MccHalo3, MaxVersion = (int)CacheType.Halo3ODST)]
-    [FixedSize(220, MinVersion = (int)CacheType.Halo3ODST)]
+    [FixedSize(220, MinVersion = (int)CacheType.Halo3ODST, MaxVersion = (int)CacheType.MccHalo3ODST)]
+    [FixedSize(280, MinVersion = (int)CacheType.MccHalo3ODST)]
     public class ClusterBlock
     {
         [Offset(0)]
@@ -176,7 +177,8 @@ namespace Adjutant.Blam.Halo3
         [Offset(172, MaxVersion = (int)CacheType.Halo3Retail)]
         [Offset(156, MinVersion = (int)CacheType.Halo3Retail, MaxVersion = (int)CacheType.MccHalo3)]
         [Offset(216, MinVersion = (int)CacheType.MccHalo3, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(156, MinVersion = (int)CacheType.Halo3ODST)]
+        [Offset(156, MinVersion = (int)CacheType.Halo3ODST, MaxVersion = (int)CacheType.MccHalo3ODST)]
+        [Offset(216, MinVersion = (int)CacheType.MccHalo3ODST)]
         public short SectionIndex { get; set; }
     }
 

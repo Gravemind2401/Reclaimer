@@ -13,4 +13,16 @@
     <namespace id="0x9" startIndex="0xC5F" />
     <namespace id="0xA" startIndex="0xC60" />
   </stringIDs>
+  <stringIDs id="ODST U0" indexBits="17" namespaceBits="8" lengthBits="7">
+    <namespace id="0x0" min="0x55A" startIndex="0xF0B" />
+    <namespace id="0x1" startIndex="0x55A" />
+    <namespace id="0x2" startIndex="0xBEE" />
+    <namespace id="0x3" startIndex="0xC89" />
+    <namespace id="0x4" startIndex="0xCE1" />
+    <namespace id="0x5" startIndex="0xDD8" />
+    <namespace id="0x6" startIndex="0xE24" />
+    <namespace id="0x7" startIndex="0xE73" />
+    <namespace id="0x8" startIndex="0xE8B" />
+    <namespace id="0xA" startIndex="0xE98" />
+  </stringIDs>
 </stringDefinitions>

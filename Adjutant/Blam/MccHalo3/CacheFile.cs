@@ -247,7 +247,19 @@ namespace Adjutant.Blam.MccHalo3
             items = new string[cache.Header.StringCount];
 
             var xml = Adjutant.Properties.Resources.MccHalo3Strings;
-            translator = new StringIdTranslator(xml);
+            switch (cache.CacheType)
+            {
+                case CacheType.MccHalo3:
+                    translator = new StringIdTranslator(xml, "U0");
+                    break;
+
+                case CacheType.MccHalo3ODST:
+                    translator = new StringIdTranslator(xml, "ODST U0");
+                    break;
+
+                default:
+                    throw new NotSupportedException();
+            }
         }
 
         internal void ReadItems()

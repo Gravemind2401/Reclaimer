@@ -77,6 +77,7 @@ namespace Adjutant.Blam.Common
                 case CacheType.Halo3Retail:
                 case CacheType.MccHalo3:
                 case CacheType.Halo3ODST:
+                case CacheType.MccHalo3ODST:
                     content = item.ReadMetadata<Halo3.bitmap>();
                     break;
                 case CacheType.HaloReachBeta:
@@ -118,6 +119,7 @@ namespace Adjutant.Blam.Common
                     case CacheType.Halo3Retail:
                     case CacheType.MccHalo3:
                     case CacheType.Halo3ODST:
+                    case CacheType.MccHalo3ODST:
                         content = item.ReadMetadata<Halo3.render_model>();
                         break;
                     case CacheType.HaloReachBeta:
@@ -148,6 +150,7 @@ namespace Adjutant.Blam.Common
                     case CacheType.Halo3Retail:
                     case CacheType.MccHalo3:
                     case CacheType.Halo3ODST:
+                    case CacheType.MccHalo3ODST:
                         content = item.ReadMetadata<Halo3.scenario_structure_bsp>();
                         break;
                     case CacheType.HaloReachBeta:

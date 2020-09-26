@@ -69,11 +69,20 @@ namespace Adjutant.Blam.Common
         [BuildString("Jun  4 2020 20:29:31")] //flight 1
         [BuildString("Jun 21 2020 16:34:20")] //flight 1 update
         [BuildString("Jun 25 2020 15:02:49")] //release
+        [BuildString("Aug 11 2020 23:34:41")] //flight 2 (odst test)
+        [BuildString("Aug 26 2020 21:24:11")] //update 1
         MccHalo3,
 
         [CacheGeneration(3)]
         [BuildString("13895.09.04.27.2201.atlas_relea")]
         Halo3ODST,
+
+        [CacheGeneration(3)]
+        [BuildString("Aug 11 2020 06:58:27")] //flight 1
+        [BuildString("Aug 17 2020 01:12:27")] //flight 1 update 1
+        [BuildString("Aug 24 2020 08:37:26")] //flight 1 update 2
+        [BuildString("Aug 28 2020 08:43:36")] //release
+        MccHalo3ODST,
 
         [CacheGeneration(3)]
         [BuildString("09730.10.04.09.1309.omaha_delta")]
@@ -119,9 +128,11 @@ namespace Adjutant.Blam.Common
         Halo4Retail,
 
         [CacheGeneration(4)]
-        [BuildString("Apr  9 2020 01:36:04")]
-        [BuildString("Apr 13 2020 02:24:30")]
-        [BuildString("May 10 2020 21:14:00")]
+        [BuildString("Apr  9 2020 01:36:04")] //flight
+        [BuildString("Apr 13 2020 02:24:30")] //release
+        [BuildString("May 10 2020 21:14:00")] //update 1
+        [BuildString("May 12 2020 12:18:21")] //update 2
+        [BuildString("Jul 25 2020 22:24:58")] //update 3
         MccHalo2X,
     }
 
