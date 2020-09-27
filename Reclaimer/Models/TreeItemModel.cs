@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Reclaimer.Models
 {
@@ -49,6 +50,19 @@ namespace Reclaimer.Models
             set { SetProperty(ref tag, value); }
         }
 
+        public bool IsVisible => Visibility == Visibility.Visible;
+
+        private Visibility visibility;
+        public Visibility Visibility
+        {
+            get { return visibility; }
+            set
+            {
+                if (SetProperty(ref visibility, value))
+                    RaisePropertyChanged(nameof(IsVisible));
+            }
+        }
+
         public TreeItemModel()
         {
             Items = new ObservableCollection<TreeItemModel>();
@@ -81,5 +95,7 @@ namespace Reclaimer.Models
 
             RaisePropertyChanged(nameof(HasItems));
         }
+
+        public override string ToString() => Header ?? base.ToString();
     }
 }

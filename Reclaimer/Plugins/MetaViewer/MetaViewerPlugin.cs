@@ -114,6 +114,7 @@ namespace Reclaimer.Plugins.MetaViewer
                     return "Halo3";
 
                 case CacheType.Halo3ODST:
+                case CacheType.MccHalo3ODST:
                     return "ODST";
 
                 case CacheType.HaloReachBeta:

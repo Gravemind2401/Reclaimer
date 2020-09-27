@@ -150,33 +150,39 @@
         </ToolBarTray>
         <s:SplitPanel x:Name="splitPanel" x:FieldModifier="private" SplitterThickness="3">
             <s:SplitPanel.Resources>
-                <Style TargetType="s:SplitPanelSplitter" BasedOn="{StaticResource {x:Type s:SplitPanelSplitter}}">
+                <Style TargetType="s:SplitPanelSplitter">
                     <Setter Property="Background" Value="LightGray" />
                 </Style>
             </s:SplitPanel.Resources>
-            <TreeView x:Name="tv" s:SplitPanel.DesiredSize="250"
-                    ItemsSource="{Binding TreeViewItems}"
-                    VerticalContentAlignment="Center">
-                <TreeView.ItemContainerStyle>
-                    <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
-                        <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
-                        <Setter Property="ItemsSource" Value="{Binding Items}" />
-                        <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick" />
-                    </Style>
-                </TreeView.ItemContainerStyle>
-                <TreeView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding IsChecked}"
-                                      VerticalAlignment="Center"
-                                      Checked="TreeViewItem_Checked"
-                                      Unchecked="TreeViewItem_Checked" />
-                            <TextBlock Text="{Binding Header}" Margin="5,0,0,0"
-                                       VerticalAlignment="Center" />
-                        </StackPanel>
-                    </DataTemplate>
-                </TreeView.ItemTemplate>
-            </TreeView>
+            <DockPanel s:SplitPanel.DesiredSize="250">
+                <s:SearchControl x:Name="txtSearch" x:FieldModifier="private" DockPanel.Dock="Top"
+                        WatermarkText="Search" LiveSearchEnabled="True" LiveSearchDelay="500"
+                        SearchAccepted="txtSearch_SearchChanged" SearchCanceled="txtSearch_SearchChanged" />
+                <TreeView x:Name="tv" s:SplitPanel.DesiredSize="250"
+                        ItemsSource="{Binding TreeViewItems}"
+                        VerticalContentAlignment="Center">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                            <Setter Property="Visibility" Value="{Binding Visibility}" />
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                            <Setter Property="ItemsSource" Value="{Binding Items}" />
+                            <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                    <TreeView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding IsChecked}"
+                                          VerticalAlignment="Center"
+                                          Checked="TreeViewItem_Checked"
+                                          Unchecked="TreeViewItem_Checked" />
+                                <TextBlock Text="{Binding Header}" Margin="5,0,0,0"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </DockPanel>
             <Grid>
                 <local:Renderer x:Name="renderer"
                                 x:FieldModifier="private" 

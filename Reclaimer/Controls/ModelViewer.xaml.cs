@@ -346,16 +346,16 @@ namespace Reclaimer.Controls
             if (isWorking) return;
 
             isWorking = true;
-            SetState((e.OriginalSource as FrameworkElement).DataContext as TreeItemModel);
+            SetState((e.OriginalSource as FrameworkElement).DataContext as TreeItemModel, true);
             isWorking = false;
         }
 
-        private void SetState(TreeItemModel item)
+        private void SetState(TreeItemModel item, bool updateRender)
         {
             if (item.HasItems == false)
             {
                 var parent = item.Parent as TreeItemModel;
-                var children = parent.Items.Cast<TreeItemModel>();
+                var children = parent.Items.Where(i => i.IsVisible);
 
                 if (children.All(i => i.IsChecked == true))
                     parent.IsChecked = true;
@@ -363,22 +363,29 @@ namespace Reclaimer.Controls
                     parent.IsChecked = false;
                 else parent.IsChecked = null;
 
-                var group = item.Tag as Model3DGroup;
-                if (item.IsChecked == true)
-                    modelGroup.Children.Add(group);
-                else
-                    modelGroup.Children.Remove(group);
-            }
-            else
-            {
-                foreach (TreeItemModel i in item.Items)
+                if (updateRender)
                 {
-                    var group = i.Tag as Model3DGroup;
-                    i.IsChecked = item.IsChecked;
-                    if (i.IsChecked == true)
+                    var group = item.Tag as Model3DGroup;
+                    if (item.IsChecked == true && !modelGroup.Children.Contains(group))
                         modelGroup.Children.Add(group);
                     else
                         modelGroup.Children.Remove(group);
+                }
+            }
+            else
+            {
+                foreach (var i in item.Items.Where(i => i.IsVisible))
+                {
+                    var group = i.Tag as Model3DGroup;
+                    i.IsChecked = item.IsChecked;
+
+                    if (updateRender)
+                    {
+                        if (i.IsChecked == true && !modelGroup.Children.Contains(group))
+                            modelGroup.Children.Add(group);
+                        else
+                            modelGroup.Children.Remove(group);
+                    }
                 }
             }
         }
@@ -503,6 +510,28 @@ namespace Reclaimer.Controls
                 ClearStatus();
                 LogOutput($"Recursive bitmap extract complete for {geometry.Name}.{geometry.Class}");
             });
+        }
+
+        private void txtSearch_SearchChanged(object sender, RoutedEventArgs e)
+        {
+            foreach (var parent in TreeViewItems)
+            {
+                foreach (var child in parent.Items)
+                {
+                    child.Visibility = string.IsNullOrEmpty(txtSearch.Text) || child.Header.ToUpperInvariant().Contains(txtSearch.Text.ToUpperInvariant())
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+                }
+
+                parent.Visibility = parent.Items.Any(i => i.IsVisible)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+
+            isWorking = true;
+            foreach (var item in TreeViewItems)
+                SetState(item.Items.First(), false);
+            isWorking = false;
         }
         #endregion
 
