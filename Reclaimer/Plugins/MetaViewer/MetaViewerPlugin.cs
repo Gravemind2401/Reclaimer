@@ -58,23 +58,29 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public override void OpenFile(OpenFileArgs args)
         {
-            var tabId = $"{Key}::{args.FileName}";
+            if (args.File.Any(i => i is IIndexItem))
+            {
+                var item = args.File.OfType<IIndexItem>().FirstOrDefault();
+                var tabId = $"{Key}::{item.CacheFile.FileName}::{item.Id}";
+                InitViewer(tabId, args, v => v.LoadMetadata(item, GetDefinitionPath(item)));
+            }
+            else if (args.File.Any(i => i is ModuleItem))
+            {
+                var item = args.File.OfType<ModuleItem>().FirstOrDefault();
+                var tabId = $"{Key}::{item.Module.FileName}::{item.GlobalTagId}";
+                InitViewer(tabId, args, v => v.LoadMetadata(item, GetDefinitionPath(item)));
+            }
+        }
+
+        private void InitViewer(string tabId, OpenFileArgs args, Action<Controls.MetaViewer> loadAction)
+        {
             if (Substrate.ShowTabById(tabId))
                 return;
 
             var viewer = new Controls.MetaViewer();
             viewer.TabModel.ContentId = tabId;
 
-            if (args.File.Any(i => i is IIndexItem))
-            {
-                var item = args.File.OfType<IIndexItem>().FirstOrDefault();
-                viewer.LoadMetadata(item, GetDefinitionPath(item));
-            }
-            else if (args.File.Any(i => i is ModuleItem))
-            {
-                var item = args.File.OfType<ModuleItem>().FirstOrDefault();
-                viewer.LoadMetadata(item, GetDefinitionPath(item));
-            }
+            loadAction(viewer);
 
             var container = args.TargetWindow.DocumentPanel;
             container.AddItem(viewer.TabModel);

@@ -41,7 +41,7 @@ namespace Reclaimer.Plugins
         [SharedFunction]
         public void DisplayModel(ITabContentHost targetWindow, IRenderGeometry model, string fileName)
         {
-            var tabId = $"{Key}::{fileName}";
+            var tabId = $"{Key}::{model.SourceFile}::{model.Id}";
             if (Substrate.ShowTabById(tabId))
                 return;
 

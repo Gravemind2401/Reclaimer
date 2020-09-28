@@ -26,7 +26,7 @@ namespace Reclaimer.Plugins
         [SharedFunction]
         public void DisplayBitmap(ITabContentHost targetWindow, IBitmap bitmap, string fileName)
         {
-            var tabId = $"{Key}::{bitmap.Id}::{fileName}";
+            var tabId = $"{Key}::{bitmap.SourceFile}::{bitmap.Id}";
             if (Substrate.ShowTabById(tabId))
                 return;
 
