@@ -64,6 +64,10 @@ namespace Adjutant.Blam.HaloReach
 
         #region IRenderGeometry
 
+        string IRenderGeometry.SourceFile => item.CacheFile.FileName;
+
+        int IRenderGeometry.Id => item.Id;
+
         string IRenderGeometry.Name => item.FullPath;
 
         string IRenderGeometry.Class => item.ClassName;

@@ -61,6 +61,10 @@ namespace Adjutant.Blam.Halo5
 
         #region IRenderGeometry
 
+        string IRenderGeometry.SourceFile => item.Module.FileName;
+
+        int IRenderGeometry.Id => item.GlobalTagId;
+
         string IRenderGeometry.Name => item.FullPath;
 
         string IRenderGeometry.Class => item.ClassName;

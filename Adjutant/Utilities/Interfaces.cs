@@ -11,6 +11,7 @@ namespace Adjutant.Utilities
 {
     public interface IBitmap
     {
+        string SourceFile { get; }
         int Id { get; }
         string Name { get; }
         string Class { get; }
@@ -21,6 +22,8 @@ namespace Adjutant.Utilities
 
     public interface IRenderGeometry
     {
+        string SourceFile { get; }
+        int Id { get; }
         string Name { get; }
         string Class { get; }
         int LodCount { get; }

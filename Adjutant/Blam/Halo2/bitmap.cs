@@ -56,6 +56,8 @@ namespace Adjutant.Blam.Halo2
 
         private static readonly CubemapLayout Halo2CubeLayout = CubemapLayout.NonCubemap;
 
+        string IBitmap.SourceFile => item.CacheFile.FileName;
+
         int IBitmap.Id => item.Id;
 
         string IBitmap.Name => item.FullPath;
