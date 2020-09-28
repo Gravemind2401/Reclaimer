@@ -37,7 +37,7 @@ namespace Adjutant.Blam.HaloReach
         [Offset(0)]
         public TagReference BitmapReference { get; set; }
 
-        [Offset(20)]
-        public short TilingIndex { get; set; }
+        [Offset(21)]
+        public byte TilingIndex { get; set; }
     }
 }

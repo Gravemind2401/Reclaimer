@@ -193,9 +193,9 @@ namespace Adjutant.Blam.HaloReach
     }
 
     [Flags]
-    public enum ModelFlags : int
+    public enum ModelFlags : short
     {
-        UseLocalNodes = 262144
+        UseLocalNodes = 4
     }
 
     [FixedSize(16)]
