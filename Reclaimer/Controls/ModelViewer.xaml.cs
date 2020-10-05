@@ -8,9 +8,7 @@ using Studio.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Drawing.Dds;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -22,9 +20,9 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
-using System.Windows.Navigation;
 
 namespace Reclaimer.Controls
 {
@@ -549,6 +547,23 @@ namespace Reclaimer.Controls
                 SplitPanel.SetDesiredSize(splitPanel.Children[0], (GridLength)toggle.Tag);
                 splitPanel.SplitterThickness = 3;
             }
+        }
+
+        private void PosLabel_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var label = sender as Label;
+            if (label == null)
+                return;
+
+            var anim = new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromSeconds(1)
+            };
+
+            Clipboard.SetText(label.Content?.ToString());
+            label.BeginAnimation(OpacityProperty, anim);
         }
 
         #region IDisposable
