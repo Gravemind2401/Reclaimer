@@ -250,7 +250,9 @@ namespace Adjutant.Blam.MccHalo3
             switch (cache.CacheType)
             {
                 case CacheType.MccHalo3:
-                    translator = new StringIdTranslator(xml, "U0");
+                    if (DateTime.Parse(cache.BuildString) < DateTime.Parse("Aug 26 2020 21:24:11"))
+                        translator = new StringIdTranslator(xml, "U0");
+                    else translator = new StringIdTranslator(xml, "U1");
                     break;
 
                 case CacheType.MccHalo3ODST:
