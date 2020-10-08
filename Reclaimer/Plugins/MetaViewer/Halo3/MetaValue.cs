@@ -24,7 +24,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         protected override void OnMetaPropertyChanged(string propertyName)
         {
-            using (var writer = new EndianWriter(context.Transaction, context.Cache.ByteOrder, new UTF8Encoding(), true))
+            using (var writer = new EndianWriter(context.DataSource, context.Cache.ByteOrder, true))
                 WriteValue(writer);
         }
     }

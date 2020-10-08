@@ -134,11 +134,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             if (BlockCount <= 0)
                 return;
 
-            var fs = new FileStream(context.Cache.FileName, FileMode.Open, FileAccess.Read);
-            var tran = new TransactionStream(fs);
-            context.Transaction.CopyChanges(tran);
-
-            using (var reader = context.Cache.CreateReader(context.Cache.DefaultAddressTranslator, tran))
+            using (var reader = context.Cache.CreateReader(context.Cache.DefaultAddressTranslator, context.DataSource, true))
             {
                 foreach (var c in Children)
                 {

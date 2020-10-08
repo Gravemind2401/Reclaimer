@@ -74,11 +74,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public static Halo3.MetaValue GetMetaValue(XmlNode node, Halo3.MetaContext context, long baseAddress)
         {
-            var fs = new FileStream(context.Cache.FileName, FileMode.Open, FileAccess.Read);
-            var tran = new TransactionStream(fs);
-            context.Transaction.CopyChanges(tran);
-
-            using (var reader = context.Cache.CreateReader(context.Cache.DefaultAddressTranslator, tran))
+            using (var reader = context.Cache.CreateReader(context.Cache.DefaultAddressTranslator, context.DataSource, true))
             {
                 reader.Seek(baseAddress, SeekOrigin.Begin);
 

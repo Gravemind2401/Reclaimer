@@ -12,11 +12,18 @@ namespace Reclaimer.Utilities
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null)
-                return null;
-            else if (parameter == null)
-                return value.ToString();
-            else return ((dynamic)value).ToString(parameter.ToString());
+            try
+            {
+                if (value == null)
+                    return null;
+                else if (parameter == null)
+                    return value.ToString();
+                else return ((dynamic)value).ToString(parameter.ToString());
+            }
+            catch
+            {
+                return value?.ToString();
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
