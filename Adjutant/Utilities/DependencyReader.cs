@@ -19,7 +19,12 @@ namespace Adjutant.Utilities
         private readonly Dictionary<Type, ConstructorInfo> ctorLookup;
 
         public DependencyReader(Stream input, ByteOrder byteOrder)
-            : base(input, byteOrder)
+            : this(input, byteOrder, false)
+        {
+        }
+
+        public DependencyReader(Stream input, ByteOrder byteOrder, bool leaveOpen)
+            : base(input, byteOrder, leaveOpen)
         {
             registeredTypes = new Dictionary<Type, Func<object>>();
             registeredInstances = new Dictionary<Type, object>();

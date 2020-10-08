@@ -103,15 +103,19 @@ namespace Adjutant.Blam.Common
             return field.GetCustomAttributes(typeof(CacheGenerationAttribute), false).OfType<CacheGenerationAttribute>().FirstOrDefault()?.Generation ?? -1;
         }
 
-        public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator)
+        public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator) => CreateReader(cache, translator, false);
+
+        public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator, bool leaveOpen)
         {
             var fs = new FileStream(cache.FileName, FileMode.Open, FileAccess.Read);
-            return CreateReader(cache, translator, fs);
+            return CreateReader(cache, translator, fs, leaveOpen);
         }
 
-        public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator, Stream stream)
+        public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator, Stream stream) => CreateReader(cache, translator, stream, false);
+
+        public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator, Stream stream, bool leaveOpen)
         {
-            var reader = new DependencyReader(stream, cache.ByteOrder);
+            var reader = new DependencyReader(stream, cache.ByteOrder, leaveOpen);
 
             reader.RegisterInstance(cache);
             reader.RegisterInstance(translator);
