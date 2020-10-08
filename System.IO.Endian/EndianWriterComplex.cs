@@ -18,7 +18,7 @@ namespace System.IO.Endian
 
         /// <summary>
         /// Writes a complex object to the current stream using reflection.
-        /// The type being written must have a public parameterless conustructor.
+        /// The type being written must have a public parameterless constructor.
         /// Each property to be written must have public get/set methods and
         /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
         /// </summary>
@@ -40,7 +40,7 @@ namespace System.IO.Endian
 
         /// <summary>
         /// Writes a complex object to the current stream using reflection.
-        /// The type being written must have a public parameterless conustructor.
+        /// The type being written must have a public parameterless constructor.
         /// Each property to be written must have public get/set methods and
         /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
         /// </summary>
@@ -67,7 +67,7 @@ namespace System.IO.Endian
 
         /// <summary>
         /// Writes a complex object to the current stream using reflection.
-        /// The type being written must have a public parameterless conustructor.
+        /// The type being written must have a public parameterless constructor.
         /// Each property to be written must have public get/set methods and
         /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
         /// </summary>
@@ -88,7 +88,7 @@ namespace System.IO.Endian
 
         /// <summary>
         /// Writes a complex object to the current stream using reflection.
-        /// The type being written must have a public parameterless conustructor.
+        /// The type being written must have a public parameterless constructor.
         /// Each property to be written must have public get/set methods and
         /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
         /// </summary>

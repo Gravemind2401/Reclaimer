@@ -47,6 +47,21 @@ namespace System.IO.Endian
 
         /// <summary>
         /// Initializes a new instance of the <seealso cref="EndianWriter"/> class
+        /// based on the specified stream with the specified byte order using UTF-8 encoding, and optionally leaves the stream open.
+        /// </summary>
+        /// <param name="output">The output stream.</param>
+        /// <param name="byteOrder">The byte order of the stream.</param>
+        /// <param name="leaveOpen">true to leave the stream open after the EndianWriter object is disposed; otherwise, false.</param>
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        public EndianWriter(Stream output, ByteOrder byteOrder, bool leaveOpen)
+            : this(output, byteOrder, new UTF8Encoding(), leaveOpen)
+        {
+
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <seealso cref="EndianWriter"/> class
         /// based on the specified stream with the specified byte order and character encoding.
         /// </summary>
         /// <param name="output">The output stream.</param>
