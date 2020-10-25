@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Common.Gen3
 {
-    [CLSCompliant(false)]
     public interface IGen3CacheFile : ICacheFile
     {
         long VirtualBaseAddress { get; }

@@ -138,11 +138,9 @@ namespace Adjutant.Blam.MccHalo3
         public long VirtualBaseAddress { get; set; }
 
         [Offset(1204)]
-        [CLSCompliant(false)]
         public SectionOffsetTable SectionOffsetTable { get; set; }
 
         [Offset(1220)]
-        [CLSCompliant(false)]
         public SectionTable SectionTable { get; set; }
     }
 

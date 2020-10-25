@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Common.Gen3
 {
-    [CLSCompliant(false)]
     public class PartitionTable64 : IReadOnlyList<PartitionLayout64>
     {
         private readonly PartitionLayout64[] partitions;
@@ -39,7 +38,6 @@ namespace Adjutant.Blam.Common.Gen3
     }
 
     [FixedSize(16)]
-    [CLSCompliant(false)]
     public struct PartitionLayout64
     {
         [Offset(0)]

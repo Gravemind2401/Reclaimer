@@ -13,7 +13,6 @@ namespace Adjutant.Blam.Common.Gen3
         private readonly IGen3CacheFile cache;
         private long Magic => cache.VirtualBaseAddress - (cache.SectionTable[2].Address + cache.SectionOffsetTable[2]);
 
-        [CLSCompliant(false)]
         public TagAddressTranslator(IGen3CacheFile cache)
         {
             this.cache = cache;

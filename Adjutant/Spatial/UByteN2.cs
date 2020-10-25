@@ -39,7 +39,6 @@ namespace Adjutant.Spatial
             }
         }
 
-        [CLSCompliant(false)]
         public UByteN2(ushort value)
         {
             bits = value;
@@ -64,13 +63,11 @@ namespace Adjutant.Spatial
 
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}]");
 
-        [CLSCompliant(false)]
         public static explicit operator ushort(UByteN2 value)
         {
             return value.bits;
         }
 
-        [CLSCompliant(false)]
         public static explicit operator UByteN2(ushort value)
         {
             return new UByteN2(value);

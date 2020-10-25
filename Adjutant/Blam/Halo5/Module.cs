@@ -190,25 +190,21 @@ namespace Adjutant.Blam.Halo5
     [FixedSize(32, MinVersion = (int)ModuleType.Halo5Forge)]
     public class Block
     {
-        [StoreType(typeof(uint))]
         [Offset(0, MaxVersion = (int)ModuleType.Halo5Forge)]
         [Offset(8, MinVersion = (int)ModuleType.Halo5Forge)]
-        public long CompressedOffset { get; set; }
+        public uint CompressedOffset { get; set; }
 
-        [StoreType(typeof(uint))]
         [Offset(4, MaxVersion = (int)ModuleType.Halo5Forge)]
         [Offset(12, MinVersion = (int)ModuleType.Halo5Forge)]
-        public long CompressedSize { get; set; }
+        public uint CompressedSize { get; set; }
 
-        [StoreType(typeof(uint))]
         [Offset(8, MaxVersion = (int)ModuleType.Halo5Forge)]
         [Offset(16, MinVersion = (int)ModuleType.Halo5Forge)]
-        public long UncompressedOffset { get; set; }
+        public uint UncompressedOffset { get; set; }
 
-        [StoreType(typeof(uint))]
         [Offset(12, MaxVersion = (int)ModuleType.Halo5Forge)]
         [Offset(20, MinVersion = (int)ModuleType.Halo5Forge)]
-        public long UncompressedSize { get; set; }
+        public uint UncompressedSize { get; set; }
 
         [Offset(16, MaxVersion = (int)ModuleType.Halo5Forge)]
         [Offset(24, MinVersion = (int)ModuleType.Halo5Forge)]

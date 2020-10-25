@@ -106,8 +106,7 @@ namespace Adjutant.Blam.Halo3
     public class PitchRange
     {
         [Offset(0)]
-        [StoreType(typeof(ushort))]
-        public int NameIndex { get; set; }
+        public ushort NameIndex { get; set; }
 
         [Offset(2)]
         public short ParametersIndex { get; set; }
@@ -122,8 +121,7 @@ namespace Adjutant.Blam.Halo3
         public short EncodedPermutationCount { get; set; }
 
         [Offset(10)]
-        [StoreType(typeof(ushort))]
-        public int FirstPermutationIndex { get; set; }
+        public ushort FirstPermutationIndex { get; set; }
 
         public int PermutationCount => (EncodedPermutationCount >> 4) & 63;
     }
@@ -168,8 +166,7 @@ namespace Adjutant.Blam.Halo3
         //byte here that belongs to size (24bit)
 
         [Offset(6)]
-        [StoreType(typeof(ushort))]
-        public int Size { get; set; }
+        public ushort Size { get; set; }
 
         [Offset(8)]
         public int RuntimeIndex { get; set; }

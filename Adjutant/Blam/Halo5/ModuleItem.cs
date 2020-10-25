@@ -37,12 +37,10 @@ namespace Adjutant.Blam.Halo5
         public long DataOffset { get; set; }
 
         [Offset(32)]
-        [StoreType(typeof(uint))]
-        public long TotalCompressedSize { get; set; }
+        public uint TotalCompressedSize { get; set; }
 
         [Offset(36)]
-        [StoreType(typeof(uint))]
-        public long TotalUncompressedSize { get; set; }
+        public uint TotalUncompressedSize { get; set; }
 
         [Offset(43)]
         public FileEntryFlags Flags { get; set; }
@@ -61,16 +59,13 @@ namespace Adjutant.Blam.Halo5
         public int ClassId { get; set; }
 
         [Offset(68)]
-        [StoreType(typeof(uint))]
-        public long UncompressedHeaderSize { get; set; }
+        public uint UncompressedHeaderSize { get; set; }
 
         [Offset(72)]
-        [StoreType(typeof(uint))]
-        public long UncompressedTagDataSize { get; set; }
+        public uint UncompressedTagDataSize { get; set; }
 
         [Offset(76)]
-        [StoreType(typeof(uint))]
-        public long UncompressedResourceDataSize { get; set; }
+        public uint UncompressedResourceDataSize { get; set; }
 
         [Offset(80)]
         public short HeaderBlockCount { get; set; }

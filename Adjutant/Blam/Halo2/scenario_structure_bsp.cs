@@ -272,12 +272,10 @@ namespace Adjutant.Blam.Halo2
     public class ClusterBlock
     {
         [Offset(0)]
-        [StoreType(typeof(ushort))]
-        public int VertexCount { get; set; }
+        public ushort VertexCount { get; set; }
 
         [Offset(2)]
-        [StoreType(typeof(ushort))]
-        public int FaceCount { get; set; }
+        public ushort FaceCount { get; set; }
 
         [Offset(24)]
         public BlockCollection<BoundingBoxBlock> BoundingBoxes { get; set; }

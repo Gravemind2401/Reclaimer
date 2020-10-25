@@ -149,12 +149,10 @@ namespace Adjutant.Blam.MccHaloReach
         [Offset(752, MinVersion = (int)CacheType.MccHaloReachU3)]
         public long VirtualBaseAddress { get; set; }
 
-        [CLSCompliant(false)]
         [Offset(1204, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(1196, MinVersion = (int)CacheType.MccHaloReachU3)]
         public SectionOffsetTable SectionOffsetTable { get; set; }
 
-        [CLSCompliant(false)]
         [Offset(1220, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(1212, MinVersion = (int)CacheType.MccHaloReachU3)]
         public SectionTable SectionTable { get; set; }

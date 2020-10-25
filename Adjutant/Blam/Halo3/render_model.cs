@@ -391,44 +391,35 @@ namespace Adjutant.Blam.Halo3
         public short ShaderIndex { get; set; }
 
         [Offset(4)]
-        [StoreType(typeof(ushort))]
-        public int IndexStart { get; set; }
+        public ushort IndexStart { get; set; }
 
         [Offset(6)]
-        [StoreType(typeof(ushort))]
-        public int IndexLength { get; set; }
+        public ushort IndexLength { get; set; }
 
         [Offset(8)]
-        [StoreType(typeof(ushort))]
-        public int SubsetIndex { get; set; }
+        public ushort SubsetIndex { get; set; }
 
         [Offset(10)]
-        [StoreType(typeof(ushort))]
-        public int SubsetCount { get; set; }
+        public ushort SubsetCount { get; set; }
 
         [Offset(14)]
-        [StoreType(typeof(ushort))]
-        public int VertexCount { get; set; }
+        public ushort VertexCount { get; set; }
     }
 
     [FixedSize(8)]
     public class SubsetBlock
     {
         [Offset(0)]
-        [StoreType(typeof(ushort))]
-        public int IndexStart { get; set; }
+        public ushort IndexStart { get; set; }
 
         [Offset(2)]
-        [StoreType(typeof(ushort))]
-        public int IndexLength { get; set; }
+        public ushort IndexLength { get; set; }
 
         [Offset(4)]
-        [StoreType(typeof(ushort))]
-        public int SubmeshIndex { get; set; }
+        public ushort SubmeshIndex { get; set; }
 
         [Offset(6)]
-        [StoreType(typeof(ushort))]
-        public int VertexCount { get; set; }
+        public ushort VertexCount { get; set; }
     }
 
     [FixedSize(56)]

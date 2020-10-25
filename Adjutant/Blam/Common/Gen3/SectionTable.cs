@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Common.Gen3
 {
-    [CLSCompliant(false)]
     public class SectionTable : IReadOnlyList<SectionLayout>
     {
         private readonly SectionLayout[] sections;
@@ -39,7 +38,6 @@ namespace Adjutant.Blam.Common.Gen3
     }
 
     [FixedSize(8)]
-    [CLSCompliant(false)]
     public struct SectionLayout
     {
         [Offset(0)]

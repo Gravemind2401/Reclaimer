@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Spatial
 {
-    [CLSCompliant(false)]
     public struct UInt16N
     {
         private const float multiplier = ushort.MaxValue;

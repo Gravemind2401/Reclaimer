@@ -42,7 +42,6 @@ namespace Adjutant.Spatial
             set { w = new UInt16N(value); }
         }
 
-        [CLSCompliant(false)]
         public UInt16N4(ushort x, ushort y, ushort z, ushort w)
         {
             this.x = new UInt16N(x);

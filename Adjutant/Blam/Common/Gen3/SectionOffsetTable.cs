@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Common.Gen3
 {
-    [CLSCompliant(false)]
     public class SectionOffsetTable : IReadOnlyList<uint>
     {
         private readonly uint[] sectionOffsets;

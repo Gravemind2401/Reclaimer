@@ -392,16 +392,13 @@ namespace Adjutant.Blam.Halo5
         public int IndexLength { get; set; }
 
         [Offset(12)]
-        [StoreType(typeof(ushort))]
-        public int SubsetIndex { get; set; }
+        public ushort SubsetIndex { get; set; }
 
         [Offset(14)]
-        [StoreType(typeof(ushort))]
-        public int SubsetCount { get; set; }
+        public ushort SubsetCount { get; set; }
 
         [Offset(20)]
-        [StoreType(typeof(ushort))]
-        public int VertexCount { get; set; }
+        public ushort VertexCount { get; set; }
     }
 
     [FixedSize(16)]
@@ -414,12 +411,10 @@ namespace Adjutant.Blam.Halo5
         public int IndexLength { get; set; }
 
         [Offset(8)]
-        [StoreType(typeof(ushort))]
-        public int SubmeshIndex { get; set; }
+        public ushort SubmeshIndex { get; set; }
 
         [Offset(10)]
-        [StoreType(typeof(ushort))]
-        public int VertexCount { get; set; }
+        public ushort VertexCount { get; set; }
     }
 
     [FixedSize(52)]

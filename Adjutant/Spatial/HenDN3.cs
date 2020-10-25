@@ -65,7 +65,6 @@ namespace Adjutant.Spatial
             }
         }
 
-        [CLSCompliant(false)]
         public HenDN3(uint value)
         {
             bits = value;
@@ -86,13 +85,11 @@ namespace Adjutant.Spatial
 
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}]");
 
-        [CLSCompliant(false)]
         public static explicit operator uint(HenDN3 value)
         {
             return value.bits;
         }
 
-        [CLSCompliant(false)]
         public static explicit operator HenDN3(uint value)
         {
             return new HenDN3(value);

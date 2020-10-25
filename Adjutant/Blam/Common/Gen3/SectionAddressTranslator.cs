@@ -14,7 +14,6 @@ namespace Adjutant.Blam.Common.Gen3
 
         private uint Magic => cache.SectionTable[sectionIndex].Address - (cache.SectionTable[sectionIndex].Address + cache.SectionOffsetTable[sectionIndex]);
 
-        [CLSCompliant(false)]
         public SectionAddressTranslator(IGen3CacheFile cache, int sectionIndex)
         {
             if (cache == null)

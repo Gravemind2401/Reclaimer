@@ -39,7 +39,6 @@ namespace Adjutant.Spatial
             set { bits = (uint)((bits & ~(0xFF << 24)) | (((uint)value & 0xFF) << 24)); }
         }
 
-        [CLSCompliant(false)]
         public UByte4(uint value)
         {
             bits = value;
@@ -55,13 +54,11 @@ namespace Adjutant.Spatial
 
         public override string ToString() => Utils.CurrentCulture($"[{X}, {Y}, {Z}, {W}]");
 
-        [CLSCompliant(false)]
         public static explicit operator uint(UByte4 value)
         {
             return value.bits;
         }
 
-        [CLSCompliant(false)]
         public static explicit operator UByte4(uint value)
         {
             return new UByte4(value);

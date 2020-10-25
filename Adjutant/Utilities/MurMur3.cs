@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Utilities
 {
-    [CLSCompliant(false)]
     public static class MurMur3
     {
         const uint seed = 0;

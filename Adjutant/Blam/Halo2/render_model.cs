@@ -234,12 +234,10 @@ namespace Adjutant.Blam.Halo2
     public struct MeshResourceDetailsBlock
     {
         [Offset(40)]
-        [StoreType(typeof(ushort))]
-        public int IndexCount { get; set; }
+        public ushort IndexCount { get; set; }
 
         [Offset(108)]
-        [StoreType(typeof(ushort))]
-        public int NodeMapCount { get; set; }
+        public ushort NodeMapCount { get; set; }
     }
 
     [FixedSize(72)]
@@ -249,12 +247,10 @@ namespace Adjutant.Blam.Halo2
         public short ShaderIndex { get; set; }
 
         [Offset(6)]
-        [StoreType(typeof(ushort))]
-        public int IndexStart { get; set; }
+        public ushort IndexStart { get; set; }
 
         [Offset(8)]
-        [StoreType(typeof(ushort))]
-        public int IndexLength { get; set; }
+        public ushort IndexLength { get; set; }
     }
 
     [FixedSize(56)]
@@ -329,12 +325,10 @@ namespace Adjutant.Blam.Halo2
         public GeometryClassification GeometryClassification { get; set; }
 
         [Offset(4)]
-        [StoreType(typeof(ushort))]
-        public int VertexCount { get; set; }
+        public ushort VertexCount { get; set; }
 
         [Offset(6)]
-        [StoreType(typeof(ushort))]
-        public int FaceCount { get; set; }
+        public ushort FaceCount { get; set; }
 
         [Offset(20)]
         public byte NodesPerVertex { get; set; }

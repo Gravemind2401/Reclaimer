@@ -34,7 +34,6 @@ namespace Adjutant.Blam.Halo5
     {
         private readonly MetadataHeader header;
 
-        [CLSCompliant(false)]
         public uint Hash { get; }
 
         public string Value => header.GetStringByHash(Hash);
