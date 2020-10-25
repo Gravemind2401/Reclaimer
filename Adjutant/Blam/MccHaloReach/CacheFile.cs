@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Common;
+using Adjutant.Blam.Common.Gen3;
 using Adjutant.Utilities;
 using System;
 using System.Collections;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.MccHaloReach
 {
-    public class CacheFile : ICacheFile
+    public class CacheFile : IGen3CacheFile
     {
         public int HeaderSize => 40960;
 
@@ -24,7 +25,7 @@ namespace Adjutant.Blam.MccHaloReach
         public TagIndex TagIndex { get; }
         public StringIndex StringIndex { get; }
 
-        public HeaderAddressTranslator HeaderTranslator { get; }
+        public SectionAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
 
         public PointerExpander PointerExpander { get; }
@@ -41,7 +42,7 @@ namespace Adjutant.Blam.MccHaloReach
             BuildString = detail.BuildString;
             CacheType = detail.CacheType;
 
-            HeaderTranslator = new HeaderAddressTranslator(this);
+            HeaderTranslator = new SectionAddressTranslator(this, 0);
             MetadataTranslator = new TagAddressTranslator(this);
             PointerExpander = new PointerExpander(this);
 
@@ -83,6 +84,10 @@ namespace Adjutant.Blam.MccHaloReach
         ITagIndex<IIndexItem> ICacheFile.TagIndex => TagIndex;
         IStringIndex ICacheFile.StringIndex => StringIndex;
         IAddressTranslator ICacheFile.DefaultAddressTranslator => MetadataTranslator;
+
+        long IGen3CacheFile.VirtualBaseAddress => Header.VirtualBaseAddress;
+        SectionOffsetTable IGen3CacheFile.SectionOffsetTable => Header.SectionOffsetTable;
+        SectionTable IGen3CacheFile.SectionTable => Header.SectionTable;
 
         #endregion
     }
@@ -144,17 +149,15 @@ namespace Adjutant.Blam.MccHaloReach
         [Offset(752, MinVersion = (int)CacheType.MccHaloReachU3)]
         public long VirtualBaseAddress { get; set; }
 
-        [Offset(1208, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(1200, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public int ResourceModifier { get; set; }
+        [CLSCompliant(false)]
+        [Offset(1204, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(1196, MinVersion = (int)CacheType.MccHaloReachU3)]
+        public SectionOffsetTable SectionOffsetTable { get; set; }
 
-        [Offset(1212, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(1204, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public int TagModifier { get; set; }
-
-        [Offset(1216, MaxVersion = (int)CacheType.MccHaloReachU3)]
-        [Offset(1208, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public int LocaleModifier { get; set; }
+        [CLSCompliant(false)]
+        [Offset(1220, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(1212, MinVersion = (int)CacheType.MccHaloReachU3)]
+        public SectionTable SectionTable { get; set; }
     }
 
     [FixedSize(76)]

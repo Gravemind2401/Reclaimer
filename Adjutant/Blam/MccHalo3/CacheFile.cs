@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Common;
+using Adjutant.Blam.Common.Gen3;
 using Adjutant.Utilities;
 using System;
 using System.Collections;
@@ -82,6 +83,7 @@ namespace Adjutant.Blam.MccHalo3
         IStringIndex ICacheFile.StringIndex => StringIndex;
         IAddressTranslator ICacheFile.DefaultAddressTranslator => MetadataTranslator;
 
+        long IGen3CacheFile.VirtualBaseAddress => Header.VirtualBaseAddress;
         SectionOffsetTable IGen3CacheFile.SectionOffsetTable => Header.SectionOffsetTable;
         SectionTable IGen3CacheFile.SectionTable => Header.SectionTable;
 

@@ -6,14 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.MccHalo3
+namespace Adjutant.Blam.Common.Gen3
 {
     public class TagAddressTranslator : IAddressTranslator
     {
-        private readonly CacheFile cache;
-        private long Magic => cache.Header.VirtualBaseAddress - (cache.Header.SectionTable[2].Address + cache.Header.SectionOffsetTable[2]);
+        private readonly IGen3CacheFile cache;
+        private long Magic => cache.VirtualBaseAddress - (cache.SectionTable[2].Address + cache.SectionOffsetTable[2]);
 
-        public TagAddressTranslator(CacheFile cache)
+        [CLSCompliant(false)]
+        public TagAddressTranslator(IGen3CacheFile cache)
         {
             this.cache = cache;
         }

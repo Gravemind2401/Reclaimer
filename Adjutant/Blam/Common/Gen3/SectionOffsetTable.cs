@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Common
+namespace Adjutant.Blam.Common.Gen3
 {
     [CLSCompliant(false)]
     public class SectionOffsetTable : IReadOnlyList<uint>
