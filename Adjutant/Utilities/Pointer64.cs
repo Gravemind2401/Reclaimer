@@ -40,19 +40,19 @@ namespace Adjutant.Utilities
 
         #region Equality Operators
 
-        public static bool operator ==(Pointer64 Pointer641, Pointer64 Pointer642)
+        public static bool operator ==(Pointer64 pointer1, Pointer64 pointer2)
         {
-            return Pointer641._value == Pointer642._value;
+            return pointer1._value == pointer2._value;
         }
 
-        public static bool operator !=(Pointer64 Pointer641, Pointer64 Pointer642)
+        public static bool operator !=(Pointer64 pointer1, Pointer64 pointer2)
         {
-            return !(Pointer641 == Pointer642);
+            return !(pointer1 == pointer2);
         }
 
-        public static bool Equals(Pointer64 Pointer641, Pointer64 Pointer642)
+        public static bool Equals(Pointer64 pointer1, Pointer64 pointer2)
         {
-            return Pointer641._value.Equals(Pointer642._value);
+            return pointer1._value.Equals(pointer2._value);
         }
 
         public override bool Equals(object obj)
@@ -75,9 +75,9 @@ namespace Adjutant.Utilities
 
         #endregion
 
-        public static implicit operator long(Pointer64 Pointer64)
+        public static implicit operator long(Pointer64 pointer)
         {
-            return Pointer64.Address;
+            return pointer.Address;
         }
     }
 }
