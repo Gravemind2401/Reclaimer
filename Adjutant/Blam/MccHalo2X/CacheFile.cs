@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Common;
+using Adjutant.Blam.Common.Gen3;
 using Adjutant.Utilities;
 using System;
 using System.Collections;
@@ -11,10 +12,8 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.MccHalo2X
 {
-    public class CacheFile : ICacheFile
+    public class CacheFile : IGen3CacheFile
     {
-        public int HeaderSize => 122880;
-
         public string FileName { get; }
         public ByteOrder ByteOrder { get; }
         public string BuildString { get; }
@@ -24,7 +23,7 @@ namespace Adjutant.Blam.MccHalo2X
         public TagIndex TagIndex { get; }
         public StringIndex StringIndex { get; }
 
-        public HeaderAddressTranslator HeaderTranslator { get; }
+        public SectionAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
 
         public PointerExpander PointerExpander { get; }
@@ -41,7 +40,7 @@ namespace Adjutant.Blam.MccHalo2X
             BuildString = detail.BuildString;
             CacheType = detail.CacheType;
 
-            HeaderTranslator = new HeaderAddressTranslator(this);
+            HeaderTranslator = new SectionAddressTranslator(this, 0);
             MetadataTranslator = new TagAddressTranslator(this);
             PointerExpander = new PointerExpander(this);
 
@@ -83,6 +82,10 @@ namespace Adjutant.Blam.MccHalo2X
         ITagIndex<IIndexItem> ICacheFile.TagIndex => TagIndex;
         IStringIndex ICacheFile.StringIndex => StringIndex;
         IAddressTranslator ICacheFile.DefaultAddressTranslator => MetadataTranslator;
+
+        long IGen3CacheFile.VirtualBaseAddress => Header.VirtualBaseAddress;
+        SectionOffsetTable IGen3CacheFile.SectionOffsetTable => Header.SectionOffsetTable;
+        SectionTable IGen3CacheFile.SectionTable => Header.SectionTable;
 
         #endregion
     }
@@ -134,14 +137,11 @@ namespace Adjutant.Blam.MccHalo2X
         [Offset(768)]
         public long VirtualBaseAddress { get; set; }
 
-        [Offset(1216)]
-        public int ResourceModifier { get; set; }
+        [Offset(1212)]
+        public SectionOffsetTable SectionOffsetTable { get; set; }
 
-        [Offset(1220)]
-        public int TagModifier { get; set; }
-
-        [Offset(1224)]
-        public int LocaleModifier { get; set; }
+        [Offset(1228)]
+        public SectionTable SectionTable { get; set; }
     }
 
     [FixedSize(76)]

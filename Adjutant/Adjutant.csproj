@@ -121,7 +121,6 @@
     <Compile Include="Blam\Halo4\cache_file_resource_gestalt.cs" />
     <Compile Include="Blam\Halo4\cache_file_resource_layout_table.cs" />
     <Compile Include="Blam\Halo4\Halo4Common.cs" />
-    <Compile Include="Blam\Halo4\HeaderAddressTranslator.cs" />
     <Compile Include="Blam\Halo4\material.cs" />
     <Compile Include="Blam\Halo4\render_model.cs" />
     <Compile Include="Blam\Halo4\ResourceIdentifier.cs" />
@@ -129,7 +128,6 @@
     <Compile Include="Blam\Halo4\scenario_lightmap.cs" />
     <Compile Include="Blam\Halo4\scenario_lightmap_bsp_data.cs" />
     <Compile Include="Blam\Halo4\scenario_structure_bsp.cs" />
-    <Compile Include="Blam\Halo4\TagAddressTranslator.cs" />
     <Compile Include="Blam\Halo5\bitmap.cs" />
     <Compile Include="Blam\Halo5\BlockCollection.cs" />
     <Compile Include="Blam\Halo5\Enums.cs" />
@@ -145,16 +143,13 @@
     <Compile Include="Blam\HaloReach\bitmap.cs" />
     <Compile Include="Blam\HaloReach\CacheFile.cs" />
     <Compile Include="Blam\MccHalo2X\CacheFile.cs" />
-    <Compile Include="Blam\MccHalo2X\HeaderAddressTranslator.cs" />
     <Compile Include="Blam\MccHalo2X\PointerExpander.cs" />
-    <Compile Include="Blam\MccHalo2X\TagAddressTranslator.cs" />
     <Compile Include="Blam\MccHalo3\CacheFile.cs" />
     <Compile Include="Blam\MccHalo3\PointerExpander.cs" />
     <Compile Include="Blam\MccHaloReach\CacheFile.cs" />
     <Compile Include="Blam\HaloReach\cache_file_resource_gestalt.cs" />
     <Compile Include="Blam\HaloReach\cache_file_resource_layout_table.cs" />
     <Compile Include="Blam\HaloReach\HaloReachCommon.cs" />
-    <Compile Include="Blam\HaloReach\HeaderAddressTranslator.cs" />
     <Compile Include="Blam\HaloReach\render_method_template.cs" />
     <Compile Include="Blam\HaloReach\render_model.cs" />
     <Compile Include="Blam\HaloReach\ResourceIdentifier.cs" />
@@ -165,7 +160,6 @@
     <Compile Include="Blam\HaloReach\shader.cs" />
     <Compile Include="Blam\HaloReach\sound.cs" />
     <Compile Include="Blam\HaloReach\sound_cache_file_gestalt.cs" />
-    <Compile Include="Blam\HaloReach\TagAddressTranslator.cs" />
     <Compile Include="Blam\MccHaloReach\PointerExpander.cs" />
     <Compile Include="Geometry\CoordinateSystem.cs" />
     <Compile Include="Geometry\Enums.cs" />

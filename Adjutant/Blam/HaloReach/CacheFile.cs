@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Common;
+using Adjutant.Blam.Common.Gen3;
 using Adjutant.Utilities;
 using System;
 using System.Collections;
@@ -11,15 +12,13 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.HaloReach
 {
-    public class CacheFile : ICacheFile
+    public class CacheFile : IGen3CacheFile
     {
         public const string BetaKey = "rs&m*l#/t%_()e;[";
         public const string FileNamesKey = "LetsAllPlayNice!";
         public const string StringsKey = "ILikeSafeStrings";
         public const string LocalesKey = "BungieHaloReach!";
         public const string NetworkKey = "SneakerNetReigns";
-
-        public int HeaderSize => CacheType == CacheType.HaloReachBeta ? 16384 : 40960;
 
         public string FileName { get; }
         public ByteOrder ByteOrder { get; }
@@ -30,7 +29,7 @@ namespace Adjutant.Blam.HaloReach
         public TagIndex TagIndex { get; }
         public StringIndex StringIndex { get; }
 
-        public HeaderAddressTranslator HeaderTranslator { get; }
+        public SectionAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
 
         public CacheFile(string fileName) : this(CacheDetail.FromFile(fileName)) { }
@@ -45,7 +44,7 @@ namespace Adjutant.Blam.HaloReach
             BuildString = detail.BuildString;
             CacheType = detail.CacheType;
 
-            HeaderTranslator = new HeaderAddressTranslator(this);
+            HeaderTranslator = new SectionAddressTranslator(this, 0);
             MetadataTranslator = new TagAddressTranslator(this);
 
             using (var reader = CreateReader(HeaderTranslator))
@@ -79,6 +78,10 @@ namespace Adjutant.Blam.HaloReach
         ITagIndex<IIndexItem> ICacheFile.TagIndex => TagIndex;
         IStringIndex ICacheFile.StringIndex => StringIndex;
         IAddressTranslator ICacheFile.DefaultAddressTranslator => MetadataTranslator;
+
+        long IGen3CacheFile.VirtualBaseAddress => Header.VirtualBaseAddress;
+        SectionOffsetTable IGen3CacheFile.SectionOffsetTable => Header.SectionOffsetTable;
+        SectionTable IGen3CacheFile.SectionTable => Header.SectionTable;
 
         #endregion
     }
@@ -128,14 +131,11 @@ namespace Adjutant.Blam.HaloReach
         [Offset(744)]
         public int VirtualBaseAddress { get; set; }
 
-        [Offset(1136)]
-        public int DataTableAddress { get; set; }
+        [Offset(1132)]
+        public SectionOffsetTable SectionOffsetTable { get; set; }
 
-        [Offset(1144)]
-        public int LocaleModifier { get; set; }
-
-        [Offset(1160)]
-        public int DataTableSize { get; set; }
+        [Offset(1148)]
+        public SectionTable SectionTable { get; set; }
     }
 
     [FixedSize(32)]
