@@ -268,8 +268,11 @@ namespace Adjutant.Blam.MccHalo2X
                 case "Apr 13 2020 02:24:30":
                     translator = new StringIdTranslator(xml, "U0");
                     break;
-                default:
+                case "May 10 2020 21:14:00":
                     translator = new StringIdTranslator(xml, "U1");
+                    break;
+                default:
+                    translator = new StringIdTranslator(xml, "U2");
                     break;
             }
         }
