@@ -260,9 +260,10 @@ namespace Reclaimer.Plugins
             //either Assimp or collada has issues when there is a name conflict
             const string bonePrefix = "~";
             const string geomPrefix = "-";
+            const string scenPrefix = "$";
 
             var scene = new Assimp.Scene();
-            scene.RootNode = new Assimp.Node(model.Name);
+            scene.RootNode = new Assimp.Node($"{scenPrefix}{model.Name}");
 
             //Assimp is Y-up in inches by default - this forces it to export as Z-up in meters
             scene.RootNode.Transform = (CoordinateSystem.HaloCEX * ModelViewerPlugin.Settings.AssimpScale).ToAssimp4x4();
