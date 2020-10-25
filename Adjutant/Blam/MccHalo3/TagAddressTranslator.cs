@@ -11,7 +11,7 @@ namespace Adjutant.Blam.MccHalo3
     public class TagAddressTranslator : IAddressTranslator
     {
         private readonly CacheFile cache;
-        private long Magic => cache.Header.VirtualBaseAddress - (cache.Header.TagDataAddress + cache.Header.TagModifier);
+        private long Magic => cache.Header.VirtualBaseAddress - (cache.Header.SectionTable[2].Address + cache.Header.SectionOffsetTable[2]);
 
         public TagAddressTranslator(CacheFile cache)
         {

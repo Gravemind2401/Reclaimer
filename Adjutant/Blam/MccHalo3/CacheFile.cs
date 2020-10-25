@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.MccHalo3
 {
-    public class CacheFile : ICacheFile
+    public class CacheFile : IGen3CacheFile
     {
         public string FileName { get; }
         public ByteOrder ByteOrder { get; }
@@ -22,7 +22,7 @@ namespace Adjutant.Blam.MccHalo3
         public TagIndex TagIndex { get; }
         public StringIndex StringIndex { get; }
 
-        public HeaderAddressTranslator HeaderTranslator { get; }
+        public SectionAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
 
         public PointerExpander PointerExpander { get; }
@@ -39,7 +39,7 @@ namespace Adjutant.Blam.MccHalo3
             BuildString = detail.BuildString;
             CacheType = detail.CacheType;
 
-            HeaderTranslator = new HeaderAddressTranslator(this);
+            HeaderTranslator = new SectionAddressTranslator(this, 0);
             MetadataTranslator = new TagAddressTranslator(this);
             PointerExpander = new PointerExpander(this);
 
@@ -82,6 +82,9 @@ namespace Adjutant.Blam.MccHalo3
         IStringIndex ICacheFile.StringIndex => StringIndex;
         IAddressTranslator ICacheFile.DefaultAddressTranslator => MetadataTranslator;
 
+        SectionOffsetTable IGen3CacheFile.SectionOffsetTable => Header.SectionOffsetTable;
+        SectionTable IGen3CacheFile.SectionTable => Header.SectionTable;
+
         #endregion
     }
 
@@ -108,10 +111,10 @@ namespace Adjutant.Blam.MccHalo3
         public int StringTableSize { get; set; }
 
         [Offset(356)]
-        public int StringTableIndexAddress { get; set; }
+        public Pointer StringTableIndexPointer { get; set; }
 
         [Offset(360)]
-        public int StringTableAddress { get; set; }
+        public Pointer StringTablePointer { get; set; }
 
         [Offset(444)]
         [NullTerminated(Length = 256)]
@@ -121,28 +124,24 @@ namespace Adjutant.Blam.MccHalo3
         public int FileCount { get; set; }
 
         [Offset(708)]
-        public int FileTableAddress { get; set; }
+        public Pointer FileTablePointer { get; set; }
 
         [Offset(712)]
         public int FileTableSize { get; set; }
 
         [Offset(716)]
-        public int FileTableIndexAddress { get; set; }
+        public Pointer FileTableIndexPointer { get; set; }
 
         [Offset(760)]
         public long VirtualBaseAddress { get; set; }
 
-        [Offset(1208)]
-        public int ResourceModifier { get; set; }
+        [Offset(1204)]
+        [CLSCompliant(false)]
+        public SectionOffsetTable SectionOffsetTable { get; set; }
 
-        [Offset(1212)]
-        public int TagModifier { get; set; }
-
-        [Offset(1216)]
-        public int LocaleModifier { get; set; }
-
-        [Offset(1232)]
-        public int ResourceDataSize { get; set; }
+        [Offset(1220)]
+        [CLSCompliant(false)]
+        public SectionTable SectionTable { get; set; }
     }
 
     [FixedSize(72)]
@@ -203,10 +202,10 @@ namespace Adjutant.Blam.MccHalo3
                         sysItems.Add(item.ClassCode, item);
                 }
 
-                reader.Seek(cache.Header.FileTableIndexAddress, SeekOrigin.Begin);
+                reader.Seek(cache.Header.FileTableIndexPointer.Address, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<int>(TagCount).ToArray();
 
-                using (var tempReader = reader.CreateVirtualReader(cache.Header.FileTableAddress))
+                using (var tempReader = reader.CreateVirtualReader(cache.Header.FileTablePointer.Address))
                 {
                     for (int i = 0; i < TagCount; i++)
                     {
@@ -268,10 +267,10 @@ namespace Adjutant.Blam.MccHalo3
         {
             using (var reader = cache.CreateReader(cache.HeaderTranslator))
             {
-                reader.Seek(cache.Header.StringTableIndexAddress, SeekOrigin.Begin);
+                reader.Seek(cache.Header.StringTableIndexPointer, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<int>(cache.Header.StringCount).ToArray();
 
-                using (var tempReader = reader.CreateVirtualReader(cache.Header.StringTableAddress))
+                using (var tempReader = reader.CreateVirtualReader(cache.Header.StringTablePointer))
                 {
                     for (int i = 0; i < cache.Header.StringCount; i++)
                     {

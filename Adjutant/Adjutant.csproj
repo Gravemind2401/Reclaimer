@@ -67,6 +67,11 @@
     <Compile Include="Audio\PcmHeader.cs" />
     <Compile Include="Audio\XboxAdpcmHeader.cs" />
     <Compile Include="Audio\XmaHeader.cs" />
+    <Compile Include="Blam\Common\IGen3CacheFile.cs" />
+    <Compile Include="Blam\Common\PartitionTable64.cs" />
+    <Compile Include="Blam\Common\SectionAddressTranslator.cs" />
+    <Compile Include="Blam\Common\SectionOffsetTable.cs" />
+    <Compile Include="Blam\Common\SectionTable.cs" />
     <Compile Include="Blam\Common\TagBlock.cs" />
     <Compile Include="Blam\Common\CacheDetail.cs" />
     <Compile Include="Blam\Common\CacheFactory.cs" />
@@ -143,7 +148,6 @@
     <Compile Include="Blam\MccHalo2X\PointerExpander.cs" />
     <Compile Include="Blam\MccHalo2X\TagAddressTranslator.cs" />
     <Compile Include="Blam\MccHalo3\CacheFile.cs" />
-    <Compile Include="Blam\MccHalo3\HeaderAddressTranslator.cs" />
     <Compile Include="Blam\MccHalo3\PointerExpander.cs" />
     <Compile Include="Blam\MccHalo3\TagAddressTranslator.cs" />
     <Compile Include="Blam\MccHaloReach\CacheFile.cs" />
