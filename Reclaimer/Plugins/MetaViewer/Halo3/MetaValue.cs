@@ -20,6 +20,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         {
             this.context = context;
             FieldDefinition = FieldDefinition.GetHalo3Definition(node);
+            context.AddValue(node, this);
         }
 
         protected override void OnMetaPropertyChanged(string propertyName)

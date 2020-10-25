@@ -147,6 +147,7 @@
     <Compile Include="Plugins\BitmapViewerPlugin.cs" />
     <Compile Include="Plugins\MetaViewer\Halo3\MetaContext.cs" />
     <Compile Include="Plugins\MetaViewer\Halo3\MetaValue.cs" />
+    <Compile Include="Plugins\MetaViewer\Halo3\BlockIndexValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\BitmaskValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\CommentValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\EnumValue.cs" />
@@ -190,6 +191,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Utilities\BrowseFileEditor.cs" />
     <Compile Include="Utilities\CoreTemplateSelector.cs" />
+    <Compile Include="Utilities\DeepObservableCollection.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\FolderSelectDialog.cs" />

@@ -34,11 +34,11 @@
     <realPoint3D name="Center" offset="48" visible="True" />
   </struct>
   <undefined name="Unknown" offset="44" visible="False" />
-  <struct name="Nodes" offset="48" visible="True" size="96" entryOffset="0">
+  <struct name="Nodes" srcId="render_model_node" offset="48" visible="True" size="96" entryOffset="0">
     <stringID name="Name" offset="0" visible="True" />
-    <int16 name="Parent Node Index" offset="4" visible="True" />
-    <int16 name="First Child Index" offset="6" visible="True" />
-    <int16 name="Next Sibling Index" offset="8" visible="True" />
+    <blockIndex16 name="Parent Node" targetId="render_model_node" offset="4" visible="True" />
+    <blockIndex16 name="First Child" targetId="render_model_node" offset="6" visible="True" />
+    <blockIndex16 name="Next Sibling" targetId="render_model_node" offset="8" visible="True" />
     <int16 name="Unknown" offset="10" visible="False" />
     <realPoint3D name="Position" offset="12" visible="True" />
     <realVector4D name="Rotation" offset="24" visible="True" />

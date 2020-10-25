@@ -126,4 +126,10 @@
   <argbColor size="4" valueType="byte" compontents="4" axes="color">
     <alias name="color32argb" />
   </argbColor>
+
+  <blockIndex8 size="1" valueType="blockIndex8" />
+
+  <blockIndex16 size="2" valueType="blockIndex16" />
+
+  <blockIndex32 size="4" valueType="blockIndex32" />
 </fieldDefinitions>

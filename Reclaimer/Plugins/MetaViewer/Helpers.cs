@@ -37,9 +37,12 @@ namespace Reclaimer.Plugins.MetaViewer
         Enum32,
         Enum16,
         Enum8,
-        Float32
+        Float32,
+        BlockIndex32,
+        BlockIndex16,
+        BlockIndex8
 
-        // DataReference, Angle, Euler Angle, Color, maybe block index
+        // DataReference, Angle, Euler Angle, Color
     }
 
     public struct FieldDefinition
@@ -290,6 +293,9 @@ namespace Reclaimer.Plugins.MetaViewer
                     case MetaValueType.Enum8:
                     case MetaValueType.Enum16:
                     case MetaValueType.Enum32:
+                    case MetaValueType.BlockIndex8:
+                    case MetaValueType.BlockIndex16:
+                    case MetaValueType.BlockIndex32:
                         return element.FindResource("EnumContent") as DataTemplate;
 
                     case MetaValueType.Bitmask8:

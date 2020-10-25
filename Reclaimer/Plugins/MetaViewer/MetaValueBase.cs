@@ -74,7 +74,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public static Halo3.MetaValue GetMetaValue(XmlNode node, Halo3.MetaContext context, long baseAddress)
         {
-            using (var reader = context.Cache.CreateReader(context.Cache.DefaultAddressTranslator, context.DataSource, true))
+            using (var reader = context.CreateReader())
             {
                 reader.Seek(baseAddress, SeekOrigin.Begin);
 
@@ -108,6 +108,11 @@ namespace Reclaimer.Plugins.MetaViewer
                     case MetaValueType.Enum16:
                     case MetaValueType.Enum32:
                         return new Halo3.EnumValue(node, context, reader, baseAddress);
+
+                    case MetaValueType.BlockIndex8:
+                    case MetaValueType.BlockIndex16:
+                    case MetaValueType.BlockIndex32:
+                        return new Halo3.BlockIndexValue(node, context, reader, baseAddress);
 
                     default: return new Halo3.SimpleValue(node, context, reader, baseAddress);
                 }

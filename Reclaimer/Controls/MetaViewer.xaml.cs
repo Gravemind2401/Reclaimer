@@ -96,11 +96,11 @@ namespace Reclaimer.Controls
             var tag = item as IIndexItem;
             Metadata.Clear();
 
-            context?.DataSource?.Dispose();
-            context = new Plugins.MetaViewer.Halo3.MetaContext(tag.CacheFile, tag);
-
             var doc = new XmlDocument();
             doc.Load(fileName);
+
+            context?.DataSource?.Dispose();
+            context = new Plugins.MetaViewer.Halo3.MetaContext(doc, tag.CacheFile, tag);
 
             foreach (XmlNode n in doc.DocumentElement.ChildNodes)
             {
@@ -111,6 +111,8 @@ namespace Reclaimer.Controls
                 }
                 catch { }
             }
+
+            context.UpdateBlockIndices();
         }
 
         private void LoadDataHalo5()

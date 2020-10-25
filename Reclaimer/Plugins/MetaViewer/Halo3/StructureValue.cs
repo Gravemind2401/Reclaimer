@@ -1,5 +1,6 @@
 ﻿using Adjutant.Blam.Common;
 using Adjutant.Utilities;
+using Reclaimer.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,6 +15,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
     public class StructureValue : MetaValue, IExpandable
     {
+        private MetaValue labelValue;
+
         public int BlockSize { get; }
 
         private int blockCount;
@@ -43,12 +46,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             }
         }
 
-        private IEnumerable<string> blockLabels;
-        public IEnumerable<string> BlockLabels
-        {
-            get { return blockLabels; }
-            set { SetProperty(ref blockLabels, value); }
-        }
+        public ObservableCollection<string> BlockLabels { get; }
 
         private bool isExpanded;
         public bool IsExpanded
@@ -58,7 +56,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         }
 
         public bool HasChildren => Children.Any();
-        public ObservableCollection<MetaValue> Children { get; }
+        public DeepObservableCollection<MetaValue> Children { get; }
 
         IEnumerable<MetaValueBase> IExpandable.Children => Children;
 
@@ -66,9 +64,13 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             : base(node, context, reader, baseAddress)
         {
             BlockSize = node.GetIntAttribute("elementSize", "entrySize", "size") ?? 0;
-            Children = new ObservableCollection<MetaValue>();
+            Children = new DeepObservableCollection<MetaValue>();
+            BlockLabels = new ObservableCollection<string>();
             IsExpanded = true;
+
             ReadValue(reader);
+
+            Children.ChildPropertyChanged += Children_ChildPropertyChanged;
         }
 
         public override void ReadValue(EndianReader reader)
@@ -101,23 +103,23 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 var isExplicit = entryOffset.HasValue;
                 entryOffset = entryOffset ?? 0;
 
-                var entry = Children.FirstOrDefault(c => c.Offset == entryOffset);
-                if ((isExplicit && entry is SimpleValue) || entry is StringValue || entry is TagReferenceValue)
+                labelValue = Children.FirstOrDefault(c => c.Offset == entryOffset);
+                if ((isExplicit && labelValue is SimpleValue) || labelValue is StringValue || labelValue is TagReferenceValue)
                 {
                     var labels = new List<string>();
                     for (int i = BlockCount - 1; i >= 0; i--) //end at 0 so the first entry is displayed when done
                     {
-                        entry.BaseAddress = BlockAddress + i * BlockSize;
-                        entry.ReadValue(reader);
-
-                        if (entry.EntryString == null)
-                            labels.Insert(0, $"Block {i:D2}");
-                        else
-                            labels.Insert(0, $"{i:D2} : {entry.EntryString}");
+                        labelValue.BaseAddress = BlockAddress + i * BlockSize;
+                        labelValue.ReadValue(reader);
+                        labels.Insert(0, GetEntryString(i, labelValue));
                     }
-                    BlockLabels = labels;
+                    BlockLabels.AddRange(labels);
                 }
-                else BlockLabels = Enumerable.Range(0, BlockCount).Select(i => $"Block {i:D2}");
+                else
+                {
+                    labelValue = null;
+                    BlockLabels.AddRange(Enumerable.Range(0, BlockCount).Select(i => $"Block {i:D2}"));
+                }
             }
             catch { IsEnabled = false; }
 
@@ -129,12 +131,37 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             throw new NotImplementedException();
         }
 
+        private string GetEntryString(int index, MetaValue value)
+        {
+            if (value.EntryString == null)
+                return $"Block {index:D2}";
+            else
+                return $"{index:D2} : {value.EntryString}";
+        }
+
+        private void Children_ChildPropertyChanged(object sender, ChildPropertyChangedEventArgs e)
+        {
+            if (IsBusy || labelValue == null || e.Element != labelValue)
+                return;
+
+            var temp = BlockIndex;
+            BlockLabels[BlockIndex] = GetEntryString(BlockIndex, labelValue);
+            IsBusy = false;
+
+            //force binding to refresh
+            blockIndex = -1;
+            RaisePropertyChanged(nameof(BlockIndex));
+            blockIndex = temp;
+            RaisePropertyChanged(nameof(BlockIndex));
+        }
+
         private void RefreshChildren()
         {
             if (BlockCount <= 0)
                 return;
 
-            using (var reader = context.Cache.CreateReader(context.Cache.DefaultAddressTranslator, context.DataSource, true))
+            IsBusy = true;
+            using (var reader = context.CreateReader())
             {
                 foreach (var c in Children)
                 {
@@ -142,6 +169,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                     c.ReadValue(reader);
                 }
             }
+            IsBusy = false;
         }
     }
 }
