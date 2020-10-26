@@ -79,6 +79,9 @@ namespace Reclaimer.Plugins
                 Substrate.AddTool(mv.TabModel, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
                 Substrate.AddRecentFile(fileName);
 
+                if (Settings.AutoMapFolder)
+                    Settings.MapFolder = Path.GetDirectoryName(fileName);
+
                 LogOutput($"Loaded map file: {fileName}");
             }
             catch (Exception ex)
@@ -94,5 +97,6 @@ namespace Reclaimer.Plugins
         public string MapFolder { get; set; }
 
         public bool HierarchyView { get; set; }
+        public bool AutoMapFolder { get; set; }
     }
 }
