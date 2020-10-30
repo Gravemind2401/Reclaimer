@@ -185,7 +185,7 @@ namespace Adjutant.Blam.Common
                 case CacheType.Halo2Xbox:
                     content = item.ReadMetadata<Halo2.sound>();
                     break;
-                case CacheType.Halo3Beta:
+                //case CacheType.Halo3Beta:
                 case CacheType.Halo3Retail:
                 case CacheType.Halo3ODST:
                     content = item.ReadMetadata<Halo3.sound>();

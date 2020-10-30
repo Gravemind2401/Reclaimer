@@ -62,6 +62,7 @@ namespace Adjutant.Blam.HaloReach
         [Offset(1140, MinVersion = (int)CacheType.MccHaloReach)]
         public BlockCollection<BoundingBoxBlock> BoundingBoxes { get; set; }
 
+        [MinVersion((int)CacheType.HaloReachRetail)]
         [Offset(1296, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
         [Offset(1336, MinVersion = (int)CacheType.MccHaloReach)]
         public ResourceIdentifier InstancesResourcePointer { get; set; }
