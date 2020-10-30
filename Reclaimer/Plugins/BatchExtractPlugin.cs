@@ -241,7 +241,7 @@ namespace Reclaimer.Plugins
         private bool SaveImage(IIndexItem tag)
         {
             IBitmap bitmap;
-            if (ContentFactory.TryGetBitmapContent(tag, out bitmap) &&SaveImage(bitmap, Settings.DataFolder))
+            if (ContentFactory.TryGetBitmapContent(tag, out bitmap) && SaveImage(bitmap, Settings.DataFolder))
             {
                 LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
                 return true;
@@ -313,16 +313,15 @@ namespace Reclaimer.Plugins
         private IEnumerable<Tuple<string, DecompressOptions>> GetParamsIsolateAlpha(string fileName, string extension)
         {
             yield return Tuple.Create($"{fileName}_hue{extension}", DecompressOptions.Bgr24);
-            yield return Tuple.Create($"{fileName}_alpha{extension}", DecompressOptions.Bgr24 | DecompressOptions.AlphaChannelOnly);
+            yield return Tuple.Create($"{fileName}_alpha{extension}", DecompressOptions.AlphaChannelOnly);
         }
 
         private IEnumerable<Tuple<string, DecompressOptions>> GetParamsIsolateAll(string fileName, string extension)
         {
-            var bgr24 = DecompressOptions.Bgr24;
-            yield return Tuple.Create($"{fileName}_blue{extension}", bgr24 | DecompressOptions.BlueChannelOnly);
-            yield return Tuple.Create($"{fileName}_green{extension}", bgr24 | DecompressOptions.GreenChannelOnly);
-            yield return Tuple.Create($"{fileName}_red{extension}", bgr24 | DecompressOptions.RedChannelOnly);
-            yield return Tuple.Create($"{fileName}_alpha{extension}", bgr24 | DecompressOptions.AlphaChannelOnly);
+            yield return Tuple.Create($"{fileName}_blue{extension}", DecompressOptions.BlueChannelOnly);
+            yield return Tuple.Create($"{fileName}_green{extension}", DecompressOptions.GreenChannelOnly);
+            yield return Tuple.Create($"{fileName}_red{extension}", DecompressOptions.RedChannelOnly);
+            yield return Tuple.Create($"{fileName}_alpha{extension}", DecompressOptions.AlphaChannelOnly);
         }
 
         private static readonly string[] shouldIsolate = new[] { "([_ ]multi)$", "([_ ]multipurpose)$", "([_ ]cc)$" };
