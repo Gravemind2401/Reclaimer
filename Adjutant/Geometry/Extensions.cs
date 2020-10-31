@@ -753,7 +753,7 @@ namespace Adjutant.Geometry
 
                             sw.WriteLine(float1, tex.X);
                             sw.WriteLine(float1, 1 - tex.Y);
-                            sw.WriteLine(float1, 0f);
+                            sw.WriteLine(0);
                         }
                     }
                     #endregion
