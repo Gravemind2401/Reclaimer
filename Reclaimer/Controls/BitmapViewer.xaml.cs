@@ -143,23 +143,16 @@ namespace Reclaimer.Controls
 
         public void LoadImage(IBitmap image, string fileName)
         {
-            try
-            {
-                bitmap = image;
+            bitmap = image;
 
-                TabModel.ToolTip = fileName;
-                TabModel.Header = Utils.GetFileName(fileName);
-                sourceName = Utils.GetFileNameWithoutExtension(fileName);
+            TabModel.ToolTip = fileName;
+            TabModel.Header = Utils.GetFileName(fileName);
+            sourceName = Utils.GetFileNameWithoutExtension(fileName);
 
-                Indexes = Enumerable.Range(0, bitmap.SubmapCount);
-                dds = bitmap.ToDds(0);
-                Render();
-                CoerceValue(HasMultipleProperty);
-            }
-            catch
-            {
-
-            }
+            Indexes = Enumerable.Range(0, bitmap.SubmapCount);
+            dds = bitmap.ToDds(0);
+            Render();
+            CoerceValue(HasMultipleProperty);
         }
 
         private void Render()
