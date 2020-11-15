@@ -87,5 +87,11 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
             IsDirty = false;
         }
+
+        public void SetValue(object value)
+        {
+            _value = value;
+            RaisePropertyChanged(nameof(Value));
+        }
     }
 }

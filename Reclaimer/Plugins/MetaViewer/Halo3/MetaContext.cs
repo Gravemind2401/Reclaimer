@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Common;
+using Adjutant.Blam.Common.Gen3;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +11,7 @@ using System.Xml;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
-    public class MetaContext
+    public class MetaContext : IDisposable
     {
         public XmlDocument Document { get; }
         public ICacheFile Cache { get; }
@@ -58,7 +59,15 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             DataSource = dataSource;
         }
 
-        public EndianReader CreateReader() => Cache.CreateReader(Cache.DefaultAddressTranslator, DataSource, true);
+        public EndianReader CreateReader()
+        {
+            var reader = Cache.CreateReader(Cache.DefaultAddressTranslator, DataSource, true);
+            var expander = (Cache as IMccCacheFile)?.PointerExpander;
+            if (expander != null)
+                reader.RegisterInstance(expander);
+
+            return reader;
+        }
 
         internal void AddValue(XmlNode node, MetaValue value)
         {
@@ -79,6 +88,11 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         {
             foreach (var bi in valuesByNode.Values.OfType<BlockIndexValue>())
                 bi.ReadOptions();
+        }
+
+        public void Dispose()
+        {
+            DataSource.Dispose();
         }
     }
 }

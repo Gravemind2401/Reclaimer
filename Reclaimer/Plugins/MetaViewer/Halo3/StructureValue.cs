@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Common;
+using Adjutant.Blam.Common.Gen3;
 using Adjutant.Utilities;
 using Reclaimer.Utilities;
 using System;
@@ -83,8 +84,9 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 Children.Clear();
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
+                var expander = (context.Cache as IMccCacheFile)?.PointerExpander;
                 BlockCount = reader.ReadInt32();
-                BlockAddress = new Pointer(reader.ReadInt32(), context.Cache.DefaultAddressTranslator).Address;
+                BlockAddress = new Pointer(reader.ReadInt32(), context.Cache.DefaultAddressTranslator, expander).Address;
 
                 if (BlockCount <= 0 || BlockAddress + BlockCount * BlockSize > reader.BaseStream.Length)
                 {

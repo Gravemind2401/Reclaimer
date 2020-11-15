@@ -26,7 +26,7 @@ namespace Reclaimer.Controls
     /// <summary>
     /// Interaction logic for MetaViewer.xaml
     /// </summary>
-    public partial class MetaViewer
+    public partial class MetaViewer : IDisposable
     {
         #region Dependency Properties
         public static readonly DependencyProperty ShowInvisiblesProperty =
@@ -169,6 +169,11 @@ namespace Reclaimer.Controls
         private void btnExpandAll_Click(object sender, RoutedEventArgs e)
         {
             RecursiveToggle(Metadata, true);
+        }
+
+        public void Dispose()
+        {
+            context?.Dispose();
         }
     }
 }
