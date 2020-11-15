@@ -20,5 +20,10 @@ namespace Adjutant.Blam.MccHalo3
         {
             return ((long)pointer << 2) + magic;
         }
+
+        public int Contract(long pointer)
+        {
+            return (int)((pointer - magic) >> 2);
+        }
     }
 }

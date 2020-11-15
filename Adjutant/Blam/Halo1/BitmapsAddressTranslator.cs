@@ -33,5 +33,10 @@ namespace Adjutant.Blam.Halo1
         {
             return TagAddress + (int)pointer;
         }
+
+        public long GetPointer(long address)
+        {
+            return address - TagAddress;
+        }
     }
 }

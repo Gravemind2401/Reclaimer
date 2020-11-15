@@ -9,5 +9,6 @@ namespace Adjutant.Utilities
     public interface IPointerExpander
     {
         long Expand(int pointer);
+        int Contract(long pointer);
     }
 }

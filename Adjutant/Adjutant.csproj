@@ -68,6 +68,7 @@
     <Compile Include="Audio\XboxAdpcmHeader.cs" />
     <Compile Include="Audio\XmaHeader.cs" />
     <Compile Include="Blam\Common\Gen3\IGen3CacheFile.cs" />
+    <Compile Include="Blam\Common\Gen3\IMccCacheFile.cs" />
     <Compile Include="Blam\Common\Gen3\PartitionTable64.cs" />
     <Compile Include="Blam\Common\Gen3\SectionAddressTranslator.cs" />
     <Compile Include="Blam\Common\Gen3\SectionOffsetTable.cs" />

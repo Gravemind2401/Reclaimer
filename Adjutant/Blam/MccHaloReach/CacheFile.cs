@@ -12,10 +12,8 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.MccHaloReach
 {
-    public class CacheFile : IGen3CacheFile
+    public class CacheFile : IMccCacheFile
     {
-        public int HeaderSize => 40960;
-
         public string FileName { get; }
         public ByteOrder ByteOrder { get; }
         public string BuildString { get; }
@@ -88,6 +86,8 @@ namespace Adjutant.Blam.MccHaloReach
         long IGen3CacheFile.VirtualBaseAddress => Header.VirtualBaseAddress;
         SectionOffsetTable IGen3CacheFile.SectionOffsetTable => Header.SectionOffsetTable;
         SectionTable IGen3CacheFile.SectionTable => Header.SectionTable;
+
+        IPointerExpander IMccCacheFile.PointerExpander => PointerExpander;
 
         #endregion
     }

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.MccHalo3
 {
-    public class CacheFile : IGen3CacheFile
+    public class CacheFile : IMccCacheFile
     {
         public string FileName { get; }
         public ByteOrder ByteOrder { get; }
@@ -86,6 +86,8 @@ namespace Adjutant.Blam.MccHalo3
         long IGen3CacheFile.VirtualBaseAddress => Header.VirtualBaseAddress;
         SectionOffsetTable IGen3CacheFile.SectionOffsetTable => Header.SectionOffsetTable;
         SectionTable IGen3CacheFile.SectionTable => Header.SectionTable;
+
+        IPointerExpander IMccCacheFile.PointerExpander => PointerExpander;
 
         #endregion
     }
