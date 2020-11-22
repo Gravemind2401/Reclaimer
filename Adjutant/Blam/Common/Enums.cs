@@ -104,6 +104,7 @@ namespace Adjutant.Blam.Common
 
         [CacheGeneration(3)]
         [BuildString("Jun  5 2020 10:40:14")] //update 3
+        [BuildString("Oct 15 2020 18:23:50")] //update 4
         MccHaloReachU3,
 
         [CacheGeneration(4)]
@@ -130,11 +131,17 @@ namespace Adjutant.Blam.Common
         Halo4Retail,
 
         [CacheGeneration(4)]
+        [BuildString("Oct 12 2020 08:13:40")] //flight
+        [BuildString("Oct 26 2020 11:43:08")] //release
+        MccHalo4,
+
+        [CacheGeneration(4)]
         [BuildString("Apr  9 2020 01:36:04")] //flight
         [BuildString("Apr 13 2020 02:24:30")] //release
         [BuildString("May 10 2020 21:14:00")] //update 1
         [BuildString("May 12 2020 12:18:21")] //update 2
         [BuildString("Jul 25 2020 22:24:58")] //update 3
+        [BuildString("Sep 30 2020 20:30:41")] //update 3
         MccHalo2X,
     }
 

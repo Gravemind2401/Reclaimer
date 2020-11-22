@@ -90,6 +90,9 @@ namespace Adjutant.Blam.Common
                 case CacheType.Halo4Retail:
                     return new Halo4.CacheFile(detail);
 
+                case CacheType.MccHalo4:
+                    return new MccHalo4.CacheFile(detail);
+
                 case CacheType.MccHalo2X:
                     return new MccHalo2X.CacheFile(detail);
 

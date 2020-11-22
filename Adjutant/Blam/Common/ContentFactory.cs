@@ -88,6 +88,7 @@ namespace Adjutant.Blam.Common
                     break;
                 case CacheType.Halo4Beta:
                 case CacheType.Halo4Retail:
+                case CacheType.MccHalo4:
                 case CacheType.MccHalo2X:
                     content = item.ReadMetadata<Halo4.bitmap>();
                     break;
@@ -130,6 +131,7 @@ namespace Adjutant.Blam.Common
                         break;
                     case CacheType.Halo4Beta:
                     case CacheType.Halo4Retail:
+                    case CacheType.MccHalo4:
                     case CacheType.MccHalo2X:
                         content = item.ReadMetadata<Halo4.render_model>();
                         break;
@@ -161,6 +163,7 @@ namespace Adjutant.Blam.Common
                         break;
                     case CacheType.Halo4Beta:
                     case CacheType.Halo4Retail:
+                    case CacheType.MccHalo4:
                     case CacheType.MccHalo2X:
                         content = item.ReadMetadata<Halo4.scenario_structure_bsp>();
                         break;

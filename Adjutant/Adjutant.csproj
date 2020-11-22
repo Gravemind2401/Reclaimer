@@ -143,6 +143,8 @@
     <Compile Include="Blam\Halo5\TagReference.cs" />
     <Compile Include="Blam\HaloReach\bitmap.cs" />
     <Compile Include="Blam\HaloReach\CacheFile.cs" />
+    <Compile Include="Blam\MccHalo4\CacheFile.cs" />
+    <Compile Include="Blam\MccHalo4\PointerExpander.cs" />
     <Compile Include="Blam\MccHalo2X\CacheFile.cs" />
     <Compile Include="Blam\MccHalo2X\PointerExpander.cs" />
     <Compile Include="Blam\MccHalo3\CacheFile.cs" />
@@ -263,6 +265,7 @@
   <ItemGroup>
     <Content Include="Resources\Halo1Classes.xml" />
     <Content Include="Resources\Halo2Classes.xml" />
+    <Content Include="Resources\MccHalo4Strings.xml" />
     <Content Include="Resources\MccHalo3Strings.xml" />
     <Content Include="Resources\Halo4Strings.xml" />
     <Content Include="Resources\Halo3VertexBuffer.xml" />

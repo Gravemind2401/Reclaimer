@@ -89,7 +89,7 @@ namespace Adjutant.Blam.Halo4
             using (var fs = new FileStream(targetFile, FileMode.Open, FileAccess.Read))
             using (var reader = new EndianReader(fs, cache.ByteOrder))
             {
-                reader.Seek(cache.CacheType >= CacheType.MccHalo2X ? 1216 : 1152, SeekOrigin.Begin);
+                reader.Seek(cache.CacheType >= CacheType.MccHalo4 ? 1216 : 1152, SeekOrigin.Begin);
                 var dataTableAddress = reader.ReadUInt32();
                 reader.Seek(dataTableAddress + page.DataOffset, SeekOrigin.Begin);
 

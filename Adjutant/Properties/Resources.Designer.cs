@@ -297,6 +297,24 @@ namespace Adjutant.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- https://github.com/XboxChaos/Assembly/tree/dev/src/Blamite/Formats --&gt;
         ///&lt;stringDefinitions&gt;
+        ///  &lt;stringIDs id=&quot;U0&quot; indexBits=&quot;19&quot; namespaceBits=&quot;8&quot; lengthBits=&quot;5&quot;&gt;
+        ///    &lt;namespace id=&quot;0x0&quot; min=&quot;0x631&quot; startIndex=&quot;0x20E0&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x1&quot; startIndex=&quot;0x631&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x2&quot; startIndex=&quot;0xEA8&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x3&quot; startIndex=&quot;0xFB3&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x4&quot; startIndex=&quot;0x1040&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x5&quot; startIndex=&quot;0x1138&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x6&quot; startIndex=&quot;0x118D&quot; /&gt; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MccHalo4Strings {
+            get {
+                return ResourceManager.GetString("MccHalo4Strings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!-- https://github.com/XboxChaos/Assembly/tree/dev/src/Blamite/Formats --&gt;
+        ///&lt;stringDefinitions&gt;
         ///  &lt;stringIDs id=&quot;U0&quot; indexBits=&quot;17&quot; namespaceBits=&quot;8&quot; lengthBits=&quot;7&quot;&gt;
         ///    &lt;namespace id=&quot;0x0&quot; min=&quot;0x4C9&quot; startIndex=&quot;0x173C&quot; /&gt;
         ///    &lt;namespace id=&quot;0x1&quot; startIndex=&quot;0x4C9&quot; /&gt;
