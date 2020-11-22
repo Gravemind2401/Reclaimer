@@ -39,8 +39,12 @@ namespace Reclaimer.Plugins.MetaViewer
                 var item = args.File.OfType<IIndexItem>().FirstOrDefault();
                 if (item == null) return false;
 
-                var xml = GetDefinitionPath(item);
-                return File.Exists(xml);
+                try
+                {
+                    var xml = GetDefinitionPath(item);
+                    return File.Exists(xml);
+                }
+                catch { return false; }
             }
 
             ModuleType moduleType;

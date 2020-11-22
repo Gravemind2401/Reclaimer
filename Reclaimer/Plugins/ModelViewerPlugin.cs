@@ -112,7 +112,7 @@ namespace Reclaimer.Plugins
             extension = extension.ToLower();
 
             if (UserFormats.ContainsKey(formatId))
-                throw new ArgumentException("An format the same ID has already been added.", nameof(formatId));
+                throw new ArgumentException("A format the same ID has already been added.", nameof(formatId));
 
             UserFormats.Add(formatId, new ExportFormat(formatId, extension, description, exportFunction));
         }

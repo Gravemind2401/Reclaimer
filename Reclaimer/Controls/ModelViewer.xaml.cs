@@ -414,7 +414,7 @@ namespace Reclaimer.Controls
                 item.IsChecked = false;
         }
 
-        public bool PromptFileSave(out string fileName, out string formatId)
+        private bool PromptFileSave(out string fileName, out string formatId)
         {
             var exportFormats = ModelViewerPlugin.GetExportFormats()
                 .Select(f => new
