@@ -128,7 +128,7 @@ namespace Adjutant.Blam.Halo4
                 data = TextureUtils.ApplyCrop(data, submap.BitmapFormat, submap.FaceCount, virtualWidth, virtualHeight, submap.Width, submap.Height * submap.FaceCount);
 
             DdsImage dds;
-            if (cache.CacheType >= CacheType.MccHaloReach && submap.BitmapFormat == TextureFormat.DXN)
+            if (cache.CacheType >= CacheType.MccHalo4 && submap.BitmapFormat == TextureFormat.DXN)
                 dds = new DdsImage(submap.Height, submap.Width, XboxFormat.DXN_SNorm, DxgiTextureType.Texture2D, data);
             else if (dxgiLookup.ContainsKey(submap.BitmapFormat))
                 dds = new DdsImage(submap.Height, submap.Width, dxgiLookup[submap.BitmapFormat], DxgiTextureType.Texture2D, data);
