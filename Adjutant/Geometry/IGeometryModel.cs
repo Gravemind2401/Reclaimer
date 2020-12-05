@@ -41,12 +41,14 @@ namespace Adjutant.Geometry
 
     public interface IGeometryRegion
     {
+        int SourceIndex { get; }
         string Name { get; }
         IReadOnlyList<IGeometryPermutation> Permutations { get; }
     }
 
     public interface IGeometryPermutation
     {
+        int SourceIndex { get; }
         string Name { get; }
         int MeshIndex { get; }
         int MeshCount { get; }

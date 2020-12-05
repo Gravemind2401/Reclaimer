@@ -98,6 +98,7 @@ namespace Adjutant.Blam.Halo1
 
                     var gPermutation = new GeometryPermutation
                     {
+                        SourceIndex = Lightmaps.IndexOf(section),
                         Name = sectionIndex.ToString("D3", CultureInfo.CurrentCulture),
                         MeshIndex = sectionIndex,
                         MeshCount = 1

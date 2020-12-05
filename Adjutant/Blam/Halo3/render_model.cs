@@ -87,10 +87,11 @@ namespace Adjutant.Blam.Halo3
 
             foreach (var region in Regions)
             {
-                var gRegion = new GeometryRegion { Name = region.Name };
+                var gRegion = new GeometryRegion { SourceIndex = Regions.IndexOf(region), Name = region.Name };
                 gRegion.Permutations.AddRange(region.Permutations.Where(p => p.SectionIndex >= 0).Select(p =>
                     new GeometryPermutation
                     {
+                        SourceIndex = region.Permutations.IndexOf(p),
                         Name = p.Name,
                         MeshIndex = p.SectionIndex,
                         MeshCount = 1
@@ -127,6 +128,7 @@ namespace Adjutant.Blam.Halo3
             gRegion.Permutations.AddRange(GeometryInstances.Select(i =>
                 new GeometryPermutation
                 {
+                    SourceIndex = GeometryInstances.IndexOf(i),
                     Name = i.Name,
                     Transform = i.Transform,
                     TransformScale = i.TransformScale,

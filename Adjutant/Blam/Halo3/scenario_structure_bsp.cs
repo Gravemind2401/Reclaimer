@@ -102,8 +102,9 @@ namespace Adjutant.Blam.Halo3
 
             var clusterRegion = new GeometryRegion { Name = "Clusters" };
             clusterRegion.Permutations.AddRange(
-                Clusters.Select(c => new GeometryPermutation
+                Clusters.Select((c, i) => new GeometryPermutation
                 {
+                    SourceIndex = i,
                     Name = Clusters.IndexOf(c).ToString("D3", CultureInfo.CurrentCulture),
                     MeshIndex = c.SectionIndex,
                     MeshCount = 1
@@ -118,6 +119,7 @@ namespace Adjutant.Blam.Halo3
                 sectionRegion.Permutations.AddRange(
                     instanceGroup.Select(i => new GeometryPermutation
                     {
+                        SourceIndex = GeometryInstances.IndexOf(i),
                         Name = i.Name,
                         Transform = i.Transform,
                         TransformScale = i.TransformScale,

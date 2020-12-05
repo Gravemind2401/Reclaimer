@@ -129,6 +129,7 @@ namespace Adjutant.Blam.Halo2
 
                     var perm = new GeometryPermutation
                     {
+                        SourceIndex = Clusters.IndexOf(section),
                         Name = sectionIndex.ToString("D3", CultureInfo.CurrentCulture),
                         MeshIndex = model.Meshes.Count,
                         MeshCount = 1
@@ -218,6 +219,7 @@ namespace Adjutant.Blam.Halo2
                         .Where(i => i.SectionIndex == sectionIndex)
                         .Select(i => new GeometryPermutation
                         {
+                            SourceIndex = GeometryInstances.IndexOf(i),
                             Name = i.Name,
                             Transform = i.Transform,
                             TransformScale = i.TransformScale,

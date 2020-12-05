@@ -77,10 +77,11 @@ namespace Adjutant.Blam.Halo1
 
                 foreach (var region in Regions)
                 {
-                    var gRegion = new GeometryRegion { Name = region.Name };
+                    var gRegion = new GeometryRegion { SourceIndex = Regions.IndexOf(region), Name = region.Name };
                     gRegion.Permutations.AddRange(region.Permutations.Select(p =>
                         new GeometryPermutation
                         {
+                            SourceIndex = region.Permutations.IndexOf(p),
                             Name = p.Name,
                             MeshIndex = p.LodIndex(lod),
                             MeshCount = 1

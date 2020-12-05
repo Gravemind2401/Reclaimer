@@ -101,6 +101,7 @@ namespace Adjutant.Geometry
 
     public class GeometryRegion : IGeometryRegion
     {
+        public int SourceIndex { get; set; }
         public string Name { get; set; }
         public List<IGeometryPermutation> Permutations { get; set; }
 
@@ -120,6 +121,7 @@ namespace Adjutant.Geometry
 
     public class GeometryPermutation : IGeometryPermutation
     {
+        public int SourceIndex { get; set; }
         public string Name { get; set; }
         public int MeshIndex { get; set; }
         public int MeshCount { get; set; }
