@@ -201,7 +201,7 @@ namespace Adjutant.Blam.Halo4
 
                     items.Add(i, item);
 
-                    if (CacheFactory.SystemClasses.Contains(item.ClassCode))
+                    if (item.ClassCode != CacheFactory.ScenarioClass && CacheFactory.SystemClasses.Contains(item.ClassCode))
                         sysItems.Add(item.ClassCode, item);
                 }
 
@@ -231,6 +231,12 @@ namespace Adjutant.Blam.Halo4
                     }
                 }
             }
+
+            try
+            {
+                sysItems[CacheFactory.ScenarioClass] = items.Values.Single(i => i.ClassCode == CacheFactory.ScenarioClass && i.FullPath == cache.Header.ScenarioName);
+            }
+            catch { throw Exceptions.AmbiguousScenarioReference(); }
         }
 
         public IndexItem GetGlobalTag(string classCode) => sysItems.ValueOrDefault(classCode);

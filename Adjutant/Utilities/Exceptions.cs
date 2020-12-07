@@ -39,5 +39,10 @@ namespace Adjutant.Utilities
         {
             return new ArgumentException($"'{item.Name}' is not a texture file.");
         }
+
+        internal static NotSupportedException AmbiguousScenarioReference()
+        {
+            return new NotSupportedException("Could not determine primary scenario tag.");
+        }
     }
 }
