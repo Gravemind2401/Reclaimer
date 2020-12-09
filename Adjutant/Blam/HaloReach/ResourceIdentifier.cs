@@ -69,7 +69,7 @@ namespace Adjutant.Blam.HaloReach
                 throw new InvalidOperationException("Data not found");
 
             var page = resourceLayoutTable.Pages[pageIndex];
-            if (mode == PageType.Auto && page.DataOffset < 0)
+            if (mode == PageType.Auto && (page.DataOffset < 0 || page.CompressedSize == 0))
             {
                 pageIndex = segment.PrimaryPageIndex;
                 chunkOffset = segment.PrimaryPageOffset;
