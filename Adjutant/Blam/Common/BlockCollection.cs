@@ -31,7 +31,7 @@ namespace Adjutant.Blam.Common
             var count = reader.ReadInt32();
             Pointer = new Pointer(reader.ReadInt32(), translator, expander);
 
-            if (count == 0)
+            if (count == 0 || Pointer.Address < 0 || Pointer.Address >= reader.BaseStream.Length)
                 return;
 
             reader.BaseStream.Position = Pointer.Address;
