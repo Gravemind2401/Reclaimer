@@ -398,7 +398,7 @@ namespace Reclaimer.Plugins
                     break;
 
                 case FolderMode.TagClass:
-                    baseDirectory = Path.Combine(baseDirectory, tagClass);
+                    baseDirectory = Path.Combine(baseDirectory, tagClass, Utils.GetFileName(tagPath));
                     break;
             }
 
