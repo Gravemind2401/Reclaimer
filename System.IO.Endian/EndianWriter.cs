@@ -665,6 +665,112 @@ namespace System.IO.Endian
                 WriteObject(value, version);
         }
 
+        /// <summary>
+        /// Inserts data at the current position. Any following data will be moved forward and the stream will be expanded.
+        /// </summary>
+        /// <param name="buffer">The data to insert.</param>
+        public void Insert(byte[] buffer)
+        {
+            if (buffer == null)
+                throw new ArgumentNullException(nameof(buffer));
+            else if (buffer.Length == 0)
+                return;
+
+            var source = BaseStream.Position;
+            if (source < BaseStream.Length)
+            {
+                var destination = source + buffer.Length;
+                Copy(source, destination, buffer.Length);
+            }
+
+            Write(buffer);
+        }
+
+        /// <summary>
+        /// Inserts padding bytes at the current position. Any following data will be moved forward and the stream will be expanded.
+        /// </summary>
+        /// <param name="pad">The byte to pad with.</param>
+        /// <param name="length">The number of bytes to insert.</param>
+        public void Insert(byte pad, int length)
+        {
+            if (length < 0)
+                throw Exceptions.ParamMustBeNonNegative(nameof(length), length);
+            else if (length == 0)
+                return;
+
+            var source = BaseStream.Position;
+            if (source < BaseStream.Length)
+            {
+                var destination = source + length;
+                Copy(source, destination, length);
+            }
+
+            Fill(pad, length);
+        }
+
+        /// <summary>
+        /// Overwrites data with padding bytes.
+        /// </summary>
+        /// <param name="pad">The byte to pad with.</param>
+        /// <param name="length">The number of bytes to insert.</param>
+        public void Fill(byte pad, int length)
+        {
+            if (length < 0)
+                throw Exceptions.ParamMustBeNonNegative(nameof(length), length);
+            else if (length == 0)
+                return;
+
+            var buffer = new byte[length];
+
+            if (pad != default(byte))
+            {
+                for (int i = 0; i < length; i++)
+                    buffer[i] = pad;
+            }
+
+            Write(buffer);
+        }
+
+        /// <summary>
+        /// Copies data from one part of the stream to another, overwriting data at the destination. The stream position is not advanced.
+        /// </summary>
+        /// <param name="sourceAddress"></param>
+        /// <param name="destinationAddress"></param>
+        /// <param name="length"></param>
+        public void Copy(long sourceAddress, long destinationAddress, int length)
+        {
+            if (sourceAddress <= 0)
+                throw Exceptions.ParamMustBePositive(nameof(sourceAddress), sourceAddress);
+
+            if (destinationAddress <= 0)
+                throw Exceptions.ParamMustBePositive(nameof(destinationAddress), destinationAddress);
+
+            if (length <= 0)
+                throw Exceptions.ParamMustBePositive(nameof(length), length);
+
+            const int blockSize = 0x10000;
+            var origin = BaseStream.Position;
+
+            var buffer = new byte[blockSize];
+            for (int remaining = length; remaining > 0;)
+            {
+                var readLength = Math.Min(blockSize, remaining);
+                var offset = sourceAddress > destinationAddress
+                    ? length - remaining
+                    : remaining - readLength;
+
+                Seek(sourceAddress + offset, SeekOrigin.Begin);
+                BaseStream.Read(buffer, 0, readLength);
+
+                Seek(destinationAddress + offset, SeekOrigin.Begin);
+                BaseStream.Write(buffer, 0, readLength);
+
+                remaining -= readLength;
+            }
+
+            Seek(origin, SeekOrigin.Begin);
+        }
+
         #endregion
     }
 }

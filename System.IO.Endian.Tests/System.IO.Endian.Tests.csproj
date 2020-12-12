@@ -91,6 +91,7 @@
     <Compile Include="TestEnumerable.cs" />
     <Compile Include="TestVirtualSeek.cs" />
     <Compile Include="TestAnnotations.cs" />
+    <Compile Include="TestWriteInsert.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\System.IO.Endian\System.IO.Endian.csproj">
