@@ -8,22 +8,13 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Halo3
 {
-    public class TagAddressTranslator : IAddressTranslator
+    public class BetaHeaderAddressTranslator : IAddressTranslator
     {
         private readonly CacheFile cache;
 
-        private int Magic
-        {
-            get
-            {
-                if (cache.CacheType == CacheType.Halo3Beta)
-                    return cache.Header.VirtualBaseAddress - cache.Header.MetadataAddress;
+        private int Magic => 0;
 
-                return cache.Header.VirtualBaseAddress - (cache.Header.DataTableAddress + cache.Header.DataTableSize);
-            }
-        }
-
-        public TagAddressTranslator(CacheFile cache)
+        public BetaHeaderAddressTranslator(CacheFile cache)
         {
             this.cache = cache;
         }

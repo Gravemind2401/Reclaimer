@@ -79,22 +79,26 @@ namespace Adjutant.Blam.HaloReach
         IStringIndex ICacheFile.StringIndex => StringIndex;
         IAddressTranslator ICacheFile.DefaultAddressTranslator => MetadataTranslator;
 
-        long IGen3CacheFile.VirtualBaseAddress => Header.VirtualBaseAddress;
-        SectionOffsetTable IGen3CacheFile.SectionOffsetTable => Header.SectionOffsetTable;
-        SectionTable IGen3CacheFile.SectionTable => Header.SectionTable;
+        IGen3Header IGen3CacheFile.Header => Header;
 
         #endregion
     }
 
     [FixedSize(16384, MaxVersion = (int)CacheType.HaloReachRetail)]
     [FixedSize(40960, MinVersion = (int)CacheType.HaloReachRetail)]
-    public class CacheHeader
+    public class CacheHeader : IGen3Header
     {
         [Offset(8)]
         public int FileSize { get; set; }
 
         [Offset(16)]
         public Pointer IndexPointer { get; set; }
+
+        [Offset(20)]
+        public int TagDataAddress { get; set; }
+
+        [Offset(24)]
+        public int VirtualSize { get; set; }
 
         [Offset(284)]
         [NullTerminated(Length = 32)]
@@ -131,11 +135,32 @@ namespace Adjutant.Blam.HaloReach
         [Offset(744)]
         public int VirtualBaseAddress { get; set; }
 
+        [Offset(752)]
+        public PartitionTable PartitionTable { get; set; }
+
         [Offset(1132)]
         public SectionOffsetTable SectionOffsetTable { get; set; }
 
         [Offset(1148)]
         public SectionTable SectionTable { get; set; }
+
+        #region IGen3Header
+
+        long IGen3Header.FileSize
+        {
+            get { return FileSize; }
+            set { FileSize = (int)value; }
+        }
+
+        long IGen3Header.VirtualBaseAddress
+        {
+            get { return VirtualBaseAddress; }
+            set { VirtualBaseAddress = (int)value; }
+        }
+
+        IPartitionTable IGen3Header.PartitionTable => PartitionTable;
+
+        #endregion
     }
 
     [FixedSize(32)]

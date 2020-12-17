@@ -83,9 +83,7 @@ namespace Adjutant.Blam.MccHalo4
         IStringIndex ICacheFile.StringIndex => StringIndex;
         IAddressTranslator ICacheFile.DefaultAddressTranslator => MetadataTranslator;
 
-        long IGen3CacheFile.VirtualBaseAddress => Header.VirtualBaseAddress;
-        SectionOffsetTable IGen3CacheFile.SectionOffsetTable => Header.SectionOffsetTable;
-        SectionTable IGen3CacheFile.SectionTable => Header.SectionTable;
+        IGen3Header IGen3CacheFile.Header => Header;
 
         IPointerExpander IMccCacheFile.PointerExpander => PointerExpander;
 
@@ -93,16 +91,19 @@ namespace Adjutant.Blam.MccHalo4
     }
 
     [FixedSize(122880)]
-    public class CacheHeader
+    public class CacheHeader : IGen3Header
     {
         [Offset(8)]
-        public int FileSize { get; set; }
+        public long FileSize { get; set; }
 
         [Offset(16)]
         public Pointer64 IndexPointer { get; set; }
 
         [Offset(24)]
         public int TagDataAddress { get; set; }
+
+        [Offset(28)]
+        public int VirtualSize { get; set; }
 
         [Offset(288)]
         [NullTerminated(Length = 32)]
@@ -139,11 +140,20 @@ namespace Adjutant.Blam.MccHalo4
         [Offset(768)]
         public long VirtualBaseAddress { get; set; }
 
+        [Offset(784)]
+        public PartitionTable64 PartitionTable { get; set; }
+
         [Offset(1212)]
         public SectionOffsetTable SectionOffsetTable { get; set; }
 
         [Offset(1228)]
         public SectionTable SectionTable { get; set; }
+
+        #region IGen3Header
+
+        IPartitionTable IGen3Header.PartitionTable => PartitionTable;
+
+        #endregion
     }
 
     [FixedSize(76)]

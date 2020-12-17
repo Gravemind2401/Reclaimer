@@ -30,7 +30,11 @@ namespace Adjutant.Blam.Common.Gen3
         }
 
         #region IReadOnlyList
-        public uint this[int index] => sectionOffsets[index];
+        public uint this[int index]
+        {
+            get { return sectionOffsets[index]; }
+            set { sectionOffsets[index] = value; }
+        }
 
         public int Count => sectionOffsets.Length;
 

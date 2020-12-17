@@ -83,9 +83,7 @@ namespace Adjutant.Blam.MccHaloReach
         IStringIndex ICacheFile.StringIndex => StringIndex;
         IAddressTranslator ICacheFile.DefaultAddressTranslator => MetadataTranslator;
 
-        long IGen3CacheFile.VirtualBaseAddress => Header.VirtualBaseAddress;
-        SectionOffsetTable IGen3CacheFile.SectionOffsetTable => Header.SectionOffsetTable;
-        SectionTable IGen3CacheFile.SectionTable => Header.SectionTable;
+        IGen3Header IGen3CacheFile.Header => Header;
 
         IPointerExpander IMccCacheFile.PointerExpander => PointerExpander;
 
@@ -93,7 +91,7 @@ namespace Adjutant.Blam.MccHaloReach
     }
 
     [FixedSize(40960)]
-    public class CacheHeader
+    public class CacheHeader : IGen3Header
     {
         [Offset(8)]
         public long FileSize { get; set; }
@@ -103,6 +101,9 @@ namespace Adjutant.Blam.MccHaloReach
 
         [Offset(24)]
         public int TagDataAddress { get; set; }
+
+        [Offset(28)]
+        public int VirtualSize { get; set; }
 
         [Offset(288)]
         [NullTerminated(Length = 32)]
@@ -149,6 +150,10 @@ namespace Adjutant.Blam.MccHaloReach
         [Offset(752, MinVersion = (int)CacheType.MccHaloReachU3)]
         public long VirtualBaseAddress { get; set; }
 
+        [Offset(776, MaxVersion = (int)CacheType.MccHaloReachU3)]
+        [Offset(768, MinVersion = (int)CacheType.MccHaloReachU3)]
+        public PartitionTable64 PartitionTable { get; set; }
+
         [Offset(1204, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(1196, MinVersion = (int)CacheType.MccHaloReachU3)]
         public SectionOffsetTable SectionOffsetTable { get; set; }
@@ -156,6 +161,12 @@ namespace Adjutant.Blam.MccHaloReach
         [Offset(1220, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(1212, MinVersion = (int)CacheType.MccHaloReachU3)]
         public SectionTable SectionTable { get; set; }
+
+        #region IGen3Header
+
+        IPartitionTable IGen3Header.PartitionTable => PartitionTable;
+
+        #endregion
     }
 
     [FixedSize(76)]

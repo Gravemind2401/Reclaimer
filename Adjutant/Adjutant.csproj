@@ -68,7 +68,10 @@
     <Compile Include="Audio\XboxAdpcmHeader.cs" />
     <Compile Include="Audio\XmaHeader.cs" />
     <Compile Include="Blam\Common\Gen3\IGen3CacheFile.cs" />
+    <Compile Include="Blam\Common\Gen3\IGen3Header.cs" />
     <Compile Include="Blam\Common\Gen3\IMccCacheFile.cs" />
+    <Compile Include="Blam\Common\Gen3\IPartitionTable.cs" />
+    <Compile Include="Blam\Common\Gen3\PartitionTable.cs" />
     <Compile Include="Blam\Common\Gen3\PartitionTable64.cs" />
     <Compile Include="Blam\Common\Gen3\SectionAddressTranslator.cs" />
     <Compile Include="Blam\Common\Gen3\SectionOffsetTable.cs" />
@@ -107,7 +110,7 @@
     <Compile Include="Blam\Halo3\render_method_template.cs" />
     <Compile Include="Blam\Halo3\render_model.cs" />
     <Compile Include="Blam\Halo3\ResourceIdentifier.cs" />
-    <Compile Include="Blam\Halo3\HeaderAddressTranslator.cs" />
+    <Compile Include="Blam\Halo3\BetaHeaderAddressTranslator.cs" />
     <Compile Include="Blam\Halo3\scenario.cs" />
     <Compile Include="Blam\Halo3\scenario_lightmap.cs" />
     <Compile Include="Blam\Halo3\scenario_lightmap_bsp_data.cs" />
@@ -115,7 +118,7 @@
     <Compile Include="Blam\Halo3\shader.cs" />
     <Compile Include="Blam\Halo3\sound.cs" />
     <Compile Include="Blam\Halo3\sound_cache_file_gestalt.cs" />
-    <Compile Include="Blam\Halo3\TagAddressTranslator.cs" />
+    <Compile Include="Blam\Halo3\BetaTagAddressTranslator.cs" />
     <Compile Include="Blam\Common\XmlVertex.cs" />
     <Compile Include="Blam\Halo4\bitmap.cs" />
     <Compile Include="Blam\Halo4\CacheFile.cs" />

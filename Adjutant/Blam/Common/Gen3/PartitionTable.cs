@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Common.Gen3
 {
-    public class PartitionTable64 : IPartitionTable
+    public class PartitionTable : IPartitionTable
     {
         private readonly IPartitionLayout[] partitions;
 
-        public PartitionTable64(ICacheFile cache, EndianReader reader)
+        public PartitionTable(ICacheFile cache, EndianReader reader)
         {
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
@@ -23,7 +23,7 @@ namespace Adjutant.Blam.Common.Gen3
             partitions = new IPartitionLayout[6];
 
             for (int i = 0; i < partitions.Length; i++)
-                partitions[i] = reader.ReadObject<PartitionLayout64>();
+                partitions[i] = reader.ReadObject<PartitionLayout>();
         }
 
         #region IPartitionTable
@@ -37,13 +37,27 @@ namespace Adjutant.Blam.Common.Gen3
         #endregion
     }
 
-    [FixedSize(16)]
-    public class PartitionLayout64 : IPartitionLayout
+    [FixedSize(8)]
+    public class PartitionLayout : IPartitionLayout
     {
         [Offset(0)]
-        public ulong Address { get; set; }
+        public uint Address { get; set; }
 
-        [Offset(8)]
-        public ulong Size { get; set; }
+        [Offset(4)]
+        public uint Size { get; set; }
+
+        #region IPartitionLayout
+        ulong IPartitionLayout.Address
+        {
+            get { return Address; }
+            set { Address = (uint)value; }
+        }
+
+        ulong IPartitionLayout.Size
+        {
+            get { return Size; }
+            set { Size = (uint)value; }
+        } 
+        #endregion
     }
 }

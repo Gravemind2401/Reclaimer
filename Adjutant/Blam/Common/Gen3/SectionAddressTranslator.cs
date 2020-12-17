@@ -12,7 +12,7 @@ namespace Adjutant.Blam.Common.Gen3
         private readonly IGen3CacheFile cache;
         private readonly int sectionIndex;
 
-        private uint Magic => cache.SectionTable[sectionIndex].Address - (cache.SectionTable[sectionIndex].Address + cache.SectionOffsetTable[sectionIndex]);
+        private uint Magic => cache.Header.SectionTable[sectionIndex].Address - (cache.Header.SectionTable[sectionIndex].Address + cache.Header.SectionOffsetTable[sectionIndex]);
 
         public SectionAddressTranslator(IGen3CacheFile cache, int sectionIndex)
         {

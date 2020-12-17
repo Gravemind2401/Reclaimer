@@ -78,21 +78,25 @@ namespace Adjutant.Blam.Halo4
         IStringIndex ICacheFile.StringIndex => StringIndex;
         IAddressTranslator ICacheFile.DefaultAddressTranslator => MetadataTranslator;
 
-        long IGen3CacheFile.VirtualBaseAddress => Header.VirtualBaseAddress;
-        SectionOffsetTable IGen3CacheFile.SectionOffsetTable => Header.SectionOffsetTable;
-        SectionTable IGen3CacheFile.SectionTable => Header.SectionTable;
+        IGen3Header IGen3CacheFile.Header => Header;
 
         #endregion
     }
 
     [FixedSize(122880)]
-    public class CacheHeader
+    public class CacheHeader : IGen3Header
     {
         [Offset(8)]
         public int FileSize { get; set; }
 
         [Offset(16)]
         public Pointer IndexPointer { get; set; }
+
+        [Offset(20)]
+        public int TagDataAddress { get; set; }
+
+        [Offset(24)]
+        public int VirtualSize { get; set; }
 
         [Offset(284)]
         [NullTerminated(Length = 32)]
@@ -129,11 +133,32 @@ namespace Adjutant.Blam.Halo4
         [Offset(760)]
         public int VirtualBaseAddress { get; set; }
 
+        [Offset(768)]
+        public PartitionTable PartitionTable { get; set; }
+
         [Offset(1148)]
         public SectionOffsetTable SectionOffsetTable { get; set; }
 
         [Offset(1164)]
         public SectionTable SectionTable { get; set; }
+
+        #region IGen3Header
+
+        long IGen3Header.FileSize
+        {
+            get { return FileSize; }
+            set { FileSize = (int)value; }
+        }
+
+        long IGen3Header.VirtualBaseAddress
+        {
+            get { return VirtualBaseAddress; }
+            set { VirtualBaseAddress = (int)value; }
+        }
+
+        IPartitionTable IGen3Header.PartitionTable => PartitionTable;
+
+        #endregion
     }
 
     [FixedSize(32)]

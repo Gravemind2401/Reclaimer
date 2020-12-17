@@ -38,7 +38,7 @@ namespace Adjutant.Blam.Common.Gen3
     }
 
     [FixedSize(8)]
-    public struct SectionLayout
+    public class SectionLayout
     {
         [Offset(0)]
         public uint Address { get; set; }
