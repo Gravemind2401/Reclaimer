@@ -72,6 +72,7 @@ namespace Adjutant.Blam.Common
         [BuildString("Aug 11 2020 23:34:41")] //flight 2 (odst test)
         [BuildString("Aug 26 2020 21:24:11")] //update 1
         [BuildString("Oct 21 2020 09:24:30")] //update 2
+        [BuildString("Nov 24 2020 15:47:48")] //update 3
         MccHalo3,
 
         [CacheGeneration(3)]
@@ -105,6 +106,7 @@ namespace Adjutant.Blam.Common
         [CacheGeneration(3)]
         [BuildString("Jun  5 2020 10:40:14")] //update 3
         [BuildString("Oct 15 2020 18:23:50")] //update 4
+        [BuildString("Nov 24 2020 18:32:37")] //update 5
         MccHaloReachU3,
 
         [CacheGeneration(4)]
