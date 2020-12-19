@@ -204,7 +204,7 @@ namespace Adjutant.Blam.Halo4
     [Flags]
     public enum ModelFlags : int
     {
-        UseLocalNodes = 262144
+        UseLocalNodes = 4
     }
 
     [FixedSize(16)]

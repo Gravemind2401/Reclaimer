@@ -102,7 +102,7 @@ namespace Adjutant.Blam.Halo3
             }
 
             Func<int, int, int> mapNodeFunc = null;
-            if(Flags.HasFlag(ModelFlags.UseLocalNodes))
+            if (Flags.HasFlag(ModelFlags.UseLocalNodes))
                 mapNodeFunc = (si, i) => NodeMaps[si].Indices[i];
 
             model.Meshes.AddRange(Halo3Common.GetMeshes(cache, ResourcePointer, Sections, (s, m) => m.BoundsIndex = 0, mapNodeFunc));
@@ -200,7 +200,7 @@ namespace Adjutant.Blam.Halo3
     [Flags]
     public enum ModelFlags : int
     {
-        UseLocalNodes = 262144
+        UseLocalNodes = 4
     }
 
     [FixedSize(16)]
