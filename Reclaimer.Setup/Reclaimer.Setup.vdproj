@@ -201,6 +201,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D7085246395C4B9AAA83EAE32A701041"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_F415CDE9BD3846E6B8E5B36DB40736D4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -984,6 +990,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D7085246395C4B9AAA83EAE32A701041"
+            {
+            "SourcePath" = "8:settings.json"
+            "TargetName" = "8:settings.json"
+            "Tag" = "8:"
+            "Folder" = "8:_E0A38ADEC6444FE3B5694CDC428C3E88"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:FALSE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FD06B594005F404A9DDF9409C641D6BB"
             {
             "SourcePath" = "8:..\\Reclaimer\\bin\\Release\\runtimes\\win-x64\\native\\assimp.dll"
@@ -1010,6 +1036,39 @@
         }
         "Folder"
         {
+            "{1525181F-901A-416C-8A58-119130FE478E}:_454B1C9923F24A1A919FCB5893F27C3A"
+            {
+            "Name" = "8:#1915"
+            "AlwaysCreate" = "11:FALSE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Property" = "8:AppDataFolder"
+                "Folders"
+                {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_1B20995A924144FD8873F232FB383C1E"
+                    {
+                    "Name" = "8:Gravemind2401"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_762ABB99193942D59F04CC1C1FBE55F0"
+                        "Folders"
+                        {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_E0A38ADEC6444FE3B5694CDC428C3E88"
+                            {
+                            "Name" = "8:Reclaimer"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_01FFBA074D704E3C86AED42F1D455F06"
+                                "Folders"
+                                {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             "{1525181F-901A-416C-8A58-119130FE478E}:_543D27C1DA1E4AA99896F9723BA022F3"
             {
             "Name" = "8:#1919"
@@ -1045,7 +1104,7 @@
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_B9D9EDBB58BF4772BD98821053D4AFD9"
                     {
                     "Name" = "8:runtimes"
-                    "AlwaysCreate" = "11:FALSE"
+                    "AlwaysCreate" = "11:TRUE"
                     "Condition" = "8:"
                     "Transitive" = "11:FALSE"
                     "Property" = "8:_37A6E52706824CB7ADC0D98174EC5D8C"

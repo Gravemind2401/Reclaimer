@@ -12,7 +12,9 @@ namespace Reclaimer
 {
     internal class Settings
     {
-        private static string settingsJson => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
+        private static string oldSettingsJson => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
+        private static string settingsJson => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Gravemind2401\\Reclaimer\\settings.json");
+
         private static JsonSerializerSettings serializerSettings => new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
@@ -45,9 +47,21 @@ namespace Reclaimer
 
         public static Settings FromFile()
         {
-            if (!File.Exists(settingsJson))
+            var settingsContent = File.Exists(settingsJson)
+                ? File.ReadAllText(settingsJson)
+                : null;
+
+            if (string.IsNullOrWhiteSpace(settingsContent) && File.Exists(oldSettingsJson))
+            {
+                settingsContent = File.ReadAllText(oldSettingsJson);
+                try { File.Delete(oldSettingsJson); }
+                catch (Exception ex) { Substrate.LogError("Unable to delete old settings.json.", ex); }
+            }
+
+            if (string.IsNullOrWhiteSpace(settingsContent))
                 return new Settings();
-            else return JsonConvert.DeserializeObject<Settings>(File.ReadAllText(settingsJson));
+
+            return JsonConvert.DeserializeObject<Settings>(settingsContent);
         }
 
         public void Save()
