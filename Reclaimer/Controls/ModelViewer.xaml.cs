@@ -31,8 +31,7 @@ namespace Reclaimer.Controls
     /// </summary>
     public partial class ModelViewer : IDisposable
     {
-        private delegate bool GetDataFolder(out string dataFolder);
-        private delegate bool SaveImage(IBitmap bitmap, string baseDir);
+        public delegate void ExportBitmaps(IRenderGeometry geometry);
 
         private static readonly string[] AllLods = new[] { "Highest", "High", "Medium", "Low", "Lowest" };
         private static readonly DiffuseMaterial ErrorMaterial;
@@ -481,33 +480,8 @@ namespace Reclaimer.Controls
 
         private void btnExportBitmaps_Click(object sender, RoutedEventArgs e)
         {
-            var getFolder = Substrate.GetSharedFunction<GetDataFolder>("Reclaimer.Plugins.BatchExtractPlugin.GetDataFolder");
-
-            string folder;
-            if (!getFolder(out folder))
-                return;
-
-            Task.Run(() =>
-            {
-                var saveImage = Substrate.GetSharedFunction<SaveImage>("Reclaimer.Plugins.BatchExtractPlugin.SaveImage");
-
-                foreach (var bitm in geometry.GetAllBitmaps())
-                {
-                    try
-                    {
-                        SetStatus($"Extracting {bitm.Name}");
-                        saveImage(bitm, folder);
-                        LogOutput($"Extracted {bitm.Name}.{bitm.Class}");
-                    }
-                    catch (Exception ex)
-                    {
-                        LogError($"Error extracting {bitm.Name}.{bitm.Class}", ex);
-                    }
-                }
-
-                ClearStatus();
-                LogOutput($"Recursive bitmap extract complete for {geometry.Name}.{geometry.Class}");
-            });
+            var export = Substrate.GetSharedFunction<ExportBitmaps>("Reclaimer.Plugins.ModelViewerPlugin.ExportBitmaps");
+            export.Invoke(geometry);
         }
 
         private void txtSearch_SearchChanged(object sender, RoutedEventArgs e)
