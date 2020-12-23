@@ -46,7 +46,11 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                     case MetaValueType.UInt16: Value = reader.ReadUInt16(); break;
                     case MetaValueType.UInt32: Value = reader.ReadUInt32(); break;
                     case MetaValueType.UInt64: Value = reader.ReadUInt64(); break;
-                    case MetaValueType.Float32: Value = reader.ReadSingle(); break;
+
+                    case MetaValueType.Angle:
+                    case MetaValueType.Float32:
+                        Value = reader.ReadSingle();
+                        break;
 
                     case MetaValueType.Undefined:
                     default:
@@ -77,7 +81,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 case MetaValueType.UInt16: writer.Write((ushort)parsed); break;
                 case MetaValueType.UInt32: writer.Write((uint)parsed); break;
                 case MetaValueType.UInt64: writer.Write((ulong)parsed); break;
-                case MetaValueType.Float32: writer.Write((float)parsed); break;
+
+                case MetaValueType.Angle:
+                case MetaValueType.Float32:
+                    writer.Write((float)parsed); break;
 
                 case MetaValueType.Undefined:
                 default:

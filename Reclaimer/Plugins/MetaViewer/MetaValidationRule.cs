@@ -48,6 +48,7 @@ namespace Reclaimer.Plugins.MetaViewer
                     return ValidateUInt64(str);
 
                 case MetaValueType.Float32:
+                case MetaValueType.Angle:
                     return ValidateSingle(str);
 
                 case MetaValueType.String:
@@ -65,9 +66,11 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            var binding = value as BindingExpression;
-            var meta = binding.DataItem as MetaValueBase;
-            var prop = meta.GetType().GetProperty(binding.ParentBinding.Path.Path);
+            var binding = value as Binding;
+            var expr = value as BindingExpression;
+
+            var meta = (expr?.DataItem ?? binding?.Source) as MetaValueBase;
+            var prop = meta.GetType().GetProperty((expr?.ParentBinding ?? binding).Path.Path);
 
             if (prop == null)
                 return ValidationResult.ValidResult;

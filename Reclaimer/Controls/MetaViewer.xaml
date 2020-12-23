@@ -77,7 +77,8 @@
         </Style>
 
         <DataTemplate x:Key="DefaultContent">
-            <TextBox Width="{StaticResource valueColWidthS}">
+            <TextBox Width="{StaticResource valueColWidthS}"
+                     mv:MetaValueConverter.MetaProperty="Value">
                 <TextBox.Text>
                     <Binding Path="Value" ValidatesOnExceptions="True">
                         <Binding.ValidationRules>
@@ -198,7 +199,7 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <StackPanel Orientation="Horizontal" Visibility="{Binding Converter={StaticResource fieldVisConverter}, ConverterParameter=0}">
                         <Label Content="{Binding Labels[0]}" />
-                        <TextBox>
+                        <TextBox mv:MetaValueConverter.MetaProperty="Value1">
                             <TextBox.Text>
                                 <Binding Path="Value1" ValidatesOnExceptions="True">
                                     <Binding.ValidationRules>
@@ -210,7 +211,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Visibility="{Binding Converter={StaticResource fieldVisConverter}, ConverterParameter=1}">
                         <Label Content="{Binding Labels[1]}" />
-                        <TextBox>
+                        <TextBox mv:MetaValueConverter.MetaProperty="Value2">
                             <TextBox.Text>
                                 <Binding Path="Value2" ValidatesOnExceptions="True">
                                     <Binding.ValidationRules>
@@ -222,7 +223,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Visibility="{Binding Converter={StaticResource fieldVisConverter}, ConverterParameter=2}">
                         <Label Content="{Binding Labels[2]}" />
-                        <TextBox>
+                        <TextBox mv:MetaValueConverter.MetaProperty="Value3">
                             <TextBox.Text>
                                 <Binding Path="Value3" ValidatesOnExceptions="True">
                                     <Binding.ValidationRules>
@@ -234,7 +235,7 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Visibility="{Binding Converter={StaticResource fieldVisConverter}, ConverterParameter=3}">
                         <Label Content="{Binding Labels[3]}" />
-                        <TextBox>
+                        <TextBox mv:MetaValueConverter.MetaProperty="Value4">
                             <TextBox.Text>
                                 <Binding Path="Value4" ValidatesOnExceptions="True">
                                     <Binding.ValidationRules>

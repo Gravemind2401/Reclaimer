@@ -8,7 +8,7 @@ using System.Windows.Data;
 
 namespace Reclaimer.Utilities
 {
-    public class RadToDegConverter : IValueConverter
+    public class RadToDeg64Converter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -16,11 +16,11 @@ namespace Reclaimer.Utilities
             if (rad == null)
                 return null;
 
-            var deg = (180 / Math.PI) * rad.Value;
+            var deg = Utils.RadToDeg(rad.Value);
 
             if (parameter == null)
                 return deg.ToString();
-            else return ((dynamic)deg).ToString(parameter.ToString());
+            else return deg.ToString(parameter.ToString());
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

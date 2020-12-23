@@ -74,6 +74,10 @@
     <alias name="float" />
   </float32>
 
+  <angle size="4" valueType="angle">
+    <alias name="degree" />
+  </angle>
+
   <shortBounds size="4" valueType="int16" components="2" axes="bounds">
     <alias name="range16" />
   </shortBounds>
@@ -118,6 +122,18 @@
     <alias name="vector4d" />
     <alias name="realVector4d" />
   </realVector4>
+
+  <realEuler2 size="8" valueType="angle" components="2" axes="angle">
+    <alias name="euler2" />
+    <alias name="euler2d" />
+    <alias name="reaEuler2d" />
+  </realEuler2>
+
+  <realEuler3 size="12" valueType="angle" components="3" axes="angle">
+    <alias name="euler3" />
+    <alias name="euler3d" />
+    <alias name="realEuler3d" />
+  </realEuler3>
 
   <rgbColor size="4" valueType="byte" compontents="3" axes="color">
     <alias name="color32rgb" />

@@ -40,9 +40,10 @@ namespace Reclaimer.Plugins.MetaViewer
         Float32,
         BlockIndex32,
         BlockIndex16,
-        BlockIndex8
+        BlockIndex8,
+        Angle
 
-        // DataReference, Angle, Euler Angle, Color
+        // DataReference, Color
     }
 
     public struct FieldDefinition

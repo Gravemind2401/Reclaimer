@@ -11,7 +11,7 @@
 
     <UserControl.Resources>
         <u:ToStringConverter x:Key="stringConverter" />
-        <u:RadToDegConverter x:Key="radToDegConverter" />
+        <u:RadToDeg64Converter x:Key="radToDegConverter" />
 
         <Style x:Key="showHideStyle" TargetType="ToggleButton">
             <Setter Property="Background" Value="LightGray" />

@@ -50,6 +50,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 Labels = new[] { "x", "y", "z", "w" };
             else if (FieldDefinition.Axes == AxesDefinition.Vector)
                 Labels = new[] { "i", "j", "k", "w" };
+            else if (FieldDefinition.Axes == AxesDefinition.Angle)
+                Labels = new[] { "r", "p", "y", string.Empty };
             else if (FieldDefinition.Axes == AxesDefinition.Bounds)
                 Labels = new[] { "min", "max", string.Empty, string.Empty };
 

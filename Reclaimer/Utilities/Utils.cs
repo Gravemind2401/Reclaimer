@@ -41,5 +41,23 @@ namespace Reclaimer.Utilities
         {
             return string.Join("_", fileName.Split(Path.GetInvalidPathChars()));
         }
+
+        /// <summary>
+        /// Converts radian values to degree values.
+        /// </summary>
+        /// <param name="radians">The value in radians.</param>
+        public static double RadToDeg(double radians)
+        {
+            return radians * (180d / Math.PI);
+        }
+
+        /// <summary>
+        /// Converts degree values to radian values.
+        /// </summary>
+        /// <param name="degrees">The value in degrees.</param>
+        public static double DegToRad(double degrees)
+        {
+            return degrees * (Math.PI / 180d);
+        }
     }
 }

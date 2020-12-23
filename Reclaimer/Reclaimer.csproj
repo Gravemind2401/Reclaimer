@@ -161,6 +161,7 @@
     <Compile Include="Plugins\MetaViewer\Halo5\TagReferenceValue.cs" />
     <Compile Include="Plugins\MetaViewer\MetaValidationRule.cs" />
     <Compile Include="Plugins\MetaViewer\MetaValueBase.cs" />
+    <Compile Include="Plugins\MetaViewer\MetaValueConverter.cs" />
     <Compile Include="Plugins\MetaViewer\XmlExtensions.cs" />
     <Compile Include="Plugins\ModuleViewerPlugin.cs" />
     <Compile Include="Plugins\MapViewerPlugin.cs" />
@@ -197,7 +198,8 @@
     <Compile Include="Utilities\FolderSelectDialog.cs" />
     <Compile Include="Utilities\BrowseFolderEditor.cs" />
     <Compile Include="Utilities\GridLengthConverter.cs" />
-    <Compile Include="Utilities\RadToDegConverter.cs" />
+    <Compile Include="Utilities\RadToDeg32Converter.cs" />
+    <Compile Include="Utilities\RadToDeg64Converter.cs" />
     <Compile Include="Utilities\ToStringConverter.cs" />
     <Compile Include="Utilities\NativeMethods.cs" />
     <Compile Include="Utilities\Utils.cs" />

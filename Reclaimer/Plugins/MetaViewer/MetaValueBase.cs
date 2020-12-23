@@ -80,7 +80,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
                 var def = FieldDefinition.GetHalo3Definition(node);
 
-                if (def.Components > 1 && def.ValueType == MetaValueType.Float32)
+                if (def.Components > 1 && (def.ValueType == MetaValueType.Float32 || def.ValueType == MetaValueType.Angle))
                     return new Halo3.MultiValue(node, context, reader, baseAddress);
 
                 switch (def.ValueType)
