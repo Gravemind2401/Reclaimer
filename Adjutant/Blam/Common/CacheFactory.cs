@@ -38,7 +38,7 @@ namespace Adjutant.Blam.Common
         }
 
         internal const string ScenarioClass = "scnr";
-        internal static readonly string[] SystemClasses = new[] { "scnr", "ugh!", "play", "zone" };
+        internal static readonly string[] SystemClasses = new[] { "scnr", "matg", "ugh!", "play", "zone" };
 
         private static Dictionary<string, string> ReadClassXml(string xml)
         {

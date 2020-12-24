@@ -157,9 +157,16 @@ namespace Adjutant.Blam.Common
         LatinAmericanSpanish = 5,
         Italian = 6,
         Korean = 7,
-        Chinese = 8,
-        Unknown0 = 9,
+        ChineseTrad = 8,
+        ChineseSimp = 9,
         Portuguese = 10,
-        Unknown1 = 11
+        Polish = 11,
+
+        // Halo 4
+        Russian = 12,
+        Danish = 13,
+        Finnish= 14,
+        Dutch = 15,
+        Norwegian = 16
     }
 }
