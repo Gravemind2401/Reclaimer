@@ -266,7 +266,10 @@ namespace Reclaimer.Plugins
                 {
                     if (Settings.OverwriteExisting || !File.Exists(fileName + ext))
                     {
-                        bitmap.ToDds(i).WriteToDisk(fileName + ext);
+                        var rawDds = bitmap.ToDds(i);
+                        if (rawDds.FormatCode == (int)FourCC.XBOX)
+                            rawDds = rawDds.AsUncompressed();
+                        rawDds.WriteToDisk(fileName + ext);
                         extracted++;
                     }
                     continue;

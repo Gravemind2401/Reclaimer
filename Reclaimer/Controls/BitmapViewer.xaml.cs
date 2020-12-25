@@ -197,6 +197,8 @@ namespace Reclaimer.Controls
             if (sfd.FilterIndex == 4)
             {
                 var dds = bitmap.ToDds(0);
+                if (dds.FormatCode == (int)FourCC.XBOX)
+                    dds = dds.AsUncompressed();
                 dds.WriteToDisk(sfd.FileName);
                 return;
             }
