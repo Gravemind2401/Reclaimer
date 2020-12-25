@@ -237,38 +237,7 @@ namespace System.Drawing.Dds
             if (isCubeMap) virtualHeight *= 6;
 
             var bgr24 = options.HasFlag(DecompressOptions.Bgr24);
-
-            byte[] pixels;
-            if (header.PixelFormat.FourCC == (uint)FourCC.DX10)
-            {
-                if (decompressMethodsDxgi.ContainsKey(dx10Header.DxgiFormat))
-                    pixels = decompressMethodsDxgi[dx10Header.DxgiFormat](data, virtualHeight, Width, bgr24);
-                else
-                {
-                    switch (dx10Header.DxgiFormat)
-                    {
-                        case DxgiFormat.B8G8R8X8_UNorm:
-                        case DxgiFormat.B8G8R8A8_UNorm:
-                            pixels = bgr24 ? ToArray(SkipNth(data, 4), true, virtualHeight, Width) : data;
-                            break;
-
-                        default: throw new NotSupportedException("The DxgiFormat is not supported.");
-                    }
-                }
-            }
-            else if (header.PixelFormat.FourCC == (uint)FourCC.XBOX)
-            {
-                if (decompressMethodsXbox.ContainsKey(xboxHeader.XboxFormat))
-                    pixels = decompressMethodsXbox[xboxHeader.XboxFormat](data, virtualHeight, Width, bgr24);
-                else throw new NotSupportedException("The XboxFormat is not supported.");
-            }
-            else
-            {
-                var fourcc = (FourCC)header.PixelFormat.FourCC;
-                if (decompressMethodsFourCC.ContainsKey(fourcc))
-                    pixels = decompressMethodsFourCC[fourcc](data, virtualHeight, Width, bgr24);
-                else throw new NotSupportedException("The FourCC is not supported.");
-            }
+            var pixels = DecompressPixelData(bgr24);
 
             var format = bgr24 ? PixelFormats.Bgr24 : PixelFormats.Bgra32;
             var bpp = bgr24 ? 3 : 4;
@@ -285,6 +254,102 @@ namespace System.Drawing.Dds
             return source;
         }
         #endregion
+
+        public DdsImage AsUncompressed()
+        {
+            if (header.PixelFormat.FourCC == (int)FourCC.DX10)
+            {
+                switch (dx10Header.DxgiFormat)
+                {
+                    case DxgiFormat.B8G8R8X8_UNorm:
+                    case DxgiFormat.B8G8R8A8_UNorm:
+                        return this;
+                }
+            }
+
+            var pixels = DecompressPixelData(false);
+            var result = new DdsImage(Height, Width, pixels);
+
+            result.header.PixelFormat.FourCC = (int)FourCC.DX10;
+            result.header.PixelFormat.Flags = header.PixelFormat.Flags;
+            result.header.PixelFormat.BBitmask = header.PixelFormat.BBitmask;
+            result.header.PixelFormat.GBitmask = header.PixelFormat.GBitmask;
+            result.header.PixelFormat.RBitmask = header.PixelFormat.RBitmask;
+            result.header.PixelFormat.ABitmask = header.PixelFormat.ABitmask;
+            result.header.PixelFormat.RgbBitCount = header.PixelFormat.RgbBitCount;
+
+            result.header.Caps = header.Caps;
+            result.header.Caps2 = header.Caps2;
+            result.header.Caps3 = header.Caps3;
+            result.header.Caps4 = header.Caps4;
+            result.header.Depth = header.Depth;
+            result.header.Flags = header.Flags;
+            result.header.MipmapCount = header.MipmapCount;
+            result.header.PitchOrLinearSize = header.PitchOrLinearSize;
+
+            result.dx10Header.DxgiFormat = DxgiFormat.B8G8R8A8_UNorm;
+
+            if (header.PixelFormat.FourCC == (int)FourCC.DX10)
+            {
+                result.dx10Header.ResourceDimension = dx10Header.ResourceDimension;
+                result.dx10Header.MiscFlags = dx10Header.MiscFlags;
+                result.dx10Header.ArraySize = dx10Header.ArraySize;
+                result.dx10Header.MiscFlags2 = dx10Header.MiscFlags2;
+            }
+            else if (header.PixelFormat.FourCC == (int)FourCC.XBOX)
+            {
+                result.dx10Header.ResourceDimension = xboxHeader.ResourceDimension;
+                result.dx10Header.MiscFlags = xboxHeader.MiscFlags;
+                result.dx10Header.ArraySize = xboxHeader.ArraySize;
+                result.dx10Header.MiscFlags2 = xboxHeader.MiscFlags2;
+            }
+            else
+            {
+                result.dx10Header.ResourceDimension = D3D10ResourceDimension.Texture2D;
+                result.dx10Header.MiscFlags = D3D10ResourceMiscFlags.None;
+                result.dx10Header.ArraySize = 1;
+                result.dx10Header.MiscFlags2 = D3D10ResourceMiscFlag2.DdsAlphaModeStraight;
+            }
+
+            return result;
+        }
+
+        private byte[] DecompressPixelData(bool bgr24)
+        {
+            var virtualHeight = Height;
+            var isCubeMap = TextureFlags.HasFlag(TextureFlags.DdsSurfaceFlagsCubemap) && CubemapFlags.HasFlag(CubemapFlags.DdsCubemapAllFaces);
+            if (isCubeMap) virtualHeight *= 6;
+
+            if (header.PixelFormat.FourCC == (uint)FourCC.DX10)
+            {
+                if (decompressMethodsDxgi.ContainsKey(dx10Header.DxgiFormat))
+                    return decompressMethodsDxgi[dx10Header.DxgiFormat](data, virtualHeight, Width, bgr24);
+                else
+                {
+                    switch (dx10Header.DxgiFormat)
+                    {
+                        case DxgiFormat.B8G8R8X8_UNorm:
+                        case DxgiFormat.B8G8R8A8_UNorm:
+                            return bgr24 ? ToArray(SkipNth(data, 4), true, virtualHeight, Width) : data;
+
+                        default: throw new NotSupportedException("The DxgiFormat is not supported.");
+                    }
+                }
+            }
+            else if (header.PixelFormat.FourCC == (uint)FourCC.XBOX)
+            {
+                if (decompressMethodsXbox.ContainsKey(xboxHeader.XboxFormat))
+                    return decompressMethodsXbox[xboxHeader.XboxFormat](data, virtualHeight, Width, bgr24);
+                else throw new NotSupportedException("The XboxFormat is not supported.");
+            }
+            else
+            {
+                var fourcc = (FourCC)header.PixelFormat.FourCC;
+                if (decompressMethodsFourCC.ContainsKey(fourcc))
+                    return decompressMethodsFourCC[fourcc](data, virtualHeight, Width, bgr24);
+                else throw new NotSupportedException("The FourCC is not supported.");
+            }
+        }
 
         private void MaskChannels(byte[] source, DecompressOptions channels)
         {

@@ -152,6 +152,11 @@ namespace System.Drawing.Dds
         #region Properties
 
         /// <summary>
+        /// Gets the FourCC code in the DDS header.
+        /// </summary>
+        public int FormatCode => header.PixelFormat.FourCC;
+
+        /// <summary>
         /// Gets or sets the height of the image, in pixels.
         /// </summary>
         public int Height
