@@ -60,7 +60,7 @@ namespace Adjutant.Blam.MccHalo3
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
 
-                LocaleIndex = new LocaleIndex(this);
+                LocaleIndex = new LocaleIndex(this, 464, 80, 12);
             }
 
             Task.Factory.StartNew(() =>
@@ -312,101 +312,6 @@ namespace Adjutant.Blam.MccHalo3
         public IEnumerator<string> GetEnumerator() => items.AsEnumerable().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
-    }
-
-    public class LocaleIndex //: IReadOnlyDictionary<Language, IReadOnlyList<string>>
-    {
-        private readonly CacheFile cache;
-        private readonly LanguageDefinition[] definitions;
-        private readonly Dictionary<Language, string[]> languages;
-
-        public LocaleIndex(CacheFile cache)
-        {
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
-            this.cache = cache;
-            definitions = new LanguageDefinition[12];
-            languages = new Dictionary<Language, string[]>();
-
-            var globalsTag = cache.TagIndex.GetGlobalTag("matg");
-            using (var reader = cache.CreateReader(cache.MetadataTranslator))
-            {
-                reader.Seek(globalsTag.MetaPointer.Address + 0x1D0, SeekOrigin.Begin);
-                for (int i = 0; i < definitions.Length; i++)
-                    definitions[i] = reader.ReadObject<LanguageDefinition>();
-            }
-        }
-
-        private void ReadItems(Language lang)
-        {
-            var index = (int)lang;
-            if (index >= definitions.Length)
-                return;
-
-            var definition = definitions[index];
-            var translator = new SectionAddressTranslator(cache, 3);
-            var results = new string[definition.StringCount];
-            using (var reader = cache.CreateReader(translator))
-            {
-                var addr = translator.GetAddress(definition.IndicesOffset);
-                reader.Seek(addr, SeekOrigin.Begin);
-                var indices = reader.ReadEnumerable<LocaleStringIndex>(definition.StringCount).ToList();
-
-                addr = translator.GetAddress(definition.StringsOffset);
-                using (var tempReader = reader.CreateVirtualReader(addr))
-                {
-                    for (int i = 0; i < definition.StringCount; i++)
-                    {
-                        if (indices[i].Offset < 0)
-                            continue;
-
-                        tempReader.Seek(indices[i].Offset, SeekOrigin.Begin);
-                        results[i] = tempReader.ReadNullTerminatedString();
-                    }
-                }
-            }
-
-            languages[lang] = results;
-        }
-
-        public IReadOnlyList<string> this[Language lang]
-        {
-            get
-            {
-                if (!languages.ContainsKey(lang))
-                    ReadItems(lang);
-
-                //unsupported languages will return null
-                return languages.ValueOrDefault(lang);
-            }
-        }
-
-        [FixedSize(0x50)]
-        public class LanguageDefinition
-        {
-            [Offset(0)]
-            public int StringCount { get; set; }
-
-            [Offset(4)]
-            public int StringsSize { get; set; }
-
-            [Offset(8)]
-            public int IndicesOffset { get; set; }
-
-            [Offset(12)]
-            public int StringsOffset { get; set; }
-        }
-
-        [FixedSize(8)]
-        public class LocaleStringIndex
-        {
-            [Offset(0)]
-            public StringId StringId { get; set; }
-
-            [Offset(4)]
-            public int Offset { get; set; }
-        }
     }
 
     [FixedSize(16)]

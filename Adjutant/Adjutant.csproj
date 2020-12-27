@@ -71,6 +71,8 @@
     <Compile Include="Blam\Common\Gen3\IGen3Header.cs" />
     <Compile Include="Blam\Common\Gen3\IMccCacheFile.cs" />
     <Compile Include="Blam\Common\Gen3\IPartitionTable.cs" />
+    <Compile Include="Blam\Common\Gen3\LanguageDefinition.cs" />
+    <Compile Include="Blam\Common\Gen3\LocaleIndex.cs" />
     <Compile Include="Blam\Common\Gen3\PartitionTable.cs" />
     <Compile Include="Blam\Common\Gen3\PartitionTable64.cs" />
     <Compile Include="Blam\Common\Gen3\SectionAddressTranslator.cs" />
