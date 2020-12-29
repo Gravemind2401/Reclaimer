@@ -187,7 +187,8 @@ namespace Reclaimer.Plugins
 
             var handler = AllPlugins
                 .Where(p => p.CanOpenFile(args))
-                .OrderBy(p => p.Name)
+                .OrderByDescending(p => p.FilePriority ?? int.MaxValue)
+                .ThenBy(p => p.Name)
                 .FirstOrDefault();
 
             if (handler == null)

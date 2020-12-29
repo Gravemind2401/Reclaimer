@@ -10,6 +10,8 @@ namespace Reclaimer.Plugins
 {
     public class BitmapViewerPlugin : Plugin
     {
+        internal override int? FilePriority => 1;
+
         public override string Name => "Bitmap Viewer";
 
         public override bool CanOpenFile(OpenFileArgs args)

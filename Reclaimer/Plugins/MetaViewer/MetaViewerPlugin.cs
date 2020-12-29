@@ -16,6 +16,8 @@ namespace Reclaimer.Plugins.MetaViewer
     {
         internal static MetaViewerSettings Settings { get; private set; }
 
+        internal override int? FilePriority => 0;
+
         public override string Name => "Meta Viewer";
 
         public override void Initialise()

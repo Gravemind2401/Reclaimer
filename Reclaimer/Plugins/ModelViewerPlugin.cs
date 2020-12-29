@@ -13,6 +13,8 @@ namespace Reclaimer.Plugins
 {
     public class ModelViewerPlugin : Plugin
     {
+        internal override int? FilePriority => 1;
+
         public override string Name => "Model Viewer";
 
         internal static ModelViewerSettings Settings;

@@ -125,6 +125,8 @@ namespace Reclaimer.Plugins
             }
         }
 
+        internal virtual int? FilePriority => null;
+
         /// <summary>
         /// The name of the plugin.
         /// </summary>
