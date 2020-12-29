@@ -13,15 +13,41 @@ namespace Reclaimer.Plugins
 {
     public class ModelViewerPlugin : Plugin
     {
+        private delegate bool GetDataFolder(out string dataFolder);
+        private GetDataFolder getDataFolderFunc;
+
+        private delegate bool SaveImage(IBitmap bitmap, string baseDir);
+        private SaveImage saveImageFunc;
+
         internal override int? FilePriority => 1;
 
         public override string Name => "Model Viewer";
 
         internal static ModelViewerSettings Settings;
 
+        private PluginContextItem ExtractBitmapsContextItem
+        {
+            get
+            {
+                return new PluginContextItem("ExtractBitmaps", "Extract Bitmaps", OnContextItemClick);
+            }
+        }
+
         public override void Initialise()
         {
             Settings = LoadSettings<ModelViewerSettings>();
+        }
+
+        public override void PostInitialise()
+        {
+            getDataFolderFunc = Substrate.GetSharedFunction<GetDataFolder>("Reclaimer.Plugins.BatchExtractPlugin.GetDataFolder");
+            saveImageFunc = Substrate.GetSharedFunction<SaveImage>("Reclaimer.Plugins.BatchExtractPlugin.SaveImage");
+        }
+
+        public override IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
+        {
+            if (context.File.OfType<IRenderGeometry>().Any())
+                yield return ExtractBitmapsContextItem;
         }
 
         public override void Suspend()
@@ -38,6 +64,40 @@ namespace Reclaimer.Plugins
         {
             var model = args.File.OfType<IRenderGeometry>().FirstOrDefault();
             DisplayModel(args.TargetWindow, model, args.FileName);
+        }
+
+        private void OnContextItemClick(string key, OpenFileArgs context)
+        {
+            var geometry = context.File.OfType<IRenderGeometry>().FirstOrDefault();
+            ExportBitmaps(geometry);
+        }
+
+        [SharedFunction]
+        public void ExportBitmaps(IRenderGeometry geometry)
+        {
+            string folder;
+            if (!getDataFolderFunc(out folder))
+                return;
+
+            Task.Run(() =>
+            {
+                foreach (var bitm in geometry.GetAllBitmaps())
+                {
+                    try
+                    {
+                        SetWorkingStatus($"Extracting {bitm.Name}");
+                        saveImageFunc(bitm, folder);
+                        LogOutput($"Extracted {bitm.Name}.{bitm.Class}");
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError($"Error extracting {bitm.Name}.{bitm.Class}", ex);
+                    }
+                }
+
+                ClearWorkingStatus();
+                LogOutput($"Recursive bitmap extract complete for {geometry.Name}.{geometry.Class}");
+            });
         }
 
         [SharedFunction]
