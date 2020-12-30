@@ -22,6 +22,7 @@ namespace Adjutant.Blam.Halo3
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
         public StringIndex StringIndex { get; }
+        public LocaleIndex LocaleIndex { get; }
 
         public IAddressTranslator HeaderTranslator { get; }
         public IAddressTranslator MetadataTranslator { get; }
@@ -63,6 +64,19 @@ namespace Adjutant.Blam.Halo3
 
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
+
+                switch (CacheType)
+                {
+                    case CacheType.Halo3Beta:
+                        LocaleIndex = new LocaleIndex(this, 488, 28, 11);
+                        break;
+                    case CacheType.Halo3Retail:
+                        LocaleIndex = new LocaleIndex(this, 452, 68, 12);
+                        break;
+                    case CacheType.Halo3ODST:
+                        LocaleIndex = new LocaleIndex(this, 508, 68, 12);
+                        break;
+                }
             }
 
             Task.Factory.StartNew(() =>
@@ -82,6 +96,7 @@ namespace Adjutant.Blam.Halo3
         IAddressTranslator ICacheFile.DefaultAddressTranslator => MetadataTranslator;
 
         IGen3Header IGen3CacheFile.Header => Header;
+        ILocaleIndex IGen3CacheFile.LocaleIndex => LocaleIndex;
 
         #endregion
     }

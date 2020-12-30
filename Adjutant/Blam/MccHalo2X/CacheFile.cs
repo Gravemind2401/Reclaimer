@@ -22,6 +22,7 @@ namespace Adjutant.Blam.MccHalo2X
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
         public StringIndex StringIndex { get; }
+        public LocaleIndex LocaleIndex { get; }
 
         public SectionAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
@@ -58,6 +59,7 @@ namespace Adjutant.Blam.MccHalo2X
 
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
+                LocaleIndex = new LocaleIndex(this, 712, 80, 17);
             }
 
             Task.Factory.StartNew(() =>
@@ -84,6 +86,7 @@ namespace Adjutant.Blam.MccHalo2X
         IAddressTranslator ICacheFile.DefaultAddressTranslator => MetadataTranslator;
 
         IGen3Header IGen3CacheFile.Header => Header;
+        ILocaleIndex IGen3CacheFile.LocaleIndex => LocaleIndex;
 
         IPointerExpander IMccCacheFile.PointerExpander => PointerExpander;
 

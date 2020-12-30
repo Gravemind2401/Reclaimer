@@ -60,7 +60,15 @@ namespace Adjutant.Blam.MccHalo3
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
 
-                LocaleIndex = new LocaleIndex(this, 464, 80, 12);
+                switch (CacheType)
+                {
+                    case CacheType.MccHalo3:
+                        LocaleIndex = new LocaleIndex(this, 464, 80, 12);
+                        break;
+                    case CacheType.MccHalo3ODST:
+                        LocaleIndex = new LocaleIndex(this, 520, 80, 12);
+                        break;
+                }
             }
 
             Task.Factory.StartNew(() =>
@@ -87,6 +95,7 @@ namespace Adjutant.Blam.MccHalo3
         IAddressTranslator ICacheFile.DefaultAddressTranslator => MetadataTranslator;
 
         IGen3Header IGen3CacheFile.Header => Header;
+        ILocaleIndex IGen3CacheFile.LocaleIndex => LocaleIndex;
 
         IPointerExpander IMccCacheFile.PointerExpander => PointerExpander;
 

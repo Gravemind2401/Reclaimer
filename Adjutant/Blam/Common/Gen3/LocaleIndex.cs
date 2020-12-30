@@ -10,7 +10,7 @@ using System.Collections;
 
 namespace Adjutant.Blam.Common.Gen3
 {
-    public class LocaleIndex
+    public class LocaleIndex : ILocaleIndex
     {
         private readonly Dictionary<int, LocaleTable> languages;
 
@@ -34,9 +34,11 @@ namespace Adjutant.Blam.Common.Gen3
         }
 
         public LocaleTable this[Language lang] => languages.ValueOrDefault((int)lang);
+
+        ILocaleTable ILocaleIndex.this[Language lang] => this[lang];
     }
 
-    public class LocaleTable : IReadOnlyList<string>
+    public class LocaleTable : ILocaleTable, IReadOnlyList<string>
     {
         private readonly IGen3CacheFile cache;
         private readonly LanguageDefinition definition;
@@ -66,25 +68,57 @@ namespace Adjutant.Blam.Common.Gen3
 
         private void ReadItems()
         {
-            var translator = new SectionAddressTranslator(cache, 3);
-            using (var reader = cache.CreateReader(translator))
+            string key;
+            switch (cache.CacheType)
             {
-                var addr = translator.GetAddress(definition.IndicesOffset);
+                case CacheType.HaloReachBeta:
+                    key = HaloReach.CacheFile.BetaKey;
+                    break;
+                case CacheType.HaloReachRetail:
+                    key = HaloReach.CacheFile.LocalesKey;
+                    break;
+                case CacheType.Halo4Beta:
+                case CacheType.Halo4Retail:
+                    key = Halo4.CacheFile.LocalesKey;
+                    break;
+
+                default:
+                    key = null;
+                    break;
+            }
+
+            using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
+            {
+                var localeSectionOffset = cache.Header.SectionOffsetTable?[3] ?? 0;
+                var addr = definition.IndicesOffset + localeSectionOffset;
                 reader.Seek(addr, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<LocaleStringIndex>(definition.StringCount).ToList();
 
-                addr = translator.GetAddress(definition.StringsOffset);
-                using (var tempReader = reader.CreateVirtualReader(addr))
-                {
-                    for (int i = 0; i < definition.StringCount; i++)
-                    {
-                        if (indices[i].Offset < 0)
-                            continue;
+                addr = definition.StringsOffset + localeSectionOffset;
+                reader.Seek(addr, SeekOrigin.Begin);
 
-                        tempReader.Seek(indices[i].Offset, SeekOrigin.Begin);
-                        values[i] = tempReader.ReadNullTerminatedString();
-                    }
+                Stream ms = null;
+                EndianReader tempReader;
+
+                if (!string.IsNullOrEmpty(key))
+                {
+                    var decrypted = reader.ReadAesBytes(definition.StringsSize, key);
+                    ms = new MemoryStream(decrypted);
+                    tempReader = new EndianReader(ms);
                 }
+                else tempReader = reader.CreateVirtualReader();
+
+                for (int i = 0; i < definition.StringCount; i++)
+                {
+                    if (indices[i].Offset < 0)
+                        continue;
+
+                    tempReader.Seek(indices[i].Offset, SeekOrigin.Begin);
+                    values[i] = tempReader.ReadNullTerminatedString();
+                }
+
+                ms?.Dispose();
+                tempReader.Dispose();
             }
 
             isInitialised = true;
@@ -105,7 +139,35 @@ namespace Adjutant.Blam.Common.Gen3
                 ReadItems();
 
             return ((IReadOnlyList<string>)values).GetEnumerator();
-        } 
+        }
+        #endregion
+
+        #region ILocaleTable
+        string ILocaleTable.this[int index] => this[index];
+
+        int ILocaleTable.StringCount
+        {
+            get { return definition.StringCount; }
+            set { definition.StringCount = value; }
+        }
+
+        int ILocaleTable.StringsSize
+        {
+            get { return definition.StringsSize; }
+            set { definition.StringsSize = value; }
+        }
+
+        int ILocaleTable.IndicesOffset
+        {
+            get { return definition.IndicesOffset; }
+            set { definition.IndicesOffset = value; }
+        }
+
+        int ILocaleTable.StringsOffset
+        {
+            get { return definition.StringsOffset; }
+            set { definition.StringsOffset = value; }
+        }
         #endregion
 
         [FixedSize(8)]
