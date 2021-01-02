@@ -29,7 +29,7 @@ namespace Adjutant.Blam.Common
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
 
-            this.id = cache.CacheType < CacheType.Halo3Beta ? reader.ReadInt16() : reader.ReadInt32();
+            this.id = cache.CacheType < CacheType.Halo3Alpha ? reader.ReadInt16() : reader.ReadInt32();
             this.cache = cache;
         }
 

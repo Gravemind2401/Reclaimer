@@ -53,7 +53,7 @@ namespace Adjutant.Blam.Halo3
 
         public byte[] ReadData(PageType mode)
         {
-            if (cache.CacheType == CacheType.Halo3Beta)
+            if (cache.CacheType <= CacheType.Halo3Beta)
                 return ReadDataHalo3Beta(mode);
 
             var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();

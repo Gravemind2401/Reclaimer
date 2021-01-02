@@ -55,6 +55,12 @@ namespace Adjutant.Blam.Common
         [CacheGeneration(2)]
         [BuildString("11081.07.04.30.0934.main")]
         Halo2Vista,
+
+        [CacheGeneration(3)]
+        [BuildString("08117.07.03.07.1702.delta")]
+        [BuildString("08172.07.03.08.2240.delta")]
+        [BuildString("Mar  9 2007 22:22:32")]
+        Halo3Alpha,
         
         [CacheGeneration(3)]
         [BuildString("09699.07.05.01.1534.delta")]

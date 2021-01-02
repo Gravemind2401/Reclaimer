@@ -10,9 +10,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo3
+namespace Adjutant.Blam.Halo3Alpha
 {
-    public class CacheFile : IGen3CacheFile
+    //TODO: look at merging H3 beta into this class rather than have it with the retail class as there are big differences between beta and retail
+
+    public class CacheFile : ICacheFile
     {
         public string FileName { get; }
         public ByteOrder ByteOrder { get; }
@@ -22,7 +24,6 @@ namespace Adjutant.Blam.Halo3
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
         public StringIndex StringIndex { get; }
-        public LocaleIndex LocaleIndex { get; }
 
         public IAddressTranslator HeaderTranslator { get; }
         public IAddressTranslator MetadataTranslator { get; }
@@ -39,16 +40,8 @@ namespace Adjutant.Blam.Halo3
             BuildString = detail.BuildString;
             CacheType = detail.CacheType;
 
-            if (detail.CacheType == CacheType.Halo3Beta)
-            {
-                HeaderTranslator = new BetaHeaderAddressTranslator(this);
-                MetadataTranslator = new BetaTagAddressTranslator(this);
-            }
-            else
-            {
-                HeaderTranslator = new SectionAddressTranslator(this, 0);
-                MetadataTranslator = new TagAddressTranslator(this);
-            }
+            HeaderTranslator = new AlphaHeaderAddressTranslator(this);
+            MetadataTranslator = new AlphaTagAddressTranslator(this);
 
             using (var reader = CreateReader(HeaderTranslator))
                 Header = reader.ReadObject<CacheHeader>((int)CacheType);
@@ -64,26 +57,13 @@ namespace Adjutant.Blam.Halo3
 
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
-
-                switch (CacheType)
-                {
-                    case CacheType.Halo3Beta:
-                        LocaleIndex = new LocaleIndex(this, 488, 28, 11);
-                        break;
-                    case CacheType.Halo3Retail:
-                        LocaleIndex = new LocaleIndex(this, 452, 68, 12);
-                        break;
-                    case CacheType.Halo3ODST:
-                        LocaleIndex = new LocaleIndex(this, 508, 68, 12);
-                        break;
-                }
             }
 
             Task.Factory.StartNew(() =>
             {
-                TagIndex.GetGlobalTag("play")?.ReadMetadata<cache_file_resource_layout_table>();
-                TagIndex.GetGlobalTag("zone")?.ReadMetadata<cache_file_resource_gestalt>();
-                TagIndex.GetGlobalTag("scnr")?.ReadMetadata<scenario>();
+                TagIndex.GetGlobalTag("play")?.ReadMetadata<Halo3.cache_file_resource_layout_table>();
+                TagIndex.GetGlobalTag("zone")?.ReadMetadata<Halo3.cache_file_resource_gestalt>();
+                TagIndex.GetGlobalTag("scnr")?.ReadMetadata<Halo3.scenario>();
             });
         }
 
@@ -95,15 +75,11 @@ namespace Adjutant.Blam.Halo3
         IStringIndex ICacheFile.StringIndex => StringIndex;
         IAddressTranslator ICacheFile.DefaultAddressTranslator => MetadataTranslator;
 
-        IGen3Header IGen3CacheFile.Header => Header;
-        ILocaleIndex IGen3CacheFile.LocaleIndex => LocaleIndex;
-
         #endregion
     }
 
-    [FixedSize(2048, MaxVersion = (int)CacheType.Halo3Retail)]
-    [FixedSize(12288, MinVersion = (int)CacheType.Halo3Retail)]
-    public class CacheHeader : IGen3Header
+    [FixedSize(2048)]
+    public class CacheHeader
     {
         [Offset(8)]
         public int FileSize { get; set; }
@@ -121,76 +97,36 @@ namespace Adjutant.Blam.Halo3
         [NullTerminated(Length = 32)]
         public string BuildString { get; set; }
 
-        [Offset(352, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(344, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(352)]
         public int StringCount { get; set; }
 
-        [Offset(356, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(348, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(356)]
         public int StringTableSize { get; set; }
 
-        [Offset(360, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(352, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(360)]
         public Pointer StringTableIndexPointer { get; set; }
 
-        [Offset(364, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(356, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(364)]
         public Pointer StringTablePointer { get; set; }
 
-        [Offset(440, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(432, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(440)]
         [NullTerminated(Length = 256)]
         public string ScenarioName { get; set; }
 
-        [Offset(700, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(692, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(700)]
         public int FileCount { get; set; }
 
-        [Offset(704, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(696, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(704)]
         public Pointer FileTablePointer { get; set; }
 
-        [Offset(708, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(700, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(708)]
         public int FileTableSize { get; set; }
 
-        [Offset(712, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(704, MinVersion = (int)CacheType.Halo3Retail)]
+        [Offset(712)]
         public Pointer FileTableIndexPointer { get; set; }
 
-        [Offset(752, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(744, MinVersion = (int)CacheType.Halo3Retail)]
-        public int VirtualBaseAddress { get; set; }
-
         [Offset(752)]
-        [MinVersion((int)CacheType.Halo3Retail)]
-        public PartitionTable PartitionTable { get; set; }
-
-        [Offset(1132)]
-        [MinVersion((int)CacheType.Halo3Retail)]
-        public SectionOffsetTable SectionOffsetTable { get; set; }
-
-        [Offset(1148)]
-        [MinVersion((int)CacheType.Halo3Retail)]
-        public SectionTable SectionTable { get; set; }
-
-        #region IGen3Header
-
-        long IGen3Header.FileSize
-        {
-            get { return FileSize; }
-            set { FileSize = (int)value; }
-        }
-
-        long IGen3Header.VirtualBaseAddress
-        {
-            get { return VirtualBaseAddress; }
-            set { VirtualBaseAddress = (int)value; }
-        }
-
-        IPartitionTable IGen3Header.PartitionTable => PartitionTable;
-
-        #endregion
+        public int VirtualBaseAddress { get; set; }
     }
 
     [FixedSize(32)]
@@ -313,12 +249,7 @@ namespace Adjutant.Blam.Halo3
             items = new string[cache.Header.StringCount];
 
             var xml = Adjutant.Properties.Resources.Halo3Strings;
-            if (cache.CacheType == CacheType.Halo3Beta)
-                translator = new StringIdTranslator(xml, "beta");
-            else if (cache.CacheType == CacheType.Halo3Retail)
-                translator = new StringIdTranslator(xml, "retail");
-            else
-                translator = new StringIdTranslator(xml, "odst");
+            translator = new StringIdTranslator(xml, "alpha");
         }
 
         internal void ReadItems()

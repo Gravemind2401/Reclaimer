@@ -6,15 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo3
+namespace Adjutant.Blam.Halo3Alpha
 {
-    public class BetaTagAddressTranslator : IAddressTranslator
+    public class AlphaTagAddressTranslator : IAddressTranslator
     {
         private readonly CacheFile cache;
 
         private int Magic => cache.Header.VirtualBaseAddress - cache.Header.TagDataAddress;
 
-        public BetaTagAddressTranslator(CacheFile cache)
+        public AlphaTagAddressTranslator(CacheFile cache)
         {
             this.cache = cache;
         }

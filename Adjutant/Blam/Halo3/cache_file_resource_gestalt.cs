@@ -60,27 +60,27 @@ namespace Adjutant.Blam.Halo3
         public short SegmentIndex { get; set; }
 
         [Offset(36)]
-        [VersionSpecific((int)CacheType.Halo3Beta)]
+        [MaxVersion((int)CacheType.Halo3Retail)]
         public int CacheIndex { get; set; }
 
         [Offset(40)]
-        [VersionSpecific((int)CacheType.Halo3Beta)]
+        [MaxVersion((int)CacheType.Halo3Retail)]
         public int PrimaryOffset { get; set; }
 
         [Offset(44)]
-        [VersionSpecific((int)CacheType.Halo3Beta)]
+        [MaxVersion((int)CacheType.Halo3Retail)]
         public int PrimarySize { get; set; }
 
         [Offset(52)]
-        [VersionSpecific((int)CacheType.Halo3Beta)]
+        [MaxVersion((int)CacheType.Halo3Retail)]
         public int CacheIndex2 { get; set; }
 
         [Offset(56)]
-        [VersionSpecific((int)CacheType.Halo3Beta)]
+        [MaxVersion((int)CacheType.Halo3Retail)]
         public int SecondaryOffset { get; set; }
 
         [Offset(60)]
-        [VersionSpecific((int)CacheType.Halo3Beta)]
+        [MaxVersion((int)CacheType.Halo3Retail)]
         public int SecondarySize { get; set; }
 
         [Offset(72, MaxVersion = (int)CacheType.Halo3Retail)]

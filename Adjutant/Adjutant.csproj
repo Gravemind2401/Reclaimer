@@ -105,6 +105,9 @@
     <Compile Include="Blam\Halo2\sound.cs" />
     <Compile Include="Blam\Halo2\sound_cache_file_gestalt.cs" />
     <Compile Include="Blam\Halo2\Vertex.cs" />
+    <Compile Include="Blam\Halo3Alpha\AlphaHeaderAddressTranslator.cs" />
+    <Compile Include="Blam\Halo3Alpha\AlphaTagAddressTranslator.cs" />
+    <Compile Include="Blam\Halo3Alpha\CacheFile.cs" />
     <Compile Include="Blam\Halo3\bitmap.cs" />
     <Compile Include="Blam\Halo3\CacheFile.cs" />
     <Compile Include="Blam\Halo3\cache_file_resource_gestalt.cs" />

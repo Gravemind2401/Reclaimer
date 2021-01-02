@@ -70,6 +70,9 @@ namespace Adjutant.Blam.Common
                 case CacheType.Halo2Vista:
                     return new Halo2.CacheFile(detail);
 
+                case CacheType.Halo3Alpha:
+                    return new Halo3Alpha.CacheFile(detail);
+
                 case CacheType.Halo3Beta:
                 case CacheType.Halo3Retail:
                 case CacheType.Halo3ODST:

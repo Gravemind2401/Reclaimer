@@ -14,7 +14,8 @@ namespace Adjutant.Blam.Halo3
         [Offset(20, MinVersion = (int)CacheType.Halo3Retail)]
         public BlockCollection<StructureBspBlock> StructureBsps { get; set; }
 
-        [Offset(1720, MaxVersion = (int)CacheType.Halo3Retail)]
+        [Offset(1736, MaxVersion = (int)CacheType.Halo3Beta)]
+        [Offset(1720, MinVersion = (int)CacheType.Halo3Beta, MaxVersion = (int)CacheType.Halo3Retail)]
         [Offset(1776, MinVersion = (int)CacheType.Halo3Retail, MaxVersion = (int)CacheType.Halo3ODST)]
         [Offset(1852, MinVersion = (int)CacheType.Halo3ODST)]
         public TagReference ScenarioLightmapReference { get; set; }
