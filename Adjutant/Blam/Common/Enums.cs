@@ -59,10 +59,11 @@ namespace Adjutant.Blam.Common
         [CacheGeneration(3)]
         [BuildString("08117.07.03.07.1702.delta")]
         [BuildString("08172.07.03.08.2240.delta")]
-        [BuildString("Mar  9 2007 22:22:32")]
         Halo3Alpha,
         
         [CacheGeneration(3)]
+        [BuildString("Mar  9 2007 22:22:32")] //not really beta but matches for the tags we need
+        //[BuildString("Mar 10 2007 16:16:44")] //no tag names
         [BuildString("09699.07.05.01.1534.delta")]
         Halo3Beta,
 

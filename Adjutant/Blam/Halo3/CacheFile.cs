@@ -314,7 +314,12 @@ namespace Adjutant.Blam.Halo3
 
             var xml = Adjutant.Properties.Resources.Halo3Strings;
             if (cache.CacheType == CacheType.Halo3Beta)
-                translator = new StringIdTranslator(xml, "beta");
+            {
+                if (cache.BuildString == "09699.07.05.01.1534.delta")
+                    translator = new StringIdTranslator(xml, "beta");
+                else
+                    translator = new StringIdTranslator(xml, "alpha_0308");
+            }
             else if (cache.CacheType == CacheType.Halo3Retail)
                 translator = new StringIdTranslator(xml, "retail");
             else

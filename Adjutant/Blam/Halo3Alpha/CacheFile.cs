@@ -249,7 +249,11 @@ namespace Adjutant.Blam.Halo3Alpha
             items = new string[cache.Header.StringCount];
 
             var xml = Adjutant.Properties.Resources.Halo3Strings;
-            translator = new StringIdTranslator(xml, "alpha");
+            var code = cache.BuildString == "08117.07.03.07.1702.delta"
+                ? "alpha_0307"
+                : "alpha_0308";
+
+            translator = new StringIdTranslator(xml, code);
         }
 
         internal void ReadItems()
