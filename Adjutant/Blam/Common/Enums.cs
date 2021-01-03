@@ -49,6 +49,10 @@ namespace Adjutant.Blam.Common
         Halo1AE,
 
         [CacheGeneration(2)]
+        [BuildString("02.06.28.07902")]
+        Halo2Beta,
+
+        [CacheGeneration(2)]
         [BuildString("02.09.27.09809")]
         Halo2Xbox,
 
