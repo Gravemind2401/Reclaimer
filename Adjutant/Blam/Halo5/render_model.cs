@@ -170,7 +170,22 @@ namespace Adjutant.Blam.Halo5
 
         public IEnumerable<IBitmap> GetAllBitmaps()
         {
-            yield break;
+            var complete = new List<int>();
+
+            foreach (var m in Materials)
+            {
+                var mat = m.MaterialReference.Tag?.ReadMetadata<material>();
+                if (mat == null) continue;
+
+                foreach (var tex in mat.PostprocessDefinitions.SelectMany(p => p.Textures))
+                {
+                    if (tex.BitmapReference.Tag == null || complete.Contains(tex.BitmapReference.TagId))
+                        continue;
+
+                    complete.Add(tex.BitmapReference.TagId);
+                    yield return tex.BitmapReference.Tag.ReadMetadata<bitmap>();
+                }
+            }
         }
 
         #endregion
