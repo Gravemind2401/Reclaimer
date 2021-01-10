@@ -16,11 +16,32 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         public int Length { get; }
 
+        private StringId stringIdValue;
+        public StringId StringIdValue
+        {
+            get { return stringIdValue; }
+            set
+            {
+                if (SetMetaProperty(ref stringIdValue, value))
+                {
+                    _value = stringIdValue.Value;
+                    RaisePropertyChanged(nameof(Value));
+                }
+            }
+        }
+
         private string _value;
         public string Value
         {
             get { return _value; }
-            set { SetMetaProperty(ref _value, value); }
+            set
+            {
+                if (SetMetaProperty(ref _value, value))
+                {
+                    stringIdValue = default(StringId);
+                    RaisePropertyChanged(nameof(StringIdValue));
+                }
+            }
         }
 
         public StringValue(XmlNode node, MetaContext context, EndianReader reader, long baseAddress)
@@ -43,8 +64,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                     Value = reader.ReadNullTerminatedString(Length);
                 else
                 {
-                    var id = context.Cache.CacheType < CacheType.Halo3Beta ? reader.ReadInt16() : reader.ReadInt32();
-                    Value = context.Cache.StringIndex[id];
+                    StringIdValue = new StringId(reader, context.Cache);
+                    Value = StringIdValue.Value;
                 }
 
                 IsDirty = false;

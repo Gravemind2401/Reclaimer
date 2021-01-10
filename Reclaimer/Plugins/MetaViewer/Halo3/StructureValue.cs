@@ -88,7 +88,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 BlockCount = reader.ReadInt32();
                 BlockAddress = new Pointer(reader.ReadInt32(), context.Cache.DefaultAddressTranslator, expander).Address;
 
-                if (BlockCount <= 0 || BlockAddress + BlockCount * BlockSize > reader.BaseStream.Length)
+                if (BlockCount <= 0 || BlockAddress < 0 || BlockAddress + BlockCount * BlockSize > reader.BaseStream.Length)
                 {
                     IsEnabled = false;
                     return;
