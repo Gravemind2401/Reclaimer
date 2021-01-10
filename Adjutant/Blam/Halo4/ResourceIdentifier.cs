@@ -102,15 +102,29 @@ namespace Adjutant.Blam.Halo4
                         return reader2.ReadBytes(page.DecompressedSize - chunkOffset);
                     }
                 }
-                else if (cache.CacheType > CacheType.Halo4Retail)
+#if DEBUG
+                else if (cache.CacheType > CacheType.Halo4Retail) //experimental
                 {
+                    using (var ms = new MemoryStream())
+                    using (var mw = new BinaryWriter(ms))
                     using (var ds = new DeflateStream(fs, CompressionMode.Decompress))
                     using (var reader2 = new BinaryReader(ds))
                     {
-                        reader2.ReadBytes(chunkOffset);
-                        return reader2.ReadBytes(page.DecompressedSize - chunkOffset);
+                        var dataSize = page.DecompressedSize - chunkOffset;
+                        for (int i = 0; i < dataSize;)
+                        {
+                            bool flag;
+                            var blockSize = ReadSpecialInt(reader2, out flag);
+                            if (flag) reader2.ReadBytes(2);
+                            mw.Write(reader2.ReadBytes(blockSize));
+                            i += blockSize;
+                        }
+
+                        //File.WriteAllBytes("C:\\dump.bin", ms.ToArray());
+                        return ms.ToArray();
                     }
                 }
+#endif
                 else
                 {
                     var compressed = reader.ReadBytes(page.CompressedSize);
@@ -135,6 +149,36 @@ namespace Adjutant.Blam.Halo4
         }
 
         public override string ToString() => Value.ToString(CultureInfo.CurrentCulture);
+
+        private static int ReadSpecialInt(BinaryReader reader, out bool flag) //basically a variant of 7bit encoded int
+        {
+            flag = false;
+            var isFirst = true;
+
+            var result = 0;
+            var shift = 0;
+
+            byte b;
+            do
+            {
+                var bits = isFirst ? 6 : 7;
+
+                var mask = (1 << bits) - 1;
+
+                b = reader.ReadByte();
+                result |= (b & mask) << shift;
+                shift += bits;
+
+                if (isFirst)
+                {
+                    flag = (b & 0x40) != 0;
+                    isFirst = false;
+                }
+
+            } while ((b & 0x80) != 0);
+
+            return result;
+        }
 
         #region Equality Operators
 
