@@ -1,6 +1,7 @@
 ﻿using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO.Endian;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace Adjutant.Blam.Common
             this.cache = cache;
         }
 
-        public StringId(DependencyReader reader, ICacheFile cache)
+        public StringId(EndianReader reader, ICacheFile cache)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
@@ -34,7 +35,14 @@ namespace Adjutant.Blam.Common
         }
 
         public int Id => id;
-        public string Value => cache?.StringIndex?[id];
+        public string Value
+        {
+            get
+            {
+                try { return cache?.StringIndex?[id]; }
+                catch { return "<invalid>"; }
+            }
+        }
 
         public override string ToString() => Value;
 
