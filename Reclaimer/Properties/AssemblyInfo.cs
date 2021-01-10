@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Gravemind2401")]
 [assembly: AssemblyProduct("Reclaimer")]
-[assembly: AssemblyCopyright("Copyright © Gravemind2401 2019 - 2020")]
+[assembly: AssemblyCopyright("Copyright © Gravemind2401 2019 - 2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,5 +51,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.5.229.1501")]
-[assembly: AssemblyFileVersion("1.5.229.1501")]
+[assembly: AssemblyVersion("1.5.230.1501")]
+[assembly: AssemblyFileVersion("1.5.230.1501")]
