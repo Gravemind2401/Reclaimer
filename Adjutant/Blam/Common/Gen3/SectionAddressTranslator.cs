@@ -14,6 +14,8 @@ namespace Adjutant.Blam.Common.Gen3
 
         private uint Magic => cache.Header.SectionTable[sectionIndex].Address - (cache.Header.SectionTable[sectionIndex].Address + cache.Header.SectionOffsetTable[sectionIndex]);
 
+        public uint VirtualAddress => cache.Header.SectionTable[sectionIndex].Address;
+
         public SectionAddressTranslator(IGen3CacheFile cache, int sectionIndex)
         {
             if (cache == null)

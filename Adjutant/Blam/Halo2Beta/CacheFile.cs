@@ -79,7 +79,7 @@ namespace Adjutant.Blam.Halo2Beta
         public int IndexAddress { get; set; }
 
         [Offset(20)]
-        public int MetadataAddress { get; set; }
+        public int IndexSize { get; set; }
 
         [Offset(288)]
         [NullTerminated(Length = 32)]
@@ -114,6 +114,9 @@ namespace Adjutant.Blam.Halo2Beta
         [Offset(0)]
         public int Magic { get; set; }
 
+        [Offset(4)]
+        public int ScenarioId { get; set; }
+
         [Offset(12)]
         public int TagCount { get; set; }
 
@@ -132,7 +135,7 @@ namespace Adjutant.Blam.Halo2Beta
             if (items.Any())
                 throw new InvalidOperationException();
 
-            using (var reader = cache.CreateReader(cache.HeaderTranslator))
+            using (var reader = cache.CreateReader(cache.MetadataTranslator))
             {
                 reader.Seek(cache.Header.IndexAddress + HeaderSize, SeekOrigin.Begin);
                 for (int i = 0; i < TagCount; i++)
@@ -143,8 +146,13 @@ namespace Adjutant.Blam.Halo2Beta
 
                 for (int i = 0; i < TagCount; i++)
                 {
-                    reader.Seek(items[i].FileNamePointer.Address, SeekOrigin.Begin);
-                    items[i].FullPath = reader.ReadNullTerminatedString();
+                    var item = items[i];
+
+                    //change FileNamePointer to use HeaderTranslator instead of MetadataTranslator
+                    item.FileNamePointer = new Pointer(item.FileNamePointer.Value, cache.HeaderTranslator);
+
+                    reader.Seek(item.FileNamePointer.Address, SeekOrigin.Begin);
+                    item.FullPath = reader.ReadNullTerminatedString();
                 }
             }
         }
@@ -220,6 +228,12 @@ namespace Adjutant.Blam.Halo2Beta
 
         [Offset(0)]
         public int ClassId { get; set; }
+
+        [Offset(4)]
+        public int ParentClassId { get; set; }
+
+        [Offset(8)]
+        public int ParentClassId2 { get; set; }
 
         [Offset(12)]
         public int Id { get; set; }

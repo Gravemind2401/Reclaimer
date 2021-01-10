@@ -11,7 +11,7 @@ namespace Adjutant.Blam.Halo2Beta
     {
         private readonly CacheFile cache;
 
-        private int Magic => cache.TagIndex[0].MetaPointer.Value - (cache.Header.IndexAddress + cache.Header.MetadataAddress);
+        private int Magic => cache.TagIndex[0].MetaPointer.Value - (cache.Header.IndexAddress + cache.Header.IndexSize);
 
         public TagAddressTranslator(CacheFile cache)
         {

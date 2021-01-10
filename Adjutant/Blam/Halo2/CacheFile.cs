@@ -85,7 +85,7 @@ namespace Adjutant.Blam.Halo2
         public int IndexAddress { get; set; }
 
         [Offset(20)]
-        public int MetadataAddress { get; set; }
+        public int IndexSize { get; set; }
 
         [Offset(288, MinVersion = 0)]
         [Offset(300, MaxVersion = 0)]
@@ -331,7 +331,7 @@ namespace Adjutant.Blam.Halo2
             {
                 reader.RegisterInstance<IIndexItem>(this);
                 reader.Seek(address, SeekOrigin.Begin);
-                var result = (T)reader.ReadObject(typeof(T), cache.Header.Version);
+                var result = (T)reader.ReadObject(typeof(T), (int)cache.CacheType);
 
                 if (CacheFactory.SystemClasses.Contains(ClassCode))
                     metadataCache = result;

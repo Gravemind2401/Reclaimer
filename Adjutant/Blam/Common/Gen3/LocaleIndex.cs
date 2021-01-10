@@ -33,6 +33,8 @@ namespace Adjutant.Blam.Common.Gen3
             }
         }
 
+        public IEnumerable<ILocaleTable> Languages => languages.Values;
+
         public LocaleTable this[Language lang] => languages.ValueOrDefault((int)lang);
 
         ILocaleTable ILocaleIndex.this[Language lang] => this[lang];
