@@ -82,6 +82,11 @@ namespace Reclaimer.Windows
             System.Diagnostics.Process.Start(AppDomain.CurrentDomain.BaseDirectory);
         }
 
+        private void menuAppDataDir_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Gravemind2401\\Reclaimer"));
+        }
+
         private void menuSettings_Click(object sender, RoutedEventArgs e)
         {
             const string tabId = "Reclaimer::Settings";

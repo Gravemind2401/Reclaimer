@@ -60,6 +60,7 @@
             <MenuItem Header="View">
                 <MenuItem Header="Output" Click="menuOutput_Click" />
                 <MenuItem Header="App Directory" Click="menuAppDir_Click" />
+                <MenuItem Header="AppData Directory" Click="menuAppDataDir_Click" />
             </MenuItem>
             <MenuItem Header="Tools">
                 <MenuItem Header="Settings" Click="menuSettings_Click" />
