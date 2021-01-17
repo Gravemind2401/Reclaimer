@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Audio
 {
+    //http://wiki.xentax.com/index.php/Psychonauts_ISB
+    //https://xboxdevwiki.net/Xbox_ADPCM
+    //https://github.com/Sergeanur/XboxADPCM/blob/master/XboxADPCM/XboxADPCM.cpp
+    //http://samples.ffmpeg.org/game-formats/xbox-adpcm-wav/
     public class XboxAdpcmHeader : IFormatHeader
     {
         const short formatId = 0x0069;
