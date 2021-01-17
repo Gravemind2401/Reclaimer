@@ -70,6 +70,9 @@ namespace Adjutant.Blam.Common
                 case CacheType.Halo1PC:
                     content = item.ReadMetadata<Halo1.bitmap>();
                     break;
+                case CacheType.Halo2Beta:
+                    content = item.ReadMetadata<Halo2Beta.bitmap>();
+                    break;
                 case CacheType.Halo2Xbox:
                     content = item.ReadMetadata<Halo2.bitmap>();
                     break;
