@@ -11,11 +11,13 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <DockPanel>
-        <Grid DockPanel.Dock="Top" Background="{DynamicResource Environment.CommandBar.Gradient}">
+        <StackPanel DockPanel.Dock="Top" Background="{DynamicResource Environment.CommandBar.Gradient}">
             <ComboBox x:Name="txtSearch" x:FieldModifier="private"
                       Margin="0,2" DisplayMemberPath="Name"
                       SelectionChanged="txtSearch_SelectionChanged" />
-        </Grid>
+            <TextBlock x:Name="txtVersion" Margin="3,0,0,2"
+                       FontStyle="Italic" Text="Assembly.dll Version 0.0.0.0" />
+        </StackPanel>
         <local:WpfPropertyGrid x:Name="propGrid" x:FieldModifier="private"
                                TypeLabelVisible="False" ToolbarVisible="False" />
     </DockPanel>

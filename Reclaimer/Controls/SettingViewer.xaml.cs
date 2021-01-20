@@ -46,6 +46,9 @@ namespace Reclaimer.Controls
         private void txtSearch_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var plugin = (Plugin)txtSearch.SelectedItem;
+            var assembly = plugin.GetType().Assembly.GetName();
+            var origin = System.IO.Path.GetFileName(new Uri(assembly.CodeBase).LocalPath);
+            txtVersion.Text = $"{origin} Version {assembly.Version}";
             propGrid.SelectedObject = plugin.settings;
         }
     }
