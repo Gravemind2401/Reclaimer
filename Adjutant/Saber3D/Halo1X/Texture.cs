@@ -26,22 +26,6 @@ namespace Adjutant.Saber3D.Halo1X
 
         #region IBitmap
 
-        private static readonly Dictionary<TextureFormat, DxgiFormat> dxgiLookup = new Dictionary<TextureFormat, DxgiFormat>
-        {
-            { TextureFormat.DXT1, DxgiFormat.BC1_UNorm },
-            { TextureFormat.DXT3, DxgiFormat.BC2_UNorm },
-            { TextureFormat.DXT5, DxgiFormat.BC3_UNorm },
-            { TextureFormat.A8R8G8B8, DxgiFormat.B8G8R8A8_UNorm },
-            { TextureFormat.X8R8G8B8, DxgiFormat.B8G8R8X8_UNorm }
-        };
-
-        private static readonly Dictionary<TextureFormat, XboxFormat> xboxLookup = new Dictionary<TextureFormat, XboxFormat>
-        {
-            { TextureFormat.A8Y8, XboxFormat.Y8A8 },
-            { TextureFormat.DXT5a, XboxFormat.DXT5a_scalar },
-            { TextureFormat.DXN, XboxFormat.DXN }
-        };
-
         string IBitmap.SourceFile => item.Container.FileName;
 
         int IBitmap.Id => item.Address;
@@ -80,12 +64,7 @@ namespace Adjutant.Saber3D.Halo1X
                 }
             }
 
-            DdsImage dds;
-            if (dxgiLookup.ContainsKey(Format))
-                dds = new DdsImage(Height * MapCount, Width, dxgiLookup[Format], DxgiTextureType.Texture2D, data);
-            else if (xboxLookup.ContainsKey(Format))
-                dds = new DdsImage(Height * MapCount, Width, xboxLookup[Format], DxgiTextureType.Texture2D, data);
-            else throw Exceptions.BitmapFormatNotSupported(Format.ToString());
+            return TextureUtils.GetDds(Height * MapCount, Width, Format, false, data);
 
             //if (MapCount == 6)
             //{
@@ -93,8 +72,6 @@ namespace Adjutant.Saber3D.Halo1X
             //    dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
             //    dds.DX10ResourceFlags = D3D10ResourceMiscFlags.TextureCube;
             //}
-
-            return dds;
         }
         #endregion
 

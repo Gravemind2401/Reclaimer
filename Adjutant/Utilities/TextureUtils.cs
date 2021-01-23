@@ -10,6 +10,42 @@ namespace Adjutant.Utilities
 {
     public static class TextureUtils
     {
+        #region Lookups
+
+        private static readonly Dictionary<KnownTextureFormat, DxgiFormat> dxgiLookup = new Dictionary<KnownTextureFormat, DxgiFormat>
+        {
+            { KnownTextureFormat.DXT1, DxgiFormat.BC1_UNorm },
+            { KnownTextureFormat.DXT3, DxgiFormat.BC2_UNorm },
+            { KnownTextureFormat.DXT5, DxgiFormat.BC3_UNorm },
+            { KnownTextureFormat.BC7_unorm, DxgiFormat.BC7_UNorm },
+            { KnownTextureFormat.A8R8G8B8, DxgiFormat.B8G8R8A8_UNorm },
+            { KnownTextureFormat.X8R8G8B8, DxgiFormat.B8G8R8X8_UNorm },
+            { KnownTextureFormat.R5G6B5, DxgiFormat.B5G6R5_UNorm },
+            { KnownTextureFormat.A1R5G5B5, DxgiFormat.B5G5R5A1_UNorm },
+            { KnownTextureFormat.A4R4G4B4, DxgiFormat.B4G4R4A4_UNorm }
+        };
+
+        private static readonly Dictionary<KnownTextureFormat, XboxFormat> xboxLookup = new Dictionary<KnownTextureFormat, XboxFormat>
+        {
+            { KnownTextureFormat.A8, XboxFormat.A8 },
+            { KnownTextureFormat.A8Y8, XboxFormat.Y8A8 },
+            { KnownTextureFormat.AY8, XboxFormat.AY8 },
+            { KnownTextureFormat.CTX1, XboxFormat.CTX1 },
+            { KnownTextureFormat.DXT3a_mono, XboxFormat.DXT3a_mono },
+            { KnownTextureFormat.DXT3a_alpha, XboxFormat.DXT3a_alpha },
+            { KnownTextureFormat.BC4_unorm, XboxFormat.DXT5a_scalar },
+            { KnownTextureFormat.DXT5a, XboxFormat.DXT5a_scalar },
+            { KnownTextureFormat.DXT5a_mono, XboxFormat.DXT5a_mono },
+            { KnownTextureFormat.DXT5a_alpha, XboxFormat.DXT5a_alpha },
+            { KnownTextureFormat.DXN, XboxFormat.DXN },
+            { KnownTextureFormat.DXN_mono_alpha, XboxFormat.DXN_mono_alpha },
+            { KnownTextureFormat.P8, XboxFormat.Y8 },
+            { KnownTextureFormat.P8_bump, XboxFormat.Y8 },
+            { KnownTextureFormat.Y8, XboxFormat.Y8 }
+        };
+
+        #endregion
+
         #region Extensions
 
         private enum KnownTextureFormat
@@ -40,7 +76,9 @@ namespace Adjutant.Utilities
             DXT3a_mono,
             DXT5a_alpha,
             DXT5a_mono,
-            DXN_mono_alpha
+            DXN_mono_alpha,
+            BC4_unorm, //same as DXT5a
+            BC7_unorm
         }
 
         private static KnownTextureFormat AsKnown(this object format)
@@ -226,6 +264,31 @@ namespace Adjutant.Utilities
             }
 
             return output;
+        }
+
+        public static DdsImage GetDds(int height, int width, object format, bool isCubemap, byte[] data, bool isPC = false)
+        {
+            var knownFormat = format.AsKnown();
+            if (knownFormat == KnownTextureFormat.Unknown)
+                throw new ArgumentException("Could not translate to a known texture format.", nameof(format));
+
+            DdsImage dds;
+            if (isPC && knownFormat == KnownTextureFormat.DXN)
+                dds = new DdsImage(height, width, XboxFormat.DXN_SNorm, DxgiTextureType.Texture2D, data);
+            else if (dxgiLookup.ContainsKey(knownFormat))
+                dds = new DdsImage(height, width, dxgiLookup[knownFormat], DxgiTextureType.Texture2D, data);
+            else if (xboxLookup.ContainsKey(knownFormat))
+                dds = new DdsImage(height, width, xboxLookup[knownFormat], DxgiTextureType.Texture2D, data);
+            else throw Exceptions.BitmapFormatNotSupported(format.ToString());
+
+            if (isCubemap)
+            {
+                dds.TextureFlags = TextureFlags.DdsSurfaceFlagsCubemap;
+                dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
+                dds.DX10ResourceFlags = D3D10ResourceMiscFlags.TextureCube;
+            }
+
+            return dds;
         }
 
         #endregion
