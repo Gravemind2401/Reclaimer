@@ -5,17 +5,17 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reclaimer", "Reclaimer\Reclaimer.csproj", "{F05A3EB2-3336-47BC-8F5A-0DBB4E2EDABB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adjutant", "..\Adjutant\Adjutant\Adjutant.csproj", "{A46DD713-D7F0-4D6A-BD0F-348D890E135A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Adjutant", "Adjutant\Adjutant\Adjutant.csproj", "{A46DD713-D7F0-4D6A-BD0F-348D890E135A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Drawing.Dds", "..\System.Drawing.Dds\System.Drawing.Dds\System.Drawing.Dds.csproj", "{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Drawing.Dds", "System.Drawing.Dds\System.Drawing.Dds\System.Drawing.Dds.csproj", "{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamplePlugin", "ExamplePlugin\ExamplePlugin.csproj", "{E5249282-18DB-403F-825E-C3612441EC35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Studio", "..\Studio\Studio\Studio.csproj", "{5F4C3814-8097-4869-B5E2-4C21EF45CEB2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Studio", "Studio\Studio\Studio.csproj", "{5F4C3814-8097-4869-B5E2-4C21EF45CEB2}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Reclaimer.Setup", "Reclaimer.Setup\Reclaimer.Setup.vdproj", "{00227FE4-8DDA-411F-BFD5-297B94C92C28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.IO.Endian", "..\System.IO.Endian\System.IO.Endian\System.IO.Endian.csproj", "{06A312C3-C3EC-447D-B7B7-F50E47A886D5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.IO.Endian", "System.IO.Endian\System.IO.Endian\System.IO.Endian.csproj", "{06A312C3-C3EC-447D-B7B7-F50E47A886D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
