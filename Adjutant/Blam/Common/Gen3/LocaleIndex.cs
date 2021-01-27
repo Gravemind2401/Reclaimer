@@ -37,27 +37,29 @@ namespace Adjutant.Blam.Common.Gen3
 
         public LocaleTable this[Language lang] => languages.ValueOrDefault((int)lang);
 
+        public string this[Language lang, StringId key] => languages.ValueOrDefault((int)lang)?[key];
+
         ILocaleTable ILocaleIndex.this[Language lang] => this[lang];
     }
 
-    public class LocaleTable : ILocaleTable, IReadOnlyList<string>
+    public class LocaleTable : ILocaleTable, IEnumerable<KeyValuePair<StringId, string>>
     {
         private readonly IGen3CacheFile cache;
         private readonly LanguageDefinition definition;
-        private readonly string[] values;
+        private readonly Dictionary<int, string> values;
 
         private bool isInitialised = false;
 
-        public int Count => values.Length;
+        public int Count => values.Count;
 
-        public string this[int index]
+        public string this[StringId key]
         {
             get
             {
                 if (!isInitialised)
                     ReadItems();
 
-                return values[index];
+                return values.ContainsKey(key.Id) ? values[key.Id] : null;
             }
         }
 
@@ -65,7 +67,7 @@ namespace Adjutant.Blam.Common.Gen3
         {
             this.cache = cache;
             this.definition = definition;
-            values = new string[definition.StringCount];
+            values = new Dictionary<int, string>(definition.StringCount);
         }
 
         private void ReadItems()
@@ -94,7 +96,7 @@ namespace Adjutant.Blam.Common.Gen3
                 var localeSectionOffset = cache.Header.SectionOffsetTable?[3] ?? 0;
                 var addr = definition.IndicesOffset + localeSectionOffset;
                 reader.Seek(addr, SeekOrigin.Begin);
-                var indices = reader.ReadEnumerable<LocaleStringIndex>(definition.StringCount).ToList();
+                var entries = reader.ReadEnumerable<LocaleEntry>(definition.StringCount).ToList();
 
                 addr = definition.StringsOffset + localeSectionOffset;
                 reader.Seek(addr, SeekOrigin.Begin);
@@ -112,11 +114,11 @@ namespace Adjutant.Blam.Common.Gen3
 
                 for (int i = 0; i < definition.StringCount; i++)
                 {
-                    if (indices[i].Offset < 0)
+                    if (entries[i].Offset < 0)
                         continue;
 
-                    tempReader.Seek(indices[i].Offset, SeekOrigin.Begin);
-                    values[i] = tempReader.ReadNullTerminatedString();
+                    tempReader.Seek(entries[i].Offset, SeekOrigin.Begin);
+                    values.Add(entries[i].StringId.Id, tempReader.ReadNullTerminatedString());
                 }
 
                 ms?.Dispose();
@@ -127,12 +129,12 @@ namespace Adjutant.Blam.Common.Gen3
         }
 
         #region IEnumerable
-        public IEnumerator<string> GetEnumerator()
+        public IEnumerator<KeyValuePair<StringId, string>> GetEnumerator()
         {
             if (!isInitialised)
                 ReadItems();
 
-            return ((IReadOnlyList<string>)values).GetEnumerator();
+            return ((IReadOnlyList<KeyValuePair<StringId, string>>)values).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -140,12 +142,12 @@ namespace Adjutant.Blam.Common.Gen3
             if (!isInitialised)
                 ReadItems();
 
-            return ((IReadOnlyList<string>)values).GetEnumerator();
+            return ((IReadOnlyList<KeyValuePair<StringId, string>>)values).GetEnumerator();
         }
         #endregion
 
         #region ILocaleTable
-        string ILocaleTable.this[int index] => this[index];
+        string ILocaleTable.this[StringId key] => this[key];
 
         int ILocaleTable.StringCount
         {
@@ -173,7 +175,7 @@ namespace Adjutant.Blam.Common.Gen3
         #endregion
 
         [FixedSize(8)]
-        public class LocaleStringIndex
+        public class LocaleEntry //must be public for dynamic reader to instanciate
         {
             [Offset(0)]
             public StringId StringId { get; set; }

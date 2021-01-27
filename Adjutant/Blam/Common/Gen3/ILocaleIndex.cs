@@ -9,11 +9,12 @@ namespace Adjutant.Blam.Common.Gen3
     public interface ILocaleIndex
     {
         ILocaleTable this[Language lang] { get; }
+        string this[Language lang, StringId key] { get; }
     }
 
-    public interface ILocaleTable
+    public interface ILocaleTable : IEnumerable<KeyValuePair<StringId, string>>
     {
-        string this[int index] { get; }
+        string this[StringId key] { get; }
 
         int StringCount { get; set; }
         int StringsSize { get; set; }

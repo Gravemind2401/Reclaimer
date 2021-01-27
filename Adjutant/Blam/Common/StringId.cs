@@ -87,5 +87,10 @@ namespace Adjutant.Blam.Common
         {
             return stringId.Value;
         }
+
+        public static explicit operator int(StringId stringId)
+        {
+            return stringId.id;
+        }
     }
 }
