@@ -18,6 +18,10 @@ namespace Adjutant.Utilities
             : this(value, translator, null)
         { }
 
+        public Pointer(int value, Pointer copyFrom)
+            : this(value, copyFrom.translator, copyFrom.expander)
+        { }
+
         public Pointer(int value, IAddressTranslator translator, IPointerExpander expander)
         {
             if (translator == null)
