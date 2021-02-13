@@ -275,8 +275,10 @@
     <None Include="Adjutant.snk" />
     <None Include="Adjutant.ruleset" />
     <None Include="packages.config" />
+    <None Include="Resources\3dsMax AMF2.ms" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Blender AMF2.py" />
     <Content Include="Resources\Halo1Classes.xml" />
     <Content Include="Resources\Halo2Classes.xml" />
     <Content Include="Resources\MccHalo4Strings.xml" />
