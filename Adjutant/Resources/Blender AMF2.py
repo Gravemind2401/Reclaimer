@@ -18,9 +18,7 @@ import itertools
 import bpy_extras
 
 from dataclasses import dataclass
-from mathutils import Matrix
-from mathutils import Quaternion
-from mathutils import Vector
+from mathutils import Matrix, Quaternion, Vector
 from bpy.props import BoolProperty, FloatProperty, StringProperty, EnumProperty
 
 @dataclass
@@ -562,25 +560,21 @@ def main(context, import_filename, options):
     if options.IMPORT_MATERIALS and len(model.materials) > 0:
         print("creating materials")
         for mat in model.materials:
-            diffuse_path = mat.textures[0].texture_path;
-            if diffuse_path == "null":
-                model_materials.append(None) #need to preserve material indexes
-                continue
-
             material = bpy.data.materials.new(mat.name)
             material.use_nodes = True
 
             bsdf = material.node_tree.nodes["Principled BSDF"]
 
             texture = material.node_tree.nodes.new('ShaderNodeTexImage')
+            diffuse_path = mat.textures[0].texture_path;
             texture_path = ntpath.join(baseDir, diffuse_path) + "." + options.SUFFIX_BITMAP
-            if ntpath.exists(texture_path):
+            if diffuse_path != "null" and ntpath.exists(texture_path):
                 texture.image = bpy.data.images.load(texture_path)
                 if not mat.is_transparent:
                     texture.image.alpha_mode = 'NONE'
 
-        #    texture.repeat_x = mat.textures[0].uv_tiles[0]
-        #    texture.repeat_y = mat.textures[0].uv_tiles[1]
+#            texture.repeat_x = mat.textures[0].uv_tiles[0]
+#            texture.repeat_y = mat.textures[0].uv_tiles[1]
 
             material.node_tree.links.new(bsdf.inputs['Base Color'], texture.outputs['Color'])
 
@@ -663,7 +657,7 @@ def main(context, import_filename, options):
                     mesh.normals_split_custom_set_from_vertices(mesh_norms)
                     mesh.use_auto_smooth = True #required for custom normals to take effect
 
-                    if options.IMPORT_MATERIALS and model_materials[sub.mat_index] is not None:
+                    if options.IMPORT_MATERIALS:
                         for mat in model_materials:
                             mesh.materials.append(mat)
 
