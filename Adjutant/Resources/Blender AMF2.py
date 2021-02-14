@@ -2,7 +2,7 @@ bl_info = {
     "name": "AMF format",
     "description": "Import AMF files created by Reclaimer.",
     "author": "Gravemind2401",
-    "version": (2, 0),
+    "version": (2, 0, 1),
     "blender": (2, 80, 0),
     "location": "File > Import > AMF",
     "category": "Import-Export",
@@ -90,6 +90,9 @@ class Vertex:
         self.position = reader.read_vec3()
         self.normal = reader.read_vec3()
         self.texcoords = reader.read_vec2()
+        
+        #these normals arent normal enough for Blender
+        self.normal.normalize()
 
         #the vertex may be affected by 0 to 4 bones
         #the file stores the index of each relevant bone,
