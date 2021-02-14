@@ -11,7 +11,7 @@
   <tagReference size="16" valueType="tagReference">
     <alias name="tagRef" />
   </tagReference>
-  
+
   <stringId size="4" valueType="stringId" />
 
   <string size="length" valueType="string">
@@ -22,20 +22,23 @@
 
   <bitmask8 size="1" valueType="bitmask8">
     <alias name="bitfield8" />
+    <alias name="flags8" />
   </bitmask8>
 
   <bitmask16 size="2" valueType="bitmask16">
     <alias name="bitfield16" />
+    <alias name="flags16" />
   </bitmask16>
 
   <bitmask32 size="4" valueType="bitmask32">
     <alias name="bitfield32" />
+    <alias name="flags32" />
   </bitmask32>
-  
+
   <enum8 size="1" valueType="enum8" />
-  
+
   <enum16 size="2" valueType="enum16" />
-  
+
   <enum32 size="4" valueType="enum32" />
 
   <sbyte size="1" valueType="sbyte">
