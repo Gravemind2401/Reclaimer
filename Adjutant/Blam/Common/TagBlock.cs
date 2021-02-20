@@ -10,7 +10,7 @@ namespace Adjutant.Blam.Common
     [FixedSize(12, MaxVersion = (int)CacheType.Halo2Xbox)]
     [FixedSize(8, MinVersion = (int)CacheType.Halo2Xbox, MaxVersion = (int)CacheType.Halo3Beta)]
     [FixedSize(12, MinVersion = (int)CacheType.Halo3Beta)]
-    public class TagBlock
+    public class TagBlock : IWriteable
     {
         public int Count { get; }
         public Pointer Pointer { get; }
@@ -40,6 +40,12 @@ namespace Adjutant.Blam.Common
             Pointer = new Pointer(reader.ReadInt32(), translator, expander);
 
             IsInvalid = Count <= 0 || Pointer.Address < 0 || Pointer.Address >= reader.BaseStream.Length;
+        }
+
+        public void Write(EndianWriter writer, double? version)
+        {
+            writer.Write(Count);
+            Pointer.Write(writer, version);
         }
     }
 }

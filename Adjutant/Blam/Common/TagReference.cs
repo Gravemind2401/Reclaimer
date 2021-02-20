@@ -12,7 +12,7 @@ namespace Adjutant.Blam.Common
     [FixedSize(16, MaxVersion = (int)CacheType.Halo2Xbox)]
     [FixedSize(8, MinVersion = (int)CacheType.Halo2Xbox, MaxVersion = (int)CacheType.Halo3Beta)]
     [FixedSize(16, MinVersion = (int)CacheType.Halo3Beta)]
-    public struct TagReference
+    public struct TagReference : IWriteable
     {
         public static TagReference NullReference { get; } = new TagReference(null, -1, -1);
 
@@ -48,7 +48,9 @@ namespace Adjutant.Blam.Common
             tagId = reader.ReadInt32();
         }
 
-        public void Write(EndianWriter writer)
+        public void Write(EndianWriter writer) => Write(writer, null);
+
+        public void Write(EndianWriter writer, double? version)
         {
             writer.Write(classId);
 

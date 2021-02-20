@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Adjutant.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO.Endian;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Common.Gen3
 {
-    public class PartitionTable64 : IPartitionTable
+    public class PartitionTable64 : IPartitionTable, IWriteable
     {
         private readonly IPartitionLayout[] partitions;
 
@@ -24,6 +25,12 @@ namespace Adjutant.Blam.Common.Gen3
 
             for (int i = 0; i < partitions.Length; i++)
                 partitions[i] = reader.ReadObject<PartitionLayout64>();
+        }
+
+        public void Write(EndianWriter writer, double? version)
+        {
+            foreach (var partition in partitions)
+                writer.WriteObject(partition);
         }
 
         #region IPartitionTable

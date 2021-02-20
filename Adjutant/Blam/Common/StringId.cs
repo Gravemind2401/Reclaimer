@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Common
 {
-    public struct StringId
+    public struct StringId : IWriteable
     {
         private readonly int id;
         private readonly ICacheFile cache;
@@ -42,6 +42,13 @@ namespace Adjutant.Blam.Common
                 try { return cache?.StringIndex?[id]; }
                 catch { return "<invalid>"; }
             }
+        }
+
+        public void Write(EndianWriter writer, double? version)
+        {
+            if (cache.CacheType < CacheType.Halo3Alpha)
+                writer.Write((short)Id);
+            else writer.Write(Id);
         }
 
         public override string ToString() => Value;

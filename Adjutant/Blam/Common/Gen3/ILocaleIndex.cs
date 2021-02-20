@@ -10,6 +10,7 @@ namespace Adjutant.Blam.Common.Gen3
     {
         ILocaleTable this[Language lang] { get; }
         string this[Language lang, StringId key] { get; }
+        IEnumerable<ILocaleTable> Languages { get; }
     }
 
     public interface ILocaleTable : IEnumerable<KeyValuePair<StringId, string>>

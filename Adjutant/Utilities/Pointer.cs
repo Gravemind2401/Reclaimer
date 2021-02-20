@@ -1,14 +1,14 @@
-﻿using Adjutant.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO.Endian;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Adjutant.Utilities
 {
-    public struct Pointer
+    public struct Pointer : IWriteable
     {
         private readonly int _value;
         private readonly IAddressTranslator translator;
@@ -51,6 +51,8 @@ namespace Adjutant.Utilities
 
         public int Value => _value;
         public long Address => translator?.GetAddress(expander?.Expand(_value) ?? _value) ?? default(long);
+
+        public void Write(EndianWriter writer, double? version) => writer.Write(Value);
 
         public override string ToString() => Value.ToString(CultureInfo.CurrentCulture);
 

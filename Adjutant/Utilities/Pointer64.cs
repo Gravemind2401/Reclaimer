@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO.Endian;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Adjutant.Utilities
 {
-    public struct Pointer64
+    public struct Pointer64 : IWriteable
     {
         private readonly long _value;
         private readonly IAddressTranslator translator;
@@ -35,6 +36,8 @@ namespace Adjutant.Utilities
 
         public long Value => _value;
         public long Address => translator?.GetAddress(_value) ?? default(long);
+
+        public void Write(EndianWriter writer, double? version) => writer.Write(Value);
 
         public override string ToString() => Value.ToString(CultureInfo.CurrentCulture);
 

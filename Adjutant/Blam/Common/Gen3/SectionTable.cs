@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Adjutant.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO.Endian;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Common.Gen3
 {
-    public class SectionTable : IReadOnlyList<SectionLayout>
+    public class SectionTable : IReadOnlyList<SectionLayout>, IWriteable
     {
         private readonly SectionLayout[] sections;
 
@@ -24,6 +25,12 @@ namespace Adjutant.Blam.Common.Gen3
 
             for (int i = 0; i < sections.Length; i++)
                 sections[i] = reader.ReadObject<SectionLayout>();
+        }
+
+        public void Write(EndianWriter writer, double? version)
+        {
+            foreach (var section in sections)
+                writer.WriteObject(section);
         }
 
         #region IReadOnlyList

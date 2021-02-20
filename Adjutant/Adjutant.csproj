@@ -244,9 +244,11 @@
     <Compile Include="Spatial\RealVector2D.cs" />
     <Compile Include="Spatial\RealVector4D.cs" />
     <Compile Include="Spatial\RealVector3D.cs" />
+    <Compile Include="Utilities\EndianWriterEx.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
     <Compile Include="Utilities\Interfaces.cs" />
     <Compile Include="Utilities\IPointerExpander.cs" />
+    <Compile Include="Utilities\IWriteable.cs" />
     <Compile Include="Utilities\MurMur3.cs" />
     <Compile Include="Blam\Common\StringId.cs" />
     <Compile Include="Utilities\Pointer64.cs" />
