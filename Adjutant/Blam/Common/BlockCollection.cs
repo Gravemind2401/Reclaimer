@@ -1,5 +1,6 @@
 ﻿using Adjutant.Utilities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO.Endian;
@@ -12,31 +13,33 @@ namespace Adjutant.Blam.Common
     [FixedSize(12, MaxVersion = (int)CacheType.Halo2Xbox)]
     [FixedSize(8, MinVersion = (int)CacheType.Halo2Xbox, MaxVersion = (int)CacheType.Halo3Beta)]
     [FixedSize(12, MinVersion = (int)CacheType.Halo3Beta)]
-    public class BlockCollection<T> : Collection<T>
+    public class BlockCollection<T> : TagBlock, IReadOnlyList<T>
     {
-        public Pointer Pointer { get; }
+        private readonly Collection<T> items = new Collection<T>();
 
         public BlockCollection(DependencyReader reader, ICacheFile cache, IAddressTranslator translator)
             : this(reader, cache, translator, null)
         { }
         
         public BlockCollection(DependencyReader reader, ICacheFile cache, IAddressTranslator translator, IPointerExpander expander)
+            : base(reader, cache, translator, expander)
         {
-            if (reader == null)
-                throw new ArgumentNullException(nameof(reader));
-
-            if (translator == null)
-                throw new ArgumentNullException(nameof(translator));
-
-            var count = reader.ReadInt32();
-            Pointer = new Pointer(reader.ReadInt32(), translator, expander);
-
-            if (count == 0 || Pointer.Address < 0 || Pointer.Address >= reader.BaseStream.Length)
+            if (IsInvalid)
                 return;
 
             reader.BaseStream.Position = Pointer.Address;
-            for (int i = 0; i < count; i++)
-                Add((T)reader.ReadObject(typeof(T), (int)cache.CacheType));
+            for (int i = 0; i < Count; i++)
+                items.Add((T)reader.ReadObject(typeof(T), (int)cache.CacheType));
         }
+
+        #region IReadOnlyList
+        public T this[int index] => items[index];
+
+        public int IndexOf(T item) => items.IndexOf(item);
+
+        public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator(); 
+        #endregion
     }
 }

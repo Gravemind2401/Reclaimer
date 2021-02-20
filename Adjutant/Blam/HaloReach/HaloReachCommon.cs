@@ -56,7 +56,7 @@ namespace Adjutant.Blam.HaloReach
             { "specular_tint", TintUsage.Specular }
         };
 
-        public static IEnumerable<GeometryMaterial> GetMaterials(IList<ShaderBlock> shaders)
+        public static IEnumerable<GeometryMaterial> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
         {
             for (int i = 0; i < shaders.Count; i++)
             {
@@ -141,7 +141,7 @@ namespace Adjutant.Blam.HaloReach
             }
         }
 
-        public static IEnumerable<GeometryMesh> GetMeshes(ICacheFile cache, ResourceIdentifier resourcePointer, IList<SectionBlock> sections, Action<SectionBlock, GeometryMesh> setProps, Func<int, int, int> mapNode = null)
+        public static IEnumerable<GeometryMesh> GetMeshes(ICacheFile cache, ResourceIdentifier resourcePointer, IEnumerable<SectionBlock> sections, Action<SectionBlock, GeometryMesh> setProps, Func<int, int, int> mapNode = null)
         {
             VertexBufferInfo[] vertexBufferInfo;
             IndexBufferInfo[] indexBufferInfo;

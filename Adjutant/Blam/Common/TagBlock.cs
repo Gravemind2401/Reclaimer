@@ -1,7 +1,5 @@
 ﻿using Adjutant.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO.Endian;
 using System.Linq;
 using System.Text;
@@ -16,6 +14,15 @@ namespace Adjutant.Blam.Common
     {
         public int Count { get; }
         public Pointer Pointer { get; }
+        public bool IsInvalid { get; }
+
+        public TagBlock(int count, Pointer pointer)
+        {
+            Count = count;
+            Pointer = pointer;
+
+            IsInvalid = Count <= 0 || Pointer.Address < 0;
+        }
 
         public TagBlock(DependencyReader reader, ICacheFile cache, IAddressTranslator translator)
             : this(reader, cache, translator, null)
@@ -31,6 +38,8 @@ namespace Adjutant.Blam.Common
 
             Count = reader.ReadInt32();
             Pointer = new Pointer(reader.ReadInt32(), translator, expander);
+
+            IsInvalid = Count <= 0 || Pointer.Address < 0 || Pointer.Address >= reader.BaseStream.Length;
         }
     }
 }
