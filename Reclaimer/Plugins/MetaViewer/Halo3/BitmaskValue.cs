@@ -86,15 +86,15 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
             switch (FieldDefinition.ValueType)
             {
-                case MetaValueType.Enum8:
+                case MetaValueType.Bitmask8:
                     writer.Write((byte)Value);
                     break;
 
-                case MetaValueType.Enum16:
+                case MetaValueType.Bitmask16:
                     writer.Write((short)Value);
                     break;
 
-                case MetaValueType.Enum32:
+                case MetaValueType.Bitmask32:
                     writer.Write(Value);
                     break;
             }
