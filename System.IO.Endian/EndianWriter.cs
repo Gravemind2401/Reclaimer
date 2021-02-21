@@ -688,6 +688,7 @@ namespace System.IO.Endian
 
         /// <summary>
         /// Inserts padding bytes at the current position. Any following data will be moved forward and the stream will be expanded.
+        /// <para>Requires read access.</para>
         /// </summary>
         /// <param name="pad">The byte to pad with.</param>
         /// <param name="length">The number of bytes to insert.</param>
@@ -702,7 +703,7 @@ namespace System.IO.Endian
             if (source < BaseStream.Length)
             {
                 var destination = source + length;
-                Copy(source, destination, length);
+                Copy(source, destination, (int)(BaseStream.Length - source));
             }
 
             Fill(pad, length);
@@ -733,10 +734,11 @@ namespace System.IO.Endian
 
         /// <summary>
         /// Copies data from one part of the stream to another, overwriting data at the destination. The stream position is not advanced.
+        /// <para>Requires read access.</para>
         /// </summary>
-        /// <param name="sourceAddress"></param>
-        /// <param name="destinationAddress"></param>
-        /// <param name="length"></param>
+        /// <param name="sourceAddress">The address to start copying from.</param>
+        /// <param name="destinationAddress">The address to copy to.</param>
+        /// <param name="length">The number of bytes to copy.</param>
         public void Copy(long sourceAddress, long destinationAddress, int length)
         {
             if (sourceAddress <= 0)
