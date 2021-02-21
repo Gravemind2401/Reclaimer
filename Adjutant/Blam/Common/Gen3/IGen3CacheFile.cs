@@ -10,5 +10,6 @@ namespace Adjutant.Blam.Common.Gen3
     {
         IGen3Header Header { get; }
         ILocaleIndex LocaleIndex { get; }
+        bool UsesStringEncryption { get; }
     }
 }

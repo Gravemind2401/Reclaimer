@@ -113,6 +113,11 @@ namespace Adjutant.Blam.Common
             return field.GetCustomAttributes(typeof(CacheGenerationAttribute), false).OfType<CacheGenerationAttribute>().FirstOrDefault()?.Generation ?? -1;
         }
 
+        public static int GetHeaderSize(this Gen3.IGen3CacheFile cache)
+        {
+            return (int)FixedSizeAttribute.ValueFor(cache.Header.GetType(), (int)cache.CacheType);
+        }
+
         public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator) => CreateReader(cache, translator, false);
 
         public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator, bool leaveOpen)
@@ -153,6 +158,45 @@ namespace Adjutant.Blam.Common
             }
 
             return reader;
+        }
+
+        public static EndianWriterEx CreateWriter(this ICacheFile cache) => CreateWriter(cache, false);
+
+        public static EndianWriterEx CreateWriter(this ICacheFile cache, bool leaveOpen)
+        {
+            using (var fs = new FileStream(cache.FileName, FileMode.Open, FileAccess.ReadWrite))
+                return CreateWriter(cache, fs, leaveOpen);
+        }
+
+        public static EndianWriterEx CreateWriter(this ICacheFile cache, Stream stream) => CreateWriter(cache, stream, false);
+
+        public static EndianWriterEx CreateWriter(this ICacheFile cache, Stream stream, bool leaveOpen)
+        {
+            var writer = new EndianWriterEx(stream, cache.ByteOrder, leaveOpen);
+
+            if (cache.CacheType >= CacheType.Halo2Xbox)
+            {
+                writer.RegisterType<Matrix4x4>((m, v) =>
+                {
+                    writer.Write(m.M11);
+                    writer.Write(m.M12);
+                    writer.Write(m.M13);
+
+                    writer.Write(m.M21);
+                    writer.Write(m.M22);
+                    writer.Write(m.M23);
+
+                    writer.Write(m.M31);
+                    writer.Write(m.M32);
+                    writer.Write(m.M33);
+
+                    writer.Write(m.M41);
+                    writer.Write(m.M42);
+                    writer.Write(m.M43);
+                });
+            }
+
+            return writer;
         }
     }
 }

@@ -88,6 +88,7 @@ namespace Adjutant.Blam.MccHaloReach
 
         IGen3Header IGen3CacheFile.Header => Header;
         ILocaleIndex IGen3CacheFile.LocaleIndex => LocaleIndex;
+        bool IGen3CacheFile.UsesStringEncryption => false;
 
         IPointerExpander IMccCacheFile.PointerExpander => PointerExpander;
 

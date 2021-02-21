@@ -92,6 +92,7 @@ namespace Adjutant.Blam.HaloReach
 
         IGen3Header IGen3CacheFile.Header => Header;
         ILocaleIndex IGen3CacheFile.LocaleIndex => LocaleIndex;
+        bool IGen3CacheFile.UsesStringEncryption => true;
 
         #endregion
     }
