@@ -90,8 +90,47 @@ namespace Adjutant.Utilities
             else return KnownTextureFormat.Unknown;
         }
 
-        //bytes, not bits
+        //number of bits used to store each pixel
         private static int GetBpp(KnownTextureFormat format)
+        {
+            switch (format)
+            {
+                case KnownTextureFormat.A8R8G8B8:
+                case KnownTextureFormat.X8R8G8B8:
+                case KnownTextureFormat.ARGBFP32:
+                case KnownTextureFormat.RGBFP32:
+                    return 32;
+
+                case KnownTextureFormat.A8:
+                case KnownTextureFormat.Y8:
+                case KnownTextureFormat.AY8:
+                case KnownTextureFormat.P8_bump:
+                    return 8;
+
+                case KnownTextureFormat.CTX1:
+                case KnownTextureFormat.DXT1:
+                case KnownTextureFormat.DXT3a_alpha:
+                case KnownTextureFormat.DXT3a_mono:
+                case KnownTextureFormat.DXT5a:
+                case KnownTextureFormat.DXT5a_alpha:
+                case KnownTextureFormat.DXT5a_mono:
+                case KnownTextureFormat.BC4_unorm:
+                    return 4;
+
+                case KnownTextureFormat.DXT3:
+                case KnownTextureFormat.DXT5:
+                case KnownTextureFormat.DXN:
+                case KnownTextureFormat.DXN_mono_alpha:
+                case KnownTextureFormat.BC7_unorm:
+                    return 8;
+
+                default: return 16;
+            }
+        }
+
+        //the size in bytes of each read/write unit
+        //ie 32bit uses ints, DXT uses shorts etc. Used for endian swaps.
+        private static int GetLinearUnitSize(KnownTextureFormat format)
         {
             switch (format)
             {
@@ -207,6 +246,13 @@ namespace Adjutant.Utilities
         public static int Bpp(this Blam.Halo4.TextureFormat format) => GetBpp(format.AsKnown());
         public static int Bpp(this Saber3D.Halo1X.TextureFormat format) => GetBpp(format.AsKnown());
 
+        public static int LinearUnitSize(this Blam.Halo1.TextureFormat format) => GetLinearUnitSize(format.AsKnown());
+        public static int LinearUnitSize(this Blam.Halo2.TextureFormat format) => GetLinearUnitSize(format.AsKnown());
+        public static int LinearUnitSize(this Blam.Halo3.TextureFormat format) => GetLinearUnitSize(format.AsKnown());
+        public static int LinearUnitSize(this Blam.HaloReach.TextureFormat format) => GetLinearUnitSize(format.AsKnown());
+        public static int LinearUnitSize(this Blam.Halo4.TextureFormat format) => GetLinearUnitSize(format.AsKnown());
+        public static int LinearUnitSize(this Saber3D.Halo1X.TextureFormat format) => GetLinearUnitSize(format.AsKnown());
+
         public static int LinearBlockSize(this Blam.Halo3.TextureFormat format) => GetLinearBlockSize(format.AsKnown());
         public static int LinearBlockSize(this Blam.HaloReach.TextureFormat format) => GetLinearBlockSize(format.AsKnown());
         public static int LinearBlockSize(this Blam.Halo4.TextureFormat format) => GetLinearBlockSize(format.AsKnown());
@@ -244,7 +290,6 @@ namespace Adjutant.Utilities
             if (knownFormat == KnownTextureFormat.Unknown)
                 throw new ArgumentException("Could not translate to a known texture format.", nameof(format));
 
-            var bpp = GetBpp(knownFormat);
             double blockLen = GetLinearBlockSize(knownFormat);
             var blockSize = GetLinearTexelPitch(knownFormat);
 
@@ -424,7 +469,7 @@ namespace Adjutant.Utilities
             width = (int)Math.Ceiling((float)width / tileSize) * tileSize;
             height = (int)Math.Ceiling((float)height / tileSize) * tileSize;
 
-            var expectedSize = width * height * bpp;
+            var expectedSize = width * height * bpp / 8;
             if (expectedSize > data.Length)
                 Array.Resize(ref data, expectedSize);
 

@@ -56,8 +56,8 @@ namespace Adjutant.Blam.Halo2
 
             if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
             {
-                var bpp = submap.BitmapFormat.Bpp();
-                data = TextureUtils.Swizzle(data, submap.Width, submap.Height, 1, bpp);
+                var unitSize = submap.BitmapFormat.LinearUnitSize();
+                data = TextureUtils.Swizzle(data, submap.Width, submap.Height, 1, unitSize);
             }
 
             return TextureUtils.GetDds(submap.Height, submap.Width, submap.BitmapFormat, false, data);

@@ -82,9 +82,9 @@ namespace Adjutant.Blam.HaloReach
 
             if (cache.ByteOrder == ByteOrder.BigEndian)
             {
-                var bpp = submap.BitmapFormat.Bpp();
-                for (int i = 0; i < data.Length - 1; i += bpp)
-                    Array.Reverse(data, i, bpp);
+                var unitSize = submap.BitmapFormat.LinearUnitSize();
+                for (int i = 0; i < data.Length - 1; i += unitSize)
+                    Array.Reverse(data, i, unitSize);
             }
 
             var isMcc = cache.CacheType == CacheType.MccHaloReach || cache.CacheType == CacheType.MccHaloReachU3;

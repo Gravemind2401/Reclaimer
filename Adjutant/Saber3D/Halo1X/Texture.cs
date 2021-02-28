@@ -49,18 +49,18 @@ namespace Adjutant.Saber3D.Halo1X
             byte[] data;
             using (var reader = item.Container.CreateReader())
             {
-                var size = Height * Width * MapCount * Format.Bpp();
+                var size = Height * Width * MapCount * Format.Bpp() / 8;
                 reader.Seek(item.Address + DataOffset, SeekOrigin.Begin);
                 data = reader.ReadBytes(size);
             }
 
             if (isBigEndian)
             {
-                var bpp = Format.Bpp();
-                if (bpp > 1)
+                var unitSize = Format.LinearUnitSize();
+                if (unitSize > 1)
                 {
-                    for (int i = 0; i < data.Length; i += bpp)
-                        Array.Reverse(data, i, bpp);
+                    for (int i = 0; i < data.Length; i += unitSize)
+                        Array.Reverse(data, i, unitSize);
                 }
             }
 

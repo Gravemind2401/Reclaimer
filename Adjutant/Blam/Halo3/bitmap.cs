@@ -78,12 +78,12 @@ namespace Adjutant.Blam.Halo3
 
             if (cache.ByteOrder == ByteOrder.BigEndian)
             {
-                var bpp = submap.BitmapFormat.Bpp();
-                for (int i = 0; i < data.Length - 1; i += bpp)
-                    Array.Reverse(data, i, bpp);
+                var unitSize = submap.BitmapFormat.LinearUnitSize();
+                for (int i = 0; i < data.Length - 1; i += unitSize)
+                    Array.Reverse(data, i, unitSize);
             }
 
-            var isMcc = cache.CacheType == CacheType.MccHalo3  || cache.CacheType == CacheType.MccHalo3U4 || cache.CacheType == CacheType.MccHalo3ODST;
+            var isMcc = cache.CacheType == CacheType.MccHalo3 || cache.CacheType == CacheType.MccHalo3U4 || cache.CacheType == CacheType.MccHalo3ODST;
 
             int virtualWidth, virtualHeight;
             if (isMcc)
