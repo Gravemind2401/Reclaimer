@@ -146,7 +146,7 @@ namespace Adjutant.Blam.Halo3
             VertexBufferInfo[] vertexBufferInfo;
             IndexBufferInfo[] indexBufferInfo;
 
-            var isMcc = cache.CacheType == CacheType.MccHalo3 || cache.CacheType == CacheType.MccHalo3ODST;
+            var isMcc = cache.CacheType == CacheType.MccHalo3 || cache.CacheType == CacheType.MccHalo3U4 || cache.CacheType == CacheType.MccHalo3ODST;
 
             var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
             var entry = resourceGestalt.ResourceEntries[resourcePointer.ResourceIndex];

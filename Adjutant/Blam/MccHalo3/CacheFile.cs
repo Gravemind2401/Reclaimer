@@ -63,6 +63,7 @@ namespace Adjutant.Blam.MccHalo3
                 switch (CacheType)
                 {
                     case CacheType.MccHalo3:
+                    case CacheType.MccHalo3U4:
                         LocaleIndex = new LocaleIndex(this, 464, 80, 12);
                         break;
                     case CacheType.MccHalo3ODST:
@@ -280,6 +281,7 @@ namespace Adjutant.Blam.MccHalo3
             switch (cache.CacheType)
             {
                 case CacheType.MccHalo3:
+                case CacheType.MccHalo3U4:
                     if (DateTime.Parse(cache.BuildString) < DateTime.Parse("Aug 26 2020 21:24:11"))
                         translator = new StringIdTranslator(xml, "U0");
                     else translator = new StringIdTranslator(xml, "U1");

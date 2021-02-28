@@ -83,7 +83,7 @@ namespace Adjutant.Blam.Halo3
                     Array.Reverse(data, i, bpp);
             }
 
-            var isMcc = cache.CacheType == CacheType.MccHalo3 || cache.CacheType == CacheType.MccHalo3ODST;
+            var isMcc = cache.CacheType == CacheType.MccHalo3  || cache.CacheType == CacheType.MccHalo3U4 || cache.CacheType == CacheType.MccHalo3ODST;
 
             int virtualWidth, virtualHeight;
             if (isMcc)

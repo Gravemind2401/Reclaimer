@@ -25,47 +25,55 @@ namespace Adjutant.Blam.Halo3
             this.item = item;
         }
 
-        [Offset(60, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(64, MinVersion = (int)CacheType.Halo3ODST)]
+        [Offset(60, MaxVersion = (int)CacheType.MccHalo3U4)]
+        [Offset(64, MinVersion = (int)CacheType.MccHalo3U4)]
         public RealBounds XBounds { get; set; }
 
-        [Offset(68, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(72, MinVersion = (int)CacheType.Halo3ODST)]
+        [Offset(68, MaxVersion = (int)CacheType.MccHalo3U4)]
+        [Offset(72, MinVersion = (int)CacheType.MccHalo3U4)]
         public RealBounds YBounds { get; set; }
 
-        [Offset(76, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(80, MinVersion = (int)CacheType.Halo3ODST)]
+        [Offset(76, MaxVersion = (int)CacheType.MccHalo3U4)]
+        [Offset(80, MinVersion = (int)CacheType.MccHalo3U4)]
         public RealBounds ZBounds { get; set; }
 
-        [Offset(180, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(180, MaxVersion = (int)CacheType.MccHalo3U4)]
+        [Offset(196, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
         [Offset(184, MinVersion = (int)CacheType.Halo3ODST)]
         public BlockCollection<ClusterBlock> Clusters { get; set; }
 
-        [Offset(192, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(192, MaxVersion = (int)CacheType.MccHalo3U4)]
+        [Offset(208, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
         [Offset(196, MinVersion = (int)CacheType.Halo3ODST)]
         public BlockCollection<ShaderBlock> Shaders { get; set; }
 
-        [Offset(432, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(432, MaxVersion = (int)CacheType.MccHalo3U4)]
+        [Offset(448, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
         [Offset(436, MinVersion = (int)CacheType.Halo3ODST)]
         public BlockCollection<BspGeometryInstanceBlock> GeometryInstances { get; set; }
 
-        [Offset(580, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(580, MaxVersion = (int)CacheType.MccHalo3U4)]
+        [Offset(596, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
         [Offset(584, MinVersion = (int)CacheType.Halo3ODST)]
         public ResourceIdentifier ResourcePointer1 { get; set; }
 
-        [Offset(740, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(740, MaxVersion = (int)CacheType.MccHalo3U4)]
+        [Offset(756, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
         [Offset(744, MinVersion = (int)CacheType.Halo3ODST)]
         public BlockCollection<SectionBlock> Sections { get; set; }
 
-        [Offset(752, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(752, MaxVersion = (int)CacheType.MccHalo3U4)]
+        [Offset(768, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
         [Offset(756, MinVersion = (int)CacheType.Halo3ODST)]
         public BlockCollection<BspBoundingBoxBlock> BoundingBoxes { get; set; }
 
-        [Offset(860, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(860, MaxVersion = (int)CacheType.MccHalo3U4)]
+        [Offset(876, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
         [Offset(864, MinVersion = (int)CacheType.Halo3ODST)]
         public ResourceIdentifier ResourcePointer2 { get; set; }
 
-        [Offset(892, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(892, MaxVersion = (int)CacheType.MccHalo3U4)]
+        [Offset(908, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
         [Offset(896, MinVersion = (int)CacheType.Halo3ODST)]
         public ResourceIdentifier ResourcePointer3 { get; set; }
 
@@ -93,7 +101,7 @@ namespace Adjutant.Blam.Halo3
             var bspIndex = scenario.StructureBsps.IndexOf(bspBlock);
 
             var lightmap = scenario.ScenarioLightmapReference.Tag.ReadMetadata<scenario_lightmap>();
-            var lightmapData = cache.CacheType < CacheType.Halo3ODST
+            var lightmapData = cache.CacheType < CacheType.MccHalo3U4
                 ? lightmap.LightmapData[bspIndex]
                 : lightmap.LightmapRefs[bspIndex].Tag.ReadMetadata<scenario_lightmap_bsp_data>();
 
