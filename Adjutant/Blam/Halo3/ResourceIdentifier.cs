@@ -51,8 +51,13 @@ namespace Adjutant.Blam.Halo3
 
         public int ResourceIndex => identifier & ushort.MaxValue;
 
-        public byte[] ReadData(PageType mode)
+        public byte[] ReadData(PageType mode) => ReadData(mode, int.MaxValue);
+
+        public byte[] ReadData(PageType mode, int maxLength)
         {
+            if (maxLength < 0)
+                throw new ArgumentOutOfRangeException(nameof(maxLength));
+
             if (cache.CacheType <= CacheType.Halo3Beta)
                 return ReadDataHalo3Beta(mode);
 
@@ -67,16 +72,16 @@ namespace Adjutant.Blam.Halo3
             var useSecondary = mode == PageType.Secondary || (mode == PageType.Auto && segment.SecondaryPageIndex >= 0);
 
             var pageIndex = useSecondary ? segment.SecondaryPageIndex : segment.PrimaryPageIndex;
-            var chunkOffset = useSecondary ? segment.SecondaryPageOffset : segment.PrimaryPageOffset;
+            var segmentOffset = useSecondary ? segment.SecondaryPageOffset : segment.PrimaryPageOffset;
 
-            if (pageIndex < 0 || chunkOffset < 0)
+            if (pageIndex < 0 || segmentOffset < 0)
                 throw new InvalidOperationException("Data not found");
 
             var page = resourceLayoutTable.Pages[pageIndex];
             if (mode == PageType.Auto && (page.DataOffset < 0 || page.CompressedSize == 0))
             {
                 pageIndex = segment.PrimaryPageIndex;
-                chunkOffset = segment.PrimaryPageOffset;
+                segmentOffset = segment.PrimaryPageOffset;
                 page = resourceLayoutTable.Pages[pageIndex];
             }
 
@@ -113,19 +118,20 @@ namespace Adjutant.Blam.Halo3
 
                 reader.Seek(dataTableAddress + page.DataOffset, SeekOrigin.Begin);
 
+                var segmentLength = Math.Min(maxLength, page.DecompressedSize - segmentOffset);
                 if (page.CompressedSize < page.DecompressedSize)
                 {
                     using (var ds = new DeflateStream(fs, CompressionMode.Decompress))
                     using (var reader2 = new BinaryReader(ds))
                     {
-                        reader2.ReadBytes(chunkOffset);
-                        return reader2.ReadBytes(page.DecompressedSize - chunkOffset);
+                        reader2.ReadBytes(segmentOffset);
+                        return reader2.ReadBytes(segmentLength);
                     }
                 }
                 else
                 {
-                    reader.Seek(chunkOffset, SeekOrigin.Current);
-                    return reader.ReadBytes(page.DecompressedSize);
+                    reader.Seek(segmentOffset, SeekOrigin.Current);
+                    return reader.ReadBytes(segmentLength);
                 }
             }
         }

@@ -78,15 +78,6 @@ namespace Adjutant.Blam.HaloReach
                 ? InterleavedResources[submap.InterleavedIndex].ResourcePointer
                 : Resources[index].ResourcePointer;
 
-            var data = resource.ReadData(PageType.Auto);
-
-            if (cache.ByteOrder == ByteOrder.BigEndian)
-            {
-                var unitSize = submap.BitmapFormat.LinearUnitSize();
-                for (int i = 0; i < data.Length - 1; i += unitSize)
-                    Array.Reverse(data, i, unitSize);
-            }
-
             var isMcc = cache.CacheType == CacheType.MccHaloReach || cache.CacheType == CacheType.MccHaloReachU3;
 
             int virtualWidth, virtualHeight;
@@ -96,6 +87,16 @@ namespace Adjutant.Blam.HaloReach
                 virtualHeight = submap.Height * submap.FaceCount;
             }
             else TextureUtils.GetVirtualSize(submap.BitmapFormat, submap.Width, submap.Height, submap.FaceCount, out virtualWidth, out virtualHeight);
+
+            var lod0Size = virtualWidth * virtualHeight * submap.BitmapFormat.Bpp() / 8;
+            var data = resource.ReadData(PageType.Auto, lod0Size);
+
+            if (cache.ByteOrder == ByteOrder.BigEndian)
+            {
+                var unitSize = submap.BitmapFormat.LinearUnitSize();
+                for (int i = 0; i < data.Length - 1; i += unitSize)
+                    Array.Reverse(data, i, unitSize);
+            }
 
             if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
                 data = TextureUtils.XTextureScramble(data, virtualWidth, virtualHeight, submap.BitmapFormat, false);

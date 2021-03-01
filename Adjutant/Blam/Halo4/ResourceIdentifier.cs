@@ -50,7 +50,9 @@ namespace Adjutant.Blam.Halo4
 
         public int ResourceIndex => identifier & ushort.MaxValue;
 
-        public byte[] ReadData(PageType mode)
+        public byte[] ReadData(PageType mode) => ReadData(mode, int.MaxValue);
+
+        public byte[] ReadData(PageType mode, int maxLength)
         {
             var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
             var resourceLayoutTable = cache.TagIndex.GetGlobalTag("play").ReadMetadata<cache_file_resource_layout_table>();
@@ -65,16 +67,16 @@ namespace Adjutant.Blam.Halo4
             var useSecondary = mode == PageType.Secondary || (mode == PageType.Auto && segment.SecondaryPageIndex >= 0);
 
             var pageIndex = useTertiary ? segment.TertiaryPageIndex : useSecondary ? segment.SecondaryPageIndex : segment.PrimaryPageIndex;
-            var chunkOffset = useTertiary ? segment.TertiaryPageOffset : useSecondary ? segment.SecondaryPageOffset : segment.PrimaryPageOffset;
+            var segmentOffset = useTertiary ? segment.TertiaryPageOffset : useSecondary ? segment.SecondaryPageOffset : segment.PrimaryPageOffset;
 
-            if (pageIndex < 0 || chunkOffset < 0)
+            if (pageIndex < 0 || segmentOffset < 0)
                 throw new InvalidOperationException("Data not found");
 
             var page = resourceLayoutTable.Pages[pageIndex];
             if (mode == PageType.Auto && (page.DataOffset < 0 || page.CompressedSize == 0))
             {
                 pageIndex = segment.PrimaryPageIndex;
-                chunkOffset = segment.PrimaryPageOffset;
+                segmentOffset = segment.PrimaryPageOffset;
                 page = resourceLayoutTable.Pages[pageIndex];
             }
 
@@ -93,13 +95,20 @@ namespace Adjutant.Blam.Halo4
                 var dataTableAddress = reader.ReadUInt32();
                 reader.Seek(dataTableAddress + page.DataOffset, SeekOrigin.Begin);
 
+                var segmentLength = Math.Min(maxLength, page.DecompressedSize - segmentOffset);
+                if (page.CompressedSize == page.DecompressedSize)
+                {
+                    reader.Seek(segmentOffset, SeekOrigin.Current);
+                    return reader.ReadBytes(segmentLength);
+                }
+
                 if (cache.CacheType <= CacheType.Halo4Beta)
                 {
                     using (var ds = new DeflateStream(fs, CompressionMode.Decompress))
                     using (var reader2 = new BinaryReader(ds))
                     {
-                        reader2.ReadBytes(chunkOffset);
-                        return reader2.ReadBytes(page.DecompressedSize - chunkOffset);
+                        reader2.ReadBytes(segmentOffset);
+                        return reader2.ReadBytes(segmentLength);
                     }
                 }
 #if DEBUG
@@ -138,11 +147,11 @@ namespace Adjutant.Blam.Halo4
                     XCompress.XMemDecompressStream(decompressionContext, decompressed, ref endSize, compressed, ref startSize);
                     XCompress.XMemDestroyDecompressionContext(decompressionContext);
 
-                    if (chunkOffset == 0)
+                    if (decompressed.Length == segmentLength)
                         return decompressed;
 
-                    var result = new byte[page.DecompressedSize - chunkOffset];
-                    Array.Copy(decompressed, chunkOffset, result, 0, result.Length);
+                    var result = new byte[segmentLength];
+                    Array.Copy(decompressed, segmentOffset, result, 0, result.Length);
                     return result;
                 }
             }
