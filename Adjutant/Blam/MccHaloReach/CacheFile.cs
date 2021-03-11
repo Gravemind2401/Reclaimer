@@ -130,6 +130,14 @@ namespace Adjutant.Blam.MccHaloReach
         [Offset(348, MinVersion = (int)CacheType.MccHaloReachU3)]
         public Pointer StringTablePointer { get; set; }
 
+        [MinVersion((int)CacheType.MccHaloReachU3)]
+        [Offset(352, MinVersion = (int)CacheType.MccHaloReachU3)]
+        public int StringNamespaceCount { get; set; }
+
+        [MinVersion((int)CacheType.MccHaloReachU3)]
+        [Offset(356, MinVersion = (int)CacheType.MccHaloReachU3)]
+        public Pointer StringNamespaceTablePointer { get; set; }
+
         [Offset(444, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(440, MinVersion = (int)CacheType.MccHaloReachU3)]
         [NullTerminated(Length = 256)]

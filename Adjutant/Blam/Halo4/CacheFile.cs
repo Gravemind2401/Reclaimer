@@ -171,6 +171,18 @@ namespace Adjutant.Blam.Halo4
 
         IPartitionTable IGen3Header.PartitionTable => PartitionTable;
 
+        int IGen3Header.StringNamespaceCount
+        {
+            get { return default(int); }
+            set { }
+        }
+
+        Pointer IGen3Header.StringNamespaceTablePointer
+        {
+            get { return default(Pointer); }
+            set { }
+        }
+
         #endregion
     }
 
