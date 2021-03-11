@@ -161,12 +161,10 @@ namespace Adjutant.Blam.Common
             return reader;
         }
 
-        public static EndianWriterEx CreateWriter(this ICacheFile cache) => CreateWriter(cache, false);
-
-        public static EndianWriterEx CreateWriter(this ICacheFile cache, bool leaveOpen)
+        public static EndianWriterEx CreateWriter(this ICacheFile cache)
         {
-            using (var fs = new FileStream(cache.FileName, FileMode.Open, FileAccess.ReadWrite))
-                return CreateWriter(cache, fs, leaveOpen);
+            var fs = new FileStream(cache.FileName, FileMode.Open, FileAccess.ReadWrite);
+            return CreateWriter(cache, fs, false);
         }
 
         public static EndianWriterEx CreateWriter(this ICacheFile cache, Stream stream) => CreateWriter(cache, stream, false);
