@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Adjutant.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,15 +7,17 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Common.Gen3
 {
-    public interface ILocaleIndex
+    public interface ILocaleIndex : IWriteable
     {
         ILocaleTable this[Language lang] { get; }
         string this[Language lang, StringId key] { get; }
-        IEnumerable<ILocaleTable> Languages { get; }
+        IReadOnlyList<ILocaleTable> Languages { get; }
     }
 
     public interface ILocaleTable : IEnumerable<KeyValuePair<StringId, string>>
     {
+        Language Language { get; }
+
         string this[StringId key] { get; }
 
         int StringCount { get; set; }
