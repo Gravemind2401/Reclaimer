@@ -118,8 +118,7 @@ namespace Adjutant.Blam.Halo4
                     using (var ds = new DeflateStream(fs, CompressionMode.Decompress))
                     using (var reader2 = new BinaryReader(ds))
                     {
-                        var dataSize = page.DecompressedSize - segmentOffset;
-                        for (int i = 0; i < dataSize;)
+                        for (int i = 0; i < segmentLength;)
                         {
                             bool flag;
                             var blockSize = ReadSpecialInt(reader2, out flag);
@@ -128,7 +127,6 @@ namespace Adjutant.Blam.Halo4
                             i += blockSize;
                         }
 
-                        //File.WriteAllBytes("C:\\dump.bin", ms.ToArray());
                         return ms.ToArray();
                     }
                 }
