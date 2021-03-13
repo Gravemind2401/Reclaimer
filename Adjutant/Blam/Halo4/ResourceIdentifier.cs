@@ -111,7 +111,6 @@ namespace Adjutant.Blam.Halo4
                         return reader2.ReadBytes(segmentLength);
                     }
                 }
-#if DEBUG
                 else if (cache.CacheType > CacheType.Halo4Retail) //experimental
                 {
                     using (var ms = new MemoryStream())
@@ -133,7 +132,6 @@ namespace Adjutant.Blam.Halo4
                         return ms.ToArray();
                     }
                 }
-#endif
                 else
                 {
                     var compressed = reader.ReadBytes(page.CompressedSize);

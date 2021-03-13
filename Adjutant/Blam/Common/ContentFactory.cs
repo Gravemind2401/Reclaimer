@@ -93,10 +93,8 @@ namespace Adjutant.Blam.Common
                     break;
                 case CacheType.Halo4Beta:
                 case CacheType.Halo4Retail:
-#if DEBUG
                 case CacheType.MccHalo4:
                 case CacheType.MccHalo2X:
-#endif
                     content = item.ReadMetadata<Halo4.bitmap>();
                     break;
             }
