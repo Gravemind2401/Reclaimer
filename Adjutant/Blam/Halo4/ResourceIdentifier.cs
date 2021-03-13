@@ -118,7 +118,7 @@ namespace Adjutant.Blam.Halo4
                     using (var ds = new DeflateStream(fs, CompressionMode.Decompress))
                     using (var reader2 = new BinaryReader(ds))
                     {
-                        var dataSize = page.DecompressedSize - chunkOffset;
+                        var dataSize = page.DecompressedSize - segmentOffset;
                         for (int i = 0; i < dataSize;)
                         {
                             bool flag;
