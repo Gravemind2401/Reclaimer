@@ -123,6 +123,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
                 case CacheType.Halo3Retail:
                 case CacheType.MccHalo3:
+                case CacheType.MccHalo3U4:
                     return "Halo3";
 
                 case CacheType.Halo3ODST:
