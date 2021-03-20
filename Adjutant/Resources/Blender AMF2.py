@@ -2,7 +2,7 @@ bl_info = {
     "name": "AMF format",
     "description": "Import AMF files created by Reclaimer.",
     "author": "Gravemind2401",
-    "version": (2, 0, 1),
+    "version": (2, 0, 2),
     "blender": (2, 80, 0),
     "location": "File > Import > AMF",
     "category": "Import-Export",
@@ -13,7 +13,7 @@ import io
 import bpy
 import bmesh
 import math
-import ntpath
+import os.path as ospath
 import itertools
 import bpy_extras
 
@@ -453,6 +453,7 @@ class ImportOptions:
     PREFIX_MARKER: str = "#"
     PREFIX_BONE: str = ""
 
+    DIRECTORY_BITMAP: str = ""
     SUFFIX_BITMAP: str = "tif"
 
     MODE_SCALE = 'METERS'
@@ -496,7 +497,10 @@ def main(context, import_filename, options):
     IMPORT_SCALE = options.get_scale_multiplier()
     print(f"importing at scale {IMPORT_SCALE}")
 
-    baseDir = ntpath.split(import_filename)[0]
+    bitmapsDir = ospath.split(import_filename)[0]
+    if len(options.DIRECTORY_BITMAP) > 0:
+        bitmapsDir = options.DIRECTORY_BITMAP
+
     reader = FileReader(import_filename)
 
     model = AmfModel(reader)
@@ -569,9 +573,9 @@ def main(context, import_filename, options):
             bsdf = material.node_tree.nodes["Principled BSDF"]
 
             texture = material.node_tree.nodes.new('ShaderNodeTexImage')
-            diffuse_path = mat.textures[0].texture_path;
-            texture_path = ntpath.join(baseDir, diffuse_path) + "." + options.SUFFIX_BITMAP
-            if diffuse_path != "null" and ntpath.exists(texture_path):
+            diffuse_path = mat.textures[0].texture_path
+            texture_path = ospath.join(bitmapsDir, diffuse_path) + "." + options.SUFFIX_BITMAP
+            if diffuse_path != "null" and ospath.exists(texture_path):
                 texture.image = bpy.data.images.load(texture_path)
                 if not mat.is_transparent:
                     texture.image.alpha_mode = 'NONE'
@@ -584,8 +588,8 @@ def main(context, import_filename, options):
 #            bump_path = mat.textures[3].texture_path;
 #            if bump_path != "null":
 #                texture = material.node_tree.nodes.new('ShaderNodeTexImage')
-#                texture_path = ntpath.join(baseDir, bump_path) + "." + options.SUFFIX_BITMAP
-#                if ntpath.exists(texture_path):
+#                texture_path = ospath.join(bitmapsDir, bump_path) + "." + options.SUFFIX_BITMAP
+#                if ospath.exists(texture_path):
 #                    texture.image = bpy.data.images.load(texture_path)
 #                    texture.image.alpha_mode = 'NONE'
 #                material.node_tree.links.new(bsdf.inputs['Normal'], texture.outputs['Color'])
@@ -596,7 +600,6 @@ def main(context, import_filename, options):
     if options.IMPORT_MESHES and len(model.regions) > 0:
         print("creating meshes")
         instance_lookup = dict()
-        object_groups = []
         for region in model.regions:
             for perm in region.permutations:
                 index_buffer = model.index_buffers[perm.face_address]
@@ -735,8 +738,8 @@ class IMPORT_SCENE_OT_amf(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
     )
 
     import_nodes: BoolProperty(
-        name = "Import Nodes",
-        description = "Determines whether an armature and bones will be created, if applicable",
+        name = "Import Bones",
+        description = "Determines if an armature and bones will be created, when applicable",
         default = True
     )
 
@@ -748,7 +751,7 @@ class IMPORT_SCENE_OT_amf(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
 
     import_markers: BoolProperty(
         name = "Import Markers",
-        description = "Determines whether marker spheres will be created, if applicable",
+        description = "Determines if marker spheres will be created, when applicable",
         default = True
     )
 
@@ -768,7 +771,7 @@ class IMPORT_SCENE_OT_amf(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
 
     import_meshes: BoolProperty(
         name = "Import Meshes",
-        description = "Determines whether mesh geometry will be created",
+        description = "Determines if mesh geometry will be created",
         default = True
     )
 
@@ -782,8 +785,15 @@ class IMPORT_SCENE_OT_amf(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
 
     import_materials: BoolProperty(
         name = "Import Materials",
-        description = "Determines whether materials will be created and applied",
+        description = "Determines if materials will be created and applied",
         default = True
+    )
+
+    bitmap_dir: StringProperty(
+        name = "Folder",
+        description = "The root folder where bitmaps are saved",
+        default = "",
+#        subtype = 'DIR_PATH' # blender will not allow us to open a browser dilaog while the import dialog is open
     )
 
     bitmap_ext: StringProperty(
@@ -803,6 +813,7 @@ class IMPORT_SCENE_OT_amf(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
         options.PREFIX_MARKER = self.marker_prefix
         options.PREFIX_BONE = self.node_prefix
 
+        options.DIRECTORY_BITMAP = self.bitmap_dir
         options.SUFFIX_BITMAP = self.bitmap_ext.lstrip(" .").rstrip()
 
         options.MODE_SCALE = self.import_units
@@ -817,20 +828,20 @@ class IMPORT_SCENE_OT_amf(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
         layout = self.layout
 
         box = layout.box()
-        box.label(text = "Scale")
+        box.label(icon = 'WORLD_DATA', text = "Scale")
         box.prop(self, "import_units")
         box.prop(self, "import_scale")
 
         box = layout.box()
         row = box.row()
-        row.label(text = "Nodes")
+        row.label(icon = 'BONE_DATA', text = "Bones")
         row.prop(self, "import_nodes")
         if self.import_nodes:
             box.prop(self, "node_prefix")
 
         box = layout.box()
         row = box.row()
-        row.label(text = "Markers")
+        row.label(icon = 'MESH_CIRCLE', text = "Markers")
         row.prop(self, "import_markers")
         if self.import_markers:
             box.prop(self, "marker_mode")
@@ -838,14 +849,15 @@ class IMPORT_SCENE_OT_amf(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
 
         box = layout.box()
         row = box.row()
-        row.label(text = "Materials")
+        row.label(icon = 'MATERIAL_DATA', text = "Materials")
         row.prop(self, "import_materials")
         if self.import_materials:
+            box.prop(self, "bitmap_dir")
             box.prop(self, "bitmap_ext")
 
         box = layout.box()
         row = box.row()
-        row.label(text = "Meshes")
+        row.label(icon = 'MESH_DATA', text = "Meshes")
         row.prop(self, "import_meshes")
         if self.import_meshes:
             box.prop(self, "mesh_mode")
@@ -877,7 +889,8 @@ def unregister():
 ###############################################################################################################################
 
 if __name__ == "__main__":
-#    filepath = ""
-#    options = ImportOptions()
-#    main(bpy.context, filepath, options)
-    register()
+    try:
+        unregister()
+    finally:
+        register()
+        bpy.ops.import_scene.amf('INVOKE_DEFAULT')
