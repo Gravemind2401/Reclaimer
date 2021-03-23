@@ -2,7 +2,7 @@ bl_info = {
     "name": "AMF format",
     "description": "Import AMF files created by Reclaimer.",
     "author": "Gravemind2401",
-    "version": (2, 0, 2),
+    "version": (2, 0, 3),
     "blender": (2, 80, 0),
     "location": "File > Import > AMF",
     "category": "Import-Export",
@@ -17,6 +17,7 @@ import os.path as ospath
 import itertools
 import bpy_extras
 
+from pathlib import Path, PureWindowsPath
 from dataclasses import dataclass
 from mathutils import Matrix, Quaternion, Vector
 from bpy.props import BoolProperty, FloatProperty, StringProperty, EnumProperty
@@ -440,7 +441,18 @@ class Material:
 class Submaterial:
     texture_path: str
     uv_tiles: Vector
-
+    is_null: bool
+    
+    def __init__(self, texture_path, uv_tiles):
+        self.texture_path = texture_path
+        self.uv_tiles = uv_tiles
+        self.is_null = texture_path == "null"
+    
+    def get_full_path(self, root_dir, ext):
+        return Path(root_dir) / Path(PureWindowsPath(self.texture_path + "." + ext))
+    
+    def get_texture_name(self):
+        return PureWindowsPath(self.texture_path).name
 
 @dataclass
 class ImportOptions:
@@ -490,6 +502,18 @@ class ImportOptions:
             return Matrix()
 
 ###############################################################################################################################
+
+def clean_scene():
+    
+    for item in bpy.data.objects:
+        if item.type == 'MESH' or item.type == 'EMPTY':
+            bpy.data.objects.remove(item)
+            
+    check_users = False
+    for collection in (bpy.data.meshes, bpy.data.armatures, bpy.data.materials, bpy.data.textures, bpy.data.images):
+        for item in collection:
+            if item.users == 0 or not check_users:
+                collection.remove(item)
 
 def main(context, import_filename, options):
     print("execute amf import")
@@ -573,29 +597,50 @@ def main(context, import_filename, options):
             bsdf = material.node_tree.nodes["Principled BSDF"]
 
             texture = material.node_tree.nodes.new('ShaderNodeTexImage')
-            diffuse_path = mat.textures[0].texture_path
-            texture_path = ospath.join(bitmapsDir, diffuse_path) + "." + options.SUFFIX_BITMAP
-            if diffuse_path != "null" and ospath.exists(texture_path):
-                texture.image = bpy.data.images.load(texture_path)
+            texture_path = mat.textures[0].get_full_path(bitmapsDir, options.SUFFIX_BITMAP)
+            if not mat.textures[0].is_null and texture_path.exists():
+                texture.image = bpy.data.images.load(str(texture_path))
                 if not mat.is_transparent:
-                    texture.image.alpha_mode = 'NONE'
-
-#            texture.repeat_x = mat.textures[0].uv_tiles[0]
-#            texture.repeat_y = mat.textures[0].uv_tiles[1]
+                    texture.image.alpha_mode = 'CHANNEL_PACKED'
+                    material.node_tree.links.new(bsdf.inputs['Specular'], texture.outputs['Alpha'])
 
             material.node_tree.links.new(bsdf.inputs['Base Color'], texture.outputs['Color'])
+            bsdf.location = [0, 300]
+            texture.location = [-300, 300]
 
-#            bump_path = mat.textures[3].texture_path;
-#            if bump_path != "null":
-#                texture = material.node_tree.nodes.new('ShaderNodeTexImage')
-#                texture_path = ospath.join(bitmapsDir, bump_path) + "." + options.SUFFIX_BITMAP
-#                if ospath.exists(texture_path):
-#                    texture.image = bpy.data.images.load(texture_path)
-#                    texture.image.alpha_mode = 'NONE'
-#                material.node_tree.links.new(bsdf.inputs['Normal'], texture.outputs['Color'])
+#           texture.repeat_x = mat.textures[0].uv_tiles[0]
+#           texture.repeat_y = mat.textures[0].uv_tiles[1]
 
+            if not mat.is_terrain and not mat.textures[3].is_null:
+                texture = material.node_tree.nodes.new('ShaderNodeTexImage')
+                texture_path = mat.textures[3].get_full_path(bitmapsDir, options.SUFFIX_BITMAP)
+                if texture_path.exists():
+                    texture.image = bpy.data.images.load(str(texture_path))
+                    texture.image.alpha_mode = 'NONE'
+                    texture.image.colorspace_settings.name = 'Non-Color'
+                    
+                # inverting green channel is necessary to convert from DirectX coordsys to OpenGL
+                
+                bump = material.node_tree.nodes.new('ShaderNodeNormalMap')
+                split = material.node_tree.nodes.new('ShaderNodeSeparateRGB')
+                invert = material.node_tree.nodes.new('ShaderNodeInvert')
+                merge = material.node_tree.nodes.new('ShaderNodeCombineRGB')
+                
+                texture.location = [-1100, -100]
+                split.location = [-800, -100]
+                invert.location = [-600, -200]
+                merge.location = [-400, -100]
+                bump.location = [-200, -100]
+                
+                material.node_tree.links.new(split.inputs['Image'], texture.outputs['Color'])
+                material.node_tree.links.new(invert.inputs['Color'], split.outputs['G'])
+                material.node_tree.links.new(merge.inputs['R'], split.outputs['R'])
+                material.node_tree.links.new(merge.inputs['G'], invert.outputs['Color'])
+                material.node_tree.links.new(merge.inputs['B'], split.outputs['B'])
+                material.node_tree.links.new(bump.inputs['Color'], merge.outputs['Image'])
+                material.node_tree.links.new(bsdf.inputs['Normal'], bump.outputs['Normal'])
+ 
             model_materials.append(material)
-
 
     if options.IMPORT_MESHES and len(model.regions) > 0:
         print("creating meshes")
@@ -892,5 +937,6 @@ if __name__ == "__main__":
     try:
         unregister()
     finally:
-        register()
+        clean_scene()
+        register()    
         bpy.ops.import_scene.amf('INVOKE_DEFAULT')
