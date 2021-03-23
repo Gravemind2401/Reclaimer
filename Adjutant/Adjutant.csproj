@@ -98,6 +98,7 @@
     <Compile Include="Blam\Halo2Beta\BSPAddressTranslator.cs" />
     <Compile Include="Blam\Halo2Beta\CacheFile.cs" />
     <Compile Include="Blam\Halo2Beta\HeaderAddressTranslator.cs" />
+    <Compile Include="Blam\Halo2Beta\render_model.cs" />
     <Compile Include="Blam\Halo2Beta\TagAddressTranslator.cs" />
     <Compile Include="Blam\Halo2\bitmap.cs" />
     <Compile Include="Blam\Halo2\BSPAddressTranslator.cs" />
