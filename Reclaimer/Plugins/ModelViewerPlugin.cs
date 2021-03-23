@@ -204,7 +204,7 @@ namespace Reclaimer.Plugins
             {
                 using (var context = new Assimp.AssimpContext())
                 {
-                    var scene = model.CreateAssimpScene(context);
+                    var scene = model.CreateAssimpScene(context, formatId);
                     context.ExportFile(scene, fileName, formatId);
                 }
             }
@@ -315,7 +315,7 @@ namespace Reclaimer.Plugins
             };
         }
 
-        public static Assimp.Scene CreateAssimpScene(this IGeometryModel model, Assimp.AssimpContext context)
+        public static Assimp.Scene CreateAssimpScene(this IGeometryModel model, Assimp.AssimpContext context, string formatId)
         {
             var scale = ModelViewerPlugin.Settings.GeometryScale;
 
@@ -497,10 +497,17 @@ namespace Reclaimer.Plugins
                 var dif = mat?.Submaterials.FirstOrDefault(s => s.Usage == MaterialUsage.Diffuse);
                 if (dif != null)
                 {
+                    var filePath = $"{dif.Bitmap.Name}.{ModelViewerPlugin.Settings.MaterialExtension}";
+
+                    //collada spec says it requires URI formatting, and Assimp doesn't do it for us
+                    //for some reason "new Uri(filePath, UriKind.Relative)" doesnt change the slashes, have to use absolute uri
+                    if (formatId == "collada")
+                        filePath = new Uri("X:\\", UriKind.Absolute).MakeRelativeUri(new Uri(System.IO.Path.Combine("X:\\", filePath))).ToString();
+
                     m.TextureDiffuse = new Assimp.TextureSlot
                     {
                         BlendFactor = 1,
-                        FilePath = $"{dif.Bitmap.Name}.{ModelViewerPlugin.Settings.MaterialExtension}",
+                        FilePath = filePath,
                         TextureType = Assimp.TextureType.Diffuse
                     };
                 }
