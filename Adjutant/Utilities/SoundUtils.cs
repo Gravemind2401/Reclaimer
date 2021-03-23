@@ -11,10 +11,17 @@ namespace Adjutant.Utilities
 {
     public static class SoundUtils
     {
+        //null header indicates the data should be written as-is
         public static void WriteRiffData(Stream output, IFormatHeader header, byte[] data)
         {
             using (var sw = new EndianWriter(output, ByteOrder.LittleEndian))
             {
+                if (header == null)
+                {
+                    sw.Write(data);
+                    return;
+                }
+
                 sw.WriteStringFixedLength("RIFF");
                 sw.Write(data.Length + header.Length + 20); //20 is the combined size of strings length ints
                 sw.WriteStringFixedLength("WAVE");
