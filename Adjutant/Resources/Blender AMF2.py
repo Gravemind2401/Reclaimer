@@ -2,7 +2,7 @@ bl_info = {
     "name": "AMF format",
     "description": "Import AMF files created by Reclaimer.",
     "author": "Gravemind2401",
-    "version": (2, 0, 3),
+    "version": (2, 0, 4),
     "blender": (2, 80, 0),
     "location": "File > Import > AMF",
     "category": "Import-Export",
@@ -709,12 +709,16 @@ def main(context, import_filename, options):
                     mesh.use_auto_smooth = True #required for custom normals to take effect
 
                     if options.IMPORT_MATERIALS:
-                        for mat in model_materials:
-                            mesh.materials.append(mat)
+                        mat_lookup = dict()
+                        for i, mat_index in enumerate(set(t[2] for t in mat_ranges)):
+                            mat_lookup[mat_index] = i
 
-                    for face_start, face_count, mat_index in mat_ranges:
-                        for i in range(face_start, face_start + face_count):
-                            mesh.polygons[i].material_index = mat_index
+                        for i in mat_lookup.keys():
+                            mesh.materials.append(model_materials[i])
+
+                        for face_start, face_count, mat_index in mat_ranges:
+                            for i in range(face_start, face_start + face_count):
+                                mesh.polygons[i].material_index = mat_lookup[mat_index]
 
                     uvmap = mesh.uv_layers.new()
                     for i in range(len(mesh_coords)):
