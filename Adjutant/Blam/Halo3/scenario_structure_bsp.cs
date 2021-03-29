@@ -102,8 +102,8 @@ namespace Adjutant.Blam.Halo3
 
             var lightmap = scenario.ScenarioLightmapReference.Tag.ReadMetadata<scenario_lightmap>();
             var lightmapData = cache.CacheType < CacheType.MccHalo3U4
-                ? lightmap.LightmapData[bspIndex]
-                : lightmap.LightmapRefs[bspIndex].Tag.ReadMetadata<scenario_lightmap_bsp_data>();
+                ? lightmap.LightmapData.First(sldt => sldt.BspIndex == bspIndex)
+                : lightmap.LightmapRefs.Select(sldt => sldt.Tag.ReadMetadata<scenario_lightmap_bsp_data>()).First(sldt => sldt.BspIndex == bspIndex);
 
             model.Bounds.AddRange(BoundingBoxes);
             model.Materials.AddRange(Halo3Common.GetMaterials(Shaders));
