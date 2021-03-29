@@ -98,6 +98,11 @@ namespace Reclaimer.Windows
             Substrate.AddTool(settings.TabModel, this, Dock.Right, new GridLength(350));
         }
 
+        private void menuIssue_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/Gravemind2401/Reclaimer/issues");
+        }
+
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
             //add initial menu items
