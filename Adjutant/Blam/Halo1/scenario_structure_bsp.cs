@@ -67,10 +67,6 @@ namespace Adjutant.Blam.Halo1
             {
                 var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
 
-                var group = new GeometryMarkerGroup();
-                group.Markers.AddRange(Markers);
-                model.MarkerGroups.Add(group);
-
                 var shaderRefs = Lightmaps.SelectMany(m => m.Materials)
                     .Where(m => m.ShaderReference.TagId >= 0)
                     .GroupBy(m => m.ShaderReference.TagId)
