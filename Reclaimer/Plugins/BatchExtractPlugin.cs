@@ -1,5 +1,6 @@
 ﻿using Adjutant.Audio;
 using Adjutant.Blam.Common;
+using Adjutant.Blam.Halo5;
 using Adjutant.Geometry;
 using Adjutant.Utilities;
 using Reclaimer.Models;
@@ -25,7 +26,7 @@ namespace Reclaimer.Plugins
     {
         private const string supportedTags = "bitm,mode,mod2,sbsp,snd!";
 
-        private ConcurrentQueue<IIndexItem> extractionQueue = new ConcurrentQueue<IIndexItem>();
+        private ConcurrentQueue<object> extractionQueue = new ConcurrentQueue<object>();
 
         private bool isBusy;
         private CancellationTokenSource tokenSource;
@@ -81,15 +82,14 @@ namespace Reclaimer.Plugins
             Match match;
             if ((match = Regex.Match(context.FileTypeKey, @"Blam\.(\w+)\.(.*)")).Success)
             {
-                CacheType cacheType;
-                if (!Enum.TryParse(match.Groups[1].Value, out cacheType))
+                if (!ValidateCacheType(match.Groups[1].Value))
                     yield break;
 
                 if (match.Groups[2].Value == "*" && context.File.Any(i => i is TreeItemModel))
                     yield return ExtractMultipleContextItem;
                 else
                 {
-                    var item = context.File.OfType<IIndexItem>().FirstOrDefault();
+                    dynamic item = context.File.FirstOrDefault(f => ValidateTag(f));
                     if (item != null && supportedTags.Split(',').Any(s => item.ClassCode == s))
                         yield return ExtractSingleContextItem;
                 }
@@ -101,6 +101,21 @@ namespace Reclaimer.Plugins
             Settings.DataFolder = Settings.DataFolder.PatternReplace(Substrate.PluginsDirectory, ":plugins:");
             SaveSettings(Settings);
         }
+
+        private bool ValidateCacheType(string name)
+        {
+            CacheType cacheType;
+            if (Enum.TryParse(name, out cacheType))
+                return true;
+
+            ModuleType moduleType;
+            if (Enum.TryParse(name, out moduleType))
+                return true;
+
+            return false;
+        }
+
+        private bool ValidateTag(object tag) => tag != null && (tag is IIndexItem || tag is ModuleItem);
 
         [SharedFunction]
         private bool GetDataFolder(out string dataFolder)
@@ -132,7 +147,7 @@ namespace Reclaimer.Plugins
             if (!tokenSource.IsCancellationRequested)
                 tokenSource.Cancel();
 
-            extractionQueue = new ConcurrentQueue<IIndexItem>();
+            extractionQueue = new ConcurrentQueue<object>();
         }
 
         private void OnContextItemClick(string key, OpenFileArgs context)
@@ -149,7 +164,7 @@ namespace Reclaimer.Plugins
                 BatchQueue(node);
             else
             {
-                var item = context.File.OfType<IIndexItem>().FirstOrDefault();
+                var item = context.File.FirstOrDefault(f => ValidateTag(f));
                 if (item != null)
                     extractionQueue.Enqueue(item);
             }
@@ -169,7 +184,7 @@ namespace Reclaimer.Plugins
                     if (tokenSource.IsCancellationRequested)
                         break;
 
-                    IIndexItem item;
+                    dynamic item;
                     if (!extractionQueue.TryDequeue(out item))
                         break;
 
@@ -197,14 +212,15 @@ namespace Reclaimer.Plugins
                 foreach (var child in node.Items)
                     BatchQueue(child);
             }
-            else extractionQueue.Enqueue(node.Tag as IIndexItem);
+            else if (ValidateTag(node.Tag))
+                extractionQueue.Enqueue(node.Tag);
         }
 
-        private void Extract(IIndexItem tag, ExtractCounter counter)
+        private void Extract(dynamic tag, ExtractCounter counter)
         {
             try
             {
-                switch (tag.ClassCode)
+                switch ((string)tag.ClassCode)
                 {
                     case "bitm":
                         if (SaveImage(tag))
@@ -239,6 +255,18 @@ namespace Reclaimer.Plugins
 
         #region Images
         private bool SaveImage(IIndexItem tag)
+        {
+            IBitmap bitmap;
+            if (ContentFactory.TryGetBitmapContent(tag, out bitmap) && SaveImage(bitmap, Settings.DataFolder))
+            {
+                LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool SaveImage(ModuleItem tag)
         {
             IBitmap bitmap;
             if (ContentFactory.TryGetBitmapContent(tag, out bitmap) && SaveImage(bitmap, Settings.DataFolder))
@@ -353,6 +381,18 @@ namespace Reclaimer.Plugins
             return false;
         }
 
+        private bool SaveModel(ModuleItem tag)
+        {
+            IRenderGeometry geometry;
+            if (ContentFactory.TryGetGeometryContent(tag, out geometry) && SaveModel(geometry, Settings.DataFolder))
+            {
+                LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
+                return true;
+            }
+
+            return false;
+        }
+
         [SharedFunction]
         private bool SaveModel(IRenderGeometry geometry, string baseDir)
         {
@@ -377,6 +417,11 @@ namespace Reclaimer.Plugins
                 return true;
             }
 
+            return false;
+        }
+
+        private bool SaveSound(ModuleItem tag)
+        {
             return false;
         }
 

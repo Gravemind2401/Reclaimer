@@ -233,7 +233,10 @@ namespace Reclaimer.Controls
 
         private void TreeItemContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            foreach (MenuItem item in ContextItems.Where(i => i is MenuItem))
+            if ((sender as TreeViewItem)?.DataContext != tv.SelectedItem)
+                return; //because this event bubbles to the parent node
+
+            foreach (var item in ContextItems.OfType<MenuItem>())
                 item.Click -= ContextItem_Click;
 
             var menu = (sender as ContextMenu);
@@ -254,7 +257,7 @@ namespace Reclaimer.Controls
             foreach (var item in customItems)
                 ContextItems.Add(new MenuItem { Header = item.Path, Tag = item });
 
-            foreach (MenuItem item in ContextItems.Where(i => i is MenuItem))
+            foreach (var item in ContextItems.OfType<MenuItem>())
                 item.Click += ContextItem_Click;
 
             if (!ContextItems.Any())

@@ -269,6 +269,9 @@ namespace Reclaimer.Controls
 
         private void TreeItemContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
+            if ((sender as TreeViewItem)?.DataContext != tv.SelectedItem)
+                return; //because this event bubbles to the parent node
+
             foreach (var item in ContextItems.OfType<MenuItem>().Concat(OpenFromContextItem.Items.OfType<MenuItem>()))
                 item.Click -= ContextItem_Click;
 
