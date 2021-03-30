@@ -83,8 +83,7 @@ namespace Adjutant.Blam.Halo2
 
         public GameSound ReadData()
         {
-            var channels = (byte)(Encoding + 1);
-            if (CompressionCodec != CompressionCodec.WMA && (CompressionCodec != CompressionCodec.XboxAdpcm || channels > 2))
+            if (CompressionCodec != CompressionCodec.WMA && CompressionCodec != CompressionCodec.XboxAdpcm)
                 throw new NotSupportedException("Unsupported Codec/Encoding");
 
             var resourceGestalt = cache.TagIndex.GetGlobalTag("ugh!").ReadMetadata<sound_cache_file_gestalt>();
@@ -93,10 +92,12 @@ namespace Adjutant.Blam.Halo2
             var result = new GameSound { Name = item.FileName() };
             if (CompressionCodec == CompressionCodec.XboxAdpcm)
             {
-                result.FormatHeader = new XboxAdpcmHeader(SampleRateInt, channels);
+                if (Encoding != Encoding.Codec)
+                    result.FormatHeader = new XboxAdpcmHeader(SampleRateInt, (byte)(Encoding + 1));
+
                 result.DefaultExtension = "wav";
             }
-            if (CompressionCodec == CompressionCodec.WMA)
+            else if (CompressionCodec == CompressionCodec.WMA)
                 result.DefaultExtension = "wma";
 
             for (int i = 0; i < pitchRange.PermutationCount; i++)
