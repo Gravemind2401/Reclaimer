@@ -210,13 +210,12 @@ namespace Adjutant.Blam.Halo4
         Swizzled = 8
     }
 
-    public enum TextureType : short
+    public enum TextureType : byte
     {
         Texture2D = 0,
         Texture3D = 1,
         CubeMap = 2,
-        Sprite = 3,
-        UIBitmap = 4
+        Array = 3
     }
 
     public enum TextureFormat : short
