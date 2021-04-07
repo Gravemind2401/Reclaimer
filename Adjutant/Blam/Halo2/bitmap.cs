@@ -32,7 +32,19 @@ namespace Adjutant.Blam.Halo2
 
         #region IBitmap
 
-        private static readonly CubemapLayout Halo2CubeLayout = CubemapLayout.NonCubemap;
+        private static readonly CubemapLayout Halo2CubeLayout = new CubemapLayout
+        {
+            Face1 = CubemapFace.Right,
+            Face2 = CubemapFace.Left,
+            Face3 = CubemapFace.Back,
+            Face4 = CubemapFace.Front,
+            Face5 = CubemapFace.Top,
+            Face6 = CubemapFace.Bottom,
+            Orientation1 = RotateFlipType.Rotate270FlipNone,
+            Orientation2 = RotateFlipType.Rotate90FlipNone,
+            Orientation3 = RotateFlipType.Rotate180FlipNone,
+            Orientation6 = RotateFlipType.Rotate180FlipNone
+        };
 
         string IBitmap.SourceFile => item.CacheFile.FileName;
 
@@ -54,22 +66,32 @@ namespace Adjutant.Blam.Halo2
             var submap = Bitmaps[index];
             var data = submap.Lod0Pointer.ReadData(submap.Lod0Size);
 
+            //Halo2 has all the lod mips in the same resource data as the main lod.
+            //this means that for cubemaps each face will be separated by mips, so we
+            //need to make sure the main lods are contiguous and discard additional data.
+            var mip0Size = submap.Width * submap.Height * submap.BitmapFormat.Bpp() / 8;
+            if (submap.FaceCount > 1)
+            {
+                var mipsSize = submap.Lod0Size / submap.FaceCount;
+                for (int i = 1; i < submap.FaceCount; i++)
+                    Array.Copy(data, i * mipsSize, data, i * mip0Size, mip0Size);
+            }
+
+            //get rid of additional mipmap data
+            Array.Resize(ref data, mip0Size * submap.FaceCount);
+
+            int virtualWidth, virtualHeight;
+            virtualWidth = submap.Width;
+            virtualHeight = submap.Height * submap.FaceCount;
+
             if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
             {
                 var unitSize = submap.BitmapFormat.LinearUnitSize();
-                data = TextureUtils.Swizzle(data, submap.Width, submap.Height, 1, unitSize);
+                data = TextureUtils.Swizzle(data, virtualWidth, virtualHeight, 1, unitSize);
             }
 
-            return TextureUtils.GetDds(submap.Height, submap.Width, submap.BitmapFormat, false, data);
-
-            ////mipmaps are getting in the way
-            //if (submap.BitmapType == TextureType.CubeMap)
-            //{
-            //    dds.TextureFlags = TextureFlags.DdsSurfaceFlagsCubemap;
-            //    dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
-            //    dds.DX10ResourceFlags = D3D10ResourceMiscFlags.TextureCube;
-            //}
-        } 
+            return TextureUtils.GetDds(submap.Height, submap.Width, submap.BitmapFormat, submap.BitmapType == TextureType.CubeMap, data);
+        }
 
         #endregion
     }
@@ -164,6 +186,9 @@ namespace Adjutant.Blam.Halo2
 
         [Offset(60)]
         public int Lod2Size { get; set; }
+
+        //in theory should always be the same as MipmapCount
+        public int FaceCount => BitmapType == TextureType.CubeMap ? 6 : 1;
     }
 
     [Flags]
@@ -176,9 +201,7 @@ namespace Adjutant.Blam.Halo2
     {
         Texture2D = 0,
         Texture3D = 1,
-        CubeMap = 2,
-        Sprite = 3,
-        UIBitmap = 4
+        CubeMap = 2
     }
 
     public enum TextureFormat : short
