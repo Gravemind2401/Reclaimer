@@ -32,6 +32,8 @@ namespace Adjutant.Blam.Common
                 items.Add((T)reader.ReadObject(typeof(T), (int)cache.CacheType));
         }
 
+        public override string ToString() => items.ToString();
+
         #region IReadOnlyList
         public T this[int index] => items[index];
 

@@ -50,7 +50,7 @@ namespace Adjutant.Blam.Halo2
 
         string IRenderGeometry.Class => item.ClassName;
 
-        int IRenderGeometry.LodCount => 1;
+        int IRenderGeometry.LodCount => 6;
 
         public IGeometryModel ReadGeometry(int lod)
         {
@@ -72,7 +72,7 @@ namespace Adjutant.Blam.Halo2
                     {
                         SourceIndex = region.Permutations.IndexOf(p),
                         Name = p.Name,
-                        MeshIndex = p.SectionIndex,
+                        MeshIndex = p.LodArray[lod],
                         MeshCount = 1
                     }));
 
@@ -305,8 +305,25 @@ namespace Adjutant.Blam.Halo2
         [Offset(0)]
         public StringId Name { get; set; }
 
+        [Offset(4)]
+        public short PotatoSectionIndex { get; set; }
+
+        [Offset(6)]
+        public short SuperLowSectionIndex { get; set; }
+
+        [Offset(8)]
+        public short LowSectionIndex { get; set; }
+
+        [Offset(10)]
+        public short MediumSectionIndex { get; set; }
+
+        [Offset(12)]
+        public short HighSectionIndex { get; set; }
+
         [Offset(14)]
-        public short SectionIndex { get; set; }
+        public short SuperHighSectionIndex { get; set; }
+
+        internal short[] LodArray => new[] { SuperHighSectionIndex, HighSectionIndex, MediumSectionIndex, LowSectionIndex, SuperLowSectionIndex, PotatoSectionIndex };
 
         public override string ToString() => Name;
     }
