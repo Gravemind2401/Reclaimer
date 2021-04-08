@@ -37,19 +37,7 @@ namespace Adjutant.Blam.Halo3
 
         #region IBitmap
 
-        private static readonly CubemapLayout Halo3CubeLayout = new CubemapLayout
-        {
-            Face1 = CubemapFace.Right,
-            Face2 = CubemapFace.Left,
-            Face3 = CubemapFace.Back,
-            Face4 = CubemapFace.Front,
-            Face5 = CubemapFace.Top,
-            Face6 = CubemapFace.Bottom,
-            Orientation1 = RotateFlipType.Rotate270FlipNone,
-            Orientation2 = RotateFlipType.Rotate90FlipNone,
-            Orientation3 = RotateFlipType.Rotate180FlipNone,
-            Orientation6 = RotateFlipType.Rotate180FlipNone
-        };
+        private bool isMcc => cache.CacheType == CacheType.MccHalo3 || cache.CacheType == CacheType.MccHalo3U4 || cache.CacheType == CacheType.MccHalo3ODST;
 
         string IBitmap.SourceFile => item.CacheFile.FileName;
 
@@ -61,7 +49,7 @@ namespace Adjutant.Blam.Halo3
 
         int IBitmap.SubmapCount => Bitmaps.Count;
 
-        CubemapLayout IBitmap.CubeLayout => Halo3CubeLayout;
+        CubemapLayout IBitmap.CubeLayout => isMcc ? CacheFactory.MccGen3CubeLayout : CacheFactory.Gen3CubeLayout;
 
         public DdsImage ToDds(int index)
         {
@@ -73,8 +61,6 @@ namespace Adjutant.Blam.Halo3
             var resource = InterleavedResources.Any()
                 ? InterleavedResources[submap.InterleavedIndex].ResourcePointer
                 : Resources[index].ResourcePointer;
-
-            var isMcc = cache.CacheType == CacheType.MccHalo3 || cache.CacheType == CacheType.MccHalo3U4 || cache.CacheType == CacheType.MccHalo3ODST;
 
             int virtualWidth, virtualHeight;
             if (isMcc)

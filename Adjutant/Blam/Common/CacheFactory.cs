@@ -1,6 +1,8 @@
 ﻿using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Dds;
 using System.IO;
 using System.IO.Endian;
 using System.Linq;
@@ -48,6 +50,34 @@ namespace Adjutant.Blam.Common
             return doc.FirstChild.ChildNodes.Cast<XmlNode>()
                 .ToDictionary(n => n.Attributes["code"].Value, n => n.Attributes["name"].Value);
         }
+
+        internal static readonly CubemapLayout Gen3CubeLayout = new CubemapLayout
+        {
+            Face1 = CubemapFace.Right,
+            Face2 = CubemapFace.Left,
+            Face3 = CubemapFace.Back,
+            Face4 = CubemapFace.Front,
+            Face5 = CubemapFace.Top,
+            Face6 = CubemapFace.Bottom,
+            Orientation1 = RotateFlipType.Rotate270FlipNone,
+            Orientation2 = RotateFlipType.Rotate90FlipNone,
+            Orientation3 = RotateFlipType.Rotate180FlipNone,
+            Orientation6 = RotateFlipType.Rotate180FlipNone
+        };
+
+        internal static readonly CubemapLayout MccGen3CubeLayout = new CubemapLayout
+        {
+            Face1 = CubemapFace.Right,
+            Face2 = CubemapFace.Back,
+            Face3 = CubemapFace.Left,
+            Face4 = CubemapFace.Front,
+            Face5 = CubemapFace.Top,
+            Face6 = CubemapFace.Bottom,
+            Orientation1 = RotateFlipType.Rotate270FlipNone,
+            Orientation2 = RotateFlipType.Rotate180FlipNone,
+            Orientation3 = RotateFlipType.Rotate90FlipNone,
+            Orientation6 = RotateFlipType.Rotate180FlipNone
+        };
 
         public static ICacheFile ReadCacheFile(string fileName)
         {
