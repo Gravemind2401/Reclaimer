@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 namespace Adjutant.Blam.Halo2Beta
 {
     public class render_model
+    //note H2B ascii string fields are actually 32 bytes, but the last 4 are not part of the string
     {
         private readonly IIndexItem item;
 
@@ -39,6 +40,26 @@ namespace Adjutant.Blam.Halo2Beta
 
         [Offset(160)]
         public BlockCollection<ShaderBlock> Shaders { get; set; }
+    public struct MeshResourceDetailsBlock
+    {
+        [Offset(52)]
+        public ushort IndexCount { get; set; }
+
+        [Offset(168)]
+        public ushort NodeMapCount { get; set; }
+    }
+
+    [FixedSize(72)]
+    public struct SubmeshDataBlock
+    {
+        [Offset(4)]
+        public short ShaderIndex { get; set; }
+
+        [Offset(6)]
+        public ushort IndexStart { get; set; }
+
+        [Offset(8)]
+        public ushort IndexLength { get; set; }
     }
 
     [FixedSize(56)]
@@ -78,7 +99,7 @@ namespace Adjutant.Blam.Halo2Beta
     public class RegionBlock
     {
         [Offset(0)]
-        [NullTerminated(Length = 16)]
+        [NullTerminated(Length = 28)]
         public string Name { get; set; }
 
         [Offset(36)]
@@ -91,11 +112,28 @@ namespace Adjutant.Blam.Halo2Beta
     public class PermutationBlock
     {
         [Offset(0)]
-        [NullTerminated(Length = 16)]
+        [NullTerminated(Length = 28)]
         public string Name { get; set; }
 
         [Offset(32)]
-        public short SectionIndex { get; set; }
+        public short PotatoSectionIndex { get; set; }
+
+        [Offset(34)]
+        public short SuperLowSectionIndex { get; set; }
+
+        [Offset(36)]
+        public short LowSectionIndex { get; set; }
+
+        [Offset(38)]
+        public short MediumSectionIndex { get; set; }
+
+        [Offset(40)]
+        public short HighSectionIndex { get; set; }
+
+        [Offset(42)]
+        public short SuperHighSectionIndex { get; set; }
+
+        internal short[] LodArray => new[] { SuperHighSectionIndex, HighSectionIndex, MediumSectionIndex, LowSectionIndex, SuperLowSectionIndex, PotatoSectionIndex };
 
         public override string ToString() => Name;
     }
@@ -134,13 +172,16 @@ namespace Adjutant.Blam.Halo2Beta
 
         [Offset(76)]
         public int BodySize { get; set; }
+
+        [Offset(80)]
+        public BlockCollection<Halo2.ResourceInfoBlock> Resources { get; set; }
     }
 
     [FixedSize(124)]
     public class NodeBlock : IGeometryNode
     {
         [Offset(0)]
-        [NullTerminated(Length = 16)]
+        [NullTerminated(Length = 28)]
         public string Name { get; set; }
 
         [Offset(32)]
@@ -164,10 +205,10 @@ namespace Adjutant.Blam.Halo2Beta
         [Offset(68)]
         public float TransformScale { get; set; }
 
-        //[Offset(44)]
+        [Offset(72)]
         public Matrix4x4 Transform { get; set; }
 
-        //[Offset(92)]
+        [Offset(120)]
         public float DistanceFromParent { get; set; }
 
         public override string ToString() => Name;
@@ -189,7 +230,7 @@ namespace Adjutant.Blam.Halo2Beta
     public class MarkerGroupBlock : IGeometryMarkerGroup
     {
         [Offset(0)]
-        [NullTerminated(Length = 16)]
+        [NullTerminated(Length = 28)]
         public string Name { get; set; }
 
         [Offset(32)]
