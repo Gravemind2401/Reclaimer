@@ -202,7 +202,7 @@ namespace Adjutant.Blam.Halo4
     }
 
     [Flags]
-    public enum ModelFlags : int
+    public enum ModelFlags : short
     {
         UseLocalNodes = 4
     }
