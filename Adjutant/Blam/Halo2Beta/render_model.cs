@@ -13,8 +13,8 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Halo2Beta
 {
-    public class render_model
     //note H2B ascii string fields are actually 32 bytes, but the last 4 are not part of the string
+    public class render_model
     {
         private readonly IIndexItem item;
 
@@ -40,6 +40,8 @@ namespace Adjutant.Blam.Halo2Beta
 
         [Offset(160)]
         public BlockCollection<ShaderBlock> Shaders { get; set; }
+    }
+
     public struct MeshResourceDetailsBlock
     {
         [Offset(52)]
