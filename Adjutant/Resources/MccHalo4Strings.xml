@@ -17,4 +17,21 @@
     <namespace id="0xE" startIndex="0x1FBB" />
     <namespace id="0xF" startIndex="0x1FFD" />
   </stringIDs>
+  <stringIDs id="U1" indexBits="19" namespaceBits="8" lengthBits="5">
+    <namespace id="0x0" min="0x631" startIndex="0x20E1" />
+    <namespace id="0x1" startIndex="0x631" />
+    <namespace id="0x2" startIndex="0xEA8" />
+    <namespace id="0x3" startIndex="0xFB3" />
+    <namespace id="0x4" startIndex="0x1040" />
+    <namespace id="0x5" startIndex="0x1138" />
+    <namespace id="0x6" startIndex="0x118D" />
+    <namespace id="0x7" startIndex="0x11B8" />
+    <namespace id="0x8" startIndex="0x1CB5" />
+    <namespace id="0x9" startIndex="0x1EC5" />
+    <namespace id="0xA" startIndex="0x1EF8" />
+    <namespace id="0xC" startIndex="0x1F7B" />
+    <namespace id="0xD" startIndex="0x1FAF" />
+    <namespace id="0xE" startIndex="0x1FBC" />
+    <namespace id="0xF" startIndex="0x1FFE" />
+  </stringIDs>
 </stringDefinitions>

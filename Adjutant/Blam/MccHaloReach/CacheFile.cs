@@ -300,7 +300,9 @@ namespace Adjutant.Blam.MccHaloReach
                     translator = new StringIdTranslator(xml, "U1");
                     break;
                 default:
-                    translator = new StringIdTranslator(xml, "U2");
+                    if (DateTime.Parse(cache.BuildString) < DateTime.Parse("Mar  4 2021 13:14:28"))
+                        translator = new StringIdTranslator(xml, "U2");
+                    else translator = new StringIdTranslator(xml, "U6");
                     break;
             }
         }

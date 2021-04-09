@@ -298,8 +298,12 @@ namespace Adjutant.Blam.MccHalo4
             var xml = Adjutant.Properties.Resources.MccHalo4Strings;
             switch (cache.BuildString)
             {
-                default:
+                case "Oct 12 2020 08:13:40":
+                case "Oct 26 2020 11:43:08":
                     translator = new StringIdTranslator(xml, "U0");
+                    break;
+                default:
+                    translator = new StringIdTranslator(xml, "U1");
                     break;
             }
         }

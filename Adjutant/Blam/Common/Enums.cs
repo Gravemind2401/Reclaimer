@@ -89,6 +89,8 @@ namespace Adjutant.Blam.Common
         [CacheGeneration(3)]
         [BuildString("Oct  7 2020 03:55:07")] //flight 3 (mainmenu)
         [BuildString("Feb 19 2021 11:19:43")] //flight 3
+        [BuildString("Mar  5 2021 08:45:13")] //flight 4
+        [BuildString("Mar 14 2021 03:19:55")] //update 4
         MccHalo3U4,
 
         [CacheGeneration(3)]
@@ -101,6 +103,7 @@ namespace Adjutant.Blam.Common
         [BuildString("Aug 24 2020 08:37:26")] //flight 1 update 2
         [BuildString("Aug 28 2020 08:43:36")] //release
         [BuildString("Sep 29 2020 10:59:04")] //update 1
+        [BuildString("Dec  4 2020 18:24:06")] //update 2
         MccHalo3ODST,
 
         [CacheGeneration(3)]
@@ -123,6 +126,7 @@ namespace Adjutant.Blam.Common
         [BuildString("Jun  5 2020 10:40:14")] //update 3
         [BuildString("Oct 15 2020 18:23:50")] //update 4
         [BuildString("Nov 24 2020 18:32:37")] //update 5
+        [BuildString("Mar  4 2021 13:14:28")] //update 6
         MccHaloReachU3,
 
         [CacheGeneration(4)]
@@ -151,6 +155,7 @@ namespace Adjutant.Blam.Common
         [CacheGeneration(4)]
         [BuildString("Oct 12 2020 08:13:40")] //flight
         [BuildString("Oct 26 2020 11:43:08")] //release
+        [BuildString("Mar 20 2021 04:23:02")] //update 1
         MccHalo4,
 
         [CacheGeneration(4)]
@@ -159,7 +164,8 @@ namespace Adjutant.Blam.Common
         [BuildString("May 10 2020 21:14:00")] //update 1
         [BuildString("May 12 2020 12:18:21")] //update 2
         [BuildString("Jul 25 2020 22:24:58")] //update 3
-        [BuildString("Sep 30 2020 20:30:41")] //update 3
+        [BuildString("Sep 30 2020 20:30:41")] //update 4
+        [BuildString("Dec 25 2020 16:05:40")] //update 5
         MccHalo2X,
     }
 
