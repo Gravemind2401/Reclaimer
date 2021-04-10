@@ -24,7 +24,7 @@ namespace Adjutant.Blam.Halo2Beta
         }
 
         [Offset(52)]
-        public BlockCollection<BoundingBoxBlock> BoundingBoxes { get; set; }
+        public BlockCollection<Halo2.BoundingBoxBlock> BoundingBoxes { get; set; }
 
         [Offset(64)]
         public BlockCollection<RegionBlock> Regions { get; set; }
@@ -39,7 +39,7 @@ namespace Adjutant.Blam.Halo2Beta
         public BlockCollection<MarkerGroupBlock> MarkerGroups { get; set; }
 
         [Offset(160)]
-        public BlockCollection<ShaderBlock> Shaders { get; set; }
+        public BlockCollection<Halo2.ShaderBlock> Shaders { get; set; }
     }
 
     public struct MeshResourceDetailsBlock
@@ -49,52 +49,6 @@ namespace Adjutant.Blam.Halo2Beta
 
         [Offset(168)]
         public ushort NodeMapCount { get; set; }
-    }
-
-    [FixedSize(72)]
-    public struct SubmeshDataBlock
-    {
-        [Offset(4)]
-        public short ShaderIndex { get; set; }
-
-        [Offset(6)]
-        public ushort IndexStart { get; set; }
-
-        [Offset(8)]
-        public ushort IndexLength { get; set; }
-    }
-
-    [FixedSize(56)]
-    public class BoundingBoxBlock : IRealBounds5D
-    {
-        [Offset(0)]
-        public RealBounds XBounds { get; set; }
-
-        [Offset(8)]
-        public RealBounds YBounds { get; set; }
-
-        [Offset(16)]
-        public RealBounds ZBounds { get; set; }
-
-        [Offset(24)]
-        public RealBounds UBounds { get; set; }
-
-        [Offset(32)]
-        public RealBounds VBounds { get; set; }
-
-        #region IRealBounds5D
-
-        IRealBounds IRealBounds5D.XBounds => XBounds;
-
-        IRealBounds IRealBounds5D.YBounds => YBounds;
-
-        IRealBounds IRealBounds5D.ZBounds => ZBounds;
-
-        IRealBounds IRealBounds5D.UBounds => UBounds;
-
-        IRealBounds IRealBounds5D.VBounds => VBounds;
-
-        #endregion
     }
 
     [FixedSize(48)]
@@ -140,19 +94,11 @@ namespace Adjutant.Blam.Halo2Beta
         public override string ToString() => Name;
     }
 
-    public enum GeometryClassification : short
-    {
-        Worldspace = 0,
-        Rigid = 1,
-        RigidBoned = 2,
-        Skinned = 3
-    }
-
     [FixedSize(104)]
     public class SectionBlock
     {
         [Offset(0)]
-        public GeometryClassification GeometryClassification { get; set; }
+        public Halo2.GeometryClassification GeometryClassification { get; set; }
 
         [Offset(4)]
         public ushort VertexCount { get; set; }
@@ -236,7 +182,7 @@ namespace Adjutant.Blam.Halo2Beta
         public string Name { get; set; }
 
         [Offset(32)]
-        public BlockCollection<MarkerBlock> Markers { get; set; }
+        public BlockCollection<Halo2.MarkerBlock> Markers { get; set; }
 
         public override string ToString() => Name;
 
@@ -247,46 +193,5 @@ namespace Adjutant.Blam.Halo2Beta
         IReadOnlyList<IGeometryMarker> IGeometryMarkerGroup.Markers => Markers;
 
         #endregion
-    }
-
-    [FixedSize(36)]
-    public class MarkerBlock : IGeometryMarker
-    {
-        [Offset(0)]
-        public byte RegionIndex { get; set; }
-
-        [Offset(1)]
-        public byte PermutationIndex { get; set; }
-
-        [Offset(2)]
-        public byte NodeIndex { get; set; }
-
-        [Offset(4)]
-        public RealVector3D Position { get; set; }
-
-        [Offset(16)]
-        public RealVector4D Rotation { get; set; }
-
-        [Offset(32)]
-        public float Scale { get; set; }
-
-        public override string ToString() => Position.ToString();
-
-        #region IGeometryMarker
-
-        IRealVector3D IGeometryMarker.Position => Position;
-
-        IRealVector4D IGeometryMarker.Rotation => Rotation;
-
-        #endregion
-    }
-
-    [FixedSize(36)]
-    public class ShaderBlock
-    {
-        [Offset(4)]
-        public TagReference ShaderReference { get; set; }
-
-        public override string ToString() => ShaderReference.Tag?.FullPath;
     }
 }

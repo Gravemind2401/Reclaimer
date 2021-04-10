@@ -44,6 +44,8 @@ namespace Adjutant.Blam.Common
 
             if (cache.CacheType.GetCacheGeneration() != 2)
                 reader.Seek(8, SeekOrigin.Current);
+            else if (cache.CacheType == CacheType.Halo2Beta)
+                reader.Seek(8, SeekOrigin.Current);
 
             tagId = reader.ReadInt32();
         }

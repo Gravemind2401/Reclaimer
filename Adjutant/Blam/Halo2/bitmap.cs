@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Dds;
-using System.IO;
 using System.IO.Endian;
 using System.Linq;
 using System.Text;
@@ -25,9 +24,11 @@ namespace Adjutant.Blam.Halo2
         }
 
         [Offset(60)]
+        [MinVersion((int)CacheType.Halo2Xbox)] //ignore h2b
         public BlockCollection<SequenceBlock> Sequences { get; set; }
 
-        [Offset(68)]
+        [Offset(96, MaxVersion = (int)CacheType.Halo2Xbox)]
+        [Offset(68, MinVersion = (int)CacheType.Halo2Xbox)]
         public BlockCollection<BitmapDataBlock> Bitmaps { get; set; }
 
         #region IBitmap

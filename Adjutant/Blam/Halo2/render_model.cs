@@ -461,10 +461,12 @@ namespace Adjutant.Blam.Halo2
         #endregion
     }
 
-    [FixedSize(32)]
+    [FixedSize(52, MaxVersion = (int)CacheType.Halo2Xbox)]
+    [FixedSize(32, MinVersion = (int)CacheType.Halo2Xbox)]
     public class ShaderBlock
     {
-        [Offset(8)]
+        [Offset(16, MaxVersion = (int)CacheType.Halo2Xbox)]
+        [Offset(8, MinVersion = (int)CacheType.Halo2Xbox)]
         public TagReference ShaderReference { get; set; }
 
         public override string ToString() => ShaderReference.Tag?.FullPath;

@@ -10,23 +10,28 @@ namespace Adjutant.Blam.Halo2
 {
     public class shader
     {
-        [Offset(12)]
+        [Offset(20, MaxVersion = (int)CacheType.Halo2Xbox)]
+        [Offset(12, MinVersion = (int)CacheType.Halo2Xbox)]
         public BlockCollection<ShaderMapBlock> ShaderMaps { get; set; }
 
-        [Offset(32)]
+        [MinVersion((int)CacheType.Halo2Xbox)] // for h2b just assume tiling is always 1
+        [Offset(32, MinVersion = (int)CacheType.Halo2Xbox)]
         public BlockCollection<ShaderPropertiesBlock> ShaderProperties { get; set; }
     }
 
-    [FixedSize(80)]
+    [FixedSize(108, MaxVersion = (int)CacheType.Halo2Xbox)]
+    [FixedSize(80, MinVersion = (int)CacheType.Halo2Xbox)]
     public class ShaderMapBlock
     {
         [Offset(0)]
         public TagReference DiffuseBitmapReference { get; set; }
 
-        [Offset(8)]
+        [Offset(16, MaxVersion = (int)CacheType.Halo2Xbox)]
+        [Offset(8, MinVersion = (int)CacheType.Halo2Xbox)]
         public TagReference IllumBitmapReference { get; set; }
 
-        [Offset(54)]
+        [Offset(76, MaxVersion = (int)CacheType.Halo2Xbox)]
+        [Offset(54, MinVersion = (int)CacheType.Halo2Xbox)]
         public TagReference BitmapReference2 { get; set; }
 
         public IEnumerable<TagReference> EnumerateBitmapReferences()
