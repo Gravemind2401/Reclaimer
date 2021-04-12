@@ -67,9 +67,8 @@ namespace Adjutant.Blam.Halo4
                     continue;
                 }
 
-                var tile = map.TilingIndex == byte.MaxValue
-                    ? (RealVector4D?)null
-                    : shader.ShaderProperties[0].TilingData[map.TilingIndex];
+                //maybe map.TilingIndex has the wrong offset? can sometimes be out of bounds (other than 0xFF)
+                var tile = shader.ShaderProperties[0].TilingData.Cast<RealVector4D?>().ElementAtOrDefault(map.TilingIndex);
 
                 try
                 {
