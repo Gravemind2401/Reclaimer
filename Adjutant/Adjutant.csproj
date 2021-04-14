@@ -81,7 +81,7 @@
     <Compile Include="Blam\Common\Gen3\SectionTable.cs" />
     <Compile Include="Blam\Common\Gen3\TagAddressTranslator.cs" />
     <Compile Include="Blam\Common\TagBlock.cs" />
-    <Compile Include="Blam\Common\CacheDetail.cs" />
+    <Compile Include="Blam\Common\CacheArgs.cs" />
     <Compile Include="Blam\Common\CacheFactory.cs" />
     <Compile Include="Blam\Common\Enums.cs" />
     <Compile Include="Blam\Common\Extensions.cs" />
