@@ -14,7 +14,8 @@ namespace Adjutant.Blam.Halo2
         [Offset(12, MinVersion = (int)CacheType.Halo2Xbox)]
         public BlockCollection<ShaderMapBlock> ShaderMaps { get; set; }
 
-        [MinVersion((int)CacheType.Halo2Xbox)] // for h2b just assume tiling is always 1
+        //[Offset(36, MaxVersion = (int)CacheType.Halo2Xbox)] //maybe come back to this
+        [MinVersion((int)CacheType.Halo2Xbox)]
         [Offset(32, MinVersion = (int)CacheType.Halo2Xbox)]
         public BlockCollection<ShaderPropertiesBlock> ShaderProperties { get; set; }
     }
