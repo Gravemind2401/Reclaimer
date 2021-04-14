@@ -87,52 +87,52 @@ namespace Adjutant.Blam.Common
             if (!File.Exists(fileName))
                 throw Exceptions.FileNotFound(fileName);
 
-            var detail = CacheDetail.FromFile(fileName);
-            switch (detail.CacheType)
+            var args = CacheArgs.FromFile(fileName);
+            switch (args.CacheType)
             {
                 case CacheType.Halo1Xbox:
                 case CacheType.Halo1PC:
                 case CacheType.Halo1CE:
                 case CacheType.Halo1AE:
-                    return new Halo1.CacheFile(detail);
+                    return new Halo1.CacheFile(args);
 
                 case CacheType.Halo2Beta:
-                    return new Halo2Beta.CacheFile(detail);
+                    return new Halo2Beta.CacheFile(args);
 
                 case CacheType.Halo2Xbox:
                 case CacheType.Halo2Vista:
-                    return new Halo2.CacheFile(detail);
+                    return new Halo2.CacheFile(args);
 
                 case CacheType.Halo3Alpha:
-                    return new Halo3Alpha.CacheFile(detail);
+                    return new Halo3Alpha.CacheFile(args);
 
                 case CacheType.Halo3Beta:
                 case CacheType.Halo3Retail:
                 case CacheType.Halo3ODST:
-                    return new Halo3.CacheFile(detail);
+                    return new Halo3.CacheFile(args);
 
                 case CacheType.MccHalo3:
                 case CacheType.MccHalo3U4:
                 case CacheType.MccHalo3ODST:
-                    return new MccHalo3.CacheFile(detail);
+                    return new MccHalo3.CacheFile(args);
 
                 case CacheType.HaloReachBeta:
                 case CacheType.HaloReachRetail:
-                    return new HaloReach.CacheFile(detail);
+                    return new HaloReach.CacheFile(args);
 
                 case CacheType.MccHaloReach:
                 case CacheType.MccHaloReachU3:
-                    return new MccHaloReach.CacheFile(detail);
+                    return new MccHaloReach.CacheFile(args);
 
                 case CacheType.Halo4Beta:
                 case CacheType.Halo4Retail:
-                    return new Halo4.CacheFile(detail);
+                    return new Halo4.CacheFile(args);
 
                 case CacheType.MccHalo4:
-                    return new MccHalo4.CacheFile(detail);
+                    return new MccHalo4.CacheFile(args);
 
                 case CacheType.MccHalo2X:
-                    return new MccHalo2X.CacheFile(detail);
+                    return new MccHalo2X.CacheFile(args);
 
                 default: throw Exceptions.NotAValidMapFile(fileName);
             }

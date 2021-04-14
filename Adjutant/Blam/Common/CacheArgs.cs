@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Common
 {
-    internal struct CacheDetail
+    internal struct CacheArgs
     {
         //when read using little endian
         internal const int LittleHeader = 0x68656164;
@@ -20,7 +20,7 @@ namespace Adjutant.Blam.Common
         public CacheType CacheType { get; }
         public string BuildString { get; }
 
-        private CacheDetail(string fileName, ByteOrder byteOrder, string buildString, CacheType cacheType)
+        private CacheArgs(string fileName, ByteOrder byteOrder, string buildString, CacheType cacheType)
         {
             FileName = fileName;
             ByteOrder = byteOrder;
@@ -28,7 +28,7 @@ namespace Adjutant.Blam.Common
             BuildString = buildString;
         }
 
-        public static CacheDetail FromFile(string fileName)
+        public static CacheArgs FromFile(string fileName)
         {
             if (fileName == null)
                 throw new ArgumentNullException(nameof(fileName));
@@ -83,7 +83,7 @@ namespace Adjutant.Blam.Common
                         break;
                 }
 
-                return new CacheDetail(fileName, reader.ByteOrder, buildString, cacheType);
+                return new CacheArgs(fileName, reader.ByteOrder, buildString, cacheType);
             }
         }
     }

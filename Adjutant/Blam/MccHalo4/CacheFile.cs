@@ -29,17 +29,17 @@ namespace Adjutant.Blam.MccHalo4
 
         public PointerExpander PointerExpander { get; }
 
-        public CacheFile(string fileName) : this(CacheDetail.FromFile(fileName)) { }
+        public CacheFile(string fileName) : this(CacheArgs.FromFile(fileName)) { }
 
-        internal CacheFile(CacheDetail detail)
+        internal CacheFile(CacheArgs args)
         {
-            if (!File.Exists(detail.FileName))
-                throw Exceptions.FileNotFound(detail.FileName);
+            if (!File.Exists(args.FileName))
+                throw Exceptions.FileNotFound(args.FileName);
 
-            FileName = detail.FileName;
-            ByteOrder = detail.ByteOrder;
-            BuildString = detail.BuildString;
-            CacheType = detail.CacheType;
+            FileName = args.FileName;
+            ByteOrder = args.ByteOrder;
+            BuildString = args.BuildString;
+            CacheType = args.CacheType;
 
             HeaderTranslator = new SectionAddressTranslator(this, 0);
             MetadataTranslator = new TagAddressTranslator(this);
