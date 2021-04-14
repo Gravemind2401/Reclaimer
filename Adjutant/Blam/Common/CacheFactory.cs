@@ -134,7 +134,7 @@ namespace Adjutant.Blam.Common
                 case CacheType.MccHalo2X:
                     return new MccHalo2X.CacheFile(args);
 
-                default: throw Exceptions.NotAValidMapFile(fileName);
+                default: throw Exceptions.UnknownMapFile(fileName);
             }
         }
 
