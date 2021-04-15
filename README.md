@@ -7,6 +7,7 @@ For original research on the Blam! engine and answering many a question along th
 - AMD
 - Darvolt
 - [Assembly](https://github.com/XboxChaos/Assembly "Assembly") Contributors
+- [troymac1ure](https://github.com/troymac1ure/Entity "troymac1ure")
 - [Ausar Docs](https://github.com/ElDewrito/AusarDocs "Ausar Docs")
 - And a whole bunch of other people we didn't have room to 7hank
 
