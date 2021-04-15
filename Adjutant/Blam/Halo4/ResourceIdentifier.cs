@@ -94,96 +94,11 @@ namespace Adjutant.Blam.Halo4
                 reader.Seek(cache.CacheType >= CacheType.MccHalo4 ? 1216 : 1152, SeekOrigin.Begin);
                 var dataTableAddress = reader.ReadUInt32();
                 reader.Seek(dataTableAddress + page.DataOffset, SeekOrigin.Begin);
-
-                var segmentLength = Math.Min(maxLength, page.DecompressedSize - segmentOffset);
-                if (page.CompressedSize == page.DecompressedSize)
-                {
-                    reader.Seek(segmentOffset, SeekOrigin.Current);
-                    return reader.ReadBytes(segmentLength);
-                }
-
-                if (cache.CacheType <= CacheType.Halo4Beta)
-                {
-                    using (var ds = new DeflateStream(fs, CompressionMode.Decompress))
-                    using (var reader2 = new BinaryReader(ds))
-                    {
-                        reader2.ReadBytes(segmentOffset);
-                        return reader2.ReadBytes(segmentLength);
-                    }
-                }
-                else if (cache.CacheType > CacheType.Halo4Retail) //experimental
-                {
-                    using (var ms = new MemoryStream())
-                    using (var mw = new BinaryWriter(ms))
-                    using (var ds = new DeflateStream(fs, CompressionMode.Decompress))
-                    using (var reader2 = new BinaryReader(ds))
-                    {
-                        for (int i = 0; i < segmentLength;)
-                        {
-                            bool flag;
-                            var blockSize = ReadSpecialInt(reader2, out flag);
-                            if (flag) reader2.ReadBytes(2);
-                            mw.Write(reader2.ReadBytes(blockSize));
-                            i += blockSize;
-                        }
-
-                        return ms.ToArray();
-                    }
-                }
-                else
-                {
-                    var compressed = reader.ReadBytes(page.CompressedSize);
-                    var decompressed = new byte[page.DecompressedSize];
-
-                    int startSize = page.CompressedSize;
-                    int endSize = page.DecompressedSize;
-                    int decompressionContext = 0;
-                    XCompress.XMemCreateDecompressionContext(XCompress.XMemCodecType.LZX, 0, 0, ref decompressionContext);
-                    XCompress.XMemResetDecompressionContext(decompressionContext);
-                    XCompress.XMemDecompressStream(decompressionContext, decompressed, ref endSize, compressed, ref startSize);
-                    XCompress.XMemDestroyDecompressionContext(decompressionContext);
-
-                    if (decompressed.Length == segmentLength)
-                        return decompressed;
-
-                    var result = new byte[segmentLength];
-                    Array.Copy(decompressed, segmentOffset, result, 0, result.Length);
-                    return result;
-                }
+                return ContentFactory.GetResourceData(reader, cache.Metadata.ResourceCodec, maxLength, segmentOffset, page.CompressedSize, page.DecompressedSize);
             }
         }
 
         public override string ToString() => Value.ToString(CultureInfo.CurrentCulture);
-
-        private static int ReadSpecialInt(BinaryReader reader, out bool flag) //basically a variant of 7bit encoded int
-        {
-            flag = false;
-            var isFirst = true;
-
-            var result = 0;
-            var shift = 0;
-
-            byte b;
-            do
-            {
-                var bits = isFirst ? 6 : 7;
-
-                var mask = (1 << bits) - 1;
-
-                b = reader.ReadByte();
-                result |= (b & mask) << shift;
-                shift += bits;
-
-                if (isFirst)
-                {
-                    flag = (b & 0x40) != 0;
-                    isFirst = false;
-                }
-
-            } while ((b & 0x80) != 0);
-
-            return result;
-        }
 
         #region Equality Operators
 

@@ -59,7 +59,7 @@ namespace Adjutant.Blam.Halo3
                 throw new ArgumentOutOfRangeException(nameof(maxLength));
 
             if (cache.CacheType <= CacheType.Halo3Beta)
-                return ReadDataHalo3Beta(mode);
+                return ReadDataHalo3Beta(mode, maxLength);
 
             var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
             var resourceLayoutTable = cache.TagIndex.GetGlobalTag("play").ReadMetadata<cache_file_resource_layout_table>();
@@ -117,26 +117,11 @@ namespace Adjutant.Blam.Halo3
                 }
 
                 reader.Seek(dataTableAddress + page.DataOffset, SeekOrigin.Begin);
-
-                var segmentLength = Math.Min(maxLength, page.DecompressedSize - segmentOffset);
-                if (page.CompressedSize < page.DecompressedSize)
-                {
-                    using (var ds = new DeflateStream(fs, CompressionMode.Decompress))
-                    using (var reader2 = new BinaryReader(ds))
-                    {
-                        reader2.ReadBytes(segmentOffset);
-                        return reader2.ReadBytes(segmentLength);
-                    }
-                }
-                else
-                {
-                    reader.Seek(segmentOffset, SeekOrigin.Current);
-                    return reader.ReadBytes(segmentLength);
-                }
+                return ContentFactory.GetResourceData(reader, cache.Metadata.ResourceCodec, maxLength, segmentOffset, page.CompressedSize, page.DecompressedSize);
             }
         }
 
-        private byte[] ReadDataHalo3Beta(PageType mode)
+        private byte[] ReadDataHalo3Beta(PageType mode, int maxLength)
         {
             var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
             var directory = Directory.GetParent(cache.FileName).FullName;
@@ -153,7 +138,7 @@ namespace Adjutant.Blam.Halo3
             using (var reader = new EndianReader(fs))
             {
                 reader.Seek(address, SeekOrigin.Begin);
-                return reader.ReadBytes(size);
+                return ContentFactory.GetResourceData(reader, cache.Metadata.ResourceCodec, maxLength, 0, size, size);
             }
         }
 

@@ -1,6 +1,9 @@
 ﻿using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.IO.Endian;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -271,5 +274,95 @@ namespace Adjutant.Blam.Common
         }
 
         #endregion
+
+        //the reader must currently be at the start of the encoded block. the first [segmentOffset] bytes of the block will be discarded.
+        internal static byte[] GetResourceData(EndianReader reader, CacheResourceCodec codec, int maxLength, int segmentOffset, int compressedSize, int decompressedSize)
+        {
+            var segmentLength = Math.Min(maxLength, decompressedSize - segmentOffset);
+            if (codec == CacheResourceCodec.Uncompressed || compressedSize == decompressedSize)
+            {
+                reader.Seek(segmentOffset, SeekOrigin.Current);
+                return reader.ReadBytes(segmentLength);
+            }
+            else if (codec == CacheResourceCodec.Deflate)
+            {
+                using (var ds = new DeflateStream(reader.BaseStream, CompressionMode.Decompress))
+                using (var reader2 = new BinaryReader(ds))
+                {
+                    reader2.ReadBytes(segmentOffset);
+                    return reader2.ReadBytes(segmentLength);
+                }
+            }
+            else if (codec == CacheResourceCodec.LZX)
+            {
+                var compressed = reader.ReadBytes(compressedSize);
+                var decompressed = new byte[decompressedSize];
+
+                int startSize = compressedSize;
+                int endSize = decompressedSize;
+                int decompressionContext = 0;
+                XCompress.XMemCreateDecompressionContext(XCompress.XMemCodecType.LZX, 0, 0, ref decompressionContext);
+                XCompress.XMemResetDecompressionContext(decompressionContext);
+                XCompress.XMemDecompressStream(decompressionContext, decompressed, ref endSize, compressed, ref startSize);
+                XCompress.XMemDestroyDecompressionContext(decompressionContext);
+
+                if (decompressed.Length == segmentLength)
+                    return decompressed;
+
+                var result = new byte[segmentLength];
+                Array.Copy(decompressed, segmentOffset, result, 0, result.Length);
+                return result;
+            }
+            else if (codec == CacheResourceCodec.UnknownDeflate) //experimental
+            {
+                using (var ms = new MemoryStream())
+                using (var mw = new BinaryWriter(ms))
+                using (var ds = new DeflateStream(reader.BaseStream, CompressionMode.Decompress))
+                using (var reader2 = new BinaryReader(ds))
+                {
+                    for (int i = 0; i < segmentLength;)
+                    {
+                        bool flag;
+                        var blockSize = ReadSpecialInt(reader2, out flag);
+                        if (flag) reader2.ReadBytes(2);
+                        mw.Write(reader2.ReadBytes(blockSize));
+                        i += blockSize;
+                    }
+
+                    return ms.ToArray();
+                }
+            }
+            else
+                throw new NotSupportedException("Unknown Resource Codec");
+        }
+
+        private static int ReadSpecialInt(BinaryReader reader, out bool flag) //basically a variant of 7bit encoded int
+        {
+            flag = false;
+            var isFirst = true;
+
+            var result = 0;
+            var shift = 0;
+
+            byte b;
+            do
+            {
+                var bits = isFirst ? 6 : 7;
+                var mask = (1 << bits) - 1;
+
+                b = reader.ReadByte();
+                result |= (b & mask) << shift;
+                shift += bits;
+
+                if (isFirst)
+                {
+                    flag = (b & 0x40) != 0;
+                    isFirst = false;
+                }
+
+            } while ((b & 0x80) != 0);
+
+            return result;
+        }
     }
 }

@@ -104,22 +104,7 @@ namespace Adjutant.Blam.HaloReach
 
                 var dataTableAddress = reader.ReadUInt32();
                 reader.Seek(dataTableAddress + page.DataOffset, SeekOrigin.Begin);
-
-                var segmentLength = Math.Min(maxLength, page.DecompressedSize - segmentOffset);
-                if (page.CompressedSize < page.DecompressedSize)
-                {
-                    using (var ds = new DeflateStream(fs, CompressionMode.Decompress))
-                    using (var reader2 = new BinaryReader(ds))
-                    {
-                        reader2.ReadBytes(segmentOffset);
-                        return reader2.ReadBytes(segmentLength);
-                    }
-                }
-                else
-                {
-                    reader.Seek(segmentOffset, SeekOrigin.Current);
-                    return reader.ReadBytes(segmentLength);
-                }
+                return ContentFactory.GetResourceData(reader, cache.Metadata.ResourceCodec, maxLength, segmentOffset, page.CompressedSize, page.DecompressedSize);
             }
         }
 

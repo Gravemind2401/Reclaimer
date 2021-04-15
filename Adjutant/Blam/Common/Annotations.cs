@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Common
 {
+    using static CacheMetadataFlags;
+    using static CacheResourceCodec;
+
     [AttributeUsage(AttributeTargets.Field)]
     internal sealed class CacheMetadataAttribute : Attribute
     {
@@ -15,15 +18,15 @@ namespace Adjutant.Blam.Common
         public CacheMetadataFlags Flags { get; }
 
         public CacheMetadataAttribute(CacheGeneration generation, CachePlatform platform)
-            : this(generation, platform, CacheResourceCodec.Deflate, CacheMetadataFlags.None)
+            : this(generation, platform, generation < CacheGeneration.Gen3 ? Uncompressed : Deflate, None)
         { }
 
         public CacheMetadataAttribute(CacheGeneration generation, CachePlatform platform, CacheMetadataFlags flags)
-            : this(generation, platform, CacheResourceCodec.Deflate, flags)
+            : this(generation, platform, generation < CacheGeneration.Gen3 ? Uncompressed : Deflate, flags)
         { }
 
         public CacheMetadataAttribute(CacheGeneration generation, CachePlatform platform, CacheResourceCodec codec)
-             : this(generation, platform, codec, CacheMetadataFlags.None)
+             : this(generation, platform, codec, None)
         { }
 
         public CacheMetadataAttribute(CacheGeneration generation, CachePlatform platform, CacheResourceCodec codec, CacheMetadataFlags flags)

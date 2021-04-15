@@ -49,7 +49,8 @@ namespace Adjutant.Blam.Common
     public enum CacheResourceCodec
     {
         Unknown = -1,
-        Deflate,
+        Uncompressed, //default for Gen1/2
+        Deflate, //default for Gen3+
         LZX,
         UnknownDeflate
     }
@@ -98,12 +99,12 @@ namespace Adjutant.Blam.Common
         [BuildString("11081.07.04.30.0934.main")]
         Halo2Vista,
 
-        [CacheMetadata(CacheGeneration.Gen3, Xbox360, PreBeta)]
+        [CacheMetadata(CacheGeneration.Gen3, Xbox360, Uncompressed, PreBeta)]
         [BuildString("08117.07.03.07.1702.delta", "alpha_0307")]
         [BuildString("08172.07.03.08.2240.delta", "alpha_0308")]
         Halo3Alpha,
 
-        [CacheMetadata(CacheGeneration.Gen3, Xbox360, Beta)]
+        [CacheMetadata(CacheGeneration.Gen3, Xbox360, Uncompressed, Beta)]
         [BuildString("Mar  9 2007 22:22:32", "alpha_0308", PreBeta)] //not really beta but matches for the tags we need
         //[BuildString("Mar 10 2007 16:16:44", "alpha_0308", PreBeta)] //no tag names
         [BuildString("09699.07.05.01.1534.delta", "beta")]
