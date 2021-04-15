@@ -1,5 +1,6 @@
 ﻿using Adjutant.Blam.Common;
 using Adjutant.Geometry;
+using Adjutant.Properties;
 using Adjutant.Spatial;
 using Adjutant.Utilities;
 using System;
@@ -109,7 +110,7 @@ namespace Adjutant.Blam.Halo5
                 using (var reader = blockReader.CreateVirtualReader(header.GetSectionOffset(2)))
                 {
                     var doc = new XmlDocument();
-                    doc.LoadXml(Adjutant.Properties.Resources.Halo5VertexBuffer);
+                    doc.LoadXml(Resources.Halo5VertexBuffer);
 
                     var lookup = doc.DocumentElement.ChildNodes.Cast<XmlNode>()
                         .ToDictionary(n => Convert.ToInt32(n.Attributes[XmlVertexField.Type].Value, 16));

@@ -37,8 +37,6 @@ namespace Adjutant.Blam.Halo3
 
         #region IBitmap
 
-        private bool isMcc => cache.CacheType == CacheType.MccHalo3 || cache.CacheType == CacheType.MccHalo3U4 || cache.CacheType == CacheType.MccHalo3ODST;
-
         string IBitmap.SourceFile => item.CacheFile.FileName;
 
         int IBitmap.Id => item.Id;
@@ -49,7 +47,7 @@ namespace Adjutant.Blam.Halo3
 
         int IBitmap.SubmapCount => Bitmaps.Count;
 
-        CubemapLayout IBitmap.CubeLayout => isMcc ? CacheFactory.MccGen3CubeLayout : CacheFactory.Gen3CubeLayout;
+        CubemapLayout IBitmap.CubeLayout => cache.Metadata.IsMcc ? CacheFactory.MccGen3CubeLayout : CacheFactory.Gen3CubeLayout;
 
         public DdsImage ToDds(int index)
         {
@@ -63,7 +61,7 @@ namespace Adjutant.Blam.Halo3
                 : Resources[index].ResourcePointer;
 
             int virtualWidth, virtualHeight;
-            if (isMcc)
+            if (cache.Metadata.IsMcc)
             {
                 virtualWidth = submap.Width;
                 virtualHeight = submap.Height * submap.FaceCount;
@@ -86,7 +84,7 @@ namespace Adjutant.Blam.Halo3
             if (virtualWidth > submap.Width || virtualHeight > submap.Height)
                 data = TextureUtils.ApplyCrop(data, submap.BitmapFormat, submap.FaceCount, virtualWidth, virtualHeight, submap.Width, submap.Height * submap.FaceCount);
 
-            return TextureUtils.GetDds(submap.Height, submap.Width, submap.BitmapFormat, submap.BitmapType == TextureType.CubeMap, data, isMcc);
+            return TextureUtils.GetDds(submap.Height, submap.Width, submap.BitmapFormat, submap.BitmapType == TextureType.CubeMap, data, cache.Metadata.IsMcc);
         }
 
         #endregion

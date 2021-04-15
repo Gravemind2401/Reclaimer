@@ -1,5 +1,6 @@
 ﻿using Adjutant.Blam.Common;
 using Adjutant.Blam.Common.Gen3;
+using Adjutant.Properties;
 using Adjutant.Utilities;
 using System;
 using System.Collections;
@@ -249,13 +250,7 @@ namespace Adjutant.Blam.Halo3Alpha
 
             this.cache = cache;
             items = new string[cache.Header.StringCount];
-
-            var xml = Adjutant.Properties.Resources.Halo3Strings;
-            var code = cache.BuildString == "08117.07.03.07.1702.delta"
-                ? "alpha_0307"
-                : "alpha_0308";
-
-            translator = new StringIdTranslator(xml, code);
+            translator = new StringIdTranslator(Resources.Halo3Strings, cache.Metadata.StringIds);
         }
 
         internal void ReadItems()

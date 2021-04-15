@@ -1,5 +1,6 @@
 ﻿using Adjutant.Blam.Common;
 using Adjutant.Blam.Common.Gen3;
+using Adjutant.Properties;
 using Adjutant.Utilities;
 using System;
 using System.Collections;
@@ -326,19 +327,7 @@ namespace Adjutant.Blam.Halo3
 
             this.cache = cache;
             items = new string[cache.Header.StringCount];
-
-            var xml = Adjutant.Properties.Resources.Halo3Strings;
-            if (cache.CacheType == CacheType.Halo3Beta)
-            {
-                if (cache.BuildString == "09699.07.05.01.1534.delta")
-                    translator = new StringIdTranslator(xml, "beta");
-                else
-                    translator = new StringIdTranslator(xml, "alpha_0308");
-            }
-            else if (cache.CacheType == CacheType.Halo3Retail)
-                translator = new StringIdTranslator(xml, "retail");
-            else
-                translator = new StringIdTranslator(xml, "odst");
+            translator = new StringIdTranslator(Resources.Halo3Strings, cache.Metadata.StringIds);
         }
 
         internal void ReadItems()

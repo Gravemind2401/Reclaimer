@@ -1,5 +1,6 @@
 ﻿using Adjutant.Blam.Common;
 using Adjutant.Blam.Common.Gen3;
+using Adjutant.Properties;
 using Adjutant.Utilities;
 using System;
 using System.Collections;
@@ -311,13 +312,7 @@ namespace Adjutant.Blam.HaloReach
 
             this.cache = cache;
             items = new string[cache.Header.StringCount];
-
-            var xml = Adjutant.Properties.Resources.HaloReachStrings;
-            if (cache.CacheType == CacheType.HaloReachBeta)
-                translator = new StringIdTranslator(xml, "beta");
-            else
-                translator = new StringIdTranslator(xml, "retail");
-
+            translator = new StringIdTranslator(Resources.HaloReachStrings, cache.Metadata.StringIds);
         }
 
         internal void ReadItems()

@@ -1,5 +1,6 @@
 ﻿using Adjutant.Blam.Common;
 using Adjutant.Blam.Common.Gen3;
+using Adjutant.Properties;
 using Adjutant.Utilities;
 using System;
 using System.Collections;
@@ -290,24 +291,7 @@ namespace Adjutant.Blam.MccHalo3
 
             this.cache = cache;
             items = new string[cache.Header.StringCount];
-
-            var xml = Adjutant.Properties.Resources.MccHalo3Strings;
-            switch (cache.CacheType)
-            {
-                case CacheType.MccHalo3:
-                case CacheType.MccHalo3U4:
-                    if (DateTime.Parse(cache.BuildString) < DateTime.Parse("Aug 26 2020 21:24:11"))
-                        translator = new StringIdTranslator(xml, "U0");
-                    else translator = new StringIdTranslator(xml, "U1");
-                    break;
-
-                case CacheType.MccHalo3ODST:
-                    translator = new StringIdTranslator(xml, "ODST U0");
-                    break;
-
-                default:
-                    throw new NotSupportedException();
-            }
+            translator = new StringIdTranslator(Resources.MccHalo3Strings, cache.Metadata.StringIds);
         }
 
         internal void ReadItems()

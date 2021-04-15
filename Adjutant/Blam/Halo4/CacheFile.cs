@@ -1,5 +1,6 @@
 ﻿using Adjutant.Blam.Common;
 using Adjutant.Blam.Common.Gen3;
+using Adjutant.Properties;
 using Adjutant.Utilities;
 using System;
 using System.Collections;
@@ -313,12 +314,7 @@ namespace Adjutant.Blam.Halo4
 
             this.cache = cache;
             items = new string[cache.Header.StringCount];
-
-            var xml = Adjutant.Properties.Resources.Halo4Strings;
-            if (cache.CacheType == CacheType.Halo4Beta)
-                translator = new StringIdTranslator(xml, "beta");
-            else
-                translator = new StringIdTranslator(xml, "retail");
+            translator = new StringIdTranslator(Resources.Halo4Strings, cache.Metadata.StringIds);
         }
 
         internal void ReadItems()

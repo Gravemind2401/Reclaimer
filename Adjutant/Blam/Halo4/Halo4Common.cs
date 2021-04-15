@@ -1,5 +1,6 @@
 ﻿using Adjutant.Blam.Common;
 using Adjutant.Geometry;
+using Adjutant.Properties;
 using Adjutant.Spatial;
 using Adjutant.Utilities;
 using System;
@@ -121,7 +122,6 @@ namespace Adjutant.Blam.Halo4
             using (var reader = new EndianReader(ms, cache.ByteOrder))
             {
                 var doc = new XmlDocument();
-                doc.LoadXml(Adjutant.Properties.Resources.Halo4VertexBuffer);
 
                 var lookup = doc.DocumentElement.ChildNodes.Cast<XmlNode>()
                     .ToDictionary(n => Convert.ToInt32(n.Attributes[XmlVertexField.Type].Value, 16));

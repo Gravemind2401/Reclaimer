@@ -134,7 +134,7 @@ namespace Adjutant.Blam.Common
         MccHalo3U4,
 
         [CacheMetadata(CacheGeneration.Gen3, Xbox360)]
-        [BuildString("13895.09.04.27.2201.atlas_relea")]
+        [BuildString("13895.09.04.27.2201.atlas_relea", "odst")]
         Halo3ODST,
 
         [CacheMetadata(CacheGeneration.Gen3, PC, Mcc)]

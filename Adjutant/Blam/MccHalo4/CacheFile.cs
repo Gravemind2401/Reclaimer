@@ -1,5 +1,6 @@
 ﻿using Adjutant.Blam.Common;
 using Adjutant.Blam.Common.Gen3;
+using Adjutant.Properties;
 using Adjutant.Utilities;
 using System;
 using System.Collections;
@@ -296,18 +297,7 @@ namespace Adjutant.Blam.MccHalo4
 
             this.cache = cache;
             items = new string[cache.Header.StringCount];
-
-            var xml = Adjutant.Properties.Resources.MccHalo4Strings;
-            switch (cache.BuildString)
-            {
-                case "Oct 12 2020 08:13:40":
-                case "Oct 26 2020 11:43:08":
-                    translator = new StringIdTranslator(xml, "U0");
-                    break;
-                default:
-                    translator = new StringIdTranslator(xml, "U1");
-                    break;
-            }
+            translator = new StringIdTranslator(Resources.MccHalo4Strings, cache.Metadata.StringIds);
         }
 
         internal void ReadItems()
