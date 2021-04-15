@@ -20,6 +20,7 @@ namespace Adjutant.Blam.Halo3Alpha
         public ByteOrder ByteOrder { get; }
         public string BuildString { get; }
         public CacheType CacheType { get; }
+        public CacheMetadata Metadata { get; }
 
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
@@ -39,6 +40,7 @@ namespace Adjutant.Blam.Halo3Alpha
             ByteOrder = args.ByteOrder;
             BuildString = args.BuildString;
             CacheType = args.CacheType;
+            Metadata = args.Metadata;
 
             HeaderTranslator = new AlphaHeaderAddressTranslator(this);
             MetadataTranslator = new AlphaTagAddressTranslator(this);

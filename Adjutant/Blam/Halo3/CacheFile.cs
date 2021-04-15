@@ -18,6 +18,7 @@ namespace Adjutant.Blam.Halo3
         public ByteOrder ByteOrder { get; }
         public string BuildString { get; }
         public CacheType CacheType { get; }
+        public CacheMetadata Metadata { get; }
 
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
@@ -38,6 +39,7 @@ namespace Adjutant.Blam.Halo3
             ByteOrder = args.ByteOrder;
             BuildString = args.BuildString;
             CacheType = args.CacheType;
+            Metadata = args.Metadata;
 
             if (args.CacheType == CacheType.Halo3Beta)
             {

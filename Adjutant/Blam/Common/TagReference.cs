@@ -42,7 +42,7 @@ namespace Adjutant.Blam.Common
 
             classId = reader.ReadInt32();
 
-            if (cache.CacheType.GetCacheGeneration() != 2)
+            if (cache.Metadata.Generation != CacheGeneration.Gen2)
                 reader.Seek(8, SeekOrigin.Current);
             else if (cache.CacheType == CacheType.Halo2Beta)
                 reader.Seek(8, SeekOrigin.Current);
@@ -56,7 +56,12 @@ namespace Adjutant.Blam.Common
         {
             writer.Write(classId);
 
-            if (cache.CacheType.GetCacheGeneration() != 2)
+            if (cache.Metadata.Generation != CacheGeneration.Gen2)
+            {
+                writer.Write(0);
+                writer.Write(0);
+            }
+            else if (cache.CacheType == CacheType.Halo2Beta)
             {
                 writer.Write(0);
                 writer.Write(0);

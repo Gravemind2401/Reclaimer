@@ -88,7 +88,7 @@ namespace Adjutant.Blam.Common
                 throw Exceptions.FileNotFound(fileName);
 
             var args = CacheArgs.FromFile(fileName);
-            switch (args.CacheType)
+            switch (args.Metadata?.CacheType)
             {
                 case CacheType.Halo1Xbox:
                 case CacheType.Halo1PC:
@@ -136,13 +136,6 @@ namespace Adjutant.Blam.Common
 
                 default: throw Exceptions.UnknownMapFile(fileName);
             }
-        }
-
-        public static int GetCacheGeneration(this CacheType cacheType)
-        {
-            var field = typeof(CacheType).GetField(cacheType.ToString());
-            var gen = field.GetCustomAttributes(typeof(CacheMetadataAttribute), false).OfType<CacheMetadataAttribute>().FirstOrDefault()?.Generation;
-            return gen == null ? -1 : (int)gen.Value + 1;
         }
 
         public static int GetHeaderSize(this Gen3.IGen3CacheFile cache)

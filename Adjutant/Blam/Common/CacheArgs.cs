@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Common
 {
-    internal struct CacheArgs
+    internal class CacheArgs
     {
         //when read using little endian
         internal const int LittleHeader = 0x68656164;
@@ -17,15 +17,17 @@ namespace Adjutant.Blam.Common
 
         public string FileName { get; }
         public ByteOrder ByteOrder { get; }
-        public CacheType CacheType { get; }
         public string BuildString { get; }
+        public CacheMetadata Metadata { get; }
 
-        private CacheArgs(string fileName, ByteOrder byteOrder, string buildString, CacheType cacheType)
+        public CacheType CacheType => Metadata?.CacheType ?? CacheType.Unknown;
+
+        private CacheArgs(string fileName, ByteOrder byteOrder, string buildString, CacheMetadata metadata)
         {
             FileName = fileName;
             ByteOrder = byteOrder;
-            CacheType = cacheType;
             BuildString = buildString;
+            Metadata = metadata;
         }
 
         public static CacheArgs FromFile(string fileName)
@@ -66,24 +68,7 @@ namespace Adjutant.Blam.Common
                 var buildString = reader.ReadNullTerminatedString(32);
                 System.Diagnostics.Debug.WriteLine($"Found build string {buildString ?? "\\0"}");
 
-                var cacheType = CacheType.Unknown;
-                foreach (var fi in typeof(CacheType).GetFields().Where(f => f.FieldType == typeof(CacheType)))
-                {
-                    foreach (BuildStringAttribute attr in fi.GetCustomAttributes(typeof(BuildStringAttribute), false))
-                    {
-                        if (attr.BuildString != buildString)
-                            continue;
-
-                        cacheType = (CacheType)fi.GetValue(null);
-                        System.Diagnostics.Debug.WriteLine($"Resolved CacheType {cacheType}");
-                        break;
-                    }
-
-                    if (cacheType != CacheType.Unknown)
-                        break;
-                }
-
-                return new CacheArgs(fileName, reader.ByteOrder, buildString, cacheType);
+                return new CacheArgs(fileName, reader.ByteOrder, buildString, CacheMetadata.FromBuildString(buildString));
             }
         }
     }

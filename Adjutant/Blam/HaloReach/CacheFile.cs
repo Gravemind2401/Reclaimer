@@ -24,6 +24,7 @@ namespace Adjutant.Blam.HaloReach
         public ByteOrder ByteOrder { get; }
         public string BuildString { get; }
         public CacheType CacheType { get; }
+        public CacheMetadata Metadata { get; }
 
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
@@ -44,6 +45,7 @@ namespace Adjutant.Blam.HaloReach
             ByteOrder = args.ByteOrder;
             BuildString = args.BuildString;
             CacheType = args.CacheType;
+            Metadata = args.Metadata;
 
             HeaderTranslator = new SectionAddressTranslator(this, 0);
             MetadataTranslator = new TagAddressTranslator(this);

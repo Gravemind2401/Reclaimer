@@ -19,6 +19,7 @@ namespace Adjutant.Blam.Halo1
         public ByteOrder ByteOrder { get; }
         public string BuildString { get; }
         public CacheType CacheType { get; }
+        public CacheMetadata Metadata { get; }
 
         public CacheHeader Header { get; }
         public TagIndex TagIndex { get; }
@@ -36,6 +37,7 @@ namespace Adjutant.Blam.Halo1
             ByteOrder = args.ByteOrder;
             BuildString = args.BuildString;
             CacheType = args.CacheType;
+            Metadata = args.Metadata;
 
             AddressTranslator = new TagAddressTranslator(this);
 

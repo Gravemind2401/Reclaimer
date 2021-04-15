@@ -21,7 +21,7 @@ namespace Adjutant.Blam.Common.Gen3
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
 
-            if (cache.CacheType.GetCacheGeneration() < 3)
+            if (cache.Metadata.Generation < CacheGeneration.Gen3)
                 throw new ArgumentException();
 
             sectionOffsets = new uint[4];
