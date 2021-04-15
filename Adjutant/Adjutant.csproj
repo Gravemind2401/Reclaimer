@@ -67,6 +67,8 @@
     <Compile Include="Audio\PcmHeader.cs" />
     <Compile Include="Audio\XboxAdpcmHeader.cs" />
     <Compile Include="Audio\XmaHeader.cs" />
+    <Compile Include="Blam\Common\Annotations.cs" />
+    <Compile Include="Blam\Common\CacheMetadata.cs" />
     <Compile Include="Blam\Common\Gen3\IGen3CacheFile.cs" />
     <Compile Include="Blam\Common\Gen3\IGen3Header.cs" />
     <Compile Include="Blam\Common\Gen3\ILocaleIndex.cs" />

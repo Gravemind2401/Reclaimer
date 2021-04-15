@@ -59,7 +59,7 @@ namespace Adjutant.Blam.Common
                     else throw Exceptions.NotAValidMapFile(fileName);
                 }
                 else if (reader.ByteOrder == ByteOrder.LittleEndian)
-                    buildAddress = 288;
+                    buildAddress = 288; //MCC
                 else buildAddress = 284;
 
                 reader.Seek(buildAddress, SeekOrigin.Begin);

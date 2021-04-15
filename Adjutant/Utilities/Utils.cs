@@ -42,5 +42,28 @@ namespace Adjutant.Utilities
         {
             return dic.ContainsKey(key) ? dic[key] : default(TValue);
         }
+
+        public static IEnumerable<KeyValuePair<TEnum, TAttribute>> GetEnumAttributes<TEnum, TAttribute>() where TEnum : struct where TAttribute : Attribute
+        {
+            foreach (var fi in typeof(TEnum).GetFields().Where(f => f.FieldType == typeof(TEnum)))
+            {
+                var field = (TEnum)fi.GetValue(null);
+                foreach (TAttribute attr in fi.GetCustomAttributes(typeof(TAttribute), false))
+                    yield return new KeyValuePair<TEnum, TAttribute>(field, attr);
+            }
+        }
+
+        public static IEnumerable<TAttribute> GetEnumAttributes<TEnum, TAttribute>(TEnum enumValue) where TEnum : struct where TAttribute : Attribute
+        {
+            foreach (var fi in typeof(TEnum).GetFields().Where(f => f.FieldType == typeof(TEnum)))
+            {
+                var field = (TEnum)fi.GetValue(null);
+                if (!field.Equals(enumValue))
+                    continue;
+
+                foreach (TAttribute attr in fi.GetCustomAttributes(typeof(TAttribute), false))
+                    yield return attr;
+            }
+        }
     }
 }

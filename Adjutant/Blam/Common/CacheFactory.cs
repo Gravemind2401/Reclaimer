@@ -141,7 +141,8 @@ namespace Adjutant.Blam.Common
         public static int GetCacheGeneration(this CacheType cacheType)
         {
             var field = typeof(CacheType).GetField(cacheType.ToString());
-            return field.GetCustomAttributes(typeof(CacheGenerationAttribute), false).OfType<CacheGenerationAttribute>().FirstOrDefault()?.Generation ?? -1;
+            var gen = field.GetCustomAttributes(typeof(CacheMetadataAttribute), false).OfType<CacheMetadataAttribute>().FirstOrDefault()?.Generation;
+            return gen == null ? -1 : (int)gen.Value + 1;
         }
 
         public static int GetHeaderSize(this Gen3.IGen3CacheFile cache)
