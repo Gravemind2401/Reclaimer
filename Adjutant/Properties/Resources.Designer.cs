@@ -102,15 +102,14 @@ namespace Adjutant.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- https://github.com/XboxChaos/Assembly/tree/dev/src/Blamite/Formats --&gt;
         ///&lt;stringDefinitions&gt;
-        ///  &lt;stringIDs id=&quot;beta&quot; indexBits=&quot;16&quot; namespaceBits=&quot;8&quot; lengthBits=&quot;8&quot;&gt;
-        ///    &lt;namespace id=&quot;0x0&quot; min=&quot;0x4CD&quot; startIndex=&quot;0x962&quot; /&gt;
-        ///    &lt;namespace id=&quot;0x1&quot; startIndex=&quot;0x4CD&quot; /&gt;
-        ///    &lt;namespace id=&quot;0x2&quot; startIndex=&quot;0x85C&quot; /&gt;
-        ///    &lt;namespace id=&quot;0x3&quot; startIndex=&quot;0x8B4&quot; /&gt;
-        ///    &lt;namespace id=&quot;0x4&quot; startIndex=&quot;0x911&quot; /&gt;
-        ///    &lt;namespace id=&quot;0x5&quot; startIndex=&quot;0x8DA&quot; /&gt;
-        ///    &lt;namespace id=&quot;0x6&quot; startIndex=&quot;0x921&quot; /&gt;
-        /// [rest of string was truncated]&quot;;.
+        ///  &lt;stringIDs id=&quot;alpha_0307&quot; indexBits=&quot;16&quot; namespaceBits=&quot;8&quot; lengthBits=&quot;8&quot;&gt;
+        ///    &lt;namespace id=&quot;0x0&quot; min=&quot;0x4B8&quot; startIndex=&quot;0x8BB&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x1&quot; startIndex=&quot;0x4B8&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x2&quot; startIndex=&quot;0x7F1&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x3&quot; startIndex=&quot;0x829&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x4&quot; startIndex=&quot;0x87F&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x5&quot; startIndex=&quot;0x84B&quot; /&gt;
+        ///    &lt;namespace id=&quot;0x6&quot; startIndex=&quot;0x88F [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Halo3Strings {
             get {
@@ -309,6 +308,23 @@ namespace Adjutant.Properties {
         internal static string MccHalo4Strings {
             get {
                 return ResourceManager.GetString("MccHalo4Strings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!-- https://github.com/XboxChaos/Assembly/tree/dev/src/Blamite/Formats --&gt;
+        ///&lt;VertexDefinitions&gt;
+        ///	&lt;vertex type=&quot;0x01&quot; name=&quot;s_rigid_vertex&quot;&gt;
+        ///    &lt;value stream=&quot;0&quot; offset=&quot;0x0&quot; type=&quot;Float32_4&quot; usage=&quot;position&quot; usageIndex=&quot;0&quot; /&gt;
+        ///    &lt;value stream=&quot;0&quot; offset=&quot;0x10&quot; type=&quot;UInt16_N2&quot; usage=&quot;texcoords&quot; usageIndex=&quot;0&quot; /&gt;
+        ///    &lt;value stream=&quot;0&quot; offset=&quot;0x14&quot; type=&quot;Int16_N4&quot; usage=&quot;normal&quot; usageIndex=&quot;0&quot; /&gt;
+        ///    &lt;value stream=&quot;0&quot; offset=&quot;0x1C&quot; type=&quot;Int16_N4&quot; usage=&quot;tangent&quot; usageIndex=&quot;0&quot; /&gt;
+        ///	&lt;/vertex&gt;
+        ///&lt;/Vert [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MccHalo4VertexBuffer {
+            get {
+                return ResourceManager.GetString("MccHalo4VertexBuffer", resourceCulture);
             }
         }
         

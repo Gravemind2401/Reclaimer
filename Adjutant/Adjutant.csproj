@@ -286,6 +286,7 @@
     <Content Include="Resources\Halo1Classes.xml" />
     <Content Include="Resources\Halo2Classes.xml" />
     <Content Include="Resources\MccHalo4Strings.xml" />
+    <Content Include="Resources\MccHalo4VertexBuffer.xml" />
     <Content Include="Resources\MccHalo3Strings.xml" />
     <Content Include="Resources\Halo4Strings.xml" />
     <Content Include="Resources\Halo3VertexBuffer.xml" />
