@@ -15,7 +15,8 @@ namespace Adjutant.Blam.Halo4
         public BlockCollection<StructureBspBlock> StructureBsps { get; set; }
 
         [Offset(1884, MaxVersion = (int)CacheType.Halo4Retail)]
-        [Offset(1896, MinVersion = (int)CacheType.Halo4Retail)]
+        [Offset(1896, MinVersion = (int)CacheType.Halo4Retail, MaxVersion = (int)CacheType.MccHalo4)]
+        [Offset(1908, MinVersion = (int)CacheType.MccHalo4)]
         public TagReference ScenarioLightmapReference { get; set; }
     }
 

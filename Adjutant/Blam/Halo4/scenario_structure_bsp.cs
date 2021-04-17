@@ -56,24 +56,29 @@ namespace Adjutant.Blam.Halo4
         public ResourceIdentifier ResourcePointer1 { get; set; }
 
         [Offset(1440, MaxVersion = (int)CacheType.Halo4Retail)]
-        [Offset(1048, MinVersion = (int)CacheType.Halo4Retail)]
+        [Offset(1048, MinVersion = (int)CacheType.Halo4Retail, MaxVersion = (int)CacheType.MccHalo4)]
+        [Offset(1072, MinVersion = (int)CacheType.MccHalo4)]
         public ResourceIdentifier ResourcePointer2 { get; set; }
 
         [Offset(1756, MaxVersion = (int)CacheType.Halo4Retail)]
-        [Offset(1144, MinVersion = (int)CacheType.Halo4Retail)]
+        [Offset(1144, MinVersion = (int)CacheType.Halo4Retail, MaxVersion = (int)CacheType.MccHalo4)]
+        [Offset(1192, MinVersion = (int)CacheType.MccHalo4)]
         public BlockCollection<SectionBlock> Sections { get; set; }
 
         [Offset(932, MaxVersion = (int)CacheType.Halo4Retail)]
-        [Offset(1168, MinVersion = (int)CacheType.Halo4Retail)]
+        [Offset(1168, MinVersion = (int)CacheType.Halo4Retail, MaxVersion = (int)CacheType.MccHalo4)]
+        [Offset(1216, MinVersion = (int)CacheType.MccHalo4)]
         public BlockCollection<BoundingBoxBlock> BoundingBoxes { get; set; }
 
         [Offset(1888, MaxVersion = (int)CacheType.Halo4Retail)]
-        [Offset(1288, MinVersion = (int)CacheType.Halo4Retail)]
+        [Offset(1288, MinVersion = (int)CacheType.Halo4Retail, MaxVersion = (int)CacheType.MccHalo4)]
+        [Offset(1336, MinVersion = (int)CacheType.MccHalo4)]
         public ResourceIdentifier ResourcePointer3 { get; set; }
 
         [Offset(1964, MaxVersion = (int)CacheType.Halo4Retail)]
-        [Offset(1364, MinVersion = (int)CacheType.Halo4Retail)]
-        public ResourceIdentifier InstancesResourcePointer { get; set; }
+        [Offset(1364, MinVersion = (int)CacheType.Halo4Retail, MaxVersion = (int)CacheType.MccHalo4)]
+        [Offset(1436, MinVersion = (int)CacheType.MccHalo4)]
+        public ResourceIdentifier InstancesResourcePointer { get; set; } //datum 5
 
         #region IRenderGeometry
 
@@ -227,7 +232,7 @@ namespace Adjutant.Blam.Halo4
     public class BspGeometryInstanceGroupBlock
     {
         [Offset(4)]
-        public BlockCollection<short> SunGroupIndexes { get; set; }
+        public BlockCollection<short> SubGroupIndexes { get; set; }
     }
 
     [FixedSize(44)]

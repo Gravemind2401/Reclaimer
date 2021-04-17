@@ -1,4 +1,10 @@
 <VertexDefinitions>
+  <vertex type="0x00" name="s_world_vertex">
+    <value stream="0" offset="0x0" type="Float32_4" usage="position" usageIndex="0" />
+    <value stream="0" offset="0x10" type="Float16_2" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0x14" type="Int16_N4" usage="normal" usageIndex="0" />
+    <value stream="0" offset="0x1C" type="Int16_N4" usage="tangent" usageIndex="0" />
+  </vertex>
 	<vertex type="0x01" name="s_rigid_vertex">
     <value stream="0" offset="0x0" type="Float32_4" usage="position" usageIndex="0" />
     <value stream="0" offset="0x10" type="UInt16_N2" usage="texcoords" usageIndex="0" />
