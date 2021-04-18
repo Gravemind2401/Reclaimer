@@ -34,6 +34,7 @@ namespace System.Drawing.Dds
         DXT5a_scalar,
         DXT5a_mono,
         DXT5a_alpha,
+        V8U8,
         Y8,
         Y8A8,
     }

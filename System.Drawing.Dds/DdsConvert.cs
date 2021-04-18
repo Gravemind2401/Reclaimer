@@ -56,6 +56,7 @@ namespace System.Drawing.Dds
             { XboxFormat.DXT5a_scalar, DecompressDXT5a_scalar },
             { XboxFormat.DXT5a_mono, DecompressDXT5a_mono },
             { XboxFormat.DXT5a_alpha, DecompressDXT5a_alpha },
+            { XboxFormat.V8U8, DecompressV8U8 },
             { XboxFormat.Y8, DecompressY8 },
             { XboxFormat.Y8A8, DecompressY8A8 },
         };
@@ -1025,6 +1026,29 @@ namespace System.Drawing.Dds
         internal static byte[] DecompressAY8(byte[] data, int height, int width, bool bgr24)
         {
             return ToArray(data.SelectMany(b => Enumerable.Range(0, bgr24 ? 3 : 4).Select(i => b)), bgr24, height, width);
+        }
+
+        internal static byte[] DecompressV8U8(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+
+            const int bytesPerBlock = 2;
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    var srcIndex = (y * width + x) * bytesPerBlock;
+                    var destIndex = (y * width + x) * bpp;
+
+                    var colour = new BgraColour { g = (byte)(unchecked((sbyte)data[srcIndex + 0]) + sbyte.MaxValue), r = (byte)(unchecked((sbyte)data[srcIndex + 1]) + sbyte.MaxValue), a = byte.MaxValue };
+                    colour.b = CalculateZVector(colour.r, colour.g);
+                    colour.Copy(output, destIndex, bgr24);
+                }
+            }
+
+            return output;
         }
 
         internal static byte[] DecompressY8(byte[] data, int height, int width, bool bgr24)
