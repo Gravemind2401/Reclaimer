@@ -197,6 +197,25 @@ namespace System.Drawing.Dds
                 encoder = new TiffBitmapEncoder();
             else throw new NotSupportedException("The ImageFormat is not supported.");
 
+            WriteToStream(stream, encoder, options, layout);
+        }
+
+        /// <summary>
+        /// Decompresses any compressed pixel data and writes the image to a stream using a standard image format.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="encoder">The bitmap encoder to write with.</param>
+        /// <param name="options">Options to use when decompressing the image.</param>
+        /// <param name="layout">The layout of the cubemap. Has no effect if the DDS cubemap flags are not set.</param>
+        /// <exception cref="ArgumentNullException" />
+        public void WriteToStream(Stream stream, BitmapEncoder encoder, DecompressOptions options, CubemapLayout layout)
+        {
+            if (stream == null)
+                throw new ArgumentNullException(nameof(stream));
+
+            if (encoder == null)
+                throw new ArgumentNullException(nameof(encoder));
+
             var source = ToBitmapSource(options, layout);
             encoder.Frames.Add(BitmapFrame.Create(source));
             encoder.Save(stream);
@@ -255,6 +274,9 @@ namespace System.Drawing.Dds
         }
         #endregion
 
+        /// <summary>
+        /// Returns a copy of the image in 32bit BGRA format.
+        /// </summary>
         public DdsImage AsUncompressed()
         {
             if (header.PixelFormat.FourCC == (int)FourCC.DX10)

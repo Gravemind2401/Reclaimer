@@ -353,6 +353,16 @@ namespace System.Drawing.Dds
         #endregion
 
         /// <summary>
+        /// Returns a copy of the underlying raw pixel data for this image without perfoming any conversions.
+        /// </summary>
+        public byte[] GetPixelData()
+        {
+            var result = new byte[data.Length];
+            Array.Copy(data, result, data.Length);
+            return result;
+        }
+
+        /// <summary>
         /// Writes the DDS header and pixel data to a file on disk.
         /// </summary>
         /// <param name="fileName">The full path of the file to write.</param>
