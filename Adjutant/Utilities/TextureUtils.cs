@@ -41,6 +41,7 @@ namespace Adjutant.Utilities
             { KnownTextureFormat.DXN_mono_alpha, XboxFormat.DXN_mono_alpha },
             { KnownTextureFormat.P8, XboxFormat.Y8 },
             { KnownTextureFormat.P8_bump, XboxFormat.Y8 },
+            { KnownTextureFormat.U8V8, XboxFormat.V8U8 },
             { KnownTextureFormat.Y8, XboxFormat.Y8 }
         };
 
