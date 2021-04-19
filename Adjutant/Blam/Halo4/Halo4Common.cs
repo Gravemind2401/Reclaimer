@@ -60,27 +60,41 @@ namespace Adjutant.Blam.Halo4
                 }
 
                 var subMaterials = new List<ISubmaterial>();
-                var map = shader.ShaderProperties.FirstOrDefault()?.ShaderMaps.FirstOrDefault();
-                var bitmTag = map?.BitmapReference.Tag;
-                if (bitmTag == null)
+                var props = shader.ShaderProperties[0];
+                foreach (var map in props.ShaderMaps)
                 {
-                    yield return material;
-                    continue;
-                }
+                    var bitmTag = map.BitmapReference.Tag;
+                    if (bitmTag == null)
+                        continue;
 
-                //maybe map.TilingIndex has the wrong offset? can sometimes be out of bounds (other than 0xFF)
-                var tile = shader.ShaderProperties[0].TilingData.Cast<RealVector4D?>().ElementAtOrDefault(map.TilingIndex);
+                    MaterialUsage usage;
+                    var name = bitmTag.FileName();
+                    if (name.EndsWith("_detail_normal") || name.EndsWith("_detail_bump"))
+                        usage = MaterialUsage.NormalDetail;
+                    else if (name.EndsWith("_detail"))
+                        usage = MaterialUsage.DiffuseDetail;
+                    else if (name.EndsWith("_normal") || name.EndsWith("_bump"))
+                        usage = MaterialUsage.Normal;
+                    else if (name.EndsWith("_diff") || name.EndsWith("_color") || name.StartsWith("watersurface_"))
+                        usage = MaterialUsage.Diffuse;
+                    else if (props.ShaderMaps.Count == 1)
+                        usage = MaterialUsage.Diffuse;
+                    else continue;
 
-                try
-                {
-                    subMaterials.Add(new SubMaterial
+                    //maybe map.TilingIndex has the wrong offset? can sometimes be out of bounds (other than 0xFF)
+                    var tile = props.TilingData.Cast<RealVector4D?>().ElementAtOrDefault(map.TilingIndex);
+
+                    try
                     {
-                        Usage = MaterialUsage.Diffuse,
-                        Bitmap = bitmTag.ReadMetadata<bitmap>(),
-                        Tiling = new RealVector2D(tile?.X ?? 1, tile?.Y ?? 1)
-                    });
+                        subMaterials.Add(new SubMaterial
+                        {
+                            Usage = usage,
+                            Bitmap = bitmTag.ReadMetadata<bitmap>(),
+                            Tiling = new RealVector2D(tile?.X ?? 1, tile?.Y ?? 1)
+                        });
+                    }
+                    catch { }
                 }
-                catch { }
 
                 if (subMaterials.Count == 0)
                 {
