@@ -99,7 +99,7 @@ namespace Adjutant.Blam.MccHaloReach
     }
 
     [FixedSize(40960)]
-    public class CacheHeader : IGen3Header
+    public class CacheHeader : IMccGen3Header
     {
         [Offset(8)]
         public long FileSize { get; set; }

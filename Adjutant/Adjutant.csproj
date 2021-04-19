@@ -70,6 +70,8 @@
     <Compile Include="Blam\Common\Annotations.cs" />
     <Compile Include="Blam\Common\CacheMetadata.cs" />
     <Compile Include="Blam\Common\Gen3\IGen3CacheFile.cs" />
+    <Compile Include="Blam\Common\Gen3\IMccGen3Header.cs" />
+    <Compile Include="Blam\Common\Gen3\IGen4Header.cs" />
     <Compile Include="Blam\Common\Gen3\IGen3Header.cs" />
     <Compile Include="Blam\Common\Gen3\ILocaleIndex.cs" />
     <Compile Include="Blam\Common\Gen3\IMccCacheFile.cs" />

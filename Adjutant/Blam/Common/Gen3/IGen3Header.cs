@@ -18,8 +18,6 @@ namespace Adjutant.Blam.Common.Gen3
         int StringTableSize { get; set; }
         Pointer StringTableIndexPointer { get; set; }
         Pointer StringTablePointer { get; set; }
-        int StringNamespaceCount { get; set; }
-        Pointer StringNamespaceTablePointer { get; set; }
         string ScenarioName { get; set; }
         int FileCount { get; set; }
         Pointer FileTablePointer { get; set; }

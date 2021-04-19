@@ -98,7 +98,7 @@ namespace Adjutant.Blam.MccHalo2X
     }
 
     [FixedSize(122880)]
-    public class CacheHeader : IGen3Header
+    public class CacheHeader : IGen4Header
     {
         [Offset(8)]
         public long FileSize { get; set; }
@@ -144,6 +144,12 @@ namespace Adjutant.Blam.MccHalo2X
         [Offset(708)]
         public Pointer FileTableIndexPointer { get; set; }
 
+        [Offset(712)]
+        public int UnknownTableSize { get; set; }
+
+        [Offset(716)]
+        public Pointer UnknownTablePointer { get; set; }
+
         [Offset(768)]
         public long VirtualBaseAddress { get; set; }
 
@@ -159,18 +165,6 @@ namespace Adjutant.Blam.MccHalo2X
         #region IGen3Header
 
         IPartitionTable IGen3Header.PartitionTable => PartitionTable;
-
-        int IGen3Header.StringNamespaceCount
-        {
-            get { return default(int); }
-            set { }
-        }
-
-        Pointer IGen3Header.StringNamespaceTablePointer
-        {
-            get { return default(Pointer); }
-            set { }
-        }
 
         #endregion
     }

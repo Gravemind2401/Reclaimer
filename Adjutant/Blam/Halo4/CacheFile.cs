@@ -100,7 +100,7 @@ namespace Adjutant.Blam.Halo4
     }
 
     [FixedSize(122880)]
-    public class CacheHeader : IGen3Header
+    public class CacheHeader : IGen4Header
     {
         [Offset(8)]
         public int FileSize { get; set; }
@@ -146,6 +146,12 @@ namespace Adjutant.Blam.Halo4
         [Offset(704)]
         public Pointer FileTableIndexPointer { get; set; }
 
+        [Offset(708)]
+        public int UnknownTableSize { get; set; }
+
+        [Offset(712)]
+        public Pointer UnknownTablePointer { get; set; }
+
         [Offset(760)]
         public int VirtualBaseAddress { get; set; }
 
@@ -173,18 +179,6 @@ namespace Adjutant.Blam.Halo4
         }
 
         IPartitionTable IGen3Header.PartitionTable => PartitionTable;
-
-        int IGen3Header.StringNamespaceCount
-        {
-            get { return default(int); }
-            set { }
-        }
-
-        Pointer IGen3Header.StringNamespaceTablePointer
-        {
-            get { return default(Pointer); }
-            set { }
-        }
 
         #endregion
     }
