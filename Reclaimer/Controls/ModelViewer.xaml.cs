@@ -33,7 +33,7 @@ namespace Reclaimer.Controls
     {
         public delegate void ExportBitmaps(IRenderGeometry geometry);
 
-        private static readonly string[] AllLods = new[] { "Highest", "High", "Medium", "Low", "Lowest" };
+        private static readonly string[] AllLods = new[] { "Highest", "High", "Medium", "Low", "Lowest", "Potato" };
         private static readonly DiffuseMaterial ErrorMaterial;
 
         #region Dependency Properties
@@ -194,6 +194,7 @@ namespace Reclaimer.Controls
             var indexes = model.Meshes.SelectMany(m => m.Submeshes)
                 .Select(s => s.MaterialIndex).Distinct().ToArray();
 
+            var bitmapLookup = new Dictionary<int, DiffuseMaterial>();
             for (short i = 0; i < model.Materials.Count; i++)
             {
                 if (!indexes.Contains(i))
@@ -208,18 +209,23 @@ namespace Reclaimer.Controls
                 try
                 {
                     var diffuse = mat.Submaterials.First(m => m.Usage == MaterialUsage.Diffuse);
-                    var dds = diffuse.Bitmap.ToDds(0);
-
-                    var brush = new ImageBrush(dds.ToBitmapSource(DecompressOptions.Bgr24))
+                    if (!bitmapLookup.ContainsKey(diffuse.Bitmap.Id))
                     {
-                        ViewportUnits = BrushMappingMode.Absolute,
-                        TileMode = TileMode.Tile,
-                        Viewport = new Rect(0, 0, 1f / Math.Abs(diffuse.Tiling.X), 1f / Math.Abs(diffuse.Tiling.Y))
-                    };
+                        var dds = diffuse.Bitmap.ToDds(0);
 
-                    brush.Freeze();
-                    material = new DiffuseMaterial(brush);
-                    material.Freeze();
+                        var brush = new ImageBrush(dds.ToBitmapSource(DecompressOptions.Bgr24))
+                        {
+                            ViewportUnits = BrushMappingMode.Absolute,
+                            TileMode = TileMode.Tile,
+                            Viewport = new Rect(0, 0, 1f / Math.Abs(diffuse.Tiling.X), 1f / Math.Abs(diffuse.Tiling.Y))
+                        };
+
+                        brush.Freeze();
+                        material = new DiffuseMaterial(brush);
+                        material.Freeze();
+                        bitmapLookup[diffuse.Bitmap.Id] = material;
+                    }
+                    else material = bitmapLookup[diffuse.Bitmap.Id];
                 }
                 catch
                 {
@@ -309,7 +315,7 @@ namespace Reclaimer.Controls
                             (geom.Normals = new Vector3DCollection(normals)).Freeze();
                         }
 
-                        var mat = sub.MaterialIndex >= 0 ? materials[sub.MaterialIndex] : ErrorMaterial;
+                        var mat = materials.ElementAtOrDefault(sub.MaterialIndex) ?? ErrorMaterial;
                         var subGroup = new GeometryModel3D(geom, mat) { BackMaterial = mat };
                         subGroup.Freeze();
                         mGroup.Children.Add(subGroup);
