@@ -1042,7 +1042,7 @@ namespace System.Drawing.Dds
                     var srcIndex = (y * width + x) * bytesPerBlock;
                     var destIndex = (y * width + x) * bpp;
 
-                    var colour = new BgraColour { g = (byte)(unchecked((sbyte)data[srcIndex + 0]) + sbyte.MaxValue), r = (byte)(unchecked((sbyte)data[srcIndex + 1]) + sbyte.MaxValue), a = byte.MaxValue };
+                    var colour = new BgraColour { g = (byte)(unchecked((sbyte)data[srcIndex + 0]) - sbyte.MinValue), r = (byte)(unchecked((sbyte)data[srcIndex + 1]) - sbyte.MinValue), a = byte.MaxValue };
                     colour.b = CalculateZVector(colour.r, colour.g);
                     colour.Copy(output, destIndex, bgr24);
                 }
