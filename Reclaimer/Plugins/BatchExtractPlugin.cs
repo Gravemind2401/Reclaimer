@@ -295,9 +295,7 @@ namespace Reclaimer.Plugins
                     if (Settings.OverwriteExisting || !File.Exists(fileName + ext))
                     {
                         var rawDds = bitmap.ToDds(i);
-                        if (rawDds.FormatCode == (int)FourCC.XBOX)
-                            rawDds = rawDds.AsUncompressed();
-                        rawDds.WriteToDisk(fileName + ext);
+                        rawDds.WriteToDxgi(fileName + ext);
                         extracted++;
                     }
                     continue;
@@ -305,13 +303,15 @@ namespace Reclaimer.Plugins
 
                 var outputs = new List<Tuple<string, DecompressOptions>>();
 
-                ImageFormat format; ;
+                ImageFormat format;
                 if (Settings.BitmapFormat == BitmapFormat.PNG)
                     format = ImageFormat.Png;
                 else if (Settings.BitmapFormat == BitmapFormat.TIF)
                     format = ImageFormat.Tiff;
-                else //if (Settings.BitmapFormat == BitmapFormat.JPEG)
+                else if (Settings.BitmapFormat == BitmapFormat.JPEG)
                     format = ImageFormat.Jpeg;
+                else //if (Settings.BitmapFormat == BitmapFormat.TGA)
+                    format = null;
 
                 if (Settings.BitmapMode == BitmapMode.Default)
                     outputs.Add(Tuple.Create(fileName + ext, DecompressOptions.Default));
@@ -333,7 +333,11 @@ namespace Reclaimer.Plugins
                     if (dds == null)
                         dds = bitmap.ToDds(i);
 
-                    dds.WriteToDisk(param.Item1, format, param.Item2, bitmap.CubeLayout);
+                    if (format != null)
+                        dds.WriteToDisk(param.Item1, format, param.Item2, bitmap.CubeLayout);
+                    else //if (Settings.BitmapFormat == BitmapFormat.TGA)
+                        dds.WriteToTarga(param.Item1, param.Item2, bitmap.CubeLayout);
+
                     extracted++;
                 }
             }
@@ -509,7 +513,8 @@ namespace Reclaimer.Plugins
             DDS,
             TIF,
             PNG,
-            JPEG
+            JPEG,
+            TGA
         }
     }
 }

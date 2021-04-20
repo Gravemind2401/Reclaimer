@@ -174,7 +174,7 @@ namespace Reclaimer.Controls
 
         private void ExportImage(bool allChannels)
         {
-            var filter = "TIF Files|*.tif|PNG Files|*.png|JPEG Files|*.jpeg";
+            var filter = "TIF Files|*.tif|PNG Files|*.png|JPEG Files|*.jpeg|TARGA Files|*.tga";
             if (allChannels)
                 filter += "|DDS Files|*.dds";
 
@@ -196,10 +196,14 @@ namespace Reclaimer.Controls
 
             if (sfd.FilterIndex == 4)
             {
+                var source = allChannels ? dds.ToBitmapSource() : ImageSource;
+                source.WriteToTarga(sfd.FileName, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                return;
+            }
+            else if (sfd.FilterIndex == 5)
+            {
                 var dds = bitmap.ToDds(0);
-                if (dds.FormatCode == (int)FourCC.XBOX)
-                    dds = dds.AsUncompressed();
-                dds.WriteToDisk(sfd.FileName);
+                dds.WriteToDxgi(sfd.FileName);
                 return;
             }
 

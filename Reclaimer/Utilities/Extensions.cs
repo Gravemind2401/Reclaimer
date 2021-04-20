@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Dds;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media.Imaging;
+
+using Drawing = System.Drawing;
+using Imaging = System.Drawing.Imaging;
 
 namespace Reclaimer.Utilities
 {
@@ -72,6 +77,31 @@ namespace Reclaimer.Utilities
         public static TValue ValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key)
         {
             return dic.ContainsKey(key) ? dic[key] : default(TValue);
+        }
+
+        public static void WriteToDxgi(this DdsImage dds, string fileName)
+        {
+            if (dds.FormatCode == (int)FourCC.XBOX)
+                dds = dds.AsUncompressed();
+            dds.WriteToDisk(fileName);
+        }
+
+        public static void WriteToTarga(this DdsImage dds, string fileName, DecompressOptions options, CubemapLayout layout)
+        {
+            var source = dds.ToBitmapSource(options, layout);
+            var format = options.HasFlag(DecompressOptions.Bgr24) ? Imaging.PixelFormat.Format24bppRgb : Imaging.PixelFormat.Format32bppArgb;
+            WriteToTarga(source, fileName, format);
+        }
+
+        public static void WriteToTarga(this BitmapSource source, string fileName, Imaging.PixelFormat format)
+        {
+            var dest = new Drawing.Bitmap(source.PixelWidth, source.PixelHeight, format);
+            var destData = dest.LockBits(new Drawing.Rectangle(Drawing.Point.Empty, dest.Size), Imaging.ImageLockMode.WriteOnly, format);
+            source.CopyPixels(Int32Rect.Empty, destData.Scan0, destData.Height * destData.Stride, destData.Stride);
+            dest.UnlockBits(destData);
+
+            var tga = new TGASharpLib.TGA(dest);
+            tga.Save(fileName);
         }
     }
 }
