@@ -62,26 +62,32 @@ namespace Adjutant.Blam.Halo1
         {
             foreach (var shaderRef in shaderRefs)
             {
-                var bitmTag = GetShaderDiffuse(shaderRef, reader);
-                if (bitmTag == null)
+                if (shaderRef.Tag == null)
                 {
                     yield return null;
                     continue;
                 }
 
-                yield return new GeometryMaterial
+                var material = new GeometryMaterial
                 {
-                    Name = Utils.GetFileName(shaderRef.Tag.FullPath),
-                    Submaterials = new List<ISubmaterial>
-                    {
-                        new SubMaterial
-                        {
-                            Usage = MaterialUsage.Diffuse,
-                            Bitmap = bitmTag.ReadMetadata<bitmap>(),
-                            Tiling = new RealVector2D(1, 1)
-                        }
-                    }
+                    Name = Utils.GetFileName(shaderRef.Tag.FullPath)
                 };
+
+                var bitmTag = GetShaderDiffuse(shaderRef, reader);
+                if (bitmTag == null)
+                {
+                    yield return material;
+                    continue;
+                }
+
+                material.Submaterials.Add(new SubMaterial
+                {
+                    Usage = MaterialUsage.Diffuse,
+                    Bitmap = bitmTag.ReadMetadata<bitmap>(),
+                    Tiling = new RealVector2D(1, 1)
+                });
+
+                yield return material;
             }
         }
     }

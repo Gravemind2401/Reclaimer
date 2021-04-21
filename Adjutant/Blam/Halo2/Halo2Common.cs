@@ -29,37 +29,44 @@ namespace Adjutant.Blam.Halo2
 
     internal static class Halo2Common
     {
-        public static IEnumerable<GeometryMaterial> GetMaterials(IEnumerable<ShaderBlock> shaderBlocks)
+        public static IEnumerable<GeometryMaterial> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
         {
-            foreach (var shaderRef in shaderBlocks.Select(b => b.ShaderReference))
+            for (int i = 0; i < shaders.Count; i++)
             {
-                var shader = shaderRef.Tag?.ReadMetadata<shader>();
-                if (shader == null)
+                var tag = shaders[i].ShaderReference.Tag;
+                if (tag == null)
                 {
                     yield return null;
+                    continue;
+                }
+
+                var material = new GeometryMaterial
+                {
+                    Name = Utils.GetFileName(tag.FullPath)
+                };
+
+                var shader = tag?.ReadMetadata<shader>();
+                if (shader == null)
+                {
+                    yield return material;
                     continue;
                 }
 
                 var bitmTag = shader.ShaderMaps[0].DiffuseBitmapReference.Tag;
                 if (bitmTag == null)
                 {
-                    yield return null;
+                    yield return material;
                     continue;
                 }
 
-                yield return new GeometryMaterial
+                material.Submaterials.Add(new SubMaterial
                 {
-                    Name = Utils.GetFileName(shaderRef.Tag.FullPath),
-                    Submaterials = new List<ISubmaterial>
-                    {
-                        new SubMaterial
-                        {
-                            Usage = MaterialUsage.Diffuse,
-                            Bitmap = bitmTag.ReadMetadata<bitmap>(),
-                            Tiling = new RealVector2D(1, 1)
-                        }
-                    }
-                };
+                    Usage = MaterialUsage.Diffuse,
+                    Bitmap = bitmTag.ReadMetadata<bitmap>(),
+                    Tiling = new RealVector2D(1, 1)
+                });
+
+                yield return material;
             }
         }
     }
