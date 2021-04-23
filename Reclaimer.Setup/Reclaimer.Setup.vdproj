@@ -912,7 +912,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Adjutant, Version=5.6.313.0, Culture=neutral, PublicKeyToken=10f296c5c79ce69a, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Adjutant, Version=5.6.314.0, Culture=neutral, PublicKeyToken=10f296c5c79ce69a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C65EB60B5A00F717FBEA48700D1BEA62"
@@ -1174,15 +1174,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Reclaimer"
-        "ProductCode" = "8:{0D39755D-F906-4A3A-88E1-8B604404C5C7}"
-        "PackageCode" = "8:{DD0086CB-EB7F-4A63-B828-AE4AD36E8851}"
+        "ProductCode" = "8:{7E4492A1-47C3-4911-BC86-75D951A59533}"
+        "PackageCode" = "8:{A46FE4FC-D62F-4E09-80EF-1CB73E3B9B88}"
         "UpgradeCode" = "8:{FBBE75A5-B290-459D-AFEE-4B97449AE820}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.6.249"
+        "ProductVersion" = "8:1.6.250"
         "Manufacturer" = "8:Gravemind2401"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
