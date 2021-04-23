@@ -282,10 +282,19 @@ namespace Adjutant.Blam.Common
             }
             else if (codec == CacheResourceCodec.Deflate)
             {
+                const int maxSeekSize = 0x80000;
+
                 using (var ds = new DeflateStream(reader.BaseStream, CompressionMode.Decompress))
                 using (var reader2 = new BinaryReader(ds))
                 {
-                    reader2.ReadBytes(segmentOffset);
+                    int position = 0;
+                    while (position < segmentOffset)
+                    {
+                        var seek = Math.Min(maxSeekSize, segmentOffset - position);
+                        reader2.ReadBytes(seek);
+                        position += seek;
+                    }
+
                     return reader2.ReadBytes(segmentLength);
                 }
             }
