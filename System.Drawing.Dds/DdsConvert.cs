@@ -1003,8 +1003,6 @@ namespace System.Drawing.Dds
                             }
 
                             result.Copy(output, destIndex, bgr24);
-
-                            if (!bgr24) output[destIndex + 3] = byte.MaxValue;
                         }
                     }
 
