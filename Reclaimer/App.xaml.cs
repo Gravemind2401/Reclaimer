@@ -149,7 +149,7 @@ namespace Reclaimer
             if (System.Diagnostics.Debugger.IsAttached)
                 System.Diagnostics.Debugger.Break();
 
-            var fileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "crash.txt");
+            var fileName = Path.Combine(Settings.AppDataDirectory, "crash.txt");
             File.WriteAllText(fileName, ex.ToString());
         }
 

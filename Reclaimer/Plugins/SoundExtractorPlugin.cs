@@ -1,6 +1,6 @@
 ﻿using Adjutant.Audio;
 using Adjutant.Utilities;
-using Reclaimer.Utilities;
+using Reclaimer.Controls.Editors;
 using System;
 using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
@@ -101,17 +101,23 @@ namespace Reclaimer.Plugins
         private class SoundExtractorSettings
         {
             [Editor(typeof(BrowseFileEditor), typeof(PropertyValueEditor))]
+            [DisplayName("FFmpeg Path")]
             public string FFmpegPath { get; set; }
 
+            [DisplayName("Output File Extension")]
             public string OutputExtension { get; set; }
+
+            [DisplayName("Output Filename Format")]
             public string OutputNameFormat { get; set; }
+
+            [DisplayName("Log FFmpeg Output")]
             public bool LogFFmpegOutput { get; set; }
 
             internal bool NoConversion => string.IsNullOrWhiteSpace(OutputExtension);
 
             public SoundExtractorSettings()
             {
-                var relative = Substrate.PluginsDirectory.Replace(AppDomain.CurrentDomain.BaseDirectory, string.Empty);
+                var relative = Substrate.PluginsDirectory.Replace(Reclaimer.Settings.AppBaseDirectory, string.Empty);
                 FFmpegPath = Path.Combine(".", relative, "ffmpeg", "ffmpeg.exe");
                 OutputExtension = "wav";
                 OutputNameFormat = "{0}[{1}]";

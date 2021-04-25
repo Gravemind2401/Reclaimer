@@ -1,4 +1,4 @@
-﻿using Reclaimer.Utilities;
+﻿using Reclaimer.Controls.Editors;
 using System;
 using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
@@ -90,6 +90,7 @@ namespace Reclaimer.Plugins
     internal class PakViewerSettings
     {
         [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
+        [DisplayName("s3dpak Folder")]
         public string PakFolder { get; set; }
     }
 }

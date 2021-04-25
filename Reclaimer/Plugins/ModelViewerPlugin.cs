@@ -1,13 +1,15 @@
 ﻿using Adjutant.Geometry;
 using Adjutant.Utilities;
+using Reclaimer.Controls.Editors;
 using Reclaimer.Utilities;
 using Reclaimer.Windows;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace Reclaimer.Plugins
 {
@@ -231,9 +233,17 @@ namespace Reclaimer.Plugins
 
     internal class ModelViewerSettings
     {
+        [ItemsSource(typeof(ModelFormatItemsSource))]
+        [DisplayName("Default Save Format")]
         public string DefaultSaveFormat { get; set; }
+
+        [DisplayName("Embedded Material Extension")]
         public string MaterialExtension { get; set; }
+
+        [DisplayName("Geometry Scale")]
         public float GeometryScale { get; set; }
+
+        [DisplayName("Assimp Scale")]
         public float AssimpScale { get; set; }
 
         public ModelViewerSettings()

@@ -1,5 +1,4 @@
-﻿using Reclaimer.Utilities;
-using Studio.Controls;
+﻿using Reclaimer.Controls.Editors;
 using System;
 using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
@@ -94,9 +93,13 @@ namespace Reclaimer.Plugins
     internal class MapViewerSettings
     {
         [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
+        [DisplayName("Maps Folder")]
         public string MapFolder { get; set; }
 
+        [DisplayName("Hierarchy View")]
         public bool HierarchyView { get; set; }
+
+        [DisplayName("Auto Update Maps Folder")]
         public bool AutoMapFolder { get; set; }
     }
 }

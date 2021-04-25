@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Adjutant.Blam.Common;
+using Adjutant.Blam.Halo5;
+using Reclaimer.Controls.Editors;
+using System;
+using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Reclaimer.Windows;
-using Adjutant.Blam.Common;
-using System.IO;
-using System.Xml;
 using System.Text.RegularExpressions;
-using Adjutant.Blam.Halo5;
 
 namespace Reclaimer.Plugins.MetaViewer
 {
@@ -95,13 +95,13 @@ namespace Reclaimer.Plugins.MetaViewer
         private string GetDefinitionPath(IIndexItem item)
         {
             var xmlName = string.Join("_", item.ClassCode.Split(Path.GetInvalidFileNameChars())).PadRight(4);
-            return Path.Combine(Substrate.PluginsDirectory, "Meta Viewer", PluginFolder(item.CacheFile.CacheType), $"{xmlName}.xml");
+            return Path.Combine(Settings.PluginFolder, PluginFolder(item.CacheFile.CacheType), $"{xmlName}.xml");
         }
 
         private string GetDefinitionPath(ModuleItem item)
         {
             var xmlName = string.Join("_", item.ClassCode.Split(Path.GetInvalidFileNameChars())).Trim();
-            return Path.Combine(Substrate.PluginsDirectory, "Meta Viewer", PluginFolder(item.Module.ModuleType), $"({xmlName}){item.ClassName}.xml");
+            return Path.Combine(Settings.PluginFolder, PluginFolder(item.Module.ModuleType), $"({xmlName}){item.ClassName}.xml");
         }
 
         private string PluginFolder(CacheType cacheType)
@@ -160,7 +160,17 @@ namespace Reclaimer.Plugins.MetaViewer
 
         internal class MetaViewerSettings
         {
+            [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
+            [DisplayName("Plugins Folder")]
+            public string PluginFolder { get; set; }
+
+            [DisplayName("Show Invisibles")]
             public bool ShowInvisibles { get; set; }
+
+            public MetaViewerSettings()
+            {
+                PluginFolder = Path.Combine(Substrate.PluginsDirectory, "Meta Viewer");
+            }
         }
     }
 }

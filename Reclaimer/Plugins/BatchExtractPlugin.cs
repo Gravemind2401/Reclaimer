@@ -3,6 +3,7 @@ using Adjutant.Blam.Common;
 using Adjutant.Blam.Halo5;
 using Adjutant.Geometry;
 using Adjutant.Utilities;
+using Reclaimer.Controls.Editors;
 using Reclaimer.Models;
 using Reclaimer.Utilities;
 using System;
@@ -19,6 +20,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace Reclaimer.Plugins
 {
@@ -471,13 +473,26 @@ namespace Reclaimer.Plugins
         private class BatchExtractSettings
         {
             [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
+            [DisplayName("Data Folder")]
             public string DataFolder { get; set; }
 
+            [DisplayName("Data Folder")]
             public bool PromptForFolder { get; set; }
+
+            [DisplayName("Overwrite Existing")]
             public bool OverwriteExisting { get; set; }
+
+            [DisplayName("Folder Mode")]
             public FolderMode FolderMode { get; set; }
+
+            [DisplayName("Bitmap Format")]
             public BitmapFormat BitmapFormat { get; set; }
+
+            [DisplayName("Bitmap Mode")]
             public BitmapMode BitmapMode { get; set; }
+
+            [ItemsSource(typeof(ModelFormatItemsSource))]
+            [DisplayName("Model Format")]
             public string ModelFormat { get; set; }
 
             public BatchExtractSettings()

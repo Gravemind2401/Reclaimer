@@ -12,8 +12,11 @@ namespace Reclaimer
 {
     internal class Settings
     {
-        private static string oldSettingsJson => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
-        private static string settingsJson => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Gravemind2401\\Reclaimer\\settings.json");
+        private static string oldSettingsJson => Path.Combine(AppBaseDirectory, "settings.json");
+        private static string settingsJson => Path.Combine(AppDataDirectory, "settings.json");
+
+        public static string AppBaseDirectory => AppDomain.CurrentDomain.BaseDirectory;
+        public static string AppDataDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Gravemind2401\\Reclaimer");
 
         private static JsonSerializerSettings serializerSettings => new JsonSerializerSettings
         {

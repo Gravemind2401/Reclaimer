@@ -84,7 +84,7 @@ namespace Reclaimer.Windows
 
         private void menuAppDataDir_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Gravemind2401\\Reclaimer"));
+            System.Diagnostics.Process.Start(Settings.AppDataDirectory);
         }
 
         private void menuSettings_Click(object sender, RoutedEventArgs e)

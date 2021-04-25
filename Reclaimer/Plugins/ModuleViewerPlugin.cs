@@ -1,5 +1,4 @@
-﻿using Reclaimer.Utilities;
-using Studio.Controls;
+﻿using Reclaimer.Controls.Editors;
 using System;
 using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
@@ -91,8 +90,10 @@ namespace Reclaimer.Plugins
     internal class ModuleViewerSettings
     {
         [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
+        [DisplayName("Modules Folder")]
         public string ModuleFolder { get; set; }
 
+        [DisplayName("Hierarchy View")]
         public bool HierarchyView { get; set; }
     }
 }

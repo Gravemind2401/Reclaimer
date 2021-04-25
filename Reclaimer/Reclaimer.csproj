@@ -64,6 +64,10 @@
       <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="DotNetProjects.Wpf.Extended.Toolkit, Version=4.6.97.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetProjects.Extended.Wpf.Toolkit.4.6.97\lib\net40\DotNetProjects.Wpf.Extended.Toolkit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net46\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
@@ -82,6 +86,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Activities.Presentation" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -117,6 +122,12 @@
     <Compile Include="Controls\BitmapViewer.xaml.cs">
       <DependentUpon>BitmapViewer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Editors\BrowseEditorBase.xaml.cs">
+      <DependentUpon>BrowseEditorBase.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Editors\BrowseFileEditor.cs" />
+    <Compile Include="Controls\Editors\BrowseFolderEditor.cs" />
+    <Compile Include="Controls\Editors\ModelFormatItemsSource.cs" />
     <Compile Include="Controls\ModuleViewer.xaml.cs">
       <DependentUpon>ModuleViewer.xaml</DependentUpon>
     </Compile>
@@ -190,13 +201,11 @@
     <Compile Include="Plugins\SoundExtractorPlugin.cs" />
     <Compile Include="Plugins\Substrate.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Utilities\BrowseFileEditor.cs" />
     <Compile Include="Utilities\CoreTemplateSelector.cs" />
     <Compile Include="Utilities\DeepObservableCollection.cs" />
     <Compile Include="Utilities\Exceptions.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\FolderSelectDialog.cs" />
-    <Compile Include="Utilities\BrowseFolderEditor.cs" />
     <Compile Include="Utilities\GridLengthConverter.cs" />
     <Compile Include="Utilities\RadToDeg32Converter.cs" />
     <Compile Include="Utilities\RadToDeg64Converter.cs" />
@@ -217,6 +226,10 @@
     <Page Include="Controls\BitmapViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Editors\BrowseEditorBase.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\ModuleViewer.xaml">
       <Generator>MSBuild:Compile</Generator>
