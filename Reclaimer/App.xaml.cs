@@ -19,6 +19,7 @@ namespace Reclaimer
     {
         internal static App Instance { get; private set; }
         internal static Settings Settings { get; private set; }
+        internal static UserSettings UserSettings => Settings.UserSettings;
 
         private static ResourceDictionary templateResources;
         private static readonly Dictionary<string, ResourceDictionary> themes = new Dictionary<string, ResourceDictionary>();

@@ -109,7 +109,7 @@ namespace Reclaimer.Plugins
 
         internal DateTime WorkingStatusTime { get; private set; }
 
-        protected internal object settings { get; private set; }
+        internal object settings { get; set; }
 
         private string workingStatus;
         internal string WorkingStatus

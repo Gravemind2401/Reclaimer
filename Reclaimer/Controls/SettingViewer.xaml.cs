@@ -34,18 +34,20 @@ namespace Reclaimer.Controls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            var defaultPlugin = Substrate.AllPlugins.First();
             var plugins = Substrate.AllPlugins
                 .Where(p => p.settings != null)
-                .OrderBy(p => p.Name)
+                .OrderByDescending(p => p == defaultPlugin)
+                .ThenBy(p => p.Name)
                 .ToList();
 
-            txtSearch.ItemsSource = plugins;
-            txtSearch.SelectedIndex = 0;
+            cmbPlugins.ItemsSource = plugins;
+            cmbPlugins.SelectedIndex = 0;
         }
 
-        private void txtSearch_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void cmbPlugins_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var plugin = (Plugin)txtSearch.SelectedItem;
+            var plugin = (Plugin)cmbPlugins.SelectedItem;
             var assembly = plugin.GetType().Assembly.GetName();
             var origin = System.IO.Path.GetFileName(new Uri(assembly.CodeBase).LocalPath);
             txtVersion.Text = $"{origin} Version {assembly.Version}";

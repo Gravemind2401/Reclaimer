@@ -10,9 +10,9 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Background="{DynamicResource Environment.CommandBar.Gradient}">
-            <ComboBox x:Name="txtSearch" x:FieldModifier="private"
+            <ComboBox x:Name="cmbPlugins" x:FieldModifier="private"
                       Margin="0,2" DisplayMemberPath="Name"
-                      SelectionChanged="txtSearch_SelectionChanged" />
+                      SelectionChanged="cmbPlugins_SelectionChanged" />
             <TextBlock x:Name="txtVersion" Margin="3,0,0,2"
                        FontStyle="Italic" Text="Assembly.dll Version 0.0.0.0" />
         </StackPanel>
