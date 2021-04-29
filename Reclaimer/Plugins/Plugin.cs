@@ -178,7 +178,7 @@ namespace Reclaimer.Plugins
         /// Updates the working status that appears in the statusbar.
         /// </summary>
         /// <param name="status">The status to display.</param>
-        protected void SetWorkingStatus(string status)
+        internal protected void SetWorkingStatus(string status)
         {
             if (string.IsNullOrWhiteSpace(status))
                 throw Exceptions.MissingStringParameter(nameof(status));
@@ -190,7 +190,7 @@ namespace Reclaimer.Plugins
         /// <summary>
         /// Removes this plugin's working status from the status bar.
         /// </summary>
-        protected void ClearWorkingStatus()
+        internal protected void ClearWorkingStatus()
         {
             WorkingStatus = null;
             Substrate.RaiseWorkingStatusChanged(this);

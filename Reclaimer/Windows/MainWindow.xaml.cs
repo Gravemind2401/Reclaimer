@@ -6,17 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using Studio.Controls;
 using Reclaimer.Plugins;
 using Reclaimer.Models;
 using Reclaimer.Utilities;
 using System.IO;
+using Octokit;
 
 namespace Reclaimer.Windows
 {
@@ -25,23 +19,45 @@ namespace Reclaimer.Windows
     /// </summary>
     public partial class MainWindow : MetroWindow, ITabContentHost
     {
-        #region Dependency Properties
-        public static readonly DependencyProperty IsBusyProperty =
-            DependencyProperty.Register(nameof(IsBusy), typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+        private static Version AssemblyVersion => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
-        public static readonly DependencyProperty CurrentStatusProperty =
-            DependencyProperty.Register(nameof(CurrentStatus), typeof(string), typeof(MainWindow), new PropertyMetadata("Ready"));
+        #region Dependency Properties
+        public static readonly DependencyPropertyKey HasUpdatePropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(HasUpdate), typeof(bool), typeof(MainWindow), new PropertyMetadata(false, null, (d, baseValue) =>
+            {
+                return App.Settings.LatestRelease?.Version > AssemblyVersion;
+            }));
+
+        public static readonly DependencyProperty HasUpdateProperty = HasUpdatePropertyKey.DependencyProperty;
+
+        public static readonly DependencyPropertyKey IsBusyPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(IsBusy), typeof(bool), typeof(MainWindow), new PropertyMetadata(false, (s, e) =>
+            {
+                (s as MainWindow).RefreshStatus();
+            }));
+
+        public static readonly DependencyProperty IsBusyProperty = IsBusyPropertyKey.DependencyProperty;
+
+        public static readonly DependencyPropertyKey CurrentStatusPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(CurrentStatus), typeof(string), typeof(MainWindow), new PropertyMetadata());
+
+        public static readonly DependencyProperty CurrentStatusProperty = CurrentStatusPropertyKey.DependencyProperty;
+
+        public bool HasUpdate
+        {
+            get { return (bool)GetValue(HasUpdateProperty); }
+        }
 
         public bool IsBusy
         {
             get { return (bool)GetValue(IsBusyProperty); }
-            set { SetValue(IsBusyProperty, value); }
+            private set { SetValue(IsBusyPropertyKey, value); }
         }
 
         public string CurrentStatus
         {
             get { return (string)GetValue(CurrentStatusProperty); }
-            set { SetValue(CurrentStatusProperty, value); }
+            private set { SetValue(CurrentStatusPropertyKey, value); }
         }
         #endregion
 
@@ -51,7 +67,7 @@ namespace Reclaimer.Windows
 #if DEBUG
         public string AppVersion => "DEBUG";
 #else
-        public string AppVersion => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+        public string AppVersion => AssemblyVersion.ToString(3);
 #endif
 
         public DockContainerModel Model { get; }
@@ -72,6 +88,7 @@ namespace Reclaimer.Windows
             Substrate.RecentsChanged += Substrate_RecentsChanged;
         }
 
+        #region Event Handlers
         private void menuOutput_Click(object sender, RoutedEventArgs e)
         {
             Substrate.ShowOutput();
@@ -79,7 +96,7 @@ namespace Reclaimer.Windows
 
         private void menuAppDir_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start(AppDomain.CurrentDomain.BaseDirectory);
+            System.Diagnostics.Process.Start(Settings.AppBaseDirectory);
         }
 
         private void menuAppDataDir_Click(object sender, RoutedEventArgs e)
@@ -96,6 +113,18 @@ namespace Reclaimer.Windows
             var settings = new Controls.SettingViewer();
             settings.TabModel.ContentId = tabId;
             Substrate.AddTool(settings.TabModel, this, Dock.Right, new GridLength(350));
+        }
+
+        private void menuUpdates_Click(object sender, RoutedEventArgs e)
+        {
+            Task.Run(async () =>
+            {
+                if(!await CheckForUpdates())
+                    MessageBox.Show("Error checking for updates.", nameof(Reclaimer));
+                else if (!HasUpdate)
+                    MessageBox.Show("No updates available.", nameof(Reclaimer));
+                //else show update details
+            });
         }
 
         private void menuIssue_Click(object sender, RoutedEventArgs e)
@@ -127,11 +156,17 @@ namespace Reclaimer.Windows
 
             if (App.Settings.WindowState != WindowState.Minimized)
                 WindowState = App.Settings.WindowState;
+
+            CoerceValue(HasUpdateProperty);
+            RefreshStatus();
+
+            if (App.UserSettings.AutoUpdatesCheck && App.Settings.ShouldCheckUpdates)
+                Task.Run(CheckForUpdates);
         }
 
         private void MetroWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (App.Settings.RememberWindowState)
+            if (App.UserSettings.RememberWindowState)
                 App.Settings.WindowState = WindowState;
         }
 
@@ -140,14 +175,11 @@ namespace Reclaimer.Windows
             Dispatcher.Invoke(() =>
             {
                 if (e.Status == null)
-                {
-                    ClearValue(CurrentStatusProperty);
                     IsBusy = false;
-                }
                 else
                 {
-                    CurrentStatus = $"{e.PluginName}: {e.Status}";
                     IsBusy = true;
+                    CurrentStatus = $"{e.PluginName}: {e.Status}";
                 }
             });
         }
@@ -174,6 +206,40 @@ namespace Reclaimer.Windows
             var root = GetRoot(menuItem);
             if (!menu.Items.Contains(root))
                 menu.Items.Add(root);
+        }
+        #endregion
+
+        private async Task<bool> CheckForUpdates()
+        {
+            Substrate.SetSystemWorkingStatus("Checking for updates...");
+
+            try
+            {
+                var client = new GitHubClient(new ProductHeaderValue(nameof(Reclaimer), AppVersion));
+                var latest = await client.Repository.Release.GetLatest("Gravemind2401", nameof(Reclaimer));
+
+                App.Settings.LastUpdateCheck = DateTime.Now;
+                App.Settings.LatestRelease = new AppRelease(latest);
+
+                await Dispatcher.InvokeAsync(() => CoerceValue(HasUpdateProperty));
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Substrate.LogError("Error checking for updates", ex);
+                return false;
+            }
+            finally
+            {
+                Substrate.ClearSystemWorkingStatus();
+            }
+        }
+
+        private void RefreshStatus()
+        {
+            if (!IsBusy)
+                CurrentStatus = HasUpdate ? "There is an update available" : "Ready";
         }
 
         private void RefreshRecents()

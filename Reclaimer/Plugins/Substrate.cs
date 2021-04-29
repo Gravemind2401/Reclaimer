@@ -166,6 +166,16 @@ namespace Reclaimer.Plugins
 
         internal static void ClearLogOutput(Plugin source) => EmptyLog?.Invoke(source, new LogEventArgs(source, default(LogEntry)));
 
+        internal static void SetSystemWorkingStatus(string status)
+        {
+            defaultPlugin.SetWorkingStatus(status);
+        }
+
+        internal static void ClearSystemWorkingStatus()
+        {
+            defaultPlugin.ClearWorkingStatus();
+        }
+
         internal static void RaiseWorkingStatusChanged(Plugin source)
         {
             if (source.WorkingStatus != null)

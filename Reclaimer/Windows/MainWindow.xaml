@@ -64,6 +64,7 @@
             </MenuItem>
             <MenuItem Header="Tools">
                 <MenuItem Header="Settings" Click="menuSettings_Click" />
+                <MenuItem Header="Check for updates" Click="menuUpdates_Click" />
             </MenuItem>
             <MenuItem Header="Themes" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
             <MenuItem Header="Help">
@@ -95,6 +96,14 @@
                     <Setter Property="Background" Value="{DynamicResource Environment.StatusBar.DefaultBackground}" />
                     <Setter Property="Foreground" Value="{DynamicResource Environment.StatusBar.DefaultForeground}" />
                     <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding HasUpdate}" Value="True" />
+                                <Condition Binding="{Binding IsBusy}" Value="False" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="{DynamicResource Environment.StatusBar.NoSolutionBackground}" />
+                            <Setter Property="Foreground" Value="{DynamicResource Environment.StatusBar.NoSolutionForeground}" />
+                        </MultiDataTrigger>
                         <DataTrigger Binding="{Binding IsBusy}" Value="True">
                             <Setter Property="Background" Value="{DynamicResource Environment.StatusBar.DebuggingBackground}" />
                             <Setter Property="Foreground" Value="{DynamicResource Environment.StatusBar.DebuggingForeground}" />

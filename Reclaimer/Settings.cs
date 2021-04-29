@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Reclaimer.Models;
 using Reclaimer.Plugins;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,11 @@ namespace Reclaimer
 
         public string Theme { get; set; }
         public WindowState WindowState { get; set; }
+        public DateTime LastUpdateCheck { get; set; }
+
+        public AppRelease LatestRelease { get; set; }
+
+        internal bool ShouldCheckUpdates => (DateTime.Now - LastUpdateCheck).TotalHours > 12;
 
         public Dictionary<string, string> DefaultHandlers
         {
@@ -73,5 +79,8 @@ namespace Reclaimer
     {
         [DisplayName("Restore Window State")]
         public bool RememberWindowState { get; set; }
+
+        [DisplayName("Auto Updates Check")]
+        public bool AutoUpdatesCheck { get; set; }
     }
 }
