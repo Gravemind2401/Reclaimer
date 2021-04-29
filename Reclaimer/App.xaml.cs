@@ -21,7 +21,7 @@ namespace Reclaimer
         internal static Settings Settings { get; private set; }
         internal static UserSettings UserSettings => Settings.UserSettings;
 
-        private static ResourceDictionary templateResources;
+        private static ResourceDictionary styleResources;
         private static readonly Dictionary<string, ResourceDictionary> themes = new Dictionary<string, ResourceDictionary>();
 
         public App() : base()
@@ -82,7 +82,7 @@ namespace Reclaimer
 
             base.OnStartup(e);
 
-            templateResources = new ResourceDictionary { Source = new Uri("/Reclaimer;component/Resources/Templates.xaml", UriKind.RelativeOrAbsolute) };
+            styleResources = new ResourceDictionary { Source = new Uri("/Reclaimer;component/Resources/Styles.xaml", UriKind.RelativeOrAbsolute) };
 
             var themeList = new[] { "Blue", "Dark", "Light", "Green", "Purple", "Red", "Tan", "Solarized (Dark)", "Solarized (Light)" };
 
@@ -172,7 +172,7 @@ namespace Reclaimer
                 throw new KeyNotFoundException($"'{theme}' does not exist");
 
             Instance.Resources.MergedDictionaries.Clear();
-            Instance.Resources.MergedDictionaries.Add(templateResources);
+            Instance.Resources.MergedDictionaries.Add(styleResources);
             Instance.Resources.MergedDictionaries.Add(themes[theme]);
 
             Settings.Theme = theme;
