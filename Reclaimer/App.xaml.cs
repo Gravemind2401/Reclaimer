@@ -82,7 +82,7 @@ namespace Reclaimer
 
             base.OnStartup(e);
 
-            styleResources = new ResourceDictionary { Source = new Uri("/Reclaimer;component/Resources/Styles.xaml", UriKind.RelativeOrAbsolute) };
+            styleResources = new ResourceDictionary { Source = new Uri("/Reclaimer;component/Styles/Styles.xaml", UriKind.RelativeOrAbsolute) };
 
             var themeList = new[] { "Blue", "Dark", "Light", "Green", "Purple", "Red", "Tan", "Solarized (Dark)", "Solarized (Light)" };
 

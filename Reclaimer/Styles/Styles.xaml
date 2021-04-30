@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+                    xmlns:s="clr-namespace:Studio.Controls;assembly=Studio"
+                    xmlns:su="clr-namespace:Studio.Utilities;assembly=Studio"
+                    xmlns:u="clr-namespace:Reclaimer.Utilities"
+                    xmlns:m="clr-namespace:Reclaimer.Models">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Reclaimer;component/Styles/DataTemplates.xaml" />
+        <ResourceDictionary Source="/Reclaimer;component/Styles/IconTemplates.xaml" />
+        <ResourceDictionary Source="/Reclaimer;component/Styles/Windows.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>
