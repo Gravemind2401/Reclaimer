@@ -88,7 +88,7 @@ namespace Reclaimer.Models
                 Height = e.VisualBounds.Height
             };
 
-            if (!pc.AllTabs.Any())
+            if (pc.Host != null && !pc.AllTabs.Any())
                 pc.Host.TransitionTo(wnd);
             else
             {

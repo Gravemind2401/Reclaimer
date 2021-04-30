@@ -147,7 +147,7 @@ namespace Reclaimer.Models
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
 
-            var group = new ToolWellModel() { Width = item.Width, Height = item.Height };
+            var group = new ToolWellModel() { Width = item.Width, Height = item.Height, Dock = dock };
             group.Children.Add(item);
 
             var container = new SplitPanelModel(dock, group);
