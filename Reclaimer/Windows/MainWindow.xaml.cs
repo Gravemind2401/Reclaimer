@@ -144,8 +144,6 @@ namespace Reclaimer.Windows
                     AddMenuItem(plugin, item);
             }
 
-            RefreshRecents();
-
             var themeRoot = GetMenuItem("Themes");
             foreach (var theme in App.Themes)
             {
@@ -158,7 +156,11 @@ namespace Reclaimer.Windows
                 WindowState = App.Settings.WindowState;
 
             CoerceValue(HasUpdateProperty);
+            RefreshRecents();
             RefreshStatus();
+
+            Controls.OutputViewer.Instance.Height = 250;
+            Substrate.GetHostWindow().DockContainer.BottomDockItems.Add(Controls.OutputViewer.Instance);
 
             if (App.UserSettings.AutoUpdatesCheck && App.Settings.ShouldCheckUpdates)
                 Task.Run(CheckForUpdates);

@@ -78,6 +78,8 @@ namespace Reclaimer.Controls
         #region Event Handlers
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            cmbPlugins_SelectionChanged(null, null);
+
             Substrate.Log += Substrate_Log;
             Substrate.EmptyLog += Substrate_EmptyLog;
             txtOutput.CaretIndex = txtOutput.Text.Length;

@@ -387,9 +387,16 @@ namespace Reclaimer.Plugins
         public static void ShowOutput()
         {
             if (Controls.OutputViewer.Instance.Parent != null)
-                return;
+                FocusOutput();
+            else AddTool(Controls.OutputViewer.Instance, GetHostWindow(), Dock.Bottom, new GridLength(250));
+        }
 
-            AddTool(Controls.OutputViewer.Instance, GetHostWindow(), Dock.Bottom, new GridLength(250));
+        /// <summary>
+        /// Gives focus to the output tool if it has been added to the window.
+        /// </summary>
+        public static void FocusOutput()
+        {
+            ShowTab(Controls.OutputViewer.Instance);
         }
 
         /// <summary>
@@ -422,7 +429,17 @@ namespace Reclaimer.Plugins
             var tab = hosts.SelectMany(h => h.DockContainer.AllTabs)
                 .FirstOrDefault(t => t.ContentId == contentId);
 
-            if (tab == null)
+            return ShowTab(tab);
+        }
+
+        /// <summary>
+        /// Gives focus to the specified <see cref="TabModel"/>, if possible.
+        /// </summary>
+        /// <param name="tab">The <see cref="TabModel"/> to show.</param>
+        /// <returns>true if the tab was focused, otherwise false.</returns>
+        public static bool ShowTab(TabModel tab)
+        {
+            if (tab?.Parent == null)
                 return false;
 
             var well = tab.Parent as TabWellModelBase;
@@ -434,13 +451,20 @@ namespace Reclaimer.Plugins
 
                 well.SelectedItem = tab;
                 well.IsActive = true;
+
+                return true;
             }
 
             var container = tab.Parent as DockContainerModel;
             if (container != null)
+            {
                 container.SelectedDockItem = tab;
+                tab.IsActive = true;
 
-            return true;
+                return true;
+            }
+
+            return false;
         }
         #endregion
     }
