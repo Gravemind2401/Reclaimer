@@ -91,7 +91,18 @@ namespace Adjutant.Blam.Halo2
                 data = TextureUtils.Swizzle(data, virtualWidth, virtualHeight, 1, unitSize);
             }
 
-            return TextureUtils.GetDds(submap.Height, submap.Width, submap.BitmapFormat, submap.BitmapType == TextureType.CubeMap, data);
+            var format = submap.BitmapFormat;
+            if (format == TextureFormat.P8_bump)
+            {
+                var indices = data;
+                data = new byte[indices.Length * 4];
+                format = TextureFormat.A8R8G8B8;
+
+                for (int i = 0; i < indices.Length; i++)
+                    Array.Copy(Properties.Resources.Halo2BumpPalette, indices[i] * 4, data, i * 4, 4);
+            }
+
+            return TextureUtils.GetDds(submap.Height, submap.Width, format, submap.BitmapType == TextureType.CubeMap, data);
         }
 
         #endregion

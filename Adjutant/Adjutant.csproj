@@ -282,6 +282,7 @@
     <None Include="Adjutant.ruleset" />
     <None Include="packages.config" />
     <None Include="Resources\3dsMax AMF2.ms" />
+    <None Include="Resources\Halo2BumpPalette.bin" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Blender AMF2.py" />
