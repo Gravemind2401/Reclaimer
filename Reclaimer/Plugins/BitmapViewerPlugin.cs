@@ -48,7 +48,7 @@ namespace Reclaimer.Plugins
             }
             catch (Exception e)
             {
-                LogError($"Error loading image: {fileName}", e);
+                LogError($"Error loading image: {fileName}", e, true);
             }
         }
     }

@@ -93,7 +93,7 @@ namespace Reclaimer.Plugins
                     }
                     catch (Exception ex)
                     {
-                        LogError($"Error extracting {bitm.Name}.{bitm.Class}", ex);
+                        LogError($"Error extracting {bitm.Name}.{bitm.Class}", ex, true);
                     }
                 }
 
@@ -132,7 +132,7 @@ namespace Reclaimer.Plugins
             }
             catch (Exception e)
             {
-                LogError($"Error loading model: {fileName}", e);
+                LogError($"Error loading model: {fileName}", e, true);
             }
         }
 

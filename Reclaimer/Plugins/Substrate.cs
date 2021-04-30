@@ -162,7 +162,13 @@ namespace Reclaimer.Plugins
 
         internal static void LogError(string message, Exception e) => defaultPlugin.LogError(message, e);
 
-        internal static void LogOutput(Plugin source, LogEntry entry) => Log?.Invoke(source, new LogEventArgs(source, entry));
+        internal static void LogOutput(Plugin source, LogEntry entry, bool focusOutput)
+        {
+            if (focusOutput) //only focus if already present in ui - do not add new tab
+                ShowTab(Controls.OutputViewer.Instance);
+
+            Log?.Invoke(source, new LogEventArgs(source, entry));
+        }
 
         internal static void ClearLogOutput(Plugin source) => EmptyLog?.Invoke(source, new LogEventArgs(source, default(LogEntry)));
 

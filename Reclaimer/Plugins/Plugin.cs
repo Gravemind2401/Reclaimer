@@ -256,7 +256,7 @@ namespace Reclaimer.Plugins
         {
             var entry = new LogEntry(DateTime.Now, message);
             logEntries.Add(entry);
-            Substrate.LogOutput(this, entry);
+            Substrate.LogOutput(this, entry, false);
         }
 
         /// <summary>
@@ -264,11 +264,19 @@ namespace Reclaimer.Plugins
         /// </summary>
         /// <param name="message">The message to log.</param>
         /// <param name="e">The error to log.</param>
-        protected internal void LogError(string message, Exception e)
+        protected internal void LogError(string message, Exception e) => LogError(message, e, false);
+
+        /// <summary>
+        /// Logs an error to the output pane with a related message.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="e">The error to log.</param>
+        /// <param name="focusOutput">true to focus the output window.</param>
+        protected internal void LogError(string message, Exception e, bool focusOutput)
         {
             var entry = new LogEntry(DateTime.Now, $"{message}{Environment.NewLine}{e.ToString()}");
             logEntries.Add(entry);
-            Substrate.LogOutput(this, entry);
+            Substrate.LogOutput(this, entry, focusOutput);
         }
 
         /// <summary>
