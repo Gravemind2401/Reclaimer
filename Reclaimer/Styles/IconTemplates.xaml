@@ -599,4 +599,185 @@
         </Viewbox>
     </ControlTemplate>
 
+    <ControlTemplate x:Key="ic_Upload_16x" TargetType="ContentControl">
+        <Viewbox Width="16" Height="16">
+            <Rectangle Width="16" Height="16">
+                <Rectangle.Fill>
+                    <DrawingBrush>
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <DrawingGroup.Children>
+                                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M13,13L10,10 10,15 6,15 6,10 3,13 3,6 8,1 13,6z" />
+                                    <GeometryDrawing Brush="#FF00539C" Geometry="F1M12,10L9,7 9,14 7,14 7,7 4,10 4,7 8,3 12,7z" />
+                                </DrawingGroup.Children>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ic_Upload_grey_16x" TargetType="ContentControl">
+        <Viewbox Width="16" Height="16">
+            <Rectangle Width="16" Height="16">
+                <Rectangle.Fill>
+                    <DrawingBrush>
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <DrawingGroup.Children>
+                                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M13,13L10,10 10,15 6,15 6,10 3,13 3,6 8,1 13,6z" />
+                                    <GeometryDrawing Brush="#FF424242" Geometry="F1M12,10L9,7 9,14 7,14 7,7 4,10 4,7 8,3 12,7z" />
+                                </DrawingGroup.Children>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ic_Download_16x" TargetType="ContentControl">
+        <Viewbox Width="16" Height="16">
+            <Rectangle Width="16" Height="16">
+                <Rectangle.Fill>
+                    <DrawingBrush>
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <DrawingGroup.Children>
+                                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M13,3L13,10 8,15 3,10 3,3 6,6 6,1 10,1 10,6z" />
+                                    <GeometryDrawing Brush="#FF00539C" Geometry="F1M12,6L12,9 8,13 4,9 4,6 7,9 7,2 9,2 9,9z" />
+                                </DrawingGroup.Children>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ic_Download_grey_16x" TargetType="ContentControl">
+        <Viewbox Width="16" Height="16">
+            <Rectangle Width="16" Height="16">
+                <Rectangle.Fill>
+                    <DrawingBrush>
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <DrawingGroup.Children>
+                                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M10,6L10,1 6,1 6,6 3,3 3,10 8,15 13,10 13,3z" />
+                                    <GeometryDrawing Brush="#FF424242" Geometry="F1M9,9L9,2 7,2 7,9 4,6 4,9 8,13 12,9 12,6z" />
+                                </DrawingGroup.Children>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ic_Add_16x" TargetType="ContentControl">
+        <Viewbox Width="16" Height="16">
+            <Rectangle Width="16" Height="16">
+                <Rectangle.Fill>
+                    <DrawingBrush>
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <DrawingGroup.Children>
+                                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M5.0004,-0.000199999999999534L5.0004,4.9998 0.000399999999999956,4.9998 0.000399999999999956,10.9998 5.0004,10.9998 5.0004,15.9998 10.9994,15.9998 10.9994,10.9998 16.0004,10.9998 16.0004,4.9998 10.9994,4.9998 10.9994,-0.000199999999999534z" />
+                                    <GeometryDrawing Brush="#FF388A34" Geometry="F1M10,6L15,6 15,10 10,10 10,15 6,15 6,10 1,10 1,6 6,6 6,1 10,1z" />
+                                </DrawingGroup.Children>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ic_Add_grey_16x" TargetType="ContentControl">
+        <Viewbox Width="16" Height="16">
+            <Rectangle Width="16" Height="16">
+                <Rectangle.Fill>
+                    <DrawingBrush>
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <DrawingGroup.Children>
+                                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M5.0004,-0.000199999999999534L5.0004,4.9998 0.000399999999999956,4.9998 0.000399999999999956,10.9998 5.0004,10.9998 5.0004,15.9998 10.9994,15.9998 10.9994,10.9998 16.0004,10.9998 16.0004,4.9998 10.9994,4.9998 10.9994,-0.000199999999999534z" />
+                                    <GeometryDrawing Brush="#FF424242" Geometry="F1M10,6L15,6 15,10 10,10 10,15 6,15 6,10 1,10 1,6 6,6 6,1 10,1z" />
+                                </DrawingGroup.Children>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ic_Remove_16x" TargetType="ContentControl">
+        <Viewbox Width="16" Height="16">
+            <Rectangle Width="16" Height="16">
+                <Rectangle.Fill>
+                    <DrawingBrush>
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <DrawingGroup.Children>
+                                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M0,11L16,11 16,5.001 0,5.001z" />
+                                    <GeometryDrawing Brush="#FF414141" Geometry="F1M15,10L1,10 1,6 15,6z" />
+                                </DrawingGroup.Children>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ic_Remove_color_16x" TargetType="ContentControl">
+        <Viewbox Width="16" Height="16">
+            <Rectangle Width="16" Height="16">
+                <Rectangle.Fill>
+                    <DrawingBrush>
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <DrawingGroup.Children>
+                                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M0,11L16,11 16,5.001 0,5.001z" />
+                                    <GeometryDrawing Brush="#FFA1260D" Geometry="F1M15,10L1,10 1,6 15,6z" />
+                                </DrawingGroup.Children>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ic_Copy_16x" TargetType="ContentControl">
+        <Viewbox Width="16" Height="16">
+            <Rectangle Width="16" Height="16">
+                <Rectangle.Fill>
+                    <DrawingBrush>
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <DrawingGroup.Children>
+                                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M5.0004,-0.000199999999999534L5.0004,4.0008 0.9994,4.0008 0.9994,15.9998 10.9994,15.9998 10.9994,12.0008 15.0004,12.0008 15.0004,-0.000199999999999534z" />
+                                    <GeometryDrawing Brush="#FF424242" Geometry="F1M9,6L3,6 3,14 9,14z M10,15L2,15 2,5 10,5z M11,11L11,10 13,10 13,2 7,2 7,4 6,4 6,1 14,1 14,11z" />
+                                    <GeometryDrawing Brush="#FFF0EFF1" Geometry="F1M7,2L7,4 11,4 11,10 13,10 13,2z M9,14L3,14 3,6 9,6z" />
+                                </DrawingGroup.Children>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Viewbox>
+    </ControlTemplate>
+
 </ResourceDictionary>

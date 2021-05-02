@@ -9,7 +9,9 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Reclaimer;component/Styles/DataTemplates.xaml" />
         <ResourceDictionary Source="/Reclaimer;component/Styles/IconTemplates.xaml" />
+        <ResourceDictionary Source="/Reclaimer;component/Styles/Defaults.xaml" />
         <ResourceDictionary Source="/Reclaimer;component/Styles/Windows.xaml" />
+        <ResourceDictionary Source="/Reclaimer;component/Styles/PropertyGrid.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

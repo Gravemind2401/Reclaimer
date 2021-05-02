@@ -14,11 +14,9 @@
                       Margin="0,2" DisplayMemberPath="Name"
                       SelectionChanged="cmbPlugins_SelectionChanged" />
             <TextBlock x:Name="txtVersion" Margin="3,0,0,2"
+                       Foreground="{DynamicResource CommonControls.TextBox.Text}"
                        FontStyle="Italic" Text="Assembly.dll Version 0.0.0.0" />
         </StackPanel>
-        <xctk:PropertyGrid x:Name="propGrid" x:FieldModifier="private"
-                           ShowTitle="False" ShowSortOptions="False"
-                           ShowSearchBox="False" ShowSummary="False"
-                           PropertyNameLeftPadding="5" />
+        <xctk:PropertyGrid x:Name="propGrid" x:FieldModifier="private" />
     </DockPanel>
 </UserControl>

@@ -48,24 +48,8 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
-        <Style TargetType="ListBox" BasedOn="{StaticResource {x:Type ListBox}}">
+        <Style TargetType="ListBox" BasedOn="{StaticResource Reclaimer.ListBoxStyle}">
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="OverridesDefaultStyle" Value="True" />
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Padding" Value="2,1" />
-
-            <Setter Property="Foreground" Value="{DynamicResource CommonControls.TextBox.Text}" />
-            <Setter Property="Background" Value="{DynamicResource CommonControls.TextBox.Background}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource CommonControls.TextBox.Border}" />
-
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Foreground" Value="{DynamicResource CommonControls.TextBox.TextDisabled}" />
-                    <Setter Property="Background" Value="{DynamicResource CommonControls.TextBox.BackgroundDisabled}" />
-                    <Setter Property="BorderBrush" Value="{DynamicResource CommonControls.TextBox.BorderDisabled}" />
-                </Trigger>
-            </Style.Triggers>
         </Style>
 
         <Style TargetType="ComboBoxItem" x:Key="ComboBoxOption">

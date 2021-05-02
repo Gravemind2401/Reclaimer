@@ -44,7 +44,7 @@
 
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top" IsLocked="True">
-            <ToolBar Margin="3,1">
+            <ToolBar>
                 <Button Click="btnCollapseAll_Click"
                         ToolTip="Collapse all">
                     <ContentControl Template="{StaticResource ic_CollapseGroup_16x}" />
@@ -77,7 +77,7 @@
             </ToolBar>
         </ToolBarTray>
         <ToolBarTray DockPanel.Dock="Bottom" IsLocked="True">
-            <ToolBar Margin="3,1">
+            <ToolBar>
                 <ToolBar.Resources>
                     <Style TargetType="Label">
                         <Setter Property="Padding" Value="4,0,6,2" />
