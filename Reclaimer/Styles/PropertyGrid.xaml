@@ -5,9 +5,11 @@
                     xmlns:conv="clr-namespace:Xceed.Wpf.Toolkit.Core.Converters;assembly=DotNetProjects.Wpf.Extended.Toolkit"
                     xmlns:colconv="clr-namespace:Xceed.Wpf.Toolkit.Converters;assembly=DotNetProjects.Wpf.Extended.Toolkit"
                     xmlns:pgconv="clr-namespace:Xceed.Wpf.Toolkit.PropertyGrid.Converters;assembly=DotNetProjects.Wpf.Extended.Toolkit"
+                    xmlns:editors="clr-namespace:Xceed.Wpf.Toolkit.PropertyGrid.Editors;assembly=DotNetProjects.Wpf.Extended.Toolkit"
                     xmlns:utilities="clr-namespace:Xceed.Wpf.Toolkit.Core.Utilities;assembly=DotNetProjects.Wpf.Extended.Toolkit"
                     xmlns:commands="clr-namespace:Xceed.Wpf.Toolkit.PropertyGrid.Commands;assembly=DotNetProjects.Wpf.Extended.Toolkit"
-                    xmlns:themes="clr-namespace:Xceed.Wpf.Toolkit.Themes;assembly=DotNetProjects.Wpf.Extended.Toolkit">
+                    xmlns:themes="clr-namespace:Xceed.Wpf.Toolkit.Themes;assembly=DotNetProjects.Wpf.Extended.Toolkit"
+                    xmlns:prim="clr-namespace:Xceed.Wpf.Toolkit.Primitives;assembly=DotNetProjects.Wpf.Extended.Toolkit">
 
     <conv:ObjectTypeToNameConverter x:Key="ObjectTypeToNameConverter" />
     <colconv:NewItemTypesComboBoxConverter x:Key="NewItemTypesComboBoxConverter" />
@@ -61,11 +63,11 @@
 
                             <!-- Set the BorderThickness at 1 pixel to the right to let the "vertical line" appear -->
                             <Border x:Name="PART_Name" Margin="0,0,1,0"
-                                  Background="{TemplateBinding Background}"
-                                  BorderBrush="{TemplateBinding BorderBrush}"
-                                  BorderThickness="{TemplateBinding BorderThickness}"
-                                  VerticalAlignment="Stretch"
-                                  HorizontalAlignment="Stretch">
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalAlignment="Stretch">
                                 <Grid Margin="2" VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -574,4 +576,247 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <DataTemplate x:Key="Xceed.DefaultWatermarkTemplate">
+        <ContentControl Content="{Binding}" Focusable="False"
+                        Foreground="{DynamicResource SearchControl.MouseOverWatermarkText}" />
+    </DataTemplate>
+
+    <!--https://github.com/dotnetprojects/WpfExtendedToolkit/blob/Extended/Src/Xceed.Wpf.Toolkit/ButtonSpinner/Themes/Aero2.NormalColor.xaml-->
+    <Style x:Key="Xceed.ButtonSpinnerStyle" TargetType="xctk:ButtonSpinner">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="0" />
+        
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="True" />
+        
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="xctk:ButtonSpinner">
+                    <Border x:Name="Border"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition x:Name="firstContentColumn" Width="*" />
+                                <ColumnDefinition x:Name="secondContentColumn" Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ContentPresenter x:Name="contentPresenter"
+                                    Focusable="False"
+                                    Margin="{TemplateBinding Padding}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+
+                            <Grid x:Name="gridContent" Grid.Column="1"
+                                  Height="{Binding ActualHeight, ElementName=contentPresenter}"
+                                  Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}">
+                                
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <RepeatButton x:Name="PART_IncreaseButton" VerticalAlignment="Stretch"
+                                        Style="{StaticResource Studio.ScrollBarLineButtonStyle}"
+                                        IsTabStop="{TemplateBinding IsTabStop}">
+                                    <Viewbox StretchDirection="DownOnly">
+                                        <ContentControl Template="{StaticResource Studio.ScrollArrowUpGlyph}"
+                                                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RepeatButton}}" />
+                                    </Viewbox>
+                                </RepeatButton>
+
+                                <RepeatButton x:Name="PART_DecreaseButton" Grid.Row="1" VerticalAlignment="Stretch"
+                                        Style="{StaticResource Studio.ScrollBarLineButtonStyle}"
+                                        IsTabStop="{TemplateBinding IsTabStop}">
+                                    <Viewbox StretchDirection="DownOnly">
+                                        <ContentControl Template="{StaticResource Studio.ScrollArrowDownGlyph}"
+                                                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RepeatButton}}" />
+                                    </Viewbox>
+                                </RepeatButton>
+
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="ShowButtonSpinner" Value="False">
+                            <Setter Property="Visibility" Value="Hidden" TargetName="gridContent" />
+                            <Setter Property="Width" Value="0" TargetName="gridContent" />
+                        </Trigger>
+                        <Trigger Property="ButtonSpinnerLocation" Value="Left">
+                            <Setter TargetName="firstContentColumn" Property="Width" Value="Auto" />
+                            <Setter TargetName="secondContentColumn" Property="Width" Value="*" />
+                            <Setter TargetName="contentPresenter" Property="Grid.Column" Value="1" />
+                            <Setter TargetName="gridContent" Property="Grid.Column" Value="0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsKeyboardFocusWithin" Value="False" />
+                    <Condition Property="IsMouseOver" Value="False" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Foreground" Value="{DynamicResource SearchControl.UnfocusedForeground}" />
+                <Setter Property="Background" Value="{DynamicResource SearchControl.UnfocusedBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource SearchControl.UnfocusedBorder}" />
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsKeyboardFocusWithin" Value="False" />
+                    <Condition Property="IsMouseOver" Value="True" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Foreground" Value="{DynamicResource SearchControl.MouseOverForeground}" />
+                <Setter Property="Background" Value="{DynamicResource SearchControl.MouseOverBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource SearchControl.MouseOverBorder}" />
+            </MultiTrigger>
+            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource SearchControl.FocusedForeground}" />
+                <Setter Property="Background" Value="{DynamicResource SearchControl.FocusedBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource SearchControl.FocusedBorder}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource SearchControl.DisabledForeground}" />
+                <Setter Property="Background" Value="{DynamicResource SearchControl.DisabledBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource SearchControl.DisabledBorder}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--https://github.com/dotnetprojects/WpfExtendedToolkit/blob/Extended/Src/Xceed.Wpf.Toolkit/WatermarkTextBox/Themes/Aero2.NormalColor.xaml-->
+    <Style x:Key="Xceed.WatermarkTextBoxStyle" TargetType="xctk:WatermarkTextBox" BasedOn="{StaticResource Studio.TextBoxStyle}">
+        <Setter Property="WatermarkTemplate" Value="{StaticResource Xceed.DefaultWatermarkTemplate}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource SearchControl.Selection}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="xctk:WatermarkTextBox">
+                    <Border BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            Background="{TemplateBinding Background}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                        <Grid>
+                            <ScrollViewer Panel.ZIndex="0" x:Name="PART_ContentHost" />
+                            <ContentPresenter x:Name="PART_WatermarkHost"
+                                  Content="{TemplateBinding Watermark}"
+                                  ContentTemplate="{Binding WatermarkTemplate, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={StaticResource Xceed.DefaultWatermarkTemplate}}"
+                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  IsHitTestVisible="False"
+                                  Margin="{TemplateBinding Padding}"
+                                  Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="KeepWatermarkOnGotFocus" Value="False" />
+                                <Condition Property="IsFocused" Value="False" />
+                                <Condition Property="Text" Value="" />
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Visibility" TargetName="PART_WatermarkHost" Value="Visible" />
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="KeepWatermarkOnGotFocus" Value="True" />
+                                <Condition Property="Text" Value="" />
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Visibility" TargetName="PART_WatermarkHost" Value="Visible" />
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--https://github.com/dotnetprojects/WpfExtendedToolkit/blob/Extended/Src/Xceed.Wpf.Toolkit/NumericUpDown/Themes/Aero2.NormalColor.xaml-->
+    <Style x:Key="Xceed.NumericUpDown" TargetType="prim:InputBase">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+
+        <Setter Property="TextAlignment" Value="Right" />
+        <Setter Property="HorizontalContentAlignment" Value="Right" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+
+        <Setter Property="WatermarkTemplate" Value="{StaticResource Xceed.DefaultWatermarkTemplate}" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Control">
+                    <xctk:ButtonSpinner x:Name="PART_Spinner"
+                            Style="{StaticResource Xceed.ButtonSpinnerStyle}"
+                            IsTabStop="False"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            AllowSpin="{Binding AllowSpin, RelativeSource={RelativeSource TemplatedParent}}"
+                            ShowButtonSpinner="{Binding ShowButtonSpinner, RelativeSource={RelativeSource TemplatedParent}}"
+                            ButtonSpinnerLocation="{Binding ButtonSpinnerLocation, RelativeSource={RelativeSource TemplatedParent}}">
+                        <xctk:WatermarkTextBox x:Name="PART_TextBox"
+                                Style="{StaticResource Xceed.WatermarkTextBoxStyle}"
+                                BorderThickness="0"
+                                Background="Transparent"
+                                ContextMenu="{TemplateBinding ContextMenu}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontStretch="{TemplateBinding FontStretch}"
+                                FontStyle="{TemplateBinding FontStyle}"
+                                FontWeight="{TemplateBinding FontWeight}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                IsUndoEnabled="{Binding IsUndoEnabled, RelativeSource={RelativeSource TemplatedParent}}"
+                                IsTabStop="True"
+                                MinWidth="20"
+                                AcceptsReturn="False"
+                                AutoSelectBehavior="{Binding AutoSelectBehavior, RelativeSource={RelativeSource TemplatedParent}}"
+                                AutoMoveFocus="{Binding AutoMoveFocus, RelativeSource={RelativeSource TemplatedParent}}"
+                                TextAlignment="{Binding TextAlignment, RelativeSource={RelativeSource TemplatedParent}}"
+                                TextWrapping="NoWrap"
+                                TabIndex="{TemplateBinding TabIndex}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Watermark="{Binding Watermark, RelativeSource={RelativeSource TemplatedParent}}"
+                                WatermarkTemplate="{Binding WatermarkTemplate, RelativeSource={RelativeSource TemplatedParent}}"
+                                MaxLength="{Binding MaxLength, RelativeSource={RelativeSource TemplatedParent}}">
+                        </xctk:WatermarkTextBox>
+                    </xctk:ButtonSpinner>
+
+                    <ControlTemplate.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsReadOnly, RelativeSource={RelativeSource Self}}" Value="False" />
+                                <Condition Binding="{Binding AllowTextInput, RelativeSource={RelativeSource Self}}" Value="False" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="IsReadOnly" Value="True" TargetName="PART_TextBox" />
+                        </MultiDataTrigger>
+                        <DataTrigger Binding="{Binding IsReadOnly, RelativeSource={RelativeSource Self}}" Value="True">
+                            <Setter Property="IsReadOnly" Value="True" TargetName="PART_TextBox" />
+                        </DataTrigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="PART_TextBox" Property="FocusManager.FocusedElement" Value="{Binding ElementName=PART_TextBox}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="xctk:ButtonSpinner" BasedOn="{StaticResource Xceed.ButtonSpinnerStyle}" />
+    <Style TargetType="xctk:WatermarkTextBox" BasedOn="{StaticResource Xceed.WatermarkTextBoxStyle}" />
+
+    <Style TargetType="editors:PropertyGridEditorTextBox" BasedOn="{StaticResource Xceed.WatermarkTextBoxStyle}" />
+    <Style TargetType="editors:PropertyGridEditorComboBox" BasedOn="{StaticResource Studio.ComboBoxStyle}" />
+    <Style TargetType="editors:PropertyGridEditorIntegerUpDown" BasedOn="{StaticResource Xceed.NumericUpDown}" />
+    <Style TargetType="editors:PropertyGridEditorSingleUpDown" BasedOn="{StaticResource Xceed.NumericUpDown}" />
+    <Style TargetType="editors:PropertyGridEditorDoubleUpDown" BasedOn="{StaticResource Xceed.NumericUpDown}" />
+
 </ResourceDictionary>
