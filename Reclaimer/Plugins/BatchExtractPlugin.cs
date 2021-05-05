@@ -132,7 +132,10 @@ namespace Reclaimer.Plugins
                 if (!fsd.ShowDialog())
                     return false;
 
-                Settings.DataFolder = dataFolder = fsd.SelectedPath;
+                dataFolder = fsd.SelectedPath;
+
+                if (Settings.AutoDataFolder)
+                    Settings.DataFolder = dataFolder;
             }
 
             return true;
@@ -476,8 +479,11 @@ namespace Reclaimer.Plugins
             [DisplayName("Data Folder")]
             public string DataFolder { get; set; }
 
-            [DisplayName("Data Folder")]
+            [DisplayName("Data Folder Prompt")]
             public bool PromptForFolder { get; set; }
+
+            [DisplayName("Auto Update Data Folder")]
+            public bool AutoDataFolder { get; set; }
 
             [DisplayName("Overwrite Existing")]
             public bool OverwriteExisting { get; set; }

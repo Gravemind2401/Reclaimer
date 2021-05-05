@@ -12,6 +12,7 @@
         <Style TargetType="Window" />
         <Style TargetType="Label" />
         <Style TargetType="ListBox" />
+        <Style TargetType="ListBoxItem" />
         <Style TargetType="Button" />
     </Window.Resources>
     
