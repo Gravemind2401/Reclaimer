@@ -403,7 +403,11 @@ namespace Reclaimer.Plugins
                         vIndex++;
 
                         if (v.Position.Count > 0)
+                        {
                             m.Vertices.Add(v.Position[0].ToAssimp3D(scale));
+                            if (v.Color.Count == 0 && !float.IsNaN(v.Position[0].W))
+                                m.VertexColorChannels[0].Add(new Assimp.Color4D { R = v.Position[0].W });
+                        }
 
                         if (v.Normal.Count > 0)
                             m.Normals.Add(v.Normal[0].ToAssimp3D());
