@@ -6,7 +6,7 @@
              xmlns:su="clr-namespace:Studio.Utilities;assembly=Studio"
              xmlns:local="clr-namespace:Reclaimer.Controls"
              x:Name="userControl"
-             mc:Ignorable="d" d:DesignHeight="30" d:DesignWidth="300">
+             mc:Ignorable="d" d:DesignHeight="30" d:DesignWidth="200">
 
     <UserControl.Resources>
         <su:VisibilityConverter x:Key="visConverter" TrueValue="Collapsed" FalseValue="Visible" />

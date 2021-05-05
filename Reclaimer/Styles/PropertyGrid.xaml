@@ -465,7 +465,99 @@
     </Style>
 
     <!--https://github.com/dotnetprojects/WpfExtendedToolkit/blob/Extended/Src/Xceed.Wpf.Toolkit/CollectionControl/Themes/Aero2.NormalColor.xaml-->
+    <Style x:Key="Xceed.CollectionControlButton" TargetType="xctk:CollectionControlButton">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Content" Value="(Collection)" />
+        <Setter Property="IsTabStop" Value="True" />
+
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="MinHeight" Value="20" />
+        <Setter Property="Padding" Value="4,3,4,4" />
+
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource Environment.DropDown.Text}" />
+        <Setter Property="Background" Value="{DynamicResource Environment.DropDown.Background}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Environment.DropDown.Border}" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="1" />
+                            <ColumnDefinition Width="13" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.ColumnSpan="3"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Background="{TemplateBinding Background}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                        </Border>
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                TextBlock.Foreground="{TemplateBinding Foreground}"
+                                TextOptions.TextFormattingMode="Display">
+                        </ContentPresenter>
+                        <Border x:Name="Separator" Grid.Column="1" Width="1" Margin="0,1" Background="Transparent" />
+                        <Border x:Name="ArrowBox" Grid.Column="2" Margin="0,1,1,1"
+                                Focusable="False" Background="Transparent">
+                            <Path x:Name="ArrowGlyph" Margin="0,1,0,0"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Data="M0,0 L3,3 L6,0 Z" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="False">
+                            <Setter TargetName="ArrowGlyph" Property="Fill" Value="{DynamicResource Environment.DropDown.Glyph}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Separator" Property="Background" Value="{DynamicResource Environment.DropDown.ButtonMouseOverSeparator}" />
+                            <Setter TargetName="ArrowGlyph" Property="Fill" Value="{DynamicResource Environment.DropDown.MouseOverGlyph}" />
+                            <Setter TargetName="ArrowBox" Property="Background" Value="{DynamicResource Environment.DropDown.ButtonMouseOverBackground}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ArrowGlyph" Property="Fill" Value="{DynamicResource Environment.DropDown.DisabledGlyph}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource Environment.DropDown.MouseOverText}" />
+                <Setter Property="Background" Value="{DynamicResource Environment.DropDown.MouseOverBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Environment.DropDown.MouseOverBorder}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Environment.DropDown.DisabledText}" />
+                <Setter Property="Background" Value="{DynamicResource Environment.DropDown.DisabledBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Environment.DropDown.DisabledBorder}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="xctk:CollectionControlDialog">
+        <Style.Resources>
+            <Style TargetType="Button" BasedOn="{StaticResource Studio.ButtonStyle}">
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+            </Style>
+        </Style.Resources>
+        <Setter Property="Background" Value="{DynamicResource Environment.EnvironmentBackground}" />
+        <Setter Property="Title" Value="Edit Collection" />
+    </Style>
+
+    <!--https://github.com/dotnetprojects/WpfExtendedToolkit/blob/Extended/Src/Xceed.Wpf.Toolkit/CollectionControl/Themes/Aero2.NormalColor.xaml-->
     <Style TargetType="xctk:CollectionControl">
+        <Setter Property="TextBlock.Foreground" Value="{DynamicResource CommonControls.TextBox.Text}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="xctk:CollectionControl">
@@ -487,8 +579,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <ContentControl Margin="0,0,0,5" Content="{TemplateBinding TypeSelectionLabel}">
-                                </ContentControl>
+                                <ContentControl Margin="0,0,0,5" Content="{TemplateBinding TypeSelectionLabel}" />
                                 <ComboBox x:Name="PART_NewItemTypesComboBox"
                                           Grid.Row="1" Margin="0,0,0,3"
                                           HorizontalAlignment="Stretch"
@@ -554,8 +645,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <ContentControl Grid.Column="1" Content="{TemplateBinding PropertiesLabel}">
-                                </ContentControl>
+                                <ContentControl Grid.Column="1" Content="{TemplateBinding PropertiesLabel}" />
                                 <pg:PropertyGrid x:Name="PART_PropertyGrid"
                                         Grid.Row="1" Grid.Column="1"
                                         Margin="0,5,0,0"
@@ -813,6 +903,7 @@
     <Style TargetType="xctk:ButtonSpinner" BasedOn="{StaticResource Xceed.ButtonSpinnerStyle}" />
     <Style TargetType="xctk:WatermarkTextBox" BasedOn="{StaticResource Xceed.WatermarkTextBoxStyle}" />
 
+    <Style TargetType="editors:PropertyGridEditorCollectionControl" BasedOn="{StaticResource Xceed.CollectionControlButton}" />
     <Style TargetType="editors:PropertyGridEditorTextBox" BasedOn="{StaticResource Xceed.WatermarkTextBoxStyle}" />
     <Style TargetType="editors:PropertyGridEditorComboBox" BasedOn="{StaticResource Studio.ComboBoxStyle}" />
     <Style TargetType="editors:PropertyGridEditorIntegerUpDown" BasedOn="{StaticResource Xceed.NumericUpDown}" />
