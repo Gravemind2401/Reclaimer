@@ -40,7 +40,7 @@ namespace Reclaimer.Plugins.MetaViewer
             {
                 var newBinding = new Binding(binding.Path.Path);
 
-                foreach(var prop in typeof(Binding).GetProperties())
+                foreach (var prop in typeof(Binding).GetProperties())
                 {
                     try
                     {

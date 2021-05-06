@@ -122,7 +122,11 @@
     </Compile>
     <Compile Include="Controls\Editors\BrowseFileEditor.cs" />
     <Compile Include="Controls\Editors\BrowseFolderEditor.cs" />
+    <Compile Include="Controls\Editors\EnumMultiSelectEditor.cs" />
     <Compile Include="Controls\Editors\ModelFormatItemsSource.cs" />
+    <Compile Include="Controls\Editors\MultiSelectEditorBase.xaml.cs">
+      <DependentUpon>MultiSelectEditorBase.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ModuleViewer.xaml.cs">
       <DependentUpon>ModuleViewer.xaml</DependentUpon>
     </Compile>
@@ -226,6 +230,10 @@
     <Page Include="Controls\Editors\BrowseEditorBase.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Editors\MultiSelectEditorBase.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\ModuleViewer.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -1,0 +1,173 @@
+﻿<UserControl x:Class="Reclaimer.Controls.Editors.MultiSelectEditorBase"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:su="clr-namespace:Studio.Utilities;assembly=Studio"
+             xmlns:local="clr-namespace:Reclaimer.Controls.Editors"
+             x:Name="userControl" mc:Ignorable="d" 
+             d:DesignHeight="30" d:DesignWidth="200">
+
+    <UserControl.Resources>
+        <Style x:Key="local.ComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="MinWidth" Value="120" />
+            <Setter Property="MinHeight" Value="20" />
+            <Setter Property="Padding" Value="4,3,4,4" />
+
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Foreground" Value="{DynamicResource Environment.DropDown.Text}" />
+            <Setter Property="Background" Value="{DynamicResource Environment.DropDown.Background}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Environment.DropDown.Border}" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="1" />
+                                <ColumnDefinition Width="13" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.ColumnSpan="3"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="{TemplateBinding BorderBrush}">
+                            </Border>
+                            <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False"
+                                    Margin="{TemplateBinding Padding}"
+                                    Content="{TemplateBinding SelectionBoxItem}"
+                                    ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                    ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    TextBlock.Foreground="{TemplateBinding Foreground}"
+                                    TextOptions.TextFormattingMode="Display">
+                            </ContentPresenter>
+                            <TextBlock x:Name="PART_EditableTextBox" Background="Transparent"
+                                     Margin="{TemplateBinding Padding}" Style="{x:Null}"
+                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                     TextBlock.Foreground="{TemplateBinding Foreground}"
+                                     TextOptions.TextFormattingMode="Display"
+                                     Text="{TemplateBinding Text}">
+                            </TextBlock>
+                            <Border x:Name="Separator" Grid.Column="1" Width="1" Margin="0,1" Background="Transparent" />
+                            <ToggleButton x:Name="ToggleButton" Grid.Column="2" Margin="0,1,1,1"
+                                          Focusable="False" ClickMode="Press" Background="Transparent"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <Path Margin="0,1,0,0" Fill="{TemplateBinding Foreground}"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"
+                                                  Data="M0,0 L3,3 L6,0 Z" />
+                                        </Border>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ToggleButton x:Name="ToggleOverlay" Grid.ColumnSpan="3" Panel.ZIndex="1"
+                                          Focusable="False" ClickMode="Press" Background="Transparent"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border Background="{TemplateBinding Background}" />
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <Popup x:Name="Popup" Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True" Focusable="False"
+                                   HorizontalOffset="1" VerticalOffset="-1">
+                                <Border ClipToBounds="True" Padding="0,0,5,5">
+                                    <Grid x:Name="DropDown"
+                                          SnapsToDevicePixels="True"
+                                          MinWidth="{TemplateBinding ActualWidth}"
+                                          MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                        <Border x:Name="DropDownBorder" 
+                                                BorderThickness="1" Margin="0,0,2,0"
+                                                Background="{DynamicResource Environment.DropDown.PopupBackground}"
+                                                BorderBrush="{DynamicResource Environment.DropDown.PopupBorder}">
+                                            <Border.Effect>
+                                                <DropShadowEffect BlurRadius="5" ShadowDepth="2" Opacity="0.5" Direction="300" />
+                                            </Border.Effect>
+                                        </Border>
+                                        <ScrollViewer SnapsToDevicePixels="True" Margin="3,1,5,1">
+                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                        </ScrollViewer>
+                                    </Grid>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="False">
+                                <Setter TargetName="ToggleButton" Property="Foreground" Value="{DynamicResource Environment.DropDown.Glyph}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Separator" Property="Background" Value="{DynamicResource Environment.DropDown.ButtonMouseOverSeparator}" />
+                                <Setter TargetName="ToggleButton" Property="Foreground" Value="{DynamicResource Environment.DropDown.MouseOverGlyph}" />
+                                <Setter TargetName="ToggleButton" Property="Background" Value="{DynamicResource Environment.DropDown.ButtonMouseOverBackground}" />
+                            </Trigger>
+                            <Trigger Property="IsDropDownOpen" Value="True">
+                                <Setter TargetName="Separator" Property="Background" Value="{DynamicResource Environment.DropDown.ButtonMouseDownSeparator}" />
+                                <Setter TargetName="ToggleButton" Property="Foreground" Value="{DynamicResource Environment.DropDown.MouseDownGlyph}" />
+                                <Setter TargetName="ToggleButton" Property="Background" Value="{DynamicResource Environment.DropDown.ButtonMouseDownBackground}" />
+                            </Trigger>
+                            <!--<Trigger Property="IsEditable" Value="True">
+                                <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="ToggleOverlay" Property="Visibility" Value="Collapsed" />
+                            </Trigger>-->
+                            <Trigger Property="HasItems" Value="False">
+                                <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95" />
+                            </Trigger>
+                            <Trigger Property="IsGrouping" Value="True">
+                                <Setter Property="ScrollViewer.CanContentScroll" Value="False" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ToggleButton" Property="Foreground" Value="{DynamicResource Environment.DropDown.DisabledGlyph}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource Environment.DropDown.MouseOverText}" />
+                    <Setter Property="Background" Value="{DynamicResource Environment.DropDown.MouseOverBackground}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource Environment.DropDown.MouseOverBorder}" />
+                </Trigger>
+                <Trigger Property="IsDropDownOpen" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource Environment.DropDown.MouseDownText}" />
+                    <Setter Property="Background" Value="{DynamicResource Environment.DropDown.MouseDownBackground}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource Environment.DropDown.MouseDownBorder}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="{DynamicResource Environment.DropDown.DisabledText}" />
+                    <Setter Property="Background" Value="{DynamicResource Environment.DropDown.DisabledBackground}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource Environment.DropDown.DisabledBorder}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid DataContext="{Binding ElementName=userControl}">
+        <ComboBox Style="{StaticResource local.ComboBoxStyle}"
+                  Text="(Collection)" ItemsSource="{Binding Options}"
+                  DropDownClosed="ComboBox_DropDownClosed">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox Content="{Binding Value}" IsChecked="{Binding IsSelected}"
+                              Foreground="{Binding Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+    </Grid>
+</UserControl>

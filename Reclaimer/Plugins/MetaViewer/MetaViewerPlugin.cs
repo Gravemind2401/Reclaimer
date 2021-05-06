@@ -43,8 +43,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
                 try
                 {
-                    var xml = GetDefinitionPath(item);
-                    return File.Exists(xml);
+                    return !string.IsNullOrEmpty(GetDefinitionPath(item));
                 }
                 catch { return false; }
             }
@@ -94,68 +93,37 @@ namespace Reclaimer.Plugins.MetaViewer
 
         private string GetDefinitionPath(IIndexItem item)
         {
-            var xmlName = string.Join("_", item.ClassCode.Split(Path.GetInvalidFileNameChars())).PadRight(4);
-            return Path.Combine(Settings.PluginFolder, PluginFolder(item.CacheFile.CacheType), $"{xmlName}.xml");
+            return GetDefinitionPath(p => p.ValidFor(item.CacheFile.CacheType), item.ClassCode, item.ClassName);
         }
 
         private string GetDefinitionPath(ModuleItem item)
         {
-            var xmlName = string.Join("_", item.ClassCode.Split(Path.GetInvalidFileNameChars())).Trim();
-            return Path.Combine(Settings.PluginFolder, PluginFolder(item.Module.ModuleType), $"({xmlName}){item.ClassName}.xml");
+            return GetDefinitionPath(p => p.ValidFor(item.Module.ModuleType), item.ClassCode, item.ClassName);
         }
 
-        private string PluginFolder(CacheType cacheType)
+
+        private string GetDefinitionPath(Predicate<PluginProfile> validate, string classCode, string className)
         {
-            switch (cacheType)
+            if (string.IsNullOrEmpty(Settings.PluginFolder) || !Directory.Exists(Settings.PluginFolder))
+                return null;
+
+            foreach (var profile in Settings.PluginProfiles.Where(p => validate(p)))
             {
-                case CacheType.Halo1Xbox:
-                case CacheType.Halo1PC:
-                case CacheType.Halo1CE:
-                case CacheType.Halo1AE:
-                    return "Halo1";
-
-                case CacheType.Halo2Xbox:
-                case CacheType.Halo2Vista:
-                    return "Halo2";
-
-                case CacheType.Halo3Beta:
-                    return "Halo3Beta";
-
-                case CacheType.Halo3Retail:
-                case CacheType.MccHalo3:
-                case CacheType.MccHalo3U4:
-                    return "Halo3";
-
-                case CacheType.Halo3ODST:
-                case CacheType.MccHalo3ODST:
-                    return "ODST";
-
-                case CacheType.HaloReachBeta:
-                    return "ReachBeta";
-
-                case CacheType.HaloReachRetail:
-                case CacheType.MccHaloReach:
-                case CacheType.MccHaloReachU3:
-                    return "Reach";
-
-                case CacheType.Halo4Beta:
-                case CacheType.Halo4Retail:
-                    return "Halo4";
-
-                default: throw new NotSupportedException();
+                try
+                {
+                    var safeCode = string.Join("_", classCode.Split(Path.GetInvalidFileNameChars())).Trim();
+                    var xmlName = string.Format(profile.FileNameFormat, safeCode, className);
+                    var path = Path.Combine(Settings.PluginFolder, profile.Subfolder, xmlName);
+                    if (File.Exists(path))
+                        return path;
+                }
+                catch (Exception ex)
+                {
+                    Substrate.LogError($"Error validating plugin profile '{profile.Subfolder}'", ex);
+                }
             }
-        }
 
-        private string PluginFolder(ModuleType moduleType)
-        {
-            switch (moduleType)
-            {
-                case ModuleType.Halo5Server:
-                case ModuleType.Halo5Forge:
-                    return "Halo5";
-
-                default: throw new NotSupportedException();
-            }
+            return null;
         }
 
         internal class MetaViewerSettings
@@ -167,10 +135,44 @@ namespace Reclaimer.Plugins.MetaViewer
             [DisplayName("Show Invisibles")]
             public bool ShowInvisibles { get; set; }
 
-            public MetaViewerSettings()
+            [DisplayName("Plugin Profiles")]
+            public List<PluginProfile> PluginProfiles { get; set; }
+        }
+
+        internal class PluginProfile
+        {
+            [DisplayName("Subfolder")]
+            public string Subfolder { get; set; }
+
+            [DisplayName("Filename Format")]
+            public string FileNameFormat { get; set; } //0 = code, 1 = name
+
+            [Editor(typeof(EnumMultiSelectEditor), typeof(PropertyValueEditor))]
+            [EditorOption(Name = "CollectionType", Value = typeof(CacheType))]
+            [DisplayName("Map Types")]
+            public List<CacheType> MapTypes { get; set; }
+
+            [Editor(typeof(EnumMultiSelectEditor), typeof(PropertyValueEditor))]
+            [EditorOption(Name = "CollectionType", Value = typeof(ModuleType))]
+            [DisplayName("Module Types")]
+            public List<ModuleType> ModuleTypes { get; set; }
+
+            public PluginProfile()
+            { }
+
+            public bool ValidFor(CacheType cacheType)
             {
-                PluginFolder = Path.Combine(Substrate.PluginsDirectory, "Meta Viewer");
+                return !string.IsNullOrEmpty(Subfolder)
+                    && MapTypes?.Contains(cacheType) == true;
             }
+
+            public bool ValidFor(ModuleType moduleType)
+            {
+                return !string.IsNullOrEmpty(Subfolder)
+                    && ModuleTypes?.Contains(moduleType) == true;
+            }
+
+            public override string ToString() => Subfolder;
         }
     }
 }
