@@ -1,9 +1,0 @@
-<plugin>
-  <reflexive name="multiplayer scenarios" offset="0x0" visible="true" entrySize="0x34">
-    <comment title="net map info">these provide the info required by the UI to load a net map</comment>
-    <tagRef name="descriptive bitmap" offset="0x0" visible="true" />
-    <tagRef name="displayed map name" offset="0x8" visible="true" />
-    <ascii name="scenario tag directory path" offset="0x10" length="0x20" visible="true" description="this is the path to the directory containing the scenario tag file of the same name" />
-    <undefined name="Unknown" offset="0x30" visible="false" />
-  </reflexive>
-</plugin>

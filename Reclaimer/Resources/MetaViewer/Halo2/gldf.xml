@@ -1,9 +1,0 @@
-<plugin>
-  <revisions />
-  <struct name="Light Variables" offset="0x0" visible="True" size="0x90">
-    <struct name="Primary Light Function" offset="0x24" visible="True" size="0x1" />
-    <struct name="Secondary Light Function" offset="0x60" visible="True" size="0x1" />
-    <struct name="Ambient Light Function" offset="0x80" visible="True" size="0x1" />
-    <struct name="Lightmap Shadows" offset="0x88" visible="True" size="0x1" />
-  </struct>
-</plugin>

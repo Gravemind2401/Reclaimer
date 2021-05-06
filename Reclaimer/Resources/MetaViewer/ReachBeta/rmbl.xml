@@ -1,7 +1,0 @@
-<plugin class="rmbl" headersize="48">
-  <revisions>
-    <revision author="-DeToX-" version="0.1">Mapped plugin structure a new.</revision>
-  </revisions>
-  <undefined name="Unknown" offset="0" visible="False" />
-  <undefined name="Unknown" offset="24" visible="False" />
-</plugin>

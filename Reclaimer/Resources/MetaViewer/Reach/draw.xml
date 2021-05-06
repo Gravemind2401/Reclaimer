@@ -1,8 +1,0 @@
-<plugin class="draw" headersize="12">
-  <revisions>
-    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
-  </revisions>
-  <undefined name="Unknown" offset="0" visible="True" />
-  <int32 name="Unknown" offset="4" visible="True" />
-  <int32 name="Unknown" offset="8" visible="True" />
-</plugin>

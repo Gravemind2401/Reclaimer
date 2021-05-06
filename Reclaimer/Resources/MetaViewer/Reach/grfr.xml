@@ -1,9 +1,0 @@
-<plugin class="grfr" headersize="36">
-  <revisions>
-    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
-  </revisions>
-  <undefined name="Unknown" offset="20" visible="True" />
-  <undefined name="Unknown" offset="24" visible="True" />
-  <undefined name="Unknown" offset="28" visible="True" />
-  <undefined name="Unknown" offset="32" visible="True" />
-</plugin>

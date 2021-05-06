@@ -1,9 +1,0 @@
-<plugin class="trak" headersize="16">
-  <revisions>
-    <revision author="Gravemind2401" version="1.0">Where did the revisions go? Plugin is complete and updated for new controls.</revision>
-  </revisions>
-  <struct name="Control Points" offset="4" visible="True" size="28">
-    <realPoint3D name="Position" offset="0" visible="True" />
-    <realVector3D name="Orientation" offset="12" visible="True" />
-  </struct>
-</plugin>

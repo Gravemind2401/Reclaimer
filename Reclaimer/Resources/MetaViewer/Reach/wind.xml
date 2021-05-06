@@ -1,8 +1,0 @@
-<plugin class="wind" headersize="120">
-  <revisions>
-    <revision author="DarkShallFall" version="0.1">Mapped plugin structure a new.</revision>
-    <revision author="Lord Zedd" version="0.11">Initial testing</revision>
-  </revisions>
-  <undefined name="Unknown" offset="100" visible="True" />
-  <tagRef name="Unknown" offset="104" visible="True" />
-</plugin>

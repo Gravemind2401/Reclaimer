@@ -1,7 +1,0 @@
-<plugin class="wind" headersize="120">
-  <revisions>
-    <revision author="-DeToX-" version="0.1">Created layout of plugin</revision>
-  </revisions>
-  <undefined name="Unknown" offset="100" visible="False" />
-  <tagRef name="Unknown" offset="104" visible="False" />
-</plugin>
