@@ -215,6 +215,9 @@
     <Compile Include="Utilities\NativeMethods.cs" />
     <Compile Include="Utilities\Utils.cs" />
     <Compile Include="Windows\ITabContentHost.cs" />
+    <Compile Include="Windows\UpdateDialog.xaml.cs">
+      <DependentUpon>UpdateDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\OpenWithDialog.xaml.cs">
       <DependentUpon>OpenWithDialog.xaml</DependentUpon>
     </Compile>
@@ -311,6 +314,10 @@
     <Page Include="Styles\IconTemplates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\UpdateDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\OpenWithDialog.xaml">
       <SubType>Designer</SubType>

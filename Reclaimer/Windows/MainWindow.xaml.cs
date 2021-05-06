@@ -19,13 +19,11 @@ namespace Reclaimer.Windows
     /// </summary>
     public partial class MainWindow : MetroWindow, ITabContentHost
     {
-        private static Version AssemblyVersion => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-
         #region Dependency Properties
         public static readonly DependencyPropertyKey HasUpdatePropertyKey =
             DependencyProperty.RegisterReadOnly(nameof(HasUpdate), typeof(bool), typeof(MainWindow), new PropertyMetadata(false, null, (d, baseValue) =>
             {
-                return App.Settings.LatestRelease?.Version > AssemblyVersion;
+                return App.Settings.LatestRelease?.Version > App.AssemblyVersion;
             }));
 
         public static readonly DependencyProperty HasUpdateProperty = HasUpdatePropertyKey.DependencyProperty;
@@ -63,12 +61,6 @@ namespace Reclaimer.Windows
 
         DockContainerModel ITabContentHost.DockContainer => Model;
         DocumentPanelModel ITabContentHost.DocumentPanel => DocPanel;
-
-#if DEBUG
-        public string AppVersion => "DEBUG";
-#else
-        public string AppVersion => AssemblyVersion.ToString(3);
-#endif
 
         public DockContainerModel Model { get; }
         private DocumentPanelModel DocPanel { get; }
@@ -119,11 +111,19 @@ namespace Reclaimer.Windows
         {
             Task.Run(async () =>
             {
-                if(!await CheckForUpdates())
+                if (!await CheckForUpdates())
+                {
                     MessageBox.Show("Error checking for updates.", nameof(Reclaimer));
-                else if (!HasUpdate)
-                    MessageBox.Show("No updates available.", nameof(Reclaimer));
-                //else show update details
+                    return;
+                }
+
+                await Dispatcher.InvokeAsync(() =>
+                {
+                    if (!HasUpdate)
+                        MessageBox.Show("No updates available.", nameof(Reclaimer));
+                    else
+                        UpdateDialog.ShowUpdate();
+                });
             });
         }
 
@@ -217,7 +217,7 @@ namespace Reclaimer.Windows
 
             try
             {
-                var client = new GitHubClient(new ProductHeaderValue(nameof(Reclaimer), AppVersion));
+                var client = new GitHubClient(new ProductHeaderValue(nameof(Reclaimer), App.AppVersion));
                 var latest = await client.Repository.Release.GetLatest("Gravemind2401", nameof(Reclaimer));
 
                 App.Settings.LastUpdateCheck = DateTime.Now;

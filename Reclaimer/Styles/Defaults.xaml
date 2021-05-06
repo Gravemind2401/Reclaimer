@@ -85,11 +85,50 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="Reclaimer.RichTextBoxStyle" TargetType="RichTextBox">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="2,1" />
+
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+
+        <Setter Property="Foreground" Value="{DynamicResource CommonControls.TextBox.Text}" />
+        <Setter Property="Background" Value="{DynamicResource CommonControls.TextBox.Background}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CommonControls.TextBox.Border}" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RichTextBox">
+                    <Border BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            Background="{TemplateBinding Background}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                        <ScrollViewer Panel.ZIndex="0" x:Name="PART_ContentHost" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource CommonControls.TextBox.TextFocused}" />
+                <Setter Property="Background" Value="{DynamicResource CommonControls.TextBox.BackgroundFocused}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource CommonControls.TextBox.BorderFocused}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource CommonControls.TextBox.TextDisabled}" />
+                <Setter Property="Background" Value="{DynamicResource CommonControls.TextBox.BackgroundDisabled}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource CommonControls.TextBox.BorderDisabled}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style TargetType="Label" BasedOn="{StaticResource Reclaimer.LabelStyle}" />
     <Style TargetType="Button" BasedOn="{StaticResource Reclaimer.ButtonStyle}" />
     <Style TargetType="ListBox" BasedOn="{StaticResource Reclaimer.ListBoxStyle}" />
     <Style TargetType="ListBoxItem" BasedOn="{StaticResource Reclaimer.ListBoxItemStyle}" />
     <Style TargetType="ToolBar" BasedOn="{StaticResource Reclaimer.ToolBarStyle}" />
     <Style x:Key="{x:Static ToolBar.ButtonStyleKey}" TargetType="Button" BasedOn="{StaticResource Reclaimer.ToolBarButtonStyle}" />
+    <Style TargetType="RichTextBox" BasedOn="{StaticResource Reclaimer.RichTextBoxStyle}" />
 
 </ResourceDictionary>

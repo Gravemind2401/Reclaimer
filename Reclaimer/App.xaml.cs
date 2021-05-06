@@ -20,9 +20,16 @@ namespace Reclaimer
         internal static App Instance { get; private set; }
         internal static Settings Settings { get; private set; }
         internal static UserSettings UserSettings => Settings.UserSettings;
+        internal static Version AssemblyVersion => Assembly.GetExecutingAssembly().GetName().Version;
 
         private static ResourceDictionary styleResources;
         private static readonly Dictionary<string, ResourceDictionary> themes = new Dictionary<string, ResourceDictionary>();
+
+#if DEBUG
+        public static string AppVersion => "DEBUG";
+#else
+        public static string AppVersion => AssemblyVersion.ToString(3);
+#endif
 
         public App() : base()
         {

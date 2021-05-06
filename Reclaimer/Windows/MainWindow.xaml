@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:local="clr-namespace:Reclaimer.Windows"
+    xmlns:r="clr-namespace:Reclaimer"
     xmlns:s="clr-namespace:Studio.Controls;assembly=Studio"
     xmlns:u="clr-namespace:Studio.Utilities;assembly=Studio"
     mc:Ignorable="d" WindowState="Maximized" Icon="../Resources/Reclaimer.ico"
@@ -70,7 +71,7 @@
             <MenuItem Header="Help">
                 <MenuItem Header="Submit an issue" Click="menuIssue_Click" />
             </MenuItem>
-            <MenuItem Header="{Binding AppVersion, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, FallbackValue='0.0.0.0'}" DockPanel.Dock="Right" IsEnabled="False" />
+            <MenuItem Header="{Binding Source={x:Static r:App.AppVersion}, FallbackValue='0.0.0.0'}" DockPanel.Dock="Right" IsEnabled="False" />
         </Menu>
 
         <s:DockContainer Grid.Row="1" 

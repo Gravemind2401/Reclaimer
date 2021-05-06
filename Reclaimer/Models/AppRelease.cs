@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Reclaimer.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +21,12 @@ namespace Reclaimer.Models
         public string DetailsUrl { get; set; }
         public string DownloadUrl { get; set; }
         public int DownloadSize { get; set; }
+
+        [JsonIgnore]
+        public string VersionDisplay => Version.ToString(3);
+
+        [JsonIgnore]
+        public string ReleaseDateDisplay => ReleaseDate?.ToString("d");
 
         public AppRelease() { }
 
