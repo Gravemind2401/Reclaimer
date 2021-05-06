@@ -131,7 +131,7 @@ namespace Reclaimer.Plugins
         internal static T GetPluginSettings<T>(string key) where T : new()
         {
             if (!App.Settings.PluginSettings.ContainsKey(key))
-                return new T();
+                return GetDefaultPluginSettings<T>();
 
             //we cant just cast it because we cant guarantee it has the correct type
             //but we still want to preserve settings between changes, so re-serializing
@@ -140,13 +140,23 @@ namespace Reclaimer.Plugins
             try
             {
                 var json = JsonConvert.SerializeObject(App.Settings.PluginSettings[key]);
-                return JsonConvert.DeserializeObject<T>(json);
+                var settings = JsonConvert.DeserializeObject<T>(json);
+                (settings as IPluginSettings)?.ApplyDefaultValues(false);
+
+                return settings;
             }
             catch (Exception e)
             {
                 LogError($"Error loading settings for {plugins[key].Name}:", e);
-                return new T();
+                return GetDefaultPluginSettings<T>();
             }
+        }
+
+        private static T GetDefaultPluginSettings<T>() where T : new()
+        {
+            var settings = new T();
+            (settings as IPluginSettings)?.ApplyDefaultValues(true);
+            return settings;
         }
 
         internal static void SavePluginSettings<T>(string key, T settings) where T : new()

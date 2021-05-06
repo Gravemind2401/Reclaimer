@@ -126,7 +126,7 @@ namespace Reclaimer.Plugins.MetaViewer
             return null;
         }
 
-        internal class MetaViewerSettings
+        internal class MetaViewerSettings : IPluginSettings
         {
             [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
             [DisplayName("Plugins Folder")]
@@ -137,6 +137,32 @@ namespace Reclaimer.Plugins.MetaViewer
 
             [DisplayName("Plugin Profiles")]
             public List<PluginProfile> PluginProfiles { get; set; }
+
+            void IPluginSettings.ApplyDefaultValues(bool newInstance)
+            {
+                if (PluginProfiles != null)
+                    return;
+
+                PluginProfiles = new List<PluginProfile>
+                {
+                    new PluginProfile("Halo5", ModuleType.Halo5Server, ModuleType.Halo5Forge),
+                    new PluginProfile("Halo2AMCC", CacheType.MccHalo2X),
+                    new PluginProfile("Halo4MCC", CacheType.MccHalo4),
+                    new PluginProfile("Halo4", CacheType.Halo4Retail, CacheType.MccHalo4, CacheType.MccHalo2X),
+                    new PluginProfile("Halo4NetTest", CacheType.Halo4Beta),
+                    new PluginProfile("ReachMCC", CacheType.MccHaloReach, CacheType.MccHaloReachU3),
+                    new PluginProfile("Reach", CacheType.HaloReachRetail, CacheType.MccHaloReach, CacheType.MccHaloReachU3),
+                    new PluginProfile("ReachBeta", CacheType.HaloReachBeta),
+                    new PluginProfile("ODSTMCC", CacheType.MccHalo3ODST),
+                    new PluginProfile("ODST", CacheType.Halo3ODST),
+                    new PluginProfile("Halo3MCC", CacheType.MccHalo3, CacheType.MccHalo3U4),
+                    new PluginProfile("Halo3", CacheType.Halo3Retail, CacheType.MccHalo3, CacheType.MccHalo3U4),
+                    new PluginProfile("Halo3Beta", CacheType.Halo3Alpha, CacheType.Halo3Beta),
+                    new PluginProfile("Halo2MCC", CacheType.MccHalo2),
+                    new PluginProfile("Halo2", CacheType.Halo2Xbox, CacheType.Halo2Vista, CacheType.MccHalo2),
+                    new PluginProfile("Halo1", CacheType.Halo1Xbox, CacheType.Halo1PC, CacheType.Halo1CE, CacheType.Halo1AE),
+                };
+            }
         }
 
         internal class PluginProfile
@@ -157,8 +183,27 @@ namespace Reclaimer.Plugins.MetaViewer
             [DisplayName("Module Types")]
             public List<ModuleType> ModuleTypes { get; set; }
 
+            //json/propertygrid constructor
             public PluginProfile()
             { }
+
+            //used for default settings
+            public PluginProfile(string path, params CacheType[] builds)
+            {
+                FileNameFormat = "{0,-4}.xml";
+                Subfolder = path;
+                MapTypes = builds.ToList();
+                ModuleTypes = new List<ModuleType>();
+            }
+
+            //used for default settings
+            public PluginProfile(string path, params ModuleType[] builds)
+            {
+                FileNameFormat = "({0}){1}.xml";
+                Subfolder = path;
+                MapTypes = new List<CacheType>();
+                ModuleTypes = builds.ToList();
+            }
 
             public bool ValidFor(CacheType cacheType)
             {
