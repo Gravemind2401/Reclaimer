@@ -6,14 +6,11 @@
         xmlns:local="clr-namespace:Reclaimer.Windows"
         mc:Ignorable="d" Height="320" Width="480"
         WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource TreeView.Background}"
         ShowInTaskbar="False" ResizeMode="NoResize">
 
     <Window.Resources>
-        <Style TargetType="Window" />
-        <Style TargetType="Label" />
-        <Style TargetType="ListBox" />
-        <Style TargetType="ListBoxItem" />
-        <Style TargetType="Button" />
+        <Style TargetType="Button" BasedOn="{StaticResource Reclaimer.ButtonStyle}" />
     </Window.Resources>
     
     <Grid Margin="12,6,12,12">

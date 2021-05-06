@@ -475,7 +475,7 @@
         <Setter Property="MinHeight" Value="20" />
         <Setter Property="Padding" Value="4,3,4,4" />
 
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Foreground" Value="{DynamicResource Environment.DropDown.Text}" />
         <Setter Property="Background" Value="{DynamicResource Environment.DropDown.Background}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Environment.DropDown.Border}" />
@@ -551,7 +551,7 @@
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
             </Style>
         </Style.Resources>
-        <Setter Property="Background" Value="{DynamicResource Environment.EnvironmentBackground}" />
+        <Setter Property="Background" Value="{DynamicResource TreeView.Background}" />
         <Setter Property="Title" Value="Edit Collection" />
     </Style>
 
@@ -648,7 +648,7 @@
                                 <ContentControl Grid.Column="1" Content="{TemplateBinding PropertiesLabel}" />
                                 <pg:PropertyGrid x:Name="PART_PropertyGrid"
                                         Grid.Row="1" Grid.Column="1"
-                                        Margin="0,5,0,0"
+                                        Margin="0,5,0,0" BorderThickness="1"
                                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                         SelectedObject="{Binding SelectedItem, RelativeSource={RelativeSource TemplatedParent}}"
                                         IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource TemplatedParent}}"
@@ -785,6 +785,7 @@
     <Style x:Key="Xceed.WatermarkTextBoxStyle" TargetType="xctk:WatermarkTextBox" BasedOn="{StaticResource Studio.TextBoxStyle}">
         <Setter Property="WatermarkTemplate" Value="{StaticResource Xceed.DefaultWatermarkTemplate}" />
         <Setter Property="SelectionBrush" Value="{DynamicResource SearchControl.Selection}" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="xctk:WatermarkTextBox">
@@ -837,6 +838,7 @@
         <Setter Property="TextAlignment" Value="Right" />
         <Setter Property="HorizontalContentAlignment" Value="Right" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Focusable" Value="False" />
         <Setter Property="IsTabStop" Value="False" />
 
@@ -905,7 +907,9 @@
 
     <Style TargetType="editors:PropertyGridEditorCollectionControl" BasedOn="{StaticResource Xceed.CollectionControlButton}" />
     <Style TargetType="editors:PropertyGridEditorTextBox" BasedOn="{StaticResource Xceed.WatermarkTextBoxStyle}" />
-    <Style TargetType="editors:PropertyGridEditorComboBox" BasedOn="{StaticResource Studio.ComboBoxStyle}" />
+    <Style TargetType="editors:PropertyGridEditorComboBox" BasedOn="{StaticResource Studio.ComboBoxStyle}">
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
     <Style TargetType="editors:PropertyGridEditorIntegerUpDown" BasedOn="{StaticResource Xceed.NumericUpDown}" />
     <Style TargetType="editors:PropertyGridEditorSingleUpDown" BasedOn="{StaticResource Xceed.NumericUpDown}" />
     <Style TargetType="editors:PropertyGridEditorDoubleUpDown" BasedOn="{StaticResource Xceed.NumericUpDown}" />
