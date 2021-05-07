@@ -177,37 +177,69 @@ namespace Reclaimer.Plugins
             if (isBusy) return;
 
             tokenSource = new CancellationTokenSource();
+
+            Task.Run(ProcessQueueAsync, tokenSource.Token);
+        }
+
+        private async Task ProcessQueueAsync()
+        {
             isBusy = true;
 
-            Task.Run(() =>
+            try
             {
+                var nextWorkerId = 0;
+                var locker = new KeyedSemaphore();
                 var counter = new ExtractCounter();
                 var start = DateTime.Now;
 
-                while (extractionQueue.Count > 0)
+                //note that multiple workers can result in the working status (status bar text)
+                //being inaccurate - each tag will only set the status once so if a slow tag
+                //sets the status and a fast tag replaces it then the status will not update
+                //back to the slow tag after the fast one finishes.
+
+                Func<Task> process = async () =>
                 {
-                    if (tokenSource.IsCancellationRequested)
-                        break;
+                    var prefix = Settings.BatchWorkerCount > 1 ? $"[Worker {nextWorkerId++}] " : string.Empty;
 
-                    dynamic item;
-                    if (!extractionQueue.TryDequeue(out item))
-                        break;
-
-                    if (item != null)
+                    while (extractionQueue.Count > 0)
                     {
-                        SetWorkingStatus($"Extracting {item.FullPath}");
-                        Extract(item, counter);
+                        if (tokenSource.IsCancellationRequested)
+                            break;
+
+                        dynamic item;
+                        if (!extractionQueue.TryDequeue(out item))
+                            break;
+
+                        if (item != null)
+                        {
+                            var itemKey = $"{item.FullPath}.{item.ClassName}";
+                            using (await locker.WaitAsync(itemKey))
+                            {
+                                SetWorkingStatus($"{prefix}Extracting {item.FullPath}");
+                                Extract(item, counter);
+                            }
+                        }
                     }
-                }
+                };
+
+                var processors = Enumerable.Range(0, Settings.BatchWorkerCount).Select(i => Task.Run(process)).ToList();
+                await Task.WhenAll(processors);
 
                 var span = DateTime.Now - start;
                 LogOutput($"Extracted {counter.Extracted} tags in {Math.Round(span.TotalSeconds)} seconds with {counter.Errors} errors.");
-
+            }
+            catch (Exception ex)
+            {
+                Substrate.LogError("Error during batch extraction", ex);
+            }
+            finally
+            {
                 tokenSource.Dispose();
                 tokenSource = null;
-                isBusy = false;
-                ClearWorkingStatus();
-            }, tokenSource.Token);
+            }
+
+            isBusy = false;
+            ClearWorkingStatus();
         }
 
         private void BatchQueue(TreeItemModel node)
@@ -469,11 +501,11 @@ namespace Reclaimer.Plugins
 
         private class ExtractCounter
         {
-            public int Extracted { get; set; }
-            public int Errors { get; set; }
+            public volatile int Extracted;
+            public volatile int Errors;
         }
 
-        private class BatchExtractSettings
+        private class BatchExtractSettings : IPluginSettings
         {
             [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
             [DisplayName("Data Folder")]
@@ -501,6 +533,10 @@ namespace Reclaimer.Plugins
             [DisplayName("Model Format")]
             public string ModelFormat { get; set; }
 
+            [DisplayName("Batcher Worker Count")]
+            [System.ComponentModel.DataAnnotations.Range(1, 5)]
+            public int BatchWorkerCount { get; set; }
+
             public BatchExtractSettings()
             {
                 DataFolder = ":plugins:\\Batch Extractor";
@@ -510,6 +546,13 @@ namespace Reclaimer.Plugins
                 BitmapFormat = BitmapFormat.TIF;
                 BitmapMode = BitmapMode.Default;
                 ModelFormat = "amf";
+                BatchWorkerCount = 1;
+            }
+
+            void IPluginSettings.ApplyDefaultValues(bool newInstance)
+            {
+                if (BatchWorkerCount < 0 || BatchWorkerCount > 5)
+                    BatchWorkerCount = 1;
             }
         }
 
