@@ -99,6 +99,9 @@ namespace Adjutant.Blam.Common
         [BuildString("11081.07.04.30.0934.main")]
         Halo2Vista,
 
+        [CacheMetadata(Gen2, PC, Anniversary | Mcc)]
+        MccHalo2,
+
         [CacheMetadata(CacheGeneration.Gen3, Xbox360, Uncompressed, PreBeta)]
         [BuildString("08117.07.03.07.1702.delta", "alpha_0307")]
         [BuildString("08172.07.03.08.2240.delta", "alpha_0308")]
