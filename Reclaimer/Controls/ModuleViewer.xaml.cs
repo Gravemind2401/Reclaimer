@@ -32,6 +32,7 @@ namespace Reclaimer.Controls
         private readonly MenuItem OpenContextItem;
         private readonly MenuItem OpenWithContextItem;
         private readonly MenuItem OpenFromContextItem;
+        private readonly MenuItem CopyPathContextItem;
         private readonly Separator ContextSeparator;
 
         private Module module;
@@ -62,6 +63,7 @@ namespace Reclaimer.Controls
             OpenContextItem = new MenuItem { Header = "Open" };
             OpenWithContextItem = new MenuItem { Header = "Open With..." };
             OpenFromContextItem = new MenuItem { Header = "Open From..." };
+            CopyPathContextItem = new MenuItem { Header = "Copy Path" };
             ContextSeparator = new Separator();
 
             TabModel = new TabModel(this, TabItemType.Tool);
@@ -298,6 +300,8 @@ namespace Reclaimer.Controls
 
                     ContextItems.Add(OpenFromContextItem);
                 }
+
+                ContextItems.Add(CopyPathContextItem);
             }
 
             var customItems = Substrate.GetContextItems(GetSelectedArgs());
@@ -328,6 +332,11 @@ namespace Reclaimer.Controls
                 Substrate.OpenWithPrompt(args);
             else if (OpenFromContextItem.Items.Contains(item))
                 Substrate.OpenWithPrompt(GetSelectedArgs(item.Tag as ModuleItem));
+            else if (sender == CopyPathContextItem)
+            {
+                var tag = args.File.OfType<ModuleItem>().First();
+                Clipboard.SetText($"{tag.FullPath}.{tag.ClassName}");
+            }
             else ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(args);
         }
         #endregion

@@ -30,6 +30,7 @@ namespace Reclaimer.Controls
     {
         private readonly MenuItem OpenContextItem;
         private readonly MenuItem OpenWithContextItem;
+        private readonly MenuItem CopyPathContextItem;
         private readonly Separator ContextSeparator;
 
         private ICacheFile cache;
@@ -59,6 +60,7 @@ namespace Reclaimer.Controls
 
             OpenContextItem = new MenuItem { Header = "Open" };
             OpenWithContextItem = new MenuItem { Header = "Open With..." };
+            CopyPathContextItem = new MenuItem { Header = "Copy Path" };
             ContextSeparator = new Separator();
 
             TabModel = new TabModel(this, TabItemType.Tool);
@@ -247,6 +249,7 @@ namespace Reclaimer.Controls
             {
                 ContextItems.Add(OpenContextItem);
                 ContextItems.Add(OpenWithContextItem);
+                ContextItems.Add(CopyPathContextItem);
             }
 
             var customItems = Substrate.GetContextItems(GetSelectedArgs());
@@ -271,6 +274,11 @@ namespace Reclaimer.Controls
                 Substrate.OpenWithDefault(args);
             else if (sender == OpenWithContextItem)
                 Substrate.OpenWithPrompt(args);
+            else if (sender == CopyPathContextItem)
+            {
+                var tag = args.File.OfType<IIndexItem>().First();
+                Clipboard.SetText($"{tag.FullPath}.{tag.ClassName}");
+            }
             else ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(args);
         }
         #endregion
