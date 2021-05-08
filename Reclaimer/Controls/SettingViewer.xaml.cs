@@ -20,7 +20,7 @@ namespace Reclaimer.Controls
     /// <summary>
     /// Interaction logic for SettingViewer.xaml
     /// </summary>
-    public partial class SettingViewer : UserControl
+    public partial class SettingViewer : UserControl, IDisposable
     {
         public TabModel TabModel { get; }
 
@@ -52,6 +52,11 @@ namespace Reclaimer.Controls
             var origin = System.IO.Path.GetFileName(new Uri(assembly.CodeBase).LocalPath);
             txtVersion.Text = $"{origin} Version {assembly.Version}";
             propGrid.SelectedObject = plugin.settings;
+        }
+
+        void IDisposable.Dispose()
+        {
+            App.Settings.Save();
         }
     }
 }

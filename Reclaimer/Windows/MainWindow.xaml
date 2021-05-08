@@ -65,7 +65,19 @@
             </MenuItem>
             <MenuItem Header="Tools">
                 <MenuItem Header="Settings" Click="menuSettings_Click" />
-                <MenuItem Header="Check for updates" Click="menuUpdates_Click" />
+                <MenuItem DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                          Click="menuUpdates_Click">
+                    <MenuItem.Style>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="Header" Value="Check for updates" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasUpdate}" Value="True">
+                                    <Setter Property="Header" Value="View update details" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Themes" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
             <MenuItem Header="Help">
@@ -93,7 +105,7 @@
             <StatusBarItem HorizontalAlignment="Left" Content="{Binding CurrentStatus}" />
 
             <StatusBar.Style>
-                <Style TargetType="StatusBar" BasedOn="{StaticResource {x:Type StatusBar}}">
+                <Style TargetType="StatusBar" BasedOn="{StaticResource Studio.StatusBarStyle}">
                     <Setter Property="Background" Value="{DynamicResource Environment.StatusBar.DefaultBackground}" />
                     <Setter Property="Foreground" Value="{DynamicResource Environment.StatusBar.DefaultForeground}" />
                     <Style.Triggers>

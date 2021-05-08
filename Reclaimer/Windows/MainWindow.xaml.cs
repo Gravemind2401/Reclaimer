@@ -213,6 +213,9 @@ namespace Reclaimer.Windows
 
         private async Task<bool> CheckForUpdates()
         {
+            if (Dispatcher.Invoke(() => HasUpdate && !App.Settings.ShouldCheckUpdates))
+                return true; //dont check again if we already found one recently
+
             Substrate.SetSystemWorkingStatus("Checking for updates...");
 
             try
@@ -222,6 +225,7 @@ namespace Reclaimer.Windows
 
                 App.Settings.LastUpdateCheck = DateTime.Now;
                 App.Settings.LatestRelease = new AppRelease(latest);
+                App.Settings.Save();
 
                 await Dispatcher.InvokeAsync(() => CoerceValue(HasUpdateProperty));
 
