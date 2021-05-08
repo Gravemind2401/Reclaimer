@@ -87,7 +87,7 @@ namespace Reclaimer.Plugins
         }
     }
 
-    internal class PakViewerSettings
+    internal sealed class PakViewerSettings
     {
         [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
         [DisplayName("s3dpak Folder")]

@@ -126,7 +126,7 @@ namespace Reclaimer.Plugins.MetaViewer
             return null;
         }
 
-        internal class MetaViewerSettings : IPluginSettings
+        internal sealed class MetaViewerSettings : IPluginSettings
         {
             [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
             [DisplayName("Plugins Folder")]
@@ -165,7 +165,7 @@ namespace Reclaimer.Plugins.MetaViewer
             }
         }
 
-        internal class PluginProfile
+        internal sealed class PluginProfile
         {
             [DisplayName("Subfolder")]
             public string Subfolder { get; set; }

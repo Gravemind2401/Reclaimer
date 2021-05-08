@@ -14,10 +14,10 @@ namespace Reclaimer.Plugins
 {
     public class MapViewerPlugin : Plugin
     {
-        const string OpenKey = "MapViewer.OpenMap";
-        const string OpenPath = "File\\Open Map";
+        private const string OpenKey = "MapViewer.OpenMap";
+        private const string OpenPath = "File\\Open Map";
 
-        internal static MapViewerSettings Settings;
+        internal static MapViewerSettings Settings { get; private set; }
 
         public override string Name => "Map Viewer";
 
@@ -90,7 +90,7 @@ namespace Reclaimer.Plugins
         }
     }
 
-    internal class MapViewerSettings
+    internal sealed class MapViewerSettings
     {
         [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
         [DisplayName("Maps Folder")]

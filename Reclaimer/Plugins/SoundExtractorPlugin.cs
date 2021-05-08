@@ -98,7 +98,7 @@ namespace Reclaimer.Plugins
             Instance.LogOutput(e.Data);
         }
 
-        private class SoundExtractorSettings
+        private sealed class SoundExtractorSettings
         {
             [Editor(typeof(BrowseFileEditor), typeof(PropertyValueEditor))]
             [DisplayName("FFmpeg Path")]

@@ -18,6 +18,8 @@
         <Setter Property="Background" Value="{DynamicResource CommonControls.TextBox.Background}" />
         <Setter Property="BorderBrush" Value="{DynamicResource CommonControls.TextBox.Border}" />
 
+        <Setter Property="ItemContainerStyle" Value="{StaticResource Reclaimer.ListBoxItemStyle}" />
+
         <Style.Triggers>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Foreground" Value="{DynamicResource CommonControls.TextBox.TextDisabled}" />

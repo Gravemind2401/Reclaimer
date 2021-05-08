@@ -231,7 +231,7 @@ namespace Reclaimer.Plugins
         #endregion
     }
 
-    internal class ModelViewerSettings
+    internal sealed class ModelViewerSettings
     {
         [ItemsSource(typeof(ModelFormatItemsSource))]
         [DisplayName("Default Save Format")]

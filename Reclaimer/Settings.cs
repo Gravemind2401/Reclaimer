@@ -12,7 +12,7 @@ using System.Windows;
 
 namespace Reclaimer
 {
-    internal class Settings
+    internal sealed class Settings
     {
         private static string settingsJson => Path.Combine(AppDataDirectory, "settings.json");
 
@@ -75,7 +75,7 @@ namespace Reclaimer
     }
 
     //settings that will be visible in the settings viewer property grid
-    public class UserSettings
+    public sealed class UserSettings
     {
         [DisplayName("Restore Window State")]
         public bool RememberWindowState { get; set; }

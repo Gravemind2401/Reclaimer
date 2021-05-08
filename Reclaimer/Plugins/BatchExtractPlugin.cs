@@ -11,6 +11,7 @@ using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Drawing.Dds;
 using System.Drawing.Imaging;
 using System.IO;
@@ -499,14 +500,17 @@ namespace Reclaimer.Plugins
             return baseDirectory;
         }
 
-        private class ExtractCounter
+        private sealed class ExtractCounter
         {
             public volatile int Extracted;
             public volatile int Errors;
         }
 
-        private class BatchExtractSettings : IPluginSettings
+        private sealed class BatchExtractSettings : IPluginSettings
         {
+            private const int minWorkers = 1;
+            private const int maxWorkers = 10;
+
             [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
             [DisplayName("Data Folder")]
             public string DataFolder { get; set; }
@@ -533,8 +537,8 @@ namespace Reclaimer.Plugins
             [DisplayName("Model Format")]
             public string ModelFormat { get; set; }
 
-            [DisplayName("Batcher Worker Count")]
-            [System.ComponentModel.DataAnnotations.Range(1, 5)]
+            [DisplayName("Batch Worker Count")]
+            [Range(minWorkers, maxWorkers)]
             public int BatchWorkerCount { get; set; }
 
             public BatchExtractSettings()
@@ -546,13 +550,13 @@ namespace Reclaimer.Plugins
                 BitmapFormat = BitmapFormat.TIF;
                 BitmapMode = BitmapMode.Default;
                 ModelFormat = "amf";
-                BatchWorkerCount = 1;
+                BatchWorkerCount = minWorkers;
             }
 
             void IPluginSettings.ApplyDefaultValues(bool newInstance)
             {
-                if (BatchWorkerCount < 0 || BatchWorkerCount > 5)
-                    BatchWorkerCount = 1;
+                if (BatchWorkerCount < minWorkers || BatchWorkerCount > maxWorkers)
+                    BatchWorkerCount = minWorkers;
             }
         }
 
