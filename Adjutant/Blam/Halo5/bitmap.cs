@@ -60,7 +60,12 @@ namespace Adjutant.Blam.Halo5
             using (var reader = resource.CreateReader())
             {
                 if (!isChunk)
-                    reader.Seek(Header.Header.HeaderSize, SeekOrigin.Begin);
+                {
+                    if (resource.Flags.HasFlag(FileEntryFlags.HasBlocks))
+                        reader.Seek(resource.UncompressedHeaderSize + resource.UncompressedTagDataSize, SeekOrigin.Begin);
+                    else
+                        reader.Seek(Header.Header.HeaderSize, SeekOrigin.Begin);
+                }
 
                 var data = reader.ReadBytes((int)resource.TotalUncompressedSize);
 
