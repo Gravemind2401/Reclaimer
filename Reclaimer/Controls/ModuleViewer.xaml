@@ -29,7 +29,7 @@
                     <ContentControl Template="{StaticResource ic_AddLink_16x}" />
                 </Button>
                 <Separator Visibility="{Binding HasGlobalHandlers, Converter={StaticResource visConverter}}" />
-                <c:MenuButton x:Name="globalMenuButton" ToolTip="Map-wide operations"
+                <c:MenuButton x:Name="globalMenuButton" ToolTip="Module-wide operations"
                               Visibility="{Binding HasGlobalHandlers, Converter={StaticResource visConverter}}">
                     <ContentControl Template="{StaticResource ic_WebFolder_16x}" />
                 </c:MenuButton>

@@ -2,6 +2,7 @@
 using Adjutant.Blam.Common;
 using Adjutant.Blam.Halo5;
 using Adjutant.Geometry;
+using Adjutant.Saber3D.Common;
 using Adjutant.Utilities;
 using Reclaimer.Controls.Editors;
 using Reclaimer.Models;
@@ -20,16 +21,16 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
+
+using BlamContentFactory = Adjutant.Blam.Common.ContentFactory;
+using SaberContentFactory = Adjutant.Saber3D.Common.ContentFactory;
 
 namespace Reclaimer.Plugins
 {
     public class BatchExtractPlugin : Plugin
     {
-        private const string supportedTags = "bitm,mode,mod2,sbsp,snd!";
-
-        private ConcurrentQueue<object> extractionQueue = new ConcurrentQueue<object>();
+        private ConcurrentQueue<IExtractable> extractionQueue = new ConcurrentQueue<IExtractable>();
 
         private bool isBusy;
         private CancellationTokenSource tokenSource;
@@ -92,8 +93,20 @@ namespace Reclaimer.Plugins
                     yield return ExtractMultipleContextItem;
                 else
                 {
-                    dynamic item = context.File.FirstOrDefault(f => ValidateTag(f));
-                    if (item != null && supportedTags.Split(',').Any(s => item.ClassCode == s))
+                    if (context.File.Any(f => GetExtractable(f) != null))
+                        yield return ExtractSingleContextItem;
+                }
+            }
+            else if ((match = Regex.Match(context.FileTypeKey, @"Saber3D\.(\w+)\.(.*)")).Success)
+            {
+                if (match.Groups[1].Value != "Halo1X")
+                    yield break;
+
+                if (match.Groups[2].Value == "*" && context.File.Any(i => i is TreeItemModel))
+                    yield return ExtractMultipleContextItem;
+                else
+                {
+                    if (context.File.Any(f => GetExtractable(f) != null))
                         yield return ExtractSingleContextItem;
                 }
             }
@@ -118,7 +131,22 @@ namespace Reclaimer.Plugins
             return false;
         }
 
-        private bool ValidateTag(object tag) => tag != null && (tag is IIndexItem || tag is ModuleItem);
+        private IExtractable GetExtractable(object obj)
+        {
+            IExtractable extractable;
+            if (obj is IIndexItem)
+                extractable = new CacheExtractable(obj as IIndexItem);
+            else if (obj is ModuleItem)
+                extractable = new ModuleExtractable(obj as ModuleItem);
+            else if (obj is IPakItem)
+                extractable = new PakExtractable(obj as IPakItem);
+            else extractable = null;
+
+            if (extractable?.GetContentType() >= 0)
+                return extractable;
+
+            return null;
+        }
 
         [SharedFunction]
         private bool GetDataFolder(out string dataFolder)
@@ -153,7 +181,7 @@ namespace Reclaimer.Plugins
             if (!tokenSource.IsCancellationRequested)
                 tokenSource.Cancel();
 
-            extractionQueue = new ConcurrentQueue<object>();
+            extractionQueue = new ConcurrentQueue<IExtractable>();
         }
 
         private void OnContextItemClick(string key, OpenFileArgs context)
@@ -170,7 +198,7 @@ namespace Reclaimer.Plugins
                 BatchQueue(node);
             else
             {
-                var item = context.File.FirstOrDefault(f => ValidateTag(f));
+                var item = context.File.Select(f => GetExtractable(f)).FirstOrDefault(e => e != null);
                 if (item != null)
                     extractionQueue.Enqueue(item);
             }
@@ -180,6 +208,21 @@ namespace Reclaimer.Plugins
             tokenSource = new CancellationTokenSource();
 
             Task.Run(ProcessQueueAsync, tokenSource.Token);
+        }
+
+        private void BatchQueue(TreeItemModel node)
+        {
+            if (node.HasItems)
+            {
+                foreach (var child in node.Items)
+                    BatchQueue(child);
+            }
+            else
+            {
+                var item = GetExtractable(node.Tag);
+                if (item != null)
+                    extractionQueue.Enqueue(item);
+            }
         }
 
         private async Task ProcessQueueAsync()
@@ -207,18 +250,14 @@ namespace Reclaimer.Plugins
                         if (tokenSource.IsCancellationRequested)
                             break;
 
-                        dynamic item;
+                        IExtractable item;
                         if (!extractionQueue.TryDequeue(out item))
                             break;
 
-                        if (item != null)
+                        using (await locker.WaitAsync(item.ItemKey))
                         {
-                            var itemKey = $"{item.FullPath}.{item.ClassName}";
-                            using (await locker.WaitAsync(itemKey))
-                            {
-                                SetWorkingStatus($"{prefix}Extracting {item.FullPath}");
-                                Extract(item, counter);
-                            }
+                            SetWorkingStatus($"{prefix}Extracting {item.DisplayName}");
+                            Extract(item, counter);
                         }
                     }
                 };
@@ -243,73 +282,42 @@ namespace Reclaimer.Plugins
             ClearWorkingStatus();
         }
 
-        private void BatchQueue(TreeItemModel node)
-        {
-            if (node.HasItems)
-            {
-                foreach (var child in node.Items)
-                    BatchQueue(child);
-            }
-            else if (ValidateTag(node.Tag))
-                extractionQueue.Enqueue(node.Tag);
-        }
-
-        private void Extract(dynamic tag, ExtractCounter counter)
+        private void Extract(IExtractable item, ExtractCounter counter)
         {
             try
             {
-                switch ((string)tag.ClassCode)
+                switch (item.GetContentType())
                 {
-                    case "bitm":
-                        if (SaveImage(tag))
+                    case 0:
+                        if (SaveImage(item))
                             counter.Extracted++;
                         break;
 
-                    case "mode":
-                    case "mod2":
-                    case "sbsp":
-                        if (writeModelFileFunc != null)
-                        {
-                            if (SaveModel(tag))
-                                counter.Extracted++;
-                        }
+                    case 1:
+                        if (writeModelFileFunc != null && SaveModel(item))
+                            counter.Extracted++;
                         break;
 
-                    case "snd!":
-                        if (writeSoundFileFunc != null)
-                        {
-                            if (SaveSound(tag))
-                                counter.Extracted++;
-                        }
+                    case 2:
+                        if (writeSoundFileFunc != null && SaveSound(item))
+                            counter.Extracted++;
                         break;
                 }
             }
             catch (Exception e)
             {
-                LogError($"Error extracting {tag.FullPath}", e);
+                LogError($"Error extracting {item.DisplayName}", e);
                 counter.Errors++;
             }
         }
 
         #region Images
-        private bool SaveImage(IIndexItem tag)
+        private bool SaveImage(IExtractable item)
         {
             IBitmap bitmap;
-            if (ContentFactory.TryGetBitmapContent(tag, out bitmap) && SaveImage(bitmap, Settings.DataFolder))
+            if (item.GetBitmapContent(out bitmap) && SaveImage(bitmap, Settings.DataFolder))
             {
-                LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool SaveImage(ModuleItem tag)
-        {
-            IBitmap bitmap;
-            if (ContentFactory.TryGetBitmapContent(tag, out bitmap) && SaveImage(bitmap, Settings.DataFolder))
-            {
-                LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
+                LogOutput($"Extracted {item.DisplayName}");
                 return true;
             }
 
@@ -411,24 +419,12 @@ namespace Reclaimer.Plugins
         #endregion
 
         #region Models
-        private bool SaveModel(IIndexItem tag)
+        private bool SaveModel(IExtractable item)
         {
             IRenderGeometry geometry;
-            if (ContentFactory.TryGetGeometryContent(tag, out geometry) && SaveModel(geometry, Settings.DataFolder))
+            if (item.GetGeometryContent(out geometry) && SaveModel(geometry, Settings.DataFolder))
             {
-                LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool SaveModel(ModuleItem tag)
-        {
-            IRenderGeometry geometry;
-            if (ContentFactory.TryGetGeometryContent(tag, out geometry) && SaveModel(geometry, Settings.DataFolder))
-            {
-                LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
+                LogOutput($"Extracted {item.DisplayName}");
                 return true;
             }
 
@@ -450,20 +446,15 @@ namespace Reclaimer.Plugins
         #endregion
 
         #region Sounds
-        private bool SaveSound(IIndexItem tag)
+        private bool SaveSound(IExtractable item)
         {
             ISoundContainer container;
-            if (ContentFactory.TryGetSoundContent(tag, out container) && SaveSound(container, Settings.DataFolder))
+            if (item.GetSoundContent(out container) && SaveSound(container, Settings.DataFolder))
             {
-                LogOutput($"Extracted {tag.FullPath}.{tag.ClassName}");
+                LogOutput($"Extracted {item.DisplayName}");
                 return true;
             }
 
-            return false;
-        }
-
-        private bool SaveSound(ModuleItem tag)
-        {
             return false;
         }
 
@@ -584,5 +575,136 @@ namespace Reclaimer.Plugins
             JPEG,
             TGA
         }
+
+        #region Extractables
+        private interface IExtractable
+        {
+            string ItemKey { get; }
+            string DisplayName { get; }
+            int GetContentType();
+            bool GetBitmapContent(out IBitmap bitmap);
+            bool GetGeometryContent(out IRenderGeometry geometry);
+            bool GetSoundContent(out ISoundContainer container);
+        }
+
+        private sealed class CacheExtractable : IExtractable
+        {
+            private readonly IIndexItem item;
+
+            public string ItemKey => $"{item.FullPath}.{item.ClassName}";
+
+            public string DisplayName => ItemKey;
+
+            public CacheExtractable(IIndexItem item)
+            {
+                this.item = item;
+            }
+
+            public int GetContentType()
+            {
+                switch (item.ClassCode)
+                {
+                    case "bitm":
+                        return 0;
+
+                    case "mode":
+                    case "mod2":
+                    case "sbsp":
+                        return 1;
+
+                    case "snd!":
+                        return 2;
+
+                    default:
+                        return -1;
+                }
+            }
+
+            public bool GetBitmapContent(out IBitmap bitmap) => BlamContentFactory.TryGetBitmapContent(item, out bitmap);
+            public bool GetGeometryContent(out IRenderGeometry geometry) => BlamContentFactory.TryGetGeometryContent(item, out geometry);
+            public bool GetSoundContent(out ISoundContainer container) => BlamContentFactory.TryGetSoundContent(item, out container);
+        }
+
+        private sealed class ModuleExtractable : IExtractable
+        {
+            private readonly ModuleItem item;
+
+            public string ItemKey => $"{item.FullPath}.{item.ClassName}";
+
+            public string DisplayName => ItemKey;
+
+            public ModuleExtractable(ModuleItem item)
+            {
+                this.item = item;
+            }
+
+            public int GetContentType()
+            {
+                switch (item.ClassCode)
+                {
+                    case "bitm":
+                        return 0;
+
+                    case "mode":
+                    //case "sbsp":
+                        return 1;
+
+                    //case "snd!":
+                    //    return 2;
+
+                    default:
+                        return -1;
+                }
+            }
+
+            public bool GetBitmapContent(out IBitmap bitmap) => BlamContentFactory.TryGetBitmapContent(item, out bitmap);
+            public bool GetGeometryContent(out IRenderGeometry geometry) => BlamContentFactory.TryGetGeometryContent(item, out geometry);
+            public bool GetSoundContent(out ISoundContainer container)
+            {
+                container = null;
+                return false;
+            }
+        }
+
+        private sealed class PakExtractable : IExtractable
+        {
+            private readonly IPakItem item;
+
+            public string ItemKey => $"{item.ItemType}\\{item.Name}";
+
+            public string DisplayName => ItemKey;
+
+            public PakExtractable(IPakItem item)
+            {
+                this.item = item;
+            }
+
+            public int GetContentType()
+            {
+                switch (item.ItemType)
+                {
+                    case PakItemType.Textures:
+                        return 0;
+
+                    default:
+                        return -1;
+                }
+            }
+
+            public bool GetBitmapContent(out IBitmap bitmap) => SaberContentFactory.TryGetBitmapContent(item, out bitmap);
+
+            public bool GetGeometryContent(out IRenderGeometry geometry)
+            {
+                geometry = null;
+                return false;
+            }
+
+            public bool GetSoundContent(out ISoundContainer container)
+            {
+                container = null;
+                return false;
+            }
+        } 
+        #endregion
     }
 }

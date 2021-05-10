@@ -30,6 +30,20 @@ namespace Reclaimer.Controls
         private readonly Separator ContextSeparator;
 
         private IPakFile pak;
+        private TreeItemModel rootNode;
+
+        #region Dependency Properties
+        public static readonly DependencyPropertyKey HasGlobalHandlersPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(HasGlobalHandlers), typeof(bool), typeof(MapViewer), new PropertyMetadata(false));
+
+        public static readonly DependencyProperty HasGlobalHandlersProperty = HasGlobalHandlersPropertyKey.DependencyProperty;
+
+        public bool HasGlobalHandlers
+        {
+            get { return (bool)GetValue(HasGlobalHandlersProperty); }
+            private set { SetValue(HasGlobalHandlersPropertyKey, value); }
+        }
+        #endregion
 
         public TabModel TabModel { get; }
         public ObservableCollection<UIElement> ContextItems { get; }
@@ -51,9 +65,28 @@ namespace Reclaimer.Controls
         public void LoadPak(string fileName)
         {
             pak = new Adjutant.Saber3D.Halo1X.PakFile(fileName);
+            rootNode = new TreeItemModel(pak.FileName);
+            tv.ItemsSource = rootNode.Items;
 
             TabModel.Header = Utils.GetFileName(pak.FileName);
             TabModel.ToolTip = $"Pak Viewer - {TabModel.Header}";
+
+            foreach (var item in globalMenuButton.MenuItems.OfType<MenuItem>())
+                item.Click -= GlobalContextItem_Click;
+
+            globalMenuButton.MenuItems.Clear();
+
+            var globalHandlers = Substrate.GetContextItems(GetFolderArgs(rootNode));
+            HasGlobalHandlers = globalHandlers.Any();
+
+            if (HasGlobalHandlers)
+            {
+                foreach (var item in globalHandlers)
+                    globalMenuButton.MenuItems.Add(new MenuItem { Header = item.Path, Tag = item });
+
+                foreach (var item in globalMenuButton.MenuItems.OfType<MenuItem>())
+                    item.Click += GlobalContextItem_Click;
+            }
 
             BuildItemTree(null);
         }
@@ -79,7 +112,7 @@ namespace Reclaimer.Controls
                 result.Add(node);
             }
 
-            tv.ItemsSource = result;
+            rootNode.Items.Reset(result);
         }
 
         private bool FilterTag(string filter, IPakItem item)
@@ -100,11 +133,16 @@ namespace Reclaimer.Controls
             node.IsExpanded = false;
         }
 
+        private OpenFileArgs GetFolderArgs(TreeItemModel node)
+        {
+            return new OpenFileArgs(node.Header, $"Saber3D.Halo1X.*", node);
+        }
+
         private OpenFileArgs GetSelectedArgs()
         {
             var node = tv.SelectedItem as TreeItemModel;
             if (node.HasItems) //folder
-                return new OpenFileArgs(node.Header, $"Saber3D.Halo1X.*", node);
+                return GetFolderArgs(node);
 
             var item = node.Tag as IPakItem;
             var fileName = $"{item.Name}.{item.ItemType}";
@@ -124,9 +162,7 @@ namespace Reclaimer.Controls
         #region Event Handlers
         private void btnCollapseAll_Click(object sender, RoutedEventArgs e)
         {
-            var nodes = tv.ItemsSource as List<TreeItemModel>;
-
-            foreach (var node in nodes)
+            foreach (var node in rootNode.Items)
                 RecursiveCollapseNode(node);
         }
 
@@ -192,6 +228,11 @@ namespace Reclaimer.Controls
             else if (sender == OpenWithContextItem)
                 Substrate.OpenWithPrompt(args);
             else ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(args);
+        }
+
+        private void GlobalContextItem_Click(object sender, RoutedEventArgs e)
+        {
+            ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(GetFolderArgs(rootNode));
         }
         #endregion
     }

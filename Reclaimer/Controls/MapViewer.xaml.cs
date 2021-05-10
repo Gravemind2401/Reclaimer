@@ -217,7 +217,6 @@ namespace Reclaimer.Controls
             return new OpenFileArgs(node.Header, $"Blam.{cache.CacheType}.*", node);
         }
 
-
         private OpenFileArgs GetSelectedArgs()
         {
             var node = tv.SelectedItem as TreeItemModel;
