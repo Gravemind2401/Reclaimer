@@ -1,4 +1,5 @@
 ﻿using Prism.Mvvm;
+using Reclaimer.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,7 +12,7 @@ namespace Reclaimer.Models
 {
     public class TreeItemModel : BindableBase
     {
-        public ObservableCollection<TreeItemModel> Items { get; }
+        public BulkObservableCollection<TreeItemModel> Items { get; }
 
         public bool HasItems => Items.Count > 0;
 
@@ -65,7 +66,7 @@ namespace Reclaimer.Models
 
         public TreeItemModel()
         {
-            Items = new ObservableCollection<TreeItemModel>();
+            Items = new BulkObservableCollection<TreeItemModel>();
             Items.CollectionChanged += Items_CollectionChanged;
         }
 

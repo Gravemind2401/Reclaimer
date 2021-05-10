@@ -211,6 +211,7 @@
     <Compile Include="Utilities\FolderSelectDialog.cs" />
     <Compile Include="Utilities\GridLengthConverter.cs" />
     <Compile Include="Utilities\KeyedSemarphore.cs" />
+    <Compile Include="Utilities\BulkObservableCollection.cs" />
     <Compile Include="Utilities\RadToDeg32Converter.cs" />
     <Compile Include="Utilities\RadToDeg64Converter.cs" />
     <Compile Include="External\TGASharpLib.cs" />

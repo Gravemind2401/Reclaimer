@@ -34,15 +34,29 @@ namespace Reclaimer.Controls
         private readonly Separator ContextSeparator;
 
         private ICacheFile cache;
+        private TreeItemModel rootNode;
+
+        #region Dependency Properties
+        public static readonly DependencyPropertyKey HasGlobalHandlersPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(HasGlobalHandlers), typeof(bool), typeof(MapViewer), new PropertyMetadata(false));
+
+        public static readonly DependencyProperty HasGlobalHandlersProperty = HasGlobalHandlersPropertyKey.DependencyProperty;
 
         public static readonly DependencyProperty HierarchyViewProperty =
             DependencyProperty.Register(nameof(HierarchyView), typeof(bool), typeof(MapViewer), new PropertyMetadata(false, HierarchyViewChanged));
+
+        public bool HasGlobalHandlers
+        {
+            get { return (bool)GetValue(HasGlobalHandlersProperty); }
+            private set { SetValue(HasGlobalHandlersPropertyKey, value); }
+        }
 
         public bool HierarchyView
         {
             get { return (bool)GetValue(HierarchyViewProperty); }
             set { SetValue(HierarchyViewProperty, value); }
         }
+        #endregion
 
         public TabModel TabModel { get; }
         public ObservableCollection<UIElement> ContextItems { get; }
@@ -72,9 +86,28 @@ namespace Reclaimer.Controls
         public void LoadMap(string fileName)
         {
             cache = CacheFactory.ReadCacheFile(fileName);
+            rootNode = new TreeItemModel(cache.FileName);
+            tv.ItemsSource = rootNode.Items;
 
             TabModel.Header = Utils.GetFileName(cache.FileName);
             TabModel.ToolTip = $"Map Viewer - {TabModel.Header}";
+
+            foreach (var item in globalMenuButton.MenuItems.OfType<MenuItem>())
+                item.Click -= GlobalContextItem_Click;
+
+            globalMenuButton.MenuItems.Clear();
+
+            var globalHandlers = Substrate.GetContextItems(GetFolderArgs(rootNode));
+            HasGlobalHandlers = globalHandlers.Any();
+
+            if (HasGlobalHandlers)
+            {
+                foreach (var item in globalHandlers)
+                    globalMenuButton.MenuItems.Add(new MenuItem { Header = item.Path, Tag = item });
+
+                foreach (var item in globalMenuButton.MenuItems.OfType<MenuItem>())
+                    item.Click += GlobalContextItem_Click;
+            }
 
             HierarchyView = MapViewerPlugin.Settings.HierarchyView;
             BuildTagTree(null);
@@ -108,7 +141,7 @@ namespace Reclaimer.Controls
                 result.Add(node);
             }
 
-            tv.ItemsSource = result;
+            rootNode.Items.Reset(result);
         }
 
         private void BuildHierarchyTree(string filter)
@@ -122,7 +155,7 @@ namespace Reclaimer.Controls
                 node.Tag = tag;
             }
 
-            tv.ItemsSource = result;
+            rootNode.Items.Reset(result);
         }
 
         private bool FilterTag(string filter, IIndexItem tag)
@@ -179,11 +212,17 @@ namespace Reclaimer.Controls
             node.IsExpanded = false;
         }
 
+        private OpenFileArgs GetFolderArgs(TreeItemModel node)
+        {
+            return new OpenFileArgs(node.Header, $"Blam.{cache.CacheType}.*", node);
+        }
+
+
         private OpenFileArgs GetSelectedArgs()
         {
             var node = tv.SelectedItem as TreeItemModel;
             if (node.HasItems) //folder
-                return new OpenFileArgs(node.Header, $"Blam.{cache.CacheType}.*", node);
+                return GetFolderArgs(node);
 
             var item = node.Tag as IIndexItem;
             var fileName = $"{item.FullPath}.{item.ClassName}";
@@ -203,10 +242,13 @@ namespace Reclaimer.Controls
         #region Event Handlers
         private void btnCollapseAll_Click(object sender, RoutedEventArgs e)
         {
-            var nodes = tv.ItemsSource as List<TreeItemModel>;
-
-            foreach (var node in nodes)
+            foreach (var node in rootNode.Items)
                 RecursiveCollapseNode(node);
+        }
+
+        private void btnExtractAll_Click(object sender, RoutedEventArgs e)
+        {
+            //else ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(args);
         }
 
         private void txtSearch_SearchChanged(object sender, RoutedEventArgs e)
@@ -280,6 +322,11 @@ namespace Reclaimer.Controls
                 Clipboard.SetText($"{tag.FullPath}.{tag.ClassName}");
             }
             else ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(args);
+        }
+
+        private void GlobalContextItem_Click(object sender, RoutedEventArgs e)
+        {
+            ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(GetFolderArgs(rootNode));
         }
         #endregion
     }
