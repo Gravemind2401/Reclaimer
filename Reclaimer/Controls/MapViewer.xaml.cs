@@ -246,11 +246,6 @@ namespace Reclaimer.Controls
                 RecursiveCollapseNode(node);
         }
 
-        private void btnExtractAll_Click(object sender, RoutedEventArgs e)
-        {
-            //else ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(args);
-        }
-
         private void txtSearch_SearchChanged(object sender, RoutedEventArgs e)
         {
             BuildTagTree(txtSearch.Text);
