@@ -44,4 +44,85 @@
             </Setter.Value>
         </Setter>
     </Style>
+    
+    <Style TargetType="c:MenuButton">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="3" />
+
+        <Setter Property="Foreground" Value="{DynamicResource Environment.CommandBar.TextActive}" />
+        <Setter Property="Background" Value="Transparent" />
+        
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="c:MenuButton">
+                    <Grid>
+                        <Border BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Background="{TemplateBinding Background}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                    TextBlock.Foreground="{TemplateBinding Foreground}"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                    TextOptions.TextFormattingMode="Display" />
+                        </Border>
+                        <Popup x:Name="PART_Popup" StaysOpen="False"
+                               Placement="Bottom" VerticalOffset="1" HorizontalOffset="0"
+                               AllowsTransparency="True" Grid.IsSharedSizeScope="True"
+                               Focusable="False" PopupAnimation="None">
+                            <Border ClipToBounds="True">
+                                <Border x:Name="SubmenuBorder"
+                                        Panel.ZIndex="0" Margin="0,0,3,3"
+                                        SnapsToDevicePixels="True"
+                                        BorderThickness="1"
+                                        BorderBrush="{DynamicResource Environment.CommandBar.MenuBorder}"
+                                        Background="{DynamicResource Environment.CommandBar.MenuBackgroundGradient}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition SharedSizeGroup="MenuPopupCheckBox" />
+                                            <ColumnDefinition SharedSizeGroup="MenuPopupIcon" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border Margin="0,1,0,0" Grid.ColumnSpan="2"
+                                                VerticalAlignment="Stretch" MinWidth="27"
+                                                Background="{DynamicResource Environment.CommandBar.MenuIconBackground}" />
+                                        <c:MenuButtonItemsControl Grid.ColumnSpan="3" Margin="2"
+                                                                  ItemsSource="{TemplateBinding MenuItems}">
+                                            <c:MenuButtonItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <VirtualizingStackPanel KeyboardNavigation.DirectionalNavigation="Cycle" />
+                                                </ItemsPanelTemplate>
+                                            </c:MenuButtonItemsControl.ItemsPanel>
+                                        </c:MenuButtonItemsControl>
+                                    </Grid>
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="5" ShadowDepth="2" Opacity="0.5" Direction="300" />
+                                    </Border.Effect>
+                                </Border>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource Environment.CommandBar.TextHover}" />
+                <Setter Property="Background" Value="{DynamicResource Environment.CommandBar.MouseOverBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Environment.CommandBar.Border}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource Environment.CommandBar.TextMouseDown}" />
+                <Setter Property="Background" Value="{DynamicResource Environment.CommandBar.MouseDownBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Environment.CommandBar.MouseDownBorder}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource Environment.CommandBar.TextInactive}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>

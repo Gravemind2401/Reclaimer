@@ -127,6 +127,8 @@
     <Compile Include="Controls\Editors\MultiSelectEditorBase.xaml.cs">
       <DependentUpon>MultiSelectEditorBase.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MenuButton.cs" />
+    <Compile Include="Controls\MenuButtonItemsControl.cs" />
     <Compile Include="Controls\ModuleViewer.xaml.cs">
       <DependentUpon>ModuleViewer.xaml</DependentUpon>
     </Compile>
