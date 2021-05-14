@@ -294,7 +294,7 @@ namespace Reclaimer.Plugins
         public static bool OpenWithDefault(OpenFileArgs args)
         {
             var defaultHandler = GetDefaultHandler(args);
-            if (defaultHandler == null)
+            if (defaultHandler == null || !defaultHandler.CanOpenFile(args))
                 return false;
 
             defaultHandler.OpenFile(args);
