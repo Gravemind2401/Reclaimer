@@ -405,7 +405,10 @@ namespace Reclaimer.Plugins
                         if (v.Position.Count > 0)
                         {
                             m.Vertices.Add(v.Position[0].ToAssimp3D(scale));
-                            if (v.Color.Count == 0 && !float.IsNaN(v.Position[0].W))
+
+                            //some Halo shaders use position W as the colour alpha - add it to a colour channel to preserve it
+                            //also assimp appears to have issues exporting obj when a colour channel exists so only do this for collada
+                            if (formatId == "collada" && v.Color.Count == 0 && !float.IsNaN(v.Position[0].W))
                                 m.VertexColorChannels[0].Add(new Assimp.Color4D { R = v.Position[0].W });
                         }
 
