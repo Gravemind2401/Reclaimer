@@ -10,23 +10,20 @@ using System.Xml;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
-    public class StringValue : MetaValue
+    public class StringIdValue : MetaValue
     {
         public override string EntryString => Value;
 
-        public int Length { get; }
-
-        private string _value;
-        public string Value
+        private StringId _value;
+        public StringId Value
         {
             get { return _value; }
             set { SetMetaProperty(ref _value, value); }
         }
 
-        public StringValue(XmlNode node, MetaContext context, EndianReader reader, long baseAddress)
+        public StringIdValue(XmlNode node, MetaContext context, EndianReader reader, long baseAddress)
             : base(node, context, reader, baseAddress)
         {
-            Length = node.GetIntAttribute("length", "maxlength", "size") ?? 0;
             ReadValue(reader);
         }
 
@@ -38,7 +35,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             try
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
-                Value = reader.ReadNullTerminatedString(Length);
+                Value = new StringId(reader, context.Cache);
 
                 IsDirty = false;
             }
@@ -50,7 +47,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         public override void WriteValue(EndianWriter writer)
         {
             writer.Seek(ValueAddress, SeekOrigin.Begin);
-            writer.WriteStringFixedLength(Value, Length, '\0');
+
+            throw new NotImplementedException();
 
             IsDirty = false;
         }

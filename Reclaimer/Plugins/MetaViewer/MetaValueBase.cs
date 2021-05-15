@@ -89,8 +89,10 @@ namespace Reclaimer.Plugins.MetaViewer
                         return new Halo3.StructureValue(node, context, reader, baseAddress);
 
                     case MetaValueType.String:
-                    case MetaValueType.StringId:
                         return new Halo3.StringValue(node, context, reader, baseAddress);
+
+                    case MetaValueType.StringId:
+                        return new Halo3.StringIdValue(node, context, reader, baseAddress);
 
                     case MetaValueType.TagReference:
                         return new Halo3.TagReferenceValue(node, context, reader, baseAddress);

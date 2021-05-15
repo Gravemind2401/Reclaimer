@@ -162,6 +162,7 @@
     <Compile Include="Plugins\MetaViewer\Halo3\MetaContext.cs" />
     <Compile Include="Plugins\MetaViewer\Halo3\MetaValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo3\BlockIndexValue.cs" />
+    <Compile Include="Plugins\MetaViewer\Halo3\StringIdValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\BitmaskValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\CommentValue.cs" />
     <Compile Include="Plugins\MetaViewer\Halo5\EnumValue.cs" />

@@ -288,8 +288,10 @@ namespace Reclaimer.Plugins.MetaViewer
                 switch (meta.FieldDefinition.ValueType)
                 {
                     case MetaValueType.String:
-                    case MetaValueType.StringId:
                         return element.FindResource("StringContent") as DataTemplate;
+
+                    case MetaValueType.StringId:
+                        return element.FindResource("StringIdContent") as DataTemplate;
 
                     case MetaValueType.Enum8:
                     case MetaValueType.Enum16:
