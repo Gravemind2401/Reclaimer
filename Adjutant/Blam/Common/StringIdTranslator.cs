@@ -71,7 +71,7 @@ namespace Adjutant.Blam.Common
                 .FirstOrDefault(n => n.Start <= index);
 
             if (ns == null)
-                return 0;
+                return index;
 
             var nsFirst = (ns.Id << indexBits) | (ns.Min);
             return index - ns.Start + nsFirst;
