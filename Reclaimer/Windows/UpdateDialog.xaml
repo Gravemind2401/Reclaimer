@@ -49,6 +49,7 @@
                                TextWrapping="Wrap"
                                TextDecorations="Underline"
                                FontSize="16" />
+                    <LineBreak/>
                     <TextBlock Text="{Binding Description}"
                                TextWrapping="Wrap" />
                 </Paragraph>
