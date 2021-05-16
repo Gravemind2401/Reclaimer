@@ -65,7 +65,19 @@ namespace Adjutant.Blam.Common
             return index < ns.Min ? index : index - ns.Min + ns.Start;
         }
 
-        private struct Namespace
+        public int GetStringId(int index)
+        {
+            var ns = namespaces.Values.OrderByDescending(n => n.Start)
+                .FirstOrDefault(n => n.Start <= index);
+
+            if (ns == null)
+                return 0;
+
+            var nsFirst = (ns.Id << indexBits) | (ns.Min);
+            return index - ns.Start + nsFirst;
+        }
+
+        private class Namespace
         {
             public int Id { get; }
             public int Min { get; }

@@ -209,6 +209,8 @@ namespace Adjutant.Blam.Halo2Beta
 
         public string this[int id] => items[id];
 
+        public int GetStringId(string value) => Array.IndexOf(items, value);
+
         public IEnumerator<string> GetEnumerator() => items.AsEnumerable().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();

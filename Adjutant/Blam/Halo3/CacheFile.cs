@@ -343,6 +343,8 @@ namespace Adjutant.Blam.Halo3
 
         public string this[int id] => items[translator.GetStringIndex(id)];
 
+        public int GetStringId(string value) => translator.GetStringId(Array.IndexOf(items, value));
+
         public IEnumerator<string> GetEnumerator() => items.AsEnumerable().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();

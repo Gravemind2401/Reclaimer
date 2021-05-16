@@ -10,5 +10,6 @@ namespace Adjutant.Blam.Common
     {
         int StringCount { get; }
         string this[int id] { get; }
+        int GetStringId(string value);
     }
 }
