@@ -81,7 +81,12 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
             try
             {
+                //force block index dropdown to reset
+                blockIndex = -1;
+                RaisePropertyChanged(nameof(BlockIndex));
+
                 Children.Clear();
+                BlockLabels.Clear();
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
                 var expander = (context.Cache as IMccCacheFile)?.PointerExpander;
@@ -97,9 +102,6 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 blockIndex = 0;
                 foreach (XmlNode n in node.ChildNodes)
                     Children.Add(GetMetaValue(n, context, BlockAddress));
-
-                RaisePropertyChanged(nameof(BlockIndex));
-                RaisePropertyChanged(nameof(HasChildren));
 
                 var entryOffset = node.GetIntAttribute("entryName", "entryOffset", "label");
                 var isExplicit = entryOffset.HasValue;
@@ -122,6 +124,9 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                     labelValue = null;
                     BlockLabels.AddRange(Enumerable.Range(0, BlockCount).Select(i => $"Block {i:D2}"));
                 }
+
+                RaisePropertyChanged(nameof(BlockIndex));
+                RaisePropertyChanged(nameof(HasChildren));
             }
             catch { IsEnabled = false; }
 
