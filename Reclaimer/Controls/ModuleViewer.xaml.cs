@@ -39,7 +39,7 @@ namespace Reclaimer.Controls
         private TreeItemModel rootNode;
 
         #region Dependency Properties
-        public static readonly DependencyPropertyKey HasGlobalHandlersPropertyKey =
+        private static readonly DependencyPropertyKey HasGlobalHandlersPropertyKey =
             DependencyProperty.RegisterReadOnly(nameof(HasGlobalHandlers), typeof(bool), typeof(ModuleViewer), new PropertyMetadata(false));
 
         public static readonly DependencyProperty HasGlobalHandlersProperty = HasGlobalHandlersPropertyKey.DependencyProperty;

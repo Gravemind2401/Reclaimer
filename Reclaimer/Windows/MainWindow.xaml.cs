@@ -20,7 +20,7 @@ namespace Reclaimer.Windows
     public partial class MainWindow : MetroWindow, ITabContentHost
     {
         #region Dependency Properties
-        public static readonly DependencyPropertyKey HasUpdatePropertyKey =
+        private static readonly DependencyPropertyKey HasUpdatePropertyKey =
             DependencyProperty.RegisterReadOnly(nameof(HasUpdate), typeof(bool), typeof(MainWindow), new PropertyMetadata(false, null, (d, baseValue) =>
             {
                 return App.Settings.LatestRelease?.Version > App.AssemblyVersion;
@@ -28,7 +28,7 @@ namespace Reclaimer.Windows
 
         public static readonly DependencyProperty HasUpdateProperty = HasUpdatePropertyKey.DependencyProperty;
 
-        public static readonly DependencyPropertyKey IsBusyPropertyKey =
+        private static readonly DependencyPropertyKey IsBusyPropertyKey =
             DependencyProperty.RegisterReadOnly(nameof(IsBusy), typeof(bool), typeof(MainWindow), new PropertyMetadata(false, (s, e) =>
             {
                 (s as MainWindow).RefreshStatus();
@@ -36,7 +36,7 @@ namespace Reclaimer.Windows
 
         public static readonly DependencyProperty IsBusyProperty = IsBusyPropertyKey.DependencyProperty;
 
-        public static readonly DependencyPropertyKey CurrentStatusPropertyKey =
+        private static readonly DependencyPropertyKey CurrentStatusPropertyKey =
             DependencyProperty.RegisterReadOnly(nameof(CurrentStatus), typeof(string), typeof(MainWindow), new PropertyMetadata());
 
         public static readonly DependencyProperty CurrentStatusProperty = CurrentStatusPropertyKey.DependencyProperty;
