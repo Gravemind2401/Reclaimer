@@ -11,10 +11,13 @@ namespace Reclaimer.Plugins.MetaViewer
 {
     public class MetaValidationRule : ValidationRule
     {
-        public static bool Validate(FieldDefinition field, object value)
+        public static bool Validate(MetaValueBase meta, object value)
         {
+            if (meta.HasCustomValidation)
+                return meta.ValidateValue(value);
+
             var str = value?.ToString();
-            switch (field.ValueType)
+            switch (meta.FieldDefinition.ValueType)
             {
                 case MetaValueType.SByte:
                     return ValidateSByte(str);
@@ -52,7 +55,7 @@ namespace Reclaimer.Plugins.MetaViewer
                     return ValidateSingle(str);
 
                 case MetaValueType.String:
-                    return str?.Length <= field.Size;
+                    return str?.Length <= meta.FieldDefinition.Size;
 
                 default: return true;
             }
@@ -76,7 +79,7 @@ namespace Reclaimer.Plugins.MetaViewer
                 return ValidationResult.ValidResult;
 
             var propValue = prop.GetValue(meta);
-            return new ValidationResult(Validate(meta.FieldDefinition, propValue), null);
+            return new ValidationResult(Validate(meta, propValue), null);
         }
 
         private static bool ValidateSByte(string value)

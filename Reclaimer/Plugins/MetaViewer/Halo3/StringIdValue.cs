@@ -1,4 +1,5 @@
 ﻿using Adjutant.Blam.Common;
+using Reclaimer.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,12 +11,12 @@ using System.Xml;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
-    public class StringIdValue : MetaValue
+    public class StringIdValue : MetaValue, AutoCompleteTextBox.ISuggestionProvider
     {
         public override string EntryString => Value;
 
-        private StringId _value;
-        public StringId Value
+        private string _value;
+        public string Value
         {
             get { return _value; }
             set { SetMetaProperty(ref _value, value); }
@@ -48,9 +49,39 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         {
             writer.Seek(ValueAddress, SeekOrigin.Begin);
 
-            throw new NotImplementedException();
+            var intValue = GetStringId(Value);
+            if (string.IsNullOrEmpty(Value) || intValue > 0)
+                writer.Write(intValue);
 
             IsDirty = false;
+        }
+
+        private int GetStringId(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return 0;
+            else return context.Cache.StringIndex.GetStringId(value);
+        }
+
+        protected internal override bool HasCustomValidation => true;
+
+        protected internal override bool ValidateValue(object value)
+        {
+            var str = value?.ToString();
+
+            if (string.IsNullOrEmpty(str))
+                return true;
+            else return GetStringId(str) > 0;
+        }
+
+        IEnumerable<string> AutoCompleteTextBox.ISuggestionProvider.GetSuggestions(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return Enumerable.Empty<string>();
+            else if (text.Length < 3)
+                return context.Cache.StringIndex.Where(s => s.Length < 3 && s?.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0).OrderBy(s => s);
+            else
+                return context.Cache.StringIndex.Where(s => s.Length >= 3 && s?.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0).OrderBy(s => s);
         }
     }
 }

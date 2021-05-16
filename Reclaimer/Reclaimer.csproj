@@ -149,6 +149,7 @@
     </Compile>
     <Compile Include="Controls\PropertyGrid.cs" />
     <Compile Include="Controls\Renderer.cs" />
+    <Compile Include="Controls\AutoCompleteTextBox.cs" />
     <Compile Include="Controls\SettingViewer.xaml.cs">
       <DependentUpon>SettingViewer.xaml</DependentUpon>
     </Compile>

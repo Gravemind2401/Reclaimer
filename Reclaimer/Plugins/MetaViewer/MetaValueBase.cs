@@ -60,7 +60,7 @@ namespace Reclaimer.Plugins.MetaViewer
             if (changed)
             {
                 IsDirty = true;
-                if (!IsBusy && MetaValidationRule.Validate(FieldDefinition, value))
+                if (!IsBusy && MetaValidationRule.Validate(this, value))
                     OnMetaPropertyChanged(propertyName);
             }
             return changed;
@@ -172,6 +172,13 @@ namespace Reclaimer.Plugins.MetaViewer
                 default:
                     return new Halo5.SimpleValue(node, item, header, host, reader, baseAddress, offset);
             }
+        }
+
+        internal protected virtual bool HasCustomValidation => false;
+
+        internal protected virtual bool ValidateValue(object value)
+        {
+            throw new NotImplementedException();
         }
     }
 }

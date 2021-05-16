@@ -125,4 +125,115 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    <Style TargetType="c:AutoCompleteTextBox">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource SearchControl.Selection}" />
+        <Setter Property="Padding" Value="2,1" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="c:AutoCompleteTextBox">
+                    <Grid>
+                        <Border BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Background="{TemplateBinding Background}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                            <Grid>
+                                <ScrollViewer Panel.ZIndex="0" x:Name="PART_ContentHost" />
+                                <TextBox x:Name="watermark" Panel.ZIndex="1" IsHitTestVisible="False"
+                                         Background="Transparent" BorderThickness="0" Visibility="Collapsed"
+                                         SnapsToDevicePixels="{Binding SnapsToDevicePixels, RelativeSource={RelativeSource AncestorType=c:AutoCompleteTextBox}}"
+                                         TextAlignment="{Binding TextAlignment, RelativeSource={RelativeSource AncestorType=c:AutoCompleteTextBox}}"
+                                         Padding="{Binding Padding, RelativeSource={RelativeSource AncestorType=c:AutoCompleteTextBox}}"
+                                         Text="{Binding WatermarkText, RelativeSource={RelativeSource AncestorType=c:AutoCompleteTextBox}}" />
+                            </Grid>
+                        </Border>
+                        <Popup x:Name="Popup" Placement="Bottom"
+                               IsOpen="{TemplateBinding IsDropDownOpen}"
+                               AllowsTransparency="True" Focusable="False"
+                               HorizontalOffset="1" VerticalOffset="-1">
+                            <Border ClipToBounds="True" Padding="0,0,5,5">
+                                <Grid x:Name="DropDown"
+                                      SnapsToDevicePixels="True"
+                                      MinWidth="{TemplateBinding ActualWidth}"
+                                      MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border x:Name="DropDownBorder" 
+                                            BorderThickness="1" Margin="0,0,2,0"
+                                            Background="{DynamicResource Environment.DropDown.PopupBackground}"
+                                            BorderBrush="{DynamicResource Environment.DropDown.PopupBorder}">
+                                        <Border.Effect>
+                                            <DropShadowEffect BlurRadius="5" ShadowDepth="2" Opacity="0.5" Direction="300" />
+                                        </Border.Effect>
+                                    </Border>
+                                    <ScrollViewer SnapsToDevicePixels="True" Margin="3,1,5,1"
+                                                  VerticalScrollBarVisibility="Auto">
+                                        <ItemsControl x:Name="PART_ItemsHost">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <VirtualizingStackPanel KeyboardNavigation.DirectionalNavigation="Contained" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <ComboBoxItem Content="{Binding}" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="False">
+                            <Setter TargetName="watermark" Property="Foreground" Value="{DynamicResource SearchControl.UnfocusedWatermarkText}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="watermark" Property="Foreground" Value="{DynamicResource SearchControl.MouseOverWatermarkText}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsKeyboardFocusWithin" Value="False" />
+                                <Condition Property="HasText" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="watermark" Property="Visibility" Value="Visible" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsFocused" Value="False" />
+                    <Condition Property="IsMouseOver" Value="False" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Foreground" Value="{DynamicResource SearchControl.UnfocusedForeground}" />
+                <Setter Property="Background" Value="{DynamicResource SearchControl.UnfocusedBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource SearchControl.UnfocusedBorder}" />
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsFocused" Value="False" />
+                    <Condition Property="IsMouseOver" Value="True" />
+                </MultiTrigger.Conditions>
+                <Setter Property="Foreground" Value="{DynamicResource SearchControl.MouseOverForeground}" />
+                <Setter Property="Background" Value="{DynamicResource SearchControl.MouseOverBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource SearchControl.MouseOverBorder}" />
+            </MultiTrigger>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource SearchControl.FocusedForeground}" />
+                <Setter Property="Background" Value="{DynamicResource SearchControl.FocusedBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource SearchControl.FocusedBorder}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{DynamicResource SearchControl.DisabledForeground}" />
+                <Setter Property="Background" Value="{DynamicResource SearchControl.DisabledBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource SearchControl.DisabledBorder}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>
