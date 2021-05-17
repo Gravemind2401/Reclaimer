@@ -87,24 +87,28 @@ namespace Adjutant.Blam.Halo5
 
             using (var blockReader = resource.CreateReader())
             {
-
                 var header = new MetadataHeader(blockReader);
                 using (var reader = blockReader.CreateVirtualReader(header.GetSectionOffset(1)))
                 {
-                    //DataBlock 0: ?
+                    //DataBlock 0: mostly padding, buffer counts
                     //DataBlock 1: vertex buffer infos
                     //DataBlock 2: index buffer infos
                     //DataBlock 3+: additional vertex data block for each buffer
                     //DataBlock n+: additional index data block for each buffer
-                    var bufferCount = (header.DataBlocks.Count - 3) / 2;
 
-                    var block = header.DataBlocks[1];
+                    var block = header.DataBlocks[0];
+                    reader.Seek(block.Offset + 16, SeekOrigin.Begin);
+                    var vertexBufferCount = reader.ReadInt32();
+                    reader.Seek(block.Offset + 44, SeekOrigin.Begin);
+                    var indexBufferCount = reader.ReadInt32();
+
+                    block = header.DataBlocks[1];
                     reader.Seek(block.Offset, SeekOrigin.Begin);
-                    vertexBufferInfo = reader.ReadEnumerable<VertexBufferInfo>(bufferCount).ToArray();
+                    vertexBufferInfo = reader.ReadEnumerable<VertexBufferInfo>(vertexBufferCount).ToArray();
 
                     block = header.DataBlocks[2];
                     reader.Seek(block.Offset, SeekOrigin.Begin);
-                    indexBufferInfo = reader.ReadEnumerable<IndexBufferInfo>(bufferCount).ToArray();
+                    indexBufferInfo = reader.ReadEnumerable<IndexBufferInfo>(indexBufferCount).ToArray();
                 }
 
                 using (var reader = blockReader.CreateVirtualReader(header.GetSectionOffset(2)))
