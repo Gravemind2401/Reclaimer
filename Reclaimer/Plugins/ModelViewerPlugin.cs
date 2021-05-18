@@ -251,7 +251,7 @@ namespace Reclaimer.Plugins
             DefaultSaveFormat = "amf";
             MaterialExtension = "tif";
             GeometryScale = 100f;
-            AssimpScale = 0.0254f;
+            AssimpScale = 0.03048;
         }
     }
 
