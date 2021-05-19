@@ -251,7 +251,7 @@ namespace Reclaimer.Plugins
             DefaultSaveFormat = "amf";
             MaterialExtension = "tif";
             GeometryScale = 100f;
-            AssimpScale = 0.03048;
+            AssimpScale = 0.03048f;
         }
     }
 
@@ -514,7 +514,8 @@ namespace Reclaimer.Plugins
                 var dif = mat?.Submaterials.FirstOrDefault(s => s.Usage == MaterialUsage.Diffuse);
                 if (dif != null)
                 {
-                    var filePath = $"{dif.Bitmap.Name}.{ModelViewerPlugin.Settings.MaterialExtension}";
+                    var suffix = dif.Bitmap.SubmapCount > 1 ? "[0]" : string.Empty;
+                    var filePath = $"{dif.Bitmap.Name}{suffix}.{ModelViewerPlugin.Settings.MaterialExtension}";
 
                     //collada spec says it requires URI formatting, and Assimp doesn't do it for us
                     //for some reason "new Uri(filePath, UriKind.Relative)" doesnt change the slashes, have to use absolute uri
