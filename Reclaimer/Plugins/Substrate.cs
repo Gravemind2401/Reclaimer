@@ -339,8 +339,8 @@ namespace Reclaimer.Plugins
             App.Settings.RecentFiles.RemoveAll(s => s.Equals(fileName, StringComparison.OrdinalIgnoreCase));
             App.Settings.RecentFiles.Insert(0, fileName);
 
-            while (App.Settings.RecentFiles.Count > 10)
-                App.Settings.RecentFiles.RemoveAt(10);
+            while (App.Settings.RecentFiles.Count > App.UserSettings.MaxRecentFiles)
+                App.Settings.RecentFiles.RemoveAt(App.UserSettings.MaxRecentFiles);
 
             RecentsChanged?.Invoke(typeof(Substrate), EventArgs.Empty);
         }

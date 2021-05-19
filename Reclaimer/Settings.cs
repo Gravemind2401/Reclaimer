@@ -87,5 +87,9 @@ namespace Reclaimer
         [DisplayName("Auto Updates Check")]
         [DefaultValue(false)]
         public bool AutoUpdatesCheck { get; set; }
+
+        [DisplayName("Max Recent Files Count")]
+        [DefaultValue(10)]
+        public int MaxRecentFiles { get; set; }
     }
 }
