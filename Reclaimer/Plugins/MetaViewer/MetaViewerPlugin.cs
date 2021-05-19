@@ -138,6 +138,7 @@ namespace Reclaimer.Plugins.MetaViewer
             [DisplayName("Plugin Profiles")]
             public List<PluginProfile> PluginProfiles { get; set; }
 
+            //cant use RuntimeDefaultValue because json seems to think it is always the default value and ignores it
             void IPluginSettings.ApplyDefaultValues(bool newInstance)
             {
                 if (PluginProfiles != null)

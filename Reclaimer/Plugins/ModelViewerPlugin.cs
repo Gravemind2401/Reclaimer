@@ -235,24 +235,20 @@ namespace Reclaimer.Plugins
     {
         [ItemsSource(typeof(ModelFormatItemsSource))]
         [DisplayName("Default Save Format")]
+        [DefaultValue("amf")]
         public string DefaultSaveFormat { get; set; }
 
         [DisplayName("Embedded Material Extension")]
+        [DefaultValue("tif")]
         public string MaterialExtension { get; set; }
 
         [DisplayName("Geometry Scale")]
+        [DefaultValue(100f)]
         public float GeometryScale { get; set; }
 
         [DisplayName("Assimp Scale")]
+        [DefaultValue(0.03048f)]
         public float AssimpScale { get; set; }
-
-        public ModelViewerSettings()
-        {
-            DefaultSaveFormat = "amf";
-            MaterialExtension = "tif";
-            GeometryScale = 100f;
-            AssimpScale = 0.03048f;
-        }
     }
 
     public static class ModelViewerExtensions

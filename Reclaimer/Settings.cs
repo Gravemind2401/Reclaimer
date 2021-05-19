@@ -4,6 +4,7 @@ using Reclaimer.Plugins;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,10 +20,11 @@ namespace Reclaimer
         public static string AppBaseDirectory => AppDomain.CurrentDomain.BaseDirectory;
         public static string AppDataDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Gravemind2401\\Reclaimer");
 
-        private static JsonSerializerSettings serializerSettings => new JsonSerializerSettings
+        internal static JsonSerializerSettings SerializerSettings => new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
-            NullValueHandling = NullValueHandling.Include,
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
             Converters = new[] { new Newtonsoft.Json.Converters.StringEnumConverter() }
         };
 
@@ -65,12 +67,13 @@ namespace Reclaimer
             if (string.IsNullOrWhiteSpace(settingsContent))
                 return new Settings();
 
-            return JsonConvert.DeserializeObject<Settings>(settingsContent);
+            var result = JsonConvert.DeserializeObject<Settings>(settingsContent, SerializerSettings);
+            return result;
         }
 
         public void Save()
         {
-            File.WriteAllText(settingsJson, JsonConvert.SerializeObject(this, serializerSettings));
+            File.WriteAllText(settingsJson, JsonConvert.SerializeObject(this, SerializerSettings));
         }
     }
 
@@ -78,9 +81,11 @@ namespace Reclaimer
     public sealed class UserSettings
     {
         [DisplayName("Restore Window State")]
+        [DefaultValue(false)]
         public bool RememberWindowState { get; set; }
 
         [DisplayName("Auto Updates Check")]
+        [DefaultValue(false)]
         public bool AutoUpdatesCheck { get; set; }
     }
 }

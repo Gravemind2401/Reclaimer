@@ -1,5 +1,6 @@
 ﻿using Adjutant.Audio;
 using Adjutant.Utilities;
+using Reclaimer.Annotations;
 using Reclaimer.Controls.Editors;
 using System;
 using System.Activities.Presentation.PropertyEditing;
@@ -102,26 +103,30 @@ namespace Reclaimer.Plugins
         {
             [Editor(typeof(BrowseFileEditor), typeof(PropertyValueEditor))]
             [DisplayName("FFmpeg Path")]
+            [RuntimeDefaultValue(typeof(SoundExtractorSettings), nameof(DefaultFFmpegPath))]
             public string FFmpegPath { get; set; }
 
             [DisplayName("Output File Extension")]
+            [DefaultValue("wav")]
             public string OutputExtension { get; set; }
 
             [DisplayName("Output Filename Format")]
+            [DefaultValue("{0}[{1}]")]
             public string OutputNameFormat { get; set; }
 
             [DisplayName("Log FFmpeg Output")]
+            [DefaultValue(false)]
             public bool LogFFmpegOutput { get; set; }
 
             internal bool NoConversion => string.IsNullOrWhiteSpace(OutputExtension);
 
-            public SoundExtractorSettings()
+            private static string DefaultFFmpegPath
             {
-                var relative = Substrate.PluginsDirectory.Replace(Reclaimer.Settings.AppBaseDirectory, string.Empty);
-                FFmpegPath = Path.Combine(".", relative, "ffmpeg", "ffmpeg.exe");
-                OutputExtension = "wav";
-                OutputNameFormat = "{0}[{1}]";
-                LogFFmpegOutput = false;
+                get
+                {
+                    var relative = Substrate.PluginsDirectory.Replace(Reclaimer.Settings.AppBaseDirectory, string.Empty);
+                    return Path.Combine(".", relative, "ffmpeg", "ffmpeg.exe");
+                }
             }
         }
     }

@@ -504,45 +504,42 @@ namespace Reclaimer.Plugins
 
             [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
             [DisplayName("Data Folder")]
+            [DefaultValue(":plugins:\\Batch Extractor")]
             public string DataFolder { get; set; }
 
             [DisplayName("Data Folder Prompt")]
+            [DefaultValue(true)]
             public bool PromptForFolder { get; set; }
 
             [DisplayName("Auto Update Data Folder")]
+            [DefaultValue(false)]
             public bool AutoDataFolder { get; set; }
 
             [DisplayName("Overwrite Existing")]
+            [DefaultValue(true)]
             public bool OverwriteExisting { get; set; }
 
             [DisplayName("Folder Mode")]
+            [DefaultValue(FolderMode.Hierarchy)]
             public FolderMode FolderMode { get; set; }
 
             [DisplayName("Bitmap Format")]
+            [DefaultValue(BitmapFormat.TIF)]
             public BitmapFormat BitmapFormat { get; set; }
 
             [DisplayName("Bitmap Mode")]
+            [DefaultValue(BitmapMode.Default)]
             public BitmapMode BitmapMode { get; set; }
 
             [ItemsSource(typeof(ModelFormatItemsSource))]
             [DisplayName("Model Format")]
+            [DefaultValue("amf")]
             public string ModelFormat { get; set; }
 
             [DisplayName("Batch Worker Count")]
             [Range(minWorkers, maxWorkers)]
+            [DefaultValue(minWorkers)]
             public int BatchWorkerCount { get; set; }
-
-            public BatchExtractSettings()
-            {
-                DataFolder = ":plugins:\\Batch Extractor";
-                PromptForFolder = true;
-                OverwriteExisting = true;
-                FolderMode = FolderMode.Hierarchy;
-                BitmapFormat = BitmapFormat.TIF;
-                BitmapMode = BitmapMode.Default;
-                ModelFormat = "amf";
-                BatchWorkerCount = minWorkers;
-            }
 
             void IPluginSettings.ApplyDefaultValues(bool newInstance)
             {

@@ -114,6 +114,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Annotations\RuntimeDefaultValueAttribute.cs" />
     <Compile Include="Controls\BitmapViewer.xaml.cs">
       <DependentUpon>BitmapViewer.xaml</DependentUpon>
     </Compile>

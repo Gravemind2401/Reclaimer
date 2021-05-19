@@ -139,8 +139,8 @@ namespace Reclaimer.Plugins
 
             try
             {
-                var json = JsonConvert.SerializeObject(App.Settings.PluginSettings[key]);
-                var settings = JsonConvert.DeserializeObject<T>(json);
+                var json = JsonConvert.SerializeObject(App.Settings.PluginSettings[key], Settings.SerializerSettings);
+                var settings = JsonConvert.DeserializeObject<T>(json, Settings.SerializerSettings);
                 (settings as IPluginSettings)?.ApplyDefaultValues(false);
 
                 return settings;
