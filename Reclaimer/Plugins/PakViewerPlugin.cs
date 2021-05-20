@@ -14,8 +14,10 @@ namespace Reclaimer.Plugins
 {
     public class PakViewerPlugin : Plugin
     {
-        const string OpenKey = "PakViewer.OpenPak";
-        const string OpenPath = "File\\Open Pak";
+        private const string OpenKey = "PakViewer.OpenPak";
+        private const string OpenPath = "File\\Open Pak";
+        private const string BrowseFileFilter = "Saber Pak Files|*.s3dpak";
+        private const string PakFileExtension = "s3dpak";
 
         internal static PakViewerSettings Settings;
 
@@ -42,7 +44,7 @@ namespace Reclaimer.Plugins
 
             var ofd = new Microsoft.Win32.OpenFileDialog
             {
-                Filter = "Saber Pak Files|*.s3dpak",
+                Filter = BrowseFileFilter,
                 Multiselect = true,
                 CheckFileExists = true
             };
@@ -59,7 +61,7 @@ namespace Reclaimer.Plugins
 
         public override bool SupportsFileExtension(string extension)
         {
-            return extension.ToLower() == "s3dpak";
+            return extension.ToLower() == PakFileExtension;
         }
 
         public override void OpenPhysicalFile(string fileName)

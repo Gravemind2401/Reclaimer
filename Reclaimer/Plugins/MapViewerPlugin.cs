@@ -16,6 +16,9 @@ namespace Reclaimer.Plugins
     {
         private const string OpenKey = "MapViewer.OpenMap";
         private const string OpenPath = "File\\Open Map";
+        private const string BrowseFileFilter = "Halo Map Files|*.map;*.yelo";
+        private const string MapFileExtension = "map";
+        private const string YeloFileExtension = "yelo";
 
         internal static MapViewerSettings Settings { get; private set; }
 
@@ -42,7 +45,7 @@ namespace Reclaimer.Plugins
 
             var ofd = new Microsoft.Win32.OpenFileDialog
             {
-                Filter = "Halo Map Files|*.map;*.yelo",
+                Filter = BrowseFileFilter,
                 Multiselect = true,
                 CheckFileExists = true
             };
@@ -59,7 +62,7 @@ namespace Reclaimer.Plugins
 
         public override bool SupportsFileExtension(string extension)
         {
-            return extension.ToLower() == "map" || extension.ToLower() == "yelo";
+            return extension.ToLower() == MapFileExtension || extension.ToLower() == YeloFileExtension;
         }
 
         public override void OpenPhysicalFile(string fileName)

@@ -84,7 +84,7 @@ namespace Reclaimer
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            if (!InstanceManager.CreateSingleInstance("Reclaimer.Application", OnReceivedCommandLineArguments))
+            if (!InstanceManager.CreateSingleInstance(Constants.ApplicationInstanceKey, OnReceivedCommandLineArguments))
                 return;
 
             base.OnStartup(e);
@@ -157,7 +157,7 @@ namespace Reclaimer
             if (System.Diagnostics.Debugger.IsAttached)
                 System.Diagnostics.Debugger.Break();
 
-            var fileName = Path.Combine(Settings.AppDataDirectory, "crash.txt");
+            var fileName = Path.Combine(Settings.AppDataDirectory, Constants.CrashDumpFileName);
             File.WriteAllText(fileName, ex.ToString());
         }
 

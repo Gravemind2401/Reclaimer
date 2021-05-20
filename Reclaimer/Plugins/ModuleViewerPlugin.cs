@@ -14,8 +14,10 @@ namespace Reclaimer.Plugins
 {
     public class ModuleViewerPlugin : Plugin
     {
-        const string OpenKey = "ModuleViewer.OpenModule";
-        const string OpenPath = "File\\Open Module";
+        private const string OpenKey = "ModuleViewer.OpenModule";
+        private const string OpenPath = "File\\Open Module";
+        private const string BrowseFileFilter = "Halo Module Files|*.module";
+        private const string ModuleFileExtension = "module";
 
         internal static ModuleViewerSettings Settings;
 
@@ -42,7 +44,7 @@ namespace Reclaimer.Plugins
 
             var ofd = new Microsoft.Win32.OpenFileDialog
             {
-                Filter = "Halo Module Files|*.module",
+                Filter = BrowseFileFilter,
                 Multiselect = true,
                 CheckFileExists = true
             };
@@ -59,7 +61,7 @@ namespace Reclaimer.Plugins
 
         public override bool SupportsFileExtension(string extension)
         {
-            return extension.ToLowerInvariant() == "module";
+            return extension.ToLowerInvariant() == ModuleFileExtension;
         }
 
         public override void OpenPhysicalFile(string fileName)

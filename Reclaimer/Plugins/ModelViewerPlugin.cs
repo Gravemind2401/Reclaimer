@@ -42,8 +42,8 @@ namespace Reclaimer.Plugins
 
         public override void PostInitialise()
         {
-            getDataFolderFunc = Substrate.GetSharedFunction<GetDataFolder>("Reclaimer.Plugins.BatchExtractPlugin.GetDataFolder");
-            saveImageFunc = Substrate.GetSharedFunction<SaveImage>("Reclaimer.Plugins.BatchExtractPlugin.SaveImage");
+            getDataFolderFunc = Substrate.GetSharedFunction<GetDataFolder>(Constants.SharedFuncGetDataFolder);
+            saveImageFunc = Substrate.GetSharedFunction<SaveImage>(Constants.SharedFuncSaveImage);
         }
 
         public override IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
@@ -140,11 +140,11 @@ namespace Reclaimer.Plugins
 
         private static readonly ExportFormat[] StandardFormats = new[]
         {
-            new ExportFormat("amf",         "amf",  "AMF Files", (model, fileName) => model.WriteAMF(fileName, Settings.GeometryScale)),
-            new ExportFormat("jms",         "jms",  "JMS Files", (model, fileName) => model.WriteJMS(fileName, Settings.GeometryScale)),
-            new ExportFormat("objnomtl",    "obj",  "OBJ Files"),
-            new ExportFormat("obj",         "obj",  "OBJ Files with materials"),
-            new ExportFormat("collada",     "dae",  "COLLADA Files"),
+            new ExportFormat(FormatId.AMF,              "amf",  "AMF Files", (model, fileName) => model.WriteAMF(fileName, Settings.GeometryScale)),
+            new ExportFormat(FormatId.JMS,              "jms",  "JMS Files", (model, fileName) => model.WriteJMS(fileName, Settings.GeometryScale)),
+            new ExportFormat(FormatId.OBJNoMaterials,   "obj",  "OBJ Files"),
+            new ExportFormat(FormatId.OBJ,              "obj",  "OBJ Files with materials"),
+            new ExportFormat(FormatId.Collada,          "dae",  "COLLADA Files"),
         };
 
         private static Dictionary<string, ExportFormat> UserFormats = new Dictionary<string, ExportFormat>();
@@ -231,11 +231,20 @@ namespace Reclaimer.Plugins
         #endregion
     }
 
+    internal static class FormatId
+    {
+        public const string AMF = "amf";
+        public const string JMS = "jms";
+        public const string OBJNoMaterials = "objnomtl";
+        public const string OBJ = "obj";
+        public const string Collada = "collada";
+    }
+
     internal sealed class ModelViewerSettings
     {
         [ItemsSource(typeof(ModelFormatItemsSource))]
         [DisplayName("Default Save Format")]
-        [DefaultValue("amf")]
+        [DefaultValue(FormatId.AMF)]
         public string DefaultSaveFormat { get; set; }
 
         [DisplayName("Embedded Material Extension")]
@@ -515,7 +524,7 @@ namespace Reclaimer.Plugins
 
                     //collada spec says it requires URI formatting, and Assimp doesn't do it for us
                     //for some reason "new Uri(filePath, UriKind.Relative)" doesnt change the slashes, have to use absolute uri
-                    if (formatId == "collada")
+                    if (formatId == FormatId.Collada)
                         filePath = new Uri("X:\\", UriKind.Absolute).MakeRelativeUri(new Uri(System.IO.Path.Combine("X:\\", filePath))).ToString();
 
                     m.TextureDiffuse = new Assimp.TextureSlot

@@ -30,6 +30,10 @@ namespace Reclaimer.Plugins
 {
     public class BatchExtractPlugin : Plugin
     {
+        private const string BlamFileRegex = @"Blam\.(\w+)\.(.*)";
+        private const string SaberFileRegex = @"Saber3D\.(\w+)\.(.*)";
+        private const string FileKeyWildcard = "*";
+
         private ConcurrentQueue<IExtractable> extractionQueue = new ConcurrentQueue<IExtractable>();
 
         private bool isBusy;
@@ -66,14 +70,14 @@ namespace Reclaimer.Plugins
         public override void Initialise()
         {
             Settings = LoadSettings<BatchExtractSettings>();
-            Settings.DataFolder = Settings.DataFolder.PatternReplace(":plugins:", Substrate.PluginsDirectory);
-            getModelExtensionFunc = new Lazy<GetModelExtension>(() => Substrate.GetSharedFunction<GetModelExtension>("Reclaimer.Plugins.ModelViewerPlugin.GetFormatExtension"));
+            Settings.DataFolder = Settings.DataFolder.PatternReplace(Constants.PluginsFolderToken, Substrate.PluginsDirectory);
+            getModelExtensionFunc = new Lazy<GetModelExtension>(() => Substrate.GetSharedFunction<GetModelExtension>(Constants.SharedFuncGetModelExtension));
         }
 
         public override void PostInitialise()
         {
-            writeModelFileFunc = Substrate.GetSharedFunction<WriteModelFile>("Reclaimer.Plugins.ModelViewerPlugin.WriteModelFile");
-            writeSoundFileFunc = Substrate.GetSharedFunction<WriteSoundFile>("Reclaimer.Plugins.SoundExtractorPlugin.WriteSoundFile");
+            writeModelFileFunc = Substrate.GetSharedFunction<WriteModelFile>(Constants.SharedFuncWriteModelFile);
+            writeSoundFileFunc = Substrate.GetSharedFunction<WriteSoundFile>(Constants.SharedFuncWriteSoundFile);
         }
 
         public override IEnumerable<PluginMenuItem> GetMenuItems()
@@ -84,12 +88,12 @@ namespace Reclaimer.Plugins
         public override IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
         {
             Match match;
-            if ((match = Regex.Match(context.FileTypeKey, @"Blam\.(\w+)\.(.*)")).Success)
+            if ((match = Regex.Match(context.FileTypeKey, BlamFileRegex)).Success)
             {
                 if (!ValidateCacheType(match.Groups[1].Value))
                     yield break;
 
-                if (match.Groups[2].Value == "*" && context.File.Any(i => i is TreeItemModel))
+                if (match.Groups[2].Value == FileKeyWildcard && context.File.Any(i => i is TreeItemModel))
                     yield return ExtractMultipleContextItem;
                 else
                 {
@@ -97,12 +101,12 @@ namespace Reclaimer.Plugins
                         yield return ExtractSingleContextItem;
                 }
             }
-            else if ((match = Regex.Match(context.FileTypeKey, @"Saber3D\.(\w+)\.(.*)")).Success)
+            else if ((match = Regex.Match(context.FileTypeKey, SaberFileRegex)).Success)
             {
                 if (match.Groups[1].Value != "Halo1X")
                     yield break;
 
-                if (match.Groups[2].Value == "*" && context.File.Any(i => i is TreeItemModel))
+                if (match.Groups[2].Value == FileKeyWildcard && context.File.Any(i => i is TreeItemModel))
                     yield return ExtractMultipleContextItem;
                 else
                 {
@@ -114,7 +118,7 @@ namespace Reclaimer.Plugins
 
         public override void Suspend()
         {
-            Settings.DataFolder = Settings.DataFolder.PatternReplace(Substrate.PluginsDirectory, ":plugins:");
+            Settings.DataFolder = Settings.DataFolder.PatternReplace(Substrate.PluginsDirectory, Constants.PluginsFolderToken);
             SaveSettings(Settings);
         }
 

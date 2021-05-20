@@ -285,7 +285,7 @@ namespace Reclaimer.Plugins
         /// <summary>
         /// Gets the directory path that plugin assemblies are loaded from.
         /// </summary>
-        public static string PluginsDirectory => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plugins");
+        public static string PluginsDirectory => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.PluginsFolderName);
 
         /// <summary>
         /// Opens a file object with the associated default handler.

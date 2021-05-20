@@ -16,10 +16,13 @@ namespace Reclaimer.Plugins
 {
     public class SoundExtractorPlugin : Plugin
     {
-        public override string Name => "Sound Extractor";
+        private const string FFmpegFolderName = "ffmpeg";
+        private const string FFmpegExecutableName = "ffmpeg.exe";
 
         private static SoundExtractorSettings Settings;
         private static SoundExtractorPlugin Instance;
+
+        public override string Name => "Sound Extractor";
 
         public override void Initialise()
         {
@@ -125,7 +128,7 @@ namespace Reclaimer.Plugins
                 get
                 {
                     var relative = Substrate.PluginsDirectory.Replace(Reclaimer.Settings.AppBaseDirectory, string.Empty);
-                    return Path.Combine(".", relative, "ffmpeg", "ffmpeg.exe");
+                    return Path.Combine(".", relative, FFmpegFolderName, FFmpegExecutableName);
                 }
             }
         }
