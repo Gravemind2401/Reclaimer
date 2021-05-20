@@ -17,8 +17,13 @@ namespace Reclaimer.Controls
 
         private Popup submenuPopup;
 
+        static MenuButton()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(MenuButton), new FrameworkPropertyMetadata(typeof(MenuButton)));
+        }
+
         public static readonly DependencyProperty MenuItemsProperty =
-            DependencyProperty.Register(nameof(MenuItems), typeof(ObservableCollection<Control>), typeof(MenuButton), new PropertyMetadata(new ObservableCollection<Control>()));
+            DependencyProperty.Register(nameof(MenuItems), typeof(ObservableCollection<Control>), typeof(MenuButton), new PropertyMetadata(null, null));
 
         public ObservableCollection<Control> MenuItems
         {
@@ -26,15 +31,15 @@ namespace Reclaimer.Controls
             set { SetValue(MenuItemsProperty, value); }
         }
 
-        static MenuButton()
+        public MenuButton()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(MenuButton), new FrameworkPropertyMetadata(typeof(MenuButton)));
+            MenuItems = new ObservableCollection<Control>();
         }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            submenuPopup = GetTemplateChild(PART_Popup) as Popup;
+            submenuPopup = Template.FindName(PART_Popup, this) as Popup;
         }
 
         protected override void OnClick()
