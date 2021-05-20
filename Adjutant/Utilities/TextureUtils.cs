@@ -213,9 +213,7 @@ namespace Adjutant.Utilities
             switch (format)
             {
                 case KnownTextureFormat.A8:
-                case KnownTextureFormat.Y8:
                 case KnownTextureFormat.AY8:
-                case KnownTextureFormat.A8Y8:
                 case KnownTextureFormat.A8R8G8B8:
                 case KnownTextureFormat.X8R8G8B8:
                 case KnownTextureFormat.A4R4G4B4:
@@ -223,6 +221,8 @@ namespace Adjutant.Utilities
                 case KnownTextureFormat.U8V8:
                     return 32;
 
+                case KnownTextureFormat.A8Y8:
+                case KnownTextureFormat.Y8:
                 case KnownTextureFormat.DXT5a_mono:
                 case KnownTextureFormat.DXT5a_alpha:
                 case KnownTextureFormat.DXT1:
