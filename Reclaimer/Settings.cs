@@ -89,7 +89,7 @@ namespace Reclaimer
         public bool AutoUpdatesCheck { get; set; }
 
         [DisplayName("Max Recent Files Count")]
-        [DefaultValue(10)]
+        [DefaultValue(10), Range(0, 50)]
         public int MaxRecentFiles { get; set; }
     }
 }

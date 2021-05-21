@@ -542,8 +542,7 @@ namespace Reclaimer.Plugins
             public string ModelFormat { get; set; }
 
             [DisplayName("Batch Worker Count")]
-            [Range(minWorkers, maxWorkers)]
-            [DefaultValue(minWorkers)]
+            [DefaultValue(minWorkers), Range(minWorkers, maxWorkers)]
             public int BatchWorkerCount { get; set; }
 
             void IPluginSettings.ApplyDefaultValues(bool newInstance)
