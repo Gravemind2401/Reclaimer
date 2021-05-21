@@ -115,6 +115,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Annotations\RuntimeDefaultValueAttribute.cs" />
+    <Compile Include="Annotations\SharedFunctionAttribute.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Controls\BitmapViewer.xaml.cs">
       <DependentUpon>BitmapViewer.xaml</DependentUpon>
