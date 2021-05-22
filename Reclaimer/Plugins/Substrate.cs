@@ -141,7 +141,8 @@ namespace Reclaimer.Plugins
             try
             {
                 var json = JsonConvert.SerializeObject(App.Settings.PluginSettings[key], Settings.SerializerSettings);
-                var settings = JsonConvert.DeserializeObject<T>(json, Settings.SerializerSettings);
+                var settings = Utils.CreateDefaultInstance<T>();
+                JsonConvert.PopulateObject(json, settings, Settings.SerializerSettings);
                 (settings as IPluginSettings)?.ApplyDefaultValues(false);
 
                 return settings;
@@ -155,7 +156,7 @@ namespace Reclaimer.Plugins
 
         private static T GetDefaultPluginSettings<T>() where T : new()
         {
-            var settings = new T();
+            var settings = Utils.CreateDefaultInstance<T>();
             (settings as IPluginSettings)?.ApplyDefaultValues(true);
             return settings;
         }

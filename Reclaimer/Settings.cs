@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Reclaimer.Models;
 using Reclaimer.Plugins;
+using Reclaimer.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,7 +25,7 @@ namespace Reclaimer
         {
             Formatting = Formatting.Indented,
             NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+            DefaultValueHandling = DefaultValueHandling.Ignore,
             Converters = new[] { new Newtonsoft.Json.Converters.StringEnumConverter() }
         };
 
@@ -55,7 +56,7 @@ namespace Reclaimer
             DefaultHandlers = new Dictionary<string, string>();
             PluginSettings = new Dictionary<string, object>();
             RecentFiles = new List<string>();
-            UserSettings = new UserSettings();
+            UserSettings = Utils.CreateDefaultInstance<UserSettings>();
         }
 
         public static Settings FromFile()

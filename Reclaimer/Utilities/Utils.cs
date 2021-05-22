@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -58,6 +60,31 @@ namespace Reclaimer.Utilities
         public static double DegToRad(double degrees)
         {
             return degrees * (Math.PI / 180d);
+        }
+
+        /// <summary>
+        /// Creates an instance of T and populates it's public properties based their <see cref="DefaultValueAttribute"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of object to create.</typeparam>
+        public static T CreateDefaultInstance<T>() where T : new()
+        {
+            var instance = new T();
+
+            foreach (var propInfo in typeof(T).GetProperties())
+            {
+                var attr = propInfo.GetCustomAttribute<DefaultValueAttribute>(true);
+                if (attr?.Value == null)
+                    continue;
+
+                var setter = propInfo.GetSetMethod();
+                if (setter == null)
+                    continue;
+
+                if (propInfo.PropertyType.IsAssignableFrom(attr.Value.GetType()))
+                    propInfo.SetValue(instance, attr.Value);
+            }
+
+            return instance;
         }
     }
 }
