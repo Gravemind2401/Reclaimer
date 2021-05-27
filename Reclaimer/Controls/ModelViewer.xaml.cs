@@ -76,6 +76,9 @@ namespace Reclaimer.Controls
         public Action<string> SetStatus { get; set; }
         public Action ClearStatus { get; set; }
 
+        private List<IGeometryRegion> InvalidRegions { get; }
+        private List<IGeometryPermutation> InvalidPermutations { get; }
+
         static ModelViewer()
         {
             (ErrorMaterial = new DiffuseMaterial(Brushes.Gold)).Freeze();
@@ -86,6 +89,8 @@ namespace Reclaimer.Controls
             InitializeComponent();
             TabModel = new TabModel(this, TabItemType.Document);
             TreeViewItems = new ObservableCollection<TreeItemModel>();
+            InvalidRegions = new List<IGeometryRegion>();
+            InvalidPermutations = new List<IGeometryPermutation>();
             DataContext = this;
 
             visual.Content = modelGroup;
@@ -108,6 +113,8 @@ namespace Reclaimer.Controls
             var meshes = GetMeshes(model).ToList();
 
             TreeViewItems.Clear();
+            InvalidRegions.Clear();
+            InvalidPermutations.Clear();
             modelGroup.Children.Clear();
             foreach (var region in model.Regions)
             {
@@ -117,7 +124,10 @@ namespace Reclaimer.Controls
                 {
                     var mesh = meshes[perm.MeshIndex];
                     if (mesh == null)
+                    {
+                        InvalidPermutations.Add(perm);
                         continue;
+                    }
 
                     var permNode = new TreeItemModel { Header = perm.Name, IsChecked = true };
                     regNode.Items.Add(permNode);
@@ -182,6 +192,8 @@ namespace Reclaimer.Controls
 
                 if (regNode.HasItems)
                     TreeViewItems.Add(regNode);
+                else
+                    InvalidRegions.Add(region);
             }
 
             renderer.ScaleToContent(new[] { modelGroup });
@@ -369,7 +381,7 @@ namespace Reclaimer.Controls
                     var group = item.Tag as Model3DGroup;
                     if (item.IsChecked == true && !modelGroup.Children.Contains(group))
                         modelGroup.Children.Add(group);
-                    else
+                    else if (item.IsChecked == false)
                         modelGroup.Children.Remove(group);
                 }
             }
@@ -384,7 +396,7 @@ namespace Reclaimer.Controls
                     {
                         if (i.IsChecked == true && !modelGroup.Children.Contains(group))
                             modelGroup.Children.Add(group);
-                        else
+                        else if (i.IsChecked == false)
                             modelGroup.Children.Remove(group);
                     }
                 }
@@ -466,12 +478,12 @@ namespace Reclaimer.Controls
                 return;
 
             var selectedPerms = new List<IGeometryPermutation>();
-            foreach (var parent in TreeViewItems.Zip(model.Regions, (a, b) => new { Node = a, Region = b }))
+            foreach (var parent in TreeViewItems.Zip(model.Regions.Except(InvalidRegions), (a, b) => new { Node = a, Region = b }))
             {
                 if (parent.Node.IsChecked == false)
                     continue;
 
-                foreach (var child in parent.Node.Items.Zip(parent.Region.Permutations, (a, b) => new { Node = a, Permutation = b }))
+                foreach (var child in parent.Node.Items.Zip(parent.Region.Permutations.Except(InvalidPermutations), (a, b) => new { Node = a, Permutation = b }))
                 {
                     if (child.Node.IsChecked == true)
                         selectedPerms.Add(child.Permutation);
