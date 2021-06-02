@@ -39,6 +39,7 @@ namespace Reclaimer.Plugins
 
         private bool isBusy;
         private CancellationTokenSource tokenSource;
+        private string lastDataFolder;
 
         private delegate string GetModelExtension(string formatId);
         private Lazy<GetModelExtension> getModelExtensionFunc;
@@ -98,7 +99,7 @@ namespace Reclaimer.Plugins
                     yield return ExtractMultipleContextItem;
                 else
                 {
-                    if (context.File.Any(f => GetExtractable(f) != null))
+                    if (context.File.Any(f => IsExtractable(f)))
                         yield return ExtractSingleContextItem;
                 }
             }
@@ -111,7 +112,7 @@ namespace Reclaimer.Plugins
                     yield return ExtractMultipleContextItem;
                 else
                 {
-                    if (context.File.Any(f => GetExtractable(f) != null))
+                    if (context.File.Any(f => IsExtractable(f)))
                         yield return ExtractSingleContextItem;
                 }
             }
@@ -136,15 +137,17 @@ namespace Reclaimer.Plugins
             return false;
         }
 
-        private IExtractable GetExtractable(object obj)
+        private bool IsExtractable(object obj) => GetExtractable(obj, Settings.DataFolder) != null;
+
+        private IExtractable GetExtractable(object obj, string outputFolder)
         {
             IExtractable extractable;
             if (obj is IIndexItem)
-                extractable = new CacheExtractable(obj as IIndexItem);
+                extractable = new CacheExtractable(obj as IIndexItem, outputFolder);
             else if (obj is ModuleItem)
-                extractable = new ModuleExtractable(obj as ModuleItem);
+                extractable = new ModuleExtractable(obj as ModuleItem, outputFolder);
             else if (obj is IPakItem)
-                extractable = new PakExtractable(obj as IPakItem);
+                extractable = new PakExtractable(obj as IPakItem, outputFolder);
             else extractable = null;
 
             if (extractable?.GetContentType() >= 0)
@@ -160,8 +163,8 @@ namespace Reclaimer.Plugins
             if (Settings.PromptForFolder)
             {
                 var fsd = new FolderSelectDialog();
-                if (!string.IsNullOrEmpty(Settings.DataFolder))
-                    fsd.InitialDirectory = Settings.DataFolder;
+                if (!string.IsNullOrEmpty(dataFolder))
+                    fsd.InitialDirectory = dataFolder;
 
                 if (!fsd.ShowDialog())
                     return false;
@@ -193,17 +196,16 @@ namespace Reclaimer.Plugins
         {
             if (!isBusy)
             {
-                string folder;
-                if (!GetDataFolder(out folder))
+                if (!GetDataFolder(out lastDataFolder))
                     return;
             }
 
             var node = context.File.OfType<TreeItemModel>().FirstOrDefault();
             if (node != null)
-                BatchQueue(node);
+                BatchQueue(node, lastDataFolder);
             else
             {
-                var item = context.File.Select(f => GetExtractable(f)).FirstOrDefault(e => e != null);
+                var item = context.File.Select(f => GetExtractable(f, lastDataFolder)).FirstOrDefault(e => e != null);
                 if (item != null)
                     extractionQueue.Enqueue(item);
             }
@@ -215,16 +217,16 @@ namespace Reclaimer.Plugins
             Task.Run(ProcessQueueAsync, tokenSource.Token);
         }
 
-        private void BatchQueue(TreeItemModel node)
+        private void BatchQueue(TreeItemModel node, string outputFolder)
         {
             if (node.HasItems)
             {
                 foreach (var child in node.Items)
-                    BatchQueue(child);
+                    BatchQueue(child, outputFolder);
             }
             else
             {
-                var item = GetExtractable(node.Tag);
+                var item = GetExtractable(node.Tag, outputFolder);
                 if (item != null)
                     extractionQueue.Enqueue(item);
             }
@@ -320,7 +322,7 @@ namespace Reclaimer.Plugins
         private bool SaveImage(IExtractable item)
         {
             IBitmap bitmap;
-            if (item.GetBitmapContent(out bitmap) && SaveImage(bitmap, Settings.DataFolder))
+            if (item.GetBitmapContent(out bitmap) && SaveImage(bitmap, item.Destination))
             {
                 LogOutput($"Extracted {item.DisplayName}");
                 return true;
@@ -427,7 +429,7 @@ namespace Reclaimer.Plugins
         private bool SaveModel(IExtractable item)
         {
             IRenderGeometry geometry;
-            if (item.GetGeometryContent(out geometry) && SaveModel(geometry, Settings.DataFolder))
+            if (item.GetGeometryContent(out geometry) && SaveModel(geometry, item.Destination))
             {
                 LogOutput($"Extracted {item.DisplayName}");
                 return true;
@@ -454,7 +456,7 @@ namespace Reclaimer.Plugins
         private bool SaveSound(IExtractable item)
         {
             ISoundContainer container;
-            if (item.GetSoundContent(out container) && SaveSound(container, Settings.DataFolder))
+            if (item.GetSoundContent(out container) && SaveSound(container, item.Destination))
             {
                 LogOutput($"Extracted {item.DisplayName}");
                 return true;
@@ -582,6 +584,7 @@ namespace Reclaimer.Plugins
         {
             string ItemKey { get; }
             string DisplayName { get; }
+            string Destination { get; }
             int GetContentType();
             bool GetBitmapContent(out IBitmap bitmap);
             bool GetGeometryContent(out IRenderGeometry geometry);
@@ -596,9 +599,12 @@ namespace Reclaimer.Plugins
 
             public string DisplayName => ItemKey;
 
-            public CacheExtractable(IIndexItem item)
+            public string Destination { get; }
+
+            public CacheExtractable(IIndexItem item, string destination)
             {
                 this.item = item;
+                Destination = destination;
             }
 
             public int GetContentType()
@@ -634,9 +640,12 @@ namespace Reclaimer.Plugins
 
             public string DisplayName => ItemKey;
 
-            public ModuleExtractable(ModuleItem item)
+            public string Destination { get; }
+
+            public ModuleExtractable(ModuleItem item, string destination)
             {
                 this.item = item;
+                Destination = destination;
             }
 
             public int GetContentType()
@@ -675,9 +684,12 @@ namespace Reclaimer.Plugins
 
             public string DisplayName => ItemKey;
 
-            public PakExtractable(IPakItem item)
+            public string Destination { get; }
+
+            public PakExtractable(IPakItem item, string destination)
             {
                 this.item = item;
+                Destination = destination;
             }
 
             public int GetContentType()
