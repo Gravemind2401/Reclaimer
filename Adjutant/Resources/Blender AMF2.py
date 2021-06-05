@@ -2,7 +2,7 @@ bl_info = {
     "name": "AMF format",
     "description": "Import AMF files created by Reclaimer.",
     "author": "Gravemind2401",
-    "version": (2, 0, 4),
+    "version": (2, 0, 5),
     "blender": (2, 80, 0),
     "location": "File > Import > AMF",
     "category": "Import-Export",
@@ -91,9 +91,9 @@ class Vertex:
         self.position = reader.read_vec3()
         self.normal = reader.read_vec3()
         self.texcoords = reader.read_vec2()
-        
-        #these normals arent normal enough for Blender
-        self.normal.normalize()
+
+        ##these normals arent normal enough for Blender
+        #self.normal.normalize()
 
         #the vertex may be affected by 0 to 4 bones
         #the file stores the index of each relevant bone,
@@ -442,15 +442,15 @@ class Submaterial:
     texture_path: str
     uv_tiles: Vector
     is_null: bool
-    
+
     def __init__(self, texture_path, uv_tiles):
         self.texture_path = texture_path
         self.uv_tiles = uv_tiles
         self.is_null = texture_path == "null"
-    
+
     def get_full_path(self, root_dir, ext):
         return Path(root_dir) / Path(PureWindowsPath(self.texture_path + "." + ext))
-    
+
     def get_texture_name(self):
         return PureWindowsPath(self.texture_path).name
 
@@ -504,11 +504,11 @@ class ImportOptions:
 ###############################################################################################################################
 
 def clean_scene():
-    
+
     for item in bpy.data.objects:
         if item.type == 'MESH' or item.type == 'EMPTY':
             bpy.data.objects.remove(item)
-            
+
     check_users = False
     for collection in (bpy.data.meshes, bpy.data.armatures, bpy.data.materials, bpy.data.textures, bpy.data.images):
         for item in collection:
@@ -618,20 +618,20 @@ def main(context, import_filename, options):
                     texture.image = bpy.data.images.load(str(texture_path))
                     texture.image.alpha_mode = 'NONE'
                     texture.image.colorspace_settings.name = 'Non-Color'
-                    
+
                 # inverting green channel is necessary to convert from DirectX coordsys to OpenGL
-                
+
                 bump = material.node_tree.nodes.new('ShaderNodeNormalMap')
                 split = material.node_tree.nodes.new('ShaderNodeSeparateRGB')
                 invert = material.node_tree.nodes.new('ShaderNodeInvert')
                 merge = material.node_tree.nodes.new('ShaderNodeCombineRGB')
-                
+
                 texture.location = [-1100, -100]
                 split.location = [-800, -100]
                 invert.location = [-600, -200]
                 merge.location = [-400, -100]
                 bump.location = [-200, -100]
-                
+
                 material.node_tree.links.new(split.inputs['Image'], texture.outputs['Color'])
                 material.node_tree.links.new(invert.inputs['Color'], split.outputs['G'])
                 material.node_tree.links.new(merge.inputs['R'], split.outputs['R'])
@@ -639,7 +639,7 @@ def main(context, import_filename, options):
                 material.node_tree.links.new(merge.inputs['B'], split.outputs['B'])
                 material.node_tree.links.new(bump.inputs['Color'], merge.outputs['Image'])
                 material.node_tree.links.new(bsdf.inputs['Normal'], bump.outputs['Normal'])
- 
+
             model_materials.append(material)
 
     if options.IMPORT_MESHES and len(model.regions) > 0:
@@ -704,6 +704,9 @@ def main(context, import_filename, options):
                     mesh = bpy.data.meshes.new(mesh_name)
                     mesh.from_pydata(mesh_verts, [], mesh_faces)
                     mesh_obj = bpy.data.objects.new(mesh_name, mesh)
+
+                    for p in mesh.polygons:
+                        p.use_smooth = True
 
                     mesh.normals_split_custom_set_from_vertices(mesh_norms)
                     mesh.use_auto_smooth = True #required for custom normals to take effect
@@ -942,5 +945,5 @@ if __name__ == "__main__":
         unregister()
     finally:
         clean_scene()
-        register()    
+        register()
         bpy.ops.import_scene.amf('INVOKE_DEFAULT')
