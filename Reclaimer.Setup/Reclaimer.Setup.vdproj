@@ -361,7 +361,7 @@
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
-        "Compression" = "3:2"
+        "Compression" = "3:3"
         "SignOutput" = "11:FALSE"
         "CertificateFile" = "8:"
         "PrivateKeyFile" = "8:"
@@ -880,7 +880,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Studio, Version=1.0.73.861, Culture=neutral, PublicKeyToken=55a4186af9c33fa3, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Studio, Version=1.0.74.862, Culture=neutral, PublicKeyToken=55a4186af9c33fa3, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_AD666444E60404CDAB7078853E8B681E"
@@ -1004,7 +1004,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Adjutant, Version=5.6.318.0, Culture=neutral, PublicKeyToken=10f296c5c79ce69a, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:Adjutant, Version=5.6.326.0, Culture=neutral, PublicKeyToken=10f296c5c79ce69a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_C65EB60B5A00F717FBEA48700D1BEA62"
@@ -1193,6 +1193,17 @@
             "Property" = "8:TARGETDIR"
                 "Folders"
                 {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_80546A96FE9447AA8DE57970BB501577"
+                    {
+                    "Name" = "8:Plugins"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_6EA8B525D1E34D9C8813410B1AF4204A"
+                        "Folders"
+                        {
+                        }
+                    }
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_B9D9EDBB58BF4772BD98821053D4AFD9"
                     {
                     "Name" = "8:runtimes"
@@ -1266,15 +1277,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Reclaimer"
-        "ProductCode" = "8:{A9433E70-CC8A-46F3-88EB-5518354DD164}"
-        "PackageCode" = "8:{B0267575-6D43-4488-9BB7-1A2294BA4678}"
+        "ProductCode" = "8:{8824E23E-7FAA-4DFF-9F08-96920CF36781}"
+        "PackageCode" = "8:{8526EE33-6217-449E-8201-CB963E9637F0}"
         "UpgradeCode" = "8:{FBBE75A5-B290-459D-AFEE-4B97449AE820}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.6.274"
+        "ProductVersion" = "8:1.6.298"
         "Manufacturer" = "8:Gravemind2401"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
