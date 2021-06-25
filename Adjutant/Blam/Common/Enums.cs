@@ -136,6 +136,7 @@ namespace Adjutant.Blam.Common
         [BuildString("Mar  5 2021 08:45:13", "U1", MccFlight)] //flight 4
         [BuildString("Mar 14 2021 03:19:55", "U1")] //update 4
         [BuildString("May 19 2021 16:19:54", "U1", MccFlight)] //flight 5
+        [BuildString("Jun  9 2021 09:25:41", "U1")] //update 5
         MccHalo3U4,
 
         [CacheMetadata(CacheGeneration.Gen3, Xbox360)]
@@ -173,6 +174,7 @@ namespace Adjutant.Blam.Common
         [BuildString("Oct 15 2020 18:23:50", "U2")] //update 4
         [BuildString("Nov 24 2020 18:32:37", "U2")] //update 5
         [BuildString("Mar  4 2021 13:14:28", "U6")] //update 6
+        [BuildString("May 26 2021 10:02:45", "U6")] //update 7
         MccHaloReachU3,
 
         [CacheMetadata(Gen4, Xbox360, Beta)]
@@ -202,7 +204,8 @@ namespace Adjutant.Blam.Common
         [BuildString("Oct 12 2020 08:13:40", "U0", MccFlight)] //flight 1
         [BuildString("Oct 26 2020 11:43:08", "U0")] //release
         [BuildString("Mar 20 2021 04:23:02", "U1", Deflate)] //update 1
-        [BuildString("May 16 2021 10:41:44", "U1", Deflate)] //flight 2
+        [BuildString("May 16 2021 10:41:44", "U1", Deflate, MccFlight)] //flight 2
+        [BuildString("May 27 2021 15:23:34", "U1", Deflate)] //update 2
         MccHalo4,
 
         [CacheMetadata(Gen4, PC, UnknownDeflate, Mcc)]

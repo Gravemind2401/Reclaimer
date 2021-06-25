@@ -66,7 +66,11 @@ namespace Adjutant.Blam.Common
             : this(buildString, stringIds, null, flags)
         { }
 
-        public BuildStringAttribute(string buildString, string stringIds, CacheResourceCodec? codecOverride, CacheMetadataFlags? flagsOverride)
+        public BuildStringAttribute(string buildString, string stringIds, CacheResourceCodec codecOverride, CacheMetadataFlags flagsOverride)
+            : this(buildString, stringIds, (CacheResourceCodec?)codecOverride, (CacheMetadataFlags?)flagsOverride)
+        { }
+
+        private BuildStringAttribute(string buildString, string stringIds, CacheResourceCodec? codecOverride, CacheMetadataFlags? flagsOverride)
         {
             BuildString = buildString;
             StringIds = stringIds;
