@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Drawing.Dds.Bc7;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 /* https://docs.microsoft.com/en-us/windows/desktop/direct3d10/d3d10-graphics-programming-guide-resources-block-compression */
@@ -1341,196 +1340,104 @@ namespace System.Drawing.Dds
             }
             return output;
         }
-    }
 
-    [Flags]
-    public enum DecompressOptions
-    {
-        /// <summary>
-        /// The default option. If no other flags are specified, 32bpp BGRA will be used.
-        /// </summary>
-        Default = 0,
-
-        /// <summary>
-        /// Outputs pixel data in 24bpp BGR format. Does not output an alpha channel regardless of any other flags specified.
-        /// </summary>
-        Bgr24 = 1,
-
-        /// <summary>
-        /// Replaces all blue channel data with zeros.
-        /// </summary>
-        RemoveBlueChannel = 2,
-
-        /// <summary>
-        /// Replaces all green channel data with zeros.
-        /// </summary>
-        RemoveGreenChannel = 4,
-
-        /// <summary>
-        /// Replaces all red channel data with zeros.
-        /// </summary>
-        RemoveRedChannel = 8,
-
-        /// <summary>
-        /// Replaces all alpha channel data with full opacity.
-        /// </summary>
-        RemoveAlphaChannel = 16,
-
-        /// <summary>
-        /// Replicates the blue channel data over the green and red channels. The alpha channel will be fully opaque.
-        /// </summary>
-        BlueChannelOnly = RemoveGreenChannel | RemoveRedChannel | RemoveAlphaChannel,
-
-        /// <summary>
-        /// Replicates the green channel data over the blue and red channels. The alpha channel will be fully opaque.
-        /// </summary>
-        GreenChannelOnly = RemoveBlueChannel | RemoveRedChannel | RemoveAlphaChannel,
-
-        /// <summary>
-        /// Replicates the red channel data over the blue and green and channels. The alpha channel will be fully opaque.
-        /// </summary>
-        RedChannelOnly = RemoveBlueChannel | RemoveGreenChannel | RemoveAlphaChannel,
-
-        /// <summary>
-        /// Replicates the alpha channel data over the blue, green and red channels. The alpha channel will be fully opaque.
-        /// </summary>
-        AlphaChannelOnly = RemoveBlueChannel | RemoveGreenChannel | RemoveRedChannel,
-
-        /// <summary>
-        /// Produces a solid black image with opaque alpha.
-        /// </summary>
-        RemoveAllChannels = RemoveBlueChannel | RemoveGreenChannel | RemoveRedChannel | RemoveAlphaChannel
-    }
-
-    public enum CubemapFace
-    {
-        None,
-        Top,
-        Left,
-        Front,
-        Right,
-        Back,
-        Bottom
-    }
-
-    public class CubemapLayout
-    {
-        private static readonly CubemapLayout invalid = new CubemapLayout();
-        public static CubemapLayout NonCubemap => invalid;
-
-        public CubemapFace Face1 { get; set; }
-        public CubemapFace Face2 { get; set; }
-        public CubemapFace Face3 { get; set; }
-        public CubemapFace Face4 { get; set; }
-        public CubemapFace Face5 { get; set; }
-        public CubemapFace Face6 { get; set; }
-
-        public RotateFlipType Orientation1 { get; set; }
-        public RotateFlipType Orientation2 { get; set; }
-        public RotateFlipType Orientation3 { get; set; }
-        public RotateFlipType Orientation4 { get; set; }
-        public RotateFlipType Orientation5 { get; set; }
-        public RotateFlipType Orientation6 { get; set; }
-
-        public bool IsValid => (Face1 | Face2 | Face3 | Face4 | Face5 | Face6) > 0;
-    }
-
-    internal struct BgraColour
-    {
-        public byte b, g, r, a;
-
-        public byte this[int index]
+        private struct BgraColour
         {
-            get
+            public byte b, g, r, a;
+
+            public byte this[int index]
             {
-                switch (index)
+                get
                 {
-                    case 0: return b;
-                    case 1: return g;
-                    case 2: return r;
-                    case 3: return a;
-                    default: throw new ArgumentOutOfRangeException(nameof(index));
+                    switch (index)
+                    {
+                        case 0: return b;
+                        case 1: return g;
+                        case 2: return r;
+                        case 3: return a;
+                        default: throw new ArgumentOutOfRangeException(nameof(index));
+                    }
+                }
+                set
+                {
+                    switch (index)
+                    {
+                        case 0: b = value; break;
+                        case 1: g = value; break;
+                        case 2: r = value; break;
+                        case 3: a = value; break;
+                        default: throw new ArgumentOutOfRangeException(nameof(index));
+                    }
                 }
             }
-            set
+
+            public IEnumerable<byte> AsEnumerable(bool bgr24)
             {
-                switch (index)
-                {
-                    case 0: b = value; break;
-                    case 1: g = value; break;
-                    case 2: r = value; break;
-                    case 3: a = value; break;
-                    default: throw new ArgumentOutOfRangeException(nameof(index));
-                }
+                yield return b;
+                yield return g;
+                yield return r;
+                if (!bgr24) yield return a;
             }
-        }
 
-        public IEnumerable<byte> AsEnumerable(bool bgr24)
-        {
-            yield return b;
-            yield return g;
-            yield return r;
-            if (!bgr24) yield return a;
-        }
-
-        public void Copy(byte[] destination, int destinationIndex, bool bgr24)
-        {
-            destination[destinationIndex] = b;
-            destination[destinationIndex + 1] = g;
-            destination[destinationIndex + 2] = r;
-            if (!bgr24) destination[destinationIndex + 3] = a;
-        }
-
-        public static BgraColour From565(ushort value)
-        {
-            const byte BMask = 0x1F;
-            const byte GMask = 0x3F;
-            const byte RMask = 0x1F;
-
-            return new BgraColour
+            public void Copy(byte[] destination, int destinationIndex, bool bgr24)
             {
-                b = (byte)((0xFF / BMask) * (value & BMask)),
-                g = (byte)((0xFF / GMask) * ((value >> 5) & GMask)),
-                r = (byte)((0xFF / RMask) * ((value >> 11) & RMask)),
-                a = byte.MaxValue
-            };
-        }
+                destination[destinationIndex] = b;
+                destination[destinationIndex + 1] = g;
+                destination[destinationIndex + 2] = r;
+                if (!bgr24) destination[destinationIndex + 3] = a;
+            }
 
-        public static BgraColour From5551(ushort value)
-        {
-            const byte BMask = 0x1F;
-            const byte GMask = 0x1F;
-            const byte RMask = 0x1F;
-            const byte AMask = 0x01;
-
-            return new BgraColour
+            public static BgraColour From565(ushort value)
             {
-                b = (byte)((0xFF / BMask) * (value & BMask)),
-                g = (byte)((0xFF / GMask) * ((value >> 5) & GMask)),
-                r = (byte)((0xFF / RMask) * ((value >> 10) & RMask)),
-                a = (byte)((0xFF / AMask) * ((value >> 15) & AMask))
-            };
-        }
+                const byte BMask = 0x1F;
+                const byte GMask = 0x3F;
+                const byte RMask = 0x1F;
 
-        public static BgraColour From4444(ushort value)
-        {
-            const byte BMask = 0x0F;
-            const byte GMask = 0x0F;
-            const byte RMask = 0x0F;
-            const byte AMask = 0x0F;
+                return new BgraColour
+                {
+                    b = (byte)((0xFF / BMask) * (value & BMask)),
+                    g = (byte)((0xFF / GMask) * ((value >> 5) & GMask)),
+                    r = (byte)((0xFF / RMask) * ((value >> 11) & RMask)),
+                    a = byte.MaxValue
+                };
+            }
 
-            return new BgraColour
+            public static BgraColour From5551(ushort value)
             {
-                b = (byte)((0xFF / BMask) * (value & BMask)),
-                g = (byte)((0xFF / GMask) * ((value >> 4) & GMask)),
-                r = (byte)((0xFF / RMask) * ((value >> 8) & RMask)),
-                a = (byte)((0xFF / AMask) * ((value >> 12) & AMask)),
-            };
-        }
+                const byte BMask = 0x1F;
+                const byte GMask = 0x1F;
+                const byte RMask = 0x1F;
+                const byte AMask = 0x01;
 
-        public override string ToString()
-        {
-            return string.Format("{{ {0,3}, {1,3}, {2,3}, {3,3} }} #{0:X2}{1:X2}{2:X2}{3:X2}", b, g, r, a);
+                return new BgraColour
+                {
+                    b = (byte)((0xFF / BMask) * (value & BMask)),
+                    g = (byte)((0xFF / GMask) * ((value >> 5) & GMask)),
+                    r = (byte)((0xFF / RMask) * ((value >> 10) & RMask)),
+                    a = (byte)((0xFF / AMask) * ((value >> 15) & AMask))
+                };
+            }
+
+            public static BgraColour From4444(ushort value)
+            {
+                const byte BMask = 0x0F;
+                const byte GMask = 0x0F;
+                const byte RMask = 0x0F;
+                const byte AMask = 0x0F;
+
+                return new BgraColour
+                {
+                    b = (byte)((0xFF / BMask) * (value & BMask)),
+                    g = (byte)((0xFF / GMask) * ((value >> 4) & GMask)),
+                    r = (byte)((0xFF / RMask) * ((value >> 8) & RMask)),
+                    a = (byte)((0xFF / AMask) * ((value >> 12) & AMask)),
+                };
+            }
+
+            public override string ToString()
+            {
+                return string.Format("{{ {0,3}, {1,3}, {2,3}, {3,3} }} #{0:X2}{1:X2}{2:X2}{3:X2}", b, g, r, a);
+            }
         }
     }
 }

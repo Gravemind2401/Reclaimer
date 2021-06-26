@@ -52,14 +52,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bc7Helper.cs" />
-    <Compile Include="BitReader.cs" />
+    <Compile Include="Bc7\Bc7Helper.cs" />
+    <Compile Include="Bc7\BitReader.cs" />
+    <Compile Include="CubemapLayout.cs" />
     <Compile Include="DdsConvert.cs" />
     <Compile Include="DdsHeader.cs" />
     <Compile Include="DdsHeaderXbox.cs" />
     <Compile Include="DdsHeaderDxt10.cs" />
     <Compile Include="DdsImage.cs" />
     <Compile Include="DdsPixelFormat.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

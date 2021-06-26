@@ -6,6 +6,21 @@ using System.Threading.Tasks;
 
 namespace System.Drawing.Dds.Bc7
 {
+    [Flags]
+    internal enum BlockMode
+    {
+        Mode0 = 1,
+        Mode1 = 2,
+        Mode2 = 4,
+        Mode3 = 8,
+        Mode4 = 16,
+        Mode5 = 32,
+        Mode6 = 64,
+        Mode7 = 128,
+
+        AllModes = Mode0 | Mode1 | Mode2 | Mode3 | Mode4 | Mode5 | Mode6 | Mode7
+    }
+
     internal enum PBitMode : byte
     {
         None,
