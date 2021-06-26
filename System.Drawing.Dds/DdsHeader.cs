@@ -29,6 +29,14 @@ namespace System.Drawing.Dds
             Reserved1 = new int[11];
             PixelFormat = new DdsPixelFormat();
         }
+
+        public void SetFlag(HeaderFlags flag, bool set)
+        {
+            if (set)
+                Flags |= flag;
+            else
+                Flags &= ~flag;
+        }
     }
 
     [Flags]

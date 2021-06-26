@@ -7,6 +7,14 @@ using System.Threading.Tasks;
 namespace System.Drawing.Dds
 {
     [Flags]
+    internal enum TextureFlags
+    {
+        DdsSurfaceFlagsTexture = DdsCaps.Texture,
+        DdsSurfaceFlagsCubemap = DdsCaps.Texture | DdsCaps.Complex,
+        DdsSurfaceFlagsMipmap = DdsCaps.Texture | DdsCaps.Complex | DdsCaps.Mipmap
+    }
+
+    [Flags]
     public enum DecompressOptions
     {
         /// <summary>

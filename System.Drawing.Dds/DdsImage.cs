@@ -119,11 +119,11 @@ namespace System.Drawing.Dds
         /// <param name="dxgiFormat">The DxgiFormat value that identifies the format of the pixel data.</param>
         /// <param name="textureType">The type of texture represented by the image.</param>
         /// <param name="pixelData">The binary data containing the pixels of the image.</param>
-        public DdsImage(int height, int width, DxgiFormat dxgiFormat, DxgiTextureType textureType, byte[] pixelData)
+        public DdsImage(int height, int width, DxgiFormat dxgiFormat, byte[] pixelData)
             : this(height, width, FourCC.DX10, pixelData)
         {
             dx10Header.DxgiFormat = dxgiFormat;
-            dx10Header.ResourceDimension = (D3D10ResourceDimension)textureType;
+            dx10Header.ResourceDimension = D3D10ResourceDimension.Texture2D;
             dx10Header.MiscFlags = D3D10ResourceMiscFlags.None;
             dx10Header.ArraySize = 1;
             dx10Header.MiscFlags2 = D3D10ResourceMiscFlag2.DdsAlphaModeStraight;
@@ -137,11 +137,11 @@ namespace System.Drawing.Dds
         /// <param name="xboxFormat">The XboxFormat value that identifies the format of the pixel data.</param>
         /// <param name="textureType">The type of texture represented by the image.</param>
         /// <param name="pixelData">The binary data containing the pixels of the image.</param>
-        public DdsImage(int height, int width, XboxFormat xboxFormat, DxgiTextureType textureType, byte[] pixelData)
+        public DdsImage(int height, int width, XboxFormat xboxFormat, byte[] pixelData)
             : this(height, width, FourCC.XBOX, pixelData)
         {
             xboxHeader.XboxFormat = xboxFormat;
-            xboxHeader.ResourceDimension = (D3D10ResourceDimension)textureType;
+            xboxHeader.ResourceDimension = D3D10ResourceDimension.Texture2D;
             xboxHeader.MiscFlags = D3D10ResourceMiscFlags.None;
             xboxHeader.ArraySize = 1;
             xboxHeader.MiscFlags2 = D3D10ResourceMiscFlag2.DdsAlphaModeStraight;
@@ -205,13 +205,9 @@ namespace System.Drawing.Dds
                 if (value <= 0)
                     throw ParamMustBeGreaterThanZero(nameof(Pitch), value);
 
+                header.SetFlag(HeaderFlags.Pitch, value.HasValue);
                 if (value.HasValue)
-                {
-                    header.Flags |= HeaderFlags.Pitch;
                     LinearSize = null;
-                }
-                else
-                    header.Flags &= ~HeaderFlags.Pitch;
 
                 header.PitchOrLinearSize = value ?? 0;
             }
@@ -234,13 +230,9 @@ namespace System.Drawing.Dds
                 if (value <= 0)
                     throw ParamMustBeGreaterThanZero(nameof(LinearSize), value);
 
+                header.SetFlag(HeaderFlags.LinearSize, value.HasValue);
                 if (value.HasValue)
-                {
-                    header.Flags |= HeaderFlags.LinearSize;
                     Pitch = null;
-                }
-                else
-                    header.Flags &= ~HeaderFlags.LinearSize;
 
                 header.PitchOrLinearSize = value ?? 0;
             }
@@ -263,9 +255,14 @@ namespace System.Drawing.Dds
                 if (value <= 0)
                     throw ParamMustBeGreaterThanZero(nameof(Depth), value);
 
-                var flag = HeaderFlags.Depth;
-                header.Flags = value.HasValue ? header.Flags | flag : header.Flags & ~flag;
+                header.SetFlag(HeaderFlags.Depth, value.HasValue);
                 header.Depth = value ?? 0;
+
+                dx10Header.ResourceDimension = xboxHeader.ResourceDimension = value > 1
+                    ? D3D10ResourceDimension.Texture3D
+                    : D3D10ResourceDimension.Texture2D;
+
+                UpdateTextureFlags();
             }
         }
 
@@ -286,19 +283,38 @@ namespace System.Drawing.Dds
                 if (value <= 0)
                     throw ParamMustBeGreaterThanZero(nameof(MipmapCount), value);
 
-                var flag = HeaderFlags.MipmapCount;
-                header.Flags = value.HasValue ? header.Flags | flag : header.Flags & ~flag;
+                header.SetFlag(HeaderFlags.MipmapCount, value.HasValue);
                 header.MipmapCount = value ?? 0;
+
+                UpdateTextureFlags();
             }
         }
 
         /// <summary>
-        /// Gets or sets flags indicating the type of texture represented by the image.
+        /// Gets or sets the number of slices in an array texture.
         /// </summary>
-        public TextureFlags TextureFlags
+        public int ArraySize
         {
-            get { return (TextureFlags)header.Caps; }
-            set { header.Caps = (DdsCaps)value; }
+            get { return dx10Header.ArraySize; }
+            set
+            {
+                if (value <= 0)
+                    throw ParamMustBeGreaterThanZero(nameof(ArraySize), value);
+
+                dx10Header.ArraySize = xboxHeader.ArraySize = value;
+            }
+        }
+
+        private TextureFlags TextureFlags => (TextureFlags)header.Caps;
+
+        private void UpdateTextureFlags()
+        {
+            if (MipmapCount > 1)
+                header.Caps = (DdsCaps)TextureFlags.DdsSurfaceFlagsMipmap;
+            else if (CubemapFlags > 0)
+                header.Caps = (DdsCaps)TextureFlags.DdsSurfaceFlagsCubemap;
+            else
+                header.Caps = (DdsCaps)TextureFlags.DdsSurfaceFlagsTexture;
         }
 
         /// <summary>
@@ -307,7 +323,17 @@ namespace System.Drawing.Dds
         public CubemapFlags CubemapFlags
         {
             get { return (CubemapFlags)header.Caps2; }
-            set { header.Caps2 = (DdsCaps2)value; }
+            set
+            {
+                header.Caps2 = (DdsCaps2)value;
+
+                if (value > 0)
+                    DX10ResourceFlags |= D3D10ResourceMiscFlags.TextureCube;
+                else
+                    DX10ResourceFlags &= ~D3D10ResourceMiscFlags.TextureCube;
+
+                UpdateTextureFlags();
+            }
         }
 
         /// <summary>
@@ -525,17 +551,6 @@ namespace System.Drawing.Dds
     }
 
     /// <summary>
-    /// Indicates the type of texture contained in the DDS image.
-    /// </summary>
-    [Flags]
-    public enum TextureFlags
-    {
-        DdsSurfaceFlagsTexture = DdsCaps.Texture,
-        DdsSurfaceFlagsCubemap = DdsCaps.Texture | DdsCaps.Complex,
-        DdsSurfaceFlagsMipmap = DdsCaps.Texture | DdsCaps.Complex | DdsCaps.Mipmap
-    }
-
-    /// <summary>
     /// Indicates which faces of a cubemap are contained in a DDS image.
     /// </summary>
     [Flags]
@@ -583,13 +598,5 @@ namespace System.Drawing.Dds
         UYVY = 0x59565955, //D3DFMT_UYVY
         YUY2 = 0x32595559, //D3DFMT_YUY2
         V8U8 = 117, //D3DFMT_CxV8U8
-    }
-
-    public enum DxgiTextureType
-    {
-        Buffer = D3D10ResourceDimension.Buffer,
-        Texture1D = D3D10ResourceDimension.Texture1D,
-        Texture2D = D3D10ResourceDimension.Texture2D,
-        Texture3D = D3D10ResourceDimension.Texture3D
     }
 }
