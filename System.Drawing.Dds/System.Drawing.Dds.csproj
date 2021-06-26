@@ -65,6 +65,7 @@
     <Compile Include="DdsHeaderDxt10.cs" />
     <Compile Include="DdsImage.cs" />
     <Compile Include="DdsPixelFormat.cs" />
+    <Compile Include="DdsOutputArgs.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

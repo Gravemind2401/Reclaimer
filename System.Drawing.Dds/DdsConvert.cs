@@ -43,40 +43,17 @@ namespace System.Drawing.Dds
         /// <param name="format">The image format to write with.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="NotSupportedException" />
-        public void WriteToDisk(string fileName, ImageFormat format) => WriteToDisk(fileName, format, DecompressOptions.Default, CubemapLayout.NonCubemap);
-
-        /// <summary>
-        /// Decompresses any compressed pixel data and saves the image to a file on disk using a standard image format
-        /// using the specified decompression options and a non-cubemap layout.
-        /// </summary>
-        /// <param name="fileName">The full path of the file to write.</param>
-        /// <param name="format">The image format to write with.</param>
-        /// <param name="options">Options to use when decompressing the image.</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="NotSupportedException" />
-        public void WriteToDisk(string fileName, ImageFormat format, DecompressOptions options) => WriteToDisk(fileName, format, options, CubemapLayout.NonCubemap);
-
-        /// <summary>
-        /// Decompresses any compressed pixel data and saves the image to a file on disk using a standard image format
-        /// using the default decompression options the specified cubemap layout.
-        /// </summary>
-        /// <param name="fileName">The full path of the file to write.</param>
-        /// <param name="format">The image format to write with.</param>
-        /// <param name="layout">The layout of the cubemap. Has no effect if the DDS cubemap flags are not set.</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="NotSupportedException" />
-        public void WriteToDisk(string fileName, ImageFormat format, CubemapLayout layout) => WriteToDisk(fileName, format, DecompressOptions.Default, layout);
+        public void WriteToDisk(string fileName, ImageFormat format) => WriteToDisk(fileName, format, new DdsOutputArgs());
 
         /// <summary>
         /// Decompresses any compressed pixel data and saves the image to a file on disk using a standard image format.
         /// </summary>
         /// <param name="fileName">The full path of the file to write.</param>
         /// <param name="format">The image format to write with.</param>
-        /// <param name="options">Options to use when decompressing the image.</param>
-        /// <param name="layout">The layout of the cubemap. Has no effect if the DDS cubemap flags are not set.</param>
+        /// <param name="args">Parameters to use when writing the image.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="NotSupportedException" />
-        public void WriteToDisk(string fileName, ImageFormat format, DecompressOptions options, CubemapLayout layout)
+        public void WriteToDisk(string fileName, ImageFormat format, DdsOutputArgs args)
         {
             if (fileName == null)
                 throw new ArgumentNullException(nameof(fileName));
@@ -84,13 +61,16 @@ namespace System.Drawing.Dds
             if (format == null)
                 throw new ArgumentNullException(nameof(format));
 
+            if (args == null)
+                throw new ArgumentNullException(nameof(args));
+
             var dir = Directory.GetParent(fileName).FullName;
 
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-                WriteToStream(fs, format, options, layout);
+                WriteToStream(fs, format, args);
         }
         #endregion
 
@@ -103,46 +83,26 @@ namespace System.Drawing.Dds
         /// <param name="format">The image format to write with.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="NotSupportedException" />
-        public void WriteToStream(Stream stream, ImageFormat format) => WriteToStream(stream, format, DecompressOptions.Default, CubemapLayout.NonCubemap);
-
-        /// <summary>
-        /// Decompresses any compressed pixel data and writes the image to a stream using a standard image format
-        /// using the specified decompression options and a non-cubemap layout.
-        /// </summary>
-        /// <param name="stream">The stream to write to.</param>
-        /// <param name="format">The image format to write with.</param>
-        /// <param name="options">Options to use when decompressing the image.</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="NotSupportedException" />
-        public void WriteToStream(Stream stream, ImageFormat format, DecompressOptions options) => WriteToStream(stream, format, options, CubemapLayout.NonCubemap);
-
-        /// <summary>
-        /// Decompresses any compressed pixel data and writes the image to a stream using a standard image format
-        /// using the default decompression options the specified cubemap layout.
-        /// </summary>
-        /// <param name="stream">The stream to write to.</param>
-        /// <param name="format">The image format to write with.</param>
-        /// <param name="layout">The layout of the cubemap. Has no effect if the DDS cubemap flags are not set.</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="NotSupportedException" />
-        public void WriteToStream(Stream stream, ImageFormat format, CubemapLayout layout) => WriteToStream(stream, format, DecompressOptions.Default, layout);
+        public void WriteToStream(Stream stream, ImageFormat format) => WriteToStream(stream, format, new DdsOutputArgs());
 
         /// <summary>
         /// Decompresses any compressed pixel data and writes the image to a stream using a standard image format.
         /// </summary>
         /// <param name="stream">The stream to write to.</param>
         /// <param name="format">The image format to write with.</param>
-        /// <param name="options">Options to use when decompressing the image.</param>
-        /// <param name="layout">The layout of the cubemap. Has no effect if the DDS cubemap flags are not set.</param>
+        /// <param name="args">Parameters to use when writing the image.</param>
         /// <exception cref="ArgumentNullException" />
         /// <exception cref="NotSupportedException" />
-        public void WriteToStream(Stream stream, ImageFormat format, DecompressOptions options, CubemapLayout layout)
+        public void WriteToStream(Stream stream, ImageFormat format, DdsOutputArgs args)
         {
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream));
 
             if (format == null)
                 throw new ArgumentNullException(nameof(format));
+
+            if (args == null)
+                throw new ArgumentNullException(nameof(args));
 
             BitmapEncoder encoder;
             if (format.Equals(ImageFormat.Bmp))
@@ -157,7 +117,7 @@ namespace System.Drawing.Dds
                 encoder = new TiffBitmapEncoder();
             else throw new NotSupportedException("The ImageFormat is not supported.");
 
-            WriteToStream(stream, encoder, options, layout);
+            WriteToStream(stream, encoder, args);
         }
 
         /// <summary>
@@ -165,10 +125,9 @@ namespace System.Drawing.Dds
         /// </summary>
         /// <param name="stream">The stream to write to.</param>
         /// <param name="encoder">The bitmap encoder to write with.</param>
-        /// <param name="options">Options to use when decompressing the image.</param>
-        /// <param name="layout">The layout of the cubemap. Has no effect if the DDS cubemap flags are not set.</param>
+        /// <param name="args">Parameters to use when writing the image.</param>
         /// <exception cref="ArgumentNullException" />
-        public void WriteToStream(Stream stream, BitmapEncoder encoder, DecompressOptions options, CubemapLayout layout)
+        public void WriteToStream(Stream stream, BitmapEncoder encoder, DdsOutputArgs args)
         {
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream));
@@ -176,7 +135,10 @@ namespace System.Drawing.Dds
             if (encoder == null)
                 throw new ArgumentNullException(nameof(encoder));
 
-            var source = ToBitmapSource(options, layout);
+            if (args == null)
+                throw new ArgumentNullException(nameof(args));
+
+            var source = ToBitmapSource(args);
             encoder.Frames.Add(BitmapFrame.Create(source));
             encoder.Save(stream);
         }
@@ -187,48 +149,33 @@ namespace System.Drawing.Dds
         /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>.
         /// </summary>
         /// <exception cref="NotSupportedException" />
-        public BitmapSource ToBitmapSource() => ToBitmapSource(DecompressOptions.Default, CubemapLayout.NonCubemap);
-
-        /// <summary>
-        /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>.
-        /// </summary>
-        /// <exception cref="NotSupportedException" />
-        public BitmapSource ToBitmapSource(DecompressOptions options) => ToBitmapSource(options, CubemapLayout.NonCubemap);
-
-        /// <summary>
-        /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>.
-        /// </summary>
-        /// <exception cref="NotSupportedException" />
-        public BitmapSource ToBitmapSource(CubemapLayout layout) => ToBitmapSource(DecompressOptions.Default, layout);
+        public BitmapSource ToBitmapSource() => ToBitmapSource(new DdsOutputArgs());
 
         /// <summary>
         /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>
         /// </summary>
-        /// <param name="options">Options to use during decompression.</param>
-        /// <param name="layout">The layout of the cubemap. Has no effect if the DDS cubemap flags are not set.</param>
+        /// <param name="args">Parameters to use when writing the image.</param>
         /// <exception cref="NotSupportedException" />
-        public BitmapSource ToBitmapSource(DecompressOptions options, CubemapLayout layout)
+        public BitmapSource ToBitmapSource(DdsOutputArgs args)
         {
+            if (args == null)
+                throw new ArgumentNullException(nameof(args));
+
             const double dpi = 96;
             var virtualHeight = Height;
 
             var isCubeMap = TextureFlags.HasFlag(TextureFlags.DdsSurfaceFlagsCubemap) && CubemapFlags.HasFlag(CubemapFlags.DdsCubemapAllFaces);
             if (isCubeMap) virtualHeight *= 6;
 
-            var bgr24 = options.HasFlag(DecompressOptions.Bgr24);
-            var pixels = DecompressPixelData(bgr24);
+            var pixels = DecompressPixelData(args.Bgr24);
 
-            var format = bgr24 ? PixelFormats.Bgr24 : PixelFormats.Bgra32;
-            var bpp = bgr24 ? 3 : 4;
+            if (args.UseChannelMask)
+                MaskChannels(pixels, args.Options);
 
-            //at least one 'remove channel' flag is set
-            if ((options & DecompressOptions.RemoveAllChannels) != 0)
-                MaskChannels(pixels, options);
+            var source = BitmapSource.Create(Width, virtualHeight, dpi, dpi, args.Format, null, pixels, Width * args.Bpp);
 
-            var source = BitmapSource.Create(Width, virtualHeight, dpi, dpi, format, null, pixels, Width * bpp);
-
-            if (isCubeMap && layout.IsValid)
-                source = UnwrapCubemapSource(source, dpi, format, layout);
+            if (isCubeMap && args.ValidCubeLayout)
+                source = UnwrapCubemapSource(source, dpi, args.Format, args.Layout);
 
             return source;
         }
