@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Dds.Annotations;
 using System.Drawing.Dds.Bc7;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -12,6 +14,9 @@ using System.Windows.Media.Imaging;
 /* https://docs.microsoft.com/en-us/windows/desktop/direct3d10/d3d10-graphics-programming-guide-resources-block-compression */
 namespace System.Drawing.Dds
 {
+    using static DxgiFormat;
+    using static XboxFormat;
+
     public partial class DdsImage
     {
         private const int bcBlockWidth = 4;
@@ -19,61 +24,16 @@ namespace System.Drawing.Dds
 
         private delegate byte[] Decompress(byte[] data, int height, int width, bool bgr24);
 
-        private static readonly Dictionary<DxgiFormat, Decompress> decompressMethodsDxgi = new Dictionary<DxgiFormat, Decompress>
-        {
-            { DxgiFormat.BC1_Typeless, DecompressBC1 },
-            { DxgiFormat.BC1_UNorm, DecompressBC1 },
-            { DxgiFormat.BC2_Typeless, DecompressBC2 },
-            { DxgiFormat.BC2_UNorm, DecompressBC2 },
-            { DxgiFormat.BC3_Typeless, DecompressBC3 },
-            { DxgiFormat.BC3_UNorm, DecompressBC3 },
-            { DxgiFormat.BC4_Typeless, DecompressBC4 },
-            { DxgiFormat.BC4_UNorm, DecompressBC4 },
-            { DxgiFormat.BC4_SNorm, DecompressBC4 },
-            { DxgiFormat.BC5_Typeless, DecompressBC5 },
-            { DxgiFormat.BC5_UNorm, DecompressBC5 },
-            { DxgiFormat.BC5_SNorm, DecompressBC5Signed },
-            { DxgiFormat.BC7_Typeless, DecompressBC7 },
-            { DxgiFormat.BC7_UNorm, DecompressBC7 },
-            { DxgiFormat.B5G6R5_UNorm, DecompressB5G6R5 },
-            { DxgiFormat.B5G5R5A1_UNorm, DecompressB5G5R5A1 },
-            { DxgiFormat.P8, DecompressY8 },
-            { DxgiFormat.B4G4R4A4_UNorm, DecompressB4G4R4A4 }
-        };
+        private static readonly Dictionary<DxgiFormat, Decompress> decompressMethodsDxgi = CreateLookup<DxgiDecompressorAttribute, DxgiFormat>();
+        private static readonly Dictionary<XboxFormat, Decompress> decompressMethodsXbox = CreateLookup<XboxDecompressorAttribute, XboxFormat>();
+        private static readonly Dictionary<FourCC, Decompress> decompressMethodsFourCC = CreateLookup<FourCCDecompressorAttribute, FourCC>();
 
-        private static readonly Dictionary<XboxFormat, Decompress> decompressMethodsXbox = new Dictionary<XboxFormat, Decompress>
+        private static Dictionary<TFormat, Decompress> CreateLookup<TAttribute, TFormat>() where TAttribute : Attribute, IFormatAttribute<TFormat>
         {
-            { XboxFormat.A8, DecompressA8 },
-            { XboxFormat.AY8, DecompressAY8 },
-            { XboxFormat.CTX1, DecompressCTX1 },
-            { XboxFormat.DXN, DecompressDXN },
-            { XboxFormat.DXN_mono_alpha, DecompressDXN_mono_alpha },
-            { XboxFormat.DXN_SNorm, DecompressDXNSigned },
-            { XboxFormat.DXT3a_scalar, DecompressDXT3a_scalar },
-            { XboxFormat.DXT3a_mono, DecompressDXT3a_mono },
-            { XboxFormat.DXT3a_alpha, DecompressDXT3a_alpha },
-            { XboxFormat.DXT5a_scalar, DecompressDXT5a_scalar },
-            { XboxFormat.DXT5a_mono, DecompressDXT5a_mono },
-            { XboxFormat.DXT5a_alpha, DecompressDXT5a_alpha },
-            { XboxFormat.V8U8, DecompressV8U8 },
-            { XboxFormat.Y8, DecompressY8 },
-            { XboxFormat.Y8A8, DecompressY8A8 },
-        };
-
-        private static readonly Dictionary<FourCC, Decompress> decompressMethodsFourCC = new Dictionary<FourCC, Decompress>
-        {
-            { FourCC.DXT1, DecompressBC1 },
-            { FourCC.DXT2, DecompressBC2 },
-            { FourCC.DXT3, DecompressBC2 },
-            { FourCC.DXT4, DecompressBC3 },
-            { FourCC.DXT5, DecompressBC3 },
-            { FourCC.BC4U, DecompressBC4 },
-            { FourCC.BC4S, DecompressBC4 },
-            { FourCC.ATI1, DecompressBC4 },
-            { FourCC.BC5U, DecompressBC5 },
-            { FourCC.BC5S, DecompressBC5Signed },
-            { FourCC.ATI2, DecompressBC5 },
-        };
+            return typeof(DdsImage).GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
+                .SelectMany(m => m.GetCustomAttributes<TAttribute>().Select(a => new { Format = a.Format, Delegate = (Decompress)m.CreateDelegate(typeof(Decompress)) }))
+                .ToDictionary(m => m.Format, m => m.Delegate);
+        }
 
         #region WriteToDisk
         /// <summary>
@@ -438,21 +398,26 @@ namespace System.Drawing.Dds
         }
 
         #region Standard Decompression Methods
+        [DxgiDecompressor(B5G6R5_UNorm)]
         internal static byte[] DecompressB5G6R5(byte[] source, int height, int width, bool bgr24)
         {
             return ToArray(Enumerable.Range(0, height * width).SelectMany(i => BgraColour.From565(BitConverter.ToUInt16(source, i * 2)).AsEnumerable(bgr24)), bgr24, height, width);
         }
 
+        [DxgiDecompressor(B5G5R5A1_UNorm)]
         internal static byte[] DecompressB5G5R5A1(byte[] data, int height, int width, bool bgr24)
         {
             return ToArray(Enumerable.Range(0, height * width).SelectMany(i => BgraColour.From5551(BitConverter.ToUInt16(data, i * 2)).AsEnumerable(bgr24)), bgr24, height, width);
         }
 
+        [DxgiDecompressor(B4G4R4A4_UNorm)]
         internal static byte[] DecompressB4G4R4A4(byte[] data, int height, int width, bool bgr24)
         {
             return ToArray(Enumerable.Range(0, height * width).SelectMany(i => BgraColour.From4444(BitConverter.ToUInt16(data, i * 2)).AsEnumerable(bgr24)), bgr24, height, width);
         }
 
+        [FourCCDecompressor(FourCC.DXT1)]
+        [DxgiDecompressor(BC1_Typeless), DxgiDecompressor(BC1_UNorm)]
         internal static byte[] DecompressBC1(byte[] data, int height, int width, bool bgr24)
         {
             var bpp = bgr24 ? 3 : 4;
@@ -507,6 +472,8 @@ namespace System.Drawing.Dds
             return output;
         }
 
+        [FourCCDecompressor(FourCC.DXT2), FourCCDecompressor(FourCC.DXT3)]
+        [DxgiDecompressor(BC2_Typeless), DxgiDecompressor(BC2_UNorm)]
         internal static byte[] DecompressBC2(byte[] data, int height, int width, bool bgr24)
         {
             var bpp = bgr24 ? 3 : 4;
@@ -554,6 +521,8 @@ namespace System.Drawing.Dds
             return output;
         }
 
+        [FourCCDecompressor(FourCC.DXT4), FourCCDecompressor(FourCC.DXT5)]
+        [DxgiDecompressor(BC3_Typeless), DxgiDecompressor(BC3_UNorm)]
         internal static byte[] DecompressBC3(byte[] data, int height, int width, bool bgr24)
         {
             var bpp = bgr24 ? 3 : 4;
@@ -618,6 +587,8 @@ namespace System.Drawing.Dds
             return output;
         }
 
+        [FourCCDecompressor(FourCC.ATI1), FourCCDecompressor(FourCC.BC4U), FourCCDecompressor(FourCC.BC4S)]
+        [DxgiDecompressor(BC4_Typeless), DxgiDecompressor(BC4_UNorm), DxgiDecompressor(BC4_SNorm)]
         internal static byte[] DecompressBC4(byte[] data, int height, int width, bool bgr24)
         {
             var bpp = bgr24 ? 3 : 4;
@@ -673,6 +644,8 @@ namespace System.Drawing.Dds
             return output;
         }
 
+        [FourCCDecompressor(FourCC.ATI2), FourCCDecompressor(FourCC.BC5U)]
+        [DxgiDecompressor(BC5_Typeless), DxgiDecompressor(BC5_UNorm)]
         internal static byte[] DecompressBC5(byte[] data, int height, int width, bool bgr24)
         {
             var bpp = bgr24 ? 3 : 4;
@@ -752,6 +725,8 @@ namespace System.Drawing.Dds
             return output;
         }
 
+        [FourCCDecompressor(FourCC.BC5S)]
+        [DxgiDecompressor(BC5_SNorm)]
         internal static byte[] DecompressBC5Signed(byte[] data, int height, int width, bool bgr24)
         {
             var bpp = bgr24 ? 3 : 4;
@@ -831,6 +806,7 @@ namespace System.Drawing.Dds
             return output;
         }
 
+        [DxgiDecompressor(BC7_Typeless), DxgiDecompressor(BC7_UNorm)]
         internal static byte[] DecompressBC7(byte[] data, int height, int width, bool bgr24)
         {
             var bpp = bgr24 ? 3 : 4;
@@ -1015,16 +991,19 @@ namespace System.Drawing.Dds
         #endregion
 
         #region Xbox Decompression Methods
+        [XboxDecompressor(A8)]
         internal static byte[] DecompressA8(byte[] data, int height, int width, bool bgr24)
         {
             return ToArray(data.SelectMany(b => Enumerable.Range(0, bgr24 ? 3 : 4).Select(i => i < 3 ? byte.MinValue : b)), bgr24, height, width);
         }
 
+        [XboxDecompressor(AY8)]
         internal static byte[] DecompressAY8(byte[] data, int height, int width, bool bgr24)
         {
             return ToArray(data.SelectMany(b => Enumerable.Range(0, bgr24 ? 3 : 4).Select(i => b)), bgr24, height, width);
         }
 
+        [XboxDecompressor(V8U8)]
         internal static byte[] DecompressV8U8(byte[] data, int height, int width, bool bgr24)
         {
             var bpp = bgr24 ? 3 : 4;
@@ -1048,11 +1027,13 @@ namespace System.Drawing.Dds
             return output;
         }
 
+        [XboxDecompressor(Y8)]
         internal static byte[] DecompressY8(byte[] data, int height, int width, bool bgr24)
         {
             return ToArray(data.SelectMany(b => Enumerable.Range(0, bgr24 ? 3 : 4).Select(i => i < 3 ? b : byte.MaxValue)), bgr24, height, width);
         }
 
+        [XboxDecompressor(Y8A8)]
         internal static byte[] DecompressY8A8(byte[] data, int height, int width, bool bgr24)
         {
             return ToArray(Enumerable.Range(0, height * width).SelectMany(i => Enumerable.Range(0, bgr24 ? 3 : 4).Select(j => j < 3 ? data[i * 2 + 1] : data[i * 2])), bgr24, height, width);
@@ -1148,11 +1129,13 @@ namespace System.Drawing.Dds
             return data;
         }
 
+        [XboxDecompressor(CTX1)]
         internal static byte[] DecompressCTX1(byte[] data, int height, int width, bool bgr24)
         {
             return DecompressBC1DualChannel(data, height, width, bgr24);
         }
 
+        [XboxDecompressor(DXN)]
         internal static byte[] DecompressDXN(byte[] data, int height, int width, bool bgr24)
         {
             var bpp = bgr24 ? 3 : 4;
@@ -1163,6 +1146,7 @@ namespace System.Drawing.Dds
             return data;
         }
 
+        [XboxDecompressor(DXN_SNorm)]
         internal static byte[] DecompressDXNSigned(byte[] data, int height, int width, bool bgr24)
         {
             var bpp = bgr24 ? 3 : 4;
@@ -1173,6 +1157,7 @@ namespace System.Drawing.Dds
             return data;
         }
 
+        [XboxDecompressor(DXN_mono_alpha)]
         internal static byte[] DecompressDXN_mono_alpha(byte[] data, int height, int width, bool bgr24)
         {
             var bpp = bgr24 ? 3 : 4;
@@ -1186,31 +1171,37 @@ namespace System.Drawing.Dds
             return data;
         }
 
+        [XboxDecompressor(DXT3a_scalar)]
         internal static byte[] DecompressDXT3a_scalar(byte[] data, int height, int width, bool bgr24)
         {
             return DecompressBC2AlphaOnly(data, height, width, true, true, bgr24);
         }
 
+        [XboxDecompressor(DXT3a_mono)]
         internal static byte[] DecompressDXT3a_mono(byte[] data, int height, int width, bool bgr24)
         {
             return DecompressBC2AlphaOnly(data, height, width, true, false, bgr24);
         }
 
+        [XboxDecompressor(DXT3a_alpha)]
         internal static byte[] DecompressDXT3a_alpha(byte[] data, int height, int width, bool bgr24)
         {
             return DecompressBC2AlphaOnly(data, height, width, false, true, bgr24);
         }
 
+        [XboxDecompressor(DXT5a_scalar)]
         internal static byte[] DecompressDXT5a_scalar(byte[] data, int height, int width, bool bgr24)
         {
             return DecompressBC3AlphaOnly(data, height, width, true, true, bgr24);
         }
 
+        [XboxDecompressor(DXT5a_mono)]
         internal static byte[] DecompressDXT5a_mono(byte[] data, int height, int width, bool bgr24)
         {
             return DecompressBC3AlphaOnly(data, height, width, true, false, bgr24);
         }
 
+        [XboxDecompressor(DXT5a_alpha)]
         internal static byte[] DecompressDXT5a_alpha(byte[] data, int height, int width, bool bgr24)
         {
             return DecompressBC3AlphaOnly(data, height, width, false, true, bgr24);
