@@ -71,6 +71,7 @@ namespace Adjutant.Blam.Common
                 case CacheType.Halo1Xbox:
                 case CacheType.Halo1CE:
                 case CacheType.Halo1PC:
+                case CacheType.MccHalo1:
                     content = item.ReadMetadata<Halo1.bitmap>();
                     break;
                 case CacheType.Halo2Beta:
@@ -117,6 +118,8 @@ namespace Adjutant.Blam.Common
                     case CacheType.Halo1Xbox:
                     case CacheType.Halo1CE:
                     case CacheType.Halo1PC:
+                    case CacheType.Halo1AE:
+                    case CacheType.MccHalo1:
                         content = item.ReadMetadata<Halo1.gbxmodel>();
                         break;
                     case CacheType.Halo2Beta:

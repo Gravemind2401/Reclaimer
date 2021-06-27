@@ -50,7 +50,7 @@ namespace Adjutant.Blam.Common
                 var version = reader.ReadInt32();
 
                 int buildAddress;
-                if (new[] { 5, 7, 609 }.Contains(version)) // Halo1 Xbox, PC, CE
+                if (new[] { 5, 6, 7, 13, 609 }.Contains(version)) // Halo1 Xbox, PC, CE
                     buildAddress = 64;
                 else if (version == 8)
                 {

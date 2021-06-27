@@ -49,13 +49,20 @@ namespace Adjutant.Blam.Halo1
                 default: return null;
             }
 
-            reader.Seek(tagRef.Tag.MetaPointer.Address + offset, SeekOrigin.Begin);
+            try
+            {
+                reader.Seek(tagRef.Tag.MetaPointer.Address + offset, SeekOrigin.Begin);
 
-            var bitmId = reader.ReadInt16();
+                var bitmId = reader.ReadInt16();
 
-            if (bitmId == -1)
+                if (bitmId == -1)
+                    return null;
+                else return tagRef.Tag.CacheFile.TagIndex[bitmId];
+            }
+            catch
+            {
                 return null;
-            else return tagRef.Tag.CacheFile.TagIndex[bitmId];
+            }
         }
 
         public static IEnumerable<GeometryMaterial> GetMaterials(IEnumerable<TagReference> shaderRefs, DependencyReader reader)

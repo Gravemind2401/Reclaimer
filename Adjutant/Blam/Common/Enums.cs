@@ -76,7 +76,8 @@ namespace Adjutant.Blam.Common
         Halo1Xbox,
 
         [CacheMetadata(Gen1, PC)]
-        [BuildString("01.00.00.0564")]
+        [BuildString("01.07.30.0452", Beta)]
+        [BuildString("01.00.00.0564")] //release
         Halo1PC,
 
         [CacheMetadata(Gen1, PC)]
@@ -86,6 +87,10 @@ namespace Adjutant.Blam.Common
         [CacheMetadata(Gen1, Xbox360, Anniversary)]
         [BuildString("01.00.01.0563")]
         Halo1AE,
+
+        [CacheMetadata(Gen1, PC, Anniversary | Mcc)]
+        [BuildString("01.03.43.0000")]
+        MccHalo1,
 
         [CacheMetadata(Gen2, Xbox, Beta)]
         [BuildString("02.06.28.07902")]

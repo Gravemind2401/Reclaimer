@@ -94,6 +94,7 @@ namespace Adjutant.Blam.Common
                 case CacheType.Halo1PC:
                 case CacheType.Halo1CE:
                 case CacheType.Halo1AE:
+                case CacheType.MccHalo1:
                     return new Halo1.CacheFile(args);
 
                 case CacheType.Halo2Beta:
