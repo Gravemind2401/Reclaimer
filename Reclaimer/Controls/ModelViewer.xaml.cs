@@ -223,7 +223,7 @@ namespace Reclaimer.Controls
                     {
                         var dds = diffuse.Bitmap.ToDds(0);
 
-                        var brush = new ImageBrush(dds.ToBitmapSource(DecompressOptions.Bgr24))
+                        var brush = new ImageBrush(dds.ToBitmapSource(new DdsOutputArgs(DecompressOptions.Bgr24)))
                         {
                             ViewportUnits = BrushMappingMode.Absolute,
                             TileMode = TileMode.Tile,

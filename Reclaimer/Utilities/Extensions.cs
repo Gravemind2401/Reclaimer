@@ -86,10 +86,10 @@ namespace Reclaimer.Utilities
             dds.WriteToDisk(fileName);
         }
 
-        public static void WriteToTarga(this DdsImage dds, string fileName, DecompressOptions options, CubemapLayout layout)
+        public static void WriteToTarga(this DdsImage dds, string fileName, DdsOutputArgs args)
         {
-            var source = dds.ToBitmapSource(options, layout);
-            var format = options.HasFlag(DecompressOptions.Bgr24) ? Imaging.PixelFormat.Format24bppRgb : Imaging.PixelFormat.Format32bppArgb;
+            var source = dds.ToBitmapSource(args);
+            var format = args.Options.HasFlag(DecompressOptions.Bgr24) ? Imaging.PixelFormat.Format24bppRgb : Imaging.PixelFormat.Format32bppArgb;
             WriteToTarga(source, fileName, format);
         }
 

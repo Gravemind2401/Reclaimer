@@ -150,7 +150,7 @@ namespace Reclaimer.Controls
 
         private void Render()
         {
-            var src = dds.ToBitmapSource(GetOptions(), bitmap.CubeLayout);
+            var src = dds.ToBitmapSource(new DdsOutputArgs(GetOptions(), bitmap.CubeLayout));
             if (src.CanFreeze) src.Freeze();
             ImageSource = src;
         }

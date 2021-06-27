@@ -386,10 +386,11 @@ namespace Reclaimer.Plugins
                     if (dds == null)
                         dds = bitmap.ToDds(i);
 
+                    var args = new DdsOutputArgs(param.Item2, bitmap.CubeLayout);
                     if (format != null)
-                        dds.WriteToDisk(param.Item1, format, param.Item2, bitmap.CubeLayout);
+                        dds.WriteToDisk(param.Item1, format, args);
                     else //if (Settings.BitmapFormat == BitmapFormat.TGA)
-                        dds.WriteToTarga(param.Item1, param.Item2, bitmap.CubeLayout);
+                        dds.WriteToTarga(param.Item1, args);
 
                     extracted++;
                 }
