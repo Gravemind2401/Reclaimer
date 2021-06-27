@@ -88,7 +88,9 @@ namespace Reclaimer.Plugins
             }
             catch (Exception ex)
             {
-                Substrate.ShowErrorMessage($"Unable to load {Path.GetFileName(fileName)}:{Environment.NewLine}{ex.Message}");
+                var message = $"Unable to load {Path.GetFileName(fileName)}:{Environment.NewLine}{ex.Message}";
+                Substrate.ShowErrorMessage(message);
+                Substrate.LogError(message, ex);
             }
         }
     }

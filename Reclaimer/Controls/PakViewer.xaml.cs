@@ -29,7 +29,7 @@ namespace Reclaimer.Controls
 
         #region Dependency Properties
         private static readonly DependencyPropertyKey HasGlobalHandlersPropertyKey =
-            DependencyProperty.RegisterReadOnly(nameof(HasGlobalHandlers), typeof(bool), typeof(MapViewer), new PropertyMetadata(false));
+            DependencyProperty.RegisterReadOnly(nameof(HasGlobalHandlers), typeof(bool), typeof(PakViewer), new PropertyMetadata(false));
 
         public static readonly DependencyProperty HasGlobalHandlersProperty = HasGlobalHandlersPropertyKey.DependencyProperty;
 
