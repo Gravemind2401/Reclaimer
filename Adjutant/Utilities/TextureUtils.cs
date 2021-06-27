@@ -320,19 +320,15 @@ namespace Adjutant.Utilities
 
             DdsImage dds;
             if (isPC && knownFormat == KnownTextureFormat.DXN)
-                dds = new DdsImage(height, width, XboxFormat.DXN_SNorm, DxgiTextureType.Texture2D, data);
+                dds = new DdsImage(height, width, XboxFormat.DXN_SNorm, data);
             else if (dxgiLookup.ContainsKey(knownFormat))
-                dds = new DdsImage(height, width, dxgiLookup[knownFormat], DxgiTextureType.Texture2D, data);
+                dds = new DdsImage(height, width, dxgiLookup[knownFormat], data);
             else if (xboxLookup.ContainsKey(knownFormat))
-                dds = new DdsImage(height, width, xboxLookup[knownFormat], DxgiTextureType.Texture2D, data);
+                dds = new DdsImage(height, width, xboxLookup[knownFormat], data);
             else throw Exceptions.BitmapFormatNotSupported(format.ToString());
 
             if (isCubemap)
-            {
-                dds.TextureFlags = TextureFlags.DdsSurfaceFlagsCubemap;
                 dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
-                dds.DX10ResourceFlags = D3D10ResourceMiscFlags.TextureCube;
-            }
 
             return dds;
         }
