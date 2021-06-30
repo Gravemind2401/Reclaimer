@@ -161,7 +161,7 @@ namespace Reclaimer.Plugins.MetaViewer
                     new PluginProfile("Halo3Beta", CacheType.Halo3Alpha, CacheType.Halo3Beta),
                     new PluginProfile("Halo2MCC", CacheType.MccHalo2),
                     new PluginProfile("Halo2", CacheType.Halo2Xbox, CacheType.Halo2Vista, CacheType.MccHalo2),
-                    new PluginProfile("Halo1", CacheType.Halo1Xbox, CacheType.Halo1PC, CacheType.Halo1CE, CacheType.Halo1AE),
+                    new PluginProfile("Halo1", CacheType.Halo1Xbox, CacheType.Halo1PC, CacheType.Halo1CE, CacheType.Halo1AE, CacheType.MccHalo1),
                 };
             }
         }

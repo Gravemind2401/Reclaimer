@@ -122,8 +122,8 @@ namespace Reclaimer.Controls
 
                 foreach (var perm in region.Permutations)
                 {
-                    var mesh = meshes[perm.MeshIndex];
-                    if (mesh == null)
+                    var mesh = meshes.ElementAtOrDefault(perm.MeshIndex);
+                    if (mesh == null || perm.MeshCount <= 0)
                     {
                         InvalidPermutations.Add(perm);
                         continue;
