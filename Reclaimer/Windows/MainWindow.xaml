@@ -9,10 +9,11 @@
     xmlns:r="clr-namespace:Reclaimer"
     xmlns:s="clr-namespace:Studio.Controls;assembly=Studio"
     xmlns:u="clr-namespace:Studio.Utilities;assembly=Studio"
+    xmlns:t="clr-namespace:Reclaimer.Resources.Terminology"
     mc:Ignorable="d" WindowState="Maximized" Icon="../Resources/Reclaimer.ico"
     Style="{StaticResource MainWindowStyle}"
     Loaded="MetroWindow_Loaded" Closing="MetroWindow_Closing"
-    Title="Reclaimer" Width="1600" Height="900">
+    Title="{x:Static t:UI.Reclaimer}" Width="1600" Height="900">
 
     <metro:MetroWindow.IconTemplate>
         <DataTemplate>
@@ -56,32 +57,32 @@
                     <DockPanel HorizontalAlignment="Stretch" LastChildFill="False" />
                 </ItemsPanelTemplate>
             </Menu.ItemsPanel>
-            <MenuItem x:Name="fileMenu" Header="File" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
-            <MenuItem Header="Edit" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
-            <MenuItem Header="View">
-                <MenuItem Header="Output" Click="menuOutput_Click" />
-                <MenuItem Header="App Directory" Click="menuAppDir_Click" />
-                <MenuItem Header="AppData Directory" Click="menuAppDataDir_Click" />
+            <MenuItem x:Name="fileMenu" Header="{x:Static t:Menu.File}" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
+            <MenuItem Header="{x:Static t:Menu.Edit}" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
+            <MenuItem Header="{x:Static t:Menu.View}">
+                <MenuItem Header="{x:Static t:Menu.Output}" Click="menuOutput_Click" />
+                <MenuItem Header="{x:Static t:Menu.AppDirectory}" Click="menuAppDir_Click" />
+                <MenuItem Header="{x:Static t:Menu.AppDataDirectory}" Click="menuAppDataDir_Click" />
             </MenuItem>
-            <MenuItem Header="Tools">
-                <MenuItem Header="Settings" Click="menuSettings_Click" />
+            <MenuItem Header="{x:Static t:Menu.Tools}">
+                <MenuItem Header="{x:Static t:Menu.Settings}" Click="menuSettings_Click" />
                 <MenuItem DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                           Click="menuUpdates_Click">
                     <MenuItem.Style>
                         <Style TargetType="MenuItem">
-                            <Setter Property="Header" Value="Check for updates" />
+                            <Setter Property="Header" Value="{x:Static t:Menu.CheckForUpdates}" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding HasUpdate}" Value="True">
-                                    <Setter Property="Header" Value="View update details" />
+                                    <Setter Property="Header" Value="{x:Static t:Menu.ViewUpdateDetails}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </MenuItem.Style>
                 </MenuItem>
             </MenuItem>
-            <MenuItem Header="Themes" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
-            <MenuItem Header="Help">
-                <MenuItem Header="Submit an issue" Click="menuIssue_Click" />
+            <MenuItem Header="{x:Static t:Menu.Themes}" Visibility="{Binding HasItems, RelativeSource={RelativeSource Self}, Converter={StaticResource visConverter}}" />
+            <MenuItem Header="{x:Static t:Menu.Help}">
+                <MenuItem Header="{x:Static t:Menu.SubmitAnIssue}" Click="menuIssue_Click" />
             </MenuItem>
             <MenuItem Header="{Binding Source={x:Static r:App.AppVersion}, FallbackValue='0.0.0.0'}" DockPanel.Dock="Right" IsEnabled="False" />
         </Menu>

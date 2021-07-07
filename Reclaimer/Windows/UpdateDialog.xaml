@@ -3,11 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:t="clr-namespace:Reclaimer.Resources.Terminology"
         xmlns:local="clr-namespace:Reclaimer.Windows"
         xmlns:r="clr-namespace:Reclaimer"
         mc:Ignorable="d" Height="320" Width="480"
         WindowStartupLocation="CenterOwner"
-        Title="Reclaimer Updates"
+        Title="{x:Static t:UI.ReclaimerUpdates}"
         Background="{DynamicResource TreeView.Background}"
         ShowInTaskbar="False" ResizeMode="NoResize">
 
@@ -35,11 +36,11 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Content="Current version: " />
+            <Label Grid.Row="0" Grid.Column="0" Content="{x:Static t:UI.CurrentVersion}" />
             <Label Grid.Row="0" Grid.Column="1" Content="{Binding Source={x:Static r:App.AppVersion}}" />
-            <Label Grid.Row="1" Grid.Column="0" Content="Latest version: " />
+            <Label Grid.Row="1" Grid.Column="0" Content="{x:Static t:UI.LatestVersion}" />
             <Label Grid.Row="1" Grid.Column="1" Content="{Binding VersionDisplay, FallbackValue='0.0.000'}" />
-            <Label Grid.Row="1" Grid.Column="2" Content="Release Date: " />
+            <Label Grid.Row="1" Grid.Column="2" Content="{x:Static t:UI.ReleaseDate}" />
             <Label Grid.Row="1" Grid.Column="3" Content="{Binding ReleaseDateDisplay, FallbackValue='00/00/0000'}" />
         </Grid>
         <RichTextBox Grid.Row="1" Margin="0,6,0,0">
@@ -57,8 +58,8 @@
         </RichTextBox>
         <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,12,0,0"
                     HorizontalAlignment="Center">
-            <Button Content="View Download" Click="btnOk_Click" />
-            <Button Content="Cancel" Click="btnCancel_Click" />
+            <Button Content="{x:Static t:UI.ViewDownload}" Click="btnOk_Click" />
+            <Button Content="{x:Static t:UI.Cancel}" Click="btnCancel_Click" />
         </StackPanel>
     </Grid>
 </Window>

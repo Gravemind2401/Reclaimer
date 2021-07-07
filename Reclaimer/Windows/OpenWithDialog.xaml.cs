@@ -7,13 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
+using Terminology = Reclaimer.Resources.Terminology;
 
 namespace Reclaimer.Windows
 {
@@ -50,7 +46,7 @@ namespace Reclaimer.Windows
         private void LoadList(IEnumerable<Plugin> handlers, OpenFileArgs args)
         {
             this.args = args;
-            Title = $"Open With - {Utils.GetFileName(args.FileName)}";
+            Title = $"{Terminology.UI.OpenWith} - {Utils.GetFileName(args.FileName)}";
 
             var defaultHandler = App.Settings.DefaultHandlers[args.FileTypeKey];
 
@@ -58,7 +54,7 @@ namespace Reclaimer.Windows
             foreach (var p in handlers.OrderBy(p => p.Name))
             {
                 var isDefault = p.Key == defaultHandler;
-                var item = Tuple.Create(p, p.Name + (isDefault ? " (Default)" : string.Empty));
+                var item = Tuple.Create(p, p.Name + (isDefault ? $" ({Terminology.UI.Default})" : string.Empty));
 
                 FileHandlers.Add(item);
 

@@ -1,0 +1,55 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Reclaimer.Utilities
+{
+    public static class Localiser
+    {
+        //TODO: read custom values from somewhere
+        internal static readonly Dictionary<string, Dictionary<string, string>> valueLookup = new Dictionary<string, Dictionary<string, string>>();
+
+        public static void ConfigureResourceType(Type type)
+        {
+            var props = type.GetProperties()
+                .Where(PropertyPredicate)
+                .Select(p => new
+                {
+                    Info = p,
+                    Default = p.GetCustomAttribute<DefaultValueAttribute>()?.Value as string ?? p.Name
+                }).ToList();
+
+            var userValues = valueLookup.ValueOrDefault(type.FullName);
+
+            foreach (var prop in props)
+            {
+                var key = prop.Info.Name;
+                var value = userValues?.ValueOrDefault(key);
+
+                if (string.IsNullOrEmpty(value))
+                    value = prop.Default;
+
+                var setter = prop.Info.GetSetMethod(true);
+                setter.Invoke(null, new[] { value });
+            }
+        }
+
+        private static bool PropertyPredicate(PropertyInfo prop)
+        {
+            if (prop.PropertyType != typeof(string))
+                return false;
+
+            var getter = prop.GetGetMethod(true);
+            if (getter?.IsStatic != true || getter.Invoke(null, null) != null)
+                return false;
+
+            return prop.GetSetMethod(true)?.IsStatic == true;
+        }
+    }
+}

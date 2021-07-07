@@ -208,6 +208,7 @@
     <Compile Include="Plugins\Plugin.cs" />
     <Compile Include="Plugins\SoundExtractorPlugin.cs" />
     <Compile Include="Plugins\Substrate.cs" />
+    <Compile Include="Resources\Terminology.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Utilities\CoreTemplateSelector.cs" />
     <Compile Include="Utilities\DeepObservableCollection.cs" />
@@ -217,6 +218,7 @@
     <Compile Include="Utilities\GridLengthConverter.cs" />
     <Compile Include="Utilities\KeyedSemarphore.cs" />
     <Compile Include="Utilities\BulkObservableCollection.cs" />
+    <Compile Include="Utilities\Localiser.cs" />
     <Compile Include="Utilities\RadToDeg32Converter.cs" />
     <Compile Include="Utilities\RadToDeg64Converter.cs" />
     <Compile Include="External\TGASharpLib.cs" />

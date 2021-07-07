@@ -1,6 +1,8 @@
 ﻿using MahApps.Metro.Controls;
+using Octokit;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,8 +11,8 @@ using System.Windows.Controls;
 using Reclaimer.Plugins;
 using Reclaimer.Models;
 using Reclaimer.Utilities;
-using System.IO;
-using Octokit;
+
+using Terminology = Reclaimer.Resources.Terminology;
 
 namespace Reclaimer.Windows
 {
@@ -72,7 +74,7 @@ namespace Reclaimer.Windows
 
             Model = new DockContainerModel();
             Model.Content = DocPanel = new DocumentPanelModel();
-            RecentsMenuItem = new MenuItem { Header = "Recent Files" };
+            RecentsMenuItem = new MenuItem { Header = Terminology.Menu.RecentFiles };
 
             Substrate.LoadPlugins();
 
@@ -113,14 +115,14 @@ namespace Reclaimer.Windows
             {
                 if (!await CheckForUpdates())
                 {
-                    MessageBox.Show("Error checking for updates.", nameof(Reclaimer));
+                    MessageBox.Show(Terminology.Message.ErrorCheckingUpdates, Terminology.UI.Reclaimer);
                     return;
                 }
 
                 await Dispatcher.InvokeAsync(() =>
                 {
                     if (!HasUpdate)
-                        MessageBox.Show("No updates available.", nameof(Reclaimer));
+                        MessageBox.Show(Terminology.Message.NoUpdatesAvailable, Terminology.UI.Reclaimer);
                     else
                         UpdateDialog.ShowUpdate();
                 });
@@ -144,7 +146,7 @@ namespace Reclaimer.Windows
                     AddMenuItem(plugin, item);
             }
 
-            var themeRoot = GetMenuItem("Themes");
+            var themeRoot = GetMenuItem(Terminology.Menu.Themes);
             foreach (var theme in App.Themes)
             {
                 var item = new MenuItem { Header = theme, Tag = theme };
@@ -216,7 +218,7 @@ namespace Reclaimer.Windows
             if (Dispatcher.Invoke(() => HasUpdate && !App.Settings.ShouldCheckUpdates))
                 return true; //dont check again if we already found one recently
 
-            Substrate.SetSystemWorkingStatus("Checking for updates...");
+            Substrate.SetSystemWorkingStatus(Terminology.Status.CheckingForUpdates);
 
             try
             {
@@ -245,7 +247,7 @@ namespace Reclaimer.Windows
         private void RefreshStatus()
         {
             if (!IsBusy)
-                CurrentStatus = HasUpdate ? "There is an update available" : "Ready";
+                CurrentStatus = HasUpdate ? Terminology.Status.UpdateAvailable : Terminology.Status.Ready;
         }
 
         private void RefreshRecents()

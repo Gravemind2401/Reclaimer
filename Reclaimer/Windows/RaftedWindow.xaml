@@ -5,10 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Reclaimer.Windows"
         xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:t="clr-namespace:Reclaimer.Resources.Terminology"
         xmlns:s="clr-namespace:Studio.Controls;assembly=Studio"
         mc:Ignorable="d" Height="300" Width="300"
         Closed="RaftedWindow_Closed" Icon="../Resources/Reclaimer.ico"
-        Style="{StaticResource RaftedWindowStyle}" Title="Reclaimer">
+        Style="{StaticResource RaftedWindowStyle}" Title="{x:Static t:UI.Reclaimer}">
 
     <metro:MetroWindow.IconTemplate>
         <DataTemplate>

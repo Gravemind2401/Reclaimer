@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:t="clr-namespace:Reclaimer.Resources.Terminology"
         xmlns:local="clr-namespace:Reclaimer.Windows"
         mc:Ignorable="d" Height="320" Width="480"
         WindowStartupLocation="CenterOwner"
@@ -22,16 +23,16 @@
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <Label Grid.Row="0" Grid.ColumnSpan="2" Content="Choose the plugin you want to use to open this file:" />
+        <Label Grid.Row="0" Grid.ColumnSpan="2" Content="{x:Static t:UI.ChoosePlugin}" />
         <ListBox x:Name="list" x:FieldModifier="private"
                  Grid.Row="1" ItemsSource="{Binding FileHandlers}"
                  MouseDoubleClick="list_MouseDoubleClick"
                  DisplayMemberPath="Item2" />
         <StackPanel Grid.Row="1" Grid.Column="1"
                     Margin="12,0,0,0" Width="120">
-            <Button Content="OK" Click="btnOk_Click" />
-            <Button Margin="0,8" Content="Cancel" Click="btnCancel_Click" />
-            <Button Content="Set as Default" Click="btnSetDefault_Click" />
+            <Button Content="{x:Static t:UI.OK}" Click="btnOk_Click" />
+            <Button Margin="0,8" Content="{x:Static t:UI.Cancel}" Click="btnCancel_Click" />
+            <Button Content="{x:Static t:UI.SetAsDefault}" Click="btnSetDefault_Click" />
         </StackPanel>
     </Grid>
 </Window>
