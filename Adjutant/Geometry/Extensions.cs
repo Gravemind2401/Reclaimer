@@ -210,7 +210,7 @@ namespace Adjutant.Geometry
                 var dupeDic = new Dictionary<int, long>();
 
                 var validRegions = model.Regions
-                    .Select(r => new { r.Name, Permutations = r.Permutations.Where(p => model.Meshes[p.MeshIndex].Submeshes.Count > 0).ToList() })
+                    .Select(r => new { r.Name, Permutations = r.Permutations.Where(p => p.MeshCount > 0 && model.Meshes.ElementAtOrDefault(p.MeshIndex)?.Submeshes.Count > 0).ToList() })
                     .Where(r => r.Permutations.Count > 0)
                     .ToList();
 

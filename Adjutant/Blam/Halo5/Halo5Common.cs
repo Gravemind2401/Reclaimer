@@ -125,7 +125,8 @@ namespace Adjutant.Blam.Halo5
                         sectionIndex++;
                         var lodData = section.SectionLods[Math.Min(lod, section.SectionLods.Count - 1)];
 
-                        if (lodData.VertexBufferIndex < 0 || lodData.IndexBufferIndex < 0 || !lookup.ContainsKey(section.VertexFormat))
+                        if (lodData.VertexBufferIndex < 0 || lodData.IndexBufferIndex < 0 || !lookup.ContainsKey(section.VertexFormat)
+                            || lodData.VertexBufferIndex >= vertexBufferInfo.Length || lodData.IndexBufferIndex >= indexBufferInfo.Length)
                         {
                             yield return new GeometryMesh();
                             continue;

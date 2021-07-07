@@ -57,6 +57,8 @@ namespace Adjutant.Blam.Halo5
 
             var submap = Bitmaps[index];
 
+            //todo: calculate expected frame size, use it to get data offset for multi-bitmaps
+
             using (var reader = resource.CreateReader())
             {
                 if (!isChunk)
@@ -72,7 +74,7 @@ namespace Adjutant.Blam.Halo5
                 //todo: cubemap check
                 return TextureUtils.GetDds(submap.Height, submap.Width, submap.BitmapFormat, false, data, true);
             }
-        } 
+        }
 
         #endregion
     }
