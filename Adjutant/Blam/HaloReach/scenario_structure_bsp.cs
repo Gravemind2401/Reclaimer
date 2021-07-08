@@ -158,25 +158,9 @@ namespace Adjutant.Blam.HaloReach
             return model;
         }
 
-        public IEnumerable<IBitmap> GetAllBitmaps()
-        {
-            var complete = new List<int>();
+        public IEnumerable<IBitmap> GetAllBitmaps() => HaloReachCommon.GetBitmaps(Shaders);
 
-            foreach (var s in Shaders)
-            {
-                var rmsh = s.ShaderReference.Tag?.ReadMetadata<shader>();
-                if (rmsh == null) continue;
-
-                foreach (var map in rmsh.ShaderProperties.SelectMany(p => p.ShaderMaps))
-                {
-                    if (map.BitmapReference.Tag == null || complete.Contains(map.BitmapReference.TagId))
-                        continue;
-
-                    complete.Add(map.BitmapReference.TagId);
-                    yield return map.BitmapReference.Tag.ReadMetadata<bitmap>();
-                }
-            }
-        }
+        public IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes) => HaloReachCommon.GetBitmaps(Shaders, shaderIndexes);
 
         #endregion
     }

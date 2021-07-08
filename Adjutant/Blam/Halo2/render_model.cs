@@ -209,25 +209,9 @@ namespace Adjutant.Blam.Halo2
             }
         }
 
-        public IEnumerable<IBitmap> GetAllBitmaps()
-        {
-            var complete = new List<int>();
+        public IEnumerable<IBitmap> GetAllBitmaps() => Halo2Common.GetBitmaps(Shaders);
 
-            foreach (var s in Shaders)
-            {
-                var rmsh = s.ShaderReference.Tag?.ReadMetadata<shader>();
-                if (rmsh == null) continue;
-
-                foreach (var tagRef in rmsh.ShaderMaps.SelectMany(m => m.EnumerateBitmapReferences()))
-                {
-                    if (tagRef.Tag == null || complete.Contains(tagRef.TagId))
-                        continue;
-
-                    complete.Add(tagRef.TagId);
-                    yield return tagRef.Tag.ReadMetadata<bitmap>();
-                }
-            }
-        }
+        public IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes) => Halo2Common.GetBitmaps(Shaders, shaderIndexes);
 
         #endregion
     }

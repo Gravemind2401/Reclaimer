@@ -141,13 +141,18 @@ namespace Adjutant.Blam.Halo1
             }
         }
 
-        public IEnumerable<IBitmap> GetAllBitmaps()
-        {
-            var complete = new List<int>();
+        public IEnumerable<IBitmap> GetAllBitmaps() => GetBitmaps(Enumerable.Range(0, Lightmaps?.Count ?? 0));
 
+        public IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes)
+        {
+            var selection = shaderIndexes?.Distinct().Where(i => i >= 0 && i < Lightmaps?.Count).Select(i => Lightmaps[i]);
+            if (selection?.Any() != true)
+                yield break;
+
+            var complete = new List<int>();
             using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
             {
-                foreach (var mat in Lightmaps.SelectMany(lm => lm.Materials))
+                foreach (var mat in selection.SelectMany(lm => lm.Materials))
                 {
                     var bitmTag = Halo1Common.GetShaderDiffuse(mat.ShaderReference, reader);
                     if (bitmTag == null || complete.Contains(bitmTag.Id))

@@ -168,25 +168,9 @@ namespace Adjutant.Blam.Halo5
             }
         }
 
-        public IEnumerable<IBitmap> GetAllBitmaps()
-        {
-            var complete = new List<int>();
+        public IEnumerable<IBitmap> GetAllBitmaps() => Halo5Common.GetBitmaps(Materials);
 
-            foreach (var m in Materials)
-            {
-                var mat = m.MaterialReference.Tag?.ReadMetadata<material>();
-                if (mat == null) continue;
-
-                foreach (var tex in mat.PostprocessDefinitions.SelectMany(p => p.Textures))
-                {
-                    if (tex.BitmapReference.Tag == null || complete.Contains(tex.BitmapReference.TagId))
-                        continue;
-
-                    complete.Add(tex.BitmapReference.TagId);
-                    yield return tex.BitmapReference.Tag.ReadMetadata<bitmap>();
-                }
-            }
-        }
+        public IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes) => Halo5Common.GetBitmaps(Materials, shaderIndexes);
 
         #endregion
     }

@@ -15,6 +15,30 @@ namespace Adjutant.Blam.Halo5
 {
     internal static class Halo5Common
     {
+        public static IEnumerable<IBitmap> GetBitmaps(IReadOnlyList<MaterialBlock> materials) => GetBitmaps(materials, Enumerable.Range(0, materials?.Count ?? 0));
+        public static IEnumerable<IBitmap> GetBitmaps(IReadOnlyList<MaterialBlock> materials, IEnumerable<int> matIndexes)
+        {
+            var selection = matIndexes?.Distinct().Where(i => i >= 0 && i < materials?.Count).Select(i => materials[i]);
+            if (selection?.Any() != true)
+                yield break;
+
+            var complete = new List<int>();
+            foreach (var m in selection)
+            {
+                var mat = m.MaterialReference.Tag?.ReadMetadata<material>();
+                if (mat == null) continue;
+
+                foreach (var tex in mat.PostprocessDefinitions.SelectMany(p => p.Textures))
+                {
+                    if (tex.BitmapReference.Tag == null || complete.Contains(tex.BitmapReference.TagId))
+                        continue;
+
+                    complete.Add(tex.BitmapReference.TagId);
+                    yield return tex.BitmapReference.Tag.ReadMetadata<bitmap>();
+                }
+            }
+        }
+
         public static IEnumerable<GeometryMaterial> GetMaterials(IList<MaterialBlock> materials)
         {
             for (int i = 0; i < materials.Count; i++)

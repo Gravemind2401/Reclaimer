@@ -29,6 +29,30 @@ namespace Adjutant.Blam.Halo2
 
     internal static class Halo2Common
     {
+        public static IEnumerable<IBitmap> GetBitmaps(IReadOnlyList<ShaderBlock> shaders) => GetBitmaps(shaders, Enumerable.Range(0, shaders?.Count ?? 0));
+        public static IEnumerable<IBitmap> GetBitmaps(IReadOnlyList<ShaderBlock> shaders, IEnumerable<int> shaderIndexes)
+        {
+            var selection = shaderIndexes?.Distinct().Where(i => i >= 0 && i < shaders?.Count).Select(i => shaders[i]);
+            if (selection?.Any() != true)
+                yield break;
+
+            var complete = new List<int>();
+            foreach (var s in selection)
+            {
+                var rmsh = s.ShaderReference.Tag?.ReadMetadata<shader>();
+                if (rmsh == null) continue;
+
+                foreach (var tagRef in rmsh.ShaderMaps.SelectMany(m => m.EnumerateBitmapReferences()))
+                {
+                    if (tagRef.Tag == null || complete.Contains(tagRef.TagId))
+                        continue;
+
+                    complete.Add(tagRef.TagId);
+                    yield return tagRef.Tag.ReadMetadata<bitmap>();
+                }
+            }
+        }
+
         public static IEnumerable<GeometryMaterial> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
         {
             for (int i = 0; i < shaders.Count; i++)

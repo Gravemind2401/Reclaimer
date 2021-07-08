@@ -178,25 +178,9 @@ namespace Adjutant.Blam.Halo4
             }
         }
 
-        public IEnumerable<IBitmap> GetAllBitmaps()
-        {
-            var complete = new List<int>();
+        public IEnumerable<IBitmap> GetAllBitmaps() => Halo4Common.GetBitmaps(Shaders);
 
-            foreach (var s in Shaders)
-            {
-                var rmsh = s.MaterialReference.Tag?.ReadMetadata<material>();
-                if (rmsh == null) continue;
-
-                foreach (var map in rmsh.ShaderProperties.SelectMany(p => p.ShaderMaps))
-                {
-                    if (map.BitmapReference.Tag == null || complete.Contains(map.BitmapReference.TagId))
-                        continue;
-
-                    complete.Add(map.BitmapReference.TagId);
-                    yield return map.BitmapReference.Tag.ReadMetadata<bitmap>();
-                }
-            }
-        }
+        public IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes) => Halo4Common.GetBitmaps(Shaders, shaderIndexes);
 
         #endregion
     }
