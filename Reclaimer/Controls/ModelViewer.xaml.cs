@@ -30,6 +30,7 @@ namespace Reclaimer.Controls
     public partial class ModelViewer : IDisposable
     {
         public delegate void ExportBitmaps(IRenderGeometry geometry);
+        public delegate void ExportSelectedBitmaps(IRenderGeometry geometry, IEnumerable<int> shaderIndexes);
 
         private static readonly string[] AllLods = new[] { "Highest", "High", "Medium", "Low", "Lowest", "Potato" };
         private static readonly DiffuseMaterial ErrorMaterial;
@@ -340,6 +341,24 @@ namespace Reclaimer.Controls
             }
         }
 
+        private IList<IGeometryPermutation> GetSelectedPermutations()
+        {
+            var selectedPerms = new List<IGeometryPermutation>();
+            foreach (var parent in TreeViewItems.Zip(model.Regions.Except(InvalidRegions), (a, b) => new { Node = a, Region = b }))
+            {
+                if (parent.Node.IsChecked == false)
+                    continue;
+
+                foreach (var child in parent.Node.Items.Zip(parent.Region.Permutations.Except(InvalidPermutations), (a, b) => new { Node = a, Permutation = b }))
+                {
+                    if (child.Node.IsChecked == true)
+                        selectedPerms.Add(child.Permutation);
+                }
+            }
+
+            return selectedPerms;
+        }
+
         #region Treeview Events
         private void TreeViewItem_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
@@ -477,27 +496,27 @@ namespace Reclaimer.Controls
             if (!PromptFileSave(out fileName, out formatId))
                 return;
 
-            var selectedPerms = new List<IGeometryPermutation>();
-            foreach (var parent in TreeViewItems.Zip(model.Regions.Except(InvalidRegions), (a, b) => new { Node = a, Region = b }))
-            {
-                if (parent.Node.IsChecked == false)
-                    continue;
-
-                foreach (var child in parent.Node.Items.Zip(parent.Region.Permutations.Except(InvalidPermutations), (a, b) => new { Node = a, Permutation = b }))
-                {
-                    if (child.Node.IsChecked == true)
-                        selectedPerms.Add(child.Permutation);
-                }
-            }
-
-            var masked = new MaskedGeometryModel(model, selectedPerms);
+            var masked = new MaskedGeometryModel(model, GetSelectedPermutations());
             ModelViewerPlugin.WriteModelFile(masked, fileName, formatId);
         }
 
         private void btnExportBitmaps_Click(object sender, RoutedEventArgs e)
         {
-            var export = Substrate.GetSharedFunction<ExportBitmaps>("Reclaimer.Plugins.ModelViewerPlugin.ExportBitmaps");
+            var export = Substrate.GetSharedFunction<ExportBitmaps>(Constants.SharedFuncExportBitmaps);
             export.Invoke(geometry);
+        }
+
+        private void btnExportSelectedBitmaps_Click(object sender, RoutedEventArgs e)
+        {
+            var export = Substrate.GetSharedFunction<ExportSelectedBitmaps>(Constants.SharedFuncExportSelectedBitmaps);
+            var matIndices = GetSelectedPermutations()
+                .SelectMany(p => Enumerable.Range(p.MeshIndex, p.MeshCount))
+                .Select(i => model.Meshes.ElementAtOrDefault(i))
+                .Where(m => m != null)
+                .SelectMany(m => m.Submeshes.Select(s => (int)s.MaterialIndex))
+                .Distinct();
+
+            export.Invoke(geometry, matIndices);
         }
 
         private void txtSearch_SearchChanged(object sender, RoutedEventArgs e)

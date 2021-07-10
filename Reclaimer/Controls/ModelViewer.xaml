@@ -62,10 +62,15 @@
                     <ContentControl Template="{StaticResource ic_CheckboxList_16x}" />
                 </Button>
                 <Separator />
+                <Button Click="btnExportSelectedBitmaps_Click"
+                        ToolTip="Export selected bitmaps">
+                    <ContentControl Template="{StaticResource ic_ImageGroup_16x}" />
+                </Button>
                 <Button Click="btnExportBitmaps_Click"
-                        ToolTip="Export bitmaps">
+                        ToolTip="Export all bitmaps">
                     <ContentControl Template="{StaticResource ic_ImageStack_16x}" />
                 </Button>
+                <Separator />
                 <Button Click="btnExportSelected_Click"
                         ToolTip="Export selected geometry">
                     <ContentControl Template="{StaticResource ic_Save_16x}" />

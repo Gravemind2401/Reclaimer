@@ -78,13 +78,24 @@ namespace Reclaimer.Plugins
         [SharedFunction]
         public void ExportBitmaps(IRenderGeometry geometry)
         {
+            ExportBitmaps(geometry, g => g.GetAllBitmaps());
+        }
+
+        [SharedFunction]
+        public void ExportSelectedBitmaps(IRenderGeometry geometry, IEnumerable<int> shaderIndexes)
+        {
+            ExportBitmaps(geometry, g => g.GetBitmaps(shaderIndexes));
+        }
+
+        private void ExportBitmaps(IRenderGeometry geometry, Func<IRenderGeometry, IEnumerable<IBitmap>> getBitmaps)
+        {
             string folder;
             if (!getDataFolderFunc(out folder))
                 return;
 
             Task.Run(() =>
             {
-                foreach (var bitm in geometry.GetAllBitmaps())
+                foreach (var bitm in getBitmaps(geometry))
                 {
                     try
                     {
