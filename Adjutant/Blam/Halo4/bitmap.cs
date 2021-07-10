@@ -60,31 +60,9 @@ namespace Adjutant.Blam.Halo4
                 ? InterleavedResources[submap.InterleavedIndex].ResourcePointer
                 : Resources[index].ResourcePointer;
 
-            int virtualWidth, virtualHeight;
-            if (cache.Metadata.IsMcc)
-            {
-                virtualWidth = submap.Width;
-                virtualHeight = submap.Height * submap.FaceCount;
-            }
-            else TextureUtils.GetVirtualSize(submap.BitmapFormat, submap.Width, submap.Height, submap.FaceCount, out virtualWidth, out virtualHeight);
-
-            var lod0Size = virtualWidth * virtualHeight * submap.BitmapFormat.Bpp() / 8;
-            var data = resource.ReadData(PageType.Auto, lod0Size);
-
-            if (cache.ByteOrder == ByteOrder.BigEndian)
-            {
-                var unitSize = submap.BitmapFormat.LinearUnitSize();
-                for (int i = 0; i < data.Length - 1; i += unitSize)
-                    Array.Reverse(data, i, unitSize);
-            }
-
-            if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
-                data = TextureUtils.XTextureScramble(data, virtualWidth, virtualHeight, submap.BitmapFormat, false);
-
-            if (virtualWidth > submap.Width || virtualHeight > submap.Height)
-                data = TextureUtils.ApplyCrop(data, submap.BitmapFormat, submap.FaceCount, virtualWidth, virtualHeight, submap.Width, submap.Height * submap.FaceCount);
-
-            return TextureUtils.GetDds(submap.Height, submap.Width, submap.BitmapFormat, submap.BitmapType == TextureType.CubeMap, data, cache.Metadata.IsMcc);
+            var useMips = cache.Metadata.IsMcc && submap.BitmapType == TextureType.Array;
+            var data = resource.ReadData(PageType.Auto, TextureUtils.GetBitmapDataLength(submap, useMips));
+            return TextureUtils.GetDds(submap, data, useMips);
         }
 
         #endregion
@@ -131,8 +109,15 @@ namespace Adjutant.Blam.Halo4
 
     [FixedSize(44, MaxVersion = (int)CacheType.MccHalo4)]
     [FixedSize(48, MinVersion = (int)CacheType.MccHalo4)]
-    public class BitmapDataBlock
+    public class BitmapDataBlock : IBitmapData
     {
+        private readonly ICacheFile cache;
+
+        public BitmapDataBlock(ICacheFile cache)
+        {
+            this.cache = cache;
+        }
+
         [Offset(0)]
         public short Width { get; set; }
 
@@ -161,7 +146,10 @@ namespace Adjutant.Blam.Halo4
         public short RegY { get; set; }
 
         [Offset(16)]
-        public short MipmapCount { get; set; }
+        public byte MipmapCount { get; set; }
+
+        [Offset(17)]
+        public byte Curve { get; set; }
 
         [Offset(18)]
         public byte InterleavedIndex { get; set; }
@@ -175,7 +163,25 @@ namespace Adjutant.Blam.Halo4
         [Offset(24)]
         public byte PixelsSize { get; set; }
 
-        public int FaceCount => BitmapType == TextureType.CubeMap ? 6 : 1;
+        #region IBitmapData
+
+        ByteOrder IBitmapData.ByteOrder => cache.ByteOrder;
+        bool IBitmapData.UsesPadding => !cache.Metadata.IsMcc;
+        MipmapLayout IBitmapData.CubeMipLayout => MipmapLayout.None;
+        MipmapLayout IBitmapData.ArrayMipLayout => cache.Metadata.IsMcc ? MipmapLayout.Fragmented : MipmapLayout.None;
+
+        int IBitmapData.Width => Width;
+        int IBitmapData.Height => Height;
+        int IBitmapData.Depth => BitmapType == TextureType.Texture3D ? Depth : 1;
+        int IBitmapData.MipmapCount => MipmapCount;
+        int IBitmapData.FrameCount => BitmapType == TextureType.CubeMap ? 6 : Depth;
+
+        object IBitmapData.BitmapFormat => TextureUtils.DXNSwap(BitmapFormat, cache.Metadata.Platform == CachePlatform.PC);
+        object IBitmapData.BitmapType => BitmapType;
+
+        bool IBitmapData.Swizzled => Flags.HasFlag(BitmapFlags.Swizzled);
+
+        #endregion
     }
 
     [FixedSize(8)]

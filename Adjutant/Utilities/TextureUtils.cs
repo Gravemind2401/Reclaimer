@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Adjutant.Blam.Common;
+using System;
 using System.Collections.Generic;
 using System.Drawing.Dds;
+using System.IO.Endian;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,6 +40,7 @@ namespace Adjutant.Utilities
             { KnownTextureFormat.DXT5a_mono, XboxFormat.DXT5a_mono },
             { KnownTextureFormat.DXT5a_alpha, XboxFormat.DXT5a_alpha },
             { KnownTextureFormat.DXN, XboxFormat.DXN },
+            { KnownTextureFormat.DXN_SNorm, XboxFormat.DXN_SNorm },
             { KnownTextureFormat.DXN_mono_alpha, XboxFormat.DXN_mono_alpha },
             { KnownTextureFormat.P8, XboxFormat.Y8 },
             { KnownTextureFormat.P8_bump, XboxFormat.Y8 },
@@ -72,6 +75,7 @@ namespace Adjutant.Utilities
             U8V8,
             DXT5a,
             DXN,
+            DXN_SNorm,
             CTX1,
             DXT3a_alpha,
             DXT3a_mono,
@@ -82,13 +86,24 @@ namespace Adjutant.Utilities
             BC7_unorm
         }
 
-        private static KnownTextureFormat AsKnown(this object format)
+        private enum KnownTextureType : short
         {
-            var name = format.ToString();
-            KnownTextureFormat common;
-            if (Enum.TryParse(name, out common))
-                return common;
-            else return KnownTextureFormat.Unknown;
+            Texture2D,
+            Texture3D,
+            CubeMap,
+            Array
+        }
+
+        private static T ParseToEnum<T>(this object input, T defaultValue = default(T)) where T : struct
+        {
+            if (input != null)
+            {
+                T enumValue;
+                if (Enum.TryParse(input.ToString(), out enumValue))
+                    return enumValue;
+            }
+
+            return defaultValue;
         }
 
         //number of bits used to store each pixel
@@ -240,32 +255,13 @@ namespace Adjutant.Utilities
             }
         }
 
-        public static int Bpp(this Blam.Halo1.TextureFormat format) => GetBpp(format.AsKnown());
-        public static int Bpp(this Blam.Halo2.TextureFormat format) => GetBpp(format.AsKnown());
-        public static int Bpp(this Blam.Halo3.TextureFormat format) => GetBpp(format.AsKnown());
-        public static int Bpp(this Blam.HaloReach.TextureFormat format) => GetBpp(format.AsKnown());
-        public static int Bpp(this Blam.Halo4.TextureFormat format) => GetBpp(format.AsKnown());
-        public static int Bpp(this Saber3D.Halo1X.TextureFormat format) => GetBpp(format.AsKnown());
-
-        public static int LinearUnitSize(this Blam.Halo1.TextureFormat format) => GetLinearUnitSize(format.AsKnown());
-        public static int LinearUnitSize(this Blam.Halo2.TextureFormat format) => GetLinearUnitSize(format.AsKnown());
-        public static int LinearUnitSize(this Blam.Halo3.TextureFormat format) => GetLinearUnitSize(format.AsKnown());
-        public static int LinearUnitSize(this Blam.HaloReach.TextureFormat format) => GetLinearUnitSize(format.AsKnown());
-        public static int LinearUnitSize(this Blam.Halo4.TextureFormat format) => GetLinearUnitSize(format.AsKnown());
-        public static int LinearUnitSize(this Saber3D.Halo1X.TextureFormat format) => GetLinearUnitSize(format.AsKnown());
-
-        public static int LinearBlockSize(this Blam.Halo3.TextureFormat format) => GetLinearBlockSize(format.AsKnown());
-        public static int LinearBlockSize(this Blam.HaloReach.TextureFormat format) => GetLinearBlockSize(format.AsKnown());
-        public static int LinearBlockSize(this Blam.Halo4.TextureFormat format) => GetLinearBlockSize(format.AsKnown());
-
-        public static int LinearTexelPitch(this Blam.Halo3.TextureFormat format) => GetLinearTexelPitch(format.AsKnown());
-        public static int LinearTexelPitch(this Blam.HaloReach.TextureFormat format) => GetLinearTexelPitch(format.AsKnown());
-        public static int LinearTexelPitch(this Blam.Halo4.TextureFormat format) => GetLinearTexelPitch(format.AsKnown());
+        public static int Bpp(this Blam.Halo2.TextureFormat format) => GetBpp(format.ParseToEnum<KnownTextureFormat>());
+        public static int LinearUnitSize(this Blam.Halo2.TextureFormat format) => GetLinearUnitSize(format.ParseToEnum<KnownTextureFormat>());
 
         //round up to the nearst valid size, accounting for block sizes and tile sizes
-        public static void GetVirtualSize(object format, int width, int height, int faces, out int virtualWidth, out int virtualHeight)
+        public static void GetVirtualSize(object format, int width, int height, out int virtualWidth, out int virtualHeight)
         {
-            var knownFormat = format.AsKnown();
+            var knownFormat = format.ParseToEnum<KnownTextureFormat>();
             if (knownFormat == KnownTextureFormat.Unknown)
                 throw new ArgumentException("Could not translate to a known texture format.", nameof(format));
 
@@ -273,7 +269,7 @@ namespace Adjutant.Utilities
             double tileSize = GetTileSize(knownFormat);
 
             virtualWidth = (int)(Math.Ceiling(width / tileSize) * tileSize);
-            virtualHeight = (int)(Math.Ceiling(height / tileSize) * tileSize) * faces;
+            virtualHeight = (int)(Math.Ceiling(height / tileSize) * tileSize);
 
             virtualWidth = (int)(Math.Ceiling(virtualWidth / blockSize) * blockSize);
             virtualHeight = (int)(Math.Ceiling(virtualHeight / blockSize) * blockSize);
@@ -287,7 +283,7 @@ namespace Adjutant.Utilities
             if (outWidth >= inWidth && outHeight >= inHeight)
                 return data;
 
-            var knownFormat = format.AsKnown();
+            var knownFormat = format.ParseToEnum<KnownTextureFormat>();
             if (knownFormat == KnownTextureFormat.Unknown)
                 throw new ArgumentException("Could not translate to a known texture format.", nameof(format));
 
@@ -312,9 +308,17 @@ namespace Adjutant.Utilities
             return output;
         }
 
+        public static object DXNSwap(object format, bool shouldSwap)
+        {
+            var bitmapFormat = format.ParseToEnum<KnownTextureFormat>();
+            return shouldSwap && bitmapFormat == KnownTextureFormat.DXN
+                ? KnownTextureFormat.DXN_SNorm
+                : bitmapFormat;
+        }
+
         public static DdsImage GetDds(int height, int width, object format, bool isCubemap, byte[] data, bool isPC = false)
         {
-            var knownFormat = format.AsKnown();
+            var knownFormat = format.ParseToEnum<KnownTextureFormat>();
             if (knownFormat == KnownTextureFormat.Unknown)
                 throw new ArgumentException("Could not translate to a known texture format.", nameof(format));
 
@@ -329,6 +333,99 @@ namespace Adjutant.Utilities
 
             if (isCubemap)
                 dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
+
+            return dds;
+        }
+
+        public static int GetBitmapDataLength(IBitmapData submap, bool includeMips)
+        {
+            if (submap.MipmapCount == 0)
+                includeMips = false;
+
+            int virtualWidth, virtualHeight;
+            if (!submap.UsesPadding)
+            {
+                virtualWidth = submap.Width;
+                virtualHeight = submap.Height;
+            }
+            else
+                GetVirtualSize(submap.BitmapFormat, submap.Width, submap.Height, out virtualWidth, out virtualHeight);
+
+            var bitmapFormat = submap.BitmapFormat.ParseToEnum<KnownTextureFormat>();
+            var frameSize = virtualWidth * virtualHeight * GetBpp(bitmapFormat) / 8;
+
+            if (includeMips)
+            {
+                var mipsSize = 0;
+                var minUnit = (int)Math.Pow(GetLinearBlockSize(bitmapFormat), 2) * GetBpp(bitmapFormat) / 8;
+                for (int i = 1; i <= submap.MipmapCount; i++)
+                    mipsSize += Math.Max(minUnit, (int)(frameSize * Math.Pow(0.25, i)));
+                frameSize += mipsSize;
+            }
+
+            return frameSize * Math.Max(1, submap.FrameCount);
+        }
+
+        public static DdsImage GetDds(IBitmapData submap, byte[] data, bool includeMips)
+        {
+            if (submap.MipmapCount == 0)
+                includeMips = false;
+
+            int virtualWidth, virtualHeight;
+            if (!submap.UsesPadding)
+            {
+                virtualWidth = submap.Width;
+                virtualHeight = submap.Height;
+            }
+            else
+                GetVirtualSize(submap.BitmapFormat, submap.Width, submap.Height, out virtualWidth, out virtualHeight);
+
+            var bitmapFormat = submap.BitmapFormat.ParseToEnum<KnownTextureFormat>();
+            var textureType = submap.BitmapType.ParseToEnum<KnownTextureType>();
+
+            if (submap.ByteOrder == ByteOrder.BigEndian)
+            {
+                var unitSize = GetLinearUnitSize(bitmapFormat);
+                if (unitSize > 1)
+                {
+                    for (int i = 0; i < data.Length - 1; i += unitSize)
+                        Array.Reverse(data, i, unitSize);
+                }
+            }
+
+            var arrayHeight = virtualHeight * Math.Max(1, submap.FrameCount);
+
+            if (includeMips)
+            {
+                var mipsHeight = 0d;
+                for (int i = 1; i <= submap.MipmapCount; i++)
+                    mipsHeight += arrayHeight * Math.Pow(0.25, i);
+
+                var minUnit = GetLinearBlockSize(bitmapFormat);
+                mipsHeight += (minUnit - (mipsHeight % minUnit)) % minUnit;
+
+                arrayHeight += (int)mipsHeight * Math.Max(1, submap.FrameCount);
+            }
+
+            if (submap.Swizzled)
+                data = XTextureScramble(data, virtualWidth, arrayHeight, submap.BitmapFormat, false);
+
+            if (virtualWidth > submap.Width || virtualHeight > submap.Height)
+                data = ApplyCrop(data, submap.BitmapFormat, submap.FrameCount, virtualWidth, virtualHeight, submap.Width, submap.Height);
+
+            DdsImage dds;
+            if (dxgiLookup.ContainsKey(bitmapFormat))
+                dds = new DdsImage(submap.Height, submap.Width, dxgiLookup[bitmapFormat], data);
+            else if (xboxLookup.ContainsKey(bitmapFormat))
+                dds = new DdsImage(submap.Height, submap.Width, xboxLookup[bitmapFormat], data);
+            else throw Exceptions.BitmapFormatNotSupported(bitmapFormat.ToString());
+
+            if (textureType == KnownTextureType.CubeMap)
+                dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
+            if (textureType == KnownTextureType.Array)
+                dds.ArraySize = submap.FrameCount;
+            if (includeMips)
+                dds.MipmapCount = submap.MipmapCount + 1;
 
             return dds;
         }
@@ -454,7 +551,7 @@ namespace Adjutant.Utilities
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
 
-            var knownFormat = format.AsKnown();
+            var knownFormat = format.ParseToEnum<KnownTextureFormat>();
             if (knownFormat == KnownTextureFormat.Unknown)
                 throw new ArgumentException("Could not translate to a known texture format.", nameof(format));
 

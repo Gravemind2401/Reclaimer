@@ -7,73 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing.Dds;
+using Adjutant.Blam.Common;
 
 namespace Adjutant.Saber3D.Halo1X
 {
-    public class Texture : IBitmap
+    public class Texture : IBitmap, IBitmapData
     {
         private const int LittleHeader = 0x50494354; //TCIP
         private const int BigHeader = 0x54434950; //PICT
 
         private readonly PakItem item;
         private readonly bool isBigEndian;
-
-        public int Width { get; }
-        public int Height { get; }
-        public int MapCount { get; }
-        public TextureFormat Format { get; }
-        public int DataOffset { get; }
-
-        #region IBitmap
-
-        string IBitmap.SourceFile => item.Container.FileName;
-
-        int IBitmap.Id => item.Address;
-
-        string IBitmap.Name => item.Name;
-
-        string IBitmap.Class => item.ItemType.ToString();
-
-        int IBitmap.SubmapCount => 1;
-
-        CubemapLayout IBitmap.CubeLayout => new CubemapLayout
-        {
-
-        };
-
-        DdsImage IBitmap.ToDds(int index)
-        {
-            if (index < 0 || index >= 1)
-                throw new ArgumentOutOfRangeException(nameof(index));
-
-            byte[] data;
-            using (var reader = item.Container.CreateReader())
-            {
-                var size = Height * Width * MapCount * Format.Bpp() / 8;
-                reader.Seek(item.Address + DataOffset, SeekOrigin.Begin);
-                data = reader.ReadBytes(size);
-            }
-
-            if (isBigEndian)
-            {
-                var unitSize = Format.LinearUnitSize();
-                if (unitSize > 1)
-                {
-                    for (int i = 0; i < data.Length; i += unitSize)
-                        Array.Reverse(data, i, unitSize);
-                }
-            }
-
-            return TextureUtils.GetDds(Height * MapCount, Width, Format, false, data);
-
-            //if (MapCount == 6)
-            //{
-            //    dds.TextureFlags = TextureFlags.DdsSurfaceFlagsCubemap;
-            //    dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
-            //    dds.DX10ResourceFlags = D3D10ResourceMiscFlags.TextureCube;
-            //}
-        }
-        #endregion
 
         public Texture(PakItem item)
         {
@@ -113,6 +57,60 @@ namespace Adjutant.Saber3D.Halo1X
                 DataOffset = isBigEndian ? 4096 : 58;
             }
         }
+
+        public int Width { get; }
+        public int Height { get; }
+        public int MapCount { get; }
+        public TextureFormat Format { get; }
+        public int DataOffset { get; }
+
+        #region IBitmap
+
+        string IBitmap.SourceFile => item.Container.FileName;
+
+        int IBitmap.Id => item.Address;
+
+        string IBitmap.Name => item.Name;
+
+        string IBitmap.Class => item.ItemType.ToString();
+
+        int IBitmap.SubmapCount => 1;
+
+        CubemapLayout IBitmap.CubeLayout => CubemapLayout.NonCubemap;
+
+        DdsImage IBitmap.ToDds(int index)
+        {
+            if (index < 0 || index >= 1)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            byte[] data;
+            using (var reader = item.Container.CreateReader())
+            {
+                reader.Seek(item.Address + DataOffset, SeekOrigin.Begin);
+                data = reader.ReadBytes(TextureUtils.GetBitmapDataLength(this, false));
+            }
+
+            return TextureUtils.GetDds(this, data, false);
+        }
+        #endregion
+
+        #region IBitmapData
+
+        ByteOrder IBitmapData.ByteOrder => isBigEndian ? ByteOrder.BigEndian : ByteOrder.LittleEndian;
+        bool IBitmapData.UsesPadding => false;
+        MipmapLayout IBitmapData.CubeMipLayout => MipmapLayout.None;
+        MipmapLayout IBitmapData.ArrayMipLayout => MipmapLayout.None;
+
+        int IBitmapData.Depth => 1;
+        int IBitmapData.MipmapCount => 0;
+        int IBitmapData.FrameCount => MapCount;
+
+        object IBitmapData.BitmapFormat => Format;
+        object IBitmapData.BitmapType => "Texture2D";
+
+        bool IBitmapData.Swizzled => false;
+
+        #endregion
     }
 
     public enum TextureFormat

@@ -74,7 +74,6 @@ namespace Adjutant.Blam.Halo1
                 bitmapSource = cache.FileName;
 
             byte[] data;
-
             using (var fs = new FileStream(bitmapSource, FileMode.Open, FileAccess.Read))
             using (var reader = new DependencyReader(fs, ByteOrder.LittleEndian))
             {
@@ -82,14 +81,7 @@ namespace Adjutant.Blam.Halo1
                 data = reader.ReadBytes(submap.PixelsSize);
             }
 
-            //not sure if this works, haven't seen any Halo1 bitmaps with the swizzle flag
-            //if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
-            //{
-            //    var bpp = submap.BitmapFormat.Bpp();
-            //    data = TextureUtils.Swizzle(data, submap.Width, submap.Height, 1, bpp);
-            //}
-
-            return TextureUtils.GetDds(submap.Height, submap.Width, submap.BitmapFormat, submap.BitmapType == TextureType.CubeMap, data);
+            return TextureUtils.GetDds(submap, data, true);
         }
 
         #endregion
@@ -135,8 +127,15 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(48)]
-    public class BitmapDataBlock
+    public class BitmapDataBlock : IBitmapData
     {
+        private readonly ICacheFile cache;
+
+        public BitmapDataBlock(ICacheFile cache)
+        {
+            this.cache = cache;
+        }
+
         [Offset(0)]
         [FixedLength(4)]
         public string Class { get; set; }
@@ -166,13 +165,34 @@ namespace Adjutant.Blam.Halo1
         public short RegY { get; set; }
 
         [Offset(20)]
-        public int MipmapCount { get; set; }
+        public short MipmapCount { get; set; }
 
         [Offset(24)]
         public int PixelsOffset { get; set; }
 
         [Offset(28)]
         public int PixelsSize { get; set; }
+
+        #region IBitmapData
+
+        ByteOrder IBitmapData.ByteOrder => cache.ByteOrder;
+        bool IBitmapData.UsesPadding => false;
+        MipmapLayout IBitmapData.CubeMipLayout => MipmapLayout.Contiguous;
+        MipmapLayout IBitmapData.ArrayMipLayout => MipmapLayout.None;
+
+        int IBitmapData.Width => Width;
+        int IBitmapData.Height => Height;
+        int IBitmapData.Depth => BitmapType == TextureType.Texture3D ? Depth : 1;
+        int IBitmapData.MipmapCount => MipmapCount;
+        int IBitmapData.FrameCount => BitmapType == TextureType.CubeMap ? 6 : Depth;
+
+        object IBitmapData.BitmapFormat => BitmapFormat;
+        object IBitmapData.BitmapType => BitmapType == TextureType.CubeMap ? BitmapType : TextureType.Texture2D;
+
+        //haven't seen any Halo1 bitmaps with the swizzle flag
+        bool IBitmapData.Swizzled => false;
+
+        #endregion
     }
 
     [Flags]

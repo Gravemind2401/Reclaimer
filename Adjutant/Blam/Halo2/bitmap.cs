@@ -66,24 +66,25 @@ namespace Adjutant.Blam.Halo2
 
             var submap = Bitmaps[index];
             var data = submap.Lod0Pointer.ReadData(submap.Lod0Size);
+            var frameCount = ((IBitmapData)submap).FrameCount;
 
             //Halo2 has all the lod mips in the same resource data as the main lod.
             //this means that for cubemaps each face will be separated by mips, so we
             //need to make sure the main lods are contiguous and discard additional data.
             var mip0Size = submap.Width * submap.Height * submap.BitmapFormat.Bpp() / 8;
-            if (submap.FaceCount > 1)
+            if (frameCount > 1)
             {
-                var mipsSize = submap.Lod0Size / submap.FaceCount;
-                for (int i = 1; i < submap.FaceCount; i++)
+                var mipsSize = submap.Lod0Size / frameCount;
+                for (int i = 1; i < frameCount; i++)
                     Array.Copy(data, i * mipsSize, data, i * mip0Size, mip0Size);
             }
 
             //get rid of additional mipmap data
-            Array.Resize(ref data, mip0Size * submap.FaceCount);
+            Array.Resize(ref data, mip0Size * frameCount);
 
             int virtualWidth, virtualHeight;
             virtualWidth = submap.Width;
-            virtualHeight = submap.Height * submap.FaceCount;
+            virtualHeight = submap.Height * frameCount;
 
             if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
             {
@@ -148,8 +149,15 @@ namespace Adjutant.Blam.Halo2
     }
 
     [FixedSize(116)]
-    public class BitmapDataBlock
+    public class BitmapDataBlock : IBitmapData
     {
+        private readonly ICacheFile cache;
+
+        public BitmapDataBlock(ICacheFile cache)
+        {
+            this.cache = cache;
+        }
+
         [Offset(0)]
         [FixedLength(4)]
         public string Class { get; set; }
@@ -199,8 +207,25 @@ namespace Adjutant.Blam.Halo2
         [Offset(60)]
         public int Lod2Size { get; set; }
 
-        //in theory should always be the same as MipmapCount
-        public int FaceCount => BitmapType == TextureType.CubeMap ? 6 : 1;
+        #region IBitmapData
+
+        ByteOrder IBitmapData.ByteOrder => cache.ByteOrder;
+        bool IBitmapData.UsesPadding => false;
+        MipmapLayout IBitmapData.CubeMipLayout => MipmapLayout.Fragmented;
+        MipmapLayout IBitmapData.ArrayMipLayout => MipmapLayout.None;
+
+        int IBitmapData.Width => Width;
+        int IBitmapData.Height => Height;
+        int IBitmapData.Depth => BitmapType == TextureType.Texture3D ? Depth : 1;
+        int IBitmapData.MipmapCount => MipmapCount;
+        int IBitmapData.FrameCount => BitmapType == TextureType.CubeMap ? 6 : Depth;
+
+        object IBitmapData.BitmapFormat => BitmapFormat;
+        object IBitmapData.BitmapType => BitmapType;
+
+        bool IBitmapData.Swizzled => Flags.HasFlag(BitmapFlags.Swizzled);
+
+        #endregion
     }
 
     [Flags]

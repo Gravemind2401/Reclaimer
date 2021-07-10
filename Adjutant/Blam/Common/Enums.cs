@@ -246,4 +246,11 @@ namespace Adjutant.Blam.Common
         Dutch = 15,
         Norwegian = 16
     }
+
+    public enum MipmapLayout
+    {
+        None,
+        Fragmented,
+        Contiguous
+    }
 }

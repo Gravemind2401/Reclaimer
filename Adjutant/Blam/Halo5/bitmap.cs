@@ -1,4 +1,5 @@
-﻿using Adjutant.Utilities;
+﻿using Adjutant.Blam.Common;
+using Adjutant.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing.Dds;
@@ -80,7 +81,7 @@ namespace Adjutant.Blam.Halo5
     }
 
     [FixedSize(40)]
-    public class BitmapDataBlock
+    public class BitmapDataBlock : IBitmapData
     {
         [Offset(0)]
         public short Width { get; set; }
@@ -90,6 +91,26 @@ namespace Adjutant.Blam.Halo5
 
         [Offset(8)]
         public TextureFormat BitmapFormat { get; set; }
+
+        #region IBitmapData
+
+        ByteOrder IBitmapData.ByteOrder => ByteOrder.LittleEndian;
+        bool IBitmapData.UsesPadding => false;
+        MipmapLayout IBitmapData.CubeMipLayout => MipmapLayout.None;
+        MipmapLayout IBitmapData.ArrayMipLayout => MipmapLayout.None;
+
+        int IBitmapData.Width => Width;
+        int IBitmapData.Height => Height;
+        int IBitmapData.Depth => 1;
+        int IBitmapData.MipmapCount => 0;
+        int IBitmapData.FrameCount => 1;
+
+        object IBitmapData.BitmapFormat => TextureUtils.DXNSwap(BitmapFormat, true);
+        object IBitmapData.BitmapType => "Texture2D";
+
+        bool IBitmapData.Swizzled => false;
+
+        #endregion
     }
 
     public enum TextureFormat : short
