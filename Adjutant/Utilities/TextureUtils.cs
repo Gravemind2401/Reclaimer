@@ -316,74 +316,53 @@ namespace Adjutant.Utilities
                 : bitmapFormat;
         }
 
-        public static DdsImage GetDds(int height, int width, object format, bool isCubemap, byte[] data, bool isPC = false)
+        public static int GetBitmapDataLength(BitmapProperties props, bool includeMips)
         {
-            var knownFormat = format.ParseToEnum<KnownTextureFormat>();
-            if (knownFormat == KnownTextureFormat.Unknown)
-                throw new ArgumentException("Could not translate to a known texture format.", nameof(format));
-
-            DdsImage dds;
-            if (isPC && knownFormat == KnownTextureFormat.DXN)
-                dds = new DdsImage(height, width, XboxFormat.DXN_SNorm, data);
-            else if (dxgiLookup.ContainsKey(knownFormat))
-                dds = new DdsImage(height, width, dxgiLookup[knownFormat], data);
-            else if (xboxLookup.ContainsKey(knownFormat))
-                dds = new DdsImage(height, width, xboxLookup[knownFormat], data);
-            else throw Exceptions.BitmapFormatNotSupported(format.ToString());
-
-            if (isCubemap)
-                dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
-
-            return dds;
-        }
-
-        public static int GetBitmapDataLength(IBitmapData submap, bool includeMips)
-        {
-            if (submap.MipmapCount == 0)
+            if (props.MipmapCount == 0)
                 includeMips = false;
 
             int virtualWidth, virtualHeight;
-            if (!submap.UsesPadding)
+            if (!props.UsesPadding)
             {
-                virtualWidth = submap.Width;
-                virtualHeight = submap.Height;
+                virtualWidth = props.Width;
+                virtualHeight = props.Height;
             }
             else
-                GetVirtualSize(submap.BitmapFormat, submap.Width, submap.Height, out virtualWidth, out virtualHeight);
+                GetVirtualSize(props.BitmapFormat, props.Width, props.Height, out virtualWidth, out virtualHeight);
 
-            var bitmapFormat = submap.BitmapFormat.ParseToEnum<KnownTextureFormat>();
+            var bitmapFormat = props.BitmapFormat.ParseToEnum<KnownTextureFormat>();
             var frameSize = virtualWidth * virtualHeight * GetBpp(bitmapFormat) / 8;
 
             if (includeMips)
             {
                 var mipsSize = 0;
                 var minUnit = (int)Math.Pow(GetLinearBlockSize(bitmapFormat), 2) * GetBpp(bitmapFormat) / 8;
-                for (int i = 1; i <= submap.MipmapCount; i++)
+                for (int i = 1; i <= props.MipmapCount; i++)
                     mipsSize += Math.Max(minUnit, (int)(frameSize * Math.Pow(0.25, i)));
                 frameSize += mipsSize;
             }
 
-            return frameSize * Math.Max(1, submap.FrameCount);
+            return frameSize * Math.Max(1, props.FrameCount);
         }
 
-        public static DdsImage GetDds(IBitmapData submap, byte[] data, bool includeMips)
+        public static DdsImage GetDds(BitmapProperties props, byte[] data, bool includeMips)
         {
-            if (submap.MipmapCount == 0)
+            if (props.MipmapCount == 0)
                 includeMips = false;
 
             int virtualWidth, virtualHeight;
-            if (!submap.UsesPadding)
+            if (!props.UsesPadding)
             {
-                virtualWidth = submap.Width;
-                virtualHeight = submap.Height;
+                virtualWidth = props.Width;
+                virtualHeight = props.Height;
             }
             else
-                GetVirtualSize(submap.BitmapFormat, submap.Width, submap.Height, out virtualWidth, out virtualHeight);
+                GetVirtualSize(props.BitmapFormat, props.Width, props.Height, out virtualWidth, out virtualHeight);
 
-            var bitmapFormat = submap.BitmapFormat.ParseToEnum<KnownTextureFormat>();
-            var textureType = submap.BitmapType.ParseToEnum<KnownTextureType>();
+            var bitmapFormat = props.BitmapFormat.ParseToEnum<KnownTextureFormat>();
+            var textureType = props.BitmapType.ParseToEnum<KnownTextureType>();
 
-            if (submap.ByteOrder == ByteOrder.BigEndian)
+            if (props.ByteOrder == ByteOrder.BigEndian)
             {
                 var unitSize = GetLinearUnitSize(bitmapFormat);
                 if (unitSize > 1)
@@ -393,39 +372,40 @@ namespace Adjutant.Utilities
                 }
             }
 
-            var arrayHeight = virtualHeight * Math.Max(1, submap.FrameCount);
+            var arrayHeight = virtualHeight * Math.Max(1, props.FrameCount);
 
             if (includeMips)
             {
                 var mipsHeight = 0d;
-                for (int i = 1; i <= submap.MipmapCount; i++)
+                for (int i = 1; i <= props.MipmapCount; i++)
                     mipsHeight += arrayHeight * Math.Pow(0.25, i);
 
                 var minUnit = GetLinearBlockSize(bitmapFormat);
                 mipsHeight += (minUnit - (mipsHeight % minUnit)) % minUnit;
 
-                arrayHeight += (int)mipsHeight * Math.Max(1, submap.FrameCount);
+                arrayHeight += (int)mipsHeight * Math.Max(1, props.FrameCount);
             }
 
-            if (submap.Swizzled)
-                data = XTextureScramble(data, virtualWidth, arrayHeight, submap.BitmapFormat, false);
+            if (props.Swizzled)
+                data = XTextureScramble(data, virtualWidth, arrayHeight, props.BitmapFormat, false);
 
-            if (virtualWidth > submap.Width || virtualHeight > submap.Height)
-                data = ApplyCrop(data, submap.BitmapFormat, submap.FrameCount, virtualWidth, virtualHeight, submap.Width, submap.Height);
+            if (virtualWidth > props.Width || virtualHeight > props.Height)
+                data = ApplyCrop(data, props.BitmapFormat, props.FrameCount, virtualWidth, virtualHeight, props.Width, props.Height);
+
 
             DdsImage dds;
             if (dxgiLookup.ContainsKey(bitmapFormat))
-                dds = new DdsImage(submap.Height, submap.Width, dxgiLookup[bitmapFormat], data);
+                dds = new DdsImage(props.Height, props.Width, dxgiLookup[bitmapFormat], data);
             else if (xboxLookup.ContainsKey(bitmapFormat))
-                dds = new DdsImage(submap.Height, submap.Width, xboxLookup[bitmapFormat], data);
+                dds = new DdsImage(props.Height, props.Width, xboxLookup[bitmapFormat], data);
             else throw Exceptions.BitmapFormatNotSupported(bitmapFormat.ToString());
 
             if (textureType == KnownTextureType.CubeMap)
                 dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
             if (textureType == KnownTextureType.Array)
-                dds.ArraySize = submap.FrameCount;
+                dds.ArraySize = props.FrameCount;
             if (includeMips)
-                dds.MipmapCount = submap.MipmapCount + 1;
+                dds.MipmapCount = props.MipmapCount + 1;
 
             return dds;
         }

@@ -22,25 +22,6 @@ namespace Adjutant.Utilities
         DdsImage ToDds(int index);
     }
 
-    public interface IBitmapData
-    {
-        ByteOrder ByteOrder { get; }
-        bool UsesPadding { get; }
-        MipmapLayout CubeMipLayout { get; }
-        MipmapLayout ArrayMipLayout { get; }
-
-        int Width { get; }
-        int Height { get; }
-        int Depth { get; }
-        int FrameCount { get; }
-        int MipmapCount { get; }
-
-        object BitmapFormat { get; }
-        object BitmapType { get; }
-
-        bool Swizzled { get; }
-    }
-
     public interface IRenderGeometry
     {
         string SourceFile { get; }

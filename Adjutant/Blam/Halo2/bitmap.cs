@@ -66,21 +66,22 @@ namespace Adjutant.Blam.Halo2
 
             var submap = Bitmaps[index];
             var data = submap.Lod0Pointer.ReadData(submap.Lod0Size);
-            var frameCount = ((IBitmapData)submap).FrameCount;
+            var frameCount = submap.BitmapType == TextureType.CubeMap ? 6 : submap.Depth;
 
             //Halo2 has all the lod mips in the same resource data as the main lod.
             //this means that for cubemaps each face will be separated by mips, so we
             //need to make sure the main lods are contiguous and discard additional data.
+            //Once the dds library can decode individual mips/frames this can be changed.
             var mip0Size = submap.Width * submap.Height * submap.BitmapFormat.Bpp() / 8;
             if (frameCount > 1)
             {
                 var mipsSize = submap.Lod0Size / frameCount;
                 for (int i = 1; i < frameCount; i++)
                     Array.Copy(data, i * mipsSize, data, i * mip0Size, mip0Size);
-            }
 
-            //get rid of additional mipmap data
-            Array.Resize(ref data, mip0Size * frameCount);
+                //get rid of additional mipmap data
+                Array.Resize(ref data, mip0Size * frameCount);
+            }
 
             int virtualWidth, virtualHeight;
             virtualWidth = submap.Width;
@@ -103,7 +104,16 @@ namespace Adjutant.Blam.Halo2
                     Array.Copy(Properties.Resources.Halo2BumpPalette, indices[i] * 4, data, i * 4, 4);
             }
 
-            return TextureUtils.GetDds(submap.Height, submap.Width, format, submap.BitmapType == TextureType.CubeMap, data);
+            var props = new BitmapProperties(submap.Width, submap.Height, format, submap.BitmapType)
+            {
+                ByteOrder = cache.ByteOrder,
+                Depth = submap.BitmapType == TextureType.Texture3D ? submap.Depth : 1,
+                FrameCount = submap.BitmapType == TextureType.CubeMap ? 6 : submap.Depth,
+                MipmapCount = submap.BitmapType == TextureType.CubeMap ? 0 : submap.MipmapCount,
+                CubeMipLayout = MipmapLayout.Fragmented
+            };
+
+            return TextureUtils.GetDds(props, data, submap.BitmapType != TextureType.CubeMap);
         }
 
         #endregion
@@ -149,15 +159,8 @@ namespace Adjutant.Blam.Halo2
     }
 
     [FixedSize(116)]
-    public class BitmapDataBlock : IBitmapData
+    public class BitmapDataBlock
     {
-        private readonly ICacheFile cache;
-
-        public BitmapDataBlock(ICacheFile cache)
-        {
-            this.cache = cache;
-        }
-
         [Offset(0)]
         [FixedLength(4)]
         public string Class { get; set; }
@@ -206,26 +209,6 @@ namespace Adjutant.Blam.Halo2
 
         [Offset(60)]
         public int Lod2Size { get; set; }
-
-        #region IBitmapData
-
-        ByteOrder IBitmapData.ByteOrder => cache.ByteOrder;
-        bool IBitmapData.UsesPadding => false;
-        MipmapLayout IBitmapData.CubeMipLayout => MipmapLayout.Fragmented;
-        MipmapLayout IBitmapData.ArrayMipLayout => MipmapLayout.None;
-
-        int IBitmapData.Width => Width;
-        int IBitmapData.Height => Height;
-        int IBitmapData.Depth => BitmapType == TextureType.Texture3D ? Depth : 1;
-        int IBitmapData.MipmapCount => MipmapCount;
-        int IBitmapData.FrameCount => BitmapType == TextureType.CubeMap ? 6 : Depth;
-
-        object IBitmapData.BitmapFormat => BitmapFormat;
-        object IBitmapData.BitmapType => BitmapType;
-
-        bool IBitmapData.Swizzled => Flags.HasFlag(BitmapFlags.Swizzled);
-
-        #endregion
     }
 
     [Flags]

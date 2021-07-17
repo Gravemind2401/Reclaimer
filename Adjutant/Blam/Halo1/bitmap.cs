@@ -81,7 +81,17 @@ namespace Adjutant.Blam.Halo1
                 data = reader.ReadBytes(submap.PixelsSize);
             }
 
-            return TextureUtils.GetDds(submap, data, true);
+            var type = submap.BitmapType == TextureType.CubeMap ? submap.BitmapType : TextureType.Texture2D;
+            var props = new BitmapProperties(submap.Width, submap.Height, submap.BitmapFormat, type)
+            {
+                ByteOrder = cache.ByteOrder,
+                Depth = submap.BitmapType == TextureType.Texture3D ? submap.Depth : 1,
+                FrameCount = submap.BitmapType == TextureType.CubeMap ? 6 : submap.Depth,
+                MipmapCount = submap.MipmapCount,
+                CubeMipLayout = MipmapLayout.Contiguous
+            };
+
+            return TextureUtils.GetDds(props, data, submap.BitmapType != TextureType.CubeMap);
         }
 
         #endregion
@@ -127,15 +137,8 @@ namespace Adjutant.Blam.Halo1
     }
 
     [FixedSize(48)]
-    public class BitmapDataBlock : IBitmapData
+    public class BitmapDataBlock
     {
-        private readonly ICacheFile cache;
-
-        public BitmapDataBlock(ICacheFile cache)
-        {
-            this.cache = cache;
-        }
-
         [Offset(0)]
         [FixedLength(4)]
         public string Class { get; set; }
@@ -172,32 +175,12 @@ namespace Adjutant.Blam.Halo1
 
         [Offset(28)]
         public int PixelsSize { get; set; }
-
-        #region IBitmapData
-
-        ByteOrder IBitmapData.ByteOrder => cache.ByteOrder;
-        bool IBitmapData.UsesPadding => false;
-        MipmapLayout IBitmapData.CubeMipLayout => MipmapLayout.Contiguous;
-        MipmapLayout IBitmapData.ArrayMipLayout => MipmapLayout.None;
-
-        int IBitmapData.Width => Width;
-        int IBitmapData.Height => Height;
-        int IBitmapData.Depth => BitmapType == TextureType.Texture3D ? Depth : 1;
-        int IBitmapData.MipmapCount => MipmapCount;
-        int IBitmapData.FrameCount => BitmapType == TextureType.CubeMap ? 6 : Depth;
-
-        object IBitmapData.BitmapFormat => BitmapFormat;
-        object IBitmapData.BitmapType => BitmapType == TextureType.CubeMap ? BitmapType : TextureType.Texture2D;
-
-        //haven't seen any Halo1 bitmaps with the swizzle flag
-        bool IBitmapData.Swizzled => false;
-
-        #endregion
     }
 
     [Flags]
     public enum BitmapFlags : short
     {
+        //haven't seen any Halo1 bitmaps with the swizzle flag, likely only used on xbox
         Swizzled = 8
     }
 

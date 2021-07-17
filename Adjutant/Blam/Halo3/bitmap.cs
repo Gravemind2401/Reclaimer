@@ -60,9 +60,21 @@ namespace Adjutant.Blam.Halo3
                 ? InterleavedResources[submap.InterleavedIndex].ResourcePointer
                 : Resources[index].ResourcePointer;
 
+            var format = TextureUtils.DXNSwap(submap.BitmapFormat, cache.Metadata.Platform == CachePlatform.PC);
+            var props = new BitmapProperties(submap.Width, submap.Height, format, submap.BitmapType)
+            {
+                ByteOrder = cache.ByteOrder,
+                UsesPadding = !cache.Metadata.IsMcc,
+                Swizzled = submap.Flags.HasFlag(BitmapFlags.Swizzled),
+                Depth = submap.BitmapType == TextureType.Texture3D ? submap.Depth : 1,
+                FrameCount = submap.BitmapType == TextureType.CubeMap ? 6 : submap.Depth,
+                MipmapCount = submap.MipmapCount,
+                ArrayMipLayout = cache.Metadata.IsMcc ? MipmapLayout.Fragmented : MipmapLayout.None
+            };
+
             var useMips = cache.Metadata.IsMcc && submap.BitmapType == TextureType.Array;
-            var data = resource.ReadData(PageType.Auto, TextureUtils.GetBitmapDataLength(submap, useMips));
-            return TextureUtils.GetDds(submap, data, useMips);
+            var data = resource.ReadData(PageType.Auto, TextureUtils.GetBitmapDataLength(props, useMips));
+            return TextureUtils.GetDds(props, data, useMips);
         }
 
         #endregion
@@ -111,15 +123,8 @@ namespace Adjutant.Blam.Halo3
     [FixedSize(56, MinVersion = (int)CacheType.MccHalo3, MaxVersion = (int)CacheType.Halo3ODST)]
     [FixedSize(48, MinVersion = (int)CacheType.Halo3ODST, MaxVersion = (int)CacheType.MccHalo3ODST)]
     [FixedSize(56, MinVersion = (int)CacheType.MccHalo3ODST)]
-    public class BitmapDataBlock : IBitmapData
+    public class BitmapDataBlock
     {
-        private readonly ICacheFile cache;
-
-        public BitmapDataBlock(ICacheFile cache)
-        {
-            this.cache = cache;
-        }
-
         [Offset(0)]
         [FixedLength(4)]
         public string Class { get; set; }
@@ -168,26 +173,6 @@ namespace Adjutant.Blam.Halo3
 
         [Offset(28)]
         public byte PixelsSize { get; set; }
-
-        #region IBitmapData
-
-        ByteOrder IBitmapData.ByteOrder => cache.ByteOrder;
-        bool IBitmapData.UsesPadding => !cache.Metadata.IsMcc;
-        MipmapLayout IBitmapData.CubeMipLayout => MipmapLayout.None;
-        MipmapLayout IBitmapData.ArrayMipLayout => cache.Metadata.IsMcc ? MipmapLayout.Fragmented : MipmapLayout.None;
-
-        int IBitmapData.Width => Width;
-        int IBitmapData.Height => Height;
-        int IBitmapData.Depth => BitmapType == TextureType.Texture3D ? Depth : 1;
-        int IBitmapData.MipmapCount => MipmapCount;
-        int IBitmapData.FrameCount => BitmapType == TextureType.CubeMap ? 6 : Depth;
-
-        object IBitmapData.BitmapFormat => TextureUtils.DXNSwap(BitmapFormat, cache.Metadata.Platform == CachePlatform.PC);
-        object IBitmapData.BitmapType => BitmapType;
-
-        bool IBitmapData.Swizzled => Flags.HasFlag(BitmapFlags.Swizzled); 
-
-        #endregion
     }
 
     [FixedSize(8)]

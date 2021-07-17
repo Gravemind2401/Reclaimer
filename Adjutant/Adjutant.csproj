@@ -210,6 +210,7 @@
     <Compile Include="Spatial\UInt16N.cs" />
     <Compile Include="Utilities\AesHelper.cs" />
     <Compile Include="Blam\Common\ContentFactory.cs" />
+    <Compile Include="Utilities\BitmapProperties.cs" />
     <Compile Include="Utilities\DependencyReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

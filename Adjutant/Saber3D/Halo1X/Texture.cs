@@ -11,7 +11,7 @@ using Adjutant.Blam.Common;
 
 namespace Adjutant.Saber3D.Halo1X
 {
-    public class Texture : IBitmap, IBitmapData
+    public class Texture : IBitmap
     {
         private const int LittleHeader = 0x50494354; //TCIP
         private const int BigHeader = 0x54434950; //PICT
@@ -83,33 +83,21 @@ namespace Adjutant.Saber3D.Halo1X
             if (index < 0 || index >= 1)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
+            var props = new BitmapProperties(Width, Height, Format, "Texture2D")
+            {
+                ByteOrder = isBigEndian ? ByteOrder.BigEndian : ByteOrder.LittleEndian,
+                FrameCount = MapCount
+            };
+
             byte[] data;
             using (var reader = item.Container.CreateReader())
             {
                 reader.Seek(item.Address + DataOffset, SeekOrigin.Begin);
-                data = reader.ReadBytes(TextureUtils.GetBitmapDataLength(this, false));
+                data = reader.ReadBytes(TextureUtils.GetBitmapDataLength(props, false));
             }
 
-            return TextureUtils.GetDds(this, data, false);
+            return TextureUtils.GetDds(props, data, false);
         }
-        #endregion
-
-        #region IBitmapData
-
-        ByteOrder IBitmapData.ByteOrder => isBigEndian ? ByteOrder.BigEndian : ByteOrder.LittleEndian;
-        bool IBitmapData.UsesPadding => false;
-        MipmapLayout IBitmapData.CubeMipLayout => MipmapLayout.None;
-        MipmapLayout IBitmapData.ArrayMipLayout => MipmapLayout.None;
-
-        int IBitmapData.Depth => 1;
-        int IBitmapData.MipmapCount => 0;
-        int IBitmapData.FrameCount => MapCount;
-
-        object IBitmapData.BitmapFormat => Format;
-        object IBitmapData.BitmapType => "Texture2D";
-
-        bool IBitmapData.Swizzled => false;
-
         #endregion
     }
 

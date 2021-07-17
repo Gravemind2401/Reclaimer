@@ -60,6 +60,7 @@ namespace Adjutant.Blam.Halo5
 
             //todo: calculate expected frame size, use it to get data offset for multi-bitmaps
 
+            byte[] data;
             using (var reader = resource.CreateReader())
             {
                 if (!isChunk)
@@ -70,18 +71,21 @@ namespace Adjutant.Blam.Halo5
                         reader.Seek(Header.Header.HeaderSize, SeekOrigin.Begin);
                 }
 
-                var data = reader.ReadBytes((int)resource.TotalUncompressedSize);
+                data = reader.ReadBytes((int)resource.TotalUncompressedSize);
 
-                //todo: cubemap check
-                return TextureUtils.GetDds(submap.Height, submap.Width, submap.BitmapFormat, false, data, true);
             }
+
+            //todo: cubemap check
+            var format = TextureUtils.DXNSwap(submap.BitmapFormat, true);
+            var props = new BitmapProperties(submap.Width, submap.Height, format, "Texture2D");
+            return TextureUtils.GetDds(props, data, false);
         }
 
         #endregion
     }
 
     [FixedSize(40)]
-    public class BitmapDataBlock : IBitmapData
+    public class BitmapDataBlock
     {
         [Offset(0)]
         public short Width { get; set; }
@@ -91,26 +95,6 @@ namespace Adjutant.Blam.Halo5
 
         [Offset(8)]
         public TextureFormat BitmapFormat { get; set; }
-
-        #region IBitmapData
-
-        ByteOrder IBitmapData.ByteOrder => ByteOrder.LittleEndian;
-        bool IBitmapData.UsesPadding => false;
-        MipmapLayout IBitmapData.CubeMipLayout => MipmapLayout.None;
-        MipmapLayout IBitmapData.ArrayMipLayout => MipmapLayout.None;
-
-        int IBitmapData.Width => Width;
-        int IBitmapData.Height => Height;
-        int IBitmapData.Depth => 1;
-        int IBitmapData.MipmapCount => 0;
-        int IBitmapData.FrameCount => 1;
-
-        object IBitmapData.BitmapFormat => TextureUtils.DXNSwap(BitmapFormat, true);
-        object IBitmapData.BitmapType => "Texture2D";
-
-        bool IBitmapData.Swizzled => false;
-
-        #endregion
     }
 
     public enum TextureFormat : short
