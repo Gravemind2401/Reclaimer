@@ -49,5 +49,10 @@ namespace Adjutant.Utilities
         {
             return new NotSupportedException("Could not determine primary scenario tag.");
         }
+
+        internal static InvalidOperationException GeometryHasNoEdges()
+        {
+            return new InvalidOperationException("Geometry contains no edges.");
+        }
     }
 }

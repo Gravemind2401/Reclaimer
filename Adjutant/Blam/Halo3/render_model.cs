@@ -78,6 +78,9 @@ namespace Adjutant.Blam.Halo3
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
+            if (Sections.All(s => s.IndexBufferIndex < 0))
+                throw Exceptions.GeometryHasNoEdges();
+
             var model = new GeometryModel(Name) { CoordinateSystem = CoordinateSystem.Default };
 
             model.Nodes.AddRange(Nodes);
