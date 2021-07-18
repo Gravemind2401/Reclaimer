@@ -1,6 +1,5 @@
 ﻿using Adjutant.Geometry;
 using Adjutant.Spatial;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +16,10 @@ namespace Reclaimer.Models
         public List<IGeometryMarkerGroup> MarkerGroups { get; }
         public List<IGeometryRegion> Regions { get; }
 
-        public MaskedGeometryModel(IGeometryModel source, IList<IGeometryPermutation> permutations)
+        public MaskedGeometryModel(IGeometryModel source, IEnumerable<IGeometryPermutation> permutations)
         {
             this.source = source;
+            permutations = (permutations as IList<IGeometryPermutation>) ?? permutations.ToList();
 
             var regions = new List<GeometryRegion>();
 

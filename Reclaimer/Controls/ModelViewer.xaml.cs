@@ -29,8 +29,8 @@ namespace Reclaimer.Controls
     /// </summary>
     public partial class ModelViewer : IDisposable
     {
-        public delegate void ExportBitmaps(IRenderGeometry geometry);
-        public delegate void ExportSelectedBitmaps(IRenderGeometry geometry, IEnumerable<int> shaderIndexes);
+        private delegate void ExportBitmaps(IRenderGeometry geometry);
+        private delegate void ExportSelectedBitmaps(IRenderGeometry geometry, IEnumerable<int> shaderIndexes);
 
         private static readonly string[] AllLods = new[] { "Highest", "High", "Medium", "Low", "Lowest", "Potato" };
         private static readonly DiffuseMaterial ErrorMaterial;
@@ -77,9 +77,6 @@ namespace Reclaimer.Controls
         public Action<string> SetStatus { get; set; }
         public Action ClearStatus { get; set; }
 
-        private List<IGeometryRegion> InvalidRegions { get; }
-        private List<IGeometryPermutation> InvalidPermutations { get; }
-
         static ModelViewer()
         {
             (ErrorMaterial = new DiffuseMaterial(Brushes.Gold)).Freeze();
@@ -90,8 +87,6 @@ namespace Reclaimer.Controls
             InitializeComponent();
             TabModel = new TabModel(this, TabItemType.Document);
             TreeViewItems = new ObservableCollection<TreeItemModel>();
-            InvalidRegions = new List<IGeometryRegion>();
-            InvalidPermutations = new List<IGeometryPermutation>();
             DataContext = this;
 
             visual.Content = modelGroup;
@@ -113,9 +108,10 @@ namespace Reclaimer.Controls
             model = geometry.ReadGeometry(index);
             var meshes = GetMeshes(model).ToList();
 
+            //remove any invalid regions/permutations so the model hierarchy is 1:1 with the treeview
+            model = new MaskedGeometryModel(model, model.Regions.SelectMany(r => r.Permutations).Where(p => p.MeshCount > 0 && meshes.ElementAtOrDefault(p.MeshIndex) != null));
+
             TreeViewItems.Clear();
-            InvalidRegions.Clear();
-            InvalidPermutations.Clear();
             modelGroup.Children.Clear();
             foreach (var region in model.Regions)
             {
@@ -125,10 +121,7 @@ namespace Reclaimer.Controls
                 {
                     var mesh = meshes.ElementAtOrDefault(perm.MeshIndex);
                     if (mesh == null || perm.MeshCount <= 0)
-                    {
-                        InvalidPermutations.Add(perm);
                         continue;
-                    }
 
                     var permNode = new TreeItemModel { Header = perm.Name, IsChecked = true };
                     regNode.Items.Add(permNode);
@@ -187,14 +180,12 @@ namespace Reclaimer.Controls
                         }
                     }
 
-                    permNode.Tag = permGroup;
+                    permNode.Tag = new MeshTag(permGroup, perm);
                     modelGroup.Children.Add(permGroup);
                 }
 
                 if (regNode.HasItems)
                     TreeViewItems.Add(regNode);
-                else
-                    InvalidRegions.Add(region);
             }
 
             renderer.ScaleToContent(new[] { modelGroup });
@@ -341,22 +332,11 @@ namespace Reclaimer.Controls
             }
         }
 
-        private IList<IGeometryPermutation> GetSelectedPermutations()
+        private IEnumerable<IGeometryPermutation> GetSelectedPermutations()
         {
-            var selectedPerms = new List<IGeometryPermutation>();
-            foreach (var parent in TreeViewItems.Zip(model.Regions.Except(InvalidRegions), (a, b) => new { Node = a, Region = b }))
-            {
-                if (parent.Node.IsChecked == false)
-                    continue;
-
-                foreach (var child in parent.Node.Items.Zip(parent.Region.Permutations.Except(InvalidPermutations), (a, b) => new { Node = a, Permutation = b }))
-                {
-                    if (child.Node.IsChecked == true)
-                        selectedPerms.Add(child.Permutation);
-                }
-            }
-
-            return selectedPerms;
+            return TreeViewItems.Where(i => i.IsChecked != false)
+                .SelectMany(i => i.Items.Where(ii => ii.IsChecked == true))
+                .Select(i => (i.Tag as MeshTag).Permutation);
         }
 
         #region Treeview Events
@@ -366,7 +346,7 @@ namespace Reclaimer.Controls
             if (item != tv.SelectedItem)
                 return; //because this event bubbles to the parent node
 
-            var mesh = item.Tag as Model3DGroup;
+            var mesh = (item.Tag as MeshTag)?.Mesh;
             if (mesh != null)
                 renderer.LocateObject(mesh);
         }
@@ -384,7 +364,7 @@ namespace Reclaimer.Controls
 
         private void SetState(TreeItemModel item, bool updateRender)
         {
-            if (item.HasItems == false)
+            if (item.HasItems == false) //permutation
             {
                 var parent = item.Parent as TreeItemModel;
                 var children = parent.Items.Where(i => i.IsVisible);
@@ -397,18 +377,18 @@ namespace Reclaimer.Controls
 
                 if (updateRender)
                 {
-                    var group = item.Tag as Model3DGroup;
+                    var group = (item.Tag as MeshTag).Mesh;
                     if (item.IsChecked == true && !modelGroup.Children.Contains(group))
                         modelGroup.Children.Add(group);
                     else if (item.IsChecked == false)
                         modelGroup.Children.Remove(group);
                 }
             }
-            else
+            else //region
             {
                 foreach (var i in item.Items.Where(i => i.IsVisible))
                 {
-                    var group = i.Tag as Model3DGroup;
+                    var group = (i.Tag as MeshTag).Mesh;
                     i.IsChecked = item.IsChecked;
 
                     if (updateRender)
@@ -583,5 +563,17 @@ namespace Reclaimer.Controls
             GC.Collect();
         }
         #endregion
+
+        private class MeshTag
+        {
+            public Model3DGroup Mesh { get; }
+            public IGeometryPermutation Permutation { get; }
+
+            public MeshTag(Model3DGroup mesh, IGeometryPermutation permutation)
+            {
+                Mesh = mesh;
+                Permutation = permutation;
+            }
+        }
     }
 }
