@@ -89,7 +89,8 @@ namespace Adjutant.Blam.Common
         Halo1AE,
 
         [CacheMetadata(Gen1, PC, Anniversary | Mcc)]
-        [BuildString("01.03.43.0000")]
+        //[BuildString("01.00.01.0563")]
+        [BuildString("01.03.43.0000")] //update 1
         MccHalo1,
 
         [CacheMetadata(Gen2, Xbox, Beta)]
