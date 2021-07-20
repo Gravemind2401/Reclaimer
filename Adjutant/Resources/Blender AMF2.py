@@ -541,16 +541,14 @@ def main(context, import_filename, options):
         armature = arm_obj.data
         armature.name = model.name + " armature"
 
-        node_abs_transforms = options.get_node_transforms(model.nodes, 0.5) #why is this getting doubled somehow?
+        node_abs_transforms = options.get_node_transforms(model.nodes, 1)
         for i, node in enumerate(model.nodes):
             bone = armature.edit_bones.new(options.PREFIX_BONE + node.name)
             if node.parent_index >= 0:
                 bone.parent = model_nodes[node.parent_index]
-            bone.tail = Vector([1,0,0]) * IMPORT_SCALE
+            bone.tail = Vector([0,5,0]) * IMPORT_SCALE
 
-            #'bone.transform' only applies rotation
-            bone.transform(node_abs_transforms[i], scale = False)
-            bone.translate(node_abs_transforms[i].translation)
+            bone.matrix = node_abs_transforms[i]
             model_nodes.append(bone)
 
         bpy.ops.object.mode_set(mode = 'OBJECT')
@@ -570,7 +568,7 @@ def main(context, import_filename, options):
                     bm.to_mesh(mesh)
                     bm.free()
 
-                    context.scene.collection.objects.link(marker_obj)
+                    context.collection.objects.link(marker_obj)
                 else: # MODE_MARKERS == 'EMPTY'
                     #it says 'radius' but it comes out the same size as uvsphere's diameter
                     bpy.ops.object.empty_add(type = 'SPHERE', radius = IMPORT_SCALE)
@@ -662,7 +660,7 @@ def main(context, import_filename, options):
                         #this makes a deep copy rather than a linked copy
                         #mesh_obj.data = root_obj.data.copy()
                         mesh_obj.matrix_world = options.get_perm_transform(perm)
-                        context.scene.collection.objects.link(mesh_obj)
+                        context.collection.objects.link(mesh_obj)
 
                         if options.MODE_MESHES == 'JOIN':
                             break #skip the rest of the submeshes
@@ -752,7 +750,7 @@ def main(context, import_filename, options):
                         instance_lookup[instance_key] = mesh_obj
 
                     mesh.transform(Matrix.Scale(IMPORT_SCALE, 4))
-                    context.scene.collection.objects.link(mesh_obj)
+                    context.collection.objects.link(mesh_obj)
 
                     if options.MODE_MESHES == 'JOIN':
                         break #skip the rest of the submeshes
