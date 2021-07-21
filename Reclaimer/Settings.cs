@@ -69,7 +69,7 @@ namespace Reclaimer
                 return new Settings();
 
             var result = JsonConvert.DeserializeObject<Settings>(settingsContent, SerializerSettings);
-            return result;
+            return result ?? new Settings();
         }
 
         public void Save()
