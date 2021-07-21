@@ -108,9 +108,6 @@ namespace Reclaimer.Controls
             model = geometry.ReadGeometry(index);
             var meshes = GetMeshes(model).ToList();
 
-            //remove any invalid regions/permutations so the model hierarchy is 1:1 with the treeview
-            model = new MaskedGeometryModel(model, model.Regions.SelectMany(r => r.Permutations).Where(p => p.MeshCount > 0 && meshes.ElementAtOrDefault(p.MeshIndex) != null));
-
             TreeViewItems.Clear();
             modelGroup.Children.Clear();
             foreach (var region in model.Regions)
