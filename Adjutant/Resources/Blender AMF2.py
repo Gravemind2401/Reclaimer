@@ -2,7 +2,7 @@ bl_info = {
     "name": "AMF format",
     "description": "Import AMF files created by Reclaimer.",
     "author": "Gravemind2401",
-    "version": (2, 0, 5),
+    "version": (2, 0, 6),
     "blender": (2, 80, 0),
     "location": "File > Import > AMF",
     "category": "Import-Export",

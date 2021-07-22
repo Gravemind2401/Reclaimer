@@ -281,7 +281,7 @@ namespace Adjutant.Blam.Halo1
     [Flags]
     public enum ModelFlags : short
     {
-        UseLocalNodes = 1
+        UseLocalNodes = 2
     }
 
     [FixedSize(64)]
