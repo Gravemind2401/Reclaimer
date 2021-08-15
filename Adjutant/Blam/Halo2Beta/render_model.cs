@@ -167,14 +167,18 @@ namespace Adjutant.Blam.Halo2Beta
 
         private void ReadBlendData(EndianReader reader, SectionBlock section, GeometryMesh mesh, Halo2.Vertex vert, byte[] nodeMap)
         {
-            if (section.NodesPerVertex == 0 && section.GeometryClassification == Halo2.GeometryClassification.Rigid)
+            if (section.GeometryClassification == Halo2.GeometryClassification.Rigid)
             {
-                mesh.NodeIndex = 0;
+                mesh.VertexWeights = VertexWeights.Rigid;
+                if (section.NodesPerVertex == 0)
+                    mesh.NodeIndex = 0;
+                else if (section.NodesPerVertex == 1 && nodeMap.Length > 0)
+                    mesh.NodeIndex = nodeMap[0];
+                else
+                    throw new NotSupportedException();
+
                 return;
             }
-
-            if (section.GeometryClassification == Halo2.GeometryClassification.Rigid)
-                mesh.VertexWeights = VertexWeights.Rigid;
             else if (section.GeometryClassification == Halo2.GeometryClassification.RigidBoned)
             {
                 mesh.VertexWeights = VertexWeights.Skinned;
