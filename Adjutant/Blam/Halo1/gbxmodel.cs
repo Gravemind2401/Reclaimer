@@ -197,17 +197,18 @@ namespace Adjutant.Blam.Halo1
 
                 foreach (var submesh in section.Submeshes)
                 {
+                    reader.Seek(tagIndex.VertexDataOffset + tagIndex.IndexDataOffset + submesh.IndexOffset, SeekOrigin.Begin);
+                    var subIndices = reader.ReadEnumerable<ushort>(submesh.IndexCount + 2).Select(i => i + vertices.Count).Unstrip().Reverse().ToList();
+
                     var gSubmesh = new GeometrySubmesh
                     {
                         MaterialIndex = submesh.ShaderIndex,
                         IndexStart = indices.Count,
-                        IndexLength = submesh.IndexCount + 2
+                        IndexLength = subIndices.Count
                     };
 
                     submeshes.Add(gSubmesh);
-
-                    reader.Seek(tagIndex.VertexDataOffset + tagIndex.IndexDataOffset + submesh.IndexOffset, SeekOrigin.Begin);
-                    indices.AddRange(reader.ReadEnumerable<ushort>(gSubmesh.IndexLength).Select(i => i + vertices.Count));
+                    indices.AddRange(subIndices);
 
                     reader.Seek(tagIndex.VertexDataOffset + submesh.VertexOffset, SeekOrigin.Begin);
                     var vertsTemp = reader.ReadEnumerable<UncompressedVertex>(submesh.VertexCount).ToList();
@@ -243,7 +244,7 @@ namespace Adjutant.Blam.Halo1
 
                 yield return new GeometryMesh
                 {
-                    IndexFormat = IndexFormat.TriangleStrip,
+                    IndexFormat = IndexFormat.TriangleList,
                     VertexWeights = VertexWeights.Skinned,
                     Indicies = indices.ToArray(),
                     Vertices = vertices.ToArray(),
