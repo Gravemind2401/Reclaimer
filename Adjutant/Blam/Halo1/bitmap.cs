@@ -70,7 +70,7 @@ namespace Adjutant.Blam.Halo1
 
             //Xbox maps and player-made CE maps use internal bitmap resources
             if (cache.CacheType == CacheType.Halo1Xbox
-                || cache.CacheType == CacheType.Halo1CE && item.MetaPointer.Address > 0)
+                || (cache.CacheType == CacheType.Halo1CE && item.MetaPointer.Address > 0 && !submap.Flags.HasFlag(BitmapFlags.External)))
                 bitmapSource = cache.FileName;
 
             byte[] data;
@@ -181,7 +181,8 @@ namespace Adjutant.Blam.Halo1
     public enum BitmapFlags : short
     {
         //haven't seen any Halo1 bitmaps with the swizzle flag, likely only used on xbox
-        Swizzled = 8
+        Swizzled = 8,
+        External = 256
     }
 
     public enum TextureType : short
