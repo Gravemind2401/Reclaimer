@@ -5,12 +5,15 @@ using System.IO;
 using System.IO.Endian;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Adjutant.Blam.Common
 {
     internal class CacheArgs
     {
+        private const string BuildStringRegex = @"[A-Za-z0-9\. _:]{10,32}";
+        
         //when read using little endian
         internal const int LittleHeader = 0x68656164;
         internal const int BigHeader = 0x64616568;
@@ -62,13 +65,28 @@ namespace Adjutant.Blam.Common
                     else if (x == -1) buildAddress = 300; //Halo2 Vista
                     else throw Exceptions.NotAValidMapFile(fileName);
                 }
+                //else if (version == 10) //MccHalo2
+                //{
+                //
+                //}
                 else if (version == 13)
                 {
                     reader.Seek(64, SeekOrigin.Begin);
-                    buildAddress = reader.ReadInt32() == 0
-                        ? 288 //Gen3 MCC
-                        : 64; //MccHalo1
+                    if (reader.PeekInt32() == 0) //test for padding
+                        buildAddress = 288; //Gen3 MCC (pre August 2021)
+                    else
+                    {
+                        var test = reader.ReadNullTerminatedString(32);
+                        if (Regex.IsMatch(test, BuildStringRegex))
+                            buildAddress = 64; //MccHalo1
+                        else
+                            buildAddress = 160; //Gen3 MCC
+                    }
                 }
+                //else if (version == 343) //MCC H1 Custom
+                //{
+                //
+                //}
                 else if (reader.ByteOrder == ByteOrder.LittleEndian)
                     buildAddress = 288; //Gen3 MCC
                 else buildAddress = 284; //Gen3 x360

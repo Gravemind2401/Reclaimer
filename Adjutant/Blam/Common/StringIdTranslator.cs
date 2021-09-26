@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Adjutant.Blam.Common.Gen3;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +24,7 @@ namespace Adjutant.Blam.Common
             return doc.DocumentElement.ChildNodes.OfType<XmlNode>();
         }
 
+        #region Xml-Based
         public StringIdTranslator(string xml)
             : this(GetNodes(xml).First())
         {
@@ -52,6 +53,50 @@ namespace Adjutant.Blam.Common
                 namespaces.Add(id, new Namespace(id, min, start));
             }
         }
+        #endregion
+
+        #region Header-Based
+        public StringIdTranslator(IMccCacheFile cache, string xml)
+            : this(cache, GetNodes(xml).First())
+        {
+
+        }
+
+        public StringIdTranslator(IMccCacheFile cache, string xml, string collectionId)
+            : this(cache, GetNodes(xml).First(n => n.Attributes["id"].Value == collectionId))
+        {
+
+        }
+
+        private StringIdTranslator(IMccCacheFile cache, XmlNode node)
+        {
+            var header = cache.Header as IMccGen3Header;
+            if (header == null)
+                throw new ArgumentException();
+
+            indexBits = int.Parse(node.Attributes["indexBits"].Value);
+            namespaceBits = int.Parse(node.Attributes["namespaceBits"].Value);
+            lengthBits = int.Parse(node.Attributes["lengthBits"].Value);
+
+            namespaces = new Dictionary<int, Namespace>();
+
+            if (header.StringNamespaceCount <= 1)
+                return;
+
+            var reader = cache.CreateReader(cache.DefaultAddressTranslator);
+            reader.Seek(header.StringNamespaceTablePointer.Address, System.IO.SeekOrigin.Begin);
+            var nsList = reader.ReadEnumerable<int>(header.StringNamespaceCount).ToList();
+
+            //namespace 0 always starts at the end of the rest
+            int mask = (1 << indexBits) - 1, start = nsList[0] & mask;
+            for (int i = 1; i < header.StringNamespaceCount; i++)
+            {
+                namespaces.Add(i, new Namespace(i, 0, start));
+                start += nsList[i] & mask;
+            }
+            namespaces.Add(0, new Namespace(0, nsList[0] & mask, start));
+        }
+        #endregion
 
         public int GetStringIndex(int stringId)
         {

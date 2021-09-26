@@ -145,6 +145,10 @@ namespace Adjutant.Blam.Common
         [BuildString("Jun  9 2021 09:25:41", "U1")] //update 5
         MccHalo3U4,
 
+        [CacheMetadata(CacheGeneration.Gen3, PC, Mcc)]
+        [BuildString("Aug 25 2021 03:43:53", "U1", MccFlight)] //flight 6
+        MccHalo3U6,
+
         [CacheMetadata(CacheGeneration.Gen3, Xbox360)]
         [BuildString("13895.09.04.27.2201.atlas_relea", "odst")]
         Halo3ODST,
@@ -157,6 +161,10 @@ namespace Adjutant.Blam.Common
         [BuildString("Sep 29 2020 10:59:04", "ODST U0")] //update 1
         [BuildString("Dec  4 2020 18:24:06", "ODST U0")] //update 2
         MccHalo3ODST,
+
+        [CacheMetadata(CacheGeneration.Gen3, PC, Mcc)]
+        [BuildString("Aug 25 2021 03:35:05", "ODST U0", MccFlight)] //flight 3
+        MccHalo3ODSTU3,
 
         [CacheMetadata(CacheGeneration.Gen3, Xbox360, Beta)]
         [BuildString("09449.10.03.25.1545.omaha_beta", "beta", PreBeta)]

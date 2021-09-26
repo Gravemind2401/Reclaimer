@@ -155,6 +155,7 @@
     <Compile Include="Blam\Halo5\TagReference.cs" />
     <Compile Include="Blam\HaloReach\bitmap.cs" />
     <Compile Include="Blam\HaloReach\CacheFile.cs" />
+    <Compile Include="Blam\MccHalo3\CacheFileU6.cs" />
     <Compile Include="Blam\MccHalo4\CacheFile.cs" />
     <Compile Include="Blam\MccHalo4\PointerExpander.cs" />
     <Compile Include="Blam\MccHalo2X\CacheFile.cs" />
