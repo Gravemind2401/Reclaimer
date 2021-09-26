@@ -129,6 +129,9 @@ namespace Adjutant.Blam.Common
                 case CacheType.MccHaloReachU3:
                     return new MccHaloReach.CacheFile(args);
 
+                case CacheType.MccHaloReachU8:
+                    return new MccHaloReach.CacheFileU8(args);
+
                 case CacheType.Halo4Beta:
                 case CacheType.Halo4Retail:
                     return new Halo4.CacheFile(args);

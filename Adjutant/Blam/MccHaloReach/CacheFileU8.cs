@@ -10,9 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.MccHalo3
+namespace Adjutant.Blam.MccHaloReach
 {
-    public class CacheFileU6 : CacheFile
+    public class CacheFileU8 : CacheFile
     {
         public override CacheHeader Header { get; }
         public override TagIndex TagIndex { get; }
@@ -24,9 +24,9 @@ namespace Adjutant.Blam.MccHalo3
 
         public override PointerExpander PointerExpander { get; }
 
-        public CacheFileU6(string fileName) : this(CacheArgs.FromFile(fileName)) { }
+        public CacheFileU8(string fileName) : this(CacheArgs.FromFile(fileName)) { }
 
-        internal CacheFileU6(CacheArgs args)
+        internal CacheFileU8(CacheArgs args)
             : base(args.FileName, args.ByteOrder, args.BuildString, args.CacheType, args.Metadata)
         {
             HeaderTranslator = new SectionAddressTranslator(this, 0);
@@ -34,7 +34,7 @@ namespace Adjutant.Blam.MccHalo3
             PointerExpander = new PointerExpander(this);
 
             using (var reader = CreateReader(HeaderTranslator))
-                Header = reader.ReadObject<CacheHeaderU6>((int)CacheType);
+                Header = reader.ReadObject<CacheHeaderU8>((int)CacheType);
 
             //change IndexPointer to use MetadataTranslator instead of HeaderTranslator
             Header.IndexPointer = new Pointer64(Header.IndexPointer.Value, MetadataTranslator);
@@ -43,33 +43,25 @@ namespace Adjutant.Blam.MccHalo3
             {
                 reader.Seek(Header.IndexPointer.Address, SeekOrigin.Begin);
                 TagIndex = reader.ReadObject(new TagIndex(this));
-                StringIndex = new StringIndexU6(this);
+                StringIndex = new StringIndexU8(this);
 
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
 
-                switch (CacheType)
-                {
-                    case CacheType.MccHalo3U6:
-                        LocaleIndex = new LocaleIndex(this, 464, 80, 12);
-                        break;
-                    case CacheType.MccHalo3ODSTU3:
-                        LocaleIndex = new LocaleIndex(this, 520, 80, 12);
-                        break;
-                }
+                LocaleIndex = new LocaleIndex(this, 664, 80, 12);
             }
 
             Task.Factory.StartNew(() =>
             {
-                TagIndex.GetGlobalTag("play")?.ReadMetadata<Halo3.cache_file_resource_layout_table>();
-                TagIndex.GetGlobalTag("zone")?.ReadMetadata<Halo3.cache_file_resource_gestalt>();
-                TagIndex.GetGlobalTag("scnr")?.ReadMetadata<Halo3.scenario>();
+                TagIndex.GetGlobalTag("play")?.ReadMetadata<HaloReach.cache_file_resource_layout_table>();
+                TagIndex.GetGlobalTag("zone")?.ReadMetadata<HaloReach.cache_file_resource_gestalt>();
+                TagIndex.GetGlobalTag("scnr")?.ReadMetadata<HaloReach.scenario>();
             });
         }
     }
 
-    [FixedSize(16384)]
-    public class CacheHeaderU6 : CacheHeader, IMccGen3Header
+    [FixedSize(40960)]
+    public class CacheHeaderU8 : CacheHeader
     {
         [Offset(8)]
         [StoreType(typeof(int))]
@@ -106,10 +98,10 @@ namespace Adjutant.Blam.MccHalo3
         public override Pointer StringTableIndexPointer { get; set; }
 
         [Offset(64)]
-        public int StringNamespaceCount { get; set; }
+        public override int StringNamespaceCount { get; set; }
 
         [Offset(68)]
-        public Pointer StringNamespaceTablePointer { get; set; }
+        public override Pointer StringNamespaceTablePointer { get; set; }
 
         [Offset(160)]
         [NullTerminated(Length = 32)]
@@ -135,14 +127,14 @@ namespace Adjutant.Blam.MccHalo3
         public override SectionTable SectionTable { get; set; }
     }
 
-    public class StringIndexU6 : StringIndex
+    public class StringIndexU8 : StringIndex
     {
         internal override StringIdTranslator Translator { get; }
 
-        public StringIndexU6(CacheFileU6 cache)
+        public StringIndexU8(CacheFileU8 cache)
             : base(cache)
         {
-            Translator = new StringIdTranslator(cache, Resources.MccHalo3Strings, cache.Metadata.StringIds);
+            Translator = new StringIdTranslator(cache, Resources.MccHaloReachStrings, cache.Metadata.StringIds);
         }
     }
 }

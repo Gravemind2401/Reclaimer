@@ -191,6 +191,10 @@ namespace Adjutant.Blam.Common
         [BuildString("May 26 2021 10:02:45", "U6")] //update 7
         MccHaloReachU3,
 
+        [CacheMetadata(CacheGeneration.Gen3, PC, Mcc)]
+        [BuildString("Aug 11 2021 15:50:30", "U6", MccFlight)] //flight 4
+        MccHaloReachU8,
+
         [CacheMetadata(Gen4, Xbox360, Beta)]
         [BuildString("14064.12.05.05.1011.beta", "beta")]
         Halo4Beta,

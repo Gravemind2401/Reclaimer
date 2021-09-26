@@ -21,19 +21,32 @@ namespace Adjutant.Blam.MccHaloReach
         public CacheType CacheType { get; }
         public CacheMetadata Metadata { get; }
 
-        public CacheHeader Header { get; }
-        public TagIndex TagIndex { get; }
-        public StringIndex StringIndex { get; }
-        public LocaleIndex LocaleIndex { get; }
+        public virtual CacheHeader Header { get; }
+        public virtual TagIndex TagIndex { get; }
+        public virtual StringIndex StringIndex { get; }
+        public virtual LocaleIndex LocaleIndex { get; }
 
-        public SectionAddressTranslator HeaderTranslator { get; }
-        public TagAddressTranslator MetadataTranslator { get; }
+        public virtual SectionAddressTranslator HeaderTranslator { get; }
+        public virtual TagAddressTranslator MetadataTranslator { get; }
 
-        public PointerExpander PointerExpander { get; }
+        public virtual PointerExpander PointerExpander { get; }
+
+        protected CacheFile(string fileName, ByteOrder byteOrder, string buildString, CacheType cacheType, CacheMetadata metadata)
+        {
+            if (!File.Exists(fileName))
+                throw Exceptions.FileNotFound(fileName);
+
+            FileName = fileName;
+            ByteOrder = byteOrder;
+            BuildString = buildString;
+            CacheType = cacheType;
+            Metadata = metadata;
+        }
 
         public CacheFile(string fileName) : this(CacheArgs.FromFile(fileName)) { }
 
         internal CacheFile(CacheArgs args)
+            : this(args.FileName, args.ByteOrder, args.BuildString, args.CacheType, args.Metadata)
         {
             if (!File.Exists(args.FileName))
                 throw Exceptions.FileNotFound(args.FileName);
@@ -102,81 +115,81 @@ namespace Adjutant.Blam.MccHaloReach
     public class CacheHeader : IMccGen3Header
     {
         [Offset(8)]
-        public long FileSize { get; set; }
+        public virtual long FileSize { get; set; }
 
         [Offset(16)]
-        public Pointer64 IndexPointer { get; set; }
+        public virtual Pointer64 IndexPointer { get; set; }
 
         [Offset(24)]
-        public int TagDataAddress { get; set; }
+        public virtual int TagDataAddress { get; set; }
 
         [Offset(28)]
-        public int VirtualSize { get; set; }
+        public virtual int VirtualSize { get; set; }
 
         [Offset(288)]
         [NullTerminated(Length = 32)]
-        public string BuildString { get; set; }
+        public virtual string BuildString { get; set; }
 
         [Offset(348, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(336, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public int StringCount { get; set; }
+        public virtual int StringCount { get; set; }
 
         [Offset(352, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(340, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public int StringTableSize { get; set; }
+        public virtual int StringTableSize { get; set; }
 
         [Offset(356, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(344, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public Pointer StringTableIndexPointer { get; set; }
+        public virtual Pointer StringTableIndexPointer { get; set; }
 
         [Offset(360, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(348, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public Pointer StringTablePointer { get; set; }
+        public virtual Pointer StringTablePointer { get; set; }
 
         [MinVersion((int)CacheType.MccHaloReachU3)]
         [Offset(352, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public int StringNamespaceCount { get; set; }
+        public virtual int StringNamespaceCount { get; set; }
 
         [MinVersion((int)CacheType.MccHaloReachU3)]
         [Offset(356, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public Pointer StringNamespaceTablePointer { get; set; }
+        public virtual Pointer StringNamespaceTablePointer { get; set; }
 
         [Offset(444, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(440, MinVersion = (int)CacheType.MccHaloReachU3)]
         [NullTerminated(Length = 256)]
-        public string ScenarioName { get; set; }
+        public virtual string ScenarioName { get; set; }
 
         [Offset(704, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(700, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public int FileCount { get; set; }
+        public virtual int FileCount { get; set; }
 
         [Offset(708, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(704, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public Pointer FileTablePointer { get; set; }
+        public virtual Pointer FileTablePointer { get; set; }
 
         [Offset(712, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(708, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public int FileTableSize { get; set; }
+        public virtual int FileTableSize { get; set; }
 
         [Offset(716, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(712, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public Pointer FileTableIndexPointer { get; set; }
+        public virtual Pointer FileTableIndexPointer { get; set; }
 
         [Offset(760, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(752, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public long VirtualBaseAddress { get; set; }
+        public virtual long VirtualBaseAddress { get; set; }
 
         [Offset(776, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(768, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public PartitionTable64 PartitionTable { get; set; }
+        public virtual PartitionTable64 PartitionTable { get; set; }
 
         [Offset(1204, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(1196, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public SectionOffsetTable SectionOffsetTable { get; set; }
+        public virtual SectionOffsetTable SectionOffsetTable { get; set; }
 
         [Offset(1220, MaxVersion = (int)CacheType.MccHaloReachU3)]
         [Offset(1212, MinVersion = (int)CacheType.MccHaloReachU3)]
-        public SectionTable SectionTable { get; set; }
+        public virtual SectionTable SectionTable { get; set; }
 
         #region IGen3Header
 
@@ -282,8 +295,9 @@ namespace Adjutant.Blam.MccHaloReach
     public class StringIndex : IStringIndex
     {
         private readonly CacheFile cache;
-        private readonly StringIdTranslator translator;
         private readonly string[] items;
+
+        internal virtual StringIdTranslator Translator { get; }
 
         public StringIndex(CacheFile cache)
         {
@@ -292,7 +306,7 @@ namespace Adjutant.Blam.MccHaloReach
 
             this.cache = cache;
             items = new string[cache.Header.StringCount];
-            translator = new StringIdTranslator(Resources.MccHaloReachStrings, cache.Metadata.StringIds);
+            Translator = new StringIdTranslator(Resources.MccHaloReachStrings, cache.Metadata.StringIds);
         }
 
         internal void ReadItems()
@@ -319,9 +333,9 @@ namespace Adjutant.Blam.MccHaloReach
 
         public int StringCount => items.Length;
 
-        public string this[int id] => items[translator.GetStringIndex(id)];
+        public string this[int id] => items[Translator.GetStringIndex(id)];
 
-        public int GetStringId(string value) => translator.GetStringId(Array.IndexOf(items, value));
+        public int GetStringId(string value) => Translator.GetStringId(Array.IndexOf(items, value));
 
         public IEnumerator<string> GetEnumerator() => items.AsEnumerable().GetEnumerator();
 
