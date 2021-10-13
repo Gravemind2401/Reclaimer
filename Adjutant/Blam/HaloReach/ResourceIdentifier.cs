@@ -95,6 +95,7 @@ namespace Adjutant.Blam.HaloReach
                         reader.Seek(1208, SeekOrigin.Begin);
                         break;
                     case CacheType.MccHaloReachU3:
+                    case CacheType.MccHaloReachU8:
                         reader.Seek(1200, SeekOrigin.Begin);
                         break;
                     default:
