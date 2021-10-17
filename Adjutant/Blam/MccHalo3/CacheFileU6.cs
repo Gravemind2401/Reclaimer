@@ -50,9 +50,11 @@ namespace Adjutant.Blam.MccHalo3
 
                 switch (CacheType)
                 {
+                    case CacheType.MccHalo3F6:
                     case CacheType.MccHalo3U6:
                         LocaleIndex = new LocaleIndex(this, 464, 80, 12);
                         break;
+                    case CacheType.MccHalo3ODSTF3:
                     case CacheType.MccHalo3ODSTU3:
                         LocaleIndex = new LocaleIndex(this, 520, 80, 12);
                         break;
@@ -128,10 +130,16 @@ namespace Adjutant.Blam.MccHalo3
         [Offset(768)]
         public override PartitionTable64 PartitionTable { get; set; }
 
-        [Offset(1196)]
+        [Offset(1196, MaxVersion = (int)CacheType.MccHalo3U6)]
+        [Offset(1228, MinVersion = (int)CacheType.MccHalo3U6, MaxVersion = (int)CacheType.MccHalo3ODSTF3)]
+        [Offset(1196, MinVersion = (int)CacheType.MccHalo3ODSTF3, MaxVersion = (int)CacheType.MccHalo3ODSTU3)]
+        [Offset(1228, MinVersion = (int)CacheType.MccHalo3ODSTU3)]
         public override SectionOffsetTable SectionOffsetTable { get; set; }
 
-        [Offset(1212)]
+        [Offset(1212, MaxVersion = (int)CacheType.MccHalo3U6)]
+        [Offset(1244, MinVersion = (int)CacheType.MccHalo3U6, MaxVersion = (int)CacheType.MccHalo3ODSTF3)]
+        [Offset(1212, MinVersion = (int)CacheType.MccHalo3ODSTF3, MaxVersion = (int)CacheType.MccHalo3ODSTU3)]
+        [Offset(1244, MinVersion = (int)CacheType.MccHalo3ODSTU3)]
         public override SectionTable SectionTable { get; set; }
     }
 

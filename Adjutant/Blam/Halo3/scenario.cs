@@ -16,8 +16,10 @@ namespace Adjutant.Blam.Halo3
 
         [Offset(1736, MaxVersion = (int)CacheType.Halo3Beta)]
         [Offset(1720, MinVersion = (int)CacheType.Halo3Beta, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(1776, MinVersion = (int)CacheType.Halo3Retail, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(1852, MinVersion = (int)CacheType.Halo3ODST)]
+        [Offset(1776, MinVersion = (int)CacheType.Halo3Retail, MaxVersion = (int)CacheType.MccHalo3F6)]
+        [Offset(1764, MinVersion = (int)CacheType.MccHalo3F6, MaxVersion = (int)CacheType.Halo3ODST)]
+        [Offset(1852, MinVersion = (int)CacheType.Halo3ODST, MaxVersion = (int)CacheType.MccHalo3ODSTF3)]
+        [Offset(1840, MinVersion = (int)CacheType.MccHalo3ODSTF3)]
         public TagReference ScenarioLightmapReference { get; set; }
     }
 

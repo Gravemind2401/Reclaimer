@@ -145,8 +145,13 @@ namespace Adjutant.Blam.Common
         [BuildString("Jun  9 2021 09:25:41", "U1")] //update 5
         MccHalo3U4,
 
+        [CacheMetadata(CacheGeneration.Gen3, PC, Mcc | MccFlight)]
+        [BuildString("Aug 25 2021 03:43:53", "U1")] //flight 6
+        MccHalo3F6,
+
         [CacheMetadata(CacheGeneration.Gen3, PC, Mcc)]
-        [BuildString("Aug 25 2021 03:43:53", "U1", MccFlight)] //flight 6
+        [BuildString("Sep 29 2021 09:17:56", "U1")] //update 6
+        [BuildString("Oct 11 2021 04:58:42", "U1")] //U6 custom maps
         MccHalo3U6,
 
         [CacheMetadata(CacheGeneration.Gen3, Xbox360)]
@@ -162,8 +167,12 @@ namespace Adjutant.Blam.Common
         [BuildString("Dec  4 2020 18:24:06", "ODST U0")] //update 2
         MccHalo3ODST,
 
+        [CacheMetadata(CacheGeneration.Gen3, PC, Mcc | MccFlight)]
+        [BuildString("Aug 25 2021 03:35:05", "ODST U0")] //flight 3
+        MccHalo3ODSTF3,
+
         [CacheMetadata(CacheGeneration.Gen3, PC, Mcc)]
-        [BuildString("Aug 25 2021 03:35:05", "ODST U0", MccFlight)] //flight 3
+        [BuildString("Sep 18 2021 21:15:55", "ODST U0")] //update 3
         MccHalo3ODSTU3,
 
         [CacheMetadata(CacheGeneration.Gen3, Xbox360, Beta)]
@@ -193,6 +202,7 @@ namespace Adjutant.Blam.Common
 
         [CacheMetadata(CacheGeneration.Gen3, PC, Mcc)]
         [BuildString("Aug 11 2021 15:50:30", "U6", MccFlight)] //flight 4
+        [BuildString("Sep 13 2021 09:49:52", "U6")] //update 8
         MccHaloReachU8,
 
         [CacheMetadata(Gen4, Xbox360, Beta)]
@@ -224,6 +234,7 @@ namespace Adjutant.Blam.Common
         [BuildString("Mar 20 2021 04:23:02", "U1", Deflate)] //update 1
         [BuildString("May 16 2021 10:41:44", "U1", Deflate, MccFlight)] //flight 2
         [BuildString("May 27 2021 15:23:34", "U1", Deflate)] //update 2
+        [BuildString("Sep 10 2021 06:54:23", "U3", Deflate)] //update 3
         MccHalo4,
 
         [CacheMetadata(Gen4, PC, UnknownDeflate, Mcc)]
@@ -234,6 +245,7 @@ namespace Adjutant.Blam.Common
         [BuildString("Jul 25 2020 22:24:58", "U2")] //update 3
         [BuildString("Sep 30 2020 20:30:41", "U2")] //update 4
         [BuildString("Dec 25 2020 16:05:40", "U2", Deflate)] //update 5
+        [BuildString("Sep 23 2021 02:46:19", "U6", Deflate)] //update 6
         MccHalo2X,
     }
 

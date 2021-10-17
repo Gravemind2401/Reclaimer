@@ -117,7 +117,9 @@ namespace Adjutant.Blam.Common
                 case CacheType.MccHalo3ODST:
                     return new MccHalo3.CacheFile(args);
 
+                case CacheType.MccHalo3F6:
                 case CacheType.MccHalo3U6:
+                case CacheType.MccHalo3ODSTF3:
                 case CacheType.MccHalo3ODSTU3:
                     return new MccHalo3.CacheFileU6(args);
 

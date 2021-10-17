@@ -105,6 +105,16 @@ namespace Adjutant.Blam.Halo3
                             dataTableAddress = 16384; //header size
                         else
                         {
+                            reader.Seek(1232, SeekOrigin.Begin);
+                            dataTableAddress = reader.ReadInt32();
+                        }
+                        break;
+                    case CacheType.MccHalo3F6:
+                    case CacheType.MccHalo3ODSTF3:
+                        if (page.CacheIndex >= 0)
+                            dataTableAddress = 16384; //header size
+                        else
+                        {
                             reader.Seek(1200, SeekOrigin.Begin);
                             dataTableAddress = reader.ReadInt32();
                         }
