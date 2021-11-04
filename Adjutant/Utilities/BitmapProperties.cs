@@ -26,6 +26,10 @@ namespace Adjutant.Utilities
         public bool UsesPadding { get; set; }
         public bool Swizzled { get; set; }
 
+        //non-zero to override
+        public int VirtualWidth { get; set; }
+        public int VirtualHeight { get; set; }
+
         public BitmapProperties(int width, int height, object format, object type)
         {
             Width = width;
@@ -38,6 +42,8 @@ namespace Adjutant.Utilities
             CubeMipLayout = ArrayMipLayout = MipmapLayout.None;
             UsesPadding = false;
             Swizzled = false;
+            VirtualWidth = 0;
+            VirtualHeight = 0;
         }
     }
 }

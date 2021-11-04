@@ -359,6 +359,11 @@ namespace Adjutant.Utilities
             else
                 GetVirtualSize(props.BitmapFormat, props.Width, props.Height, out virtualWidth, out virtualHeight);
 
+            if (props.VirtualWidth > 0)
+                virtualWidth = props.VirtualWidth;
+            if (props.VirtualHeight > 0)
+                virtualHeight = props.VirtualHeight;
+
             var bitmapFormat = props.BitmapFormat.ParseToEnum<KnownTextureFormat>();
             var textureType = props.BitmapType.ParseToEnum<KnownTextureType>();
 

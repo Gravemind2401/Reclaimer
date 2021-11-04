@@ -113,6 +113,12 @@ namespace Adjutant.Blam.Halo2
                 CubeMipLayout = MipmapLayout.Fragmented
             };
 
+            if (submap.BitmapFormat == TextureFormat.A8R8G8B8)
+            {
+                props.VirtualWidth = (int)(Math.Ceiling(submap.Width / 16d) * 16d);
+                props.VirtualHeight = submap.Height;
+            }
+
             return TextureUtils.GetDds(props, data, submap.BitmapType != TextureType.CubeMap);
         }
 
