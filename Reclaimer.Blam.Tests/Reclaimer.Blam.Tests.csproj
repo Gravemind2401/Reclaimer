@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\MSTest.TestAdapter.2.1.2\build\net45\MSTest.TestAdapter.props" Condition="Exists('..\packages\MSTest.TestAdapter.2.1.2\build\net45\MSTest.TestAdapter.props')" />
+  <Import Project="..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.props" Condition="Exists('..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{341F1E52-F911-499E-BE8D-3B9BA569D190}</ProjectGuid>
+    <ProjectGuid>{241C66BA-7F51-4C38-8E5D-F25AF37BC866}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>System.IO.Endian.Tests</RootNamespace>
-    <AssemblyName>System.IO.Endian.Tests</AssemblyName>
+    <RootNamespace>Reclaimer.Tests</RootNamespace>
+    <AssemblyName>Reclaimer.Blam.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -29,6 +29,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\Reclaimer.Blam\Reclaimer.Blam.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,14 +38,15 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\Reclaimer.Blam\Reclaimer.Blam.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\MSTest.TestFramework.2.1.2\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
+      <HintPath>..\packages\MSTest.TestFramework.1.4.0\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\MSTest.TestFramework.2.1.2\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
+      <HintPath>..\packages\MSTest.TestFramework.1.4.0\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -58,45 +60,21 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="ComplexRead\BinaryConstructor.cs" />
-    <Compile Include="ComplexRead\Enums.cs" />
-    <Compile Include="ComplexRead\DataLength.cs" />
-    <Compile Include="ComplexRead\StoreType.cs" />
-    <Compile Include="ComplexRead\Versions.cs" />
-    <Compile Include="ComplexRead\Nullable.cs" />
-    <Compile Include="ComplexRead\StringRead.cs" />
-    <Compile Include="ComplexRead\ByteOrder.cs" />
-    <Compile Include="ComplexRead\Basic.cs" />
-    <Compile Include="ComplexWrite\ByteOrder.cs" />
-    <Compile Include="ComplexWrite\DataLength.cs" />
-    <Compile Include="ComplexWrite\Enums.cs" />
-    <Compile Include="ComplexWrite\Nullable.cs" />
-    <Compile Include="ComplexWrite\Basic.cs" />
-    <Compile Include="ComplexWrite\StoreType.cs" />
-    <Compile Include="ComplexWrite\StringWrite.cs" />
-    <Compile Include="ComplexWrite\Versions.cs" />
-    <Compile Include="TestDecimal.cs" />
-    <Compile Include="TestGuid.cs" />
-    <Compile Include="TestDouble.cs" />
-    <Compile Include="TestString.cs" />
-    <Compile Include="TestSingle.cs" />
-    <Compile Include="TestTransactionStream.cs" />
-    <Compile Include="TestUInt64.cs" />
-    <Compile Include="TestUInt32.cs" />
-    <Compile Include="TestUInt16.cs" />
-    <Compile Include="TestInt64.cs" />
-    <Compile Include="TestInt32.cs" />
-    <Compile Include="TestInt16.cs" />
+    <Compile Include="Blam\Halo1\CacheFile.cs" />
+    <Compile Include="Blam\Halo2\CacheFile.cs" />
+    <Compile Include="Blam\Halo3\CacheFile.cs" />
+    <Compile Include="Blam\Halo4\CacheFile.cs" />
+    <Compile Include="Blam\Halo5\Module.cs" />
+    <Compile Include="Blam\MccHalo2X\CacheFile.cs" />
+    <Compile Include="Blam\MccHalo3\CacheFile.cs" />
+    <Compile Include="Blam\MccHaloReach\CacheFile.cs" />
+    <Compile Include="Blam\HaloReach\CacheFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestEnumerable.cs" />
-    <Compile Include="TestVirtualSeek.cs" />
-    <Compile Include="TestAnnotations.cs" />
-    <Compile Include="TestWriteInsert.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\System.IO.Endian\System.IO.Endian.csproj">
-      <Project>{06a312c3-c3ec-447d-b7b7-f50e47a886d5}</Project>
-      <Name>System.IO.Endian</Name>
+    <ProjectReference Include="..\Reclaimer.Blam\Reclaimer.Blam.csproj">
+      <Project>{a46dd713-d7f0-4d6a-bd0f-348d890e135a}</Project>
+      <Name>Reclaimer.Blam</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -126,10 +104,10 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\MSTest.TestAdapter.2.1.2\build\net45\MSTest.TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.2.1.2\build\net45\MSTest.TestAdapter.props'))" />
-    <Error Condition="!Exists('..\packages\MSTest.TestAdapter.2.1.2\build\net45\MSTest.TestAdapter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.2.1.2\build\net45\MSTest.TestAdapter.targets'))" />
+    <Error Condition="!Exists('..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.props'))" />
+    <Error Condition="!Exists('..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.targets'))" />
   </Target>
-  <Import Project="..\packages\MSTest.TestAdapter.2.1.2\build\net45\MSTest.TestAdapter.targets" Condition="Exists('..\packages\MSTest.TestAdapter.2.1.2\build\net45\MSTest.TestAdapter.targets')" />
+  <Import Project="..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.targets" Condition="Exists('..\packages\MSTest.TestAdapter.1.4.0\build\net45\MSTest.TestAdapter.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

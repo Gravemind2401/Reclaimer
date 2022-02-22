@@ -7,8 +7,8 @@
     <ProjectGuid>{A46DD713-D7F0-4D6A-BD0F-348D890E135A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Adjutant</RootNamespace>
-    <AssemblyName>Adjutant</AssemblyName>
+    <RootNamespace>Reclaimer</RootNamespace>
+    <AssemblyName>Reclaimer.Blam</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -22,7 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>true</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>Adjutant.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>Reclaimer.Blam.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,13 +31,13 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>Adjutant.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>Reclaimer.Blam.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Adjutant.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Reclaimer.Blam.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DotNetZip, Version=1.13.8.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
@@ -265,9 +265,9 @@
       <Project>{a31a58a8-2bc6-43af-ad81-692b2e37f01a}</Project>
       <Name>System.Drawing.Dds</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\System.IO.Endian\System.IO.Endian\System.IO.Endian.csproj">
+    <ProjectReference Include="..\Reclaimer.Core\Reclaimer.Core.csproj">
       <Project>{06a312c3-c3ec-447d-b7b7-f50e47a886d5}</Project>
-      <Name>System.IO.Endian</Name>
+      <Name>Reclaimer.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Markeli.Half\Markeli.Half.csproj">
       <Project>{8de687a2-fd57-42cd-9389-527330d5af9f}</Project>
@@ -275,8 +275,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Adjutant.snk" />
-    <None Include="Adjutant.ruleset" />
+    <None Include="Reclaimer.Blam.snk" />
+    <None Include="Reclaimer.Blam.ruleset" />
     <None Include="packages.config" />
     <None Include="Resources\3dsMax AMF2.ms" />
     <None Include="Resources\Halo2BumpPalette.bin" />
