@@ -1,0 +1,28 @@
+<VertexDefinitions>
+  <vertex type="0x00" name="s_world_vertex">
+    <value stream="0" offset="0x0" type="Float32_3" usage="position" usageIndex="0" />
+    <value stream="0" offset="0xC" type="Float32_2" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0x14" type="Int16_N4" usage="normal" usageIndex="0" />
+    <value stream="0" offset="0x1C" type="Int16_N4" usage="tangent" usageIndex="0" />
+    <value stream="0" offset="0x24" type="Int16_N4" usage="binormal" usageIndex="0" />
+  </vertex>
+  <vertex type="0x01" name="s_rigid_vertex">
+    <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
+    <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0xC" type="Int16_N4" usage="normal" usageIndex="0" />
+    <value stream="0" offset="0x14" type="Int16_N4" usage="tangent" usageIndex="0" />
+    <value stream="0" offset="0x1C" type="Int16_N4" usage="binormal" usageIndex="0" />
+  </vertex>
+  <vertex type="0x02" name="s_skinned_vertex">
+    <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
+    <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0xC" type="Int16_N4" usage="normal" usageIndex="0" />
+    <value stream="0" offset="0x14" type="Int16_N4" usage="tangent" usageIndex="0" />
+    <value stream="0" offset="0x1C" type="Int16_N4" usage="binormal" usageIndex="0" />
+    <value stream="0" offset="0x24" type="UInt8_4" usage="blendindices" usageIndex="0" />
+    <value stream="0" offset="0x28" type="UInt8_N4" usage="blendweight" usageIndex="0" />
+  </vertex>
+  <vertex type="0x10" name="s_tiny_position_vertex">
+    <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
+  </vertex>
+</VertexDefinitions>

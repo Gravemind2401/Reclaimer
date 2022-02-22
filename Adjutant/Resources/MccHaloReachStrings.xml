@@ -1,0 +1,75 @@
+﻿<!-- https://github.com/XboxChaos/Assembly/tree/dev/src/Blamite/Formats -->
+<stringDefinitions>
+  <stringIDs id="U0" indexBits="17" namespaceBits="8" lengthBits="7">
+    <namespace id="0x0" min="0x4C9" startIndex="0x173C" />
+    <namespace id="0x1" startIndex="0x4C9" />
+    <namespace id="0x2" startIndex="0xB2E" />
+    <namespace id="0x3" startIndex="0xC07" />
+    <namespace id="0x4" startIndex="0xC71" />
+    <namespace id="0x5" startIndex="0xD4A" />
+    <namespace id="0x6" startIndex="0xD70" />
+    <namespace id="0x7" startIndex="0xD75" />
+    <namespace id="0x8" startIndex="0x1434" />
+    <namespace id="0x9" startIndex="0x15A4" />
+    <namespace id="0xA" startIndex="0x15B8" />
+    <namespace id="0xC" startIndex="0x161A" />
+    <namespace id="0xD" startIndex="0x1632" />
+    <namespace id="0xE" startIndex="0x163F" />
+    <namespace id="0xF" startIndex="0x1668" />
+    <namespace id="0x10" startIndex="0x16C9" />
+  </stringIDs>
+  <stringIDs id="U1" indexBits="17" namespaceBits="8" lengthBits="7">
+    <namespace id="0x0" min="0x4C9" startIndex="0x173F" />
+    <namespace id="0x1" startIndex="0x4C9" />
+    <namespace id="0x2" startIndex="0xB2E" />
+    <namespace id="0x3" startIndex="0xC07" />
+    <namespace id="0x4" startIndex="0xC71" />
+    <namespace id="0x5" startIndex="0xD4A" />
+    <namespace id="0x6" startIndex="0xD72" />
+    <namespace id="0x7" startIndex="0xD77" />
+    <namespace id="0x8" startIndex="0x1436" />
+    <namespace id="0x9" startIndex="0x15A7" />
+    <namespace id="0xA" startIndex="0x15BB" />
+    <namespace id="0xC" startIndex="0x161D" />
+    <namespace id="0xD" startIndex="0x1635" />
+    <namespace id="0xE" startIndex="0x1642" />
+    <namespace id="0xF" startIndex="0x166B" />
+    <namespace id="0x10" startIndex="0x16CC" />
+  </stringIDs>
+  <stringIDs id="U2" indexBits="17" namespaceBits="8" lengthBits="7">
+    <namespace id="0x0" min="0x4C9" startIndex="0x1740" />
+    <namespace id="0x1" startIndex="0x4C9" />
+    <namespace id="0x2" startIndex="0xB2E" />
+    <namespace id="0x3" startIndex="0xC07" />
+    <namespace id="0x4" startIndex="0xC71" />
+    <namespace id="0x5" startIndex="0xD4A" />
+    <namespace id="0x6" startIndex="0xD72" />
+    <namespace id="0x7" startIndex="0xD77" />
+    <namespace id="0x8" startIndex="0x1437" />
+    <namespace id="0x9" startIndex="0x15A8" />
+    <namespace id="0xA" startIndex="0x15BC" />
+    <namespace id="0xC" startIndex="0x161E" />
+    <namespace id="0xD" startIndex="0x1636" />
+    <namespace id="0xE" startIndex="0x1643" />
+    <namespace id="0xF" startIndex="0x166C" />
+    <namespace id="0x10" startIndex="0x16CD" />
+  </stringIDs>
+  <stringIDs id="U6" indexBits="17" namespaceBits="8" lengthBits="7">
+    <namespace id="0x0" min="0x4C9" startIndex="0x1744" />
+    <namespace id="0x1" startIndex="0x4C9" />
+    <namespace id="0x2" startIndex="0xB2E" />
+    <namespace id="0x3" startIndex="0xC07" />
+    <namespace id="0x4" startIndex="0xC71" />
+    <namespace id="0x5" startIndex="0xD4A" />
+    <namespace id="0x6" startIndex="0xD72" />
+    <namespace id="0x7" startIndex="0xD77" />
+    <namespace id="0x8" startIndex="0x1437" />
+    <namespace id="0x9" startIndex="0x15A8" />
+    <namespace id="0xA" startIndex="0x15BF" />
+    <namespace id="0xC" startIndex="0x1621" />
+    <namespace id="0xD" startIndex="0x1639" />
+    <namespace id="0xE" startIndex="0x1646" />
+    <namespace id="0xF" startIndex="0x166F" />
+    <namespace id="0x10" startIndex="0x16D1" />
+  </stringIDs>
+</stringDefinitions>

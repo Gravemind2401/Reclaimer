@@ -1,0 +1,124 @@
+<!-- https://github.com/XboxChaos/Assembly/tree/dev/src/Blamite/Formats -->
+<VertexDefinitions>
+  <vertex type="0x00" name="s_world_vertex">
+    <value stream="0" offset="0x0" type="Float32_3" usage="position" usageIndex="0" />
+    <value stream="0" offset="0xC" type="Float32_2" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0x14" type="DHenN3" usage="normal" usageIndex="0" />
+    <value stream="0" offset="0x18" type="DHenN3" usage="tangent" usageIndex="0" />
+    <value stream="0" offset="0x1C" type="DHenN3" usage="binormal" usageIndex="0" />
+  </vertex>
+  <vertex type="0x01" name="s_rigid_vertex">
+    <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
+    <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0xC" type="DHenN3" usage="normal" usageIndex="0" />
+    <value stream="0" offset="0x10" type="DHenN3" usage="tangent" usageIndex="0" />
+    <value stream="0" offset="0x14" type="DHenN3" usage="binormal" usageIndex="0" />
+  </vertex>
+  <vertex type="0x02" name="s_skinned_vertex">
+    <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
+    <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0xC" type="DHenN3" usage="normal" usageIndex="0" />
+    <value stream="0" offset="0x10" type="DHenN3" usage="tangent" usageIndex="0" />
+    <value stream="0" offset="0x14" type="DHenN3" usage="binormal" usageIndex="0" />
+    <value stream="0" offset="0x18" type="UInt8_4" usage="blendindices" usageIndex="0" />
+    <value stream="0" offset="0x1C" type="UInt8_N4" usage="blendweight" usageIndex="0" />
+  </vertex>
+  <vertex type="0x03" name="s_particle_model_vertex">
+    <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
+    <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0xC" type="DHenN3" usage="normal" usageIndex="0" />
+  </vertex>
+  <vertex type="0x04" name="s_flat_world_vertex">
+    <value stream="0" offset="0x0" type="Float32_3" usage="position" usageIndex="0" />
+    <value stream="0" offset="0xC" type="Float32_2" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0x14" type="DHenN3" usage="normal" usageIndex="0" />
+    <value stream="0" offset="0x18" type="DHenN3" usage="tangent" usageIndex="0" />
+    <value stream="0" offset="0x1C" type="DHenN3" usage="binormal" usageIndex="0" />
+  </vertex>
+  <vertex type="0x05" name="s_flat_rigid_vertex">
+    <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
+    <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0xC" type="DHenN3" usage="normal" usageIndex="0" />
+    <value stream="0" offset="0x10" type="DHenN3" usage="tangent" usageIndex="0" />
+    <value stream="0" offset="0x14" type="DHenN3" usage="binormal" usageIndex="0" />
+  </vertex>
+  <vertex type="0x06" name="s_flat_skinned_vertex">
+    <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
+    <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0xC" type="DHenN3" usage="normal" usageIndex="0" />
+    <value stream="0" offset="0x10" type="DHenN3" usage="tangent" usageIndex="0" />
+    <value stream="0" offset="0x14" type="DHenN3" usage="binormal" usageIndex="0" />
+    <value stream="0" offset="0x18" type="UInt8_4" usage="blendindices" usageIndex="0" />
+    <value stream="0" offset="0x1C" type="UInt8_N4" usage="blendweight" usageIndex="0" />
+  </vertex>
+  <vertex type="0x07" name="s_screen_vertex">
+    <value stream="0" offset="0x0" type="Float32_2" usage="position" usageIndex="0" />
+    <value stream="0" offset="0x8" type="Float32_2" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0x10" type="D3DColour" usage="color" usageIndex="0" />
+  </vertex>
+  <vertex type="0x08" name="s_debug_vertex">
+    <value stream="0" offset="0x0" type="Float32_3" usage="position" usageIndex="0" />
+    <value stream="0" offset="0xC" type="D3DColour" usage="color" usageIndex="0" />
+  </vertex>
+  <vertex type="0x09" name="s_transparent_vertex">
+    <value stream="0" offset="0x0" type="Float32_3" usage="position" usageIndex="0" />
+    <value stream="0" offset="0xC" type="Float32_2" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0x14" type="D3DColour" usage="color" usageIndex="0" />
+  </vertex>
+  <vertex type="0x0A" name="s_particle_vertex" />
+  <vertex type="0x0B" name="s_contrail_vertex" />
+  <vertex type="0x0C" name="s_light_volume_vertex" />
+  <vertex type="0x0D" name="s_chud_vertex_simple">
+    <value stream="0" offset="0x0" type="Float32_2" usage="position" usageIndex="0" />
+    <value stream="0" offset="0x8" type="Float32_2" usage="texcoords" usageIndex="0" />
+  </vertex>
+  <vertex type="0x0E" name="s_chud_vertex_fancy">
+    <value stream="0" offset="0x0" type="Float32_3" usage="position" usageIndex="0" />
+    <value stream="0" offset="0xC" type="D3DColour" usage="color" usageIndex="0" />
+    <value stream="0" offset="0x10" type="Float32_2" usage="texcoords" usageIndex="0" />
+  </vertex>
+  <vertex type="0x0F" name="s_decorator_vertex">
+    <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
+    <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0xC" type="DHenN3" usage="normal" usageIndex="0" />
+    <value stream="1" offset="0x0" type="UInt16_4" usage="position" usageIndex="1" />
+    <value stream="1" offset="0x8" type="Int8_N4" usage="normal" usageIndex="1" />
+    <value stream="1" offset="0xC" type="UInt8_N4" usage="color" usageIndex="1" />
+    <value stream="2" offset="0x0" type="UInt16_2" usage="position" usageIndex="2" />
+  </vertex>
+  <vertex type="0x10" name="s_tiny_position_vertex">
+    <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
+  </vertex>
+  <vertex type="0x11" name="s_patchy_fog_vertex">
+    <value stream="0" offset="0x0" type="Float32_4" usage="position" usageIndex="0" />
+  </vertex>
+  <vertex type="0x12" name="s_water_vertex">
+    <value stream="0" offset="0x0" type="Float32_3" usage="position" usageIndex="0" />
+    <value stream="0" offset="0xC" type="Float32_2" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0x14" type="DHenN3" usage="normal" usageIndex="0" />
+    <value stream="0" offset="0x18" type="DHenN3" usage="tangent" usageIndex="0" />
+    <value stream="0" offset="0x1C" type="DHenN3" usage="binormal" usageIndex="0" />
+    <value stream="4" offset="0x0" type="UInt16_N2" usage="texcoords" usageIndex="1" />
+    <value stream="2" offset="0x0" type="UInt16_2" usage="color" usageIndex="0" />
+    <value stream="2" offset="0x4" type="UInt16_2" usage="color" usageIndex="1" />
+    <value stream="2" offset="0x8" type="UInt16_2" usage="color" usageIndex="2" />
+    <value stream="3" offset="0x0" type="Float32_3" usage="position" usageIndex="1" />
+    <value stream="3" offset="0xC" type="Float32_3" usage="position" usageIndex="2" />
+    <value stream="3" offset="0x18" type="Float32_3" usage="position" usageIndex="3" />
+  </vertex>
+  <vertex type="0x13" name="s_ripple_vertex">
+    <value stream="0" offset="0x0" type="Float32_4" usage="position" usageIndex="0" />
+    <value stream="0" offset="0x10" type="Float32_4" usage="texcoords" usageIndex="0" />
+    <value stream="0" offset="0x20" type="Float32_4" usage="texcoords" usageIndex="1" />
+    <value stream="0" offset="0x30" type="Float32_4" usage="texcoords" usageIndex="2" />
+    <value stream="0" offset="0x40" type="Float32_4" usage="texcoords" usageIndex="3" />
+    <value stream="0" offset="0x50" type="Float32_4" usage="texcoords" usageIndex="4" />
+    <value stream="0" offset="0x60" type="Float32_4" usage="color" usageIndex="0" />
+    <value stream="0" offset="0x70" type="Float32_4" usage="color" usageIndex="1" />
+  </vertex>
+  <vertex type="0x14" name="s_implicit_vertex">
+    <value stream="0" offset="0x0" type="Float32_3" usage="position" usageIndex="0" />
+    <value stream="0" offset="0xC" type="Float32_2" usage="texcoords" usageIndex="0" />
+  </vertex>
+  <vertex type="0x15" name="s_beam_vertex" />
+</VertexDefinitions>
