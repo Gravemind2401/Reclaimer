@@ -261,7 +261,7 @@
     <Compile Include="Utilities\XCompress.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\System.Drawing.Dds\System.Drawing.Dds\System.Drawing.Dds.csproj">
+    <ProjectReference Include="..\System.Drawing.Dds\System.Drawing.Dds.csproj">
       <Project>{a31a58a8-2bc6-43af-ad81-692b2e37f01a}</Project>
       <Name>System.Drawing.Dds</Name>
     </ProjectReference>
