@@ -7,7 +7,7 @@
     <ProjectGuid>{241C66BA-7F51-4C38-8E5D-F25AF37BC866}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Reclaimer.Tests</RootNamespace>
+    <RootNamespace>Reclaimer</RootNamespace>
     <AssemblyName>Reclaimer.Blam.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

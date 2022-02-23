@@ -56,11 +56,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Audio\GameSound.cs" />
-    <Compile Include="Audio\IFormatHeader.cs" />
-    <Compile Include="Audio\PcmHeader.cs" />
-    <Compile Include="Audio\XboxAdpcmHeader.cs" />
-    <Compile Include="Audio\XmaHeader.cs" />
     <Compile Include="Blam\Common\Annotations.cs" />
     <Compile Include="Blam\Common\CacheMetadata.cs" />
     <Compile Include="Blam\Common\Gen3\IGen3CacheFile.cs" />
@@ -261,10 +256,6 @@
     <Compile Include="Utilities\XCompress.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\System.Drawing.Dds\System.Drawing.Dds.csproj">
-      <Project>{a31a58a8-2bc6-43af-ad81-692b2e37f01a}</Project>
-      <Name>System.Drawing.Dds</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Reclaimer.Core\Reclaimer.Core.csproj">
       <Project>{06a312c3-c3ec-447d-b7b7-f50e47a886d5}</Project>
       <Name>Reclaimer.Core</Name>

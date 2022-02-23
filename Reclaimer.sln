@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reclaimer", "Reclaimer\Recl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reclaimer.Blam", "Reclaimer.Blam\Reclaimer.Blam.csproj", "{A46DD713-D7F0-4D6A-BD0F-348D890E135A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Drawing.Dds", "System.Drawing.Dds\System.Drawing.Dds.csproj", "{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamplePlugin", "ExamplePlugin\ExamplePlugin.csproj", "{E5249282-18DB-403F-825E-C3612441EC35}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Studio", "..\Studio\Studio\Studio.csproj", "{5F4C3814-8097-4869-B5E2-4C21EF45CEB2}"
@@ -37,10 +35,6 @@ Global
 		{A46DD713-D7F0-4D6A-BD0F-348D890E135A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A46DD713-D7F0-4D6A-BD0F-348D890E135A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A46DD713-D7F0-4D6A-BD0F-348D890E135A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A31A58A8-2BC6-43AF-AD81-692B2E37F01A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E5249282-18DB-403F-825E-C3612441EC35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E5249282-18DB-403F-825E-C3612441EC35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5249282-18DB-403F-825E-C3612441EC35}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -7,7 +7,7 @@
     <ProjectGuid>{341F1E52-F911-499E-BE8D-3B9BA569D190}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Reclaimer.Tests</RootNamespace>
+    <RootNamespace>Reclaimer</RootNamespace>
     <AssemblyName>Reclaimer.Core.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -58,40 +58,40 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="ComplexRead\BinaryConstructor.cs" />
-    <Compile Include="ComplexRead\Enums.cs" />
-    <Compile Include="ComplexRead\DataLength.cs" />
-    <Compile Include="ComplexRead\StoreType.cs" />
-    <Compile Include="ComplexRead\Versions.cs" />
-    <Compile Include="ComplexRead\Nullable.cs" />
-    <Compile Include="ComplexRead\StringRead.cs" />
-    <Compile Include="ComplexRead\ByteOrder.cs" />
-    <Compile Include="ComplexRead\Basic.cs" />
-    <Compile Include="ComplexWrite\ByteOrder.cs" />
-    <Compile Include="ComplexWrite\DataLength.cs" />
-    <Compile Include="ComplexWrite\Enums.cs" />
-    <Compile Include="ComplexWrite\Nullable.cs" />
-    <Compile Include="ComplexWrite\Basic.cs" />
-    <Compile Include="ComplexWrite\StoreType.cs" />
-    <Compile Include="ComplexWrite\StringWrite.cs" />
-    <Compile Include="ComplexWrite\Versions.cs" />
-    <Compile Include="TestDecimal.cs" />
-    <Compile Include="TestGuid.cs" />
-    <Compile Include="TestDouble.cs" />
-    <Compile Include="TestString.cs" />
-    <Compile Include="TestSingle.cs" />
-    <Compile Include="TestTransactionStream.cs" />
-    <Compile Include="TestUInt64.cs" />
-    <Compile Include="TestUInt32.cs" />
-    <Compile Include="TestUInt16.cs" />
-    <Compile Include="TestInt64.cs" />
-    <Compile Include="TestInt32.cs" />
-    <Compile Include="TestInt16.cs" />
+    <Compile Include="IO.Tests\ComplexRead\BinaryConstructor.cs" />
+    <Compile Include="IO.Tests\ComplexRead\Enums.cs" />
+    <Compile Include="IO.Tests\ComplexRead\DataLength.cs" />
+    <Compile Include="IO.Tests\ComplexRead\StoreType.cs" />
+    <Compile Include="IO.Tests\ComplexRead\Versions.cs" />
+    <Compile Include="IO.Tests\ComplexRead\Nullable.cs" />
+    <Compile Include="IO.Tests\ComplexRead\StringRead.cs" />
+    <Compile Include="IO.Tests\ComplexRead\ByteOrder.cs" />
+    <Compile Include="IO.Tests\ComplexRead\Basic.cs" />
+    <Compile Include="IO.Tests\ComplexWrite\ByteOrder.cs" />
+    <Compile Include="IO.Tests\ComplexWrite\DataLength.cs" />
+    <Compile Include="IO.Tests\ComplexWrite\Enums.cs" />
+    <Compile Include="IO.Tests\ComplexWrite\Nullable.cs" />
+    <Compile Include="IO.Tests\ComplexWrite\Basic.cs" />
+    <Compile Include="IO.Tests\ComplexWrite\StoreType.cs" />
+    <Compile Include="IO.Tests\ComplexWrite\StringWrite.cs" />
+    <Compile Include="IO.Tests\ComplexWrite\Versions.cs" />
+    <Compile Include="IO.Tests\TestDecimal.cs" />
+    <Compile Include="IO.Tests\TestGuid.cs" />
+    <Compile Include="IO.Tests\TestDouble.cs" />
+    <Compile Include="IO.Tests\TestString.cs" />
+    <Compile Include="IO.Tests\TestSingle.cs" />
+    <Compile Include="IO.Tests\TestTransactionStream.cs" />
+    <Compile Include="IO.Tests\TestUInt64.cs" />
+    <Compile Include="IO.Tests\TestUInt32.cs" />
+    <Compile Include="IO.Tests\TestUInt16.cs" />
+    <Compile Include="IO.Tests\TestInt64.cs" />
+    <Compile Include="IO.Tests\TestInt32.cs" />
+    <Compile Include="IO.Tests\TestInt16.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestEnumerable.cs" />
-    <Compile Include="TestVirtualSeek.cs" />
-    <Compile Include="TestAnnotations.cs" />
-    <Compile Include="TestWriteInsert.cs" />
+    <Compile Include="IO.Tests\TestEnumerable.cs" />
+    <Compile Include="IO.Tests\TestVirtualSeek.cs" />
+    <Compile Include="IO.Tests\TestAnnotations.cs" />
+    <Compile Include="IO.Tests\TestWriteInsert.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Reclaimer.Core\Reclaimer.Core.csproj">
@@ -102,6 +102,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

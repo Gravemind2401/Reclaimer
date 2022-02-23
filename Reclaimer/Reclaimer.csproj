@@ -360,21 +360,17 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Adjutant\Adjutant\Adjutant.csproj">
-      <Project>{A46DD713-D7F0-4D6A-BD0F-348D890E135A}</Project>
-      <Name>Adjutant</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Studio\Studio\Studio.csproj">
       <Project>{5f4c3814-8097-4869-b5e2-4c21ef45ceb2}</Project>
       <Name>Studio</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\System.Drawing.Dds\System.Drawing.Dds\System.Drawing.Dds.csproj">
-      <Project>{a31a58a8-2bc6-43af-ad81-692b2e37f01a}</Project>
-      <Name>System.Drawing.Dds</Name>
+    <ProjectReference Include="..\Reclaimer.Blam\Reclaimer.Blam.csproj">
+      <Project>{a46dd713-d7f0-4d6a-bd0f-348d890e135a}</Project>
+      <Name>Reclaimer.Blam</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\System.IO.Endian\System.IO.Endian\System.IO.Endian.csproj">
+    <ProjectReference Include="..\Reclaimer.Core\Reclaimer.Core.csproj">
       <Project>{06a312c3-c3ec-447d-b7b7-f50e47a886d5}</Project>
-      <Name>System.IO.Endian</Name>
+      <Name>Reclaimer.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
