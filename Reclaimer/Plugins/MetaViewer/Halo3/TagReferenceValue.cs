@@ -1,10 +1,10 @@
-﻿using Adjutant.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Reclaimer.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace System.Drawing.Dds
+namespace Reclaimer.Drawing
 {
      // This class does not represent an actual Xbox DDS header.
      // It is based on DdsHeaderDxt10 and serves as a way to specify alternate

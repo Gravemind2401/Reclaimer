@@ -1,16 +1,16 @@
-﻿using Adjutant.Blam.Halo5;
+﻿using Reclaimer.Blam.Halo5;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Runtime.CompilerServices;
 using Prism.Mvvm;
-using Adjutant.Blam.Common;
+using Reclaimer.Blam.Common;
 
 namespace Reclaimer.Plugins.MetaViewer
 {

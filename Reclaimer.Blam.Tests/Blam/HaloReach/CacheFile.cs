@@ -1,5 +1,5 @@
-﻿using Adjutant.Blam.Common;
-using Adjutant.Blam.HaloReach;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.HaloReach;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -91,7 +91,7 @@ namespace Adjutant.Tests.Blam.HaloReach
 
         private void TestMap(string folder, string map)
         {
-            var cache = new Adjutant.Blam.HaloReach.CacheFile(Path.Combine(folder, $"{map}.map"));
+            var cache = new Reclaimer.Blam.HaloReach.CacheFile(Path.Combine(folder, $"{map}.map"));
 
             var t0 = Task.Run(() =>
             {

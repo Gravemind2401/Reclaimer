@@ -3,13 +3,13 @@ using Adjutant.Spatial;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Adjutant.Blam.Common
+namespace Reclaimer.Blam.Common
 {
     public static class XmlVertexField
     {

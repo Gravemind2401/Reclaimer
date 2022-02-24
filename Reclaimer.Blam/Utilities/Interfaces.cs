@@ -1,15 +1,15 @@
-﻿using Adjutant.Audio;
-using Adjutant.Blam.Common;
+﻿using Reclaimer.Audio;
+using Reclaimer.Blam.Common;
 using Adjutant.Geometry;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Dds;
-using System.IO.Endian;
+using Reclaimer.Drawing;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Utilities
+namespace Reclaimer.Blam.Utilities
 {
     public interface IBitmap
     {

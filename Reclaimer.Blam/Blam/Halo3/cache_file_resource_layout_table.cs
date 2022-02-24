@@ -1,12 +1,12 @@
-﻿using Adjutant.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using System;
 using System.Collections.Generic;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo3
+namespace Reclaimer.Blam.Halo3
 {
     public class cache_file_resource_layout_table
     {

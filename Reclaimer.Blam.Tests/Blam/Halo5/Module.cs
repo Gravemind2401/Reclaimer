@@ -1,4 +1,4 @@
-﻿using Adjutant.Blam.Halo5;
+﻿using Reclaimer.Blam.Halo5;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ namespace Adjutant.Tests.Blam.Halo5
 
         private void TestModule(string folder, string fileName)
         {
-            var module = new Adjutant.Blam.Halo5.Module(Path.Combine(folder, $"{fileName}.module"));
+            var module = new Reclaimer.Blam.Halo5.Module(Path.Combine(folder, $"{fileName}.module"));
         }
     }
 }

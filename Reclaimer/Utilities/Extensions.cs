@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Dds;
+using Reclaimer.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,9 +8,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
-
-using Drawing = System.Drawing;
-using Imaging = System.Drawing.Imaging;
 
 namespace Reclaimer.Utilities
 {
@@ -89,14 +86,14 @@ namespace Reclaimer.Utilities
         public static void WriteToTarga(this DdsImage dds, string fileName, DdsOutputArgs args)
         {
             var source = dds.ToBitmapSource(args);
-            var format = args.Options.HasFlag(DecompressOptions.Bgr24) ? Imaging.PixelFormat.Format24bppRgb : Imaging.PixelFormat.Format32bppArgb;
+            var format = args.Options.HasFlag(DecompressOptions.Bgr24) ? System.Drawing.Imaging.PixelFormat.Format24bppRgb : System.Drawing.Imaging.PixelFormat.Format32bppArgb;
             WriteToTarga(source, fileName, format);
         }
 
-        public static void WriteToTarga(this BitmapSource source, string fileName, Imaging.PixelFormat format)
+        public static void WriteToTarga(this BitmapSource source, string fileName, System.Drawing.Imaging.PixelFormat format)
         {
-            var dest = new Drawing.Bitmap(source.PixelWidth, source.PixelHeight, format);
-            var destData = dest.LockBits(new Drawing.Rectangle(Drawing.Point.Empty, dest.Size), Imaging.ImageLockMode.WriteOnly, format);
+            var dest = new System.Drawing.Bitmap(source.PixelWidth, source.PixelHeight, format);
+            var destData = dest.LockBits(new System.Drawing.Rectangle(System.Drawing.Point.Empty, dest.Size), System.Drawing.Imaging.ImageLockMode.WriteOnly, format);
             source.CopyPixels(Int32Rect.Empty, destData.Scan0, destData.Height * destData.Stride, destData.Stride);
             dest.UnlockBits(destData);
 

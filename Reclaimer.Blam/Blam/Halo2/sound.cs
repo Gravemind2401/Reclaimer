@@ -1,14 +1,14 @@
-﻿using Adjutant.Utilities;
+﻿using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Adjutant.Audio;
-using Adjutant.Blam.Common;
+using Reclaimer.Audio;
+using Reclaimer.Blam.Common;
 
-namespace Adjutant.Blam.Halo2
+namespace Reclaimer.Blam.Halo2
 {
     public class sound : ISoundContainer
     {

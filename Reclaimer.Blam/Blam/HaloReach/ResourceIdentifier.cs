@@ -1,16 +1,16 @@
-﻿using Adjutant.Blam.Common;
-using Adjutant.Utilities;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.HaloReach
+namespace Reclaimer.Blam.HaloReach
 {
     public enum PageType
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace System.Drawing.Dds.Bc7
+namespace Reclaimer.Drawing.Bc7
 {
     [Flags]
     internal enum BlockMode

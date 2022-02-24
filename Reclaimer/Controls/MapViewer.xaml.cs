@@ -1,4 +1,4 @@
-﻿using Adjutant.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Reclaimer.Models;
 using Reclaimer.Plugins;
 using Reclaimer.Utilities;

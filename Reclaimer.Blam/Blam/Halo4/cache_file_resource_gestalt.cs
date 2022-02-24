@@ -1,13 +1,13 @@
-﻿using Adjutant.Blam.Common;
-using Adjutant.Utilities;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo4
+namespace Reclaimer.Blam.Halo4
 {
     public class cache_file_resource_gestalt
     {

@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Reclaimer.Drawing.Annotations;
+using Reclaimer.Drawing.Bc7;
+using System;
 using System.Collections.Generic;
-using System.Drawing.Dds.Annotations;
-using System.Drawing.Dds.Bc7;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -12,7 +13,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 
 /* https://docs.microsoft.com/en-us/windows/desktop/direct3d10/d3d10-graphics-programming-guide-resources-block-compression */
-namespace System.Drawing.Dds
+namespace Reclaimer.Drawing
 {
     using static DxgiFormat;
     using static XboxFormat;
@@ -316,7 +317,7 @@ namespace System.Drawing.Dds
             }
         }
 
-        private BitmapSource UnwrapCubemapSource(BitmapSource source, double dpi, Windows.Media.PixelFormat format, CubemapLayout layout)
+        private BitmapSource UnwrapCubemapSource(BitmapSource source, double dpi, System.Windows.Media.PixelFormat format, CubemapLayout layout)
         {
             var bpp = format.BitsPerPixel / 8;
             var stride = bpp * Width;

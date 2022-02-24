@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace System.IO.Endian
+namespace Reclaimer.IO
 {
     /// <summary>
     /// Provides a wrapper around an inner stream that allows changes to be written without altering the inner stream, akin to a transaction.

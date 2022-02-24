@@ -1,9 +1,9 @@
-﻿using Adjutant.Blam.Common;
-using Adjutant.Blam.Common.Gen3;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Common.Gen3;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;

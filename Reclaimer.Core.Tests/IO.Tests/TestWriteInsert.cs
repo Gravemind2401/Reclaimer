@@ -1,8 +1,9 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using System.IO;
 
-namespace System.IO.Endian.Tests
+namespace Reclaimer.IO.Tests
 {
     [TestClass]
     public class TestWriteInsert

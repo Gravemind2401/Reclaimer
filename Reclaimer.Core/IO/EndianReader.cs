@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace System.IO.Endian
+namespace Reclaimer.IO
 {
     /// <summary>
     /// Reads primitive and complex data types from a stream in a specific byte order and encoding.

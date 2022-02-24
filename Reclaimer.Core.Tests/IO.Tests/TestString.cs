@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace System.IO.Endian.Tests
+namespace Reclaimer.IO.Tests
 {
     [TestClass]
     public class TestString

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Audio
+namespace Reclaimer.Audio
 {
     //http://wiki.xentax.com/index.php/Psychonauts_ISB
     //https://xboxdevwiki.net/Xbox_ADPCM

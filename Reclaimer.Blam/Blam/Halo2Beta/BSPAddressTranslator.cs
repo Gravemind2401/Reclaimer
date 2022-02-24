@@ -1,12 +1,12 @@
-﻿using Adjutant.Utilities;
-using Adjutant.Blam.Halo2;
+﻿using Reclaimer.Blam.Utilities;
+using Reclaimer.Blam.Halo2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo2Beta
+namespace Reclaimer.Blam.Halo2Beta
 {
     public class BSPAddressTranslator : IAddressTranslator
     {

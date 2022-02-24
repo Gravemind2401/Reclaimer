@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Common
+namespace Reclaimer.Blam.Common
 {
     public interface IStringIndex : IEnumerable<string>
     {

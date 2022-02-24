@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace System.IO.Endian
+namespace Reclaimer.IO
 {
     internal static class Exceptions
     {

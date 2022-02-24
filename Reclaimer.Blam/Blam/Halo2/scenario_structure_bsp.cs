@@ -1,18 +1,18 @@
-﻿using Adjutant.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Adjutant.Geometry;
 using Adjutant.Spatial;
-using Adjutant.Utilities;
+using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo2
+namespace Reclaimer.Blam.Halo2
 {
     public class scenario_structure_bsp : IRenderGeometry
     {

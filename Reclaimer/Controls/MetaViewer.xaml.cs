@@ -1,5 +1,5 @@
-﻿using Adjutant.Blam.Common;
-using Adjutant.Blam.Halo5;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Halo5;
 using Reclaimer.Models;
 using Reclaimer.Plugins.MetaViewer;
 using Reclaimer.Utilities;

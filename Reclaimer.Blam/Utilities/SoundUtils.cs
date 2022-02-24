@@ -1,13 +1,13 @@
-﻿using Adjutant.Audio;
+﻿using Reclaimer.Audio;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Utilities
+namespace Reclaimer.Blam.Utilities
 {
     public static class SoundUtils
     {

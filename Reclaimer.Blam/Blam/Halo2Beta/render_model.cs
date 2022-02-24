@@ -1,17 +1,17 @@
-﻿using Adjutant.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Adjutant.Geometry;
 using Adjutant.Spatial;
-using Adjutant.Utilities;
+using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo2Beta
+namespace Reclaimer.Blam.Halo2Beta
 {
     //note H2B ascii string fields are actually 32 bytes, but the last 4 are not part of the string
     public class render_model : IRenderGeometry

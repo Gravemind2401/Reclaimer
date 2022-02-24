@@ -1,8 +1,8 @@
-﻿using Adjutant.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Adjutant.Geometry;
-using Adjutant.Properties;
+using Reclaimer.Blam.Properties;
 using Adjutant.Spatial;
-using Adjutant.Utilities;
+using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Adjutant.Blam.Halo5
+namespace Reclaimer.Blam.Halo5
 {
     internal static class Halo5Common
     {

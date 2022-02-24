@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace System.Drawing.Dds
+namespace Reclaimer.Drawing
 {
     [Flags]
     internal enum TextureFlags

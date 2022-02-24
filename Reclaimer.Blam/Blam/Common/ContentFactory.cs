@@ -1,14 +1,14 @@
-﻿using Adjutant.Utilities;
+﻿using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Common
+namespace Reclaimer.Blam.Common
 {
     public static class ContentFactory
     {

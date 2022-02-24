@@ -1,15 +1,15 @@
-﻿using Adjutant.Utilities;
+﻿using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Drawing.Dds;
-using Adjutant.Blam.Common;
+using Reclaimer.Drawing;
+using Reclaimer.Blam.Common;
 
-namespace Adjutant.Saber3D.Halo1X
+namespace Reclaimer.Saber3D.Halo1X
 {
     public class Texture : IBitmap
     {

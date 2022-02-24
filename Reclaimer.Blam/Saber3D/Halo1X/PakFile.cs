@@ -1,14 +1,14 @@
-﻿using Adjutant.Saber3D.Common;
-using Adjutant.Utilities;
+﻿using Reclaimer.Saber3D.Common;
+using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Saber3D.Halo1X
+namespace Reclaimer.Saber3D.Halo1X
 {
     public class PakFile : IPakFile
     {

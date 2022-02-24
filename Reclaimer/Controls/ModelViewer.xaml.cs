@@ -1,5 +1,5 @@
 ﻿using Adjutant.Geometry;
-using Adjutant.Utilities;
+using Reclaimer.Blam.Utilities;
 using Microsoft.Win32;
 using Reclaimer.Models;
 using Reclaimer.Plugins;
@@ -8,7 +8,7 @@ using Studio.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing.Dds;
+using Reclaimer.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;

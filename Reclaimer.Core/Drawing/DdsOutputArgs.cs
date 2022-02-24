@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace System.Drawing.Dds
+namespace Reclaimer.Drawing
 {
     public class DdsOutputArgs
     {

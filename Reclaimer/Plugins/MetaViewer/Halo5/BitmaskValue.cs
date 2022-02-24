@@ -1,10 +1,10 @@
-﻿using Adjutant.Blam.Halo5;
+﻿using Reclaimer.Blam.Halo5;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;

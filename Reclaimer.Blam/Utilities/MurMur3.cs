@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 /* https://gist.github.com/automatonic/3725443 */
 
-namespace Adjutant.Utilities
+namespace Reclaimer.Blam.Utilities
 {
     public static class MurMur3
     {

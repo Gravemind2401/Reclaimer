@@ -1,17 +1,17 @@
-﻿using Adjutant.Utilities;
+﻿using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Dds;
+using Reclaimer.Drawing;
 using System.IO;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Adjutant.Blam.Common
+namespace Reclaimer.Blam.Common
 {
     public static class CacheFactory
     {

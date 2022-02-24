@@ -1,7 +1,8 @@
 ﻿using System;
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace System.IO.Endian.Tests
+namespace Reclaimer.IO.Tests
 {
     [TestClass]
     public class TestVirtualSeek

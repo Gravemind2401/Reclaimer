@@ -1,15 +1,15 @@
-﻿using Adjutant.Blam.Common;
-using Adjutant.Utilities;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Dds;
+using Reclaimer.Drawing;
 using System.IO;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo5
+namespace Reclaimer.Blam.Halo5
 {
     public class bitmap : IBitmap
     {

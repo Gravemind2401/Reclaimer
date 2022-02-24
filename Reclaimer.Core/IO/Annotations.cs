@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace System.IO.Endian
+namespace Reclaimer.IO
 {
     internal interface IVersionAttribute
     {

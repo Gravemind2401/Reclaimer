@@ -1,7 +1,7 @@
-﻿using Adjutant.Utilities;
+﻿using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;

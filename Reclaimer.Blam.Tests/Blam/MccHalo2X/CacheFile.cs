@@ -1,5 +1,5 @@
-﻿using Adjutant.Blam.Common;
-using Adjutant.Blam.Halo4;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Halo4;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace Adjutant.Tests.Blam.MccHalo2X
 
         private void TestMap(string folder, string map)
         {
-            var cache = new Adjutant.Blam.MccHalo2X.CacheFile(Path.Combine(folder, $"{map}.map"));
+            var cache = new Reclaimer.Blam.MccHalo2X.CacheFile(Path.Combine(folder, $"{map}.map"));
 
             var t0 = Task.Run(() =>
             {

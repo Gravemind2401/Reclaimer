@@ -1,13 +1,13 @@
-﻿using Adjutant.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Adjutant.Spatial;
 using System;
 using System.Collections.Generic;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.HaloReach
+namespace Reclaimer.Blam.HaloReach
 {
     public class shader
     {

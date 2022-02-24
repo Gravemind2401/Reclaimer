@@ -5,7 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Adjutant.Utilities;
+using Reclaimer.Blam.Utilities;
 
 namespace Adjutant.Geometry
 {

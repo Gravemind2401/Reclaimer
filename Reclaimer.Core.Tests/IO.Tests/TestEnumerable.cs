@@ -1,8 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace System.IO.Endian.Tests
+namespace Reclaimer.IO.Tests
 {
     [TestClass]
     public class TestEnumerable

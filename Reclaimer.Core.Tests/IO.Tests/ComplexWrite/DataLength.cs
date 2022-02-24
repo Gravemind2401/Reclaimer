@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace System.IO.Endian.Tests.ComplexWrite
+namespace Reclaimer.IO.Tests.ComplexWrite
 {
     public partial class ComplexWrite
     {

@@ -1,9 +1,9 @@
-﻿using Adjutant.Audio;
-using Adjutant.Blam.Common;
-using Adjutant.Blam.Halo5;
+﻿using Reclaimer.Audio;
+using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Halo5;
 using Adjutant.Geometry;
-using Adjutant.Saber3D.Common;
-using Adjutant.Utilities;
+using Reclaimer.Saber3D.Common;
+using Reclaimer.Blam.Utilities;
 using Reclaimer.Annotations;
 using Reclaimer.Controls.Editors;
 using Reclaimer.Models;
@@ -14,7 +14,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Drawing.Dds;
+using Reclaimer.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -24,8 +24,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
-using BlamContentFactory = Adjutant.Blam.Common.ContentFactory;
-using SaberContentFactory = Adjutant.Saber3D.Common.ContentFactory;
+using BlamContentFactory = Reclaimer.Blam.Common.ContentFactory;
+using SaberContentFactory = Reclaimer.Saber3D.Common.ContentFactory;
 
 namespace Reclaimer.Plugins
 {

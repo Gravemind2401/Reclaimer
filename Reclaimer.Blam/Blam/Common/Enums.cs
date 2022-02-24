@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Common
+namespace Reclaimer.Blam.Common
 {
     using static CacheGeneration;
     using static CachePlatform;

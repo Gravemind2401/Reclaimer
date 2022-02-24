@@ -1,17 +1,17 @@
-﻿using Adjutant.Blam.Common;
-using Adjutant.Blam.Common.Gen3;
-using Adjutant.Properties;
-using Adjutant.Utilities;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Common.Gen3;
+using Reclaimer.Blam.Properties;
+using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo3Alpha
+namespace Reclaimer.Blam.Halo3Alpha
 {
     //TODO: look at merging H3 beta into this class rather than have it with the retail class as there are big differences between beta and retail
 

@@ -1,12 +1,12 @@
-﻿using Adjutant.Blam.Common;
-using Adjutant.Utilities;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Common.Gen3
+namespace Reclaimer.Blam.Common.Gen3
 {
     public class TagAddressTranslator : IAddressTranslator
     {

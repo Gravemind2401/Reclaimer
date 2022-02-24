@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo5
+namespace Reclaimer.Blam.Halo5
 {
     public enum ModuleType : int
     {

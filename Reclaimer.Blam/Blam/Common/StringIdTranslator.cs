@@ -1,4 +1,4 @@
-﻿using Adjutant.Blam.Common.Gen3;
+﻿using Reclaimer.Blam.Common.Gen3;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Adjutant.Blam.Common
+namespace Reclaimer.Blam.Common
 {
     internal class StringIdTranslator
     {

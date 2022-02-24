@@ -1,11 +1,11 @@
-﻿using Adjutant.Utilities;
+﻿using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.MccHalo2X
+namespace Reclaimer.Blam.MccHalo2X
 {
     public class PointerExpander : IPointerExpander
     {

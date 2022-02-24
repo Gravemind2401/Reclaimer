@@ -2,13 +2,13 @@
 using Adjutant.Spatial;
 using System;
 using System.Collections.Generic;
-using System.IO.Endian;
+using Reclaimer.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Blam.Halo1
+namespace Reclaimer.Blam.Halo1
 {
     [FixedSize(56)]
     public class WorldVertex : IVertex

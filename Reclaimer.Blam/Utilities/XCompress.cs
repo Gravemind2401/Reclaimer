@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Utilities
+namespace Reclaimer.Blam.Utilities
 {
     public static class XCompress
     {
