@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Reclaimer.IO")]
+[assembly: AssemblyTitle("Reclaimer.Core")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Gravemind2401")]
-[assembly: AssemblyProduct("Reclaimer.IO")]
-[assembly: AssemblyCopyright("Copyright © Gravemind2401 2018 - 2021")]
+[assembly: AssemblyProduct("Reclaimer.Core")]
+[assembly: AssemblyCopyright("Copyright © Gravemind2401 2018 - 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(true)]

@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Gravemind2401")]
 [assembly: AssemblyProduct("Reclaimer")]
-[assembly: AssemblyCopyright("Copyright © Gravemind2401 2019 - 2021")]
+[assembly: AssemblyCopyright("Copyright © Gravemind2401 2019 - 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
