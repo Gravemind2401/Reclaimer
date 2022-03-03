@@ -19,7 +19,7 @@ namespace Reclaimer.Blam.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -39,7 +39,7 @@ namespace Reclaimer.Blam.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Reclaimer.Blam.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Reclaimer.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -329,8 +329,8 @@ namespace Reclaimer.Blam.Properties {
         ///    &lt;value stream=&quot;0&quot; offset=&quot;0x14&quot; type=&quot;Int16_N4&quot; usage=&quot;normal&quot; usageIndex=&quot;0&quot; /&gt;
         ///    &lt;value stream=&quot;0&quot; offset=&quot;0x1C&quot; type=&quot;Int16_N4&quot; usage=&quot;tangent&quot; usageIndex=&quot;0&quot; /&gt;
         ///  &lt;/vertex&gt;
-        ///	&lt;vertex type=&quot;0x01&quot; name=&quot;s_rigid_vertex&quot;&gt;
-        ///    &lt;value stream=&quot;0&quot; offset=&quot;0x0&quot; t [rest of string was truncated]&quot;;.
+        ///  &lt;vertex type=&quot;0x01&quot; name=&quot;s_rigid_vertex&quot;&gt;
+        ///    &lt;value stream=&quot;0&quot; offset=&quot;0x0&quot;  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string MccHalo4VertexBuffer {
             get {

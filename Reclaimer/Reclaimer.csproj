@@ -1,408 +1,60 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F05A3EB2-3336-47BC-8F5A-0DBB4E2EDABB}</ProjectGuid>
+    <ProjectName>$([System.IO.Path]::GetFileName($(MSBuildProjectDirectory)))</ProjectName>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Reclaimer</RootNamespace>
-    <AssemblyName>Reclaimer</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <Nullable>disable</Nullable>
+    <UseWPF>true</UseWPF>
+    <SignAssembly>False</SignAssembly>
+    <Authors>Gravemind2401</Authors>
+    <AssemblyVersion>1.7.311.0</AssemblyVersion>
+    <FileVersion>$(AssemblyVersion)</FileVersion>
+    <Version>$(VersionPrefix)$(AssemblyVersion)</Version>
+    <Copyright>Copyright © $(Authors) 2019 - $([System.DateTime]::Now.Year)</Copyright>
+    <RootNamespace>$(ProjectName.Split(".")[0])</RootNamespace>
     <ApplicationIcon>Resources\Reclaimer.ico</ApplicationIcon>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="AssimpNet, Version=4.1.0.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL">
-      <HintPath>..\packages\AssimpNet.4.1.0\lib\net40\AssimpNet.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CommonServiceLocator, Version=2.0.4.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommonServiceLocator.2.0.4\lib\net46\CommonServiceLocator.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net462\ControlzEx.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="DotNetProjects.Wpf.Extended.Toolkit, Version=4.6.97.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetProjects.Extended.Wpf.Toolkit.4.6.97\lib\net40\DotNetProjects.Wpf.Extended.Toolkit.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net46\MahApps.Metro.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Octokit, Version=0.50.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Octokit.0.50.0\lib\net46\Octokit.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Prism, Version=7.2.0.1367, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
-      <HintPath>..\packages\Prism.Core.7.2.0.1367\lib\net45\Prism.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Prism.Wpf, Version=7.2.0.1367, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
-      <HintPath>..\packages\Prism.Wpf.7.2.0.1367\lib\net45\Prism.Wpf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
+    <ProjectReference Include="..\..\Studio\Studio\Studio.csproj" />
+    <ProjectReference Include="..\Reclaimer.Blam\Reclaimer.Blam.csproj" />
+    <ProjectReference Include="..\Reclaimer.Core\Reclaimer.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System.Activities.Presentation" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Remoting" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Prism.Wpf.7.2.0.1367\lib\net45\System.Windows.Interactivity.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
   </ItemGroup>
+
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="Annotations\RuntimeDefaultValueAttribute.cs" />
-    <Compile Include="Annotations\SharedFunctionAttribute.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="Controls\BitmapViewer.xaml.cs">
-      <DependentUpon>BitmapViewer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Editors\BrowseEditorBase.xaml.cs">
-      <DependentUpon>BrowseEditorBase.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Editors\BrowseFileEditor.cs" />
-    <Compile Include="Controls\Editors\BrowseFolderEditor.cs" />
-    <Compile Include="Controls\Editors\EnumMultiSelectEditor.cs" />
-    <Compile Include="Controls\Editors\ModelFormatItemsSource.cs" />
-    <Compile Include="Controls\Editors\MultiSelectEditorBase.xaml.cs">
-      <DependentUpon>MultiSelectEditorBase.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\MenuButton.cs" />
-    <Compile Include="Controls\MenuButtonItemsControl.cs" />
-    <Compile Include="Controls\ModuleViewer.xaml.cs">
-      <DependentUpon>ModuleViewer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\MetaViewer.xaml.cs">
-      <DependentUpon>MetaViewer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ModelViewer.xaml.cs">
-      <DependentUpon>ModelViewer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\OutputViewer.xaml.cs">
-      <DependentUpon>OutputViewer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\MapViewer.xaml.cs">
-      <DependentUpon>MapViewer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\PakViewer.xaml.cs">
-      <DependentUpon>PakViewer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\PropertyGrid.cs" />
-    <Compile Include="Controls\Renderer.cs" />
-    <Compile Include="Controls\AutoCompleteTextBox.cs" />
-    <Compile Include="Controls\SettingViewer.xaml.cs">
-      <DependentUpon>SettingViewer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\ZoomPanel.cs" />
-    <Compile Include="InstanceManager.cs" />
-    <Compile Include="Models\AppRelease.cs" />
-    <Compile Include="Models\MaskedGeometryModel.cs" />
-    <Compile Include="Plugins\BatchExtractPlugin.cs" />
-    <Compile Include="Plugins\BitmapViewerPlugin.cs" />
-    <Compile Include="Plugins\IPluginSettings.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo3\MetaContext.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo3\MetaValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo3\BlockIndexValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo3\StringIdValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo5\BitmaskValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo5\CommentValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo5\EnumValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo5\MetaValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo5\MultiValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo5\NameHelper.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo5\SimpleValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo5\StringValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo5\ArrayValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo5\StructureValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo5\TagReferenceValue.cs" />
-    <Compile Include="Plugins\MetaViewer\MetaValidationRule.cs" />
-    <Compile Include="Plugins\MetaViewer\MetaValueBase.cs" />
-    <Compile Include="Plugins\MetaViewer\MetaValueConverter.cs" />
-    <Compile Include="Plugins\MetaViewer\XmlExtensions.cs" />
-    <Compile Include="Plugins\ModuleViewerPlugin.cs" />
-    <Compile Include="Plugins\MapViewerPlugin.cs" />
-    <Compile Include="Models\DockContainerModel.cs" />
-    <Compile Include="Models\DocumentPanelModel.cs" />
-    <Compile Include="Models\DocumentWellModel.cs" />
-    <Compile Include="Models\TabOwnerModelBase.cs" />
-    <Compile Include="Models\SplitPanelModel.cs" />
-    <Compile Include="Models\TabModel.cs" />
-    <Compile Include="Models\TabWellModelBase.cs" />
-    <Compile Include="Models\ToolWellModel.cs" />
-    <Compile Include="Models\TreeItemModel.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo3\BitmaskValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo3\CommentValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo3\EnumValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Helpers.cs" />
-    <Compile Include="Plugins\MetaViewer\MetaViewerPlugin.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo3\MultiValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo3\SimpleValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo3\StringValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo3\StructureValue.cs" />
-    <Compile Include="Plugins\MetaViewer\Halo3\TagReferenceValue.cs" />
-    <Compile Include="Plugins\ModelViewerPlugin.cs" />
-    <Compile Include="Plugins\PakViewerPlugin.cs" />
-    <Compile Include="Plugins\Plugin.cs" />
-    <Compile Include="Plugins\SoundExtractorPlugin.cs" />
-    <Compile Include="Plugins\Substrate.cs" />
-    <Compile Include="Resources\Terminology.cs" />
-    <Compile Include="Settings.cs" />
-    <Compile Include="Utilities\CoreTemplateSelector.cs" />
-    <Compile Include="Utilities\DeepObservableCollection.cs" />
-    <Compile Include="Utilities\Exceptions.cs" />
-    <Compile Include="Utilities\Extensions.cs" />
-    <Compile Include="Utilities\FolderSelectDialog.cs" />
-    <Compile Include="Utilities\GridLengthConverter.cs" />
-    <Compile Include="Utilities\KeyedSemarphore.cs" />
-    <Compile Include="Utilities\BulkObservableCollection.cs" />
-    <Compile Include="Utilities\Localiser.cs" />
-    <Compile Include="Utilities\RadToDeg32Converter.cs" />
-    <Compile Include="Utilities\RadToDeg64Converter.cs" />
-    <Compile Include="External\TGASharpLib.cs" />
-    <Compile Include="Utilities\ToStringConverter.cs" />
-    <Compile Include="Utilities\NativeMethods.cs" />
-    <Compile Include="Utilities\Utils.cs" />
-    <Compile Include="Windows\ITabContentHost.cs" />
-    <Compile Include="Windows\UpdateDialog.xaml.cs">
-      <DependentUpon>UpdateDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\OpenWithDialog.xaml.cs">
-      <DependentUpon>OpenWithDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\RaftedWindow.xaml.cs">
-      <DependentUpon>RaftedWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\ToolWindow.xaml.cs">
-      <DependentUpon>ToolWindow.xaml</DependentUpon>
-    </Compile>
-    <Page Include="Controls\BitmapViewer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Editors\BrowseEditorBase.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Editors\MultiSelectEditorBase.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\ModuleViewer.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\MetaViewer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\ModelViewer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\OutputViewer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\MapViewer.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\PakViewer.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\SettingViewer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\Defaults.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\PropertyGrid.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\DataTemplates.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Styles\Windows.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Styles\Styles.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Dark.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Themes\Blue.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Generic.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Windows\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="Styles\IconTemplates.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\UpdateDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Windows\OpenWithDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\RaftedWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\ToolWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <PackageReference Include="AssimpNet" Version="4.1.0" />
+    <PackageReference Include="DotNetProjects.Extended.Wpf.Toolkit" Version="4.6.97" />
+    <PackageReference Include="MahApps.Metro" Version="1.6.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Octokit" Version="0.50.0" />
+    <PackageReference Include="Prism.Wpf" Version="7.2.0.1367" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Resource Include="Resources\grab.cur" />
+    <Resource Include="Resources\grabbing.cur" />
+    <Resource Include="Resources\Reclaimer.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config" />
-    <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Studio\Studio\Studio.csproj">
-      <Project>{5f4c3814-8097-4869-b5e2-4c21ef45ceb2}</Project>
-      <Name>Studio</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Reclaimer.Blam\Reclaimer.Blam.csproj">
-      <Project>{a46dd713-d7f0-4d6a-bd0f-348d890e135a}</Project>
-      <Name>Reclaimer.Blam</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Reclaimer.Core\Reclaimer.Core.csproj">
-      <Project>{06a312c3-c3ec-447d-b7b7-f50e47a886d5}</Project>
-      <Name>Reclaimer.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Reclaimer.svg" />
-    <Resource Include="Resources\Reclaimer.ico" />
-    <Resource Include="Resources\grab.cur" />
-    <Resource Include="Resources\grabbing.cur" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\MetaViewer\Halo5FieldDefinitions.xml">
-      <SubType>Designer</SubType>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\MetaViewer\Halo3FieldDefinitions.xml" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AssimpNet.4.1.0\build\AssimpNet.targets'))" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

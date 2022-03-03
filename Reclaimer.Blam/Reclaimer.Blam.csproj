@@ -1,317 +1,51 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A46DD713-D7F0-4D6A-BD0F-348D890E135A}</ProjectGuid>
+    <ProjectName>$([System.IO.Path]::GetFileName($(MSBuildProjectDirectory)))</ProjectName>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Reclaimer</RootNamespace>
-    <AssemblyName>Reclaimer.Blam</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>net48</TargetFramework>
+    <Nullable>disable</Nullable>
+    <SignAssembly>false</SignAssembly>
+    <Authors>Gravemind2401</Authors>
+    <AssemblyVersion>5.7.347.0</AssemblyVersion>
+    <FileVersion>$(AssemblyVersion)</FileVersion>
+    <Version>$(VersionPrefix)$(AssemblyVersion)</Version>
+    <Copyright>Copyright © $(Authors) 2018 - $([System.DateTime]::Now.Year)</Copyright>
+    <RootNamespace>$(ProjectName.Split(".")[0])</RootNamespace>
+    <AssemblyOriginatorKeyFile>$(ProjectName).snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-    <CodeAnalysisRuleSet>Reclaimer.Blam.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>Reclaimer.Blam.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Reclaimer.Blam.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="DotNetZip, Version=1.13.8.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetZip.1.13.8\lib\net40\DotNetZip.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <ProjectReference Include="..\Reclaimer.Core\Reclaimer.Core.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Blam\Common\Annotations.cs" />
-    <Compile Include="Blam\Common\CacheMetadata.cs" />
-    <Compile Include="Blam\Common\Gen3\IGen3CacheFile.cs" />
-    <Compile Include="Blam\Common\Gen3\IMccGen3Header.cs" />
-    <Compile Include="Blam\Common\Gen3\IGen4Header.cs" />
-    <Compile Include="Blam\Common\Gen3\IGen3Header.cs" />
-    <Compile Include="Blam\Common\Gen3\ILocaleIndex.cs" />
-    <Compile Include="Blam\Common\Gen3\IMccCacheFile.cs" />
-    <Compile Include="Blam\Common\Gen3\IPartitionTable.cs" />
-    <Compile Include="Blam\Common\Gen3\LanguageDefinition.cs" />
-    <Compile Include="Blam\Common\Gen3\LocaleIndex.cs" />
-    <Compile Include="Blam\Common\Gen3\PartitionTable.cs" />
-    <Compile Include="Blam\Common\Gen3\PartitionTable64.cs" />
-    <Compile Include="Blam\Common\Gen3\SectionAddressTranslator.cs" />
-    <Compile Include="Blam\Common\Gen3\SectionOffsetTable.cs" />
-    <Compile Include="Blam\Common\Gen3\SectionTable.cs" />
-    <Compile Include="Blam\Common\Gen3\TagAddressTranslator.cs" />
-    <Compile Include="Blam\Common\TagBlock.cs" />
-    <Compile Include="Blam\Common\CacheArgs.cs" />
-    <Compile Include="Blam\Common\CacheFactory.cs" />
-    <Compile Include="Blam\Common\Enums.cs" />
-    <Compile Include="Blam\Common\Extensions.cs" />
-    <Compile Include="Blam\Common\ICacheFile.cs" />
-    <Compile Include="Blam\Common\IStringIndex.cs" />
-    <Compile Include="Blam\Common\ITagIndex.cs" />
-    <Compile Include="Blam\Common\IIndexItem.cs" />
-    <Compile Include="Blam\Common\StringIdTranslator.cs" />
-    <Compile Include="Blam\Halo1\BitmapsAddressTranslator.cs" />
-    <Compile Include="Blam\Halo1\CompressedVertex.cs" />
-    <Compile Include="Blam\Halo1\Halo1Common.cs" />
-    <Compile Include="Blam\Halo1\ITagIndexGen1.cs" />
-    <Compile Include="Blam\Halo2Beta\BSPAddressTranslator.cs" />
-    <Compile Include="Blam\Halo2Beta\CacheFile.cs" />
-    <Compile Include="Blam\Halo2Beta\HeaderAddressTranslator.cs" />
-    <Compile Include="Blam\Halo2Beta\render_model.cs" />
-    <Compile Include="Blam\Halo2Beta\TagAddressTranslator.cs" />
-    <Compile Include="Blam\Halo2\bitmap.cs" />
-    <Compile Include="Blam\Halo2\BSPAddressTranslator.cs" />
-    <Compile Include="Blam\Halo2\DataPointer.cs" />
-    <Compile Include="Blam\Halo2\Halo2Common.cs" />
-    <Compile Include="Blam\Halo2\render_model.cs" />
-    <Compile Include="Blam\Halo2\scenario.cs" />
-    <Compile Include="Blam\Halo2\scenario_structure_bsp.cs" />
-    <Compile Include="Blam\Halo2\shader.cs" />
-    <Compile Include="Blam\Halo2\sound.cs" />
-    <Compile Include="Blam\Halo2\sound_cache_file_gestalt.cs" />
-    <Compile Include="Blam\Halo2\Vertex.cs" />
-    <Compile Include="Blam\Halo3Alpha\AlphaHeaderAddressTranslator.cs" />
-    <Compile Include="Blam\Halo3Alpha\AlphaTagAddressTranslator.cs" />
-    <Compile Include="Blam\Halo3Alpha\CacheFile.cs" />
-    <Compile Include="Blam\Halo3\bitmap.cs" />
-    <Compile Include="Blam\Halo3\CacheFile.cs" />
-    <Compile Include="Blam\Halo3\cache_file_resource_gestalt.cs" />
-    <Compile Include="Blam\Halo3\cache_file_resource_layout_table.cs" />
-    <Compile Include="Blam\Halo3\Halo3Common.cs" />
-    <Compile Include="Blam\Halo3\render_method_template.cs" />
-    <Compile Include="Blam\Halo3\render_model.cs" />
-    <Compile Include="Blam\Halo3\ResourceIdentifier.cs" />
-    <Compile Include="Blam\Halo3\BetaHeaderAddressTranslator.cs" />
-    <Compile Include="Blam\Halo3\scenario.cs" />
-    <Compile Include="Blam\Halo3\scenario_lightmap.cs" />
-    <Compile Include="Blam\Halo3\scenario_lightmap_bsp_data.cs" />
-    <Compile Include="Blam\Halo3\scenario_structure_bsp.cs" />
-    <Compile Include="Blam\Halo3\shader.cs" />
-    <Compile Include="Blam\Halo3\sound.cs" />
-    <Compile Include="Blam\Halo3\sound_cache_file_gestalt.cs" />
-    <Compile Include="Blam\Halo3\BetaTagAddressTranslator.cs" />
-    <Compile Include="Blam\Common\XmlVertex.cs" />
-    <Compile Include="Blam\Halo4\bitmap.cs" />
-    <Compile Include="Blam\Halo4\CacheFile.cs" />
-    <Compile Include="Blam\Halo4\cache_file_resource_gestalt.cs" />
-    <Compile Include="Blam\Halo4\cache_file_resource_layout_table.cs" />
-    <Compile Include="Blam\Halo4\Halo4Common.cs" />
-    <Compile Include="Blam\Halo4\material.cs" />
-    <Compile Include="Blam\Halo4\render_model.cs" />
-    <Compile Include="Blam\Halo4\ResourceIdentifier.cs" />
-    <Compile Include="Blam\Halo4\scenario.cs" />
-    <Compile Include="Blam\Halo4\scenario_lightmap.cs" />
-    <Compile Include="Blam\Halo4\scenario_lightmap_bsp_data.cs" />
-    <Compile Include="Blam\Halo4\scenario_structure_bsp.cs" />
-    <Compile Include="Blam\Halo5\bitmap.cs" />
-    <Compile Include="Blam\Halo5\BlockCollection.cs" />
-    <Compile Include="Blam\Halo5\Enums.cs" />
-    <Compile Include="Blam\Halo5\Halo5Common.cs" />
-    <Compile Include="Blam\Halo5\material.cs" />
-    <Compile Include="Blam\Halo5\MetadataHeader.cs" />
-    <Compile Include="Blam\Halo5\Module.cs" />
-    <Compile Include="Blam\Halo5\ModuleItem.cs" />
-    <Compile Include="Blam\Halo5\render_model.cs" />
-    <Compile Include="Blam\Halo5\StringId.cs" />
-    <Compile Include="Blam\Halo5\TagHeader.cs" />
-    <Compile Include="Blam\Halo5\TagReference.cs" />
-    <Compile Include="Blam\HaloReach\bitmap.cs" />
-    <Compile Include="Blam\HaloReach\CacheFile.cs" />
-    <Compile Include="Blam\MccHalo3\CacheFileU6.cs" />
-    <Compile Include="Blam\MccHalo4\CacheFile.cs" />
-    <Compile Include="Blam\MccHalo4\PointerExpander.cs" />
-    <Compile Include="Blam\MccHalo2X\CacheFile.cs" />
-    <Compile Include="Blam\MccHalo2X\PointerExpander.cs" />
-    <Compile Include="Blam\MccHalo3\CacheFile.cs" />
-    <Compile Include="Blam\MccHalo3\PointerExpander.cs" />
-    <Compile Include="Blam\MccHaloReach\CacheFile.cs" />
-    <Compile Include="Blam\HaloReach\cache_file_resource_gestalt.cs" />
-    <Compile Include="Blam\HaloReach\cache_file_resource_layout_table.cs" />
-    <Compile Include="Blam\HaloReach\HaloReachCommon.cs" />
-    <Compile Include="Blam\HaloReach\render_method_template.cs" />
-    <Compile Include="Blam\HaloReach\render_model.cs" />
-    <Compile Include="Blam\HaloReach\ResourceIdentifier.cs" />
-    <Compile Include="Blam\HaloReach\scenario.cs" />
-    <Compile Include="Blam\HaloReach\scenario_lightmap.cs" />
-    <Compile Include="Blam\HaloReach\scenario_lightmap_bsp_data.cs" />
-    <Compile Include="Blam\HaloReach\scenario_structure_bsp.cs" />
-    <Compile Include="Blam\HaloReach\shader.cs" />
-    <Compile Include="Blam\HaloReach\sound.cs" />
-    <Compile Include="Blam\HaloReach\sound_cache_file_gestalt.cs" />
-    <Compile Include="Blam\MccHaloReach\CacheFileU8.cs" />
-    <Compile Include="Blam\MccHaloReach\PointerExpander.cs" />
-    <Compile Include="Geometry\CoordinateSystem.cs" />
-    <Compile Include="Geometry\Enums.cs" />
-    <Compile Include="Geometry\Extensions.cs" />
-    <Compile Include="Geometry\IVertex.cs" />
-    <Compile Include="Blam\Halo1\bitmap.cs" />
-    <Compile Include="Blam\Halo1\BSPAddressTranslator.cs" />
-    <Compile Include="Blam\Halo1\CacheFile.cs" />
-    <Compile Include="Blam\Halo1\gbxmodel.cs" />
-    <Compile Include="Blam\Common\BlockCollection.cs" />
-    <Compile Include="Blam\Halo1\scenario.cs" />
-    <Compile Include="Blam\Halo1\scenario_structure_bsp.cs" />
-    <Compile Include="Blam\Halo1\UncompressedVertex.cs" />
-    <Compile Include="Blam\Halo1\TagAddressTranslator.cs" />
-    <Compile Include="Blam\Common\TagReference.cs" />
-    <Compile Include="Blam\Halo1\WorldVertex.cs" />
-    <Compile Include="Blam\Halo2\CacheFile.cs" />
-    <Compile Include="Blam\Halo2\HeaderAddressTranslator.cs" />
-    <Compile Include="Blam\Halo2\TagAddressTranslator.cs" />
-    <Compile Include="Geometry\IGeometryModel.cs" />
-    <Compile Include="Geometry\GeometryModel.cs" />
-    <Compile Include="Geometry\TransformedVector2D.cs" />
-    <Compile Include="Geometry\TransformedVector3D.cs" />
-    <Compile Include="Geometry\TransformedVertex.cs" />
-    <Compile Include="Geometry\VectorType.cs" />
-    <Compile Include="Saber3D\Common\ContentFactory.cs" />
-    <Compile Include="Saber3D\Common\Enums.cs" />
-    <Compile Include="Saber3D\Common\IPakFile.cs" />
-    <Compile Include="Saber3D\Common\IPakItem.cs" />
-    <Compile Include="Saber3D\Halo1X\PakFile.cs" />
-    <Compile Include="Saber3D\Halo1X\Texture.cs" />
-    <Compile Include="Spatial\Int16N.cs" />
-    <Compile Include="Spatial\UInt16N.cs" />
-    <Compile Include="Utilities\AesHelper.cs" />
-    <Compile Include="Blam\Common\ContentFactory.cs" />
-    <Compile Include="Utilities\BitmapProperties.cs" />
-    <Compile Include="Utilities\DependencyReader.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <PackageReference Include="DotNetZip" Version="1.13.8" />
+    <PackageReference Include="Markeli.Half" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Spatial\DecN4.cs" />
-    <Compile Include="Spatial\HenDN3.cs" />
-    <Compile Include="Spatial\Int16N2.cs" />
-    <Compile Include="Spatial\UByte4.cs" />
-    <Compile Include="Spatial\UInt16N2.cs" />
-    <Compile Include="Spatial\UInt16N4.cs" />
-    <Compile Include="Spatial\Int16N4.cs" />
-    <Compile Include="Spatial\Int16N3.cs" />
-    <Compile Include="Spatial\IRealBounds.cs" />
-    <Compile Include="Geometry\IXMVector.cs" />
-    <Compile Include="Spatial\IRealBounds5D.cs" />
-    <Compile Include="Spatial\RealBounds.cs" />
-    <Compile Include="Spatial\RealBounds3D.cs" />
-    <Compile Include="Spatial\UByteN2.cs" />
-    <Compile Include="Spatial\UByteN4.cs" />
-    <Compile Include="Spatial\UDecN4.cs" />
-    <Compile Include="Spatial\UHenDN3.cs" />
-    <Compile Include="Spatial\UDHenN3.cs" />
-    <Compile Include="Spatial\DHenN3.cs" />
-    <Compile Include="Spatial\IRealVector2D.cs" />
-    <Compile Include="Spatial\IRealVector4D.cs" />
-    <Compile Include="Spatial\IRealVector3D.cs" />
-    <Compile Include="Spatial\RealVector2D.cs" />
-    <Compile Include="Spatial\RealVector4D.cs" />
-    <Compile Include="Spatial\RealVector3D.cs" />
-    <Compile Include="Utilities\EndianWriterEx.cs" />
-    <Compile Include="Utilities\Exceptions.cs" />
-    <Compile Include="Utilities\Interfaces.cs" />
-    <Compile Include="Utilities\IPointerExpander.cs" />
-    <Compile Include="Utilities\IWriteable.cs" />
-    <Compile Include="Utilities\MurMur3.cs" />
-    <Compile Include="Blam\Common\StringId.cs" />
-    <Compile Include="Utilities\Pointer64.cs" />
-    <Compile Include="Utilities\SoundUtils.cs" />
-    <Compile Include="Utilities\TextureUtils.cs" />
-    <Compile Include="Utilities\Utils.cs" />
-    <Compile Include="Utilities\IAddressTranslator.cs" />
-    <Compile Include="Utilities\Pointer.cs" />
-    <Compile Include="Utilities\XCompress.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Reclaimer.Core\Reclaimer.Core.csproj">
-      <Project>{06a312c3-c3ec-447d-b7b7-f50e47a886d5}</Project>
-      <Name>Reclaimer.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Markeli.Half\Markeli.Half.csproj">
-      <Project>{8de687a2-fd57-42cd-9389-527330d5af9f}</Project>
-      <Name>Markeli.Half</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Reclaimer.Blam.snk" />
-    <None Include="Reclaimer.Blam.ruleset" />
-    <None Include="packages.config" />
-    <None Include="Resources\3dsMax AMF2.ms" />
-    <None Include="Resources\Halo2BumpPalette.bin" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Blender AMF2.py" />
-    <Content Include="Resources\Halo1Classes.xml" />
-    <Content Include="Resources\Halo2Classes.xml" />
-    <Content Include="Resources\MccHalo4Strings.xml" />
-    <Content Include="Resources\MccHalo4VertexBuffer.xml" />
-    <Content Include="Resources\MccHalo3Strings.xml" />
-    <Content Include="Resources\Halo4Strings.xml" />
-    <Content Include="Resources\Halo3VertexBuffer.xml" />
-    <Content Include="Resources\Halo5VertexBuffer.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\Halo5Classes.xml" />
-    <Content Include="Resources\Halo3Strings.xml" />
-    <Content Include="Resources\HaloReachStrings.xml" />
-    <Content Include="Resources\MccHalo2XStrings.xml" />
-    <Content Include="Resources\MccHaloReachStrings.xml" />
-    <Content Include="Resources\MccHalo3VertexBuffer.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\MccHaloReachVertexBuffer.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\HaloReachVertexBuffer.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Resources\Halo4VertexBuffer.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Reclaimer.Blam.Properties</CustomToolNamespace>
     </EmbeddedResource>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+  <ItemGroup>
+    <ContentWithTargetPath Include="Resources\xcompress32.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>xcompress32.dll</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\xcompress64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>xcompress64.dll</TargetPath>
+    </ContentWithTargetPath>
+  </ItemGroup>
+
 </Project>

@@ -19,7 +19,7 @@ namespace Reclaimer.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -74,14 +74,14 @@ namespace Reclaimer.Properties {
         ///  &lt;tagReference size=&quot;16&quot; valueType=&quot;tagReference&quot;&gt;
         ///    &lt;alias name=&quot;tagRef&quot; /&gt;
         ///  &lt;/tagReference&gt;
-        ///  
+        ///
         ///  &lt;stringId size=&quot;4&quot; valueType=&quot;stringId&quot; /&gt;
         ///
         ///  &lt;string size=&quot;length&quot; valueType=&quot;string&quot;&gt;
         ///    &lt;alias name=&quot;ascii&quot; /&gt;
         ///  &lt;/string&gt;
         ///
-        ///  &lt; [rest of string was truncated]&quot;;.
+        ///  &lt;co [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Halo3FieldDefinitions {
             get {
@@ -94,15 +94,15 @@ namespace Reclaimer.Properties {
         ///&lt;fieldDefinitions&gt;
         ///  &lt;_field_tag_reference_64 size=&quot;32&quot; valueType=&quot;tagReference&quot; /&gt;
         ///  &lt;_field_block_64 size=&quot;28&quot; valueType=&quot;structure&quot; /&gt;
-        ///  &lt;_field_data_64 size=&quot;28&quot; valueType=&quot;&quot; /&gt;
-        ///  &lt;_field_pageable_resource_64 size=&quot;16&quot; valueType=&quot;&quot; /&gt;
+        ///  
+        ///  &lt;_field_data_64 size=&quot;28&quot; valueType=&quot;&quot; hidden=&quot;true&quot; /&gt;
+        ///  &lt;_field_pageable_resource_64 size=&quot;16&quot; valueType=&quot;&quot; hidden=&quot;true&quot; /&gt;
+        ///  &lt;_field_tag size=&quot;4&quot; valueType=&quot;string&quot; hidden=&quot;true&quot; /&gt;
         ///
         ///  &lt;_field_struct size=&quot;sum&quot; valueType=&quot;array&quot; /&gt;
         ///  &lt;_field_array size=&quot;sum&quot; valueType=&quot;array&quot; /&gt;
         ///
-        ///  &lt;_field_string_id size=&quot;4&quot; valueType=&quot;stringId&quot; /&gt;
-        ///  &lt;_field_string size=&quot;32&quot; valueType=&quot;string&quot; /&gt;
-        ///  &lt;_field_long_strin [rest of string was truncated]&quot;;.
+        ///  &lt;_field_string_id size=&quot;4&quot; val [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Halo5FieldDefinitions {
             get {

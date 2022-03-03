@@ -1,25 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reclaimer", "Reclaimer\Reclaimer.csproj", "{F05A3EB2-3336-47BC-8F5A-0DBB4E2EDABB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reclaimer", "Reclaimer\Reclaimer.csproj", "{F05A3EB2-3336-47BC-8F5A-0DBB4E2EDABB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reclaimer.Blam", "Reclaimer.Blam\Reclaimer.Blam.csproj", "{A46DD713-D7F0-4D6A-BD0F-348D890E135A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reclaimer.Blam", "Reclaimer.Blam\Reclaimer.Blam.csproj", "{A46DD713-D7F0-4D6A-BD0F-348D890E135A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamplePlugin", "ExamplePlugin\ExamplePlugin.csproj", "{E5249282-18DB-403F-825E-C3612441EC35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExamplePlugin", "ExamplePlugin\ExamplePlugin.csproj", "{E5249282-18DB-403F-825E-C3612441EC35}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Studio", "..\Studio\Studio\Studio.csproj", "{5F4C3814-8097-4869-B5E2-4C21EF45CEB2}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Reclaimer.Setup", "Reclaimer.Setup\Reclaimer.Setup.vdproj", "{00227FE4-8DDA-411F-BFD5-297B94C92C28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reclaimer.Core", "Reclaimer.Core\Reclaimer.Core.csproj", "{06A312C3-C3EC-447D-B7B7-F50E47A886D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reclaimer.Core", "Reclaimer.Core\Reclaimer.Core.csproj", "{06A312C3-C3EC-447D-B7B7-F50E47A886D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Markeli.Half", "Markeli.Half\Markeli.Half.csproj", "{8DE687A2-FD57-42CD-9389-527330D5AF9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reclaimer.Blam.Tests", "Reclaimer.Blam.Tests\Reclaimer.Blam.Tests.csproj", "{241C66BA-7F51-4C38-8E5D-F25AF37BC866}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reclaimer.Blam.Tests", "Reclaimer.Blam.Tests\Reclaimer.Blam.Tests.csproj", "{241C66BA-7F51-4C38-8E5D-F25AF37BC866}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reclaimer.Core.Tests", "Reclaimer.Core.Tests\Reclaimer.Core.Tests.csproj", "{341F1E52-F911-499E-BE8D-3B9BA569D190}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reclaimer.Core.Tests", "Reclaimer.Core.Tests\Reclaimer.Core.Tests.csproj", "{341F1E52-F911-499E-BE8D-3B9BA569D190}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,10 +47,6 @@ Global
 		{06A312C3-C3EC-447D-B7B7-F50E47A886D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06A312C3-C3EC-447D-B7B7-F50E47A886D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06A312C3-C3EC-447D-B7B7-F50E47A886D5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8DE687A2-FD57-42CD-9389-527330D5AF9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8DE687A2-FD57-42CD-9389-527330D5AF9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8DE687A2-FD57-42CD-9389-527330D5AF9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8DE687A2-FD57-42CD-9389-527330D5AF9F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{241C66BA-7F51-4C38-8E5D-F25AF37BC866}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{241C66BA-7F51-4C38-8E5D-F25AF37BC866}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{241C66BA-7F51-4C38-8E5D-F25AF37BC866}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -64,5 +58,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4CB3CBA1-FDA8-4EEB-A837-EB806357152C}
 	EndGlobalSection
 EndGlobal

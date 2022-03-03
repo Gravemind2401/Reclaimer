@@ -74,6 +74,7 @@ namespace Reclaimer
 
         public void Save()
         {
+            Directory.CreateDirectory(Path.GetDirectoryName(settingsJson));
             File.WriteAllText(settingsJson, JsonConvert.SerializeObject(this, SerializerSettings));
         }
     }
