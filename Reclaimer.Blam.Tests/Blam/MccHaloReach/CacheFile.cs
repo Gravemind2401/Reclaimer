@@ -1,7 +1,5 @@
-﻿using Reclaimer.Blam.Common;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Reclaimer.Blam.HaloReach;
-using Reclaimer.Blam.MccHaloReach;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;

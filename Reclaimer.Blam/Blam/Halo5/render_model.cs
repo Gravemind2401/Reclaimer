@@ -1,17 +1,13 @@
-﻿using Reclaimer.Blam.Common;
-using Adjutant.Geometry;
+﻿using Adjutant.Geometry;
 using Adjutant.Spatial;
 using Reclaimer.Blam.Utilities;
+using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
-using Reclaimer.Drawing;
-using System.IO;
-using Reclaimer.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace Reclaimer.Blam.Halo5
 {

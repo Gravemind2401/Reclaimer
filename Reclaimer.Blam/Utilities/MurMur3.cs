@@ -11,7 +11,7 @@ namespace Reclaimer.Blam.Utilities
 {
     public static class MurMur3
     {
-        const uint seed = 0;
+        private const uint seed = 0;
 
         public static uint Hash32(string value)
         {

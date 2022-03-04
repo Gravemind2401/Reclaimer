@@ -2,10 +2,10 @@
 using Reclaimer.Blam.Common.Gen3;
 using Reclaimer.Blam.Properties;
 using Reclaimer.Blam.Utilities;
+using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;

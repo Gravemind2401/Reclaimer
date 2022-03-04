@@ -49,7 +49,7 @@ namespace Reclaimer.Utilities
     {
         public virtual object Element { get; }
 
-        public ChildPropertyChangedEventArgs(object element, string propertyName) 
+        public ChildPropertyChangedEventArgs(object element, string propertyName)
             : base(propertyName)
         {
             Element = element;

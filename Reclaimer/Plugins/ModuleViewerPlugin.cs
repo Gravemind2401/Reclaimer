@@ -1,5 +1,4 @@
-﻿using Reclaimer.Controls.Editors;
-using System;
+﻿using System;
 using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Reclaimer.Controls.Editors;
 
 namespace Reclaimer.Plugins
 {

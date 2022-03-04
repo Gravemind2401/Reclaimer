@@ -1,9 +1,9 @@
-﻿using Reclaimer.Blam.Utilities;
-using Ionic.Zlib;
+﻿using Ionic.Zlib;
+using Reclaimer.Blam.Utilities;
+using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;

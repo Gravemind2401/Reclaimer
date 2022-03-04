@@ -1,10 +1,4 @@
-﻿using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
-using Reclaimer.Models;
-using Reclaimer.Plugins.MetaViewer;
-using Reclaimer.Utilities;
-using Studio.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -12,6 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
+using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Halo5;
+using Reclaimer.Models;
+using Reclaimer.Plugins.MetaViewer;
+using Reclaimer.Utilities;
+using Studio.Controls;
 
 namespace Reclaimer.Controls
 {

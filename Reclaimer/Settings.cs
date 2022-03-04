@@ -1,8 +1,4 @@
-﻿using Newtonsoft.Json;
-using Reclaimer.Models;
-using Reclaimer.Plugins;
-using Reclaimer.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -11,6 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Newtonsoft.Json;
+using Reclaimer.Models;
+using Reclaimer.Plugins;
+using Reclaimer.Utilities;
 
 namespace Reclaimer
 {

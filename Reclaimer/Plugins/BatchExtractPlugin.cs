@@ -1,20 +1,9 @@
-﻿using Reclaimer.Audio;
-using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
-using Adjutant.Geometry;
-using Reclaimer.Saber3D.Common;
-using Reclaimer.Blam.Utilities;
-using Reclaimer.Annotations;
-using Reclaimer.Controls.Editors;
-using Reclaimer.Models;
-using Reclaimer.Utilities;
-using System;
+﻿using System;
 using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Reclaimer.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -22,8 +11,18 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Adjutant.Geometry;
+using Reclaimer.Annotations;
+using Reclaimer.Audio;
+using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Halo5;
+using Reclaimer.Blam.Utilities;
+using Reclaimer.Controls.Editors;
+using Reclaimer.Drawing;
+using Reclaimer.Models;
+using Reclaimer.Saber3D.Common;
+using Reclaimer.Utilities;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
-
 using BlamContentFactory = Reclaimer.Blam.Common.ContentFactory;
 using SaberContentFactory = Reclaimer.Saber3D.Common.ContentFactory;
 
@@ -657,7 +656,7 @@ namespace Reclaimer.Plugins
                         return 0;
 
                     case "mode":
-                    //case "sbsp":
+                        //case "sbsp":
                         return 1;
 
                     //case "snd!":
@@ -718,7 +717,7 @@ namespace Reclaimer.Plugins
                 container = null;
                 return false;
             }
-        } 
+        }
         #endregion
     }
 }

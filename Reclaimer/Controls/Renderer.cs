@@ -1,6 +1,4 @@
-﻿using Adjutant.Spatial;
-using Reclaimer.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +14,8 @@ using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Adjutant.Spatial;
+using Reclaimer.Utilities;
 using Keys = System.Windows.Forms.Keys;
 
 namespace Reclaimer.Controls

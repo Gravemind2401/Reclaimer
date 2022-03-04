@@ -1,9 +1,4 @@
-﻿using Reclaimer.Blam.Common;
-using Reclaimer.Models;
-using Reclaimer.Plugins;
-using Reclaimer.Utilities;
-using Studio.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -12,6 +7,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Reclaimer.Blam.Common;
+using Reclaimer.Models;
+using Reclaimer.Plugins;
+using Reclaimer.Utilities;
+using Studio.Controls;
 
 namespace Reclaimer.Controls
 {

@@ -1,8 +1,8 @@
 ﻿using Reclaimer.Blam.Utilities;
+using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -13,7 +13,7 @@ namespace Reclaimer.Blam.Common
     internal class CacheArgs
     {
         private const string BuildStringRegex = @"[A-Za-z0-9\. _:]{10,32}";
-        
+
         //when read using little endian
         internal const int LittleHeader = 0x68656164;
         internal const int BigHeader = 0x64616568;

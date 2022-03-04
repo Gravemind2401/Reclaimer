@@ -1,13 +1,13 @@
-﻿using Reclaimer.Blam.Common;
-using Reclaimer.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Reclaimer.Blam.Common;
+using Reclaimer.Controls;
+using Reclaimer.IO;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo3
 {

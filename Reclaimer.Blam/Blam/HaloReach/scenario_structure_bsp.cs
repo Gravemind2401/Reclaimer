@@ -1,12 +1,12 @@
-﻿using Reclaimer.Blam.Common;
-using Adjutant.Geometry;
+﻿using Adjutant.Geometry;
 using Adjutant.Spatial;
+using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
+using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using Reclaimer.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -38,7 +38,7 @@ namespace Reclaimer.Blam.HaloReach
         [Offset(252, MaxVersion = (int)CacheType.MccHaloReach)]
         [Offset(256, MinVersion = (int)CacheType.MccHaloReach)]
         public RealBounds ZBounds { get; set; }
-        
+
         [Offset(308, MaxVersion = (int)CacheType.MccHaloReach)]
         [Offset(312, MinVersion = (int)CacheType.MccHaloReach)]
         public BlockCollection<ClusterBlock> Clusters { get; set; }

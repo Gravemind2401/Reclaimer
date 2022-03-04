@@ -1,10 +1,10 @@
-﻿using Reclaimer.Utilities;
-using Reclaimer.Windows;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Reclaimer.Utilities;
+using Reclaimer.Windows;
 
 namespace Reclaimer.Plugins
 {
@@ -178,7 +178,7 @@ namespace Reclaimer.Plugins
         /// Updates the working status that appears in the statusbar.
         /// </summary>
         /// <param name="status">The status to display.</param>
-        internal protected void SetWorkingStatus(string status)
+        protected internal void SetWorkingStatus(string status)
         {
             if (string.IsNullOrWhiteSpace(status))
                 throw Exceptions.MissingStringParameter(nameof(status));
@@ -190,7 +190,7 @@ namespace Reclaimer.Plugins
         /// <summary>
         /// Removes this plugin's working status from the status bar.
         /// </summary>
-        internal protected void ClearWorkingStatus()
+        protected internal void ClearWorkingStatus()
         {
             WorkingStatus = null;
             Substrate.RaiseWorkingStatusChanged(this);

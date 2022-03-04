@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Reclaimer.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +10,7 @@ namespace Reclaimer.Audio
 {
     public class PcmHeader : IFormatHeader
     {
-        const short formatId = 0x0001;
+        private const short formatId = 0x0001;
 
         public int Length => 16;
 

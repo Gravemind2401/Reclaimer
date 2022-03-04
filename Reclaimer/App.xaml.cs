@@ -1,5 +1,4 @@
-﻿using Reclaimer.Plugins;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -9,6 +8,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using Reclaimer.Plugins;
 
 namespace Reclaimer
 {

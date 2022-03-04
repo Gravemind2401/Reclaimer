@@ -1,8 +1,8 @@
 ﻿using Reclaimer.Blam.Utilities;
+using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -107,8 +107,8 @@ namespace Reclaimer.Blam.Halo5
 
         public IEnumerable<ModuleItem> GetItemsByClass(string classCode)
         {
-            return tagIndex.ItemsByClass.ContainsKey(classCode) 
-                ? tagIndex.ItemsByClass[classCode] 
+            return tagIndex.ItemsByClass.ContainsKey(classCode)
+                ? tagIndex.ItemsByClass[classCode]
                 : Enumerable.Empty<ModuleItem>();
         }
 

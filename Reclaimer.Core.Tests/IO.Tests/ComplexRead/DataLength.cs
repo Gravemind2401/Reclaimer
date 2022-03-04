@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Reclaimer.IO.Tests.ComplexRead
 {
@@ -23,7 +23,7 @@ namespace Reclaimer.IO.Tests.ComplexRead
 
                 writer.Write(5);
                 writer.Write(100);
-                
+
                 stream.Position = 0;
                 var obj = reader.ReadObject<DataClass14>();
 

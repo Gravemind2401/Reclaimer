@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Reclaimer.IO.Tests.ComplexRead
 {
@@ -148,7 +148,7 @@ namespace Reclaimer.IO.Tests.ComplexRead
                 //the highest offset should always be read last
                 //so if no size is specified the position should end
                 //up at the highest offset + the size of the property
-                Assert.AreEqual(0xA2, stream.Position); 
+                Assert.AreEqual(0xA2, stream.Position);
                 Assert.AreEqual(obj.Property1, rand[0]);
                 Assert.AreEqual(obj.Property2, rand[1]);
                 Assert.AreEqual(obj.Property3, rand[2]);

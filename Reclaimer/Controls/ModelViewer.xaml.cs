@@ -1,14 +1,6 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.Blam.Utilities;
-using Microsoft.Win32;
-using Reclaimer.Models;
-using Reclaimer.Plugins;
-using Reclaimer.Utilities;
-using Studio.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Reclaimer.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -21,6 +13,14 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
+using Adjutant.Geometry;
+using Microsoft.Win32;
+using Reclaimer.Blam.Utilities;
+using Reclaimer.Drawing;
+using Reclaimer.Models;
+using Reclaimer.Plugins;
+using Reclaimer.Utilities;
+using Studio.Controls;
 
 namespace Reclaimer.Controls
 {

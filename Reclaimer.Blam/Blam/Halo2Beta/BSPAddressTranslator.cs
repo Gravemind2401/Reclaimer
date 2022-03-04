@@ -1,5 +1,5 @@
-﻿using Reclaimer.Blam.Utilities;
-using Reclaimer.Blam.Halo2;
+﻿using Reclaimer.Blam.Halo2;
+using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

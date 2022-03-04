@@ -1,8 +1,8 @@
 ﻿using Reclaimer.Blam.Utilities;
+using Reclaimer.IO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,7 +47,7 @@ namespace Reclaimer.Blam.Common.Gen3
 
         public IEnumerator<uint> GetEnumerator() => ((IReadOnlyList<uint>)sectionOffsets).GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => sectionOffsets.GetEnumerator(); 
+        IEnumerator IEnumerable.GetEnumerator() => sectionOffsets.GetEnumerator();
         #endregion
     }
 }

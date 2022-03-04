@@ -1,10 +1,10 @@
 ﻿using Reclaimer.Blam.Utilities;
+using Reclaimer.Drawing;
+using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Reclaimer.Drawing;
 using System.IO;
-using Reclaimer.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;

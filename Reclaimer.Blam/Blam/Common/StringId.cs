@@ -1,7 +1,7 @@
 ﻿using Reclaimer.Blam.Utilities;
+using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
-using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +30,7 @@ namespace Reclaimer.Blam.Common
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
 
-            this.id = cache.CacheType < CacheType.Halo3Alpha ? reader.ReadInt16() : reader.ReadInt32();
+            id = cache.CacheType < CacheType.Halo3Alpha ? reader.ReadInt16() : reader.ReadInt32();
             this.cache = cache;
         }
 

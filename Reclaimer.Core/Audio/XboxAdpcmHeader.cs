@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Reclaimer.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +14,7 @@ namespace Reclaimer.Audio
     //http://samples.ffmpeg.org/game-formats/xbox-adpcm-wav/
     public class XboxAdpcmHeader : IFormatHeader
     {
-        const short formatId = 0x0069;
+        private const short formatId = 0x0069;
 
         public int Length => 20;
 

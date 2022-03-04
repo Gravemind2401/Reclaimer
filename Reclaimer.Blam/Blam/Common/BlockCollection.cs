@@ -1,9 +1,9 @@
 ﻿using Reclaimer.Blam.Utilities;
+using Reclaimer.IO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +20,7 @@ namespace Reclaimer.Blam.Common
         public BlockCollection(DependencyReader reader, ICacheFile cache, IAddressTranslator translator)
             : this(reader, cache, translator, null)
         { }
-        
+
         public BlockCollection(DependencyReader reader, ICacheFile cache, IAddressTranslator translator, IPointerExpander expander)
             : base(reader, cache, translator, expander)
         {
@@ -41,7 +41,7 @@ namespace Reclaimer.Blam.Common
 
         public IEnumerator<T> GetEnumerator() => items.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator(); 
+        IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
         #endregion
     }
 }

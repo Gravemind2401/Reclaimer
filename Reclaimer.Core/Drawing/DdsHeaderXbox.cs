@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Reclaimer.Drawing
 {
-     // This class does not represent an actual Xbox DDS header.
-     // It is based on DdsHeaderDxt10 and serves as a way to specify alternate
-     // texture formats used by Xbox that are not part of the Dxgi spec.
+    // This class does not represent an actual Xbox DDS header.
+    // It is based on DdsHeaderDxt10 and serves as a way to specify alternate
+    // texture formats used by Xbox that are not part of the Dxgi spec.
 
     internal class DdsHeaderXbox
     {

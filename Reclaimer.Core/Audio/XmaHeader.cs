@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Reclaimer.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +10,7 @@ namespace Reclaimer.Audio
 {
     public class XmaHeader : IFormatHeader
     {
-        const short formatId = 0x0165;
+        private const short formatId = 0x0165;
 
         public int Length => 12 + Streams.Count * 20;
 

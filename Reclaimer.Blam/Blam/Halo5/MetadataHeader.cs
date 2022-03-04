@@ -53,7 +53,7 @@ namespace Reclaimer.Blam.Halo5
                 stringsByOffset.Add((int)relative, stringTable.Count);
 
                 var hash = MurMur3.Hash32(currentValue);
-                if(!stringsByHash.ContainsKey(hash))
+                if (!stringsByHash.ContainsKey(hash))
                     stringsByHash.Add(hash, stringTable.Count);
 
                 stringTable.Add(currentValue);

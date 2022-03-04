@@ -1,13 +1,12 @@
 ﻿using Reclaimer.Blam.Utilities;
+using Reclaimer.Drawing;
+using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Reclaimer.Drawing;
-using Reclaimer.Blam.Common;
 
 namespace Reclaimer.Saber3D.Halo1X
 {

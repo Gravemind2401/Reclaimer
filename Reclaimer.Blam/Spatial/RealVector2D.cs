@@ -1,8 +1,8 @@
 ﻿using Adjutant.Geometry;
 using Reclaimer.Blam.Utilities;
+using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
-using Reclaimer.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;

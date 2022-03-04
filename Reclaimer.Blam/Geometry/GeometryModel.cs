@@ -1,11 +1,11 @@
 ﻿using Adjutant.Spatial;
+using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Reclaimer.Blam.Utilities;
 
 namespace Adjutant.Geometry
 {
@@ -94,7 +94,7 @@ namespace Adjutant.Geometry
 
         #region IGeometryMarkerGroup
 
-        IReadOnlyList<IGeometryMarker> IGeometryMarkerGroup.Markers => Markers; 
+        IReadOnlyList<IGeometryMarker> IGeometryMarkerGroup.Markers => Markers;
 
         #endregion
     }
@@ -114,7 +114,7 @@ namespace Adjutant.Geometry
 
         #region IGeometryRegion
 
-        IReadOnlyList<IGeometryPermutation> IGeometryRegion.Permutations => Permutations; 
+        IReadOnlyList<IGeometryPermutation> IGeometryRegion.Permutations => Permutations;
 
         #endregion
     }
@@ -172,9 +172,9 @@ namespace Adjutant.Geometry
 
         IReadOnlyList<IVertex> IGeometryMesh.Vertices => Vertices;
 
-        IReadOnlyList<int> IGeometryMesh.Indicies => Indicies; 
+        IReadOnlyList<int> IGeometryMesh.Indicies => Indicies;
 
-        IReadOnlyList<IGeometrySubmesh> IGeometryMesh.Submeshes => Submeshes; 
+        IReadOnlyList<IGeometrySubmesh> IGeometryMesh.Submeshes => Submeshes;
 
         #endregion
 

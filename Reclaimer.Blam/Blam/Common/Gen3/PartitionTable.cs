@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Reclaimer.IO;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,7 +57,7 @@ namespace Reclaimer.Blam.Common.Gen3
         {
             get { return Size; }
             set { Size = (uint)value; }
-        } 
+        }
         #endregion
     }
 }

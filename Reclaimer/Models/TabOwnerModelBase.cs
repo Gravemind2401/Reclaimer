@@ -1,11 +1,11 @@
-﻿using Prism.Mvvm;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Prism.Mvvm;
 
 namespace Reclaimer.Models
 {
@@ -32,7 +32,7 @@ namespace Reclaimer.Models
             set { SetProperty(ref minPanelSize, value); }
         }
 
-        protected bool SetProperty<T>(ref T storage, T value, Action<T, T> onChanged, [CallerMemberName]string propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, Action<T, T> onChanged, [CallerMemberName] string propertyName = null)
         {
             var prev = storage;
             if (SetProperty(ref storage, value, propertyName))

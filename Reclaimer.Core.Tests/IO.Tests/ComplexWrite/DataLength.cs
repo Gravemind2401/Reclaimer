@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Reclaimer.IO.Tests.ComplexWrite
 {
@@ -24,7 +24,7 @@ namespace Reclaimer.IO.Tests.ComplexWrite
                 };
 
                 writer.WriteObject(obj);
-                
+
                 Assert.AreEqual(100, stream.Position);
                 stream.Position = 0;
                 Assert.AreEqual(5, reader.ReadInt32());

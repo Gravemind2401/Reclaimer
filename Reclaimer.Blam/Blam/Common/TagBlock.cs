@@ -1,6 +1,6 @@
 ﻿using Reclaimer.Blam.Utilities;
-using System;
 using Reclaimer.IO;
+using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +27,7 @@ namespace Reclaimer.Blam.Common
         public TagBlock(DependencyReader reader, ICacheFile cache, IAddressTranslator translator)
             : this(reader, cache, translator, null)
         { }
-        
+
         public TagBlock(DependencyReader reader, ICacheFile cache, IAddressTranslator translator, IPointerExpander expander)
         {
             if (reader == null)

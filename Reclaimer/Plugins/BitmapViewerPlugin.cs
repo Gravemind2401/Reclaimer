@@ -1,11 +1,11 @@
-﻿using Reclaimer.Blam.Utilities;
-using Reclaimer.Annotations;
-using Reclaimer.Windows;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Reclaimer.Annotations;
+using Reclaimer.Blam.Utilities;
+using Reclaimer.Windows;
 
 namespace Reclaimer.Plugins
 {

@@ -107,7 +107,7 @@ namespace Reclaimer.IO
             return new ArgumentException(Utils.CurrentCulture($"The property with the {nameof(VersionNumberAttribute)} applied must have a single offset supplied and no version restrictions."));
         }
 
-        internal static ArgumentException NotValidForStringTypes([CallerMemberName]string methodName = null)
+        internal static ArgumentException NotValidForStringTypes([CallerMemberName] string methodName = null)
         {
             return new ArgumentException(Utils.CurrentCulture($"{methodName} cannot be used with strings."));
         }

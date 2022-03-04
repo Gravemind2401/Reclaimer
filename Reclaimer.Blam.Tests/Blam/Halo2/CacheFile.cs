@@ -1,6 +1,5 @@
-﻿using Reclaimer.Blam.Common;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Reclaimer.Blam.Halo2;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Linq;

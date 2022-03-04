@@ -1,12 +1,12 @@
-﻿using Reclaimer.Blam.Utilities;
+﻿using Reclaimer.Audio;
+using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Utilities;
+using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
-using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Reclaimer.Audio;
-using Reclaimer.Blam.Common;
 
 namespace Reclaimer.Blam.Halo2
 {

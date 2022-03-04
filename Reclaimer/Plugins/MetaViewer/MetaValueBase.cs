@@ -1,16 +1,14 @@
-﻿using Reclaimer.Blam.Halo5;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using Reclaimer.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Runtime.CompilerServices;
 using Prism.Mvvm;
-using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Halo5;
+using Reclaimer.IO;
 
 namespace Reclaimer.Plugins.MetaViewer
 {
@@ -174,9 +172,9 @@ namespace Reclaimer.Plugins.MetaViewer
             }
         }
 
-        internal protected virtual bool HasCustomValidation => false;
+        protected internal virtual bool HasCustomValidation => false;
 
-        internal protected virtual bool ValidateValue(object value)
+        protected internal virtual bool ValidateValue(object value)
         {
             throw new NotImplementedException();
         }

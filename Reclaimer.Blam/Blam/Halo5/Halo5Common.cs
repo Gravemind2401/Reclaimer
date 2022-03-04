@@ -1,7 +1,7 @@
-﻿using Reclaimer.Blam.Common;
-using Adjutant.Geometry;
-using Reclaimer.Blam.Properties;
+﻿using Adjutant.Geometry;
 using Adjutant.Spatial;
+using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Properties;
 using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Reclaimer.IO;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Reclaimer.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +18,7 @@ namespace Reclaimer.Blam.Utilities
             if (translator == null)
                 throw new ArgumentNullException(nameof(translator));
 
-            this._value = value;
+            _value = value;
             this.translator = translator;
         }
 
@@ -30,7 +30,7 @@ namespace Reclaimer.Blam.Utilities
             if (translator == null)
                 throw new ArgumentNullException(nameof(translator));
 
-            this._value = reader.ReadInt64();
+            _value = reader.ReadInt64();
             this.translator = translator;
         }
 

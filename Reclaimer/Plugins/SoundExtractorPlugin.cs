@@ -1,8 +1,4 @@
-﻿using Reclaimer.Audio;
-using Reclaimer.Blam.Utilities;
-using Reclaimer.Annotations;
-using Reclaimer.Controls.Editors;
-using System;
+﻿using System;
 using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +7,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Reclaimer.Annotations;
+using Reclaimer.Audio;
+using Reclaimer.Blam.Utilities;
+using Reclaimer.Controls.Editors;
 
 namespace Reclaimer.Plugins
 {

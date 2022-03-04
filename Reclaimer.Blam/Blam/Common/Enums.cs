@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace Reclaimer.Blam.Common
 {
     using static CacheGeneration;
-    using static CachePlatform;
     using static CacheMetadataFlags;
+    using static CachePlatform;
     using static CacheResourceCodec;
 
     public enum CacheGeneration
