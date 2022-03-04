@@ -21,7 +21,7 @@ namespace Adjutant.Spatial
 
         public float X
         {
-            get { return (bits & 0xFF) / scale; }
+            get => (bits & 0xFF) / scale;
             set
             {
                 value = Utils.Clamp(value, 0, 1) * scale;
@@ -31,7 +31,7 @@ namespace Adjutant.Spatial
 
         public float Y
         {
-            get { return ((bits >> 8) & 0xFF) / scale; }
+            get => ((bits >> 8) & 0xFF) / scale;
             set
             {
                 value = Utils.Clamp(value, 0, 1) * scale;
@@ -41,7 +41,7 @@ namespace Adjutant.Spatial
 
         public float Z
         {
-            get { return ((bits >> 16) & 0xFF) / scale; }
+            get => ((bits >> 16) & 0xFF) / scale;
             set
             {
                 value = Utils.Clamp(value, 0, 1) * scale;
@@ -51,7 +51,7 @@ namespace Adjutant.Spatial
 
         public float W
         {
-            get { return ((bits >> 24) & 0xFF) / scale; }
+            get => ((bits >> 24) & 0xFF) / scale;
             set
             {
                 value = Utils.Clamp(value, 0, 1) * scale;

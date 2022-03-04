@@ -30,8 +30,8 @@ namespace Reclaimer.Plugins.MetaViewer
         private bool isEnabled;
         public bool IsEnabled
         {
-            get { return isEnabled; }
-            set { SetProperty(ref isEnabled, value); }
+            get => isEnabled;
+            set => SetProperty(ref isEnabled, value);
         }
 
         public virtual string EntryString => null;

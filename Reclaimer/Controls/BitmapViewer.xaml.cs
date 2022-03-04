@@ -59,50 +59,50 @@ namespace Reclaimer.Controls
 
         public IEnumerable<int> Indexes
         {
-            get { return (IEnumerable<int>)GetValue(IndexesProperty); }
-            private set { SetValue(IndexesPropertyKey, value); }
+            get => (IEnumerable<int>)GetValue(IndexesProperty);
+            private set => SetValue(IndexesPropertyKey, value);
         }
 
         public BitmapSource ImageSource
         {
-            get { return (BitmapSource)GetValue(ImageSourceProperty); }
-            private set { SetValue(ImageSourcePropertyKey, value); }
+            get => (BitmapSource)GetValue(ImageSourceProperty);
+            private set => SetValue(ImageSourcePropertyKey, value);
         }
 
         public int SelectedIndex
         {
-            get { return (int)GetValue(SelectedIndexProperty); }
-            set { SetValue(SelectedIndexProperty, value); }
+            get => (int)GetValue(SelectedIndexProperty);
+            set => SetValue(SelectedIndexProperty, value);
         }
 
         public bool HasMultiple
         {
-            get { return (bool)GetValue(HasMultipleProperty); }
-            private set { SetValue(HasMultiplePropertyKey, value); }
+            get => (bool)GetValue(HasMultipleProperty);
+            private set => SetValue(HasMultiplePropertyKey, value);
         }
 
         public bool BlueChannel
         {
-            get { return (bool)GetValue(BlueChannelProperty); }
-            set { SetValue(BlueChannelProperty, value); }
+            get => (bool)GetValue(BlueChannelProperty);
+            set => SetValue(BlueChannelProperty, value);
         }
 
         public bool GreenChannel
         {
-            get { return (bool)GetValue(GreenChannelProperty); }
-            set { SetValue(GreenChannelProperty, value); }
+            get => (bool)GetValue(GreenChannelProperty);
+            set => SetValue(GreenChannelProperty, value);
         }
 
         public bool RedChannel
         {
-            get { return (bool)GetValue(RedChannelProperty); }
-            set { SetValue(RedChannelProperty, value); }
+            get => (bool)GetValue(RedChannelProperty);
+            set => SetValue(RedChannelProperty, value);
         }
 
         public bool AlphaChannel
         {
-            get { return (bool)GetValue(AlphaChannelProperty); }
-            set { SetValue(AlphaChannelProperty, value); }
+            get => (bool)GetValue(AlphaChannelProperty);
+            set => SetValue(AlphaChannelProperty, value);
         }
 
         public static object CoerceHasMultiple(DependencyObject d, object baseValue)

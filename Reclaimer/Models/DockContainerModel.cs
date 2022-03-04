@@ -20,22 +20,22 @@ namespace Reclaimer.Models
         private bool isRafted;
         public bool IsRafted
         {
-            get { return isRafted; }
-            internal set { SetProperty(ref isRafted, value); }
+            get => isRafted;
+            internal set => SetProperty(ref isRafted, value);
         }
 
         private TabModel selectedDockItem;
         public TabModel SelectedDockItem
         {
-            get { return selectedDockItem; }
-            set { SetProperty(ref selectedDockItem, value); }
+            get => selectedDockItem;
+            set => SetProperty(ref selectedDockItem, value);
         }
 
         private TabOwnerModelBase content;
         public TabOwnerModelBase Content
         {
-            get { return content; }
-            set { SetProperty(ref content, value, OnContentChanged); }
+            get => content;
+            set => SetProperty(ref content, value, OnContentChanged);
         }
 
         public ObservableCollection<TabModel> LeftDockItems { get; }

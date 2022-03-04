@@ -96,7 +96,7 @@ namespace Reclaimer.Plugins
         private string workingStatus;
         internal string WorkingStatus
         {
-            get { return workingStatus; }
+            get => workingStatus;
             private set
             {
                 if (workingStatus != value)

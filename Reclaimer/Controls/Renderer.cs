@@ -80,79 +80,78 @@ namespace Reclaimer.Controls
 
         public Point3D Position
         {
-            get { return (Point3D)GetValue(PositionProperty); }
-            set { SetValue(PositionProperty, value); }
+            get => (Point3D)GetValue(PositionProperty);
+            set => SetValue(PositionProperty, value);
         }
 
         public Vector3D LookDirection
         {
-            get { return (Vector3D)GetValue(LookDirectionProperty); }
-            set { SetValue(LookDirectionProperty, value); }
+            get => (Vector3D)GetValue(LookDirectionProperty);
+            set => SetValue(LookDirectionProperty, value);
         }
 
         public Vector3D UpDirection
         {
-            get { return (Vector3D)GetValue(UpDirectionProperty); }
-            set { SetValue(UpDirectionProperty, value); }
+            get => (Vector3D)GetValue(UpDirectionProperty);
+            set => SetValue(UpDirectionProperty, value);
         }
 
         public double Yaw
         {
-            get { return (double)GetValue(YawProperty); }
-            private set { SetValue(YawPropertyKey, value); }
+            get => (double)GetValue(YawProperty);
+            private set => SetValue(YawPropertyKey, value);
         }
 
         public double Pitch
         {
-            get { return (double)GetValue(PitchProperty); }
-            private set { SetValue(PitchPropertyKey, value); }
+            get => (double)GetValue(PitchProperty);
+            private set => SetValue(PitchPropertyKey, value);
         }
 
         public double NearPlaneDistance
         {
-            get { return (double)GetValue(NearPlaneDistanceProperty); }
-            set { SetValue(NearPlaneDistanceProperty, value); }
+            get => (double)GetValue(NearPlaneDistanceProperty);
+            set => SetValue(NearPlaneDistanceProperty, value);
         }
 
         public double MinFarPlaneDistance
         {
-            get { return (double)GetValue(MinFarPlaneDistanceProperty); }
-            private set { SetValue(MinFarPlaneDistancePropertyKey, value); }
+            get => (double)GetValue(MinFarPlaneDistanceProperty);
+            private set => SetValue(MinFarPlaneDistancePropertyKey, value);
         }
 
         public double FarPlaneDistance
         {
-            get { return (double)GetValue(FarPlaneDistanceProperty); }
-            set { SetValue(FarPlaneDistanceProperty, value); }
+            get => (double)GetValue(FarPlaneDistanceProperty);
+            set => SetValue(FarPlaneDistanceProperty, value);
         }
 
         public double MaxFarPlaneDistance
         {
-            get { return (double)GetValue(MaxFarPlaneDistanceProperty); }
-            private set { SetValue(MaxFarPlaneDistancePropertyKey, value); }
+            get => (double)GetValue(MaxFarPlaneDistanceProperty);
+            private set => SetValue(MaxFarPlaneDistancePropertyKey, value);
         }
 
         public double FieldOfView
         {
-            get { return (double)GetValue(FieldOfViewProperty); }
-            set { SetValue(FieldOfViewProperty, value); }
+            get => (double)GetValue(FieldOfViewProperty);
+            set => SetValue(FieldOfViewProperty, value);
         }
 
         public double CameraSpeed
         {
-            get { return (double)GetValue(CameraSpeedProperty); }
-            set { SetValue(CameraSpeedProperty, value); }
+            get => (double)GetValue(CameraSpeedProperty);
+            set => SetValue(CameraSpeedProperty, value);
         }
 
         public double MaxCameraSpeed
         {
-            get { return (double)GetValue(MaxCameraSpeedProperty); }
-            private set { SetValue(MaxCameraSpeedPropertyKey, value); }
+            get => (double)GetValue(MaxCameraSpeedProperty);
+            private set => SetValue(MaxCameraSpeedPropertyKey, value);
         }
 
         #endregion
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
         static Renderer()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(Renderer), new FrameworkPropertyMetadata(typeof(Renderer)));

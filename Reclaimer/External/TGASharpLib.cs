@@ -3390,10 +3390,7 @@ namespace TGASharpLib
             set { entries = value; }
         }
 
-        public int Count
-        {
-            get { return entries.Count; }
-        }
+        public int Count => entries.Count;
 
         public TgaDevEntry this[int index]
         {
@@ -4281,10 +4278,7 @@ namespace TGASharpLib
         /// Is footer is real footer of TGA File Format Version 2.0?
         /// Checking by <see cref="TgaString.XFileSignatute"/>.
         /// </summary>
-        public bool IsFooterCorrect
-        {
-            get { return signature == TgaString.XFileSignatute; }
-        }
+        public bool IsFooterCorrect => signature == TgaString.XFileSignatute;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

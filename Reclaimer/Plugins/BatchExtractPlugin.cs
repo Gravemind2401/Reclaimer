@@ -53,20 +53,8 @@ namespace Reclaimer.Plugins
 
         private BatchExtractSettings Settings { get; set; }
 
-        private PluginContextItem ExtractMultipleContextItem
-        {
-            get
-            {
-                return new PluginContextItem("ExtractAll", isBusy ? "Add to extraction queue" : "Extract All", OnContextItemClick);
-            }
-        }
-        private PluginContextItem ExtractSingleContextItem
-        {
-            get
-            {
-                return new PluginContextItem("Extract", isBusy ? "Add to extraction queue" : "Extract", OnContextItemClick);
-            }
-        }
+        private PluginContextItem ExtractMultipleContextItem => new PluginContextItem("ExtractAll", isBusy ? "Add to extraction queue" : "Extract All", OnContextItemClick);
+        private PluginContextItem ExtractSingleContextItem => new PluginContextItem("Extract", isBusy ? "Add to extraction queue" : "Extract", OnContextItemClick);
 
         public override void Initialise()
         {

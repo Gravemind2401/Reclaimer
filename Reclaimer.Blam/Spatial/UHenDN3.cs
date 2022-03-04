@@ -22,10 +22,7 @@ namespace Adjutant.Spatial
 
         public float X
         {
-            get
-            {
-                return (bits & 0x7FF) / scaleXY;
-            }
+            get => (bits & 0x7FF) / scaleXY;
             set
             {
                 value = Utils.Clamp(value, 0f, 1f) * scaleXY;
@@ -35,10 +32,7 @@ namespace Adjutant.Spatial
 
         public float Y
         {
-            get
-            {
-                return ((bits >> 11) & 0x7FF) / scaleXY;
-            }
+            get => ((bits >> 11) & 0x7FF) / scaleXY;
             set
             {
                 value = Utils.Clamp(value, 0f, 1f) * scaleXY;
@@ -48,10 +42,7 @@ namespace Adjutant.Spatial
 
         public float Z
         {
-            get
-            {
-                return ((bits >> 22) & 0x3FF) / scaleZ;
-            }
+            get => ((bits >> 22) & 0x3FF) / scaleZ;
             set
             {
                 value = Utils.Clamp(value, 0f, 1f) * scaleZ;
@@ -93,7 +84,7 @@ namespace Adjutant.Spatial
 
         float IXMVector.W
         {
-            get { return float.NaN; }
+            get => float.NaN;
             set { }
         }
 

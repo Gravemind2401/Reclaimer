@@ -93,8 +93,8 @@ namespace Reclaimer.Blam.Halo2
         [Offset(4)]
         public int DataSize
         {
-            get { return dataSize; }
-            set { dataSize = value & 0x00FFFFFF; }
+            get => dataSize;
+            set => dataSize = value & 0x00FFFFFF;
         }
     }
 }

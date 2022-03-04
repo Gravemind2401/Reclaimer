@@ -15,8 +15,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         private int _value;
         public int Value
         {
-            get { return _value; }
-            set { SetMetaProperty(ref _value, value); }
+            get => _value;
+            set => SetMetaProperty(ref _value, value);
         }
 
         public ObservableCollection<Tuple<int, string>> Options { get; }

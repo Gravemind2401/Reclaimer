@@ -18,15 +18,15 @@ namespace Adjutant.Spatial
         [Offset(0)]
         public float Min
         {
-            get { return min; }
-            set { min = value; }
+            get => min;
+            set => min = value;
         }
 
         [Offset(4)]
         public float Max
         {
-            get { return max; }
-            set { max = value; }
+            get => max;
+            set => max = value;
         }
 
         public RealBounds(float min, float max)

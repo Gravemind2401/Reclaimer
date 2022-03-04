@@ -19,8 +19,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         private string _value;
         public string Value
         {
-            get { return _value; }
-            set { SetMetaProperty(ref _value, value); }
+            get => _value;
+            set => SetMetaProperty(ref _value, value);
         }
 
         public StringValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)

@@ -26,8 +26,8 @@ namespace Reclaimer.Controls
 
         public bool ShowInvisibles
         {
-            get { return (bool)GetValue(ShowInvisiblesProperty); }
-            set { SetValue(ShowInvisiblesProperty, value); }
+            get => (bool)GetValue(ShowInvisiblesProperty);
+            set => SetValue(ShowInvisiblesProperty, value);
         }
 
         public static void ShowInvisiblesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

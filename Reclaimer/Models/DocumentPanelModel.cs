@@ -18,8 +18,8 @@ namespace Reclaimer.Models
         private Orientation orientation;
         public Orientation Orientation
         {
-            get { return orientation; }
-            set { SetProperty(ref orientation, value); }
+            get => orientation;
+            set => SetProperty(ref orientation, value);
         }
 
         public DelegateCommand<DockEventArgs> DockCommand { get; }

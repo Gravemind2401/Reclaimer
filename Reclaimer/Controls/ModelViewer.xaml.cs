@@ -46,14 +46,14 @@ namespace Reclaimer.Controls
 
         public IEnumerable<string> AvailableLods
         {
-            get { return (IEnumerable<string>)GetValue(AvailableLodsProperty); }
-            private set { SetValue(AvailableLodsPropertyKey, value); }
+            get => (IEnumerable<string>)GetValue(AvailableLodsProperty);
+            private set => SetValue(AvailableLodsPropertyKey, value);
         }
 
         public int SelectedLod
         {
-            get { return (int)GetValue(SelectedLodProperty); }
-            set { SetValue(SelectedLodProperty, value); }
+            get => (int)GetValue(SelectedLodProperty);
+            set => SetValue(SelectedLodProperty, value);
         }
 
         public static void SelectedLodChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

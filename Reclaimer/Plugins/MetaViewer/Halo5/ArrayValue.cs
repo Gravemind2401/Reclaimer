@@ -15,8 +15,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         private bool isExpanded;
         public bool IsExpanded
         {
-            get { return isExpanded; }
-            set { SetProperty(ref isExpanded, value); }
+            get => isExpanded;
+            set => SetProperty(ref isExpanded, value);
         }
 
         public bool HasChildren => Children.Any();

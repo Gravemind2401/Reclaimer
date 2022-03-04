@@ -240,7 +240,7 @@ namespace Reclaimer.IO
             if (prop.GetGetMethod() == null || prop.GetSetMethod() == null)
                 throw Exceptions.NonPublicGetSet(prop.Name);
 
-            object value = null;
+            object value;
 
             if (storeType.IsEnum)
                 storeType = storeType.GetEnumUnderlyingType();

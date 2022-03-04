@@ -99,7 +99,7 @@ namespace Adjutant.Spatial
 
         float IXMVector.W
         {
-            get { return float.NaN; }
+            get => float.NaN;
             set { }
         }
 

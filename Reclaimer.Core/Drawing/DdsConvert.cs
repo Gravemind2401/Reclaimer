@@ -32,7 +32,7 @@ namespace Reclaimer.Drawing
         private static Dictionary<TFormat, Decompress> CreateLookup<TAttribute, TFormat>() where TAttribute : Attribute, IFormatAttribute<TFormat>
         {
             return typeof(DdsImage).GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
-                .SelectMany(m => m.GetCustomAttributes<TAttribute>().Select(a => new { Format = a.Format, Delegate = (Decompress)m.CreateDelegate(typeof(Decompress)) }))
+                .SelectMany(m => m.GetCustomAttributes<TAttribute>().Select(a => new { a.Format, Delegate = (Decompress)m.CreateDelegate(typeof(Decompress)) }))
                 .ToDictionary(m => m.Format, m => m.Delegate);
         }
 
@@ -772,7 +772,7 @@ namespace Reclaimer.Drawing
                     var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
                     reader.Position = srcIndex * 8;
 
-                    int mode = 0;
+                    int mode;
                     for (mode = 0; mode < 8; mode++)
                     {
                         if (reader.ReadBit() == 1)
@@ -1197,7 +1197,7 @@ namespace Reclaimer.Drawing
                     var sourceIndex = y * width * bpp + x * bpp;
 
                     int destW = rot % 2 == 0 ? width : height;
-                    int destH = rot % 2 == 0 ? height : width;
+                    //int destH = rot % 2 == 0 ? height : width;
 
                     int destX, destY;
                     if (turns == 0)

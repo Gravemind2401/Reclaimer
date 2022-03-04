@@ -31,8 +31,8 @@ namespace Reclaimer.Utilities
         /// </summary>
         public string InitialDirectory
         {
-            get { return ofd.InitialDirectory; }
-            set { ofd.InitialDirectory = value; }
+            get => ofd.InitialDirectory;
+            set => ofd.InitialDirectory = value;
         }
 
         /// <summary>
@@ -40,8 +40,8 @@ namespace Reclaimer.Utilities
         /// </summary>
         public string Title
         {
-            get { return ofd.Title; }
-            set { ofd.Title = value; }
+            get => ofd.Title;
+            set => ofd.Title = value;
         }
 
         /// <summary>

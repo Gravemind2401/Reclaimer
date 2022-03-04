@@ -19,26 +19,26 @@ namespace Adjutant.Spatial
 
         public float X
         {
-            get { return x.Value; }
-            set { x = new UInt16N(value); }
+            get => x.Value;
+            set => x = new UInt16N(value);
         }
 
         public float Y
         {
-            get { return y.Value; }
-            set { y = new UInt16N(value); }
+            get => y.Value;
+            set => y = new UInt16N(value);
         }
 
         public float Z
         {
-            get { return z.Value; }
-            set { z = new UInt16N(value); }
+            get => z.Value;
+            set => z = new UInt16N(value);
         }
 
         public float W
         {
-            get { return w.Value; }
-            set { w = new UInt16N(value); }
+            get => w.Value;
+            set => w = new UInt16N(value);
         }
 
         public UInt16N4(ushort x, ushort y, ushort z, ushort w)

@@ -19,14 +19,14 @@ namespace Adjutant.Spatial
 
         public float X
         {
-            get { return x.Value; }
-            set { x = new UInt16N(value); }
+            get => x.Value;
+            set => x = new UInt16N(value);
         }
 
         public float Y
         {
-            get { return y.Value; }
-            set { y = new UInt16N(value); }
+            get => y.Value;
+            set => y = new UInt16N(value);
         }
 
         public UInt16N2(ushort x, ushort y)
@@ -49,13 +49,13 @@ namespace Adjutant.Spatial
 
         float IXMVector.Z
         {
-            get { return float.NaN; }
+            get => float.NaN;
             set { }
         }
 
         float IXMVector.W
         {
-            get { return float.NaN; }
+            get => float.NaN;
             set { }
         }
 

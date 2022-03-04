@@ -27,8 +27,8 @@ namespace Reclaimer.Controls
 
         public ObservableCollection<Control> MenuItems
         {
-            get { return (ObservableCollection<Control>)GetValue(MenuItemsProperty); }
-            set { SetValue(MenuItemsProperty, value); }
+            get => (ObservableCollection<Control>)GetValue(MenuItemsProperty);
+            set => SetValue(MenuItemsProperty, value);
         }
 
         public MenuButton()

@@ -23,15 +23,15 @@ namespace Adjutant.Spatial
         [Offset(0)]
         public float X
         {
-            get { return x; }
-            set { x = value; }
+            get => x;
+            set => x = value;
         }
 
         [Offset(4)]
         public float Y
         {
-            get { return y; }
-            set { y = value; }
+            get => y;
+            set => y = value;
         }
 
         public RealVector2D(float x, float y)
@@ -48,13 +48,13 @@ namespace Adjutant.Spatial
 
         float IXMVector.Z
         {
-            get { return float.NaN; }
+            get => float.NaN;
             set { }
         }
 
         float IXMVector.W
         {
-            get { return float.NaN; }
+            get => float.NaN;
             set { }
         }
 

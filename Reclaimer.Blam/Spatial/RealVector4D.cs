@@ -23,29 +23,29 @@ namespace Adjutant.Spatial
         [Offset(0)]
         public float X
         {
-            get { return x; }
-            set { x = value; }
+            get => x;
+            set => x = value;
         }
 
         [Offset(4)]
         public float Y
         {
-            get { return y; }
-            set { y = value; }
+            get => y;
+            set => y = value;
         }
 
         [Offset(8)]
         public float Z
         {
-            get { return z; }
-            set { z = value; }
+            get => z;
+            set => z = value;
         }
 
         [Offset(12)]
         public float W
         {
-            get { return w; }
-            set { w = value; }
+            get => w;
+            set => w = value;
         }
 
         public RealVector4D(float x, float y, float z, float w)

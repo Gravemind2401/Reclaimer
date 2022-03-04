@@ -17,36 +17,36 @@ namespace Reclaimer.Models
         private TreeItemModel parent;
         public TreeItemModel Parent
         {
-            get { return parent; }
-            private set { SetProperty(ref parent, value); }
+            get => parent;
+            private set => SetProperty(ref parent, value);
         }
 
         private string header;
         public string Header
         {
-            get { return header; }
-            set { SetProperty(ref header, value); }
+            get => header;
+            set => SetProperty(ref header, value);
         }
 
         private bool? isChecked;
         public bool? IsChecked
         {
-            get { return isChecked; }
-            set { SetProperty(ref isChecked, value); }
+            get => isChecked;
+            set => SetProperty(ref isChecked, value);
         }
 
         private bool isExpanded;
         public bool IsExpanded
         {
-            get { return isExpanded; }
-            set { SetProperty(ref isExpanded, value); }
+            get => isExpanded;
+            set => SetProperty(ref isExpanded, value);
         }
 
         private object tag;
         public object Tag
         {
-            get { return tag; }
-            set { SetProperty(ref tag, value); }
+            get => tag;
+            set => SetProperty(ref tag, value);
         }
 
         public bool IsVisible => Visibility == Visibility.Visible;
@@ -54,7 +54,7 @@ namespace Reclaimer.Models
         private Visibility visibility;
         public Visibility Visibility
         {
-            get { return visibility; }
+            get => visibility;
             set
             {
                 if (SetProperty(ref visibility, value))

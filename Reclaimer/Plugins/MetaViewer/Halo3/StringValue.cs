@@ -18,8 +18,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         private string _value;
         public string Value
         {
-            get { return _value; }
-            set { SetMetaProperty(ref _value, value); }
+            get => _value;
+            set => SetMetaProperty(ref _value, value);
         }
 
         public StringValue(XmlNode node, MetaContext context, EndianReader reader, long baseAddress)

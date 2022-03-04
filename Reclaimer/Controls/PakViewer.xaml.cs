@@ -35,8 +35,8 @@ namespace Reclaimer.Controls
 
         public bool HasGlobalHandlers
         {
-            get { return (bool)GetValue(HasGlobalHandlersProperty); }
-            private set { SetValue(HasGlobalHandlersPropertyKey, value); }
+            get => (bool)GetValue(HasGlobalHandlersProperty);
+            private set => SetValue(HasGlobalHandlersPropertyKey, value);
         }
         #endregion
 

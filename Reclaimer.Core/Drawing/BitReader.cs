@@ -24,7 +24,7 @@ namespace Reclaimer.Drawing.Bc7
         private int position;
         public int Position
         {
-            get { return position; }
+            get => position;
             set
             {
                 if (value < 0)

@@ -39,8 +39,8 @@ namespace Reclaimer
 
         public Dictionary<string, string> DefaultHandlers
         {
-            get { return Substrate.DefaultHandlers; }
-            set { Substrate.DefaultHandlers = value; }
+            get => Substrate.DefaultHandlers;
+            set => Substrate.DefaultHandlers = value;
         }
 
         //will initially be read in as JObjects

@@ -16,8 +16,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         private int _value;
         public int Value
         {
-            get { return _value; }
-            set { SetMetaProperty(ref _value, value); }
+            get => _value;
+            set => SetMetaProperty(ref _value, value);
         }
 
         public ObservableCollection<BitValue> Options { get; }
@@ -118,7 +118,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             private bool isChecked;
             public bool IsChecked
             {
-                get { return isChecked; }
+                get => isChecked;
                 set
                 {
                     if (!SetProperty(ref isChecked, value))

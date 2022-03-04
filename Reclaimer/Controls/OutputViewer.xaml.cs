@@ -23,8 +23,8 @@ namespace Reclaimer.Controls
 
         public bool WordWrapEnabled
         {
-            get { return (bool)GetValue(WordWrapEnabledProperty); }
-            set { SetValue(WordWrapEnabledProperty, value); }
+            get => (bool)GetValue(WordWrapEnabledProperty);
+            set => SetValue(WordWrapEnabledProperty, value);
         }
 
         public static void WordWrapEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

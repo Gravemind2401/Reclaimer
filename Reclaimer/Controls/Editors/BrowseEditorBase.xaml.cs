@@ -20,8 +20,8 @@ namespace Reclaimer.Controls
 
         public PropertyItem PropertyItem
         {
-            get { return (PropertyItem)GetValue(PropertyItemProperty); }
-            set { SetValue(PropertyItemProperty, value); }
+            get => (PropertyItem)GetValue(PropertyItemProperty);
+            set => SetValue(PropertyItemProperty, value);
         }
 
         public BrowseEditorBase()

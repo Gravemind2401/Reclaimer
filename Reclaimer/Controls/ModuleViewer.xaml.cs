@@ -41,14 +41,14 @@ namespace Reclaimer.Controls
 
         public bool HasGlobalHandlers
         {
-            get { return (bool)GetValue(HasGlobalHandlersProperty); }
-            private set { SetValue(HasGlobalHandlersPropertyKey, value); }
+            get => (bool)GetValue(HasGlobalHandlersProperty);
+            private set => SetValue(HasGlobalHandlersPropertyKey, value);
         }
 
         public bool HierarchyView
         {
-            get { return (bool)GetValue(HierarchyViewProperty); }
-            set { SetValue(HierarchyViewProperty, value); }
+            get => (bool)GetValue(HierarchyViewProperty);
+            set => SetValue(HierarchyViewProperty, value);
         }
         #endregion
 

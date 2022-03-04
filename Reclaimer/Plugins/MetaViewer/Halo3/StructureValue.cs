@@ -22,21 +22,21 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         private int blockCount;
         public int BlockCount
         {
-            get { return blockCount; }
-            set { SetProperty(ref blockCount, value); }
+            get => blockCount;
+            set => SetProperty(ref blockCount, value);
         }
 
         private long blockAddress;
         public long BlockAddress
         {
-            get { return blockAddress; }
-            set { SetProperty(ref blockAddress, value); }
+            get => blockAddress;
+            set => SetProperty(ref blockAddress, value);
         }
 
         private int blockIndex;
         public int BlockIndex
         {
-            get { return blockIndex; }
+            get => blockIndex;
             set
             {
                 value = Math.Min(Math.Max(0, value), BlockCount - 1);
@@ -51,8 +51,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         private bool isExpanded;
         public bool IsExpanded
         {
-            get { return isExpanded; }
-            set { SetProperty(ref isExpanded, value); }
+            get => isExpanded;
+            set => SetProperty(ref isExpanded, value);
         }
 
         public bool HasChildren => Children.Any();

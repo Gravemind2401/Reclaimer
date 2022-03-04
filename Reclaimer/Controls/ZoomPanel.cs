@@ -37,25 +37,25 @@ namespace Reclaimer.Controls
 
         public double MinZoom
         {
-            get { return (double)GetValue(MinZoomProperty); }
-            set { SetValue(MinZoomProperty, value); }
+            get => (double)GetValue(MinZoomProperty);
+            set => SetValue(MinZoomProperty, value);
         }
 
         public double MaxZoom
         {
-            get { return (double)GetValue(MaxZoomProperty); }
-            set { SetValue(MaxZoomProperty, value); }
+            get => (double)GetValue(MaxZoomProperty);
+            set => SetValue(MaxZoomProperty, value);
         }
 
         public double ZoomVariance
         {
-            get { return (double)GetValue(ZoomVarianceProperty); }
-            set { SetValue(ZoomVarianceProperty, value); }
+            get => (double)GetValue(ZoomVarianceProperty);
+            set => SetValue(ZoomVarianceProperty, value);
         }
 
         public double ZoomLevel
         {
-            get { return (double)GetValue(ZoomLevelProperty); }
+            get => (double)GetValue(ZoomLevelProperty);
             set
             {
                 value = Math.Min(Math.Max(MinZoom, value), MaxZoom);
@@ -70,7 +70,6 @@ namespace Reclaimer.Controls
         }
         #endregion
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
         static ZoomPanel()
         {
             ClipToBoundsProperty.OverrideMetadata(typeof(ZoomPanel), new FrameworkPropertyMetadata(true));
@@ -105,7 +104,7 @@ namespace Reclaimer.Controls
 
         public override UIElement Child
         {
-            get { return base.Child; }
+            get => base.Child;
             set
             {
                 OnChildChanged(base.Child, value);

@@ -15,29 +15,29 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         private float value1;
         public float Value1
         {
-            get { return value1; }
-            set { SetMetaProperty(ref value1, value); }
+            get => value1;
+            set => SetMetaProperty(ref value1, value);
         }
 
         private float value2;
         public float Value2
         {
-            get { return value2; }
-            set { SetMetaProperty(ref value2, value); }
+            get => value2;
+            set => SetMetaProperty(ref value2, value);
         }
 
         private float value3;
         public float Value3
         {
-            get { return value3; }
-            set { SetMetaProperty(ref value3, value); }
+            get => value3;
+            set => SetMetaProperty(ref value3, value);
         }
 
         private float value4;
         public float Value4
         {
-            get { return value4; }
-            set { SetMetaProperty(ref value4, value); }
+            get => value4;
+            set => SetMetaProperty(ref value4, value);
         }
 
         public string[] Labels { get; }

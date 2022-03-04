@@ -113,14 +113,14 @@ namespace Reclaimer
 
         public static bool IsFirstInstance
         {
-            get { return firstInstance; }
-            set { firstInstance = value; }
+            get => firstInstance;
+            set => firstInstance = value;
         }
 
         public static string[] CommandLineArgs
         {
-            get { return arrCommandLineArgs; }
-            set { arrCommandLineArgs = value; }
+            get => arrCommandLineArgs;
+            set => arrCommandLineArgs = value;
         }
 
         public void SetCommandLineArgs(bool isFirstInstance, string[] commandLineArgs)

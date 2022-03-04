@@ -16,29 +16,29 @@ namespace Reclaimer.Models
         private bool isActive;
         public bool IsActive
         {
-            get { return isActive; }
-            set { SetProperty(ref isActive, value); }
+            get => isActive;
+            set => SetProperty(ref isActive, value);
         }
 
         private TabModel selectedItem;
         public TabModel SelectedItem
         {
-            get { return selectedItem; }
-            set { SetProperty(ref selectedItem, value); }
+            get => selectedItem;
+            set => SetProperty(ref selectedItem, value);
         }
 
         private double width;
         public double Width
         {
-            get { return width; }
-            set { SetProperty(ref width, value, UpdateChildrenWidth); }
+            get => width;
+            set => SetProperty(ref width, value, UpdateChildrenWidth);
         }
 
         private double height;
         public double Height
         {
-            get { return height; }
-            set { SetProperty(ref height, value, UpdateChildrenHeight); }
+            get => height;
+            set => SetProperty(ref height, value, UpdateChildrenHeight);
         }
 
         public DelegateCommand<TabModel> CloseTabCommand { get; }

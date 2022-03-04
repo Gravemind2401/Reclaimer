@@ -45,7 +45,7 @@ namespace Reclaimer.IO
         /// </summary>
         public double MinVersion
         {
-            get { return minVersion.GetValueOrDefault(); }
+            get => minVersion.GetValueOrDefault();
             set
             {
                 if (value > maxVersion)
@@ -60,7 +60,7 @@ namespace Reclaimer.IO
         /// </summary>
         public double MaxVersion
         {
-            get { return maxVersion.GetValueOrDefault(); }
+            get => maxVersion.GetValueOrDefault();
             set
             {
                 if (value < minVersion)
@@ -125,7 +125,7 @@ namespace Reclaimer.IO
         /// </summary>
         public double MinVersion
         {
-            get { return minVersion.GetValueOrDefault(); }
+            get => minVersion.GetValueOrDefault();
             set
             {
                 if (value > maxVersion)
@@ -140,7 +140,7 @@ namespace Reclaimer.IO
         /// </summary>
         public double MaxVersion
         {
-            get { return maxVersion.GetValueOrDefault(); }
+            get => maxVersion.GetValueOrDefault();
             set
             {
                 if (value < minVersion)
@@ -180,7 +180,7 @@ namespace Reclaimer.IO
         /// </summary>
         public double MinVersion
         {
-            get { return minVersion.GetValueOrDefault(); }
+            get => minVersion.GetValueOrDefault();
             set
             {
                 if (value > maxVersion)
@@ -195,7 +195,7 @@ namespace Reclaimer.IO
         /// </summary>
         public double MaxVersion
         {
-            get { return maxVersion.GetValueOrDefault(); }
+            get => maxVersion.GetValueOrDefault();
             set
             {
                 if (value < minVersion)
@@ -351,7 +351,7 @@ namespace Reclaimer.IO
         /// </summary>
         public double MinVersion
         {
-            get { return minVersion.GetValueOrDefault(); }
+            get => minVersion.GetValueOrDefault();
             set
             {
                 if (value > maxVersion)
@@ -366,7 +366,7 @@ namespace Reclaimer.IO
         /// </summary>
         public double MaxVersion
         {
-            get { return maxVersion.GetValueOrDefault(); }
+            get => maxVersion.GetValueOrDefault();
             set
             {
                 if (value < minVersion)
@@ -440,7 +440,7 @@ namespace Reclaimer.IO
         /// </summary>
         public int Length
         {
-            get { return length.GetValueOrDefault(); }
+            get => length.GetValueOrDefault();
             set
             {
                 if (value < 0)
@@ -489,7 +489,7 @@ namespace Reclaimer.IO
         /// </summary>
         public double MinVersion
         {
-            get { return minVersion.GetValueOrDefault(); }
+            get => minVersion.GetValueOrDefault();
             set
             {
                 if (value > maxVersion)
@@ -504,7 +504,7 @@ namespace Reclaimer.IO
         /// </summary>
         public double MaxVersion
         {
-            get { return maxVersion.GetValueOrDefault(); }
+            get => maxVersion.GetValueOrDefault();
             set
             {
                 if (value < minVersion)
@@ -549,7 +549,7 @@ namespace Reclaimer.IO
         /// </summary>
         public double MinVersion
         {
-            get { return minVersion.GetValueOrDefault(); }
+            get => minVersion.GetValueOrDefault();
             set
             {
                 if (value > maxVersion)
@@ -564,7 +564,7 @@ namespace Reclaimer.IO
         /// </summary>
         public double MaxVersion
         {
-            get { return maxVersion.GetValueOrDefault(); }
+            get => maxVersion.GetValueOrDefault();
             set
             {
                 if (value < minVersion)

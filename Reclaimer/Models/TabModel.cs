@@ -14,56 +14,56 @@ namespace Reclaimer.Models
         private TabOwnerModelBase parent;
         public TabOwnerModelBase Parent
         {
-            get { return parent; }
-            internal set { SetProperty(ref parent, value); }
+            get => parent;
+            internal set => SetProperty(ref parent, value);
         }
         private string contentId;
         public string ContentId
         {
-            get { return contentId; }
-            set { SetProperty(ref contentId, value); }
+            get => contentId;
+            set => SetProperty(ref contentId, value);
         }
 
         private bool isPinned;
         public bool IsPinned
         {
-            get { return isPinned; }
-            set { SetProperty(ref isPinned, value); }
+            get => isPinned;
+            set => SetProperty(ref isPinned, value);
         }
 
         private bool isActive;
         public bool IsActive
         {
-            get { return isActive; }
-            set { SetProperty(ref isActive, value); }
+            get => isActive;
+            set => SetProperty(ref isActive, value);
         }
 
         private string header;
         public string Header
         {
-            get { return header; }
-            set { SetProperty(ref header, value); }
+            get => header;
+            set => SetProperty(ref header, value);
         }
 
         private string toolTip;
         public string ToolTip
         {
-            get { return toolTip; }
-            set { SetProperty(ref toolTip, value); }
+            get => toolTip;
+            set => SetProperty(ref toolTip, value);
         }
 
         private double width;
         public double Width
         {
-            get { return width; }
-            set { SetProperty(ref width, value); }
+            get => width;
+            set => SetProperty(ref width, value);
         }
 
         private double height;
         public double Height
         {
-            get { return height; }
-            set { SetProperty(ref height, value); }
+            get => height;
+            set => SetProperty(ref height, value);
         }
 
         public FrameworkElement Content { get; }

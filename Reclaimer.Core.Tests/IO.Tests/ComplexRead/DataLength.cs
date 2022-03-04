@@ -14,7 +14,6 @@ namespace Reclaimer.IO.Tests.ComplexRead
         [DataRow(ByteOrder.BigEndian, true)]
         public void DataLength01(ByteOrder order, bool dynamicRead)
         {
-            var rng = new Random();
             using (var stream = new MemoryStream(new byte[500]))
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))

@@ -164,14 +164,14 @@ namespace Reclaimer.Blam.HaloReach
 
         long IGen3Header.FileSize
         {
-            get { return FileSize; }
-            set { FileSize = (int)value; }
+            get => FileSize;
+            set => FileSize = (int)value;
         }
 
         long IGen3Header.VirtualBaseAddress
         {
-            get { return VirtualBaseAddress; }
-            set { VirtualBaseAddress = (int)value; }
+            get => VirtualBaseAddress;
+            set => VirtualBaseAddress = (int)value;
         }
 
         IPartitionTable IGen3Header.PartitionTable => PartitionTable;

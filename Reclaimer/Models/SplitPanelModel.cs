@@ -17,13 +17,13 @@ namespace Reclaimer.Models
         private Orientation orientation = Orientation.Horizontal;
         public Orientation Orientation
         {
-            get { return orientation; }
-            set { SetProperty(ref orientation, value); }
+            get => orientation;
+            set => SetProperty(ref orientation, value);
         }
 
         public TabOwnerModelBase Item1
         {
-            get { return Items[0]; }
+            get => Items[0];
             set
             {
                 if (Item1 == value)
@@ -39,7 +39,7 @@ namespace Reclaimer.Models
 
         public TabOwnerModelBase Item2
         {
-            get { return Items[1]; }
+            get => Items[1];
             set
             {
                 if (Item2 == value)

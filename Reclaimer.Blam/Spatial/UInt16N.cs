@@ -12,10 +12,7 @@ namespace Adjutant.Spatial
         private const float multiplier = ushort.MaxValue;
         private readonly ushort bits;
 
-        public float Value
-        {
-            get { return bits / multiplier; }
-        }
+        public float Value => bits / multiplier;
 
         public UInt16N(ushort value)
         {

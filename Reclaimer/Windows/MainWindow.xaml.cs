@@ -42,21 +42,18 @@ namespace Reclaimer.Windows
 
         public static readonly DependencyProperty CurrentStatusProperty = CurrentStatusPropertyKey.DependencyProperty;
 
-        public bool HasUpdate
-        {
-            get { return (bool)GetValue(HasUpdateProperty); }
-        }
+        public bool HasUpdate => (bool)GetValue(HasUpdateProperty);
 
         public bool IsBusy
         {
-            get { return (bool)GetValue(IsBusyProperty); }
-            private set { SetValue(IsBusyPropertyKey, value); }
+            get => (bool)GetValue(IsBusyProperty);
+            private set => SetValue(IsBusyPropertyKey, value);
         }
 
         public string CurrentStatus
         {
-            get { return (string)GetValue(CurrentStatusProperty); }
-            private set { SetValue(CurrentStatusPropertyKey, value); }
+            get => (string)GetValue(CurrentStatusProperty);
+            private set => SetValue(CurrentStatusPropertyKey, value);
         }
         #endregion
 

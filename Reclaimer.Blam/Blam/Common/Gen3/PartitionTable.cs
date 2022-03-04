@@ -49,14 +49,14 @@ namespace Reclaimer.Blam.Common.Gen3
         #region IPartitionLayout
         ulong IPartitionLayout.Address
         {
-            get { return Address; }
-            set { Address = (uint)value; }
+            get => Address;
+            set => Address = (uint)value;
         }
 
         ulong IPartitionLayout.Size
         {
-            get { return Size; }
-            set { Size = (uint)value; }
+            get => Size;
+            set => Size = (uint)value;
         }
         #endregion
     }

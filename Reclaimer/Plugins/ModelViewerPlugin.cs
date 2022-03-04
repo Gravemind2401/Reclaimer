@@ -28,13 +28,7 @@ namespace Reclaimer.Plugins
 
         internal static ModelViewerSettings Settings;
 
-        private PluginContextItem ExtractBitmapsContextItem
-        {
-            get
-            {
-                return new PluginContextItem("ExtractBitmaps", "Extract Bitmaps", OnContextItemClick);
-            }
-        }
+        private PluginContextItem ExtractBitmapsContextItem => new PluginContextItem("ExtractBitmaps", "Extract Bitmaps", OnContextItemClick);
 
         public override void Initialise()
         {

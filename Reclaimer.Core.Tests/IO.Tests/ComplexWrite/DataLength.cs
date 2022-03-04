@@ -12,7 +12,6 @@ namespace Reclaimer.IO.Tests.ComplexWrite
         [DataRow(ByteOrder.BigEndian)]
         public void DataLength01(ByteOrder order)
         {
-            var rng = new Random();
             using (var stream = new MemoryStream(new byte[500]))
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))

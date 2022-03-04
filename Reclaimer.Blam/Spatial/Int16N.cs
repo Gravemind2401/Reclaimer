@@ -12,10 +12,7 @@ namespace Adjutant.Spatial
         private const float multiplier = short.MaxValue;
         private readonly short bits;
 
-        public float Value
-        {
-            get { return bits / multiplier; }
-        }
+        public float Value => bits / multiplier;
 
         public Int16N(short value)
         {

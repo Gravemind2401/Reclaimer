@@ -19,14 +19,14 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         private ComboBoxItem<IIndexItem> selectedItem;
         public ComboBoxItem<IIndexItem> SelectedItem
         {
-            get { return selectedItem; }
-            set { SetMetaProperty(ref selectedItem, value); }
+            get => selectedItem;
+            set => SetMetaProperty(ref selectedItem, value);
         }
 
         private ComboBoxItem selectedClass;
         public ComboBoxItem SelectedClass
         {
-            get { return selectedClass; }
+            get => selectedClass;
             set
             {
                 if (SetProperty(ref selectedClass, value))

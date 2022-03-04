@@ -60,9 +60,7 @@ namespace Reclaimer.Plugins
 
         internal static void LoadPlugins()
         {
-            var temp = new List<Plugin>();
-
-            temp.Add(defaultPlugin);
+            var temp = new List<Plugin> { defaultPlugin };
             temp.AddRange(FindPlugins(typeof(Substrate).Assembly));
 
             if (Directory.Exists(PluginsDirectory))

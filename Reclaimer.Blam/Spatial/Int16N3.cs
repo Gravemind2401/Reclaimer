@@ -14,20 +14,20 @@ namespace Adjutant.Spatial
 
         public float X
         {
-            get { return x.Value; }
-            set { x = new Int16N(value); }
+            get => x.Value;
+            set => x = new Int16N(value);
         }
 
         public float Y
         {
-            get { return y.Value; }
-            set { y = new Int16N(value); }
+            get => y.Value;
+            set => y = new Int16N(value);
         }
 
         public float Z
         {
-            get { return z.Value; }
-            set { z = new Int16N(value); }
+            get => z.Value;
+            set => z = new Int16N(value);
         }
 
         public Int16N3(short x, short y, short z)
@@ -52,7 +52,7 @@ namespace Adjutant.Spatial
 
         float IXMVector.W
         {
-            get { return float.NaN; }
+            get => float.NaN;
             set { }
         }
 

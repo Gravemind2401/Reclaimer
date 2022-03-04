@@ -25,14 +25,14 @@ namespace Reclaimer.Controls.Editors
 
         public IList<Selectable> Options
         {
-            get { return (IList<Selectable>)GetValue(OptionsProperty); }
-            private set { SetValue(OptionsPropertyKey, value); }
+            get => (IList<Selectable>)GetValue(OptionsProperty);
+            private set => SetValue(OptionsPropertyKey, value);
         }
 
         public PropertyItem PropertyItem
         {
-            get { return (PropertyItem)GetValue(PropertyItemProperty); }
-            set { SetValue(PropertyItemProperty, value); }
+            get => (PropertyItem)GetValue(PropertyItemProperty);
+            set => SetValue(PropertyItemProperty, value);
         }
 
         public MultiSelectEditorBase()

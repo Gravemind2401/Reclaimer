@@ -158,7 +158,7 @@ namespace Reclaimer.Drawing
         /// </summary>
         public int Height
         {
-            get { return header.Height; }
+            get => header.Height;
             set
             {
                 if (value <= 0)
@@ -174,7 +174,7 @@ namespace Reclaimer.Drawing
         /// </summary>
         public int Width
         {
-            get { return header.Width; }
+            get => header.Width;
             set
             {
                 if (value <= 0)
@@ -292,7 +292,7 @@ namespace Reclaimer.Drawing
         /// </summary>
         public int ArraySize
         {
-            get { return dx10Header.ArraySize; }
+            get => dx10Header.ArraySize;
             set
             {
                 if (value <= 0)
@@ -319,7 +319,7 @@ namespace Reclaimer.Drawing
         /// </summary>
         public CubemapFlags CubemapFlags
         {
-            get { return (CubemapFlags)header.Caps2; }
+            get => (CubemapFlags)header.Caps2;
             set
             {
                 header.Caps2 = (DdsCaps2)value;
@@ -339,8 +339,8 @@ namespace Reclaimer.Drawing
         /// </summary>
         public D3D10ResourceMiscFlags DX10ResourceFlags
         {
-            get { return dx10Header.MiscFlags; }
-            set { dx10Header.MiscFlags = value; }
+            get => dx10Header.MiscFlags;
+            set => dx10Header.MiscFlags = value;
         }
 
         /// <summary>
@@ -349,8 +349,8 @@ namespace Reclaimer.Drawing
         /// </summary>
         public D3D10ResourceMiscFlag2 DX10AlphaFlags
         {
-            get { return dx10Header.MiscFlags2; }
-            set { dx10Header.MiscFlags2 = value; }
+            get => dx10Header.MiscFlags2;
+            set => dx10Header.MiscFlags2 = value;
         }
 
         /// <summary>
@@ -359,8 +359,8 @@ namespace Reclaimer.Drawing
         /// </summary>
         public D3D10ResourceMiscFlags XboxResourceFlags
         {
-            get { return xboxHeader.MiscFlags; }
-            set { xboxHeader.MiscFlags = value; }
+            get => xboxHeader.MiscFlags;
+            set => xboxHeader.MiscFlags = value;
         }
 
         /// <summary>
@@ -369,8 +369,8 @@ namespace Reclaimer.Drawing
         /// </summary>
         public D3D10ResourceMiscFlag2 XboxAlphaFlags
         {
-            get { return xboxHeader.MiscFlags2; }
-            set { xboxHeader.MiscFlags2 = value; }
+            get => xboxHeader.MiscFlags2;
+            set => xboxHeader.MiscFlags2 = value;
         }
 
         #endregion

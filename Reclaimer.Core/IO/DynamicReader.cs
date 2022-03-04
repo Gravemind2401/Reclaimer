@@ -340,11 +340,11 @@ namespace Reclaimer.IO
             il.Emit(OpCodes.Ldarg_0); //reader
 
             MethodInfo method = null;
-            Action<MethodInfo> SetMethod = (value) =>
+            void SetMethod(MethodInfo value)
             {
                 method = value;
                 EmitDebugOutput(il, prop, method);
-            };
+            }
 
             if (lenPrefixed != null)
             {

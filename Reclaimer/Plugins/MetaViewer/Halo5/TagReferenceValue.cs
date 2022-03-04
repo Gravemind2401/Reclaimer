@@ -22,14 +22,14 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         private ComboBoxItem<ModuleItem> selectedItem;
         public ComboBoxItem<ModuleItem> SelectedItem
         {
-            get { return selectedItem; }
-            set { SetMetaProperty(ref selectedItem, value); }
+            get => selectedItem;
+            set => SetMetaProperty(ref selectedItem, value);
         }
 
         private ComboBoxItem<TagClass> selectedClass;
         public ComboBoxItem<TagClass> SelectedClass
         {
-            get { return selectedClass; }
+            get => selectedClass;
             set
             {
                 if (SetProperty(ref selectedClass, value))

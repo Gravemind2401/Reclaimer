@@ -39,8 +39,8 @@ namespace Reclaimer.Blam.Common.Gen3
         #region IReadOnlyList
         public uint this[int index]
         {
-            get { return sectionOffsets[index]; }
-            set { sectionOffsets[index] = value; }
+            get => sectionOffsets[index];
+            set => sectionOffsets[index] = value;
         }
 
         public int Count => sectionOffsets.Length;

@@ -22,26 +22,26 @@ namespace Adjutant.Geometry
 
         public float X
         {
-            get { return source.X * transform.M11 + source.Y * transform.M21 + (isPoint ? transform.M41 : 0); }
-            set { throw new NotImplementedException(); }
+            get => source.X * transform.M11 + source.Y * transform.M21 + (isPoint ? transform.M41 : 0);
+            set => throw new NotImplementedException();
         }
 
         public float Y
         {
-            get { return source.X * transform.M12 + source.Y * transform.M22 + (isPoint ? transform.M42 : 0); }
-            set { throw new NotImplementedException(); }
+            get => source.X * transform.M12 + source.Y * transform.M22 + (isPoint ? transform.M42 : 0);
+            set => throw new NotImplementedException();
         }
 
         public float Z
         {
-            get { return source.Z; }
-            set { throw new NotImplementedException(); }
+            get => source.Z;
+            set => throw new NotImplementedException();
         }
 
         public float W
         {
-            get { return source.W; }
-            set { throw new NotImplementedException(); }
+            get => source.W;
+            set => throw new NotImplementedException();
         }
 
         public float Length => source.Length;

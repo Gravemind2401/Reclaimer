@@ -179,26 +179,26 @@ namespace Reclaimer.Blam.Common.Gen3
 
         int ILocaleTable.StringCount
         {
-            get { return definition.StringCount; }
-            set { definition.StringCount = value; }
+            get => definition.StringCount;
+            set => definition.StringCount = value;
         }
 
         int ILocaleTable.StringsSize
         {
-            get { return definition.StringsSize; }
-            set { definition.StringsSize = value; }
+            get => definition.StringsSize;
+            set => definition.StringsSize = value;
         }
 
         int ILocaleTable.IndicesOffset
         {
-            get { return definition.IndicesOffset; }
-            set { definition.IndicesOffset = value; }
+            get => definition.IndicesOffset;
+            set => definition.IndicesOffset = value;
         }
 
         int ILocaleTable.StringsOffset
         {
-            get { return definition.StringsOffset; }
-            set { definition.StringsOffset = value; }
+            get => definition.StringsOffset;
+            set => definition.StringsOffset = value;
         }
         #endregion
 

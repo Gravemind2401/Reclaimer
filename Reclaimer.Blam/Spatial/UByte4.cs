@@ -17,26 +17,26 @@ namespace Adjutant.Spatial
 
         public byte X
         {
-            get { return (byte)(bits & 0xFF); }
-            set { bits = (uint)((bits & ~0xFF) | ((uint)value & 0xFF)); }
+            get => (byte)(bits & 0xFF);
+            set => bits = (uint)((bits & ~0xFF) | ((uint)value & 0xFF));
         }
 
         public byte Y
         {
-            get { return (byte)((bits >> 8) & 0xFF); }
-            set { bits = (uint)((bits & ~(0xFF << 8)) | (((uint)value & 0xFF) << 8)); }
+            get => (byte)((bits >> 8) & 0xFF);
+            set => bits = (uint)((bits & ~(0xFF << 8)) | (((uint)value & 0xFF) << 8));
         }
 
         public byte Z
         {
-            get { return (byte)((bits >> 16) & 0xFF); }
-            set { bits = (uint)((bits & ~(0xFF << 16)) | (((uint)value & 0xFF) << 16)); }
+            get => (byte)((bits >> 16) & 0xFF);
+            set => bits = (uint)((bits & ~(0xFF << 16)) | (((uint)value & 0xFF) << 16));
         }
 
         public byte W
         {
-            get { return (byte)((bits >> 24) & 0xFF); }
-            set { bits = (uint)((bits & ~(0xFF << 24)) | (((uint)value & 0xFF) << 24)); }
+            get => (byte)((bits >> 24) & 0xFF);
+            set => bits = (uint)((bits & ~(0xFF << 24)) | (((uint)value & 0xFF) << 24));
         }
 
         public UByte4(uint value)
@@ -68,26 +68,26 @@ namespace Adjutant.Spatial
 
         float IXMVector.X
         {
-            get { return X; }
-            set { X = (byte)Utils.Clamp(value, 0, byte.MaxValue); }
+            get => X;
+            set => X = (byte)Utils.Clamp(value, 0, byte.MaxValue);
         }
 
         float IXMVector.Y
         {
-            get { return Y; }
-            set { Y = (byte)Utils.Clamp(value, 0, byte.MaxValue); }
+            get => Y;
+            set => Y = (byte)Utils.Clamp(value, 0, byte.MaxValue);
         }
 
         float IXMVector.Z
         {
-            get { return Z; }
-            set { Z = (byte)Utils.Clamp(value, 0, byte.MaxValue); }
+            get => Z;
+            set => Z = (byte)Utils.Clamp(value, 0, byte.MaxValue);
         }
 
         float IXMVector.W
         {
-            get { return W; }
-            set { W = (byte)Utils.Clamp(value, 0, byte.MaxValue); }
+            get => W;
+            set => W = (byte)Utils.Clamp(value, 0, byte.MaxValue);
         }
 
         VectorType IXMVector.VectorType => VectorType.UInt8_4;

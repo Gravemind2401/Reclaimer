@@ -22,7 +22,6 @@ namespace Reclaimer.Controls
         private string LastSearch;
         private bool isWorking;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline")]
         static AutoCompleteTextBox()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AutoCompleteTextBox), new FrameworkPropertyMetadata(typeof(AutoCompleteTextBox)));
@@ -49,39 +48,36 @@ namespace Reclaimer.Controls
         public static readonly DependencyProperty SuggestionProviderProperty =
             DependencyProperty.Register(nameof(SuggestionProvider), typeof(ISuggestionProvider), typeof(AutoCompleteTextBox), new PropertyMetadata(null, null));
 
-        public bool HasText
-        {
-            get { return (bool)GetValue(HasTextProperty); }
-        }
+        public bool HasText => (bool)GetValue(HasTextProperty);
 
         public string WatermarkText
         {
-            get { return (string)GetValue(WatermarkTextProperty); }
-            set { SetValue(WatermarkTextProperty, value); }
+            get => (string)GetValue(WatermarkTextProperty);
+            set => SetValue(WatermarkTextProperty, value);
         }
 
         public int CallbackDelay
         {
-            get { return (int)GetValue(LiveSearchDelayProperty); }
-            set { SetValue(LiveSearchDelayProperty, value); }
+            get => (int)GetValue(LiveSearchDelayProperty);
+            set => SetValue(LiveSearchDelayProperty, value);
         }
 
         public double MaxDropDownHeight
         {
-            get { return (double)GetValue(MaxDropDownHeightProperty); }
-            set { SetValue(MaxDropDownHeightProperty, value); }
+            get => (double)GetValue(MaxDropDownHeightProperty);
+            set => SetValue(MaxDropDownHeightProperty, value);
         }
 
         public bool IsDropDownOpen
         {
-            get { return (bool)GetValue(IsDropDownOpenProperty); }
-            set { SetValue(IsDropDownOpenProperty, value); }
+            get => (bool)GetValue(IsDropDownOpenProperty);
+            set => SetValue(IsDropDownOpenProperty, value);
         }
 
         public ISuggestionProvider SuggestionProvider
         {
-            get { return (ISuggestionProvider)GetValue(SuggestionProviderProperty); }
-            set { SetValue(SuggestionProviderProperty, value); }
+            get => (ISuggestionProvider)GetValue(SuggestionProviderProperty);
+            set => SetValue(SuggestionProviderProperty, value);
         }
 
         public static object CoerceHasText(DependencyObject d, object baseValue)
@@ -91,7 +87,7 @@ namespace Reclaimer.Controls
 
         public static bool ValidateLiveSearchDelay(object value)
         {
-            return value is int && (int)value >= 0;
+            return value is int i && i >= 0;
         }
 
         public static void LiveSearchTimeoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
