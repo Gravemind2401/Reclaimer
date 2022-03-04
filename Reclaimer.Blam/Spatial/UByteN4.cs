@@ -77,7 +77,7 @@ namespace Adjutant.Spatial
             z = Utils.Clamp(z, 0, 1) * scale;
             w = Utils.Clamp(w, 0, 1) * scale;
 
-            var temp = ((byte)z << 24) | ((byte)y << 16) | ((byte)y << 8) | (byte)x;
+            var temp = ((byte)w << 24) | ((byte)z << 16) | ((byte)y << 8) | (byte)x;
             bits = unchecked((uint)temp);
         }
 
