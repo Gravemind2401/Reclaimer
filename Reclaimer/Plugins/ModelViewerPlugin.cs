@@ -89,8 +89,7 @@ namespace Reclaimer.Plugins
 
         private void ExportBitmaps(IRenderGeometry geometry, Func<IRenderGeometry, IEnumerable<IBitmap>> getBitmaps)
         {
-            string folder;
-            if (!getDataFolderFunc(out folder))
+            if (!getDataFolderFunc(out var folder))
                 return;
 
             Task.Run(() =>
@@ -159,7 +158,7 @@ namespace Reclaimer.Plugins
             new ExportFormat(FormatId.Collada,          "dae",  "COLLADA Files"),
         };
 
-        private static Dictionary<string, ExportFormat> UserFormats = new Dictionary<string, ExportFormat>();
+        private static readonly Dictionary<string, ExportFormat> UserFormats = new Dictionary<string, ExportFormat>();
 
         private static IEnumerable<ExportFormat> ExportFormats => UserFormats.Values.Concat(StandardFormats);
 

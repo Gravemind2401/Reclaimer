@@ -35,8 +35,7 @@ namespace Reclaimer.Plugins.MetaViewer
             var match = Regex.Match(args.FileTypeKey, @"Blam\.(\w+)\.(.*)");
             if (!match.Success) return false;
 
-            CacheType cacheType;
-            if (Enum.TryParse(match.Groups[1].Value, out cacheType))
+            if (Enum.TryParse(match.Groups[1].Value, out CacheType _))
             {
                 var item = args.File.OfType<IIndexItem>().FirstOrDefault();
                 if (item == null) return false;
@@ -48,8 +47,7 @@ namespace Reclaimer.Plugins.MetaViewer
                 catch { return false; }
             }
 
-            ModuleType moduleType;
-            if (Enum.TryParse(match.Groups[1].Value, out moduleType))
+            if (Enum.TryParse(match.Groups[1].Value, out ModuleType _))
             {
                 var item = args.File.OfType<ModuleItem>().FirstOrDefault();
                 if (item == null) return false;
@@ -100,7 +98,6 @@ namespace Reclaimer.Plugins.MetaViewer
         {
             return GetDefinitionPath(p => p.ValidFor(item.Module.ModuleType), item.ClassCode, item.ClassName);
         }
-
 
         private string GetDefinitionPath(Predicate<PluginProfile> validate, string classCode, string className)
         {

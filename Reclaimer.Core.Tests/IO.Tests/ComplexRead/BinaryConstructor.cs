@@ -20,7 +20,7 @@ namespace Reclaimer.IO.Tests.ComplexRead
             using (var writer = new EndianWriter(stream, order))
             {
                 reader.DynamicReadEnabled = dynamicRead;
-                var value1 = (int)rng.Next(int.MinValue, int.MaxValue);
+                var value1 = rng.Next(int.MinValue, int.MaxValue);
                 var value2 = (float)rng.NextDouble();
                 var value3 = (byte)rng.Next(byte.MinValue, byte.MaxValue);
 
@@ -37,7 +37,7 @@ namespace Reclaimer.IO.Tests.ComplexRead
 
                 stream.Position = 0;
 
-                value1 = (int)rng.Next(int.MinValue, int.MaxValue);
+                value1 = rng.Next(int.MinValue, int.MaxValue);
                 value2 = (float)rng.NextDouble();
                 value3 = (byte)rng.Next(byte.MinValue, byte.MaxValue);
 
@@ -67,7 +67,7 @@ namespace Reclaimer.IO.Tests.ComplexRead
             using (var writer = new EndianWriter(stream, order))
             {
                 reader.DynamicReadEnabled = dynamicRead;
-                var value1 = (int)rng.Next(int.MinValue, int.MaxValue);
+                var value1 = rng.Next(int.MinValue, int.MaxValue);
                 var value2 = (float)rng.NextDouble();
                 var value3 = (byte)rng.Next(byte.MinValue, byte.MaxValue);
 
@@ -84,7 +84,7 @@ namespace Reclaimer.IO.Tests.ComplexRead
 
                 stream.Position = 0;
 
-                value1 = (int)rng.Next(int.MinValue, int.MaxValue);
+                value1 = rng.Next(int.MinValue, int.MaxValue);
                 value2 = (float)rng.NextDouble();
                 value3 = (byte)rng.Next(byte.MinValue, byte.MaxValue);
 

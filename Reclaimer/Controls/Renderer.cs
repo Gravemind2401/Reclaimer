@@ -463,8 +463,7 @@ namespace Reclaimer.Controls
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            var cursorPos = new System.Drawing.Point();
-            NativeMethods.GetCursorPos(out cursorPos);
+            NativeMethods.GetCursorPos(out var cursorPos);
 
             UpdateCameraPosition();
             UpdateCameraDirection(new Point(cursorPos.X, cursorPos.Y));

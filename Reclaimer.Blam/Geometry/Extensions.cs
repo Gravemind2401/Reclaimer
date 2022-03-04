@@ -392,8 +392,7 @@ namespace Adjutant.Geometry
 
                         var scale1 = perm.Transform.IsIdentity && perm.TransformScale == 1 ? scale : 1;
 
-                        long address;
-                        if (dupeDic.TryGetValue(perm.MeshIndex, out address))
+                        if (dupeDic.TryGetValue(perm.MeshIndex, out long address))
                         {
                             vertValueList.Add(address);
                             continue;
@@ -479,8 +478,7 @@ namespace Adjutant.Geometry
                             ? fauxMeshes[perm.MeshIndex]
                             : model.Meshes[perm.MeshIndex];
 
-                        long address;
-                        if (dupeDic.TryGetValue(perm.MeshIndex, out address))
+                        if (dupeDic.TryGetValue(perm.MeshIndex, out long address))
                         {
                             indxValueList.Add(address);
                             continue;

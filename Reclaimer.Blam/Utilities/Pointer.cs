@@ -24,11 +24,8 @@ namespace Reclaimer.Blam.Utilities
 
         public Pointer(int value, IAddressTranslator translator, IPointerExpander expander)
         {
-            if (translator == null)
-                throw new ArgumentNullException(nameof(translator));
-
             _value = value;
-            this.translator = translator;
+            this.translator = translator ?? throw new ArgumentNullException(nameof(translator));
             this.expander = expander;
         }
 
@@ -40,17 +37,13 @@ namespace Reclaimer.Blam.Utilities
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
-
-            if (translator == null)
-                throw new ArgumentNullException(nameof(translator));
-
             _value = reader.ReadInt32();
-            this.translator = translator;
+            this.translator = translator ?? throw new ArgumentNullException(nameof(translator));
             this.expander = expander;
         }
 
         public int Value => _value;
-        public long Address => translator?.GetAddress(expander?.Expand(_value) ?? _value) ?? default(long);
+        public long Address => translator?.GetAddress(expander?.Expand(_value) ?? _value) ?? default;
 
         public void Write(EndianWriter writer, double? version) => writer.Write(Value);
 

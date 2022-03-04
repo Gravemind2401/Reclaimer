@@ -149,8 +149,7 @@ namespace Reclaimer.Controls
         {
             yield return item;
 
-            object content;
-            if (ContentFactory.TryGetPrimaryContent(item, out content))
+            if (ContentFactory.TryGetPrimaryContent(item, out var content))
                 yield return content;
         }
 
@@ -179,8 +178,8 @@ namespace Reclaimer.Controls
             if ((sender as TreeViewItem)?.DataContext != tv.SelectedItem)
                 return; //because this event bubbles to the parent node
 
-            var item = (tv.SelectedItem as TreeItemModel)?.Tag as IPakItem;
-            if (item == null) return;
+            if (!((tv.SelectedItem as TreeItemModel)?.Tag is IPakItem))
+                return;
 
             Substrate.OpenWithDefault(GetSelectedArgs());
         }

@@ -100,8 +100,7 @@ namespace Reclaimer.Blam.Halo1
 
         private IEnumerable<GeometryMesh> ReadXboxMeshes(DependencyReader reader)
         {
-            var tagIndex = cache.TagIndex as ITagIndexGen1;
-            if (tagIndex == null)
+            if (!(cache.TagIndex is ITagIndexGen1 tagIndex))
                 throw new NotSupportedException();
 
             foreach (var section in Sections)
@@ -185,8 +184,7 @@ namespace Reclaimer.Blam.Halo1
 
         private IEnumerable<GeometryMesh> ReadPCMeshes(DependencyReader reader)
         {
-            var tagIndex = cache.TagIndex as ITagIndexGen1;
-            if (tagIndex == null)
+            if (!(cache.TagIndex is ITagIndexGen1 tagIndex))
                 throw new NotSupportedException();
 
             foreach (var section in Sections)

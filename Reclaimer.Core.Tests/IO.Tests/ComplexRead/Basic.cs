@@ -31,7 +31,7 @@ namespace Reclaimer.IO.Tests.ComplexRead
                 writer.Seek(0x10, SeekOrigin.Begin);
                 writer.Write((short)rand[1]);
 
-                rand[2] = (int)rng.Next(int.MinValue, int.MaxValue);
+                rand[2] = rng.Next(int.MinValue, int.MaxValue);
                 writer.Seek(0x20, SeekOrigin.Begin);
                 writer.Write((int)rand[2]);
 
@@ -59,7 +59,7 @@ namespace Reclaimer.IO.Tests.ComplexRead
                 writer.Seek(0x80, SeekOrigin.Begin);
                 writer.Write((float)rand[8]);
 
-                rand[9] = (double)rng.NextDouble();
+                rand[9] = rng.NextDouble();
                 writer.Seek(0x90, SeekOrigin.Begin);
                 writer.Write((double)rand[9]);
 
@@ -108,7 +108,7 @@ namespace Reclaimer.IO.Tests.ComplexRead
                 writer.Seek(0x40, SeekOrigin.Begin);
                 writer.Write((short)rand[1]);
 
-                rand[2] = (int)rng.Next(int.MinValue, int.MaxValue);
+                rand[2] = rng.Next(int.MinValue, int.MaxValue);
                 writer.Seek(0x30, SeekOrigin.Begin);
                 writer.Write((int)rand[2]);
 
@@ -136,7 +136,7 @@ namespace Reclaimer.IO.Tests.ComplexRead
                 writer.Seek(0x20, SeekOrigin.Begin);
                 writer.Write((float)rand[8]);
 
-                rand[9] = (double)rng.NextDouble();
+                rand[9] = rng.NextDouble();
                 writer.Seek(0x50, SeekOrigin.Begin);
                 writer.Write((double)rand[9]);
 
@@ -188,7 +188,7 @@ namespace Reclaimer.IO.Tests.ComplexRead
                 writer.Seek(0x10, SeekOrigin.Begin);
                 writer.Write((short)rand[1]);
 
-                rand[2] = (int)rng.Next(int.MinValue, int.MaxValue);
+                rand[2] = rng.Next(int.MinValue, int.MaxValue);
                 writer.Seek(0x20, SeekOrigin.Begin);
                 writer.Write((int)rand[2]);
 
@@ -216,7 +216,7 @@ namespace Reclaimer.IO.Tests.ComplexRead
                 writer.Seek(0x80, SeekOrigin.Begin);
                 writer.Write((float)rand[8]);
 
-                rand[9] = (double)rng.NextDouble();
+                rand[9] = rng.NextDouble();
                 writer.Seek(0x90, SeekOrigin.Begin);
                 writer.Write((double)rand[9]);
 

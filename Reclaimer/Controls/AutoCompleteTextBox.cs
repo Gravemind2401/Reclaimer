@@ -148,8 +148,7 @@ namespace Reclaimer.Controls
 
         private void ItemsHost_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            var textblock = e.OriginalSource as TextBlock;
-            if (textblock != null)
+            if (e.OriginalSource is TextBlock textblock)
             {
                 isWorking = true;
                 Text = textblock.Text;

@@ -363,7 +363,7 @@ namespace Reclaimer.Controls
         {
             if (item.HasItems == false) //permutation
             {
-                var parent = item.Parent as TreeItemModel;
+                var parent = item.Parent;
                 var children = parent.Items.Where(i => i.IsVisible);
 
                 if (children.All(i => i.IsChecked == true))
@@ -460,8 +460,7 @@ namespace Reclaimer.Controls
 
         private void btnExportAll_Click(object sender, RoutedEventArgs e)
         {
-            string fileName, formatId;
-            if (!PromptFileSave(out fileName, out formatId))
+            if (!PromptFileSave(out var fileName, out var formatId))
                 return;
 
             ModelViewerPlugin.WriteModelFile(model, fileName, formatId);
@@ -469,8 +468,7 @@ namespace Reclaimer.Controls
 
         private void btnExportSelected_Click(object sender, RoutedEventArgs e)
         {
-            string fileName, formatId;
-            if (!PromptFileSave(out fileName, out formatId))
+            if (!PromptFileSave(out var fileName, out var formatId))
                 return;
 
             var masked = new MaskedGeometryModel(model, GetSelectedPermutations());
@@ -537,8 +535,7 @@ namespace Reclaimer.Controls
 
         private void PosLabel_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var label = sender as Label;
-            if (label == null)
+            if (!(sender is Label label))
                 return;
 
             var anim = new DoubleAnimation

@@ -35,9 +35,6 @@ namespace Reclaimer.Drawing
         private DdsImage(int height, int width, byte[] pixelData)
             : this(new DdsHeader(), new DdsHeaderDxt10(), new DdsHeaderXbox(), pixelData)
         {
-            if (pixelData == null)
-                throw new ArgumentNullException(nameof(pixelData));
-
             if (height <= 0)
                 throw ParamMustBeGreaterThanZero(nameof(height), height);
 
@@ -49,7 +46,7 @@ namespace Reclaimer.Drawing
             header.Width = width;
             header.Caps = DdsCaps.Texture;
 
-            data = pixelData;
+            data = pixelData ?? throw new ArgumentNullException(nameof(pixelData));
         }
 
         /// <summary>

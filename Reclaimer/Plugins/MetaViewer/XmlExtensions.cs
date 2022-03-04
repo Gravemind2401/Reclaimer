@@ -20,10 +20,9 @@ namespace Reclaimer.Plugins.MetaViewer
             var attr = FindAttribute(node, possibleNames);
             if (attr == null) return null;
 
-            int intVal;
             var strVal = attr.Value;
 
-            if (int.TryParse(strVal, out intVal))
+            if (int.TryParse(strVal, out var intVal))
                 return intVal;
             else if (int.TryParse(strVal.Substring(2), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out intVal))
                 return intVal;
@@ -35,10 +34,9 @@ namespace Reclaimer.Plugins.MetaViewer
             var attr = FindAttribute(node, possibleNames);
             if (attr == null) return null;
 
-            bool boolVal;
             var strVal = attr.Value;
 
-            if (bool.TryParse(strVal, out boolVal))
+            if (bool.TryParse(strVal, out var boolVal))
                 return boolVal;
             else return null;
         }
@@ -48,10 +46,9 @@ namespace Reclaimer.Plugins.MetaViewer
             var attr = FindAttribute(node, possibleNames);
             if (attr == null) return null;
 
-            TEnum enumVal;
             var strVal = attr.Value;
 
-            if (Enum.TryParse(strVal, true, out enumVal))
+            if (Enum.TryParse(strVal, true, out TEnum enumVal))
                 return enumVal;
             else return null;
         }

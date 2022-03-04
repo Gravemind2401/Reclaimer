@@ -19,10 +19,7 @@ namespace Reclaimer.Blam.Halo5
 
         public StringId(MetadataHeader meta)
         {
-            if (meta == null)
-                throw new ArgumentNullException(nameof(meta));
-
-            this.meta = meta;
+            this.meta = meta ?? throw new ArgumentNullException(nameof(meta));
         }
 
         public override string ToString() => Value ?? "[invalid string]";

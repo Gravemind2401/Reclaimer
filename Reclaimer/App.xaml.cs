@@ -46,8 +46,7 @@ namespace Reclaimer
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            var ex = e.ExceptionObject as Exception;
-            if (ex != null)
+            if (e.ExceptionObject is Exception ex)
                 LogUnhandledException(ex);
         }
 

@@ -71,10 +71,7 @@ namespace Reclaimer.Models
 
         public TabModel(FrameworkElement content, TabItemType usage)
         {
-            if (content == null)
-                throw new ArgumentNullException(nameof(content));
-
-            Content = content;
+            Content = content ?? throw new ArgumentNullException(nameof(content));
             Usage = usage;
         }
 

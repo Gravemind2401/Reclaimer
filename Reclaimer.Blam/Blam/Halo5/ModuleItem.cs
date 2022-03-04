@@ -106,10 +106,7 @@ namespace Reclaimer.Blam.Halo5
 
         public ModuleItem(Module module)
         {
-            if (module == null)
-                throw new ArgumentNullException(nameof(module));
-
-            Module = module;
+            Module = module ?? throw new ArgumentNullException(nameof(module));
         }
 
         private Block GetImpliedBlock()
@@ -126,11 +123,11 @@ namespace Reclaimer.Blam.Halo5
 
         public DependencyReader CreateReader()
         {
-            Func<DependencyReader, DependencyReader> register = (r) =>
+            DependencyReader Register(DependencyReader r)
             {
                 r.RegisterInstance(this);
                 return r;
-            };
+            }
 
             using (var reader = Module.CreateReader())
             {
@@ -155,7 +152,7 @@ namespace Reclaimer.Blam.Halo5
                 }
 
                 decompressed.Position = 0;
-                return register(Module.CreateReader(decompressed));
+                return Register(Module.CreateReader(decompressed));
             }
         }
 

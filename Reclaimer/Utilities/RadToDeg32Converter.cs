@@ -25,8 +25,7 @@ namespace Reclaimer.Utilities
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            float deg;
-            if (float.TryParse(value?.ToString(), out deg))
+            if (float.TryParse(value?.ToString(), out var deg))
                 return (float)Utils.DegToRad(deg);
             else return System.Windows.DependencyProperty.UnsetValue;
         }

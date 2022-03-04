@@ -125,12 +125,10 @@ namespace Reclaimer.Plugins
 
         private bool ValidateCacheType(string name)
         {
-            CacheType cacheType;
-            if (Enum.TryParse(name, out cacheType))
+            if (Enum.TryParse(name, out CacheType _))
                 return true;
 
-            ModuleType moduleType;
-            if (Enum.TryParse(name, out moduleType))
+            if (Enum.TryParse(name, out ModuleType _))
                 return true;
 
             return false;
@@ -247,7 +245,7 @@ namespace Reclaimer.Plugins
                 //sets the status and a fast tag replaces it then the status will not update
                 //back to the slow tag after the fast one finishes.
 
-                Func<Task> process = async () =>
+                async Task Process()
                 {
                     var prefix = Settings.BatchWorkerCount > 1 ? $"[Worker {nextWorkerId++}] " : string.Empty;
 
@@ -256,8 +254,7 @@ namespace Reclaimer.Plugins
                         if (tokenSource.IsCancellationRequested)
                             break;
 
-                        IExtractable item;
-                        if (!extractionQueue.TryDequeue(out item))
+                        if (!extractionQueue.TryDequeue(out var item))
                             break;
 
                         using (await locker.WaitAsync(item.ItemKey))
@@ -266,9 +263,9 @@ namespace Reclaimer.Plugins
                             Extract(item, counter);
                         }
                     }
-                };
+                }
 
-                var processors = Enumerable.Range(0, Settings.BatchWorkerCount).Select(i => Task.Run(process)).ToList();
+                var processors = Enumerable.Range(0, Settings.BatchWorkerCount).Select(i => Task.Run(Process)).ToList();
                 await Task.WhenAll(processors);
 
                 var span = DateTime.Now - start;
@@ -320,8 +317,7 @@ namespace Reclaimer.Plugins
         #region Images
         private bool SaveImage(IExtractable item)
         {
-            IBitmap bitmap;
-            if (item.GetBitmapContent(out bitmap) && SaveImage(bitmap, item.Destination))
+            if (item.GetBitmapContent(out var bitmap) && SaveImage(bitmap, item.Destination))
             {
                 LogOutput($"Extracted {item.DisplayName}");
                 return true;
@@ -428,8 +424,7 @@ namespace Reclaimer.Plugins
         #region Models
         private bool SaveModel(IExtractable item)
         {
-            IRenderGeometry geometry;
-            if (item.GetGeometryContent(out geometry) && SaveModel(geometry, item.Destination))
+            if (item.GetGeometryContent(out var geometry) && SaveModel(geometry, item.Destination))
             {
                 LogOutput($"Extracted {item.DisplayName}");
                 return true;
@@ -455,8 +450,7 @@ namespace Reclaimer.Plugins
         #region Sounds
         private bool SaveSound(IExtractable item)
         {
-            ISoundContainer container;
-            if (item.GetSoundContent(out container) && SaveSound(container, item.Destination))
+            if (item.GetSoundContent(out var container) && SaveSound(container, item.Destination))
             {
                 LogOutput($"Extracted {item.DisplayName}");
                 return true;

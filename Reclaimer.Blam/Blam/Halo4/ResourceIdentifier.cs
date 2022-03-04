@@ -26,10 +26,7 @@ namespace Reclaimer.Blam.Halo4
 
         public ResourceIdentifier(int identifier, ICacheFile cache)
         {
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
-            this.cache = cache;
+            this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
             this.identifier = identifier;
         }
 
@@ -37,11 +34,7 @@ namespace Reclaimer.Blam.Halo4
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
-
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
-            this.cache = cache;
+            this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
             identifier = reader.ReadInt32();
         }
 

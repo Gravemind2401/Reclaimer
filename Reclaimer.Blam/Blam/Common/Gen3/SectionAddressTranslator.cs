@@ -18,10 +18,7 @@ namespace Reclaimer.Blam.Common.Gen3
 
         public SectionAddressTranslator(IGen3CacheFile cache, int sectionIndex)
         {
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
-            this.cache = cache;
+            this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
             this.sectionIndex = sectionIndex;
         }
 

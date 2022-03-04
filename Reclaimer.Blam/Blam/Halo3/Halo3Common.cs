@@ -212,14 +212,14 @@ namespace Reclaimer.Blam.Halo3
                     var vInfo = vertexBufferInfo[section.VertexBufferIndex];
                     var iInfo = indexBufferInfo[section.IndexBufferIndex];
 
-                    Func<XmlNode, string, bool> hasUsage = (n, u) =>
+                    bool HasUsage(XmlNode n, string u)
                     {
                         return n.ChildNodes.Cast<XmlNode>().Any(c => c.Attributes?[XmlVertexField.Usage]?.Value == u);
-                    };
+                    }
 
                     var skinType = VertexWeights.None;
-                    if (hasUsage(node, XmlVertexUsage.BlendIndices))
-                        skinType = hasUsage(node, XmlVertexUsage.BlendWeight) ? VertexWeights.Skinned : VertexWeights.Rigid;
+                    if (HasUsage(node, XmlVertexUsage.BlendIndices))
+                        skinType = HasUsage(node, XmlVertexUsage.BlendWeight) ? VertexWeights.Skinned : VertexWeights.Rigid;
                     else if (section.NodeIndex < byte.MaxValue)
                         skinType = VertexWeights.Rigid;
 

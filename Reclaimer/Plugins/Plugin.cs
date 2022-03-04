@@ -37,18 +37,9 @@ namespace Reclaimer.Plugins
         /// <param name="handler">The method to execute when the menu item is clicked.</param>
         public PluginMenuItem(string key, string path, MenuItemClickHandler handler)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
-
-            if (path == null)
-                throw new ArgumentNullException(nameof(path));
-
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
-
-            this.key = key;
-            this.handler = handler;
-            Path = path;
+            this.key = key ?? throw new ArgumentNullException(nameof(key));
+            this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            Path = path ?? throw new ArgumentNullException(nameof(path));
         }
     }
 
@@ -79,18 +70,9 @@ namespace Reclaimer.Plugins
         /// <param name="handler">The method to execute when the context menu item is clicked.</param>
         public PluginContextItem(string key, string path, ContextItemClickHandler handler)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
-
-            if (path == null)
-                throw new ArgumentNullException(nameof(path));
-
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
-
-            this.key = key;
-            this.handler = handler;
-            Path = path;
+            this.key = key ?? throw new ArgumentNullException(nameof(key));
+            this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            Path = path ?? throw new ArgumentNullException(nameof(path));
         }
     }
 
@@ -274,7 +256,7 @@ namespace Reclaimer.Plugins
         /// <param name="focusOutput">true to focus the output window.</param>
         protected internal void LogError(string message, Exception e, bool focusOutput)
         {
-            var entry = new LogEntry(DateTime.Now, $"{message}{Environment.NewLine}{e.ToString()}");
+            var entry = new LogEntry(DateTime.Now, $"{message}{Environment.NewLine}{e}");
             logEntries.Add(entry);
             Substrate.LogOutput(this, entry, focusOutput);
         }

@@ -18,10 +18,7 @@ namespace Reclaimer.Blam.Halo2
         public BSPAddressTranslator(CacheFile cache, int id)
         {
             var bspData = cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>().StructureBsps.SingleOrDefault(i => (i.BspReference.TagId) == id);
-            if (bspData == null)
-                throw new InvalidOperationException();
-
-            data = bspData;
+            data = bspData ?? throw new InvalidOperationException();
         }
 
         public long GetAddress(long pointer)

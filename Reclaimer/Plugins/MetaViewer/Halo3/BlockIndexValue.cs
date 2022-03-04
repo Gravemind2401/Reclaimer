@@ -92,7 +92,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             {
                 case MetaValueType.BlockIndex8: writer.Write((byte)parsed); break;
                 case MetaValueType.BlockIndex16: writer.Write((short)parsed); break;
-                case MetaValueType.BlockIndex32: writer.Write((int)parsed); break;
+                case MetaValueType.BlockIndex32: writer.Write(parsed); break;
             }
 
             IsDirty = false;

@@ -23,10 +23,7 @@ namespace Adjutant.Geometry
 
         public GeometryModel(string name)
         {
-            if (name == null)
-                throw new ArgumentNullException(nameof(name));
-
-            Name = name;
+            Name = name ?? throw new ArgumentNullException(nameof(name));
             Nodes = new List<IGeometryNode>();
             MarkerGroups = new List<IGeometryMarkerGroup>();
             Regions = new List<IGeometryRegion>();

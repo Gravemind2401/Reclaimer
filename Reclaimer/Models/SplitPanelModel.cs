@@ -11,7 +11,7 @@ namespace Reclaimer.Models
 {
     public class SplitPanelModel : TabOwnerModelBase
     {
-        private ObservableCollection<TabOwnerModelBase> items = new ObservableCollection<TabOwnerModelBase>();
+        private readonly ObservableCollection<TabOwnerModelBase> items = new ObservableCollection<TabOwnerModelBase>();
         public ReadOnlyObservableCollection<TabOwnerModelBase> Items { get; }
 
         private Orientation orientation = Orientation.Horizontal;

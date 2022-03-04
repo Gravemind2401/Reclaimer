@@ -124,10 +124,7 @@ namespace Reclaimer.Blam.Halo2Beta
 
         public TagIndex(CacheFile cache)
         {
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
-            this.cache = cache;
+            this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
             items = new Dictionary<int, IndexItem>();
             sysItems = new Dictionary<string, IndexItem>();
         }
@@ -175,10 +172,7 @@ namespace Reclaimer.Blam.Halo2Beta
 
         public StringIndex(CacheFile cache)
         {
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
-            this.cache = cache;
+            this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
             items = new string[cache.Header.StringCount];
         }
 
@@ -268,8 +262,7 @@ namespace Reclaimer.Blam.Halo2Beta
 
         public T ReadMetadata<T>()
         {
-            var lazy = metadataCache as Lazy<T>;
-            if (lazy != null)
+            if (metadataCache is Lazy<T> lazy)
                 return lazy.Value;
             else if (CacheFactory.SystemClasses.Contains(ClassCode))
             {

@@ -291,8 +291,8 @@ namespace Reclaimer.Controls
             if ((sender as TreeViewItem)?.DataContext != tv.SelectedItem)
                 return; //because this event bubbles to the parent node
 
-            var item = (tv.SelectedItem as TreeItemModel)?.Tag as ModuleItem;
-            if (item == null) return;
+            if (!((tv.SelectedItem as TreeItemModel)?.Tag is ModuleItem))
+                return;
 
             Substrate.OpenWithDefault(GetSelectedArgs());
         }
@@ -311,8 +311,7 @@ namespace Reclaimer.Controls
             ContextItems.Clear();
             OpenFromContextItem.Items.Clear();
 
-            var moduleItem = node.Tag as ModuleItem;
-            if (moduleItem != null)
+            if (node.Tag is ModuleItem moduleItem)
             {
                 ContextItems.Add(OpenContextItem);
                 ContextItems.Add(OpenWithContextItem);
@@ -349,8 +348,7 @@ namespace Reclaimer.Controls
 
         private void ContextItem_Click(object sender, RoutedEventArgs e)
         {
-            var item = sender as MenuItem;
-            if (item == null)
+            if (!(sender is MenuItem item))
                 return;
 
             var args = GetSelectedArgs();

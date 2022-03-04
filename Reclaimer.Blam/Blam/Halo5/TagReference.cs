@@ -22,13 +22,10 @@ namespace Reclaimer.Blam.Halo5
 
         public TagReference(Module module, EndianReader reader)
         {
-            if (module == null)
-                throw new ArgumentNullException(nameof(module));
-
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
 
-            this.module = module;
+            this.module = module ?? throw new ArgumentNullException(nameof(module));
 
             reader.BaseStream.Position += 8; //padding
             reader.ReadInt32(); //index?

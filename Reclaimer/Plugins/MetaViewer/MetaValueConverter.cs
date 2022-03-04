@@ -27,9 +27,8 @@ namespace Reclaimer.Plugins.MetaViewer
             obj.SetValue(MetaPropertyProperty, value);
 
             var element = obj as Control;
-            var meta = element?.DataContext as MetaValueBase;
 
-            if (meta == null)
+            if (!(element?.DataContext is MetaValueBase meta))
                 return;
 
             var descriptor = DependencyPropertyDescriptor.FromName("Text", obj.GetType(), obj.GetType());

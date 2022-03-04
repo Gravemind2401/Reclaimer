@@ -64,7 +64,7 @@ namespace Reclaimer.Blam.Utilities
                             h1 ^= k1;
                             break;
                         case 1:
-                            k1 = (uint)(chunk[0]);
+                            k1 = chunk[0];
                             k1 *= c1;
                             k1 = rotl32(k1, 15);
                             k1 *= c2;

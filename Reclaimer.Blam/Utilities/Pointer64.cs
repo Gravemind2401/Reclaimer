@@ -15,27 +15,20 @@ namespace Reclaimer.Blam.Utilities
 
         public Pointer64(long value, IAddressTranslator translator)
         {
-            if (translator == null)
-                throw new ArgumentNullException(nameof(translator));
-
             _value = value;
-            this.translator = translator;
+            this.translator = translator ?? throw new ArgumentNullException(nameof(translator));
         }
 
         public Pointer64(DependencyReader reader, IAddressTranslator translator)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
-
-            if (translator == null)
-                throw new ArgumentNullException(nameof(translator));
-
             _value = reader.ReadInt64();
-            this.translator = translator;
+            this.translator = translator ?? throw new ArgumentNullException(nameof(translator));
         }
 
         public long Value => _value;
-        public long Address => translator?.GetAddress(_value) ?? default(long);
+        public long Address => translator?.GetAddress(_value) ?? default;
 
         public void Write(EndianWriter writer, double? version) => writer.Write(Value);
 

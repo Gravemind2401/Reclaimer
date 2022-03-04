@@ -182,7 +182,7 @@ namespace Reclaimer.Plugins
             Log?.Invoke(source, new LogEventArgs(source, entry));
         }
 
-        internal static void ClearLogOutput(Plugin source) => EmptyLog?.Invoke(source, new LogEventArgs(source, default(LogEntry)));
+        internal static void ClearLogOutput(Plugin source) => EmptyLog?.Invoke(source, new LogEventArgs(source, default));
 
         internal static void SetSystemWorkingStatus(string status)
         {
@@ -460,8 +460,7 @@ namespace Reclaimer.Plugins
             if (tab?.Parent == null)
                 return false;
 
-            var well = tab.Parent as TabWellModelBase;
-            if (well != null)
+            if (tab.Parent is TabWellModelBase well)
             {
                 var currentIndex = well.Children.IndexOf(tab);
                 if (currentIndex > 0)
@@ -473,8 +472,7 @@ namespace Reclaimer.Plugins
                 return true;
             }
 
-            var container = tab.Parent as DockContainerModel;
-            if (container != null)
+            if (tab.Parent is DockContainerModel container)
             {
                 container.SelectedDockItem = tab;
                 tab.IsActive = true;

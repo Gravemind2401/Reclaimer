@@ -301,7 +301,7 @@ namespace Reclaimer.Windows
             item?.ExecuteHandler();
         }
 
-        private Dictionary<string, MenuItem> menuLookup = new Dictionary<string, MenuItem>();
+        private readonly Dictionary<string, MenuItem> menuLookup = new Dictionary<string, MenuItem>();
         private MenuItem GetMenuItem(string path)
         {
             if (menuLookup.ContainsKey(path))

@@ -97,8 +97,7 @@ namespace Reclaimer.Models
         {
             //Reverse() to preserve tab order
             var groups = e.SourceContent.OfType<TabWellModelBase>().Reverse().ToList();
-            var target = e.TargetItem as TabModel;
-            var index = target == null || target.IsPinned ? 0 : Children.IndexOf(target);
+            var index = !(e.TargetItem is TabModel target) || target.IsPinned ? 0 : Children.IndexOf(target);
 
             foreach (var group in groups)
             {

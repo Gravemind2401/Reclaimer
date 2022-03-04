@@ -70,8 +70,7 @@ namespace Reclaimer.Blam.Common
 
         private StringIdTranslator(IMccCacheFile cache, XmlNode node)
         {
-            var header = cache.Header as IMccGen3Header;
-            if (header == null)
+            if (!(cache.Header is IMccGen3Header header))
                 throw new ArgumentException();
 
             indexBits = int.Parse(node.Attributes["indexBits"].Value);

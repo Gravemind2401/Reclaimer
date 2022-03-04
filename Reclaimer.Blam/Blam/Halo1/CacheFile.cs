@@ -142,10 +142,7 @@ namespace Reclaimer.Blam.Halo1
 
         public TagIndex(CacheFile cache)
         {
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
-            this.cache = cache;
+            this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
             items = new List<IndexItem>();
             sysItems = new Dictionary<string, IndexItem>();
             Filenames = new Dictionary<int, string>();

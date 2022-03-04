@@ -40,7 +40,7 @@ namespace Reclaimer.Blam.Utilities
 
         public static TValue ValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key)
         {
-            return dic.ContainsKey(key) ? dic[key] : default(TValue);
+            return dic.ContainsKey(key) ? dic[key] : default;
         }
 
         public static IEnumerable<KeyValuePair<TEnum, TAttribute>> GetEnumAttributes<TEnum, TAttribute>() where TEnum : struct where TAttribute : Attribute

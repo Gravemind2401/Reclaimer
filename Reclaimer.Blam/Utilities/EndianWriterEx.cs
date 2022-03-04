@@ -54,8 +54,7 @@ namespace Reclaimer.Blam.Utilities
 
         protected override void WriteObject(object value, double? version)
         {
-            var writeable = value as IWriteable;
-            if (writeable != null)
+            if (value is IWriteable writeable)
                 writeable.Write(this, version);
             else if (registeredTypes.ContainsKey(value.GetType()))
                 registeredTypes[value.GetType()](value, version);

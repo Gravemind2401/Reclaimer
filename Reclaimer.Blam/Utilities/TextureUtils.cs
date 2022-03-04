@@ -93,12 +93,11 @@ namespace Reclaimer.Blam.Utilities
             Array
         }
 
-        private static T ParseToEnum<T>(this object input, T defaultValue = default(T)) where T : struct
+        private static T ParseToEnum<T>(this object input, T defaultValue = default) where T : struct
         {
             if (input != null)
             {
-                T enumValue;
-                if (Enum.TryParse(input.ToString(), out enumValue))
+                if (Enum.TryParse(input.ToString(), out T enumValue))
                     return enumValue;
             }
 
@@ -466,7 +465,7 @@ namespace Reclaimer.Blam.Utilities
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
 
-            int a = 0, b = 0;
+            int a, b;
             var output = new byte[data.Length];
 
             var masks = new MaskSet(width, height, depth);

@@ -22,18 +22,9 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         public MetaContext(XmlDocument xml, ICacheFile cache, IIndexItem indexItem)
         {
-            if (xml == null)
-                throw new ArgumentNullException(nameof(xml));
-
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
-            if (indexItem == null)
-                throw new ArgumentNullException(nameof(indexItem));
-
-            Document = xml;
-            Cache = cache;
-            IndexItem = indexItem;
+            Document = xml ?? throw new ArgumentNullException(nameof(xml));
+            Cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            IndexItem = indexItem ?? throw new ArgumentNullException(nameof(indexItem));
 
             var fs = new FileStream(cache.FileName, FileMode.Open, FileAccess.Read);
             DataSource = new TransactionStream(fs);
@@ -41,22 +32,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         public MetaContext(XmlDocument xml, ICacheFile cache, IIndexItem indexItem, Stream dataSource)
         {
-            if (xml == null)
-                throw new ArgumentNullException(nameof(xml));
-
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
-            if (indexItem == null)
-                throw new ArgumentNullException(nameof(indexItem));
-
-            if (dataSource == null)
-                throw new ArgumentNullException(nameof(dataSource));
-
-            Document = xml;
-            Cache = cache;
-            IndexItem = indexItem;
-            DataSource = dataSource;
+            Document = xml ?? throw new ArgumentNullException(nameof(xml));
+            Cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            IndexItem = indexItem ?? throw new ArgumentNullException(nameof(indexItem));
+            DataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         }
 
         public EndianReader CreateReader()

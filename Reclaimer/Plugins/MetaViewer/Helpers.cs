@@ -218,11 +218,8 @@ namespace Reclaimer.Plugins.MetaViewer
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values?.Length == 2 && values[0] is bool && values[1] is bool)
-            {
-                if ((bool)values[0] || (bool)values[1])
-                    return Visibility.Visible;
-            }
+            if (values?.Length == 2 && values[0] is bool b0 && values[1] is bool b1 && (b0 || b1))
+                return Visibility.Visible;
 
             return Visibility.Collapsed;
         }
@@ -237,10 +234,7 @@ namespace Reclaimer.Plugins.MetaViewer
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var meta = value as MetaValueBase;
-            int index;
-
-            if (meta == null || !int.TryParse(parameter?.ToString(), out index))
+            if (!(value is MetaValueBase meta) || !int.TryParse(parameter?.ToString(), out var index))
                 return Visibility.Collapsed;
 
             return index < meta.FieldDefinition.Components ? Visibility.Visible : Visibility.Collapsed;
@@ -269,10 +263,7 @@ namespace Reclaimer.Plugins.MetaViewer
     {
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            var element = container as FrameworkElement;
-            var meta = item as MetaValueBase;
-
-            if (element == null || meta == null)
+            if (!(container is FrameworkElement element) || !(item is MetaValueBase meta))
                 return base.SelectTemplate(item, container);
 
             if (meta.FieldDefinition.ValueType == MetaValueType.Comment)

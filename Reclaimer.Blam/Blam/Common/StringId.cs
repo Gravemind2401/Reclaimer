@@ -15,11 +15,8 @@ namespace Reclaimer.Blam.Common
 
         public StringId(int id, ICacheFile cache)
         {
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
             this.id = id;
-            this.cache = cache;
+            this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
         public StringId(EndianReader reader, ICacheFile cache)

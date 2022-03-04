@@ -18,23 +18,16 @@ namespace Reclaimer.Blam.Halo2
 
         public DataPointer(int value, ICacheFile cache)
         {
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
             _value = value;
-            _cache = cache;
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
         public DataPointer(DependencyReader reader, ICacheFile cache)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
-
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
             _value = reader.ReadInt32();
-            _cache = cache;
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
         public int Value => _value;

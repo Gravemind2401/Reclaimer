@@ -56,8 +56,7 @@ namespace Adjutant.Geometry
         /// <returns></returns>
         public static Matrix4x4 GetTransform(Matrix4x4 origin, Matrix4x4 destination)
         {
-            Matrix4x4 inverse;
-            if (!Matrix4x4.Invert(origin, out inverse))
+            if (!Matrix4x4.Invert(origin, out Matrix4x4 inverse))
                 throw Exceptions.CoordSysNotConvertable();
 
             return inverse * destination;
