@@ -92,7 +92,9 @@ namespace Reclaimer.Blam.Halo3
                 switch (cache.CacheType)
                 {
                     case CacheType.MccHalo3U6:
+                    case CacheType.MccHalo3U9:
                     case CacheType.MccHalo3ODSTU3:
+                    case CacheType.MccHalo3ODSTU4:
                         if (page.CacheIndex >= 0)
                             dataTableAddress = 16384; //header size
                         else

@@ -155,6 +155,12 @@ namespace Reclaimer.Blam.Common
         [BuildString("Nov  1 2021 06:16:14", "U1")] //U8
         MccHalo3U6,
 
+        [CacheMetadata(CacheGeneration.Gen3, PC, Mcc)]
+        [BuildString("Feb 15 2022 01:35:34", "U1")] //U9
+        [BuildString("Apr  6 2022 10:48:27", "U1")] //U9 custom maps 1
+        [BuildString("Apr  6 2022 10:48:46", "U1")] //U9 custom maps 2
+        MccHalo3U9,
+
         [CacheMetadata(CacheGeneration.Gen3, Xbox360)]
         [BuildString("13895.09.04.27.2201.atlas_relea", "odst")]
         Halo3ODST,
@@ -175,6 +181,12 @@ namespace Reclaimer.Blam.Common
         [CacheMetadata(CacheGeneration.Gen3, PC, Mcc)]
         [BuildString("Sep 18 2021 21:15:55", "ODST U0")] //update 3
         MccHalo3ODSTU3,
+
+        [CacheMetadata(CacheGeneration.Gen3, PC, Mcc)]
+        [BuildString("Feb 15 2022 01:59:47", "ODST U0")] //update 4
+        [BuildString("Apr  5 2022 14:16:52", "ODST U0")] //update 4 custom maps 1
+        [BuildString("Apr  5 2022 14:16:35", "ODST U0")] //update 4 custom maps 2
+        MccHalo3ODSTU4,
 
         [CacheMetadata(CacheGeneration.Gen3, Xbox360, Beta)]
         [BuildString("09449.10.03.25.1545.omaha_beta", "beta", PreBeta)]
@@ -206,6 +218,10 @@ namespace Reclaimer.Blam.Common
         [BuildString("Sep 13 2021 09:49:52", "U6")] //update 8
         [BuildString("Sep 17 2021 13:25:40", "U6")] //update 9
         MccHaloReachU8,
+
+        [CacheMetadata(CacheGeneration.Gen3, PC, Mcc)]
+        [BuildString("Jan 13 2022 00:54:50", "U6")] //update 10
+        MccHaloReachU10,
 
         [CacheMetadata(Gen4, Xbox360, Beta)]
         [BuildString("14064.12.05.05.1011.beta", "beta")]
@@ -239,6 +255,10 @@ namespace Reclaimer.Blam.Common
         [BuildString("Sep 10 2021 06:54:23", "U3", Deflate)] //update 3
         MccHalo4,
 
+        //[CacheMetadata(Gen4, PC, UnknownDeflate, Mcc)]
+        //[BuildString("Feb  3 2022 19:02:31", "U3", Deflate)] //update 4
+        //MccHalo4U4,
+
         [CacheMetadata(Gen4, PC, UnknownDeflate, Mcc)]
         [BuildString("Apr  9 2020 01:36:04", "U0", MccFlight)] //flight 1
         [BuildString("Apr 13 2020 02:24:30", "U0")] //release
@@ -250,6 +270,10 @@ namespace Reclaimer.Blam.Common
         [BuildString("Sep 23 2021 02:46:19", "U6", Deflate)] //update 6
         [BuildString("Sep 17 2021 14:26:28", "U6", Deflate)] //update 7 (time travel?)
         MccHalo2X,
+
+        //[CacheMetadata(Gen4, PC, UnknownDeflate, Mcc)]
+        //[BuildString("Feb 14 2022 19:18:28", "U6", Deflate)] //update 8
+        //MccHalo2XU8,
     }
 
     public enum Language

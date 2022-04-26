@@ -119,8 +119,10 @@ namespace Reclaimer.Blam.Common
 
                 case CacheType.MccHalo3F6:
                 case CacheType.MccHalo3U6:
+                case CacheType.MccHalo3U9:
                 case CacheType.MccHalo3ODSTF3:
                 case CacheType.MccHalo3ODSTU3:
+                case CacheType.MccHalo3ODSTU4:
                     return new MccHalo3.CacheFileU6(args);
 
                 case CacheType.HaloReachBeta:
@@ -132,6 +134,7 @@ namespace Reclaimer.Blam.Common
                     return new MccHaloReach.CacheFile(args);
 
                 case CacheType.MccHaloReachU8:
+                case CacheType.MccHaloReachU10:
                     return new MccHaloReach.CacheFileU8(args);
 
                 case CacheType.Halo4Beta:

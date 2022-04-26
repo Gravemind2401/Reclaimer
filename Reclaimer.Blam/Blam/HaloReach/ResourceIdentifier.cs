@@ -90,6 +90,9 @@ namespace Reclaimer.Blam.HaloReach
                     case CacheType.MccHaloReachU8:
                         reader.Seek(1200, SeekOrigin.Begin);
                         break;
+                    case CacheType.MccHaloReachU10:
+                        reader.Seek(1232, SeekOrigin.Begin);
+                        break;
                     default:
                         reader.Seek(1136, SeekOrigin.Begin); //xbox
                         break;

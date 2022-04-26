@@ -120,10 +120,12 @@ namespace Reclaimer.Blam.MccHaloReach
         [Offset(768)]
         public override PartitionTable64 PartitionTable { get; set; }
 
-        [Offset(1196)]
+        [Offset(1196, MaxVersion = (int)CacheType.MccHaloReachU10)]
+        [Offset(1228, MinVersion = (int)CacheType.MccHaloReachU10)]
         public override SectionOffsetTable SectionOffsetTable { get; set; }
 
-        [Offset(1212)]
+        [Offset(1212, MaxVersion = (int)CacheType.MccHaloReachU10)]
+        [Offset(1244, MinVersion = (int)CacheType.MccHaloReachU10)]
         public override SectionTable SectionTable { get; set; }
     }
 
