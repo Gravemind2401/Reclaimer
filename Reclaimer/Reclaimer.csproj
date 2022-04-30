@@ -8,7 +8,7 @@
     <UseWPF>true</UseWPF>
     <SignAssembly>False</SignAssembly>
     <Authors>Gravemind2401</Authors>
-    <AssemblyVersion>1.7.311.0</AssemblyVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>$(AssemblyVersion)</FileVersion>
     <Version>$(VersionPrefix)$(AssemblyVersion)</Version>
     <Copyright>Copyright © $(Authors) 2019 - $([System.DateTime]::Now.Year)</Copyright>

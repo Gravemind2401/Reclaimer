@@ -7,7 +7,7 @@
     <Nullable>disable</Nullable>
     <SignAssembly>false</SignAssembly>
     <Authors>Gravemind2401</Authors>
-    <AssemblyVersion>5.7.347.0</AssemblyVersion>
+    <AssemblyVersion>5.0.0.0</AssemblyVersion>
     <FileVersion>$(AssemblyVersion)</FileVersion>
     <Version>$(VersionPrefix)$(AssemblyVersion)</Version>
     <Copyright>Copyright © $(Authors) 2018 - $([System.DateTime]::Now.Year)</Copyright>

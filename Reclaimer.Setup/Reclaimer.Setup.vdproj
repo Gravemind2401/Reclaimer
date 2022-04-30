@@ -140,7 +140,7 @@
         {
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_562B781D11444E6AB11C59A5F4076C69"
             {
-            "SourcePath" = "8:..\\Reclaimer\\bin\\Debug\\net48\\runtimes\\win-x86\\native\\assimp.dll"
+            "SourcePath" = "8:..\\Reclaimer\\bin\\Release\\net48\\runtimes\\win-x86\\native\\assimp.dll"
             "TargetName" = "8:assimp.dll"
             "Tag" = "8:"
             "Folder" = "8:_6A29CAA878B64EA8B4F970A5CD5E302F"
@@ -200,7 +200,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FD06B594005F404A9DDF9409C641D6BB"
             {
-            "SourcePath" = "8:..\\Reclaimer\\bin\\Debug\\net48\\runtimes\\win-x64\\native\\assimp.dll"
+            "SourcePath" = "8:..\\Reclaimer\\bin\\Release\\net48\\runtimes\\win-x64\\native\\assimp.dll"
             "TargetName" = "8:assimp.dll"
             "Tag" = "8:"
             "Folder" = "8:_4E0F548A07484CA89B290B455037C6CC"
@@ -381,7 +381,7 @@
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.7.311"
+        "ProductVersion" = "8:1.0.0"
         "Manufacturer" = "8:Gravemind2401"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -937,7 +937,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F415CDE9BD3846E6B8E5B36DB40736D4"
             {
-            "SourcePath" = "8:..\\Reclaimer\\obj\\Debug\\net48\\Reclaimer.exe"
+            "SourcePath" = "8:..\\Reclaimer\\obj\\Release\\net48\\Reclaimer.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_CFD6E818CB474C0B97D0387E639CC05D"
