@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -26,7 +25,6 @@ namespace Reclaimer
         internal static Settings Settings { get; private set; }
         internal static UserSettings UserSettings => Settings.UserSettings;
 
-        private static ResourceDictionary styleResources;
         private static readonly Dictionary<string, ResourceDictionary> themes = new Dictionary<string, ResourceDictionary>();
 
 #if DEBUG
@@ -92,22 +90,11 @@ namespace Reclaimer
 
             base.OnStartup(e);
 
-            styleResources = new ResourceDictionary { Source = new Uri("/Reclaimer;component/Styles/Styles.xaml", UriKind.RelativeOrAbsolute) };
-
-            var themeList = new[] { "Blue", "Dark", "Light", "Green", "Purple", "Red", "Tan", "Solarized (Dark)", "Solarized (Light)" };
-
-            foreach (var s in themeList)
+            var embeddedThemes = (ResourceDictionary[])Resources["Themes"];
+            foreach(var theme in embeddedThemes.Skip(1))
             {
-                var resource = Regex.Replace(s, @"[ \(\)]", string.Empty);
-
-                var theme = new ResourceDictionary();
-                theme.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"/Studio;component/Themes/{resource}.xaml", UriKind.RelativeOrAbsolute) });
-
-                if (resource != "Blue" && resource != "Dark")
-                    resource = resource.Contains("Dark") ? "Dark" : "Blue";
-
-                theme.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri($"/Reclaimer;component/Themes/{resource}.xaml", UriKind.RelativeOrAbsolute) });
-                AddTheme(s, theme);
+                theme.MergedDictionaries.Insert(0, embeddedThemes[0]);
+                AddTheme((string)theme["Name"], theme);
             }
 
             Settings = Settings.FromFile();
@@ -182,7 +169,6 @@ namespace Reclaimer
                 throw new KeyNotFoundException($"'{theme}' does not exist");
 
             Instance.Resources.MergedDictionaries.Clear();
-            Instance.Resources.MergedDictionaries.Add(styleResources);
             Instance.Resources.MergedDictionaries.Add(themes[theme]);
 
             Settings.Theme = theme;
