@@ -1,14 +1,12 @@
-﻿using System;
+﻿using Reclaimer.Plugins;
+using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
-using Reclaimer.Plugins;
 
 namespace Reclaimer
 {
@@ -17,10 +15,16 @@ namespace Reclaimer
     /// </summary>
     public partial class App : Application
     {
+        static App()
+        {
+            var assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            ReleaseVersion = new Version(assemblyVersion.Major, assemblyVersion.Minor, assemblyVersion.Revision);
+        }
+
+        internal static readonly Version ReleaseVersion;
         internal static App Instance { get; private set; }
         internal static Settings Settings { get; private set; }
         internal static UserSettings UserSettings => Settings.UserSettings;
-        internal static Version AssemblyVersion => Assembly.GetExecutingAssembly().GetName().Version;
 
         private static ResourceDictionary styleResources;
         private static readonly Dictionary<string, ResourceDictionary> themes = new Dictionary<string, ResourceDictionary>();
@@ -28,7 +32,7 @@ namespace Reclaimer
 #if DEBUG
         public static string AppVersion => "DEBUG";
 #else
-        public static string AppVersion => AssemblyVersion.ToString(3);
+        public static string AppVersion => ReleaseVersion.ToString(3);
 #endif
 
         public App() : base()

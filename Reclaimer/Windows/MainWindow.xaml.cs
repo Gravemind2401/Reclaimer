@@ -24,7 +24,7 @@ namespace Reclaimer.Windows
         private static readonly DependencyPropertyKey HasUpdatePropertyKey =
             DependencyProperty.RegisterReadOnly(nameof(HasUpdate), typeof(bool), typeof(MainWindow), new PropertyMetadata(false, null, (d, baseValue) =>
             {
-                return App.Settings.LatestRelease?.Version > App.AssemblyVersion;
+                return App.Settings.LatestRelease?.Version > App.ReleaseVersion;
             }));
 
         public static readonly DependencyProperty HasUpdateProperty = HasUpdatePropertyKey.DependencyProperty;
