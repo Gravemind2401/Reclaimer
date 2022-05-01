@@ -94,7 +94,7 @@ namespace Reclaimer.Controls
             context?.DataSource?.Dispose();
             context = new Plugins.MetaViewer.Halo3.MetaContext(doc, tag.CacheFile, tag);
 
-            foreach (XmlNode n in doc.DocumentElement.ChildNodes)
+            foreach (var n in doc.DocumentElement.GetChildElements())
             {
                 try
                 {
@@ -124,7 +124,7 @@ namespace Reclaimer.Controls
                     var rootIndex = header.StructureDefinitions.First(s => s.Type == StructureType.Main).TargetIndex;
                     var mainBlock = header.DataBlocks[rootIndex];
 
-                    foreach (XmlNode n in doc.DocumentElement.ChildNodes)
+                    foreach (var n in doc.DocumentElement.GetChildElements())
                     {
                         try
                         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reclaimer.Drawing;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Reclaimer.Drawing;
+using System.Xml;
 
 namespace Reclaimer.Utilities
 {
@@ -74,6 +75,11 @@ namespace Reclaimer.Utilities
         public static TValue ValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key)
         {
             return dic.ContainsKey(key) ? dic[key] : default;
+        }
+
+        public static IEnumerable<XmlNode> GetChildElements(this XmlNode node)
+        {
+            return node.ChildNodes.OfType<XmlNode>().Where(n => n.NodeType == XmlNodeType.Element);
         }
 
         public static void WriteToDxgi(this DdsImage dds, string fileName)

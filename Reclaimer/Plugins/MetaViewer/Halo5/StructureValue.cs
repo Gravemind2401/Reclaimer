@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Reclaimer.Blam.Halo5;
+using Reclaimer.IO;
+using Reclaimer.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -6,8 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Reclaimer.Blam.Halo5;
-using Reclaimer.IO;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo5
 {
@@ -64,7 +65,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         public StructureValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, host, reader, baseAddress, offset)
         {
-            BlockSize = node.ChildNodes.OfType<XmlNode>().Sum(n => FieldDefinition.GetHalo5Definition(n).Size);
+            BlockSize = node.GetChildElements().Sum(n => FieldDefinition.GetHalo5Definition(n).Size);
             Children = new ObservableCollection<MetaValue>();
             IsExpanded = true;
             ReadValue(reader);
@@ -95,7 +96,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
                 blockIndex = 0;
                 var offset = 0;
-                foreach (XmlNode n in node.ChildNodes)
+                foreach (var n in node.GetChildElements())
                 {
                     var def = FieldDefinition.GetHalo5Definition(n);
                     Children.Add(GetMetaValue(n, item, header, block, reader, BlockAddress, offset));

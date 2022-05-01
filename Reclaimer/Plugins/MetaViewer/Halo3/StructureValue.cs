@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Reclaimer.Blam.Common.Gen3;
+using Reclaimer.Blam.Utilities;
+using Reclaimer.IO;
+using Reclaimer.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -6,10 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Reclaimer.Blam.Common.Gen3;
-using Reclaimer.Blam.Utilities;
-using Reclaimer.IO;
-using Reclaimer.Utilities;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
@@ -99,7 +99,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 }
 
                 blockIndex = 0;
-                foreach (XmlNode n in node.ChildNodes)
+                foreach (var n in node.GetChildElements())
                     Children.Add(GetMetaValue(n, context, BlockAddress));
 
                 var entryOffset = node.GetIntAttribute("entryName", "entryOffset", "label");

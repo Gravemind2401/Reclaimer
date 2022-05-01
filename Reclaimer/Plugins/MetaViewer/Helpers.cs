@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -9,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Xml;
+using Reclaimer.Utilities;
 
 namespace Reclaimer.Plugins.MetaViewer
 {
@@ -66,12 +66,12 @@ namespace Reclaimer.Plugins.MetaViewer
                 var doc = new XmlDocument();
                 doc.LoadXml(definitionXml);
 
-                foreach (XmlNode def in doc.DocumentElement.ChildNodes)
+                foreach (var def in doc.DocumentElement.GetChildElements())
                 {
                     var defName = def.Name.ToLowerInvariant();
                     cache.Add(defName, new FieldDefinition(def));
 
-                    foreach (XmlNode child in def.ChildNodes)
+                    foreach (var child in def.GetChildElements())
                     {
                         if (child.Name.ToLowerInvariant() != "alias")
                             continue;
@@ -100,7 +100,7 @@ namespace Reclaimer.Plugins.MetaViewer
             }
             else if (result.Size == -2) //sum
             {
-                var totalSize = node.ChildNodes.OfType<XmlNode>()
+                var totalSize = node.GetChildElements()
                     .Sum(n => GetDefinition(n, definitionXml, aliasLookup, cache).Size);
                 return new FieldDefinition(result, totalSize);
             }

@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Reclaimer.Blam.Halo5;
+using Reclaimer.IO;
+using Reclaimer.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Reclaimer.Blam.Halo5;
-using Reclaimer.IO;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo5
 {
@@ -41,7 +42,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                 Children.Clear();
 
                 var offset = Offset;
-                foreach (XmlNode n in node.ChildNodes)
+                foreach (var n in node.GetChildElements())
                 {
                     var def = FieldDefinition.GetHalo5Definition(n);
                     Children.Add(GetMetaValue(n, item, header, host, reader, BaseAddress, offset));
