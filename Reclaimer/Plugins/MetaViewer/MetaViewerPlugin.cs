@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Halo5;
+using Reclaimer.Controls.Editors;
+using System;
 using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,9 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
-using Reclaimer.Controls.Editors;
 
 namespace Reclaimer.Plugins.MetaViewer
 {
@@ -141,20 +141,24 @@ namespace Reclaimer.Plugins.MetaViewer
                 if (PluginProfiles != null)
                     return;
 
+                var cacheTypes = Enum.GetValues(typeof(CacheType)).OfType<CacheType>();
+
+                IEnumerable<CacheType> CacheTypesByPrefix(CacheType prefix) => cacheTypes.Where(t => t.ToString().StartsWith(prefix.ToString()));
+
                 PluginProfiles = new List<PluginProfile>
                 {
                     new PluginProfile("Halo5", ModuleType.Halo5Server, ModuleType.Halo5Forge),
                     new PluginProfile("Halo2AMCC", CacheType.MccHalo2X),
-                    new PluginProfile("Halo4MCC", CacheType.MccHalo4),
+                    new PluginProfile("Halo4MCC", CacheTypesByPrefix(CacheType.MccHalo4)),
                     new PluginProfile("Halo4", CacheType.Halo4Retail, CacheType.MccHalo4, CacheType.MccHalo2X),
                     new PluginProfile("Halo4NetTest", CacheType.Halo4Beta),
-                    new PluginProfile("ReachMCC", CacheType.MccHaloReach, CacheType.MccHaloReachU3, CacheType.MccHaloReachU8, CacheType.MccHaloReachU10),
-                    new PluginProfile("Reach", CacheType.HaloReachRetail, CacheType.MccHaloReach, CacheType.MccHaloReachU3),
+                    new PluginProfile("ReachMCC", CacheTypesByPrefix(CacheType.MccHaloReach)),
+                    new PluginProfile("Reach", CacheTypesByPrefix(CacheType.MccHaloReach).Prepend(CacheType.HaloReachRetail)),
                     new PluginProfile("ReachBeta", CacheType.HaloReachBeta),
-                    new PluginProfile("ODSTMCC", CacheType.MccHalo3ODST, CacheType.MccHalo3ODSTU4),
-                    new PluginProfile("ODST", CacheType.Halo3ODST),
-                    new PluginProfile("Halo3MCC", CacheType.MccHalo3, CacheType.MccHalo3U4, CacheType.MccHalo3U6),
-                    new PluginProfile("Halo3", CacheType.Halo3Retail, CacheType.MccHalo3, CacheType.MccHalo3U4),
+                    new PluginProfile("ODSTMCC", CacheTypesByPrefix(CacheType.MccHalo3ODST)),
+                    new PluginProfile("ODST", CacheTypesByPrefix(CacheType.MccHalo3ODST).Prepend(CacheType.Halo3ODST)),
+                    new PluginProfile("Halo3MCC", CacheTypesByPrefix(CacheType.MccHalo3).Where(t => !t.ToString().StartsWith(nameof(CacheType.MccHalo3ODST)))),
+                    new PluginProfile("Halo3", CacheTypesByPrefix(CacheType.MccHalo3).Where(t => !t.ToString().StartsWith(nameof(CacheType.MccHalo3ODST))).Prepend(CacheType.Halo3Retail)),
                     new PluginProfile("Halo3Beta", CacheType.Halo3Alpha, CacheType.Halo3Beta),
                     new PluginProfile("Halo2MCC", CacheType.MccHalo2),
                     new PluginProfile("Halo2", CacheType.Halo2Xbox, CacheType.Halo2Vista, CacheType.MccHalo2),
@@ -187,6 +191,9 @@ namespace Reclaimer.Plugins.MetaViewer
 
             //used for default settings
             public PluginProfile(string path, params CacheType[] builds)
+                : this(path, builds.AsEnumerable()) { }
+
+            public PluginProfile(string path, IEnumerable<CacheType> builds)
             {
                 FileNameFormat = "{0,-4}.xml";
                 Subfolder = path;
@@ -196,6 +203,9 @@ namespace Reclaimer.Plugins.MetaViewer
 
             //used for default settings
             public PluginProfile(string path, params ModuleType[] builds)
+                : this(path, builds.AsEnumerable()) { }
+
+            public PluginProfile(string path, IEnumerable<ModuleType> builds)
             {
                 FileNameFormat = "({0}){1}.xml";
                 Subfolder = path;
