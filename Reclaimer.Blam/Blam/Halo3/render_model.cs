@@ -202,8 +202,8 @@ namespace Reclaimer.Blam.Halo3
         public override string ToString() => Name;
     }
 
-    [FixedSize(16, MaxVersion = (int)CacheType.Halo3ODST)]
-    [FixedSize(24, MinVersion = (int)CacheType.Halo3ODST)]
+    [FixedSize(16, MaxVersion = (int)CacheType.MccHalo3U9)]
+    [FixedSize(24, MinVersion = (int)CacheType.MccHalo3U9)]
     public class PermutationBlock
     {
         [Offset(0)]
