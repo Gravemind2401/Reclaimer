@@ -62,14 +62,7 @@ namespace Reclaimer.Utilities
             RaiseCollectionChanged(NotifyCollectionChangedAction.Reset);
         }
 
-        protected void RaisePropertyChanged(string propertyName)
-        {
-            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-        }
-
-        protected void RaiseCollectionChanged(NotifyCollectionChangedAction action)
-        {
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(action));
-        }
+        protected void RaisePropertyChanged(string propertyName) => OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+        protected void RaiseCollectionChanged(NotifyCollectionChangedAction action) => OnCollectionChanged(new NotifyCollectionChangedEventArgs(action));
     }
 }

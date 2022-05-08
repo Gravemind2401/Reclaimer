@@ -92,7 +92,8 @@ namespace Reclaimer.Blam.Halo1
 
                 if (cache.CacheType == CacheType.Halo1Xbox)
                     model.Meshes.AddRange(ReadXboxMeshes(reader));
-                else model.Meshes.AddRange(ReadPCMeshes(reader));
+                else
+                    model.Meshes.AddRange(ReadPCMeshes(reader));
 
                 return model;
             }

@@ -1,4 +1,15 @@
-﻿using System;
+﻿using Adjutant.Geometry;
+using Reclaimer.Annotations;
+using Reclaimer.Audio;
+using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Halo5;
+using Reclaimer.Blam.Utilities;
+using Reclaimer.Controls.Editors;
+using Reclaimer.Drawing;
+using Reclaimer.Models;
+using Reclaimer.Saber3D.Common;
+using Reclaimer.Utilities;
+using System;
 using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,18 +22,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Adjutant.Geometry;
-using Reclaimer.Annotations;
-using Reclaimer.Audio;
-using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
-using Reclaimer.Blam.Utilities;
-using Reclaimer.Controls.Editors;
-using Reclaimer.Drawing;
-using Reclaimer.Models;
-using Reclaimer.Saber3D.Common;
-using Reclaimer.Utilities;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
+
 using BlamContentFactory = Reclaimer.Blam.Common.ContentFactory;
 using SaberContentFactory = Reclaimer.Saber3D.Common.ContentFactory;
 
@@ -111,16 +112,7 @@ namespace Reclaimer.Plugins
             SaveSettings(Settings);
         }
 
-        private bool ValidateCacheType(string name)
-        {
-            if (Enum.TryParse(name, out CacheType _))
-                return true;
-
-            if (Enum.TryParse(name, out ModuleType _))
-                return true;
-
-            return false;
-        }
+        private bool ValidateCacheType(string name) => Enum.TryParse(name, out CacheType _) || Enum.TryParse(name, out ModuleType _);
 
         private bool IsExtractable(object obj) => GetExtractable(obj, Settings.DataFolder) != null;
 
@@ -133,7 +125,8 @@ namespace Reclaimer.Plugins
                 extractable = new ModuleExtractable(obj as ModuleItem, outputFolder);
             else if (obj is IPakItem)
                 extractable = new PakExtractable(obj as IPakItem, outputFolder);
-            else extractable = null;
+            else
+                extractable = null;
 
             if (extractable?.GetContentType() >= 0)
                 return extractable;
@@ -195,7 +188,8 @@ namespace Reclaimer.Plugins
                     extractionQueue.Enqueue(item);
             }
 
-            if (isBusy) return;
+            if (isBusy)
+                return;
 
             tokenSource = new CancellationTokenSource();
 
@@ -403,9 +397,9 @@ namespace Reclaimer.Plugins
             if (imageName.EndsWith("]"))
                 imageName = imageName.Substring(0, imageName.LastIndexOf('['));
 
-            if (shouldIsolate.Any(s => Regex.IsMatch(imageName, s, RegexOptions.IgnoreCase)))
-                return GetParamsIsolateAll(fileName, extension);
-            else return GetParamsIsolateAlpha(fileName, extension);
+            return shouldIsolate.Any(s => Regex.IsMatch(imageName, s, RegexOptions.IgnoreCase))
+                ? GetParamsIsolateAll(fileName, extension)
+                : GetParamsIsolateAlpha(fileName, extension);
         }
         #endregion
 

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Reclaimer.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Reclaimer.IO;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
@@ -83,7 +83,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
                 case MetaValueType.Angle:
                 case MetaValueType.Float32:
-                    writer.Write((float)parsed); break;
+                    writer.Write((float)parsed);
+                    break;
 
                 case MetaValueType.Undefined:
                 default:

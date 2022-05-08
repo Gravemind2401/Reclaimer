@@ -147,14 +147,12 @@ namespace Reclaimer.Blam.Common
                 case CacheType.MccHalo2X:
                     return new MccHalo2X.CacheFile(args);
 
-                default: throw Exceptions.UnknownMapFile(fileName);
+                default:
+                    throw Exceptions.UnknownMapFile(fileName);
             }
         }
 
-        public static int GetHeaderSize(this Gen3.IGen3CacheFile cache)
-        {
-            return (int)FixedSizeAttribute.ValueFor(cache.Header.GetType(), (int)cache.CacheType);
-        }
+        public static int GetHeaderSize(this Gen3.IGen3CacheFile cache) => (int)FixedSizeAttribute.ValueFor(cache.Header.GetType(), (int)cache.CacheType);
 
         public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator) => CreateReader(cache, translator, false);
 

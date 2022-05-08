@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Reclaimer.Models;
+using Reclaimer.Plugins;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Reclaimer.Models;
-using Reclaimer.Plugins;
 
 namespace Reclaimer.Controls
 {
@@ -21,7 +21,6 @@ namespace Reclaimer.Controls
         {
             InitializeComponent();
             TabModel = new TabModel(this, Studio.Controls.TabItemType.Tool);
-
             TabModel.Header = TabModel.ToolTip = "Settings";
         }
 
@@ -47,9 +46,6 @@ namespace Reclaimer.Controls
             propGrid.SelectedObject = plugin.settings;
         }
 
-        void IDisposable.Dispose()
-        {
-            App.Settings.Save();
-        }
+        void IDisposable.Dispose() => App.Settings.Save();
     }
 }

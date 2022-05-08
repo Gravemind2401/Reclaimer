@@ -40,10 +40,7 @@ namespace Reclaimer.Blam.Halo5
             Hash = reader.ReadUInt32();
         }
 
-        public static implicit operator string(StringHash stringHash)
-        {
-            return stringHash.Value;
-        }
+        public static implicit operator string(StringHash value) => value.Value;
 
         public override string ToString() => Value ?? "[invalid string]";
     }

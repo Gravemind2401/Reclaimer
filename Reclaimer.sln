@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reclaimer.Blam", "Reclaimer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExamplePlugin", "ExamplePlugin\ExamplePlugin.csproj", "{E5249282-18DB-403F-825E-C3612441EC35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Studio", "..\Studio\Studio\Studio.csproj", "{5F4C3814-8097-4869-B5E2-4C21EF45CEB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Studio", "..\Studio\Studio\Studio.csproj", "{5F4C3814-8097-4869-B5E2-4C21EF45CEB2}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Reclaimer.Setup", "Reclaimer.Setup\Reclaimer.Setup.vdproj", "{00227FE4-8DDA-411F-BFD5-297B94C92C28}"
 EndProject
@@ -18,6 +18,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reclaimer.Blam.Tests", "Reclaimer.Blam.Tests\Reclaimer.Blam.Tests.csproj", "{241C66BA-7F51-4C38-8E5D-F25AF37BC866}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reclaimer.Core.Tests", "Reclaimer.Core.Tests\Reclaimer.Core.Tests.csproj", "{341F1E52-F911-499E-BE8D-3B9BA569D190}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{80A46DE3-ECFF-4B97-8C23-16C725A397CE}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

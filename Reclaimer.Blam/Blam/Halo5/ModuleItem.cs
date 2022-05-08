@@ -131,13 +131,9 @@ namespace Reclaimer.Blam.Halo5
 
             using (var reader = Module.CreateReader())
             {
-                IEnumerable<Block> blocks;
-                if (BlockCount > 0)
-                    blocks = Module.Blocks.Skip(BlockIndex).Take(BlockCount);
-                else
-                    blocks = Enumerable.Repeat(GetImpliedBlock(), 1);
-
+                var blocks = BlockCount > 0 ? Module.Blocks.Skip(BlockIndex).Take(BlockCount) : Enumerable.Repeat(GetImpliedBlock(), 1);
                 var decompressed = new MemoryStream((int)blocks.Sum(b => b.UncompressedSize));
+
                 foreach (var block in blocks)
                 {
                     reader.Seek(Module.DataAddress + DataOffset + block.CompressedOffset, SeekOrigin.Begin);

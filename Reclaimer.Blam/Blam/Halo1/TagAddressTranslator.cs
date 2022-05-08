@@ -18,14 +18,7 @@ namespace Reclaimer.Blam.Halo1
             this.cache = cache;
         }
 
-        public long GetAddress(long pointer)
-        {
-            return (int)pointer - Magic;
-        }
-
-        public long GetPointer(long address)
-        {
-            return (int)address + Magic;
-        }
+        public long GetAddress(long pointer) => (int)pointer - Magic;
+        public long GetPointer(long address) => (int)address + Magic;
     }
 }

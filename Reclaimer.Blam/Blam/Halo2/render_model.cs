@@ -113,7 +113,8 @@ namespace Reclaimer.Blam.Halo2
 
                     if (section.FaceCount * 3 == sectionInfo.IndexCount)
                         mesh.IndexFormat = IndexFormat.TriangleList;
-                    else mesh.IndexFormat = IndexFormat.TriangleStrip;
+                    else
+                        mesh.IndexFormat = IndexFormat.TriangleStrip;
 
                     reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
                     mesh.Indicies = reader.ReadEnumerable<ushort>(sectionInfo.IndexCount).Select(i => (int)i).ToArray();

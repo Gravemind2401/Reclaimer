@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Controls;
+using Reclaimer.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Reclaimer.Blam.Common;
-using Reclaimer.Controls;
-using Reclaimer.IO;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
@@ -58,9 +58,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         private int GetStringId(string value)
         {
-            if (string.IsNullOrEmpty(value))
-                return 0;
-            else return context.Cache.StringIndex.GetStringId(value);
+            return string.IsNullOrEmpty(value) ? 0 : context.Cache.StringIndex.GetStringId(value);
         }
 
         protected internal override bool HasCustomValidation => true;
@@ -68,10 +66,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         protected internal override bool ValidateValue(object value)
         {
             var str = value?.ToString();
-
-            if (string.IsNullOrEmpty(str))
-                return true;
-            else return GetStringId(str) > 0;
+            return string.IsNullOrEmpty(str) || GetStringId(str) > 0;
         }
 
         IEnumerable<string> AutoCompleteTextBox.ISuggestionProvider.GetSuggestions(string text)

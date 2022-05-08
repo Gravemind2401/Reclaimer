@@ -20,25 +20,20 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public override string Name => "Meta Viewer";
 
-        public override void Initialise()
-        {
-            Settings = LoadSettings<MetaViewerSettings>();
-        }
-
-        public override void Suspend()
-        {
-            SaveSettings(Settings);
-        }
+        public override void Initialise() => Settings = LoadSettings<MetaViewerSettings>();
+        public override void Suspend() => SaveSettings(Settings);
 
         public override bool CanOpenFile(OpenFileArgs args)
         {
             var match = Regex.Match(args.FileTypeKey, @"Blam\.(\w+)\.(.*)");
-            if (!match.Success) return false;
+            if (!match.Success)
+                return false;
 
             if (Enum.TryParse(match.Groups[1].Value, out CacheType _))
             {
                 var item = args.File.OfType<IIndexItem>().FirstOrDefault();
-                if (item == null) return false;
+                if (item == null)
+                    return false;
 
                 try
                 {
@@ -50,7 +45,8 @@ namespace Reclaimer.Plugins.MetaViewer
             if (Enum.TryParse(match.Groups[1].Value, out ModuleType _))
             {
                 var item = args.File.OfType<ModuleItem>().FirstOrDefault();
-                if (item == null) return false;
+                if (item == null)
+                    return false;
 
                 var xml = GetDefinitionPath(item);
                 return File.Exists(xml);
@@ -89,16 +85,8 @@ namespace Reclaimer.Plugins.MetaViewer
             container.AddItem(viewer.TabModel);
         }
 
-        private string GetDefinitionPath(IIndexItem item)
-        {
-            return GetDefinitionPath(p => p.ValidFor(item.CacheFile.CacheType), item.ClassCode, item.ClassName);
-        }
-
-        private string GetDefinitionPath(ModuleItem item)
-        {
-            return GetDefinitionPath(p => p.ValidFor(item.Module.ModuleType), item.ClassCode, item.ClassName);
-        }
-
+        private string GetDefinitionPath(IIndexItem item) => GetDefinitionPath(p => p.ValidFor(item.CacheFile.CacheType), item.ClassCode, item.ClassName);
+        private string GetDefinitionPath(ModuleItem item) => GetDefinitionPath(p => p.ValidFor(item.Module.ModuleType), item.ClassCode, item.ClassName);
         private string GetDefinitionPath(Predicate<PluginProfile> validate, string classCode, string className)
         {
             if (string.IsNullOrEmpty(Settings.PluginFolder) || !Directory.Exists(Settings.PluginFolder))

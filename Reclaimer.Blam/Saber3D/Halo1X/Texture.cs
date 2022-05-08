@@ -36,7 +36,8 @@ namespace Reclaimer.Saber3D.Halo1X
 
                     if (head == BigHeader)
                         reader.ByteOrder = ByteOrder.BigEndian;
-                    else throw Exceptions.NotASaberTextureItem(item);
+                    else
+                        throw Exceptions.NotASaberTextureItem(item);
 
                     isBigEndian = true;
                 }

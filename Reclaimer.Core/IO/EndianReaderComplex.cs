@@ -34,10 +34,7 @@ namespace Reclaimer.IO
         /// <exception cref="InvalidCastException" />
         /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
-        public T ReadObject<T>()
-        {
-            return (T)ReadObject(null, typeof(T), null);
-        }
+        public T ReadObject<T>() => (T)ReadObject(null, typeof(T), null);
 
         /// <summary>
         /// Reads a complex object from the current stream using reflection.
@@ -56,10 +53,7 @@ namespace Reclaimer.IO
         /// <exception cref="InvalidCastException" />
         /// <exception cref="InvalidOperationException" />
         /// <exception cref="MissingMethodException" />
-        public T ReadObject<T>(double version)
-        {
-            return (T)ReadObject(null, typeof(T), version);
-        }
+        public T ReadObject<T>(double version) => (T)ReadObject(null, typeof(T), version);
 
         /// <summary>
         /// Reads a complex object from the current stream using reflection.
@@ -254,9 +248,11 @@ namespace Reclaimer.IO
                 var innerType = storeType.GetGenericArguments()[0];
                 if (innerType.IsPrimitive || innerType.Equals(typeof(Guid)))
                     value = ReadStandardValue(innerType);
-                else value = ReadObject(null, innerType, version);
+                else
+                    value = ReadObject(null, innerType, version);
             }
-            else value = ReadObject(null, storeType, version);
+            else
+                value = ReadObject(null, storeType, version);
 
             var propType = prop.PropertyType.IsEnum ? prop.PropertyType.GetEnumUnderlyingType() : prop.PropertyType;
             if (value != null && storeType != propType && !Utils.TryConvert(ref value, storeType, propType))
@@ -274,10 +270,12 @@ namespace Reclaimer.IO
             var storeType = prop.PropertyType;
 
             var boAttr = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
-            if (boAttr != null) ByteOrder = boAttr.ByteOrder;
+            if (boAttr != null)
+                ByteOrder = boAttr.ByteOrder;
 
             var stAttr = Utils.GetAttributeForVersion<StoreTypeAttribute>(prop, version);
-            if (stAttr != null) storeType = stAttr.StoreType;
+            if (stAttr != null)
+                storeType = stAttr.StoreType;
 
             Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
             ReadProperty(obj, prop, storeType, version);
@@ -345,9 +343,9 @@ namespace Reclaimer.IO
                 if (lenPrefixed != null || fixedLen != null)
                     throw Exceptions.StringTypeOverlap(prop.Name);
 
-                if (nullTerm.HasLength)
-                    value = ReadNullTerminatedString(nullTerm.Length);
-                else value = ReadNullTerminatedString();
+                value = nullTerm.HasLength
+                    ? ReadNullTerminatedString(nullTerm.Length)
+                    : ReadNullTerminatedString();
             }
 
             return value;
@@ -437,12 +435,14 @@ namespace Reclaimer.IO
                 ctorInfo = constructors.FirstOrDefault();
                 if (ctorInfo == null && type.IsClass && type.GetConstructor(Type.EmptyTypes) == null)
                     throw Exceptions.TypeNotConstructable(type.Name);
-                else ctorCache.TryAdd(typeKey, ctorInfo);
+                else
+                    ctorCache.TryAdd(typeKey, ctorInfo);
             }
 
             if (ctorInfo != null)
                 return ConstructObject(ctorInfo);
-            else return Activator.CreateInstance(type);
+            else
+                return Activator.CreateInstance(type);
         }
 
         private object ConstructObject(ConstructorInfo ctorInfo)
@@ -485,7 +485,8 @@ namespace Reclaimer.IO
                     version = reader.GetVersionValue(instance, type);
 
                 var boAttr = Utils.GetAttributeForVersion<ByteOrderAttribute>(type, version);
-                if (boAttr != null) reader.ByteOrder = boAttr.ByteOrder;
+                if (boAttr != null)
+                    reader.ByteOrder = boAttr.ByteOrder;
 
                 var propInfo = Utils.GetProperties(type, version);
                 foreach (var prop in propInfo)
@@ -515,7 +516,8 @@ namespace Reclaimer.IO
             }
 
             var fsAttr = Utils.GetAttributeForVersion<FixedSizeAttribute>(type, version);
-            if (fsAttr != null) SeekAbsolute(originalPosition + fsAttr.Size);
+            if (fsAttr != null)
+                SeekAbsolute(originalPosition + fsAttr.Size);
 
             return instance;
         }

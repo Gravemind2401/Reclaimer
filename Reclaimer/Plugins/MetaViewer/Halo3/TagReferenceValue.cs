@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.IO;
+using Reclaimer.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -6,9 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Reclaimer.Blam.Common;
-using Reclaimer.IO;
-using Reclaimer.Utilities;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
@@ -27,11 +27,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         public ComboBoxItem SelectedClass
         {
             get => selectedClass;
-            set
-            {
-                if (SetProperty(ref selectedClass, value))
-                    OnClassChanged();
-            }
+            set => SetProperty(ref selectedClass, value, OnClassChanged);
         }
 
         public override string EntryString => Utils.GetFileName(SelectedItem?.Context?.FullPath);

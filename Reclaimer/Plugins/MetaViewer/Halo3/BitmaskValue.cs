@@ -125,9 +125,9 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                     if (!SetProperty(ref isChecked, value))
                         return;
 
-                    if (value)
-                        parent.Value |= Mask;
-                    else parent.Value &= ~Mask;
+                    parent.Value = value
+                        ? parent.Value | Mask
+                        : parent.Value & ~Mask;
 
                     parent.RefreshOptions();
                 }

@@ -82,15 +82,8 @@ namespace Adjutant.Spatial
 
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}, {W:F3}]");
 
-        public static explicit operator uint(UDecN4 value)
-        {
-            return value.bits;
-        }
-
-        public static explicit operator UDecN4(uint value)
-        {
-            return new UDecN4(value);
-        }
+        public static explicit operator uint(UDecN4 value) => value.bits;
+        public static explicit operator UDecN4(uint value) => new UDecN4(value);
 
         #region IXMVector
 
@@ -100,38 +93,14 @@ namespace Adjutant.Spatial
 
         #region Equality Operators
 
-        public static bool operator ==(UDecN4 point1, UDecN4 point2)
-        {
-            return point1.bits == point2.bits;
-        }
+        public static bool operator ==(UDecN4 value1, UDecN4 value2) => value1.bits == value2.bits;
+        public static bool operator !=(UDecN4 value1, UDecN4 value2) => !(value1 == value2);
 
-        public static bool operator !=(UDecN4 point1, UDecN4 point2)
-        {
-            return !(point1 == point2);
-        }
+        public static bool Equals(UDecN4 value1, UDecN4 value2) => value1.bits.Equals(value2.bits);
+        public override bool Equals(object obj)=> obj is UDecN4 value && UDecN4.Equals(this, value);
+        public bool Equals(UDecN4 value) => UDecN4.Equals(this, value);
 
-        public static bool Equals(UDecN4 point1, UDecN4 point2)
-        {
-            return point1.bits.Equals(point2.bits);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj == null) || !(obj is UDecN4))
-                return false;
-
-            return UDecN4.Equals(this, (UDecN4)obj);
-        }
-
-        public bool Equals(UDecN4 value)
-        {
-            return UDecN4.Equals(this, value);
-        }
-
-        public override int GetHashCode()
-        {
-            return bits.GetHashCode();
-        }
+        public override int GetHashCode() => bits.GetHashCode();
 
         #endregion
     }

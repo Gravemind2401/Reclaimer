@@ -94,38 +94,14 @@ namespace Reclaimer.Blam.Halo4
 
         #region Equality Operators
 
-        public static bool operator ==(ResourceIdentifier value1, ResourceIdentifier value2)
-        {
-            return value1.identifier == value2.identifier;
-        }
+        public static bool operator ==(ResourceIdentifier value1, ResourceIdentifier value2) => value1.identifier == value2.identifier;
+        public static bool operator !=(ResourceIdentifier value1, ResourceIdentifier value2) => !(value1 == value2);
 
-        public static bool operator !=(ResourceIdentifier value1, ResourceIdentifier value2)
-        {
-            return !(value1 == value2);
-        }
+        public static bool Equals(ResourceIdentifier value1, ResourceIdentifier value2) => value1.identifier.Equals(value2.identifier);
+        public override bool Equals(object obj) => obj is ResourceIdentifier value && ResourceIdentifier.Equals(this, value);
+        public bool Equals(ResourceIdentifier value) => ResourceIdentifier.Equals(this, value);
 
-        public static bool Equals(ResourceIdentifier value1, ResourceIdentifier value2)
-        {
-            return value1.identifier.Equals(value2.identifier);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj == null) || !(obj is ResourceIdentifier))
-                return false;
-
-            return ResourceIdentifier.Equals(this, (ResourceIdentifier)obj);
-        }
-
-        public bool Equals(ResourceIdentifier value)
-        {
-            return ResourceIdentifier.Equals(this, value);
-        }
-
-        public override int GetHashCode()
-        {
-            return identifier.GetHashCode();
-        }
+        public override int GetHashCode() => identifier.GetHashCode();
 
         #endregion
     }

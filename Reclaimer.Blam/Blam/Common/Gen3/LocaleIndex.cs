@@ -133,7 +133,8 @@ namespace Reclaimer.Blam.Common.Gen3
                     ms = new MemoryStream(decrypted);
                     tempReader = new EndianReader(ms);
                 }
-                else tempReader = reader.CreateVirtualReader();
+                else
+                    tempReader = reader.CreateVirtualReader();
 
                 for (int i = 0; i < definition.StringCount; i++)
                 {

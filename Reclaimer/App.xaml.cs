@@ -41,10 +41,7 @@ namespace Reclaimer
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
         }
 
-        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {
-            LogUnhandledException(e.Exception);
-        }
+        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e) => LogUnhandledException(e.Exception);
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
@@ -91,7 +88,7 @@ namespace Reclaimer
             base.OnStartup(e);
 
             var embeddedThemes = (ResourceDictionary[])Resources["Themes"];
-            foreach(var theme in embeddedThemes.Skip(1))
+            foreach (var theme in embeddedThemes.Skip(1))
             {
                 theme.MergedDictionaries.Insert(0, embeddedThemes[0]);
                 AddTheme((string)theme["Name"], theme);
@@ -113,10 +110,7 @@ namespace Reclaimer
             base.OnExit(e);
         }
 
-        private void OnReceivedCommandLineArguments(object sender, InstanceCallbackEventArgs e)
-        {
-            ProcessCommandLineArguments(e.Arguments);
-        }
+        private void OnReceivedCommandLineArguments(object sender, InstanceCallbackEventArgs e) => ProcessCommandLineArguments(e.Arguments);
 
         private void ProcessCommandLineArguments(params string[] arguments)
         {
@@ -135,7 +129,8 @@ namespace Reclaimer
 
                     if (Substrate.HandlePhysicalFile(arg))
                         Substrate.LogOutput($"Handled file: {arg}");
-                    else Substrate.LogOutput($"No handler found for file: {arg}");
+                    else
+                        Substrate.LogOutput($"No handler found for file: {arg}");
                 }
 
                 MainWindow.Activate();

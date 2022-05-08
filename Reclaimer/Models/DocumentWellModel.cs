@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Reclaimer.Utilities;
+using Reclaimer.Windows;
+using Studio.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Reclaimer.Utilities;
-using Reclaimer.Windows;
-using Studio.Controls;
 
 namespace Reclaimer.Models
 {
@@ -55,7 +55,8 @@ namespace Reclaimer.Models
                 base.DockExecuted(e);
             else if (e.TargetDock == DockTarget.SplitLeft || e.TargetDock == DockTarget.SplitTop || e.TargetDock == DockTarget.SplitRight || e.TargetDock == DockTarget.SplitBottom)
                 InnerDock(e);
-            else OuterDock(e);
+            else
+                OuterDock(e);
         }
 
         private void InnerDock(DockEventArgs e)

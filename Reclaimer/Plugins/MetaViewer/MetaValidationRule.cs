@@ -57,7 +57,8 @@ namespace Reclaimer.Plugins.MetaViewer
                 case MetaValueType.String:
                     return str?.Length <= meta.FieldDefinition.Size;
 
-                default: return true;
+                default:
+                    return true;
             }
         }
 

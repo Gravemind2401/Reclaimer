@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Prism.Commands;
+using Studio.Controls;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Prism.Commands;
-using Studio.Controls;
 
 namespace Reclaimer.Models
 {
@@ -73,25 +73,10 @@ namespace Reclaimer.Models
                 parent.Host.Close();
         }
 
-        protected virtual void TogglePinStatusExecuted(TabModel item)
-        {
-
-        }
-
-        protected virtual void SelectItemExecuted(TabModel item)
-        {
-            SelectedItem = item;
-        }
-
-        protected virtual void FloatTabExecuted(FloatEventArgs e)
-        {
-
-        }
-
-        protected virtual void FloatAllExecuted(FloatEventArgs e)
-        {
-
-        }
+        protected virtual void TogglePinStatusExecuted(TabModel item) { }
+        protected virtual void SelectItemExecuted(TabModel item) => SelectedItem = item;
+        protected virtual void FloatTabExecuted(FloatEventArgs e) { }
+        protected virtual void FloatAllExecuted(FloatEventArgs e) { }
 
         protected virtual void DockExecuted(DockEventArgs e)
         {
@@ -134,10 +119,7 @@ namespace Reclaimer.Models
             OnChildrenChanged();
         }
 
-        protected virtual void OnChildrenChanged()
-        {
-
-        }
+        protected virtual void OnChildrenChanged() { }
 
         private void UpdateChildrenWidth()
         {

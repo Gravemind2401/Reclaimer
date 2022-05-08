@@ -1,5 +1,4 @@
-﻿using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Utilities;
+﻿using Reclaimer.Blam.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,14 +17,7 @@ namespace Reclaimer.Blam.Common.Gen3
             this.cache = cache;
         }
 
-        public long GetAddress(long pointer)
-        {
-            return pointer - Magic;
-        }
-
-        public long GetPointer(long address)
-        {
-            return address + Magic;
-        }
+        public long GetAddress(long pointer) => pointer - Magic;
+        public long GetPointer(long address) => address + Magic;
     }
 }

@@ -18,14 +18,9 @@ namespace Reclaimer.Utilities
 
             var deg = Utils.RadToDeg(rad.Value);
 
-            if (parameter == null)
-                return deg.ToString();
-            else return deg.ToString(parameter.ToString());
+            return parameter == null ? deg.ToString() : deg.ToString(parameter.ToString());
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
     }
 }

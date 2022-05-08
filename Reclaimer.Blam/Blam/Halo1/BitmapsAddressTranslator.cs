@@ -15,9 +15,7 @@ namespace Reclaimer.Blam.Halo1
 
         public BitmapsAddressTranslator(CacheFile cache, IndexItem tag)
             : this(cache, tag, cache.CreateBitmapsReader())
-        {
-
-        }
+        { }
 
         public BitmapsAddressTranslator(CacheFile cache, IndexItem tag, EndianReader reader)
         {
@@ -29,14 +27,7 @@ namespace Reclaimer.Blam.Halo1
             TagAddress = reader.ReadInt32();
         }
 
-        public long GetAddress(long pointer)
-        {
-            return TagAddress + (int)pointer;
-        }
-
-        public long GetPointer(long address)
-        {
-            return address - TagAddress;
-        }
+        public long GetAddress(long pointer) => TagAddress + (int)pointer;
+        public long GetPointer(long address) => address - TagAddress;
     }
 }

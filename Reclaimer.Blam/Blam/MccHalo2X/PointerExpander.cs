@@ -16,14 +16,7 @@ namespace Reclaimer.Blam.MccHalo2X
             magic = 0x7AC00000;
         }
 
-        public long Expand(int pointer)
-        {
-            return ((long)pointer << 2) + magic;
-        }
-
-        public int Contract(long pointer)
-        {
-            return (int)((pointer - magic) >> 2);
-        }
+        public long Expand(int pointer) => ((long)pointer << 2) + magic;
+        public int Contract(long pointer) => (int)((pointer - magic) >> 2);
     }
 }

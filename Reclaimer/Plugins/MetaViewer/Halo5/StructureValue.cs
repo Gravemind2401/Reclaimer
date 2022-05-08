@@ -125,7 +125,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                     }
                     BlockLabels = labels;
                 }
-                else BlockLabels = Enumerable.Range(0, BlockCount).Select(i => $"Block {i:D2}");
+                else
+                    BlockLabels = Enumerable.Range(0, BlockCount).Select(i => $"Block {i:D2}");
             }
             catch { IsEnabled = false; }
         }

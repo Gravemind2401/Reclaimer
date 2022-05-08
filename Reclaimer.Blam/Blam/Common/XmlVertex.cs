@@ -67,7 +67,8 @@ namespace Reclaimer.Blam.Common
                     continue;
 
                 var stream = int.Parse(child.Attributes[XmlVertexField.Stream].Value, CultureInfo.InvariantCulture);
-                if (stream > 0) throw new NotSupportedException();
+                if (stream > 0)
+                    throw new NotSupportedException();
 
                 var offset = Convert.ToInt32(child.Attributes[XmlVertexField.Offset].Value, 16);
                 var type = (VectorType)Enum.Parse(typeof(VectorType), child.Attributes[XmlVertexField.Type].Value, true);

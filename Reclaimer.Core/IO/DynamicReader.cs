@@ -16,10 +16,7 @@ namespace Reclaimer.IO
     {
         public static bool DebugMode { get; private set; }
 
-        public static void SetDebugMode(bool enabled)
-        {
-            DebugMode = enabled;
-        }
+        public static void SetDebugMode(bool enabled) => DebugMode = enabled;
     }
 
     internal static class DynamicReader<T>
@@ -41,7 +38,8 @@ namespace Reclaimer.IO
                 return VersionLookup[version.Value](reader, instance, origin);
             else if (!version.HasValue && Unversioned != null)
                 return Unversioned(reader, instance, origin);
-            else return GenerateReadMethod(version)(reader, instance, origin);
+            else
+                return GenerateReadMethod(version)(reader, instance, origin);
         }
 
         public static void DumpAssembly(double? version)
@@ -80,7 +78,8 @@ namespace Reclaimer.IO
 
             if (version.HasValue)
                 VersionLookup.TryAdd(version.Value, del);
-            else Unversioned = del;
+            else
+                Unversioned = del;
 
             return del;
         }
@@ -177,7 +176,8 @@ namespace Reclaimer.IO
         private static void EmitPropertyRead(ILGenerator il, double? version, ByteOrderAttribute typeOrder, PropertyInfo prop)
         {
             var offset = Utils.GetAttributeForVersion<OffsetAttribute>(prop, version);
-            if (offset == null) return;
+            if (offset == null)
+                return;
 
             EmitDebugOutput(il, $"[Read property '{prop.Name}']");
 
@@ -219,7 +219,8 @@ namespace Reclaimer.IO
 
             if (TypeArg.IsValueType)
                 il.Emit(OpCodes.Ldarga_S, (byte)1);
-            else il.Emit(OpCodes.Ldarg_1); // instance
+            else
+                il.Emit(OpCodes.Ldarg_1); // instance
 
             var propOrder = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
             if (storeType.Equals(typeof(string)))
@@ -257,7 +258,8 @@ namespace Reclaimer.IO
 
             if (TypeArg.IsValueType)
                 il.Emit(OpCodes.Call, setter);
-            else il.Emit(OpCodes.Callvirt, setter);
+            else
+                il.Emit(OpCodes.Callvirt, setter);
 
         }
 
@@ -373,7 +375,8 @@ namespace Reclaimer.IO
                     SetMethod(typeof(EndianReader).GetMethod(nameof(EndianReader.ReadNullTerminatedString), new[] { typeof(int) }));
                     il.Emit(OpCodes.Ldc_I4, nullTerm.Length);
                 }
-                else SetMethod(typeof(EndianReader).GetMethod(nameof(EndianReader.ReadNullTerminatedString), Type.EmptyTypes));
+                else
+                    SetMethod(typeof(EndianReader).GetMethod(nameof(EndianReader.ReadNullTerminatedString), Type.EmptyTypes));
             }
 
             il.Emit(OpCodes.Callvirt, method);
@@ -386,7 +389,7 @@ namespace Reclaimer.IO
                                    && !m.Name.Equals(nameof(EndianReader.Read), StringComparison.Ordinal)
                                    && m.ReturnType.Equals(type)
                                    let args = m.GetParameters()
-                                   where (type.Equals(typeof(byte)) || type.Equals(typeof(sbyte)))
+                                   where type.Equals(typeof(byte)) || type.Equals(typeof(sbyte))
                                    || (!order.HasValue && args.Length == 0)
                                    || (order.HasValue && args.Length == 1 && args[0].ParameterType.Equals(typeof(ByteOrder)))
                                    select m).SingleOrDefault();

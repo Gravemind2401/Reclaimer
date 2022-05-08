@@ -10,15 +10,13 @@ namespace Reclaimer.Plugins.MetaViewer
 {
     public static class XmlExtensions
     {
-        public static string GetStringAttribute(this XmlNode node, params string[] possibleNames)
-        {
-            return FindAttribute(node, possibleNames)?.Value;
-        }
+        public static string GetStringAttribute(this XmlNode node, params string[] possibleNames) => FindAttribute(node, possibleNames)?.Value;
 
         public static int? GetIntAttribute(this XmlNode node, params string[] possibleNames)
         {
             var attr = FindAttribute(node, possibleNames);
-            if (attr == null) return null;
+            if (attr == null)
+                return null;
 
             var strVal = attr.Value;
 
@@ -26,31 +24,36 @@ namespace Reclaimer.Plugins.MetaViewer
                 return intVal;
             else if (int.TryParse(strVal.Substring(2), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out intVal))
                 return intVal;
-            else return null;
+            else
+                return null;
         }
 
         public static bool? GetBoolAttribute(this XmlNode node, params string[] possibleNames)
         {
             var attr = FindAttribute(node, possibleNames);
-            if (attr == null) return null;
+            if (attr == null)
+                return null;
 
             var strVal = attr.Value;
 
             if (bool.TryParse(strVal, out var boolVal))
                 return boolVal;
-            else return null;
+            else
+                return null;
         }
 
         public static TEnum? GetEnumAttribute<TEnum>(this XmlNode node, params string[] possibleNames) where TEnum : struct
         {
             var attr = FindAttribute(node, possibleNames);
-            if (attr == null) return null;
+            if (attr == null)
+                return null;
 
             var strVal = attr.Value;
 
             if (Enum.TryParse(strVal, true, out TEnum enumVal))
                 return enumVal;
-            else return null;
+            else
+                return null;
         }
 
         public static XmlAttribute FindAttribute(this XmlNode node, params string[] possibleNames)

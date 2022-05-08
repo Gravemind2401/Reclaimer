@@ -85,15 +85,8 @@ namespace Adjutant.Spatial
 
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}]");
 
-        public static explicit operator uint(HenDN3 value)
-        {
-            return value.bits;
-        }
-
-        public static explicit operator HenDN3(uint value)
-        {
-            return new HenDN3(value);
-        }
+        public static explicit operator uint(HenDN3 value) => value.bits;
+        public static explicit operator HenDN3(uint value) => new HenDN3(value);
 
         #region IXMVector
 
@@ -109,38 +102,14 @@ namespace Adjutant.Spatial
 
         #region Equality Operators
 
-        public static bool operator ==(HenDN3 point1, HenDN3 point2)
-        {
-            return point1.bits == point2.bits;
-        }
+        public static bool operator ==(HenDN3 value1, HenDN3 value2) => value1.bits == value2.bits;
+        public static bool operator !=(HenDN3 value1, HenDN3 value2) => !(value1 == value2);
 
-        public static bool operator !=(HenDN3 point1, HenDN3 point2)
-        {
-            return !(point1 == point2);
-        }
+        public static bool Equals(HenDN3 value1, HenDN3 value2) => value1.bits.Equals(value2.bits);
+        public override bool Equals(object obj)=> obj is HenDN3 value && HenDN3.Equals(this, value);
+        public bool Equals(HenDN3 value) => HenDN3.Equals(this, value);
 
-        public static bool Equals(HenDN3 point1, HenDN3 point2)
-        {
-            return point1.bits.Equals(point2.bits);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj == null) || !(obj is HenDN3))
-                return false;
-
-            return HenDN3.Equals(this, (HenDN3)obj);
-        }
-
-        public bool Equals(HenDN3 value)
-        {
-            return HenDN3.Equals(this, value);
-        }
-
-        public override int GetHashCode()
-        {
-            return bits.GetHashCode();
-        }
+        public override int GetHashCode() => bits.GetHashCode();
 
         #endregion
     }

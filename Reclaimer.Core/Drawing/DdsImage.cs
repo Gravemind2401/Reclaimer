@@ -17,10 +17,7 @@ namespace Reclaimer.Drawing
         private readonly DdsHeaderXbox xboxHeader;
         private readonly byte[] data;
 
-        private static ArgumentOutOfRangeException ParamMustBeGreaterThanZero(string paramName, object value)
-        {
-            return new ArgumentOutOfRangeException(paramName, value, string.Format(CultureInfo.CurrentCulture, "{0} must be greater than zero.", paramName));
-        }
+        private static ArgumentOutOfRangeException ParamMustBeGreaterThanZero(string paramName, object value) => new ArgumentOutOfRangeException(paramName, value, string.Format(CultureInfo.CurrentCulture, "{0} must be greater than zero.", paramName));
 
         #region Constructors
 

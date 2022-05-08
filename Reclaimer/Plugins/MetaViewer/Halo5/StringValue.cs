@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Reclaimer.Blam.Halo5;
+using Reclaimer.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Reclaimer.Blam.Halo5;
-using Reclaimer.IO;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo5
 {
@@ -26,10 +26,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         public StringValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, host, reader, baseAddress, offset)
         {
-            if (FieldDefinition.ValueType == MetaValueType.StringId)
-                Length = -1;
-            else Length = FieldDefinition.Size;
-
+            Length = FieldDefinition.ValueType == MetaValueType.StringId? -1 : FieldDefinition.Size;
             ReadValue(reader);
         }
 
@@ -46,7 +43,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                     var hash = new StringHash(reader, header);
                     Value = hash.Value;
                 }
-                else Value = reader.ReadNullTerminatedString(Length);
+                else
+                    Value = reader.ReadNullTerminatedString(Length);
 
                 IsDirty = false;
             }

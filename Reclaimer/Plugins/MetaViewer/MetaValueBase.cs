@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Prism.Mvvm;
+using Reclaimer.Blam.Halo5;
+using Reclaimer.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,9 +9,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Prism.Mvvm;
-using Reclaimer.Blam.Halo5;
-using Reclaimer.IO;
 
 namespace Reclaimer.Plugins.MetaViewer
 {
@@ -114,7 +114,8 @@ namespace Reclaimer.Plugins.MetaViewer
                     case MetaValueType.BlockIndex32:
                         return new Halo3.BlockIndexValue(node, context, reader, baseAddress);
 
-                    default: return new Halo3.SimpleValue(node, context, reader, baseAddress);
+                    default:
+                        return new Halo3.SimpleValue(node, context, reader, baseAddress);
                 }
             }
         }

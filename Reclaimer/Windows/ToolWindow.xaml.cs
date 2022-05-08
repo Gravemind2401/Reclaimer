@@ -1,22 +1,14 @@
-﻿using System;
+﻿using MahApps.Metro.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using MahApps.Metro.Controls;
 
 namespace Reclaimer.Windows
 {
     /// <summary>
-    /// Interaction logic for UtilityWindow.xaml
+    /// Interaction logic for ToolyWindow.xaml
     /// </summary>
     public partial class ToolWindow : MetroWindow
     {
@@ -25,9 +17,6 @@ namespace Reclaimer.Windows
             InitializeComponent();
         }
 
-        private void ToolWindow_Closed(object sender, EventArgs e)
-        {
-            (Content as IDisposable)?.Dispose();
-        }
+        private void ToolWindow_Closed(object sender, EventArgs e) => (Content as IDisposable)?.Dispose();
     }
 }

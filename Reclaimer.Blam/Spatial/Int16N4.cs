@@ -64,38 +64,14 @@ namespace Adjutant.Spatial
 
         #region Equality Operators
 
-        public static bool operator ==(Int16N4 value1, Int16N4 value2)
-        {
-            return value1.x == value2.x && value1.y == value2.y && value1.z == value2.z && value1.w == value2.w;
-        }
+        public static bool operator ==(Int16N4 value1, Int16N4 value2) => value1.x == value2.x && value1.y == value2.y && value1.z == value2.z && value1.w == value2.w;
+        public static bool operator !=(Int16N4 value1, Int16N4 value2) => !(value1 == value2);
 
-        public static bool operator !=(Int16N4 value1, Int16N4 value2)
-        {
-            return !(value1 == value2);
-        }
+        public static bool Equals(Int16N4 value1, Int16N4 value2) => value1.x.Equals(value2.x) && value1.y.Equals(value2.y) && value1.z.Equals(value2.z) && value1.w.Equals(value2.w);
+        public override bool Equals(object obj)=> obj is Int16N4 value && Int16N4.Equals(this, value);
+        public bool Equals(Int16N4 value) => Int16N4.Equals(this, value);
 
-        public static bool Equals(Int16N4 value1, Int16N4 value2)
-        {
-            return value1.x.Equals(value2.x) && value1.y.Equals(value2.y) && value1.z.Equals(value2.z) && value1.w.Equals(value2.w);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj == null) || !(obj is Int16N4))
-                return false;
-
-            return Int16N4.Equals(this, (Int16N4)obj);
-        }
-
-        public bool Equals(Int16N4 value)
-        {
-            return Int16N4.Equals(this, value);
-        }
-
-        public override int GetHashCode()
-        {
-            return x.GetHashCode() ^ y.GetHashCode() ^ z.GetHashCode() ^ w.GetHashCode();
-        }
+        public override int GetHashCode() => x.GetHashCode() ^ y.GetHashCode() ^ z.GetHashCode() ^ w.GetHashCode();
 
         #endregion
     }

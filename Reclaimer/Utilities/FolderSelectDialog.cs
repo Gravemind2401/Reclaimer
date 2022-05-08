@@ -49,10 +49,7 @@ namespace Reclaimer.Utilities
         /// </summary>
         public string SelectedPath => ofd.FileName;
 
-        public bool ShowDialog()
-        {
-            return ShowDialog(null);
-        }
+        public bool ShowDialog() => ShowDialog(null);
 
         public bool ShowDialog(Window owner)
         {

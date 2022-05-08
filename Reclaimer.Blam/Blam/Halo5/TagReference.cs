@@ -39,38 +39,14 @@ namespace Reclaimer.Blam.Halo5
 
         #region Equality Operators
 
-        public static bool operator ==(TagReference value1, TagReference value2)
-        {
-            return value1.module != null && value2.module != null && value1.module == value2.module && value1.globalTagId == value2.globalTagId;
-        }
+        public static bool operator ==(TagReference value1, TagReference value2) => value1.module != null && value2.module != null && value1.module == value2.module && value1.globalTagId == value2.globalTagId;
+        public static bool operator !=(TagReference value1, TagReference value2) => !(value1 == value2);
 
-        public static bool operator !=(TagReference value1, TagReference value2)
-        {
-            return !(value1 == value2);
-        }
+        public static bool Equals(TagReference value1, TagReference value2) => value1.module != null && value2.module != null && value1.module.Equals(value2.module) && value1.globalTagId.Equals(value2.globalTagId);
+        public override bool Equals(object obj) => obj is TagReference value && TagReference.Equals(this, value);
+        public bool Equals(TagReference value) => TagReference.Equals(this, value);
 
-        public static bool Equals(TagReference value1, TagReference value2)
-        {
-            return value1.module != null && value2.module != null && value1.module.Equals(value2.module) && value1.globalTagId.Equals(value2.globalTagId);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj == null) || !(obj is TagReference))
-                return false;
-
-            return TagReference.Equals(this, (TagReference)obj);
-        }
-
-        public bool Equals(TagReference value)
-        {
-            return TagReference.Equals(this, value);
-        }
-
-        public override int GetHashCode()
-        {
-            return module?.GetHashCode() ?? 0 ^ globalTagId.GetHashCode();
-        }
+        public override int GetHashCode() => module?.GetHashCode() ?? 0 ^ globalTagId.GetHashCode();
 
         #endregion
     }

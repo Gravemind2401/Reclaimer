@@ -60,15 +60,9 @@ namespace Reclaimer.Blam.Utilities
             registeredInstances.Add(typeof(T), instance);
         }
 
-        public override EndianReader CreateVirtualReader()
-        {
-            return CreateVirtualReader(BaseStream.Position);
-        }
+        public override EndianReader CreateVirtualReader() => CreateVirtualReader(BaseStream.Position);
 
-        public override EndianReader CreateVirtualReader(long origin)
-        {
-            return new DependencyReader(this, origin);
-        }
+        public override EndianReader CreateVirtualReader(long origin) => new DependencyReader(this, origin);
 
         protected override object CreateInstance(Type type, double? version)
         {
@@ -78,7 +72,8 @@ namespace Reclaimer.Blam.Utilities
             var constructor = FindConstructor(type);
             if (constructor == null)
                 return base.CreateInstance(type, version);
-            else return Construct(type, constructor);
+            else
+                return Construct(type, constructor);
         }
 
         private object Construct(Type type, ConstructorInfo constructor)

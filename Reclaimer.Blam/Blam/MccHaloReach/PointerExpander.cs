@@ -25,14 +25,7 @@ namespace Reclaimer.Blam.MccHaloReach
             }
         }
 
-        public long Expand(int pointer)
-        {
-            return ((long)pointer << 2) + magic;
-        }
-
-        public int Contract(long pointer)
-        {
-            return (int)((pointer - magic) >> 2);
-        }
+        public long Expand(int pointer) => ((long)pointer << 2) + magic;
+        public int Contract(long pointer) => (int)((pointer - magic) >> 2);
     }
 }

@@ -13,27 +13,23 @@ namespace Reclaimer.Blam.Halo2
 {
     public struct DataPointer
     {
-        private readonly ICacheFile _cache;
-        private readonly int _value;
+        private readonly ICacheFile cache;
+        private readonly int pointer;
 
-        public DataPointer(int value, ICacheFile cache)
+        public DataPointer(int pointer, ICacheFile cache)
         {
-            _value = value;
-            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            this.pointer = pointer;
+            this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
         public DataPointer(DependencyReader reader, ICacheFile cache)
         {
-            if (reader == null)
-                throw new ArgumentNullException(nameof(reader));
-            _value = reader.ReadInt32();
-            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            pointer = reader?.ReadInt32() ?? throw new ArgumentNullException(nameof(reader));
+            this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
-        public int Value => _value;
-
+        public int Value => pointer;
         public DataLocation Location => (DataLocation)((Value & 0xC0000000) >> 30);
-
         public int Address => Value & 0x3FFFFFFF;
 
         public byte[] ReadData(int size)
@@ -41,7 +37,7 @@ namespace Reclaimer.Blam.Halo2
             if (size <= 0)
                 throw new ArgumentOutOfRangeException(nameof(size));
 
-            var directory = Directory.GetParent(_cache.FileName).FullName;
+            var directory = Directory.GetParent(cache.FileName).FullName;
 
             string target;
             switch (Location)
@@ -56,7 +52,7 @@ namespace Reclaimer.Blam.Halo2
                     target = Path.Combine(directory, CacheFile.SinglePlayerSharedMap);
                     break;
                 default:
-                    target = _cache.FileName;
+                    target = cache.FileName;
                     break;
             }
 
@@ -72,38 +68,14 @@ namespace Reclaimer.Blam.Halo2
 
         #region Equality Operators
 
-        public static bool operator ==(DataPointer pointer1, DataPointer pointer2)
-        {
-            return pointer1._value == pointer2._value;
-        }
+        public static bool operator ==(DataPointer value1, DataPointer value2) => value1.pointer == value2.pointer;
+        public static bool operator !=(DataPointer value1, DataPointer value2) => !(value1 == value2);
 
-        public static bool operator !=(DataPointer pointer1, DataPointer pointer2)
-        {
-            return !(pointer1 == pointer2);
-        }
+        public static bool Equals(DataPointer value1, DataPointer value2) => value1.pointer.Equals(value2.pointer);
+        public override bool Equals(object obj) => obj is DataPointer value && DataPointer.Equals(this, value);
+        public bool Equals(DataPointer value) => DataPointer.Equals(this, value);
 
-        public static bool Equals(DataPointer pointer1, DataPointer pointer2)
-        {
-            return pointer1._value.Equals(pointer2._value);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj == null) || !(obj is DataPointer))
-                return false;
-
-            return DataPointer.Equals(this, (DataPointer)obj);
-        }
-
-        public bool Equals(DataPointer value)
-        {
-            return DataPointer.Equals(this, value);
-        }
-
-        public override int GetHashCode()
-        {
-            return _value.GetHashCode();
-        }
+        public override int GetHashCode() => pointer.GetHashCode();
 
         #endregion
     }

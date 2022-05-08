@@ -354,8 +354,9 @@ namespace Reclaimer.Blam.Common
                 {
                     for (int i = 0; i < segmentLength;)
                     {
-                        var blockSize = ReadSpecialInt(reader2, out bool flag);
-                        if (flag) reader2.ReadBytes(2);
+                        var blockSize = ReadSpecialInt(reader2, out var flag);
+                        if (flag)
+                            reader2.ReadBytes(2);
                         mw.Write(reader2.ReadBytes(blockSize));
                         i += blockSize;
                     }

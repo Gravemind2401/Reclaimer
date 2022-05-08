@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reclaimer.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -8,7 +9,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Xml;
-using Reclaimer.Utilities;
 
 namespace Reclaimer.Plugins.MetaViewer
 {
@@ -150,7 +150,8 @@ namespace Reclaimer.Plugins.MetaViewer
                 Size = -2;
             else if (sizeStr == "?" || sizeStr == null)
                 Size = -3;
-            else Size = node.GetIntAttribute("size") ?? 0;
+            else
+                Size = node.GetIntAttribute("size") ?? 0;
 
             Components = node.GetIntAttribute("components") ?? 1;
             Axes = node.GetEnumAttribute<AxesDefinition>("axes") ?? AxesDefinition.None;
@@ -224,10 +225,7 @@ namespace Reclaimer.Plugins.MetaViewer
             return Visibility.Collapsed;
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
     }
 
     public class FieldVisibilityConverter : IValueConverter
@@ -240,23 +238,14 @@ namespace Reclaimer.Plugins.MetaViewer
             return index < meta.FieldDefinition.Components ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
     }
 
     public class CommentVisibilityConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return string.IsNullOrEmpty(value as string) ? Visibility.Collapsed : Visibility.Visible;
-        }
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => string.IsNullOrEmpty(value as string) ? Visibility.Collapsed : Visibility.Visible;
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
     }
 
     public class MetaValueTemplateSelector : DataTemplateSelector
@@ -304,7 +293,8 @@ namespace Reclaimer.Plugins.MetaViewer
                         return element.FindResource("DefaultContent") as DataTemplate;
                 }
             }
-            else return element.FindResource("SingleValueTemplate") as DataTemplate;
+            else
+                return element.FindResource("SingleValueTemplate") as DataTemplate;
         }
     }
 }

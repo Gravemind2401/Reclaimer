@@ -29,10 +29,7 @@ namespace Reclaimer.Controls
             InitializeComponent();
         }
 
-        private void EditButton_Click(object sender, RoutedEventArgs e)
-        {
-            ShowDialog();
-        }
+        private void EditButton_Click(object sender, RoutedEventArgs e) => ShowDialog();
 
         protected virtual void ShowDialog() { }
 

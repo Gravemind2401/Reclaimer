@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Adjutant.Geometry;
+using Adjutant.Spatial;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Adjutant.Geometry;
-using Adjutant.Spatial;
 
 namespace Reclaimer.Models
 {

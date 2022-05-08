@@ -26,7 +26,8 @@ namespace Reclaimer.Blam.Halo5
             foreach (var m in selection)
             {
                 var mat = m.MaterialReference.Tag?.ReadMetadata<material>();
-                if (mat == null) continue;
+                if (mat == null)
+                    continue;
 
                 foreach (var tex in mat.PostprocessDefinitions.SelectMany(p => p.Textures))
                 {
@@ -192,7 +193,8 @@ namespace Reclaimer.Blam.Halo5
                             reader.Seek(block.Offset, SeekOrigin.Begin);
                             if (vInfo.VertexCount > ushort.MaxValue)
                                 mesh.Indicies = reader.ReadEnumerable<int>(iInfo.IndexCount).ToArray();
-                            else mesh.Indicies = reader.ReadEnumerable<ushort>(iInfo.IndexCount).Select(i => (int)i).ToArray();
+                            else
+                                mesh.Indicies = reader.ReadEnumerable<ushort>(iInfo.IndexCount).Select(i => (int)i).ToArray();
 
                         }
                         catch

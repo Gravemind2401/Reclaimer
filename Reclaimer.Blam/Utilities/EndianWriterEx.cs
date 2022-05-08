@@ -42,15 +42,9 @@ namespace Reclaimer.Blam.Utilities
             registeredTypes.Add(typeof(T), (obj, ver) => writer((T)obj, ver));
         }
 
-        public override EndianWriter CreateVirtualWriter()
-        {
-            return CreateVirtualWriter(BaseStream.Position);
-        }
+        public override EndianWriter CreateVirtualWriter() => CreateVirtualWriter(BaseStream.Position);
 
-        public override EndianWriter CreateVirtualWriter(long origin)
-        {
-            return new EndianWriterEx(this, origin);
-        }
+        public override EndianWriter CreateVirtualWriter(long origin) => new EndianWriterEx(this, origin);
 
         protected override void WriteObject(object value, double? version)
         {
@@ -58,7 +52,8 @@ namespace Reclaimer.Blam.Utilities
                 writeable.Write(this, version);
             else if (registeredTypes.ContainsKey(value.GetType()))
                 registeredTypes[value.GetType()](value, version);
-            else base.WriteObject(value, version);
+            else
+                base.WriteObject(value, version);
         }
     }
 }

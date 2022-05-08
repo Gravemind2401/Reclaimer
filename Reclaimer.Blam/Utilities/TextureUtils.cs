@@ -138,7 +138,8 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.BC7_unorm:
                     return 8;
 
-                default: return 16;
+                default:
+                    return 16;
             }
         }
 
@@ -158,7 +159,8 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.P8_bump:
                     return 1;
 
-                default: return 2;
+                default:
+                    return 2;
             }
         }
 
@@ -180,7 +182,8 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.DXN_mono_alpha:
                     return 4;
 
-                default: return 1;
+                default:
+                    return 1;
             }
         }
 
@@ -215,7 +218,8 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.X8R8G8B8:
                     return 4;
 
-                default: return 2;
+                default:
+                    return 2;
             }
         }
 
@@ -249,7 +253,8 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.DXN_mono_alpha:
                     return 128;
 
-                default: return 1;
+                default:
+                    return 1;
             }
         }
 
@@ -401,7 +406,8 @@ namespace Reclaimer.Blam.Utilities
                 dds = new DdsImage(props.Height, props.Width, dxgiLookup[bitmapFormat], data);
             else if (xboxLookup.ContainsKey(bitmapFormat))
                 dds = new DdsImage(props.Height, props.Width, xboxLookup[bitmapFormat], data);
-            else throw Exceptions.BitmapFormatNotSupported(bitmapFormat.ToString());
+            else
+                throw Exceptions.BitmapFormatNotSupported(bitmapFormat.ToString());
 
             if (textureType == KnownTextureType.CubeMap)
                 dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
@@ -455,10 +461,7 @@ namespace Reclaimer.Blam.Utilities
             }
         }
 
-        public static byte[] Swizzle(byte[] data, int width, int height, int depth, int bpp)
-        {
-            return Swizzle(data, width, height, depth, bpp, true);
-        }
+        public static byte[] Swizzle(byte[] data, int width, int height, int depth, int bpp) => Swizzle(data, width, height, depth, bpp, true);
 
         public static byte[] Swizzle(byte[] data, int width, int height, int depth, int bpp, bool deswizzle)
         {
@@ -476,12 +479,12 @@ namespace Reclaimer.Blam.Utilities
                     if (deswizzle)
                     {
                         a = ((y * width) + x) * bpp;
-                        b = (Swizzle(x, y, depth, masks)) * bpp;
+                        b = Swizzle(x, y, depth, masks) * bpp;
                     }
                     else
                     {
                         b = ((y * width) + x) * bpp;
-                        a = (Swizzle(x, y, depth, masks)) * bpp;
+                        a = Swizzle(x, y, depth, masks) * bpp;
                     }
 
                     if (a < output.Length && b < data.Length)
@@ -489,17 +492,15 @@ namespace Reclaimer.Blam.Utilities
                         for (int i = 0; i < bpp; i++)
                             output[a + i] = data[b + i];
                     }
-                    else return null;
+                    else
+                        return null;
                 }
             }
 
             return output;
         }
 
-        private static int Swizzle(int x, int y, int z, MaskSet masks)
-        {
-            return SwizzleAxis(x, masks.x) | SwizzleAxis(y, masks.y) | (z == -1 ? 0 : SwizzleAxis(z, masks.z));
-        }
+        private static int Swizzle(int x, int y, int z, MaskSet masks) => SwizzleAxis(x, masks.x) | SwizzleAxis(y, masks.y) | (z == -1 ? 0 : SwizzleAxis(z, masks.z));
 
         private static int SwizzleAxis(int val, int mask)
         {
@@ -510,8 +511,10 @@ namespace Reclaimer.Blam.Utilities
             {
                 int tmp = mask & bit;
 
-                if (tmp != 0) result |= (val & bit);
-                else val <<= 1;
+                if (tmp != 0)
+                    result |= val & bit;
+                else
+                    val <<= 1;
 
                 bit <<= 1;
             }
@@ -524,10 +527,7 @@ namespace Reclaimer.Blam.Utilities
         #region Xbox 360
 
         /* https://github.com/gdkchan/MESTool/blob/master/MESTool/Program.cs */
-        public static byte[] XTextureScramble(byte[] data, int width, int height, object format)
-        {
-            return XTextureScramble(data, width, height, format, false);
-        }
+        public static byte[] XTextureScramble(byte[] data, int width, int height, object format) => XTextureScramble(data, width, height, format, false);
 
         public static byte[] XTextureScramble(byte[] data, int width, int height, object format, bool toLinear)
         {
@@ -581,7 +581,7 @@ namespace Reclaimer.Blam.Utilities
         {
             int alignedWidth = (width + 31) & ~31;
 
-            int logBPP = (texelPitch >> 2) + ((texelPitch >> 1) >> (texelPitch >> 2));
+            int logBPP = (texelPitch >> 2) + (texelPitch >> 1 >> (texelPitch >> 2));
             int offsetB = offset << logBPP;
             int offsetT = ((offsetB & ~4095) >> 3) + ((offsetB & 1792) >> 2) + (offsetB & 63);
             int offsetM = offsetT >> (7 + logBPP);
@@ -598,7 +598,7 @@ namespace Reclaimer.Blam.Utilities
         {
             int alignedWidth = (width + 31) & ~31;
 
-            int logBPP = (texelPitch >> 2) + ((texelPitch >> 1) >> (texelPitch >> 2));
+            int logBPP = (texelPitch >> 2) + (texelPitch >> 1 >> (texelPitch >> 2));
             int offsetB = offset << logBPP;
             int offsetT = ((offsetB & ~4095) >> 3) + ((offsetB & 1792) >> 2) + (offsetB & 63);
             int offsetM = offsetT >> (7 + logBPP);
@@ -606,7 +606,7 @@ namespace Reclaimer.Blam.Utilities
             int macroY = (offsetM / (alignedWidth >> 5)) << 2;
             int tile = ((offsetT >> (6 + logBPP)) & 1) + ((offsetB & 2048) >> 10);
             int macro = (macroY + tile) << 3;
-            int micro = (((offsetT & (((texelPitch << 6) - 1) & ~31)) + ((offsetT & 15) << 1)) >> (3 + logBPP)) & ~1;
+            int micro = (((offsetT & ((texelPitch << 6) - 1) & ~31) + ((offsetT & 15) << 1)) >> (3 + logBPP)) & ~1;
 
             return macro + micro + ((offsetT & 16) >> 4);
         }

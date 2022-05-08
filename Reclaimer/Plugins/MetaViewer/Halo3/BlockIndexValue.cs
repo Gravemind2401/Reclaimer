@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reclaimer.IO;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -6,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Reclaimer.IO;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
@@ -34,10 +34,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             ReadValue(reader);
         }
 
-        private void Context_BlockAdded(object sender, EventArgs e)
-        {
-            ReadOptions();
-        }
+        private void Context_BlockAdded(object sender, EventArgs e) => ReadOptions();
 
         internal void ReadOptions()
         {
@@ -70,9 +67,15 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
                 switch (FieldDefinition.ValueType)
                 {
-                    case MetaValueType.BlockIndex8: Value = reader.ReadByte(); break;
-                    case MetaValueType.BlockIndex16: Value = reader.ReadInt16(); break;
-                    case MetaValueType.BlockIndex32: Value = reader.ReadInt32(); break;
+                    case MetaValueType.BlockIndex8:
+                        Value = reader.ReadByte();
+                        break;
+                    case MetaValueType.BlockIndex16:
+                        Value = reader.ReadInt16();
+                        break;
+                    case MetaValueType.BlockIndex32:
+                        Value = reader.ReadInt32();
+                        break;
                 }
 
                 IsDirty = false;
@@ -90,9 +93,15 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
             switch (FieldDefinition.ValueType)
             {
-                case MetaValueType.BlockIndex8: writer.Write((byte)parsed); break;
-                case MetaValueType.BlockIndex16: writer.Write((short)parsed); break;
-                case MetaValueType.BlockIndex32: writer.Write(parsed); break;
+                case MetaValueType.BlockIndex8:
+                    writer.Write((byte)parsed);
+                    break;
+                case MetaValueType.BlockIndex16:
+                    writer.Write((short)parsed);
+                    break;
+                case MetaValueType.BlockIndex32:
+                    writer.Write(parsed);
+                    break;
             }
 
             IsDirty = false;

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace Reclaimer.Windows
 {
@@ -29,14 +28,7 @@ namespace Reclaimer.Windows
             window.ShowDialog();
         }
 
-        private void btnOk_Click(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start(App.Settings.LatestRelease.DetailsUrl);
-        }
-
-        private void btnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
+        private void btnOk_Click(object sender, RoutedEventArgs e) => System.Diagnostics.Process.Start(App.Settings.LatestRelease.DetailsUrl);
+        private void btnCancel_Click(object sender, RoutedEventArgs e) => Close();
     }
 }

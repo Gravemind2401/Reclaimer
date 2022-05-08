@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Reclaimer.Annotations;
+using Reclaimer.Audio;
+using Reclaimer.Blam.Utilities;
+using Reclaimer.Controls.Editors;
+using System;
 using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,10 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Reclaimer.Annotations;
-using Reclaimer.Audio;
-using Reclaimer.Blam.Utilities;
-using Reclaimer.Controls.Editors;
 
 namespace Reclaimer.Plugins
 {
@@ -36,10 +36,7 @@ namespace Reclaimer.Plugins
             }
         }
 
-        public override void Suspend()
-        {
-            SaveSettings(Settings);
-        }
+        public override void Suspend() => SaveSettings(Settings);
 
         [SharedFunction]
         public static bool WriteSoundFile(GameSound sound, string directory, bool overwrite)

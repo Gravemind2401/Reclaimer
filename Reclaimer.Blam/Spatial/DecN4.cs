@@ -101,15 +101,8 @@ namespace Adjutant.Spatial
 
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}, {W:F0}]");
 
-        public static explicit operator uint(DecN4 value)
-        {
-            return value.bits;
-        }
-
-        public static explicit operator DecN4(uint value)
-        {
-            return new DecN4(value);
-        }
+        public static explicit operator uint(DecN4 value) => value.bits;
+        public static explicit operator DecN4(uint value) => new DecN4(value);
 
         #region IXMVector
 
@@ -119,38 +112,14 @@ namespace Adjutant.Spatial
 
         #region Equality Operators
 
-        public static bool operator ==(DecN4 point1, DecN4 point2)
-        {
-            return point1.bits == point2.bits;
-        }
+        public static bool operator ==(DecN4 value1, DecN4 value2) => value1.bits == value2.bits;
+        public static bool operator !=(DecN4 value1, DecN4 value2) => !(value1 == value2);
 
-        public static bool operator !=(DecN4 point1, DecN4 point2)
-        {
-            return !(point1 == point2);
-        }
+        public static bool Equals(DecN4 value1, DecN4 value2) => value1.bits.Equals(value2.bits);
+        public override bool Equals(object obj)=> obj is DecN4 value && DecN4.Equals(this, value);
+        public bool Equals(DecN4 value) => DecN4.Equals(this, value);
 
-        public static bool Equals(DecN4 point1, DecN4 point2)
-        {
-            return point1.bits.Equals(point2.bits);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj == null) || !(obj is DecN4))
-                return false;
-
-            return DecN4.Equals(this, (DecN4)obj);
-        }
-
-        public bool Equals(DecN4 value)
-        {
-            return DecN4.Equals(this, value);
-        }
-
-        public override int GetHashCode()
-        {
-            return bits.GetHashCode();
-        }
+        public override int GetHashCode() => bits.GetHashCode();
 
         #endregion
     }

@@ -94,10 +94,7 @@ namespace Reclaimer.IO
         /// </summary>
         /// <param name="type">The type to check.</param>
         /// <param name="version">The version to check.</param>
-        public static long ValueFor(Type type, double? version)
-        {
-            return Utils.GetAttributeForVersion<FixedSizeAttribute>(type, version).Size;
-        }
+        public static long ValueFor(Type type, double? version) => Utils.GetAttributeForVersion<FixedSizeAttribute>(type, version).Size;
     }
 
     /// <summary>

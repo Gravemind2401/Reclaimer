@@ -171,7 +171,8 @@ namespace Reclaimer.Blam.Halo2
                 {
                     //Halo2Vista multiplayer maps have empty tags in them
                     var item = reader.ReadObject(new IndexItem(cache));
-                    if (item.Id < 0) continue;
+                    if (item.Id < 0)
+                        continue;
 
                     items.Add(i, item);
 
@@ -304,7 +305,8 @@ namespace Reclaimer.Blam.Halo2
 
                 return lazy.Value;
             }
-            else return ReadMetadataInternal<T>();
+            else
+                return ReadMetadataInternal<T>();
         }
 
         private T ReadMetadataInternal<T>()

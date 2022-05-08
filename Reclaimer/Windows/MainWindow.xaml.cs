@@ -1,4 +1,9 @@
-﻿using System;
+﻿using MahApps.Metro.Controls;
+using Octokit;
+using Reclaimer.Models;
+using Reclaimer.Plugins;
+using Reclaimer.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,11 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using MahApps.Metro.Controls;
-using Octokit;
-using Reclaimer.Models;
-using Reclaimer.Plugins;
-using Reclaimer.Utilities;
+
 using Terminology = Reclaimer.Resources.Terminology;
 
 namespace Reclaimer.Windows
@@ -79,20 +80,9 @@ namespace Reclaimer.Windows
         }
 
         #region Event Handlers
-        private void menuOutput_Click(object sender, RoutedEventArgs e)
-        {
-            Substrate.ShowOutput();
-        }
-
-        private void menuAppDir_Click(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start(Settings.AppBaseDirectory);
-        }
-
-        private void menuAppDataDir_Click(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start(Settings.AppDataDirectory);
-        }
+        private void menuOutput_Click(object sender, RoutedEventArgs e) => Substrate.ShowOutput();
+        private void menuAppDir_Click(object sender, RoutedEventArgs e) => System.Diagnostics.Process.Start(Settings.AppBaseDirectory);
+        private void menuAppDataDir_Click(object sender, RoutedEventArgs e) => System.Diagnostics.Process.Start(Settings.AppDataDirectory);
 
         private void menuSettings_Click(object sender, RoutedEventArgs e)
         {
@@ -125,10 +115,7 @@ namespace Reclaimer.Windows
             });
         }
 
-        private void menuIssue_Click(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start("https://github.com/Gravemind2401/Reclaimer/issues");
-        }
+        private void menuIssue_Click(object sender, RoutedEventArgs e) => System.Diagnostics.Process.Start("https://github.com/Gravemind2401/Reclaimer/issues");
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
@@ -190,10 +177,7 @@ namespace Reclaimer.Windows
             RefreshRecents();
         }
 
-        private void ThemeMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            App.SetTheme((sender as MenuItem).Tag as string);
-        }
+        private void ThemeMenuItem_Click(object sender, RoutedEventArgs e) => App.SetTheme((sender as MenuItem).Tag as string);
 
         private void AddMenuItem(Plugin source, PluginMenuItem item)
         {

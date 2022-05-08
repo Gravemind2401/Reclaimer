@@ -227,7 +227,8 @@ namespace Reclaimer.Blam.MccHalo4
                 for (int i = 0; i < TagCount; i++)
                 {
                     var item = reader.ReadObject(new IndexItem(cache, i));
-                    if (item.ClassIndex < 0) continue;
+                    if (item.ClassIndex < 0)
+                        continue;
 
                     items.Add(i, item);
 
@@ -413,7 +414,8 @@ namespace Reclaimer.Blam.MccHalo4
 
                 return lazy.Value;
             }
-            else return ReadMetadataInternal<T>();
+            else
+                return ReadMetadataInternal<T>();
         }
 
         private T ReadMetadataInternal<T>()

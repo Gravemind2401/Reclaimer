@@ -36,7 +36,8 @@ namespace Reclaimer.Blam.Common
         {
             get
             {
-                try { return cache?.StringIndex?[id]; }
+                try
+                { return cache?.StringIndex?[id]; }
                 catch { return "<invalid>"; }
             }
         }
@@ -45,56 +46,26 @@ namespace Reclaimer.Blam.Common
         {
             if (cache.CacheType < CacheType.Halo3Alpha)
                 writer.Write((short)Id);
-            else writer.Write(Id);
+            else
+                writer.Write(Id);
         }
 
         public override string ToString() => Value;
 
         #region Equality Operators
 
-        public static bool operator ==(StringId stringId1, StringId stringId2)
-        {
-            return stringId1.id == stringId2.id;
-        }
+        public static bool operator ==(StringId value1, StringId value2) => value1.id == value2.id;
+        public static bool operator !=(StringId value1, StringId value2) => !(value1 == value2);
 
-        public static bool operator !=(StringId stringId1, StringId stringId2)
-        {
-            return !(stringId1 == stringId2);
-        }
+        public static bool Equals(StringId value1, StringId value2) => value1.id.Equals(value2.id);
+        public override bool Equals(object obj) => obj is StringId value && StringId.Equals(this, value);
+        public bool Equals(StringId value) => StringId.Equals(this, value);
 
-        public static bool Equals(StringId stringId1, StringId stringId2)
-        {
-            return stringId1.id.Equals(stringId2.id);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj == null) || !(obj is StringId))
-                return false;
-
-            return StringId.Equals(this, (StringId)obj);
-        }
-
-        public bool Equals(StringId value)
-        {
-            return StringId.Equals(this, value);
-        }
-
-        public override int GetHashCode()
-        {
-            return id.GetHashCode();
-        }
+        public override int GetHashCode() => id.GetHashCode();
 
         #endregion
 
-        public static implicit operator string(StringId stringId)
-        {
-            return stringId.Value;
-        }
-
-        public static explicit operator int(StringId stringId)
-        {
-            return stringId.id;
-        }
+        public static implicit operator string(StringId value) => value.Value;
+        public static explicit operator int(StringId value) => value.id;
     }
 }

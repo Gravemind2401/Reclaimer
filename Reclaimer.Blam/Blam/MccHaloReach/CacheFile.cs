@@ -245,7 +245,8 @@ namespace Reclaimer.Blam.MccHaloReach
                 {
                     //every Reach map has an empty tag
                     var item = reader.ReadObject(new IndexItem(cache, i));
-                    if (item.ClassIndex < 0) continue;
+                    if (item.ClassIndex < 0)
+                        continue;
 
                     items.Add(i, item);
 
@@ -369,10 +370,7 @@ namespace Reclaimer.Blam.MccHaloReach
             }
         }
 
-        public override string ToString()
-        {
-            return Utils.CurrentCulture($"[{ClassCode}] {ClassName.Value}");
-        }
+        public override string ToString() => Utils.CurrentCulture($"[{ClassCode}] {ClassName.Value}");
     }
 
     [FixedSize(8)]
@@ -428,7 +426,8 @@ namespace Reclaimer.Blam.MccHaloReach
 
                 return lazy.Value;
             }
-            else return ReadMetadataInternal<T>();
+            else
+                return ReadMetadataInternal<T>();
         }
 
         private T ReadMetadataInternal<T>()

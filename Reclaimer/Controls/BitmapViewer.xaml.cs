@@ -1,4 +1,10 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using Reclaimer.Blam.Utilities;
+using Reclaimer.Drawing;
+using Reclaimer.Models;
+using Reclaimer.Utilities;
+using Studio.Controls;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,12 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Microsoft.Win32;
-using Reclaimer.Blam.Utilities;
-using Reclaimer.Drawing;
-using Reclaimer.Models;
-using Reclaimer.Utilities;
-using Studio.Controls;
 
 namespace Reclaimer.Controls
 {
@@ -20,7 +20,7 @@ namespace Reclaimer.Controls
     /// </summary>
     public partial class BitmapViewer
     {
-        private const double dpi = 96;
+        //private const double dpi = 96;
 
         private IBitmap bitmap;
         private DdsImage dds;
@@ -105,10 +105,7 @@ namespace Reclaimer.Controls
             set => SetValue(AlphaChannelProperty, value);
         }
 
-        public static object CoerceHasMultiple(DependencyObject d, object baseValue)
-        {
-            return (d as BitmapViewer)?.Indexes.Count() > 1;
-        }
+        public static object CoerceHasMultiple(DependencyObject d, object baseValue) => (d as BitmapViewer)?.Indexes.Count() > 1;
 
         public static void ChannelPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -151,7 +148,8 @@ namespace Reclaimer.Controls
         private void Render()
         {
             var src = dds.ToBitmapSource(new DdsOutputArgs(GetOptions(), bitmap.CubeLayout));
-            if (src.CanFreeze) src.Freeze();
+            if (src.CanFreeze)
+                src.Freeze();
             ImageSource = src;
         }
 
@@ -225,10 +223,7 @@ namespace Reclaimer.Controls
         }
 
         #region Toolbar Events
-        private void btnFitActual_Click(object sender, RoutedEventArgs e)
-        {
-            zoomPanel.ResetZoom();
-        }
+        private void btnFitActual_Click(object sender, RoutedEventArgs e) => zoomPanel.ResetZoom();
 
         private void btnFitWindow_Click(object sender, RoutedEventArgs e)
         {
@@ -242,20 +237,12 @@ namespace Reclaimer.Controls
         private void btnFitWidth_Click(object sender, RoutedEventArgs e)
         {
             var xScale = zoomPanel.ActualWidth / dds.Width;
-
             zoomPanel.ResetZoom();
             zoomPanel.ZoomLevel = xScale;
         }
 
-        private void btnExportSelected_Click(object sender, RoutedEventArgs e)
-        {
-            ExportImage(false);
-        }
-
-        private void btnExportAll_Click(object sender, RoutedEventArgs e)
-        {
-            ExportImage(true);
-        }
+        private void btnExportSelected_Click(object sender, RoutedEventArgs e) => ExportImage(false);
+        private void btnExportAll_Click(object sender, RoutedEventArgs e) => ExportImage(true);
         #endregion
     }
 }

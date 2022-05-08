@@ -70,15 +70,8 @@ namespace Adjutant.Spatial
 
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}]");
 
-        public static explicit operator uint(UDHenN3 value)
-        {
-            return value.bits;
-        }
-
-        public static explicit operator UDHenN3(uint value)
-        {
-            return new UDHenN3(value);
-        }
+        public static explicit operator uint(UDHenN3 value) => value.bits;
+        public static explicit operator UDHenN3(uint value) => new UDHenN3(value);
 
         #region IXMVector
 
@@ -94,38 +87,14 @@ namespace Adjutant.Spatial
 
         #region Equality Operators
 
-        public static bool operator ==(UDHenN3 point1, UDHenN3 point2)
-        {
-            return point1.bits == point2.bits;
-        }
+        public static bool operator ==(UDHenN3 value1, UDHenN3 value2) => value1.bits == value2.bits;
+        public static bool operator !=(UDHenN3 value1, UDHenN3 value2) => !(value1 == value2);
 
-        public static bool operator !=(UDHenN3 point1, UDHenN3 point2)
-        {
-            return !(point1 == point2);
-        }
+        public static bool Equals(UDHenN3 value1, UDHenN3 value2) => value1.bits.Equals(value2.bits);
+        public override bool Equals(object obj)=> obj is UDHenN3 value && UDHenN3.Equals(this, value);
+        public bool Equals(UDHenN3 value) => UDHenN3.Equals(this, value);
 
-        public static bool Equals(UDHenN3 point1, UDHenN3 point2)
-        {
-            return point1.bits.Equals(point2.bits);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj == null) || !(obj is UDHenN3))
-                return false;
-
-            return UDHenN3.Equals(this, (UDHenN3)obj);
-        }
-
-        public bool Equals(UDHenN3 value)
-        {
-            return UDHenN3.Equals(this, value);
-        }
-
-        public override int GetHashCode()
-        {
-            return bits.GetHashCode();
-        }
+        public override int GetHashCode() => bits.GetHashCode();
 
         #endregion
     }

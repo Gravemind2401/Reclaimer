@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Adjutant.Geometry;
+﻿using Adjutant.Geometry;
 using Reclaimer.Annotations;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Controls.Editors;
 using Reclaimer.Utilities;
 using Reclaimer.Windows;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace Reclaimer.Plugins
@@ -30,10 +30,7 @@ namespace Reclaimer.Plugins
 
         private PluginContextItem ExtractBitmapsContextItem => new PluginContextItem("ExtractBitmaps", "Extract Bitmaps", OnContextItemClick);
 
-        public override void Initialise()
-        {
-            Settings = LoadSettings<ModelViewerSettings>();
-        }
+        public override void Initialise() => Settings = LoadSettings<ModelViewerSettings>();
 
         public override void PostInitialise()
         {
@@ -47,15 +44,9 @@ namespace Reclaimer.Plugins
                 yield return ExtractBitmapsContextItem;
         }
 
-        public override void Suspend()
-        {
-            SaveSettings(Settings);
-        }
+        public override void Suspend() => SaveSettings(Settings);
 
-        public override bool CanOpenFile(OpenFileArgs args)
-        {
-            return args.File.Any(i => i is IRenderGeometry);
-        }
+        public override bool CanOpenFile(OpenFileArgs args) => args.File.Any(i => i is IRenderGeometry);
 
         public override void OpenFile(OpenFileArgs args)
         {
@@ -70,16 +61,10 @@ namespace Reclaimer.Plugins
         }
 
         [SharedFunction]
-        public void ExportBitmaps(IRenderGeometry geometry)
-        {
-            ExportBitmaps(geometry, g => g.GetAllBitmaps());
-        }
+        public void ExportBitmaps(IRenderGeometry geometry) => ExportBitmaps(geometry, g => g.GetAllBitmaps());
 
         [SharedFunction]
-        public void ExportSelectedBitmaps(IRenderGeometry geometry, IEnumerable<int> shaderIndexes)
-        {
-            ExportBitmaps(geometry, g => g.GetBitmaps(shaderIndexes));
-        }
+        public void ExportSelectedBitmaps(IRenderGeometry geometry, IEnumerable<int> shaderIndexes) => ExportBitmaps(geometry, g => g.GetBitmaps(shaderIndexes));
 
         private void ExportBitmaps(IRenderGeometry geometry, Func<IRenderGeometry, IEnumerable<IBitmap>> getBitmaps)
         {
@@ -267,26 +252,10 @@ namespace Reclaimer.Plugins
 
     public static class ModelViewerExtensions
     {
-        public static Assimp.Vector2D ToAssimp2D(this IXMVector v)
-        {
-            return new Assimp.Vector2D(v.X, v.Y);
-        }
-
-        public static Assimp.Vector3D ToAssimp3D(this IXMVector v)
-        {
-            return new Assimp.Vector3D(v.X, v.Y, v.Z);
-        }
-
-        public static Assimp.Vector3D ToAssimp3D(this IXMVector v, float scale)
-        {
-            return new Assimp.Vector3D(v.X * scale, v.Y * scale, v.Z * scale);
-        }
-
-        public static Assimp.Vector3D ToAssimpUV(this IXMVector v)
-        {
-            return new Assimp.Vector3D(v.X, 1f - v.Y, 0f);
-        }
-
+        public static Assimp.Vector2D ToAssimp2D(this IXMVector v) => new Assimp.Vector2D(v.X, v.Y);
+        public static Assimp.Vector3D ToAssimp3D(this IXMVector v) => new Assimp.Vector3D(v.X, v.Y, v.Z);
+        public static Assimp.Vector3D ToAssimp3D(this IXMVector v, float scale) => new Assimp.Vector3D(v.X * scale, v.Y * scale, v.Z * scale);
+        public static Assimp.Vector3D ToAssimpUV(this IXMVector v) => new Assimp.Vector3D(v.X, 1f - v.Y, 0f);
         public static Assimp.Matrix4x4 ToAssimp4x4(this System.Numerics.Matrix4x4 m) => m.ToAssimp4x4(1f);
 
         public static Assimp.Matrix4x4 ToAssimp4x4(this System.Numerics.Matrix4x4 m, float offsetScale)
@@ -369,7 +338,8 @@ namespace Reclaimer.Plugins
                 var node = model.Nodes[i];
                 if (node.ParentIndex >= 0)
                     allNodes[node.ParentIndex].Children.Add(allNodes[i]);
-                else scene.RootNode.Children.Add(allNodes[i]);
+                else
+                    scene.RootNode.Children.Add(allNodes[i]);
             }
             #endregion
 
@@ -390,7 +360,6 @@ namespace Reclaimer.Plugins
                 foreach (var sub in geom.Submeshes)
                 {
                     var m = new Assimp.Mesh($"mesh{i:D3}");
-
                     var indices = geom.Indicies.Skip(sub.IndexStart).Take(sub.IndexLength);
 
                     var minIndex = indices.Min();

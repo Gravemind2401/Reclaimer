@@ -61,9 +61,12 @@ namespace Reclaimer.Blam.Common
                 {
                     reader.Seek(36, SeekOrigin.Begin);
                     var x = reader.ReadInt32();
-                    if (x == 0) buildAddress = 288; //Halo2 Xbox
-                    else if (x == -1) buildAddress = 300; //Halo2 Vista
-                    else throw Exceptions.NotAValidMapFile(fileName);
+                    if (x == 0)
+                        buildAddress = 288; //Halo2 Xbox
+                    else if (x == -1)
+                        buildAddress = 300; //Halo2 Vista
+                    else
+                        throw Exceptions.NotAValidMapFile(fileName);
                 }
                 //else if (version == 10) //MccHalo2
                 //{
@@ -89,7 +92,8 @@ namespace Reclaimer.Blam.Common
                 //}
                 else if (reader.ByteOrder == ByteOrder.LittleEndian)
                     buildAddress = 288; //Gen3 MCC
-                else buildAddress = 284; //Gen3 x360
+                else
+                    buildAddress = 284; //Gen3 x360
 
                 reader.Seek(buildAddress, SeekOrigin.Begin);
                 var buildString = reader.ReadNullTerminatedString(32);

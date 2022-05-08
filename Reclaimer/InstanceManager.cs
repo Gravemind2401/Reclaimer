@@ -14,7 +14,7 @@ namespace Reclaimer
         public static bool CreateSingleInstance(string name, EventHandler<InstanceCallbackEventArgs> callback)
         {
             EventWaitHandle eventWaitHandle = null;
-            string eventName = string.Format("{0}-{1}", Environment.MachineName, name);
+            var eventName = string.Format("{0}-{1}", Environment.MachineName, name);
 
             InstanceProxy.IsFirstInstance = false;
             InstanceProxy.CommandLineArgs = Environment.GetCommandLineArgs();
@@ -80,7 +80,7 @@ namespace Reclaimer
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(InstanceProxy), uri, WellKnownObjectMode.Singleton);
 
             // close channel, on process exit
-            Process process = Process.GetCurrentProcess();
+            var process = Process.GetCurrentProcess();
             process.Exited += delegate { ChannelServices.UnregisterChannel(serverChannel); };
         }
 

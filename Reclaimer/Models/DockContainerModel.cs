@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Prism.Commands;
+using Studio.Controls;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -6,8 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Prism.Commands;
-using Studio.Controls;
 
 namespace Reclaimer.Models
 {
@@ -145,7 +145,8 @@ namespace Reclaimer.Models
 
         public void AddTool(TabModel item, TabOwnerModelBase target, Dock dock)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
 
             var group = new ToolWellModel() { Width = item.Width, Height = item.Height, Dock = dock };
             group.Children.Add(item);
@@ -170,7 +171,8 @@ namespace Reclaimer.Models
 
         public void AddTool2(TabModel item, Dock targetDock, GridLength defaultSize)
         {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
             if (item.Usage == TabItemType.Document)
                 throw new InvalidOperationException();
 

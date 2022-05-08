@@ -47,7 +47,8 @@ namespace Reclaimer.Blam.Halo4
             foreach (var s in selection)
             {
                 var rmsh = s.MaterialReference.Tag?.ReadMetadata<material>();
-                if (rmsh == null) continue;
+                if (rmsh == null)
+                    continue;
 
                 foreach (var map in rmsh.ShaderProperties.SelectMany(p => p.ShaderMaps))
                 {
@@ -103,7 +104,8 @@ namespace Reclaimer.Blam.Halo4
                         usage = MaterialUsage.Diffuse;
                     else if (props.ShaderMaps.Count == 1)
                         usage = MaterialUsage.Diffuse;
-                    else continue;
+                    else
+                        continue;
 
                     //maybe map.TilingIndex has the wrong offset? can sometimes be out of bounds (other than 0xFF)
                     var tile = props.TilingData.Cast<RealVector4D?>().ElementAtOrDefault(map.TilingIndex);
@@ -179,10 +181,7 @@ namespace Reclaimer.Blam.Halo4
                     var vInfo = vertexBufferInfo[section.VertexBufferIndex];
                     var iInfo = indexBufferInfo[section.IndexBufferIndex];
 
-                    bool HasUsage(XmlNode n, string u)
-                    {
-                        return n.ChildNodes.Cast<XmlNode>().Any(c => c.Attributes?[XmlVertexField.Usage]?.Value == u);
-                    }
+                    bool HasUsage(XmlNode n, string u) => n.ChildNodes.Cast<XmlNode>().Any(c => c.Attributes?[XmlVertexField.Usage]?.Value == u);
 
                     var skinType = VertexWeights.None;
                     if (HasUsage(node, XmlVertexUsage.BlendIndices))
@@ -235,9 +234,9 @@ namespace Reclaimer.Blam.Halo4
                     var totalIndices = section.Submeshes.Sum(s => s.IndexLength);
                     address = entry.ResourceFixups[vertexBufferInfo.Length * 2 + section.IndexBufferIndex].Offset & 0x0FFFFFFF;
                     reader.Seek(address, SeekOrigin.Begin);
-                    if (vInfo.VertexCount > ushort.MaxValue)
-                        mesh.Indicies = reader.ReadEnumerable<int>(totalIndices).ToArray();
-                    else mesh.Indicies = reader.ReadEnumerable<ushort>(totalIndices).Select(i => (int)i).ToArray();
+                    mesh.Indicies = vInfo.VertexCount > ushort.MaxValue
+                        ? reader.ReadEnumerable<int>(totalIndices).ToArray()
+                        : reader.ReadEnumerable<ushort>(totalIndices).Select(i => (int)i).ToArray();
 
                     yield return mesh;
                 }

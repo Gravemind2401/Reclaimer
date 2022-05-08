@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reclaimer.Controls.Editors;
+using System;
 using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Reclaimer.Controls.Editors;
 
 namespace Reclaimer.Plugins
 {
@@ -24,15 +24,8 @@ namespace Reclaimer.Plugins
 
         public override string Name => "Map Viewer";
 
-        public override void Initialise()
-        {
-            Settings = LoadSettings<MapViewerSettings>();
-        }
-
-        public override void Suspend()
-        {
-            SaveSettings(Settings);
-        }
+        public override void Initialise() => Settings = LoadSettings<MapViewerSettings>();
+        public override void Suspend() => SaveSettings(Settings);
 
         public override IEnumerable<PluginMenuItem> GetMenuItems()
         {
@@ -41,7 +34,8 @@ namespace Reclaimer.Plugins
 
         private void OnMenuItemClick(string key)
         {
-            if (key != OpenKey) return;
+            if (key != OpenKey)
+                return;
 
             var ofd = new Microsoft.Win32.OpenFileDialog
             {

@@ -46,7 +46,8 @@ namespace Reclaimer.Blam.Halo1
                     offset = 88;
                     break;
 
-                default: return null;
+                default:
+                    return null;
             }
 
             try
@@ -57,7 +58,8 @@ namespace Reclaimer.Blam.Halo1
 
                 if (bitmId == -1)
                     return null;
-                else return tagRef.Tag.CacheFile.TagIndex[bitmId];
+                else
+                    return tagRef.Tag.CacheFile.TagIndex[bitmId];
             }
             catch
             {

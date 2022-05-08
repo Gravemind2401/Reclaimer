@@ -1,4 +1,10 @@
-﻿using System;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Halo5;
+using Reclaimer.Models;
+using Reclaimer.Plugins.MetaViewer;
+using Reclaimer.Utilities;
+using Studio.Controls;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -6,12 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
-using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
-using Reclaimer.Models;
-using Reclaimer.Plugins.MetaViewer;
-using Reclaimer.Utilities;
-using Studio.Controls;
 
 namespace Reclaimer.Controls
 {
@@ -148,24 +148,10 @@ namespace Reclaimer.Controls
             }
         }
 
-        private void btnReload_Click(object sender, RoutedEventArgs e)
-        {
-            LoadData();
-        }
-
-        private void btnCollapseAll_Click(object sender, RoutedEventArgs e)
-        {
-            RecursiveToggle(Metadata, false);
-        }
-
-        private void btnExpandAll_Click(object sender, RoutedEventArgs e)
-        {
-            RecursiveToggle(Metadata, true);
-        }
-
-        public void Dispose()
-        {
-            context?.Dispose();
-        }
+        private void btnReload_Click(object sender, RoutedEventArgs e) => LoadData();
+        private void btnCollapseAll_Click(object sender, RoutedEventArgs e) => RecursiveToggle(Metadata, false);
+        private void btnExpandAll_Click(object sender, RoutedEventArgs e) => RecursiveToggle(Metadata, true);
+        
+        public void Dispose() => context?.Dispose();
     }
 }

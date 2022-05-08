@@ -1,4 +1,12 @@
-﻿using System;
+﻿using Adjutant.Geometry;
+using Microsoft.Win32;
+using Reclaimer.Blam.Utilities;
+using Reclaimer.Drawing;
+using Reclaimer.Models;
+using Reclaimer.Plugins;
+using Reclaimer.Utilities;
+using Studio.Controls;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -11,16 +19,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
-using Adjutant.Geometry;
-using Microsoft.Win32;
-using Reclaimer.Blam.Utilities;
-using Reclaimer.Drawing;
-using Reclaimer.Models;
-using Reclaimer.Plugins;
-using Reclaimer.Utilities;
-using Studio.Controls;
 
 namespace Reclaimer.Controls
 {
@@ -173,7 +172,8 @@ namespace Reclaimer.Controls
                                 permGroup.Children.Add(meshes[perm.MeshIndex + i]);
                                 permGroup.Freeze();
                             }
-                            else permGroup.Children.Add(meshes[perm.MeshIndex + i]);
+                            else
+                                permGroup.Children.Add(meshes[perm.MeshIndex + i]);
                         }
                     }
 
@@ -224,7 +224,8 @@ namespace Reclaimer.Controls
                         material.Freeze();
                         bitmapLookup[diffuse.Bitmap.Id] = material;
                     }
-                    else material = bitmapLookup[diffuse.Bitmap.Id];
+                    else
+                        material = bitmapLookup[diffuse.Bitmap.Id];
                 }
                 catch
                 {
@@ -290,7 +291,8 @@ namespace Reclaimer.Controls
                         var geom = new MeshGeometry3D();
 
                         var indices = mesh.Indicies.Skip(sub.IndexStart).Take(sub.IndexLength).ToList();
-                        if (mesh.IndexFormat == IndexFormat.TriangleStrip) indices = indices.Unstrip().ToList();
+                        if (mesh.IndexFormat == IndexFormat.TriangleStrip)
+                            indices = indices.Unstrip().ToList();
 
                         var vertStart = indices.Min();
                         var vertLength = indices.Max() - vertStart + 1;
@@ -304,7 +306,8 @@ namespace Reclaimer.Controls
                         if (mesh.Vertices[0].TexCoords.Count > 0)
                         {
                             var texcoords = verts.Select(v => new Point(v.TexCoords[0].X, v.TexCoords[0].Y)).ToArray();
-                            if (!texMatrix.IsIdentity) texMatrix.Transform(texcoords);
+                            if (!texMatrix.IsIdentity)
+                                texMatrix.Transform(texcoords);
                             (geom.TextureCoordinates = new PointCollection(texcoords)).Freeze();
                         }
 
@@ -352,7 +355,8 @@ namespace Reclaimer.Controls
 
         private void TreeViewItem_Checked(object sender, RoutedEventArgs e)
         {
-            if (isWorking) return;
+            if (isWorking)
+                return;
 
             isWorking = true;
             SetState((e.OriginalSource as FrameworkElement).DataContext as TreeItemModel, true);
@@ -370,7 +374,8 @@ namespace Reclaimer.Controls
                     parent.IsChecked = true;
                 else if (children.All(i => i.IsChecked == false))
                     parent.IsChecked = false;
-                else parent.IsChecked = null;
+                else
+                    parent.IsChecked = null;
 
                 if (updateRender)
                 {

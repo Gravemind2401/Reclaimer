@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using Prism.Mvvm;
 
 namespace Reclaimer.Models
 {
@@ -40,7 +40,8 @@ namespace Reclaimer.Models
                 onChanged(prev, value);
                 return true;
             }
-            else return false;
+            else
+                return false;
         }
 
         protected virtual void OnParentChanged(TabOwnerModelBase prev, TabOwnerModelBase next)
@@ -59,7 +60,8 @@ namespace Reclaimer.Models
                 {
                     if (model is DockContainerModel)
                         return model as DockContainerModel;
-                    else model = model.Parent;
+                    else
+                        model = model.Parent;
                 }
 
                 return null;

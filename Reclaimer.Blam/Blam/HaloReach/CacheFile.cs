@@ -238,7 +238,8 @@ namespace Reclaimer.Blam.HaloReach
                 {
                     //every Reach map has an empty tag
                     var item = reader.ReadObject(new IndexItem(cache, i));
-                    if (item.ClassIndex < 0) continue;
+                    if (item.ClassIndex < 0)
+                        continue;
 
                     items.Add(i, item);
 
@@ -412,7 +413,8 @@ namespace Reclaimer.Blam.HaloReach
 
                 return lazy.Value;
             }
-            else return ReadMetadataInternal<T>();
+            else
+                return ReadMetadataInternal<T>();
         }
 
         private T ReadMetadataInternal<T>()

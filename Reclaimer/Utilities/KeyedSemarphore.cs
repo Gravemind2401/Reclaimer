@@ -68,10 +68,7 @@ namespace Reclaimer.Utilities
                 this.disposeAction = disposeAction;
             }
 
-            public void Dispose()
-            {
-                disposeAction(key);
-            }
+            public void Dispose() => disposeAction(key);
         }
     }
 }

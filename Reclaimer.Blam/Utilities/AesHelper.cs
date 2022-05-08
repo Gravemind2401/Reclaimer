@@ -10,15 +10,9 @@ namespace Reclaimer.Blam.Utilities
 {
     public static class AesHelper
     {
-        public static byte[] DecryptAes(byte[] source, string key)
-        {
-            return DecryptAes(source, key, Encoding.UTF8);
-        }
+        public static byte[] DecryptAes(byte[] source, string key) => DecryptAes(source, key, Encoding.UTF8);
 
-        public static byte[] DecryptAes(byte[] source, string key, Encoding keyEncoding)
-        {
-            return DecryptAes(source, keyEncoding.GetBytes(key));
-        }
+        public static byte[] DecryptAes(byte[] source, string key, Encoding keyEncoding) => DecryptAes(source, keyEncoding.GetBytes(key));
 
         public static byte[] DecryptAes(byte[] source, byte[] key)
         {
@@ -40,7 +34,8 @@ namespace Reclaimer.Blam.Utilities
 
         public static byte[] ReadAesBytes(this BinaryReader reader, int count, string key)
         {
-            if (count % 16 > 0) count += 16 - count % 16;
+            if (count % 16 > 0)
+                count += 16 - count % 16;
             return DecryptAes(reader.ReadBytes(count), key);
         }
     }

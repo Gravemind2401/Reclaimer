@@ -77,14 +77,16 @@ namespace Reclaimer.Blam.Halo5
         {
             if (stringsByOffset.ContainsKey(offset))
                 return stringTable[stringsByOffset[offset]];
-            else return null;
+            else
+                return null;
         }
 
         internal string GetStringByHash(uint hash)
         {
             if (stringsByHash.ContainsKey(hash))
                 return stringTable[stringsByHash[hash]];
-            else return null;
+            else
+                return null;
         }
     }
 }

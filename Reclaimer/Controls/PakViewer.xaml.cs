@@ -1,4 +1,9 @@
-﻿using System;
+﻿using Reclaimer.Models;
+using Reclaimer.Plugins;
+using Reclaimer.Saber3D.Common;
+using Reclaimer.Utilities;
+using Studio.Controls;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -7,11 +12,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Reclaimer.Models;
-using Reclaimer.Plugins;
-using Reclaimer.Saber3D.Common;
-using Reclaimer.Utilities;
-using Studio.Controls;
 
 namespace Reclaimer.Controls
 {
@@ -112,13 +112,7 @@ namespace Reclaimer.Controls
 
         private bool FilterTag(string filter, IPakItem item)
         {
-            if (string.IsNullOrEmpty(filter))
-                return true;
-
-            if (item.Name.ToUpper() == filter.ToUpper())
-                return true;
-
-            return false;
+            return string.IsNullOrEmpty(filter) || item.Name.ToUpper() == filter.ToUpper();
         }
 
         private void RecursiveCollapseNode(TreeItemModel node)
@@ -128,10 +122,7 @@ namespace Reclaimer.Controls
             node.IsExpanded = false;
         }
 
-        private OpenFileArgs GetFolderArgs(TreeItemModel node)
-        {
-            return new OpenFileArgs(node.Header, $"Saber3D.Halo1X.*", node);
-        }
+        private OpenFileArgs GetFolderArgs(TreeItemModel node) => new OpenFileArgs(node.Header, $"Saber3D.Halo1X.*", node);
 
         private OpenFileArgs GetSelectedArgs()
         {
@@ -160,15 +151,9 @@ namespace Reclaimer.Controls
                 RecursiveCollapseNode(node);
         }
 
-        private void txtSearch_SearchChanged(object sender, RoutedEventArgs e)
-        {
-            BuildItemTree(txtSearch.Text);
-        }
+        private void txtSearch_SearchChanged(object sender, RoutedEventArgs e) => BuildItemTree(txtSearch.Text);
 
-        private void TreeItemPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            (sender as TreeViewItem).IsSelected = true;
-        }
+        private void TreeItemPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e) => (sender as TreeViewItem).IsSelected = true;
 
         private void TreeItemMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -189,7 +174,7 @@ namespace Reclaimer.Controls
             foreach (MenuItem item in ContextItems.Where(i => i is MenuItem))
                 item.Click -= ContextItem_Click;
 
-            var menu = (sender as ContextMenu);
+            var menu = sender as ContextMenu;
             var node = tv.SelectedItem as TreeItemModel;
 
             ContextItems.Clear();
@@ -221,13 +206,11 @@ namespace Reclaimer.Controls
                 Substrate.OpenWithDefault(args);
             else if (sender == OpenWithContextItem)
                 Substrate.OpenWithPrompt(args);
-            else ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(args);
+            else
+                ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(args);
         }
 
-        private void GlobalContextItem_Click(object sender, RoutedEventArgs e)
-        {
-            ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(GetFolderArgs(rootNode));
-        }
+        private void GlobalContextItem_Click(object sender, RoutedEventArgs e) => ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(GetFolderArgs(rootNode));
         #endregion
     }
 }

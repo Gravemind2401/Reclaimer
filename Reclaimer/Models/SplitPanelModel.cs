@@ -86,7 +86,8 @@ namespace Reclaimer.Models
             if (next == null)
             {
                 var remaining = Item1 ?? Item2;
-                if (remaining == null) return;
+                if (remaining == null)
+                    return;
                 Item1 = Item2 = null;
 
                 if (ParentBranch != null)

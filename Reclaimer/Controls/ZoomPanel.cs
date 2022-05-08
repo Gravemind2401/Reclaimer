@@ -141,7 +141,8 @@ namespace Reclaimer.Controls
         {
             base.OnMouseWheel(e);
 
-            if (Child == null) return;
+            if (Child == null)
+                return;
 
             var multiplier = e.Delta > 0 ? 1 + ZoomVariance : 1 - ZoomVariance;
 
@@ -170,7 +171,8 @@ namespace Reclaimer.Controls
         {
             base.OnMouseMove(e);
 
-            if (!IsMouseCaptured) return;
+            if (!IsMouseCaptured)
+                return;
 
             var pos = e.GetPosition(this);
             var delta = dragStart - pos;

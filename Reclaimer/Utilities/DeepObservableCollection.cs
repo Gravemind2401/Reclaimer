@@ -39,10 +39,7 @@ namespace Reclaimer.Utilities
             base.ClearItems();
         }
 
-        private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            ChildPropertyChanged?.Invoke(this, new ChildPropertyChangedEventArgs(sender, e.PropertyName));
-        }
+        private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e) => ChildPropertyChanged?.Invoke(this, new ChildPropertyChangedEventArgs(sender, e.PropertyName));
     }
 
     public class ChildPropertyChangedEventArgs : PropertyChangedEventArgs

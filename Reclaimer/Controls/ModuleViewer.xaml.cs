@@ -1,4 +1,10 @@
-﻿using System;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Halo5;
+using Reclaimer.Models;
+using Reclaimer.Plugins;
+using Reclaimer.Utilities;
+using Studio.Controls;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -7,12 +13,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
-using Reclaimer.Models;
-using Reclaimer.Plugins;
-using Reclaimer.Utilities;
-using Studio.Controls;
 
 namespace Reclaimer.Controls
 {
@@ -112,7 +112,8 @@ namespace Reclaimer.Controls
         {
             if (HierarchyView)
                 BuildHierarchyTree(filter);
-            else BuildClassTree(filter);
+            else
+                BuildClassTree(filter);
         }
 
         private void BuildClassTree(string filter)
@@ -159,19 +160,7 @@ namespace Reclaimer.Controls
             if (tag.GlobalTagId == -1)
                 return false;
 
-            if (string.IsNullOrEmpty(filter))
-                return true;
-
-            if (tag.FullPath.ToUpper().Contains(filter.ToUpper()))
-                return true;
-
-            if (tag.ClassCode.ToUpper() == filter.ToUpper())
-                return true;
-
-            if (tag.ClassName.ToUpper() == filter.ToUpper())
-                return true;
-
-            return false;
+            return string.IsNullOrEmpty(filter) || tag.FullPath.ToUpper().Contains(filter.ToUpper()) || tag.ClassCode.ToUpper() == filter.ToUpper() || tag.ClassName.ToUpper() == filter.ToUpper();
         }
 
         private TreeItemModel MakeNode(IList<TreeItemModel> root, IDictionary<string, TreeItemModel> lookup, string path, bool inner = false)
@@ -190,7 +179,8 @@ namespace Reclaimer.Controls
             {
                 if (inner)
                     root.Insert(root.LastIndexWhere(n => n.HasItems) + 1, item);
-                else root.Add(item);
+                else
+                    root.Add(item);
 
                 return item;
             }
@@ -199,7 +189,8 @@ namespace Reclaimer.Controls
 
             if (inner)
                 parent.Items.Insert(parent.Items.LastIndexWhere(n => n.HasItems) + 1, item);
-            else parent.Items.Add(item);
+            else
+                parent.Items.Add(item);
 
             return item;
         }
@@ -211,10 +202,7 @@ namespace Reclaimer.Controls
             node.IsExpanded = false;
         }
 
-        private OpenFileArgs GetFolderArgs(TreeItemModel node)
-        {
-            return new OpenFileArgs(node.Header, $"Blam.{module.ModuleType}.*", node);
-        }
+        private OpenFileArgs GetFolderArgs(TreeItemModel node) => new OpenFileArgs(node.Header, $"Blam.{module.ModuleType}.*", node);
 
         private OpenFileArgs GetSelectedArgs()
         {
@@ -305,7 +293,7 @@ namespace Reclaimer.Controls
             foreach (var item in ContextItems.OfType<MenuItem>().Concat(OpenFromContextItem.Items.OfType<MenuItem>()))
                 item.Click -= ContextItem_Click;
 
-            var menu = (sender as ContextMenu);
+            var menu = sender as ContextMenu;
             var node = tv.SelectedItem as TreeItemModel;
 
             ContextItems.Clear();
@@ -363,7 +351,8 @@ namespace Reclaimer.Controls
                 var tag = args.File.OfType<ModuleItem>().First();
                 Clipboard.SetText($"{tag.FullPath}.{tag.ClassName}");
             }
-            else ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(args);
+            else
+                ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(args);
         }
 
         private void GlobalContextItem_Click(object sender, RoutedEventArgs e)

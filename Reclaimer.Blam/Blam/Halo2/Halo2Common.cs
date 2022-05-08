@@ -39,7 +39,8 @@ namespace Reclaimer.Blam.Halo2
             foreach (var s in selection)
             {
                 var rmsh = s.ShaderReference.Tag?.ReadMetadata<shader>();
-                if (rmsh == null) continue;
+                if (rmsh == null)
+                    continue;
 
                 foreach (var tagRef in rmsh.ShaderMaps.SelectMany(m => m.EnumerateBitmapReferences()))
                 {

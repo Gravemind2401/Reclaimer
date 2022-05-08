@@ -18,16 +18,14 @@ namespace Reclaimer.Utilities
 
             var deg = (float)Utils.RadToDeg(rad.Value);
 
-            if (parameter == null)
-                return deg.ToString();
-            else return deg.ToString(parameter.ToString());
+            return parameter == null ? deg.ToString() : deg.ToString(parameter.ToString());
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (float.TryParse(value?.ToString(), out var deg))
-                return (float)Utils.DegToRad(deg);
-            else return System.Windows.DependencyProperty.UnsetValue;
+            return float.TryParse(value?.ToString(), out var deg)
+                ? Utils.DegToRad(deg)
+                : System.Windows.DependencyProperty.UnsetValue;
         }
     }
 }

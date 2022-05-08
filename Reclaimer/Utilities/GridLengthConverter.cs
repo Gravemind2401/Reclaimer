@@ -18,14 +18,7 @@ namespace Reclaimer.Utilities
             GridUnitType = GridUnitType.Pixel;
         }
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return new GridLength((double)value, GridUnitType);
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return ((GridLength)value).Value;
-        }
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => new GridLength((double)value, GridUnitType);
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => ((GridLength)value).Value;
     }
 }

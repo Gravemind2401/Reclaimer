@@ -8,9 +8,6 @@ namespace Reclaimer.Blam.Common
 {
     public static class Extensions
     {
-        public static string FileName(this IIndexItem item)
-        {
-            return Utilities.Utils.GetFileName(item.FullPath);
-        }
+        public static string FileName(this IIndexItem item) => Utilities.Utils.GetFileName(item.FullPath);
     }
 }

@@ -66,38 +66,14 @@ namespace Adjutant.Spatial
 
         #region Equality Operators
 
-        public static bool operator ==(RealVector3D value1, RealVector3D value2)
-        {
-            return value1.x == value2.x && value1.y == value2.y && value1.z == value2.z;
-        }
+        public static bool operator ==(RealVector3D value1, RealVector3D value2) => value1.x == value2.x && value1.y == value2.y && value1.z == value2.z;
+        public static bool operator !=(RealVector3D value1, RealVector3D value2) => !(value1 == value2);
 
-        public static bool operator !=(RealVector3D value1, RealVector3D value2)
-        {
-            return !(value1 == value2);
-        }
+        public static bool Equals(RealVector3D value1, RealVector3D value2) => value1.x.Equals(value2.x) && value1.y.Equals(value2.y) && value1.z.Equals(value2.z);
+        public override bool Equals(object obj)=> obj is RealVector3D value && RealVector3D.Equals(this, value);
+        public bool Equals(RealVector3D value) => RealVector3D.Equals(this, value);
 
-        public static bool Equals(RealVector3D value1, RealVector3D value2)
-        {
-            return value1.x.Equals(value2.x) && value1.y.Equals(value2.y) && value1.z.Equals(value2.z);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj == null) || !(obj is RealVector3D))
-                return false;
-
-            return RealVector3D.Equals(this, (RealVector3D)obj);
-        }
-
-        public bool Equals(RealVector3D value)
-        {
-            return RealVector3D.Equals(this, value);
-        }
-
-        public override int GetHashCode()
-        {
-            return x.GetHashCode() ^ y.GetHashCode() ^ z.GetHashCode();
-        }
+        public override int GetHashCode() => x.GetHashCode() ^ y.GetHashCode() ^ z.GetHashCode();
 
         #endregion
     }

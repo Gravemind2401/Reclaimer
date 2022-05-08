@@ -80,15 +80,9 @@ namespace Reclaimer.Controls
             set => SetValue(SuggestionProviderProperty, value);
         }
 
-        public static object CoerceHasText(DependencyObject d, object baseValue)
-        {
-            return !string.IsNullOrEmpty((d as AutoCompleteTextBox)?.Text);
-        }
+        public static object CoerceHasText(DependencyObject d, object baseValue) => !string.IsNullOrEmpty((d as AutoCompleteTextBox)?.Text);
 
-        public static bool ValidateLiveSearchDelay(object value)
-        {
-            return value is int i && i >= 0;
-        }
+        public static bool ValidateLiveSearchDelay(object value) => value is int i && i >= 0;
 
         public static void LiveSearchTimeoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -169,7 +163,8 @@ namespace Reclaimer.Controls
                 ItemsHost.ItemsSource = suggestions;
                 IsDropDownOpen = true;
             }
-            else IsDropDownOpen = false;
+            else
+                IsDropDownOpen = false;
         }
 
         private void Reset()
@@ -185,7 +180,8 @@ namespace Reclaimer.Controls
         {
             base.OnKeyDown(e);
 
-            if (e.Handled) return;
+            if (e.Handled)
+                return;
 
             if (e.Key == Key.Escape || string.IsNullOrEmpty(Text) && e.Key == Key.Enter)
                 Reset();
@@ -211,14 +207,16 @@ namespace Reclaimer.Controls
 
             if (CallbackDelay == 0)
                 CallbackTimer_Tick(null, null);
-            else CallbackTimer.Start();
+            else
+                CallbackTimer.Start();
         }
 
         private void CallbackTimer_Tick(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(Text))
                 Reset();
-            else UpdateSuggestions();
+            else
+                UpdateSuggestions();
         }
 
         public interface ISuggestionProvider

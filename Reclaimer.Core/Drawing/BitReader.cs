@@ -83,7 +83,7 @@ namespace Reclaimer.Drawing.Bc7
                 var shift = i; //RTL
                 //var shift = 7 - i; //LTR (MSB-first)
 
-                cacheBits |= ((long)stream[offset + i] << byteSize * shift);
+                cacheBits |= (long)stream[offset + i] << byteSize * shift;
             }
         }
     }

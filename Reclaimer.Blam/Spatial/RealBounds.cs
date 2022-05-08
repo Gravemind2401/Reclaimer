@@ -43,38 +43,14 @@ namespace Adjutant.Spatial
 
         #region Equality Operators
 
-        public static bool operator ==(RealBounds value1, RealBounds value2)
-        {
-            return value1.min == value2.min && value1.max == value2.max;
-        }
+        public static bool operator ==(RealBounds value1, RealBounds value2) => value1.min == value2.min && value1.max == value2.max;
+        public static bool operator !=(RealBounds value1, RealBounds value2) => !(value1 == value2);
 
-        public static bool operator !=(RealBounds value1, RealBounds value2)
-        {
-            return !(value1 == value2);
-        }
+        public static bool Equals(RealBounds value1, RealBounds value2) => value1.min.Equals(value2.min) && value1.max.Equals(value2.max);
+        public override bool Equals(object obj)=> obj is RealBounds value && RealBounds.Equals(this, value);
+        public bool Equals(RealBounds value) => RealBounds.Equals(this, value);
 
-        public static bool Equals(RealBounds value1, RealBounds value2)
-        {
-            return value1.min.Equals(value2.min) && value1.max.Equals(value2.max);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj == null) || !(obj is RealBounds))
-                return false;
-
-            return RealBounds.Equals(this, (RealBounds)obj);
-        }
-
-        public bool Equals(RealBounds value)
-        {
-            return RealBounds.Equals(this, value);
-        }
-
-        public override int GetHashCode()
-        {
-            return min.GetHashCode() ^ max.GetHashCode();
-        }
+        public override int GetHashCode() => min.GetHashCode() ^ max.GetHashCode();
 
         #endregion
     }

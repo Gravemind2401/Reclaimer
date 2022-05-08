@@ -34,7 +34,10 @@ namespace Reclaimer.Utilities
             int index = 0;
 
             foreach (var item in source)
-                if (predicate(item)) match = index++;
+            {
+                if (predicate(item))
+                    match = index++;
+            }
 
             return match;
         }

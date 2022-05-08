@@ -51,10 +51,7 @@ namespace Reclaimer.Controls.Editors
             return this;
         }
 
-        private void ComboBox_DropDownClosed(object sender, EventArgs e)
-        {
-            SetItems(PropertyItem, Options.Where(o => o.IsSelected).Select(o => o.Value));
-        }
+        private void ComboBox_DropDownClosed(object sender, EventArgs e) => SetItems(PropertyItem, Options.Where(o => o.IsSelected).Select(o => o.Value));
 
         public class Selectable
         {

@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Common.Gen3;
+using Reclaimer.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Common.Gen3;
-using Reclaimer.IO;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
@@ -52,7 +52,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         {
             if (valuesByNode.ContainsKey(node))
                 valuesByNode[node] = value;
-            else valuesByNode.Add(node, value);
+            else
+                valuesByNode.Add(node, value);
         }
 
         public MetaValue GetValue(string xpath)
@@ -60,7 +61,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             var node = Document.SelectSingleNode(xpath);
             if (node != null && valuesByNode.ContainsKey(node))
                 return valuesByNode[node];
-            else return null;
+            else
+                return null;
         }
 
         public void UpdateBlockIndices()
@@ -69,9 +71,6 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 bi.ReadOptions();
         }
 
-        public void Dispose()
-        {
-            DataSource.Dispose();
-        }
+        public void Dispose() => DataSource.Dispose();
     }
 }

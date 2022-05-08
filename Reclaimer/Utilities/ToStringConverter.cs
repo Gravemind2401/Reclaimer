@@ -18,7 +18,8 @@ namespace Reclaimer.Utilities
                     return null;
                 else if (parameter == null)
                     return value.ToString();
-                else return ((dynamic)value).ToString(parameter.ToString());
+                else
+                    return ((dynamic)value).ToString(parameter.ToString());
             }
             catch
             {
@@ -26,9 +27,6 @@ namespace Reclaimer.Utilities
             }
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
     }
 }

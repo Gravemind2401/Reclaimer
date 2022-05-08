@@ -17,13 +17,7 @@ namespace Reclaimer.IO
         private static readonly ConcurrentDictionary<string, Attribute> attrVerCache = new ConcurrentDictionary<string, Attribute>();
         private static readonly ConcurrentDictionary<string, bool> propValidationCache = new ConcurrentDictionary<string, bool>();
 
-        internal static string CurrentCulture(FormattableString formattable)
-        {
-            if (formattable == null)
-                throw new ArgumentNullException(nameof(formattable));
-
-            return formattable.ToString(CultureInfo.CurrentCulture);
-        }
+        internal static string CurrentCulture(FormattableString formattable) => formattable?.ToString(CultureInfo.CurrentCulture) ?? throw new ArgumentNullException(nameof(formattable));
 
         internal static PropertyInfo[] GetProperties(Type type, double? version)
         {
@@ -62,7 +56,7 @@ namespace Reclaimer.IO
                 var maxVersion = o.HasMaxVersion ? o.MaxVersion : (double?)null;
 
                 //exclude when read version is specified and is out of bounds (this expression will always be false if version is null)
-                if ((version != minVersion && (version < minVersion || version >= maxVersion)))
+                if (version != minVersion && (version < minVersion || version >= maxVersion))
                     return false;
 
                 //exclude when read version is not specified but at least one of the bounds is
@@ -96,7 +90,8 @@ namespace Reclaimer.IO
         internal static bool CheckPropertyForReadWrite(PropertyInfo property, double? version)
         {
             var key = CurrentCulture($"{property.DeclaringType.FullName}.{property.Name}:{version}");
-            if (propValidationCache.ContainsKey(key)) return true;
+            if (propValidationCache.ContainsKey(key))
+                return true;
 
             if (!Attribute.IsDefined(property, typeof(OffsetAttribute)))
                 return false; //ignore properties with no offset assigned
@@ -131,15 +126,9 @@ namespace Reclaimer.IO
             return true;
         }
 
-        internal static T GetCustomAttribute<T>(MemberInfo member) where T : Attribute
-        {
-            return (T)Attribute.GetCustomAttribute(member, typeof(T));
-        }
+        internal static T GetCustomAttribute<T>(MemberInfo member) where T : Attribute => (T)Attribute.GetCustomAttribute(member, typeof(T));
 
-        internal static IEnumerable<T> GetCustomAttributes<T>(MemberInfo member) where T : Attribute
-        {
-            return Attribute.GetCustomAttributes(member, typeof(T)).OfType<T>();
-        }
+        internal static IEnumerable<T> GetCustomAttributes<T>(MemberInfo member) where T : Attribute => Attribute.GetCustomAttributes(member, typeof(T)).OfType<T>();
 
         internal static bool TryConvert(ref object value, Type fromType, Type toType)
         {

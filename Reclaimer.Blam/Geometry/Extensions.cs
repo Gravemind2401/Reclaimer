@@ -127,7 +127,7 @@ namespace Adjutant.Geometry
                         {
                             foreach (var sm in mesh.Submeshes)
                             {
-                                IEnumerable<int> indices = mesh.Indicies.Skip(sm.IndexStart).Take(sm.IndexLength);
+                                var indices = mesh.Indicies.Skip(sm.IndexStart).Take(sm.IndexLength);
                                 if (mesh.IndexFormat == IndexFormat.TriangleStrip)
                                     indices = indices.Unstrip();
 
@@ -163,7 +163,7 @@ namespace Adjutant.Geometry
                         var offset = 0;
                         foreach (var mesh in AllMeshes)
                         {
-                            IEnumerable<int> indices = mesh.IndexFormat == IndexFormat.TriangleStrip
+                            var indices = mesh.IndexFormat == IndexFormat.TriangleStrip
                                 ? mesh.Indicies.Unstrip()
                                 : mesh.Indicies;
 
@@ -201,8 +201,10 @@ namespace Adjutant.Geometry
 
         public static void WriteAMF(this IGeometryModel model, string fileName, float scale)
         {
-            if (!Directory.GetParent(fileName).Exists) Directory.GetParent(fileName).Create();
-            if (!fileName.EndsWith(".amf", StringComparison.CurrentCultureIgnoreCase)) fileName += ".amf";
+            if (!Directory.GetParent(fileName).Exists)
+                Directory.GetParent(fileName).Create();
+            if (!fileName.EndsWith(".amf", StringComparison.CurrentCultureIgnoreCase))
+                fileName += ".amf";
 
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             using (var bw = new EndianWriter(fs, ByteOrder.LittleEndian))
@@ -392,12 +394,13 @@ namespace Adjutant.Geometry
 
                         var scale1 = perm.Transform.IsIdentity && perm.TransformScale == 1 ? scale : 1;
 
-                        if (dupeDic.TryGetValue(perm.MeshIndex, out long address))
+                        if (dupeDic.TryGetValue(perm.MeshIndex, out var address))
                         {
                             vertValueList.Add(address);
                             continue;
                         }
-                        else dupeDic.Add(perm.MeshIndex, bw.BaseStream.Position);
+                        else
+                            dupeDic.Add(perm.MeshIndex, bw.BaseStream.Position);
 
                         vertValueList.Add(bw.BaseStream.Position);
 
@@ -425,16 +428,23 @@ namespace Adjutant.Geometry
                                 var indices = new List<int>();
                                 i = vert.BlendIndices.Count > 0 ? vert.BlendIndices[0] : emptyVector;
 
-                                if (!indices.Contains((int)i.X) && i.X != 0) indices.Add((int)i.X);
-                                if (!indices.Contains((int)i.Y) && i.X != 0) indices.Add((int)i.Y);
-                                if (!indices.Contains((int)i.Z) && i.X != 0) indices.Add((int)i.Z);
-                                if (!indices.Contains((int)i.W) && i.X != 0) indices.Add((int)i.W);
+                                if (!indices.Contains((int)i.X) && i.X != 0)
+                                    indices.Add((int)i.X);
+                                if (!indices.Contains((int)i.Y) && i.X != 0)
+                                    indices.Add((int)i.Y);
+                                if (!indices.Contains((int)i.Z) && i.X != 0)
+                                    indices.Add((int)i.Z);
+                                if (!indices.Contains((int)i.W) && i.X != 0)
+                                    indices.Add((int)i.W);
 
-                                if (indices.Count == 0) indices.Add(0);
+                                if (indices.Count == 0)
+                                    indices.Add(0);
 
-                                foreach (int index in indices) bw.Write((byte)index);
+                                foreach (int index in indices)
+                                    bw.Write((byte)index);
 
-                                if (indices.Count < 4) bw.Write(byte.MaxValue);
+                                if (indices.Count < 4)
+                                    bw.Write(byte.MaxValue);
                             }
                             else if (part.VertexWeights == VertexWeights.Skinned)
                             {
@@ -458,7 +468,8 @@ namespace Adjutant.Geometry
                                         bw.Write((byte)indices[i]);
                                 }
 
-                                if (count != 4) bw.Write(byte.MaxValue);
+                                if (count != 4)
+                                    bw.Write(byte.MaxValue);
 
                                 foreach (var w in weights.Where(w => w > 0))
                                     bw.Write(w);
@@ -478,12 +489,13 @@ namespace Adjutant.Geometry
                             ? fauxMeshes[perm.MeshIndex]
                             : model.Meshes[perm.MeshIndex];
 
-                        if (dupeDic.TryGetValue(perm.MeshIndex, out long address))
+                        if (dupeDic.TryGetValue(perm.MeshIndex, out var address))
                         {
                             indxValueList.Add(address);
                             continue;
                         }
-                        else dupeDic.Add(perm.MeshIndex, bw.BaseStream.Position);
+                        else
+                            dupeDic.Add(perm.MeshIndex, bw.BaseStream.Position);
 
                         indxValueList.Add(bw.BaseStream.Position);
 
@@ -495,8 +507,10 @@ namespace Adjutant.Geometry
 
                             foreach (var index in indices)
                             {
-                                if (part.Vertices.Count > ushort.MaxValue) bw.Write(index);
-                                else bw.Write((ushort)index);
+                                if (part.Vertices.Count > ushort.MaxValue)
+                                    bw.Write(index);
+                                else
+                                    bw.Write((ushort)index);
                             }
                         }
                     }
@@ -762,7 +776,8 @@ namespace Adjutant.Geometry
                         var mesh = model.Meshes[p.MeshIndex];
                         if (mesh.IndexFormat == IndexFormat.TriangleList)
                             return mesh.Indicies;
-                        else return mesh.Submeshes.SelectMany(s => mesh.Indicies.Skip(s.IndexStart).Take(s.IndexLength).Unstrip());
+                        else
+                            return mesh.Submeshes.SelectMany(s => mesh.Indicies.Skip(s.IndexStart).Take(s.IndexLength).Unstrip());
                     }).Count();
 
                     sw.WriteLine(totalEdges / 3);

@@ -52,10 +52,7 @@ namespace ExamplePlugin
             }
         }
 
-        public override bool CanOpenFile(OpenFileArgs args)
-        {
-            return true;
-        }
+        public override bool CanOpenFile(OpenFileArgs args) => true;
 
         public override void OpenFile(OpenFileArgs args)
         {
@@ -77,10 +74,7 @@ namespace ExamplePlugin
         }
 
         [SharedFunction]
-        public void OtherPluginsCanUseMe(string message)
-        {
-            LogOutput($"Shared Function Message: {message}");
-        }
+        public void OtherPluginsCanUseMe(string message) => LogOutput($"Shared Function Message: {message}");
 
         private class PluginSettings
         {

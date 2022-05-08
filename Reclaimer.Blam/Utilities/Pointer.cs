@@ -10,7 +10,7 @@ namespace Reclaimer.Blam.Utilities
 {
     public struct Pointer : IWriteable
     {
-        private readonly int _value;
+        private readonly int pointer;
         private readonly IAddressTranslator translator;
         private readonly IPointerExpander expander;
 
@@ -22,9 +22,9 @@ namespace Reclaimer.Blam.Utilities
             : this(value, copyFrom.translator, copyFrom.expander)
         { }
 
-        public Pointer(int value, IAddressTranslator translator, IPointerExpander expander)
+        public Pointer(int pointer, IAddressTranslator translator, IPointerExpander expander)
         {
-            _value = value;
+            this.pointer = pointer;
             this.translator = translator ?? throw new ArgumentNullException(nameof(translator));
             this.expander = expander;
         }
@@ -37,13 +37,13 @@ namespace Reclaimer.Blam.Utilities
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));
-            _value = reader.ReadInt32();
+            pointer = reader.ReadInt32();
             this.translator = translator ?? throw new ArgumentNullException(nameof(translator));
             this.expander = expander;
         }
 
-        public int Value => _value;
-        public long Address => translator?.GetAddress(expander?.Expand(_value) ?? _value) ?? default;
+        public int Value => pointer;
+        public long Address => translator?.GetAddress(expander?.Expand(pointer) ?? pointer) ?? default;
 
         public void Write(EndianWriter writer, double? version) => writer.Write(Value);
 
@@ -51,44 +51,17 @@ namespace Reclaimer.Blam.Utilities
 
         #region Equality Operators
 
-        public static bool operator ==(Pointer pointer1, Pointer pointer2)
-        {
-            return pointer1._value == pointer2._value;
-        }
+        public static bool operator ==(Pointer value1, Pointer value2) => value1.pointer == value2.pointer;
+        public static bool operator !=(Pointer value1, Pointer value2) => !(value1 == value2);
 
-        public static bool operator !=(Pointer pointer1, Pointer pointer2)
-        {
-            return !(pointer1 == pointer2);
-        }
+        public static bool Equals(Pointer value1, Pointer value2) => value1.pointer.Equals(value2.pointer);
+        public override bool Equals(object obj) => obj is Pointer value && Pointer.Equals(this, value);
+        public bool Equals(Pointer value) => Pointer.Equals(this, value);
 
-        public static bool Equals(Pointer pointer1, Pointer pointer2)
-        {
-            return pointer1._value.Equals(pointer2._value);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj == null) || !(obj is Pointer))
-                return false;
-
-            return Pointer.Equals(this, (Pointer)obj);
-        }
-
-        public bool Equals(Pointer value)
-        {
-            return Pointer.Equals(this, value);
-        }
-
-        public override int GetHashCode()
-        {
-            return _value.GetHashCode();
-        }
+        public override int GetHashCode() => pointer.GetHashCode();
 
         #endregion
 
-        public static implicit operator long(Pointer pointer)
-        {
-            return pointer.Address;
-        }
+        public static implicit operator long(Pointer value) => value.Address;
     }
 }

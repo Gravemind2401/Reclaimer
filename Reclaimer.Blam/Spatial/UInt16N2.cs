@@ -65,38 +65,14 @@ namespace Adjutant.Spatial
 
         #region Equality Operators
 
-        public static bool operator ==(UInt16N2 value1, UInt16N2 value2)
-        {
-            return value1.x == value2.x && value1.y == value2.y;
-        }
+        public static bool operator ==(UInt16N2 value1, UInt16N2 value2) => value1.x == value2.x && value1.y == value2.y;
+        public static bool operator !=(UInt16N2 value1, UInt16N2 value2) => !(value1 == value2);
 
-        public static bool operator !=(UInt16N2 value1, UInt16N2 value2)
-        {
-            return !(value1 == value2);
-        }
+        public static bool Equals(UInt16N2 value1, UInt16N2 value2) => value1.x.Equals(value2.x) && value1.y.Equals(value2.y);
+        public override bool Equals(object obj)=> obj is UInt16N2 value && UInt16N2.Equals(this, value);
+        public bool Equals(UInt16N2 value) => UInt16N2.Equals(this, value);
 
-        public static bool Equals(UInt16N2 value1, UInt16N2 value2)
-        {
-            return value1.x.Equals(value2.x) && value1.y.Equals(value2.y);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if ((obj == null) || !(obj is UInt16N2))
-                return false;
-
-            return UInt16N2.Equals(this, (UInt16N2)obj);
-        }
-
-        public bool Equals(UInt16N2 value)
-        {
-            return UInt16N2.Equals(this, value);
-        }
-
-        public override int GetHashCode()
-        {
-            return x.GetHashCode() ^ y.GetHashCode();
-        }
+        public override int GetHashCode() => x.GetHashCode() ^ y.GetHashCode();
 
         #endregion
     }

@@ -116,7 +116,8 @@ namespace Reclaimer.Drawing
                 encoder = new PngBitmapEncoder();
             else if (format.Equals(ImageFormat.Tiff))
                 encoder = new TiffBitmapEncoder();
-            else throw new NotSupportedException("The ImageFormat is not supported.");
+            else
+                throw new NotSupportedException("The ImageFormat is not supported.");
 
             WriteToStream(stream, encoder, args);
         }
@@ -166,7 +167,8 @@ namespace Reclaimer.Drawing
             var virtualHeight = Height;
 
             var isCubeMap = TextureFlags.HasFlag(TextureFlags.DdsSurfaceFlagsCubemap) && CubemapFlags.HasFlag(CubemapFlags.DdsCubemapAllFaces);
-            if (isCubeMap) virtualHeight *= 6;
+            if (isCubeMap)
+                virtualHeight *= 6;
 
             var pixels = DecompressPixelData(args.Bgr24);
 
@@ -248,7 +250,8 @@ namespace Reclaimer.Drawing
         {
             var virtualHeight = Height;
             var isCubeMap = TextureFlags.HasFlag(TextureFlags.DdsSurfaceFlagsCubemap) && CubemapFlags.HasFlag(CubemapFlags.DdsCubemapAllFaces);
-            if (isCubeMap) virtualHeight *= 6;
+            if (isCubeMap)
+                virtualHeight *= 6;
 
             if (header.PixelFormat.FourCC == (uint)FourCC.DX10)
             {
@@ -262,22 +265,23 @@ namespace Reclaimer.Drawing
                         case DxgiFormat.B8G8R8A8_UNorm:
                             return bgr24 ? ToArray(SkipNth(data, 4), true, virtualHeight, Width) : data;
 
-                        default: throw new NotSupportedException("The DxgiFormat is not supported.");
+                        default:
+                            throw new NotSupportedException("The DxgiFormat is not supported.");
                     }
                 }
             }
             else if (header.PixelFormat.FourCC == (uint)FourCC.XBOX)
             {
-                if (decompressMethodsXbox.ContainsKey(xboxHeader.XboxFormat))
-                    return decompressMethodsXbox[xboxHeader.XboxFormat](data, virtualHeight, Width, bgr24);
-                else throw new NotSupportedException("The XboxFormat is not supported.");
+                return decompressMethodsXbox.ContainsKey(xboxHeader.XboxFormat)
+                    ? decompressMethodsXbox[xboxHeader.XboxFormat](data, virtualHeight, Width, bgr24)
+                    : throw new NotSupportedException("The XboxFormat is not supported.");
             }
             else
             {
                 var fourcc = (FourCC)header.PixelFormat.FourCC;
-                if (decompressMethodsFourCC.ContainsKey(fourcc))
-                    return decompressMethodsFourCC[fourcc](data, virtualHeight, Width, bgr24);
-                else throw new NotSupportedException("The FourCC is not supported.");
+                return decompressMethodsFourCC.ContainsKey(fourcc)
+                    ? decompressMethodsFourCC[fourcc](data, virtualHeight, Width, bgr24)
+                    : throw new NotSupportedException("The FourCC is not supported.");
             }
         }
 
@@ -286,17 +290,26 @@ namespace Reclaimer.Drawing
             var bpp = channels.HasFlag(DecompressOptions.Bgr24) ? 3 : 4;
             int mask = 0;
 
-            if (!channels.HasFlag(DecompressOptions.RemoveBlueChannel)) mask |= 1;
-            if (!channels.HasFlag(DecompressOptions.RemoveGreenChannel)) mask |= 2;
-            if (!channels.HasFlag(DecompressOptions.RemoveRedChannel)) mask |= 4;
-            if (!channels.HasFlag(DecompressOptions.RemoveAlphaChannel)) mask |= 8;
+            if (!channels.HasFlag(DecompressOptions.RemoveBlueChannel))
+                mask |= 1;
+            if (!channels.HasFlag(DecompressOptions.RemoveGreenChannel))
+                mask |= 2;
+            if (!channels.HasFlag(DecompressOptions.RemoveRedChannel))
+                mask |= 4;
+            if (!channels.HasFlag(DecompressOptions.RemoveAlphaChannel))
+                mask |= 8;
 
             int channelIndex;
-            if (mask == 1) channelIndex = 0;
-            else if (mask == 2) channelIndex = 1;
-            else if (mask == 4) channelIndex = 2;
-            else if (mask == 8) channelIndex = 3;
-            else channelIndex = -1;
+            if (mask == 1)
+                channelIndex = 0;
+            else if (mask == 2)
+                channelIndex = 1;
+            else if (mask == 4)
+                channelIndex = 2;
+            else if (mask == 8)
+                channelIndex = 3;
+            else
+                channelIndex = -1;
 
             for (int i = 0; i < source.Length; i += bpp)
             {
@@ -304,8 +317,10 @@ namespace Reclaimer.Drawing
                 {
                     if (channelIndex >= 0)
                     {
-                        if (j == 3) source[i + j] = byte.MaxValue; //full opacity
-                        else source[i + j] = channelIndex < bpp ? source[i + channelIndex] : byte.MinValue;
+                        if (j == 3)
+                            source[i + j] = byte.MaxValue; //full opacity
+                        else
+                            source[i + j] = channelIndex < bpp ? source[i + channelIndex] : byte.MinValue;
                     }
                     else
                     {
@@ -583,7 +598,8 @@ namespace Reclaimer.Drawing
                             var pIndex = (byte)((pIndexBits >> (pixelIndex % 8) * 3) & 0x7);
 
                             output[destIndex] = output[destIndex + 1] = output[destIndex + 2] = palette[pIndex];
-                            if (!bgr24) output[destIndex + 3] = byte.MaxValue;
+                            if (!bgr24)
+                                output[destIndex + 3] = byte.MaxValue;
                         }
                     }
                 }
@@ -664,7 +680,8 @@ namespace Reclaimer.Drawing
                             //output[destIndex] = byte.MinValue;
                             output[destIndex + 1] = gPalette[gIndex];
                             output[destIndex + 2] = rPalette[rIndex];
-                            if (!bgr24) output[destIndex + 3] = byte.MaxValue;
+                            if (!bgr24)
+                                output[destIndex + 3] = byte.MaxValue;
                         }
                     }
                 }
@@ -745,7 +762,8 @@ namespace Reclaimer.Drawing
                             output[destIndex] = unchecked((byte)sbyte.MinValue); //opening a BC5_SNorm dds in visual studio treats the blue channel as -1f, so we may as well too
                             output[destIndex + 1] = Lerp(byte.MinValue, byte.MaxValue, (gPalette[gIndex] - sbyte.MinValue) / 255f);
                             output[destIndex + 2] = Lerp(byte.MinValue, byte.MaxValue, (rPalette[rIndex] - sbyte.MinValue) / 255f);
-                            if (!bgr24) output[destIndex + 3] = byte.MaxValue;
+                            if (!bgr24)
+                                output[destIndex + 3] = byte.MaxValue;
                         }
                     }
                 }
@@ -789,7 +807,7 @@ namespace Reclaimer.Drawing
                     var indexMode = reader.ReadBits(info.IndexModeBits);
 
                     var endpoints = new BgraColour[info.SubsetCount * 2];
-                    int channels = info.AlphaBits > 0 ? 4 : 3;
+                    var channels = info.AlphaBits > 0 ? 4 : 3;
 
                     for (int i = 2; i >= 0; i--) // R, G, B
                     {
@@ -828,7 +846,8 @@ namespace Reclaimer.Drawing
                         for (int c = 0; c < channels; c++)
                         {
                             var channelBits = c < 3 ? info.ColourBits : info.AlphaBits;
-                            if (info.PBitMode != PBitMode.None) channelBits++;
+                            if (info.PBitMode != PBitMode.None)
+                                channelBits++;
 
                             int e0 = endpoints[i * 2][c];
                             int e1 = endpoints[i * 2 + 1][c];
@@ -1053,8 +1072,10 @@ namespace Reclaimer.Drawing
                             var destIndex = (destY * width + destX) * bpp;
 
                             var value = (byte)(((alphaBits >> j * 4) & 0xF) * (0xFF / 0xF));
-                            if (bgr) output[destIndex] = output[destIndex + 1] = output[destIndex + 2] = value;
-                            if (!bgr24) output[destIndex + 3] = a ? value : byte.MaxValue;
+                            if (bgr)
+                                output[destIndex] = output[destIndex + 1] = output[destIndex + 2] = value;
+                            if (!bgr24)
+                                output[destIndex + 3] = a ? value : byte.MaxValue;
                         }
                     }
                 }
@@ -1071,17 +1092,15 @@ namespace Reclaimer.Drawing
             for (int i = 0; i < data.Length; i += 4)
             {
                 data[i + 1] = data[i + 2] = bgr ? data[i] : byte.MinValue; //gr = b
-                if (!bgr24) data[i + 3] = a ? data[i] : byte.MaxValue; //a = b
+                if (!bgr24)
+                    data[i + 3] = a ? data[i] : byte.MaxValue; //a = b
             }
 
             return data;
         }
 
         [XboxDecompressor(CTX1)]
-        internal static byte[] DecompressCTX1(byte[] data, int height, int width, bool bgr24)
-        {
-            return DecompressBC1DualChannel(data, height, width, bgr24);
-        }
+        internal static byte[] DecompressCTX1(byte[] data, int height, int width, bool bgr24) => DecompressBC1DualChannel(data, height, width, bgr24);
 
         [XboxDecompressor(DXN)]
         internal static byte[] DecompressDXN(byte[] data, int height, int width, bool bgr24)
@@ -1112,7 +1131,8 @@ namespace Reclaimer.Drawing
             data = DecompressBC5(data, height, width, bgr24);
             for (int i = 0; i < data.Length; i += bpp)
             {
-                if (!bgr24) data[i + 3] = data[i + 1]; //a = g
+                if (!bgr24)
+                    data[i + 3] = data[i + 1]; //a = g
                 data[i] = data[i + 1] = data[i + 2]; //bg = r
             }
 
@@ -1120,40 +1140,22 @@ namespace Reclaimer.Drawing
         }
 
         [XboxDecompressor(DXT3a_scalar)]
-        internal static byte[] DecompressDXT3a_scalar(byte[] data, int height, int width, bool bgr24)
-        {
-            return DecompressBC2AlphaOnly(data, height, width, true, true, bgr24);
-        }
+        internal static byte[] DecompressDXT3a_scalar(byte[] data, int height, int width, bool bgr24) => DecompressBC2AlphaOnly(data, height, width, true, true, bgr24);
 
         [XboxDecompressor(DXT3a_mono)]
-        internal static byte[] DecompressDXT3a_mono(byte[] data, int height, int width, bool bgr24)
-        {
-            return DecompressBC2AlphaOnly(data, height, width, true, false, bgr24);
-        }
+        internal static byte[] DecompressDXT3a_mono(byte[] data, int height, int width, bool bgr24) => DecompressBC2AlphaOnly(data, height, width, true, false, bgr24);
 
         [XboxDecompressor(DXT3a_alpha)]
-        internal static byte[] DecompressDXT3a_alpha(byte[] data, int height, int width, bool bgr24)
-        {
-            return DecompressBC2AlphaOnly(data, height, width, false, true, bgr24);
-        }
+        internal static byte[] DecompressDXT3a_alpha(byte[] data, int height, int width, bool bgr24) => DecompressBC2AlphaOnly(data, height, width, false, true, bgr24);
 
         [XboxDecompressor(DXT5a_scalar)]
-        internal static byte[] DecompressDXT5a_scalar(byte[] data, int height, int width, bool bgr24)
-        {
-            return DecompressBC3AlphaOnly(data, height, width, true, true, bgr24);
-        }
+        internal static byte[] DecompressDXT5a_scalar(byte[] data, int height, int width, bool bgr24) => DecompressBC3AlphaOnly(data, height, width, true, true, bgr24);
 
         [XboxDecompressor(DXT5a_mono)]
-        internal static byte[] DecompressDXT5a_mono(byte[] data, int height, int width, bool bgr24)
-        {
-            return DecompressBC3AlphaOnly(data, height, width, true, false, bgr24);
-        }
+        internal static byte[] DecompressDXT5a_mono(byte[] data, int height, int width, bool bgr24) => DecompressBC3AlphaOnly(data, height, width, true, false, bgr24);
 
         [XboxDecompressor(DXT5a_alpha)]
-        internal static byte[] DecompressDXT5a_alpha(byte[] data, int height, int width, bool bgr24)
-        {
-            return DecompressBC3AlphaOnly(data, height, width, false, true, bgr24);
-        }
+        internal static byte[] DecompressDXT5a_alpha(byte[] data, int height, int width, bool bgr24) => DecompressBC3AlphaOnly(data, height, width, false, true, bgr24);
         #endregion
 
         private static sbyte Lerp(sbyte p1, sbyte p2, float fraction)
@@ -1196,7 +1198,7 @@ namespace Reclaimer.Drawing
                 {
                     var sourceIndex = y * width * bpp + x * bpp;
 
-                    int destW = rot % 2 == 0 ? width : height;
+                    var destW = rot % 2 == 0 ? width : height;
                     //int destH = rot % 2 == 0 ? height : width;
 
                     int destX, destY;
@@ -1251,7 +1253,8 @@ namespace Reclaimer.Drawing
             {
                 if (++i != n)
                     yield return item;
-                else i = 0;
+                else
+                    i = 0;
             }
         }
 
@@ -1315,7 +1318,8 @@ namespace Reclaimer.Drawing
                 yield return b;
                 yield return g;
                 yield return r;
-                if (!bgr24) yield return a;
+                if (!bgr24)
+                    yield return a;
             }
 
             public void Copy(byte[] destination, int destinationIndex, bool bgr24)
@@ -1323,7 +1327,8 @@ namespace Reclaimer.Drawing
                 destination[destinationIndex] = b;
                 destination[destinationIndex + 1] = g;
                 destination[destinationIndex + 2] = r;
-                if (!bgr24) destination[destinationIndex + 3] = a;
+                if (!bgr24)
+                    destination[destinationIndex + 3] = a;
             }
 
             public static BgraColour From565(ushort value)

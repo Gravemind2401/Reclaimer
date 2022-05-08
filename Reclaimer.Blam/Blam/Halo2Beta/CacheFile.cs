@@ -277,7 +277,8 @@ namespace Reclaimer.Blam.Halo2Beta
 
                 return lazy.Value;
             }
-            else return ReadMetadataInternal<T>();
+            else
+                return ReadMetadataInternal<T>();
         }
 
         private T ReadMetadataInternal<T>()

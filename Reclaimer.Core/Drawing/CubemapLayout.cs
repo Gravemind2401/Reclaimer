@@ -9,8 +9,7 @@ namespace Reclaimer.Drawing
 {
     public class CubemapLayout
     {
-        private static readonly CubemapLayout invalid = new CubemapLayout();
-        public static CubemapLayout NonCubemap => invalid;
+        public static CubemapLayout NonCubemap { get; } = new CubemapLayout();
 
         public CubemapFace Face1 { get; set; }
         public CubemapFace Face2 { get; set; }

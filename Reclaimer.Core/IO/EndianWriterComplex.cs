@@ -180,7 +180,8 @@ namespace Reclaimer.IO
                 WriteStandardValue(value);
             else if (storeType.Equals(typeof(string)))
                 WriteStringValue(instance, prop);
-            else WriteObject(value, version);
+            else
+                WriteObject(value, version);
         }
 
         private void WritePropertyValue(object instance, PropertyInfo prop, double? version)
@@ -189,10 +190,12 @@ namespace Reclaimer.IO
             var storeType = prop.PropertyType;
 
             var boAttr = Utils.GetAttributeForVersion<ByteOrderAttribute>(prop, version);
-            if (boAttr != null) ByteOrder = boAttr.ByteOrder;
+            if (boAttr != null)
+                ByteOrder = boAttr.ByteOrder;
 
             var stAttr = Utils.GetAttributeForVersion<StoreTypeAttribute>(prop, version);
-            if (stAttr != null) storeType = stAttr.StoreType;
+            if (stAttr != null)
+                storeType = stAttr.StoreType;
 
             Seek(Utils.GetAttributeForVersion<OffsetAttribute>(prop, version).Offset, SeekOrigin.Begin);
             WriteProperty(instance, prop, storeType, version);
@@ -271,7 +274,8 @@ namespace Reclaimer.IO
 
                 if (nullTerm.HasLength)
                     WriteStringFixedLength(value, nullTerm.Length, '\0');
-                else WriteStringNullTerminated(value);
+                else
+                    WriteStringNullTerminated(value);
             }
         }
 
@@ -347,7 +351,8 @@ namespace Reclaimer.IO
                     version = GetVersionValue(value, type);
 
                 var boAttr = Utils.GetAttributeForVersion<ByteOrderAttribute>(type, version);
-                if (boAttr != null) writer.ByteOrder = boAttr.ByteOrder;
+                if (boAttr != null)
+                    writer.ByteOrder = boAttr.ByteOrder;
 
                 var propInfo = Utils.GetProperties(type, version);
                 foreach (var prop in propInfo)
@@ -377,7 +382,8 @@ namespace Reclaimer.IO
             }
 
             var fsAttr = Utils.GetAttributeForVersion<FixedSizeAttribute>(type, version);
-            if (fsAttr != null) SeekAbsolute(originalPosition + fsAttr.Size);
+            if (fsAttr != null)
+                SeekAbsolute(originalPosition + fsAttr.Size);
         }
     }
 }

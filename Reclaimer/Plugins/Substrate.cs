@@ -1,4 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Reclaimer.Annotations;
+using Reclaimer.Models;
+using Reclaimer.Utilities;
+using Reclaimer.Windows;
+using Studio.Controls;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,12 +13,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Newtonsoft.Json;
-using Reclaimer.Annotations;
-using Reclaimer.Models;
-using Reclaimer.Utilities;
-using Reclaimer.Windows;
-using Studio.Controls;
 
 namespace Reclaimer.Plugins
 {
@@ -24,10 +24,7 @@ namespace Reclaimer.Plugins
             internal override string Key => nameof(Reclaimer);
             public override string Name => nameof(Reclaimer);
 
-            public override void Initialise()
-            {
-                settings = App.UserSettings;
-            }
+            public override void Initialise() => settings = App.UserSettings;
         }
 
         private static readonly DefaultPlugin defaultPlugin = new DefaultPlugin();
@@ -163,13 +160,13 @@ namespace Reclaimer.Plugins
         {
             if (App.Settings.PluginSettings.ContainsKey(key))
                 App.Settings.PluginSettings[key] = settings;
-            else App.Settings.PluginSettings.Add(key, settings);
+            else
+                App.Settings.PluginSettings.Add(key, settings);
 
             App.Settings.Save();
         }
 
         internal static void LogOutput(string message) => defaultPlugin.LogOutput(message);
-
         internal static void LogError(string message, Exception e) => defaultPlugin.LogError(message, e);
 
         internal static void LogOutput(Plugin source, LogEntry entry, bool focusOutput)
@@ -181,16 +178,8 @@ namespace Reclaimer.Plugins
         }
 
         internal static void ClearLogOutput(Plugin source) => EmptyLog?.Invoke(source, new LogEventArgs(source, default));
-
-        internal static void SetSystemWorkingStatus(string status)
-        {
-            defaultPlugin.SetWorkingStatus(status);
-        }
-
-        internal static void ClearSystemWorkingStatus()
-        {
-            defaultPlugin.ClearWorkingStatus();
-        }
+        internal static void SetSystemWorkingStatus(string status) => defaultPlugin.SetWorkingStatus(status);
+        internal static void ClearSystemWorkingStatus() => defaultPlugin.ClearWorkingStatus();
 
         internal static void RaiseWorkingStatusChanged(Plugin source)
         {
@@ -252,10 +241,7 @@ namespace Reclaimer.Plugins
         /// <summary>
         /// Gets a list of available function keys.
         /// </summary>
-        public static IEnumerable<string> GetSharedFunctionKeys()
-        {
-            return sharedFunctions.Keys.OrderBy(s => s);
-        }
+        public static IEnumerable<string> GetSharedFunctionKeys() => sharedFunctions.Keys.OrderBy(s => s);
 
         /// <summary>
         /// Returns a shared function using the specified key.
@@ -322,10 +308,7 @@ namespace Reclaimer.Plugins
         /// Fetches context items from across all plugins for a particular file object.
         /// </summary>
         /// <param name="context">The file arguments.</param>
-        public static IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
-        {
-            return AllPlugins.SelectMany(p => p.GetContextItems(context));
-        }
+        public static IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context) => AllPlugins.SelectMany(p => p.GetContextItems(context));
 
         /// <summary>
         /// Adds an entry to the recent files menu.
@@ -404,16 +387,14 @@ namespace Reclaimer.Plugins
         {
             if (Controls.OutputViewer.Instance.Parent != null)
                 FocusOutput();
-            else AddTool(Controls.OutputViewer.Instance, GetHostWindow(), Dock.Bottom, new GridLength(250));
+            else
+                AddTool(Controls.OutputViewer.Instance, GetHostWindow(), Dock.Bottom, new GridLength(250));
         }
 
         /// <summary>
         /// Gives focus to the output tool if it has been added to the window.
         /// </summary>
-        public static void FocusOutput()
-        {
-            ShowTab(Controls.OutputViewer.Instance);
-        }
+        public static void FocusOutput() => ShowTab(Controls.OutputViewer.Instance);
 
         /// <summary>
         /// Gets the application's main window.
@@ -426,10 +407,9 @@ namespace Reclaimer.Plugins
         /// <param name="element">The element to find the host for.</param>
         public static ITabContentHost GetHostWindow(UIElement element)
         {
-            ITabContentHost host;
-            if (element == null)
-                host = Application.Current.MainWindow as ITabContentHost;
-            else host = Window.GetWindow(element) as ITabContentHost ?? Application.Current.MainWindow as ITabContentHost;
+            var host = element == null
+                ? Application.Current.MainWindow as ITabContentHost
+                : Window.GetWindow(element) as ITabContentHost ?? Application.Current.MainWindow as ITabContentHost;
             return host;
         }
 
@@ -441,7 +421,6 @@ namespace Reclaimer.Plugins
         public static bool ShowTabById(string contentId)
         {
             var hosts = Application.Current.Windows.OfType<ITabContentHost>();
-
             var tab = hosts.SelectMany(h => h.DockContainer.AllTabs)
                 .FirstOrDefault(t => t.ContentId == contentId);
 

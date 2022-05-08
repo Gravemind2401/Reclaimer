@@ -1,21 +1,15 @@
-﻿using System;
+﻿using Adjutant.Spatial;
+using Reclaimer.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using Adjutant.Spatial;
-using Reclaimer.Utilities;
 using Keys = System.Windows.Forms.Keys;
 
 namespace Reclaimer.Controls
@@ -208,13 +202,15 @@ namespace Reclaimer.Controls
         {
             base.OnPreviewMouseWheel(e);
 
-            if (e.Delta > 0) CameraSpeed = ClipValue(Math.Ceiling(CameraSpeed * 1050) / 1000, 0.001, MaxCameraSpeed);
-            else CameraSpeed = ClipValue(Math.Floor(CameraSpeed * 0950) / 1000, 0.001, MaxCameraSpeed);
+            CameraSpeed = e.Delta > 0
+                ? ClipValue(Math.Ceiling(CameraSpeed * 1050) / 1000, 0.001, MaxCameraSpeed)
+                : ClipValue(Math.Floor(CameraSpeed * 0950) / 1000, 0.001, MaxCameraSpeed);
         }
 
         private void OnViewportUnset()
         {
-            if (Viewport == null) return;
+            if (Viewport == null)
+                return;
 
             foreach (var c in children)
                 Viewport.Children.Remove(c);
@@ -222,7 +218,8 @@ namespace Reclaimer.Controls
 
         private void OnViewportSet()
         {
-            if (Viewport == null) return;
+            if (Viewport == null)
+                return;
 
             foreach (var c in children)
                 Viewport.Children.Add(c);
@@ -284,13 +281,13 @@ namespace Reclaimer.Controls
 
                 YBounds = new RealBounds
                 {
-                    Min = (float)(m.Bounds.Y),
+                    Min = (float)m.Bounds.Y,
                     Max = (float)(m.Bounds.Y + m.Bounds.SizeY)
                 },
 
                 ZBounds = new RealBounds
                 {
-                    Min = (float)(m.Bounds.Z),
+                    Min = (float)m.Bounds.Z,
                     Max = (float)(m.Bounds.Z + m.Bounds.SizeZ)
                 }
             };
@@ -361,19 +358,25 @@ namespace Reclaimer.Controls
 
         private void UpdateCameraPosition()
         {
-            if (!IsMouseCaptured && !IsFocused) return;
+            if (!IsMouseCaptured && !IsFocused)
+                return;
 
             #region Set FOV
-            if (CheckKeyState(Keys.NumPad6)) FieldOfView = ClipValue(FieldOfView + FieldOfView / 100.0, 45, 120);
-            if (CheckKeyState(Keys.NumPad4)) FieldOfView = ClipValue(FieldOfView - FieldOfView / 100.0, 45, 120);
+            if (CheckKeyState(Keys.NumPad6))
+                FieldOfView = ClipValue(FieldOfView + FieldOfView / 100.0, 45, 120);
+            if (CheckKeyState(Keys.NumPad4))
+                FieldOfView = ClipValue(FieldOfView - FieldOfView / 100.0, 45, 120);
             #endregion
 
             #region Set FPD
-            if (CheckKeyState(Keys.NumPad8)) FarPlaneDistance = ClipValue(FarPlaneDistance * 1.01, MinFarPlaneDistance, MaxFarPlaneDistance);
-            if (CheckKeyState(Keys.NumPad2)) FarPlaneDistance = ClipValue(FarPlaneDistance * 0.99, MinFarPlaneDistance, MaxFarPlaneDistance);
+            if (CheckKeyState(Keys.NumPad8))
+                FarPlaneDistance = ClipValue(FarPlaneDistance * 1.01, MinFarPlaneDistance, MaxFarPlaneDistance);
+            if (CheckKeyState(Keys.NumPad2))
+                FarPlaneDistance = ClipValue(FarPlaneDistance * 0.99, MinFarPlaneDistance, MaxFarPlaneDistance);
             #endregion
 
-            if (!IsMouseCaptured) return;
+            if (!IsMouseCaptured)
+                return;
 
             if (CheckKeyState(Keys.W) || CheckKeyState(Keys.A) || CheckKeyState(Keys.S) || CheckKeyState(Keys.D) || CheckKeyState(Keys.R) || CheckKeyState(Keys.F))
             {
@@ -382,8 +385,10 @@ namespace Reclaimer.Controls
                 var lookDirection = LookDirection = new Vector3D(LookDirection.X / len, LookDirection.Y / len, LookDirection.Z / len);
 
                 var dist = CameraSpeed * SpeedMultipler;
-                if (CheckKeyState(Keys.ShiftKey)) dist *= 3;
-                if (CheckKeyState(Keys.Space)) dist /= 3;
+                if (CheckKeyState(Keys.ShiftKey))
+                    dist *= 3;
+                if (CheckKeyState(Keys.Space))
+                    dist /= 3;
 
                 #region Check WASD
 
@@ -444,8 +449,8 @@ namespace Reclaimer.Controls
 
         private void UpdateCameraDirection(Point mousePos)
         {
-            if (!IsMouseCaptured) return;
-            if (lastPoint.Equals(mousePos)) return;
+            if (!IsMouseCaptured || lastPoint.Equals(mousePos))
+                return;
 
             var deltaX = mousePos.X - lastPoint.X;
             var deltaY = mousePos.Y - lastPoint.Y;
@@ -475,7 +480,7 @@ namespace Reclaimer.Controls
 
         private static bool CheckKeyState(Keys keys)
         {
-            return ((NativeMethods.GetAsyncKeyState((int)keys) & 32768) != 0);
+            return (NativeMethods.GetAsyncKeyState((int)keys) & 32768) != 0;
         }
     }
 }
