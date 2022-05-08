@@ -5,13 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Adjutant.Tests.Blam.Halo1
+namespace Reclaimer.Blam.Tests.Halo1
 {
     [TestClass]
     public class CacheFile
     {
-        private const string MapsFolder = @"Y:\Halo\Halo1PC\MAPS";
-
         [DataRow("a10")]
         [DataRow("a30")]
         [DataRow("b30")]
@@ -22,10 +20,7 @@ namespace Adjutant.Tests.Blam.Halo1
         [DataRow("d20")]
         [DataRow("d40")]
         [DataTestMethod]
-        public void Halo1Campaign(string map)
-        {
-            TestMap(map);
-        }
+        public void Halo1Campaign(string map) => TestMap(map);
 
         [DataRow("beavercreek")]
         [DataRow("bloodgulch")]
@@ -46,14 +41,11 @@ namespace Adjutant.Tests.Blam.Halo1
         [DataRow("timberland")]
         [DataRow("wizard")]
         [DataTestMethod]
-        public void Halo1Multiplayer(string map)
-        {
-            TestMap(map);
-        }
+        public void Halo1Multiplayer(string map) => TestMap(map);
 
         private void TestMap(string map)
         {
-            var cache = new Reclaimer.Blam.Halo1.CacheFile(Path.Combine(MapsFolder, $"{map}.map"));
+            var cache = new Blam.Halo1.CacheFile(Path.Combine(Directories.PCHalo1, $"{map}.map"));
 
             var t1 = Task.Run(() =>
             {

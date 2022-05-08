@@ -7,25 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Tests.Blam.Halo4
+namespace Reclaimer.Blam.Tests.Halo4
 {
     [TestClass]
     public class CacheFile
     {
-        private const string BetaFolder = @"Y:\Halo\Halo4Beta";
-        private const string RetailSPFolder = @"Y:\Halo\Halo4Retail\Campaign\maps";
-        private const string RetailMPFolder = @"Y:\Halo\Halo4Retail\Multiplayer\maps";
-        private const string DLCFolder = @"Y:\Halo\Halo4Retail\DLC";
-
         [DataRow("mainmenu")]
         [DataRow("ca_gore_valley")]
         [DataRow("ca_warhouse")]
         [DataRow("wraparound")]
         [DataTestMethod]
-        public void Halo4Beta(string map)
-        {
-            TestMap(BetaFolder, map);
-        }
+        public void Halo4Beta(string map) => TestMap(Directories.ConsoleHalo4Beta, map);
 
         [DataRow("mainmenu")]
         [DataRow("m05_prologue")]
@@ -40,10 +32,7 @@ namespace Adjutant.Tests.Blam.Halo4
         [DataRow("m95_epilogue")]
         [DataRow("onyx_patch")]
         [DataTestMethod]
-        public void Halo4Campaign(string map)
-        {
-            TestMap(RetailSPFolder, map);
-        }
+        public void Halo4Campaign(string map) => TestMap(Directories.ConsoleHalo4, map);
 
         [DataRow("mainmenu")]
         [DataRow("ca_blood_cavern")]
@@ -61,10 +50,7 @@ namespace Adjutant.Tests.Blam.Halo4
         [DataRow("z05_cliffside")]
         [DataRow("z11_valhalla")]
         [DataTestMethod]
-        public void Halo4Multiplayer(string map)
-        {
-            TestMap(RetailMPFolder, map);
-        }
+        public void Halo4Multiplayer(string map) => TestMap(Directories.ConsoleHalo4Multiplayer, map);
 
         [DataRow("dlc_forge_island")]
         [DataRow("Castle\\ca_basin")]
@@ -74,14 +60,11 @@ namespace Adjutant.Tests.Blam.Halo4
         [DataRow("Crimson\\dlc_dejunkyard")]
         [DataRow("Crimson\\zd_02_grind")]
         [DataTestMethod]
-        public void Halo4DLC(string map)
-        {
-            TestMap(DLCFolder, map);
-        }
+        public void Halo4DLC(string map) => TestMap(Directories.ConsoleHalo4DLC, map);
 
         private void TestMap(string folder, string map)
         {
-            var cache = new Reclaimer.Blam.Halo4.CacheFile(Path.Combine(folder, $"{map}.map"));
+            var cache = new Blam.Halo4.CacheFile(Path.Combine(folder, $"{map}.map"));
 
             var t0 = Task.Run(() =>
             {

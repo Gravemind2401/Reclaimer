@@ -7,13 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Tests.Blam.MccHalo2X
+namespace Reclaimer.Blam.Tests.MccHalo2X
 {
     [TestClass]
     public class CacheFile
     {
-        private const string MapsFolder = @"Y:\Program Files (x86)\Steam\steamapps\common\Halo The Master Chief Collection\groundhog\maps";
-
         [DataRow("ca_ascension")]
         [DataRow("ca_coagulation")]
         [DataRow("ca_forge_skybox01")]
@@ -25,14 +23,11 @@ namespace Adjutant.Tests.Blam.MccHalo2X
         [DataRow("ca_warlock")]
         [DataRow("ca_zanzibar")]
         [DataTestMethod]
-        public void Halo2X(string map)
-        {
-            TestMap(MapsFolder, map);
-        }
+        public void Halo2X(string map) => TestMap(Directories.MccHalo2X, map);
 
         private void TestMap(string folder, string map)
         {
-            var cache = new Reclaimer.Blam.MccHalo2X.CacheFile(Path.Combine(folder, $"{map}.map"));
+            var cache = new Blam.MccHalo2X.CacheFile(Path.Combine(folder, $"{map}.map"));
 
             var t0 = Task.Run(() =>
             {

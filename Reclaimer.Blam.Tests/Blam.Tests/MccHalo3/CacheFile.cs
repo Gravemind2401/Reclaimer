@@ -7,13 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Tests.Blam.MccHalo3
+namespace Reclaimer.Blam.Tests.MccHalo3
 {
     [TestClass]
     public class CacheFile
     {
-        private const string MapsFolder = @"Y:\Program Files (x86)\Steam\steamapps\common\Halo The Master Chief Collection\halo3\maps";
-
         [DataRow("mainmenu")]
         [DataRow("005_intro")]
         [DataRow("010_jungle")]
@@ -27,10 +25,7 @@ namespace Adjutant.Tests.Blam.MccHalo3
         [DataRow("120_halo")]
         [DataRow("130_epilogue")]
         [DataTestMethod]
-        public void MccHalo3Campaign(string map)
-        {
-            TestMap(MapsFolder, map);
-        }
+        public void MccHalo3Campaign(string map) => TestMap(Directories.MccHalo3, map);
 
         [DataRow("armory")]
         [DataRow("bunkerworld")]
@@ -57,14 +52,11 @@ namespace Adjutant.Tests.Blam.MccHalo3
         [DataRow("warehouse")]
         [DataRow("zanzibar")]
         [DataTestMethod]
-        public void MccHalo3Multiplayer(string map)
-        {
-            TestMap(MapsFolder, map);
-        }
+        public void MccHalo3Multiplayer(string map) => TestMap(Directories.MccHalo3, map);
 
         private void TestMap(string folder, string map)
         {
-            var cache = new Reclaimer.Blam.MccHalo3.CacheFile(Path.Combine(folder, $"{map}.map"));
+            var cache = new Blam.MccHalo3.CacheFile(Path.Combine(folder, $"{map}.map"));
 
             var t0 = Task.Run(() =>
             {

@@ -4,16 +4,22 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Adjutant.Tests.Blam.MccHaloReach
+namespace Reclaimer.Blam.Tests.HaloReach
 {
     [TestClass]
     public class CacheFile
     {
-        private const string MapsFolder = @"Y:\Program Files (x86)\Steam\steamapps\common\Halo The Master Chief Collection\haloreach\maps";
+        [DataRow("mainmenu")]
+        [DataRow("20_sword_slayer")]
+        [DataRow("30_settlement")]
+        [DataRow("70_boneyard")]
+        [DataRow("ff10_prototype")]
+        [DataTestMethod]
+        public void HaloReachBeta(string map) => TestMap(Directories.ConsoleHaloReachBeta, map);
 
+        [DataRow("mainmenu")]
         [DataRow("m05")]
         [DataRow("m10")]
         [DataRow("m20")]
@@ -27,10 +33,7 @@ namespace Adjutant.Tests.Blam.MccHaloReach
         [DataRow("m70_a")]
         [DataRow("m70_bonus")]
         [DataTestMethod]
-        public void MccHaloReachCampaign(string map)
-        {
-            TestMap(MapsFolder, map);
-        }
+        public void HaloReachCampaign(string map) => TestMap(Directories.ConsoleHaloReach, map);
 
         [DataRow("20_sword_slayer")]
         [DataRow("30_settlement")]
@@ -42,10 +45,7 @@ namespace Adjutant.Tests.Blam.MccHaloReach
         [DataRow("70_boneyard")]
         [DataRow("forge_halo")]
         [DataTestMethod]
-        public void MccHaloReachMultiplayer(string map)
-        {
-            TestMap(MapsFolder, map);
-        }
+        public void HaloReachMultiplayer(string map) => TestMap(Directories.ConsoleHaloReach, map);
 
         [DataRow("ff10_prototype")]
         [DataRow("ff20_courtyard")]
@@ -56,10 +56,7 @@ namespace Adjutant.Tests.Blam.MccHaloReach
         [DataRow("ff60_icecave")]
         [DataRow("ff70_holdout")]
         [DataTestMethod]
-        public void MccHaloReachFirefight(string map)
-        {
-            TestMap(MapsFolder, map);
-        }
+        public void HaloReachFirefight(string map) => TestMap(Directories.ConsoleHaloReach, map);
 
         [DataRow("cex_beaver_creek")]
         [DataRow("cex_damnation")]
@@ -69,19 +66,17 @@ namespace Adjutant.Tests.Blam.MccHaloReach
         [DataRow("cex_prisoner")]
         [DataRow("cex_timberland")]
         [DataTestMethod]
-        public void HaloReachCex(string map)
-        {
-            TestMap(MapsFolder, map);
-        }
+        public void HaloReachCex(string map) => TestMap(Directories.ConsoleHaloCEX, map);
 
         private void TestMap(string folder, string map)
         {
-            var cache = new Reclaimer.Blam.MccHaloReach.CacheFile(Path.Combine(folder, $"{map}.map"));
+            var cache = new Blam.HaloReach.CacheFile(Path.Combine(folder, $"{map}.map"));
 
             var t0 = Task.Run(() =>
             {
                 var gestalt = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "zone")?.ReadMetadata<cache_file_resource_gestalt>();
                 var layoutTable = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "play")?.ReadMetadata<cache_file_resource_layout_table>();
+                var soundGestalt = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "ugh!")?.ReadMetadata<sound_cache_file_gestalt>();
 
                 return true;
             });
@@ -113,10 +108,20 @@ namespace Adjutant.Tests.Blam.MccHaloReach
                 return true;
             });
 
+            var t4 = Task.Run(() =>
+            {
+                var bsps = cache.TagIndex.Where(i => i.ClassCode == "snd!")
+                .Select(i => i.ReadMetadata<sound>())
+                .ToList();
+
+                return true;
+            });
+
             Assert.IsTrue(t0.GetAwaiter().GetResult());
             Assert.IsTrue(t1.GetAwaiter().GetResult());
             Assert.IsTrue(t2.GetAwaiter().GetResult());
             Assert.IsTrue(t3.GetAwaiter().GetResult());
+            Assert.IsTrue(t4.GetAwaiter().GetResult());
         }
     }
 }

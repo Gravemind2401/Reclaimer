@@ -5,25 +5,17 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Adjutant.Tests.Blam.Halo3
+namespace Reclaimer.Blam.Tests.Halo3
 {
     [TestClass]
     public class CacheFile
     {
-        private const string BetaFolder = @"Y:\Halo\Halo3Beta\maps";
-        private const string RetailSPFolder = @"Y:\Halo\Halo3Retail\Campaign\maps";
-        private const string RetailMPFolder = @"Y:\Halo\Halo3Retail\Multiplayer\maps";
-        private const string OdstFolder = @"Y:\Halo\Halo3ODST\maps";
-
         [DataRow("mainmenu")]
         [DataRow("deadlock")]
         [DataRow("riverworld")]
         [DataRow("snowbound")]
         [DataTestMethod]
-        public void Halo3Beta(string map)
-        {
-            TestMap(BetaFolder, map);
-        }
+        public void Halo3Beta(string map) => TestMap(Directories.ConsoleHalo3Beta, map);
 
         [DataRow("mainmenu")]
         [DataRow("005_intro")]
@@ -38,10 +30,7 @@ namespace Adjutant.Tests.Blam.Halo3
         [DataRow("120_halo")]
         [DataRow("130_epilogue")]
         [DataTestMethod]
-        public void Halo3Campaign(string map)
-        {
-            TestMap(RetailSPFolder, map);
-        }
+        public void Halo3Campaign(string map) => TestMap(Directories.ConsoleHalo3, map);
 
         [DataRow("chill")]
         [DataRow("construct")]
@@ -55,10 +44,7 @@ namespace Adjutant.Tests.Blam.Halo3
         [DataRow("snowbound")]
         [DataRow("zanzibar")]
         [DataTestMethod]
-        public void Halo3Multiplayer(string map)
-        {
-            TestMap(RetailSPFolder, map);
-        }
+        public void Halo3Multiplayer(string map) => TestMap(Directories.ConsoleHalo3Multiplayer, map);
 
         [DataRow("mainmenu")]
         [DataRow("armory")]
@@ -87,10 +73,7 @@ namespace Adjutant.Tests.Blam.Halo3
         [DataRow("warehouse")]
         [DataRow("zanzibar")]
         [DataTestMethod]
-        public void Halo3MapPack(string map)
-        {
-            TestMap(RetailMPFolder, map);
-        }
+        public void Halo3MapPack(string map) => TestMap(Directories.ConsoleHalo3Multiplayer, map);
 
         [DataRow("mainmenu")]
         [DataRow("c100")]
@@ -105,14 +88,11 @@ namespace Adjutant.Tests.Blam.Halo3
         [DataRow("sc140")]
         [DataRow("sc150")]
         [DataTestMethod]
-        public void Halo3Odst(string map)
-        {
-            TestMap(OdstFolder, map);
-        }
+        public void Halo3Odst(string map) => TestMap(Directories.ConsoleHalo3ODST, map);
 
         private void TestMap(string folder, string map)
         {
-            var cache = new Reclaimer.Blam.Halo3.CacheFile(Path.Combine(folder, $"{map}.map"));
+            var cache = new Blam.Halo3.CacheFile(Path.Combine(folder, $"{map}.map"));
 
             var t0 = Task.Run(() =>
             {
