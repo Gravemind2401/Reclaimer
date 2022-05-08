@@ -9,6 +9,7 @@
 //
 // *********************************************************************
 
+using System;
 using System.Activities.Presentation;
 using System.Activities.Presentation.Model;
 using System.Activities.Presentation.View;
@@ -17,7 +18,6 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System;
 
 namespace Reclaimer.Controls
 {
@@ -33,14 +33,14 @@ namespace Reclaimer.Controls
     public class WpfPropertyGrid : Grid
     {
         #region Private fields
-        private WorkflowDesigner Designer;
-        private MethodInfo RefreshMethod;
-        private MethodInfo OnSelectionChangedMethod;
-        private MethodInfo IsInAlphaViewMethod;
-        private TextBlock SelectionTypeLabel;
-        private Control PropertyToolBar;
-        private Border HelpText;
-        private GridSplitter Splitter;
+        private readonly WorkflowDesigner Designer;
+        private readonly MethodInfo RefreshMethod;
+        private readonly MethodInfo OnSelectionChangedMethod;
+        private readonly MethodInfo IsInAlphaViewMethod;
+        private readonly TextBlock SelectionTypeLabel;
+        private readonly Control PropertyToolBar;
+        private readonly Border HelpText;
+        private readonly GridSplitter Splitter;
         private double HelpTextHeight = 60;
         #endregion
 
@@ -48,46 +48,43 @@ namespace Reclaimer.Controls
         /// <summary>Get or sets the selected object. Can be null.</summary>
         public object SelectedObject
         {
-            get { return GetValue(SelectedObjectProperty); }
-            set { SetValue(SelectedObjectProperty, value); }
+            get => GetValue(SelectedObjectProperty);
+            set => SetValue(SelectedObjectProperty, value);
         }
         /// <summary>Get or sets the selected object collection. Returns empty array by default.</summary>
         public object[] SelectedObjects
         {
-            get { return GetValue(SelectedObjectsProperty) as object[]; }
-            set { SetValue(SelectedObjectsProperty, value); }
+            get => GetValue(SelectedObjectsProperty) as object[];
+            set => SetValue(SelectedObjectsProperty, value);
         }
         /// <summary>XAML information with PropertyGrid's font and color information</summary>
         /// <seealso>Documentation for WorkflowDesigner.PropertyInspectorFontAndColorData</seealso>
         public string FontAndColorData
         {
-            set
-            {
-                Designer.PropertyInspectorFontAndColorData = value;
-            }
+            set => Designer.PropertyInspectorFontAndColorData = value;
         }
         /// <summary>Shows the description area on the top of the control</summary>
         public bool HelpVisible
         {
-            get { return (bool)GetValue(HelpVisibleProperty); }
-            set { SetValue(HelpVisibleProperty, value); }
+            get => (bool)GetValue(HelpVisibleProperty);
+            set => SetValue(HelpVisibleProperty, value);
         }
         /// <summary>Shows the tolbar on the top of the control</summary>
         public bool ToolbarVisible
         {
-            get { return (bool)GetValue(ToolbarVisibleProperty); }
-            set { SetValue(ToolbarVisibleProperty, value); }
+            get => (bool)GetValue(ToolbarVisibleProperty);
+            set => SetValue(ToolbarVisibleProperty, value);
         }
         /// <summary>Shows the type label on the top of the control</summary>
         public bool TypeLabelVisible
         {
-            get { return (bool)GetValue(TypeLabelVisibleProperty); }
-            set { SetValue(TypeLabelVisibleProperty, value); }
+            get => (bool)GetValue(TypeLabelVisibleProperty);
+            set => SetValue(TypeLabelVisibleProperty, value);
         }
         public PropertySort PropertySort
         {
-            get { return (PropertySort)GetValue(PropertySortProperty); }
-            set { SetValue(PropertySortProperty, value); }
+            get => (PropertySort)GetValue(PropertySortProperty);
+            set => SetValue(PropertySortProperty, value);
         }
         #endregion
 
@@ -116,26 +113,24 @@ namespace Reclaimer.Controls
         #endregion
 
         #region Dependency properties events
-        private static object CoerceSelectedObject(DependencyObject d, object value)
-        {
-            WpfPropertyGrid pg = d as WpfPropertyGrid;
-
-            object[] collection = pg.GetValue(SelectedObjectsProperty) as object[];
-
-            return collection.Length == 0 ? null : value;
-        }
+        //private static object CoerceSelectedObject(DependencyObject d, object value)
+        //{
+        //    var pg = d as WpfPropertyGrid;
+        //    var collection = pg.GetValue(SelectedObjectsProperty) as object[];
+        //
+        //    return collection.Length == 0 ? null : value;
+        //}
         private static object CoerceSelectedObjects(DependencyObject d, object value)
         {
-            WpfPropertyGrid pg = d as WpfPropertyGrid;
-
-            object single = pg.GetValue(SelectedObjectsProperty);
+            var pg = d as WpfPropertyGrid;
+            var single = pg.GetValue(SelectedObjectsProperty);
 
             return single == null ? new object[0] : value;
         }
 
         private static void SelectedObjectPropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
         {
-            WpfPropertyGrid pg = source as WpfPropertyGrid;
+            var pg = source as WpfPropertyGrid;
             pg.CoerceValue(SelectedObjectsProperty);
 
             if (e.NewValue == null)
@@ -148,7 +143,7 @@ namespace Reclaimer.Controls
                 var context = new EditingContext();
                 var mtm = new ModelTreeManager(context);
                 mtm.Load(e.NewValue);
-                Selection selection = Selection.Select(context, mtm.Root);
+                var selection = Selection.Select(context, mtm.Root);
 
                 pg.OnSelectionChangedMethod.Invoke(pg.Designer.PropertyInspectorView, new object[] { selection });
                 pg.SelectionTypeLabel.Text = e.NewValue.GetType().Name;
@@ -158,10 +153,10 @@ namespace Reclaimer.Controls
         }
         private static void SelectedObjectsPropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
         {
-            WpfPropertyGrid pg = source as WpfPropertyGrid;
+            var pg = source as WpfPropertyGrid;
             pg.CoerceValue(SelectedObjectsProperty);
 
-            object[] collection = e.NewValue as object[];
+            var collection = e.NewValue as object[];
 
             if (collection.Length == 0)
             {
@@ -170,7 +165,7 @@ namespace Reclaimer.Controls
             }
             else
             {
-                bool same = true;
+                var same = true;
                 Type first = null;
 
                 var context = new EditingContext();
@@ -178,7 +173,7 @@ namespace Reclaimer.Controls
                 Selection selection = null;
 
                 // Accumulates the selection and determines the type to be shown in the top of the PG
-                for (int i = 0; i < collection.Length; i++)
+                for (var i = 0; i < collection.Length; i++)
                 {
                     mtm.Load(collection[i]);
                     if (i == 0)
@@ -202,7 +197,7 @@ namespace Reclaimer.Controls
         }
         private static void HelpVisiblePropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
         {
-            WpfPropertyGrid pg = source as WpfPropertyGrid;
+            var pg = source as WpfPropertyGrid;
 
             if (e.NewValue != e.OldValue)
             {
@@ -221,20 +216,20 @@ namespace Reclaimer.Controls
         }
         private static void ToolbarVisiblePropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
         {
-            WpfPropertyGrid pg = source as WpfPropertyGrid;
+            var pg = source as WpfPropertyGrid;
             pg.PropertyToolBar.Visibility = e.NewValue.Equals(true) ? Visibility.Visible : Visibility.Collapsed;
         }
         private static void TypeLabelVisiblePropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
         {
-            WpfPropertyGrid pg = source as WpfPropertyGrid;
+            var pg = source as WpfPropertyGrid;
             ((FrameworkElement)pg.SelectionTypeLabel.Parent).Visibility = e.NewValue.Equals(true) ? Visibility.Visible : Visibility.Collapsed;
         }
         private static void PropertySortPropertyChanged(DependencyObject source, DependencyPropertyChangedEventArgs e)
         {
-            WpfPropertyGrid pg = source as WpfPropertyGrid;
-            PropertySort sort = (PropertySort)e.NewValue;
+            var pg = source as WpfPropertyGrid;
+            var sort = (PropertySort)e.NewValue;
 
-            bool isAlpha = (sort == PropertySort.Alphabetical || sort == PropertySort.NoSort);
+            var isAlpha = sort == PropertySort.Alphabetical || sort == PropertySort.NoSort;
             pg.IsInAlphaViewMethod.Invoke(pg.Designer.PropertyInspectorView, new object[] { isAlpha });
         }
         #endregion
@@ -242,26 +237,26 @@ namespace Reclaimer.Controls
         /// <summary>Default constructor, creates the UIElements including a PropertyInspector</summary>
         public WpfPropertyGrid()
         {
-            this.ColumnDefinitions.Add(new ColumnDefinition());
-            this.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
-            this.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0) });
-            this.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0) });
+            ColumnDefinitions.Add(new ColumnDefinition());
+            RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+            RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0) });
+            RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0) });
 
-            this.Designer = new WorkflowDesigner();
-            TextBlock title = new TextBlock()
+            Designer = new WorkflowDesigner();
+            var title = new TextBlock()
             {
                 Visibility = Visibility.Visible,
                 TextWrapping = TextWrapping.NoWrap,
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 FontWeight = FontWeights.Bold
             };
-            TextBlock descrip = new TextBlock()
+            var descrip = new TextBlock()
             {
                 Visibility = Visibility.Visible,
                 TextWrapping = TextWrapping.Wrap,
                 TextTrimming = TextTrimming.CharacterEllipsis
             };
-            DockPanel dock = new DockPanel()
+            var dock = new DockPanel()
             {
                 Visibility = Visibility.Visible,
                 LastChildFill = true,
@@ -271,7 +266,7 @@ namespace Reclaimer.Controls
             title.SetValue(DockPanel.DockProperty, Dock.Top);
             dock.Children.Add(title);
             dock.Children.Add(descrip);
-            this.HelpText = new Border()
+            HelpText = new Border()
             {
                 Visibility = Visibility.Visible,
                 BorderBrush = SystemColors.ActiveBorderBrush,
@@ -279,7 +274,7 @@ namespace Reclaimer.Controls
                 BorderThickness = new Thickness(1),
                 Child = dock
             };
-            this.Splitter = new GridSplitter()
+            Splitter = new GridSplitter()
             {
                 Visibility = Visibility.Visible,
                 ResizeDirection = GridResizeDirection.Rows,
@@ -291,50 +286,36 @@ namespace Reclaimer.Controls
             inspector.Visibility = Visibility.Visible;
             inspector.SetValue(VerticalAlignmentProperty, VerticalAlignment.Stretch);
 
-            this.Splitter.SetValue(RowProperty, 1);
-            this.Splitter.SetValue(ColumnProperty, 0);
+            Splitter.SetValue(RowProperty, 1);
+            Splitter.SetValue(ColumnProperty, 0);
 
-            this.HelpText.SetValue(RowProperty, 2);
-            this.HelpText.SetValue(ColumnProperty, 0);
+            HelpText.SetValue(RowProperty, 2);
+            HelpText.SetValue(ColumnProperty, 0);
 
-            Binding binding = new Binding("Parent.Background");
+            var binding = new Binding("Parent.Background");
             title.SetBinding(BackgroundProperty, binding);
             descrip.SetBinding(BackgroundProperty, binding);
 
-            this.Children.Add(inspector);
-            this.Children.Add(this.Splitter);
-            this.Children.Add(this.HelpText);
+            Children.Add(inspector);
+            Children.Add(Splitter);
+            Children.Add(HelpText);
 
-            Type inspectorType = inspector.GetType();
-            var props = inspectorType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
-                BindingFlags.DeclaredOnly);
+            var inspectorType = inspector.GetType();
+            //var props = inspectorType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            //var methods = inspectorType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
-            var methods = inspectorType.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
-                BindingFlags.DeclaredOnly);
+            RefreshMethod = inspectorType.GetMethod("RefreshPropertyList", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            IsInAlphaViewMethod = inspectorType.GetMethod("set_IsInAlphaView", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            OnSelectionChangedMethod = inspectorType.GetMethod("OnSelectionChanged", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            SelectionTypeLabel = inspectorType.GetMethod("get_SelectionTypeLabel", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly).Invoke(inspector, new object[0]) as TextBlock;
+            PropertyToolBar = inspectorType.GetMethod("get_PropertyToolBar", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly).Invoke(inspector, new object[0]) as Control;
+            inspectorType.GetEvent("GotFocus").AddEventHandler(this, Delegate.CreateDelegate(typeof(RoutedEventHandler), this, "GotFocusHandler", false));
 
-            this.RefreshMethod = inspectorType.GetMethod("RefreshPropertyList",
-                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-            this.IsInAlphaViewMethod = inspectorType.GetMethod("set_IsInAlphaView",
-                BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-            this.OnSelectionChangedMethod = inspectorType.GetMethod("OnSelectionChanged",
-                BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-            this.SelectionTypeLabel = inspectorType.GetMethod("get_SelectionTypeLabel",
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
-                BindingFlags.DeclaredOnly).Invoke(inspector, new object[0]) as TextBlock;
-            this.PropertyToolBar = inspectorType.GetMethod("get_PropertyToolBar",
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
-                BindingFlags.DeclaredOnly).Invoke(inspector, new object[0]) as Control;
-            inspectorType.GetEvent("GotFocus").AddEventHandler(this,
-                Delegate.CreateDelegate(typeof(RoutedEventHandler), this, "GotFocusHandler", false));
-
-            this.SelectionTypeLabel.Text = string.Empty;
+            SelectionTypeLabel.Text = string.Empty;
         }
 
         /// <summary>Updates the PropertyGrid's properties</summary>
-        public void RefreshPropertyList()
-        {
-            RefreshMethod.Invoke(Designer.PropertyInspectorView, new object[] { false });
-        }
+        public void RefreshPropertyList() => RefreshMethod.Invoke(Designer.PropertyInspectorView, new object[] { false });
 
         /// <summary>Traps the change of focused property and updates the help text</summary>
         /// <param name="sender">Not used</param>
@@ -343,14 +324,13 @@ namespace Reclaimer.Controls
         {
             //if (args.OriginalSource is TextBlock)
             //{
-            string title = string.Empty;
-            string descrip = string.Empty;
-            var theSelectedObjects = this.GetValue(SelectedObjectsProperty) as object[];
+            var title = string.Empty;
+            var descrip = string.Empty;
 
-            if (theSelectedObjects != null && theSelectedObjects.Length > 0)
+            if (GetValue(SelectedObjectsProperty) is object[] theSelectedObjects && theSelectedObjects.Length > 0)
             {
-                Type first = theSelectedObjects[0].GetType();
-                for (int i = 1; i < theSelectedObjects.Length; i++)
+                var first = theSelectedObjects[0].GetType();
+                for (var i = 1; i < theSelectedObjects.Length; i++)
                 {
                     if (!theSelectedObjects[i].GetType().Equals(first))
                     {
@@ -359,20 +339,17 @@ namespace Reclaimer.Controls
                     }
                 }
 
-                object data = (args.OriginalSource as FrameworkElement).DataContext;
-                PropertyInfo propEntry = data.GetType().GetProperty("PropertyEntry");
-                if (propEntry == null)
-                {
-                    propEntry = data.GetType().GetProperty("ParentProperty");
-                }
+                var data = (args.OriginalSource as FrameworkElement).DataContext;
+                var propEntry = data.GetType().GetProperty("PropertyEntry")
+                    ?? data.GetType().GetProperty("ParentProperty");
 
                 if (propEntry != null)
                 {
-                    object propEntryValue = propEntry.GetValue(data, null);
-                    string propName = propEntryValue.GetType().GetProperty("PropertyName").GetValue(propEntryValue, null) as string;
+                    var propEntryValue = propEntry.GetValue(data, null);
+                    var propName = propEntryValue.GetType().GetProperty("PropertyName").GetValue(propEntryValue, null) as string;
                     title = propEntryValue.GetType().GetProperty("DisplayName").GetValue(propEntryValue, null) as string;
-                    PropertyInfo property = theSelectedObjects[0].GetType().GetProperty(propName);
-                    object[] attrs = property.GetCustomAttributes(typeof(DescriptionAttribute), true);
+                    var property = theSelectedObjects[0].GetType().GetProperty(propName);
+                    var attrs = property.GetCustomAttributes(typeof(DescriptionAttribute), true);
 
                     if (attrs != null && attrs.Length > 0)
                         descrip = (attrs[0] as DescriptionAttribute).Description;
@@ -387,7 +364,7 @@ namespace Reclaimer.Controls
         /// <param name="descrip">Description with ellipsis</param>
         private void ChangeHelpText(string title, string descrip)
         {
-            DockPanel dock = this.HelpText.Child as DockPanel;
+            var dock = HelpText.Child as DockPanel;
             (dock.Children[0] as TextBlock).Text = title;
             (dock.Children[1] as TextBlock).Text = descrip;
         }
