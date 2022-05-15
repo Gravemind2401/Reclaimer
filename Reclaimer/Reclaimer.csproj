@@ -3,9 +3,10 @@
   <PropertyGroup>
     <ProjectName>$([System.IO.Path]::GetFileName($(MSBuildProjectDirectory)))</ProjectName>
     <OutputType>WinExe</OutputType>
-	  <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>disable</Nullable>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>True</UseWindowsForms>
     <SignAssembly>False</SignAssembly>
     <Authors>Gravemind2401</Authors>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -18,17 +19,11 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\..\Studio\Studio\Studio.csproj" />
-		<ProjectReference Include="..\Reclaimer.Blam\Reclaimer.Blam.csproj" />
-		<ProjectReference Include="..\Reclaimer.Core\Reclaimer.Core.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Reference Include="System.Activities.Presentation" />
-		<Reference Include="System.Runtime.Remoting" />
-		<Reference Include="System.Windows.Forms" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Studio\Studio\Studio.csproj" />
+    <ProjectReference Include="..\Reclaimer.Blam\Reclaimer.Blam.csproj" />
+    <ProjectReference Include="..\Reclaimer.Core\Reclaimer.Core.csproj" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AssimpNet" Version="4.1.0" />
