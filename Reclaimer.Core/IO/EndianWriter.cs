@@ -113,21 +113,26 @@ namespace Reclaimer.IO
 
         private static Stream BaseStreamOrThrow(EndianWriter parent)
         {
-            if (parent == null)
-                throw new ArgumentNullException(nameof(parent));
-            return parent.BaseStream;
+            return parent?.BaseStream ?? throw new ArgumentNullException(nameof(parent));
         }
 
         private static Encoding EncodingOrThrow(EndianWriter parent)
         {
-            if (parent == null)
-                throw new ArgumentNullException(nameof(parent));
-            return parent.encoding;
+            return parent?.encoding ?? throw new ArgumentNullException(nameof(parent));
         }
 
         #endregion
 
         #region Overrides
+
+        /// <summary>
+        /// Writes a two-byte floating-point value to the current stream using the current byte order
+        /// and advances the current position of the stream by two bytes.
+        /// </summary>
+        /// <param name="value">The two-byte floating-point value to write.</param>
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public override void Write(Half value) => Write(value, ByteOrder);
 
         /// <summary>
         /// Writes a four-byte floating-point value to the current stream using the current byte order
@@ -190,7 +195,6 @@ namespace Reclaimer.IO
         /// <param name="value">The two-byte unsigned integer to write.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public override void Write(ushort value) => Write(value, ByteOrder);
 
         /// <summary>
@@ -200,7 +204,6 @@ namespace Reclaimer.IO
         /// <param name="value">The four-byte unsigned integer to write.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public override void Write(uint value) => Write(value, ByteOrder);
 
         /// <summary>
@@ -210,7 +213,6 @@ namespace Reclaimer.IO
         /// <param name="value">The eight-byte unsigned integer to write.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public override void Write(ulong value) => Write(value, ByteOrder);
 
         /// <summary>
@@ -235,6 +237,27 @@ namespace Reclaimer.IO
         #endregion
 
         #region ByteOrder Write
+
+        /// <summary>
+        /// Writes a two-byte floating-point value to the current stream using the specified byte order
+        /// and advances the current position of the stream by two bytes.
+        /// </summary>
+        /// <param name="value">The two-byte floating-point value to write.</param>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public virtual void Write(Half value, ByteOrder byteOrder)
+        {
+            if (byteOrder == ByteOrder.LittleEndian)
+            {
+                base.Write(value);
+                return;
+            }
+
+            var bytes = BitConverter.GetBytes(value);
+            Array.Reverse(bytes);
+            base.Write(bytes);
+        }
 
         /// <summary>
         /// Writes a four-byte floating-point value to the current stream using the specified byte order
@@ -297,7 +320,7 @@ namespace Reclaimer.IO
             var bits = decimal.GetBits(value);
             var bytes = new byte[16];
 
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
                 Array.Copy(BitConverter.GetBytes(bits[i]), 0, bytes, i * 4, 4);
 
             Array.Reverse(bytes);
@@ -375,7 +398,6 @@ namespace Reclaimer.IO
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public virtual void Write(ushort value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
@@ -397,7 +419,6 @@ namespace Reclaimer.IO
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public virtual void Write(uint value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
@@ -419,7 +440,6 @@ namespace Reclaimer.IO
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public virtual void Write(ulong value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
@@ -715,7 +735,7 @@ namespace Reclaimer.IO
             var origin = BaseStream.Position;
 
             var buffer = new byte[blockSize];
-            for (int remaining = length; remaining > 0;)
+            for (var remaining = length; remaining > 0;)
             {
                 var readLength = Math.Min(blockSize, remaining);
                 var offset = sourceAddress > destinationAddress

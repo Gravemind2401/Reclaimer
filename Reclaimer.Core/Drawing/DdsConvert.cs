@@ -311,9 +311,9 @@ namespace Reclaimer.Drawing
             else
                 channelIndex = -1;
 
-            for (int i = 0; i < source.Length; i += bpp)
+            for (var i = 0; i < source.Length; i += bpp)
             {
-                for (int j = 0; j < bpp; j++)
+                for (var j = 0; j < bpp; j++)
                 {
                     if (channelIndex >= 0)
                     {
@@ -344,7 +344,7 @@ namespace Reclaimer.Drawing
             var xTiles = new[] { 1, 0, 1, 2, 3, 1 };
             var yTiles = new[] { 0, 1, 1, 1, 1, 2 };
 
-            for (int i = 0; i < 6; i++)
+            for (var i = 0; i < 6; i++)
             {
                 var tileIndex = (int)faceArray[i] - 1;
 
@@ -1227,7 +1227,7 @@ namespace Reclaimer.Drawing
                         destX = (destW - 1) - destX;
 
                     var destIndex = destY * destW * bpp + destX * bpp;
-                    for (int i = 0; i < bpp; i++)
+                    for (var i = 0; i < bpp; i++)
                         output[destIndex + i] = buffer[sourceIndex + i];
                 }
             }

@@ -110,21 +110,26 @@ namespace Reclaimer.IO
 
         private static Stream BaseStreamOrThrow(EndianReader parent)
         {
-            if (parent == null)
-                throw new ArgumentNullException(nameof(parent));
-            return parent.BaseStream;
+            return parent?.BaseStream ?? throw new ArgumentNullException(nameof(parent));
         }
 
         private static Encoding EncodingOrThrow(EndianReader parent)
         {
-            if (parent == null)
-                throw new ArgumentNullException(nameof(parent));
-            return parent.encoding;
+            return parent?.encoding ?? throw new ArgumentNullException(nameof(parent));
         }
 
         #endregion
 
         #region Overrides
+
+        /// <summary>
+        /// Reads a 2-byte floating point value from the current stream using the current byte order 
+        /// and advances the current position of the stream by two bytes.
+        /// </summary>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public override Half ReadHalf() => ReadHalf(ByteOrder);
 
         /// <summary>
         /// Reads a 4-byte floating point value from the current stream using the current byte order 
@@ -140,7 +145,6 @@ namespace Reclaimer.IO
         /// Reads an 8-byte floating point value from the current stream using the current byte order 
         /// and advances the current position of the stream by eight bytes.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -150,7 +154,6 @@ namespace Reclaimer.IO
         /// Reads a decimal value from the current stream using the current byte order 
         /// and advances the current position of the stream by sixteen bytes.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -160,7 +163,6 @@ namespace Reclaimer.IO
         /// Reads a 2-byte signed integer from the current stream using the current byte order 
         /// and advances the current position of the stream by two bytes.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -170,7 +172,6 @@ namespace Reclaimer.IO
         /// Reads a 4-byte signed integer from the current stream using the current byte order 
         /// and advances the current position of the stream by four bytes.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -180,7 +181,6 @@ namespace Reclaimer.IO
         /// Reads an 8-byte signed integer from the current stream using the current byte order 
         /// and advances the current position of the stream by eight bytes.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -190,33 +190,27 @@ namespace Reclaimer.IO
         /// Reads a 2-byte unsigned integer from the current stream using the current byte order 
         /// and advances the current position of the stream by two bytes.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public override ushort ReadUInt16() => ReadUInt16(ByteOrder);
 
         /// <summary>
         /// Reads a 4-byte unsigned integer from the current stream using the current byte order
         /// and advances the current position of the stream by four bytes.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public override uint ReadUInt32() => ReadUInt32(ByteOrder);
 
         /// <summary>
         /// Reads an 8-byte unsigned integer from the current stream using the current byte order
         /// and advances the current position of the stream by eight bytes.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public override ulong ReadUInt64() => ReadUInt64(ByteOrder);
 
         /// <summary>
@@ -240,6 +234,24 @@ namespace Reclaimer.IO
         #endregion
 
         #region ByteOrder Read
+
+        /// <summary>
+        /// Reads a 2-byte floating-point value from the current stream using the specified byte order 
+        /// and advances the current position of the stream by two bytes.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public virtual Half ReadHalf(ByteOrder byteOrder)
+        {
+            if (byteOrder == ByteOrder.LittleEndian)
+                return base.ReadHalf();
+
+            var bytes = base.ReadBytes(2);
+            Array.Reverse(bytes);
+            return BitConverter.ToHalf(bytes, 0);
+        }
 
         /// <summary>
         /// Reads a 4-byte floating-point value from the current stream using the specified byte order 
@@ -360,7 +372,6 @@ namespace Reclaimer.IO
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public virtual ushort ReadUInt16(ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
@@ -379,7 +390,6 @@ namespace Reclaimer.IO
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public virtual uint ReadUInt32(ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
@@ -398,7 +408,6 @@ namespace Reclaimer.IO
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public virtual ulong ReadUInt64(ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
@@ -516,10 +525,18 @@ namespace Reclaimer.IO
         #region Peek
 
         /// <summary>
+        /// Reads a 2-byte floating point value from the current stream using the current byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public virtual Half PeekHalf() => PeekHalf(ByteOrder);
+
+        /// <summary>
         /// Reads a 4-byte floating point value from the current stream using the current byte order 
         /// and does not advance the current position of the stream.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -529,7 +546,6 @@ namespace Reclaimer.IO
         /// Reads an 8-byte floating point value from the current stream using the current byte order 
         /// and does not advance the current position of the stream.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -539,7 +555,6 @@ namespace Reclaimer.IO
         /// Reads a decimal value from the current stream using the current byte order 
         /// and does not advance the current position of the stream.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -549,7 +564,6 @@ namespace Reclaimer.IO
         /// Reads a 2-byte signed integer from the current stream using the current byte order 
         /// and does not advance the current position of the stream.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -559,7 +573,6 @@ namespace Reclaimer.IO
         /// Reads a 4-byte signed integer from the current stream using the current byte order 
         /// and does not advance the current position of the stream.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -569,7 +582,6 @@ namespace Reclaimer.IO
         /// Reads an 8-byte signed integer from the current stream using the current byte order 
         /// and does not advance the current position of the stream.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
@@ -579,33 +591,27 @@ namespace Reclaimer.IO
         /// Reads a 2-byte unsigned integer from the current stream using the current byte order 
         /// and does not advance the current position of the stream.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public virtual ushort PeekUInt16() => PeekUInt16(ByteOrder);
 
         /// <summary>
         /// Reads a 4-byte unsigned integer from the current stream using the current byte order
         /// and does not advance the current position of the stream.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public virtual uint PeekUInt32() => PeekUInt32(ByteOrder);
 
         /// <summary>
         /// Reads an 8-byte unsigned integer from the current stream using the current byte order
         /// and does not advance the current position of the stream.
         /// </summary>
-        /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public virtual ulong PeekUInt64() => PeekUInt64(ByteOrder);
 
         /// <summary>
@@ -620,6 +626,22 @@ namespace Reclaimer.IO
         #endregion
 
         #region ByteOrder Peek
+
+        /// <summary>
+        /// Reads a 2-byte floating point value from the current stream using the specified byte order 
+        /// and does not advance the current position of the stream.
+        /// </summary>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <exception cref="EndOfStreamException" />
+        /// <exception cref="IOException" />
+        /// <exception cref="ObjectDisposedException" />
+        public virtual Half PeekHalf(ByteOrder byteOrder)
+        {
+            var origin = BaseStream.Position;
+            var value = ReadHalf(byteOrder);
+            BaseStream.Position = origin;
+            return value;
+        }
 
         /// <summary>
         /// Reads a 4-byte floating point value from the current stream using the specified byte order 
@@ -725,7 +747,6 @@ namespace Reclaimer.IO
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public virtual ushort PeekUInt16(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
@@ -742,7 +763,6 @@ namespace Reclaimer.IO
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public virtual uint PeekUInt32(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
@@ -759,7 +779,6 @@ namespace Reclaimer.IO
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        [CLSCompliant(false)]
         public virtual ulong PeekUInt64(ByteOrder byteOrder)
         {
             var origin = BaseStream.Position;
