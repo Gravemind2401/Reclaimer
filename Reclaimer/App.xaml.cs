@@ -82,7 +82,7 @@ namespace Reclaimer
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            if (!InstanceManager.CreateSingleInstance(Constants.ApplicationInstanceKey, OnReceivedCommandLineArguments))
+            if (!SingletonHelper.EnsureSingleInstance(Constants.ApplicationInstanceKey, ProcessCommandLineArguments))
                 return;
 
             base.OnStartup(e);
@@ -109,8 +109,6 @@ namespace Reclaimer
             Substrate.Shutdown();
             base.OnExit(e);
         }
-
-        private void OnReceivedCommandLineArguments(object sender, InstanceCallbackEventArgs e) => ProcessCommandLineArguments(e.Arguments);
 
         private void ProcessCommandLineArguments(params string[] arguments)
         {
