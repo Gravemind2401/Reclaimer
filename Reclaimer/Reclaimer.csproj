@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ProjectName>$([System.IO.Path]::GetFileName($(MSBuildProjectDirectory)))</ProjectName>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net48</TargetFramework>
+	  <TargetFramework>net48</TargetFramework>
     <Nullable>disable</Nullable>
     <UseWPF>true</UseWPF>
     <SignAssembly>False</SignAssembly>
@@ -18,25 +18,25 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Studio\Studio\Studio.csproj" />
-    <ProjectReference Include="..\Reclaimer.Blam\Reclaimer.Blam.csproj" />
-    <ProjectReference Include="..\Reclaimer.Core\Reclaimer.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Studio\Studio\Studio.csproj" />
+		<ProjectReference Include="..\Reclaimer.Blam\Reclaimer.Blam.csproj" />
+		<ProjectReference Include="..\Reclaimer.Core\Reclaimer.Core.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="System.Activities.Presentation" />
-    <Reference Include="System.Runtime.Remoting" />
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="System.Activities.Presentation" />
+		<Reference Include="System.Runtime.Remoting" />
+		<Reference Include="System.Windows.Forms" />
+	</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AssimpNet" Version="4.1.0" />
-    <PackageReference Include="DotNetProjects.Extended.Wpf.Toolkit" Version="4.6.97" />
-    <PackageReference Include="MahApps.Metro" Version="1.6.5" />
+    <PackageReference Include="DotNetProjects.Extended.Wpf.Toolkit" Version="5.0.103" />
+    <PackageReference Include="MahApps.Metro" Version="2.4.9" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Octokit" Version="0.50.0" />
-    <PackageReference Include="Prism.Wpf" Version="7.2.0.1367" />
+    <PackageReference Include="Octokit" Version="0.51.0" />
+    <PackageReference Include="Prism.Wpf" Version="8.1.97" />
   </ItemGroup>
 
   <ItemGroup>

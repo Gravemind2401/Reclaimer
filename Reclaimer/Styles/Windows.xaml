@@ -2,6 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Themes/WindowButtonCommands.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
     <Style x:Key="MainWindowButtonStyle" TargetType="Button">
         <Setter Property="Margin" Value="0" />
         <Setter Property="Padding" Value="0,0,0,7" />
@@ -65,6 +69,17 @@
     </Style>
 
     <Style x:Key="MainWindowStyle" TargetType="metro:MetroWindow">
+        <Style.Resources>
+            <Style TargetType="metro:WindowButtonCommands" BasedOn="{StaticResource MahApps.Styles.WindowButtonCommands.Base}">
+                <Setter Property="LightMinButtonStyle" Value="{StaticResource MainWindowButtonStyle}" />
+                <Setter Property="LightMaxButtonStyle" Value="{StaticResource MainWindowMaxButtonStyle}" />
+                <Setter Property="LightCloseButtonStyle" Value="{StaticResource MainWindowButtonStyle}" />
+                <Setter Property="DarkMinButtonStyle" Value="{StaticResource MainWindowButtonStyle}" />
+                <Setter Property="DarkMaxButtonStyle" Value="{StaticResource MainWindowMaxButtonStyle}" />
+                <Setter Property="DarkCloseButtonStyle" Value="{StaticResource MainWindowButtonStyle}" />
+            </Style>
+        </Style.Resources>
+        
         <Setter Property="WindowTitleBrush" Value="{DynamicResource Environment.MainWindow.ActiveCaptionBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Environment.MainWindow.ActiveDefaultBorder}" />
         <!--<Setter Property="GlowBrush" Value="{DynamicResource Environment.MainWindow.ActiveDefaultBorder}" />-->
@@ -75,14 +90,10 @@
 
         <Setter Property="Background" Value="{DynamicResource Environment.EnvironmentBackground}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="TitleCaps" Value="False" />
-        <Setter Property="TitlebarHeight" Value="31" />
+        <Setter Property="TitleCharacterCasing" Value="Normal" />
+        <Setter Property="TitleBarHeight" Value="31" />
         <Setter Property="TitleForeground" Value="{DynamicResource Environment.MainWindow.InactiveCaptionForeground}" />
         <Setter Property="WindowTransitionsEnabled" Value="False" />
-
-        <Setter Property="WindowMinButtonStyle" Value="{StaticResource MainWindowButtonStyle}" />
-        <Setter Property="WindowMaxButtonStyle" Value="{StaticResource MainWindowMaxButtonStyle}" />
-        <Setter Property="WindowCloseButtonStyle" Value="{StaticResource MainWindowButtonStyle}" />
 
         <Style.Triggers>
             <Trigger Property="IsActive" Value="True">
@@ -154,6 +165,17 @@
     </Style>
 
     <Style x:Key="RaftedWindowStyle" TargetType="metro:MetroWindow">
+        <Style.Resources>
+            <Style TargetType="metro:WindowButtonCommands" BasedOn="{StaticResource MahApps.Styles.WindowButtonCommands.Base}">
+                <Setter Property="LightMinButtonStyle" Value="{StaticResource RaftedWindowButtonStyle}" />
+                <Setter Property="LightMaxButtonStyle" Value="{StaticResource RaftedWindowMaxButtonStyle}" />
+                <Setter Property="LightCloseButtonStyle" Value="{StaticResource RaftedWindowButtonStyle}" />
+                <Setter Property="DarkMinButtonStyle" Value="{StaticResource RaftedWindowButtonStyle}" />
+                <Setter Property="DarkMaxButtonStyle" Value="{StaticResource RaftedWindowMaxButtonStyle}" />
+                <Setter Property="DarkCloseButtonStyle" Value="{StaticResource RaftedWindowButtonStyle}" />
+            </Style>
+        </Style.Resources>
+        
         <Setter Property="WindowTitleBrush" Value="{DynamicResource Environment.ToolWindow.FloatingFrameBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Environment.MainWindow.ActiveDefaultBorder}" />
         <!--<Setter Property="GlowBrush" Value="{DynamicResource Environment.MainWindow.ActiveDefaultBorder}" />-->
@@ -164,14 +186,10 @@
 
         <Setter Property="Background" Value="{DynamicResource Environment.EnvironmentBackgroundGradient}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="TitleCaps" Value="False" />
-        <Setter Property="TitlebarHeight" Value="29" />
+        <Setter Property="TitleCharacterCasing" Value="Normal" />
+        <Setter Property="TitleBarHeight" Value="29" />
         <Setter Property="TitleForeground" Value="{DynamicResource Environment.ToolWindow.FloatingFrameInactiveForeground}" />
         <Setter Property="WindowTransitionsEnabled" Value="False" />
-
-        <Setter Property="WindowMinButtonStyle" Value="{StaticResource RaftedWindowButtonStyle}" />
-        <Setter Property="WindowMaxButtonStyle" Value="{StaticResource RaftedWindowMaxButtonStyle}" />
-        <Setter Property="WindowCloseButtonStyle" Value="{StaticResource RaftedWindowButtonStyle}" />
 
         <Style.Triggers>
             <Trigger Property="IsActive" Value="True">
@@ -256,6 +274,15 @@
     </Style>
 
     <Style x:Key="ToolWindowStyle" TargetType="metro:MetroWindow">
+        <Style.Resources>
+            <Style TargetType="metro:WindowButtonCommands" BasedOn="{StaticResource MahApps.Styles.WindowButtonCommands.Base}">
+                <Setter Property="LightMaxButtonStyle" Value="{StaticResource ToolWindowMaxButtonStyle}" />
+                <Setter Property="LightCloseButtonStyle" Value="{StaticResource ToolWindowCloseButtonStyle}" />
+                <Setter Property="DarkMaxButtonStyle" Value="{StaticResource ToolWindowMaxButtonStyle}" />
+                <Setter Property="DarkCloseButtonStyle" Value="{StaticResource ToolWindowCloseButtonStyle}" />
+            </Style>
+        </Style.Resources>
+        
         <Setter Property="Background" Value="{DynamicResource Environment.EnvironmentBackground}" />
 
         <Setter Property="WindowTitleBrush" Value="{DynamicResource Environment.TitleBar.ActiveGradient}" />
@@ -267,13 +294,10 @@
         <!--<Setter Property="NonActiveGlowBrush" Value="{DynamicResource Environment.MainWindow.InactiveBorder}" />-->
 
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="TitleCaps" Value="False" />
-        <Setter Property="TitlebarHeight" Value="21" />
+        <Setter Property="TitleCharacterCasing" Value="Normal" />
+        <Setter Property="TitleBarHeight" Value="21" />
         <Setter Property="TitleForeground" Value="{DynamicResource Environment.TitleBar.InactiveText}" />
         <Setter Property="WindowTransitionsEnabled" Value="False" />
-
-        <Setter Property="WindowMaxButtonStyle" Value="{StaticResource ToolWindowMaxButtonStyle}" />
-        <Setter Property="WindowCloseButtonStyle" Value="{StaticResource ToolWindowCloseButtonStyle}" />
 
         <Setter Property="ShowInTaskbar" Value="False" />
         <Setter Property="ShowMinButton" Value="False" />
