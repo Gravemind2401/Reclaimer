@@ -1,10 +1,9 @@
-﻿using Reclaimer.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
+using System.Windows.Forms;
 
 namespace Reclaimer.Controls.Editors
 {
@@ -12,13 +11,13 @@ namespace Reclaimer.Controls.Editors
     {
         protected override void ShowDialog()
         {
-            var ofd = new FolderSelectDialog
+            var fsd = new FolderBrowserDialog
             {
                 InitialDirectory = PropertyItem.Value?.ToString()
             };
 
-            if (ofd.ShowDialog(Application.Current.MainWindow) == true)
-                PropertyItem.Value = ofd.SelectedPath.Replace(Settings.AppBaseDirectory, ".\\");
+            if (fsd.ShowDialog() == DialogResult.OK)
+                PropertyItem.Value = fsd.SelectedPath.Replace(Settings.AppBaseDirectory, ".\\");
         }
     }
 }

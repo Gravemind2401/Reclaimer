@@ -22,6 +22,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 using BlamContentFactory = Reclaimer.Blam.Common.ContentFactory;
@@ -140,11 +141,11 @@ namespace Reclaimer.Plugins
             dataFolder = Settings.DataFolder;
             if (Settings.PromptForFolder)
             {
-                var fsd = new FolderSelectDialog();
+                var fsd = new FolderBrowserDialog();
                 if (!string.IsNullOrEmpty(dataFolder))
                     fsd.InitialDirectory = dataFolder;
 
-                if (!fsd.ShowDialog())
+                if (fsd.ShowDialog() != DialogResult.OK)
                     return false;
 
                 dataFolder = fsd.SelectedPath;
