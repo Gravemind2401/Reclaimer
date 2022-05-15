@@ -2,7 +2,6 @@
 using Reclaimer.Blam.Halo5;
 using Reclaimer.Controls.Editors;
 using System;
-using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -113,7 +112,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
         internal sealed class MetaViewerSettings : IPluginSettings
         {
-            [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
+            [Editor(typeof(BrowseFolderEditor), typeof(BrowseFolderEditor))]
             [DisplayName("Plugins Folder")]
             public string PluginFolder { get; set; }
 
@@ -163,13 +162,11 @@ namespace Reclaimer.Plugins.MetaViewer
             [DisplayName("Filename Format")]
             public string FileNameFormat { get; set; } //0 = code, 1 = name
 
-            [Editor(typeof(EnumMultiSelectEditor), typeof(PropertyValueEditor))]
-            [EditorOption(Name = "CollectionType", Value = typeof(CacheType))]
+            [Editor(typeof(EnumMultiSelectEditor), typeof(EnumMultiSelectEditor))]
             [DisplayName("Map Types")]
             public List<CacheType> MapTypes { get; set; }
 
-            [Editor(typeof(EnumMultiSelectEditor), typeof(PropertyValueEditor))]
-            [EditorOption(Name = "CollectionType", Value = typeof(ModuleType))]
+            [Editor(typeof(EnumMultiSelectEditor), typeof(EnumMultiSelectEditor))]
             [DisplayName("Module Types")]
             public List<ModuleType> ModuleTypes { get; set; }
 

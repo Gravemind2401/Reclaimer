@@ -1,6 +1,5 @@
 ﻿using Reclaimer.Controls.Editors;
 using System;
-using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -84,7 +83,7 @@ namespace Reclaimer.Plugins
 
     internal class ModuleViewerSettings
     {
-        [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
+        [Editor(typeof(BrowseFolderEditor), typeof(BrowseFolderEditor))]
         [DisplayName("Modules Folder")]
         public string ModuleFolder { get; set; }
 

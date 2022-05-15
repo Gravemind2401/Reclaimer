@@ -1,6 +1,5 @@
 ﻿using Reclaimer.Controls.Editors;
 using System;
-using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -91,7 +90,7 @@ namespace Reclaimer.Plugins
 
     internal sealed class MapViewerSettings
     {
-        [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
+        [Editor(typeof(BrowseFolderEditor), typeof(BrowseFolderEditor))]
         [DisplayName("Maps Folder")]
         public string MapFolder { get; set; }
 

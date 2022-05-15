@@ -3,7 +3,6 @@ using Reclaimer.Audio;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Controls.Editors;
 using System;
-using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -101,7 +100,7 @@ namespace Reclaimer.Plugins
 
         private sealed class SoundExtractorSettings
         {
-            [Editor(typeof(BrowseFileEditor), typeof(PropertyValueEditor))]
+            [Editor(typeof(BrowseFileEditor), typeof(BrowseFileEditor))]
             [DisplayName("FFmpeg Path")]
             [RuntimeDefaultValue(typeof(SoundExtractorSettings), nameof(DefaultFFmpegPath))]
             public string FFmpegPath { get; set; }

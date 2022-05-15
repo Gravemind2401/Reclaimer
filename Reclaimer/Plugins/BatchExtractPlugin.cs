@@ -10,7 +10,6 @@ using Reclaimer.Models;
 using Reclaimer.Saber3D.Common;
 using Reclaimer.Utilities;
 using System;
-using System.Activities.Presentation.PropertyEditing;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -486,7 +485,7 @@ namespace Reclaimer.Plugins
             private const int minWorkers = 1;
             private const int maxWorkers = 10;
 
-            [Editor(typeof(BrowseFolderEditor), typeof(PropertyValueEditor))]
+            [Editor(typeof(BrowseFolderEditor), typeof(BrowseFolderEditor))]
             [DisplayName("Data Folder")]
             [DefaultValue(":plugins:\\Batch Extractor")]
             public string DataFolder { get; set; }

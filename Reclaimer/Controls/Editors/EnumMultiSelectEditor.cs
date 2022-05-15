@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Activities.Presentation.PropertyEditing;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +10,14 @@ namespace Reclaimer.Controls.Editors
 {
     public class EnumMultiSelectEditor : MultiSelectEditorBase
     {
-        private Type GetTargetType(PropertyItem propertyItem)
+        private static Type GetTargetType(PropertyItem propertyItem)
         {
-            var targetType = propertyItem.PropertyDescriptor.Attributes
-                .OfType<EditorOptionAttribute>()
-                .FirstOrDefault(a => a.Name == "CollectionType")?.Value as Type;
+            var targetType = propertyItem.PropertyDescriptor.PropertyType
+                .GetInterfaces()
+                .FirstOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                ?.GenericTypeArguments.FirstOrDefault();
 
-            if (targetType == null || !targetType.IsEnum)
-                return null;
-
-            return targetType;
+            return targetType != null && targetType.IsEnum ? targetType : null;
         }
 
         protected override IList<Selectable> GetItems(PropertyItem propertyItem)
