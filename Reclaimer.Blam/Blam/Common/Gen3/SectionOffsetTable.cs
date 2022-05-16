@@ -26,7 +26,7 @@ namespace Reclaimer.Blam.Common.Gen3
 
             sectionOffsets = new uint[4];
 
-            for (int i = 0; i < sectionOffsets.Length; i++)
+            for (var i = 0; i < sectionOffsets.Length; i++)
                 sectionOffsets[i] = reader.ReadUInt32();
         }
 

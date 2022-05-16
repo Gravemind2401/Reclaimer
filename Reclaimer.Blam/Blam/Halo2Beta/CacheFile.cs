@@ -111,7 +111,7 @@ namespace Reclaimer.Blam.Halo2Beta
         private readonly Dictionary<int, IndexItem> items;
         private readonly Dictionary<string, IndexItem> sysItems;
 
-        public int HeaderSize => 20;
+        public static int HeaderSize => 20;
 
         [Offset(0)]
         public int Magic { get; set; }
@@ -137,13 +137,13 @@ namespace Reclaimer.Blam.Halo2Beta
             using (var reader = cache.CreateReader(cache.MetadataTranslator))
             {
                 reader.Seek(cache.Header.IndexAddress + HeaderSize, SeekOrigin.Begin);
-                for (int i = 0; i < TagCount; i++)
+                for (var i = 0; i < TagCount; i++)
                 {
                     var item = reader.ReadObject(new IndexItem(cache));
                     items.Add(i, item);
                 }
 
-                for (int i = 0; i < TagCount; i++)
+                for (var i = 0; i < TagCount; i++)
                 {
                     var item = items[i];
 
@@ -182,12 +182,12 @@ namespace Reclaimer.Blam.Halo2Beta
             {
                 var indices = new int[cache.Header.StringCount];
                 reader.Seek(cache.Header.StringTableIndexAddress, SeekOrigin.Begin);
-                for (int i = 0; i < cache.Header.StringCount; i++)
+                for (var i = 0; i < cache.Header.StringCount; i++)
                     indices[i] = reader.ReadInt32();
 
                 using (var reader2 = reader.CreateVirtualReader(cache.Header.StringTableAddress))
                 {
-                    for (int i = 0; i < cache.Header.StringCount; i++)
+                    for (var i = 0; i < cache.Header.StringCount; i++)
                     {
                         if (indices[i] < 0)
                             continue;

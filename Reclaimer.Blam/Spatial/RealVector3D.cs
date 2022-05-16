@@ -18,34 +18,20 @@ namespace Adjutant.Spatial
     [StructLayout(LayoutKind.Sequential)]
     public struct RealVector3D : IRealVector3D, IXMVector
     {
-        private float x, y, z;
-
         [Offset(0)]
-        public float X
-        {
-            get => x;
-            set => x = value;
-        }
+        public float X { get; set; }
 
         [Offset(4)]
-        public float Y
-        {
-            get => y;
-            set => y = value;
-        }
+        public float Y { get; set; }
 
         [Offset(8)]
-        public float Z
-        {
-            get => z;
-            set => z = value;
-        }
+        public float Z { get; set; }
 
         public RealVector3D(float x, float y, float z)
         {
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            X = x;
+            Y = y;
+            Z = z;
         }
 
         public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z);
@@ -66,14 +52,14 @@ namespace Adjutant.Spatial
 
         #region Equality Operators
 
-        public static bool operator ==(RealVector3D value1, RealVector3D value2) => value1.x == value2.x && value1.y == value2.y && value1.z == value2.z;
+        public static bool operator ==(RealVector3D value1, RealVector3D value2) => value1.X == value2.X && value1.Y == value2.Y && value1.Z == value2.Z;
         public static bool operator !=(RealVector3D value1, RealVector3D value2) => !(value1 == value2);
 
-        public static bool Equals(RealVector3D value1, RealVector3D value2) => value1.x.Equals(value2.x) && value1.y.Equals(value2.y) && value1.z.Equals(value2.z);
+        public static bool Equals(RealVector3D value1, RealVector3D value2) => value1.X.Equals(value2.X) && value1.Y.Equals(value2.Y) && value1.Z.Equals(value2.Z);
         public override bool Equals(object obj)=> obj is RealVector3D value && RealVector3D.Equals(this, value);
         public bool Equals(RealVector3D value) => RealVector3D.Equals(this, value);
 
-        public override int GetHashCode() => x.GetHashCode() ^ y.GetHashCode() ^ z.GetHashCode();
+        public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
 
         #endregion
     }

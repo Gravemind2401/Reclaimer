@@ -153,7 +153,7 @@ namespace Reclaimer.Blam.Halo1
             if (items.Any())
                 throw new InvalidOperationException();
 
-            for (int i = 0; i < TagCount; i++)
+            for (var i = 0; i < TagCount; i++)
             {
                 reader.Seek(cache.Header.IndexAddress + HeaderSize + i * 32, SeekOrigin.Begin);
 

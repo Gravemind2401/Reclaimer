@@ -35,11 +35,7 @@ namespace Reclaimer.Plugins.MetaViewer
                 return null;
 
             var strVal = attr.Value;
-
-            if (bool.TryParse(strVal, out var boolVal))
-                return boolVal;
-            else
-                return null;
+            return bool.TryParse(strVal, out var boolVal) ? boolVal : null;
         }
 
         public static TEnum? GetEnumAttribute<TEnum>(this XmlNode node, params string[] possibleNames) where TEnum : struct

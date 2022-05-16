@@ -24,7 +24,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             ToolTip = GetSection('#', value);
         }
 
-        private string GetSection(char separator, string value)
+        private static string GetSection(char separator, string value)
         {
             var start = value.IndexOf(separator);
             if (start < 0)

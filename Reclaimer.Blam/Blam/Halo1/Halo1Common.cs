@@ -55,11 +55,7 @@ namespace Reclaimer.Blam.Halo1
                 reader.Seek(tagRef.Tag.MetaPointer.Address + offset, SeekOrigin.Begin);
 
                 var bitmId = reader.ReadInt16();
-
-                if (bitmId == -1)
-                    return null;
-                else
-                    return tagRef.Tag.CacheFile.TagIndex[bitmId];
+                return bitmId == -1 ? null : tagRef.Tag.CacheFile.TagIndex[bitmId];
             }
             catch
             {

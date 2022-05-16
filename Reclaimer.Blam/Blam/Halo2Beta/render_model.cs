@@ -113,15 +113,12 @@ namespace Reclaimer.Blam.Halo2Beta
                         });
                     }
 
-                    if (section.FaceCount * 3 == sectionInfo.IndexCount)
-                        mesh.IndexFormat = IndexFormat.TriangleList;
-                    else
-                        mesh.IndexFormat = IndexFormat.TriangleStrip;
+                    mesh.IndexFormat = section.FaceCount * 3 == sectionInfo.IndexCount ? IndexFormat.TriangleList : IndexFormat.TriangleStrip;
 
                     reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
                     mesh.Indicies = reader.ReadEnumerable<ushort>(sectionInfo.IndexCount).Select(i => (int)i).ToArray();
 
-                    var nodeMap = new byte[0];
+                    var nodeMap = Array.Empty<byte>();
                     if (nodeMapResource != null)
                     {
                         reader.Seek(baseAddress + nodeMapResource.Offset, SeekOrigin.Begin);
@@ -131,7 +128,7 @@ namespace Reclaimer.Blam.Halo2Beta
                     #region Vertices
                     mesh.Vertices = new IVertex[section.VertexCount];
                     var vertexSize = vertexResource.Size / section.VertexCount;
-                    for (int i = 0; i < section.VertexCount; i++)
+                    for (var i = 0; i < section.VertexCount; i++)
                     {
                         var vert = new Halo2.Vertex();
 
@@ -142,7 +139,7 @@ namespace Reclaimer.Blam.Halo2Beta
                         mesh.Vertices[i] = vert;
                     }
 
-                    for (int i = 0; i < section.VertexCount; i++)
+                    for (var i = 0; i < section.VertexCount; i++)
                     {
                         var vert = (Halo2.Vertex)mesh.Vertices[i];
 
@@ -150,7 +147,7 @@ namespace Reclaimer.Blam.Halo2Beta
                         vert.TexCoords = new UInt16N2((ushort)(reader.ReadInt16() - short.MinValue), (ushort)(reader.ReadInt16() - short.MinValue));
                     }
 
-                    for (int i = 0; i < section.VertexCount; i++)
+                    for (var i = 0; i < section.VertexCount; i++)
                     {
                         var vert = (Halo2.Vertex)mesh.Vertices[i];
 
@@ -166,7 +163,7 @@ namespace Reclaimer.Blam.Halo2Beta
             return model;
         }
 
-        private void ReadBlendData(EndianReader reader, SectionBlock section, GeometryMesh mesh, Halo2.Vertex vert, byte[] nodeMap)
+        private static void ReadBlendData(EndianReader reader, SectionBlock section, GeometryMesh mesh, Halo2.Vertex vert, byte[] nodeMap)
         {
             if (section.GeometryClassification == Halo2.GeometryClassification.Rigid)
             {

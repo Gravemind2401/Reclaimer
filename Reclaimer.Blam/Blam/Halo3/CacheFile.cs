@@ -252,7 +252,7 @@ namespace Reclaimer.Blam.Halo3
                 Classes.AddRange(reader.ReadEnumerable<TagClass>(TagClassCount));
 
                 reader.Seek(TagDataPointer.Address, SeekOrigin.Begin);
-                for (int i = 0; i < TagCount; i++)
+                for (var i = 0; i < TagCount; i++)
                 {
                     //every Halo3 map has an empty tag
                     var item = reader.ReadObject(new IndexItem(cache, i));
@@ -270,7 +270,7 @@ namespace Reclaimer.Blam.Halo3
 
                 using (var tempReader = reader.CreateVirtualReader(cache.Header.FileTablePointer.Address))
                 {
-                    for (int i = 0; i < TagCount; i++)
+                    for (var i = 0; i < TagCount; i++)
                     {
                         if (indices[i] == -1)
                         {
@@ -322,7 +322,7 @@ namespace Reclaimer.Blam.Halo3
 
                 using (var tempReader = reader.CreateVirtualReader(cache.Header.StringTablePointer.Address))
                 {
-                    for (int i = 0; i < cache.Header.StringCount; i++)
+                    for (var i = 0; i < cache.Header.StringCount; i++)
                     {
                         if (indices[i] < 0)
                             continue;

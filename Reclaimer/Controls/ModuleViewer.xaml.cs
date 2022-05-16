@@ -220,7 +220,7 @@ namespace Reclaimer.Controls
             return new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), GetFileFormats(item).ToArray());
         }
 
-        private IEnumerable<object> GetFileFormats(ModuleItem item)
+        private static IEnumerable<object> GetFileFormats(ModuleItem item)
         {
             yield return item;
 

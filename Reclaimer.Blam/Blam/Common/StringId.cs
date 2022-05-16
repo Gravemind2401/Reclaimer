@@ -36,8 +36,7 @@ namespace Reclaimer.Blam.Common
         {
             get
             {
-                try
-                { return cache?.StringIndex?[id]; }
+                try { return cache?.StringIndex?[id]; }
                 catch { return "<invalid>"; }
             }
         }

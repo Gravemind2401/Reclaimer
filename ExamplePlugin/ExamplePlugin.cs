@@ -43,7 +43,7 @@ namespace ExamplePlugin
             {
                 Task.Run(() =>
                 {
-                    for (int i = 0; i < 100; i++)
+                    for (var i = 0; i < 100; i++)
                     {
                         LogOutput($"Output line {i}!");
                         System.Threading.Thread.Sleep(100);

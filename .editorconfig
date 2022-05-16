@@ -93,7 +93,7 @@ csharp_style_expression_bodied_properties = when_on_single_line:suggestion
 csharp_style_pattern_matching_over_as_with_null_check = true
 csharp_style_pattern_matching_over_is_with_cast_check = true
 csharp_style_prefer_not_pattern = true
-csharp_style_prefer_pattern_matching = true
+csharp_style_prefer_pattern_matching =false:silent
 csharp_style_prefer_switch_expression = true
 
 # Null-checking preferences
@@ -105,13 +105,13 @@ csharp_preferred_modifier_order = public,private,protected,internal,static,exter
 
 # Code-block preferences
 csharp_prefer_braces = when_multiline
-csharp_prefer_simple_using_statement = true
+csharp_prefer_simple_using_statement =true:silent
 csharp_style_namespace_declarations = block_scoped
 
 # Expression-level preferences
 csharp_prefer_simple_default_expression = true
 csharp_style_deconstructed_variable_declaration = true
-csharp_style_implicit_object_creation_when_type_is_apparent = true
+csharp_style_implicit_object_creation_when_type_is_apparent =true:silent
 csharp_style_inlined_variable_declaration = true
 csharp_style_pattern_local_over_anonymous_function = true
 csharp_style_prefer_index_operator = true
@@ -230,3 +230,6 @@ dotnet_naming_style.camel_case.required_prefix =
 dotnet_naming_style.camel_case.required_suffix = 
 dotnet_naming_style.camel_case.word_separator = 
 dotnet_naming_style.camel_case.capitalization = camel_case
+
+[*.{cs,vb}]
+dotnet_style_require_accessibility_modifiers=for_non_interface_members:suggestion

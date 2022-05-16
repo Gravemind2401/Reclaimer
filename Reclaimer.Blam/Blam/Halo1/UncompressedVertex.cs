@@ -54,7 +54,7 @@ namespace Reclaimer.Blam.Halo1
 
         IReadOnlyList<IXMVector> IVertex.BlendWeight => new IXMVector[] { NodeWeights };
 
-        IReadOnlyList<IXMVector> IVertex.Color => new IXMVector[0];
+        IReadOnlyList<IXMVector> IVertex.Color => Array.Empty<IXMVector>();
 
         #endregion
     }

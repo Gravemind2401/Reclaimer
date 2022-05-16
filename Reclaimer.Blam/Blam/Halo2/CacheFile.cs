@@ -135,7 +135,7 @@ namespace Reclaimer.Blam.Halo2
         private readonly Dictionary<int, IndexItem> items;
         private readonly Dictionary<string, IndexItem> sysItems;
 
-        public int HeaderSize => 32;
+        public static int HeaderSize => 32;
 
         internal Dictionary<int, string> Filenames { get; }
 
@@ -167,7 +167,7 @@ namespace Reclaimer.Blam.Halo2
             using (var reader = cache.CreateReader(cache.MetadataTranslator))
             {
                 reader.Seek(TagDataAddress.Address, SeekOrigin.Begin);
-                for (int i = 0; i < TagCount; i++)
+                for (var i = 0; i < TagCount; i++)
                 {
                     //Halo2Vista multiplayer maps have empty tags in them
                     var item = reader.ReadObject(new IndexItem(cache));
@@ -184,7 +184,7 @@ namespace Reclaimer.Blam.Halo2
                 reader.Seek(cache.Header.FileTableIndexOffset, SeekOrigin.Begin);
                 var indices = reader.ReadEnumerable<int>(TagCount).ToArray();
 
-                for (int i = 0; i < TagCount; i++)
+                for (var i = 0; i < TagCount; i++)
                 {
                     reader.Seek(cache.Header.FileTableAddress + indices[i], SeekOrigin.Begin);
                     Filenames.Add(i, reader.ReadNullTerminatedString());
@@ -218,12 +218,12 @@ namespace Reclaimer.Blam.Halo2
             {
                 var indices = new int[cache.Header.StringCount];
                 reader.Seek(cache.Header.StringTableIndexAddress, SeekOrigin.Begin);
-                for (int i = 0; i < cache.Header.StringCount; i++)
+                for (var i = 0; i < cache.Header.StringCount; i++)
                     indices[i] = reader.ReadInt32();
 
                 using (var reader2 = reader.CreateVirtualReader(cache.Header.StringTableAddress))
                 {
-                    for (int i = 0; i < cache.Header.StringCount; i++)
+                    for (var i = 0; i < cache.Header.StringCount; i++)
                     {
                         if (indices[i] < 0)
                             continue;

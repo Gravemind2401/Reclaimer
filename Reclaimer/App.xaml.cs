@@ -135,7 +135,7 @@ namespace Reclaimer
             });
         }
 
-        private void LogUnhandledException(Exception ex)
+        private static void LogUnhandledException(Exception ex)
         {
             if (System.Diagnostics.Debugger.IsAttached)
                 System.Diagnostics.Debugger.Break();

@@ -34,32 +34,31 @@ namespace Reclaimer.Blam.Halo5
         {
             FileName = fileName;
 
-            using (var reader = CreateReader())
-            {
-                Header = reader.ReadObject<ModuleHeader>();
+            using var reader = CreateReader();
 
-                Items = new List<ModuleItem>(Header.ItemCount);
-                for (int i = 0; i < Header.ItemCount; i++)
-                    Items.Add(reader.ReadObject<ModuleItem>((int)Header.Version));
+            Header = reader.ReadObject<ModuleHeader>();
 
-                var origin = reader.BaseStream.Position;
-                Strings = new Dictionary<int, string>();
-                while (reader.BaseStream.Position < origin + Header.StringsSize)
-                    Strings.Add((int)(reader.BaseStream.Position - origin), reader.ReadNullTerminatedString());
+            Items = new List<ModuleItem>(Header.ItemCount);
+            for (var i = 0; i < Header.ItemCount; i++)
+                Items.Add(reader.ReadObject<ModuleItem>((int)Header.Version));
 
-                Resources = new List<int>(Header.ResourceCount);
-                for (int i = 0; i < Header.ResourceCount; i++)
-                    Resources.Add(reader.ReadInt32());
+            var origin = reader.BaseStream.Position;
+            Strings = new Dictionary<int, string>();
+            while (reader.BaseStream.Position < origin + Header.StringsSize)
+                Strings.Add((int)(reader.BaseStream.Position - origin), reader.ReadNullTerminatedString());
 
-                Blocks = new List<Block>(Header.BlockCount);
-                for (int i = 0; i < Header.BlockCount; i++)
-                    Blocks.Add(reader.ReadObject<Block>((int)Header.Version));
+            Resources = new List<int>(Header.ResourceCount);
+            for (var i = 0; i < Header.ResourceCount; i++)
+                Resources.Add(reader.ReadInt32());
 
-                DataAddress = reader.BaseStream.Position;
+            Blocks = new List<Block>(Header.BlockCount);
+            for (var i = 0; i < Header.BlockCount; i++)
+                Blocks.Add(reader.ReadObject<Block>((int)Header.Version));
 
-                tagIndex = parentModule?.tagIndex ?? new TagIndex(Items);
-                linkedModules = parentModule?.linkedModules ?? new List<Module>(Enumerable.Repeat(this, 1));
-            }
+            DataAddress = reader.BaseStream.Position;
+
+            tagIndex = parentModule?.tagIndex ?? new TagIndex(Items);
+            linkedModules = parentModule?.linkedModules ?? new List<Module>(Enumerable.Repeat(this, 1));
         }
 
         public DependencyReader CreateReader()

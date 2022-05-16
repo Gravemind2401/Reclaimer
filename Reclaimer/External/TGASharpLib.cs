@@ -936,7 +936,7 @@ namespace TGASharpLib
         public TgaColorKey(byte[] bytes)
         {
             if (bytes == null)
-                throw new ArgumentNullException(nameof(bytes) + " = null!");
+                throw new ArgumentNullException(nameof(bytes));
             if (bytes.Length != Size)
                 throw new ArgumentOutOfRangeException(nameof(bytes.Length) + " must be equal " + Size + "!");
 
@@ -1077,7 +1077,7 @@ namespace TGASharpLib
         public TgaColorMapSpec(byte[] bytes)
         {
             if (bytes == null)
-                throw new ArgumentNullException(nameof(bytes) + " = null!");
+                throw new ArgumentNullException(nameof(bytes));
             if (bytes.Length != Size)
                 throw new ArgumentOutOfRangeException(nameof(bytes.Length) + " must be equal " + Size + "!");
 
@@ -1189,14 +1189,14 @@ namespace TGASharpLib
 
         public TgaComment(string str, char blankSpaceChar = '\0')
         {
-            OriginalString = str ?? throw new ArgumentNullException(nameof(str) + " = null!");
+            OriginalString = str ?? throw new ArgumentNullException(nameof(str));
             BlankSpaceChar = blankSpaceChar;
         }
 
         public TgaComment(byte[] bytes)
         {
             if (bytes == null)
-                throw new ArgumentNullException(nameof(bytes) + " = null!");
+                throw new ArgumentNullException(nameof(bytes));
             if (bytes.Length != Size)
                 throw new ArgumentOutOfRangeException(nameof(bytes.Length) + " must be equal " + Size + "!");
 
@@ -1355,7 +1355,7 @@ namespace TGASharpLib
         public TgaDateTime(byte[] bytes)
         {
             if (bytes == null)
-                throw new ArgumentNullException(nameof(bytes) + " = null!");
+                throw new ArgumentNullException(nameof(bytes));
             else if (bytes.Length != Size)
                 throw new ArgumentOutOfRangeException(nameof(bytes) + " must be equal " + Size + "!");
 
@@ -1513,7 +1513,7 @@ namespace TGASharpLib
         public TgaDevEntry(byte[] bytes)
         {
             if (bytes == null)
-                throw new ArgumentNullException(nameof(bytes) + " = null!");
+                throw new ArgumentNullException(nameof(bytes));
             else if (bytes.Length < 6)
                 throw new ArgumentOutOfRangeException(nameof(bytes) + " must be >= 6!");
 
@@ -1646,7 +1646,7 @@ namespace TGASharpLib
         public TgaFraction(byte[] bytes)
         {
             if (bytes == null)
-                throw new ArgumentNullException(nameof(bytes) + " = null!");
+                throw new ArgumentNullException(nameof(bytes));
             if (bytes.Length != Size)
                 throw new ArgumentOutOfRangeException(nameof(bytes.Length) + " must be equal " + Size + "!");
 
@@ -1873,7 +1873,7 @@ namespace TGASharpLib
         public TgaImageSpec(byte[] bytes)
         {
             if (bytes == null)
-                throw new ArgumentNullException(nameof(bytes) + " = null!");
+                throw new ArgumentNullException(nameof(bytes));
             if (bytes.Length != Size)
                 throw new ArgumentOutOfRangeException(nameof(bytes.Length) + " must be equal " + Size + "!");
 
@@ -2019,7 +2019,7 @@ namespace TGASharpLib
         public TgaPostageStampImage(byte[] bytes)
         {
             if (bytes == null)
-                throw new ArgumentNullException(nameof(bytes) + " = null!");
+                throw new ArgumentNullException(nameof(bytes));
             if (bytes.Length < 2)
                 throw new ArgumentOutOfRangeException(nameof(bytes.Length) + " must be >= " + 2 + "!");
 
@@ -2040,7 +2040,7 @@ namespace TGASharpLib
         {
             Width = width;
             Height = height;
-            Data = bytes ?? throw new ArgumentNullException(nameof(bytes) + " = null!");
+            Data = bytes ?? throw new ArgumentNullException(nameof(bytes));
         }
 
         /// <summary>
@@ -2150,7 +2150,7 @@ namespace TGASharpLib
         public TgaSoftVersion(byte[] bytes)
         {
             if (bytes == null)
-                throw new ArgumentNullException(nameof(bytes) + " = null!");
+                throw new ArgumentNullException(nameof(bytes));
             if (bytes.Length != Size)
                 throw new ArgumentOutOfRangeException(nameof(bytes.Length) + " must be equal " + Size + "!");
 
@@ -2242,7 +2242,7 @@ namespace TGASharpLib
         public TgaString(byte[] bytes, bool useEnding = false)
         {
             if (bytes == null)
-                throw new ArgumentNullException(nameof(bytes) + " = null!");
+                throw new ArgumentNullException(nameof(bytes));
 
             Length = bytes.Length;
             UseEndingChar = useEnding;
@@ -2272,7 +2272,7 @@ namespace TGASharpLib
 
         public TgaString(string str, int length, bool useEnding = false, char blankSpaceChar = '\0')
         {
-            OriginalString = str ?? throw new ArgumentNullException(nameof(str) + " = null!");
+            OriginalString = str ?? throw new ArgumentNullException(nameof(str));
             Length = length;
             BlankSpaceChar = blankSpaceChar;
             UseEndingChar = useEnding;
@@ -2462,7 +2462,7 @@ namespace TGASharpLib
         public TgaTime(byte[] bytes)
         {
             if (bytes == null)
-                throw new ArgumentNullException(nameof(bytes) + " = null!");
+                throw new ArgumentNullException(nameof(bytes));
             else if (bytes.Length != Size)
                 throw new ArgumentOutOfRangeException(nameof(bytes) + " must be equal " + Size + "!");
 
@@ -2570,7 +2570,7 @@ namespace TGASharpLib
         public TgaHeader(byte[] bytes)
         {
             if (bytes == null)
-                throw new ArgumentNullException(nameof(bytes) + " = null!");
+                throw new ArgumentNullException(nameof(bytes));
             if (bytes.Length != Size)
                 throw new ArgumentOutOfRangeException(nameof(bytes.Length) + " must be equal " + Size + "!");
 
@@ -2844,7 +2844,7 @@ namespace TGASharpLib
 
         public TgaDevArea(List<TgaDevEntry> entries)
         {
-            Entries = entries ?? throw new ArgumentNullException(nameof(entries) + " = null!");
+            Entries = entries ?? throw new ArgumentNullException(nameof(entries));
         }
 
         /// <summary>
@@ -2960,7 +2960,7 @@ namespace TGASharpLib
         public TgaExtArea(byte[] bytes, uint[] slt = null, TgaPostageStampImage postImg = null, ushort[] cct = null)
         {
             if (bytes == null)
-                throw new ArgumentNullException(nameof(bytes) + " = null!");
+                throw new ArgumentNullException(nameof(bytes));
             if (bytes.Length < MinSize)
                 throw new ArgumentOutOfRangeException(nameof(bytes.Length) + " must be >= " + MinSize + "!");
 
@@ -3458,7 +3458,7 @@ namespace TGASharpLib
         public TgaFooter(byte[] bytes)
         {
             if (bytes == null)
-                throw new ArgumentNullException(nameof(bytes) + " = null!");
+                throw new ArgumentNullException(nameof(bytes));
             if (bytes.Length != Size)
                 throw new ArgumentOutOfRangeException(nameof(bytes.Length) + " must be equal " + Size + "!");
 

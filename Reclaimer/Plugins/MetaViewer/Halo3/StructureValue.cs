@@ -104,13 +104,13 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
                 var entryOffset = node.GetIntAttribute("entryName", "entryOffset", "label");
                 var isExplicit = entryOffset.HasValue;
-                entryOffset = entryOffset ?? 0;
+                entryOffset ??= 0;
 
                 labelValue = Children.FirstOrDefault(c => c.Offset == entryOffset);
                 if ((isExplicit && labelValue is SimpleValue) || labelValue is StringValue || labelValue is TagReferenceValue)
                 {
                     var labels = new List<string>();
-                    for (int i = BlockCount - 1; i >= 0; i--) //end at 0 so the first entry is displayed when done
+                    for (var i = BlockCount - 1; i >= 0; i--) //end at 0 so the first entry is displayed when done
                     {
                         labelValue.BaseAddress = BlockAddress + i * BlockSize;
                         labelValue.ReadValue(reader);
@@ -137,12 +137,9 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             throw new NotImplementedException();
         }
 
-        private string GetEntryString(int index, MetaValue value)
+        private static string GetEntryString(int index, MetaValue value)
         {
-            if (value.EntryString == null)
-                return $"Block {index:D2}";
-            else
-                return $"{index:D2} : {value.EntryString}";
+            return value.EntryString == null ? $"Block {index:D2}" : $"{index:D2} : {value.EntryString}";
         }
 
         private void Children_ChildPropertyChanged(object sender, ChildPropertyChangedEventArgs e)

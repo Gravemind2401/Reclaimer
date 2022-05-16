@@ -266,7 +266,7 @@ namespace Reclaimer.Drawing
                             return bgr24 ? ToArray(SkipNth(data, 4), true, virtualHeight, Width) : data;
 
                         default:
-                            throw new NotSupportedException("The DxgiFormat is not supported.");
+                            throw new NotSupportedException($"The {nameof(DxgiFormat)} is not supported.");
                     }
                 }
             }
@@ -274,14 +274,14 @@ namespace Reclaimer.Drawing
             {
                 return decompressMethodsXbox.ContainsKey(xboxHeader.XboxFormat)
                     ? decompressMethodsXbox[xboxHeader.XboxFormat](data, virtualHeight, Width, bgr24)
-                    : throw new NotSupportedException("The XboxFormat is not supported.");
+                    : throw new NotSupportedException($"The {nameof(XboxFormat)} is not supported.");
             }
             else
             {
                 var fourcc = (FourCC)header.PixelFormat.FourCC;
                 return decompressMethodsFourCC.ContainsKey(fourcc)
                     ? decompressMethodsFourCC[fourcc](data, virtualHeight, Width, bgr24)
-                    : throw new NotSupportedException("The FourCC is not supported.");
+                    : throw new NotSupportedException($"The {nameof(FourCC)} is not supported.");
             }
         }
 
@@ -391,9 +391,9 @@ namespace Reclaimer.Drawing
             var xBlocks = (int)Math.Ceiling(width / (float)bcBlockWidth);
             var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
-            for (int yBlock = 0; yBlock < yBlocks; yBlock++)
+            for (var yBlock = 0; yBlock < yBlocks; yBlock++)
             {
-                for (int xBlock = 0; xBlock < xBlocks; xBlock++)
+                for (var xBlock = 0; xBlock < xBlocks; xBlock++)
                 {
                     var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
                     var c0 = BitConverter.ToUInt16(data, srcIndex);
@@ -413,10 +413,10 @@ namespace Reclaimer.Drawing
                         palette[3] = Lerp(palette[0], palette[1], 2 / 3f);
                     }
 
-                    for (int i = 0; i < 4; i++)
+                    for (var i = 0; i < 4; i++)
                     {
                         var indexBits = data[srcIndex + 4 + i];
-                        for (int j = 0; j < 4; j++)
+                        for (var j = 0; j < 4; j++)
                         {
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
@@ -447,9 +447,9 @@ namespace Reclaimer.Drawing
             var xBlocks = (int)Math.Ceiling(width / (float)bcBlockWidth);
             var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
-            for (int yBlock = 0; yBlock < yBlocks; yBlock++)
+            for (var yBlock = 0; yBlock < yBlocks; yBlock++)
             {
-                for (int xBlock = 0; xBlock < xBlocks; xBlock++)
+                for (var xBlock = 0; xBlock < xBlocks; xBlock++)
                 {
                     var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
                     palette[0] = BgraColour.From565(BitConverter.ToUInt16(data, srcIndex + 8));
@@ -458,11 +458,11 @@ namespace Reclaimer.Drawing
                     palette[2] = Lerp(palette[0], palette[1], 1 / 3f);
                     palette[3] = Lerp(palette[0], palette[1], 2 / 3f);
 
-                    for (int i = 0; i < 4; i++)
+                    for (var i = 0; i < 4; i++)
                     {
                         var alphaBits = BitConverter.ToUInt16(data, srcIndex + i * 2);
                         var indexBits = data[srcIndex + 12 + i];
-                        for (int j = 0; j < 4; j++)
+                        for (var j = 0; j < 4; j++)
                         {
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
@@ -497,9 +497,9 @@ namespace Reclaimer.Drawing
             var xBlocks = (int)Math.Ceiling(width / (float)bcBlockWidth);
             var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
-            for (int yBlock = 0; yBlock < yBlocks; yBlock++)
+            for (var yBlock = 0; yBlock < yBlocks; yBlock++)
             {
-                for (int xBlock = 0; xBlock < xBlocks; xBlock++)
+                for (var xBlock = 0; xBlock < xBlocks; xBlock++)
                 {
                     var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
                     rgbPalette[0] = BgraColour.From565(BitConverter.ToUInt16(data, srcIndex + 8));
@@ -512,7 +512,7 @@ namespace Reclaimer.Drawing
                     alphaPalette[1] = data[srcIndex + 1];
 
                     var gradients = alphaPalette[0] > alphaPalette[1] ? 7f : 5f;
-                    for (int i = 1; i < gradients; i++)
+                    for (var i = 1; i < gradients; i++)
                         alphaPalette[i + 1] = Lerp(alphaPalette[0], alphaPalette[1], i / gradients);
 
                     if (alphaPalette[0] <= alphaPalette[1])
@@ -521,10 +521,10 @@ namespace Reclaimer.Drawing
                         alphaPalette[7] = byte.MaxValue;
                     }
 
-                    for (int i = 0; i < 4; i++)
+                    for (var i = 0; i < 4; i++)
                     {
                         var rgbIndexBits = data[srcIndex + 12 + i];
-                        for (int j = 0; j < 4; j++)
+                        for (var j = 0; j < 4; j++)
                         {
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
@@ -562,16 +562,16 @@ namespace Reclaimer.Drawing
             var xBlocks = (int)Math.Ceiling(width / (float)bcBlockWidth);
             var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
-            for (int yBlock = 0; yBlock < yBlocks; yBlock++)
+            for (var yBlock = 0; yBlock < yBlocks; yBlock++)
             {
-                for (int xBlock = 0; xBlock < xBlocks; xBlock++)
+                for (var xBlock = 0; xBlock < xBlocks; xBlock++)
                 {
                     var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
                     palette[0] = data[srcIndex];
                     palette[1] = data[srcIndex + 1];
 
                     var gradients = palette[0] > palette[1] ? 7f : 5f;
-                    for (int i = 1; i < gradients; i++)
+                    for (var i = 1; i < gradients; i++)
                         palette[i + 1] = Lerp(palette[0], palette[1], i / gradients);
 
                     if (palette[0] <= palette[1])
@@ -580,9 +580,9 @@ namespace Reclaimer.Drawing
                         palette[7] = byte.MaxValue;
                     }
 
-                    for (int i = 0; i < 4; i++)
+                    for (var i = 0; i < 4; i++)
                     {
-                        for (int j = 0; j < 4; j++)
+                        for (var j = 0; j < 4; j++)
                         {
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
@@ -621,9 +621,9 @@ namespace Reclaimer.Drawing
             var xBlocks = (int)Math.Ceiling(width / (float)bcBlockWidth);
             var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
-            for (int yBlock = 0; yBlock < yBlocks; yBlock++)
+            for (var yBlock = 0; yBlock < yBlocks; yBlock++)
             {
-                for (int xBlock = 0; xBlock < xBlocks; xBlock++)
+                for (var xBlock = 0; xBlock < xBlocks; xBlock++)
                 {
                     var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
 
@@ -631,7 +631,7 @@ namespace Reclaimer.Drawing
                     rPalette[1] = data[srcIndex + 1];
 
                     var gradients = rPalette[0] > rPalette[1] ? 7f : 5f;
-                    for (int i = 1; i < gradients; i++)
+                    for (var i = 1; i < gradients; i++)
                         rPalette[i + 1] = Lerp(rPalette[0], rPalette[1], i / gradients);
 
                     if (rPalette[0] <= rPalette[1])
@@ -644,7 +644,7 @@ namespace Reclaimer.Drawing
                     gPalette[1] = data[srcIndex + 9];
 
                     gradients = gPalette[0] > gPalette[1] ? 7f : 5f;
-                    for (int i = 1; i < gradients; i++)
+                    for (var i = 1; i < gradients; i++)
                         gPalette[i + 1] = Lerp(gPalette[0], gPalette[1], i / gradients);
 
                     if (gPalette[0] <= gPalette[1])
@@ -653,9 +653,9 @@ namespace Reclaimer.Drawing
                         gPalette[7] = byte.MaxValue;
                     }
 
-                    for (int i = 0; i < 4; i++)
+                    for (var i = 0; i < 4; i++)
                     {
-                        for (int j = 0; j < 4; j++)
+                        for (var j = 0; j < 4; j++)
                         {
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
@@ -703,9 +703,9 @@ namespace Reclaimer.Drawing
             var xBlocks = (int)Math.Ceiling(width / (float)bcBlockWidth);
             var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
-            for (int yBlock = 0; yBlock < yBlocks; yBlock++)
+            for (var yBlock = 0; yBlock < yBlocks; yBlock++)
             {
-                for (int xBlock = 0; xBlock < xBlocks; xBlock++)
+                for (var xBlock = 0; xBlock < xBlocks; xBlock++)
                 {
                     var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
 
@@ -713,7 +713,7 @@ namespace Reclaimer.Drawing
                     rPalette[1] = unchecked((sbyte)data[srcIndex + 1]);
 
                     var gradients = rPalette[0] > rPalette[1] ? 7f : 5f;
-                    for (int i = 1; i < gradients; i++)
+                    for (var i = 1; i < gradients; i++)
                         rPalette[i + 1] = Lerp(rPalette[0], rPalette[1], i / gradients);
 
                     if (rPalette[0] <= rPalette[1])
@@ -726,7 +726,7 @@ namespace Reclaimer.Drawing
                     gPalette[1] = unchecked((sbyte)data[srcIndex + 9]);
 
                     gradients = gPalette[0] > gPalette[1] ? 7f : 5f;
-                    for (int i = 1; i < gradients; i++)
+                    for (var i = 1; i < gradients; i++)
                         gPalette[i + 1] = Lerp(gPalette[0], gPalette[1], i / gradients);
 
                     if (gPalette[0] <= gPalette[1])
@@ -735,9 +735,9 @@ namespace Reclaimer.Drawing
                         gPalette[7] = sbyte.MaxValue;
                     }
 
-                    for (int i = 0; i < 4; i++)
+                    for (var i = 0; i < 4; i++)
                     {
-                        for (int j = 0; j < 4; j++)
+                        for (var j = 0; j < 4; j++)
                         {
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
@@ -783,9 +783,9 @@ namespace Reclaimer.Drawing
             var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
             var reader = new BitReader(data);
-            for (int yBlock = 0; yBlock < yBlocks; yBlock++)
+            for (var yBlock = 0; yBlock < yBlocks; yBlock++)
             {
-                for (int xBlock = 0; xBlock < xBlocks; xBlock++)
+                for (var xBlock = 0; xBlock < xBlocks; xBlock++)
                 {
                     var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
                     reader.Position = srcIndex * 8;
@@ -809,15 +809,15 @@ namespace Reclaimer.Drawing
                     var endpoints = new BgraColour[info.SubsetCount * 2];
                     var channels = info.AlphaBits > 0 ? 4 : 3;
 
-                    for (int i = 2; i >= 0; i--) // R, G, B
+                    for (var i = 2; i >= 0; i--) // R, G, B
                     {
-                        for (int j = 0; j < endpoints.Length; j++)
+                        for (var j = 0; j < endpoints.Length; j++)
                             endpoints[j][i] = reader.ReadBits(info.ColourBits);
                     }
 
                     if (info.AlphaBits > 0)
                     {
-                        for (int i = 0; i < endpoints.Length; i++)
+                        for (var i = 0; i < endpoints.Length; i++)
                             endpoints[i].a = reader.ReadBits(info.AlphaBits);
                     }
 
@@ -825,12 +825,12 @@ namespace Reclaimer.Drawing
                     //own P-bit or a P-bit may be shared between both endpoints of a subset
                     if (info.PBitMode != PBitMode.None)
                     {
-                        for (int i = 0; i < info.SubsetCount; i++)
+                        for (var i = 0; i < info.SubsetCount; i++)
                         {
                             var p1 = reader.ReadBit();
                             var p2 = info.PBitMode == PBitMode.Shared ? p1 : reader.ReadBit();
 
-                            for (int c = 0; c < channels; c++)
+                            for (var c = 0; c < channels; c++)
                             {
                                 endpoints[i * 2][c] = (byte)((endpoints[i * 2][c] << 1) | p1);
                                 endpoints[i * 2 + 1][c] = (byte)((endpoints[i * 2 + 1][c] << 1) | p2);
@@ -841,9 +841,9 @@ namespace Reclaimer.Drawing
                     var palette0 = new BgraColour[info.SubsetCount, 1 << info.Index0Bits];
                     var palette1 = new BgraColour[info.SubsetCount, 1 << info.Index1Bits];
 
-                    for (int i = 0; i < info.SubsetCount; i++)
+                    for (var i = 0; i < info.SubsetCount; i++)
                     {
-                        for (int c = 0; c < channels; c++)
+                        for (var c = 0; c < channels; c++)
                         {
                             var channelBits = c < 3 ? info.ColourBits : info.AlphaBits;
                             if (info.PBitMode != PBitMode.None)
@@ -857,12 +857,12 @@ namespace Reclaimer.Drawing
                             e0 = ((e0 << (8 - channelBits)) | (e0 >> (2 * channelBits - 8)));
                             e1 = ((e1 << (8 - channelBits)) | (e1 >> (2 * channelBits - 8)));
 
-                            for (int j = 0; j < palette0.GetLength(1); j++)
+                            for (var j = 0; j < palette0.GetLength(1); j++)
                                 palette0[i, j][c] = Bc7Helper.Interpolate(e0, e1, j, info.Index0Bits);
 
                             if (info.Index1Bits > 0)
                             {
-                                for (int j = 0; j < palette1.GetLength(1); j++)
+                                for (var j = 0; j < palette1.GetLength(1); j++)
                                     palette1[i, j][c] = Bc7Helper.Interpolate(e0, e1, j, info.Index1Bits);
                             }
                         }
@@ -873,7 +873,7 @@ namespace Reclaimer.Drawing
                     var indices1 = new byte[16];
 
                     //get the index bits
-                    for (int i = 0; i < 16; i++)
+                    for (var i = 0; i < 16; i++)
                     {
                         var subset = Bc7Helper.PartitionTable[info.SubsetCount - 1, partitionIndex, i];
                         indices0[i] = reader.ReadBits((byte)(i == fixups[subset] ? info.Index0Bits - 1 : info.Index0Bits));
@@ -886,16 +886,16 @@ namespace Reclaimer.Drawing
                     //which is what we want for these modes, including with indices0.
                     if (info.Index1Bits > 0)
                     {
-                        for (int i = 0; i < 16; i++)
+                        for (var i = 0; i < 16; i++)
                         {
                             var subset = Bc7Helper.PartitionTable[info.SubsetCount - 1, partitionIndex, i];
                             indices1[i] = reader.ReadBits((byte)(i == fixups[subset] ? info.Index1Bits - 1 : info.Index1Bits));
                         }
                     }
 
-                    for (int i = 0; i < 4; i++)
+                    for (var i = 0; i < 4; i++)
                     {
-                        for (int j = 0; j < 4; j++)
+                        for (var j = 0; j < 4; j++)
                         {
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
@@ -978,9 +978,9 @@ namespace Reclaimer.Drawing
 
             const int bytesPerBlock = 2;
 
-            for (int y = 0; y < height; y++)
+            for (var y = 0; y < height; y++)
             {
-                for (int x = 0; x < width; x++)
+                for (var x = 0; x < width; x++)
                 {
                     var srcIndex = (y * width + x) * bytesPerBlock;
                     var destIndex = (y * width + x) * bpp;
@@ -1016,9 +1016,9 @@ namespace Reclaimer.Drawing
             var xBlocks = width / 4;
             var yBlocks = height / 4;
 
-            for (int yBlock = 0; yBlock < yBlocks; yBlock++)
+            for (var yBlock = 0; yBlock < yBlocks; yBlock++)
             {
-                for (int xBlock = 0; xBlock < xBlocks; xBlock++)
+                for (var xBlock = 0; xBlock < xBlocks; xBlock++)
                 {
                     var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
                     palette[0] = new BgraColour { g = data[srcIndex + 0], r = data[srcIndex + 1], a = byte.MaxValue };
@@ -1027,10 +1027,10 @@ namespace Reclaimer.Drawing
                     palette[2] = Lerp(palette[0], palette[1], 1 / 3f);
                     palette[3] = Lerp(palette[0], palette[1], 2 / 3f);
 
-                    for (int i = 0; i < 4; i++)
+                    for (var i = 0; i < 4; i++)
                     {
                         var indexBits = data[srcIndex + 4 + i];
-                        for (int j = 0; j < 4; j++)
+                        for (var j = 0; j < 4; j++)
                         {
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
@@ -1057,15 +1057,15 @@ namespace Reclaimer.Drawing
             var xBlocks = width / 4;
             var yBlocks = height / 4;
 
-            for (int yBlock = 0; yBlock < yBlocks; yBlock++)
+            for (var yBlock = 0; yBlock < yBlocks; yBlock++)
             {
-                for (int xBlock = 0; xBlock < xBlocks; xBlock++)
+                for (var xBlock = 0; xBlock < xBlocks; xBlock++)
                 {
                     var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
-                    for (int i = 0; i < 4; i++)
+                    for (var i = 0; i < 4; i++)
                     {
                         var alphaBits = BitConverter.ToUInt16(data, srcIndex + i * 2);
-                        for (int j = 0; j < 4; j++)
+                        for (var j = 0; j < 4; j++)
                         {
                             var destX = xBlock * 4 + j;
                             var destY = yBlock * 4 + i;
@@ -1089,7 +1089,7 @@ namespace Reclaimer.Drawing
             //same bit layout as BC4
             data = DecompressBC4(data, height, width, bgr24);
 
-            for (int i = 0; i < data.Length; i += 4)
+            for (var i = 0; i < data.Length; i += 4)
             {
                 data[i + 1] = data[i + 2] = bgr ? data[i] : byte.MinValue; //gr = b
                 if (!bgr24)
@@ -1107,7 +1107,7 @@ namespace Reclaimer.Drawing
         {
             var bpp = bgr24 ? 3 : 4;
             data = DecompressBC5(data, height, width, bgr24);
-            for (int i = 0; i < data.Length; i += bpp)
+            for (var i = 0; i < data.Length; i += bpp)
                 data[i] = CalculateZVector(data[i + 2], data[i + 1]);
 
             return data;
@@ -1118,7 +1118,7 @@ namespace Reclaimer.Drawing
         {
             var bpp = bgr24 ? 3 : 4;
             data = DecompressBC5Signed(data, height, width, bgr24);
-            for (int i = 0; i < data.Length; i += bpp)
+            for (var i = 0; i < data.Length; i += bpp)
                 data[i] = CalculateZVector(data[i + 2], data[i + 1]);
 
             return data;
@@ -1129,7 +1129,7 @@ namespace Reclaimer.Drawing
         {
             var bpp = bgr24 ? 3 : 4;
             data = DecompressBC5(data, height, width, bgr24);
-            for (int i = 0; i < data.Length; i += bpp)
+            for (var i = 0; i < data.Length; i += bpp)
             {
                 if (!bgr24)
                     data[i + 3] = data[i + 1]; //a = g
@@ -1158,20 +1158,9 @@ namespace Reclaimer.Drawing
         internal static byte[] DecompressDXT5a_alpha(byte[] data, int height, int width, bool bgr24) => DecompressBC3AlphaOnly(data, height, width, false, true, bgr24);
         #endregion
 
-        private static sbyte Lerp(sbyte p1, sbyte p2, float fraction)
-        {
-            return (sbyte)((p1 * (1 - fraction)) + (p2 * fraction));
-        }
-
-        private static byte Lerp(byte p1, byte p2, float fraction)
-        {
-            return (byte)((p1 * (1 - fraction)) + (p2 * fraction));
-        }
-
-        private static float Lerp(float p1, float p2, float fraction)
-        {
-            return (p1 * (1 - fraction)) + (p2 * fraction);
-        }
+        private static sbyte Lerp(sbyte p1, sbyte p2, float fraction) => (sbyte)((p1 * (1 - fraction)) + (p2 * fraction));
+        private static byte Lerp(byte p1, byte p2, float fraction) => (byte)((p1 * (1 - fraction)) + (p2 * fraction));
+        private static float Lerp(float p1, float p2, float fraction) => (p1 * (1 - fraction)) + (p2 * fraction);
 
         private static byte CalculateZVector(byte r, byte g)
         {
@@ -1192,9 +1181,9 @@ namespace Reclaimer.Drawing
             var turns = 4 - rot % 4; //starting at 4 because we need to undo the rotations, not apply them
             var output = new byte[buffer.Length];
 
-            for (int x = 0; x < width; x++)
+            for (var x = 0; x < width; x++)
             {
-                for (int y = 0; y < height; y++)
+                for (var y = 0; y < height; y++)
                 {
                     var sourceIndex = y * width * bpp + x * bpp;
 

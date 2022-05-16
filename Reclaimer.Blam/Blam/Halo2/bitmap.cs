@@ -76,7 +76,7 @@ namespace Reclaimer.Blam.Halo2
             if (frameCount > 1)
             {
                 var mipsSize = submap.Lod0Size / frameCount;
-                for (int i = 1; i < frameCount; i++)
+                for (var i = 1; i < frameCount; i++)
                     Array.Copy(data, i * mipsSize, data, i * mip0Size, mip0Size);
 
                 //get rid of additional mipmap data
@@ -100,7 +100,7 @@ namespace Reclaimer.Blam.Halo2
                 data = new byte[indices.Length * 4];
                 format = TextureFormat.A8R8G8B8;
 
-                for (int i = 0; i < indices.Length; i++)
+                for (var i = 0; i < indices.Length; i++)
                     Array.Copy(Properties.Resources.Halo2BumpPalette, indices[i] * 4, data, i * 4, 4);
             }
 

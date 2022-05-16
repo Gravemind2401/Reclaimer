@@ -299,12 +299,12 @@ namespace Reclaimer.Blam.Utilities
             var outStride = (int)Math.Ceiling(outWidth / blockLen) * blockSize;
 
             var output = new byte[outRows * outStride * faces];
-            for (int f = 0; f < faces; f++)
+            for (var f = 0; f < faces; f++)
             {
                 var srcTileStart = inRows * inStride * f;
                 var destTileStart = outRows * outStride * f;
 
-                for (int s = 0; s < outRows; s++)
+                for (var s = 0; s < outRows; s++)
                     Array.Copy(data, srcTileStart + inStride * s, output, destTileStart + outStride * s, outStride);
             }
 
@@ -340,7 +340,7 @@ namespace Reclaimer.Blam.Utilities
             {
                 var mipsSize = 0;
                 var minUnit = (int)Math.Pow(GetLinearBlockSize(bitmapFormat), 2) * GetBpp(bitmapFormat) / 8;
-                for (int i = 1; i <= props.MipmapCount; i++)
+                for (var i = 1; i <= props.MipmapCount; i++)
                     mipsSize += Math.Max(minUnit, (int)(frameSize * Math.Pow(0.25, i)));
                 frameSize += mipsSize;
             }
@@ -375,7 +375,7 @@ namespace Reclaimer.Blam.Utilities
                 var unitSize = GetLinearUnitSize(bitmapFormat);
                 if (unitSize > 1)
                 {
-                    for (int i = 0; i < data.Length - 1; i += unitSize)
+                    for (var i = 0; i < data.Length - 1; i += unitSize)
                         Array.Reverse(data, i, unitSize);
                 }
             }
@@ -385,7 +385,7 @@ namespace Reclaimer.Blam.Utilities
             if (includeMips)
             {
                 var mipsHeight = 0d;
-                for (int i = 1; i <= props.MipmapCount; i++)
+                for (var i = 1; i <= props.MipmapCount; i++)
                     mipsHeight += arrayHeight * Math.Pow(0.25, i);
 
                 var minUnit = GetLinearBlockSize(bitmapFormat);
@@ -472,9 +472,9 @@ namespace Reclaimer.Blam.Utilities
             var output = new byte[data.Length];
 
             var masks = new MaskSet(width, height, depth);
-            for (int y = 0; y < height * depth; y++)
+            for (var y = 0; y < height * depth; y++)
             {
-                for (int x = 0; x < width; x++)
+                for (var x = 0; x < width; x++)
                 {
                     if (deswizzle)
                     {
@@ -489,7 +489,7 @@ namespace Reclaimer.Blam.Utilities
 
                     if (a < output.Length && b < data.Length)
                     {
-                        for (int i = 0; i < bpp; i++)
+                        for (var i = 0; i < bpp; i++)
                             output[a + i] = data[b + i];
                     }
                     else
@@ -509,7 +509,7 @@ namespace Reclaimer.Blam.Utilities
 
             while (bit <= mask)
             {
-                int tmp = mask & bit;
+                var tmp = mask & bit;
 
                 if (tmp != 0)
                     result |= val & bit;
@@ -555,17 +555,17 @@ namespace Reclaimer.Blam.Utilities
             int xBlocks = width / blockSize;
             int yBlocks = height / blockSize;
 
-            for (int i = 0; i < yBlocks; i++)
+            for (var i = 0; i < yBlocks; i++)
             {
-                for (int j = 0; j < xBlocks; j++)
+                for (var j = 0; j < xBlocks; j++)
                 {
-                    int blockOffset = i * xBlocks + j;
+                    var blockOffset = i * xBlocks + j;
 
-                    int x = XGAddress2DTiledX(blockOffset, xBlocks, texelPitch);
-                    int y = XGAddress2DTiledY(blockOffset, xBlocks, texelPitch);
+                    var x = XGAddress2DTiledX(blockOffset, xBlocks, texelPitch);
+                    var y = XGAddress2DTiledY(blockOffset, xBlocks, texelPitch);
 
-                    int sourceIndex = i * xBlocks * texelPitch + j * texelPitch;
-                    int destIndex = y * xBlocks * texelPitch + x * texelPitch;
+                    var sourceIndex = i * xBlocks * texelPitch + j * texelPitch;
+                    var destIndex = y * xBlocks * texelPitch + x * texelPitch;
 
                     if (toLinear)
                         Array.Copy(data, destIndex, output, sourceIndex, texelPitch);
@@ -579,34 +579,34 @@ namespace Reclaimer.Blam.Utilities
 
         private static int XGAddress2DTiledX(int offset, int width, int texelPitch)
         {
-            int alignedWidth = (width + 31) & ~31;
+            var alignedWidth = (width + 31) & ~31;
 
-            int logBPP = (texelPitch >> 2) + (texelPitch >> 1 >> (texelPitch >> 2));
-            int offsetB = offset << logBPP;
-            int offsetT = ((offsetB & ~4095) >> 3) + ((offsetB & 1792) >> 2) + (offsetB & 63);
-            int offsetM = offsetT >> (7 + logBPP);
+            var logBPP = (texelPitch >> 2) + (texelPitch >> 1 >> (texelPitch >> 2));
+            var offsetB = offset << logBPP;
+            var offsetT = ((offsetB & ~4095) >> 3) + ((offsetB & 1792) >> 2) + (offsetB & 63);
+            var offsetM = offsetT >> (7 + logBPP);
 
-            int macroX = (offsetM % (alignedWidth >> 5)) << 2;
-            int tile = (((offsetT >> (5 + logBPP)) & 2) + (offsetB >> 6)) & 3;
-            int macro = (macroX + tile) << 3;
-            int micro = ((((offsetT >> 1) & ~15) + (offsetT & 15)) & ((texelPitch << 3) - 1)) >> logBPP;
+            var macroX = (offsetM % (alignedWidth >> 5)) << 2;
+            var tile = (((offsetT >> (5 + logBPP)) & 2) + (offsetB >> 6)) & 3;
+            var macro = (macroX + tile) << 3;
+            var micro = ((((offsetT >> 1) & ~15) + (offsetT & 15)) & ((texelPitch << 3) - 1)) >> logBPP;
 
             return macro + micro;
         }
 
         private static int XGAddress2DTiledY(int offset, int width, int texelPitch)
         {
-            int alignedWidth = (width + 31) & ~31;
+            var alignedWidth = (width + 31) & ~31;
 
-            int logBPP = (texelPitch >> 2) + (texelPitch >> 1 >> (texelPitch >> 2));
-            int offsetB = offset << logBPP;
-            int offsetT = ((offsetB & ~4095) >> 3) + ((offsetB & 1792) >> 2) + (offsetB & 63);
-            int offsetM = offsetT >> (7 + logBPP);
+            var logBPP = (texelPitch >> 2) + (texelPitch >> 1 >> (texelPitch >> 2));
+            var offsetB = offset << logBPP;
+            var offsetT = ((offsetB & ~4095) >> 3) + ((offsetB & 1792) >> 2) + (offsetB & 63);
+            var offsetM = offsetT >> (7 + logBPP);
 
-            int macroY = (offsetM / (alignedWidth >> 5)) << 2;
-            int tile = ((offsetT >> (6 + logBPP)) & 1) + ((offsetB & 2048) >> 10);
-            int macro = (macroY + tile) << 3;
-            int micro = (((offsetT & ((texelPitch << 6) - 1) & ~31) + ((offsetT & 15) << 1)) >> (3 + logBPP)) & ~1;
+            var macroY = (offsetM / (alignedWidth >> 5)) << 2;
+            var tile = ((offsetT >> (6 + logBPP)) & 1) + ((offsetB & 2048) >> 10);
+            var macro = (macroY + tile) << 3;
+            var micro = (((offsetT & ((texelPitch << 6) - 1) & ~31) + ((offsetT & 15) << 1)) >> (3 + logBPP)) & ~1;
 
             return macro + micro + ((offsetT & 16) >> 4);
         }

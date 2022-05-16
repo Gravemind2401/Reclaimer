@@ -18,26 +18,16 @@ namespace Adjutant.Spatial
     [StructLayout(LayoutKind.Sequential)]
     public struct RealVector2D : IRealVector2D, IXMVector
     {
-        private float x, y;
-
         [Offset(0)]
-        public float X
-        {
-            get => x;
-            set => x = value;
-        }
+        public float X { get; set; }
 
         [Offset(4)]
-        public float Y
-        {
-            get => y;
-            set => y = value;
-        }
+        public float Y { get; set; }
 
         public RealVector2D(float x, float y)
         {
-            this.x = x;
-            this.y = y;
+            X = x;
+            Y = y;
         }
 
         public float Length => (float)Math.Sqrt(X * X + Y * Y);
@@ -64,14 +54,14 @@ namespace Adjutant.Spatial
 
         #region Equality Operators
 
-        public static bool operator ==(RealVector2D value1, RealVector2D value2) => value1.x == value2.x && value1.y == value2.y;
+        public static bool operator ==(RealVector2D value1, RealVector2D value2) => value1.X == value2.X && value1.Y == value2.Y;
         public static bool operator !=(RealVector2D value1, RealVector2D value2) => !(value1 == value2);
 
-        public static bool Equals(RealVector2D value1, RealVector2D value2) => value1.x.Equals(value2.x) && value1.y.Equals(value2.y);
+        public static bool Equals(RealVector2D value1, RealVector2D value2) => value1.X.Equals(value2.X) && value1.Y.Equals(value2.Y);
         public override bool Equals(object obj)=> obj is RealVector2D value && RealVector2D.Equals(this, value);
         public bool Equals(RealVector2D value) => RealVector2D.Equals(this, value);
 
-        public override int GetHashCode() => x.GetHashCode() ^ y.GetHashCode();
+        public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode();
 
         #endregion
     }

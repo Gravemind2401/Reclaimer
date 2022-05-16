@@ -440,10 +440,7 @@ namespace Reclaimer.IO
                     ctorCache.TryAdd(typeKey, ctorInfo);
             }
 
-            if (ctorInfo != null)
-                return ConstructObject(ctorInfo);
-            else
-                return Activator.CreateInstance(type);
+            return ctorInfo != null ? ConstructObject(ctorInfo) : Activator.CreateInstance(type);
         }
 
         private object ConstructObject(ConstructorInfo ctorInfo)

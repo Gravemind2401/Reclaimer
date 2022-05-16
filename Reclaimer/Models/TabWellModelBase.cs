@@ -65,7 +65,7 @@ namespace Reclaimer.Models
         {
             var parent = ParentContainer;
 
-            item = item ?? SelectedItem;
+            item ??= SelectedItem;
             Children.Remove(item);
             item.Dispose();
 

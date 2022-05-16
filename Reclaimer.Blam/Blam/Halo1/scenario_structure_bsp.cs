@@ -62,82 +62,81 @@ namespace Reclaimer.Blam.Halo1
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
+            using var reader = cache.CreateReader(cache.DefaultAddressTranslator);
+
+            var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
+
+            var shaderRefs = Lightmaps.SelectMany(m => m.Materials)
+                .Where(m => m.ShaderReference.TagId >= 0)
+                .GroupBy(m => m.ShaderReference.TagId)
+                .Select(g => g.First().ShaderReference)
+                .ToList();
+
+            var shaderIds = shaderRefs.Select(r => r.TagId).ToList();
+
+            model.Materials.AddRange(Halo1Common.GetMaterials(shaderRefs, reader));
+
+            reader.Seek(SurfacePointer.Address, SeekOrigin.Begin);
+            var indices = reader.ReadEnumerable<ushort>(SurfaceCount * 3).ToArray();
+
+            var gRegion = new GeometryRegion { Name = "Clusters" };
+
+            int sectionIndex = 0;
+            foreach (var section in Lightmaps)
             {
-                var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
+                if (section.Materials.Count == 0)
+                    continue;
 
-                var shaderRefs = Lightmaps.SelectMany(m => m.Materials)
-                    .Where(m => m.ShaderReference.TagId >= 0)
-                    .GroupBy(m => m.ShaderReference.TagId)
-                    .Select(g => g.First().ShaderReference)
-                    .ToList();
+                var localIndices = new List<int>();
+                var vertices = new List<WorldVertex>();
+                var submeshes = new List<IGeometrySubmesh>();
 
-                var shaderIds = shaderRefs.Select(r => r.TagId).ToList();
-
-                model.Materials.AddRange(Halo1Common.GetMaterials(shaderRefs, reader));
-
-                reader.Seek(SurfacePointer.Address, SeekOrigin.Begin);
-                var indices = reader.ReadEnumerable<ushort>(SurfaceCount * 3).ToArray();
-
-                var gRegion = new GeometryRegion { Name = "Clusters" };
-
-                int sectionIndex = 0;
-                foreach (var section in Lightmaps)
+                var gPermutation = new GeometryPermutation
                 {
-                    if (section.Materials.Count == 0)
-                        continue;
+                    SourceIndex = Lightmaps.IndexOf(section),
+                    Name = sectionIndex.ToString("D3", CultureInfo.CurrentCulture),
+                    MeshIndex = sectionIndex,
+                    MeshCount = 1
+                };
 
-                    var localIndices = new List<int>();
-                    var vertices = new List<WorldVertex>();
-                    var submeshes = new List<IGeometrySubmesh>();
+                foreach (var submesh in section.Materials)
+                {
+                    reader.Seek(submesh.VertexPointer.Address, SeekOrigin.Begin);
 
-                    var gPermutation = new GeometryPermutation
+                    submeshes.Add(new GeometrySubmesh
                     {
-                        SourceIndex = Lightmaps.IndexOf(section),
-                        Name = sectionIndex.ToString("D3", CultureInfo.CurrentCulture),
-                        MeshIndex = sectionIndex,
-                        MeshCount = 1
-                    };
-
-                    foreach (var submesh in section.Materials)
-                    {
-                        reader.Seek(submesh.VertexPointer.Address, SeekOrigin.Begin);
-
-                        submeshes.Add(new GeometrySubmesh
-                        {
-                            MaterialIndex = (short)shaderIds.IndexOf(submesh.ShaderReference.TagId),
-                            IndexStart = localIndices.Count,
-                            IndexLength = submesh.SurfaceCount * 3
-                        });
-
-                        localIndices.AddRange(
-                            indices.Skip(submesh.SurfaceIndex * 3)
-                                   .Take(submesh.SurfaceCount * 3)
-                                   .Select(i => i + vertices.Count)
-                        );
-
-                        var vertsTemp = reader.ReadEnumerable<WorldVertex>(submesh.VertexCount).ToList();
-                        vertices.AddRange(vertsTemp);
-                    }
-
-                    gRegion.Permutations.Add(gPermutation);
-
-                    model.Meshes.Add(new GeometryMesh
-                    {
-                        IndexFormat = IndexFormat.TriangleList,
-                        VertexWeights = VertexWeights.None,
-                        Indicies = localIndices.ToArray(),
-                        Vertices = vertices.ToArray(),
-                        Submeshes = submeshes
+                        MaterialIndex = (short)shaderIds.IndexOf(submesh.ShaderReference.TagId),
+                        IndexStart = localIndices.Count,
+                        IndexLength = submesh.SurfaceCount * 3
                     });
 
-                    sectionIndex++;
+                    localIndices.AddRange(
+                        indices.Skip(submesh.SurfaceIndex * 3)
+                               .Take(submesh.SurfaceCount * 3)
+                               .Select(i => i + vertices.Count)
+                    );
+
+                    var vertsTemp = reader.ReadEnumerable<WorldVertex>(submesh.VertexCount).ToList();
+                    vertices.AddRange(vertsTemp);
                 }
 
-                model.Regions.Add(gRegion);
+                gRegion.Permutations.Add(gPermutation);
 
-                return model;
+                model.Meshes.Add(new GeometryMesh
+                {
+                    IndexFormat = IndexFormat.TriangleList,
+                    VertexWeights = VertexWeights.None,
+                    Indicies = localIndices.ToArray(),
+                    Vertices = vertices.ToArray(),
+                    Submeshes = submeshes
+                });
+
+                sectionIndex++;
             }
+
+            model.Regions.Add(gRegion);
+
+            return model;
         }
 
         public IEnumerable<IBitmap> GetAllBitmaps() => GetBitmaps(Enumerable.Range(0, Lightmaps?.Count ?? 0));

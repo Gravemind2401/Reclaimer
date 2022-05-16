@@ -63,7 +63,7 @@ namespace Reclaimer.Blam.Halo4
 
         public static IEnumerable<GeometryMaterial> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
         {
-            for (int i = 0; i < shaders.Count; i++)
+            for (var i = 0; i < shaders.Count; i++)
             {
                 var tag = shaders[i].MaterialReference.Tag;
                 if (tag == null)
@@ -211,7 +211,7 @@ namespace Reclaimer.Blam.Halo4
                     var address = entry.ResourceFixups[section.VertexBufferIndex].Offset & 0x0FFFFFFF;
                     reader.Seek(address, SeekOrigin.Begin);
 
-                    for (int i = 0; i < vInfo.VertexCount; i++)
+                    for (var i = 0; i < vInfo.VertexCount; i++)
                     {
                         var vert = new XmlVertex(reader, node);
                         mesh.Vertices[i] = vert;

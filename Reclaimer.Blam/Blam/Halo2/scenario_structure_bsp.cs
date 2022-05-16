@@ -101,7 +101,7 @@ namespace Reclaimer.Blam.Halo2
                     #region Vertices
                     mesh.Vertices = new IVertex[section.VertexCount];
                     var vertexSize = vertexResource.Size / section.VertexCount;
-                    for (int i = 0; i < section.VertexCount; i++)
+                    for (var i = 0; i < section.VertexCount; i++)
                     {
                         var vert = new WorldVertex();
 
@@ -111,7 +111,7 @@ namespace Reclaimer.Blam.Halo2
                         mesh.Vertices[i] = vert;
                     }
 
-                    for (int i = 0; i < section.VertexCount; i++)
+                    for (var i = 0; i < section.VertexCount; i++)
                     {
                         var vert = (WorldVertex)mesh.Vertices[i];
 
@@ -119,7 +119,7 @@ namespace Reclaimer.Blam.Halo2
                         vert.TexCoords = new RealVector2D(reader.ReadSingle(), reader.ReadSingle());
                     }
 
-                    for (int i = 0; i < section.VertexCount; i++)
+                    for (var i = 0; i < section.VertexCount; i++)
                     {
                         var vert = (WorldVertex)mesh.Vertices[i];
 
@@ -190,7 +190,7 @@ namespace Reclaimer.Blam.Halo2
                     #region Vertices
                     mesh.Vertices = new IVertex[section.VertexCount];
                     var vertexSize = vertexResource.Size / section.VertexCount;
-                    for (int i = 0; i < section.VertexCount; i++)
+                    for (var i = 0; i < section.VertexCount; i++)
                     {
                         var vert = new WorldVertex();
 
@@ -200,7 +200,7 @@ namespace Reclaimer.Blam.Halo2
                         mesh.Vertices[i] = vert;
                     }
 
-                    for (int i = 0; i < section.VertexCount; i++)
+                    for (var i = 0; i < section.VertexCount; i++)
                     {
                         var vert = (WorldVertex)mesh.Vertices[i];
 
@@ -208,7 +208,7 @@ namespace Reclaimer.Blam.Halo2
                         vert.TexCoords = new RealVector2D(reader.ReadSingle(), reader.ReadSingle());
                     }
 
-                    for (int i = 0; i < section.VertexCount; i++)
+                    for (var i = 0; i < section.VertexCount; i++)
                     {
                         var vert = (WorldVertex)mesh.Vertices[i];
 

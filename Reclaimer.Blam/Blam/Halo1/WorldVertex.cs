@@ -41,11 +41,11 @@ namespace Reclaimer.Blam.Halo1
 
         IReadOnlyList<IXMVector> IVertex.Tangent => new IXMVector[] { Tangent };
 
-        IReadOnlyList<IXMVector> IVertex.BlendIndices => new IXMVector[0];
+        IReadOnlyList<IXMVector> IVertex.BlendIndices => Array.Empty<IXMVector>();
 
-        IReadOnlyList<IXMVector> IVertex.BlendWeight => new IXMVector[0];
+        IReadOnlyList<IXMVector> IVertex.BlendWeight => Array.Empty<IXMVector>();
 
-        IReadOnlyList<IXMVector> IVertex.Color => new IXMVector[0];
+        IReadOnlyList<IXMVector> IVertex.Color => Array.Empty<IXMVector>();
 
         #endregion
     }

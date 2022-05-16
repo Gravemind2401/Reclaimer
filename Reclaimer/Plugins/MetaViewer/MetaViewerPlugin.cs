@@ -84,9 +84,9 @@ namespace Reclaimer.Plugins.MetaViewer
             container.AddItem(viewer.TabModel);
         }
 
-        private string GetDefinitionPath(IIndexItem item) => GetDefinitionPath(p => p.ValidFor(item.CacheFile.CacheType), item.ClassCode, item.ClassName);
-        private string GetDefinitionPath(ModuleItem item) => GetDefinitionPath(p => p.ValidFor(item.Module.ModuleType), item.ClassCode, item.ClassName);
-        private string GetDefinitionPath(Predicate<PluginProfile> validate, string classCode, string className)
+        private static string GetDefinitionPath(IIndexItem item) => GetDefinitionPath(p => p.ValidFor(item.CacheFile.CacheType), item.ClassCode, item.ClassName);
+        private static string GetDefinitionPath(ModuleItem item) => GetDefinitionPath(p => p.ValidFor(item.Module.ModuleType), item.ClassCode, item.ClassName);
+        private static string GetDefinitionPath(Predicate<PluginProfile> validate, string classCode, string className)
         {
             if (string.IsNullOrEmpty(Settings.PluginFolder) || !Directory.Exists(Settings.PluginFolder))
                 return null;

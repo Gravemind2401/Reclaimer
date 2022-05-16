@@ -42,7 +42,7 @@ namespace Reclaimer.Blam.Halo5
 
         public static IEnumerable<GeometryMaterial> GetMaterials(IList<MaterialBlock> materials)
         {
-            for (int i = 0; i < materials.Count; i++)
+            for (var i = 0; i < materials.Count; i++)
             {
                 var tag = materials[i].MaterialReference.Tag;
                 if (tag == null)
@@ -166,7 +166,7 @@ namespace Reclaimer.Blam.Halo5
                             IndexFormat = section.IndexFormat,
                             Vertices = new IVertex[vInfo.VertexCount],
                             VertexWeights = VertexWeights.None,
-                            NodeIndex = section.NodeIndex == byte.MaxValue ? (byte?)null : section.NodeIndex,
+                            NodeIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
                             BoundsIndex = 0
                         };
 
@@ -183,7 +183,7 @@ namespace Reclaimer.Blam.Halo5
 
                             var block = header.DataBlocks[3 + lodData.VertexBufferIndex];
                             reader.Seek(block.Offset, SeekOrigin.Begin);
-                            for (int i = 0; i < vInfo.VertexCount; i++)
+                            for (var i = 0; i < vInfo.VertexCount; i++)
                             {
                                 var vert = new XmlVertex(reader, node);
                                 mesh.Vertices[i] = vert;
@@ -191,10 +191,9 @@ namespace Reclaimer.Blam.Halo5
 
                             block = header.DataBlocks[3 + vertexBufferInfo.Length + lodData.IndexBufferIndex];
                             reader.Seek(block.Offset, SeekOrigin.Begin);
-                            if (vInfo.VertexCount > ushort.MaxValue)
-                                mesh.Indicies = reader.ReadEnumerable<int>(iInfo.IndexCount).ToArray();
-                            else
-                                mesh.Indicies = reader.ReadEnumerable<ushort>(iInfo.IndexCount).Select(i => (int)i).ToArray();
+                            mesh.Indicies = vInfo.VertexCount > ushort.MaxValue
+                                ? reader.ReadEnumerable<int>(iInfo.IndexCount).ToArray()
+                                : reader.ReadEnumerable<ushort>(iInfo.IndexCount).Select(i => (int)i).ToArray();
 
                         }
                         catch

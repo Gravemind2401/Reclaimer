@@ -32,7 +32,7 @@ namespace Reclaimer.Blam.Common.Gen3
             var globalsTag = cache.TagIndex.GetGlobalTag("matg");
             using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
             {
-                for (int i = 0; i < count; i++)
+                for (var i = 0; i < count; i++)
                 {
                     reader.Seek(globalsTag.MetaPointer.Address + offset + i * size, SeekOrigin.Begin);
                     var definition = reader.ReadObject<LanguageDefinition>();
@@ -54,7 +54,7 @@ namespace Reclaimer.Blam.Common.Gen3
         {
             var origin = writer.BaseStream.Position;
 
-            for (int i = 0; i < definitions.Count; i++)
+            for (var i = 0; i < definitions.Count; i++)
             {
                 writer.Seek(origin + offset + i * size, SeekOrigin.Begin);
                 writer.WriteObject(definitions[i]);
@@ -136,7 +136,7 @@ namespace Reclaimer.Blam.Common.Gen3
                 else
                     tempReader = reader.CreateVirtualReader();
 
-                for (int i = 0; i < definition.StringCount; i++)
+                for (var i = 0; i < definition.StringCount; i++)
                 {
                     if (entries[i].Offset < 0)
                         continue;

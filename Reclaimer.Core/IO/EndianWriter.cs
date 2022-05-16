@@ -539,8 +539,10 @@ namespace Reclaimer.IO
             if (value.Length > length)
                 value = value.Substring(0, length);
             else
+            {
                 while (value.Length < length)
                     value += padding;
+            }
 
             base.Write(encoding.GetBytes(value));
         }
@@ -706,7 +708,7 @@ namespace Reclaimer.IO
 
             if (pad != default(byte))
             {
-                for (int i = 0; i < length; i++)
+                for (var i = 0; i < length; i++)
                     buffer[i] = pad;
             }
 

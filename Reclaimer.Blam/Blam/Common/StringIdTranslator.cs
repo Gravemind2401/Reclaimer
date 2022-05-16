@@ -88,7 +88,7 @@ namespace Reclaimer.Blam.Common
 
             //namespace 0 always starts at the end of the rest
             int mask = (1 << indexBits) - 1, start = nsList[0] & mask;
-            for (int i = 1; i < header.StringNamespaceCount; i++)
+            for (var i = 1; i < header.StringNamespaceCount; i++)
             {
                 namespaces.Add(i, new Namespace(i, 0, start));
                 start += nsList[i] & mask;

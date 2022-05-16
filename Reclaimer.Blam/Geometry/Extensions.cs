@@ -17,7 +17,7 @@ namespace Adjutant.Geometry
             int position = 0;
             int i0 = 0, i1 = 0, i2 = 0;
 
-            foreach (int index in strip)
+            foreach (var index in strip)
             {
                 i0 = i1;
                 i1 = i2;
@@ -440,7 +440,7 @@ namespace Adjutant.Geometry
                                 if (indices.Count == 0)
                                     indices.Add(0);
 
-                                foreach (int index in indices)
+                                foreach (var index in indices)
                                     bw.Write((byte)index);
 
                                 if (indices.Count < 4)
@@ -462,7 +462,7 @@ namespace Adjutant.Geometry
                                     //throw new Exception("no weights on a weighted node. report this.");
                                 }
 
-                                for (int i = 0; i < 4; i++)
+                                for (var i = 0; i < 4; i++)
                                 {
                                     if (weights[i] > 0)
                                         bw.Write((byte)indices[i]);
@@ -557,10 +557,10 @@ namespace Adjutant.Geometry
                     if (material == null)
                     {
                         bw.WriteStringNullTerminated(nullPath);
-                        for (int i = 0; i < 8; i++)
+                        for (var i = 0; i < 8; i++)
                             bw.WriteStringNullTerminated(nullPath);
 
-                        for (int i = 0; i < 4; i++)
+                        for (var i = 0; i < 4; i++)
                             bw.Write(0);
 
                         bw.Write(Convert.ToByte(false));
@@ -601,7 +601,7 @@ namespace Adjutant.Geometry
                     else
                     {
                         bw.WriteStringNullTerminated(material.Name);
-                        for (int i = 0; i < 8; i++)
+                        for (var i = 0; i < 8; i++)
                         {
                             var submat = material.Submaterials.FirstOrDefault(s => s.Usage == (MaterialUsage)i);
                             bw.WriteStringNullTerminated(submat?.Bitmap.Name ?? nullPath);
@@ -612,7 +612,7 @@ namespace Adjutant.Geometry
                             }
                         }
 
-                        for (int i = 0; i < 4; i++)
+                        for (var i = 0; i < 4; i++)
                         {
                             var tint = material.TintColours.FirstOrDefault(t => t.Usage == (TintUsage)i);
                             if (tint == null)
@@ -634,37 +634,37 @@ namespace Adjutant.Geometry
                 #endregion
 
                 #region Write Addresses
-                for (int i = 0; i < headerAddressList.Count; i++)
+                for (var i = 0; i < headerAddressList.Count; i++)
                 {
                     bw.BaseStream.Position = headerAddressList[i];
                     bw.Write((int)headerValueList[i]);
                 }
 
-                for (int i = 0; i < markerAddressList.Count; i++)
+                for (var i = 0; i < markerAddressList.Count; i++)
                 {
                     bw.BaseStream.Position = markerAddressList[i];
                     bw.Write((int)markerValueList[i]);
                 }
 
-                for (int i = 0; i < permAddressList.Count; i++)
+                for (var i = 0; i < permAddressList.Count; i++)
                 {
                     bw.BaseStream.Position = permAddressList[i];
                     bw.Write((int)permValueList[i]);
                 }
 
-                for (int i = 0; i < vertAddressList.Count; i++)
+                for (var i = 0; i < vertAddressList.Count; i++)
                 {
                     bw.BaseStream.Position = vertAddressList[i];
                     bw.Write((int)vertValueList[i]);
                 }
 
-                for (int i = 0; i < indxAddressList.Count; i++)
+                for (var i = 0; i < indxAddressList.Count; i++)
                 {
                     bw.BaseStream.Position = indxAddressList[i];
                     bw.Write((int)indxValueList[i]);
                 }
 
-                for (int i = 0; i < meshAddressList.Count; i++)
+                for (var i = 0; i < meshAddressList.Count; i++)
                 {
                     bw.BaseStream.Position = meshAddressList[i];
                     bw.Write((int)meshValueList[i]);
@@ -774,10 +774,9 @@ namespace Adjutant.Geometry
                     var totalEdges = allPerms.SelectMany(p =>
                     {
                         var mesh = model.Meshes[p.MeshIndex];
-                        if (mesh.IndexFormat == IndexFormat.TriangleList)
-                            return mesh.Indicies;
-                        else
-                            return mesh.Submeshes.SelectMany(s => mesh.Indicies.Skip(s.IndexStart).Take(s.IndexLength).Unstrip());
+                        return mesh.IndexFormat == IndexFormat.TriangleList
+                            ? mesh.Indicies
+                            : mesh.Submeshes.SelectMany(s => mesh.Indicies.Skip(s.IndexStart).Take(s.IndexLength).Unstrip());
                     }).Count();
 
                     sw.WriteLine(totalEdges / 3);
@@ -793,7 +792,7 @@ namespace Adjutant.Geometry
                                 temp = temp.Unstrip();
 
                             var indices = temp.ToList();
-                            for (int i = 0; i < indices.Count; i += 3)
+                            for (var i = 0; i < indices.Count; i += 3)
                             {
                                 sw.WriteLine(regIndex);
                                 sw.WriteLine(sub.MaterialIndex);

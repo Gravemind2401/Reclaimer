@@ -84,7 +84,7 @@ namespace Reclaimer.Blam.Halo3
 
         public static IEnumerable<GeometryMaterial> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
         {
-            for (int i = 0; i < shaders.Count; i++)
+            for (var i = 0; i < shaders.Count; i++)
             {
                 var tag = shaders[i].ShaderReference.Tag;
                 if (tag == null)
@@ -108,7 +108,7 @@ namespace Reclaimer.Blam.Halo3
                 var subMaterials = new List<ISubmaterial>();
                 var props = shader.ShaderProperties[0];
                 var template = props.TemplateReference.Tag.ReadMetadata<render_method_template>();
-                for (int j = 0; j < template.Usages.Count; j++)
+                for (var j = 0; j < template.Usages.Count; j++)
                 {
                     var usage = template.Usages[j].Value;
                     var entry = usageLookup.FirstOrNull(p => usage.StartsWith(p.Key));
@@ -140,7 +140,7 @@ namespace Reclaimer.Blam.Halo3
 
                 material.Submaterials = subMaterials;
 
-                for (int j = 0; j < template.Arguments.Count; j++)
+                for (var j = 0; j < template.Arguments.Count; j++)
                 {
                     if (!tintLookup.ContainsKey(template.Arguments[j].Value))
                         continue;
@@ -242,7 +242,7 @@ namespace Reclaimer.Blam.Halo3
 
                     var address = entry.ResourceFixups[section.VertexBufferIndex].Offset & 0x0FFFFFFF;
                     reader.Seek(address, SeekOrigin.Begin);
-                    for (int i = 0; i < vInfo.VertexCount; i++)
+                    for (var i = 0; i < vInfo.VertexCount; i++)
                     {
                         var vert = new XmlVertex(reader, node);
                         mesh.Vertices[i] = vert;

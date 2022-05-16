@@ -59,10 +59,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         public MetaValue GetValue(string xpath)
         {
             var node = Document.SelectSingleNode(xpath);
-            if (node != null && valuesByNode.ContainsKey(node))
-                return valuesByNode[node];
-            else
-                return null;
+            return node != null && valuesByNode.ContainsKey(node) ? valuesByNode[node] : null;
         }
 
         public void UpdateBlockIndices()

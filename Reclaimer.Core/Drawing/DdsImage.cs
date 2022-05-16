@@ -187,13 +187,7 @@ namespace Reclaimer.Drawing
         /// </summary>
         public int? Pitch
         {
-            get
-            {
-                if (!header.Flags.HasFlag(HeaderFlags.Pitch))
-                    return null;
-
-                return header.PitchOrLinearSize;
-            }
+            get => !header.Flags.HasFlag(HeaderFlags.Pitch) ? null : header.PitchOrLinearSize;
             set
             {
                 if (value <= 0)
@@ -489,58 +483,57 @@ namespace Reclaimer.Drawing
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream));
 
-            using (var reader = new BinaryReader(stream, Encoding.UTF8, true))
+            using var reader = new BinaryReader(stream, Encoding.UTF8, true);
+
+            if (reader.ReadUInt32() != DDS)
+                throw new InvalidOperationException("Data is not a valid DDS file");
+
+            if (reader.ReadUInt32() != DdsHeader.Size)
+                throw new InvalidDataException("Invalid DDS data");
+
+            var header = new DdsHeader();
+            header.Flags = (HeaderFlags)reader.ReadInt32();
+            header.Height = reader.ReadInt32();
+            header.Width = reader.ReadInt32();
+            header.PitchOrLinearSize = reader.ReadInt32();
+            header.Depth = reader.ReadInt32();
+            header.MipmapCount = reader.ReadInt32();
+            for (var i = 0; i < header.Reserved1.Length; i++)
+                header.Reserved1[i] = reader.ReadInt32();
+
+            if (reader.ReadInt32() != DdsPixelFormat.Size)
+                throw new InvalidDataException("Invalid DDS data");
+
+            header.PixelFormat.Flags = (FormatFlags)reader.ReadInt32();
+            header.PixelFormat.FourCC = reader.ReadInt32();
+            header.PixelFormat.RgbBitCount = reader.ReadInt32();
+            header.PixelFormat.RBitmask = reader.ReadInt32();
+            header.PixelFormat.GBitmask = reader.ReadInt32();
+            header.PixelFormat.BBitmask = reader.ReadInt32();
+            header.PixelFormat.ABitmask = reader.ReadInt32();
+
+            var dx10Header = new DdsHeaderDxt10();
+            if (header.PixelFormat.FourCC == (uint)FourCC.DX10)
             {
-                if (reader.ReadUInt32() != DDS)
-                    throw new InvalidOperationException("Data is not a valid DDS file");
-
-                if (reader.ReadUInt32() != DdsHeader.Size)
-                    throw new InvalidDataException("Invalid DDS data");
-
-                var header = new DdsHeader();
-                header.Flags = (HeaderFlags)reader.ReadInt32();
-                header.Height = reader.ReadInt32();
-                header.Width = reader.ReadInt32();
-                header.PitchOrLinearSize = reader.ReadInt32();
-                header.Depth = reader.ReadInt32();
-                header.MipmapCount = reader.ReadInt32();
-                for (int i = 0; i < header.Reserved1.Length; i++)
-                    header.Reserved1[i] = reader.ReadInt32();
-
-                if (reader.ReadInt32() != DdsPixelFormat.Size)
-                    throw new InvalidDataException("Invalid DDS data");
-
-                header.PixelFormat.Flags = (FormatFlags)reader.ReadInt32();
-                header.PixelFormat.FourCC = reader.ReadInt32();
-                header.PixelFormat.RgbBitCount = reader.ReadInt32();
-                header.PixelFormat.RBitmask = reader.ReadInt32();
-                header.PixelFormat.GBitmask = reader.ReadInt32();
-                header.PixelFormat.BBitmask = reader.ReadInt32();
-                header.PixelFormat.ABitmask = reader.ReadInt32();
-
-                var dx10Header = new DdsHeaderDxt10();
-                if (header.PixelFormat.FourCC == (uint)FourCC.DX10)
-                {
-                    dx10Header.DxgiFormat = (DxgiFormat)reader.ReadInt32();
-                    dx10Header.ResourceDimension = (D3D10ResourceDimension)reader.ReadInt32();
-                    dx10Header.MiscFlags = (D3D10ResourceMiscFlags)reader.ReadInt32();
-                    dx10Header.ArraySize = reader.ReadInt32();
-                    dx10Header.MiscFlags2 = (D3D10ResourceMiscFlag2)reader.ReadInt32();
-                }
-
-                var xboxHeader = new DdsHeaderXbox();
-                if (header.PixelFormat.FourCC == (uint)FourCC.XBOX)
-                {
-                    xboxHeader.XboxFormat = (XboxFormat)reader.ReadInt32();
-                    xboxHeader.ResourceDimension = (D3D10ResourceDimension)reader.ReadInt32();
-                    xboxHeader.MiscFlags = (D3D10ResourceMiscFlags)reader.ReadInt32();
-                    xboxHeader.ArraySize = reader.ReadInt32();
-                    xboxHeader.MiscFlags2 = (D3D10ResourceMiscFlag2)reader.ReadInt32();
-                }
-
-                var data = reader.ReadBytes((int)(stream.Length - stream.Position));
-                return new DdsImage(header, dx10Header, xboxHeader, data);
+                dx10Header.DxgiFormat = (DxgiFormat)reader.ReadInt32();
+                dx10Header.ResourceDimension = (D3D10ResourceDimension)reader.ReadInt32();
+                dx10Header.MiscFlags = (D3D10ResourceMiscFlags)reader.ReadInt32();
+                dx10Header.ArraySize = reader.ReadInt32();
+                dx10Header.MiscFlags2 = (D3D10ResourceMiscFlag2)reader.ReadInt32();
             }
+
+            var xboxHeader = new DdsHeaderXbox();
+            if (header.PixelFormat.FourCC == (uint)FourCC.XBOX)
+            {
+                xboxHeader.XboxFormat = (XboxFormat)reader.ReadInt32();
+                xboxHeader.ResourceDimension = (D3D10ResourceDimension)reader.ReadInt32();
+                xboxHeader.MiscFlags = (D3D10ResourceMiscFlags)reader.ReadInt32();
+                xboxHeader.ArraySize = reader.ReadInt32();
+                xboxHeader.MiscFlags2 = (D3D10ResourceMiscFlag2)reader.ReadInt32();
+            }
+
+            var data = reader.ReadBytes((int)(stream.Length - stream.Position));
+            return new DdsImage(header, dx10Header, xboxHeader, data);
         }
     }
 

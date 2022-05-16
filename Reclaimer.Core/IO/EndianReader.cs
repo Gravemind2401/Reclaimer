@@ -305,7 +305,7 @@ namespace Reclaimer.IO
             var bits = new int[4];
             var bytes = base.ReadBytes(16);
             Array.Reverse(bytes);
-            for (int i = 0; i < 4; i++)
+            for (var i = 0; i < 4; i++)
                 bits[i] = BitConverter.ToInt32(bytes, i * 4);
             return new decimal(bits);
         }

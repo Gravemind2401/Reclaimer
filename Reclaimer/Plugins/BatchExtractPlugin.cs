@@ -112,11 +112,11 @@ namespace Reclaimer.Plugins
             SaveSettings(Settings);
         }
 
-        private bool ValidateCacheType(string name) => Enum.TryParse(name, out CacheType _) || Enum.TryParse(name, out ModuleType _);
+        private static bool ValidateCacheType(string name) => Enum.TryParse(name, out CacheType _) || Enum.TryParse(name, out ModuleType _);
 
         private bool IsExtractable(object obj) => GetExtractable(obj, Settings.DataFolder) != null;
 
-        private IExtractable GetExtractable(object obj, string outputFolder)
+        private static IExtractable GetExtractable(object obj, string outputFolder)
         {
             IExtractable extractable;
             if (obj is IIndexItem)
@@ -231,7 +231,7 @@ namespace Reclaimer.Plugins
                 {
                     var prefix = Settings.BatchWorkerCount > 1 ? $"[Worker {nextWorkerId++}] " : string.Empty;
 
-                    while (extractionQueue.Count > 0)
+                    while (!extractionQueue.IsEmpty)
                     {
                         if (tokenSource.IsCancellationRequested)
                             break;
@@ -312,7 +312,7 @@ namespace Reclaimer.Plugins
         private bool SaveImage(IBitmap bitmap, string baseDir)
         {
             var extracted = 0;
-            for (int i = 0; i < bitmap.SubmapCount; i++)
+            for (var i = 0; i < bitmap.SubmapCount; i++)
             {
                 var fileName = MakePath(bitmap.Class, bitmap.Name, baseDir);
                 var ext = "." + Settings.BitmapFormat.ToString().ToLower();
@@ -376,13 +376,13 @@ namespace Reclaimer.Plugins
             return extracted > 0;
         }
 
-        private IEnumerable<Tuple<string, DecompressOptions>> GetParamsIsolateAlpha(string fileName, string extension)
+        private static IEnumerable<Tuple<string, DecompressOptions>> GetParamsIsolateAlpha(string fileName, string extension)
         {
             yield return Tuple.Create($"{fileName}_hue{extension}", DecompressOptions.Bgr24);
             yield return Tuple.Create($"{fileName}_alpha{extension}", DecompressOptions.AlphaChannelOnly);
         }
 
-        private IEnumerable<Tuple<string, DecompressOptions>> GetParamsIsolateAll(string fileName, string extension)
+        private static IEnumerable<Tuple<string, DecompressOptions>> GetParamsIsolateAll(string fileName, string extension)
         {
             yield return Tuple.Create($"{fileName}_blue{extension}", DecompressOptions.BlueChannelOnly);
             yield return Tuple.Create($"{fileName}_green{extension}", DecompressOptions.GreenChannelOnly);
@@ -391,7 +391,7 @@ namespace Reclaimer.Plugins
         }
 
         private static readonly string[] shouldIsolate = new[] { "([_ ]multi)$", "([_ ]multipurpose)$", "([_ ]cc)$" };
-        private IEnumerable<Tuple<string, DecompressOptions>> GetParamsMixedIsolate(string fileName, string extension)
+        private static IEnumerable<Tuple<string, DecompressOptions>> GetParamsMixedIsolate(string fileName, string extension)
         {
             var imageName = fileName.Split('\\').Last();
             if (imageName.EndsWith("]"))

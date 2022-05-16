@@ -151,7 +151,7 @@ namespace Reclaimer.Controls
             rootNode.Items.Reset(result);
         }
 
-        private bool FilterTag(string filter, IIndexItem tag)
+        private static bool FilterTag(string filter, IIndexItem tag)
         {
             return string.IsNullOrEmpty(filter) || tag.FullPath.ToUpper().Contains(filter.ToUpper()) || tag.ClassCode.ToUpper() == filter.ToUpper() || tag.ClassName.ToUpper() == filter.ToUpper();
         }
@@ -209,7 +209,7 @@ namespace Reclaimer.Controls
             return new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), GetFileFormats(item).ToArray());
         }
 
-        private IEnumerable<object> GetFileFormats(IIndexItem item)
+        private static IEnumerable<object> GetFileFormats(IIndexItem item)
         {
             yield return item;
 

@@ -354,7 +354,7 @@ namespace Reclaimer.IO
             isOpen = false;
         }
 
-        private bool IsOverlapping(long a1, long a2, long b1, long b2)
+        private static bool IsOverlapping(long a1, long a2, long b1, long b2)
         {
             // B starts inside A
             if (b1 >= a1 && b1 < a2)

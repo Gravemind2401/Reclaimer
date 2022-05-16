@@ -28,15 +28,15 @@ namespace Reclaimer.Blam.Halo2
 
         IReadOnlyList<IXMVector> IVertex.Normal => new IXMVector[] { Normal };
 
-        IReadOnlyList<IXMVector> IVertex.Binormal => new IXMVector[0];
+        IReadOnlyList<IXMVector> IVertex.Binormal => Array.Empty<IXMVector>();
 
-        IReadOnlyList<IXMVector> IVertex.Tangent => new IXMVector[0];
+        IReadOnlyList<IXMVector> IVertex.Tangent => Array.Empty<IXMVector>();
 
         IReadOnlyList<IXMVector> IVertex.BlendIndices => new IXMVector[] { BlendIndices };
 
         IReadOnlyList<IXMVector> IVertex.BlendWeight => new IXMVector[] { BlendWeight };
 
-        IReadOnlyList<IXMVector> IVertex.Color => new IXMVector[0];
+        IReadOnlyList<IXMVector> IVertex.Color => Array.Empty<IXMVector>();
 
         #endregion
     }
@@ -57,15 +57,15 @@ namespace Reclaimer.Blam.Halo2
 
         IReadOnlyList<IXMVector> IVertex.Normal => new IXMVector[] { Normal };
 
-        IReadOnlyList<IXMVector> IVertex.Binormal => new IXMVector[0];
+        IReadOnlyList<IXMVector> IVertex.Binormal => Array.Empty<IXMVector>();
 
-        IReadOnlyList<IXMVector> IVertex.Tangent => new IXMVector[0];
+        IReadOnlyList<IXMVector> IVertex.Tangent => Array.Empty<IXMVector>();
 
-        IReadOnlyList<IXMVector> IVertex.BlendIndices => new IXMVector[0];// { new RealVector2D(NodeIndex1, NodeIndex2) };
+        IReadOnlyList<IXMVector> IVertex.BlendIndices => Array.Empty<IXMVector>();// { new RealVector2D(NodeIndex1, NodeIndex2) };
 
-        IReadOnlyList<IXMVector> IVertex.BlendWeight => new IXMVector[0];// { NodeWeights };
+        IReadOnlyList<IXMVector> IVertex.BlendWeight => Array.Empty<IXMVector>();// { NodeWeights };
 
-        IReadOnlyList<IXMVector> IVertex.Color => new IXMVector[0];
+        IReadOnlyList<IXMVector> IVertex.Color => Array.Empty<IXMVector>();
 
         #endregion
     }

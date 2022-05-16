@@ -65,38 +65,37 @@ namespace Reclaimer.Blam.Halo1
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
+            using var reader = cache.CreateReader(cache.DefaultAddressTranslator);
+
+            var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
+
+            model.Nodes.AddRange(Nodes);
+            model.MarkerGroups.AddRange(MarkerGroups);
+
+            var shaderRefs = Shaders.Select(s => s.ShaderReference);
+            model.Materials.AddRange(Halo1Common.GetMaterials(shaderRefs, reader));
+
+            foreach (var region in Regions)
             {
-                var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
+                var gRegion = new GeometryRegion { SourceIndex = Regions.IndexOf(region), Name = region.Name };
+                gRegion.Permutations.AddRange(region.Permutations.Select(p =>
+                    new GeometryPermutation
+                    {
+                        SourceIndex = region.Permutations.IndexOf(p),
+                        Name = p.Name,
+                        MeshIndex = p.LodIndex(lod),
+                        MeshCount = 1
+                    }));
 
-                model.Nodes.AddRange(Nodes);
-                model.MarkerGroups.AddRange(MarkerGroups);
-
-                var shaderRefs = Shaders.Select(s => s.ShaderReference);
-                model.Materials.AddRange(Halo1Common.GetMaterials(shaderRefs, reader));
-
-                foreach (var region in Regions)
-                {
-                    var gRegion = new GeometryRegion { SourceIndex = Regions.IndexOf(region), Name = region.Name };
-                    gRegion.Permutations.AddRange(region.Permutations.Select(p =>
-                        new GeometryPermutation
-                        {
-                            SourceIndex = region.Permutations.IndexOf(p),
-                            Name = p.Name,
-                            MeshIndex = p.LodIndex(lod),
-                            MeshCount = 1
-                        }));
-
-                    model.Regions.Add(gRegion);
-                }
-
-                if (cache.CacheType == CacheType.Halo1Xbox)
-                    model.Meshes.AddRange(ReadXboxMeshes(reader));
-                else
-                    model.Meshes.AddRange(ReadPCMeshes(reader));
-
-                return model;
+                model.Regions.Add(gRegion);
             }
+
+            if (cache.CacheType == CacheType.Halo1Xbox)
+                model.Meshes.AddRange(ReadXboxMeshes(reader));
+            else
+                model.Meshes.AddRange(ReadPCMeshes(reader));
+
+            return model;
         }
 
         private IEnumerable<GeometryMesh> ReadXboxMeshes(DependencyReader reader)
@@ -138,7 +137,7 @@ namespace Reclaimer.Blam.Halo1
                         reader.Seek(reader.ReadInt32() - tagIndex.Magic, SeekOrigin.Begin);
 
                         var vertsTemp = new List<CompressedVertex>();
-                        for (int i = 0; i < submesh.VertexCount; i++)
+                        for (var i = 0; i < submesh.VertexCount; i++)
                             vertsTemp.Add(new CompressedVertex(reader));
 
                         if (UScale != 1 || VScale != 1)

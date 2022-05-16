@@ -238,7 +238,7 @@ namespace Reclaimer.Blam.Halo4
                 Classes.AddRange(reader.ReadEnumerable<TagClass>(TagClassCount));
 
                 reader.Seek(TagDataPointer.Address, SeekOrigin.Begin);
-                for (int i = 0; i < TagCount; i++)
+                for (var i = 0; i < TagCount; i++)
                 {
                     var item = reader.ReadObject(new IndexItem(cache, i));
                     if (item.ClassIndex < 0)
@@ -263,7 +263,7 @@ namespace Reclaimer.Blam.Halo4
                 using (var ms = new MemoryStream(decrypted))
                 using (var tempReader = new EndianReader(ms))
                 {
-                    for (int i = 0; i < TagCount; i++)
+                    for (var i = 0; i < TagCount; i++)
                     {
                         if (indices[i] == -1)
                         {
@@ -318,7 +318,7 @@ namespace Reclaimer.Blam.Halo4
                 using (var ms = new MemoryStream(decrypted))
                 using (var tempReader = new EndianReader(ms))
                 {
-                    for (int i = 0; i < cache.Header.StringCount; i++)
+                    for (var i = 0; i < cache.Header.StringCount; i++)
                     {
                         if (indices[i] < 0)
                             continue;
