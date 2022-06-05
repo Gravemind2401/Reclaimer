@@ -11,7 +11,7 @@ namespace Reclaimer.IO.Tests
         [TestMethod]
         public void TestInsert01()
         {
-            using (var stream = new MemoryStream(new byte[150]))
+            using (var stream = new MemoryStream(150))
             using (var reader = new EndianReader(stream))
             using (var writer = new EndianWriter(stream))
             {

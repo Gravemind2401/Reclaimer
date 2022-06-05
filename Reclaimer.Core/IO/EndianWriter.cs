@@ -685,6 +685,7 @@ namespace Reclaimer.IO
             var source = BaseStream.Position;
             if (source < BaseStream.Length)
             {
+                //shift everything to the right by [length] places to make room for inserted bytes
                 var destination = source + length;
                 Copy(source, destination, (int)(BaseStream.Length - source));
             }
