@@ -8,18 +8,15 @@ namespace Reclaimer.IO.Tests.ComplexRead
     public partial class ComplexRead
     {
         [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian, false)]
-        [DataRow(ByteOrder.BigEndian, false)]
-        [DataRow(ByteOrder.LittleEndian, true)]
-        [DataRow(ByteOrder.BigEndian, true)]
-        public void BinaryConstructor01(ByteOrder order, bool dynamicRead)
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void BinaryConstructor01(ByteOrder order)
         {
             var rng = new Random();
             using (var stream = new MemoryStream(new byte[500]))
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                reader.DynamicReadEnabled = dynamicRead;
                 var value1 = rng.Next(int.MinValue, int.MaxValue);
                 var value2 = (float)rng.NextDouble();
                 var value3 = (byte)rng.Next(byte.MinValue, byte.MaxValue);
@@ -55,18 +52,15 @@ namespace Reclaimer.IO.Tests.ComplexRead
         }
 
         [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian, false)]
-        [DataRow(ByteOrder.BigEndian, false)]
-        [DataRow(ByteOrder.LittleEndian, true)]
-        [DataRow(ByteOrder.BigEndian, true)]
-        public void BinaryConstructor02(ByteOrder order, bool dynamicRead)
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void BinaryConstructor02(ByteOrder order)
         {
             var rng = new Random();
             using (var stream = new MemoryStream(new byte[500]))
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                reader.DynamicReadEnabled = dynamicRead;
                 var value1 = rng.Next(int.MinValue, int.MaxValue);
                 var value2 = (float)rng.NextDouble();
                 var value3 = (byte)rng.Next(byte.MinValue, byte.MaxValue);

@@ -8,18 +8,15 @@ namespace Reclaimer.IO.Tests.ComplexRead
     public partial class ComplexRead
     {
         [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian, false)]
-        [DataRow(ByteOrder.BigEndian, false)]
-        [DataRow(ByteOrder.LittleEndian, true)]
-        [DataRow(ByteOrder.BigEndian, true)]
-        public void Versions01(ByteOrder order, bool dynamicRead)
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Versions01(ByteOrder order)
         {
             var rng = new Random();
             using (var stream = new MemoryStream())
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                reader.DynamicReadEnabled = dynamicRead;
 
                 var rand = new object[6];
 
