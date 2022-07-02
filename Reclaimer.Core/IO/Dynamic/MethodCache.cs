@@ -6,7 +6,7 @@ using System.Reflection;
 namespace Reclaimer.IO.Dynamic
 {
     public delegate object ReadMethod(EndianReader reader, ByteOrder byteOrder);
-    public delegate void WriteMethod(EndianReader reader, ByteOrder byteOrder, object value);
+    public delegate void WriteMethod(EndianWriter writer, ByteOrder byteOrder, object value);
 
     internal static class MethodCache
     {

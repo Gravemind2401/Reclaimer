@@ -10,7 +10,7 @@ namespace Reclaimer.IO
     /// <summary>
     /// Writes primitive and complex data types to a stream in a specific byte order and encoding.
     /// </summary>
-    public partial class EndianWriter : BinaryWriter
+    public partial class EndianWriter : BinaryWriter, IEndianStream
     {
         private readonly long virtualOrigin;
         private readonly Encoding encoding;
@@ -565,6 +565,13 @@ namespace Reclaimer.IO
         #endregion
 
         #region Other
+
+        /// <summary>
+        /// Gets the position of the base stream.
+        /// If the current instance was created using <see cref="CreateVirtualWriter"/>
+        /// the position returned will be relative to the virtual origin.
+        /// </summary>
+        public long Position => BaseStream.Position - virtualOrigin;
 
         /// <summary>
         /// Sets the position of the underlying stream relative to a given origin.

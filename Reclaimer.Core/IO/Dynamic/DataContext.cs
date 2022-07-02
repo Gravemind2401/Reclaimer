@@ -12,19 +12,32 @@ namespace Reclaimer.IO.Dynamic
     {
         public object Target { get; }
         public long Origin { get; }
+        public IEndianStream Stream { get; }
         public EndianReader Reader { get; }
         public EndianWriter Writer { get; }
         public ByteOrder ByteOrder { get; }
         public double? Version { get; set; }
         public long? DataLength { get; set; }
 
-        public DataContext(TypeConfiguration manager, object instance, double? version, EndianReader reader)
+        private DataContext(TypeConfiguration manager, object instance, double? version, IEndianStream stream)
         {
             Target = instance;
-            Origin = reader.BaseStream.Position;
-            Reader = reader;
+            Origin = stream.Position;
+            Stream = stream;
             Version = version;
-            ByteOrder = manager.ByteOrderAttributes.FirstOrDefault(ValidateVersion)?.ByteOrder ?? Reader.ByteOrder;
+            ByteOrder = manager.ByteOrderAttributes.FirstOrDefault(ValidateVersion)?.ByteOrder ?? stream.ByteOrder;
+        }
+
+        public DataContext(TypeConfiguration manager, object instance, double? version, EndianReader reader)
+            : this(manager, instance, version, (IEndianStream)reader)
+        {
+            Reader = reader;
+        }
+
+        public DataContext(TypeConfiguration manager, object instance, double? version, EndianWriter writer)
+            : this(manager, instance, version, (IEndianStream)writer)
+        {
+            Writer = writer;
         }
 
         public bool ValidateVersion(PropertyConfiguration property) => ValidateVersion(Version, property.MinVersionAttribute?.MinVersion, property.MaxVersionAttribute?.MaxVersion);
@@ -34,15 +47,8 @@ namespace Reclaimer.IO.Dynamic
             return (version >= min || !min.HasValue) && (version < max || !max.HasValue || max == min);
         }
 
-        public void ReadValue(PropertyConfiguration prop)
+        private Type GetStorageType(PropertyConfiguration prop)
         {
-            if (prop.VersionSpecificAttribute != null && Version != prop.VersionSpecificAttribute.Version)
-                return;
-
-            var offset = prop.OffsetAttributes.FirstOrDefault(ValidateVersion)?.Offset ?? throw new InvalidOperationException();
-            Reader.Seek(Origin + offset, SeekOrigin.Begin);
-
-            var byteOrder = prop.ByteOrderAttributes.FirstOrDefault(ValidateVersion)?.ByteOrder ?? ByteOrder;
             var storageType = prop.StoreTypeAttributes.FirstOrDefault(ValidateVersion)?.StoreType ?? prop.PropertyType;
 
             if (storageType.IsGenericType && storageType.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -51,21 +57,25 @@ namespace Reclaimer.IO.Dynamic
             if (storageType.IsEnum)
                 storageType = Enum.GetUnderlyingType(storageType);
 
+            return storageType;
+        }
+
+        public void SeekOffset(long offset) => Stream.Seek(Origin + offset, SeekOrigin.Begin);
+
+        public void ReadValue(PropertyConfiguration prop)
+        {
+            var offset = prop.OffsetAttributes.FirstOrDefault(ValidateVersion)?.Offset ?? throw new InvalidOperationException();
+            SeekOffset(offset);
+
+            var byteOrder = prop.ByteOrderAttributes.FirstOrDefault(ValidateVersion)?.ByteOrder ?? ByteOrder;
+            var storageType = GetStorageType(prop);
             var value = ReadValue(prop, storageType, byteOrder);
 
-            if (prop.IsVersionNumber && !Version.HasValue)
-            {
-                var version = value;
-                if (Utils.TryConvert(ref version, storageType, typeof(double)))
-                    Version = (double)version;
-            }
+            if (prop.IsVersionNumber && !Version.HasValue && value != null)
+                Version = Convert.ToDouble(value);
 
-            if (prop.DataLengthAttributes.Any(ValidateVersion))
-            {
-                var length = value;
-                if (Utils.TryConvert(ref length, storageType, typeof(long)))
-                    DataLength = (long)length;
-            }
+            if (prop.DataLengthAttributes.Any(ValidateVersion) && value != null)
+                DataLength = Convert.ToInt64(value);
 
             prop.SetValue(Target, value);
         }
@@ -91,6 +101,59 @@ namespace Reclaimer.IO.Dynamic
             return Version.HasValue
                 ? Reader.ReadObject(storageType, Version.Value)
                 : Reader.ReadObject(storageType);
+        }
+
+        public void WriteValue(PropertyConfiguration prop)
+        {
+            var offset = prop.OffsetAttributes.FirstOrDefault(ValidateVersion)?.Offset ?? throw new InvalidOperationException();
+            SeekOffset(offset);
+
+            var byteOrder = prop.ByteOrderAttributes.FirstOrDefault(ValidateVersion)?.ByteOrder ?? ByteOrder;
+            var storageType = GetStorageType(prop);
+            var value = prop.GetValue(Target);
+
+            if (prop.IsVersionNumber && Version.HasValue)
+            {
+                value = Version;
+                if (!Utils.TryConvert(ref value, typeof(double), storageType))
+                    throw new InvalidCastException($"The version number provided in place of {prop.Property.Name} could not be stored as {storageType}");
+            }
+
+            if (value == null && !storageType.IsValueType)
+                throw new InvalidOperationException($"Null reference types cannot be written to stream");
+
+            if (value != null && prop.PropertyType != storageType && !Utils.TryConvert(ref value, prop.PropertyType, storageType))
+                throw new InvalidCastException($"The value in {prop.Property.Name} could not be stored as {storageType}");
+
+            //for nullable types write the default value
+            WriteValue(prop, storageType, byteOrder, value ?? Activator.CreateInstance(storageType));
+
+            if (value != null && prop.DataLengthAttributes.Any(ValidateVersion))
+                DataLength = Convert.ToInt64(value);
+        }
+
+        private void WriteValue(PropertyConfiguration prop, Type storageType, ByteOrder byteOrder, object value)
+        {
+            if (storageType == typeof(string))
+            {
+                var stringValue = (string)value;
+                if (prop.FixedLengthAttribute != null)
+                    Writer.WriteStringFixedLength(stringValue, prop.FixedLengthAttribute.Length, prop.FixedLengthAttribute.Padding);
+                else if (prop.IsLengthPrefixed)
+                    Writer.Write(stringValue, byteOrder);
+                else
+                {
+                    if (prop.NullTerminatedAttribute.HasLength && stringValue?.Length > prop.NullTerminatedAttribute.Length)
+                        stringValue = stringValue[..prop.NullTerminatedAttribute.Length];
+                    Writer.WriteStringNullTerminated(stringValue);
+                }
+            }
+            else if (MethodCache.WriteMethods.ContainsKey(storageType))
+                MethodCache.WriteMethods[storageType].Invoke(Writer, byteOrder, value);
+            else if (Version.HasValue)
+                Writer.WriteObject(value, Version.Value);
+            else
+                Writer.WriteObject(storageType);
         }
 
         public override string ToString() => $"{Target.GetType().Name} v{Version?.ToString() ?? "NULL"} @ {Origin}";

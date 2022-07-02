@@ -47,6 +47,17 @@ namespace Reclaimer.IO.Dynamic
             return instances[type];
         }
 
+        private IEnumerable<PropertyConfiguration> GetValidProperties(DataContext context)
+        {
+            return from prop in properties
+                   let offsetAttr = prop.OffsetAttributes.FirstOrDefault(context.ValidateVersion)
+                   where context.ValidateVersion(prop)
+                   && (prop.VersionSpecificAttribute == null || prop.VersionSpecificAttribute.Version == context.Version)
+                   && offsetAttr != null
+                   orderby offsetAttr.Offset
+                   select prop;
+        }
+
         public static object Populate(object obj, Type type, EndianReader reader, double? version)
         {
             if (type == null)
@@ -68,14 +79,53 @@ namespace Reclaimer.IO.Dynamic
             if (versionProperty != null)
                 context.ReadValue(versionProperty);
 
-            foreach (var property in properties.Where(context.ValidateVersion).OrderBy(p => p.OffsetAttributes.FirstOrDefault(context.ValidateVersion)?.Offset))
+            foreach (var property in GetValidProperties(context))
                 context.ReadValue(property);
 
             var fixedSize = FixedSizeAttributes.FirstOrDefault(context.ValidateVersion)?.Size ?? context.DataLength;
             if (fixedSize.HasValue)
-                reader.Seek(context.Origin + fixedSize.Value, SeekOrigin.Begin);
+                context.SeekOffset(fixedSize.Value);
 
             return context.Target;
+        }
+
+        public static void Write(object obj, EndianWriter writer, double? version)
+        {
+            if (obj == null)
+                throw new ArgumentNullException(nameof(obj));
+
+            var type = obj.GetType();
+            if (MethodCache.WriteMethods.ContainsKey(type))
+                MethodCache.WriteMethods[type].Invoke(writer, writer.ByteOrder, obj);
+            else
+                TypeConfiguration.ForType(type).WriteInternal(obj, writer, version);
+        }
+
+        private void WriteInternal(object obj, EndianWriter writer, double? version)
+        {
+            if (!version.HasValue && FixedSizeAttributes.AllNotEmpty(Extensions.IsVersioned))
+                throw new InvalidOperationException();
+
+            var context = new DataContext(this, obj, version, writer);
+
+            if (versionProperty != null)
+            {
+                if (!version.HasValue)
+                {
+                    var value = versionProperty.GetValue(obj);
+                    if (value != null)
+                        context.Version = Convert.ToDouble(value);
+                }
+
+                context.WriteValue(versionProperty);
+            }
+
+            foreach (var property in GetValidProperties(context))
+                context.WriteValue(property);
+
+            var fixedSize = FixedSizeAttributes.FirstOrDefault(context.ValidateVersion)?.Size ?? context.DataLength;
+            if (fixedSize.HasValue)
+                context.SeekOffset(fixedSize.Value);
         }
     }
 }
