@@ -21,29 +21,33 @@ namespace Reclaimer.Blam.MccHalo4
         public CacheType CacheType { get; }
         public CacheMetadata Metadata { get; }
 
-        public CacheHeader Header { get; }
-        public TagIndex TagIndex { get; }
-        public StringIndex StringIndex { get; }
-        public LocaleIndex LocaleIndex { get; }
+        public virtual CacheHeader Header { get; }
+        public virtual TagIndex TagIndex { get; }
+        public virtual StringIndex StringIndex { get; }
+        public virtual LocaleIndex LocaleIndex { get; }
 
-        public SectionAddressTranslator HeaderTranslator { get; }
-        public TagAddressTranslator MetadataTranslator { get; }
+        public virtual SectionAddressTranslator HeaderTranslator { get; }
+        public virtual TagAddressTranslator MetadataTranslator { get; }
 
-        public PointerExpander PointerExpander { get; }
+        public virtual PointerExpander PointerExpander { get; }
+
+        protected CacheFile(string fileName, ByteOrder byteOrder, string buildString, CacheType cacheType, CacheMetadata metadata)
+        {
+            if (!File.Exists(fileName))
+                throw Exceptions.FileNotFound(fileName);
+
+            FileName = fileName;
+            ByteOrder = byteOrder;
+            BuildString = buildString;
+            CacheType = cacheType;
+            Metadata = metadata;
+        }
 
         public CacheFile(string fileName) : this(CacheArgs.FromFile(fileName)) { }
 
         internal CacheFile(CacheArgs args)
+            : this(args.FileName, args.ByteOrder, args.BuildString, args.CacheType, args.Metadata)
         {
-            if (!File.Exists(args.FileName))
-                throw Exceptions.FileNotFound(args.FileName);
-
-            FileName = args.FileName;
-            ByteOrder = args.ByteOrder;
-            BuildString = args.BuildString;
-            CacheType = args.CacheType;
-            Metadata = args.Metadata;
-
             HeaderTranslator = new SectionAddressTranslator(this, 0);
             MetadataTranslator = new TagAddressTranslator(this);
             PointerExpander = new PointerExpander(this);
@@ -101,66 +105,66 @@ namespace Reclaimer.Blam.MccHalo4
     public class CacheHeader : IGen4Header
     {
         [Offset(8)]
-        public long FileSize { get; set; }
+        public virtual long FileSize { get; set; }
 
         [Offset(16)]
-        public Pointer64 IndexPointer { get; set; }
+        public virtual Pointer64 IndexPointer { get; set; }
 
         [Offset(24)]
-        public int TagDataAddress { get; set; }
+        public virtual int TagDataAddress { get; set; }
 
         [Offset(28)]
-        public int VirtualSize { get; set; }
+        public virtual int VirtualSize { get; set; }
 
         [Offset(288)]
         [NullTerminated(Length = 32)]
-        public string BuildString { get; set; }
+        public virtual string BuildString { get; set; }
 
         [Offset(348)]
-        public int StringCount { get; set; }
+        public virtual int StringCount { get; set; }
 
         [Offset(352)]
-        public int StringTableSize { get; set; }
+        public virtual int StringTableSize { get; set; }
 
         [Offset(356)]
-        public Pointer StringTableIndexPointer { get; set; }
+        public virtual Pointer StringTableIndexPointer { get; set; }
 
         [Offset(360)]
-        public Pointer StringTablePointer { get; set; }
+        public virtual Pointer StringTablePointer { get; set; }
 
         [Offset(436)]
         [NullTerminated(Length = 256)]
-        public string ScenarioName { get; set; }
+        public virtual string ScenarioName { get; set; }
 
         [Offset(696)]
-        public int FileCount { get; set; }
+        public virtual int FileCount { get; set; }
 
         [Offset(700)]
-        public Pointer FileTablePointer { get; set; }
+        public virtual Pointer FileTablePointer { get; set; }
 
         [Offset(704)]
-        public int FileTableSize { get; set; }
+        public virtual int FileTableSize { get; set; }
 
         [Offset(708)]
-        public Pointer FileTableIndexPointer { get; set; }
+        public virtual Pointer FileTableIndexPointer { get; set; }
 
         [Offset(712)]
-        public int UnknownTableSize { get; set; }
+        public virtual int UnknownTableSize { get; set; }
 
         [Offset(716)]
-        public Pointer UnknownTablePointer { get; set; }
+        public virtual Pointer UnknownTablePointer { get; set; }
 
         [Offset(768)]
-        public long VirtualBaseAddress { get; set; }
+        public virtual long VirtualBaseAddress { get; set; }
 
         [Offset(784)]
-        public PartitionTable64 PartitionTable { get; set; }
+        public virtual PartitionTable64 PartitionTable { get; set; }
 
         [Offset(1212)]
-        public SectionOffsetTable SectionOffsetTable { get; set; }
+        public virtual SectionOffsetTable SectionOffsetTable { get; set; }
 
         [Offset(1228)]
-        public SectionTable SectionTable { get; set; }
+        public virtual SectionTable SectionTable { get; set; }
 
         #region IGen3Header
 
@@ -224,7 +228,7 @@ namespace Reclaimer.Blam.MccHalo4
                 Classes.AddRange(reader.ReadEnumerable<TagClass>(TagClassCount));
 
                 reader.Seek(TagDataPointer.Address, SeekOrigin.Begin);
-                for (int i = 0; i < TagCount; i++)
+                for (var i = 0; i < TagCount; i++)
                 {
                     var item = reader.ReadObject(new IndexItem(cache, i));
                     if (item.ClassIndex < 0)
@@ -246,7 +250,7 @@ namespace Reclaimer.Blam.MccHalo4
                 reader.Seek(cache.Header.FileTablePointer.Address, SeekOrigin.Begin);
                 using (var tempReader = reader.CreateVirtualReader())
                 {
-                    for (int i = 0; i < TagCount; i++)
+                    for (var i = 0; i < TagCount; i++)
                     {
                         if (indices[i] == -1)
                         {
@@ -279,14 +283,15 @@ namespace Reclaimer.Blam.MccHalo4
     public class StringIndex : IStringIndex
     {
         private readonly CacheFile cache;
-        private readonly StringIdTranslator translator;
         private readonly string[] items;
 
+        internal virtual StringIdTranslator Translator { get; }
+        
         public StringIndex(CacheFile cache)
         {
             this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
             items = new string[cache.Header.StringCount];
-            translator = new StringIdTranslator(Resources.MccHalo4Strings, cache.Metadata.StringIds);
+            Translator = new StringIdTranslator(Resources.MccHalo4Strings, cache.Metadata.StringIds);
         }
 
         internal void ReadItems()
@@ -299,7 +304,7 @@ namespace Reclaimer.Blam.MccHalo4
                 reader.Seek(cache.Header.StringTablePointer.Address, SeekOrigin.Begin);
                 using (var tempReader = reader.CreateVirtualReader())
                 {
-                    for (int i = 0; i < cache.Header.StringCount; i++)
+                    for (var i = 0; i < cache.Header.StringCount; i++)
                     {
                         if (indices[i] < 0)
                             continue;
@@ -313,9 +318,9 @@ namespace Reclaimer.Blam.MccHalo4
 
         public int StringCount => items.Length;
 
-        public string this[int id] => items[translator.GetStringIndex(id)];
+        public string this[int id] => items[Translator.GetStringIndex(id)];
 
-        public int GetStringId(string value) => translator.GetStringId(Array.IndexOf(items, value));
+        public int GetStringId(string value) => Translator.GetStringId(Array.IndexOf(items, value));
 
         public IEnumerator<string> GetEnumerator() => items.AsEnumerable().GetEnumerator();
 

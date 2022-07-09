@@ -104,7 +104,9 @@ namespace Reclaimer.Blam.Common
                 case CacheType.Halo4Beta:
                 case CacheType.Halo4Retail:
                 case CacheType.MccHalo4:
+                case CacheType.MccHalo4U4:
                 case CacheType.MccHalo2X:
+                case CacheType.MccHalo2XU8:
                     content = item.ReadMetadata<Halo4.bitmap>();
                     break;
             }
@@ -162,7 +164,9 @@ namespace Reclaimer.Blam.Common
                     case CacheType.Halo4Beta:
                     case CacheType.Halo4Retail:
                     case CacheType.MccHalo4:
+                    case CacheType.MccHalo4U4:
                     case CacheType.MccHalo2X:
+                    case CacheType.MccHalo2XU8:
                         content = item.ReadMetadata<Halo4.render_model>();
                         break;
                 }
@@ -204,7 +208,9 @@ namespace Reclaimer.Blam.Common
                     case CacheType.Halo4Beta:
                     case CacheType.Halo4Retail:
                     case CacheType.MccHalo4:
+                    case CacheType.MccHalo4U4:
                     case CacheType.MccHalo2X:
+                    case CacheType.MccHalo2XU8:
                         content = item.ReadMetadata<Halo4.scenario_structure_bsp>();
                         break;
                 }
@@ -352,7 +358,7 @@ namespace Reclaimer.Blam.Common
                 using (var ds = new DeflateStream(reader.BaseStream, CompressionMode.Decompress))
                 using (var reader2 = new BinaryReader(ds))
                 {
-                    for (int i = 0; i < segmentLength;)
+                    for (var i = 0; i < segmentLength;)
                     {
                         var blockSize = ReadSpecialInt(reader2, out var flag);
                         if (flag)

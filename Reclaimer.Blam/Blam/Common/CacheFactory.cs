@@ -144,8 +144,14 @@ namespace Reclaimer.Blam.Common
                 case CacheType.MccHalo4:
                     return new MccHalo4.CacheFile(args);
 
+                case CacheType.MccHalo4U4:
+                    return new MccHalo4.CacheFileU4(args);
+
                 case CacheType.MccHalo2X:
                     return new MccHalo2X.CacheFile(args);
+
+                case CacheType.MccHalo2XU8:
+                    return new MccHalo2X.CacheFileU8(args);
 
                 default:
                     throw Exceptions.UnknownMapFile(fileName);

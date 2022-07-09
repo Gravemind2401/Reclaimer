@@ -48,15 +48,6 @@ namespace Reclaimer.Blam.MccHaloReach
         internal CacheFile(CacheArgs args)
             : this(args.FileName, args.ByteOrder, args.BuildString, args.CacheType, args.Metadata)
         {
-            if (!File.Exists(args.FileName))
-                throw Exceptions.FileNotFound(args.FileName);
-
-            FileName = args.FileName;
-            ByteOrder = args.ByteOrder;
-            BuildString = args.BuildString;
-            CacheType = args.CacheType;
-            Metadata = args.Metadata;
-
             HeaderTranslator = new SectionAddressTranslator(this, 0);
             MetadataTranslator = new TagAddressTranslator(this);
             PointerExpander = new PointerExpander(this);

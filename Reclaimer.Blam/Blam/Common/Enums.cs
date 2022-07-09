@@ -258,9 +258,9 @@ namespace Reclaimer.Blam.Common
         [BuildString("Sep 10 2021 06:54:23", "U3", Deflate)] //update 3
         MccHalo4,
 
-        //[CacheMetadata(Gen4, PC, UnknownDeflate, Mcc)]
-        //[BuildString("Feb  3 2022 19:02:31", "U3", Deflate)] //update 4
-        //MccHalo4U4,
+        [CacheMetadata(Gen4, PC, Deflate, Mcc)]
+        [BuildString("Feb  3 2022 19:02:31", "U3")] //update 4
+        MccHalo4U4,
 
         [CacheMetadata(Gen4, PC, UnknownDeflate, Mcc)]
         [BuildString("Apr  9 2020 01:36:04", "U0", MccFlight)] //flight 1
@@ -274,9 +274,9 @@ namespace Reclaimer.Blam.Common
         [BuildString("Sep 17 2021 14:26:28", "U6", Deflate)] //update 7 (time travel?)
         MccHalo2X,
 
-        //[CacheMetadata(Gen4, PC, UnknownDeflate, Mcc)]
-        //[BuildString("Feb 14 2022 19:18:28", "U6", Deflate)] //update 8
-        //MccHalo2XU8,
+        [CacheMetadata(Gen4, PC, Deflate, Mcc)]
+        [BuildString("Feb 14 2022 19:18:28", "U6")] //update 8
+        MccHalo2XU8,
     }
 
     public enum Language

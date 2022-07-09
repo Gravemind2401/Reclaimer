@@ -136,7 +136,7 @@ namespace Reclaimer.Plugins.MetaViewer
                 PluginProfiles = new List<PluginProfile>
                 {
                     new PluginProfile("Halo5", ModuleType.Halo5Server, ModuleType.Halo5Forge),
-                    new PluginProfile("Halo2AMCC", CacheType.MccHalo2X),
+                    new PluginProfile("Halo2AMCC", CacheTypesByPrefix(CacheType.MccHalo2X)),
                     new PluginProfile("Halo4MCC", CacheTypesByPrefix(CacheType.MccHalo4)),
                     new PluginProfile("Halo4", CacheType.Halo4Retail, CacheType.MccHalo4, CacheType.MccHalo2X),
                     new PluginProfile("Halo4NetTest", CacheType.Halo4Beta),

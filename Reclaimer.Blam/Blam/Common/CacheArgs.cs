@@ -83,7 +83,13 @@ namespace Reclaimer.Blam.Common
                         if (Regex.IsMatch(test, BuildStringRegex))
                             buildAddress = 64; //MccHalo1
                         else
-                            buildAddress = 160; //Gen3 MCC
+                        {
+                            reader.Seek(160, SeekOrigin.Begin);
+                            if (DateTime.TryParse(reader.ReadNullTerminatedString(32), out _))
+                                buildAddress = 160; //Gen3 MCC
+                            else
+                                buildAddress = 152; //Gen4 MCC (April 2022+)
+                        }
                     }
                 }
                 //else if (version == 343) //MCC H1 Custom
