@@ -83,8 +83,25 @@ namespace Reclaimer.Blam.Halo4
             using (var fs = new FileStream(targetFile, FileMode.Open, FileAccess.Read))
             using (var reader = new EndianReader(fs, cache.ByteOrder))
             {
-                reader.Seek(cache.CacheType >= CacheType.MccHalo4 ? 1216 : 1152, SeekOrigin.Begin);
-                var dataTableAddress = reader.ReadUInt32();
+                uint dataTableAddress;
+                //if (page.CacheIndex >= 0)
+                //    dataTableAddress = 122880; //header size
+                //else
+                //{
+                switch (cache.CacheType)
+                {
+                    case CacheType.MccHalo4U4:
+                    case CacheType.MccHalo2XU8:
+                        reader.Seek(1224, SeekOrigin.Begin);
+                        dataTableAddress = reader.ReadUInt32();
+                        break;
+                    default:
+                        reader.Seek(cache.CacheType >= CacheType.MccHalo4 ? 1216 : 1152, SeekOrigin.Begin);
+                        dataTableAddress = reader.ReadUInt32();
+                        break;
+                }
+                //}
+
                 reader.Seek(dataTableAddress + page.DataOffset, SeekOrigin.Begin);
                 return ContentFactory.GetResourceData(reader, cache.Metadata.ResourceCodec, maxLength, segmentOffset, page.CompressedSize, page.DecompressedSize);
             }

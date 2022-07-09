@@ -44,7 +44,7 @@ namespace Reclaimer.Blam.MccHalo4
             {
                 reader.Seek(Header.IndexPointer.Address, SeekOrigin.Begin);
                 TagIndex = reader.ReadObject(new TagIndex(this));
-                StringIndex = new StringIndex(this);
+                StringIndex = new StringIndexU4(this);
 
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
