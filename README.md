@@ -26,6 +26,6 @@ In general, Reclaimer works with these kinds of files:
 - `.map` files from Halo MCC PC
 - `.module` files from Halo 5
 
-Using AMF model files will require either the [3DS Max](https://github.com/Gravemind2401/Adjutant/blob/master/Adjutant/Resources/3dsMax%20AMF2.ms "3DS Max") import script or the [Blender](https://github.com/Gravemind2401/Adjutant/blob/master/Adjutant/Resources/Blender%20AMF2.py "Blender") import script.
+Using AMF model files will require either the [3DS Max](https://github.com/Gravemind2401/Reclaimer/blob/master/Reclaimer.Blam/Resources/3dsMax%20AMF2.ms "3DS Max") import script or the [Blender](https://github.com/Gravemind2401/Reclaimer/blob/master/Reclaimer.Blam/Resources/Blender%20AMF2.py "Blender") import script.
 
 More information can be found on the [Wiki](https://github.com/Gravemind2401/Reclaimer/wiki "Wiki").
