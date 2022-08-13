@@ -159,6 +159,8 @@ namespace Reclaimer.Blam.Common
         [BuildString("Feb 15 2022 01:35:34", "U1")] //U9
         [BuildString("Apr  6 2022 10:48:27", "U1")] //U9 custom maps 1
         [BuildString("Apr  6 2022 10:48:46", "U1")] //U9 custom maps 2
+        [BuildString("Apr 20 2022 11:55:21", "U1")] //U9 custom maps 3
+        [BuildString("Apr 20 2022 11:56:23", "U1")] //U9 custom maps 4
         [BuildString("May  3 2022 12:38:41", "U1")] //U10
         [BuildString("Jun  8 2022 16:05:04", "U1")] //U10 custom maps 1
         [BuildString("Jun  8 2022 16:06:30", "U1")] //U10 custom maps 2
