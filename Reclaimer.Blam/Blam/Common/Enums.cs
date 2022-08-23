@@ -179,7 +179,7 @@ namespace Reclaimer.Blam.Common
         [BuildString("Dec  4 2020 18:24:06", "ODST U0")] //update 2
         MccHalo3ODST,
 
-        [CacheMetadata(CacheGeneration.Gen3, PC, Mcc | MccFlight)]
+        [CacheMetadata(CacheGeneration.Gen3, PC, MccFlight)]
         [BuildString("Aug 25 2021 03:35:05", "ODST U0")] //flight 3
         MccHalo3ODSTF3,
 
@@ -191,6 +191,9 @@ namespace Reclaimer.Blam.Common
         [BuildString("Feb 15 2022 01:59:47", "ODST U0")] //update 4
         [BuildString("Apr  5 2022 14:16:52", "ODST U0")] //update 4 custom maps 1
         [BuildString("Apr  5 2022 14:16:35", "ODST U0")] //update 4 custom maps 2
+        [BuildString("Apr 20 2022 11:53:15", "ODST U0")] //update 5
+        [BuildString("May  3 2022 12:27:08", "ODST U0")] //update 5 custom maps 1
+        [BuildString("May  3 2022 12:27:56", "ODST U0")] //update 5 custom maps 2
         MccHalo3ODSTU4,
 
         [CacheMetadata(CacheGeneration.Gen3, Xbox360, Beta)]
