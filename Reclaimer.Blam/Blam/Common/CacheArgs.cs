@@ -105,7 +105,7 @@ namespace Reclaimer.Blam.Common
                 var buildString = reader.ReadNullTerminatedString(32);
                 System.Diagnostics.Debug.WriteLine($"Found build string {buildString ?? "\\0"}");
 
-                return new CacheArgs(fileName, reader.ByteOrder, version, buildString, CacheMetadata.FromBuildString(buildString));
+                return new CacheArgs(fileName, reader.ByteOrder, version, buildString, CacheMetadata.FromBuildString(buildString, fileName));
             }
         }
     }

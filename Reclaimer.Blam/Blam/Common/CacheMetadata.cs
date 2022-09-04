@@ -33,10 +33,21 @@ namespace Reclaimer.Blam.Common
             Flags = build.FlagsOverride ?? meta.Flags;
         }
 
-        public static CacheMetadata FromBuildString(string buildString)
+        public static CacheMetadata FromBuildString(string buildString, string fileName)
         {
             var result = Utils.GetEnumAttributes<CacheType, BuildStringAttribute>()
                 .FirstOrNull(p => p.Value.BuildString == buildString);
+
+            if (!result.HasValue)
+            {
+                var fallBack = GuessCacheType(fileName);
+
+                if (fallBack != CacheType.Unknown)
+                    System.Diagnostics.Debug.WriteLine($"Warning: Falling back to CacheType {fallBack} based on file path");
+
+                result = Utils.GetEnumAttributes<CacheType, BuildStringAttribute>()
+                    .FirstOrNull(p => p.Key == fallBack);
+            }
 
             if (!result.HasValue)
                 return null;
@@ -48,6 +59,32 @@ namespace Reclaimer.Blam.Common
             var metaAttr = Utils.GetEnumAttributes<CacheType, CacheMetadataAttribute>(cacheType).Single();
 
             return new CacheMetadata(cacheType, metaAttr, buildAttr);
+        }
+
+        private static CacheType GuessCacheType(string fileName)
+        {
+            var parent = System.IO.Directory.GetParent(fileName);
+            if (parent.Name != "maps")
+                return CacheType.Unknown;
+
+            //TODO: detect latest enum for each game instead of hardcoding
+            switch (parent.Parent.Name)
+            {
+                case "halo1":
+                    return CacheType.MccHalo1;
+                case "halo3":
+                    return CacheType.MccHalo3U9;
+                case "halo3odst":
+                    return CacheType.MccHalo3ODSTU4;
+                case "haloreach":
+                    return CacheType.MccHaloReachU10;
+                case "halo4":
+                    return CacheType.MccHalo4U4;
+                case "groundhog":
+                    return CacheType.MccHalo2XU8;
+            }
+
+            return CacheType.Unknown;
         }
     }
 }
