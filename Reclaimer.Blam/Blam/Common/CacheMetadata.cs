@@ -38,7 +38,8 @@ namespace Reclaimer.Blam.Common
             var result = Utils.GetEnumAttributes<CacheType, BuildStringAttribute>()
                 .FirstOrNull(p => p.Value.BuildString == buildString);
 
-            if (!result.HasValue)
+            //ensure build string still looks correct before trying to fall back
+            if (!result.HasValue && DateTime.TryParse(buildString, out _))
             {
                 var fallBack = GuessCacheType(fileName);
 
