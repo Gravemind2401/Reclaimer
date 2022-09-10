@@ -29,7 +29,6 @@ namespace Reclaimer.Blam.Utilities
             registeredTypes = new Dictionary<Type, Func<object>>();
             registeredInstances = new Dictionary<Type, object>();
             ctorLookup = new Dictionary<Type, ConstructorInfo>();
-            DynamicReadEnabled = true;
         }
 
         protected DependencyReader(DependencyReader parent, long virtualOrigin)
@@ -41,7 +40,6 @@ namespace Reclaimer.Blam.Utilities
             registeredTypes = parent.registeredTypes;
             registeredInstances = parent.registeredInstances;
             ctorLookup = parent.ctorLookup;
-            DynamicReadEnabled = true;
         }
 
         public void RegisterType<T>(Func<T> constructor)
