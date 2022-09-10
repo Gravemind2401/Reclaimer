@@ -71,13 +71,13 @@ namespace Reclaimer.IO.Dynamic
 
         private object PopulateInternal(object obj, EndianReader reader, double? version)
         {
-            if (!version.HasValue && FixedSizeAttributes.AllNotEmpty(Extensions.IsVersioned))
-                throw new InvalidOperationException();
-
             var context = new DataContext(this, obj ?? Activator.CreateInstance(targetType), version, reader);
 
             if (versionProperty != null)
                 context.ReadValue(versionProperty);
+
+            if (!context.Version.HasValue && FixedSizeAttributes.AllNotEmpty(Extensions.IsVersioned))
+                throw new InvalidOperationException();
 
             foreach (var property in GetValidProperties(context))
                 context.ReadValue(property);

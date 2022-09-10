@@ -46,7 +46,7 @@ namespace Reclaimer.Blam.Halo1
                 Header = reader.ReadObject<CacheHeader>();
 
                 reader.Seek(Header.IndexAddress, SeekOrigin.Begin);
-                TagIndex = reader.ReadObject(new TagIndex(this));
+                TagIndex = reader.ReadObject(new TagIndex(this), (int)CacheType);
                 TagIndex.ReadItems(reader);
             }
         }

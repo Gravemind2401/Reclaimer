@@ -56,7 +56,7 @@ namespace Reclaimer.Blam.Tests.MccHalo3
 
         private void TestMap(string folder, string map)
         {
-            var cache = new Blam.MccHalo3.CacheFile(Path.Combine(folder, $"{map}.map"));
+            var cache = new Blam.MccHalo3.CacheFileU6(Path.Combine(folder, $"{map}.map"));
 
             var t0 = Task.Run(() =>
             {

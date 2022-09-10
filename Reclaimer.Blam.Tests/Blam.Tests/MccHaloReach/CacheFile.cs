@@ -62,7 +62,7 @@ namespace Reclaimer.Blam.Tests.MccHaloReach
 
         private void TestMap(string folder, string map)
         {
-            var cache = new Blam.MccHaloReach.CacheFile(Path.Combine(folder, $"{map}.map"));
+            var cache = new Blam.MccHaloReach.CacheFileU8(Path.Combine(folder, $"{map}.map"));
 
             var t0 = Task.Run(() =>
             {
