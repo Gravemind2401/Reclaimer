@@ -394,8 +394,8 @@ namespace Reclaimer.Plugins
                         if (v.Normal.Count > 0)
                             m.Normals.Add(v.Normal[0].ToAssimp3D());
 
-                        if (v.TexCoords.Count > 0)
-                            m.TextureCoordinateChannels[0].Add(v.TexCoords[0].ToAssimpUV());
+                        for (var u = 0; u < v.TexCoords.Count; u++)
+                            m.TextureCoordinateChannels[u].Add(v.TexCoords[u].ToAssimpUV());
 
                         if (geom.VertexWeights == VertexWeights.None && !geom.NodeIndex.HasValue)
                             continue;
