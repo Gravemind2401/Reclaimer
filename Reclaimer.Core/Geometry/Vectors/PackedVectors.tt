@@ -1,0 +1,118 @@
+﻿<#@ template debug="true" hostSpecific="true" language="C#" #>
+<#@ include file="T4FileManager.ttinclude" #>
+<#@ include file="Vectors.ttinclude" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+
+<#
+
+    var fieldNames = VectorDescription.FieldNames;
+    var propertyNames = VectorDescription.PropertyNames;
+
+    var layoutInt8N = new int[] { 8, 8, 8, 8 };
+    var layoutInt16N = new int[] { 16, 16, 16, 16 };
+    var layoutDecN4 = new int[] { 10, 10, 10, 2 };
+    var layoutDHenN3 = new int[] { 10, 11, 11 };
+    var layoutHenDN3 = new int[] { 11, 11, 10 };
+
+    var packedVectors = new List<VectorDescription>();
+
+    packedVectors.Add(new VectorDescription("DHenN3", PackSize.DWORD, layoutDHenN3, 3, DescriptionFlags.Signed | DescriptionFlags.Castable));
+    packedVectors.Add(new VectorDescription("HenDN3", PackSize.DWORD, layoutHenDN3, 3, DescriptionFlags.Signed | DescriptionFlags.Castable));
+    packedVectors.Add(new VectorDescription("DecN4", PackSize.DWORD, layoutDecN4, 4, DescriptionFlags.Signed | DescriptionFlags.Castable));
+
+    packedVectors.Add(new VectorDescription("UDHenN3", PackSize.DWORD, layoutDHenN3, 3, DescriptionFlags.Castable));
+    packedVectors.Add(new VectorDescription("UHenDN3", PackSize.DWORD, layoutHenDN3, 3, DescriptionFlags.Castable));
+    packedVectors.Add(new VectorDescription("UDecN4", PackSize.DWORD, layoutDecN4, 4, DescriptionFlags.Castable));
+
+    var fileManager = T4FileManager.Create(this).DisableTemplateMainOutputFile();
+
+    foreach (var vector in packedVectors.Where(v => v.IsPacked))
+    {
+        fileManager.CreateNewFile(vector.ClassName + ".cs");
+        var formattedLayout = string.Join(", ", vector.Precision.Take(vector.Dimensions)); #>
+using System;
+using System.Numerics;
+
+<# WriteGeneratedCodeNote(); #>
+
+namespace Reclaimer.Geometry.Vectors
+{
+    /// <summary>
+    /// A <#= vector.Dimensions #>-dimensional vector packed into <#= vector.BitLength #> bits.
+    /// Each axis has a precision of <#= formattedLayout #> bits respectively.
+    /// Each axis has a possible value range from <#= vector.IsSigned ? -1 : 0 #>f to 1f.
+    /// </summary>
+    <# WriteGeneratedCodeAttribute(); #>
+    public struct <#= vector.ClassName #> : IEquatable<<#= vector.ClassName #>>
+    {
+        private static readonly PackedVectorHelper helper = PackedVectorHelper.Create<#= vector.IsSigned ? "Signed" : "Unsigned" #>(<#= formattedLayout #>);
+
+        private <#= vector.PackType #> bits;
+
+        #region Axis Properties
+
+<#      for (var index = 0; index < vector.Dimensions; index++)
+        { #>
+        public float <#= propertyNames[index] #>
+        {
+            get => helper.Get<#= propertyNames[index] #>(in bits);
+            set => helper.Set<#= propertyNames[index] #>(ref bits, value);
+        }
+
+<#      } #>
+        #endregion
+
+        public <#= vector.ClassName #>(<#= vector.PackType #> value)
+        {
+            bits = value;
+        }
+
+        public <#= vector.ClassName #>(<#= vector.NumericsType #> value)
+            : this(<#= vector.FormatDimensions(", ", "value.{1}") #>)
+        { }
+
+        public <#= vector.ClassName #>(<#= vector.FormatDimensions(", ", "float {0}") #>)
+        {
+            bits = default;
+            (<#= vector.FormatDimensions(", ", "{1}") #>) = (<#= vector.FormatDimensions(", ", "{0}") #>);
+        }
+<#      if (vector.HasPackConstructor)
+        {
+            var width = vector.Flags.HasFlag(DescriptionFlags.PackCtor8) ? 8 : 16;
+            var type = width == 8 ? "byte" : "ushort";
+            var upcast = vector.PackSize == PackSize.QWORD ? "(long)" : string.Empty; #>
+
+        public <#= vector.ClassName #>(<#= vector.FormatDimensions(", ", type + " {0}bits") #>)
+        {
+            bits = unchecked((<#= vector.PackType #>)(<#= string.Join(" | ", Enumerable.Range(1, vector.Dimensions - 1).Select(i => string.Format("{0}{1}bits << {2}", upcast, fieldNames[i], width * i)).Reverse()) #> | xbits));
+        }
+<#      } #>
+
+        public override string ToString() => $"[<#= vector.FormatDimensions(", ", "{{{1}:F6}}") #>]";
+<#      if (vector.IsCastable)
+        { #>
+
+        #region Cast Operators
+
+        public static explicit operator <#= vector.NumericsType #>(<#= vector.ClassName #> value) => new <#= vector.NumericsType #>(<#= vector.FormatDimensions(", ", "value.{1}") #>);
+        public static explicit operator <#= vector.ClassName #>(<#= vector.NumericsType #> value) => new <#= vector.ClassName #>(value);
+
+        public static explicit operator <#= vector.PackType #>(<#= vector.ClassName #> value) => value.bits;
+        public static explicit operator <#= vector.ClassName #>(<#= vector.PackType #> value) => new <#= vector.ClassName #>(value);
+
+        #endregion
+<#      } #>
+
+<# WriteEqualityOperators(vector.ClassName, "bits"); #>
+    }
+}
+<#
+    }
+
+    fileManager.Generate();
+
+#>

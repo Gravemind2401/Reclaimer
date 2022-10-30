@@ -1,0 +1,61 @@
+﻿<#@ template debug="true" hostSpecific="true" language="C#" #>
+<#@ include file="T4FileManager.ttinclude" #>
+<#@ include file="Vectors.ttinclude" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+
+<#
+
+    var fieldNames = VectorDescription.FieldNames;
+    var propertyNames = VectorDescription.PropertyNames;
+
+    var realVectors = new List<VectorDescription>();
+
+    realVectors.Add(new VectorDescription("RealVector2", 2));
+    realVectors.Add(new VectorDescription("RealVector3", 3));
+    realVectors.Add(new VectorDescription("RealVector4", 4));
+
+    var fileManager = T4FileManager.Create(this).DisableTemplateMainOutputFile();
+
+    foreach (var vector in realVectors)
+    {
+        fileManager.CreateNewFile(vector.ClassName + ".cs"); #>
+using System;
+using System.Numerics;
+
+<# WriteGeneratedCodeNote(); #>
+
+namespace Reclaimer.Geometry.Vectors
+{
+    /// <summary>
+    /// A <#= vector.Dimensions #>-dimensional vector with single-precision floating-point values.
+    /// </summary>
+    <# WriteGeneratedCodeAttribute(); #>
+    public record struct <#= vector.ClassName #>(<#= vector.FormatDimensions(", ", "float {1}") #>)
+    {
+        public <#= vector.ClassName #>(<#= vector.NumericsType #> value)
+            : this(<#= vector.FormatDimensions(", ", "value.{1}") #>)
+        { }
+        
+        public override string ToString() => $"[<#= vector.FormatDimensions(", ", "{{{1}:F6}}") #>]";
+<#      if (vector.IsCastable)
+        { #>
+
+        #region Cast Operators
+
+        public static explicit operator <#= vector.NumericsType #>(<#= vector.ClassName #> value) => new <#= vector.NumericsType #>(<#= vector.FormatDimensions(", ", "value.{1}") #>);
+        public static explicit operator <#= vector.ClassName #>(<#= vector.NumericsType #> value) => new <#= vector.ClassName #>(value);
+
+        #endregion
+<#      } #>
+    }
+}
+<#
+    }
+
+    fileManager.Generate();
+
+#>

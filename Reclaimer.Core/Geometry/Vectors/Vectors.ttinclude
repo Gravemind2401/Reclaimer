@@ -1,0 +1,105 @@
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+
+<#
+
+    var templateName = Path.GetFileName(this.Host.TemplateFile);
+    
+    void WriteGeneratedCodeNote()
+    { #>
+// This file was automatically generated via the '<#= templateName #>' T4 template.
+// Do not modify this file directly - any changes will be lost when the code is regenerated.
+<#  };
+
+    void WriteGeneratedCodeAttribute()
+    { #>
+[System.CodeDom.Compiler.GeneratedCode("<#= templateName #>", "")]    
+<#  };
+
+    void WriteEqualityOperators(string className, params string[] compareProps)
+    { #>
+        #region Equality Operators
+
+        public static bool operator ==(<#= className #> left, <#= className #> right) => <#= string.Join(" && ", compareProps.Select(s => $"left.{s} == right.{s}")) #>;
+        public static bool operator !=(<#= className #> left, <#= className #> right) => !(left == right);
+
+        public override bool Equals(object obj) => obj is <#= className #> other && Equals(other);
+        public bool Equals(<#= className #> other) => bits == other.bits;
+        public override int GetHashCode() => HashCode.Combine(<#= string.Join(", ", compareProps) #>);
+
+        #endregion
+<#  };
+
+#>
+<#+
+
+    public enum PackSize
+    {
+        NotPacked = -1,
+        WORD,
+        DWORD,
+        QWORD
+    }
+
+    [Flags]
+    public enum DescriptionFlags
+    {
+        None = 0,
+        Signed = 1,
+        Castable = 2,
+        NotNormalised = 4,
+        PackCtor8 = 8,
+        PackCtor16 = 16,
+
+        PackCtorMask = PackCtor8 | PackCtor16
+    }
+
+    public class VectorDescription
+    {
+        private static readonly string[] packTypes = new string[] { "ushort", "uint", "ulong" };
+
+        public static readonly string[] FieldNames = new string[] { "x", "y", "z", "w" };
+        public static readonly string[] PropertyNames = new string[] { "X", "Y", "Z", "W" };
+
+        public string ClassName { get; }
+        public PackSize PackSize { get; }
+        public string PackType { get; }
+        public string NumericsType { get; }
+        public int[] Precision { get; }
+        public int Dimensions { get; }
+        public DescriptionFlags Flags { get; }
+
+        public bool IsSigned => Flags.HasFlag(DescriptionFlags.Signed);
+        public bool IsCastable => Flags.HasFlag(DescriptionFlags.Castable);
+        public bool IsNormalised => !Flags.HasFlag(DescriptionFlags.NotNormalised);
+        public bool IsPacked => PackSize != PackSize.NotPacked;
+
+        public int BitLength => IsPacked ? (1 << ((int)PackSize + 4)) : 32 * Dimensions;
+
+        public bool HasPackConstructor => (Flags & DescriptionFlags.PackCtorMask) > 0;
+
+        public VectorDescription(string name, int dimensions)
+            : this(name, PackSize.NotPacked, null, dimensions, DescriptionFlags.Signed | DescriptionFlags.Castable)
+        { }
+
+        public VectorDescription(string name, PackSize packSize, int[] packLayout, int dimensions, DescriptionFlags flags)
+        {
+            ClassName = name;
+            PackSize = packSize;
+            PackType = packTypes.ElementAtOrDefault((int)PackSize);
+            NumericsType = string.Format("Vector{0}", dimensions);
+            Precision = packLayout;
+            Dimensions = dimensions;
+            Flags = flags;
+        }
+        
+        public string FormatDimensions(string separator, string format)
+        {
+            return string.Join(separator, Enumerable.Range(0, Dimensions).Select(i => string.Format(format, FieldNames[i], PropertyNames[i])));
+        }
+    }
+
+#>

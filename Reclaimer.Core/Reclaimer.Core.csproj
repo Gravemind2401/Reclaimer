@@ -17,7 +17,66 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Geometry\Vectors\PackedVectors.cs" />
+    <Compile Remove="Geometry\Vectors\RealVectors.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Geometry\Vectors\RealVectors.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>RealVectors.cs</LastGenOutput>
+    </None>
+    <None Update="Geometry\Vectors\PackedVectors.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>PackedVectors.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Geometry\Vectors\DecN4.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PackedVectors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Geometry\Vectors\DHenN3.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PackedVectors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Geometry\Vectors\HenDN3.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PackedVectors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Geometry\Vectors\RealVector2.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RealVectors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Geometry\Vectors\RealVector3.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RealVectors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Geometry\Vectors\RealVector4.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RealVectors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Geometry\Vectors\UDecN4.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PackedVectors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Geometry\Vectors\UDHenN3.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PackedVectors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Geometry\Vectors\UHenDN3.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>PackedVectors.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

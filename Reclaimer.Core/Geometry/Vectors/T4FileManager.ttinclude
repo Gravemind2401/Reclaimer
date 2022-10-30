@@ -1,0 +1,970 @@
+// This file was derived from https://databinding-gmbh.github.io/T4.FileManager.VisualStudio/
+
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Reflection" #>
+<#@ assembly name="System.Linq" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Runtime.CompilerServices" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Threading.Tasks" #>
+
+<#+
+
+    public class T4FileManager
+    {
+        #region Local Fields
+
+        /// <summary>
+        /// The interface for the host that transforms text template.
+        /// </summary>
+        private readonly ITextTemplatingEngineHost host;
+
+        /// <summary>
+        /// Object for Visual Studio core automation.
+        /// </summary>
+        private readonly DTE dte;
+
+        /// <summary>
+        /// Object for logging.
+        /// </summary>
+        private readonly Logger logger;
+
+        /// <summary>
+        /// Code to generate as <see cref="StringBuilder"/>.
+        /// </summary>
+        private readonly StringBuilder textTransformation;
+
+        /// <summary>
+        /// Files to be generated.
+        /// </summary>
+        private readonly List<FileToGenerate> filesToGenerate;
+
+        /// <summary>
+        /// Information about the generated files.
+        /// </summary>
+        private readonly GeneratedInfo generatedInfo;
+
+        /// <summary>
+        /// Uniform header block for generating the files.
+        /// </summary>
+        private string headerBlock;
+
+        /// <summary>
+        /// Information about the current file to be generated.
+        /// </summary>
+        private FileToGenerate currentFileToGenerate; 
+
+        private string CurrentProject => currentFileToGenerate?.Project;
+        private string CurrentFilename => currentFileToGenerate?.Filename;
+        private string CurrentPath => currentFileToGenerate?.Path;
+
+        private ProjectItem TemplateProjectItem => dte.Solution.FindProjectItem(host.TemplateFile);
+
+        /// <summary>
+        /// Switch to write log of generation to main output file.
+        /// </summary>
+        private bool isLogToMainOutputFileEnabled = false;
+
+        #endregion
+
+        #region Settings
+
+        /// <summary>
+        /// Allow overwriting of files if it has already been generated.
+        /// </summary>
+        /// <value>Default value is true.</value>
+        public bool CanOverwriteExistingFile = true;
+
+        /// <summary>
+        /// Automatic indentation of the code.
+        /// </summary>
+        /// <value>Default value is false.</value>
+        public bool IsAutoIndentEnabled = false;
+
+        /// <summary>
+        /// Defines Encoding format for generated output file. (Default UTF8)
+        /// </summary>
+        /// <returns></returns>
+        public Encoding Encoding { get; set; }
+
+        /// <summary>
+        /// Enable Placeholder-Content for main output file to avoiding generation of empty .cs file
+        /// and ignoring of the output extension directive in .net core projects.
+        /// </summary>
+        public bool IsNetCorePlaceholderContentEnabled = true;
+
+        /// <summary>
+        /// Automatic indentation of the code with ReSharper.
+        /// </summary>
+        public bool IsAutoCleanUpWithResharperEnabled = false;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructor for the instantiation of the FileManager.
+        /// </summary>
+        /// <param name="textTransformation">Code to generate as <see cref="GeneratedTextTransformation"/>.</param>
+        public T4FileManager(GeneratedTextTransformation textTransformation)
+            : this(textTransformation.GenerationEnvironment, textTransformation.Host) { }
+
+        /// <summary>
+        /// Constructor for the instantiation of the FileManager.
+        /// </summary>
+        /// <param name="textTransformation">Code to generate as <see cref="StringBuilder"/>.</param>
+        /// <param name="host">The interface for the host that transforms text template.</param>
+        public T4FileManager(StringBuilder textTransformation, ITextTemplatingEngineHost host)
+        {
+            this.textTransformation = textTransformation;
+            this.host = host;
+
+            // prevent "error generating output" in IDE if output extension not set
+            this.host.SetFileExtension(".txt");
+
+            filesToGenerate = new List<FileToGenerate>();
+            generatedInfo = new GeneratedInfo();
+            dte = GetHostServiceProvider();
+            logger = new Logger(dte, Path.GetFileName(this.host.TemplateFile));
+            Encoding = Encoding.UTF8;
+        }
+
+        /// <summary>
+        /// Create instance of the FileManager.
+        /// </summary>
+        /// <param name="textTransformation">Code to generate as <see cref="GeneratedTextTransformation"/>.</param>
+        public static T4FileManager Create(GeneratedTextTransformation textTransformation)
+        {
+            return new T4FileManager(textTransformation.GenerationEnvironment, textTransformation.Host);
+        }
+
+        #endregion
+
+        #region Settings Chaining Methods
+
+        /// <Summary>
+        /// Workaround: set invalid file extension to prevent generation of template main output file (Suggessted by Eagle3386)
+        /// Produces the warning A custom tool 'TextTemplatingFileGenerator' is associated with file '*.tt', but the output of the
+        /// custom tool was not found in the project.
+        /// </Summary>
+        public T4FileManager DisableTemplateMainOutputFile()
+        {
+            logger.Information("TemplateMainOutputFile disabled");
+            host.SetFileExtension("\0");
+            return this;
+        }
+
+        /// <Summary>
+        /// Change switch CanOverwriteExistingFile to false
+        /// </Summary>
+        public T4FileManager DisableOverwriteExistingFile()
+        {
+            logger.Information("CanOverwriteExistingFile is disabled (false)");
+            CanOverwriteExistingFile = false;
+            return this;
+        }
+
+        /// <Summary>
+        /// Change switch IsAutoCleanUpWithResharperEnabled to true
+        /// </Summary>
+        public T4FileManager EnableCleanUpWithResharper()
+        {
+            logger.Information("IsAutoCleanUpWithResharperEnabled is enabled (true)");
+            IsAutoCleanUpWithResharperEnabled = true;
+            return this;
+        }
+
+        /// <Summary>
+        /// Change switch IsAutoIndentEnabled to true
+        /// </Summary>
+        public T4FileManager EnableAutoIndent()
+        {
+            logger.Information("IsAutoIndentEnabled is enabled (true) / VS Format Document Shortcut");
+            IsAutoIndentEnabled = true;
+            return this;
+        }
+
+        /// <Summary>
+        /// Write log information to the main output file in addtion to the active visual studio output window.
+        /// </Summary>
+        public T4FileManager EnableLog()
+        {
+            logger.Information("Log to main output file enabled");
+            isLogToMainOutputFileEnabled = true;
+            return this;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Clear current code input for starting header block.
+        /// </summary>
+        public void StartHeader()
+        {
+            logger.Information("Header started");
+            textTransformation.Clear();
+        }
+
+        /// <summary>
+        /// Set code as header block and empty code input.
+        /// </summary>
+        public void FinishHeader()
+        {
+            logger.Information("FinishHeader: {0} chars removed from main output", textTransformation.Length);
+            headerBlock = textTransformation.ToString();
+            textTransformation.Remove(0, textTransformation.Length);
+        }
+
+        /// <summary>
+        /// Empty header block.
+        /// </summary>
+        public void ClearHeader()
+        {
+            logger.Information("ClearHeader called");
+            headerBlock = null;
+        }
+
+        public void Log(string info) => logger.Information(info);
+        public void Log(string info, params object[] param) => logger.Information(info, param);
+
+        #region CreateNewFile
+
+        /// <summary>
+        /// A new file will be started. The generated code that was before this method is added to the last file.
+        /// </summary>
+        /// <param name="filename">The file name for the generated file.</param>
+        public void CreateNewFile(string filename) => CreateNewFile(filename, null);
+
+        /// <summary>
+        /// A new file will be started. The generated code that was before this method is added to the last file.
+        /// </summary>
+        /// <param name="filename">The file name for the generated file.</param>
+        /// <param name="properties">Settings that can be defined for the generated file.</param>
+        public void CreateNewFile(string filename, FileProperties properties)
+        {
+            var projectItem = TemplateProjectItem.ContainingProject;
+            var relativeUri = new Uri(projectItem.FileName).MakeRelativeUri(new Uri(host.TemplateFile));
+
+            var projectName = TemplateProjectItem.ContainingProject.Name;
+            var relativePath = Path.GetDirectoryName(Uri.UnescapeDataString(relativeUri.OriginalString));
+
+            if (properties == null)
+                properties = new FileProperties();
+
+            properties.SetParameter(Property.AutoGen, true);
+            properties.SetParameter(Property.DependentUpon, Path.GetFileName(host.TemplateFile));
+
+            CreateNewFile(filename, projectName, relativePath, properties);
+        }
+
+        /// <summary>
+        /// A new file will be started. The generated code that was before this method is added to the last file.
+        /// </summary>
+        /// <param name="filename">The file name for the generated file.</param>
+        /// <param name="project">Project name where the file is generated.</param>
+        /// <param name="path">Subfolder within the project where the file is generated.</param>
+        public void CreateNewFile(string filename, string project, string path) => CreateNewFile(filename, project, path, null);
+
+        /// <summary>
+        ///  A new file will be started. The generated code that was before this method is added to the last file.
+        /// </summary>
+        /// <param name="filename">The file name for the generated file.</param>
+        /// <param name="project">Project name where the file is generated.</param>
+        /// <param name="path">Subfolder within the project where the file is generated.</param>
+        /// <param name="properties">Settings that can be defined for the generated file.</param>
+        public void CreateNewFile(string filename, string project, string path, FileProperties properties)
+        {
+            logger.Information($"Begin {nameof(CreateNewFile)} {filename}");
+            if (!string.IsNullOrEmpty(currentFileToGenerate?.Filename))
+            {
+                logger.Information("Finish previous file");
+                FinishFile();
+            }
+
+            var formattedPath = path?.Replace("/", @"\");
+            logger.Information("Formatted path set {0}", formattedPath);
+
+            properties = properties ?? new FileProperties();
+
+            currentFileToGenerate = new FileToGenerate
+            {
+                Filename = filename,
+                Path = formattedPath,
+                Properties = properties.ToDictionary(),
+                Project = project
+            };
+
+            textTransformation.Clear();
+            logger.Information($"End {nameof(CreateNewFile)} {filename}");
+        }
+
+        #endregion
+
+        /// <summary>
+        /// The generated file is finished.
+        /// </summary>
+        public void FinishFile()
+        {
+            logger.LogStart();
+            string directory = null;
+
+            if (!string.IsNullOrEmpty(CurrentProject))
+            {
+                directory = GetProjectDirectoryPath(CurrentProject);
+                logger.Information("Filepath {0} to project {1} for file {2}", directory, CurrentProject, CurrentFilename);
+            }
+
+            directory = directory ?? GetTemplateFileProjectDirectoryPath();
+
+            if (!string.IsNullOrEmpty(CurrentPath))
+            {
+                directory = Path.Combine(directory, CurrentPath);
+                logger.Information("Filepath {0} to solution dir {1} for file {2}", directory, CurrentProject, CurrentFilename);
+            }
+
+            currentFileToGenerate.AbsolutePath = directory;
+
+            var header = headerBlock;
+            if (string.IsNullOrEmpty(header) == false)
+                header = headerBlock.Replace("$filename$", CurrentFilename);
+
+            currentFileToGenerate.Content = textTransformation.Insert(0, header).ToString();
+            filesToGenerate.Add(currentFileToGenerate);
+            logger.Information("File {0} added to list", CurrentFilename);
+
+            logger.Information("File content ({0} chars) removed from main text transformation", textTransformation.Length);
+            textTransformation.Remove(0, textTransformation.Length);
+
+            currentFileToGenerate = new FileToGenerate();
+            logger.LogEnd();
+        }
+
+        /// <summary>
+        /// Files are generated. Old files are cleaned up. Info file is created.
+        /// </summary>
+        public void Generate()
+        {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            logger.LogStart();
+            if (!string.IsNullOrEmpty(currentFileToGenerate?.Filename))
+            {
+                logger.Information("Finish last file");
+                FinishFile();
+            }
+
+            textTransformation.Clear();
+
+            foreach (var fileToGenerate in filesToGenerate)
+            {
+                GenerateNewFile(fileToGenerate);
+                GenerateNewFileForSolution(fileToGenerate);
+            }
+
+            DeleteExistingFiles(null);
+
+            generatedInfo.FilesToGenerate = filesToGenerate;
+            logger.Information("{0} files generated", filesToGenerate.Count);
+
+            logger.LogEnd();
+            stopWatch.Stop();
+            logger.Information("Duration: {0:h\\:mm\\:ss\\.fffff}", stopWatch.Elapsed);
+
+            if (isLogToMainOutputFileEnabled)
+                textTransformation.Append(logger.Log);
+
+            if (IsNetCorePlaceholderContentEnabled)
+                textTransformation.Append(".NET Core placeholder content to avoid ignoring the output extension directive");
+        }
+
+        /// <summary>
+        /// Get interface for the host that transforms text template.
+        /// </summary>
+        /// <returns><see cref="dte"/></returns>
+        private DTE GetHostServiceProvider()
+        {
+            var hostServiceProvider = host as IServiceProvider;
+            return hostServiceProvider?.GetCOMService(typeof(DTE)) as DTE;
+        }
+
+        #region Physical File Management
+
+        /// <summary>
+        /// Physical generation of the file.
+        /// </summary>
+        /// <param name="fileToGenerate">File information.</param>
+        private void GenerateNewFile(FileToGenerate fileToGenerate)
+        {
+            Directory.CreateDirectory(fileToGenerate.AbsolutePath);
+
+            if (IsAutoIndentEnabled || IsAutoCleanUpWithResharperEnabled)
+                fileToGenerate.Content = fileToGenerate.Content.Insert(0, " ");
+
+            var canOverwriteExistingFile = CanOverwriteExistingFileByFile(fileToGenerate);
+
+            if ((canOverwriteExistingFile && CanOverwriteExistingFile) || !File.Exists(fileToGenerate.FullPath))
+                File.WriteAllText(fileToGenerate.FullPath, fileToGenerate.Content, Encoding);
+        }
+
+        /// <summary>
+        /// Check whether a file may be overwritten.
+        /// </summary>
+        /// <param name="fileToGenerate">File information.</param>
+        /// <returns>Overwriting allowed or not as <see cref="bool"/>.</returns>
+        private bool CanOverwriteExistingFileByFile(FileToGenerate fileToGenerate)
+        {
+            if (fileToGenerate.Properties.ContainsKey(Property.CanOverwriteExistingFile))
+            {
+                var value = fileToGenerate.Properties[Property.CanOverwriteExistingFile] as bool?;
+                if (value == false)
+                {
+                    logger.Information("Can't overwrite file " + fileToGenerate.Filename);
+                    return false;
+                }
+            }
+
+            logger.Information("File {0} will be overwritten", fileToGenerate.Filename);
+            return true;
+        }
+
+        /// <summary>
+        /// Add file to the solution and execute the shortcuts (example: Resharper Clean Up).
+        /// </summary>
+        /// <param name="fileToGenerate">File information.</param>
+        private void GenerateNewFileForSolution(FileToGenerate fileToGenerate)
+        {
+            logger.LogStart();
+            var exists = HasProjectItem(fileToGenerate.AbsolutePath, fileToGenerate.Filename);
+
+            AddMissingFileToProject(fileToGenerate.Project, fileToGenerate.AbsolutePath, fileToGenerate.Filename, fileToGenerate.ParentItem == Path.GetFileName(host.TemplateFile));
+
+            var fileProjectItem = FindProjectItem(fileToGenerate.Project, fileToGenerate.Filename);
+            var canOverwriteExistingFile = CanOverwriteExistingFileByFile(fileToGenerate);
+
+            if (fileToGenerate.Properties != null && (canOverwriteExistingFile && CanOverwriteExistingFile) || !exists)
+            {
+                if (fileToGenerate.Properties != null)
+                {
+                    foreach (var property in fileToGenerate.Properties.Where(p => p.Key != Property.CanOverwriteExistingFile))
+                    {
+                        logger.Information("Set property key/value pair {0}/{1}", property.Key, property.Value);
+                        SetPropertyValue(fileProjectItem, property.Key, property.Value);
+                    }
+                }
+
+                if (IsAutoIndentEnabled)
+                {
+                    logger.Information("AutoIndent is enabled for file");
+                    FormatProjectItem(fileProjectItem);
+                }
+
+                if (IsAutoCleanUpWithResharperEnabled)
+                {
+                    logger.Information("AutoCleanup with resharper is enabled for file");
+                    FormatProjectItemWithResharper(fileProjectItem);
+                }
+            }
+
+            logger.LogEnd();
+        }
+
+        /// <summary>
+        /// Clean up the old files.
+        /// </summary>
+        private void DeleteExistingFiles(GeneratedInfo filesInfoFromPreviousRun)
+        {
+            logger.LogStart();
+
+            //remove all items marked as DependentUpon the current .tt file
+            if (filesToGenerate.Any(f => f.ParentItem == Path.GetFileName(host.TemplateFile)))
+            {
+                var childItems = TemplateProjectItem.ProjectItems.OfType<ProjectItem>().ToList();
+                foreach (var item in childItems)
+                {
+                    var filePath = item.FileNames[0];
+                    var filename = Path.GetFileName(filePath);
+                    var directory = Path.GetDirectoryName(filePath);
+
+                    if (!filesToGenerate.Any(f => f.FullPath == filePath))
+                    {
+                        File.Delete(filePath);
+                        RemoveFileFromProject(directory, filename);
+                        logger.Information("Dirty file {0} removed", filePath);
+                    }
+                }
+            }
+
+            if (filesInfoFromPreviousRun?.HasContent() != true || CanOverwriteExistingFile == false)
+            {
+                logger.Information($"Cancel {nameof(DeleteExistingFiles)} (no files from previous run and {nameof(CanOverwriteExistingFile)}: {CanOverwriteExistingFile}");
+                return;
+            }
+
+            foreach (var file in filesInfoFromPreviousRun.FilesToGenerate)
+            {
+                string directory = null;
+
+                if (!string.IsNullOrEmpty(file.Project))
+                    directory = GetProjectDirectoryPath(file.Project);
+
+                directory = directory ?? GetTemplateFileProjectDirectoryPath();
+
+                if (!string.IsNullOrEmpty(file.Path))
+                    directory = Path.Combine(directory, file.Path);
+
+                var filePath = Path.Combine(directory, file.Filename);
+
+                if (!filesToGenerate.Any(x => x.Project == file.Project
+                                                    && x.Filename == file.Filename
+                                                    && x.Path == file.Path
+                                                    && CanOverwriteExistingFileByFile(x)))
+                {
+                    File.Delete(filePath);
+                    RemoveFileFromProject(directory, file.Filename);
+                    logger.Information("Dirty file {0} removed", filePath);
+                }
+            }
+
+            logger.LogEnd();
+        }
+
+        #endregion
+
+        #region Solution Management
+
+        /// <summary>
+        /// Find the project item in the solution.
+        /// </summary>
+        /// <param name="projectName">Project name without extension.</param>
+        /// <param name="filename">Filename with extension.</param>
+        /// <returns></returns>
+        private ProjectItem FindProjectItem(string projectName, string filename)
+        {
+            if (string.IsNullOrEmpty(projectName))
+            {
+                var projItem = TemplateProjectItem;
+                var prj = projItem.ContainingProject;
+                projectName = prj.Name;
+            }
+
+            return dte.Solution.FindProjectItem(filename);
+        }
+
+        /// <summary>
+        /// Make sure that the project item is searched everywhere and that it is a project.
+        /// </summary>
+        /// <param name="projectName">Project name without extension.</param>
+        /// <returns><see cref="Project"/>.</returns>
+        private Project FindProjectByName(string projectName)
+        {
+            var topLevel = dte.Solution.Projects.OfType<Project>();
+            var subProjects = topLevel.SelectMany(p => p.ProjectItems?.OfType<ProjectItem>() ?? Enumerable.Empty<ProjectItem>())
+                .Select(i => i.SubProject)
+                .OfType<Project>();
+
+            var foundProject = topLevel.Union(subProjects).FirstOrDefault(p => p.Name == projectName);
+            if (foundProject == null)
+                throw new InvalidOperationException($"Project {projectName} does not exist in the solution.");
+
+            return foundProject;
+        }
+
+        /// <summary>
+        /// Adding a file to the solution (.NET Full Framework stuff).
+        /// </summary>
+        /// <param name="projectName">Project name without extension.</param>
+        /// <param name="absolutePath">Absolute path of file.</param>
+        /// <param name="fileName">Filename with extension.</param>
+        private void AddMissingFileToProject(string projectName, string absolutePath, string fileName, bool useDependency)
+        {
+            if (string.IsNullOrEmpty(projectName))
+            {
+                var projItem = TemplateProjectItem;
+                var prj = projItem.ContainingProject;
+                projectName = prj.Name;
+            }
+
+            var projectItems = useDependency
+                ? TemplateProjectItem.ProjectItems
+                : FindProjectByName(projectName).ProjectItems;
+
+            var exists = HasProjectItem(absolutePath, fileName);
+            var combinedPath = Path.Combine(absolutePath, fileName);
+
+            if (!exists)
+                projectItems.AddFromFile(combinedPath);
+        }
+
+        /// <summary>
+        /// Check if Project item exists.
+        /// </summary>
+        /// <param name="absolutePath">Absolute path of file.</param>
+        /// <param name="fileName">Filename with extension.</param>
+        /// <returns></returns>
+        private bool HasProjectItem(string absolutePath, string fileName)
+        {
+            var combinedPath = Path.Combine(absolutePath, fileName);
+            return dte.Solution.FindProjectItem(combinedPath) != null;
+        }
+
+        /// <summary>
+        /// Remove Project item from the Solution.
+        /// </summary>
+        /// <param name="projectPath">Absolute path of project.</param>
+        /// <param name="fileName">Filename with extension.</param>
+        private void RemoveFileFromProject(string projectPath, string fileName)
+        {
+            var combinedPath = Path.Combine(projectPath, fileName);
+            var item = dte.Solution.FindProjectItem(combinedPath);
+            item?.Remove();
+        }
+
+        /// <summary>
+        /// Set setting if available.
+        /// </summary>
+        /// <param name="projectItem"><see cref="ProjectItem"/>.</param>
+        /// <param name="propertyName">Property name as <see cref="string"/>.</param>
+        /// <param name="value">Value as <see cref="object"/>.</param>
+        private void SetPropertyValue(ProjectItem projectItem, string propertyName, object value)
+        {
+            var property = projectItem.Properties.Item(propertyName);
+            if (property != null)
+            {
+                logger.Information("Property {0} exists", propertyName);
+                property.Value = value;
+            }
+        }
+
+        #endregion
+
+        #region Path Helpers
+
+        /// <summary>
+        /// Get the path of the folder where the solution is located.
+        /// </summary>
+        /// <returns>Path as <see cref="string"/>.</returns>
+        private string GetSolutionDirectoryPath()
+        {
+            var fullName = dte.Solution.FullName;
+            return Path.GetDirectoryName(fullName);
+        }
+
+        /// <summary>
+        /// Get the path of the folder where this file is located.
+        /// </summary>
+        /// <returns>Path as <see cref="string"/>.</returns>
+        private string GetTemplateFileProjectDirectoryPath()
+        {
+            var currentProjectName = TemplateProjectItem.ContainingProject.Name;
+            var project = FindProjectByName(currentProjectName);
+            return Path.GetDirectoryName(project.FullName);
+        }
+
+        /// <summary>
+        /// Get the full path of a project item.
+        /// </summary>
+        /// <param name="projectItem"><see cref="ProjectItem"/>.</param>
+        /// <returns>Path as <see cref="string"/>.</returns>
+        private string GetProjectItemPath(ProjectItem projectItem)
+        {
+            var path = projectItem.Properties.Item(Property.FullPath).Value.ToString();
+            return path;
+        }
+
+        /// <summary>
+        /// Get the path of the folder where project item is located.
+        /// </summary>
+        /// <param name="projectName">Project name without extension.</param>
+        /// <returns>Path as <see cref="string"/>.</returns>
+        private string GetProjectDirectoryPath(string projectName)
+        {
+            var project = FindProjectByName(projectName);
+            return Path.GetDirectoryName(project.FullName);
+        }
+
+        #endregion
+
+        #region Command Helpers
+
+        /// <summary>
+        /// Execute Resharper cleanup task.
+        /// </summary>
+        /// <param name="item"><see cref="ProjectItem"/>.</param>
+        private void FormatProjectItemWithResharper(ProjectItem item)
+        {
+            ExecuteVsCommand(item, VsCommand.ReSharper_SilentCleanupCode);
+        }
+
+        /// <summary>
+        /// Execute Visual Studio Format Document task.
+        /// </summary>
+        /// <param name="item"><see cref="ProjectItem"/>.</param>
+        private void FormatProjectItem(ProjectItem item)
+        {
+            ExecuteVsCommand(item, VsCommand.FormatDocument);
+        }
+
+        /// <summary>
+        /// Execute Visual Studio commands.
+        /// </summary>
+        /// <param name="item"><see cref="ProjectItem"/>.</param>
+        /// <param name="command">Commands as <see cref="string"/>.</param>
+        private void ExecuteVsCommand(ProjectItem item, params string[] command)
+        {
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+
+            if (item.IsOpen)
+                item.Document.Close(vsSaveChanges.vsSaveChangesNo);
+
+            item.Open();
+
+            foreach (var cmd in command.Where(s => !string.IsNullOrWhiteSpace(s)))
+                TryToExecuteCommand(item, cmd, false, 1);
+
+            item.Document.Close(vsSaveChanges.vsSaveChangesYes);
+            logger.Information("VS command {0} executed", command);
+        }
+
+        /// <summary>
+        /// Recursive try to execute Visual Studio commands.
+        /// </summary>
+        /// <param name="item"><see cref="ProjectItem"/>.</param>
+        /// <param name="command">Command as <see cref="string"/>.</param>
+        /// <param name="finished">Evaluate whether command was executed.</param>
+        /// <param name="attempt">Number of attempts.</param>
+        private void TryToExecuteCommand(ProjectItem item, string command, bool finished, int attempt)
+        {
+            System.Threading.Thread.Sleep(250);
+            logger.Information("TryToExecuteCommand {0}, attempt: {1}", command, attempt);
+
+            if (finished)
+                return;
+
+            try
+            {
+                item.Document.ActiveWindow.SetFocus();
+                dte.ExecuteCommand(command, string.Empty);
+                finished = true;
+            }
+            catch (Exception exception)
+            {
+                if (exception.Message.Contains("Command") && exception.Message.Contains("is not valid"))
+                    return;
+
+                finished = false;
+            }
+
+            if (item.Document.Saved == true)
+                finished = false;
+
+            if (attempt == 25)
+            {
+                logger.Information("TryToExecuteCommand {0} failed", command);
+                return;
+            }
+
+            attempt++;
+
+            TryToExecuteCommand(item, command, finished, attempt);
+        }
+
+        #endregion
+    }
+
+    #region Constants
+
+    /// <summary>
+    /// Predefined properties
+    /// </summary>
+    public static class Property
+    {
+        public const string CopyToOutputDirectory = "CopyToOutputDirectory";
+        public const string BuildAction = "BuildAction";
+        public const string CustomTool = "CustomTool";
+        public const string CanOverwriteExistingFile = "CanOverwriteExistingFile";
+        public const string AutoGen = "AutoGen";
+        public const string DependentUpon = "DependentUpon";
+        public const string FullPath = "FullPath";
+    }
+
+    /// <summary>
+    /// Predefined Visual Studio commands
+    /// </summary>
+    public static class VsCommand
+    {
+        public const string FormatDocument = "Edit.FormatDocument";
+        public const string ReSharper_SilentCleanupCode = "ReSharper.ReSharper_SilentCleanupCode";
+    }
+
+    /// <summary>
+    /// Predefined property values (CopyToOutputDirectory)
+    /// </summary>
+    public static class CopyToOutputDirectory
+    {
+        public const int DoNotCopy = 0;
+        public const int CopyAlways = 1;
+        public const int CopyIfNewer = 2;
+    }
+
+    /// <summary>
+    /// Predefined property values (CanOverwriteExistingFile).
+    /// </summary>
+    public static class CanOverwriteExistingFile
+    {
+        public const bool Yes = true;
+        public const bool No = false;
+    }
+
+    /// <summary>
+    /// Predefined property values (BuildAction).
+    /// </summary>
+    public static class BuildAction
+    {
+        public const int None = 0;
+        public const int Compile = 1;
+        public const int Content = 2;
+        public const int EmbeddedResource = 3;
+    }
+
+    #endregion
+
+    #region Helper Classes
+
+    /// <summary>
+    /// Properties for project item
+    /// </summary>
+    public sealed class FileProperties
+    {
+        public FileProperties()
+        {
+            TemplateParameter = new Dictionary<string, object>();
+        }
+
+        public string CustomTool { get; set; }
+        public int? CopyToOutputDirectory { get; set; }
+        public int? BuildAction { get; set; }
+        public Dictionary<string, object> TemplateParameter { get; }
+
+        public void SetParameter(string key, object value)
+        {
+            if (TemplateParameter.ContainsKey(key))
+                TemplateParameter[key] = value;
+            else
+                TemplateParameter.Add(key, value);
+        }
+
+        internal string BuildActionString => BuildAction.ToString();
+
+        internal Dictionary<string, object> ToDictionary()
+        {
+            var propertyDictionary = new Dictionary<string, object>();
+
+            if (!string.IsNullOrEmpty(CustomTool))
+                propertyDictionary.Add(Property.CustomTool, CustomTool);
+
+            if (CopyToOutputDirectory.HasValue)
+                propertyDictionary.Add(Property.CopyToOutputDirectory, CopyToOutputDirectory.Value);
+
+            if (BuildAction.HasValue)
+                propertyDictionary.Add(Property.BuildAction, BuildAction);
+
+            foreach (var prop in TemplateParameter)
+                propertyDictionary.Add(prop.Key, prop.Value);
+
+            return propertyDictionary;
+        }
+    }
+
+    /// <summary>
+    /// Info wrapper of the generated files.
+    /// </summary>
+    public class GeneratedInfo
+    {
+        public List<FileToGenerate> FilesToGenerate { get; set; }
+
+        public bool HasContent()
+        {
+            return FilesToGenerate != null && FilesToGenerate.Any();
+        }
+    }
+
+    /// <summary>
+    /// Info for a generated file.
+    /// </summary>
+    public class FileToGenerate
+    {
+        public string Filename { get; set; }
+        public string Project { get; set; }
+        public string Path { get; set; }
+        public Dictionary<string, object> Properties { get; set; }
+        public string Content { get; set; }
+        public string AbsolutePath { get; set; }
+        public string FullPath => System.IO.Path.Combine(AbsolutePath, Filename);
+        public string ParentItem => Properties?[Property.DependentUpon] as string;
+    }
+
+    /// <summary>
+    /// Logger for detailed information
+    /// Note: Using NET 4 syntax to avoid errors in error list
+    /// </summary>
+    public class Logger
+    {
+        private readonly StringBuilder log;
+        private readonly EnvDTE.DTE dte;
+        private readonly string logSuffix;
+
+        public Logger(EnvDTE.DTE dte, string suffix)
+        {
+            this.dte = dte;
+            log = new StringBuilder();
+            logSuffix = suffix;
+        }
+
+        public string Log => log.ToString();
+
+        public void Information(string info)
+        {
+            string line = string.Format("{0} {1} | {2}", DateTime.Now, logSuffix, info);
+            WriteToOutput(line);
+            log.AppendLine(line);
+        }
+
+        public void Information(string info, params object[] parameters)
+        {
+            string line = string.Format(info, parameters);
+            Information(line);
+        }
+
+        public void LogStart([CallerMemberName] string memberName = null) => Information($"Begin {memberName}");
+        public void LogEnd([CallerMemberName] string memberName = null) => Information($"End {memberName}");
+
+        private void WriteToOutput(string output)
+        {
+            if (dte == null)
+                return;
+
+            var window = dte.Windows.Item(EnvDTE.Constants.vsWindowKindOutput);
+            var outputWindow = window.Object as EnvDTE.OutputWindow;
+            if (outputWindow == null)
+            {
+                log.AppendLine("WriteToOutput | Unable to obtain OutputWindow object");
+                return;
+            }
+
+            outputWindow.ActivePane.Activate();
+            outputWindow.ActivePane.OutputString(output);
+            outputWindow.ActivePane.OutputString("\n");
+        }
+    }
+
+    #endregion
+
+#>
