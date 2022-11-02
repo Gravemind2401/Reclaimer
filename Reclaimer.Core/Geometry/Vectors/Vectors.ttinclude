@@ -68,6 +68,7 @@
         public PackSize PackSize { get; }
         public string PackType { get; }
         public string NumericsType { get; }
+        public string InterfaceTypes { get; }
         public int[] Precision { get; }
         public int Dimensions { get; }
         public DescriptionFlags Flags { get; }
@@ -90,7 +91,8 @@
             ClassName = name;
             PackSize = packSize;
             PackType = packTypes.ElementAtOrDefault((int)PackSize);
-            NumericsType = string.Format("Vector{0}", dimensions);
+            NumericsType = $"Vector{dimensions}";
+            InterfaceTypes = $"IVector{dimensions}, IReadOnlyVector{dimensions}";
             Precision = packLayout;
             Dimensions = dimensions;
             Flags = flags;

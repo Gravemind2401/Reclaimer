@@ -10,7 +10,7 @@ namespace Reclaimer.Geometry.Vectors
     /// A 2-dimensional vector with single-precision floating-point values.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("RealVectors.tt", "")]    
-    public record struct RealVector2(float X, float Y)
+    public record struct RealVector2(float X, float Y) : IVector2, IReadOnlyVector2
     {
         public RealVector2(Vector2 value)
             : this(value.X, value.Y)

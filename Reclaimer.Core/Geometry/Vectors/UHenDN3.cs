@@ -12,7 +12,7 @@ namespace Reclaimer.Geometry.Vectors
     /// Each axis has a possible value range from 0f to 1f.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("PackedVectors.tt", "")]    
-    public struct UHenDN3 : IEquatable<UHenDN3>
+    public struct UHenDN3 : IEquatable<UHenDN3>, IVector3, IReadOnlyVector3
     {
         private static readonly PackedVectorHelper helper = PackedVectorHelper.CreateUnsigned(11, 11, 10);
 

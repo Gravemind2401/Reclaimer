@@ -30,7 +30,7 @@
 
     var fileManager = T4FileManager.Create(this).DisableTemplateMainOutputFile();
 
-    foreach (var vector in packedVectors.Where(v => v.IsPacked))
+    foreach (var vector in packedVectors)
     {
         fileManager.CreateNewFile(vector.ClassName + ".cs");
         var formattedLayout = string.Join(", ", vector.Precision.Take(vector.Dimensions)); #>
@@ -47,7 +47,7 @@ namespace Reclaimer.Geometry.Vectors
     /// Each axis has a possible value range from <#= vector.IsSigned ? -1 : 0 #>f to 1f.
     /// </summary>
     <# WriteGeneratedCodeAttribute(); #>
-    public struct <#= vector.ClassName #> : IEquatable<<#= vector.ClassName #>>
+    public struct <#= vector.ClassName #> : IEquatable<<#= vector.ClassName #>>, <#= vector.InterfaceTypes #>
     {
         private static readonly PackedVectorHelper helper = PackedVectorHelper.Create<#= vector.IsSigned ? "Signed" : "Unsigned" #>(<#= formattedLayout #>);
 
