@@ -64,6 +64,19 @@ namespace Reclaimer.IO
         /// </returns>
         public byte[] GetBuffer() => buffer;
 
+        public void SwapEndianness()
+        {
+            if (TPack == 1)
+                return;
+
+            for (var i = 0; i < Count; i++)
+            {
+                var span = CreateSpan(i);
+                for (var j = 0; j < TSize; j += TPack)
+                    span.Slice(j, TPack).Reverse();
+            }
+        }
+
         #region ICollection
         public void CopyTo(T[] array, int arrayIndex)
         {
@@ -82,6 +95,17 @@ namespace Reclaimer.IO
         void ICollection<T>.Clear() => throw new NotSupportedException();
         bool ICollection<T>.Contains(T item) => throw new NotSupportedException();
         bool ICollection<T>.Remove(T item) => throw new NotSupportedException();
+        #endregion
+
+        #region IEnumerable
+        protected IEnumerable<T> Enumerate()
+        {
+            for (var i = 0; i < Count; i++)
+                yield return this[i];
+        }
+
+        public IEnumerator<T> GetEnumerator() => Enumerate().GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)Enumerate()).GetEnumerator();
         #endregion
     }
 }
