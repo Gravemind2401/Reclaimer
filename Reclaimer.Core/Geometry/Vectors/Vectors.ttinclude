@@ -19,15 +19,15 @@
 [System.CodeDom.Compiler.GeneratedCode("<#= templateName #>", "")]    
 <#  };
 
-    void WriteEqualityOperators(string className, params string[] compareProps)
+    void WriteEqualityOperators(string typeName, params string[] compareProps)
     { #>
         #region Equality Operators
 
-        public static bool operator ==(<#= className #> left, <#= className #> right) => <#= string.Join(" && ", compareProps.Select(s => $"left.{s} == right.{s}")) #>;
-        public static bool operator !=(<#= className #> left, <#= className #> right) => !(left == right);
+        public static bool operator ==(<#= typeName #> left, <#= typeName #> right) => <#= string.Join(" && ", compareProps.Select(s => $"left.{s} == right.{s}")) #>;
+        public static bool operator !=(<#= typeName #> left, <#= typeName #> right) => !(left == right);
 
-        public override bool Equals(object obj) => obj is <#= className #> other && Equals(other);
-        public bool Equals(<#= className #> other) => bits == other.bits;
+        public override bool Equals(object obj) => obj is <#= typeName #> other && Equals(other);
+        public bool Equals(<#= typeName #> other) => bits == other.bits;
         public override int GetHashCode() => HashCode.Combine(<#= string.Join(", ", compareProps) #>);
 
         #endregion
@@ -52,9 +52,7 @@
         Castable = 2,
         NotNormalised = 4,
         PackCtor8 = 8,
-        PackCtor16 = 16,
-
-        PackCtorMask = PackCtor8 | PackCtor16
+        PackCtor16 = 16
     }
 
     public class VectorDescription
@@ -64,43 +62,46 @@
         public static readonly string[] FieldNames = new string[] { "x", "y", "z", "w" };
         public static readonly string[] PropertyNames = new string[] { "X", "Y", "Z", "W" };
 
-        public string ClassName { get; }
-        public PackSize PackSize { get; }
-        public string PackType { get; }
+        public string TypeName { get; }
+        public string StorageType { get; }
         public string NumericsType { get; }
         public string InterfaceTypes { get; }
         public int[] Precision { get; }
         public int Dimensions { get; }
         public DescriptionFlags Flags { get; }
+        public int ByteLength { get; }
 
         public bool IsSigned => Flags.HasFlag(DescriptionFlags.Signed);
-        public bool IsCastable => Flags.HasFlag(DescriptionFlags.Castable);
-        public bool IsNormalised => !Flags.HasFlag(DescriptionFlags.NotNormalised);
-        public bool IsPacked => PackSize != PackSize.NotPacked;
 
-        public int BitLength => IsPacked ? (1 << ((int)PackSize + 4)) : 32 * Dimensions;
+        public int BitLength => ByteLength * 8;
 
-        public bool HasPackConstructor => (Flags & DescriptionFlags.PackCtorMask) > 0;
+        public VectorDescription(string name, int dimensions, byte precision)
+            : this(name, dimensions, DescriptionFlags.None)
+        {
+            StorageType = precision == 16 ? "Half" : precision == 64 ? "double" : "float";
+            Precision = new int[dimensions];
+            ByteLength = dimensions * precision / 8;
 
-        public VectorDescription(string name, int dimensions)
-            : this(name, PackSize.NotPacked, null, dimensions, DescriptionFlags.Signed | DescriptionFlags.Castable)
-        { }
+            for (var i = 0; i < dimensions; i++)
+                Precision[i] = precision;
+        }
 
         public VectorDescription(string name, PackSize packSize, int[] packLayout, int dimensions, DescriptionFlags flags)
+            : this(name, dimensions, flags)
         {
-            ClassName = name;
-            PackSize = packSize;
-            PackType = packTypes.ElementAtOrDefault((int)PackSize);
-            NumericsType = $"Vector{dimensions}";
-            InterfaceTypes = $"IVector{dimensions}, IReadOnlyVector{dimensions}";
+            StorageType = packTypes.ElementAtOrDefault((int)packSize);
             Precision = packLayout;
+            ByteLength = 4;
+        }
+
+        private VectorDescription(string name, int dimensions, DescriptionFlags flags)
+        {
+            TypeName = name;
             Dimensions = dimensions;
             Flags = flags;
-        }
-        
-        public string FormatDimensions(string separator, string format)
-        {
-            return string.Join(separator, Enumerable.Range(0, Dimensions).Select(i => string.Format(format, FieldNames[i], PropertyNames[i])));
+
+            NumericsType = $"Vector{dimensions}";
+            InterfaceTypes = $"IVector{dimensions}, IReadOnlyVector{dimensions}";
         }
     }
 

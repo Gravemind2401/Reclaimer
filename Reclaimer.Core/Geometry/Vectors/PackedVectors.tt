@@ -20,19 +20,22 @@
 
     var packedVectors = new List<VectorDescription>();
 
-    packedVectors.Add(new VectorDescription("DHenN3", PackSize.DWORD, layoutDHenN3, 3, DescriptionFlags.Signed | DescriptionFlags.Castable));
-    packedVectors.Add(new VectorDescription("HenDN3", PackSize.DWORD, layoutHenDN3, 3, DescriptionFlags.Signed | DescriptionFlags.Castable));
-    packedVectors.Add(new VectorDescription("DecN4", PackSize.DWORD, layoutDecN4, 4, DescriptionFlags.Signed | DescriptionFlags.Castable));
+    packedVectors.Add(new VectorDescription("DHenN3", PackSize.DWORD, layoutDHenN3, 3, DescriptionFlags.Signed));
+    packedVectors.Add(new VectorDescription("HenDN3", PackSize.DWORD, layoutHenDN3, 3, DescriptionFlags.Signed));
+    packedVectors.Add(new VectorDescription("DecN4", PackSize.DWORD, layoutDecN4, 4, DescriptionFlags.Signed));
 
-    packedVectors.Add(new VectorDescription("UDHenN3", PackSize.DWORD, layoutDHenN3, 3, DescriptionFlags.Castable));
-    packedVectors.Add(new VectorDescription("UHenDN3", PackSize.DWORD, layoutHenDN3, 3, DescriptionFlags.Castable));
-    packedVectors.Add(new VectorDescription("UDecN4", PackSize.DWORD, layoutDecN4, 4, DescriptionFlags.Castable));
+    packedVectors.Add(new VectorDescription("UDHenN3", PackSize.DWORD, layoutDHenN3, 3, DescriptionFlags.None));
+    packedVectors.Add(new VectorDescription("UHenDN3", PackSize.DWORD, layoutHenDN3, 3, DescriptionFlags.None));
+    packedVectors.Add(new VectorDescription("UDecN4", PackSize.DWORD, layoutDecN4, 4, DescriptionFlags.None));
 
     var fileManager = T4FileManager.Create(this).DisableTemplateMainOutputFile();
 
     foreach (var vector in packedVectors)
     {
-        fileManager.CreateNewFile(vector.ClassName + ".cs");
+        string JoinFields(string separator, string format = "{0}") => string.Join(separator, fieldNames.Take(vector.Dimensions).Select(s => string.Format(format, s)));
+        string JoinProperties(string separator, string format = "{0}") => string.Join(separator, propertyNames.Take(vector.Dimensions).Select(s => string.Format(format, s)));
+        
+        fileManager.CreateNewFile(vector.TypeName + ".cs");
         var formattedLayout = string.Join(", ", vector.Precision.Take(vector.Dimensions)); #>
 using System;
 using System.Numerics;
@@ -47,11 +50,11 @@ namespace Reclaimer.Geometry.Vectors
     /// Each axis has a possible value range from <#= vector.IsSigned ? -1 : 0 #>f to 1f.
     /// </summary>
     <# WriteGeneratedCodeAttribute(); #>
-    public struct <#= vector.ClassName #> : IEquatable<<#= vector.ClassName #>>, <#= vector.InterfaceTypes #>
+    public struct <#= vector.TypeName #> : IEquatable<<#= vector.TypeName #>>, <#= vector.InterfaceTypes #>
     {
         private static readonly PackedVectorHelper helper = PackedVectorHelper.Create<#= vector.IsSigned ? "Signed" : "Unsigned" #>(<#= formattedLayout #>);
 
-        private <#= vector.PackType #> bits;
+        private <#= vector.StorageType #> bits;
 
         #region Axis Properties
 
@@ -66,48 +69,34 @@ namespace Reclaimer.Geometry.Vectors
 <#      } #>
         #endregion
 
-        public <#= vector.ClassName #>(<#= vector.PackType #> value)
+        public <#= vector.TypeName #>(<#= vector.StorageType #> value)
         {
             bits = value;
         }
 
-        public <#= vector.ClassName #>(<#= vector.NumericsType #> value)
-            : this(<#= vector.FormatDimensions(", ", "value.{1}") #>)
+        public <#= vector.TypeName #>(<#= vector.NumericsType #> value)
+            : this(<#= JoinProperties(", ", "value.{0}") #>)
         { }
 
-        public <#= vector.ClassName #>(<#= vector.FormatDimensions(", ", "float {0}") #>)
+        public <#= vector.TypeName #>(<#= JoinFields(", ", "float {0}") #>)
         {
             bits = default;
-            (<#= vector.FormatDimensions(", ", "{1}") #>) = (<#= vector.FormatDimensions(", ", "{0}") #>);
+            (<#= JoinProperties(", ") #>) = (<#= JoinFields(", ") #>);
         }
-<#      if (vector.HasPackConstructor)
-        {
-            var width = vector.Flags.HasFlag(DescriptionFlags.PackCtor8) ? 8 : 16;
-            var type = width == 8 ? "byte" : "ushort";
-            var upcast = vector.PackSize == PackSize.QWORD ? "(long)" : string.Empty; #>
 
-        public <#= vector.ClassName #>(<#= vector.FormatDimensions(", ", type + " {0}bits") #>)
-        {
-            bits = unchecked((<#= vector.PackType #>)(<#= string.Join(" | ", Enumerable.Range(1, vector.Dimensions - 1).Select(i => string.Format("{0}{1}bits << {2}", upcast, fieldNames[i], width * i)).Reverse()) #> | xbits));
-        }
-<#      } #>
-
-        public override string ToString() => $"[<#= vector.FormatDimensions(", ", "{{{1}:F6}}") #>]";
-<#      if (vector.IsCastable)
-        { #>
+        public override string ToString() => $"[<#= JoinProperties(", ", "{{{0}:F6}}") #>]";
 
         #region Cast Operators
 
-        public static explicit operator <#= vector.NumericsType #>(<#= vector.ClassName #> value) => new <#= vector.NumericsType #>(<#= vector.FormatDimensions(", ", "value.{1}") #>);
-        public static explicit operator <#= vector.ClassName #>(<#= vector.NumericsType #> value) => new <#= vector.ClassName #>(value);
+        public static explicit operator <#= vector.NumericsType #>(<#= vector.TypeName #> value) => new <#= vector.NumericsType #>(<#= JoinProperties(", ", "value.{0}") #>);
+        public static explicit operator <#= vector.TypeName #>(<#= vector.NumericsType #> value) => new <#= vector.TypeName #>(value);
 
-        public static explicit operator <#= vector.PackType #>(<#= vector.ClassName #> value) => value.bits;
-        public static explicit operator <#= vector.ClassName #>(<#= vector.PackType #> value) => new <#= vector.ClassName #>(value);
+        public static explicit operator <#= vector.StorageType #>(<#= vector.TypeName #> value) => value.bits;
+        public static explicit operator <#= vector.TypeName #>(<#= vector.StorageType #> value) => new <#= vector.TypeName #>(value);
 
         #endregion
-<#      } #>
 
-<# WriteEqualityOperators(vector.ClassName, "bits"); #>
+<# WriteEqualityOperators(vector.TypeName, "bits"); #>
     }
 }
 <#

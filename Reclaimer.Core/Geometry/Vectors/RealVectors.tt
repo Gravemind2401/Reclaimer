@@ -14,15 +14,27 @@
 
     var realVectors = new List<VectorDescription>();
 
-    realVectors.Add(new VectorDescription("RealVector2", 2));
-    realVectors.Add(new VectorDescription("RealVector3", 3));
-    realVectors.Add(new VectorDescription("RealVector4", 4));
+    realVectors.Add(new VectorDescription("RealVector2", 2, 32));
+    realVectors.Add(new VectorDescription("RealVector3", 3, 32));
+    realVectors.Add(new VectorDescription("RealVector4", 4, 32));
+
+    //realVectors.Add(new VectorDescription("HalfVector2", 2, 16));
+    //realVectors.Add(new VectorDescription("HalfVector3", 3, 16));
+    //realVectors.Add(new VectorDescription("HalfVector4", 4, 16));
 
     var fileManager = T4FileManager.Create(this).DisableTemplateMainOutputFile();
 
     foreach (var vector in realVectors)
     {
-        fileManager.CreateNewFile(vector.ClassName + ".cs"); #>
+        string JoinFields(string separator, string format = "{0}") => string.Join(separator, fieldNames.Take(vector.Dimensions).Select(s => string.Format(format, s)));
+        string JoinProperties(string separator, string format = "{0}") => string.Join(separator, propertyNames.Take(vector.Dimensions).Select(s => string.Format(format, s)));
+
+        var precisionText = vector.StorageType == "float" ? "single" : "half";
+        var typeCast = vector.StorageType == "float" ? "" : $"({vector.StorageType})";
+        var castBack = vector.StorageType == "float" ? "" : "(float)";
+        var interfaceName = $"Vector{vector.Dimensions}";
+        
+        fileManager.CreateNewFile(vector.TypeName + ".cs"); #>
 using System;
 using System.Numerics;
 
@@ -31,23 +43,48 @@ using System.Numerics;
 namespace Reclaimer.Geometry.Vectors
 {
     /// <summary>
-    /// A <#= vector.Dimensions #>-dimensional vector with single-precision floating-point values.
+    /// A <#= vector.Dimensions #>-dimensional vector with <#= precisionText #>-precision floating-point values.
     /// </summary>
     <# WriteGeneratedCodeAttribute(); #>
-    public record struct <#= vector.ClassName #>(<#= vector.FormatDimensions(", ", "float {1}") #>) : <#= vector.InterfaceTypes #>
+    public record struct <#= vector.TypeName #>(<#= JoinProperties(", ", $"{vector.StorageType} {{0}}") #>) : <#= vector.InterfaceTypes #>
     {
-        public <#= vector.ClassName #>(<#= vector.NumericsType #> value)
-            : this(<#= vector.FormatDimensions(", ", "value.{1}") #>)
+        public <#= vector.TypeName #>(<#= vector.NumericsType #> value)
+            : this(<#= JoinProperties(", ", $"{typeCast}value.{{0}}") #>)
         { }
         
-        public override string ToString() => $"[<#= vector.FormatDimensions(", ", "{{{1}:F6}}") #>]";
+        public override string ToString() => $"[<#= JoinProperties(", ", "{{{0}:F6}}") #>]";
 
         #region Cast Operators
 
-        public static explicit operator <#= vector.NumericsType #>(<#= vector.ClassName #> value) => new <#= vector.NumericsType #>(<#= vector.FormatDimensions(", ", "value.{1}") #>);
-        public static explicit operator <#= vector.ClassName #>(<#= vector.NumericsType #> value) => new <#= vector.ClassName #>(value);
+        public static explicit operator <#= vector.NumericsType #>(<#= vector.TypeName #> value) => new <#= vector.NumericsType #>(<#= JoinProperties(", ", $"{castBack}value.{{0}}") #>);
+        public static explicit operator <#= vector.TypeName #>(<#= vector.NumericsType #> value) => new <#= vector.TypeName #>(value);
 
         #endregion
+<#      if (vector.StorageType != "float")
+        { #>
+
+        #region I<#= interfaceName #>
+
+<#          for (var index = 0; index < vector.Dimensions; index++)
+            { #>
+        float I<#= interfaceName #>.<#= propertyNames[index] #>
+        {
+            get => (float)<#= propertyNames[index] #>;
+            set => <#= propertyNames[index] #> = <#= typeCast #>value;
+        }
+<#          } #>
+
+        #endregion
+
+        #region IReadOnly<#= interfaceName #>
+
+<#          for (var index = 0; index < vector.Dimensions; index++)
+            { #>
+        float IReadOnly<#= interfaceName #>.<#= propertyNames[index] #> => (float)<#= propertyNames[index] #>;
+<#          } #>
+
+        #endregion
+<#      } #>
     }
 }
 <#
