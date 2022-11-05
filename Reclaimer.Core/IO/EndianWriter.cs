@@ -16,6 +16,9 @@ namespace Reclaimer.IO
         private readonly long virtualOrigin;
         private readonly Encoding encoding;
 
+        /// <summary>
+        /// Gets or sets the endianness used when writing to the stream.
+        /// </summary>
         public ByteOrder ByteOrder { get; set; }
 
         #region Constructors
@@ -25,13 +28,11 @@ namespace Reclaimer.IO
         /// based on the specified stream with the system byte order and using UTF-8 encoding.
         /// </summary>
         /// <param name="output">The output stream.</param>
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentException"/>
+        /// <exception cref="ArgumentNullException"/>
         public EndianWriter(Stream output)
             : this(output, BitConverter.IsLittleEndian ? ByteOrder.LittleEndian : ByteOrder.BigEndian, new UTF8Encoding(), false)
-        {
-
-        }
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <seealso cref="EndianWriter"/> class
@@ -39,13 +40,11 @@ namespace Reclaimer.IO
         /// </summary>
         /// <param name="output">The output stream.</param>
         /// <param name="byteOrder">The byte order of the stream.</param>
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentException"/>
+        /// <exception cref="ArgumentNullException"/>
         public EndianWriter(Stream output, ByteOrder byteOrder)
             : this(output, byteOrder, new UTF8Encoding(), false)
-        {
-
-        }
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <seealso cref="EndianWriter"/> class
@@ -54,13 +53,11 @@ namespace Reclaimer.IO
         /// <param name="output">The output stream.</param>
         /// <param name="byteOrder">The byte order of the stream.</param>
         /// <param name="leaveOpen">true to leave the stream open after the EndianWriter object is disposed; otherwise, false.</param>
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentException"/>
+        /// <exception cref="ArgumentNullException"/>
         public EndianWriter(Stream output, ByteOrder byteOrder, bool leaveOpen)
             : this(output, byteOrder, new UTF8Encoding(), leaveOpen)
-        {
-
-        }
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <seealso cref="EndianWriter"/> class
@@ -69,13 +66,11 @@ namespace Reclaimer.IO
         /// <param name="output">The output stream.</param>
         /// <param name="byteOrder">The byte order of the stream.</param>
         /// <param name="encoding">The character encoding to use.</param>
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentException"/>
+        /// <exception cref="ArgumentNullException"/>
         public EndianWriter(Stream output, ByteOrder byteOrder, Encoding encoding)
             : this(output, byteOrder, encoding, false)
-        {
-
-        }
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <seealso cref="EndianWriter"/> class
@@ -85,8 +80,8 @@ namespace Reclaimer.IO
         /// <param name="byteOrder">The byte order of the stream.</param>
         /// <param name="encoding">The character encoding to use.</param>
         /// <param name="leaveOpen">true to leave the stream open after the EndianWriter object is disposed; otherwise, false.</param>
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentException"/>
+        /// <exception cref="ArgumentNullException"/>
         public EndianWriter(Stream output, ByteOrder byteOrder, Encoding encoding, bool leaveOpen)
             : base(output, encoding, leaveOpen)
         {
@@ -112,15 +107,9 @@ namespace Reclaimer.IO
             ByteOrder = parent.ByteOrder;
         }
 
-        private static Stream BaseStreamOrThrow(EndianWriter parent)
-        {
-            return parent?.BaseStream ?? throw new ArgumentNullException(nameof(parent));
-        }
+        private static Stream BaseStreamOrThrow(EndianWriter parent) => parent?.BaseStream ?? throw new ArgumentNullException(nameof(parent));
 
-        private static Encoding EncodingOrThrow(EndianWriter parent)
-        {
-            return parent?.encoding ?? throw new ArgumentNullException(nameof(parent));
-        }
+        private static Encoding EncodingOrThrow(EndianWriter parent) => parent?.encoding ?? throw new ArgumentNullException(nameof(parent));
 
         #endregion
 
@@ -130,109 +119,84 @@ namespace Reclaimer.IO
         /// Writes a two-byte floating-point value to the current stream using the current byte order
         /// and advances the current position of the stream by two bytes.
         /// </summary>
-        /// <param name="value">The two-byte floating-point value to write.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="Write(Half, ByteOrder)"/>
         public override void Write(Half value) => Write(value, ByteOrder);
 
         /// <summary>
         /// Writes a four-byte floating-point value to the current stream using the current byte order
         /// and advances the current position of the stream by four bytes.
         /// </summary>
-        /// <param name="value">The four-byte floating-point value to write.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="Write(float, ByteOrder)"/>
         public override void Write(float value) => Write(value, ByteOrder);
 
         /// <summary>
         /// Writes an eight-byte floating-point value to the current stream using the current byte order
         /// and advances the current position of the stream by eight bytes.
         /// </summary>
-        /// <param name="value">The eight-byte floating-point value to write.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="Write(double, ByteOrder)"/>
         public override void Write(double value) => Write(value, ByteOrder);
 
         /// <summary>
         /// Writes a decimal value to the current stream using the current byte order
         /// and advances the current position of the stream by sixteen bytes.
         /// </summary>
-        /// <param name="value">The decimal value to write.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="Write(decimal, ByteOrder)"/>
         public override void Write(decimal value) => Write(value, ByteOrder);
 
         /// <summary>
         /// Writes a two-byte signed integer to the current stream using the current byte order
         /// and advances the current position of the stream by two bytes.
         /// </summary>
-        /// <param name="value">The two-byte signed integer to write.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="Write(short, ByteOrder)"/>
         public override void Write(short value) => Write(value, ByteOrder);
 
         /// <summary>
         /// Writes a four-byte signed integer to the current stream using the current byte order
         /// and advances the current position of the stream by four bytes.
         /// </summary>
-        /// <param name="value">The four-byte signed integer to write.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="Write(int, ByteOrder)"/>
         public override void Write(int value) => Write(value, ByteOrder);
 
         /// <summary>
         /// Writes an eight-byte signed integer to the current stream using the current byte order
         /// and advances the current position of the stream by eight bytes.
         /// </summary>
-        /// <param name="value">The eight-byte signed integer to write.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="Write(long, ByteOrder)"/>
         public override void Write(long value) => Write(value, ByteOrder);
 
         /// <summary>
         /// Writes a two-byte unsigned integer to the current stream using the current byte order
         /// and advances the current position of the stream by two bytes.
         /// </summary>
-        /// <param name="value">The two-byte unsigned integer to write.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="Write(ushort, ByteOrder)"/>
         public override void Write(ushort value) => Write(value, ByteOrder);
 
         /// <summary>
         /// Writes a four-byte unsigned integer to the current stream using the current byte order
         /// and advances the current position of the stream by four bytes.
         /// </summary>
-        /// <param name="value">The four-byte unsigned integer to write.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="Write(uint, ByteOrder)"/>
         public override void Write(uint value) => Write(value, ByteOrder);
 
         /// <summary>
         /// Writes an eight-byte unsigned integer to the current stream using the current byte order
         /// and advances the current position of the stream by eight bytes.
         /// </summary>
-        /// <param name="value">The eight-byte unsigned integer to write.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="Write(ulong, ByteOrder)"/>
         public override void Write(ulong value) => Write(value, ByteOrder);
 
         /// <summary>
         /// Writes a length-prefixed string to the current stream using the current byte order
         /// and encoding of the <seealso cref="EndianWriter"/>.
         /// </summary>
-        /// <param name="value">The string value to write.</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="Write(string, ByteOrder)"/>
         public override void Write(string value) => Write(value, ByteOrder);
 
         /// <summary>
         /// Writes a globally unique identifier to the current stream using the current byte order
         /// and advances the current position of the stream by sixteen bytes.
         /// </summary>
-        /// <param name="value">The string value to write.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="Write(Guid, ByteOrder)"/>
         public virtual void Write(Guid value) => Write(value, ByteOrder);
 
         #endregion
@@ -243,10 +207,8 @@ namespace Reclaimer.IO
         /// Writes a two-byte floating-point value to the current stream using the specified byte order
         /// and advances the current position of the stream by two bytes.
         /// </summary>
-        /// <param name="value">The two-byte floating-point value to write.</param>
-        /// <param name="byteOrder">The byte order to use.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="BinaryWriter.Write(Half)"/>
+        /// <inheritdoc cref="Write(int, ByteOrder)"/>
         public virtual void Write(Half value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
@@ -264,10 +226,8 @@ namespace Reclaimer.IO
         /// Writes a four-byte floating-point value to the current stream using the specified byte order
         /// and advances the current position of the stream by four bytes.
         /// </summary>
-        /// <param name="value">The four-byte floating-point value to write.</param>
-        /// <param name="byteOrder">The byte order to use.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="BinaryWriter.Write(float)"/>
+        /// <inheritdoc cref="Write(int, ByteOrder)"/>
         public virtual void Write(float value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
@@ -285,10 +245,8 @@ namespace Reclaimer.IO
         /// Writes an eight-byte floating-point value to the current stream using the specified byte order
         /// and advances the current position of the stream by eight bytes.
         /// </summary>
-        /// <param name="value">The eight-byte floating-point value to write.</param>
-        /// <param name="byteOrder">The byte order to use.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="BinaryWriter.Write(double)"/>
+        /// <inheritdoc cref="Write(int, ByteOrder)"/>
         public virtual void Write(double value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
@@ -306,10 +264,8 @@ namespace Reclaimer.IO
         /// Writes a decimal value to the current stream using the specified byte order
         /// and advances the current position of the stream by sixteen bytes.
         /// </summary>
-        /// <param name="value">The decimal value to write.</param>
-        /// <param name="byteOrder">The byte order to use.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="BinaryWriter.Write(decimal)"/>
+        /// <inheritdoc cref="Write(int, ByteOrder)"/>
         public virtual void Write(decimal value, ByteOrder byteOrder)
         {
             if (byteOrder == ByteOrder.LittleEndian)
@@ -332,69 +288,56 @@ namespace Reclaimer.IO
         /// Writes a two-byte signed integer to the current stream using the specified byte order
         /// and advances the current position of the stream by two bytes.
         /// </summary>
-        /// <param name="value">The two-byte signed integer to write.</param>
-        /// <param name="byteOrder">The byte order to use.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="BinaryWriter.Write(short)"/>
+        /// <inheritdoc cref="Write(int, ByteOrder)"/>
         public virtual void Write(short value, ByteOrder byteOrder) => base.Write(byteOrder == ByteOrder.LittleEndian ? value : BinaryPrimitives.ReverseEndianness(value));
 
         /// <summary>
         /// Writes a four-byte signed integer to the current stream using the specified byte order
         /// and advances the current position of the stream by four bytes.
         /// </summary>
-        /// <param name="value">The four-byte signed integer to write.</param>
         /// <param name="byteOrder">The byte order to use.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="BinaryWriter.Write(int)"/>
         public virtual void Write(int value, ByteOrder byteOrder) => base.Write(byteOrder == ByteOrder.LittleEndian ? value : BinaryPrimitives.ReverseEndianness(value));
 
         /// <summary>
         /// Writes an eight-byte signed integer to the current stream using the specified byte order
         /// and advances the current position of the stream by eight bytes.
         /// </summary>
-        /// <param name="value">The eight-byte signed integer to write.</param>
-        /// <param name="byteOrder">The byte order to use.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="BinaryWriter.Write(long)"/>
+        /// <inheritdoc cref="Write(int, ByteOrder)"/>
         public virtual void Write(long value, ByteOrder byteOrder) => base.Write(byteOrder == ByteOrder.LittleEndian ? value : BinaryPrimitives.ReverseEndianness(value));
 
         /// <summary>
         /// Writes a two-byte unsigned integer to the current stream using the specified byte order
         /// and advances the current position of the stream by two bytes.
         /// </summary>
-        /// <param name="value">The two-byte unsigned integer to write.</param>
-        /// <param name="byteOrder">The byte order to use.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="BinaryWriter.Write(ushort)"/>
+        /// <inheritdoc cref="Write(int, ByteOrder)"/>
         public virtual void Write(ushort value, ByteOrder byteOrder) => base.Write(byteOrder == ByteOrder.LittleEndian ? value : BinaryPrimitives.ReverseEndianness(value));
 
         /// <summary>
         /// Writes a four-byte unsigned integer to the current stream using the specified byte order
         /// and advances the current position of the stream by four bytes.
         /// </summary>
-        /// <param name="value">The four-byte unsigned integer to write.</param>
-        /// <param name="byteOrder">The byte order to use.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="BinaryWriter.Write(uint)"/>
+        /// <inheritdoc cref="Write(int, ByteOrder)"/>
         public virtual void Write(uint value, ByteOrder byteOrder) => base.Write(byteOrder == ByteOrder.LittleEndian ? value : BinaryPrimitives.ReverseEndianness(value));
 
         /// <summary>
         /// Writes an eight-byte unsigned integer to the current stream using the specified byte order
         /// and advances the current position of the stream by eight bytes.
         /// </summary>
-        /// <param name="value">The eight-byte unsigned integer to write.</param>
-        /// <param name="byteOrder">The byte order to use.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <inheritdoc cref="BinaryWriter.Write(ulong)"/>
+        /// <inheritdoc cref="Write(int, ByteOrder)"/>
         public virtual void Write(ulong value, ByteOrder byteOrder) => base.Write(byteOrder == ByteOrder.LittleEndian ? value : BinaryPrimitives.ReverseEndianness(value));
 
         /// <summary>
         /// Writes a globally unique identifier to the current stream using the specified byte order
         /// and advances the current position of the stream by sixteen bytes.
         /// </summary>
-        /// <param name="value">The string value to write.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <param name="value">The unique identifier to write.</param>
+        /// <inheritdoc cref="Write(int, ByteOrder)"/>
         public virtual void Write(Guid value, ByteOrder byteOrder)
         {
             var bytes = value.ToByteArray();
@@ -418,48 +361,40 @@ namespace Reclaimer.IO
         /// and the current encoding of the <seealso cref="EndianWriter"/>.
         /// </summary>
         /// <param name="value">The string value to write.</param>
-        /// <param name="byteOrder">The ByteOrder to write with.</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <param name="byteOrder">The byte order to use when writing the length value.</param>
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="IOException"/>
+        /// <exception cref="ObjectDisposedException"/>
         public virtual void Write(string value, ByteOrder byteOrder)
         {
             Write(encoding.GetByteCount(value), byteOrder);
             Write(encoding.GetBytes(value));
         }
 
-        /// <summary>
-        /// Writes a fixed-length string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
-        /// </summary>
-        /// <param name="value">The string value to write.</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <remarks></remarks>
+        /// <inheritdoc cref="WriteStringFixedLength(string, int, char)"/>
         public virtual void WriteStringFixedLength(string value) => WriteStringFixedLength(value, value.Length);
 
-        /// <summary>
-        /// Writes a fixed-length string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
+        /// <remarks>
         /// If the string is shorter than the specified length it will be padded with white-space.
         /// If the string is longer than the specified length it will be truncated.
-        /// </summary>
-        /// <param name="value">The string value to write.</param>
-        /// <param name="length">The number of characters to write.</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// </remarks>
+        /// <inheritdoc cref="WriteStringFixedLength(string, int, char)"/>
         public virtual void WriteStringFixedLength(string value, int length) => WriteStringFixedLength(value, length, ' ');
 
         /// <summary>
         /// Writes a fixed-length string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
+        /// </summary>
+        /// <remarks>
         /// If the string is shorter than the specified length it will be padded using the specified character.
         /// If the string is longer than the specified length it will be truncated.
-        /// </summary>
+        /// </remarks>
         /// <param name="value">The string value to write.</param>
         /// <param name="length">The number of characters to write.</param>
         /// <param name="padding">The character to be used as padding.</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="IOException"/>
+        /// <exception cref="ObjectDisposedException"/>
         public virtual void WriteStringFixedLength(string value, int length, char padding)
         {
             if (value == null)
@@ -486,9 +421,9 @@ namespace Reclaimer.IO
         /// Writes a null-terminated string to the current stream using the current encoding of the <seealso cref="EndianWriter"/>.
         /// </summary>
         /// <param name="value">The string value to write.</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="IOException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="IOException"/>
+        /// <exception cref="ObjectDisposedException"/>
         public virtual void WriteStringNullTerminated(string value)
         {
             if (value == null)
@@ -513,9 +448,9 @@ namespace Reclaimer.IO
         /// </summary>
         /// <param name="offset">A byte offest relative to the origin parameter.</param>
         /// <param name="origin">A value of type SeekOrigin indicating the reference point used to obtain the new position.</param>
-        /// <exception cref="IOException" />
-        /// <exception cref="NotSupportedException" />
-        /// <exception cref="ObjectDisposedException" />
+        /// <exception cref="IOException"/>
+        /// <exception cref="NotSupportedException"/>
+        /// <exception cref="ObjectDisposedException"/>
         public void Seek(long offset, SeekOrigin origin)
         {
             long address = 0;
@@ -549,12 +484,12 @@ namespace Reclaimer.IO
         public virtual EndianWriter CreateVirtualWriter() => CreateVirtualWriter(BaseStream.Position);
 
         /// <summary>
-        /// Creates an <seealso cref="EndianWriter"/> based on the same stream 
+        /// Creates an <seealso cref="EndianWriter"/> based on the same stream
         /// with the same byte order and encoding that will treat the specified offset
         /// as the beginning of the stream and will not dispose of the underlying stream when it is closed.
         /// </summary>
         /// <param name="origin">The position in the stream that will be treated as the beginning.</param>
-        /// <exception cref="ArgumentOutOfRangeException" />
+        /// <exception cref="ArgumentOutOfRangeException"/>
         public virtual EndianWriter CreateVirtualWriter(long origin)
         {
             //don't check stream bounds for writer - it can typically write beyond EOF
@@ -564,8 +499,7 @@ namespace Reclaimer.IO
         /// <summary>
         /// Calls <see cref="WriteObject{T}(T)"/> for each value in the set.
         /// </summary>
-        /// <typeparam name="T">The type of object the set contains.</typeparam>
-        /// <param name="values">The set of values.</param>
+        /// <inheritdoc cref="WriteEnumerable{T}(IEnumerable{T}, double)"/>
         public void WriteEnumerable<T>(IEnumerable<T> values)
         {
             if (values == null)
@@ -579,8 +513,9 @@ namespace Reclaimer.IO
         /// Calls <see cref="WriteObject{T}(T, double)"/> for each value in the set.
         /// </summary>
         /// <typeparam name="T">The type of object the set contains.</typeparam>
-        /// <param name="values">The set of values.</param>
+        /// <param name="values">The set of values to write.</param>
         /// <param name="version">The version of the type to write.</param>
+        /// <inheritdoc cref="WriteObject{T}(T, double)"/>
         public void WriteEnumerable<T>(IEnumerable<T> values, double version)
         {
             if (values == null)

@@ -12,52 +12,14 @@ namespace Reclaimer.IO
     {
         #region ReadObject Overloads
 
-        /// <summary>
-        /// Reads a complex object from the current stream using reflection.
-        /// The type being read must have a public parameterless conustructor.
-        /// Each property to be read must have public get/set methods and
-        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
-        /// </summary>
-        /// <typeparam name="T">The type of object to read.</typeparam>
-        /// <exception cref="AmbiguousMatchException" />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="InvalidCastException" />
-        /// <exception cref="InvalidOperationException" />
-        /// <exception cref="MissingMethodException" />
+        /// <inheritdoc cref="ReadObject{T}(double)"/>
         public T ReadObject<T>() => (T)ReadObject(null, typeof(T), null);
 
-        /// <summary>
-        /// Reads a complex object from the current stream using reflection.
-        /// The type being read must have a public parameterless conustructor.
-        /// Each property to be read must have public get/set methods and
-        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
-        /// </summary>
         /// <typeparam name="T">The type of object to read.</typeparam>
-        /// <param name="version">
-        /// The version that was used to store the object.
-        /// This determines which properties will be read, how they will be
-        /// read and at what location in the stream to read them from.
-        /// </param>
-        /// <exception cref="AmbiguousMatchException" />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="InvalidCastException" />
-        /// <exception cref="InvalidOperationException" />
-        /// <exception cref="MissingMethodException" />
+        /// <inheritdoc cref="ReadObject(Type, double)"/>
         public T ReadObject<T>(double version) => (T)ReadObject(null, typeof(T), version);
 
-        /// <summary>
-        /// Reads a complex object from the current stream using reflection.
-        /// The type being read must have a public parameterless conustructor.
-        /// Each property to be read must have public get/set methods and
-        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
-        /// </summary>
-        /// <param name="type">The type of object to read.</param>
-        /// <exception cref="AmbiguousMatchException" />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="InvalidCastException" />
-        /// <exception cref="InvalidOperationException" />
-        /// <exception cref="MissingMethodException" />
+        /// <inheritdoc cref="ReadObject(Type, double)"/>
         public object ReadObject(Type type)
         {
             if (type == null)
@@ -68,22 +30,15 @@ namespace Reclaimer.IO
 
         /// <summary>
         /// Reads a complex object from the current stream using reflection.
-        /// The type being read must have a public parameterless conustructor.
+        /// </summary>
+        /// <remarks>
+        /// The type being read must have a public parameterless constructor.
         /// Each property to be read must have public get/set methods and
         /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
-        /// </summary>
+        /// </remarks>
         /// <param name="type">The type of object to read.</param>
-        /// <param name="version">
-        /// The version that was used to store the object.
-        /// This determines which properties will be read, how they will be
-        /// read and at what location in the stream to read them from.
-        /// </param>
-        /// <exception cref="AmbiguousMatchException" />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="InvalidCastException" />
-        /// <exception cref="InvalidOperationException" />
-        /// <exception cref="MissingMethodException" />
+        /// <returns>A new instance of the specified type whose values have been populated from the current stream.</returns>
+        /// <inheritdoc cref="ReadObject(object, double)"/>
         public object ReadObject(Type type, double version)
         {
             if (type == null)
@@ -92,20 +47,7 @@ namespace Reclaimer.IO
             return ReadObject(null, type, version);
         }
 
-        /// <summary>
-        /// Populates the properties of a complex object from the current stream using reflection.
-        /// Each property to be read must have public get/set methods and
-        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
-        /// The object returned is the same instance that was supplied as the parameter.
-        /// </summary>
-        /// <typeparam name="T">The type of object to read.</typeparam>
-        /// <param name="instance">The object to populate.</param>
-        /// <exception cref="AmbiguousMatchException" />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="InvalidCastException" />
-        /// <exception cref="InvalidOperationException" />
-        /// <exception cref="MissingMethodException" />
+        /// <inheritdoc cref="ReadObject{T}(T, double)"/>
         public T ReadObject<T>(T instance)
         {
             if (instance == null)
@@ -114,25 +56,8 @@ namespace Reclaimer.IO
             return (T)ReadObject(instance, instance.GetType(), null);
         }
 
-        /// <summary>
-        /// Populates the properties of a complex object from the current stream using reflection.
-        /// Each property to be read must have public get/set methods and
-        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
-        /// </summary>
         /// <typeparam name="T">The type of object to read.</typeparam>
-        /// <param name="instance">The object to populate.</param>
-        /// <param name="version">
-        /// The version that was used to store the object.
-        /// This determines which properties will be read, how they will be
-        /// read and at what location in the stream to read them from.
-        /// The object returned is the same instance that was supplied as the parameter.
-        /// </param>
-        /// <exception cref="AmbiguousMatchException" />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="InvalidCastException" />
-        /// <exception cref="InvalidOperationException" />
-        /// <exception cref="MissingMethodException" />
+        /// <inheritdoc cref="ReadObject(object, double)"/>
         public T ReadObject<T>(T instance, double version)
         {
             if (instance == null)
@@ -141,18 +66,7 @@ namespace Reclaimer.IO
             return (T)ReadObject(instance, instance.GetType(), version);
         }
 
-        /// <summary>
-        /// Populates the properties of a complex object from the current stream using reflection.
-        /// Each property to be read must have public get/set methods and
-        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
-        /// The object returned is the same instance that was supplied as the parameter.
-        /// </summary>
-        /// <exception cref="AmbiguousMatchException" />
-        /// <exception cref="ArgumentException" />
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="InvalidCastException" />
-        /// <exception cref="InvalidOperationException" />
-        /// <exception cref="MissingMethodException" />
+        /// <inheritdoc cref="ReadObject(object, double)"/>
         public object ReadObject(object instance)
         {
             if (instance == null)
@@ -163,15 +77,19 @@ namespace Reclaimer.IO
 
         /// <summary>
         /// Populates the properties of a complex object from the current stream using reflection.
+        /// </summary>
+        /// <remarks>
         /// Each property to be read must have public get/set methods and
         /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
-        /// </summary>
+        /// </remarks>
+        /// <returns>The same object that was supplied as the <paramref name="instance"/> parameter.</returns>
         /// <param name="instance">The object to populate.</param>
         /// <param name="version">
         /// The version that was used to store the object.
+        /// <para>
         /// This determines which properties will be read, how they will be
         /// read and at what location in the stream to read them from.
-        /// The object returned is the same instance that was supplied as the parameter.
+        /// </para>
         /// </param>
         /// <exception cref="AmbiguousMatchException" />
         /// <exception cref="ArgumentException" />
@@ -212,9 +130,6 @@ namespace Reclaimer.IO
             return TypeConfiguration.Populate(instance, type, this, version);
         }
 
-        protected virtual object CreateInstance(Type type, double? version)
-        {
-            return Activator.CreateInstance(type);
-        }
+        protected virtual object CreateInstance(Type type, double? version) => Activator.CreateInstance(type);
     }
 }
