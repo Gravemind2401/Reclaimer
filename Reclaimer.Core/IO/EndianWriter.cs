@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -335,18 +336,7 @@ namespace Reclaimer.IO
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public virtual void Write(short value, ByteOrder byteOrder)
-        {
-            if (byteOrder == ByteOrder.LittleEndian)
-            {
-                base.Write(value);
-                return;
-            }
-
-            var bytes = BitConverter.GetBytes(value);
-            Array.Reverse(bytes);
-            base.Write(bytes);
-        }
+        public virtual void Write(short value, ByteOrder byteOrder) => base.Write(byteOrder == ByteOrder.LittleEndian ? value : BinaryPrimitives.ReverseEndianness(value));
 
         /// <summary>
         /// Writes a four-byte signed integer to the current stream using the specified byte order
@@ -356,18 +346,7 @@ namespace Reclaimer.IO
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public virtual void Write(int value, ByteOrder byteOrder)
-        {
-            if (byteOrder == ByteOrder.LittleEndian)
-            {
-                base.Write(value);
-                return;
-            }
-
-            var bytes = BitConverter.GetBytes(value);
-            Array.Reverse(bytes);
-            base.Write(bytes);
-        }
+        public virtual void Write(int value, ByteOrder byteOrder) => base.Write(byteOrder == ByteOrder.LittleEndian ? value : BinaryPrimitives.ReverseEndianness(value));
 
         /// <summary>
         /// Writes an eight-byte signed integer to the current stream using the specified byte order
@@ -377,18 +356,7 @@ namespace Reclaimer.IO
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public virtual void Write(long value, ByteOrder byteOrder)
-        {
-            if (byteOrder == ByteOrder.LittleEndian)
-            {
-                base.Write(value);
-                return;
-            }
-
-            var bytes = BitConverter.GetBytes(value);
-            Array.Reverse(bytes);
-            base.Write(bytes);
-        }
+        public virtual void Write(long value, ByteOrder byteOrder) => base.Write(byteOrder == ByteOrder.LittleEndian ? value : BinaryPrimitives.ReverseEndianness(value));
 
         /// <summary>
         /// Writes a two-byte unsigned integer to the current stream using the specified byte order
@@ -398,18 +366,7 @@ namespace Reclaimer.IO
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public virtual void Write(ushort value, ByteOrder byteOrder)
-        {
-            if (byteOrder == ByteOrder.LittleEndian)
-            {
-                base.Write(value);
-                return;
-            }
-
-            var bytes = BitConverter.GetBytes(value);
-            Array.Reverse(bytes);
-            base.Write(bytes);
-        }
+        public virtual void Write(ushort value, ByteOrder byteOrder) => base.Write(byteOrder == ByteOrder.LittleEndian ? value : BinaryPrimitives.ReverseEndianness(value));
 
         /// <summary>
         /// Writes a four-byte unsigned integer to the current stream using the specified byte order
@@ -419,18 +376,7 @@ namespace Reclaimer.IO
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public virtual void Write(uint value, ByteOrder byteOrder)
-        {
-            if (byteOrder == ByteOrder.LittleEndian)
-            {
-                base.Write(value);
-                return;
-            }
-
-            var bytes = BitConverter.GetBytes(value);
-            Array.Reverse(bytes);
-            base.Write(bytes);
-        }
+        public virtual void Write(uint value, ByteOrder byteOrder) => base.Write(byteOrder == ByteOrder.LittleEndian ? value : BinaryPrimitives.ReverseEndianness(value));
 
         /// <summary>
         /// Writes an eight-byte unsigned integer to the current stream using the specified byte order
@@ -440,18 +386,7 @@ namespace Reclaimer.IO
         /// <param name="byteOrder">The byte order to use.</param>
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public virtual void Write(ulong value, ByteOrder byteOrder)
-        {
-            if (byteOrder == ByteOrder.LittleEndian)
-            {
-                base.Write(value);
-                return;
-            }
-
-            var bytes = BitConverter.GetBytes(value);
-            Array.Reverse(bytes);
-            base.Write(bytes);
-        }
+        public virtual void Write(ulong value, ByteOrder byteOrder) => base.Write(byteOrder == ByteOrder.LittleEndian ? value : BinaryPrimitives.ReverseEndianness(value));
 
         /// <summary>
         /// Writes a globally unique identifier to the current stream using the specified byte order

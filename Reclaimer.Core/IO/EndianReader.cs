@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -318,15 +319,7 @@ namespace Reclaimer.IO
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public virtual short ReadInt16(ByteOrder byteOrder)
-        {
-            if (byteOrder == ByteOrder.LittleEndian)
-                return base.ReadInt16();
-
-            var bytes = base.ReadBytes(2);
-            Array.Reverse(bytes);
-            return BitConverter.ToInt16(bytes, 0);
-        }
+        public virtual short ReadInt16(ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? base.ReadInt16() : BinaryPrimitives.ReverseEndianness(base.ReadInt16());
 
         /// <summary>
         /// Reads a 4-byte signed integer from the current stream using the specified byte order 
@@ -336,15 +329,7 @@ namespace Reclaimer.IO
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public virtual int ReadInt32(ByteOrder byteOrder)
-        {
-            if (byteOrder == ByteOrder.LittleEndian)
-                return base.ReadInt32();
-
-            var bytes = base.ReadBytes(4);
-            Array.Reverse(bytes);
-            return BitConverter.ToInt32(bytes, 0);
-        }
+        public virtual int ReadInt32(ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? base.ReadInt32() : BinaryPrimitives.ReverseEndianness(base.ReadInt32());
 
         /// <summary>
         /// Reads an 8-byte signed integer from the current stream using the specified byte order 
@@ -354,15 +339,7 @@ namespace Reclaimer.IO
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public virtual long ReadInt64(ByteOrder byteOrder)
-        {
-            if (byteOrder == ByteOrder.LittleEndian)
-                return base.ReadInt64();
-
-            var bytes = base.ReadBytes(8);
-            Array.Reverse(bytes);
-            return BitConverter.ToInt64(bytes, 0);
-        }
+        public virtual long ReadInt64(ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? base.ReadInt64() : BinaryPrimitives.ReverseEndianness(base.ReadInt64());
 
         /// <summary>
         /// Reads a 2-byte unsigned integer from the current stream using the specified byte order 
@@ -372,15 +349,7 @@ namespace Reclaimer.IO
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public virtual ushort ReadUInt16(ByteOrder byteOrder)
-        {
-            if (byteOrder == ByteOrder.LittleEndian)
-                return base.ReadUInt16();
-
-            var bytes = base.ReadBytes(2);
-            Array.Reverse(bytes);
-            return BitConverter.ToUInt16(bytes, 0);
-        }
+        public virtual ushort ReadUInt16(ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? base.ReadUInt16() : BinaryPrimitives.ReverseEndianness(base.ReadUInt16());
 
         /// <summary>
         /// Reads a 4-byte unsigned integer from the current stream using the specified byte order 
@@ -390,15 +359,7 @@ namespace Reclaimer.IO
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public virtual uint ReadUInt32(ByteOrder byteOrder)
-        {
-            if (byteOrder == ByteOrder.LittleEndian)
-                return base.ReadUInt32();
-
-            var bytes = base.ReadBytes(4);
-            Array.Reverse(bytes);
-            return BitConverter.ToUInt32(bytes, 0);
-        }
+        public virtual uint ReadUInt32(ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? base.ReadUInt32() : BinaryPrimitives.ReverseEndianness(base.ReadUInt32());
 
         /// <summary>
         /// Reads an 8-byte unsigned integer from the current stream using the specified byte order 
@@ -408,15 +369,7 @@ namespace Reclaimer.IO
         /// <exception cref="EndOfStreamException" />
         /// <exception cref="IOException" />
         /// <exception cref="ObjectDisposedException" />
-        public virtual ulong ReadUInt64(ByteOrder byteOrder)
-        {
-            if (byteOrder == ByteOrder.LittleEndian)
-                return base.ReadUInt64();
-
-            var bytes = base.ReadBytes(8);
-            Array.Reverse(bytes);
-            return BitConverter.ToUInt64(bytes, 0);
-        }
+        public virtual ulong ReadUInt64(ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? base.ReadUInt64() : BinaryPrimitives.ReverseEndianness(base.ReadUInt64());
 
         /// <summary>
         /// Reads a globally unique identifier from the current stream using the specified byte order
