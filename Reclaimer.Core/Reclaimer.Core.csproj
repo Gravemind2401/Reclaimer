@@ -49,6 +49,18 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>PackedVectors.tt</DependentUpon>
     </Compile>
+    <Compile Update="Geometry\Vectors\HalfVector2.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RealVectors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Geometry\Vectors\HalfVector3.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RealVectors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Geometry\Vectors\HalfVector4.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RealVectors.tt</DependentUpon>
+    </Compile>
     <Compile Update="Geometry\Vectors\HenDN3.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>PackedVectors.tt</DependentUpon>

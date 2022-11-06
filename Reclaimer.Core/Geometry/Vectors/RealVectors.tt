@@ -18,9 +18,9 @@
     realVectors.Add(new VectorDescription("RealVector3", 3, 32));
     realVectors.Add(new VectorDescription("RealVector4", 4, 32));
 
-    //realVectors.Add(new VectorDescription("HalfVector2", 2, 16));
-    //realVectors.Add(new VectorDescription("HalfVector3", 3, 16));
-    //realVectors.Add(new VectorDescription("HalfVector4", 4, 16));
+    realVectors.Add(new VectorDescription("HalfVector2", 2, 16));
+    realVectors.Add(new VectorDescription("HalfVector3", 3, 16));
+    realVectors.Add(new VectorDescription("HalfVector4", 4, 16));
 
     var fileManager = T4FileManager.Create(this).DisableTemplateMainOutputFile();
 
@@ -66,8 +66,9 @@ namespace Reclaimer.Geometry.Vectors
         #region I<#= interfaceName #>
 
 <#          for (var index = 0; index < vector.Dimensions; index++)
-            { #>
-        float I<#= interfaceName #>.<#= propertyNames[index] #>
+            { 
+                var count = index < 1 ? 2 : index + 1; #>
+        float IVector<#= count #>.<#= propertyNames[index] #>
         {
             get => (float)<#= propertyNames[index] #>;
             set => <#= propertyNames[index] #> = <#= typeCast #>value;
@@ -79,8 +80,9 @@ namespace Reclaimer.Geometry.Vectors
         #region IReadOnly<#= interfaceName #>
 
 <#          for (var index = 0; index < vector.Dimensions; index++)
-            { #>
-        float IReadOnly<#= interfaceName #>.<#= propertyNames[index] #> => (float)<#= propertyNames[index] #>;
+            { 
+                var count = index < 1 ? 2 : index + 1; #>
+        float IReadOnlyVector<#= count #>.<#= propertyNames[index] #> => (float)<#= propertyNames[index] #>;
 <#          } #>
 
         #endregion
