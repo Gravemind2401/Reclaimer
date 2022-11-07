@@ -12,21 +12,19 @@
     var fieldNames = VectorDescription.FieldNames;
     var propertyNames = VectorDescription.PropertyNames;
 
-    var layoutInt8N = new int[] { 8, 8, 8, 8 };
-    var layoutInt16N = new int[] { 16, 16, 16, 16 };
     var layoutDecN4 = new int[] { 10, 10, 10, 2 };
     var layoutDHenN3 = new int[] { 10, 11, 11 };
     var layoutHenDN3 = new int[] { 11, 11, 10 };
 
     var packedVectors = new List<VectorDescription>();
 
-    packedVectors.Add(new VectorDescription("DHenN3", PackSize.DWORD, layoutDHenN3, 3, DescriptionFlags.Signed));
-    packedVectors.Add(new VectorDescription("HenDN3", PackSize.DWORD, layoutHenDN3, 3, DescriptionFlags.Signed));
-    packedVectors.Add(new VectorDescription("DecN4", PackSize.DWORD, layoutDecN4, 4, DescriptionFlags.Signed));
+    packedVectors.Add(new VectorDescription("DHenN3", 3, true, layoutDHenN3));
+    packedVectors.Add(new VectorDescription("HenDN3", 3, true, layoutHenDN3));
+    packedVectors.Add(new VectorDescription("DecN4", 4, true, layoutDecN4));
 
-    packedVectors.Add(new VectorDescription("UDHenN3", PackSize.DWORD, layoutDHenN3, 3, DescriptionFlags.None));
-    packedVectors.Add(new VectorDescription("UHenDN3", PackSize.DWORD, layoutHenDN3, 3, DescriptionFlags.None));
-    packedVectors.Add(new VectorDescription("UDecN4", PackSize.DWORD, layoutDecN4, 4, DescriptionFlags.None));
+    packedVectors.Add(new VectorDescription("UDHenN3", 3, false, layoutDHenN3));
+    packedVectors.Add(new VectorDescription("UHenDN3", 3, false, layoutHenDN3));
+    packedVectors.Add(new VectorDescription("UDecN4", 4, false, layoutDecN4));
 
     var fileManager = T4FileManager.Create(this).DisableTemplateMainOutputFile();
 
