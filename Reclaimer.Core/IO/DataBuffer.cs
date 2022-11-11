@@ -48,6 +48,17 @@ namespace Reclaimer.IO
 
         public abstract T this[int index] { get; set; }
 
+        public T this[Index index]
+        {
+            get => this[index.GetOffset(Count)];
+            set => this[index.GetOffset(Count)] = value;
+        }
+
+        public IEnumerable<T> this[Range range] => Subset(range);
+
+        public IEnumerable<T> Subset(Range range) => Extensions.Subset(this, range);
+        public IEnumerable<T> Subset(int index, int length) => Extensions.Subset(this, index, length);
+
         #region IEnumerable
         protected IEnumerable<T> Enumerate()
         {

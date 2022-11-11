@@ -64,19 +64,6 @@ namespace Reclaimer.IO
         /// </returns>
         public byte[] GetBuffer() => buffer;
 
-        public void SwapEndianness()
-        {
-            if (TPack == 1)
-                return;
-
-            for (var i = 0; i < Count; i++)
-            {
-                var span = CreateSpan(i);
-                for (var j = 0; j < TSize; j += TPack)
-                    span.Slice(j, TPack).Reverse();
-            }
-        }
-
         #region ICollection
         public void CopyTo(T[] array, int arrayIndex)
         {

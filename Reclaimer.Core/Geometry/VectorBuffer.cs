@@ -38,6 +38,19 @@ namespace Reclaimer.Geometry
             : base(buffer, count, start, stride, offset)
         { }
 
+        public void SwapEndianness()
+        {
+            if (TPack == 1)
+                return;
+
+            for (var i = 0; i < Count; i++)
+            {
+                var span = CreateSpan(i);
+                for (var j = 0; j < TSize; j += TPack)
+                    span.Slice(j, TPack).Reverse();
+            }
+        }
+
         int IVectorBuffer.Dimensions => TDimensions;
         IVector IReadOnlyList<IVector>.this[int index] => this[index];
         IEnumerator<IVector> IEnumerable<IVector>.GetEnumerator() => Enumerate().OfType<IVector>().GetEnumerator();
