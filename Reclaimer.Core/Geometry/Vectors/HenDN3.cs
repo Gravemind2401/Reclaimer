@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reclaimer.IO;
+using System;
 using System.Numerics;
 
 // This file was automatically generated via the 'PackedVectors.tt' T4 template.
@@ -11,9 +12,12 @@ namespace Reclaimer.Geometry.Vectors
     /// Each axis has a precision of 11, 11, 10 bits respectively.
     /// Each axis has a possible value range from -1f to 1f.
     /// </summary>
-    [System.CodeDom.Compiler.GeneratedCode("PackedVectors.tt", "")]    
-    public struct HenDN3 : IEquatable<HenDN3>, IVector3, IReadOnlyVector3
+    [System.CodeDom.Compiler.GeneratedCode("PackedVectors.tt", "")]
+    public struct HenDN3 : IEquatable<HenDN3>, IVector3, IReadOnlyVector3, IBufferableVector<HenDN3>
     {
+        private const int packSize = sizeof(uint);
+        private const int structureSize = sizeof(uint);
+
         private static readonly PackedVectorHelper helper = PackedVectorHelper.CreateSigned(11, 11, 10);
 
         private uint bits;
@@ -56,6 +60,15 @@ namespace Reclaimer.Geometry.Vectors
         }
 
         public override string ToString() => $"[{X:F6}, {Y:F6}, {Z:F6}]";
+
+        #region IBufferableVector
+
+        private static int PackSize => packSize;
+        private static int SizeOf => structureSize;
+        private static HenDN3 ReadFromBuffer(ReadOnlySpan<byte> buffer) => new HenDN3(BitConverter.ToUInt32(buffer));
+        void IBufferable<HenDN3>.WriteToBuffer(Span<byte> buffer) => BitConverter.GetBytes(bits).CopyTo(buffer);
+
+        #endregion
 
         #region Cast Operators
 

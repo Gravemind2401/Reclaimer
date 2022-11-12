@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reclaimer.IO;
+using System;
 using System.Numerics;
 
 // This file was automatically generated via the 'PackedVectors.tt' T4 template.
@@ -11,9 +12,12 @@ namespace Reclaimer.Geometry.Vectors
     /// Each axis has a precision of 10, 10, 10, 2 bits respectively.
     /// Each axis has a possible value range from 0f to 1f.
     /// </summary>
-    [System.CodeDom.Compiler.GeneratedCode("PackedVectors.tt", "")]    
-    public struct UDecN4 : IEquatable<UDecN4>, IVector4, IReadOnlyVector4
+    [System.CodeDom.Compiler.GeneratedCode("PackedVectors.tt", "")]
+    public struct UDecN4 : IEquatable<UDecN4>, IVector4, IReadOnlyVector4, IBufferableVector<UDecN4>
     {
+        private const int packSize = sizeof(uint);
+        private const int structureSize = sizeof(uint);
+
         private static readonly PackedVectorHelper helper = PackedVectorHelper.CreateUnsigned(10, 10, 10, 2);
 
         private uint bits;
@@ -62,6 +66,15 @@ namespace Reclaimer.Geometry.Vectors
         }
 
         public override string ToString() => $"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]";
+
+        #region IBufferableVector
+
+        private static int PackSize => packSize;
+        private static int SizeOf => structureSize;
+        private static UDecN4 ReadFromBuffer(ReadOnlySpan<byte> buffer) => new UDecN4(BitConverter.ToUInt32(buffer));
+        void IBufferable<UDecN4>.WriteToBuffer(Span<byte> buffer) => BitConverter.GetBytes(bits).CopyTo(buffer);
+
+        #endregion
 
         #region Cast Operators
 

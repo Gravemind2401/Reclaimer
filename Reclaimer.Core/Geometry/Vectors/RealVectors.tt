@@ -29,14 +29,18 @@
         string JoinFields(string separator, string format = "{0}") => string.Join(separator, fieldNames.Take(vector.Dimensions).Select(s => string.Format(format, s)));
         string JoinProperties(string separator, string format = "{0}") => string.Join(separator, propertyNames.Take(vector.Dimensions).Select(s => string.Format(format, s)));
 
+        var componentSize = vector.ByteLength / vector.Dimensions;
+        var bitConvert = vector.StorageType == "float" ? "ToSingle" : "ToHalf";
         var precisionText = vector.StorageType == "float" ? "single" : "half";
         var typeCast = vector.StorageType == "float" ? "" : $"({vector.StorageType})";
         var castBack = vector.StorageType == "float" ? "" : "(float)";
         var interfaceName = $"Vector{vector.Dimensions}";
-        
+
         fileManager.CreateNewFile(vector.TypeName + ".cs"); #>
+using Reclaimer.IO;
 using System;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 <# WriteGeneratedCodeNote(); #>
 
@@ -48,11 +52,27 @@ namespace Reclaimer.Geometry.Vectors
     <# WriteGeneratedCodeAttribute(); #>
     public record struct <#= vector.TypeName #>(<#= JoinProperties(", ", $"{vector.StorageType} {{0}}") #>) : <#= vector.InterfaceTypes #>
     {
+        private const int packSize = <#= vector.ByteLength / vector.Dimensions #>;
+        private const int structureSize = <#= vector.ByteLength #>;
+
         public <#= vector.TypeName #>(<#= vector.NumericsType #> value)
             : this(<#= JoinProperties(", ", $"{typeCast}value.{{0}}") #>)
         { }
-        
+
+        private <#= vector.TypeName #>(ReadOnlySpan<<#= vector.StorageType #>> values)
+            : this(<#= string.Join(", ", Enumerable.Range(0, vector.Dimensions).Select(i => $"values[{i}]")) #>)
+        { }
+
         public override string ToString() => $"[<#= JoinProperties(", ", "{{{0}:F6}}") #>]";
+
+        #region IBufferableVector
+
+        private static int PackSize => packSize;
+        private static int SizeOf => structureSize;
+        private static <#= vector.TypeName #> ReadFromBuffer(ReadOnlySpan<byte> buffer) => new <#= vector.TypeName #>(MemoryMarshal.Cast<byte, <#= vector.StorageType #>>(buffer));
+        void IBufferable<<#= vector.TypeName #>>.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<<#= vector.StorageType #>, byte>(new[] { <#= JoinProperties(", ") #> }).CopyTo(buffer);
+
+        #endregion
 
         #region Cast Operators
 
@@ -66,7 +86,7 @@ namespace Reclaimer.Geometry.Vectors
         #region I<#= interfaceName #>
 
 <#          for (var index = 0; index < vector.Dimensions; index++)
-            { 
+            {
                 var count = index < 1 ? 2 : index + 1; #>
         float IVector<#= count #>.<#= propertyNames[index] #>
         {
@@ -80,7 +100,7 @@ namespace Reclaimer.Geometry.Vectors
         #region IReadOnly<#= interfaceName #>
 
 <#          for (var index = 0; index < vector.Dimensions; index++)
-            { 
+            {
                 var count = index < 1 ? 2 : index + 1; #>
         float IReadOnlyVector<#= count #>.<#= propertyNames[index] #> => (float)<#= propertyNames[index] #>;
 <#          } #>

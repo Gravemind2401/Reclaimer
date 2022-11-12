@@ -32,9 +32,10 @@
     {
         string JoinFields(string separator, string format = "{0}") => string.Join(separator, fieldNames.Take(vector.Dimensions).Select(s => string.Format(format, s)));
         string JoinProperties(string separator, string format = "{0}") => string.Join(separator, propertyNames.Take(vector.Dimensions).Select(s => string.Format(format, s)));
-        
+
         fileManager.CreateNewFile(vector.TypeName + ".cs");
         var formattedLayout = string.Join(", ", vector.Precision.Take(vector.Dimensions)); #>
+using Reclaimer.IO;
 using System;
 using System.Numerics;
 
@@ -50,6 +51,9 @@ namespace Reclaimer.Geometry.Vectors
     <# WriteGeneratedCodeAttribute(); #>
     public struct <#= vector.TypeName #> : IEquatable<<#= vector.TypeName #>>, <#= vector.InterfaceTypes #>
     {
+        private const int packSize = sizeof(<#= vector.StorageType #>);
+        private const int structureSize = sizeof(<#= vector.StorageType #>);
+
         private static readonly PackedVectorHelper helper = PackedVectorHelper.Create<#= vector.IsSigned ? "Signed" : "Unsigned" #>(<#= formattedLayout #>);
 
         private <#= vector.StorageType #> bits;
@@ -83,6 +87,15 @@ namespace Reclaimer.Geometry.Vectors
         }
 
         public override string ToString() => $"[<#= JoinProperties(", ", "{{{0}:F6}}") #>]";
+
+        #region IBufferableVector
+
+        private static int PackSize => packSize;
+        private static int SizeOf => structureSize;
+        private static <#= vector.TypeName #> ReadFromBuffer(ReadOnlySpan<byte> buffer) => new <#= vector.TypeName #>(BitConverter.ToUInt32(buffer));
+        void IBufferable<<#= vector.TypeName #>>.WriteToBuffer(Span<byte> buffer) => BitConverter.GetBytes(bits).CopyTo(buffer);
+
+        #endregion
 
         #region Cast Operators
 

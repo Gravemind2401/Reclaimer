@@ -7,7 +7,7 @@
 <#
 
     var templateName = Path.GetFileName(this.Host.TemplateFile);
-    
+
     void WriteGeneratedCodeNote()
     { #>
 // This file was automatically generated via the '<#= templateName #>' T4 template.
@@ -16,7 +16,7 @@
 
     void WriteGeneratedCodeAttribute()
     { #>
-[System.CodeDom.Compiler.GeneratedCode("<#= templateName #>", "")]    
+[System.CodeDom.Compiler.GeneratedCode("<#= templateName #>", "")]
 <#  };
 
     void WriteEqualityOperators(string typeName, params string[] compareProps)
@@ -68,7 +68,7 @@
         {
             StorageType = "uint";
             Precision = packLayout;
-            ByteLength = 4;
+            ByteLength = sizeof(uint);
         }
 
         private VectorDescription(string name, int dimensions, bool signed)
@@ -78,7 +78,7 @@
             IsSigned = signed;
 
             NumericsType = $"Vector{dimensions}";
-            InterfaceTypes = $"IVector{dimensions}, IReadOnlyVector{dimensions}";
+            InterfaceTypes = $"IVector{dimensions}, IReadOnlyVector{dimensions}, IBufferableVector<{TypeName}>";
         }
     }
 
