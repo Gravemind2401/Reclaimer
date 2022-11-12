@@ -8,8 +8,8 @@ namespace Reclaimer.Geometry
 {
     public interface IVector
     {
-        static int Dimensions { get; } //TODO: abstract static in C# 10
-        static bool IsReadOnly { get; } //TODO: abstract static in C# 10
+        static int Dimensions { get; } //TODO: abstract static in C# 11
+        static bool IsReadOnly { get; } //TODO: abstract static in C# 11
 
         float X
         {

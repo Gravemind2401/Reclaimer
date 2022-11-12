@@ -10,7 +10,7 @@ namespace Reclaimer.Geometry
     {
         int Dimensions { get; }
         void SwapEndianness();
-        IVector this[Index index] => this[index.GetOffset(Count)];
+        IVector this[Index index] => ((IReadOnlyList<IVector>)this)[index.GetOffset(Count)];
         IEnumerable<IVector> this[Range range] => Extensions.Subset(this, range);
     }
 }

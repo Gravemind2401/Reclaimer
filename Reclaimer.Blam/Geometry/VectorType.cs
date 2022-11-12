@@ -39,5 +39,7 @@ namespace Adjutant.Geometry
         UInt16_4,
         UInt16_N2,
         UInt16_N4,
+        
+        D3DColour
     }
 }
