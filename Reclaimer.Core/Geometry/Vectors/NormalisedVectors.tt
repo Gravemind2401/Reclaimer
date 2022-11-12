@@ -1,0 +1,133 @@
+<#@ template debug="true" hostSpecific="true" language="C#" #>
+<#@ include file="T4FileManager.ttinclude" #>
+<#@ include file="Vectors.ttinclude" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+
+<#
+
+    var fieldNames = VectorDescription.FieldNames;
+    var propertyNames = VectorDescription.PropertyNames;
+
+    var uniformVectors = new List<VectorDescription>();
+
+    uniformVectors.Add(new VectorDescription("ByteN2", 2, true, 8));
+    uniformVectors.Add(new VectorDescription("ByteN4", 4, true, 8));
+
+    uniformVectors.Add(new VectorDescription("Int16N2", 2, true, 16));
+    uniformVectors.Add(new VectorDescription("Int16N4", 4, true, 16));
+
+    uniformVectors.Add(new VectorDescription("UByteN2", 4, false, 8));
+    uniformVectors.Add(new VectorDescription("UByteN4", 4, false, 8));
+
+    uniformVectors.Add(new VectorDescription("UInt16N2", 2, false, 16));
+    uniformVectors.Add(new VectorDescription("UInt16N4", 4, false, 16));
+
+    var fileManager = T4FileManager.Create(this).DisableTemplateMainOutputFile();
+
+    foreach (var vector in uniformVectors)
+    {
+        string JoinFields(string separator, string format = "{0}") => string.Join(separator, fieldNames.Take(vector.Dimensions).Select(s => string.Format(format, s)));
+        string JoinProperties(string separator, string format = "{0}") => string.Join(separator, propertyNames.Take(vector.Dimensions).Select(s => string.Format(format, s)));
+
+        var componentSize = vector.ByteLength / vector.Dimensions;
+        var bitConvert = vector.StorageType == "byte" ? "ToByte" : "ToUInt16";
+        var storageFields = fieldNames.Take(vector.Dimensions).Select(s => $"{s}bits").ToArray();
+        var precision = vector.Precision[0];
+
+        fileManager.CreateNewFile(vector.TypeName + ".cs"); #>
+using Reclaimer.IO;
+using System;
+using System.Numerics;
+using System.Runtime.InteropServices;
+
+<# WriteGeneratedCodeNote(); #>
+
+namespace Reclaimer.Geometry.Vectors
+{
+    /// <summary>
+    /// A <#= vector.Dimensions #>-dimensional vector with <#= precision #>-bit normalised components.
+    /// Each axis has a possible value range from <#= vector.IsSigned ? -1 : 0 #>f to 1f.
+    /// </summary>
+    <# WriteGeneratedCodeAttribute(); #>
+    public struct <#= vector.TypeName #> : IEquatable<<#= vector.TypeName #>>, <#= vector.InterfaceTypes #>
+    {
+        private const int packSize = <#= precision / 8 #>;
+        private const int structureSize = <#= vector.ByteLength #>;
+
+        private static readonly PackedVectorHelper helper = PackedVectorHelper.Create<#= vector.IsSigned ? "Signed" : "Unsigned" #>(<#= precision #>);
+
+        private <#= vector.StorageType #> <#= string.Join(", ", storageFields) #>;
+
+        #region Axis Properties
+
+<#      for (var index = 0; index < vector.Dimensions; index++)
+        { #>
+        public float <#= propertyNames[index] #>
+        {
+            get => helper.GetValue(in <#= storageFields[index] #>);
+            set => helper.SetValue(ref <#= storageFields[index] #>, value);
+        }
+
+<#      } #>
+        #endregion
+
+        public <#= vector.TypeName #>(<#= JoinFields(", ", $"{vector.StorageType} {{0}}") #>)
+        {
+            (<#= string.Join(", ", storageFields) #>) = (<#= JoinFields(", ") #>);
+        }
+
+        public <#= vector.TypeName #>(<#= vector.NumericsType #> value)
+            : this(<#= JoinProperties(", ", "value.{0}") #>)
+        { }
+
+        public <#= vector.TypeName #>(<#= JoinFields(", ", "float {0}") #>)
+        {
+            <#= string.Join(" = ", storageFields) #> = default;
+            (<#= JoinProperties(", ") #>) = (<#= JoinFields(", ") #>);
+        }
+
+        private <#= vector.TypeName #>(ReadOnlySpan<<#= vector.StorageType #>> values)
+            : this(<#= string.Join(", ", Enumerable.Range(0, vector.Dimensions).Select(i => $"values[{i}]")) #>)
+        { }
+
+        public override string ToString() => $"[<#= JoinProperties(", ", "{{{0}:F6}}") #>]";
+
+        #region IBufferableVector
+
+        private static int PackSize => packSize;
+        private static int SizeOf => structureSize;
+
+<#      if (precision == 8)
+        {
+            var bufferParts = string.Join(", ", Enumerable.Range(0, vector.Dimensions).Select(i => $"buffer[{i}]")); #>
+        private static <#= vector.TypeName #> ReadFromBuffer(ReadOnlySpan<byte> buffer) => new <#= vector.TypeName #>(buffer);
+        void IBufferable<<#= vector.TypeName #>>.WriteToBuffer(Span<byte> buffer) => (<#= bufferParts #>) = (<#= string.Join(", ", storageFields) #>);
+<#      }
+        else
+        { #>
+        private static <#= vector.TypeName #> ReadFromBuffer(ReadOnlySpan<byte> buffer) => new <#= vector.TypeName #>(MemoryMarshal.Cast<byte, <#= vector.StorageType #>>(buffer));
+        void IBufferable<<#= vector.TypeName #>>.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<<#= vector.StorageType #>, byte>(new[] { <#= string.Join(", ", storageFields) #> }).CopyTo(buffer);
+<#      } #>
+
+        #endregion
+
+        #region Cast Operators
+
+        public static explicit operator <#= vector.NumericsType #>(<#= vector.TypeName #> value) => new <#= vector.NumericsType #>(<#= JoinProperties(", ", "value.{0}") #>);
+        public static explicit operator <#= vector.TypeName #>(<#= vector.NumericsType #> value) => new <#= vector.TypeName #>(value);
+
+        #endregion
+
+<# WriteEqualityOperators(vector.TypeName, storageFields); #>
+    }
+}
+<#
+    }
+
+    fileManager.Generate();
+
+#>

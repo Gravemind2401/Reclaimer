@@ -71,6 +71,17 @@
             ByteLength = sizeof(uint);
         }
 
+        public VectorDescription(string name, int dimensions, bool signed, byte precision)
+            : this(name, dimensions, signed)
+        {
+            StorageType = precision == 8 ? "byte" : precision == 16 ? "ushort" : "uint";
+            Precision = new int[dimensions];
+            ByteLength = dimensions * precision / 8;
+
+            for (var i = 0; i < dimensions; i++)
+                Precision[i] = precision;
+        }
+
         private VectorDescription(string name, int dimensions, bool signed)
         {
             TypeName = name;

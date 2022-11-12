@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Geometry\Vectors\NormalisedVectors.cs" />
     <Compile Remove="Geometry\Vectors\PackedVectors.cs" />
     <Compile Remove="Geometry\Vectors\RealVectors.cs" />
   </ItemGroup>
@@ -30,6 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Geometry\Vectors\NormalisedVectors.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>NormalisedVectors.cs</LastGenOutput>
+    </None>
     <None Update="Geometry\Vectors\RealVectors.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>RealVectors.cs</LastGenOutput>
@@ -41,6 +46,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Geometry\Vectors\ByteN2.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NormalisedVectors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Geometry\Vectors\ByteN4.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NormalisedVectors.tt</DependentUpon>
+    </Compile>
     <Compile Update="Geometry\Vectors\DecN4.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>PackedVectors.tt</DependentUpon>
@@ -65,6 +78,14 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>PackedVectors.tt</DependentUpon>
     </Compile>
+    <Compile Update="Geometry\Vectors\Int16N2.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NormalisedVectors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Geometry\Vectors\Int16N4.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NormalisedVectors.tt</DependentUpon>
+    </Compile>
     <Compile Update="Geometry\Vectors\RealVector2.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>RealVectors.tt</DependentUpon>
@@ -77,6 +98,14 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>RealVectors.tt</DependentUpon>
     </Compile>
+    <Compile Update="Geometry\Vectors\UByteN2.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NormalisedVectors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Geometry\Vectors\UByteN4.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NormalisedVectors.tt</DependentUpon>
+    </Compile>
     <Compile Update="Geometry\Vectors\UDecN4.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>PackedVectors.tt</DependentUpon>
@@ -88,6 +117,14 @@
     <Compile Update="Geometry\Vectors\UHenDN3.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>PackedVectors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Geometry\Vectors\UInt16N2.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NormalisedVectors.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Geometry\Vectors\UInt16N4.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NormalisedVectors.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 

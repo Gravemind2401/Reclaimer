@@ -8,6 +8,9 @@ namespace Reclaimer.Geometry
 {
     internal class PackedVectorHelper
     {
+        public static PackedVectorHelper CreateSigned(byte uniformPrecision) => new PackedVectorHelper(true, uniformPrecision);
+        public static PackedVectorHelper CreateUnsigned(byte uniformPrecision) => new PackedVectorHelper(false, uniformPrecision);
+
         public static PackedVectorHelper CreateSigned(params byte[] precision) => new PackedVectorHelper(true, precision);
         public static PackedVectorHelper CreateUnsigned(params byte[] precision) => new PackedVectorHelper(false, precision);
 
@@ -27,6 +30,25 @@ namespace Reclaimer.Geometry
             }
         }
 
+        private float Normalise(in float value, in BitRange bitRange)
+        {
+            return signed
+                ? Utils.Clamp(value, -1f, 1f) * bitRange.SignedScale
+                : Utils.Clamp(value, 0f, 1f) * bitRange.UnsignedScale;
+        }
+
+        #region 8 or 16-bit Normalised
+
+        public float GetValue(in byte bits) => GetValue(bits, 0);
+        public void SetValue(ref byte bits, float value) => bits = (byte)Normalise(in value, axes[0]);
+
+        public float GetValue(in ushort bits) => GetValue(bits, 0);
+        public void SetValue(ref ushort bits, float value) => bits = (ushort)Normalise(in value, axes[0]);
+
+        #endregion
+
+        #region 32-bit Packed
+
         public float GetX(in uint bits) => GetValue(in bits, 0);
         public void SetX(ref uint bits, float value) => SetValue(ref bits, 0, value);
 
@@ -39,13 +61,6 @@ namespace Reclaimer.Geometry
         public float GetW(in uint bits) => GetValue(in bits, 3);
         public void SetW(ref uint bits, float value) => SetValue(ref bits, 3, value);
 
-        private uint GetUnsignedBits(in uint bits, int axis) => (bits >> axes[axis].Offset) & axes[axis].LengthMask;
-        private int GetSignedBits(in uint bits, int axis)
-        {
-            var signExtend = (bits & axes[axis].SignMask) > 0 ? axes[axis].SignExtend : 0;
-            return unchecked((int)(GetUnsignedBits(in bits, axis) | signExtend));
-        }
-
         private float GetValue(in uint bits, int index)
         {
             return signed
@@ -53,23 +68,31 @@ namespace Reclaimer.Geometry
                 : GetUnsignedBits(in bits, index) / axes[index].UnsignedScale;
         }
 
+        private uint GetUnsignedBits(in uint bits, int axis) => (bits >> axes[axis].Offset) & axes[axis].LengthMask;
+        private int GetSignedBits(in uint bits, int axis)
+        {
+            var signExtend = (bits & axes[axis].SignMask) > 0 ? axes[axis].SignExtend : 0;
+            return unchecked((int)(GetUnsignedBits(in bits, axis) | signExtend));
+        }
+
         private void SetValue(ref uint bits, int index, float value)
         {
             ref var bitRange = ref axes[index];
+            value = Normalise(in value, in bitRange);
 
             if (signed)
             {
-                value = Utils.Clamp(value, -1f, 1f) * bitRange.SignedScale;
                 var valueBits = ((int)value & (int)bitRange.LengthMask) << bitRange.Offset;
                 bits = bits & ~bitRange.OffsetMask | unchecked((uint)valueBits);
             }
             else
             {
-                value = Utils.Clamp(value, 0f, 1f) * bitRange.UnsignedScale;
                 var valueBits = ((uint)value & bitRange.LengthMask) << bitRange.Offset;
                 bits = bits & ~bitRange.OffsetMask | valueBits;
             }
         }
+
+        #endregion
 
         private readonly record struct BitRange(int Offset, int Length)
         {
