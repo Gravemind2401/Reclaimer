@@ -91,7 +91,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         [Offset(0), NullTerminated]
         public virtual string Value { get; set; }
 
-        protected override string GetDebuggerDisplay() => new { Type = $"[{BlockType:X4}] {TypeName}", Origin, Value }.ToString();
+        protected override string GetDebuggerDisplay() => new { Type = $"[{BlockType:X4}] {TypeName}", StartOfBlock, Value }.ToString();
     }
 
     [DataBlock(0x5601)]
@@ -110,6 +110,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     public class TransformBlock0x0503 : DataBlock
     {
         public List<DataBlock> ChildBlocks { get; } = new List<DataBlock>();
+
+        public MatrixListBlock0x0D03 MatrixList => ChildBlocks.OfType<MatrixListBlock0x0D03>().SingleOrDefault();
 
         internal override void Read(EndianReader reader)
         {
@@ -163,6 +165,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         [Offset(16)]
         public RealVector3D MaxBound { get; set; }
+
+        public bool IsEmpty => MinBound == MaxBound;
     }
 
     [DataBlock(0x1D01)]
@@ -200,6 +204,11 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         public List<DataBlock> ChildBlocks { get; } = new List<DataBlock>();
 
+        public RealVector3D Position => ChildBlocks.OfType<PositionBlock>().Single().Value;
+        public RealVector4D Rotation => ChildBlocks.OfType<RotationBlock>().Single().Value;
+        public RealVector3D UnknownVector0xFC02 => ChildBlocks.OfType<VectorBlock0xFC02>().Single().Value;
+        public float Scale => ChildBlocks.OfType<ScaleBlock0x0A03>().Single().Value;
+
         internal override void Read(EndianReader reader)
         {
             UnknownAsInt = reader.PeekInt32();
@@ -228,7 +237,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     public class VectorBlock0xFC02 : DataBlock
     {
         [Offset(0)]
-        public RealVector3D Value { get; set; } //usually 1,1,1
+        public RealVector3D Value { get; set; } //usually 1,1,1 (maybe actually scale?)
     }
 
     [DataBlock(0x0A03, ExpectedSize = 4)]
@@ -278,13 +287,24 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     public class NodeGraphBlock0xF000 : DataBlock
     {
         public List<DataBlock> ChildBlocks { get; } = new List<DataBlock>();
+        public List<NodeGraphBlock0xF000> ChildNodes { get; } = new List<NodeGraphBlock0xF000>();
 
-        public string UnknownString => ChildBlocks.OfType<UnknownBlock0xFD00>().SingleOrDefault()?.UnknownString;
+        public bool IsRootNode => ChildBlocks[0] is CountBlock0x2C01;
+        public int ChildNodeCount => ChildBlocks.OfType<CountBlock0x2C01>().SingleOrDefault()?.Count ?? default;
+        public string MeshName => Mesh?.Name;
+        public string UnknownString0xFD00 => ChildBlocks.OfType<UnknownBlock0xFD00>().SingleOrDefault()?.UnknownString;
+        public string UnknownString0x1501 => ChildBlocks.OfType<StringBlock0x1501>().SingleOrDefault()?.Value;
+        public MeshBlock0xB903 Mesh => ChildBlocks.OfType<MeshBlock0xB903>().SingleOrDefault();
+        public Matrix4x4? Transform => ChildBlocks.OfType<MatrixBlock0xF900>().SingleOrDefault()?.Value;
+        public BoundsBlock0x1D01 Bounds => ChildBlocks.OfType<BoundsBlock0x1D01>().SingleOrDefault();
+        public FaceListBlock Faces => ChildBlocks.OfType<FaceListBlock>().SingleOrDefault();
 
         internal override void Read(EndianReader reader)
         {
             while (reader.Position < EndOfBlock)
                 ChildBlocks.Add(reader.ReadBlock());
+
+            ChildNodes.AddRange(ChildBlocks.OfType<NodeGraphBlock0xF000>());
         }
 
         internal override void Validate()
@@ -295,6 +315,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             if (ChildBlocks.OfType<MeshBlock0xB903>().Skip(1).Any())
                 Debugger.Break();
         }
+
+        protected override string GetDebuggerDisplay() => new { Type = $"[{BlockType:X4}] {TypeName}", ChildNodeCount, HasGeometry = Mesh?.VertexCount > 0, Name = MeshName }.ToString();
     }
 
     [DataBlock(0x2C01, ExpectedSize = 4)]
@@ -350,7 +372,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             EndRead(reader.Position);
         }
 
-        protected override string GetDebuggerDisplay() => new { Type = $"[{BlockType:X4}] {TypeName}", Origin, Name }.ToString();
+        protected override string GetDebuggerDisplay() => new { Type = $"[{BlockType:X4}] {TypeName}", VertexCount, Name }.ToString();
     }
 
     [DataBlock(0x2801, ExpectedSize = 28)]

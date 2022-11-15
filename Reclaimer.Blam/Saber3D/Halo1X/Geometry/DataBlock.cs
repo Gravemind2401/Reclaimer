@@ -16,10 +16,10 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         internal virtual int ExpectedSize => BlockExtensions.AttributeLookup.GetValueOrDefault(GetType())?.ExpectedSize ?? -1;
         internal virtual int ExpectedChildCount => BlockExtensions.AttributeLookup.GetValueOrDefault(GetType())?.ExpectedChildCount ?? -1;
 
-        public int BlockSize => EndOfBlock - (Origin + 6);
+        public int BlockSize => EndOfBlock - (StartOfBlock + 6);
         public string TypeString => $"0x{BlockType:X4}";
 
-        public int Origin { get; set; }
+        public int StartOfBlock { get; set; }
         public ushort BlockType { get; set; }
         public int EndOfBlock { get; set; }
 
@@ -36,6 +36,6 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         internal virtual void Validate() { }
 
-        protected virtual string GetDebuggerDisplay() => new { Type = $"[{BlockType:X4}] {TypeName}", Size = BlockSize, Origin }.ToString();
+        protected virtual string GetDebuggerDisplay() => new { Type = $"[{BlockType:X4}] {TypeName}", Size = BlockSize, StartOfBlock }.ToString();
     }
 }

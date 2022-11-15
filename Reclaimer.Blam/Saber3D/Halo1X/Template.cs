@@ -13,6 +13,13 @@ namespace Reclaimer.Saber3D.Halo1X
 
         public List<DataBlock> Blocks { get; }
 
+        public string Name => Blocks.OfType<StringBlock0xE502>().SingleOrDefault()?.Value;
+        public BoundsBlock0x0803 Bounds => Blocks.OfType<BoundsBlock0x0803>().SingleOrDefault();
+        public NodeGraphBlock0xF000 NodeGraph => Blocks.OfType<NodeGraphBlock0xF000>().SingleOrDefault();
+        public List<BoneBlock> Bones => Blocks.OfType<BoneListBlock>().SingleOrDefault()?.Bones;
+        public List<MaterialReferenceBlock> Materials => Blocks.OfType<MaterialListBlock>().SingleOrDefault()?.Materials;
+        public MatrixListBlock0x0D03 MatrixList => Blocks.OfType<TransformBlock0x0503>().SingleOrDefault()?.MatrixList;
+
         public Template(PakItem item)
         {
             this.item = item;

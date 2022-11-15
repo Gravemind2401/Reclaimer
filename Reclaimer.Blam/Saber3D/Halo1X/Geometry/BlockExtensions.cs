@@ -24,7 +24,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             var typeId = reader.ReadUInt16(ByteOrder.BigEndian); //always read LTR
             var block = (DataBlock)Activator.CreateInstance(blockLookup.GetValueOrDefault(typeId) ?? typeof(DataBlock));
 
-            block.Origin = (int)reader.Position - 2; //adjust for typeId already being read
+            block.StartOfBlock = (int)reader.Position - 2; //adjust for typeId already being read
             block.BlockType = typeId;
             block.EndOfBlock = reader.ReadInt32();
 
