@@ -24,17 +24,17 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             var typeId = reader.ReadUInt16(ByteOrder.BigEndian); //always read LTR
             var block = (DataBlock)Activator.CreateInstance(blockLookup.GetValueOrDefault(typeId) ?? typeof(DataBlock));
 
-            block.StartOfBlock = (int)reader.Position - 2; //adjust for typeId already being read
-            block.BlockType = typeId;
-            block.EndOfBlock = reader.ReadInt32();
+            block.Header.StartOfBlock = (int)reader.Position - 2; //adjust for typeId already being read
+            block.Header.BlockType = typeId;
+            block.Header.EndOfBlock = reader.ReadInt32();
 
             block.Read(reader);
             block.Validate();
 
-            if (block.ExpectedSize >= 0 && block.BlockSize != block.ExpectedSize)
+            if (block.ExpectedSize >= 0 && block.Header.BlockSize != block.ExpectedSize)
                 Debugger.Break();
 
-            reader.Seek(block.EndOfBlock, SeekOrigin.Begin);
+            reader.Seek(block.Header.EndOfBlock, SeekOrigin.Begin);
 
             return block;
         }

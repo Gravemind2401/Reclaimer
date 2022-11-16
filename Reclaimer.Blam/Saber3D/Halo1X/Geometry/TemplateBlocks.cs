@@ -11,21 +11,15 @@ using System.Threading.Tasks;
 namespace Reclaimer.Saber3D.Halo1X.Geometry
 {
     [DataBlock(0xE402)]
-    public class TemplateBlock : DataBlock
+    public class TemplateBlock : CollectionDataBlock
     {
-        public List<DataBlock> ChildBlocks { get; } = new List<DataBlock>();
 
-        internal override void Read(EndianReader reader)
-        {
-            while (reader.Position < EndOfBlock)
-                ChildBlocks.Add(reader.ReadBlock());
-        }
     }
 
     [DataBlock(0x0100, ExpectedSize = 0)]
     public class EmptyBlock : DataBlock
     {
-
+        protected override object GetDebugProperties() => null;
     }
 
     [DataBlock(0xE502)]
@@ -43,13 +37,13 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         internal override void Validate()
         {
-            if (Unknown != 0 || BlockSize > Value.Length + 2)
+            if (Unknown != 0)
                 Debugger.Break();
         }
     }
 
     [DataBlock(0x1603, ExpectedSize = 3)]
-    public class Block0x1603 : DataBlock
+    public class UnknownBlock0x1603 : DataBlock
     {
         [Offset(0)]
         public byte Unknown0 { get; set; }
@@ -62,13 +56,13 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         internal override void Validate()
         {
-            if ((Unknown0, Unknown1, Unknown2) != (2, 1, 1) || BlockSize > 3)
+            if ((Unknown0, Unknown1, Unknown2) != (2, 1, 1) || Header.BlockSize > 3)
                 Debugger.Break();
         }
     }
 
     [DataBlock(0x5501)]
-    public class MaterialListBlock : DataBlock
+    public class MaterialListBlock : CollectionDataBlock
     {
         public int MaterialCount { get; set; }
         public List<MaterialReferenceBlock> Materials { get; } = new List<MaterialReferenceBlock>();
@@ -76,11 +70,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         internal override void Read(EndianReader reader)
         {
             MaterialCount = reader.ReadInt32();
-
-            while (Materials.Count < MaterialCount)
-                Materials.Add((MaterialReferenceBlock)reader.ReadBlock());
-
-            EndRead(reader.Position);
+            ReadChildren(reader, MaterialCount);
+            PopulateChildrenOfType(Materials);
         }
     }
 
@@ -91,7 +82,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         [Offset(0), NullTerminated]
         public virtual string Value { get; set; }
 
-        protected override string GetDebuggerDisplay() => new { Type = $"[{BlockType:X4}] {TypeName}", StartOfBlock, Value }.ToString();
+        protected override object GetDebugProperties() => new { Header.StartOfBlock, Value };
     }
 
     [DataBlock(0x5601)]
@@ -106,18 +97,10 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
     }
 
-    [DataBlock(0x0503)]
-    public class TransformBlock0x0503 : DataBlock
+    [DataBlock(0x0503, ExpectedChildCount = 2)] //MatrixList + EmptyBlock
+    public class TransformBlock0x0503 : CollectionDataBlock
     {
-        public List<DataBlock> ChildBlocks { get; } = new List<DataBlock>();
-
-        public MatrixListBlock0x0D03 MatrixList => ChildBlocks.OfType<MatrixListBlock0x0D03>().SingleOrDefault();
-
-        internal override void Read(EndianReader reader)
-        {
-            while (reader.Position < EndOfBlock)
-                ChildBlocks.Add(reader.ReadBlock());
-        }
+        public MatrixListBlock0x0D03 MatrixList => GetUniqueChild<MatrixListBlock0x0D03>();
     }
 
     [DataBlock(0x0D03)]
@@ -135,7 +118,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             Unknown0 = reader.ReadInt16();
             Unknown1 = reader.ReadByte();
 
-            while (reader.Position < EndOfBlock && Matrices.Count < MatrixCount)
+            while (Matrices.Count < MatrixCount)
                 Matrices.Add(reader.ReadMatrix4x4());
 
             EndRead(reader.Position);
@@ -167,6 +150,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public RealVector3D MaxBound { get; set; }
 
         public bool IsEmpty => MinBound == MaxBound;
+
+        protected override object GetDebugProperties() => new { Header.StartOfBlock, IsEmpty };
     }
 
     [DataBlock(0x1D01)]
@@ -176,46 +161,36 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     }
 
     [DataBlock(0xE802)]
-    public class BoneListBlock : DataBlock
+    public class BoneListBlock : CollectionDataBlock
     {
         public int BoneCount { get; set; }
-        public List<DataBlock> ChildBlocks { get; } = new List<DataBlock>();
         public List<BoneBlock> Bones { get; } = new List<BoneBlock>();
 
         internal override void Read(EndianReader reader)
         {
             BoneCount = reader.ReadInt32();
-
-            //empty block after every bone for some reason
-            while (ChildBlocks.Count < BoneCount * 2)
-                ChildBlocks.Add(reader.ReadBlock());
-
-            Bones.AddRange(ChildBlocks.OfType<BoneBlock>());
-
-            EndRead(reader.Position);
+            ReadChildren(reader, BoneCount * 2); //empty block after every bone for some reason
+            PopulateChildrenOfType(Bones);
         }
     }
 
     [DataBlock(0xE902)]
-    public class BoneBlock : DataBlock
+    public class BoneBlock : CollectionDataBlock
     {
         public float Unknown { get; set; }
         public int UnknownAsInt { get; set; }
 
-        public List<DataBlock> ChildBlocks { get; } = new List<DataBlock>();
-
-        public RealVector3D Position => ChildBlocks.OfType<PositionBlock>().Single().Value;
-        public RealVector4D Rotation => ChildBlocks.OfType<RotationBlock>().Single().Value;
-        public RealVector3D UnknownVector0xFC02 => ChildBlocks.OfType<VectorBlock0xFC02>().Single().Value;
-        public float Scale => ChildBlocks.OfType<ScaleBlock0x0A03>().Single().Value;
+        public RealVector3D Position => GetUniqueChild<PositionBlock>().Value;
+        public RealVector4D Rotation => GetUniqueChild<RotationBlock>().Value;
+        public RealVector3D UnknownVector0xFC02 => GetUniqueChild<VectorBlock0xFC02>().Value;
+        public float Scale => GetUniqueChild<ScaleBlock0x0A03>().Value;
 
         internal override void Read(EndianReader reader)
         {
             UnknownAsInt = reader.PeekInt32();
             Unknown = reader.ReadSingle();
 
-            while (reader.Position < EndOfBlock)
-                ChildBlocks.Add(reader.ReadBlock());
+            ReadChildren(reader);
         }
     }
 
@@ -264,13 +239,15 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         internal override int ExpectedSize => 4 + 4 * Count;
 
         public int Count { get; set; }
-
-        public short[] Unknown { get; set; }
+        public (short, short)[] UnknownArray { get; set; }
 
         internal override void Read(EndianReader reader)
         {
             Count = reader.ReadInt32();
-            Unknown = reader.ReadEnumerable<short>(Count * 2).ToArray();
+            UnknownArray = new (short, short)[Count];
+
+            for (var i = 0; i < Count; i++)
+                UnknownArray[i] = (reader.ReadInt16(), reader.ReadInt16());
         }
     }
 
@@ -284,27 +261,25 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     }
 
     [DataBlock(0xF000)]
-    public class NodeGraphBlock0xF000 : DataBlock
+    public class NodeGraphBlock0xF000 : CollectionDataBlock
     {
-        public List<DataBlock> ChildBlocks { get; } = new List<DataBlock>();
         public List<NodeGraphBlock0xF000> ChildNodes { get; } = new List<NodeGraphBlock0xF000>();
 
         public bool IsRootNode => ChildBlocks[0] is CountBlock0x2C01;
-        public int ChildNodeCount => ChildBlocks.OfType<CountBlock0x2C01>().SingleOrDefault()?.Count ?? default;
+        public int ChildNodeCount => GetOptionalChild<CountBlock0x2C01>()?.Count ?? default;
+        public int? MeshId => Mesh?.Id;
         public string MeshName => Mesh?.Name;
-        public string UnknownString0xFD00 => ChildBlocks.OfType<UnknownBlock0xFD00>().SingleOrDefault()?.UnknownString;
-        public string UnknownString0x1501 => ChildBlocks.OfType<StringBlock0x1501>().SingleOrDefault()?.Value;
-        public MeshBlock0xB903 Mesh => ChildBlocks.OfType<MeshBlock0xB903>().SingleOrDefault();
-        public Matrix4x4? Transform => ChildBlocks.OfType<MatrixBlock0xF900>().SingleOrDefault()?.Value;
-        public BoundsBlock0x1D01 Bounds => ChildBlocks.OfType<BoundsBlock0x1D01>().SingleOrDefault();
-        public FaceListBlock Faces => ChildBlocks.OfType<FaceListBlock>().SingleOrDefault();
+        public string UnknownString0xFD00 => GetOptionalChild<UnknownBlock0xFD00>()?.UnknownString;
+        public string UnknownString0x1501 => GetOptionalChild<StringBlock0x1501>()?.Value;
+        public MeshBlock0xB903 Mesh => GetOptionalChild<MeshBlock0xB903>();
+        public Matrix4x4? Transform => GetOptionalChild<MatrixBlock0xF900>()?.Value;
+        public BoundsBlock0x1D01 Bounds => GetOptionalChild<BoundsBlock0x1D01>();
+        public FaceListBlock Faces => GetOptionalChild<FaceListBlock>();
 
         internal override void Read(EndianReader reader)
         {
-            while (reader.Position < EndOfBlock)
-                ChildBlocks.Add(reader.ReadBlock());
-
-            ChildNodes.AddRange(ChildBlocks.OfType<NodeGraphBlock0xF000>());
+            ReadChildren(reader);
+            PopulateChildrenOfType(ChildNodes);
         }
 
         internal override void Validate()
@@ -312,11 +287,11 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             if (ChildBlocks[0] is CountBlock0x2C01 c && ChildBlocks.Count != c.Count * 2 + 1)
                 Debugger.Break();
 
-            if (ChildBlocks.OfType<MeshBlock0xB903>().Skip(1).Any())
+            if (FilterChildren<MeshBlock0xB903>().Skip(1).Any())
                 Debugger.Break();
         }
 
-        protected override string GetDebuggerDisplay() => new { Type = $"[{BlockType:X4}] {TypeName}", ChildNodeCount, HasGeometry = Mesh?.VertexCount > 0, Name = MeshName }.ToString();
+        protected override object GetDebugProperties() => new { ChildNodeCount, HasGeometry = Mesh?.VertexCount > 0, Id = MeshId, Name = MeshName };
     }
 
     [DataBlock(0x2C01, ExpectedSize = 4)]
@@ -327,23 +302,9 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     }
 
     [DataBlock(0xFD00, ExpectedChildCount = 1)]
-    public class UnknownBlock0xFD00 : DataBlock
+    public class UnknownBlock0xFD00 : CollectionDataBlock
     {
-        public List<DataBlock> ChildBlocks { get; } = new List<DataBlock>();
-
-        public string UnknownString => ChildBlocks.OfType<StringBlock0xBA01>().SingleOrDefault()?.Value;
-
-        internal override void Read(EndianReader reader)
-        {
-            while (reader.Position < EndOfBlock)
-                ChildBlocks.Add(reader.ReadBlock());
-        }
-
-        internal override void Validate()
-        {
-            if (ChildBlocks.Count > ExpectedChildCount)
-                Debugger.Break();
-        }
+        public string UnknownString => GetOptionalChild<StringBlock0xBA01>()?.Value;
     }
 
     [DataBlock(0xB903)]
@@ -372,7 +333,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             EndRead(reader.Position);
         }
 
-        protected override string GetDebuggerDisplay() => new { Type = $"[{BlockType:X4}] {TypeName}", VertexCount, Name }.ToString();
+        protected override object GetDebugProperties() => new { Id, VertexCount, Name };
     }
 
     [DataBlock(0x2801, ExpectedSize = 28)]
@@ -490,7 +451,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     }
 
     [DataBlock(0x2E01, ExpectedSize = 5)]
-    public class MeshBlock0x3501 : DataBlock
+    public class MeshBlock0x2E01 : DataBlock
     {
         [Offset(0)]
         public short Unknown0 { get; set; } //0x1200

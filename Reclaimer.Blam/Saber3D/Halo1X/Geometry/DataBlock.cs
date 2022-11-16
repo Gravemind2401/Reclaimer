@@ -11,17 +11,10 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public class DataBlock
     {
-        protected string TypeName => GetType() == typeof(DataBlock) ? "Unmapped" : GetType().Name.Replace("Block", "");
-
         internal virtual int ExpectedSize => BlockExtensions.AttributeLookup.GetValueOrDefault(GetType())?.ExpectedSize ?? -1;
         internal virtual int ExpectedChildCount => BlockExtensions.AttributeLookup.GetValueOrDefault(GetType())?.ExpectedChildCount ?? -1;
 
-        public int BlockSize => EndOfBlock - (StartOfBlock + 6);
-        public string TypeString => $"0x{BlockType:X4}";
-
-        public int StartOfBlock { get; set; }
-        public ushort BlockType { get; set; }
-        public int EndOfBlock { get; set; }
+        public BlockHeader Header { get; } = new BlockHeader();
 
         internal virtual void Read(EndianReader reader)
         {
@@ -30,12 +23,20 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         protected void EndRead(long position)
         {
-            if (position != EndOfBlock)
+            if (position != Header.EndOfBlock)
                 Debugger.Break();
         }
 
         internal virtual void Validate() { }
 
-        protected virtual string GetDebuggerDisplay() => new { Type = $"[{BlockType:X4}] {TypeName}", Size = BlockSize, StartOfBlock }.ToString();
+        protected virtual object GetDebugProperties() => new { Size = Header.BlockSize, Header.StartOfBlock };
+
+        protected virtual string GetDebuggerDisplay()
+        {
+            var displayName = GetType() == typeof(DataBlock) ? "Unmapped" : GetType().Name.Replace("Block", "").Replace(Header.TypeString, "");
+            if (this is CollectionDataBlock)
+                displayName = "*" + displayName;
+            return $"[{Header.BlockType:X4}] {displayName} {GetDebugProperties()}";
+        }
     }
 }
