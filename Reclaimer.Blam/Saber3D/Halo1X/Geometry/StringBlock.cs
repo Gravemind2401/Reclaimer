@@ -9,6 +9,6 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         [Offset(0), NullTerminated]
         public virtual string Value { get; set; }
 
-        protected override object GetDebugProperties() => new { Header.StartOfBlock, Value };
+        protected override object GetDebugProperties() => new { Value };
     }
 }

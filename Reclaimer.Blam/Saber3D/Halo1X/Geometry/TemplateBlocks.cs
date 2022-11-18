@@ -256,15 +256,19 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public List<NodeGraphBlock0xF000> ChildNodes { get; } = new List<NodeGraphBlock0xF000>();
 
         public bool IsRootNode => ChildBlocks[0] is CountBlock0x2C01;
-        public int ChildNodeCount => GetOptionalChild<CountBlock0x2C01>()?.Count ?? default;
+        public int ChildNodeCount => GetOptionalChild<CountBlock0x2C01>()?.Value ?? default;
         public int? MeshId => Mesh?.Id;
         public string MeshName => Mesh?.Name;
         public string UnknownString0xFD00 => GetOptionalChild<UnknownBlock0xFD00>()?.UnknownString;
         public string UnknownString0x1501 => GetOptionalChild<StringBlock0x1501>()?.Value;
         public MeshBlock0xB903 Mesh => GetOptionalChild<MeshBlock0xB903>();
+        public MeshDataSourceBlock MeshDataSource => GetOptionalChild<MeshDataSourceBlock>(); //this mesh doesnt have its own data
         public Matrix4x4? Transform => GetOptionalChild<MatrixBlock0xF900>()?.Value;
         public BoundsBlock0x1D01 Bounds => GetOptionalChild<BoundsBlock0x1D01>();
         public FaceListBlock Faces => GetOptionalChild<FaceListBlock>();
+        
+        public int? BoneIndex => GetOptionalChild<BoneIndexBlock>()?.Value;
+        public int? ParentId => GetOptionalChild<ParentIdBlock>()?.Value;
 
         internal override void Read(EndianReader reader)
         {
@@ -274,21 +278,38 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         internal override void Validate()
         {
-            if (ChildBlocks[0] is CountBlock0x2C01 c && ChildBlocks.Count != c.Count * 2 + 1)
+            if (ChildBlocks[0] is CountBlock0x2C01 c && ChildBlocks.Count != c.Value * 2 + 1)
                 Debugger.Break();
 
             if (FilterChildren<MeshBlock0xB903>().Skip(1).Any())
                 Debugger.Break();
         }
 
-        protected override object GetDebugProperties() => new { ChildNodeCount, HasGeometry = Mesh?.VertexCount > 0, Id = MeshId, Name = MeshName };
+        protected override object GetDebugProperties()
+        {
+            var hasGeo = Mesh?.VertexCount > 0;
+            return IsRootNode
+                ? new { ChildCount = ChildNodeCount, HasGeo = hasGeo, Id = MeshId, Name = MeshName }
+                : new { ChildCount = ChildBlocks.Count, HasGeo = hasGeo, Id = MeshId, ParentId, BoneIdx = BoneIndex, Name = MeshName };
+        }
     }
 
-    [DataBlock(0x2C01, ExpectedSize = 4)]
-    public class CountBlock0x2C01 : DataBlock
+    [DataBlock(0x2C01)]
+    public class CountBlock0x2C01 : Int32Block
     {
-        [Offset(0)]
-        public int Count { get; set; }
+
+    }
+
+    [DataBlock(0xFA00)]
+    public class BoneIndexBlock : Int32Block
+    {
+
+    }
+
+    [DataBlock(0x2B01)]
+    public class ParentIdBlock : Int32Block
+    {
+
     }
 
     [DataBlock(0xFD00, ExpectedChildCount = 1)]
@@ -368,6 +389,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         [Offset(6)]
         public int IndexOffset { get; set; }
+
+        protected override object GetDebugProperties() => new { SourceMeshId, VertexOffset, IndexOffset };
     }
 
     [DataBlock(0x3501, ExpectedSize = 12)]
