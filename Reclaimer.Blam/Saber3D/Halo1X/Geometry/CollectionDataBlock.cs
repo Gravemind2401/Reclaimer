@@ -34,6 +34,25 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         protected void PopulateChildrenOfType<TBlock>(List<TBlock> list) => list.AddRange(ChildBlocks.OfType<TBlock>());
 
+        protected void PopulateGroupList<TGroup>(List<TGroup> list, int assertCount)
+            where TGroup : DataBlockGroup, new()
+        {
+            var nextGroup = new TGroup();
+            foreach (var block in ChildBlocks)
+            {
+                if (block is EmptyBlock)
+                {
+                    list.Add(nextGroup);
+                    nextGroup = new TGroup();
+                }
+                else
+                    nextGroup.Add(block);
+            }
+
+            if (list.Count != assertCount)
+                Debugger.Break();
+        }
+
         internal override void Validate()
         {
             if (ExpectedChildCount >= 0 && ChildBlocks.Count > ExpectedChildCount)
