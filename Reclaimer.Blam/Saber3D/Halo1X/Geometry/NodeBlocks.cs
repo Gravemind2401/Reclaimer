@@ -1,0 +1,225 @@
+﻿using Reclaimer.IO;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Numerics;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Reclaimer.Saber3D.Halo1X.Geometry
+{
+    [DataBlock(0xF000)]
+    public class NodeGraphBlock0xF000 : CollectionDataBlock
+    {
+        public List<NodeGraphBlock0xF000> ChildNodes { get; } = new List<NodeGraphBlock0xF000>();
+
+        public bool IsRootNode => ChildBlocks[0] is CountBlock0x2C01;
+        public int? MeshId => Mesh?.Id;
+        public string MeshName => Mesh?.Name;
+
+        public int ChildNodeCount => GetOptionalChild<CountBlock0x2C01>()?.Value ?? default;
+        public MeshBlock0xB903 Mesh => GetOptionalChild<MeshBlock0xB903>();
+        public FaceListBlock Faces => GetOptionalChild<FaceListBlock>();
+        public BoundsBlock0x1D01 Bounds => GetOptionalChild<BoundsBlock0x1D01>();
+        public Matrix4x4? Transform => GetOptionalChild<MatrixBlock0xF900>()?.Value;
+        public int? BoneIndex => GetOptionalChild<BoneIndexBlock>()?.Value;
+        public string UnknownString0xFD00 => GetOptionalChild<UnknownBlock0xFD00>()?.UnknownString;
+        public string UnknownString0x1501 => GetOptionalChild<StringBlock0x1501>()?.Value;
+        public SubmeshBlock0x0701 SubmeshData => GetOptionalChild<SubmeshBlock0x0701>();
+        public int? ParentId => GetOptionalChild<ParentIdBlock>()?.Value;
+
+        internal override void Read(EndianReader reader)
+        {
+            ReadChildren(reader);
+            PopulateChildrenOfType(ChildNodes);
+        }
+
+        internal override void Validate()
+        {
+            if (ChildBlocks[0] is CountBlock0x2C01 c && ChildBlocks.Count != c.Value * 2 + 1)
+                Debugger.Break();
+
+            if (FilterChildren<MeshBlock0xB903>().Skip(1).Any())
+                Debugger.Break();
+        }
+
+        protected override object GetDebugProperties()
+        {
+            var hasGeo = Mesh?.VertexCount > 0;
+            return IsRootNode
+                ? new { ChildCount = ChildNodeCount, HasGeo = hasGeo, Id = MeshId, Name = MeshName }
+                : new { ChildCount = ChildBlocks.Count, HasGeo = hasGeo, Id = MeshId, ParentId, BoneIdx = BoneIndex, Name = MeshName };
+        }
+    }
+
+    [DataBlock(0x2C01)] //only on root node
+    public class CountBlock0x2C01 : Int32Block
+    {
+
+    }
+
+    [DataBlock(0xB903)]
+    public class MeshBlock0xB903 : DataBlock
+    {
+        public string Name { get; set; }
+        public short Id { get; set; }
+        public short Unknown0 { get; set; } //0x2400
+        public byte Unknown1 { get; set; }
+        public short Unknown2 { get; set; } //flags?
+        public short Unknown3 { get; set; } //flags?
+        public int VertexCount { get; set; }
+        public int FaceCount { get; set; }
+
+        internal override void Read(EndianReader reader)
+        {
+            Name = reader.ReadNullTerminatedString();
+            Id = reader.ReadInt16();
+            Unknown0 = reader.ReadInt16();
+            Unknown1 = reader.ReadByte();
+            Unknown2 = reader.ReadInt16();
+            Unknown3 = reader.ReadInt16();
+            VertexCount = reader.ReadInt32();
+            FaceCount = reader.ReadInt32();
+
+            EndRead(reader.Position);
+        }
+
+        protected override object GetDebugProperties() => new { Id, VertexCount, Name };
+    }
+
+    [DataBlock(0x2E01, ExpectedSize = 5)]
+    public class MeshBlock0x2E01 : DataBlock
+    {
+        [Offset(0)]
+        public short Unknown0 { get; set; } //0x1200
+
+        [Offset(2)]
+        public byte UnknownEnum { get; set; } //maybe flags? 03 for no materials, 86/8E for world, 87 for one material, 8F for two, 9F for three, BF for four
+
+        [Offset(3)]
+        public short Unknown1 { get; set; } //often 0x4001
+    }
+
+    #region Resource Data
+
+    //0xF100 (unmapped)
+
+    //0x3001 (unmapped)
+
+    [DataBlock(0xF200)]
+    public class FaceListBlock : DataBlock
+    {
+        internal override int ExpectedSize => 4 + 2 * Count * 3;
+
+        [Offset(0)]
+        public int Count { get; set; }
+
+        // + ushort * Count * 3
+    }
+
+    [DataBlock(0x1D01)]
+    public class BoundsBlock0x1D01 : BoundsBlock0x0803
+    {
+
+    }
+
+    //0xF800 (unmapped)
+
+    [DataBlock(0x2F01)]
+    public class MaterialBlock0x2F01 : DataBlock
+    {
+        internal override int ExpectedSize => 1 + 5 * Count;
+
+        public byte Count { get; set; }
+        public (byte Index, int Count)[] UnknownArray { get; set; }
+
+        internal override void Read(EndianReader reader)
+        {
+            Count = reader.ReadByte();
+            UnknownArray = new (byte, int)[Count];
+
+            for (var i = 0; i < Count; i++)
+                UnknownArray[i] = (reader.ReadByte(), reader.ReadInt32());
+        }
+    }
+
+    #endregion
+
+    [DataBlock(0xF900, ExpectedSize = 4 * 16)]
+    public class MatrixBlock0xF900 : DataBlock
+    {
+        public Matrix4x4 Value { get; set; }
+
+        internal override void Read(EndianReader reader)
+        {
+            Value = reader.ReadMatrix4x4();
+        }
+    }
+
+    [DataBlock(0xFA00)]
+    public class BoneIndexBlock : Int32Block
+    {
+
+    }
+
+    [DataBlock(0xFD00, ExpectedChildCount = 1)] //only on root node's first child
+    public class UnknownBlock0xFD00 : CollectionDataBlock
+    {
+        public string UnknownString => GetOptionalChild<StringBlock0xBA01>()?.Value;
+    }
+
+    //0x0701 (MeshBlocks.cs)
+
+    #region Blend Data
+
+    [DataBlock(0x1601)]
+    public class BlendDataBlock0x1601 : CollectionDataBlock
+    {
+        public UnknownBlock0x1701 Unknown0 => GetUniqueChild<UnknownBlock0x1701>();
+        public BlendIndexBlock BlendIndices => GetOptionalChild<BlendIndexBlock>();
+        public BlendWeightBlock BlendWeights => GetOptionalChild<BlendWeightBlock>();
+    }
+
+    [DataBlock(0x1701, ExpectedSize = 8)]
+    public class UnknownBlock0x1701 : DataBlock
+    {
+        [Offset(0)]
+        public int Unknown0 { get; set; }
+
+        [Offset(4)]
+        public int Unknown1 { get; set; }
+
+        protected override object GetDebugProperties() => new { Unknown0, Unknown1 };
+    }
+
+    [DataBlock(0x3301)]
+    public class BlendIndexBlock : DataBlock
+    {
+        [Offset(0)]
+        public short FirstBoneId { get; set; }
+
+        [Offset(2)]
+        public short BoneCount { get; set; }
+
+        // + UByte4 * vertex count
+
+        protected override object GetDebugProperties() => new { FirstBoneId, BoneCount };
+    }
+
+    [DataBlock(0x1A01)]
+    public class BlendWeightBlock : DataBlock
+    {
+        //UByteN4 * vertex count
+    }
+
+    #endregion
+
+    //0x1501 (CommonBlocks.cs)
+
+    [DataBlock(0x2B01)]
+    public class ParentIdBlock : Int32Block
+    {
+
+    }
+}

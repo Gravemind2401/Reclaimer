@@ -14,6 +14,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public List<SubmeshInfo> Submeshes => GetUniqueChild<SubmeshListBlock0x0401>().Submeshes;
     }
 
+    #region Unknown List
+    
     [DataBlock(0xF300)]
     public class UnknownListBlock0xF300 : CollectionDataBlock
     {
@@ -34,6 +36,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     {
 
     }
+
+    #endregion
 
     #region Submesh Data
 
@@ -56,9 +60,9 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     {
         public FaceRangeBlock FaceRange => GetUniqueChild<FaceRangeBlock>();
         public VertexRangeBlock VertexRange => GetUniqueChild<VertexRangeBlock>();
-        public SubmeshBlock0x3201 UnknownBoneDetails => GetOptionalChild<SubmeshBlock0x3201>();
         public short? UnknownId => GetOptionalChild<SubmeshBlock0x3401>()?.Value;
         public List<MaterialInfoGroup> Materials => GetUniqueChild<MaterialListBlock0x0B01>().Materials;
+        public SubmeshBlock0x3201 UnknownBoneDetails => GetOptionalChild<SubmeshBlock0x3201>();
         public MaterialBlock0x1C01 UnknownMaterial0 => GetUniqueChild<MaterialBlock0x1C01>();
         public MaterialBlock0x2001 UnknownMaterial1 => GetUniqueChild<MaterialBlock0x2001>();
         public SubmeshBlock0x2801 UnknownMeshDetails => GetOptionalChild<SubmeshBlock0x2801>();
@@ -76,14 +80,14 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
     }
 
-    [DataBlock(0x3201, ExpectedSize = 6)]
+    [DataBlock(0x3201, ExpectedSize = 6)] //mutally exclusive with 0x3401?
     public class SubmeshBlock0x3201 : DataBlock
     {
         [Offset(0)]
         public short UnknownId0 { get; set; } //points to first inheritor if skincompound, otherwise parent bone
 
         [Offset(2)]
-        public byte UnknownCount0 { get; set; } //number of inheritors/bones (starts at unkID0 and increments through object IDs)
+        public byte UnknownCount0 { get; set; } //number of inheritors/bones (starts at UnknownId0 and increments through object IDs)
 
         [Offset(3)]
         public short UnknownId1 { get; set; } //secondary parent bone
@@ -98,7 +102,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         //ID pointing to inherited sharingObj
     }
 
-    #region Material Data
+    #region Material Data List
 
     [DataBlock(0x0B01)]
     public class MaterialListBlock0x0B01 : CollectionDataBlock
@@ -149,6 +153,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     {
         //0x00FF
     }
+
+    //0xBA01 (CommonBlocks.cs)
 
     #endregion
 
@@ -227,50 +233,6 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         }
 
         protected override object GetDebugProperties() => new { VertexCount, IndexCount };
-    }
-
-    #endregion
-
-    #region Blend Data
-
-    [DataBlock(0x1601)]
-    public class BlendDataBlock0x1601 : CollectionDataBlock
-    {
-        public UnknownBlock0x1701 Unknown0 => GetUniqueChild<UnknownBlock0x1701>();
-        public BlendIndexBlock BlendIndices => GetOptionalChild<BlendIndexBlock>();
-        public BlendWeightBlock BlendWeights => GetOptionalChild<BlendWeightBlock>();
-    }
-
-    [DataBlock(0x1701, ExpectedSize = 8)]
-    public class UnknownBlock0x1701 : DataBlock
-    {
-        [Offset(0)]
-        public int Unknown0 { get; set; }
-
-        [Offset(4)]
-        public int Unknown1 { get; set; }
-
-        protected override object GetDebugProperties() => new { Unknown0, Unknown1 };
-    }
-
-    [DataBlock(0x3301)]
-    public class BlendIndexBlock : DataBlock
-    {
-        [Offset(0)]
-        public short FirstBoneId { get; set; }
-
-        [Offset(2)]
-        public short BoneCount { get; set; }
-
-        // + UByte4 * vertex count
-
-        protected override object GetDebugProperties() => new { FirstBoneId, BoneCount };
-    }
-
-    [DataBlock(0x1A01)]
-    public class BlendWeightBlock : DataBlock
-    {
-        //UByteN4 * vertex count
     }
 
     #endregion
