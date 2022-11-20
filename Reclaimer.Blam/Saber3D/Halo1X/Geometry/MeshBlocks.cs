@@ -1,6 +1,7 @@
 ﻿using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,7 +35,11 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     [DataBlock(0x0301)]
     public class UnknownBlock0x0301 : Int32Block
     {
-
+        internal override void Validate()
+        {
+            if (Value != 0)
+                Debugger.Break();
+        }
     }
 
     #endregion

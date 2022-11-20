@@ -85,6 +85,26 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
     //0xE802 (BoneBlocks.cs)
 
+    [DataBlock(0xE602)]
+    public class UnknownBlock0xE602 : Int32Block
+    {
+        internal override void Validate()
+        {
+            if (Value != 0)
+                Debugger.Break();
+        }
+    }
+
+    [DataBlock(0x1D02)]
+    public class UnknownBlock0x1D02 : Int32Block
+    {
+        internal override void Validate()
+        {
+            if (Value != 0)
+                Debugger.Break();
+        }
+    }
+
     [DataBlock(0x0403)]
     public class StringBlock0x0403 : StringBlock
     {
@@ -113,6 +133,14 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             MatrixCount = reader.ReadInt32();
             Unknown0 = reader.ReadInt16();
             Unknown1 = reader.ReadByte();
+
+            //3/3 = no matrix data here?
+            if (Header.BlockSize == 7 && MatrixCount > 0)
+            {
+                if ((Unknown0, Unknown1) != (3, 3))
+                    Debugger.Break();
+                return;
+            }
 
             while (Matrices.Count < MatrixCount)
                 Matrices.Add(reader.ReadMatrix4x4());

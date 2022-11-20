@@ -20,6 +20,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         public int DescendantCount => GetOptionalChild<CountBlock0x2C01>()?.Value ?? default;
         public MeshBlock0xB903 Mesh => GetOptionalChild<MeshBlock0xB903>();
+        public VertexPositionListBlock Positions => GetOptionalChild<VertexPositionListBlock>();
+        public VertexDataListBlock VertexData => GetOptionalChild<VertexDataListBlock>();
         public FaceListBlock Faces => GetOptionalChild<FaceListBlock>();
         public BoundsBlock0x1D01 Bounds => GetOptionalChild<BoundsBlock0x1D01>();
         public Matrix4x4? Transform => GetOptionalChild<MatrixBlock0xF900>()?.Value;
@@ -27,6 +29,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public string UnknownString0xFD00 => GetOptionalChild<UnknownBlock0xFD00>()?.UnknownString;
         public string UnknownString0x1501 => GetOptionalChild<StringBlock0x1501>()?.Value;
         public SubmeshBlock0x0701 SubmeshData => GetOptionalChild<SubmeshBlock0x0701>();
+        public BlendDataBlock0x1601 BlendData => GetOptionalChild<BlendDataBlock0x1601>();
         public int? ParentId => GetOptionalChild<ParentIdBlock>()?.Value;
 
         public NodeGraphBlock0xF000 ParentNode => GetOptionalChild<ParentIdBlock>()?.ParentNode;
@@ -47,6 +50,25 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
             if (FilterChildren<MeshBlock0xB903>().Skip(1).Any())
                 Debugger.Break();
+
+            var blend = BlendData;
+            if (blend != null)
+            {
+                if (blend.BlendIndices == null)
+                    Debugger.Break();
+
+                if (blend.Unknown0.Unknown1 != 4)
+                    Debugger.Break();
+
+                if (blend.Unknown0.Unknown0 != blend.BlendIndices?.BoneCount)
+                    Debugger.Break();
+
+                if (blend.BlendIndices != null && blend.BlendIndices.Header.BlockSize != 4 + Mesh.VertexCount * 4)
+                    Debugger.Break();
+
+                if (blend.BlendWeights != null && blend.BlendWeights.Header.BlockSize != Mesh.VertexCount * 4)
+                    Debugger.Break();
+            }
         }
 
         protected override object GetDebugProperties()
@@ -108,9 +130,55 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
     #region Resource Data
 
-    //0xF100 (unmapped)
+    [DataBlock(0xF100)]
+    public class VertexPositionListBlock : DataBlock
+    {
+        [Offset(0)]
+        public int Count { get; set; }
 
-    //0x3001 (unmapped)
+        // + center (int16 * 3, optional)
+        // + radius (int16 * 3, optional)
+
+        // + vertex * Count (either float32 * 3 or int16 * 4)
+
+        protected override object GetDebugProperties() => new { VertexCount = Count };
+    }
+
+    [DataBlock(0x3001)] //contains texcoords (big endian) + other data (unknown)
+    public class VertexDataListBlock : DataBlock
+    {
+        internal override int ExpectedSize => 13 + Count * DataSize;
+
+        [Offset(0)]
+        public int Count { get; set; }
+
+        [Offset(4)]
+        public short Unknown0 { get; set; } //0x2E00
+
+        //big endian from here on?
+
+        [Offset(6)]
+        public short Unknown1 { get; set; } //flags? 0x1C00 if uncompressed positions
+
+        [Offset(8)]
+        public byte Unknown2 { get; set; }
+
+        [Offset(9)]
+        public byte Unknown3 { get; set; }
+
+        [Offset(10)]
+        public byte Unknown4 { get; set; }
+
+        [Offset(11)]
+        public byte Unknown5 { get; set; } //0x00 if uncompressed positions, else 0x20
+
+        [Offset(12)]
+        public byte DataSize { get; set; }
+
+        // + Count * DataSize bytes
+
+        protected override object GetDebugProperties() => new { VertexCount = Count, VertexSize = DataSize };
+    }
 
     [DataBlock(0xF200)]
     public class FaceListBlock : DataBlock
@@ -131,7 +199,17 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
     }
 
-    //0xF800 (unmapped)
+    [DataBlock(0xF800)]
+    public class UnknownBlock0xF800 : Int32Block
+    {
+        //index? -1 so far
+
+        internal override void Validate()
+        {
+            if (Value != -1)
+                Debugger.Break();
+        }
+    }
 
     [DataBlock(0x2F01)]
     public class MaterialBlock0x2F01 : DataBlock
