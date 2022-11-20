@@ -12,13 +12,13 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     [DataBlock(0xF000)]
     public class NodeGraphBlock0xF000 : CollectionDataBlock
     {
-        public List<NodeGraphBlock0xF000> ChildNodes { get; } = new List<NodeGraphBlock0xF000>();
+        public List<NodeGraphBlock0xF000> AllDescendants { get; } = new List<NodeGraphBlock0xF000>();
 
         public bool IsRootNode => ChildBlocks[0] is CountBlock0x2C01;
         public int? MeshId => Mesh?.Id;
         public string MeshName => Mesh?.Name;
 
-        public int ChildNodeCount => GetOptionalChild<CountBlock0x2C01>()?.Value ?? default;
+        public int DescendantCount => GetOptionalChild<CountBlock0x2C01>()?.Value ?? default;
         public MeshBlock0xB903 Mesh => GetOptionalChild<MeshBlock0xB903>();
         public FaceListBlock Faces => GetOptionalChild<FaceListBlock>();
         public BoundsBlock0x1D01 Bounds => GetOptionalChild<BoundsBlock0x1D01>();
@@ -29,10 +29,15 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public SubmeshBlock0x0701 SubmeshData => GetOptionalChild<SubmeshBlock0x0701>();
         public int? ParentId => GetOptionalChild<ParentIdBlock>()?.Value;
 
+        public NodeGraphBlock0xF000 ParentNode => GetOptionalChild<ParentIdBlock>()?.ParentNode;
+        public IEnumerable<NodeGraphBlock0xF000> ChildNodes => IsRootNode
+            ? AllDescendants.Where(c => !c.ParentId.HasValue)
+            : Owner.NodeGraph.AllDescendants.Where(c => MeshId.HasValue && c.ParentId == MeshId);
+
         internal override void Read(EndianReader reader)
         {
             ReadChildren(reader);
-            PopulateChildrenOfType(ChildNodes);
+            PopulateChildrenOfType(AllDescendants);
         }
 
         internal override void Validate()
@@ -48,7 +53,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         {
             var hasGeo = Mesh?.VertexCount > 0;
             return IsRootNode
-                ? new { ChildCount = ChildNodeCount, HasGeo = hasGeo, Id = MeshId, Name = MeshName }
+                ? new { DescendantCount }
                 : new { ChildCount = ChildBlocks.Count, HasGeo = hasGeo, Id = MeshId, ParentId, BoneIdx = BoneIndex, Name = MeshName };
         }
     }
@@ -116,9 +121,11 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public int Count { get; set; }
 
         // + ushort * Count * 3
+
+        protected override object GetDebugProperties() => new { IndexCount = Count };
     }
 
-    [DataBlock(0x1D01)]
+    [DataBlock(0x1D01, ExpectedSize = 4 + 4 * 3 * 2)]
     public class BoundsBlock0x1D01 : BoundsBlock0x0803
     {
 
@@ -155,6 +162,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         {
             Value = reader.ReadMatrix4x4();
         }
+
+        protected override object GetDebugProperties() => new { Value.IsIdentity };
     }
 
     [DataBlock(0xFA00)]
@@ -220,6 +229,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     [DataBlock(0x2B01)]
     public class ParentIdBlock : Int32Block
     {
+        public NodeGraphBlock0xF000 ParentNode => Owner.NodeLookup[Value];
 
+        protected override object GetDebugProperties() => new { Value, Name = ParentNode?.MeshName };
     }
 }

@@ -16,7 +16,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
     #region Unknown List
     
-    [DataBlock(0xF300)]
+    [DataBlock(0xF300, ExpectedChildCount = 10)]
     public class UnknownListBlock0xF300 : CollectionDataBlock
     {
         public int Count { get; set; }
@@ -60,12 +60,14 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     {
         public FaceRangeBlock FaceRange => GetUniqueChild<FaceRangeBlock>();
         public VertexRangeBlock VertexRange => GetUniqueChild<VertexRangeBlock>();
-        public short? UnknownId => GetOptionalChild<SubmeshBlock0x3401>()?.Value;
+        public short? UnknownId => GetOptionalChild<CompoundParentIdBlock>()?.Value;
         public List<MaterialInfoGroup> Materials => GetUniqueChild<MaterialListBlock0x0B01>().Materials;
         public SubmeshBlock0x3201 UnknownBoneDetails => GetOptionalChild<SubmeshBlock0x3201>();
         public MaterialBlock0x1C01 UnknownMaterial0 => GetUniqueChild<MaterialBlock0x1C01>();
         public MaterialBlock0x2001 UnknownMaterial1 => GetUniqueChild<MaterialBlock0x2001>();
         public SubmeshBlock0x2801 UnknownMeshDetails => GetOptionalChild<SubmeshBlock0x2801>();
+
+        public NodeGraphBlock0xF000 CompoundParent => GetOptionalChild<CompoundParentIdBlock>()?.CompoundParent;
     }
 
     [DataBlock(0x0501, ExpectedSize = 8)]
@@ -97,9 +99,13 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     }
 
     [DataBlock(0x3401)]
-    public class SubmeshBlock0x3401 : Int16Block
+    public class CompoundParentIdBlock : Int16Block
     {
-        //ID pointing to inherited sharingObj
+        //ID pointing to inherited sharingObj / parent skin compound
+
+        public NodeGraphBlock0xF000 CompoundParent => Owner.NodeLookup[Value];
+
+        protected override object GetDebugProperties() => new { Value, Name = CompoundParent?.MeshName };
     }
 
     #region Material Data List

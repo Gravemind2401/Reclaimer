@@ -14,6 +14,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         internal virtual int ExpectedSize => BlockExtensions.AttributeLookup.GetValueOrDefault(GetType())?.ExpectedSize ?? -1;
         internal virtual int ExpectedChildCount => BlockExtensions.AttributeLookup.GetValueOrDefault(GetType())?.ExpectedChildCount ?? -1;
 
+        protected INodeGraph Owner { get; private set; }
+
         public BlockHeader Header { get; } = new BlockHeader();
 
         internal virtual void Read(EndianReader reader)
@@ -38,5 +40,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
                 displayName = "*" + displayName;
             return $"[{Header.BlockType:X4}] {displayName} {GetDebugProperties()}";
         }
+
+        internal void SetOwner(INodeGraph owner) => this.Owner = owner;
     }
 }

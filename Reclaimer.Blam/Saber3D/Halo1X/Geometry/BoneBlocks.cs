@@ -33,6 +33,17 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public RealVector3D UnknownVector0xFC02 => GetUniqueChild<VectorBlock0xFC02>().Value;
         public float Scale => GetUniqueChild<ScaleBlock0x0A03>().Value;
 
+        public int Index => Owner.Bones.IndexOf(this);
+
+        public string Name
+        {
+            get
+            {
+                var index = Owner.Bones.IndexOf(this);
+                return Owner.NodeGraph.AllDescendants.FirstOrDefault(c => c.BoneIndex == index)?.MeshName;
+            }
+        }
+
         internal override void Read(EndianReader reader)
         {
             UnknownAsInt = reader.PeekInt32();

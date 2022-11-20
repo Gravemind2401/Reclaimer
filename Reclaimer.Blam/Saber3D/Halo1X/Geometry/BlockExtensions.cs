@@ -19,10 +19,11 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         private static readonly Dictionary<int, Type> blockLookup = AttributeLookup.ToDictionary(kv => kv.Value.BlockType, kv => kv.Key);
 
-        public static DataBlock ReadBlock(this EndianReader reader)
+        public static DataBlock ReadBlock(this EndianReader reader, INodeGraph owner)
         {
             var typeId = reader.ReadUInt16(ByteOrder.BigEndian); //always read LTR
             var block = (DataBlock)Activator.CreateInstance(blockLookup.GetValueOrDefault(typeId) ?? typeof(DataBlock));
+            block.SetOwner(owner);
 
             block.Header.StartOfBlock = (int)reader.Position - 2; //adjust for typeId already being read
             block.Header.BlockType = typeId;

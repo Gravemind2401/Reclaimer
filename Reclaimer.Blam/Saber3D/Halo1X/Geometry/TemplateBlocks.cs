@@ -74,7 +74,9 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     [DataBlock(0x5601)]
     public class MaterialReferenceBlock : StringBlock
     {
+        public int Index => Owner.Materials.IndexOf(this);
 
+        protected override object GetDebugProperties() => new { Index, Value };
     }
 
     #endregion
@@ -117,6 +119,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
             EndRead(reader.Position);
         }
+
+        protected override object GetDebugProperties() => new { MatrixCount, Unknown0, Unknown1 };
     }
 
     #endregion
@@ -125,7 +129,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     public class BoundsBlock0x0803 : DataBlock
     {
         [Offset(0)]
-        public int Unknown0 { get; set; } //count?
+        public int Unknown0 { get; set; } //count? always 1?
 
         [Offset(4)]
         public RealVector3D MinBound { get; set; }
