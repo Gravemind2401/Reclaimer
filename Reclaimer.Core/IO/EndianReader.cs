@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reclaimer.IO.Dynamic;
+using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +12,7 @@ namespace Reclaimer.IO
     /// <summary>
     /// Reads primitive and complex data types from a stream in a specific byte order and encoding.
     /// </summary>
-    public partial class EndianReader : BinaryReader, IEndianStream
+    public class EndianReader : BinaryReader, IEndianStream
     {
         private readonly long virtualOrigin;
         private readonly Encoding encoding;
@@ -264,6 +265,7 @@ namespace Reclaimer.IO
             Array.Reverse(bytes);
             for (var i = 0; i < 4; i++)
                 bits[i] = BitConverter.ToInt32(bytes, i * 4);
+
             return new decimal(bits);
         }
 
@@ -345,10 +347,9 @@ namespace Reclaimer.IO
         {
             var length = ReadInt32(byteOrder);
 
-            if (length == 0)
-                return string.Empty;
-
-            return encoding.GetString(ReadBytes(length));
+            return length > 0
+                ? encoding.GetString(ReadBytes(length))
+                : string.Empty;
         }
 
         /// <summary>
@@ -408,10 +409,9 @@ namespace Reclaimer.IO
 
             var value = encoding.GetString(base.ReadBytes(maxLength));
 
-            if (!value.Contains('\0'))
-                return value;
-
-            return value.Substring(0, value.IndexOf('\0'));
+            return value.Contains('\0')
+                ? value.Substring(0, value.IndexOf('\0'))
+                : value;
         }
 
         #endregion
@@ -702,10 +702,9 @@ namespace Reclaimer.IO
         /// <exception cref="ArgumentOutOfRangeException"/>
         public virtual EndianReader CreateVirtualReader(long origin)
         {
-            if (origin < 0 || origin > BaseStream.Length)
-                throw Exceptions.OutOfStreamBounds(nameof(origin), origin);
-
-            return new EndianReader(this, origin);
+            return origin < 0 || origin > BaseStream.Length
+                ? throw Exceptions.OutOfStreamBounds(nameof(origin), origin)
+                : new EndianReader(this, origin);
         }
 
         /// <summary>
@@ -717,7 +716,7 @@ namespace Reclaimer.IO
             if (count < 0)
                 throw Exceptions.ParamMustBeNonNegative(nameof(count), count);
 
-            int i = 0;
+            var i = 0;
             while (i++ < count && BaseStream.Position < BaseStream.Length)
                 yield return ReadObject<T>();
         }
@@ -734,10 +733,125 @@ namespace Reclaimer.IO
             if (count < 0)
                 throw Exceptions.ParamMustBeNonNegative(nameof(count), count);
 
-            int i = 0;
+            var i = 0;
             while (i++ < count && BaseStream.Position < BaseStream.Length)
                 yield return ReadObject<T>(version);
         }
+
+        #endregion
+
+        #region Dynamic Read
+
+        /// <inheritdoc cref="ReadObject{T}(double)"/>
+        public T ReadObject<T>() => (T)ReadObject(null, typeof(T), null);
+
+        /// <typeparam name="T">The type of object to read.</typeparam>
+        /// <inheritdoc cref="ReadObject(Type, double)"/>
+        public T ReadObject<T>(double version) => (T)ReadObject(null, typeof(T), version);
+
+        /// <inheritdoc cref="ReadObject(Type, double)"/>
+        public object ReadObject(Type type)
+        {
+            return type == null
+                ? throw new ArgumentNullException(nameof(type))
+                : ReadObject(null, type, null);
+        }
+
+        /// <summary>
+        /// Reads a complex object from the current stream using reflection.
+        /// </summary>
+        /// <remarks>
+        /// The type being read must have a public parameterless constructor.
+        /// Each property to be read must have public get/set methods and
+        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// </remarks>
+        /// <param name="type">The type of object to read.</param>
+        /// <returns>A new instance of the specified type whose values have been populated from the current stream.</returns>
+        /// <inheritdoc cref="ReadObject(object, double)"/>
+        public object ReadObject(Type type, double version)
+        {
+            return type == null
+                ? throw new ArgumentNullException(nameof(type))
+                : ReadObject(null, type, version);
+        }
+
+        /// <inheritdoc cref="ReadObject{T}(T, double)"/>
+        public T ReadObject<T>(T instance)
+        {
+            return instance == null
+                ? throw new ArgumentNullException(nameof(instance))
+                : (T)ReadObject(instance, instance.GetType(), null);
+        }
+
+        /// <typeparam name="T">The type of object to read.</typeparam>
+        /// <inheritdoc cref="ReadObject(object, double)"/>
+        public T ReadObject<T>(T instance, double version)
+        {
+            return instance == null
+                ? throw new ArgumentNullException(nameof(instance))
+                : (T)ReadObject(instance, instance.GetType(), version);
+        }
+
+        /// <inheritdoc cref="ReadObject(object, double)"/>
+        public object ReadObject(object instance)
+        {
+            return instance == null
+                ? throw new ArgumentNullException(nameof(instance))
+                : ReadObject(instance, instance.GetType(), null);
+        }
+
+        /// <summary>
+        /// Populates the properties of a complex object from the current stream using reflection.
+        /// </summary>
+        /// <remarks>
+        /// Each property to be read must have public get/set methods and
+        /// must have at least the <seealso cref="OffsetAttribute"/> attribute applied.
+        /// </remarks>
+        /// <returns>The same object that was supplied as the <paramref name="instance"/> parameter.</returns>
+        /// <param name="instance">The object to populate.</param>
+        /// <param name="version">
+        /// The version that was used to store the object.
+        /// <para>
+        /// This determines which properties will be read, how they will be
+        /// read and at what location in the stream to read them from.
+        /// </para>
+        /// </param>
+        /// <exception cref="AmbiguousMatchException" />
+        /// <exception cref="ArgumentException" />
+        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="InvalidCastException" />
+        /// <exception cref="InvalidOperationException" />
+        /// <exception cref="MissingMethodException" />
+        public object ReadObject(object instance, double version)
+        {
+            return instance == null
+                ? throw new ArgumentNullException(nameof(instance))
+                : ReadObject(instance, instance.GetType(), version);
+        }
+
+        /// <summary>
+        /// This function is called by all public ReadObject overloads.
+        /// </summary>
+        /// <param name="instance">The object to populate. This value will be null if no instance was provided.</param>
+        /// <param name="type">The type of object to read.</param>
+        /// <param name="version">
+        /// The version that was used to store the object.
+        /// This determines which properties will be read, how they will be
+        /// read and at what location in the stream to read them from.
+        /// This value will be null if no version was provided.
+        /// </param>
+        protected virtual object ReadObject(object instance, Type type, double? version)
+        {
+            //cannot detect string type automatically (fixed/prefixed/terminated)
+            if (type.Equals(typeof(string)))
+                throw Exceptions.NotValidForStringTypes();
+
+            instance ??= CreateInstance(type, version);
+
+            return TypeConfiguration.Populate(instance, type, this, version);
+        }
+
+        protected virtual object CreateInstance(Type type, double? version) => Activator.CreateInstance(type);
 
         #endregion
     }
