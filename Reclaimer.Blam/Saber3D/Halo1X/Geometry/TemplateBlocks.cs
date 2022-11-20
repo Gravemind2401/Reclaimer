@@ -201,43 +201,5 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public override string Value { get; set; }
     }
 
-
-    [DataBlock(0x2901, ExpectedSize = 10)] //only appears in scene models
-    public class MeshDataSourceBlock : DataBlock
-    {
-        [Offset(0)]
-        public short SourceMeshId { get; set; }
-
-        [Offset(2)]
-        public int VertexOffset { get; set; }
-
-        [Offset(6)]
-        public int IndexOffset { get; set; }
-
-        protected override object GetDebugProperties() => new { SourceMeshId, VertexOffset, IndexOffset };
-    }
-
-    [DataBlock(0x3501, ExpectedSize = 12)]
-    public class UnknownBlock0x3501 : DataBlock
-    {
-        [Offset(0)]
-        public short Unknown0 { get; set; }
-
-        [Offset(2)]
-        public short Unknown1 { get; set; }
-
-        [Offset(4)]
-        public short Unknown2 { get; set; }
-
-        [Offset(6)]
-        public short Unknown3 { get; set; } //0x4801
-
-        [Offset(8)]
-        public short Unknown4 { get; set; } //0x4801
-
-        [Offset(10)]
-        public short Unknown5 { get; set; } //0x4801
-    }
-
     #endregion
 }

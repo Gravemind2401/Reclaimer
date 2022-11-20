@@ -32,6 +32,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public BlendDataBlock0x1601 BlendData => GetOptionalChild<BlendDataBlock0x1601>();
         public int? ParentId => GetOptionalChild<ParentIdBlock>()?.Value;
 
+        public MeshDataSourceBlock MeshDataSource => GetOptionalChild<MeshDataSourceBlock>(); //this mesh doesnt have its own data
+
         public NodeGraphBlock0xF000 ParentNode => GetOptionalChild<ParentIdBlock>()?.ParentNode;
         public IEnumerable<NodeGraphBlock0xF000> ChildNodes => IsRootNode
             ? AllDescendants.Where(c => !c.ParentId.HasValue)
@@ -115,6 +117,21 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         protected override object GetDebugProperties() => new { Id, VertexCount, Name };
     }
 
+    [DataBlock(0x2901, ExpectedSize = 10)] //only appears in scene models
+    public class MeshDataSourceBlock : DataBlock
+    {
+        [Offset(0)]
+        public short SourceMeshId { get; set; }
+
+        [Offset(2)]
+        public int VertexOffset { get; set; }
+
+        [Offset(6)]
+        public int IndexOffset { get; set; }
+
+        protected override object GetDebugProperties() => new { SourceMeshId, VertexOffset, IndexOffset, Name = Owner.NodeLookup[SourceMeshId].MeshName };
+    }
+
     [DataBlock(0x2E01, ExpectedSize = 5)]
     public class MeshBlock0x2E01 : DataBlock
     {
@@ -127,6 +144,40 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         [Offset(3)]
         public short Unknown1 { get; set; } //often 0x4001
     }
+
+    #region Scene Blocks
+
+    //below blocks only appear in scene models
+
+    [DataBlock(0x3501, ExpectedSize = 12)]
+    public class UnknownBlock0x3501 : DataBlock
+    {
+        [Offset(0)]
+        public short Unknown0 { get; set; }
+
+        [Offset(2)]
+        public short Unknown1 { get; set; }
+
+        [Offset(4)]
+        public short Unknown2 { get; set; }
+
+        [Offset(6)]
+        public short Unknown3 { get; set; } //0x4801
+
+        [Offset(8)]
+        public short Unknown4 { get; set; } //0x4801
+
+        [Offset(10)]
+        public short Unknown5 { get; set; } //0x4801
+    }
+
+    //0x2301 (unmapped, always empty?)
+
+    //0x3101 (unmapped, always empty?)
+
+    //0x2A01 (unmapped, always empty?)
+
+    #endregion
 
     #region Resource Data
 
@@ -196,7 +247,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     [DataBlock(0x1D01, ExpectedSize = 4 + 4 * 3 * 2)]
     public class BoundsBlock0x1D01 : BoundsBlock0x0803
     {
-
+        //sharingObj bounds always between -1,1
     }
 
     [DataBlock(0xF800)]
@@ -248,6 +299,12 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     public class BoneIndexBlock : Int32Block
     {
 
+    }
+
+    [DataBlock(0x8304)] //only appears in scene models
+    public class UnknownScriptBlock0x0F03 : Int32Block
+    {
+        //Script index? appears on nodes where name starts with Zone
     }
 
     [DataBlock(0xFD00, ExpectedChildCount = 1)] //only on root node's first child
