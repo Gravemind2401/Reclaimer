@@ -163,18 +163,13 @@ namespace Reclaimer.Controls
                     else
                     {
                         permGroup = new Model3DGroup();
-                        for (int i = 0; i < perm.MeshCount; i++)
-                        {
-                            if (tGroup.Children.Count > 0)
-                            {
-                                (permGroup.Transform = tGroup).Freeze();
+                        for (var i = 0; i < perm.MeshCount; i++)
+                            permGroup.Children.Add(meshes[perm.MeshIndex + i]);
 
-                                permGroup.Children.Add(meshes[perm.MeshIndex + i]);
-                                permGroup.Freeze();
-                            }
-                            else
-                                permGroup.Children.Add(meshes[perm.MeshIndex + i]);
-                        }
+                        if (tGroup.Children.Count > 0)
+                            (permGroup.Transform = tGroup).Freeze();
+
+                        permGroup.Freeze();
                     }
 
                     permNode.Tag = new MeshTag(permGroup, perm);
@@ -188,7 +183,7 @@ namespace Reclaimer.Controls
             renderer.ScaleToContent(new[] { modelGroup });
         }
 
-        private IEnumerable<Material> GetMaterials(IGeometryModel model)
+        private static IEnumerable<Material> GetMaterials(IGeometryModel model)
         {
             var indexes = model.Meshes.SelectMany(m => m.Submeshes)
                 .Select(s => s.MaterialIndex).Distinct().ToArray();
@@ -236,7 +231,7 @@ namespace Reclaimer.Controls
             }
         }
 
-        private IEnumerable<Model3DGroup> GetMeshes(IGeometryModel model)
+        private static IEnumerable<Model3DGroup> GetMeshes(IGeometryModel model)
         {
             var indexes = model.Regions.SelectMany(r => r.Permutations)
                 .SelectMany(p => Enumerable.Range(p.MeshIndex, p.MeshCount))
