@@ -65,14 +65,14 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     {
         public FaceRangeBlock FaceRange => GetUniqueChild<FaceRangeBlock>();
         public VertexRangeBlock VertexRange => GetUniqueChild<VertexRangeBlock>();
-        public short? UnknownId => GetOptionalChild<CompoundParentIdBlock>()?.Value;
+        public short? CompoundSourceId => GetOptionalChild<CompoundParentIdBlock>()?.Value;
         public List<MaterialInfoGroup> Materials => GetUniqueChild<MaterialListBlock0x0B01>().Materials;
         public SubmeshBlock0x3201 UnknownBoneDetails => GetOptionalChild<SubmeshBlock0x3201>();
         public MaterialBlock0x1C01 UnknownMaterial0 => GetUniqueChild<MaterialBlock0x1C01>();
         public MaterialBlock0x2001 UnknownMaterial1 => GetUniqueChild<MaterialBlock0x2001>();
         public SubmeshBlock0x2801 UnknownMeshDetails => GetOptionalChild<SubmeshBlock0x2801>();
 
-        public NodeGraphBlock0xF000 CompoundParent => GetOptionalChild<CompoundParentIdBlock>()?.CompoundParent;
+        public NodeGraphBlock0xF000 CompoundSource => GetOptionalChild<CompoundParentIdBlock>()?.CompoundParent;
     }
 
     [DataBlock(0x0501, ExpectedSize = 8)]
@@ -90,17 +90,21 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     [DataBlock(0x3201, ExpectedSize = 6)] //mutally exclusive with 0x3401?
     public class SubmeshBlock0x3201 : DataBlock
     {
+        //all submeshes on the same node have these values within the bounds of the node's 0x3301 node index and count
+
         [Offset(0)]
-        public short UnknownId0 { get; set; } //points to first inheritor if skincompound, otherwise parent bone
+        public short PrimaryNodeId { get; set; } //points to first dependent if skincompound, otherwise parent bone
 
         [Offset(2)]
-        public byte UnknownCount0 { get; set; } //number of inheritors/bones (starts at UnknownId0 and increments through object IDs)
+        public byte PrimaryNodeCount { get; set; }  //number of dependents/bones (starts at PrimaryNodeId and increments through object IDs)
 
         [Offset(3)]
-        public short UnknownId1 { get; set; } //secondary parent bone
+        public short SecondaryNodeId { get; set; } //unused on skin compounds?
 
         [Offset(5)]
-        public byte UnknownCount1 { get; set; } //secondary number of bones
+        public byte SecondaryNodeCount { get; set; } //unused on skin compounds?
+
+        protected override object GetDebugProperties() => new { PrimaryNodeId, PrimaryNodeCount, SecondaryNodeId, SecondaryNodeCount };
     }
 
     [DataBlock(0x3401)]
@@ -163,6 +167,12 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     public class MaterialBlock0x1F01 : Int16Block
     {
         //0x00FF
+
+        internal override void Validate()
+        {
+            if (Value != -256)
+                Debugger.Break();
+        }
     }
 
     //0xBA01 (CommonBlocks.cs)
@@ -207,6 +217,14 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         [Offset(28)]
         public float Unknown7 { get; set; }
+
+        internal override void Validate()
+        {
+            if ((Unknown0, Unknown1, Unknown2, Unknown3, Unknown4, Unknown5, Unknown6, Unknown7) != (0, 0, 0, 0, 0, 0, 0, 0))
+                Debugger.Break();
+        }
+
+        protected override object GetDebugProperties() => new { Unknown0, Unknown1, Unknown2, Unknown3, Unknown4, Unknown5, Unknown6, Unknown7 };
     }
 
     [DataBlock(0x2801, ExpectedSize = 28)]
@@ -228,7 +246,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         internal override void Read(EndianReader reader)
         {
             Unknown0 = reader.ReadByte();
-            Unknown1 = reader.ReadInt32();
+            Unknown1 = reader.ReadInt32(); //count or index?
             Unknown2 = reader.ReadByte();
             UnknownEnum = reader.ReadInt16(); //mesh type enum? 16 = standard, 18 = skin, 19 = skincompound
 
@@ -236,14 +254,14 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             IndexCount = reader.ReadInt16(); //face count * 3 [usually]
             UnknownId = reader.ReadInt32(); //object ID, unknown purpose, same as parent ID, only used on vertless meshes (inheritors)
             Unknown3 = reader.ReadInt32(); //increases with vert count
-            Unknown4 = reader.ReadInt32(); //seems to increase with mesh size
+            Unknown4 = reader.ReadInt32(); //2 * vert count + 4|6|8|12
             Unknown5 = reader.ReadInt16(); //not used on standard meshes
             Unknown6 = reader.ReadInt16(); //not used on standard meshes
 
             EndRead(reader.Position);
         }
 
-        protected override object GetDebugProperties() => new { VertexCount, IndexCount };
+        protected override object GetDebugProperties() => new { VertexCount, IndexCount, UnknownId, Enum = UnknownEnum, Unknown3, Unknown0, Unknown1, Unknown2, Unknown4 };
     }
 
     #endregion

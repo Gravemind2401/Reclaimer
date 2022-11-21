@@ -29,7 +29,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public string UnknownString0xFD00 => GetOptionalChild<UnknownBlock0xFD00>()?.UnknownString;
         public string UnknownString0x1501 => GetOptionalChild<StringBlock0x1501>()?.Value;
         public SubmeshBlock0x0701 SubmeshData => GetOptionalChild<SubmeshBlock0x0701>();
-        public BlendDataBlock0x1601 BlendData => GetOptionalChild<BlendDataBlock0x1601>();
+        public BlendDataBlock BlendData => GetOptionalChild<BlendDataBlock>();
         public int? ParentId => GetOptionalChild<ParentIdBlock>()?.Value;
 
         public MeshDataSourceBlock MeshDataSource => GetOptionalChild<MeshDataSourceBlock>(); //this mesh doesnt have its own data
@@ -56,19 +56,19 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             var blend = BlendData;
             if (blend != null)
             {
-                if (blend.BlendIndices == null)
+                if (blend.BlendIndexBuffer == null)
                     Debugger.Break();
 
-                if (blend.Unknown0.Unknown1 != 4)
+                if (blend.UnknownBlendDetails.UnknownCount != 4)
                     Debugger.Break();
 
-                if (blend.Unknown0.Unknown0 != blend.BlendIndices?.BoneCount)
+                if (blend.UnknownBlendDetails.NodeCount != blend.BlendIndexBuffer?.NodeCount)
                     Debugger.Break();
 
-                if (blend.BlendIndices != null && blend.BlendIndices.Header.BlockSize != 4 + Mesh.VertexCount * 4)
+                if (blend.BlendIndexBuffer != null && blend.BlendIndexBuffer.Header.BlockSize != 4 + Mesh.VertexCount * 4)
                     Debugger.Break();
 
-                if (blend.BlendWeights != null && blend.BlendWeights.Header.BlockSize != Mesh.VertexCount * 4)
+                if (blend.BlendWeightBuffer != null && blend.BlendWeightBuffer.Header.BlockSize != Mesh.VertexCount * 4)
                     Debugger.Break();
             }
         }
@@ -241,7 +241,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         // + ushort * Count * 3
 
-        protected override object GetDebugProperties() => new { IndexCount = Count };
+        protected override object GetDebugProperties() => new { Faces = Count, Size = Header.BlockSize };
     }
 
     [DataBlock(0x1D01, ExpectedSize = 4 + 4 * 3 * 2)]
@@ -318,42 +318,47 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     #region Blend Data
 
     [DataBlock(0x1601)]
-    public class BlendDataBlock0x1601 : CollectionDataBlock
+    public class BlendDataBlock : CollectionDataBlock
     {
-        public UnknownBlock0x1701 Unknown0 => GetUniqueChild<UnknownBlock0x1701>();
-        public BlendIndexBlock BlendIndices => GetOptionalChild<BlendIndexBlock>();
-        public BlendWeightBlock BlendWeights => GetOptionalChild<BlendWeightBlock>();
+        public UnknownBlendDetailsBlock0x1701 UnknownBlendDetails => GetUniqueChild<UnknownBlendDetailsBlock0x1701>();
+        public BlendIndexBufferBlock BlendIndexBuffer => GetOptionalChild<BlendIndexBufferBlock>();
+        public BlendWeightBufferBlock BlendWeightBuffer => GetOptionalChild<BlendWeightBufferBlock>();
     }
 
     [DataBlock(0x1701, ExpectedSize = 8)]
-    public class UnknownBlock0x1701 : DataBlock
+    public class UnknownBlendDetailsBlock0x1701 : DataBlock
     {
         [Offset(0)]
-        public int Unknown0 { get; set; }
+        public int NodeCount { get; set; } //same as 0x3301 NodeCount
 
         [Offset(4)]
-        public int Unknown1 { get; set; }
+        public int UnknownCount { get; set; } //always 4 so far (max indices/weights per vertex?)
 
-        protected override object GetDebugProperties() => new { Unknown0, Unknown1 };
+        protected override object GetDebugProperties() => new { NodeCount, UnknownCount };
     }
 
     [DataBlock(0x3301)]
-    public class BlendIndexBlock : DataBlock
+    public class BlendIndexBufferBlock : DataBlock
     {
+        //blend indices are relative to NodeIndex and refer to node IDs
+        //on skin compound meshes, each vertex has a single blend index (int32?) and is transformed as part of the referenced node
+
         [Offset(0)]
-        public short FirstBoneId { get; set; }
+        public short FirstNodeId { get; set; }
 
         [Offset(2)]
-        public short BoneCount { get; set; }
+        public short NodeCount { get; set; }
 
         // + UByte4 * vertex count
 
-        protected override object GetDebugProperties() => new { FirstBoneId, BoneCount };
+        protected override object GetDebugProperties() => new { FirstNodeId, NodeCount, Nodes = string.Join(" + ", Enumerable.Range(FirstNodeId, NodeCount).Select(i => Owner.NodeLookup[i].MeshName)) };
     }
 
     [DataBlock(0x1A01)]
-    public class BlendWeightBlock : DataBlock
+    public class BlendWeightBufferBlock : DataBlock
     {
+        //on skin compound meshes, this appears to be all zero but is essentially the same as 100% weight on a single node
+        
         //UByteN4 * vertex count
     }
 
