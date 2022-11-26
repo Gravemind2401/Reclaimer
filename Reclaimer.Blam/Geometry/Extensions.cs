@@ -53,6 +53,14 @@ namespace Adjutant.Geometry
             yield return vector.W;
         }
 
+        public static IEnumerable<float> AsEnumerable(this Vector4 vector)
+        {
+            yield return vector.X;
+            yield return vector.Y;
+            yield return vector.Z;
+            yield return vector.W;
+        }
+
         public static Matrix4x4 AsTransform(this IRealBounds5D bounds)
         {
             return new Matrix4x4
@@ -89,6 +97,7 @@ namespace Adjutant.Geometry
             return indices;
         }
 
+        public static IEnumerable<Vector3> GetPositions(this IGeometryMesh mesh) => GetPositions(mesh, 0, mesh.Vertices.Count);
         public static IEnumerable<Vector3> GetPositions(this IGeometryMesh mesh, int index, int count)
         {
             if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasPositions)
@@ -104,6 +113,7 @@ namespace Adjutant.Geometry
                    select new Vector3(v.X, v.Y, v.Z));
         }
 
+        public static IEnumerable<Vector2> GetTexCoords(this IGeometryMesh mesh) => GetTexCoords(mesh, 0, mesh.Vertices.Count);
         public static IEnumerable<Vector2> GetTexCoords(this IGeometryMesh mesh, int index, int count)
         {
             if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasPositions)
@@ -119,6 +129,7 @@ namespace Adjutant.Geometry
                    select new Vector2(v.X, v.Y));
         }
 
+        public static IEnumerable<Vector3> GetNormals(this IGeometryMesh mesh) => GetNormals(mesh, 0, mesh.Vertices.Count);
         public static IEnumerable<Vector3> GetNormals(this IGeometryMesh mesh, int index, int count)
         {
             if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasNormals)
@@ -132,6 +143,38 @@ namespace Adjutant.Geometry
                 : (from i in Enumerable.Range(index, count)
                    let v = mesh.Vertices[i].Normal[0]
                    select new Vector3(v.X, v.Y, v.Z));
+        }
+
+        public static IEnumerable<Vector4> GetBlendIndices(this IGeometryMesh mesh) => GetBlendIndices(mesh, 0, mesh.Vertices.Count);
+        public static IEnumerable<Vector4> GetBlendIndices(this IGeometryMesh mesh, int index, int count)
+        {
+            if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasBlendIndices)
+                return null;
+
+            if (mesh.VertexBuffer == null && mesh.Vertices[0].BlendIndices.Count == 0)
+                return null;
+
+            return mesh.VertexBuffer != null
+                ? mesh.VertexBuffer.BlendIndexChannels[0][index..(index + count)].Select(v => new Vector4(v.X, v.Y, v.Z, v.W))
+                : (from i in Enumerable.Range(index, count)
+                   let v = mesh.Vertices[i].BlendIndices[0]
+                   select new Vector4(v.X, v.Y, v.Z, v.W));
+        }
+
+        public static IEnumerable<Vector4> GetBlendWeights(this IGeometryMesh mesh) => GetBlendWeights(mesh, 0, mesh.Vertices.Count);
+        public static IEnumerable<Vector4> GetBlendWeights(this IGeometryMesh mesh, int index, int count)
+        {
+            if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasBlendWeights)
+                return null;
+
+            if (mesh.VertexBuffer == null && mesh.Vertices[0].BlendWeight.Count == 0)
+                return null;
+
+            return mesh.VertexBuffer != null
+                ? mesh.VertexBuffer.BlendWeightChannels[0][index..(index + count)].Select(v => new Vector4(v.X, v.Y, v.Z, v.W))
+                : (from i in Enumerable.Range(index, count)
+                   let v = mesh.Vertices[i].BlendWeight[0]
+                   select new Vector4(v.X, v.Y, v.Z, v.W));
         }
 
         private class MultiMesh : IGeometryMesh
@@ -185,10 +228,7 @@ namespace Adjutant.Geometry
                         {
                             foreach (var sm in mesh.Submeshes)
                             {
-                                var indices = mesh.Indicies.Skip(sm.IndexStart).Take(sm.IndexLength);
-                                if (mesh.IndexFormat == IndexFormat.TriangleStrip)
-                                    indices = indices.Unstrip();
-
+                                var indices = mesh.GetTriangleIndicies(sm);
                                 var newSubmesh = new GeometrySubmesh
                                 {
                                     MaterialIndex = sm.MaterialIndex,
@@ -405,10 +445,7 @@ namespace Adjutant.Geometry
                         int count = 0;
                         foreach (var submesh in part.Submeshes)
                         {
-                            var indices = part.Indicies.Skip(submesh.IndexStart).Take(submesh.IndexLength);
-                            if (part.IndexFormat == IndexFormat.TriangleStrip)
-                                indices = Unstrip(indices);
-
+                            var indices = part.GetTriangleIndicies(submesh);
                             count += indices.Count() / 3;
                         }
 
@@ -443,8 +480,6 @@ namespace Adjutant.Geometry
                 #endregion
 
                 #region Vertices
-                var emptyVector = new RealVector3D();
-
                 foreach (var region in validRegions)
                 {
                     foreach (var perm in region.Permutations)
@@ -465,38 +500,46 @@ namespace Adjutant.Geometry
 
                         vertValueList.Add(bw.BaseStream.Position);
 
-                        IXMVector vector;
-                        var vertices = part.BoundsIndex >= 0 ? part.Vertices.Select(v => (IVertex)new CompressedVertex(v, model.Bounds[part.BoundsIndex.Value])) : part.Vertices;
-                        foreach (var vert in vertices)
-                        {
-                            vector = vert.Position.Count > 0 ? vert.Position[0] : emptyVector;
-                            bw.Write(vector.X * scale1);
-                            bw.Write(vector.Y * scale1);
-                            bw.Write(vector.Z * scale1);
+                        var posTransform = model.Bounds?.ElementAtOrDefault(part.BoundsIndex ?? -1)?.AsTransform() ?? Matrix4x4.Identity;
+                        var texTransform = model.Bounds?.ElementAtOrDefault(part.BoundsIndex ?? -1)?.AsTextureTransform() ?? Matrix4x4.Identity;
 
-                            vector = vert.Normal.Count > 0 ? vert.Normal[0] : emptyVector;
+                        var positions = part.GetPositions()?.Select(v => Vector3.Transform(v, posTransform) * scale1).ToList();
+                        var texcoords = part.GetTexCoords()?.Select(v => Vector2.Transform(v, texTransform)).ToList();
+                        var normals = part.GetNormals()?.ToList();
+                        var blendIndices = part.GetBlendIndices()?.ToList();
+                        var blendWeights = part.GetBlendWeights()?.ToList();
+
+                        Vector3 vector;
+                        Vector2 vector2;
+                        for (var i = 0; i < part.Vertices.Count; i++)
+                        {
+                            vector = positions?[i] ?? default;
                             bw.Write(vector.X);
                             bw.Write(vector.Y);
                             bw.Write(vector.Z);
 
-                            vector = vert.TexCoords.Count > 0 ? vert.TexCoords[0] : emptyVector;
+                            vector = normals?[i] ?? default;
                             bw.Write(vector.X);
-                            bw.Write(1 - vector.Y);
+                            bw.Write(vector.Y);
+                            bw.Write(vector.Z);
+
+                            vector2 = texcoords?[i] ?? default;
+                            bw.Write(vector2.X);
+                            bw.Write(1 - vector2.Y);
 
                             if (part.VertexWeights == VertexWeights.Rigid)
                             {
-                                IXMVector i;
                                 var indices = new List<int>();
-                                i = vert.BlendIndices.Count > 0 ? vert.BlendIndices[0] : emptyVector;
+                                var bi = blendIndices?[i] ?? default;
 
-                                if (!indices.Contains((int)i.X) && i.X != 0)
-                                    indices.Add((int)i.X);
-                                if (!indices.Contains((int)i.Y) && i.X != 0)
-                                    indices.Add((int)i.Y);
-                                if (!indices.Contains((int)i.Z) && i.X != 0)
-                                    indices.Add((int)i.Z);
-                                if (!indices.Contains((int)i.W) && i.X != 0)
-                                    indices.Add((int)i.W);
+                                if (!indices.Contains((int)bi.X) && bi.X != 0)
+                                    indices.Add((int)bi.X);
+                                if (!indices.Contains((int)bi.Y) && bi.X != 0)
+                                    indices.Add((int)bi.Y);
+                                if (!indices.Contains((int)bi.Z) && bi.X != 0)
+                                    indices.Add((int)bi.Z);
+                                if (!indices.Contains((int)bi.W) && bi.X != 0)
+                                    indices.Add((int)bi.W);
 
                                 if (indices.Count == 0)
                                     indices.Add(0);
@@ -509,8 +552,8 @@ namespace Adjutant.Geometry
                             }
                             else if (part.VertexWeights == VertexWeights.Skinned)
                             {
-                                var indices = (vert.BlendIndices.Count > 0 ? vert.BlendIndices[0] : emptyVector).AsEnumerable().ToArray();
-                                var weights = (vert.BlendWeight.Count > 0 ? vert.BlendWeight[0] : emptyVector).AsEnumerable().ToArray();
+                                var indices = (blendIndices?[i] ?? default).AsEnumerable().ToArray();
+                                var weights = (blendWeights?[i] ?? default).AsEnumerable().ToArray();
 
                                 var count = weights.Count(w => w > 0);
 
@@ -523,10 +566,10 @@ namespace Adjutant.Geometry
                                     //throw new Exception("no weights on a weighted node. report this.");
                                 }
 
-                                for (var i = 0; i < 4; i++)
+                                for (var bi = 0; bi < 4; bi++)
                                 {
-                                    if (weights[i] > 0)
-                                        bw.Write((byte)indices[i]);
+                                    if (weights[bi] > 0)
+                                        bw.Write((byte)indices[bi]);
                                 }
 
                                 if (count != 4)
@@ -562,10 +605,7 @@ namespace Adjutant.Geometry
 
                         foreach (var submesh in part.Submeshes)
                         {
-                            var indices = part.Indicies.Skip(submesh.IndexStart).Take(submesh.IndexLength);
-                            if (part.IndexFormat == IndexFormat.TriangleStrip)
-                                indices = Unstrip(indices);
-
+                            var indices = part.GetTriangleIndicies(submesh);
                             foreach (var index in indices)
                             {
                                 if (part.Vertices.Count > ushort.MaxValue)
@@ -592,10 +632,7 @@ namespace Adjutant.Geometry
                         int currentPosition = 0;
                         foreach (var mesh in part.Submeshes)
                         {
-                            var indices = part.Indicies.Skip(mesh.IndexStart).Take(mesh.IndexLength);
-                            if (part.IndexFormat == IndexFormat.TriangleStrip)
-                                indices = Unstrip(indices);
-
+                            var indices = part.GetTriangleIndicies(mesh);
                             var faceCount = indices.Count() / 3;
 
                             bw.Write(mesh.MaterialIndex);
@@ -794,23 +831,27 @@ namespace Adjutant.Geometry
                         sw.WriteLine(region.Name);
 
                     #region Vertices
-                    var emptyVector = new RealVector3D();
-
                     sw.WriteLine(allPerms.SelectMany(p => model.Meshes.Skip(p.MeshIndex).Take(p.MeshCount)).Sum(m => m.Vertices.Count));
                     foreach (var perm in allPerms)
                     {
                         var mesh = model.Meshes[perm.MeshIndex];
-                        foreach (var vert in mesh.Vertices)
-                        {
-                            var decompressed = vert;
-                            if (mesh.BoundsIndex >= 0)
-                                decompressed = new CompressedVertex(vert, model.Bounds[mesh.BoundsIndex.Value]);
 
-                            var pos = decompressed.Position.FirstOrDefault() ?? emptyVector;
-                            var norm = vert.Normal.FirstOrDefault() ?? emptyVector;
-                            var tex = decompressed.TexCoords.FirstOrDefault() ?? emptyVector;
-                            var weights = decompressed.BlendWeight.FirstOrDefault() ?? emptyVector;
-                            var nodes = decompressed.BlendIndices.FirstOrDefault() ?? emptyVector;
+                        var posTransform = model.Bounds?.ElementAtOrDefault(mesh.BoundsIndex ?? -1)?.AsTransform() ?? Matrix4x4.Identity;
+                        var texTransform = model.Bounds?.ElementAtOrDefault(mesh.BoundsIndex ?? -1)?.AsTextureTransform() ?? Matrix4x4.Identity;
+
+                        var positions = mesh.GetPositions()?.Select(v => Vector3.Transform(v, posTransform) * scale).ToList();
+                        var texcoords = mesh.GetTexCoords()?.Select(v => Vector2.Transform(v, texTransform)).ToList();
+                        var normals = mesh.GetNormals()?.ToList();
+                        var blendIndices = mesh.GetBlendIndices()?.ToList();
+                        var blendWeights = mesh.GetBlendWeights()?.ToList();
+
+                        for (var i = 0; i < mesh.Vertices.Count; i++)
+                        {
+                            var pos = positions?[i] ?? default;
+                            var norm = normals?[i] ?? default;
+                            var tex = texcoords?[i] ?? default;
+                            var weights = blendIndices?[i] ?? default;
+                            var nodes = blendWeights?[i] ?? default;
 
                             var node1 = nodes.X;
                             if (mesh.NodeIndex < byte.MaxValue)
@@ -818,7 +859,7 @@ namespace Adjutant.Geometry
 
                             sw.WriteLine("{0:F0}", node1);
 
-                            sw.WriteLine(float3, pos.X * scale, pos.Y * scale, pos.Z * scale);
+                            sw.WriteLine(float3, pos.X, pos.Y, pos.Z);
                             sw.WriteLine(float3, norm.X, norm.Y, norm.Z);
 
                             sw.WriteLine(nodes.Y);
@@ -848,11 +889,7 @@ namespace Adjutant.Geometry
                         var mesh = model.Meshes[perm.MeshIndex];
                         foreach (var sub in mesh.Submeshes)
                         {
-                            var temp = mesh.Indicies.Skip(sub.IndexStart).Take(sub.IndexLength);
-                            if (mesh.IndexFormat == IndexFormat.TriangleStrip)
-                                temp = temp.Unstrip();
-
-                            var indices = temp.ToList();
+                            var indices = mesh.GetTriangleIndicies(sub).ToList();
                             for (var i = 0; i < indices.Count; i += 3)
                             {
                                 sw.WriteLine(regIndex);
