@@ -38,6 +38,12 @@ namespace Reclaimer.Geometry
             : base(buffer, count, start, stride, offset)
         { }
 
+        public VectorBuffer<TVector> GetSubset(int index, int count)
+        {
+            var newStart = start + index * stride;
+            return new VectorBuffer<TVector>(buffer, count, newStart, stride, offset);
+        }
+
         public void SwapEndianness()
         {
             if (TPack == 1)
@@ -52,6 +58,7 @@ namespace Reclaimer.Geometry
         }
 
         int IVectorBuffer.Dimensions => TDimensions;
+        IVectorBuffer IVectorBuffer.GetSubset(int index, int count) => GetSubset(index, count);
         IVector IReadOnlyList<IVector>.this[int index] => this[index];
         IEnumerator<IVector> IEnumerable<IVector>.GetEnumerator() => Enumerate().OfType<IVector>().GetEnumerator();
     }

@@ -11,9 +11,9 @@ namespace Reclaimer.IO
         where T : struct
     {
         protected readonly byte[] buffer;
-        private readonly int start;
-        private readonly int stride;
-        private readonly int offset;
+        protected readonly int start;
+        protected readonly int stride;
+        protected readonly int offset;
 
         protected abstract int SizeOf { get; }
 
