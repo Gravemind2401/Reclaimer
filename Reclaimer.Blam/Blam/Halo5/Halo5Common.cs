@@ -3,13 +3,13 @@ using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Properties;
 using Reclaimer.Blam.Utilities;
+using Reclaimer.Geometry;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace Reclaimer.Blam.Halo5
 {
@@ -136,70 +136,79 @@ namespace Reclaimer.Blam.Halo5
                     indexBufferInfo = reader.ReadArray<IndexBufferInfo>(indexBufferCount);
                 }
 
+                var vertexBuilder = new XmlVertexBuilder(Resources.Halo5VertexBuffer);
+                var vb = new Dictionary<int, VertexBuffer>();
+                var ib = new Dictionary<int, IndexBuffer>();
+
                 using (var reader = blockReader.CreateVirtualReader(header.GetSectionOffset(2)))
                 {
-                    var doc = new XmlDocument();
-                    doc.LoadXml(Resources.Halo5VertexBuffer);
-
-                    var lookup = doc.DocumentElement.ChildNodes.Cast<XmlNode>()
-                        .ToDictionary(n => Convert.ToInt32(n.Attributes[XmlVertexField.Type].Value, 16));
-
-                    var sectionIndex = -1;
                     foreach (var section in sections)
                     {
-                        sectionIndex++;
                         var lodData = section.SectionLods[Math.Min(lod, section.SectionLods.Count - 1)];
 
-                        if (lodData.VertexBufferIndex < 0 || lodData.IndexBufferIndex < 0 || !lookup.ContainsKey(section.VertexFormat)
-                            || lodData.VertexBufferIndex >= vertexBufferInfo.Length || lodData.IndexBufferIndex >= indexBufferInfo.Length)
-                        {
-                            yield return new GeometryMesh();
+                        var vInfo = vertexBufferInfo.ElementAtOrDefault(lodData.VertexBufferIndex);
+                        var iInfo = indexBufferInfo.ElementAtOrDefault(lodData.IndexBufferIndex);
+
+                        if (vInfo.VertexCount == 0 || iInfo.IndexCount == 0)
                             continue;
-                        }
-
-                        var node = lookup[section.VertexFormat];
-                        var vInfo = vertexBufferInfo[lodData.VertexBufferIndex];
-                        var iInfo = indexBufferInfo[lodData.IndexBufferIndex];
-
-                        var mesh = new GeometryMesh
-                        {
-                            IndexFormat = section.IndexFormat,
-                            Vertices = new IVertex[vInfo.VertexCount],
-                            VertexWeights = VertexWeights.None,
-                            NodeIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
-                            BoundsIndex = 0
-                        };
 
                         try
                         {
-                            mesh.Submeshes.AddRange(
-                                lodData.Submeshes.Select(s => new GeometrySubmesh
-                                {
-                                    MaterialIndex = s.ShaderIndex,
-                                    IndexStart = s.IndexStart,
-                                    IndexLength = s.IndexLength
-                                })
-                            );
-
-                            var block = header.DataBlocks[3 + lodData.VertexBufferIndex];
-                            reader.Seek(block.Offset, SeekOrigin.Begin);
-                            for (var i = 0; i < vInfo.VertexCount; i++)
+                            if (!vb.ContainsKey(lodData.VertexBufferIndex))
                             {
-                                var vert = new XmlVertex(reader, node);
-                                mesh.Vertices[i] = vert;
+                                var block = header.DataBlocks[3 + lodData.VertexBufferIndex];
+                                reader.Seek(block.Offset, SeekOrigin.Begin);
+                                var data = reader.ReadBytes(block.Size);
+                                var vertexBuffer = vertexBuilder.CreateVertexBuffer(section.VertexFormat, vInfo.VertexCount, data);
+                                vb.Add(lodData.VertexBufferIndex, vertexBuffer);
                             }
 
-                            block = header.DataBlocks[3 + vertexBufferInfo.Length + lodData.IndexBufferIndex];
-                            reader.Seek(block.Offset, SeekOrigin.Begin);
-                            mesh.Indicies = vInfo.VertexCount > ushort.MaxValue
-                                ? reader.ReadArray<int>(iInfo.IndexCount)
-                                : reader.ReadEnumerable<ushort>(iInfo.IndexCount).Select(i => (int)i).ToArray();
+                            if (!ib.ContainsKey(lodData.IndexBufferIndex))
+                            {
+                                var block = header.DataBlocks[3 + vertexBufferInfo.Length + lodData.IndexBufferIndex];
+                                reader.Seek(block.Offset, SeekOrigin.Begin);
+                                var data = reader.ReadBytes(block.Size);
+                                var indexBuffer = IndexBuffer.FromByteArray(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort));
 
+                                ib.Add(lodData.IndexBufferIndex, indexBuffer);
+                            }
                         }
                         catch
                         {
                             System.Diagnostics.Debugger.Break();
                         }
+                    }
+
+                    var sectionIndex = -1;
+                    foreach (var section in sections)
+                    {
+                        sectionIndex++;
+
+                        var lodData = section.SectionLods[Math.Min(lod, section.SectionLods.Count - 1)];
+                        if (!vb.ContainsKey(lodData.VertexBufferIndex) || !ib.ContainsKey(lodData.IndexBufferIndex))
+                        {
+                            yield return new GeometryMesh();
+                            continue;
+                        }
+
+                        var mesh = new GeometryMesh
+                        {
+                            IndexFormat = section.IndexFormat,
+                            VertexWeights = VertexWeights.None,
+                            NodeIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
+                            BoundsIndex = 0,
+                            VertexBuffer = vb[lodData.VertexBufferIndex],
+                            IndexBuffer = ib[lodData.IndexBufferIndex]
+                        };
+
+                        mesh.Submeshes.AddRange(
+                            lodData.Submeshes.Select(s => new GeometrySubmesh
+                            {
+                                MaterialIndex = s.ShaderIndex,
+                                IndexStart = s.IndexStart,
+                                IndexLength = s.IndexLength
+                            })
+                        );
 
                         yield return mesh;
                     }
