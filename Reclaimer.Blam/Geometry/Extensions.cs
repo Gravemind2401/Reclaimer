@@ -1,4 +1,5 @@
 ﻿using Adjutant.Spatial;
+using Reclaimer.Geometry;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -74,6 +75,63 @@ namespace Adjutant.Geometry
                 M41 = bounds.UBounds.Min,
                 M42 = bounds.VBounds.Min
             };
+        }
+
+        public static IEnumerable<int> GetTriangleIndicies(this IGeometryMesh mesh, IGeometrySubmesh submesh)
+        {
+            var indices = mesh.IndexBuffer == null
+                ? mesh.Indicies.Skip(submesh.IndexStart).Take(submesh.IndexLength).ToList()
+                : mesh.IndexBuffer[submesh.IndexStart..(submesh.IndexStart + submesh.IndexLength)];
+
+            if (mesh.IndexFormat == IndexFormat.TriangleStrip)
+                indices = Unstrip(indices);
+
+            return indices;
+        }
+
+        public static IEnumerable<Vector3> GetPositions(this IGeometryMesh mesh, int index, int count)
+        {
+            if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasPositions)
+                return null;
+
+            if (mesh.VertexBuffer == null && mesh.Vertices[0].Position.Count == 0)
+                return null;
+
+            return mesh.VertexBuffer != null
+                ? mesh.VertexBuffer.PositionChannels[0][index..(index + count)].Select(v => new Vector3(v.X, v.Y, v.Z))
+                : (from i in Enumerable.Range(index, count)
+                   let v = mesh.Vertices[i].Position[0]
+                   select new Vector3(v.X, v.Y, v.Z));
+        }
+
+        public static IEnumerable<Vector2> GetTexCoords(this IGeometryMesh mesh, int index, int count)
+        {
+            if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasPositions)
+                return null;
+
+            if (mesh.VertexBuffer == null && mesh.Vertices[0].TexCoords.Count == 0)
+                return null;
+
+            return mesh.VertexBuffer != null
+                ? mesh.VertexBuffer.TextureCoordinateChannels[0][index..(index + count)].Select(v => new Vector2(v.X, v.Y))
+                : (from i in Enumerable.Range(index, count)
+                   let v = mesh.Vertices[i].TexCoords[0]
+                   select new Vector2(v.X, v.Y));
+        }
+
+        public static IEnumerable<Vector3> GetNormals(this IGeometryMesh mesh, int index, int count)
+        {
+            if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasNormals)
+                return null;
+
+            if (mesh.VertexBuffer == null && mesh.Vertices[0].Normal.Count == 0)
+                return null;
+
+            return mesh.VertexBuffer != null
+                ? mesh.VertexBuffer.NormalChannels[0][index..(index + count)].Select(v => new Vector3(v.X, v.Y, v.Z))
+                : (from i in Enumerable.Range(index, count)
+                   let v = mesh.Vertices[i].Normal[0]
+                   select new Vector3(v.X, v.Y, v.Z));
         }
 
         private class MultiMesh : IGeometryMesh
@@ -190,6 +248,9 @@ namespace Adjutant.Geometry
                     return mergedVertices;
                 }
             }
+
+            public VertexBuffer VertexBuffer => null;
+            public IndexBuffer IndexBuffer => null;
 
             public void Dispose()
             {

@@ -285,32 +285,27 @@ namespace Reclaimer.Controls
                     {
                         var geom = new MeshGeometry3D();
 
-                        var indices = mesh.Indicies.Skip(sub.IndexStart).Take(sub.IndexLength).ToList();
-                        if (mesh.IndexFormat == IndexFormat.TriangleStrip)
-                            indices = indices.Unstrip().ToList();
+                        var indices = mesh.GetTriangleIndicies(sub);
 
                         var vertStart = indices.Min();
                         var vertLength = indices.Max() - vertStart + 1;
 
-                        var verts = mesh.Vertices.Skip(vertStart).Take(vertLength);
-                        var positions = verts.Select(v => new Point3D(v.Position[0].X, v.Position[0].Y, v.Position[0].Z));
+                        var positions = mesh.GetPositions(vertStart, vertLength).Select(v => new Point3D(v.X, v.Y, v.Z));
+                        var texcoords = mesh.GetTexCoords(vertStart, vertLength)?.Select(v => new Point(v.X, v.Y)).ToArray();
+                        var normals = mesh.GetNormals(vertStart, vertLength)?.Select(v => new Vector3D(v.X, v.Y, v.Z));
 
                         (geom.Positions = new Point3DCollection(positions)).Freeze();
                         (geom.TriangleIndices = new Int32Collection(indices.Select(j => j - vertStart))).Freeze();
 
-                        if (mesh.Vertices[0].TexCoords.Count > 0)
+                        if (texcoords != null)
                         {
-                            var texcoords = verts.Select(v => new Point(v.TexCoords[0].X, v.TexCoords[0].Y)).ToArray();
                             if (!texMatrix.IsIdentity)
                                 texMatrix.Transform(texcoords);
                             (geom.TextureCoordinates = new PointCollection(texcoords)).Freeze();
                         }
 
-                        if (mesh.Vertices[0].Normal.Count > 0)
-                        {
-                            var normals = verts.Select(v => new Vector3D(v.Normal[0].X, v.Normal[0].Y, v.Normal[0].Z));
+                        if (normals != null)
                             (geom.Normals = new Vector3DCollection(normals)).Freeze();
-                        }
 
                         var mat = materials.ElementAtOrDefault(sub.MaterialIndex) ?? ErrorMaterial;
                         var subGroup = new GeometryModel3D(geom, mat) { BackMaterial = mat };
