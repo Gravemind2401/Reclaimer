@@ -252,10 +252,10 @@ namespace Reclaimer.Plugins
 
     public static class ModelViewerExtensions
     {
-        public static Assimp.Vector2D ToAssimp2D(this IXMVector v) => new Assimp.Vector2D(v.X, v.Y);
-        public static Assimp.Vector3D ToAssimp3D(this IXMVector v) => new Assimp.Vector3D(v.X, v.Y, v.Z);
-        public static Assimp.Vector3D ToAssimp3D(this IXMVector v, float scale) => new Assimp.Vector3D(v.X * scale, v.Y * scale, v.Z * scale);
-        public static Assimp.Vector3D ToAssimpUV(this IXMVector v) => new Assimp.Vector3D(v.X, 1f - v.Y, 0f);
+        public static Assimp.Vector2D ToAssimp2D(this System.Numerics.Vector2 v) => new Assimp.Vector2D(v.X, v.Y);
+        public static Assimp.Vector3D ToAssimp3D(this System.Numerics.Vector3 v) => new Assimp.Vector3D(v.X, v.Y, v.Z);
+        public static Assimp.Vector3D ToAssimp3D(this System.Numerics.Vector3 v, float scale) => new Assimp.Vector3D(v.X * scale, v.Y * scale, v.Z * scale);
+        public static Assimp.Vector3D ToAssimpUV(this System.Numerics.Vector2 v) => new Assimp.Vector3D(v.X, 1f - v.Y, 0f);
         public static Assimp.Matrix4x4 ToAssimp4x4(this System.Numerics.Matrix4x4 m) => m.ToAssimp4x4(1f);
 
         public static Assimp.Matrix4x4 ToAssimp4x4(this System.Numerics.Matrix4x4 m, float offsetScale)
@@ -360,89 +360,89 @@ namespace Reclaimer.Plugins
                 foreach (var sub in geom.Submeshes)
                 {
                     var m = new Assimp.Mesh($"mesh{i:D3}");
-                    var indices = geom.Indicies.Skip(sub.IndexStart).Take(sub.IndexLength);
+                    var indices = geom.GetTriangleIndicies(sub);
 
                     var minIndex = indices.Min();
                     var maxIndex = indices.Max();
                     var vertCount = maxIndex - minIndex + 1;
 
-                    if (geom.IndexFormat == IndexFormat.TriangleStrip)
-                        indices = indices.Unstrip();
-
                     indices = indices.Select(x => x - minIndex);
-                    var vertices = geom.Vertices.Skip(minIndex).Take(vertCount);
 
-                    if (geom.BoundsIndex >= 0)
-                        vertices = vertices.Select(v => (IVertex)new CompressedVertex(v, model.Bounds[geom.BoundsIndex.Value]));
+                    var posTransform = model.Bounds?.ElementAtOrDefault(geom.BoundsIndex ?? -1)?.AsTransform() ?? System.Numerics.Matrix4x4.Identity;
+                    var texTransform = model.Bounds?.ElementAtOrDefault(geom.BoundsIndex ?? -1)?.AsTextureTransform() ?? System.Numerics.Matrix4x4.Identity;
 
-                    int vIndex = -1;
-                    var boneLookup = new Dictionary<int, Assimp.Bone>();
-                    foreach (var v in vertices)
+                    var positions = geom.GetPositions(minIndex, vertCount)?.Select(v => System.Numerics.Vector3.Transform(v, posTransform)).ToList();
+                    var texcoords = geom.GetTexCoords(minIndex, vertCount)?.Select(v => System.Numerics.Vector2.Transform(v, texTransform)).ToList();
+                    var normals = geom.GetNormals(minIndex, vertCount)?.ToList();
+                    var blendIndices = geom.GetBlendIndices(minIndex, vertCount)?.ToList();
+                    var blendWeights = geom.GetBlendWeights(minIndex, vertCount)?.ToList();
+
+                    if (positions != null)
                     {
-                        vIndex++;
+                        m.Vertices.AddRange(positions.Select(v => (v * scale).ToAssimp3D()));
 
-                        if (v.Position.Count > 0)
-                        {
-                            m.Vertices.Add(v.Position[0].ToAssimp3D(scale));
+                        //TODO:reimplement this using buffers
+                        ////some Halo shaders use position W as the colour alpha - add it to a colour channel to preserve it
+                        ////also assimp appears to have issues exporting obj when a colour channel exists so only do this for collada
+                        //if (formatId == "collada" && v.Color.Count == 0 && !float.IsNaN(v.Position[0].W))
+                        //    m.VertexColorChannels[0].Add(new Assimp.Color4D { R = v.Position[0].W });
+                    }
 
-                            //some Halo shaders use position W as the colour alpha - add it to a colour channel to preserve it
-                            //also assimp appears to have issues exporting obj when a colour channel exists so only do this for collada
-                            if (formatId == "collada" && v.Color.Count == 0 && !float.IsNaN(v.Position[0].W))
-                                m.VertexColorChannels[0].Add(new Assimp.Color4D { R = v.Position[0].W });
-                        }
+                    if (normals != null)
+                        m.Normals.AddRange(normals.Select(v => v.ToAssimp3D()));
 
-                        if (v.Normal.Count > 0)
-                            m.Normals.Add(v.Normal[0].ToAssimp3D());
+                    if (texcoords != null)
+                        m.TextureCoordinateChannels[0].AddRange(texcoords.Select(v => v.ToAssimpUV()));
 
-                        for (var u = 0; u < v.TexCoords.Count; u++)
-                            m.TextureCoordinateChannels[u].Add(v.TexCoords[u].ToAssimpUV());
-
+                    var boneLookup = new Dictionary<int, Assimp.Bone>();
+                    for (var vIndex = 0; i < vertCount; vIndex++)
+                    {
                         if (geom.VertexWeights == VertexWeights.None && !geom.NodeIndex.HasValue)
                             continue;
 
                         #region Vertex Weights
-                        var weights = new List<Tuple<int, float>>(4);
+                        var weights = new HashSet<(int Index, float Weight)>(4);
 
                         if (geom.NodeIndex.HasValue)
-                            weights.Add(Tuple.Create<int, float>(geom.NodeIndex.Value, 1));
-                        else if (geom.VertexWeights == VertexWeights.Skinned)
+                            weights.Add((geom.NodeIndex.Value, 1));
+                        else
                         {
-                            var ind = v.BlendIndices[0];
-                            var wt = v.BlendWeight[0];
+                            var ind = blendIndices[vIndex];
+                            var wt = blendWeights?[vIndex] ?? System.Numerics.Vector4.One;
 
                             if (wt.X > 0)
-                                weights.Add(Tuple.Create((int)ind.X, wt.X));
+                                weights.Add(((int)ind.X, wt.X));
                             if (wt.Y > 0)
-                                weights.Add(Tuple.Create((int)ind.Y, wt.Y));
+                                weights.Add(((int)ind.Y, wt.Y));
                             if (wt.Z > 0)
-                                weights.Add(Tuple.Create((int)ind.Z, wt.Z));
+                                weights.Add(((int)ind.Z, wt.Z));
                             if (wt.W > 0)
-                                weights.Add(Tuple.Create((int)ind.W, wt.W));
+                                weights.Add(((int)ind.W, wt.W));
                         }
 
-                        foreach (var val in weights)
+                        foreach (var (index, weight) in weights)
                         {
                             Assimp.Bone b;
-                            if (boneLookup.ContainsKey(val.Item1))
-                                b = boneLookup[val.Item1];
+                            if (boneLookup.ContainsKey(index))
+                                b = boneLookup[index];
                             else
                             {
-                                var t = model.Nodes[val.Item1].OffsetTransform;
+                                var t = model.Nodes[index].OffsetTransform;
                                 t.M41 *= scale;
                                 t.M42 *= scale;
                                 t.M43 *= scale;
 
                                 b = new Assimp.Bone
                                 {
-                                    Name = bonePrefix + model.Nodes[val.Item1].Name,
+                                    Name = bonePrefix + model.Nodes[index].Name,
                                     OffsetMatrix = t.ToAssimp4x4()
                                 };
 
                                 m.Bones.Add(b);
-                                boneLookup.Add(val.Item1, b);
+                                boneLookup.Add(index, b);
                             }
 
-                            b.VertexWeights.Add(new Assimp.VertexWeight(vIndex, val.Item2));
+                            b.VertexWeights.Add(new Assimp.VertexWeight(vIndex, weight));
                         }
                         #endregion
                     }
