@@ -107,7 +107,7 @@ namespace Reclaimer.Blam.HaloReach
 
             Func<int, int, int> mapNodeFunc = null;
             if (Flags.HasFlag(ModelFlags.UseLocalNodes))
-                mapNodeFunc = (si, i) => NodeMaps[si].Indices[i];
+                mapNodeFunc = (si, i) => NodeMaps.ElementAtOrDefault(si)?.Indices.Cast<byte?>().ElementAtOrDefault(i) ?? i;
 
             model.Meshes.AddRange(HaloReachCommon.GetMeshes(cache, ResourcePointer, Sections, (s, m) => m.BoundsIndex = 0, mapNodeFunc));
 

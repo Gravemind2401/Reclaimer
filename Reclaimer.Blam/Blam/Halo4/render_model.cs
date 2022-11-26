@@ -110,7 +110,7 @@ namespace Reclaimer.Blam.Halo4
 
             Func<int, int, int> mapNodeFunc = null;
             if (Flags.HasFlag(ModelFlags.UseLocalNodes))
-                mapNodeFunc = (si, i) => NodeMaps[si].Indices[i];
+                mapNodeFunc = (si, i) => NodeMaps.ElementAtOrDefault(si)?.Indices.Cast<byte?>().ElementAtOrDefault(i) ?? i;
 
             model.Meshes.AddRange(Halo4Common.GetMeshes(cache, ResourcePointer, Sections, (s, m) => m.BoundsIndex = 0, mapNodeFunc));
 
