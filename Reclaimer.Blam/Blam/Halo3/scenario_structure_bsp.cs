@@ -102,7 +102,10 @@ namespace Reclaimer.Blam.Halo3
             var lightmap = scenario.ScenarioLightmapReference.Tag.ReadMetadata<scenario_lightmap>();
             var lightmapData = cache.CacheType < CacheType.MccHalo3U4
                 ? lightmap.LightmapData.First(lbsp => lbsp.BspIndex == bspIndex)
-                : lightmap.LightmapRefs.Select(lbsp => lbsp.Tag.ReadMetadata<scenario_lightmap_bsp_data>()).First(lbsp => lbsp.BspIndex == bspIndex);
+                : lightmap.LightmapRefs.Where(t => t.TagId >= 0)
+                    .Select(lbsp => lbsp.Tag.ReadMetadata<scenario_lightmap_bsp_data>())
+                    .FirstOrDefault(lbsp => lbsp.BspIndex == bspIndex)
+                    ?? cache.TagIndex.FirstOrDefault(t => t.ClassCode == "Lbsp" && t.FullPath == item.FullPath)?.ReadMetadata<scenario_lightmap_bsp_data>();
 
             model.Bounds.AddRange(BoundingBoxes);
             model.Materials.AddRange(Halo3Common.GetMaterials(Shaders));
