@@ -78,7 +78,7 @@ namespace Adjutant.Geometry
         IReadOnlyList<int> Indicies { get; }
 
         VertexBuffer VertexBuffer { get; }
-        IndexBuffer IndexBuffer { get; }
+        IIndexBuffer IndexBuffer { get; }
 
         int VertexCount => VertexBuffer?.Count ?? Vertices.Count;
 

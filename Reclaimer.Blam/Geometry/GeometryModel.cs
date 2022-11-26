@@ -158,7 +158,7 @@ namespace Adjutant.Geometry
         public int[] Indicies { get; set; }
 
         public VertexBuffer VertexBuffer { get; set; }
-        public IndexBuffer IndexBuffer { get; set; }
+        public IIndexBuffer IndexBuffer { get; set; }
 
         public byte? NodeIndex { get; set; }
         public short? BoundsIndex { get; set; }

@@ -223,7 +223,7 @@ namespace Reclaimer.Blam.Halo3
 
                         reader.Seek(address, SeekOrigin.Begin);
                         var data = reader.ReadBytes(len);
-                        var indexBuffer = IndexBuffer.FromArray(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort));
+                        var indexBuffer = IndexBuffer.FromByteArray(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort));
 
                         ib.Add(section.IndexBufferIndex, indexBuffer);
                     }

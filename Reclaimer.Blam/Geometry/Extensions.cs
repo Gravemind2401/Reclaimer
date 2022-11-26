@@ -282,7 +282,39 @@ namespace Adjutant.Geometry
             }
 
             public VertexBuffer VertexBuffer => null;
-            public IndexBuffer IndexBuffer => null;
+
+            private IndexBuffer mergedIndexBuffer;
+            public IIndexBuffer IndexBuffer
+            {
+                get
+                {
+                    if (model.Meshes[meshIndex].IndexBuffer == null)
+                        return null;
+
+                    if (meshCount == 1)
+                        return model.Meshes[meshIndex].IndexBuffer;
+
+                    if (mergedIndexBuffer == null)
+                    {
+                        var mergedIndices = new List<int>();
+
+                        var offset = 0;
+                        foreach (var mesh in AllMeshes)
+                        {
+                            var indices = mesh.IndexFormat == IndexFormat.TriangleStrip
+                                ? mesh.IndexBuffer.Unstrip()
+                                : mesh.IndexBuffer;
+
+                            mergedIndices.AddRange(indices.Select(i => offset + i));
+                            offset += mesh.VertexCount;
+                        }
+
+                        mergedIndexBuffer = Reclaimer.Geometry.IndexBuffer.FromCollection(mergedIndices);
+                    }
+
+                    return mergedIndexBuffer;
+                }
+            }
 
             public void Dispose()
             {

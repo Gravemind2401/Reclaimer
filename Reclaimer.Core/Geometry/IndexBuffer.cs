@@ -1,7 +1,9 @@
 ﻿using Reclaimer.IO;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,7 +14,7 @@ namespace Reclaimer.Geometry
         private delegate int ReadMethod(ReadOnlySpan<byte> buffer);
         private delegate void WriteMethod(int value, Span<byte> buffer);
 
-        public static IndexBuffer FromArray(byte[] data, Type dataType)
+        public static IndexBuffer FromByteArray(byte[] data, Type dataType)
         {
             if (dataType == typeof(byte))
                 return new IndexBuffer(data, sizeof(byte));
@@ -23,6 +25,11 @@ namespace Reclaimer.Geometry
             else
                 throw new ArgumentException("Data type must be byte, ushort or int.", nameof(dataType));
         }
+
+        public static IndexBuffer FromCollection(IEnumerable<int> collection) => new IndexBuffer(MemoryMarshal.AsBytes<int>(collection.ToArray()).ToArray(), sizeof(int));
+        public static IndexBuffer FromCollection(IEnumerable<ushort> collection) => new IndexBuffer(MemoryMarshal.AsBytes<ushort>(collection.ToArray()).ToArray(), sizeof(ushort));
+        public static IndexBuffer FromCollection(IEnumerable<byte> collection) => new IndexBuffer(MemoryMarshal.AsBytes<byte>(collection.ToArray()).ToArray(), sizeof(byte));
+
 
         private readonly ReadMethod GetValue;
         private readonly WriteMethod SetValue;
