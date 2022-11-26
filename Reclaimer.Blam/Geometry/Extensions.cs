@@ -45,14 +45,6 @@ namespace Adjutant.Geometry
             }
         }
 
-        public static IEnumerable<float> AsEnumerable(this IXMVector vector)
-        {
-            yield return vector.X;
-            yield return vector.Y;
-            yield return vector.Z;
-            yield return vector.W;
-        }
-
         public static IEnumerable<float> AsEnumerable(this Vector4 vector)
         {
             yield return vector.X;
@@ -97,7 +89,7 @@ namespace Adjutant.Geometry
             return indices;
         }
 
-        public static IEnumerable<Vector3> GetPositions(this IGeometryMesh mesh) => GetPositions(mesh, 0, mesh.Vertices.Count);
+        public static IEnumerable<Vector3> GetPositions(this IGeometryMesh mesh) => GetPositions(mesh, 0, mesh.VertexCount);
         public static IEnumerable<Vector3> GetPositions(this IGeometryMesh mesh, int index, int count)
         {
             if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasPositions)
@@ -113,7 +105,7 @@ namespace Adjutant.Geometry
                    select new Vector3(v.X, v.Y, v.Z));
         }
 
-        public static IEnumerable<Vector2> GetTexCoords(this IGeometryMesh mesh) => GetTexCoords(mesh, 0, mesh.Vertices.Count);
+        public static IEnumerable<Vector2> GetTexCoords(this IGeometryMesh mesh) => GetTexCoords(mesh, 0, mesh.VertexCount);
         public static IEnumerable<Vector2> GetTexCoords(this IGeometryMesh mesh, int index, int count)
         {
             if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasPositions)
@@ -129,7 +121,7 @@ namespace Adjutant.Geometry
                    select new Vector2(v.X, v.Y));
         }
 
-        public static IEnumerable<Vector3> GetNormals(this IGeometryMesh mesh) => GetNormals(mesh, 0, mesh.Vertices.Count);
+        public static IEnumerable<Vector3> GetNormals(this IGeometryMesh mesh) => GetNormals(mesh, 0, mesh.VertexCount);
         public static IEnumerable<Vector3> GetNormals(this IGeometryMesh mesh, int index, int count)
         {
             if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasNormals)
@@ -145,7 +137,7 @@ namespace Adjutant.Geometry
                    select new Vector3(v.X, v.Y, v.Z));
         }
 
-        public static IEnumerable<Vector4> GetBlendIndices(this IGeometryMesh mesh) => GetBlendIndices(mesh, 0, mesh.Vertices.Count);
+        public static IEnumerable<Vector4> GetBlendIndices(this IGeometryMesh mesh) => GetBlendIndices(mesh, 0, mesh.VertexCount);
         public static IEnumerable<Vector4> GetBlendIndices(this IGeometryMesh mesh, int index, int count)
         {
             if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasBlendIndices)
@@ -161,7 +153,7 @@ namespace Adjutant.Geometry
                    select new Vector4(v.X, v.Y, v.Z, v.W));
         }
 
-        public static IEnumerable<Vector4> GetBlendWeights(this IGeometryMesh mesh) => GetBlendWeights(mesh, 0, mesh.Vertices.Count);
+        public static IEnumerable<Vector4> GetBlendWeights(this IGeometryMesh mesh) => GetBlendWeights(mesh, 0, mesh.VertexCount);
         public static IEnumerable<Vector4> GetBlendWeights(this IGeometryMesh mesh, int index, int count)
         {
             if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasBlendWeights)
@@ -266,7 +258,7 @@ namespace Adjutant.Geometry
                                 : mesh.Indicies;
 
                             mergedIndices.AddRange(indices.Select(i => offset + i));
-                            offset += mesh.Vertices.Count;
+                            offset += mesh.VertexCount;
                         }
                     }
 
@@ -438,7 +430,7 @@ namespace Adjutant.Geometry
                         bw.Write((byte)part.VertexWeights);
                         bw.Write(part.NodeIndex ?? byte.MaxValue);
 
-                        bw.Write(part.Vertices.Count);
+                        bw.Write(part.VertexCount);
                         vertAddressList.Add(bw.BaseStream.Position);
                         bw.Write(0);
 
@@ -511,7 +503,7 @@ namespace Adjutant.Geometry
 
                         Vector3 vector;
                         Vector2 vector2;
-                        for (var i = 0; i < part.Vertices.Count; i++)
+                        for (var i = 0; i < part.VertexCount; i++)
                         {
                             vector = positions?[i] ?? default;
                             bw.Write(vector.X);
@@ -608,7 +600,7 @@ namespace Adjutant.Geometry
                             var indices = part.GetTriangleIndicies(submesh);
                             foreach (var index in indices)
                             {
-                                if (part.Vertices.Count > ushort.MaxValue)
+                                if (part.VertexCount > ushort.MaxValue)
                                     bw.Write(index);
                                 else
                                     bw.Write((ushort)index);
@@ -831,7 +823,7 @@ namespace Adjutant.Geometry
                         sw.WriteLine(region.Name);
 
                     #region Vertices
-                    sw.WriteLine(allPerms.SelectMany(p => model.Meshes.Skip(p.MeshIndex).Take(p.MeshCount)).Sum(m => m.Vertices.Count));
+                    sw.WriteLine(allPerms.SelectMany(p => model.Meshes.Skip(p.MeshIndex).Take(p.MeshCount)).Sum(m => m.VertexCount));
                     foreach (var perm in allPerms)
                     {
                         var mesh = model.Meshes[perm.MeshIndex];
@@ -845,7 +837,7 @@ namespace Adjutant.Geometry
                         var blendIndices = mesh.GetBlendIndices()?.ToList();
                         var blendWeights = mesh.GetBlendWeights()?.ToList();
 
-                        for (var i = 0; i < mesh.Vertices.Count; i++)
+                        for (var i = 0; i < mesh.VertexCount; i++)
                         {
                             var pos = positions?[i] ?? default;
                             var norm = normals?[i] ?? default;
@@ -897,7 +889,7 @@ namespace Adjutant.Geometry
                                 sw.WriteLine("{0}\t{1}\t{2}", offset + indices[i], offset + indices[i + 1], offset + indices[i + 2]);
                             }
                         }
-                        offset += mesh.Vertices.Count;
+                        offset += mesh.VertexCount;
                     }
                     #endregion
                 }

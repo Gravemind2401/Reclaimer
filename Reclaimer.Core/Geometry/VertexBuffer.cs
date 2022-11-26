@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
 
 namespace Reclaimer.Geometry
 {
     public class VertexBuffer
     {
-        public int Count { get; }
+        public int Count => EnumerateChannels().Max(c => c?.Count) ?? default;
 
         public IList<IVectorBuffer> PositionChannels { get; } = new List<IVectorBuffer>();
         public IList<IVectorBuffer> NormalChannels { get; } = new List<IVectorBuffer>();
@@ -31,11 +30,14 @@ namespace Reclaimer.Geometry
 
         public void SwapEndianness()
         {
-            var channels = PositionChannels.Concat(NormalChannels).Concat(TangentChannels).Concat(BinormalChannels)
-                .Concat(TextureCoordinateChannels).Concat(BlendIndexChannels).Concat(BlendWeightChannels).Concat(ColorChannels);
+            foreach (var buffer in EnumerateChannels())
+                buffer?.SwapEndianness();
+        }
 
-            foreach (var buffer in channels)
-                buffer.SwapEndianness();
+        private IEnumerable<IVectorBuffer> EnumerateChannels()
+        {
+            return PositionChannels.Concat(NormalChannels).Concat(TangentChannels).Concat(BinormalChannels)
+                .Concat(TextureCoordinateChannels).Concat(BlendIndexChannels).Concat(BlendWeightChannels).Concat(ColorChannels);
         }
     }
 }

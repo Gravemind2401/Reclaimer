@@ -80,6 +80,8 @@ namespace Adjutant.Geometry
         VertexBuffer VertexBuffer { get; }
         IndexBuffer IndexBuffer { get; }
 
+        int VertexCount => VertexBuffer?.Count ?? Vertices.Count;
+
         byte? NodeIndex { get; }
         short? BoundsIndex { get; }
         IReadOnlyList<IGeometrySubmesh> Submeshes { get; }
