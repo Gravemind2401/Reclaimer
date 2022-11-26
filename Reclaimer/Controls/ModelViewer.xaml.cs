@@ -554,7 +554,10 @@ namespace Reclaimer.Controls
         {
             TreeViewItems.Clear();
             renderer.Dispose();
+            geometry = null;
+            model = null;
             GC.Collect();
+            GC.WaitForPendingFinalizers();
         }
         #endregion
 
