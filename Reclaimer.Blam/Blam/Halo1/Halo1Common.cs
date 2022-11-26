@@ -18,37 +18,19 @@ namespace Reclaimer.Blam.Halo1
             if (tagRef.Tag == null)
                 return null;
 
-            int offset;
-            switch (tagRef.Tag.ClassCode)
+            var offset = tagRef.Tag.ClassCode switch
             {
-                case "soso":
-                    offset = 176;
-                    break;
+                "soso" => 176,
+                "senv" => 148,
+                "sgla" => 356,
+                "schi" => 228,
+                "scex" => 900,
+                "swat" or "smet" => 88,
+                _ => default
+            };
 
-                case "senv":
-                    offset = 148;
-                    break;
-
-                case "sgla":
-                    offset = 356;
-                    break;
-
-                case "schi":
-                    offset = 228;
-                    break;
-
-                case "scex":
-                    offset = 900;
-                    break;
-
-                case "swat":
-                case "smet":
-                    offset = 88;
-                    break;
-
-                default:
-                    return null;
-            }
+            if (offset == default)
+                return null;
 
             try
             {
