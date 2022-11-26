@@ -117,6 +117,27 @@ namespace Reclaimer.Blam.Common
             return new VectorBuffer<T>(buffer, count, start, stride, offset);
         }
 
+        #region Nested Classes
+        private static class XmlVertexField
+        {
+            public const string Type = "type";
+            public const string Stream = "stream";
+            public const string Offset = "offset";
+            public const string Usage = "usage";
+        }
+
+        private static class XmlVertexUsage
+        {
+            public const string Position = "position";
+            public const string TexCoords = "texcoords";
+            public const string Normal = "normal";
+            public const string Binormal = "binormal";
+            public const string Tangent = "tangent";
+            public const string BlendIndices = "blendindices";
+            public const string BlendWeight = "blendweight";
+            public const string Color = "color";
+        }
+
         private sealed class XmlVertexLayout
         {
             public int TypeId { get; init; }
@@ -132,5 +153,6 @@ namespace Reclaimer.Blam.Common
             public string Usage { get; init; }
             public int UsageIndex { get; init; }
         }
+        #endregion
     }
 }
