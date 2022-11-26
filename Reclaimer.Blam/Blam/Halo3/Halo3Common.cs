@@ -200,30 +200,27 @@ namespace Reclaimer.Blam.Halo3
             {
                 foreach (var section in sections)
                 {
-                    if (section.VertexBufferIndex < 0 || section.IndexBufferIndex < 0)
-                        continue;
+                    var vInfo = vertexBufferInfo.ElementAtOrDefault(section.VertexBufferIndex);
+                    var iInfo = indexBufferInfo.ElementAtOrDefault(section.IndexBufferIndex);
 
-                    var vInfo = vertexBufferInfo[section.VertexBufferIndex];
-                    var iInfo = indexBufferInfo[section.IndexBufferIndex];
+                    if (vInfo.VertexCount == 0 || iInfo.DataLength == 0)
+                        continue;
 
                     var address = entry.ResourceFixups[section.VertexBufferIndex].Offset & 0x0FFFFFFF;
                     if (!vb.ContainsKey(section.VertexBufferIndex))
                     {
                         reader.Seek(address, SeekOrigin.Begin);
                         var data = reader.ReadBytes(vInfo.DataLength);
-                        var vertexBuffer = vertexBuilder.DoStuff(section.VertexFormat, vInfo.VertexCount, data);
+                        var vertexBuffer = vertexBuilder.CreateVertexBuffer(section.VertexFormat, vInfo.VertexCount, data);
                         vb.Add(section.VertexBufferIndex, vertexBuffer);
                     }
 
                     address = entry.ResourceFixups[vertexBufferInfo.Length * 2 + section.IndexBufferIndex].Offset & 0x0FFFFFFF;
-                    if (section.IndexBufferIndex >= 0 && !ib.ContainsKey(section.IndexBufferIndex))
+                    if (!ib.ContainsKey(section.IndexBufferIndex))
                     {
-                        var len = iInfo.DataLength;
-
                         reader.Seek(address, SeekOrigin.Begin);
-                        var data = reader.ReadBytes(len);
+                        var data = reader.ReadBytes(iInfo.DataLength);
                         var indexBuffer = IndexBuffer.FromByteArray(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort));
-
                         ib.Add(section.IndexBufferIndex, indexBuffer);
                     }
                 }
@@ -241,24 +238,21 @@ namespace Reclaimer.Blam.Halo3
             foreach (var section in sections)
             {
                 sectionIndex++;
-                if (section.VertexBufferIndex < 0 || section.IndexBufferIndex < 0)
+
+                if (!vb.ContainsKey(section.VertexBufferIndex) || !ib.ContainsKey(section.IndexBufferIndex))
                 {
                     yield return new GeometryMesh();
                     continue;
                 }
 
-                var vInfo = vertexBufferInfo[section.VertexBufferIndex];
-                var iInfo = indexBufferInfo[section.IndexBufferIndex];
-
                 var mesh = new GeometryMesh
                 {
-                    IndexFormat = iInfo.IndexFormat,
+                    IndexFormat = indexBufferInfo[section.IndexBufferIndex].IndexFormat,
                     VertexWeights = VertexWeights.None,
-                    NodeIndex = section.NodeIndex == byte.MaxValue ? (byte?)null : section.NodeIndex
+                    NodeIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
+                    VertexBuffer = vb[section.VertexBufferIndex],
+                    IndexBuffer = ib[section.IndexBufferIndex]
                 };
-
-                mesh.VertexBuffer = vb.GetValueOrDefault(section.VertexBufferIndex);
-                mesh.IndexBuffer = ib.GetValueOrDefault(section.IndexBufferIndex);
 
                 if (mesh.VertexBuffer.HasBlendIndices)
                     mesh.VertexWeights = mesh.VertexBuffer.HasBlendWeights ? VertexWeights.Skinned : VertexWeights.Rigid;

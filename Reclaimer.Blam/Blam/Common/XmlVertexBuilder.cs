@@ -4,6 +4,7 @@ using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -14,8 +15,6 @@ namespace Reclaimer.Blam.Common
 {
     public class XmlVertexBuilder
     {
-        private delegate IVectorBuffer VectorBufferFactory(byte[] buffer, int count, int start, int stride, int offset);
-
         private readonly Dictionary<int, XmlVertexLayout> vertexLayouts;
 
         public XmlVertexBuilder(string xmlDefinitions)
@@ -42,14 +41,14 @@ namespace Reclaimer.Blam.Common
             static int ParseInt(string value) => int.TryParse(value, out var result) ? result : Convert.ToInt32(value, 16);
         }
 
-        public VertexBuffer DoStuff(int typeId, int count, byte[] data)
+        public VertexBuffer CreateVertexBuffer(int typeId, int count, byte[] data)
         {
             var layout = vertexLayouts[typeId];
             var vertexBuffer = new VertexBuffer();
 
             var last = layout.Fields.OrderBy(f => f.Offset).Last();
             var lastType = GetFieldType(last.DataType);
-            var size = last.Offset + (lastType?.GetProperty(nameof(IBufferable<object>.SizeOf), System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).GetValue(null) as int?).GetValueOrDefault(4);
+            var size = last.Offset + (lastType?.GetProperty(nameof(IBufferable<object>.SizeOf), BindingFlags.Static | BindingFlags.NonPublic).GetValue(null) as int?).GetValueOrDefault(4);
 
             foreach (var field in layout.Fields)
             {
@@ -57,7 +56,7 @@ namespace Reclaimer.Blam.Common
                 if (vectorType == null)
                     continue;
 
-                var method = GetType().GetMethod(nameof(CreateBuffer), System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).MakeGenericMethod(vectorType);
+                var method = GetType().GetMethod(nameof(CreateBuffer), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(vectorType);
                 var buffer = (IVectorBuffer)method.Invoke(this, new object[] { data, count, 0, size, field.Offset });
                 GetVectorChannel(field.Usage, vertexBuffer).Add(buffer);
             }
@@ -65,7 +64,7 @@ namespace Reclaimer.Blam.Common
             return vertexBuffer;
         }
 
-        private Type GetFieldType(VectorType vectorType)
+        private static Type GetFieldType(VectorType vectorType)
         {
             return vectorType switch
             {

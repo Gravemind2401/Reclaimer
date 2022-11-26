@@ -3,6 +3,7 @@ using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Properties;
 using Reclaimer.Blam.Utilities;
+using Reclaimer.Geometry;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace Reclaimer.Blam.Halo4
 {
@@ -158,88 +158,105 @@ namespace Reclaimer.Blam.Halo4
                 //4x 12 byte structs here
             }
 
+            var vertexBuilder = new XmlVertexBuilder(cache.Metadata.IsMcc ? Resources.MccHalo4VertexBuffer : Resources.Halo4VertexBuffer);
+            var vb = new Dictionary<int, VertexBuffer>();
+            var ib = new Dictionary<int, IndexBuffer>();
+
             using (var ms = new MemoryStream(resourcePointer.ReadData(PageType.Auto)))
             using (var reader = new EndianReader(ms, cache.ByteOrder))
             {
-                var doc = new XmlDocument();
-                doc.LoadXml(cache.Metadata.IsMcc ? Resources.MccHalo4VertexBuffer : Resources.Halo4VertexBuffer);
-
-                var lookup = doc.DocumentElement.ChildNodes.Cast<XmlNode>()
-                    .ToDictionary(n => Convert.ToInt32(n.Attributes[XmlVertexField.Type].Value, 16));
-
-                var sectionIndex = -1;
                 foreach (var section in sections)
                 {
-                    sectionIndex++;
-                    if (section.VertexBufferIndex < 0 || section.IndexBufferIndex < 0)
-                    {
-                        yield return new GeometryMesh();
+                    var vInfo = vertexBufferInfo.ElementAtOrDefault(section.VertexBufferIndex);
+                    var iInfo = indexBufferInfo.ElementAtOrDefault(section.IndexBufferIndex);
+
+                    if (vInfo.VertexCount == 0 || iInfo.DataLength == 0)
                         continue;
-                    }
-
-                    var node = lookup[section.VertexFormat];
-                    var vInfo = vertexBufferInfo[section.VertexBufferIndex];
-                    var iInfo = indexBufferInfo[section.IndexBufferIndex];
-
-                    bool HasUsage(XmlNode n, string u) => n.ChildNodes.Cast<XmlNode>().Any(c => c.Attributes?[XmlVertexField.Usage]?.Value == u);
-
-                    var skinType = VertexWeights.None;
-                    if (HasUsage(node, XmlVertexUsage.BlendIndices))
-                        skinType = HasUsage(node, XmlVertexUsage.BlendWeight) ? VertexWeights.Skinned : VertexWeights.Rigid;
-                    else if (section.NodeIndex < byte.MaxValue)
-                        skinType = VertexWeights.Rigid;
-
-                    var mesh = new GeometryMesh
-                    {
-                        IndexFormat = iInfo.IndexFormat,
-                        Vertices = new IVertex[vInfo.VertexCount],
-                        VertexWeights = skinType,
-                        NodeIndex = section.NodeIndex == byte.MaxValue ? (byte?)null : section.NodeIndex
-                    };
-
-                    setProps(section, mesh);
-
-                    mesh.Submeshes.AddRange(
-                        section.Submeshes.Select(s => new GeometrySubmesh
-                        {
-                            MaterialIndex = s.ShaderIndex,
-                            IndexStart = s.IndexStart,
-                            IndexLength = s.IndexLength
-                        })
-                    );
 
                     var address = entry.ResourceFixups[section.VertexBufferIndex].Offset & 0x0FFFFFFF;
-                    reader.Seek(address, SeekOrigin.Begin);
-
-                    for (var i = 0; i < vInfo.VertexCount; i++)
+                    if (!vb.ContainsKey(section.VertexBufferIndex))
                     {
-                        var vert = new XmlVertex(reader, node);
-                        mesh.Vertices[i] = vert;
+                        reader.Seek(address, SeekOrigin.Begin);
+                        var data = reader.ReadBytes(vInfo.DataLength);
+                        var vertexBuffer = vertexBuilder.CreateVertexBuffer(section.VertexFormat, vInfo.VertexCount, data);
+                        vb.Add(section.VertexBufferIndex, vertexBuffer);
                     }
 
-                    if (mapNode != null && (skinType == VertexWeights.Skinned || skinType == VertexWeights.Rigid))
+                    address = entry.ResourceFixups[vertexBufferInfo.Length * 2 + section.IndexBufferIndex].Offset & 0x0FFFFFFF;
+                    if (section.IndexBufferIndex >= 0 && !ib.ContainsKey(section.IndexBufferIndex))
                     {
-                        foreach (var v in mesh.Vertices)
+                        reader.Seek(address, SeekOrigin.Begin);
+                        var data = reader.ReadBytes(iInfo.DataLength);
+                        var indexBuffer = IndexBuffer.FromByteArray(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort));
+                        ib.Add(section.IndexBufferIndex, indexBuffer);
+                    }
+                }
+            }
+
+            if (cache.Metadata.Architecture != PlatformArchitecture.x86)
+            {
+                foreach (var b in vb.Values)
+                    b.SwapEndianness();
+                foreach (var b in ib.Values)
+                    b.SwapEndianness();
+            }
+
+            var sectionIndex = -1;
+            foreach (var section in sections)
+            {
+                sectionIndex++;
+
+                if (!vb.ContainsKey(section.VertexBufferIndex) || !ib.ContainsKey(section.IndexBufferIndex))
+                {
+                    yield return new GeometryMesh();
+                    continue;
+                }
+
+                var mesh = new GeometryMesh
+                {
+                    IndexFormat = indexBufferInfo[section.IndexBufferIndex].IndexFormat,
+                    VertexWeights = VertexWeights.None,
+                    NodeIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
+                    VertexBuffer = vb[section.VertexBufferIndex],
+                    IndexBuffer = ib[section.IndexBufferIndex]
+                };
+
+                if (mesh.VertexBuffer.HasBlendIndices)
+                    mesh.VertexWeights = mesh.VertexBuffer.HasBlendWeights ? VertexWeights.Skinned : VertexWeights.Rigid;
+                else if (section.NodeIndex < byte.MaxValue)
+                    mesh.VertexWeights = VertexWeights.Rigid;
+
+                setProps(section, mesh);
+
+                mesh.Submeshes.AddRange(
+                    section.Submeshes.Select(s => new GeometrySubmesh
+                    {
+                        MaterialIndex = s.ShaderIndex,
+                        IndexStart = s.IndexStart,
+                        IndexLength = s.IndexLength
+                    })
+                );
+
+                if (mapNode != null && (mesh.VertexWeights == VertexWeights.Skinned || mesh.VertexWeights == VertexWeights.Rigid))
+                {
+                    foreach (var v in mesh.VertexBuffer.BlendIndexChannels)
+                    {
+                        var buf = v as VectorBuffer<Geometry.Vectors.UByte4>;
+                        for (var i = 0; i < v.Count; i++)
                         {
-                            foreach (var bi in v.BlendIndices)
+                            var bi = buf[i];
+                            buf[i] = new Geometry.Vectors.UByte4
                             {
-                                bi.X = mapNode(sectionIndex, (int)bi.X);
-                                bi.Y = mapNode(sectionIndex, (int)bi.Y);
-                                bi.Z = mapNode(sectionIndex, (int)bi.Z);
-                                bi.W = mapNode(sectionIndex, (int)bi.W);
-                            }
+                                X = (byte)mapNode(sectionIndex, bi.X),
+                                Y = (byte)mapNode(sectionIndex, bi.Y),
+                                Z = (byte)mapNode(sectionIndex, bi.Z),
+                                W = (byte)mapNode(sectionIndex, bi.W)
+                            };
                         }
                     }
-
-                    var totalIndices = section.Submeshes.Sum(s => s.IndexLength);
-                    address = entry.ResourceFixups[vertexBufferInfo.Length * 2 + section.IndexBufferIndex].Offset & 0x0FFFFFFF;
-                    reader.Seek(address, SeekOrigin.Begin);
-                    mesh.Indicies = vInfo.VertexCount > ushort.MaxValue
-                        ? reader.ReadArray<int>(totalIndices)
-                        : reader.ReadEnumerable<ushort>(totalIndices).Select(i => (int)i).ToArray();
-
-                    yield return mesh;
                 }
+
+                yield return mesh;
             }
         }
     }
