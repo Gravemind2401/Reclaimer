@@ -3,6 +3,7 @@ using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Properties;
 using Reclaimer.Blam.Utilities;
+using Reclaimer.Geometry;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -190,9 +191,52 @@ namespace Reclaimer.Blam.Halo3
                 //4x 12 byte structs here
             }
 
+            var vertexBuilder = new XmlVertexBuilder(cache.Metadata.IsMcc ? Resources.MccHalo3VertexBuffer : Resources.Halo3VertexBuffer);
+
             using (var ms = new MemoryStream(resourcePointer.ReadData(PageType.Auto)))
             using (var reader = new EndianReader(ms, cache.ByteOrder))
             {
+                var vb = new Dictionary<int, VertexBuffer>();
+                var ib = new Dictionary<int, IndexBuffer>();
+
+                foreach (var section in sections)
+                {
+                    if (section.VertexBufferIndex < 0 || section.IndexBufferIndex < 0)
+                        continue;
+
+                    var vInfo = vertexBufferInfo[section.VertexBufferIndex];
+                    var iInfo = indexBufferInfo[section.IndexBufferIndex];
+
+                    var address = entry.ResourceFixups[section.VertexBufferIndex].Offset & 0x0FFFFFFF;
+                    if (!vb.ContainsKey(section.VertexBufferIndex))
+                    {
+                        reader.Seek(address, SeekOrigin.Begin);
+                        var data = reader.ReadBytes(vInfo.DataLength);
+                        var vertexBuffer = vertexBuilder.DoStuff(section.VertexFormat, vInfo.VertexCount, data);
+                        vb.Add(section.VertexBufferIndex, vertexBuffer);
+                    }
+
+                    address = entry.ResourceFixups[vertexBufferInfo.Length * 2 + section.IndexBufferIndex].Offset & 0x0FFFFFFF;
+                    if (section.IndexBufferIndex >= 0 && !ib.ContainsKey(section.IndexBufferIndex))
+                    {
+                        var len = iInfo.DataLength;
+
+                        reader.Seek(address, SeekOrigin.Begin);
+                        var data = reader.ReadBytes(len);
+                        var indexBuffer = IndexBuffer.FromArray(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort));
+
+                        ib.Add(section.IndexBufferIndex, indexBuffer);
+                    }
+                }
+
+                if (cache.Metadata.Architecture != PlatformArchitecture.x86)
+                {
+                    foreach (var b in vb.Values)
+                        b.SwapEndianness();
+                    foreach (var b in ib.Values)
+                        b.SwapEndianness();
+                }
+
                 var doc = new XmlDocument();
                 doc.LoadXml(cache.Metadata.IsMcc ? Resources.MccHalo3VertexBuffer : Resources.Halo3VertexBuffer);
 
@@ -213,21 +257,21 @@ namespace Reclaimer.Blam.Halo3
                     var vInfo = vertexBufferInfo[section.VertexBufferIndex];
                     var iInfo = indexBufferInfo[section.IndexBufferIndex];
 
-                    bool HasUsage(XmlNode n, string u) => n.ChildNodes.Cast<XmlNode>().Any(c => c.Attributes?[XmlVertexField.Usage]?.Value == u);
-
-                    var skinType = VertexWeights.None;
-                    if (HasUsage(node, XmlVertexUsage.BlendIndices))
-                        skinType = HasUsage(node, XmlVertexUsage.BlendWeight) ? VertexWeights.Skinned : VertexWeights.Rigid;
-                    else if (section.NodeIndex < byte.MaxValue)
-                        skinType = VertexWeights.Rigid;
-
                     var mesh = new GeometryMesh
                     {
                         IndexFormat = iInfo.IndexFormat,
                         Vertices = new IVertex[vInfo.VertexCount],
-                        VertexWeights = skinType,
+                        VertexWeights = VertexWeights.None,
                         NodeIndex = section.NodeIndex == byte.MaxValue ? (byte?)null : section.NodeIndex
                     };
+
+                    mesh.VertexBuffer = vb.GetValueOrDefault(section.VertexBufferIndex);
+                    mesh.IndexBuffer = ib.GetValueOrDefault(section.IndexBufferIndex);
+
+                    if (mesh.VertexBuffer.HasBlendIndices)
+                        mesh.VertexWeights = mesh.VertexBuffer.HasBlendWeights ? VertexWeights.Skinned : VertexWeights.Rigid;
+                    else if (section.NodeIndex < byte.MaxValue)
+                        mesh.VertexWeights = VertexWeights.Rigid;
 
                     setProps(section, mesh);
 
@@ -248,7 +292,7 @@ namespace Reclaimer.Blam.Halo3
                         mesh.Vertices[i] = vert;
                     }
 
-                    if (mapNode != null && (skinType == VertexWeights.Skinned || skinType == VertexWeights.Rigid))
+                    if (mapNode != null && (mesh.VertexWeights == VertexWeights.Skinned || mesh.VertexWeights == VertexWeights.Rigid))
                     {
                         foreach (var v in mesh.Vertices)
                         {
@@ -258,6 +302,22 @@ namespace Reclaimer.Blam.Halo3
                                 bi.Y = mapNode(sectionIndex, (int)bi.Y);
                                 bi.Z = mapNode(sectionIndex, (int)bi.Z);
                                 bi.W = mapNode(sectionIndex, (int)bi.W);
+                            }
+                        }
+
+                        foreach (var v in mesh.VertexBuffer.BlendIndexChannels)
+                        {
+                            var buf = v as VectorBuffer<Reclaimer.Geometry.Vectors.UByte4>;
+                            for (var i = 0; i < v.Count; i++)
+                            {
+                                var bi = buf[i];                                
+                                buf[i] = new Geometry.Vectors.UByte4
+                                {
+                                    X = (byte)mapNode(sectionIndex, bi.X),
+                                    Y = (byte)mapNode(sectionIndex, bi.Y),
+                                    Z = (byte)mapNode(sectionIndex, bi.Z),
+                                    W = (byte)mapNode(sectionIndex, bi.W)
+                                };
                             }
                         }
                     }

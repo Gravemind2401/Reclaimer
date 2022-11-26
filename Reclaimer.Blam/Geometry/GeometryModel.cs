@@ -1,5 +1,6 @@
 ﻿using Adjutant.Spatial;
 using Reclaimer.Blam.Utilities;
+using Reclaimer.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -155,6 +156,9 @@ namespace Adjutant.Geometry
 
         public IVertex[] Vertices { get; set; }
         public int[] Indicies { get; set; }
+
+        public VertexBuffer VertexBuffer { get; set; }
+        public IndexBuffer IndexBuffer { get; set; }
 
         public byte? NodeIndex { get; set; }
         public short? BoundsIndex { get; set; }
