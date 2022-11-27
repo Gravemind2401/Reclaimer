@@ -2,6 +2,7 @@
 using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
+using Reclaimer.Geometry;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -100,7 +101,7 @@ namespace Reclaimer.Blam.Halo1
 
         private IEnumerable<GeometryMesh> ReadXboxMeshes(DependencyReader reader)
         {
-            if (!(cache.TagIndex is ITagIndexGen1 tagIndex))
+            if (cache.TagIndex is not ITagIndexGen1 tagIndex)
                 throw new NotSupportedException();
 
             foreach (var section in Sections)
@@ -184,19 +185,37 @@ namespace Reclaimer.Blam.Halo1
 
         private IEnumerable<GeometryMesh> ReadPCMeshes(DependencyReader reader)
         {
-            if (!(cache.TagIndex is ITagIndexGen1 tagIndex))
+            if (cache.TagIndex is not ITagIndexGen1 tagIndex)
                 throw new NotSupportedException();
+
+            const int submeshSize = 132;
+            const int vertexSize = 68;
 
             foreach (var section in Sections)
             {
                 var indices = new List<int>();
-                var vertices = new List<UncompressedVertex>();
                 var submeshes = new List<IGeometrySubmesh>();
 
+                var vertexCount = section.Submeshes.Sum(s => s.VertexCount);
+                var vertexData = new byte[vertexSize * vertexCount];
+
+                var vertexBuffer = new VertexBuffer();
+                var texBuffer = new VectorBuffer<Geometry.Vectors.RealVector2>(vertexData, vertexCount, vertexSize, 48);
+                var boneBuffer = new VectorBuffer<Geometry.Vectors.UShort2>(vertexData, vertexCount, vertexSize, 56);
+
+                vertexBuffer.PositionChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 0));
+                vertexBuffer.NormalChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 12));
+                vertexBuffer.BinormalChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 24));
+                vertexBuffer.TangentChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 36));
+                vertexBuffer.TextureCoordinateChannels.Add(texBuffer);
+                vertexBuffer.BlendIndexChannels.Add(boneBuffer);
+                vertexBuffer.BlendWeightChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector2>(vertexData, vertexCount, vertexSize, 60));
+
+                var vertexTally = 0;
                 foreach (var submesh in section.Submeshes)
                 {
                     reader.Seek(tagIndex.VertexDataOffset + tagIndex.IndexDataOffset + submesh.IndexOffset, SeekOrigin.Begin);
-                    var subIndices = reader.ReadEnumerable<ushort>(submesh.IndexCount + 2).Select(i => i + vertices.Count).Unstrip().Reverse().ToList();
+                    var subIndices = reader.ReadEnumerable<ushort>(submesh.IndexCount + 2).Select(i => i + vertexTally).Unstrip().Reverse().ToList();
 
                     var gSubmesh = new GeometrySubmesh
                     {
@@ -209,43 +228,49 @@ namespace Reclaimer.Blam.Halo1
                     indices.AddRange(subIndices);
 
                     reader.Seek(tagIndex.VertexDataOffset + submesh.VertexOffset, SeekOrigin.Begin);
-                    var vertsTemp = reader.ReadEnumerable<UncompressedVertex>(submesh.VertexCount).ToList();
-
-                    if (UScale != 1 || VScale != 1)
-                    {
-                        vertsTemp.ForEach((v) =>
-                        {
-                            var vec = v.TexCoords;
-                            vec.X *= UScale;
-                            vec.Y *= VScale;
-                            v.TexCoords = vec;
-                        });
-                    }
+                    reader.ReadBytes(vertexSize * submesh.VertexCount).CopyTo(vertexData, vertexTally * vertexSize);
 
                     if (Flags.HasFlag(ModelFlags.UseLocalNodes))
                     {
                         var address = section.Submeshes.Pointer.Address;
-                        address += section.Submeshes.IndexOf(submesh) * 132;
+                        address += section.Submeshes.IndexOf(submesh) * submeshSize;
                         reader.Seek(address + 107, SeekOrigin.Begin);
                         var nodeCount = reader.ReadByte();
-                        var nodes = reader.ReadArray<byte>(nodeCount);
+                        var nodes = reader.ReadBytes(nodeCount);
 
-                        vertsTemp.ForEach((v) =>
+                        for (var i = vertexTally; i < submesh.VertexCount; i++)
                         {
-                            v.NodeIndex1 = nodes[v.NodeIndex1];
-                            v.NodeIndex2 = nodes[v.NodeIndex2];
-                        });
+                            var v = boneBuffer[i];
+                            boneBuffer[i] = new Geometry.Vectors.UShort2
+                            {
+                                X = nodes[v.X],
+                                Y = nodes[v.Y]
+                            };
+                        }
                     }
 
-                    vertices.AddRange(vertsTemp);
+                    vertexTally += submesh.VertexCount;
+                }
+
+                if (UScale != 1 || VScale != 1)
+                {
+                    for (var i = 0; i < texBuffer.Count; i++)
+                    {
+                        var v = texBuffer[i];
+                        texBuffer[i] = new Geometry.Vectors.RealVector2
+                        {
+                            X = v.X * UScale,
+                            Y = v.Y * VScale
+                        };
+                    };
                 }
 
                 yield return new GeometryMesh
                 {
                     IndexFormat = IndexFormat.TriangleList,
                     VertexWeights = VertexWeights.Skinned,
-                    Indicies = indices.ToArray(),
-                    Vertices = vertices.ToArray(),
+                    IndexBuffer = IndexBuffer.FromCollection(indices),
+                    VertexBuffer = vertexBuffer,
                     Submeshes = submeshes
                 };
             }

@@ -2,6 +2,7 @@
 using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
+using Reclaimer.Geometry;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -81,14 +82,25 @@ namespace Reclaimer.Blam.Halo1
 
             var gRegion = new GeometryRegion { Name = "Clusters" };
 
+            const int vertexSize = 56;
+
             var sectionIndex = 0;
             foreach (var section in Lightmaps)
             {
                 if (section.Materials.Count == 0)
                     continue;
 
+                var vertexCount = section.Materials.Sum(s => s.VertexCount);
+                var vertexData = new byte[vertexSize * vertexCount];
+
+                var vertexBuffer = new VertexBuffer();
+                vertexBuffer.PositionChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 0));
+                vertexBuffer.NormalChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 12));
+                vertexBuffer.BinormalChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 24));
+                vertexBuffer.TangentChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 36));
+                vertexBuffer.TextureCoordinateChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector2>(vertexData, vertexCount, vertexSize, 48));
+
                 var localIndices = new List<int>();
-                var vertices = new List<WorldVertex>();
                 var submeshes = new List<IGeometrySubmesh>();
 
                 var gPermutation = new GeometryPermutation
@@ -99,9 +111,11 @@ namespace Reclaimer.Blam.Halo1
                     MeshCount = 1
                 };
 
+                var vertexTally = 0;
                 foreach (var submesh in section.Materials)
                 {
                     reader.Seek(submesh.VertexPointer.Address, SeekOrigin.Begin);
+                    reader.ReadBytes(vertexSize * submesh.VertexCount).CopyTo(vertexData, vertexTally * vertexSize);
 
                     submeshes.Add(new GeometrySubmesh
                     {
@@ -113,10 +127,10 @@ namespace Reclaimer.Blam.Halo1
                     localIndices.AddRange(
                         indices.Skip(submesh.SurfaceIndex * 3)
                                .Take(submesh.SurfaceCount * 3)
-                               .Select(i => i + vertices.Count)
+                               .Select(i => i + vertexTally)
                     );
 
-                    vertices.AddRange(reader.ReadEnumerable<WorldVertex>(submesh.VertexCount));
+                    vertexTally += submesh.VertexCount;
                 }
 
                 gRegion.Permutations.Add(gPermutation);
@@ -125,8 +139,8 @@ namespace Reclaimer.Blam.Halo1
                 {
                     IndexFormat = IndexFormat.TriangleList,
                     VertexWeights = VertexWeights.None,
-                    Indicies = localIndices.ToArray(),
-                    Vertices = vertices.ToArray(),
+                    IndexBuffer = IndexBuffer.FromCollection(localIndices),
+                    VertexBuffer = vertexBuffer,
                     Submeshes = submeshes
                 });
 
