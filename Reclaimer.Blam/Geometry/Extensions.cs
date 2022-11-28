@@ -1,4 +1,5 @@
 ﻿using Adjutant.Spatial;
+using Reclaimer;
 using Reclaimer.Geometry;
 using Reclaimer.IO;
 using System;
@@ -99,7 +100,7 @@ namespace Adjutant.Geometry
                 return null;
 
             return mesh.VertexBuffer != null
-                ? mesh.VertexBuffer.PositionChannels[0][index..(index + count)].Select(v => new Vector3(v.X, v.Y, v.Z))
+                ? mesh.VertexBuffer.PositionChannels[0].GetSubset(index, count).Select(v => new Vector3(v.X, v.Y, v.Z))
                 : (from i in Enumerable.Range(index, count)
                    let v = mesh.Vertices[i].Position[0]
                    select new Vector3(v.X, v.Y, v.Z));
@@ -115,7 +116,7 @@ namespace Adjutant.Geometry
                 return null;
 
             return mesh.VertexBuffer != null
-                ? mesh.VertexBuffer.TextureCoordinateChannels[0][index..(index + count)].Select(v => new Vector2(v.X, v.Y))
+                ? mesh.VertexBuffer.TextureCoordinateChannels[0].GetSubset(index, count).Select(v => new Vector2(v.X, v.Y))
                 : (from i in Enumerable.Range(index, count)
                    let v = mesh.Vertices[i].TexCoords[0]
                    select new Vector2(v.X, v.Y));
@@ -131,7 +132,7 @@ namespace Adjutant.Geometry
                 return null;
 
             return mesh.VertexBuffer != null
-                ? mesh.VertexBuffer.NormalChannels[0][index..(index + count)].Select(v => new Vector3(v.X, v.Y, v.Z))
+                ? mesh.VertexBuffer.NormalChannels[0].GetSubset(index, count).Select(v => new Vector3(v.X, v.Y, v.Z))
                 : (from i in Enumerable.Range(index, count)
                    let v = mesh.Vertices[i].Normal[0]
                    select new Vector3(v.X, v.Y, v.Z));
@@ -147,7 +148,7 @@ namespace Adjutant.Geometry
                 return null;
 
             return mesh.VertexBuffer != null
-                ? mesh.VertexBuffer.BlendIndexChannels[0][index..(index + count)].Select(v => new Vector4(v.X, v.Y, v.Z, v.W))
+                ? mesh.VertexBuffer.BlendIndexChannels[0].GetSubset(index, count).Select(v => new Vector4(v.X, v.Y, v.Z, v.W))
                 : (from i in Enumerable.Range(index, count)
                    let v = mesh.Vertices[i].BlendIndices[0]
                    select new Vector4(v.X, v.Y, v.Z, v.W));
@@ -163,7 +164,7 @@ namespace Adjutant.Geometry
                 return null;
 
             return mesh.VertexBuffer != null
-                ? mesh.VertexBuffer.BlendWeightChannels[0][index..(index + count)].Select(v => new Vector4(v.X, v.Y, v.Z, v.W))
+                ? mesh.VertexBuffer.BlendWeightChannels[0].GetSubset(index, count).Select(v => new Vector4(v.X, v.Y, v.Z, v.W))
                 : (from i in Enumerable.Range(index, count)
                    let v = mesh.Vertices[i].BlendWeight[0]
                    select new Vector4(v.X, v.Y, v.Z, v.W));

@@ -4,20 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using VertexChannel = System.Collections.Generic.IReadOnlyList<Reclaimer.Geometry.IVector>;
+
 namespace Reclaimer.Geometry
 {
     public class VertexBuffer
     {
         public int Count => EnumerateChannels().Max(c => c?.Count) ?? default;
 
-        public IList<IVectorBuffer> PositionChannels { get; } = new List<IVectorBuffer>();
-        public IList<IVectorBuffer> TextureCoordinateChannels { get; } = new List<IVectorBuffer>();
-        public IList<IVectorBuffer> NormalChannels { get; } = new List<IVectorBuffer>();
-        public IList<IVectorBuffer> TangentChannels { get; } = new List<IVectorBuffer>();
-        public IList<IVectorBuffer> BinormalChannels { get; } = new List<IVectorBuffer>();
-        public IList<IVectorBuffer> BlendIndexChannels { get; } = new List<IVectorBuffer>();
-        public IList<IVectorBuffer> BlendWeightChannels { get; } = new List<IVectorBuffer>();
-        public IList<IVectorBuffer> ColorChannels { get; } = new List<IVectorBuffer>();
+        public IList<VertexChannel> PositionChannels { get; } = new List<VertexChannel>();
+        public IList<VertexChannel> TextureCoordinateChannels { get; } = new List<VertexChannel>();
+        public IList<VertexChannel> NormalChannels { get; } = new List<VertexChannel>();
+        public IList<VertexChannel> TangentChannels { get; } = new List<VertexChannel>();
+        public IList<VertexChannel> BinormalChannels { get; } = new List<VertexChannel>();
+        public IList<VertexChannel> BlendIndexChannels { get; } = new List<VertexChannel>();
+        public IList<VertexChannel> BlendWeightChannels { get; } = new List<VertexChannel>();
+        public IList<VertexChannel> ColorChannels { get; } = new List<VertexChannel>();
 
         public bool HasPositions => PositionChannels.Any(c => c?.Count > 0);
         public bool HasTextureCoordinates => TextureCoordinateChannels.Any(c => c?.Count > 0);
@@ -30,10 +32,19 @@ namespace Reclaimer.Geometry
 
         public VertexBuffer GetSubset(int index, int count)
         {
-            void CopySubsets(IList<IVectorBuffer> from, IList<IVectorBuffer> to)
+            void CopySubsets(IList<VertexChannel> from, IList<VertexChannel> to)
             {
-                foreach(var item in from)
-                    to.Add(item.GetSubset(index, count));
+                foreach (var channel in from)
+                {
+                    if (channel is IVectorBuffer buffer)
+                        to.Add(buffer.GetSubset(index, count));
+                    else
+                    {
+                        var newList = new List<IVector>(count);
+                        newList.AddRange(channel.GetSubset(index, count));
+                        to.Add(newList);
+                    }
+                }
             }
 
             var result = new VertexBuffer();
@@ -52,11 +63,11 @@ namespace Reclaimer.Geometry
 
         public void SwapEndianness()
         {
-            foreach (var buffer in EnumerateChannels())
-                buffer?.SwapEndianness();
+            foreach (var buffer in EnumerateChannels().OfType<IVectorBuffer>())
+                buffer.SwapEndianness();
         }
 
-        private IEnumerable<IVectorBuffer> EnumerateChannels()
+        private IEnumerable<VertexChannel> EnumerateChannels()
         {
             return PositionChannels.Concat(NormalChannels).Concat(TangentChannels).Concat(BinormalChannels)
                 .Concat(TextureCoordinateChannels).Concat(BlendIndexChannels).Concat(BlendWeightChannels).Concat(ColorChannels);

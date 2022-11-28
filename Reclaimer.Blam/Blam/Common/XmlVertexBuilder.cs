@@ -95,7 +95,7 @@ namespace Reclaimer.Blam.Common
             };
         }
 
-        private static IList<IVectorBuffer> GetVectorChannel(string usage, VertexBuffer vertexBuffer)
+        private static IList<IReadOnlyList<IVector>> GetVectorChannel(string usage, VertexBuffer vertexBuffer)
         {
             return usage switch
             {

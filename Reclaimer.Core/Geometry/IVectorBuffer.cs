@@ -12,6 +12,6 @@ namespace Reclaimer.Geometry
         IVectorBuffer GetSubset(int index, int count);
         void SwapEndianness();
         IVector this[Index index] => ((IReadOnlyList<IVector>)this)[index.GetOffset(Count)];
-        IEnumerable<IVector> this[Range range] => Extensions.Subset(this, range);
+        IEnumerable<IVector> this[Range range] => Extensions.GetRange(this, range);
     }
 }

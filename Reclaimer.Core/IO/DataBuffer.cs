@@ -56,8 +56,8 @@ namespace Reclaimer.IO
 
         public IEnumerable<T> this[Range range] => Subset(range);
 
-        public IEnumerable<T> Subset(Range range) => Extensions.Subset(this, range);
-        public IEnumerable<T> Subset(int index, int length) => Extensions.Subset(this, index, length);
+        public IEnumerable<T> Subset(Range range) => Extensions.GetRange(this, range);
+        public IEnumerable<T> Subset(int index, int length) => Extensions.GetSubset(this, index, length);
 
         #region IEnumerable
         protected IEnumerable<T> Enumerate()

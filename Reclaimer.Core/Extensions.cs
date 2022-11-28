@@ -6,24 +6,24 @@ using System.Threading.Tasks;
 
 namespace Reclaimer
 {
-    internal static class Extensions
+    public static class Extensions
     {
-        public static IEnumerable<T> Subset<T>(this IReadOnlyList<T> source, Range range)
+        public static IEnumerable<T> GetRange<T>(this IReadOnlyList<T> source, Range range)
         {
             var (offset, length) = range.GetOffsetAndLength(source.Count);
-            return Subset(source, offset, length);
+            return GetSubset(source, offset, length);
         }
 
-        public static IEnumerable<T> Subset<T>(this IReadOnlyList<T> source, int index, int length)
+        public static IEnumerable<T> GetSubset<T>(this IReadOnlyList<T> source, int offset, int count)
         {
-            if (index < 0 || index >= source.Count)
-                throw new ArgumentOutOfRangeException(nameof(index));
+            if (offset < 0 || offset >= source.Count)
+                throw new ArgumentOutOfRangeException(nameof(offset));
 
-            var end = index + length;
+            var end = offset + count;
             if (end < 0 || end > source.Count)
-                throw new ArgumentOutOfRangeException(nameof(length));
+                throw new ArgumentOutOfRangeException(nameof(count));
 
-            for (var i = index; i < end; i++)
+            for (var i = offset; i < end; i++)
                 yield return source[i];
         }
     }
