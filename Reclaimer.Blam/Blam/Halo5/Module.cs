@@ -97,12 +97,12 @@ namespace Reclaimer.Blam.Halo5
 
         public IEnumerable<ModuleItem> FindAlternateTagInstances(int globalTagId)
         {
-            return tagIndex.InstancesById.ValueOrDefault(globalTagId);
+            return tagIndex.InstancesById.GetValueOrDefault(globalTagId);
         }
 
         public IEnumerable<TagClass> GetTagClasses() => tagIndex.Classes.Values;
 
-        public ModuleItem GetItemById(int id) => tagIndex.ItemsById.ValueOrDefault(id);
+        public ModuleItem GetItemById(int id) => tagIndex.ItemsById.GetValueOrDefault(id);
 
         public IEnumerable<ModuleItem> GetItemsByClass(string classCode)
         {

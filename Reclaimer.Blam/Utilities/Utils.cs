@@ -11,10 +11,8 @@ namespace Reclaimer.Blam.Utilities
     {
         public static string CurrentCulture(FormattableString formattable)
         {
-            if (formattable == null)
-                throw new ArgumentNullException(nameof(formattable));
-
-            return formattable.ToString(CultureInfo.CurrentCulture);
+            return formattable?.ToString(CultureInfo.CurrentCulture)
+                ?? throw new ArgumentNullException(nameof(formattable));
         }
 
         public static float Clamp(float value, float min, float max) => Math.Min(Math.Max(min, value), max);
@@ -32,14 +30,12 @@ namespace Reclaimer.Blam.Utilities
             return null;
         }
 
-        public static TValue ValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dic, TKey key) => dic.ContainsKey(key) ? dic[key] : default;
-
         public static IEnumerable<KeyValuePair<TEnum, TAttribute>> GetEnumAttributes<TEnum, TAttribute>() where TEnum : struct where TAttribute : Attribute
         {
             foreach (var fi in typeof(TEnum).GetFields().Where(f => f.FieldType == typeof(TEnum)))
             {
                 var field = (TEnum)fi.GetValue(null);
-                foreach (TAttribute attr in fi.GetCustomAttributes(typeof(TAttribute), false))
+                foreach (var attr in fi.GetCustomAttributes(typeof(TAttribute), false).OfType<TAttribute>())
                     yield return new KeyValuePair<TEnum, TAttribute>(field, attr);
             }
         }
@@ -52,7 +48,7 @@ namespace Reclaimer.Blam.Utilities
                 if (!field.Equals(enumValue))
                     continue;
 
-                foreach (TAttribute attr in fi.GetCustomAttributes(typeof(TAttribute), false))
+                foreach (var attr in fi.GetCustomAttributes(typeof(TAttribute), false).OfType<TAttribute>())
                     yield return attr;
             }
         }

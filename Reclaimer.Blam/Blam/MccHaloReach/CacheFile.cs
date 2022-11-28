@@ -272,7 +272,7 @@ namespace Reclaimer.Blam.MccHaloReach
             catch { throw Exceptions.AmbiguousScenarioReference(); }
         }
 
-        public IndexItem GetGlobalTag(string classCode) => sysItems.ValueOrDefault(classCode);
+        public IndexItem GetGlobalTag(string classCode) => sysItems.GetValueOrDefault(classCode);
 
         public IndexItem this[int index] => items[index];
 
