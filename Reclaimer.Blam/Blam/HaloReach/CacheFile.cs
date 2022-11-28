@@ -234,7 +234,7 @@ namespace Reclaimer.Blam.HaloReach
                 Classes.AddRange(reader.ReadEnumerable<TagClass>(TagClassCount));
 
                 reader.Seek(TagDataPointer.Address, SeekOrigin.Begin);
-                for (int i = 0; i < TagCount; i++)
+                for (var i = 0; i < TagCount; i++)
                 {
                     //every Reach map has an empty tag
                     var item = reader.ReadObject(new IndexItem(cache, i));
@@ -248,14 +248,14 @@ namespace Reclaimer.Blam.HaloReach
                 }
 
                 reader.Seek(cache.Header.FileTableIndexPointer.Address, SeekOrigin.Begin);
-                var indices = reader.ReadEnumerable<int>(TagCount).ToArray();
+                var indices = reader.ReadArray<int>(TagCount);
 
                 reader.Seek(cache.Header.FileTablePointer.Address, SeekOrigin.Begin);
                 var decrypted = reader.ReadAesBytes(cache.Header.FileTableSize, cache.CacheType == CacheType.HaloReachBeta ? CacheFile.BetaKey : CacheFile.FileNamesKey);
                 using (var ms = new MemoryStream(decrypted))
                 using (var tempReader = new EndianReader(ms))
                 {
-                    for (int i = 0; i < TagCount; i++)
+                    for (var i = 0; i < TagCount; i++)
                     {
                         if (indices[i] == -1)
                         {
@@ -273,7 +273,10 @@ namespace Reclaimer.Blam.HaloReach
             {
                 sysItems[CacheFactory.ScenarioClass] = items.Values.Single(i => i.ClassCode == CacheFactory.ScenarioClass && i.FullPath == cache.Header.ScenarioName);
             }
-            catch { throw Exceptions.AmbiguousScenarioReference(); }
+            catch
+            {
+                throw Exceptions.AmbiguousScenarioReference();
+            }
         }
 
         public IndexItem GetGlobalTag(string classCode) => sysItems.GetValueOrDefault(classCode);
@@ -303,14 +306,14 @@ namespace Reclaimer.Blam.HaloReach
             using (var reader = cache.CreateReader(cache.HeaderTranslator))
             {
                 reader.Seek(cache.Header.StringTableIndexPointer.Address, SeekOrigin.Begin);
-                var indices = reader.ReadEnumerable<int>(cache.Header.StringCount).ToArray();
+                var indices = reader.ReadArray<int>(cache.Header.StringCount);
 
                 reader.Seek(cache.Header.StringTablePointer.Address, SeekOrigin.Begin);
                 var decrypted = reader.ReadAesBytes(cache.Header.StringTableSize, cache.CacheType == CacheType.HaloReachBeta ? CacheFile.BetaKey : CacheFile.StringsKey);
                 using (var ms = new MemoryStream(decrypted))
                 using (var tempReader = new EndianReader(ms))
                 {
-                    for (int i = 0; i < cache.Header.StringCount; i++)
+                    for (var i = 0; i < cache.Header.StringCount; i++)
                     {
                         if (indices[i] < 0)
                             continue;

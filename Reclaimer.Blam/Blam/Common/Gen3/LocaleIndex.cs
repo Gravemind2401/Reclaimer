@@ -120,7 +120,7 @@ namespace Reclaimer.Blam.Common.Gen3
                 var translator = new SectionAddressTranslator(cache, 3);
 
                 reader.Seek((int)translator.GetAddress(definition.IndicesOffset), SeekOrigin.Begin);
-                var entries = reader.ReadEnumerable<LocaleEntry>(definition.StringCount).ToList();
+                var entries = reader.ReadArray<LocaleEntry>(definition.StringCount);
 
                 reader.Seek((int)translator.GetAddress(definition.StringsOffset), SeekOrigin.Begin);
 

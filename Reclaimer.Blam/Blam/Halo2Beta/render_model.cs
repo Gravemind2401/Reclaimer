@@ -99,7 +99,7 @@ namespace Reclaimer.Blam.Halo2Beta
                     var nodeMapResource = section.Resources.FirstOrDefault(r => r.Type0 == 164);
 
                     reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
-                    var submeshes = reader.ReadEnumerable<Halo2.SubmeshDataBlock>(submeshResource.Size / 72).ToList();
+                    var submeshes = reader.ReadArray<Halo2.SubmeshDataBlock>(submeshResource.Size / 72);
 
                     var mesh = new GeometryMesh { BoundsIndex = 0, };
 
@@ -113,7 +113,9 @@ namespace Reclaimer.Blam.Halo2Beta
                         });
                     }
 
-                    mesh.IndexFormat = section.FaceCount * 3 == sectionInfo.IndexCount ? IndexFormat.TriangleList : IndexFormat.TriangleStrip;
+                    mesh.IndexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
+                        ? IndexFormat.TriangleList
+                        : IndexFormat.TriangleStrip;
 
                     reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
                     mesh.Indicies = reader.ReadEnumerable<ushort>(sectionInfo.IndexCount).Select(i => (int)i).ToArray();

@@ -97,7 +97,7 @@ namespace Reclaimer.Blam.Halo2
                     var nodeMapResource = section.Resources.FirstOrDefault(r => r.Type0 == 100);
 
                     reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
-                    var submeshes = reader.ReadEnumerable<SubmeshDataBlock>(submeshResource.Size / 72).ToList();
+                    var submeshes = reader.ReadArray<SubmeshDataBlock>(submeshResource.Size / 72);
 
                     var mesh = new GeometryMesh { BoundsIndex = 0, };
 

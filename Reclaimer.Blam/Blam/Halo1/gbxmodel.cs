@@ -129,7 +129,7 @@ namespace Reclaimer.Blam.Halo1
                         reader.ReadInt32();
                         reader.Seek(reader.ReadInt32() - tagIndex.Magic, SeekOrigin.Begin);
 
-                        var indicesTemp = reader.ReadEnumerable<ushort>(gSubmesh.IndexLength).ToList();
+                        var indicesTemp = reader.ReadArray<ushort>(gSubmesh.IndexLength);
                         indices.AddRange(indicesTemp.Select(i => i + vertices.Count));
 
                         reader.Seek(submesh.VertexOffset - tagIndex.Magic, SeekOrigin.Begin);
@@ -228,7 +228,7 @@ namespace Reclaimer.Blam.Halo1
                         address += section.Submeshes.IndexOf(submesh) * 132;
                         reader.Seek(address + 107, SeekOrigin.Begin);
                         var nodeCount = reader.ReadByte();
-                        var nodes = reader.ReadEnumerable<byte>(nodeCount).ToArray();
+                        var nodes = reader.ReadArray<byte>(nodeCount);
 
                         vertsTemp.ForEach((v) =>
                         {

@@ -266,7 +266,7 @@ namespace Reclaimer.Blam.Halo3
                 }
 
                 reader.Seek(cache.Header.FileTableIndexPointer.Address, SeekOrigin.Begin);
-                var indices = reader.ReadEnumerable<int>(TagCount).ToArray();
+                var indices = reader.ReadArray<int>(TagCount);
 
                 using (var tempReader = reader.CreateVirtualReader(cache.Header.FileTablePointer.Address))
                 {
@@ -288,7 +288,10 @@ namespace Reclaimer.Blam.Halo3
             {
                 sysItems[CacheFactory.ScenarioClass] = items.Values.Single(i => i.ClassCode == CacheFactory.ScenarioClass && i.FullPath == cache.Header.ScenarioName);
             }
-            catch { throw Exceptions.AmbiguousScenarioReference(); }
+            catch
+            {
+                throw Exceptions.AmbiguousScenarioReference();
+            }
         }
 
         public IndexItem GetGlobalTag(string classCode) => sysItems.GetValueOrDefault(classCode);
@@ -318,7 +321,7 @@ namespace Reclaimer.Blam.Halo3
             using (var reader = cache.CreateReader(cache.HeaderTranslator))
             {
                 reader.Seek(cache.Header.StringTableIndexPointer.Address, SeekOrigin.Begin);
-                var indices = reader.ReadEnumerable<int>(cache.Header.StringCount).ToArray();
+                var indices = reader.ReadArray<int>(cache.Header.StringCount);
 
                 using (var tempReader = reader.CreateVirtualReader(cache.Header.StringTablePointer.Address))
                 {

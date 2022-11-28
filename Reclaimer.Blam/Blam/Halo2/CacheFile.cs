@@ -181,7 +181,7 @@ namespace Reclaimer.Blam.Halo2
                 }
 
                 reader.Seek(cache.Header.FileTableIndexOffset, SeekOrigin.Begin);
-                var indices = reader.ReadEnumerable<int>(TagCount).ToArray();
+                var indices = reader.ReadArray<int>(TagCount);
 
                 for (var i = 0; i < TagCount; i++)
                 {

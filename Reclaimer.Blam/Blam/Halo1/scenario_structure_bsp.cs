@@ -77,11 +77,11 @@ namespace Reclaimer.Blam.Halo1
             model.Materials.AddRange(Halo1Common.GetMaterials(shaderRefs, reader));
 
             reader.Seek(SurfacePointer.Address, SeekOrigin.Begin);
-            var indices = reader.ReadEnumerable<ushort>(SurfaceCount * 3).ToArray();
+            var indices = reader.ReadArray<ushort>(SurfaceCount * 3);
 
             var gRegion = new GeometryRegion { Name = "Clusters" };
 
-            int sectionIndex = 0;
+            var sectionIndex = 0;
             foreach (var section in Lightmaps)
             {
                 if (section.Materials.Count == 0)
@@ -116,8 +116,7 @@ namespace Reclaimer.Blam.Halo1
                                .Select(i => i + vertices.Count)
                     );
 
-                    var vertsTemp = reader.ReadEnumerable<WorldVertex>(submesh.VertexCount).ToList();
-                    vertices.AddRange(vertsTemp);
+                    vertices.AddRange(reader.ReadEnumerable<WorldVertex>(submesh.VertexCount));
                 }
 
                 gRegion.Permutations.Add(gPermutation);

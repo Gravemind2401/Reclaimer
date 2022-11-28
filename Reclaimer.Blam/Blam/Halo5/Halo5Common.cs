@@ -129,11 +129,11 @@ namespace Reclaimer.Blam.Halo5
 
                     block = header.DataBlocks[1];
                     reader.Seek(block.Offset, SeekOrigin.Begin);
-                    vertexBufferInfo = reader.ReadEnumerable<VertexBufferInfo>(vertexBufferCount).ToArray();
+                    vertexBufferInfo = reader.ReadArray<VertexBufferInfo>(vertexBufferCount);
 
                     block = header.DataBlocks[2];
                     reader.Seek(block.Offset, SeekOrigin.Begin);
-                    indexBufferInfo = reader.ReadEnumerable<IndexBufferInfo>(indexBufferCount).ToArray();
+                    indexBufferInfo = reader.ReadArray<IndexBufferInfo>(indexBufferCount);
                 }
 
                 using (var reader = blockReader.CreateVirtualReader(header.GetSectionOffset(2)))
@@ -192,7 +192,7 @@ namespace Reclaimer.Blam.Halo5
                             block = header.DataBlocks[3 + vertexBufferInfo.Length + lodData.IndexBufferIndex];
                             reader.Seek(block.Offset, SeekOrigin.Begin);
                             mesh.Indicies = vInfo.VertexCount > ushort.MaxValue
-                                ? reader.ReadEnumerable<int>(iInfo.IndexCount).ToArray()
+                                ? reader.ReadArray<int>(iInfo.IndexCount)
                                 : reader.ReadEnumerable<ushort>(iInfo.IndexCount).Select(i => (int)i).ToArray();
 
                         }

@@ -1,6 +1,7 @@
 ﻿using Reclaimer.Blam.Common.Gen3;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -70,8 +71,8 @@ namespace Reclaimer.Blam.Common
 
         private StringIdTranslator(IMccCacheFile cache, XmlNode node)
         {
-            if (!(cache.Header is IMccGen3Header header))
-                throw new ArgumentException();
+            if (cache.Header is not IMccGen3Header header)
+                throw new ArgumentException(null, nameof(cache));
 
             indexBits = int.Parse(node.Attributes["indexBits"].Value);
             namespaceBits = int.Parse(node.Attributes["namespaceBits"].Value);
@@ -84,16 +85,16 @@ namespace Reclaimer.Blam.Common
 
             var reader = cache.CreateReader(cache.DefaultAddressTranslator);
             reader.Seek(header.StringNamespaceTablePointer.Address, System.IO.SeekOrigin.Begin);
-            var nsList = reader.ReadEnumerable<int>(header.StringNamespaceCount).ToList();
+            var nsArray = reader.ReadArray<int>(header.StringNamespaceCount);
 
             //namespace 0 always starts at the end of the rest
-            int mask = (1 << indexBits) - 1, start = nsList[0] & mask;
+            int mask = (1 << indexBits) - 1, start = nsArray[0] & mask;
             for (var i = 1; i < header.StringNamespaceCount; i++)
             {
                 namespaces.Add(i, new Namespace(i, 0, start));
-                start += nsList[i] & mask;
+                start += nsArray[i] & mask;
             }
-            namespaces.Add(0, new Namespace(0, nsList[0] & mask, start));
+            namespaces.Add(0, new Namespace(0, nsArray[0] & mask, start));
         }
         #endregion
 
@@ -121,6 +122,7 @@ namespace Reclaimer.Blam.Common
             return index - ns.Start + nsFirst;
         }
 
+        [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
         private class Namespace
         {
             public int Id { get; }
@@ -134,10 +136,7 @@ namespace Reclaimer.Blam.Common
                 Start = start;
             }
 
-            public override string ToString()
-            {
-                return $"Id={Id}, Min={Min}, Start={Start}";
-            }
+            private string GetDebuggerDisplay() => new { Id, Min, Start }.ToString();
         }
     }
 }

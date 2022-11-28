@@ -183,9 +183,9 @@ namespace Reclaimer.Blam.HaloReach
                 var indexBufferCount = reader.ReadInt32();
 
                 reader.Seek(entry.FixupOffset, SeekOrigin.Begin);
-                vertexBufferInfo = reader.ReadEnumerable<VertexBufferInfo>(vertexBufferCount).ToArray();
+                vertexBufferInfo = reader.ReadArray<VertexBufferInfo>(vertexBufferCount);
                 reader.Seek(12 * vertexBufferCount, SeekOrigin.Current); //12 byte struct here for each vertex buffer
-                indexBufferInfo = reader.ReadEnumerable<IndexBufferInfo>(indexBufferCount).ToArray();
+                indexBufferInfo = reader.ReadArray<IndexBufferInfo>(indexBufferCount);
                 //12 byte struct here for each index buffer
                 //4x 12 byte structs here
             }
@@ -266,7 +266,7 @@ namespace Reclaimer.Blam.HaloReach
                     address = entry.ResourceFixups[vertexBufferInfo.Length * 2 + section.IndexBufferIndex].Offset & 0x0FFFFFFF;
                     reader.Seek(address, SeekOrigin.Begin);
                     mesh.Indicies = vInfo.VertexCount > ushort.MaxValue
-                        ? reader.ReadEnumerable<int>(totalIndices).ToArray()
+                        ? reader.ReadArray<int>(totalIndices)
                         : reader.ReadEnumerable<ushort>(totalIndices).Select(i => (int)i).ToArray();
 
                     yield return mesh;

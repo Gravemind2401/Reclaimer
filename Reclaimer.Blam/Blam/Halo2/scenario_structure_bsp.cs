@@ -86,14 +86,13 @@ namespace Reclaimer.Blam.Halo2
                     var normalsResource = section.Resources.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 2);
 
                     reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
-                    var submeshes = reader.ReadEnumerable<SubmeshDataBlock>(submeshResource.Size / 72).ToList();
+                    var submeshes = reader.ReadArray<SubmeshDataBlock>(submeshResource.Size / 72);
 
                     var mesh = new GeometryMesh();
 
-                    if (section.FaceCount * 3 == sectionInfo.IndexCount)
-                        mesh.IndexFormat = IndexFormat.TriangleList;
-                    else
-                        mesh.IndexFormat = IndexFormat.TriangleStrip;
+                    mesh.IndexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
+                        ? IndexFormat.TriangleList
+                        : IndexFormat.TriangleStrip;
 
                     reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
                     mesh.Indicies = reader.ReadEnumerable<ushort>(sectionInfo.IndexCount).Select(i => (int)i).ToArray();
@@ -175,14 +174,13 @@ namespace Reclaimer.Blam.Halo2
                     var normalsResource = section.Resources.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 2);
 
                     reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
-                    var submeshes = reader.ReadEnumerable<SubmeshDataBlock>(submeshResource.Size / 72).ToList();
+                    var submeshes = reader.ReadArray<SubmeshDataBlock>(submeshResource.Size / 72);
 
                     var mesh = new GeometryMesh { IsInstancing = true };
 
-                    if (section.FaceCount * 3 == sectionInfo.IndexCount)
-                        mesh.IndexFormat = IndexFormat.TriangleList;
-                    else
-                        mesh.IndexFormat = IndexFormat.TriangleStrip;
+                    mesh.IndexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
+                        ? IndexFormat.TriangleList
+                        : IndexFormat.TriangleStrip;
 
                     reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
                     mesh.Indicies = reader.ReadEnumerable<ushort>(sectionInfo.IndexCount).Select(i => (int)i).ToArray();
