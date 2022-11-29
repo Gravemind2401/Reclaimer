@@ -26,9 +26,13 @@ namespace Reclaimer.Geometry
                 throw new ArgumentException("Data type must be byte, ushort or int.", nameof(dataType));
         }
 
-        public static IndexBuffer FromCollection(IEnumerable<int> collection) => new IndexBuffer(MemoryMarshal.AsBytes<int>(collection.ToArray()).ToArray(), sizeof(int));
-        public static IndexBuffer FromCollection(IEnumerable<ushort> collection) => new IndexBuffer(MemoryMarshal.AsBytes<ushort>(collection.ToArray()).ToArray(), sizeof(ushort));
-        public static IndexBuffer FromCollection(IEnumerable<byte> collection) => new IndexBuffer(MemoryMarshal.AsBytes<byte>(collection.ToArray()).ToArray(), sizeof(byte));
+        public static IndexBuffer FromCollection(IEnumerable<int> collection) => FromCollection(collection.ToArray());
+        public static IndexBuffer FromCollection(IEnumerable<ushort> collection) => FromCollection(collection.ToArray());
+        public static IndexBuffer FromCollection(IEnumerable<byte> collection) => FromCollection(collection.ToArray());
+
+        public static IndexBuffer FromCollection(int[] collection) => new IndexBuffer(MemoryMarshal.AsBytes<int>(collection).ToArray(), sizeof(int));
+        public static IndexBuffer FromCollection(ushort[] collection) => new IndexBuffer(MemoryMarshal.AsBytes<ushort>(collection).ToArray(), sizeof(ushort));
+        public static IndexBuffer FromCollection(byte[] collection) => new IndexBuffer(collection, sizeof(byte));
 
 
         private readonly ReadMethod GetValue;

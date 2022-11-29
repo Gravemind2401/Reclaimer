@@ -2,6 +2,7 @@
 using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
+using Reclaimer.Geometry;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -79,53 +80,14 @@ namespace Reclaimer.Blam.Halo2
                 {
                     var sectionInfo = reader.ReadObject<MeshResourceDetailsBlock>();
 
-                    var submeshResource = section.Resources[0];
-                    var indexResource = section.Resources.FirstOrDefault(r => r.Type0 == 32);
-                    var vertexResource = section.Resources.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 0);
-                    var uvResource = section.Resources.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 1);
-                    var normalsResource = section.Resources.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 2);
-
-                    reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
-                    var submeshes = reader.ReadArray<SubmeshDataBlock>(submeshResource.Size / 72);
-
-                    var mesh = new GeometryMesh();
-
-                    mesh.IndexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
-                        ? IndexFormat.TriangleList
-                        : IndexFormat.TriangleStrip;
-
-                    reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
-                    mesh.Indicies = reader.ReadEnumerable<ushort>(sectionInfo.IndexCount).Select(i => (int)i).ToArray();
-
-                    #region Vertices
-                    mesh.Vertices = new IVertex[section.VertexCount];
-                    var vertexSize = vertexResource.Size / section.VertexCount;
-                    for (var i = 0; i < section.VertexCount; i++)
+                    var mesh = new GeometryMesh
                     {
-                        var vert = new WorldVertex();
+                        IndexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
+                            ? IndexFormat.TriangleList
+                            : IndexFormat.TriangleStrip
+                    };
 
-                        reader.Seek(baseAddress + vertexResource.Offset + i * vertexSize, SeekOrigin.Begin);
-                        vert.Position = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-
-                        mesh.Vertices[i] = vert;
-                    }
-
-                    for (var i = 0; i < section.VertexCount; i++)
-                    {
-                        var vert = (WorldVertex)mesh.Vertices[i];
-
-                        reader.Seek(baseAddress + uvResource.Offset + i * 8, SeekOrigin.Begin);
-                        vert.TexCoords = new RealVector2D(reader.ReadSingle(), reader.ReadSingle());
-                    }
-
-                    for (var i = 0; i < section.VertexCount; i++)
-                    {
-                        var vert = (WorldVertex)mesh.Vertices[i];
-
-                        reader.Seek(baseAddress + normalsResource.Offset + i * 12, SeekOrigin.Begin);
-                        vert.Normal = new HenDN3(reader.ReadUInt32());
-                    }
-                    #endregion
+                    PopulateMeshData(reader, mesh, baseAddress, sectionInfo.IndexCount, section.VertexCount, section.Resources);
 
                     var perm = new GeometryPermutation
                     {
@@ -134,16 +96,6 @@ namespace Reclaimer.Blam.Halo2
                         MeshIndex = model.Meshes.Count,
                         MeshCount = 1
                     };
-
-                    foreach (var submesh in submeshes)
-                    {
-                        mesh.Submeshes.Add(new GeometrySubmesh
-                        {
-                            MaterialIndex = submesh.ShaderIndex,
-                            IndexStart = submesh.IndexStart,
-                            IndexLength = submesh.IndexLength
-                        });
-                    }
 
                     clusterRegion.Permutations.Add(perm);
                     model.Meshes.Add(mesh);
@@ -167,53 +119,15 @@ namespace Reclaimer.Blam.Halo2
                 {
                     var sectionInfo = reader.ReadObject<MeshResourceDetailsBlock>();
 
-                    var submeshResource = section.Resources[0];
-                    var indexResource = section.Resources.FirstOrDefault(r => r.Type0 == 32);
-                    var vertexResource = section.Resources.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 0);
-                    var uvResource = section.Resources.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 1);
-                    var normalsResource = section.Resources.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 2);
-
-                    reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
-                    var submeshes = reader.ReadArray<SubmeshDataBlock>(submeshResource.Size / 72);
-
-                    var mesh = new GeometryMesh { IsInstancing = true };
-
-                    mesh.IndexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
-                        ? IndexFormat.TriangleList
-                        : IndexFormat.TriangleStrip;
-
-                    reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
-                    mesh.Indicies = reader.ReadEnumerable<ushort>(sectionInfo.IndexCount).Select(i => (int)i).ToArray();
-
-                    #region Vertices
-                    mesh.Vertices = new IVertex[section.VertexCount];
-                    var vertexSize = vertexResource.Size / section.VertexCount;
-                    for (var i = 0; i < section.VertexCount; i++)
+                    var mesh = new GeometryMesh
                     {
-                        var vert = new WorldVertex();
+                        IsInstancing = true,
+                        IndexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
+                            ? IndexFormat.TriangleList
+                            : IndexFormat.TriangleStrip
+                    };
 
-                        reader.Seek(baseAddress + vertexResource.Offset + i * vertexSize, SeekOrigin.Begin);
-                        vert.Position = new RealVector3D(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-
-                        mesh.Vertices[i] = vert;
-                    }
-
-                    for (var i = 0; i < section.VertexCount; i++)
-                    {
-                        var vert = (WorldVertex)mesh.Vertices[i];
-
-                        reader.Seek(baseAddress + uvResource.Offset + i * 8, SeekOrigin.Begin);
-                        vert.TexCoords = new RealVector2D(reader.ReadSingle(), reader.ReadSingle());
-                    }
-
-                    for (var i = 0; i < section.VertexCount; i++)
-                    {
-                        var vert = (WorldVertex)mesh.Vertices[i];
-
-                        reader.Seek(baseAddress + normalsResource.Offset + i * 12, SeekOrigin.Begin);
-                        vert.Normal = new HenDN3(reader.ReadUInt32());
-                    }
-                    #endregion
+                    PopulateMeshData(reader, mesh, baseAddress, sectionInfo.IndexCount, section.VertexCount, section.Resources);
 
                     var perms = GeometryInstances
                         .Where(i => i.SectionIndex == sectionIndex)
@@ -227,15 +141,6 @@ namespace Reclaimer.Blam.Halo2
                             MeshCount = 1
                         }).ToList();
 
-                    mesh.Submeshes.AddRange(
-                        submeshes.Select(s => new GeometrySubmesh
-                        {
-                            MaterialIndex = s.ShaderIndex,
-                            IndexStart = s.IndexStart,
-                            IndexLength = s.IndexLength
-                        })
-                    );
-
                     sectionRegion.Permutations.AddRange(perms);
                     model.Meshes.Add(mesh);
                 }
@@ -245,6 +150,58 @@ namespace Reclaimer.Blam.Halo2
             #endregion
 
             return model;
+        }
+
+        private static void PopulateMeshData(EndianReader reader, GeometryMesh mesh, int baseAddress, int indexCount, int vertexCount, IReadOnlyList<ResourceInfoBlock> resourceBlocks)
+        {
+            var submeshResource = resourceBlocks[0];
+            var indexResource = resourceBlocks.FirstOrDefault(r => r.Type0 == 32);
+            var vertexResource = resourceBlocks.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 0);
+            var uvResource = resourceBlocks.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 1);
+            var normalsResource = resourceBlocks.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 2);
+
+            reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
+            var submeshes = reader.ReadArray<SubmeshDataBlock>(submeshResource.Size / 72);
+
+            mesh.Submeshes.AddRange(
+                submeshes.Select(s => new GeometrySubmesh
+                {
+                    MaterialIndex = s.ShaderIndex,
+                    IndexStart = s.IndexStart,
+                    IndexLength = s.IndexLength
+                })
+            );
+
+            reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
+            mesh.IndexBuffer = IndexBuffer.FromCollection(reader.ReadArray<ushort>(indexCount));
+
+            var positionBuffer = new VectorBuffer<Geometry.Vectors.RealVector3>(vertexCount);
+            var texCoordsBuffer = new VectorBuffer<Geometry.Vectors.RealVector2>(vertexCount);
+            var normalBuffer = new VectorBuffer<Geometry.Vectors.HenDN3>(vertexCount);
+
+            mesh.VertexBuffer = new VertexBuffer();
+            mesh.VertexBuffer.PositionChannels.Add(positionBuffer);
+            mesh.VertexBuffer.TextureCoordinateChannels.Add(texCoordsBuffer);
+            mesh.VertexBuffer.NormalChannels.Add(normalBuffer);
+
+            var vertexSize = vertexResource.Size / vertexCount;
+            for (var i = 0; i < vertexCount; i++)
+            {
+                reader.Seek(baseAddress + vertexResource.Offset + i * vertexSize, SeekOrigin.Begin);
+                positionBuffer[i] = new Geometry.Vectors.RealVector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            }
+
+            for (var i = 0; i < vertexCount; i++)
+            {
+                reader.Seek(baseAddress + uvResource.Offset + i * 8, SeekOrigin.Begin);
+                texCoordsBuffer[i] = new Geometry.Vectors.RealVector2(reader.ReadSingle(), reader.ReadSingle());
+            }
+
+            for (var i = 0; i < vertexCount; i++)
+            {
+                reader.Seek(baseAddress + normalsResource.Offset + i * 12, SeekOrigin.Begin);
+                normalBuffer[i] = new Geometry.Vectors.HenDN3(reader.ReadUInt32());
+            }
         }
 
         public IEnumerable<IBitmap> GetAllBitmaps() => Halo2Common.GetBitmaps(Shaders);

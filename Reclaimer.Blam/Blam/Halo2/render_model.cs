@@ -2,6 +2,7 @@
 using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
+using Reclaimer.Geometry;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -99,22 +100,54 @@ namespace Reclaimer.Blam.Halo2
                     reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
                     var submeshes = reader.ReadArray<SubmeshDataBlock>(submeshResource.Size / 72);
 
-                    var mesh = new GeometryMesh { BoundsIndex = 0, };
-
-                    foreach (var submesh in submeshes)
+                    var mesh = new GeometryMesh
                     {
-                        mesh.Submeshes.Add(new GeometrySubmesh
-                        {
-                            MaterialIndex = submesh.ShaderIndex,
-                            IndexStart = submesh.IndexStart,
-                            IndexLength = submesh.IndexLength
-                        });
-                    }
+                        BoundsIndex = 0,
+                        IndexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
+                            ? IndexFormat.TriangleList
+                            : IndexFormat.TriangleStrip
+                    };
 
-                    mesh.IndexFormat = section.FaceCount * 3 == sectionInfo.IndexCount ? IndexFormat.TriangleList : IndexFormat.TriangleStrip;
+                    mesh.Submeshes.AddRange(
+                        submeshes.Select(s => new GeometrySubmesh
+                        {
+                            MaterialIndex = s.ShaderIndex,
+                            IndexStart = s.IndexStart,
+                            IndexLength = s.IndexLength
+                        })
+                    );
 
                     reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
-                    mesh.Indicies = reader.ReadEnumerable<ushort>(sectionInfo.IndexCount).Select(i => (int)i).ToArray();
+                    mesh.IndexBuffer = IndexBuffer.FromCollection(reader.ReadArray<ushort>(sectionInfo.IndexCount));
+
+                    #region Vertices
+                    var positionBuffer = new VectorBuffer<Geometry.Vectors.UInt16N4>(section.VertexCount);
+                    var texCoordsBuffer = new VectorBuffer<Geometry.Vectors.UInt16N2>(section.VertexCount);
+                    var normalBuffer = new VectorBuffer<Geometry.Vectors.HenDN3>(section.VertexCount);
+
+                    mesh.VertexBuffer = new VertexBuffer();
+                    mesh.VertexBuffer.PositionChannels.Add(positionBuffer);
+                    mesh.VertexBuffer.TextureCoordinateChannels.Add(texCoordsBuffer);
+                    mesh.VertexBuffer.NormalChannels.Add(normalBuffer);
+
+                    var vertexSize = vertexResource.Size / section.VertexCount;
+                    for (var i = 0; i < section.VertexCount; i++)
+                    {
+                        reader.Seek(baseAddress + vertexResource.Offset + i * vertexSize, SeekOrigin.Begin);
+                        positionBuffer[i] = new Geometry.Vectors.UInt16N4((ushort)(reader.ReadInt16() - short.MinValue), (ushort)(reader.ReadInt16() - short.MinValue), (ushort)(reader.ReadInt16() - short.MinValue), default);
+                    }
+
+                    for (var i = 0; i < section.VertexCount; i++)
+                    {
+                        reader.Seek(baseAddress + uvResource.Offset + i * 4, SeekOrigin.Begin);
+                        texCoordsBuffer[i] = new Geometry.Vectors.UInt16N2((ushort)(reader.ReadInt16() - short.MinValue), (ushort)(reader.ReadInt16() - short.MinValue));
+                    }
+
+                    for (var i = 0; i < section.VertexCount; i++)
+                    {
+                        reader.Seek(baseAddress + normalsResource.Offset + i * 12, SeekOrigin.Begin);
+                        normalBuffer[i] = new Geometry.Vectors.HenDN3(reader.ReadUInt32());
+                    }
 
                     var nodeMap = Array.Empty<byte>();
                     if (nodeMapResource != null)
@@ -123,35 +156,7 @@ namespace Reclaimer.Blam.Halo2
                         nodeMap = reader.ReadBytes(sectionInfo.NodeMapCount);
                     }
 
-                    #region Vertices
-                    mesh.Vertices = new IVertex[section.VertexCount];
-                    var vertexSize = vertexResource.Size / section.VertexCount;
-                    for (var i = 0; i < section.VertexCount; i++)
-                    {
-                        var vert = new Vertex();
-
-                        reader.Seek(baseAddress + vertexResource.Offset + i * vertexSize, SeekOrigin.Begin);
-                        vert.Position = new UInt16N4((ushort)(reader.ReadInt16() - short.MinValue), (ushort)(reader.ReadInt16() - short.MinValue), (ushort)(reader.ReadInt16() - short.MinValue), 0);
-                        ReadBlendData(reader, section, mesh, vert, nodeMap);
-
-                        mesh.Vertices[i] = vert;
-                    }
-
-                    for (var i = 0; i < section.VertexCount; i++)
-                    {
-                        var vert = (Vertex)mesh.Vertices[i];
-
-                        reader.Seek(baseAddress + uvResource.Offset + i * 4, SeekOrigin.Begin);
-                        vert.TexCoords = new UInt16N2((ushort)(reader.ReadInt16() - short.MinValue), (ushort)(reader.ReadInt16() - short.MinValue));
-                    }
-
-                    for (var i = 0; i < section.VertexCount; i++)
-                    {
-                        var vert = (Vertex)mesh.Vertices[i];
-
-                        reader.Seek(baseAddress + normalsResource.Offset + i * 12, SeekOrigin.Begin);
-                        vert.Normal = new HenDN3(reader.ReadUInt32());
-                    }
+                    PopulateBlendData(reader, section, mesh, nodeMap, baseAddress + vertexResource.Offset, vertexSize);
                     #endregion
 
                     model.Meshes.Add(mesh);
@@ -161,7 +166,7 @@ namespace Reclaimer.Blam.Halo2
             return model;
         }
 
-        private static void ReadBlendData(EndianReader reader, SectionBlock section, GeometryMesh mesh, Vertex vert, byte[] nodeMap)
+        private static void PopulateBlendData(EndianReader reader, SectionBlock section, GeometryMesh mesh, byte[] nodeMap, int vertexOffset, int vertexSize)
         {
             if (section.GeometryClassification == GeometryClassification.Rigid)
             {
@@ -175,39 +180,57 @@ namespace Reclaimer.Blam.Halo2
 
                 return;
             }
-            else if (section.GeometryClassification == GeometryClassification.RigidBoned)
+
+            var blendIndexBuffer = new VectorBuffer<Geometry.Vectors.UByte4>(section.VertexCount);
+            var blendWeightBuffer = new VectorBuffer<Geometry.Vectors.RealVector4>(section.VertexCount);
+
+            mesh.VertexBuffer.BlendIndexChannels.Add(blendIndexBuffer);
+            mesh.VertexBuffer.BlendWeightChannels.Add(blendWeightBuffer);
+
+            for (var i = 0; i < section.VertexCount; i++)
             {
-                mesh.VertexWeights = VertexWeights.Skinned;
-                vert.BlendIndices = new RealVector4D(reader.ReadByte(), 0, 0, 0);
-                vert.BlendWeight = new RealVector4D(1, 0, 0, 0);
-                reader.ReadByte();
-            }
-            else if (section.GeometryClassification == GeometryClassification.Skinned)
-            {
-                mesh.VertexWeights = VertexWeights.Skinned;
-                if (section.NodesPerVertex == 2 || section.NodesPerVertex == 4)
-                    reader.ReadInt16();
+                Geometry.Vectors.UByte4 blendIndices = default;
+                Geometry.Vectors.RealVector4 blendWeights = default;
 
-                var nodes = Enumerable.Range(0, 4).Select(i => section.NodesPerVertex > i ? reader.ReadByte() : 0).ToList();
-                var weights = Enumerable.Range(0, 4).Select(i => section.NodesPerVertex > i ? reader.ReadByte() / (float)byte.MaxValue : 0).ToList();
-
-                if (section.NodesPerVertex == 1 && weights.Sum() == 0)
-                    weights[0] = 1;
-
-                vert.BlendIndices = new RealVector4D(nodes[0], nodes[1], nodes[2], nodes[3]);
-                vert.BlendWeight = new RealVector4D(weights[0], weights[1], weights[2], weights[3]);
-            }
-
-            if (nodeMap.Length > 0)
-            {
-                var temp = vert.BlendIndices;
-                vert.BlendIndices = new RealVector4D
+                reader.Seek(vertexOffset + i * vertexSize + 6, SeekOrigin.Begin);
+                
+                if (section.GeometryClassification == GeometryClassification.RigidBoned)
                 {
-                    X = section.NodesPerVertex > 0 ? nodeMap[(int)temp.X] : 0,
-                    Y = section.NodesPerVertex > 1 ? nodeMap[(int)temp.Y] : 0,
-                    Z = section.NodesPerVertex > 2 ? nodeMap[(int)temp.Z] : 0,
-                    W = section.NodesPerVertex > 3 ? nodeMap[(int)temp.W] : 0,
-                };
+                    mesh.VertexWeights = VertexWeights.Skinned;
+                    blendIndices = new Geometry.Vectors.UByte4(reader.ReadByte(), default, default, default);
+                    blendWeights = new Geometry.Vectors.RealVector4(1f, default, default, default);
+                    reader.ReadByte();
+                }
+                else if (section.GeometryClassification == GeometryClassification.Skinned)
+                {
+                    mesh.VertexWeights = VertexWeights.Skinned;
+                    if (section.NodesPerVertex == 2 || section.NodesPerVertex == 4)
+                        reader.ReadInt16();
+
+                    var nodes = Enumerable.Range(0, 4).Select(i => section.NodesPerVertex > i ? reader.ReadByte() : byte.MinValue).ToList();
+                    var weights = Enumerable.Range(0, 4).Select(i => section.NodesPerVertex > i ? reader.ReadByte() / (float)byte.MaxValue : 0).ToList();
+
+                    if (section.NodesPerVertex == 1 && weights.Sum() == 0)
+                        weights[0] = 1;
+
+                    blendIndices = new Geometry.Vectors.UByte4(nodes[0], nodes[1], nodes[2], nodes[3]);
+                    blendWeights = new Geometry.Vectors.RealVector4(weights[0], weights[1], weights[2], weights[3]);
+                }
+
+                if (nodeMap.Length > 0)
+                {
+                    var temp = blendIndices;
+                    blendIndices = new Geometry.Vectors.UByte4
+                    {
+                        X = section.NodesPerVertex > 0 ? nodeMap[temp.X] : byte.MinValue,
+                        Y = section.NodesPerVertex > 1 ? nodeMap[temp.Y] : byte.MinValue,
+                        Z = section.NodesPerVertex > 2 ? nodeMap[temp.Z] : byte.MinValue,
+                        W = section.NodesPerVertex > 3 ? nodeMap[temp.W] : byte.MinValue,
+                    };
+                }
+
+                blendIndexBuffer[i] = blendIndices;
+                blendWeightBuffer[i] = blendWeights;
             }
         }
 
