@@ -13,25 +13,25 @@ namespace Reclaimer.Geometry
 
         float X
         {
-            get => throw new ArgumentOutOfRangeException();
+            get => default;
             set => throw new ArgumentOutOfRangeException();
         }
 
         float Y
         {
-            get => throw new ArgumentOutOfRangeException();
+            get => default;
             set => throw new ArgumentOutOfRangeException();
         }
 
         float Z
         {
-            get => throw new ArgumentOutOfRangeException();
+            get => default;
             set => throw new ArgumentOutOfRangeException();
         }
 
         float W
         {
-            get => throw new ArgumentOutOfRangeException();
+            get => default;
             set => throw new ArgumentOutOfRangeException();
         }
     }
