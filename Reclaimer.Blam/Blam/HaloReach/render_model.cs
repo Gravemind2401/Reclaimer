@@ -147,7 +147,7 @@ namespace Reclaimer.Blam.HaloReach
             model.Meshes.Remove(sourceMesh);
 
             var section = Sections[InstancedGeometrySectionIndex];
-            for (int i = 0; i < GeometryInstances.Count; i++)
+            for (var i = 0; i < GeometryInstances.Count; i++)
             {
                 var subset = section.Subsets[i];
                 var mesh = new GeometryMesh
@@ -158,7 +158,7 @@ namespace Reclaimer.Blam.HaloReach
                     BoundsIndex = 0
                 };
 
-                var strip = sourceMesh.IndexBuffer.Skip(subset.IndexStart).Take(subset.IndexLength);
+                var strip = sourceMesh.IndexBuffer.GetSubset(subset.IndexStart, subset.IndexLength);
 
                 var min = strip.Min();
                 var max = strip.Max();

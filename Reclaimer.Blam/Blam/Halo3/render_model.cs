@@ -157,7 +157,7 @@ namespace Reclaimer.Blam.Halo3
                     BoundsIndex = 0
                 };
 
-                var strip = sourceMesh.IndexBuffer.Skip(subset.IndexStart).Take(subset.IndexLength);
+                var strip = sourceMesh.IndexBuffer.GetSubset(subset.IndexStart, subset.IndexLength);
 
                 var min = strip.Min();
                 var max = strip.Max();

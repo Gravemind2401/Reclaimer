@@ -1,6 +1,7 @@
 ﻿using Adjutant.Geometry;
 using Adjutant.Spatial;
 using Reclaimer.Blam.Utilities;
+using Reclaimer.Geometry;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -143,21 +144,21 @@ namespace Reclaimer.Blam.Halo5
                     BoundsIndex = 0
                 };
 
-                var strip = sourceMesh.Indicies.Skip(subset.IndexStart).Take(subset.IndexLength);
+                var strip = sourceMesh.IndexBuffer.GetSubset(subset.IndexStart, subset.IndexLength);
 
                 var min = strip.Min();
                 var max = strip.Max();
                 var len = max - min + 1;
 
-                mesh.Indicies = strip.Select(j => j - min).ToArray();
-                mesh.Vertices = sourceMesh.Vertices.Skip(min).Take(len).ToArray();
+                mesh.IndexBuffer = IndexBuffer.FromCollection(strip.Select(j => j - min));
+                mesh.VertexBuffer = sourceMesh.VertexBuffer.GetSubset(min, len);
 
                 var submesh = section.SectionLods[localLod].Submeshes[subset.SubmeshIndex];
                 mesh.Submeshes.Add(new GeometrySubmesh
                 {
                     MaterialIndex = submesh.ShaderIndex,
                     IndexStart = 0,
-                    IndexLength = mesh.Indicies.Length
+                    IndexLength = mesh.IndexBuffer.Count
                 });
 
                 model.Meshes.Add(mesh);
