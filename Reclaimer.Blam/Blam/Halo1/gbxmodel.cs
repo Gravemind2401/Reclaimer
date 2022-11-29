@@ -107,9 +107,26 @@ namespace Reclaimer.Blam.Halo1
             foreach (var section in Sections)
             {
                 var indices = new List<int>();
-                var vertices = new List<CompressedVertex>();
                 var submeshes = new List<IGeometrySubmesh>();
 
+                var vertexBuffer = new VertexBuffer();
+                var positions = new List<IVector>();
+                var normals = new List<IVector>();
+                var binormals = new List<IVector>();
+                var tangents = new List<IVector>();
+                var texCoords = new List<IVector>();
+                var boneIndices = new List<IVector>();
+                var boneWeights = new List<IVector>();
+
+                vertexBuffer.PositionChannels.Add(positions);
+                vertexBuffer.NormalChannels.Add(normals);
+                vertexBuffer.BinormalChannels.Add(binormals);
+                vertexBuffer.TangentChannels.Add(tangents);
+                vertexBuffer.TextureCoordinateChannels.Add(texCoords);
+                vertexBuffer.BlendIndexChannels.Add(boneIndices);
+                vertexBuffer.BlendWeightChannels.Add(boneWeights);
+
+                var vertexTally = 0;
                 foreach (var submesh in section.Submeshes)
                 {
                     if (submesh.IndexCount == 0 || submesh.VertexCount == 0)
@@ -131,25 +148,23 @@ namespace Reclaimer.Blam.Halo1
                         reader.Seek(reader.ReadInt32() - tagIndex.Magic, SeekOrigin.Begin);
 
                         var indicesTemp = reader.ReadArray<ushort>(gSubmesh.IndexLength);
-                        indices.AddRange(indicesTemp.Select(i => i + vertices.Count));
+                        indices.AddRange(indicesTemp.Select(i => i + vertexTally));
 
                         reader.Seek(submesh.VertexOffset - tagIndex.Magic, SeekOrigin.Begin);
                         reader.ReadInt32();
                         reader.Seek(reader.ReadInt32() - tagIndex.Magic, SeekOrigin.Begin);
 
-                        var vertsTemp = new List<CompressedVertex>();
                         for (var i = 0; i < submesh.VertexCount; i++)
-                            vertsTemp.Add(new CompressedVertex(reader));
-
-                        if (UScale != 1 || VScale != 1)
                         {
-                            vertsTemp.ForEach((v) =>
-                            {
-                                var vec = v.TexCoords;
-                                vec.X *= UScale;
-                                vec.Y *= VScale;
-                                v.TexCoords = vec;
-                            });
+                            positions.Add(new Geometry.Vectors.RealVector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle()));
+                            normals.Add(new Geometry.Vectors.HenDN3(reader.ReadUInt32()));
+                            binormals.Add(new Geometry.Vectors.HenDN3(reader.ReadUInt32()));
+                            tangents.Add(new Geometry.Vectors.HenDN3(reader.ReadUInt32()));
+                            texCoords.Add(new Geometry.Vectors.RealVector2(reader.ReadInt16() / (float)short.MaxValue, reader.ReadInt16() / (float)short.MaxValue));
+                            boneIndices.Add(new Geometry.Vectors.UShort2((ushort)(reader.ReadByte() / 3), (ushort)(reader.ReadByte() / 3)));
+                            
+                            var node0Weight = reader.ReadUInt16() / (float)short.MaxValue;
+                            boneWeights.Add(new Geometry.Vectors.RealVector2(node0Weight, 1 - node0Weight));
                         }
 
                         //if (Flags.HasFlag(ModelFlags.UseLocalNodes))
@@ -167,17 +182,30 @@ namespace Reclaimer.Blam.Halo1
                         //    });
                         //}
 
-                        vertices.AddRange(vertsTemp);
+                        vertexTally += submesh.VertexCount;
                     }
                     catch { }
+                }
+
+                if (UScale != 1 || VScale != 1)
+                {
+                    for (var i = 0; i < texCoords.Count; i++)
+                    {
+                        var v = texCoords[i];
+                        texCoords[i] = new Geometry.Vectors.RealVector2
+                        {
+                            X = v.X * UScale,
+                            Y = v.Y * VScale
+                        };
+                    };
                 }
 
                 yield return new GeometryMesh
                 {
                     IndexFormat = IndexFormat.TriangleStrip,
                     VertexWeights = VertexWeights.Skinned,
-                    Indicies = indices.ToArray(),
-                    Vertices = vertices.ToArray(),
+                    IndexBuffer = IndexBuffer.FromCollection(indices),
+                    VertexBuffer = vertexBuffer,
                     Submeshes = submeshes
                 };
             }
