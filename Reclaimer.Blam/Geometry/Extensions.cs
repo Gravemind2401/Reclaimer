@@ -239,50 +239,8 @@ namespace Adjutant.Geometry
                 }
             }
 
-            private List<int> mergedIndices;
-            public IReadOnlyList<int> Indicies
-            {
-                get
-                {
-                    if (meshCount == 1)
-                        return model.Meshes[meshIndex].Indicies;
-
-                    if (mergedIndices == null)
-                    {
-                        mergedIndices = new List<int>();
-
-                        var offset = 0;
-                        foreach (var mesh in AllMeshes)
-                        {
-                            var indices = mesh.IndexFormat == IndexFormat.TriangleStrip
-                                ? mesh.Indicies.Unstrip()
-                                : mesh.Indicies;
-
-                            mergedIndices.AddRange(indices.Select(i => offset + i));
-                            offset += mesh.VertexCount;
-                        }
-                    }
-
-                    return mergedIndices;
-                }
-            }
-
-            private List<IVertex> mergedVertices;
-            public IReadOnlyList<IVertex> Vertices
-            {
-                get
-                {
-                    if (meshCount == 1)
-                        return model.Meshes[meshIndex].Vertices;
-
-                    if (mergedVertices == null)
-                        mergedVertices = AllMeshes.SelectMany(m => m.Vertices).ToList();
-
-                    return mergedVertices;
-                }
-            }
-
-            public VertexBuffer VertexBuffer => null;
+            IReadOnlyList<IVertex> IGeometryMesh.Vertices => null;
+            IReadOnlyList<int> IGeometryMesh.Indicies => null;
 
             private IndexBuffer mergedIndexBuffer;
             public IIndexBuffer IndexBuffer
@@ -317,10 +275,70 @@ namespace Adjutant.Geometry
                 }
             }
 
+            private VertexBuffer mergedVertexBuffer;
+            public VertexBuffer VertexBuffer
+            {
+                get
+                {
+                    if (meshCount == 1)
+                        return model.Meshes[meshIndex].VertexBuffer;
+
+                    if (mergedVertexBuffer == null)
+                    {
+                        IEnumerable<IReadOnlyList<IVector>> MergeChannels(IEnumerable<IList<IReadOnlyList<IVector>>> channels)
+                        {
+                            return channels.Aggregate(
+                                new List<List<IVector>>(),
+                                (result, merge) =>
+                                {
+                                    if (result.Count == 0)
+                                        result.AddRange(merge.Select(c => c.ToList()));
+                                    else
+                                    {
+                                        foreach (var (a, b) in result.Zip(merge))
+                                            a.AddRange(b);
+                                    }
+
+                                    return result;
+                                }
+                            ).Select(c => c.ToList());
+                        }
+
+                        mergedVertexBuffer = new VertexBuffer();
+
+                        foreach (var channel in MergeChannels(AllMeshes.Select(m => m.VertexBuffer.PositionChannels)))
+                            mergedVertexBuffer.PositionChannels.Add(channel);
+
+                        foreach (var channel in MergeChannels(AllMeshes.Select(m => m.VertexBuffer.TextureCoordinateChannels)))
+                            mergedVertexBuffer.TextureCoordinateChannels.Add(channel);
+
+                        foreach (var channel in MergeChannels(AllMeshes.Select(m => m.VertexBuffer.NormalChannels)))
+                            mergedVertexBuffer.NormalChannels.Add(channel);
+
+                        foreach (var channel in MergeChannels(AllMeshes.Select(m => m.VertexBuffer.TangentChannels)))
+                            mergedVertexBuffer.TangentChannels.Add(channel);
+
+                        foreach (var channel in MergeChannels(AllMeshes.Select(m => m.VertexBuffer.BinormalChannels)))
+                            mergedVertexBuffer.BinormalChannels.Add(channel);
+
+                        foreach (var channel in MergeChannels(AllMeshes.Select(m => m.VertexBuffer.BlendIndexChannels)))
+                            mergedVertexBuffer.BlendIndexChannels.Add(channel);
+
+                        foreach (var channel in MergeChannels(AllMeshes.Select(m => m.VertexBuffer.BlendWeightChannels)))
+                            mergedVertexBuffer.BlendWeightChannels.Add(channel);
+
+                        foreach (var channel in MergeChannels(AllMeshes.Select(m => m.VertexBuffer.ColorChannels)))
+                            mergedVertexBuffer.ColorChannels.Add(channel);
+                    }
+
+                    return mergedVertexBuffer;
+                }
+            }
+
             public void Dispose()
             {
-                mergedIndices.Clear();
-                mergedVertices.Clear();
+                mergedIndexBuffer = null;
+                mergedVertexBuffer = null;
                 mergedSubmeshes.Clear();
             }
         }
