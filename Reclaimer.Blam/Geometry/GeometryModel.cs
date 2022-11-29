@@ -154,9 +154,6 @@ namespace Adjutant.Geometry
         public VertexWeights VertexWeights { get; set; }
         public IndexFormat IndexFormat { get; set; }
 
-        public IVertex[] Vertices { get; set; }
-        public int[] Indicies { get; set; }
-
         public VertexBuffer VertexBuffer { get; set; }
         public IIndexBuffer IndexBuffer { get; set; }
 
@@ -171,18 +168,14 @@ namespace Adjutant.Geometry
 
         #region IGeometryMesh
 
-        IReadOnlyList<IVertex> IGeometryMesh.Vertices => Vertices;
-
-        IReadOnlyList<int> IGeometryMesh.Indicies => Indicies;
-
         IReadOnlyList<IGeometrySubmesh> IGeometryMesh.Submeshes => Submeshes;
 
         #endregion
 
         public void Dispose()
         {
-            Vertices = null;
-            Indicies = null;
+            VertexBuffer = null;
+            IndexBuffer = null;
             Submeshes.Clear();
         }
     }

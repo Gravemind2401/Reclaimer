@@ -80,9 +80,7 @@ namespace Adjutant.Geometry
 
         public static IEnumerable<int> GetTriangleIndicies(this IGeometryMesh mesh, IGeometrySubmesh submesh)
         {
-            var indices = mesh.IndexBuffer == null
-                ? mesh.Indicies.Skip(submesh.IndexStart).Take(submesh.IndexLength).ToList()
-                : mesh.IndexBuffer[submesh.IndexStart..(submesh.IndexStart + submesh.IndexLength)];
+            var indices = mesh.IndexBuffer.GetSubset(submesh.IndexStart, submesh.IndexLength);
 
             if (mesh.IndexFormat == IndexFormat.TriangleStrip)
                 indices = Unstrip(indices);
@@ -93,81 +91,31 @@ namespace Adjutant.Geometry
         public static IEnumerable<Vector3> GetPositions(this IGeometryMesh mesh) => GetPositions(mesh, 0, mesh.VertexCount);
         public static IEnumerable<Vector3> GetPositions(this IGeometryMesh mesh, int index, int count)
         {
-            if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasPositions)
-                return null;
-
-            if (mesh.VertexBuffer == null && mesh.Vertices[0].Position.Count == 0)
-                return null;
-
-            return mesh.VertexBuffer != null
-                ? mesh.VertexBuffer.PositionChannels[0].GetSubset(index, count).Select(v => new Vector3(v.X, v.Y, v.Z))
-                : (from i in Enumerable.Range(index, count)
-                   let v = mesh.Vertices[i].Position[0]
-                   select new Vector3(v.X, v.Y, v.Z));
+            return mesh.VertexBuffer.PositionChannels[0].GetSubset(index, count).Select(v => new Vector3(v.X, v.Y, v.Z));
         }
 
         public static IEnumerable<Vector2> GetTexCoords(this IGeometryMesh mesh) => GetTexCoords(mesh, 0, mesh.VertexCount);
         public static IEnumerable<Vector2> GetTexCoords(this IGeometryMesh mesh, int index, int count)
         {
-            if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasPositions)
-                return null;
-
-            if (mesh.VertexBuffer == null && mesh.Vertices[0].TexCoords.Count == 0)
-                return null;
-
-            return mesh.VertexBuffer != null
-                ? mesh.VertexBuffer.TextureCoordinateChannels[0].GetSubset(index, count).Select(v => new Vector2(v.X, v.Y))
-                : (from i in Enumerable.Range(index, count)
-                   let v = mesh.Vertices[i].TexCoords[0]
-                   select new Vector2(v.X, v.Y));
+            return mesh.VertexBuffer.TextureCoordinateChannels[0].GetSubset(index, count).Select(v => new Vector2(v.X, v.Y));
         }
 
         public static IEnumerable<Vector3> GetNormals(this IGeometryMesh mesh) => GetNormals(mesh, 0, mesh.VertexCount);
         public static IEnumerable<Vector3> GetNormals(this IGeometryMesh mesh, int index, int count)
         {
-            if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasNormals)
-                return null;
-
-            if (mesh.VertexBuffer == null && mesh.Vertices[0].Normal.Count == 0)
-                return null;
-
-            return mesh.VertexBuffer != null
-                ? mesh.VertexBuffer.NormalChannels[0].GetSubset(index, count).Select(v => new Vector3(v.X, v.Y, v.Z))
-                : (from i in Enumerable.Range(index, count)
-                   let v = mesh.Vertices[i].Normal[0]
-                   select new Vector3(v.X, v.Y, v.Z));
+            return mesh.VertexBuffer.NormalChannels[0].GetSubset(index, count).Select(v => new Vector3(v.X, v.Y, v.Z));
         }
 
         public static IEnumerable<Vector4> GetBlendIndices(this IGeometryMesh mesh) => GetBlendIndices(mesh, 0, mesh.VertexCount);
         public static IEnumerable<Vector4> GetBlendIndices(this IGeometryMesh mesh, int index, int count)
         {
-            if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasBlendIndices)
-                return null;
-
-            if (mesh.VertexBuffer == null && mesh.Vertices[0].BlendIndices.Count == 0)
-                return null;
-
-            return mesh.VertexBuffer != null
-                ? mesh.VertexBuffer.BlendIndexChannels[0].GetSubset(index, count).Select(v => new Vector4(v.X, v.Y, v.Z, v.W))
-                : (from i in Enumerable.Range(index, count)
-                   let v = mesh.Vertices[i].BlendIndices[0]
-                   select new Vector4(v.X, v.Y, v.Z, v.W));
+            return mesh.VertexBuffer.BlendIndexChannels[0].GetSubset(index, count).Select(v => new Vector4(v.X, v.Y, v.Z, v.W));
         }
 
         public static IEnumerable<Vector4> GetBlendWeights(this IGeometryMesh mesh) => GetBlendWeights(mesh, 0, mesh.VertexCount);
         public static IEnumerable<Vector4> GetBlendWeights(this IGeometryMesh mesh, int index, int count)
         {
-            if (mesh.VertexBuffer != null && !mesh.VertexBuffer.HasBlendWeights)
-                return null;
-
-            if (mesh.VertexBuffer == null && mesh.Vertices[0].BlendWeight.Count == 0)
-                return null;
-
-            return mesh.VertexBuffer != null
-                ? mesh.VertexBuffer.BlendWeightChannels[0].GetSubset(index, count).Select(v => new Vector4(v.X, v.Y, v.Z, v.W))
-                : (from i in Enumerable.Range(index, count)
-                   let v = mesh.Vertices[i].BlendWeight[0]
-                   select new Vector4(v.X, v.Y, v.Z, v.W));
+            return mesh.VertexBuffer.BlendWeightChannels[0].GetSubset(index, count).Select(v => new Vector4(v.X, v.Y, v.Z, v.W));
         }
 
         private class MultiMesh : IGeometryMesh
@@ -239,17 +187,11 @@ namespace Adjutant.Geometry
                 }
             }
 
-            IReadOnlyList<IVertex> IGeometryMesh.Vertices => null;
-            IReadOnlyList<int> IGeometryMesh.Indicies => null;
-
             private IndexBuffer mergedIndexBuffer;
             public IIndexBuffer IndexBuffer
             {
                 get
                 {
-                    if (model.Meshes[meshIndex].IndexBuffer == null)
-                        return null;
-
                     if (meshCount == 1)
                         return model.Meshes[meshIndex].IndexBuffer;
 
@@ -920,12 +862,12 @@ namespace Adjutant.Geometry
                     {
                         var mesh = model.Meshes[p.MeshIndex];
                         return mesh.IndexFormat == IndexFormat.TriangleList
-                            ? mesh.Indicies
-                            : mesh.Submeshes.SelectMany(s => mesh.Indicies.Skip(s.IndexStart).Take(s.IndexLength).Unstrip());
+                            ? mesh.IndexBuffer
+                            : mesh.Submeshes.SelectMany(s => mesh.IndexBuffer.GetSubset(s.IndexStart, s.IndexLength).Unstrip());
                     }).Count();
 
                     sw.WriteLine(totalEdges / 3);
-                    int offset = 0;
+                    var offset = 0;
                     foreach (var perm in allPerms)
                     {
                         var regIndex = allRegions.TakeWhile(r => !r.Permutations.Contains(perm)).Count();

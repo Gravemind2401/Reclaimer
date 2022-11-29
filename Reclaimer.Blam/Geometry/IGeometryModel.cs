@@ -74,13 +74,11 @@ namespace Adjutant.Geometry
         VertexWeights VertexWeights { get; }
         IndexFormat IndexFormat { get; }
 
-        IReadOnlyList<IVertex> Vertices { get; }
-        IReadOnlyList<int> Indicies { get; }
-
         VertexBuffer VertexBuffer { get; }
         IIndexBuffer IndexBuffer { get; }
 
-        int VertexCount => VertexBuffer?.Count ?? Vertices.Count;
+        int VertexCount => VertexBuffer?.Count ?? 0;
+        int IndexCount => IndexBuffer?.Count ?? 0;
 
         byte? NodeIndex { get; }
         short? BoundsIndex { get; }
