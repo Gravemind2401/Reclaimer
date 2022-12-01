@@ -3,6 +3,7 @@ using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
+using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -175,9 +176,9 @@ namespace Reclaimer.Blam.Halo2
             reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
             mesh.IndexBuffer = IndexBuffer.FromCollection(reader.ReadArray<ushort>(indexCount));
 
-            var positionBuffer = new VectorBuffer<Geometry.Vectors.RealVector3>(vertexCount);
-            var texCoordsBuffer = new VectorBuffer<Geometry.Vectors.RealVector2>(vertexCount);
-            var normalBuffer = new VectorBuffer<Geometry.Vectors.HenDN3>(vertexCount);
+            var positionBuffer = new VectorBuffer<RealVector3>(vertexCount);
+            var texCoordsBuffer = new VectorBuffer<RealVector2>(vertexCount);
+            var normalBuffer = new VectorBuffer<HenDN3>(vertexCount);
 
             mesh.VertexBuffer = new VertexBuffer();
             mesh.VertexBuffer.PositionChannels.Add(positionBuffer);
@@ -188,19 +189,19 @@ namespace Reclaimer.Blam.Halo2
             for (var i = 0; i < vertexCount; i++)
             {
                 reader.Seek(baseAddress + vertexResource.Offset + i * vertexSize, SeekOrigin.Begin);
-                positionBuffer[i] = new Geometry.Vectors.RealVector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                positionBuffer[i] = new RealVector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
             }
 
             for (var i = 0; i < vertexCount; i++)
             {
                 reader.Seek(baseAddress + uvResource.Offset + i * 8, SeekOrigin.Begin);
-                texCoordsBuffer[i] = new Geometry.Vectors.RealVector2(reader.ReadSingle(), reader.ReadSingle());
+                texCoordsBuffer[i] = new RealVector2(reader.ReadSingle(), reader.ReadSingle());
             }
 
             for (var i = 0; i < vertexCount; i++)
             {
                 reader.Seek(baseAddress + normalsResource.Offset + i * 12, SeekOrigin.Begin);
-                normalBuffer[i] = new Geometry.Vectors.HenDN3(reader.ReadUInt32());
+                normalBuffer[i] = new HenDN3(reader.ReadUInt32());
             }
         }
 

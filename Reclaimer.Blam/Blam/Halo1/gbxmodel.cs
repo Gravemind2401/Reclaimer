@@ -3,6 +3,7 @@ using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
+using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -156,15 +157,15 @@ namespace Reclaimer.Blam.Halo1
 
                         for (var i = 0; i < submesh.VertexCount; i++)
                         {
-                            positions.Add(new Geometry.Vectors.RealVector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle()));
-                            normals.Add(new Geometry.Vectors.HenDN3(reader.ReadUInt32()));
-                            binormals.Add(new Geometry.Vectors.HenDN3(reader.ReadUInt32()));
-                            tangents.Add(new Geometry.Vectors.HenDN3(reader.ReadUInt32()));
-                            texCoords.Add(new Geometry.Vectors.RealVector2(reader.ReadInt16() / (float)short.MaxValue, reader.ReadInt16() / (float)short.MaxValue));
-                            boneIndices.Add(new Geometry.Vectors.UShort2((ushort)(reader.ReadByte() / 3), (ushort)(reader.ReadByte() / 3)));
+                            positions.Add(new RealVector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle()));
+                            normals.Add(new HenDN3(reader.ReadUInt32()));
+                            binormals.Add(new HenDN3(reader.ReadUInt32()));
+                            tangents.Add(new HenDN3(reader.ReadUInt32()));
+                            texCoords.Add(new RealVector2(reader.ReadInt16() / (float)short.MaxValue, reader.ReadInt16() / (float)short.MaxValue));
+                            boneIndices.Add(new UShort2((ushort)(reader.ReadByte() / 3), (ushort)(reader.ReadByte() / 3)));
                             
                             var node0Weight = reader.ReadUInt16() / (float)short.MaxValue;
-                            boneWeights.Add(new Geometry.Vectors.RealVector2(node0Weight, 1 - node0Weight));
+                            boneWeights.Add(new RealVector2(node0Weight, 1 - node0Weight));
                         }
 
                         //if (Flags.HasFlag(ModelFlags.UseLocalNodes))
@@ -192,7 +193,7 @@ namespace Reclaimer.Blam.Halo1
                     for (var i = 0; i < texCoords.Count; i++)
                     {
                         var v = texCoords[i];
-                        texCoords[i] = new Geometry.Vectors.RealVector2
+                        texCoords[i] = new RealVector2
                         {
                             X = v.X * UScale,
                             Y = v.Y * VScale
@@ -228,16 +229,16 @@ namespace Reclaimer.Blam.Halo1
                 var vertexData = new byte[vertexSize * vertexCount];
 
                 var vertexBuffer = new VertexBuffer();
-                var texBuffer = new VectorBuffer<Geometry.Vectors.RealVector2>(vertexData, vertexCount, vertexSize, 48);
-                var boneBuffer = new VectorBuffer<Geometry.Vectors.UShort2>(vertexData, vertexCount, vertexSize, 56);
+                var texBuffer = new VectorBuffer<RealVector2>(vertexData, vertexCount, vertexSize, 48);
+                var boneBuffer = new VectorBuffer<UShort2>(vertexData, vertexCount, vertexSize, 56);
 
-                vertexBuffer.PositionChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 0));
-                vertexBuffer.NormalChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 12));
-                vertexBuffer.BinormalChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 24));
-                vertexBuffer.TangentChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 36));
+                vertexBuffer.PositionChannels.Add(new VectorBuffer<RealVector3>(vertexData, vertexCount, vertexSize, 0));
+                vertexBuffer.NormalChannels.Add(new VectorBuffer<RealVector3>(vertexData, vertexCount, vertexSize, 12));
+                vertexBuffer.BinormalChannels.Add(new VectorBuffer<RealVector3>(vertexData, vertexCount, vertexSize, 24));
+                vertexBuffer.TangentChannels.Add(new VectorBuffer<RealVector3>(vertexData, vertexCount, vertexSize, 36));
                 vertexBuffer.TextureCoordinateChannels.Add(texBuffer);
                 vertexBuffer.BlendIndexChannels.Add(boneBuffer);
-                vertexBuffer.BlendWeightChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector2>(vertexData, vertexCount, vertexSize, 60));
+                vertexBuffer.BlendWeightChannels.Add(new VectorBuffer<RealVector2>(vertexData, vertexCount, vertexSize, 60));
 
                 var vertexTally = 0;
                 foreach (var submesh in section.Submeshes)
@@ -269,7 +270,7 @@ namespace Reclaimer.Blam.Halo1
                         for (var i = vertexTally; i < submesh.VertexCount; i++)
                         {
                             var v = boneBuffer[i];
-                            boneBuffer[i] = new Geometry.Vectors.UShort2
+                            boneBuffer[i] = new UShort2
                             {
                                 X = nodes[v.X],
                                 Y = nodes[v.Y]
@@ -285,7 +286,7 @@ namespace Reclaimer.Blam.Halo1
                     for (var i = 0; i < texBuffer.Count; i++)
                     {
                         var v = texBuffer[i];
-                        texBuffer[i] = new Geometry.Vectors.RealVector2
+                        texBuffer[i] = new RealVector2
                         {
                             X = v.X * UScale,
                             Y = v.Y * VScale

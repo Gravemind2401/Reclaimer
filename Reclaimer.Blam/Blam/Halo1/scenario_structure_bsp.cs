@@ -3,6 +3,7 @@ using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
+using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -94,11 +95,11 @@ namespace Reclaimer.Blam.Halo1
                 var vertexData = new byte[vertexSize * vertexCount];
 
                 var vertexBuffer = new VertexBuffer();
-                vertexBuffer.PositionChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 0));
-                vertexBuffer.NormalChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 12));
-                vertexBuffer.BinormalChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 24));
-                vertexBuffer.TangentChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector3>(vertexData, vertexCount, vertexSize, 36));
-                vertexBuffer.TextureCoordinateChannels.Add(new VectorBuffer<Geometry.Vectors.RealVector2>(vertexData, vertexCount, vertexSize, 48));
+                vertexBuffer.PositionChannels.Add(new VectorBuffer<RealVector3>(vertexData, vertexCount, vertexSize, 0));
+                vertexBuffer.NormalChannels.Add(new VectorBuffer<RealVector3>(vertexData, vertexCount, vertexSize, 12));
+                vertexBuffer.BinormalChannels.Add(new VectorBuffer<RealVector3>(vertexData, vertexCount, vertexSize, 24));
+                vertexBuffer.TangentChannels.Add(new VectorBuffer<RealVector3>(vertexData, vertexCount, vertexSize, 36));
+                vertexBuffer.TextureCoordinateChannels.Add(new VectorBuffer<RealVector2>(vertexData, vertexCount, vertexSize, 48));
 
                 var localIndices = new List<int>();
                 var submeshes = new List<IGeometrySubmesh>();

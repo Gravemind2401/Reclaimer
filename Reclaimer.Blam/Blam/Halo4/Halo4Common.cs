@@ -4,6 +4,7 @@ using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Properties;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
+using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -241,11 +242,11 @@ namespace Reclaimer.Blam.Halo4
                 {
                     foreach (var v in mesh.VertexBuffer.BlendIndexChannels)
                     {
-                        var buf = v as VectorBuffer<Geometry.Vectors.UByte4>;
+                        var buf = v as VectorBuffer<UByte4>;
                         for (var i = 0; i < v.Count; i++)
                         {
                             var bi = buf[i];
-                            buf[i] = new Geometry.Vectors.UByte4
+                            buf[i] = new UByte4
                             {
                                 X = (byte)mapNode(sectionIndex, bi.X),
                                 Y = (byte)mapNode(sectionIndex, bi.Y),
