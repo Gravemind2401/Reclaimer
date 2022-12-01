@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.Blam.Utilities;
+﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ namespace Adjutant.Spatial
     /// </summary>
     [FixedSize(12)]
     [StructLayout(LayoutKind.Sequential)]
-    public struct RealVector3D : IRealVector3D, IXMVector
+    public struct RealVector3D : IRealVector3D
     {
         [Offset(0)]
         public float X { get; set; }
@@ -37,18 +36,6 @@ namespace Adjutant.Spatial
         public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z);
 
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}]");
-
-        #region IXMVector
-
-        float IXMVector.W
-        {
-            get => float.NaN;
-            set { }
-        }
-
-        VectorType IXMVector.VectorType => VectorType.Float32_3;
-
-        #endregion
 
         #region Equality Operators
 

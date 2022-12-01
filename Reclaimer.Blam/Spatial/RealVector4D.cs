@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.Blam.Utilities;
+﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ namespace Adjutant.Spatial
     /// </summary>
     [FixedSize(16)]
     [StructLayout(LayoutKind.Sequential)]
-    public struct RealVector4D : IRealVector4D, IXMVector
+    public struct RealVector4D : IRealVector4D
     {
         [Offset(0)]
         public float X { get; set; }
@@ -43,12 +42,6 @@ namespace Adjutant.Spatial
         public RealVector4D Conjugate => new RealVector4D(-X, -Y, -Z, W);
 
         public override string ToString() => Utils.CurrentCulture($"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]");
-
-        #region IXMVector
-
-        VectorType IXMVector.VectorType => VectorType.Float32_4;
-
-        #endregion
 
         #region Equality Operators
 

@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.IO;
+﻿using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -96,19 +95,6 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 writer.Write(Value4);
 
             IsDirty = false;
-        }
-
-        public void SetValue(IXMVector value)
-        {
-            value1 = value.X;
-            value2 = value.Y;
-            value3 = value.Z;
-            value4 = value.W;
-
-            RaisePropertyChanged(nameof(Value1));
-            RaisePropertyChanged(nameof(Value2));
-            RaisePropertyChanged(nameof(Value3));
-            RaisePropertyChanged(nameof(Value4));
         }
     }
 }

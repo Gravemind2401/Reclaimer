@@ -346,7 +346,7 @@ namespace Reclaimer.Plugins
             var meshLookup = new List<int>();
 
             #region Meshes
-            for (int i = 0; i < model.Meshes.Count; i++)
+            for (var i = 0; i < model.Meshes.Count; i++)
             {
                 var geom = model.Meshes[i];
                 if (geom.Submeshes.Count == 0)
