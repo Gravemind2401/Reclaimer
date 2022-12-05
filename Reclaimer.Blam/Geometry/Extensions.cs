@@ -91,31 +91,31 @@ namespace Adjutant.Geometry
         public static IEnumerable<Vector3> GetPositions(this IGeometryMesh mesh) => GetPositions(mesh, 0, mesh.VertexCount);
         public static IEnumerable<Vector3> GetPositions(this IGeometryMesh mesh, int index, int count)
         {
-            return mesh.VertexBuffer.PositionChannels[0].GetSubset(index, count).Select(v => new Vector3(v.X, v.Y, v.Z));
+            return mesh.VertexBuffer.HasPositions ? mesh.VertexBuffer.PositionChannels[0].GetSubset(index, count).Select(v => new Vector3(v.X, v.Y, v.Z)) : null;
         }
 
         public static IEnumerable<Vector2> GetTexCoords(this IGeometryMesh mesh) => GetTexCoords(mesh, 0, mesh.VertexCount);
         public static IEnumerable<Vector2> GetTexCoords(this IGeometryMesh mesh, int index, int count)
         {
-            return mesh.VertexBuffer.TextureCoordinateChannels[0].GetSubset(index, count).Select(v => new Vector2(v.X, v.Y));
+            return mesh.VertexBuffer.HasTextureCoordinates ? mesh.VertexBuffer.TextureCoordinateChannels[0].GetSubset(index, count).Select(v => new Vector2(v.X, v.Y)) : null;
         }
 
         public static IEnumerable<Vector3> GetNormals(this IGeometryMesh mesh) => GetNormals(mesh, 0, mesh.VertexCount);
         public static IEnumerable<Vector3> GetNormals(this IGeometryMesh mesh, int index, int count)
         {
-            return mesh.VertexBuffer.NormalChannels[0].GetSubset(index, count).Select(v => new Vector3(v.X, v.Y, v.Z));
+            return mesh.VertexBuffer.HasNormals ? mesh.VertexBuffer.NormalChannels[0].GetSubset(index, count).Select(v => new Vector3(v.X, v.Y, v.Z)) : null;
         }
 
         public static IEnumerable<Vector4> GetBlendIndices(this IGeometryMesh mesh) => GetBlendIndices(mesh, 0, mesh.VertexCount);
         public static IEnumerable<Vector4> GetBlendIndices(this IGeometryMesh mesh, int index, int count)
         {
-            return mesh.VertexBuffer.BlendIndexChannels[0].GetSubset(index, count).Select(v => new Vector4(v.X, v.Y, v.Z, v.W));
+            return mesh.VertexBuffer.HasBlendIndices ? mesh.VertexBuffer.BlendIndexChannels[0].GetSubset(index, count).Select(v => new Vector4(v.X, v.Y, v.Z, v.W)) : null;
         }
 
         public static IEnumerable<Vector4> GetBlendWeights(this IGeometryMesh mesh) => GetBlendWeights(mesh, 0, mesh.VertexCount);
         public static IEnumerable<Vector4> GetBlendWeights(this IGeometryMesh mesh, int index, int count)
         {
-            return mesh.VertexBuffer.BlendWeightChannels[0].GetSubset(index, count).Select(v => new Vector4(v.X, v.Y, v.Z, v.W));
+            return mesh.VertexBuffer.HasBlendWeights ? mesh.VertexBuffer.BlendWeightChannels[0].GetSubset(index, count).Select(v => new Vector4(v.X, v.Y, v.Z, v.W)) : null;
         }
 
         private class MultiMesh : IGeometryMesh
