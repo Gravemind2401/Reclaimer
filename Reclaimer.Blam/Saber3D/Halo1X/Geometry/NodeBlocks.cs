@@ -226,6 +226,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
             if (PositionBuffer.Count != Count)
                 Debugger.Break();
+
+            EndRead(reader.Position);
         }
 
         protected override object GetDebugProperties() => new { VertexCount = Count };
@@ -388,13 +390,22 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         //blend indices are relative to NodeIndex and refer to node IDs
         //on skin compound meshes, each vertex has a single blend index (int32?) and is transformed as part of the referenced node
 
-        [Offset(0)]
         public short FirstNodeId { get; set; }
-
-        [Offset(2)]
         public short NodeCount { get; set; }
 
-        // + UByte4 * vertex count
+        //UByte4 * vertex count
+        public VectorBuffer<UByte4> BlendIndexBuffer { get; set; }
+
+        internal override void Read(EndianReader reader)
+        {
+            FirstNodeId = reader.ReadInt16();
+            NodeCount = reader.ReadInt16();
+
+            var bufferBytes = reader.ReadBytes((int)(Header.EndOfBlock - reader.Position));
+            BlendIndexBuffer = new VectorBuffer<UByte4>(bufferBytes);
+
+            EndRead(reader.Position);
+        }
 
         protected override object GetDebugProperties() => new { FirstNodeId, NodeCount, Nodes = string.Join(" + ", Enumerable.Range(FirstNodeId, NodeCount).Select(i => Owner.NodeLookup[i].MeshName)) };
     }
@@ -405,6 +416,14 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         //on skin compound meshes, this appears to be all zero but is essentially the same as 100% weight on a single node
 
         //UByteN4 * vertex count
+        public VectorBuffer<UByteN4> BlendWeightBuffer { get; set; }
+
+        internal override void Read(EndianReader reader)
+        {
+            var bufferBytes = reader.ReadBytes((int)(Header.EndOfBlock - reader.Position));
+            BlendWeightBuffer = new VectorBuffer<UByteN4>(bufferBytes);
+            EndRead(reader.Position);
+        }
     }
 
     #endregion

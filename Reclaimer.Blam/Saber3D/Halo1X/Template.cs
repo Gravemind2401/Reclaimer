@@ -8,6 +8,7 @@ using Reclaimer.Saber3D.Common;
 using Reclaimer.Saber3D.Halo1X.Geometry;
 using System.IO;
 using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace Reclaimer.Saber3D.Halo1X
 {
@@ -66,6 +67,40 @@ namespace Reclaimer.Saber3D.Halo1X
 
             var region = new GeometryRegion { Name = Name };
 
+            var compoundVertexBuffers = new Dictionary<int, VertexBuffer>();
+            var compoundIndexBuffers = new Dictionary<int, IndexBuffer>();
+            var skinCompounds = from n in NodeGraph.AllDescendants
+                                where n.ParentId == NodeGraph.AllDescendants[0].MeshId
+                                && n.SubmeshData?.Submeshes?.Count == 1
+                                && n.Positions?.Count > 0
+                                && n.Bounds?.IsEmpty == true
+                                select n;
+
+            //populate VertexRange of each SkinCompound component for later use, also create buffers to pull from
+            foreach (var compound in skinCompounds)
+            {
+                var indexData = compound.BlendData.IndexData;
+                var blendIndices = MemoryMarshal.Cast<byte, int>(indexData.BlendIndexBuffer.GetBuffer().AsSpan());
+
+                var vb = new VertexBuffer();
+                vb.PositionChannels.Add(compound.Positions.PositionBuffer);
+                compoundVertexBuffers.Add(compound.MeshId.Value, vb);
+                compoundIndexBuffers.Add(compound.MeshId.Value, compound.Faces.IndexBuffer);
+
+                var components = Enumerable.Range(indexData.FirstNodeId, indexData.NodeCount)
+                    .Select((id, ordinal) => (ordinal, NodeLookup[id]));
+
+                foreach (var (ordinal, component) in components)
+                {
+                    if (!blendIndices.Contains(ordinal))
+                        continue; //not all ids within (FirstNodeId..NodeCount) are always referenced
+
+                    var vertexRange = blendIndices.IndexOf(ordinal)..(blendIndices.LastIndexOf(ordinal) + 1);
+                    foreach (var submesh in component.SubmeshData.Submeshes.Where(s => s.CompoundSourceId == compound.MeshId))
+                        (submesh.VertexRange.Offset, submesh.VertexRange.Count) = vertexRange.GetOffsetAndLength(blendIndices.Length);
+                }
+            }
+
             foreach (var node in NodeGraph.AllDescendants.Where(n => n.SubmeshData != null && !n.Bounds.IsEmpty))
             {
                 var meshCount = node.Positions.Count > 0 ? 1 : node.SubmeshData.Submeshes.Count;
@@ -81,22 +116,23 @@ namespace Reclaimer.Saber3D.Halo1X
                 }
                 while (next != null);
 
+                var transform = Matrix4x4.Transpose(node.Transform ?? Matrix4x4.Identity);
                 var perm = new GeometryPermutation
                 {
                     Name = node.MeshName,
                     MeshIndex = model.Meshes.Count,
                     MeshCount = meshCount,
-                    Transform = defaultTransform,
+                    Transform = transform * defaultTransform,
                     //Transform = transform,
                     TransformScale = 1
                 };
 
                 if (node.Positions.Count > 0)
-                    model.Meshes.Add(GetMesh(node, node.Bounds, null));
+                    model.Meshes.Add(GetMesh(node, node.Bounds));
                 else
                 {
-                    foreach (var submesh in node.SubmeshData.Submeshes)
-                        model.Meshes.Add(GetMesh(submesh.CompoundSource, node.Bounds, submesh));
+                    foreach (var submesh in node.SubmeshData.Submeshes.Where(s => compoundVertexBuffers.ContainsKey(s.CompoundSourceId.Value)))
+                        model.Meshes.Add(GetCompoundMesh(node, submesh));
                 }
 
                 region.Permutations.Add(perm);
@@ -121,7 +157,7 @@ namespace Reclaimer.Saber3D.Halo1X
                 return material;
             }
 
-            GeometryMesh GetMesh(NodeGraphBlock0xF000 block, BoundsBlock0x1D01 boundsBlock, SubmeshInfo segment)
+            GeometryMesh GetMesh(NodeGraphBlock0xF000 block, BoundsBlock0x1D01 boundsBlock)
             {
                 var mesh = new GeometryMesh
                 {
@@ -135,50 +171,47 @@ namespace Reclaimer.Saber3D.Halo1X
                 var bounds = boundsBlock.IsEmpty ? new DummyBounds(30) : new DummyBounds(boundsBlock.MinBound, boundsBlock.MaxBound);
                 model.Bounds.Add(bounds);
 
-                var unknown = new int[mesh.VertexBuffer.Count];
-                if (block.BlendData?.IndexData != null)
+                foreach (var submesh in block.SubmeshData.Submeshes)
                 {
-                    reader.Seek(block.BlendData.IndexData.Header.StartOfBlock + 6 + 4, SeekOrigin.Begin);
-                    for (var i = 0; i < mesh.VertexBuffer.Count; i++)
-                        unknown[i] = reader.ReadInt32();
-                }
-
-                var unknown2 = new int[mesh.VertexBuffer.Count];
-                if (block.BlendData?.WeightData != null)
-                {
-                    reader.Seek(block.BlendData.WeightData.Header.StartOfBlock + 6 + 0, SeekOrigin.Begin);
-                    for (var i = 0; i < mesh.VertexBuffer.Count; i++)
-                        unknown2[i] = reader.ReadInt32();
-                }
-
-                if (segment != null)
-                {
-                    if (!compoundOffsets.ContainsKey(block))
-                        compoundOffsets.Add(block, 0);
-
-                    var indexCount = segment.UnknownMeshDetails?.IndexCount ?? block.SubmeshData.Submeshes[0].UnknownMeshDetails.IndexCount;
                     mesh.Submeshes.Add(new GeometrySubmesh
                     {
-                        MaterialIndex = (short)segment.Materials[0].MaterialIndex,
-                        IndexStart = segment.UnknownMeshDetails == null ? 0 : compoundOffsets[block],
-                        IndexLength = indexCount
+                        MaterialIndex = (short)submesh.Materials[0].MaterialIndex,
+                        IndexStart = submesh.FaceRange.Offset * 3,
+                        IndexLength = submesh.FaceRange.Count * 3
                     });
+                }
 
-                    if (segment.UnknownMeshDetails != null)
-                        compoundOffsets[block] += indexCount;
-                }
-                else
+                return mesh;
+            }
+
+            GeometryMesh GetCompoundMesh(NodeGraphBlock0xF000 host, SubmeshInfo segment)
+            {
+                var compound = segment.CompoundSource;
+                var compoundId = segment.CompoundSourceId.Value;
+                var sourceIndices = compoundIndexBuffers[compoundId];
+                var sourceVertices = compoundVertexBuffers[compoundId];
+
+                //doesnt appear to be any way to get exact index offet+count, so this will do
+                var indices = sourceIndices
+                    .Select(i => i - segment.VertexRange.Offset)
+                    .SkipWhile(i => i < 0)
+                    .TakeWhile(i => i < segment.VertexRange.Count);
+
+                var mesh = new GeometryMesh
                 {
-                    foreach (var submesh in block.SubmeshData.Submeshes)
-                    {
-                        mesh.Submeshes.Add(new GeometrySubmesh
-                        {
-                            MaterialIndex = (short)submesh.Materials[0].MaterialIndex,
-                            IndexStart = submesh.FaceRange.Offset * 3,
-                            IndexLength = submesh.FaceRange.Count * 3
-                        });
-                    }
-                }
+                    VertexBuffer = sourceVertices.Slice(segment.VertexRange.Offset, segment.VertexRange.Count),
+                    IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleList),
+                    BoundsIndex = (short)model.Bounds.Count
+                };
+
+                model.Bounds.Add(new DummyBounds(30));
+
+                mesh.Submeshes.Add(new GeometrySubmesh
+                {
+                    MaterialIndex = (short)segment.Materials[0].MaterialIndex,
+                    IndexStart = 0,
+                    IndexLength = mesh.IndexBuffer.Count
+                });
 
                 return mesh;
             }
