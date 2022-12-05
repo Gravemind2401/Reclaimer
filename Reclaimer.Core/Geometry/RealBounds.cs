@@ -16,6 +16,9 @@ namespace Reclaimer.Geometry
             : this(values[0], values[1])
         { }
 
+        public static implicit operator RealBounds((int Min, int Max) value) => new RealBounds(value.Min, value.Max);
+        public static implicit operator RealBounds((float Min, float Max) value) => new RealBounds(value.Min, value.Max);
+
         #region IBufferable
 
         static int IBufferable.PackSize => packSize;

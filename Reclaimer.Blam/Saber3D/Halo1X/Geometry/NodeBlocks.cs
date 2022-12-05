@@ -1,5 +1,8 @@
-﻿using Reclaimer.IO;
+﻿using Reclaimer.Geometry;
+using Reclaimer.Geometry.Vectors;
+using Reclaimer.IO;
 using System.Diagnostics;
+using System.IO;
 using System.Numerics;
 
 namespace Reclaimer.Saber3D.Halo1X.Geometry
@@ -15,6 +18,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         public int DescendantCount => GetOptionalChild<CountBlock0x2C01>()?.Value ?? default;
         public MeshBlock0xB903 Mesh => GetOptionalChild<MeshBlock0xB903>();
+        public MeshFlagsBlock0x2E01 MeshFlags => GetOptionalChild<MeshFlagsBlock0x2E01>();
         public VertexPositionListBlock Positions => GetOptionalChild<VertexPositionListBlock>();
         public VertexDataListBlock VertexData => GetOptionalChild<VertexDataListBlock>();
         public FaceListBlock Faces => GetOptionalChild<FaceListBlock>();
@@ -51,19 +55,19 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             var blend = BlendData;
             if (blend != null)
             {
-                if (blend.BlendIndexBuffer == null)
+                if (blend.IndexData == null)
                     Debugger.Break();
 
                 if (blend.UnknownBlendDetails.UnknownCount != 4)
                     Debugger.Break();
 
-                if (blend.UnknownBlendDetails.NodeCount != blend.BlendIndexBuffer?.NodeCount)
+                if (blend.UnknownBlendDetails.NodeCount != blend.IndexData?.NodeCount)
                     Debugger.Break();
 
-                if (blend.BlendIndexBuffer != null && blend.BlendIndexBuffer.Header.BlockSize != 4 + Mesh.VertexCount * 4)
+                if (blend.IndexData != null && blend.IndexData.Header.BlockSize != 4 + Mesh.VertexCount * 4)
                     Debugger.Break();
 
-                if (blend.BlendWeightBuffer != null && blend.BlendWeightBuffer.Header.BlockSize != Mesh.VertexCount * 4)
+                if (blend.WeightData != null && blend.WeightData.Header.BlockSize != Mesh.VertexCount * 4)
                     Debugger.Break();
             }
         }
@@ -128,16 +132,32 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     }
 
     [DataBlock(0x2E01, ExpectedSize = 5)]
-    public class MeshBlock0x2E01 : DataBlock
+    public class MeshFlagsBlock0x2E01 : DataBlock
     {
         [Offset(0)]
         public short Unknown0 { get; set; } //0x1200
 
         [Offset(2)]
-        public byte UnknownEnum { get; set; } //maybe flags? 03 for no materials, 86/8E for world, 87 for one material, 8F for two, 9F for three, BF for four
+        public MeshFlags Flags { get; set; }
 
         [Offset(3)]
         public short Unknown1 { get; set; } //often 0x4001
+    }
+
+    public enum MeshFlags : byte
+    {
+        None = 0,
+        Compressed = 1,
+
+        //below are common combinations
+
+        WorldVertex1 = 0x86,
+        WorldVertex2 = 0x8E,
+
+        Materials1 = 0x87,
+        Materials2 = 0x8F,
+        Materials3 = 0x9F,
+        Materials4 = 0xBF,
     }
 
     #region Scene Blocks
@@ -179,13 +199,34 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     [DataBlock(0xF100)]
     public class VertexPositionListBlock : DataBlock
     {
-        [Offset(0)]
         public int Count { get; set; }
 
-        // + center (int16 * 3, optional)
-        // + radius (int16 * 3, optional)
+        // + center (int16 * 3, only if compressed)
+        // + radius (int16 * 3, only if compressed)
 
-        // + vertex * Count (either float32 * 3 or int16 * 4)
+        // Count * either [float32 * 3] (uncompressed) or [int16 * 4] (compressed)
+        public IVectorBuffer PositionBuffer { get; set; }
+
+        internal override void Read(EndianReader reader)
+        {
+            Count = reader.ReadInt32();
+
+            var compressed = ((NodeGraphBlock0xF000)ParentBlock).MeshFlags?.Flags.HasFlag(MeshFlags.Compressed) ?? false;
+
+            if (compressed)
+                reader.Seek(12, SeekOrigin.Current);
+
+            if (Count == 0)
+                return;
+
+            var bufferBytes = reader.ReadBytes((int)(Header.EndOfBlock - reader.Position));
+            PositionBuffer = compressed
+                ? new VectorBuffer<Int16N4>(bufferBytes)
+                : new VectorBuffer<RealVector3>(bufferBytes);
+
+            if (PositionBuffer.Count != Count)
+                Debugger.Break();
+        }
 
         protected override object GetDebugProperties() => new { VertexCount = Count };
     }
@@ -231,10 +272,19 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     {
         internal override int ExpectedSize => 4 + 2 * Count * 3;
 
-        [Offset(0)]
         public int Count { get; set; }
 
-        // + ushort * Count * 3
+        // Count * [ushort * 3]
+        public IndexBuffer IndexBuffer { get; set; }
+
+        internal override void Read(EndianReader reader)
+        {
+            Count = reader.ReadInt32();
+            if (Count == 0)
+                return;
+
+            IndexBuffer = new IndexBuffer(reader.ReadBytes(sizeof(ushort) * 3 * Count), typeof(ushort));
+        }
 
         protected override object GetDebugProperties() => new { Faces = Count, Size = Header.BlockSize };
     }
@@ -316,8 +366,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     public class BlendDataBlock : CollectionDataBlock
     {
         public UnknownBlendDetailsBlock0x1701 UnknownBlendDetails => GetUniqueChild<UnknownBlendDetailsBlock0x1701>();
-        public BlendIndexBufferBlock BlendIndexBuffer => GetOptionalChild<BlendIndexBufferBlock>();
-        public BlendWeightBufferBlock BlendWeightBuffer => GetOptionalChild<BlendWeightBufferBlock>();
+        public BlendIndexBufferBlock IndexData => GetOptionalChild<BlendIndexBufferBlock>();
+        public BlendWeightBufferBlock WeightData => GetOptionalChild<BlendWeightBufferBlock>();
     }
 
     [DataBlock(0x1701, ExpectedSize = 8)]
@@ -353,7 +403,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     public class BlendWeightBufferBlock : DataBlock
     {
         //on skin compound meshes, this appears to be all zero but is essentially the same as 100% weight on a single node
-        
+
         //UByteN4 * vertex count
     }
 

@@ -15,6 +15,13 @@ namespace Reclaimer.Saber3D.Common
                         return true;
                     }
                     break;
+                case PakItemType.Templates:
+                    if (TryGetGeometryContent(item, out var geometryContent))
+                    {
+                        content = geometryContent;
+                        return true;
+                    }
+                    break;
             }
 
             content = null;
@@ -29,6 +36,18 @@ namespace Reclaimer.Saber3D.Common
                 return false;
 
             content = new Halo1X.Texture((Halo1X.PakItem)item);
+
+            return content != null;
+        }
+
+        public static bool TryGetGeometryContent(IPakItem item, out IRenderGeometry content)
+        {
+            content = null;
+
+            if (item.ItemType != PakItemType.Templates)
+                return false;
+
+            content = new Halo1X.Template((Halo1X.PakItem)item);
 
             return content != null;
         }
