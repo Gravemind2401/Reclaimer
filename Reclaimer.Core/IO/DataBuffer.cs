@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.IO
 {
@@ -26,10 +23,10 @@ namespace Reclaimer.IO
             if (count < 0)
                 throw new ArgumentOutOfRangeException(nameof(count));
 
-            if (start < 0 || start >= buffer.Length)
+            if (start < 0 || (start > 0 && start >= buffer.Length))
                 throw new ArgumentOutOfRangeException(nameof(start));
 
-            if (stride < 0 || stride > buffer.Length)
+            if (stride < 0 || (buffer.Length > 0 && stride > buffer.Length))
                 throw new ArgumentOutOfRangeException(nameof(stride));
 
             if (offset < 0 || offset + SizeOf > stride)
