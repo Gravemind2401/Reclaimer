@@ -21,7 +21,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         protected void ReadChildren(EndianReader reader)
         {
             while (reader.Position < Header.EndOfBlock)
-                ChildBlocks.Add(reader.ReadBlock(Owner));
+                ChildBlocks.Add(reader.ReadBlock(Owner, this));
         }
 
         protected void ReadChildren(EndianReader reader, int assertCount)

@@ -15,6 +15,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         internal virtual int ExpectedChildCount => BlockExtensions.AttributeLookup.GetValueOrDefault(GetType())?.ExpectedChildCount ?? -1;
 
         protected INodeGraph Owner { get; private set; }
+        protected DataBlock ParentBlock { get; private set; }
 
         public BlockHeader Header { get; } = new BlockHeader();
 
@@ -41,6 +42,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             return $"[{Header.BlockType:X4}] {displayName} {GetDebugProperties()}";
         }
 
-        internal void SetOwner(INodeGraph owner) => this.Owner = owner;
+        internal void SetOwner(INodeGraph owner) => Owner = owner;
+        internal void SetParent(DataBlock parent) => ParentBlock = parent;
     }
 }
