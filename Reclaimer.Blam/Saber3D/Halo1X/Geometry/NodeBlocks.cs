@@ -7,9 +7,53 @@ using System.Numerics;
 
 namespace Reclaimer.Saber3D.Halo1X.Geometry
 {
+    public enum ObjectType
+    {
+        Branch = 0,
+
+        RootNode,
+        Bone,
+
+        StandardMesh,
+        DeferredSkinMesh,
+        DeferredSceneMesh,
+
+        SkinCompound,
+        SharingObj
+    }
+
     [DataBlock(0xF000)]
     public class NodeGraphBlock0xF000 : CollectionDataBlock
     {
+        public ObjectType ObjectType
+        {
+            get
+            {
+                if (IsRootNode)
+                    return ObjectType.RootNode;
+
+                if (BoneIndex >= 0)
+                    return ObjectType.Bone;
+
+                if (MeshDataSource?.SourceMeshId > 0)
+                    return ObjectType.DeferredSceneMesh;
+
+                if (SubmeshData?.Submeshes.Any(s => s.UnknownMeshDetails?.UnknownEnum == 19) == true)
+                    return ObjectType.SkinCompound;
+
+                if (SubmeshData?.Submeshes.Any(s => s.CompoundSourceId.HasValue) == true)
+                    return ObjectType.DeferredSkinMesh;
+
+                if (MeshId.HasValue && Owner.NodeGraph.AllDescendants.Any(n => n.MeshDataSource?.SourceMeshId == MeshId.Value))
+                    return ObjectType.SharingObj;
+
+                if (Positions?.Count > 0)
+                    return ObjectType.StandardMesh;
+
+                return ObjectType.Branch;
+            }
+        }
+
         public List<NodeGraphBlock0xF000> AllDescendants { get; } = new List<NodeGraphBlock0xF000>();
 
         public bool IsRootNode => ChildBlocks[0] is CountBlock0x2C01;
@@ -76,8 +120,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         {
             var hasGeo = Mesh?.VertexCount > 0;
             return IsRootNode
-                ? new { DescendantCount }
-                : new { ChildCount = ChildBlocks.Count, HasGeo = hasGeo, Id = MeshId, ParentId, BoneIdx = BoneIndex, Name = MeshName };
+                ? new { ObjectType, DescendantCount }
+                : new { ObjectType, ChildCount = ChildBlocks.Count, HasGeo = hasGeo, Id = MeshId, ParentId, BoneIdx = BoneIndex, Name = MeshName };
         }
     }
 
@@ -126,25 +170,29 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public int VertexOffset { get; set; }
 
         [Offset(6)]
-        public int IndexOffset { get; set; }
+        public int FaceOffset { get; set; }
 
-        protected override object GetDebugProperties() => new { SourceMeshId, VertexOffset, IndexOffset, Name = Owner.NodeLookup[SourceMeshId].MeshName };
+        protected override object GetDebugProperties() => new { SourceMeshId, VertexOffset, FaceOffset, Name = Owner.NodeLookup[SourceMeshId].MeshName };
     }
 
     [DataBlock(0x2E01, ExpectedSize = 5)]
     public class MeshFlagsBlock0x2E01 : DataBlock
     {
         [Offset(0)]
-        public short Unknown0 { get; set; } //0x1200
+        public short Unknown0 { get; set; } //always 0x1200
 
         [Offset(2)]
         public MeshFlags Flags { get; set; }
 
-        [Offset(3)]
-        public short Unknown1 { get; set; } //often 0x4001
+        [Offset(4)]
+        public byte Unknown1 { get; set; } //1 if has vertex buffer, else 0
+
+        public bool HasVertexData => Unknown1 > 0;
+
+        protected override object GetDebugProperties() => new { Flags = (short)Flags, Hex = $"0x{(short)Flags:X2}", Bits = Convert.ToString((short)Flags, 2).PadLeft(16, '0'), Unknown0, Unknown1 };
     }
 
-    public enum MeshFlags : byte
+    public enum MeshFlags : short
     {
         None = 0,
         Compressed = 1,

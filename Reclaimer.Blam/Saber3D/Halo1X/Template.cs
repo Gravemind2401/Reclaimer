@@ -63,17 +63,12 @@ namespace Reclaimer.Saber3D.Halo1X
 
             model.Materials.AddRange(Materials.Select(GetMaterial));
 
-            var compoundOffsets = new Dictionary<NodeGraphBlock0xF000, int>();
-
             var region = new GeometryRegion { Name = Name };
 
             var compoundVertexBuffers = new Dictionary<int, VertexBuffer>();
             var compoundIndexBuffers = new Dictionary<int, IndexBuffer>();
             var skinCompounds = from n in NodeGraph.AllDescendants
-                                where n.ParentId == NodeGraph.AllDescendants[0].MeshId
-                                && n.SubmeshData?.Submeshes?.Count == 1
-                                && n.Positions?.Count > 0
-                                && n.Bounds?.IsEmpty == true
+                                where n.ObjectType == ObjectType.SkinCompound
                                 select n;
 
             //populate VertexRange of each SkinCompound component for later use, also create buffers to pull from
@@ -101,17 +96,15 @@ namespace Reclaimer.Saber3D.Halo1X
                 }
             }
 
-            foreach (var node in NodeGraph.AllDescendants.Where(n => n.SubmeshData != null && !n.Bounds.IsEmpty))
+            foreach (var node in NodeGraph.AllDescendants.Where(n => n.ObjectType is ObjectType.StandardMesh or ObjectType.DeferredSkinMesh))
             {
-                var meshCount = node.Positions.Count > 0 ? 1 : node.SubmeshData.Submeshes.Count;
+                var meshCount = node.ObjectType == ObjectType.StandardMesh ? 1 : node.SubmeshData.Submeshes.Count;
 
                 var tlist = new List<Matrix4x4>();
                 var next = node;
                 do
                 {
-                    var tform = MatrixList.Matrices.Cast<Matrix4x4?>().ElementAtOrDefault(next.MeshId.Value) ?? Matrix4x4.Identity;
-                    var tform2 = next.Transform ?? Matrix4x4.Identity;
-                    tlist.Add(tform2);
+                    tlist.Add(next.Transform.HasValue ? Matrix4x4.Transpose(node.Transform.Value) : Matrix4x4.Identity);
                     next = next.ParentNode;
                 }
                 while (next != null);
@@ -123,11 +116,10 @@ namespace Reclaimer.Saber3D.Halo1X
                     MeshIndex = model.Meshes.Count,
                     MeshCount = meshCount,
                     Transform = transform * defaultTransform,
-                    //Transform = transform,
                     TransformScale = 1
                 };
 
-                if (node.Positions.Count > 0)
+                if (node.ObjectType == ObjectType.StandardMesh)
                     model.Meshes.Add(GetMesh(node, node.Bounds));
                 else
                 {
