@@ -168,7 +168,7 @@ namespace Reclaimer.Blam.Halo4
                 var len = max - min + 1;
 
                 mesh.IndexBuffer = IndexBuffer.FromCollection(strip.Select(j => j - min));
-                mesh.VertexBuffer = sourceMesh.VertexBuffer.GetSubset(min, len);
+                mesh.VertexBuffer = sourceMesh.VertexBuffer.Slice(min, len);
 
                 var submesh = section.Submeshes[subset.SubmeshIndex];
                 mesh.Submeshes.Add(new GeometrySubmesh

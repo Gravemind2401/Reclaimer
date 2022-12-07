@@ -3,8 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Geometry
 {
@@ -38,7 +36,7 @@ namespace Reclaimer.Geometry
             : base(buffer, count, start, stride, offset)
         { }
 
-        public VectorBuffer<TVector> GetSubset(int index, int count)
+        public VectorBuffer<TVector> Slice(int index, int count)
         {
             var newStart = start + index * stride;
             return new VectorBuffer<TVector>(buffer, count, newStart, stride, offset);
@@ -58,7 +56,7 @@ namespace Reclaimer.Geometry
         }
 
         int IVectorBuffer.Dimensions => TDimensions;
-        IVectorBuffer IVectorBuffer.GetSubset(int index, int count) => GetSubset(index, count);
+        IVectorBuffer IVectorBuffer.Slice(int index, int count) => Slice(index, count);
         IVector IReadOnlyList<IVector>.this[int index] => this[index];
         IEnumerator<IVector> IEnumerable<IVector>.GetEnumerator() => Enumerate().OfType<IVector>().GetEnumerator();
     }

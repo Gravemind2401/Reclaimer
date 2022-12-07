@@ -30,14 +30,14 @@ namespace Reclaimer.Geometry
         public bool HasBlendWeights => BlendWeightChannels.Any(c => c?.Count > 0);
         public bool HasColors => ColorChannels.Any(c => c?.Count > 0);
 
-        public VertexBuffer GetSubset(int index, int count)
+        public VertexBuffer Slice(int index, int count)
         {
             void CopySubsets(IList<VertexChannel> from, IList<VertexChannel> to)
             {
                 foreach (var channel in from)
                 {
                     if (channel is IVectorBuffer buffer)
-                        to.Add(buffer.GetSubset(index, count));
+                        to.Add(buffer.Slice(index, count));
                     else
                     {
                         var newList = new List<IVector>(count);

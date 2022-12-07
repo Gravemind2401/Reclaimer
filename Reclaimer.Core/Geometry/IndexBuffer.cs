@@ -4,8 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Geometry
 {
@@ -41,7 +39,11 @@ namespace Reclaimer.Geometry
         protected override int SizeOf { get; }
 
         private IndexBuffer(byte[] buffer, int size)
-            : base(buffer, buffer.Length / size, 0, size, 0)
+            : this(buffer, buffer.Length / size, 0, size, 0, size)
+        { }
+
+        private IndexBuffer(byte[] buffer, int count, int start, int stride, int offset, int size)
+            : base(buffer, count, start, stride, offset)
         {
             SizeOf = size;
 
@@ -80,6 +82,12 @@ namespace Reclaimer.Geometry
             set => SetValue(value, CreateSpan(index));
         }
 
+        public IndexBuffer Slice(int index, int count)
+        {
+            var newStart = start + index * stride;
+            return new IndexBuffer(buffer, count, newStart, stride, offset, SizeOf);
+        }
+
         public void SwapEndianness()
         {
             if (SizeOf == 1)
@@ -88,5 +96,7 @@ namespace Reclaimer.Geometry
             for (var i = 0; i < Count; i++)
                 CreateSpan(i).Reverse();
         }
+
+        IIndexBuffer IIndexBuffer.Slice(int index, int count) => Slice(index, count);
     }
 }
