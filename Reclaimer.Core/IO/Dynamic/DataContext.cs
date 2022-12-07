@@ -69,6 +69,9 @@ namespace Reclaimer.IO.Dynamic
             var storageType = GetStorageType(prop);
             var value = ReadValue(prop, storageType, byteOrder);
 
+            if (storageType == typeof(string) && prop.IsInterned)
+                value = string.Intern((string)value);
+
             if (prop.IsVersionNumber && !Version.HasValue && value != null)
                 Version = Convert.ToDouble(value);
 
@@ -93,7 +96,8 @@ namespace Reclaimer.IO.Dynamic
                         : Reader.ReadNullTerminatedString();
                 }
             }
-            else if (MethodCache.ReadMethods.ContainsKey(storageType))
+            
+            if (MethodCache.ReadMethods.ContainsKey(storageType))
                 return MethodCache.ReadMethods[storageType].Invoke(Reader, byteOrder);
 
             return Version.HasValue

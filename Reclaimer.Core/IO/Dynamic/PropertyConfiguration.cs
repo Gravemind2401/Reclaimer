@@ -17,6 +17,7 @@ namespace Reclaimer.IO.Dynamic
 
         public bool IsVersionNumber { get; }
         public bool IsLengthPrefixed { get; }
+        public bool IsInterned { get; }
 
         public MinVersionAttribute MinVersionAttribute { get; }
         public MaxVersionAttribute MaxVersionAttribute { get; }
@@ -49,6 +50,7 @@ namespace Reclaimer.IO.Dynamic
             SetMethod = prop.GetSetMethod();
             IsVersionNumber = Attribute.IsDefined(prop, typeof(VersionNumberAttribute));
             IsLengthPrefixed = Attribute.IsDefined(prop, typeof(LengthPrefixedAttribute));
+            IsInterned = Attribute.IsDefined(prop, typeof(InternedAttribute));
             MinVersionAttribute = prop.GetCustomAttribute<MinVersionAttribute>();
             MaxVersionAttribute = prop.GetCustomAttribute<MaxVersionAttribute>();
             VersionSpecificAttribute = prop.GetCustomAttribute<VersionSpecificAttribute>();
