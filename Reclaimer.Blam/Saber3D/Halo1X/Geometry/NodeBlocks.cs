@@ -313,6 +313,38 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public byte DataSize { get; set; }
 
         // + Count * DataSize bytes
+        private byte[] bufferBytes;
+        public IVectorBuffer TexCoordsBuffer { get; set; }
+
+        internal override void Read(EndianReader reader)
+        {
+            Count = reader.ReadInt32();
+            Unknown0 = reader.ReadInt16();
+            Unknown1 = reader.ReadInt16();
+            Unknown2 = reader.ReadByte();
+            Unknown3 = reader.ReadByte();
+            Unknown4 = reader.ReadByte();
+            Unknown5 = reader.ReadByte();
+            DataSize = reader.ReadByte();
+
+            var offset = DataSize switch
+            {
+                8 => 4,
+                12 => 4,
+                16 => 12,
+                20 => 16,
+                24 => 16,
+                28 => 20,
+                32 => 16,
+                36 => 24,
+                44 => 28,
+                _ => default
+            };
+
+            bufferBytes = reader.ReadBytes(Count * DataSize);
+            TexCoordsBuffer = new VectorBuffer<Int16N2>(bufferBytes, Count, 0, DataSize, offset);
+            TexCoordsBuffer.ReverseEndianness();
+        }
 
         protected override object GetDebugProperties() => new { VertexCount = Count, VertexSize = DataSize };
     }

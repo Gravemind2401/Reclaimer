@@ -79,6 +79,9 @@ namespace Reclaimer.Saber3D.Halo1X
 
                 var vb = new VertexBuffer();
                 vb.PositionChannels.Add(compound.Positions.PositionBuffer);
+                if (compound.VertexData?.Count > 0)
+                    vb.TextureCoordinateChannels.Add(compound.VertexData.TexCoordsBuffer);
+
                 compoundVertexBuffers.Add(compound.MeshId.Value, vb);
                 compoundIndexBuffers.Add(compound.MeshId.Value, compound.Faces.IndexBuffer);
 
@@ -159,6 +162,8 @@ namespace Reclaimer.Saber3D.Halo1X
                 };
 
                 mesh.VertexBuffer.PositionChannels.Add(block.Positions.PositionBuffer);
+                if (block.VertexData?.Count > 0)
+                    mesh.VertexBuffer.TextureCoordinateChannels.Add(block.VertexData.TexCoordsBuffer);
 
                 var bounds = boundsBlock.IsEmpty ? new DummyBounds(30) : new DummyBounds(boundsBlock.MinBound, boundsBlock.MaxBound);
                 model.Bounds.Add(bounds);
