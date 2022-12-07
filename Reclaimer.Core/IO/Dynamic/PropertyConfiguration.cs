@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
 namespace Reclaimer.IO.Dynamic
 {
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     internal class PropertyConfiguration
     {
         private readonly MethodInfo GetMethod;
@@ -66,28 +68,30 @@ namespace Reclaimer.IO.Dynamic
             if (OffsetAttributes.Count == 0)
                 return false;
 
+            static Exception AttributeOverlapException(Type attributeType) => new InvalidOperationException($"Multiple {attributeType.Name}s matching the current read version");
+
             if (GetMethod == null || SetMethod == null)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Property must have both a public getter and setter");
             if (IsVersionNumber && !IsVersionNullable)
                 throw new InvalidOperationException();
             if (!DataLengthAttributes.ValidateOverlap())
-                throw new InvalidOperationException();
+                throw AttributeOverlapException(typeof(DataLengthAttribute));
             if (!OffsetAttributes.ValidateOverlap())
-                throw new InvalidOperationException();
+                throw AttributeOverlapException(typeof(OffsetAttribute));
             if (!ByteOrderAttributes.ValidateOverlap())
-                throw new InvalidOperationException();
+                throw AttributeOverlapException(typeof(ByteOrderAttribute));
             if (!StoreTypeAttributes.ValidateOverlap())
-                throw new InvalidOperationException();
+                throw AttributeOverlapException(typeof(StoreTypeAttribute));
 
             var stringConstraints = Convert.ToInt32(IsLengthPrefixed) + Convert.ToInt32(FixedLengthAttribute != null) + Convert.ToInt32(NullTerminatedAttribute != null);
             if (PropertyType != typeof(string) && stringConstraints > 0)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("String type attributes applied to a non-string property");
             if (PropertyType == typeof(string) && stringConstraints != 1)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("More than one string type attribute applied");
 
             return true;
         }
 
-        public override string ToString() => $"{Property.DeclaringType.Name}.{Property.Name}";
+        private string GetDebuggerDisplay() => $"{Property.DeclaringType.Name}.{Property.Name}";
     }
 }

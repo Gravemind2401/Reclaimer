@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.IO.Dynamic
 {
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     internal class DataContext
     {
         public object Target { get; }
@@ -156,6 +154,6 @@ namespace Reclaimer.IO.Dynamic
                 Writer.WriteObject(storageType);
         }
 
-        public override string ToString() => $"{Target.GetType().Name} v{Version?.ToString() ?? "NULL"} @ {Origin}";
+        private string GetDebuggerDisplay() => $"{Target.GetType().Name} v{Version?.ToString() ?? "NULL"} @ {Origin}";
     }
 }
