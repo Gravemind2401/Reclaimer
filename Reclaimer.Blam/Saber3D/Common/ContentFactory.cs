@@ -16,6 +16,7 @@ namespace Reclaimer.Saber3D.Common
                     }
                     break;
                 case PakItemType.Templates:
+                case PakItemType.Scene:
                     if (TryGetGeometryContent(item, out var geometryContent))
                     {
                         content = geometryContent;
@@ -44,10 +45,10 @@ namespace Reclaimer.Saber3D.Common
         {
             content = null;
 
-            if (item.ItemType != PakItemType.Templates)
-                return false;
-
-            content = new Halo1X.Template((Halo1X.PakItem)item);
+            if (item.ItemType == PakItemType.Templates)
+                content = new Halo1X.Template((Halo1X.PakItem)item);
+            else if (item.ItemType == PakItemType.Scene)
+                content = new Halo1X.Scene((Halo1X.PakItem)item);
 
             return content != null;
         }
