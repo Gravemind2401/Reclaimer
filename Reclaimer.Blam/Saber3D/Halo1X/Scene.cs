@@ -1,11 +1,13 @@
-﻿using Reclaimer.IO;
+﻿using Adjutant.Geometry;
+using Reclaimer.Blam.Utilities;
+using Reclaimer.IO;
 using Reclaimer.Saber3D.Common;
 using Reclaimer.Saber3D.Halo1X.Geometry;
 using System.IO;
 
 namespace Reclaimer.Saber3D.Halo1X
 {
-    public class Scene : ItemDefinition, INodeGraph
+    public class Scene : ContentItemDefinition, INodeGraph
     {
         public List<DataBlock> Blocks { get; } = new List<DataBlock>();
 
@@ -39,5 +41,18 @@ namespace Reclaimer.Saber3D.Halo1X
             reader.RegisterInstance(Item);
             return reader;
         }
+
+        #region IRenderGeometry
+
+        PakItem INodeGraph.Item => Item;
+
+        int IRenderGeometry.LodCount => 1;
+
+        IGeometryModel IRenderGeometry.ReadGeometry(int lod)
+        {
+            throw new NotSupportedException();
+        }
+
+        #endregion
     }
 }

@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace Reclaimer.Saber3D.Halo1X
 {
-    public class Template : ContentItemDefinition, INodeGraph, IRenderGeometry
+    public class Template : ContentItemDefinition, INodeGraph
     {
         public List<DataBlock> Blocks { get; }
         public Dictionary<int, NodeGraphBlock0xF000> NodeLookup { get; }
@@ -48,6 +48,8 @@ namespace Reclaimer.Saber3D.Halo1X
         }
 
         #region IRenderGeometry
+
+        PakItem INodeGraph.Item => Item;
 
         int IRenderGeometry.LodCount => 1;
 
@@ -234,22 +236,6 @@ namespace Reclaimer.Saber3D.Halo1X
                 YBounds = (min.Y, max.Y);
                 ZBounds = (min.Z, max.Z);
             }
-        }
-
-        IEnumerable<IBitmap> IRenderGeometry.GetAllBitmaps()
-        {
-            return from m in Materials
-                   let i = Container.FindItem(PakItemType.Textures, m.Value, true)
-                   where i != null
-                   select new Texture(i);
-        }
-
-        IEnumerable<IBitmap> IRenderGeometry.GetBitmaps(IEnumerable<int> shaderIndexes)
-        {
-            return from m in shaderIndexes.Select(i => Materials[i])
-                   let i = Container.FindItem(PakItemType.Textures, m.Value, true)
-                   where i != null
-                   select new Texture(i);
         }
 
         #endregion
