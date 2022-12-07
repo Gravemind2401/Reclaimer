@@ -4,5 +4,6 @@
     {
         string FileName { get; }
         IReadOnlyList<IPakItem> Items { get; }
+        IPakItem FindItem(PakItemType itemType, string name, bool external);
     }
 }

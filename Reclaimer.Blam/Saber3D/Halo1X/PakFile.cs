@@ -7,8 +7,12 @@ namespace Reclaimer.Saber3D.Halo1X
 {
     public class PakFile : IPakFile
     {
-        public string FileName { get; }
+        private const string PakStreamFileName = "pak_stream_decompressed.s3dpak";
 
+        private readonly ILookup<PakItemType, PakItem> itemsByType;
+        private PakFile pakStream;
+
+        public string FileName { get; }
         public IReadOnlyList<PakItem> Items { get; }
 
         public PakFile(string fileName)
@@ -24,7 +28,9 @@ namespace Reclaimer.Saber3D.Halo1X
                 var items = new List<PakItem>(count);
                 for (var i = 0; i < count; i++)
                     items.Add(new PakItem(this, reader));
+                
                 Items = items;
+                itemsByType = items.ToLookup(i => i.ItemType);
             }
         }
 
@@ -36,7 +42,26 @@ namespace Reclaimer.Saber3D.Halo1X
             return reader;
         }
 
+        public PakItem FindItem(PakItemType itemType, string name, bool external)
+        {
+            var item = itemsByType[itemType].FirstOrDefault(i => i.Name == name);
+            if (item != null || !external)
+                return item;
+
+            if (pakStream == null)
+            {
+                var targetFile = Path.Combine(Path.GetDirectoryName(FileName), PakStreamFileName);
+                if (targetFile == FileName || !File.Exists(targetFile))
+                    return null;
+
+                pakStream = new PakFile(targetFile);
+            }
+
+            return pakStream.FindItem(itemType, name, false);
+        }
+
         IReadOnlyList<IPakItem> IPakFile.Items => Items;
+        IPakItem IPakFile.FindItem(PakItemType itemType, string name, bool external) => FindItem(itemType, name, external);
     }
 
     public class PakItem : IPakItem
