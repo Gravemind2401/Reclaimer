@@ -76,6 +76,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public int? ParentId => GetOptionalChild<ParentIdBlock>()?.Value;
 
         public MeshDataSourceBlock MeshDataSource => GetOptionalChild<MeshDataSourceBlock>(); //this mesh doesnt have its own data
+        public SceneObjectBoundsBlock0x3501 SceneObjectBounds => GetOptionalChild<SceneObjectBoundsBlock0x3501>();
 
         public NodeGraphBlock0xF000 ParentNode => GetOptionalChild<ParentIdBlock>()?.ParentNode;
         public IEnumerable<NodeGraphBlock0xF000> ChildNodes => IsRootNode
@@ -213,25 +214,20 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     //below blocks only appear in scene models
 
     [DataBlock(0x3501, ExpectedSize = 12)]
-    public class UnknownBlock0x3501 : DataBlock
+    public class SceneObjectBoundsBlock0x3501 : DataBlock
     {
-        [Offset(0)]
-        public short Unknown0 { get; set; }
+        public Vector3 Translation { get; set; } //translate X, Y, Z (int16)
+        public Vector3 Scale { get; set; } //scale X, Y, Z (int16)
 
-        [Offset(2)]
-        public short Unknown1 { get; set; }
+        public Matrix4x4 GetTransform() => Matrix4x4.CreateScale(Scale) * Matrix4x4.CreateTranslation(Translation);
 
-        [Offset(4)]
-        public short Unknown2 { get; set; }
+        internal override void Read(EndianReader reader)
+        {
+            Translation = new Vector3(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16());
+            Scale = new Vector3(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16());
 
-        [Offset(6)]
-        public short Unknown3 { get; set; } //0x4801
-
-        [Offset(8)]
-        public short Unknown4 { get; set; } //0x4801
-
-        [Offset(10)]
-        public short Unknown5 { get; set; } //0x4801
+            EndRead(reader.Position);
+        }
     }
 
     //0x2301 (unmapped, always empty?)
@@ -249,11 +245,13 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     {
         public int Count { get; set; }
 
-        // + center (int16 * 3, only if compressed)
-        // + radius (int16 * 3, only if compressed)
+        public Vector3 Translation { get; set; } // (int16 * 3, only if compressed)
+        public Vector3 Scale { get; set; } // (int16 * 3, only if compressed)
 
         // Count * either [float32 * 3] (uncompressed) or [int16 * 4] (compressed)
         public IVectorBuffer PositionBuffer { get; set; }
+
+        public Matrix4x4 GetTransform() => Matrix4x4.CreateScale(Scale) * Matrix4x4.CreateTranslation(Translation);
 
         internal override void Read(EndianReader reader)
         {
@@ -261,8 +259,9 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
             var compressed = ((NodeGraphBlock0xF000)ParentBlock).MeshFlags?.Flags.HasFlag(MeshFlags.Compressed) ?? false;
 
-            if (compressed)
-                reader.Seek(12, SeekOrigin.Current);
+            (Translation, Scale) = compressed
+                ? (new Vector3(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16()), new Vector3(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16()))
+                : (Vector3.Zero, Vector3.One);
 
             if (Count == 0)
                 return;

@@ -1,5 +1,4 @@
-﻿using Adjutant.Spatial;
-using Reclaimer.Geometry;
+﻿using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.Saber3D.Halo1X.Geometry;
 using System.IO;
@@ -88,18 +87,11 @@ namespace Reclaimer.Saber3D.Halo1X
                 {
                     Name = node.MeshName,
                     MeshRange = (model.Meshes.Count, meshCount),
-                    Transform = Matrix4x4.Transpose(node.Transform ?? Matrix4x4.Identity)
+                    Transform = node.Positions.GetTransform()
                 };
 
                 if (node.ObjectType == ObjectType.StandardMesh)
-                {
-                    var mesh = GetMesh(node, materials);
-
-                    var bounds = node.Bounds.IsEmpty ? new DummyBounds(30) : new DummyBounds(node.Bounds.MinBound, node.Bounds.MaxBound);
-                    SetBounds(mesh, bounds);
-
-                    model.Meshes.Add(mesh);
-                }
+                    model.Meshes.Add(GetMesh(node, materials));
                 else
                 {
                     foreach (var submesh in node.SubmeshData.Submeshes.Where(s => compoundVertexBuffers.ContainsKey(s.CompoundSourceId.Value)))
@@ -112,13 +104,6 @@ namespace Reclaimer.Saber3D.Halo1X
             model.Regions.Add(region);
 
             return model;
-
-            void SetBounds(Mesh mesh, DummyBounds bounds)
-            {
-                var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
-                var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
-                (mesh.PositionBounds, mesh.TextureBounds) = (posBounds, texBounds);
-            }
 
             Mesh GetCompoundMesh(NodeGraphBlock0xF000 host, SubmeshInfo segment)
             {
@@ -139,7 +124,16 @@ namespace Reclaimer.Saber3D.Halo1X
                     IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleList)
                 };
 
-                SetBounds(mesh, new DummyBounds(30));
+                var transform = compound.Positions.GetTransform();
+                var positions = new VectorBuffer<RealVector3>(mesh.VertexBuffer.Count);
+                for (var i = 0; i < positions.Count; i++)
+                {
+                    var raw = mesh.VertexBuffer.PositionChannels[0][i];
+                    var vec = Vector3.Transform(new Vector3(raw.X, raw.Y, raw.Z), transform);
+                    positions[i] = new RealVector3(vec.X, vec.Y, vec.Z);
+                }
+
+                mesh.VertexBuffer.PositionChannels[0] = positions;
 
                 mesh.Segments.Add(new MeshSegment
                 {
@@ -149,28 +143,6 @@ namespace Reclaimer.Saber3D.Halo1X
                 });
 
                 return mesh;
-            }
-        }
-
-        private class DummyBounds : IRealBounds5D
-        {
-            public RealBounds XBounds { get; set; } = (0, 1);
-            public RealBounds YBounds { get; set; } = (0, 1);
-            public RealBounds ZBounds { get; set; } = (0, 1);
-            public RealBounds UBounds { get; set; } = (0, 1);
-            public RealBounds VBounds { get; set; } = (0, 1);
-
-            public DummyBounds(float scale)
-            {
-                var (min, max) = (-scale / 2, scale / 2);
-                XBounds = YBounds = ZBounds = (min, max);
-            }
-
-            public DummyBounds(RealVector3 min, RealVector3 max)
-            {
-                XBounds = (min.X, max.X);
-                YBounds = (min.Y, max.Y);
-                ZBounds = (min.Z, max.Z);
             }
         }
     }

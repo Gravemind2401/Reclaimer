@@ -1,6 +1,8 @@
 ﻿using Reclaimer.Geometry;
+using Reclaimer.Geometry.Vectors;
 using Reclaimer.Saber3D.Halo1X.Geometry;
 using System.IO;
+using System.Numerics;
 
 namespace Reclaimer.Saber3D.Halo1X
 {
@@ -38,7 +40,7 @@ namespace Reclaimer.Saber3D.Halo1X
                 {
                     Name = node.MeshName,
                     MeshRange = (model.Meshes.Count, 1),
-                    UniformScale = 50
+                    Transform = node.Positions?.GetTransform() ?? Matrix4x4.Identity,
                 };
 
                 if (node.ObjectType == ObjectType.StandardMesh)
@@ -77,6 +79,20 @@ namespace Reclaimer.Saber3D.Halo1X
                     VertexBuffer = sourceVertices.Slice(vertStart, vertCount),
                     IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleList)
                 };
+
+                var transform = host.SceneObjectBounds?.GetTransform() ?? Matrix4x4.Identity;
+                if (!transform.IsIdentity)
+                {
+                    var positions = new VectorBuffer<RealVector3>(mesh.VertexBuffer.Count);
+                    for (var i = 0; i < positions.Count; i++)
+                    {
+                        var raw = mesh.VertexBuffer.PositionChannels[0][i];
+                        var vec = Vector3.Transform(new Vector3(raw.X, raw.Y, raw.Z), transform);
+                        positions[i] = new RealVector3(vec.X, vec.Y, vec.Z);
+                    }
+
+                    mesh.VertexBuffer.PositionChannels[0] = positions;
+                }
 
                 mesh.Segments.Add(new MeshSegment
                 {
