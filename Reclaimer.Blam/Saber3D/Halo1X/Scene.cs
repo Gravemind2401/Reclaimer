@@ -32,7 +32,9 @@ namespace Reclaimer.Saber3D.Halo1X
             var model = new Model { Name = Item.Name };
             var materials = GetMaterials();
 
-            var region = new ModelRegion { Name = Item.Name };
+            var defaultRegion = new ModelRegion { Name = Item.Name };
+            var regionLookup = NodeGraph.AllDescendants.Where(n => n.ObjectType == ObjectType.SharingObj)
+                .ToDictionary(n => n.MeshId.Value, n => new ModelRegion { Name = n.MeshName });
 
             foreach (var node in NodeGraph.AllDescendants.Where(n => n.ObjectType is ObjectType.StandardMesh or ObjectType.DeferredSceneMesh))
             {
@@ -44,17 +46,21 @@ namespace Reclaimer.Saber3D.Halo1X
                 };
 
                 if (node.ObjectType == ObjectType.StandardMesh)
+                {
                     model.Meshes.Add(GetMesh(node, materials));
+                    defaultRegion.Permutations.Add(perm);
+                }
                 else
                 {
                     foreach (var submesh in node.SubmeshData.Submeshes)
                         model.Meshes.Add(GetCompoundMesh(node, submesh));
+                    regionLookup[node.MeshDataSource.SourceMeshId].Permutations.Add(perm);
                 }
-
-                region.Permutations.Add(perm);
             }
 
-            model.Regions.Add(region);
+            model.Regions.Add(defaultRegion);
+            model.Regions.AddRange(regionLookup.Values.Where(r => r.Permutations.Any()));
+
             return model;
 
             Mesh GetCompoundMesh(NodeGraphBlock0xF000 host, SubmeshInfo segment)

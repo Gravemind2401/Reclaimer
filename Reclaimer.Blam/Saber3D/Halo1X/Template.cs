@@ -34,7 +34,9 @@ namespace Reclaimer.Saber3D.Halo1X
             var model = new Model { Name = Item.Name };
             var materials = GetMaterials();
 
-            var region = new ModelRegion { Name = Name };
+            var defaultRegion = new ModelRegion { Name = Name };
+            var regionLookup = NodeGraph.AllDescendants.Where(n => n.ObjectType == ObjectType.SkinCompound)
+                .ToDictionary(n => n.MeshId.Value, n => new ModelRegion { Name = n.MeshName });
 
             var compoundVertexBuffers = new Dictionary<int, VertexBuffer>();
             var compoundIndexBuffers = new Dictionary<int, IndexBuffer>();
@@ -91,17 +93,20 @@ namespace Reclaimer.Saber3D.Halo1X
                 };
 
                 if (node.ObjectType == ObjectType.StandardMesh)
+                {
                     model.Meshes.Add(GetMesh(node, materials));
+                    defaultRegion.Permutations.Add(perm);
+                }
                 else
                 {
                     foreach (var submesh in node.SubmeshData.Submeshes.Where(s => compoundVertexBuffers.ContainsKey(s.CompoundSourceId.Value)))
                         model.Meshes.Add(GetCompoundMesh(node, submesh));
+                    regionLookup[node.SubmeshData.Submeshes[0].CompoundSourceId.Value].Permutations.Add(perm);
                 }
-
-                region.Permutations.Add(perm);
             }
 
-            model.Regions.Add(region);
+            model.Regions.Add(defaultRegion);
+            model.Regions.AddRange(regionLookup.Values.Where(r => r.Permutations.Any()));
 
             return model;
 
