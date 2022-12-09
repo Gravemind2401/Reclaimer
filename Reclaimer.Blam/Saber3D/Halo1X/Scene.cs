@@ -33,6 +33,7 @@ namespace Reclaimer.Saber3D.Halo1X
             var materials = GetMaterials();
 
             var defaultRegion = new ModelRegion { Name = Item.Name };
+            var invisRegion = new ModelRegion { Name = "<hidden>" };
             var regionLookup = NodeGraph.AllDescendants.Where(n => n.ObjectType == ObjectType.SharingObj)
                 .ToDictionary(n => n.MeshId.Value, n => new ModelRegion { Name = n.MeshName });
 
@@ -46,21 +47,22 @@ namespace Reclaimer.Saber3D.Halo1X
                 };
 
                 if (node.ObjectType == ObjectType.StandardMesh)
-                {
                     model.Meshes.Add(GetMesh(node, materials));
-                    defaultRegion.Permutations.Add(perm);
-                }
                 else
                 {
                     foreach (var submesh in node.SubmeshData.Submeshes)
                         model.Meshes.Add(GetCompoundMesh(node, submesh));
-                    regionLookup[node.MeshDataSource.SourceMeshId].Permutations.Add(perm);
                 }
+
+                if (Enumerable.Range(perm.MeshRange.Index, perm.MeshRange.Count).All(i => model.Meshes[i].Segments.All(s => s.Material == null)))
+                    invisRegion.Permutations.Add(perm);
+                else if (node.ObjectType == ObjectType.StandardMesh)
+                    defaultRegion.Permutations.Add(perm);
+                else
+                    regionLookup[node.MeshDataSource.SourceMeshId].Permutations.Add(perm);
             }
 
-            model.Regions.Add(defaultRegion);
-            model.Regions.AddRange(regionLookup.Values.Where(r => r.Permutations.Any()));
-
+            model.Regions.AddRange(regionLookup.Values.Prepend(defaultRegion).Append(invisRegion).Where(r => r.Permutations.Any()));
             return model;
 
             Mesh GetCompoundMesh(NodeGraphBlock0xF000 host, SubmeshInfo segment)
