@@ -16,21 +16,5 @@ namespace Reclaimer.Saber3D.Halo1X
         int IExtractable.Id => Item.Address;
         string IExtractable.Name => Item.Name;
         string IExtractable.Class => Item.ItemType.ToString();
-
-        IEnumerable<IBitmap> IRenderGeometry.GetAllBitmaps()
-        {
-            return from m in Materials
-                   let i = Item.Container.FindItem(Common.PakItemType.Textures, m.Value, true)
-                   where i != null
-                   select new Texture(i);
-        }
-
-        IEnumerable<IBitmap> IRenderGeometry.GetBitmaps(IEnumerable<int> shaderIndexes)
-        {
-            return from m in shaderIndexes.Select(i => Materials[i])
-                   let i = Item.Container.FindItem(Common.PakItemType.Textures, m.Value, true)
-                   where i != null
-                   select new Texture(i);
-        }
     }
 }

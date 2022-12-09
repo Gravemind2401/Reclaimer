@@ -3,8 +3,6 @@ using Adjutant.Spatial;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
-using Reclaimer.IO;
-using Reclaimer.Saber3D.Common;
 using Reclaimer.Saber3D.Halo1X.Geometry;
 using System.IO;
 using System.Numerics;
@@ -12,14 +10,9 @@ using System.Runtime.InteropServices;
 
 namespace Reclaimer.Saber3D.Halo1X
 {
-    public class Template : ContentItemDefinition, INodeGraph
+    public class Template : CeaModelBase, INodeGraph
     {
-        public List<DataBlock> Blocks { get; }
-        public Dictionary<int, NodeGraphBlock0xF000> NodeLookup { get; }
-
         public string Name => Blocks.OfType<StringBlock0xE502>().SingleOrDefault()?.Value;
-        public List<MaterialReferenceBlock> Materials => Blocks.OfType<MaterialListBlock>().SingleOrDefault()?.Materials;
-        public NodeGraphBlock0xF000 NodeGraph => Blocks.OfType<NodeGraphBlock0xF000>().SingleOrDefault();
         public List<BoneBlock> Bones => Blocks.OfType<BoneListBlock>().SingleOrDefault()?.Bones;
         public string UnknownString => Blocks.OfType<StringBlock0x0403>().SingleOrDefault()?.Value;
         public MatrixListBlock0x0D03 MatrixList => Blocks.OfType<TransformBlock0x0503>().SingleOrDefault()?.MatrixList;
@@ -37,14 +30,6 @@ namespace Reclaimer.Saber3D.Halo1X
                 Blocks = (root as TemplateBlock)?.ChildBlocks;
                 NodeLookup = NodeGraph.AllDescendants.Where(n => n.MeshId.HasValue).ToDictionary(n => n.MeshId.Value);
             }
-        }
-
-        private EndianReader CreateReader()
-        {
-            var reader = Container.CreateReader();
-            reader.RegisterInstance(this);
-            reader.RegisterInstance(Item);
-            return reader;
         }
 
         #region IRenderGeometry
@@ -125,7 +110,15 @@ namespace Reclaimer.Saber3D.Halo1X
                 };
 
                 if (node.ObjectType == ObjectType.StandardMesh)
-                    model.Meshes.Add(GetMesh(node, node.Bounds));
+                {
+                    var mesh = GetMesh(node);
+
+                    mesh.BoundsIndex = (short)model.Bounds.Count;
+                    var bounds = node.Bounds.IsEmpty ? new DummyBounds(30) : new DummyBounds(node.Bounds.MinBound, node.Bounds.MaxBound);
+                    model.Bounds.Add(bounds);
+
+                    model.Meshes.Add(mesh);
+                }
                 else
                 {
                     foreach (var submesh in node.SubmeshData.Submeshes.Where(s => compoundVertexBuffers.ContainsKey(s.CompoundSourceId.Value)))
@@ -138,50 +131,6 @@ namespace Reclaimer.Saber3D.Halo1X
             model.Regions.Add(region);
 
             return model;
-
-            GeometryMaterial GetMaterial(MaterialReferenceBlock block)
-            {
-                var index = Materials.IndexOf(block);
-                var material = new GeometryMaterial { Name = block.Value };
-
-                material.Submaterials.Add(new SubMaterial
-                {
-                    Usage = MaterialUsage.Diffuse,
-                    Bitmap = ((IRenderGeometry)this).GetBitmaps(Enumerable.Repeat(index, 1)).FirstOrDefault(),
-                    Tiling = new RealVector2(1, 1)
-                });
-
-                return material;
-            }
-
-            GeometryMesh GetMesh(NodeGraphBlock0xF000 block, BoundsBlock0x1D01 boundsBlock)
-            {
-                var mesh = new GeometryMesh
-                {
-                    VertexBuffer = new VertexBuffer(),
-                    IndexBuffer = block.Faces.IndexBuffer,
-                    BoundsIndex = (short)model.Bounds.Count
-                };
-
-                mesh.VertexBuffer.PositionChannels.Add(block.Positions.PositionBuffer);
-                if (block.VertexData?.Count > 0)
-                    mesh.VertexBuffer.TextureCoordinateChannels.Add(block.VertexData.TexCoordsBuffer);
-
-                var bounds = boundsBlock.IsEmpty ? new DummyBounds(30) : new DummyBounds(boundsBlock.MinBound, boundsBlock.MaxBound);
-                model.Bounds.Add(bounds);
-
-                foreach (var submesh in block.SubmeshData.Submeshes)
-                {
-                    mesh.Submeshes.Add(new GeometrySubmesh
-                    {
-                        MaterialIndex = (short)submesh.Materials[0].MaterialIndex,
-                        IndexStart = submesh.FaceRange.Offset * 3,
-                        IndexLength = submesh.FaceRange.Count * 3
-                    });
-                }
-
-                return mesh;
-            }
 
             GeometryMesh GetCompoundMesh(NodeGraphBlock0xF000 host, SubmeshInfo segment)
             {
