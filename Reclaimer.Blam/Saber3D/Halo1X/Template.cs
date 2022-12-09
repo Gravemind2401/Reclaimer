@@ -1,8 +1,6 @@
 ﻿using Reclaimer.Geometry;
-using Reclaimer.Geometry.Vectors;
 using Reclaimer.Saber3D.Halo1X.Geometry;
 using System.IO;
-using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace Reclaimer.Saber3D.Halo1X
@@ -76,20 +74,11 @@ namespace Reclaimer.Saber3D.Halo1X
             {
                 var meshCount = node.ObjectType == ObjectType.StandardMesh ? 1 : node.SubmeshData.Submeshes.Count;
 
-                var tlist = new List<Matrix4x4>();
-                var next = node;
-                do
-                {
-                    tlist.Add(next.Transform.HasValue ? Matrix4x4.Transpose(node.Transform.Value) : Matrix4x4.Identity);
-                    next = next.ParentNode;
-                }
-                while (next != null);
-
                 var perm = new ModelPermutation
                 {
                     Name = node.MeshName,
                     MeshRange = (model.Meshes.Count, meshCount),
-                    Transform = node.Positions.GetTransform()
+                    Transform = GetNodeTransform(node)
                 };
 
                 if (node.ObjectType == ObjectType.StandardMesh)
@@ -105,9 +94,7 @@ namespace Reclaimer.Saber3D.Halo1X
                 }
             }
 
-            model.Regions.Add(defaultRegion);
-            model.Regions.AddRange(regionLookup.Values.Where(r => r.Permutations.Any()));
-
+            model.Regions.AddRange(regionLookup.Values.Prepend(defaultRegion).Where(r => r.Permutations.Any()));
             return model;
 
             Mesh GetCompoundMesh(NodeGraphBlock0xF000 host, SubmeshInfo segment)
@@ -128,17 +115,6 @@ namespace Reclaimer.Saber3D.Halo1X
                     VertexBuffer = sourceVertices.Slice(segment.VertexRange.Offset, segment.VertexRange.Count),
                     IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleList)
                 };
-
-                var transform = compound.Positions.GetTransform();
-                var positions = new VectorBuffer<RealVector3>(mesh.VertexBuffer.Count);
-                for (var i = 0; i < positions.Count; i++)
-                {
-                    var raw = mesh.VertexBuffer.PositionChannels[0][i];
-                    var vec = Vector3.Transform(new Vector3(raw.X, raw.Y, raw.Z), transform);
-                    positions[i] = new RealVector3(vec.X, vec.Y, vec.Z);
-                }
-
-                mesh.VertexBuffer.PositionChannels[0] = positions;
 
                 mesh.Segments.Add(new MeshSegment
                 {

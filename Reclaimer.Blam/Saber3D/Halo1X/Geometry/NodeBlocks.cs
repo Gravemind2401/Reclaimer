@@ -268,7 +268,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
             var bufferBytes = reader.ReadBytes((int)(Header.EndOfBlock - reader.Position));
             PositionBuffer = compressed
-                ? new VectorBuffer<Int16N4>(bufferBytes)
+                ? VectorBuffer.Transform3d(new VectorBuffer<Int16N4>(bufferBytes), GetTransform())
                 : new VectorBuffer<RealVector3>(bufferBytes);
 
             if (PositionBuffer.Count != Count)
