@@ -89,7 +89,7 @@ namespace Reclaimer.Blam.Halo2
             var resourceGestalt = cache.TagIndex.GetGlobalTag("ugh!").ReadMetadata<sound_cache_file_gestalt>();
             var pitchRange = resourceGestalt.PitchRanges[PitchRangeIndex];
 
-            var result = new GameSound { Name = item.FileName() };
+            var result = new GameSound { Name = item.FileName };
             if (CompressionCodec == CompressionCodec.XboxAdpcm)
             {
                 if (Encoding != Encoding.Codec)

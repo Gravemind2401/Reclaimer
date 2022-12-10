@@ -66,7 +66,7 @@ namespace Reclaimer.Blam.Halo1
 
             using var reader = cache.CreateReader(cache.DefaultAddressTranslator);
 
-            var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
 
             var shaderRefs = Lightmaps.SelectMany(m => m.Materials)
                 .Where(m => m.ShaderReference.TagId >= 0)

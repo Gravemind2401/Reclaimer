@@ -94,7 +94,7 @@ namespace Reclaimer.Blam.Halo4
                         continue;
 
                     MaterialUsage usage;
-                    var name = bitmTag.FileName();
+                    var name = bitmTag.FileName;
                     if (name.EndsWith("_detail_normal") || name.EndsWith("_detail_bump"))
                         usage = MaterialUsage.NormalDetail;
                     else if (name.EndsWith("_detail"))

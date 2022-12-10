@@ -98,7 +98,7 @@ namespace Reclaimer.Blam.Halo4
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
             var scenario = cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
-            var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
 
             var bspBlock = scenario.StructureBsps.First(s => s.BspReference.TagId == item.Id);
             var bspIndex = scenario.StructureBsps.IndexOf(bspBlock);

@@ -63,7 +63,7 @@ namespace Reclaimer.Blam.Halo2
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
             model.Materials.AddRange(Halo2Common.GetMaterials(Shaders));
 
             #region Clusters

@@ -61,7 +61,7 @@ namespace Reclaimer.Blam.Halo2Beta
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var model = new GeometryModel(item.FileName()) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
 
             model.Nodes.AddRange(Nodes);
             model.MarkerGroups.AddRange(MarkerGroups);

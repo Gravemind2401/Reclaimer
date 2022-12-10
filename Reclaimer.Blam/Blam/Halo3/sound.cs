@@ -78,7 +78,7 @@ namespace Reclaimer.Blam.Halo3
 
             var result = new GameSound
             {
-                Name = item.FileName(),
+                Name = item.FileName,
                 FormatHeader = new XmaHeader(codec.SampleRateInt, codec.ChannelCounts),
                 DefaultExtension = "xma"
             };
