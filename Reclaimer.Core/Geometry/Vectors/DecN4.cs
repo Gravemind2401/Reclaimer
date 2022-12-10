@@ -13,7 +13,7 @@ namespace Reclaimer.Geometry.Vectors
     /// Each axis has a possible value range from -1f to 1f.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("PackedVectors.tt", "")]
-    public struct DecN4 : IEquatable<DecN4>, IVector4, IReadOnlyVector4, IBufferableVector<DecN4>
+    public record struct DecN4 : IVector4, IReadOnlyVector4, IBufferableVector<DecN4>
     {
         private const int packSize = sizeof(uint);
         private const int structureSize = sizeof(uint);
@@ -83,17 +83,6 @@ namespace Reclaimer.Geometry.Vectors
 
         public static explicit operator uint(DecN4 value) => value.bits;
         public static explicit operator DecN4(uint value) => new DecN4(value);
-
-        #endregion
-
-        #region Equality Operators
-
-        public static bool operator ==(DecN4 left, DecN4 right) => left.bits == right.bits;
-        public static bool operator !=(DecN4 left, DecN4 right) => !(left == right);
-
-        public override bool Equals(object obj) => obj is DecN4 other && Equals(other);
-        public bool Equals(DecN4 other) => bits == other.bits;
-        public override int GetHashCode() => HashCode.Combine(bits);
 
         #endregion
     }

@@ -13,7 +13,7 @@ namespace Reclaimer.Geometry.Vectors
     /// Each axis has a possible value range from 0f to 1f.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NormalisedVectors.tt", "")]
-    public struct UByteN2 : IEquatable<UByteN2>, IVector2, IReadOnlyVector2, IBufferableVector<UByteN2>
+    public record struct UByteN2 : IVector2, IReadOnlyVector2, IBufferableVector<UByteN2>
     {
         private const int packSize = 1;
         private const int structureSize = 2;
@@ -73,17 +73,6 @@ namespace Reclaimer.Geometry.Vectors
 
         public static explicit operator Vector2(UByteN2 value) => new Vector2(value.X, value.Y);
         public static explicit operator UByteN2(Vector2 value) => new UByteN2(value);
-
-        #endregion
-
-        #region Equality Operators
-
-        public static bool operator ==(UByteN2 left, UByteN2 right) => left.xbits == right.xbits && left.ybits == right.ybits;
-        public static bool operator !=(UByteN2 left, UByteN2 right) => !(left == right);
-
-        public override bool Equals(object obj) => obj is UByteN2 other && Equals(other);
-        public bool Equals(UByteN2 other) => xbits == other.xbits && ybits == other.ybits;
-        public override int GetHashCode() => HashCode.Combine(xbits, ybits);
 
         #endregion
     }

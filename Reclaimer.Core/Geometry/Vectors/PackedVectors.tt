@@ -49,7 +49,7 @@ namespace Reclaimer.Geometry.Vectors
     /// Each axis has a possible value range from <#= vector.IsSigned ? -1 : 0 #>f to 1f.
     /// </summary>
     <# WriteGeneratedCodeAttribute(); #>
-    public struct <#= vector.TypeName #> : IEquatable<<#= vector.TypeName #>>, <#= vector.InterfaceTypes #>
+    public record struct <#= vector.TypeName #> : <#= vector.InterfaceTypes #>
     {
         private const int packSize = sizeof(<#= vector.StorageType #>);
         private const int structureSize = sizeof(<#= vector.StorageType #>);
@@ -106,8 +106,6 @@ namespace Reclaimer.Geometry.Vectors
         public static explicit operator <#= vector.TypeName #>(<#= vector.StorageType #> value) => new <#= vector.TypeName #>(value);
 
         #endregion
-
-<# WriteEqualityOperators(vector.TypeName, "bits"); #>
     }
 }
 <#
