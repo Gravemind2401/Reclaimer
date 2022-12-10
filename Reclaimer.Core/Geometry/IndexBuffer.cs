@@ -18,7 +18,7 @@ namespace Reclaimer.Geometry
                 return new IndexBuffer(data, sizeof(byte));
             else if (dataType == typeof(ushort))
                 return new IndexBuffer(data, sizeof(ushort));
-            else if (dataType == typeof(byte))
+            else if (dataType == typeof(int))
                 return new IndexBuffer(data, sizeof(int));
             else
                 throw new ArgumentException("Data type must be byte, ushort or int.", nameof(dataType));
