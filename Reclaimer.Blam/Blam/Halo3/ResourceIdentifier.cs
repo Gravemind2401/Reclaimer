@@ -2,12 +2,8 @@
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.Halo3
 {
@@ -18,7 +14,7 @@ namespace Reclaimer.Blam.Halo3
         Secondary
     }
 
-    public struct ResourceIdentifier
+    public readonly record struct ResourceIdentifier
     {
         private const string shared_map = "shared.map";
 
@@ -40,7 +36,6 @@ namespace Reclaimer.Blam.Halo3
         }
 
         public int Value => identifier;
-
         public int ResourceIndex => identifier & ushort.MaxValue;
 
         public byte[] ReadData(PageType mode) => ReadData(mode, int.MaxValue);
@@ -215,18 +210,5 @@ namespace Reclaimer.Blam.Halo3
         }
 
         public override string ToString() => Value.ToString(CultureInfo.CurrentCulture);
-
-        #region Equality Operators
-
-        public static bool operator ==(ResourceIdentifier value1, ResourceIdentifier value2) => value1.identifier == value2.identifier;
-        public static bool operator !=(ResourceIdentifier value1, ResourceIdentifier value2) => !(value1 == value2);
-
-        public static bool Equals(ResourceIdentifier value1, ResourceIdentifier value2) => value1.identifier.Equals(value2.identifier);
-        public override bool Equals(object obj) => obj is ResourceIdentifier value && ResourceIdentifier.Equals(this, value);
-        public bool Equals(ResourceIdentifier value) => ResourceIdentifier.Equals(this, value);
-
-        public override int GetHashCode() => identifier.GetHashCode();
-
-        #endregion
     }
 }

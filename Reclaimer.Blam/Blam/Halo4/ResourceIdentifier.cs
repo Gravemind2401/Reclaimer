@@ -15,7 +15,7 @@ namespace Reclaimer.Blam.Halo4
         Tertiary
     }
 
-    public struct ResourceIdentifier
+    public readonly record struct ResourceIdentifier
     {
         private readonly ICacheFile cache;
         private readonly int identifier; //actually two shorts
@@ -35,7 +35,6 @@ namespace Reclaimer.Blam.Halo4
         }
 
         public int Value => identifier;
-
         public int ResourceIndex => identifier & ushort.MaxValue;
 
         public byte[] ReadData(PageType mode) => ReadData(mode, int.MaxValue);
@@ -106,18 +105,5 @@ namespace Reclaimer.Blam.Halo4
         }
 
         public override string ToString() => Value.ToString(CultureInfo.CurrentCulture);
-
-        #region Equality Operators
-
-        public static bool operator ==(ResourceIdentifier value1, ResourceIdentifier value2) => value1.identifier == value2.identifier;
-        public static bool operator !=(ResourceIdentifier value1, ResourceIdentifier value2) => !(value1 == value2);
-
-        public static bool Equals(ResourceIdentifier value1, ResourceIdentifier value2) => value1.identifier.Equals(value2.identifier);
-        public override bool Equals(object obj) => obj is ResourceIdentifier value && ResourceIdentifier.Equals(this, value);
-        public bool Equals(ResourceIdentifier value) => ResourceIdentifier.Equals(this, value);
-
-        public override int GetHashCode() => identifier.GetHashCode();
-
-        #endregion
     }
 }
