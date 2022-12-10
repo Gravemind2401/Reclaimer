@@ -96,7 +96,7 @@ namespace Reclaimer.IO.Dynamic
                         : Reader.ReadNullTerminatedString();
                 }
             }
-            
+
             if (MethodCache.ReadMethods.ContainsKey(storageType))
                 return MethodCache.ReadMethods[storageType].Invoke(Reader, byteOrder);
 

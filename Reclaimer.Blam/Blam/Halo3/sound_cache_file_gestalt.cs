@@ -1,10 +1,6 @@
 ﻿using Reclaimer.Blam.Common;
 using Reclaimer.IO;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.Halo3
 {
@@ -60,17 +56,13 @@ namespace Reclaimer.Blam.Halo3
         {
             get
             {
-                switch (SampleRate)
+                return SampleRate switch
                 {
-                    case SampleRate.x22050Hz:
-                        return 22050;
-                    case SampleRate.x32000Hz:
-                        return 32000;
-                    case SampleRate.x44100Hz:
-                        return 44100;
-                    default:
-                        throw new NotSupportedException("Sample Rate not supported");
-                }
+                    SampleRate.x22050Hz => 22050,
+                    SampleRate.x32000Hz => 32000,
+                    SampleRate.x44100Hz => 44100,
+                    _ => throw new NotSupportedException("Sample Rate not supported")
+                };
             }
         }
 
@@ -78,19 +70,14 @@ namespace Reclaimer.Blam.Halo3
         {
             get
             {
-                switch (Encoding)
+                return Encoding switch
                 {
-                    case Encoding.Mono:
-                        return new byte[] { 1 };
-                    case Encoding.Stereo:
-                        return new byte[] { 2 };
-                    case Encoding.Surround:
-                        return new byte[] { 2, 2 };
-                    case Encoding.Surround5_1:
-                        return new byte[] { 2, 2, 2 };
-                    default:
-                        throw new NotSupportedException("Encoding not supported");
-                }
+                    Encoding.Mono => new byte[] { 1 },
+                    Encoding.Stereo => new byte[] { 2 },
+                    Encoding.Surround => new byte[] { 2, 2 },
+                    Encoding.Surround5_1 => new byte[] { 2, 2, 2 },
+                    _ => throw new NotSupportedException("Encoding not supported")
+                };
             }
         }
     }

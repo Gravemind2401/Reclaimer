@@ -326,7 +326,7 @@ namespace Reclaimer.Blam.Common
                 using (var ds = new DeflateStream(reader.BaseStream, CompressionMode.Decompress))
                 using (var reader2 = new BinaryReader(ds))
                 {
-                    int position = 0;
+                    var position = 0;
                     while (position < segmentOffset)
                     {
                         var seek = Math.Min(maxSeekSize, segmentOffset - position);
@@ -342,9 +342,9 @@ namespace Reclaimer.Blam.Common
                 var compressed = reader.ReadBytes(compressedSize);
                 var decompressed = new byte[decompressedSize];
 
-                int startSize = compressedSize;
-                int endSize = decompressedSize;
-                int decompressionContext = 0;
+                var startSize = compressedSize;
+                var endSize = decompressedSize;
+                var decompressionContext = 0;
                 XCompress.XMemCreateDecompressionContext(XCompress.XMemCodecType.LZX, 0, 0, ref decompressionContext);
                 XCompress.XMemResetDecompressionContext(decompressionContext);
                 XCompress.XMemDecompressStream(decompressionContext, decompressed, ref endSize, compressed, ref startSize);
@@ -403,7 +403,6 @@ namespace Reclaimer.Blam.Common
                     flag = (b & 0x40) != 0;
                     isFirst = false;
                 }
-
             } while ((b & 0x80) != 0);
 
             return result;

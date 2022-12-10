@@ -83,7 +83,7 @@ namespace Reclaimer.Blam.Halo3
                 DefaultExtension = "xma"
             };
 
-            for (int i = 0; i < pitchRange.PermutationCount; i++)
+            for (var i = 0; i < pitchRange.PermutationCount; i++)
             {
                 var perm = resourceGestalt.SoundPermutations[pitchRange.FirstPermutationIndex + i];
                 var name = resourceGestalt.SoundNames[perm.NameIndex].Name;

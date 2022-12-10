@@ -43,7 +43,7 @@ namespace Reclaimer.Plugins
             var extracted = 0;
 
             var ext = "." + (Settings.NoConversion ? sound.DefaultExtension : Settings.OutputExtension);
-            for (int i = 0; i < sound.Permutations.Count; i++)
+            for (var i = 0; i < sound.Permutations.Count; i++)
             {
                 var permutation = sound.Permutations[i];
                 var targetFile = Path.Combine(directory, string.Format(Settings.OutputNameFormat, sound.Name, permutation.Name, i) + ext);

@@ -131,7 +131,7 @@ namespace Reclaimer.Blam.Halo4
                 using (var reader = new EndianReader(ms, cache.ByteOrder))
                 {
                     var blockSize = cache.CacheType == CacheType.Halo4Beta ? 164 : 148;
-                    for (int i = 0; i < GeometryInstances.Count; i++)
+                    for (var i = 0; i < GeometryInstances.Count; i++)
                     {
                         reader.Seek(address + blockSize * i, SeekOrigin.Begin);
                         GeometryInstances[i].TransformScale = reader.ReadSingle();

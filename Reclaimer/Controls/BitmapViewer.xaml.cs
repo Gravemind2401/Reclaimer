@@ -200,22 +200,13 @@ namespace Reclaimer.Controls
 
             using (var fs = new FileStream(sfd.FileName, FileMode.Create))
             {
-                BitmapEncoder encoder;
-                switch (sfd.FilterIndex)
+                BitmapEncoder encoder = sfd.FilterIndex switch
                 {
-                    case 1:
-                        encoder = new TiffBitmapEncoder();
-                        break;
-                    case 2:
-                        encoder = new PngBitmapEncoder();
-                        break;
-                    case 3:
-                        encoder = new JpegBitmapEncoder();
-                        break;
-                    default:
-                        throw new InvalidOperationException();
-                }
-
+                    1 => new TiffBitmapEncoder(),
+                    2 => new PngBitmapEncoder(),
+                    3 => new JpegBitmapEncoder(),
+                    _ => throw new InvalidOperationException()
+                };
                 var src = allChannels ? dds.ToBitmapSource() : ImageSource;
                 encoder.Frames.Add(BitmapFrame.Create(src));
                 encoder.Save(fs);

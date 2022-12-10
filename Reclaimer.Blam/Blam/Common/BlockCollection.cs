@@ -1,12 +1,8 @@
 ﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.Common
 {
@@ -28,7 +24,7 @@ namespace Reclaimer.Blam.Common
                 return;
 
             reader.BaseStream.Position = Pointer.Address;
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
                 items.Add((T)reader.ReadObject(typeof(T), (int)cache.CacheType));
         }
 

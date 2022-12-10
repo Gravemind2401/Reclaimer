@@ -202,7 +202,7 @@ namespace Reclaimer.Plugins
             }
         }
 
-        private struct ExportFormat
+        private readonly struct ExportFormat
         {
             public string FormatId { get; }
             public string Extension { get; }
@@ -333,7 +333,7 @@ namespace Reclaimer.Plugins
                 allNodes.Add(result);
             }
 
-            for (int i = 0; i < model.Nodes.Count; i++)
+            for (var i = 0; i < model.Nodes.Count; i++)
             {
                 var node = model.Nodes[i];
                 if (node.ParentIndex >= 0)

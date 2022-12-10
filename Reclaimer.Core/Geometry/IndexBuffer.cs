@@ -32,7 +32,6 @@ namespace Reclaimer.Geometry
         public static IndexBuffer FromArray(ushort[] collection) => new IndexBuffer(MemoryMarshal.AsBytes<ushort>(collection).ToArray(), sizeof(ushort));
         public static IndexBuffer FromArray(byte[] collection) => new IndexBuffer(collection, sizeof(byte));
 
-
         private readonly ReadMethod GetValue;
         private readonly WriteMethod SetValue;
 
@@ -88,7 +87,7 @@ namespace Reclaimer.Geometry
 
         public IndexBuffer Slice(int index, int count)
         {
-            var newStart = start + index * stride;
+            var newStart = start + (index * stride);
             return new IndexBuffer(buffer, count, newStart, stride, offset, SizeOf);
         }
 

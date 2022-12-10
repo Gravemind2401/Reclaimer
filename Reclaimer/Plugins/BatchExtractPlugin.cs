@@ -360,8 +360,7 @@ namespace Reclaimer.Plugins
                     if (!Settings.OverwriteExisting && File.Exists(param.Item1))
                         continue;
 
-                    if (dds == null)
-                        dds = bitmap.ToDds(i);
+                    dds ??= bitmap.ToDds(i);
 
                     var args = new DdsOutputArgs(param.Item2, bitmap.CubeLayout);
                     if (format != null)
@@ -585,22 +584,13 @@ namespace Reclaimer.Plugins
 
             public int GetContentType()
             {
-                switch (item.ClassCode)
+                return item.ClassCode switch
                 {
-                    case "bitm":
-                        return 0;
-
-                    case "mode":
-                    case "mod2":
-                    case "sbsp":
-                        return 1;
-
-                    case "snd!":
-                        return 2;
-
-                    default:
-                        return -1;
-                }
+                    "bitm" => 0,
+                    "mode" or "mod2" or "sbsp" => 1,
+                    "snd!" => 2,
+                    _ => -1
+                };
             }
 
             public bool GetBitmapContent(out IBitmap bitmap) => BlamContentFactory.TryGetBitmapContent(item, out bitmap);
@@ -626,21 +616,13 @@ namespace Reclaimer.Plugins
 
             public int GetContentType()
             {
-                switch (item.ClassCode)
+                return item.ClassCode switch
                 {
-                    case "bitm":
-                        return 0;
-
-                    case "mode":
-                        //case "sbsp":
-                        return 1;
-
-                    //case "snd!":
-                    //    return 2;
-
-                    default:
-                        return -1;
-                }
+                    "bitm" => 0,
+                    "mode" /*or "sbsp"*/ => 1,
+                    //"snd!" => return 2,
+                    _ => -1
+                };
             }
 
             public bool GetBitmapContent(out IBitmap bitmap) => BlamContentFactory.TryGetBitmapContent(item, out bitmap);
@@ -670,14 +652,11 @@ namespace Reclaimer.Plugins
 
             public int GetContentType()
             {
-                switch (item.ItemType)
+                return item.ItemType switch
                 {
-                    case PakItemType.Textures:
-                        return 0;
-
-                    default:
-                        return -1;
-                }
+                    PakItemType.Textures => 0,
+                    _ => -1
+                };
             }
 
             public bool GetBitmapContent(out IBitmap bitmap) => SaberContentFactory.TryGetBitmapContent(item, out bitmap);

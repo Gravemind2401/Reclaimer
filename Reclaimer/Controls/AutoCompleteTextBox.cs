@@ -183,7 +183,7 @@ namespace Reclaimer.Controls
             if (e.Handled)
                 return;
 
-            if (e.Key == Key.Escape || string.IsNullOrEmpty(Text) && e.Key == Key.Enter)
+            if (e.Key == Key.Escape || (string.IsNullOrEmpty(Text) && e.Key == Key.Enter))
                 Reset();
             else if (e.Key == Key.Enter && SuggestionProvider != null)
                 UpdateSuggestions();

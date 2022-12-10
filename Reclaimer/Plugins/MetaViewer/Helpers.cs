@@ -46,7 +46,7 @@ namespace Reclaimer.Plugins.MetaViewer
         // DataReference, Color
     }
 
-    public struct FieldDefinition
+    public readonly struct FieldDefinition
     {
         private static readonly Dictionary<string, string> h3aliasLookup = new Dictionary<string, string>();
         private static readonly Dictionary<string, string> h5aliasLookup = new Dictionary<string, string>();
@@ -232,7 +232,7 @@ namespace Reclaimer.Plugins.MetaViewer
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(value is MetaValueBase meta) || !int.TryParse(parameter?.ToString(), out var index))
+            if (value is not MetaValueBase meta || !int.TryParse(parameter?.ToString(), out var index))
                 return Visibility.Collapsed;
 
             return index < meta.FieldDefinition.Components ? Visibility.Visible : Visibility.Collapsed;
@@ -252,7 +252,7 @@ namespace Reclaimer.Plugins.MetaViewer
     {
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            if (!(container is FrameworkElement element) || !(item is MetaValueBase meta))
+            if (container is not FrameworkElement element || item is not MetaValueBase meta)
                 return base.SelectTemplate(item, container);
 
             if (meta.FieldDefinition.ValueType == MetaValueType.Comment)

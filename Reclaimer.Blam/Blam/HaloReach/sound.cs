@@ -62,7 +62,7 @@ namespace Reclaimer.Blam.HaloReach
                 DefaultExtension = "xma"
             };
 
-            for (int i = 0; i < playback.PermutationCount; i++)
+            for (var i = 0; i < playback.PermutationCount; i++)
             {
                 var perm = resourceGestalt.SoundPermutations[playback.FirstPermutationIndex + i];
                 var name = resourceGestalt.SoundNames[perm.NameIndex].Name;

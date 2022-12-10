@@ -7,8 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Adjutant.Geometry
 {
@@ -16,7 +14,7 @@ namespace Adjutant.Geometry
     {
         public static IEnumerable<int> Unstrip(this IEnumerable<int> strip)
         {
-            int position = 0;
+            var position = 0;
             int i0 = 0, i1 = 0, i2 = 0;
 
             foreach (var index in strip)
@@ -427,7 +425,7 @@ namespace Adjutant.Geometry
                         vertAddressList.Add(bw.BaseStream.Position);
                         bw.Write(0);
 
-                        int count = 0;
+                        var count = 0;
                         foreach (var submesh in part.Submeshes)
                         {
                             var indices = part.GetTriangleIndicies(submesh);
@@ -614,7 +612,7 @@ namespace Adjutant.Geometry
                             ? fauxMeshes[perm.MeshIndex]
                             : model.Meshes[perm.MeshIndex];
 
-                        int currentPosition = 0;
+                        var currentPosition = 0;
                         foreach (var mesh in part.Submeshes)
                         {
                             var indices = part.GetTriangleIndicies(mesh);

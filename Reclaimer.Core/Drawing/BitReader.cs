@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Drawing.Bc7
 {
@@ -75,7 +71,7 @@ namespace Reclaimer.Drawing.Bc7
             cacheBits = 0;
             cachePosition = offset * byteSize;
 
-            for (int i = 0; i < cacheSize / byteSize; i++)
+            for (var i = 0; i < cacheSize / byteSize; i++)
             {
                 if (offset + i >= stream.Length)
                     break;

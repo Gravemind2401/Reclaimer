@@ -117,7 +117,7 @@ namespace Reclaimer.Blam.HaloReach
                 using (var cacheReader = cache.CreateReader(cache.DefaultAddressTranslator))
                 using (var reader = cacheReader.CreateVirtualReader(resourceGestalt.FixupDataPointer.Address))
                 {
-                    for (int i = 0; i < GeometryInstances.Count; i++)
+                    for (var i = 0; i < GeometryInstances.Count; i++)
                     {
                         reader.Seek(address + 156 * i, SeekOrigin.Begin);
                         GeometryInstances[i].TransformScale = reader.ReadSingle();

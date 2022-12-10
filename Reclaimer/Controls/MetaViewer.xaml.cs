@@ -151,7 +151,7 @@ namespace Reclaimer.Controls
         private void btnReload_Click(object sender, RoutedEventArgs e) => LoadData();
         private void btnCollapseAll_Click(object sender, RoutedEventArgs e) => RecursiveToggle(Metadata, false);
         private void btnExpandAll_Click(object sender, RoutedEventArgs e) => RecursiveToggle(Metadata, true);
-        
+
         public void Dispose() => context?.Dispose();
     }
 }

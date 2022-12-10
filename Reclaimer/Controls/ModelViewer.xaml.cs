@@ -239,7 +239,7 @@ namespace Reclaimer.Controls
 
             var materials = GetMaterials(model).ToList();
 
-            for (int i = 0; i < model.Meshes.Count; i++)
+            for (var i = 0; i < model.Meshes.Count; i++)
             {
                 var mesh = model.Meshes[i];
 
@@ -530,7 +530,7 @@ namespace Reclaimer.Controls
 
         private void PosLabel_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (!(sender is Label label))
+            if (sender is not Label label)
                 return;
 
             var anim = new DoubleAnimation

@@ -28,7 +28,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
             var element = obj as Control;
 
-            if (!(element?.DataContext is MetaValueBase meta))
+            if (element?.DataContext is not MetaValueBase meta)
                 return;
 
             var descriptor = DependencyPropertyDescriptor.FromName("Text", obj.GetType(), obj.GetType());

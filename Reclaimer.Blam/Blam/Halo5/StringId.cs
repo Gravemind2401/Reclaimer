@@ -1,9 +1,5 @@
 ﻿using Reclaimer.IO;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.Halo5
 {
@@ -26,7 +22,7 @@ namespace Reclaimer.Blam.Halo5
     }
 
     [FixedSize(4)]
-    public struct StringHash
+    public readonly struct StringHash
     {
         private readonly MetadataHeader header;
 

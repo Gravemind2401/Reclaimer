@@ -163,7 +163,7 @@ namespace Reclaimer.Controls
             if ((sender as TreeViewItem)?.DataContext != tv.SelectedItem)
                 return; //because this event bubbles to the parent node
 
-            if (!((tv.SelectedItem as TreeItemModel)?.Tag is IPakItem))
+            if ((tv.SelectedItem as TreeItemModel)?.Tag is not IPakItem)
                 return;
 
             Substrate.OpenWithDefault(GetSelectedArgs());

@@ -2,9 +2,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.Common.Gen3
 {
@@ -22,7 +19,7 @@ namespace Reclaimer.Blam.Common.Gen3
 
             partitions = new IPartitionLayout[6];
 
-            for (int i = 0; i < partitions.Length; i++)
+            for (var i = 0; i < partitions.Length; i++)
                 partitions[i] = reader.ReadObject<PartitionLayout>();
         }
 

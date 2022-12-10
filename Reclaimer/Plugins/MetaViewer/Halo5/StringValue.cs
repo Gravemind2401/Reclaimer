@@ -26,7 +26,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         public StringValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, host, reader, baseAddress, offset)
         {
-            Length = FieldDefinition.ValueType == MetaValueType.StringId? -1 : FieldDefinition.Size;
+            Length = FieldDefinition.ValueType == MetaValueType.StringId ? -1 : FieldDefinition.Size;
             ReadValue(reader);
         }
 

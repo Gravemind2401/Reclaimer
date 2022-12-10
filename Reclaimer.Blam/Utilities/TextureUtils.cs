@@ -2,10 +2,6 @@
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 
 namespace Reclaimer.Blam.Utilities
 {
@@ -400,7 +396,6 @@ namespace Reclaimer.Blam.Utilities
             if (virtualWidth > props.Width || virtualHeight > props.Height)
                 data = ApplyCrop(data, props.BitmapFormat, props.FrameCount, virtualWidth, virtualHeight, props.Width, props.Height);
 
-
             DdsImage dds;
             if (dxgiLookup.ContainsKey(bitmapFormat))
                 dds = new DdsImage(props.Height, props.Width, dxgiLookup[bitmapFormat], data);
@@ -427,32 +422,32 @@ namespace Reclaimer.Blam.Utilities
 
         private class MaskSet
         {
-            public readonly int x;
-            public readonly int y;
-            public readonly int z;
+            public readonly int X;
+            public readonly int Y;
+            public readonly int Z;
 
             public MaskSet(int w, int h, int d)
             {
-                int bit = 1;
-                int index = 1;
+                var bit = 1;
+                var index = 1;
 
                 while (bit < w || bit < h || bit < d)
                 {
                     if (bit < w)
                     {
-                        x |= index;
+                        X |= index;
                         index <<= 1;
                     }
 
                     if (bit < h)
                     {
-                        y |= index;
+                        Y |= index;
                         index <<= 1;
                     }
 
                     if (bit < d)
                     {
-                        z |= index;
+                        Z |= index;
                         index <<= 1;
                     }
 
@@ -500,12 +495,12 @@ namespace Reclaimer.Blam.Utilities
             return output;
         }
 
-        private static int Swizzle(int x, int y, int z, MaskSet masks) => SwizzleAxis(x, masks.x) | SwizzleAxis(y, masks.y) | (z == -1 ? 0 : SwizzleAxis(z, masks.z));
+        private static int Swizzle(int x, int y, int z, MaskSet masks) => SwizzleAxis(x, masks.X) | SwizzleAxis(y, masks.Y) | (z == -1 ? 0 : SwizzleAxis(z, masks.Z));
 
         private static int SwizzleAxis(int val, int mask)
         {
-            int bit = 1;
-            int result = 0;
+            var bit = 1;
+            var result = 0;
 
             while (bit <= mask)
             {
@@ -552,8 +547,7 @@ namespace Reclaimer.Blam.Utilities
 
             var output = new byte[data.Length];
 
-            int xBlocks = width / blockSize;
-            int yBlocks = height / blockSize;
+            var (xBlocks, yBlocks) = (width / blockSize, height / blockSize);
 
             for (var i = 0; i < yBlocks; i++)
             {

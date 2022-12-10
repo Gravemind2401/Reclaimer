@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Utilities
 {
@@ -23,7 +20,7 @@ namespace Reclaimer.Utilities
         {
             var lastCount = Count;
 
-            for (int i = index + count - 1; i >= index; i--)
+            for (var i = index + count - 1; i >= index; i--)
                 Items.RemoveAt(i);
 
             RaiseCollectionReset(lastCount);
@@ -33,7 +30,7 @@ namespace Reclaimer.Utilities
         {
             var lastCount = Count;
 
-            for (int i = Count - 1; i >= 0; i--)
+            for (var i = Count - 1; i >= 0; i--)
             {
                 if (match(Items[i]))
                     Items.RemoveAt(i);

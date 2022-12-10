@@ -169,7 +169,7 @@ namespace Reclaimer.IO
         {
             var type = typeof(TSource);
 
-            if (!(expr.Body is MemberExpression member))
+            if (expr.Body is not MemberExpression member)
                 throw new ArgumentException("Expression does not refer to a property");
 
             var propInfo = member.Member as PropertyInfo;

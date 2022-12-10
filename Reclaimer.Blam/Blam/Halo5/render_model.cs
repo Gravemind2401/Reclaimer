@@ -133,7 +133,7 @@ namespace Reclaimer.Blam.Halo5
 
             var section = Sections[InstancedGeometrySectionIndex];
             var localLod = Math.Min(lod, section.SectionLods.Count - 1);
-            for (int i = 0; i < GeometryInstances.Count; i++)
+            for (var i = 0; i < GeometryInstances.Count; i++)
             {
                 var subset = section.SectionLods[localLod].Subsets[i];
                 var mesh = new GeometryMesh

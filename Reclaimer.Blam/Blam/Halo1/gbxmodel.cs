@@ -163,7 +163,7 @@ namespace Reclaimer.Blam.Halo1
                             tangents.Add(new HenDN3(reader.ReadUInt32()));
                             texCoords.Add(new RealVector2(reader.ReadInt16() / (float)short.MaxValue, reader.ReadInt16() / (float)short.MaxValue));
                             boneIndices.Add(new UShort2((ushort)(reader.ReadByte() / 3), (ushort)(reader.ReadByte() / 3)));
-                            
+
                             var node0Weight = reader.ReadUInt16() / (float)short.MaxValue;
                             boneWeights.Add(new RealVector2(node0Weight, 1 - node0Weight));
                         }

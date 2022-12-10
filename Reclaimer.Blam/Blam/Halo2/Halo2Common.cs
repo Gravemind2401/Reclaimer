@@ -55,7 +55,7 @@ namespace Reclaimer.Blam.Halo2
 
         public static IEnumerable<GeometryMaterial> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
         {
-            for (int i = 0; i < shaders.Count; i++)
+            for (var i = 0; i < shaders.Count; i++)
             {
                 var tag = shaders[i].ShaderReference.Tag;
                 if (tag == null)

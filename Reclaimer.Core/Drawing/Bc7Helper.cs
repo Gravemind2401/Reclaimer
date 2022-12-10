@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Drawing.Bc7
 {
@@ -28,7 +24,7 @@ namespace Reclaimer.Drawing.Bc7
         Unique
     }
 
-    internal struct BlockAttributes
+    internal readonly struct BlockAttributes
     {
         public readonly byte Mode;
         public readonly byte PartitionBits;

@@ -1,11 +1,7 @@
 ﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Adjutant.Spatial
 {
@@ -39,7 +35,7 @@ namespace Adjutant.Spatial
         public static bool operator !=(RealVector2D value1, RealVector2D value2) => !(value1 == value2);
 
         public static bool Equals(RealVector2D value1, RealVector2D value2) => value1.X.Equals(value2.X) && value1.Y.Equals(value2.Y);
-        public override bool Equals(object obj)=> obj is RealVector2D value && RealVector2D.Equals(this, value);
+        public override bool Equals(object obj) => obj is RealVector2D value && RealVector2D.Equals(this, value);
         public bool Equals(RealVector2D value) => RealVector2D.Equals(this, value);
 
         public override int GetHashCode() => X.GetHashCode() ^ Y.GetHashCode();

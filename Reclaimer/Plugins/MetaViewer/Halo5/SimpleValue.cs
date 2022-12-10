@@ -35,30 +35,15 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                switch (FieldDefinition.ValueType)
+                Value = FieldDefinition.ValueType switch
                 {
-                    case MetaValueType.Byte:
-                        Value = reader.ReadByte();
-                        break;
-                    case MetaValueType.Int16:
-                        Value = reader.ReadInt16();
-                        break;
-                    case MetaValueType.Int32:
-                        Value = reader.ReadInt32();
-                        break;
-                    case MetaValueType.Int64:
-                        Value = reader.ReadInt64();
-                        break;
-                    case MetaValueType.Float32:
-                        Value = reader.ReadSingle();
-                        break;
-
-                    case MetaValueType.Undefined:
-                    default:
-                        Value = reader.ReadInt32();
-                        break;
-                }
-
+                    MetaValueType.Byte => reader.ReadByte(),
+                    MetaValueType.Int16 => reader.ReadInt16(),
+                    MetaValueType.Int32 => reader.ReadInt32(),
+                    MetaValueType.Int64 => reader.ReadInt64(),
+                    MetaValueType.Float32 => reader.ReadSingle(),
+                    _ => (object)reader.ReadInt32()
+                };
                 IsDirty = false;
             }
             catch { IsEnabled = false; }

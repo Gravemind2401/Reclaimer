@@ -194,7 +194,7 @@ namespace Reclaimer.Blam.Halo2
                 RealVector4 blendWeights = default;
 
                 reader.Seek(vertexOffset + i * vertexSize + 6, SeekOrigin.Begin);
-                
+
                 if (section.GeometryClassification == GeometryClassification.RigidBoned)
                 {
                     mesh.VertexWeights = VertexWeights.Skinned;

@@ -502,7 +502,7 @@ namespace Reclaimer.Plugins
         }
     }
 
-    internal struct LogEntry
+    internal readonly struct LogEntry
     {
         public readonly DateTime Timestamp;
         public readonly string Message;

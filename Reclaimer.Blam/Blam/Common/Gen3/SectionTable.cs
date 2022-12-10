@@ -3,9 +3,6 @@ using Reclaimer.IO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.Common.Gen3
 {
@@ -23,7 +20,7 @@ namespace Reclaimer.Blam.Common.Gen3
 
             sections = new SectionLayout[4];
 
-            for (int i = 0; i < sections.Length; i++)
+            for (var i = 0; i < sections.Length; i++)
                 sections[i] = reader.ReadObject<SectionLayout>();
         }
 

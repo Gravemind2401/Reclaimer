@@ -1,10 +1,5 @@
 ﻿using Reclaimer.IO;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Audio
 {
@@ -30,7 +25,7 @@ namespace Reclaimer.Audio
             ChannelCount = channelCount;
             SampleRate = sampleRate;
             BlockAlign = (short)(36 * ChannelCount);
-            ByteRate = SampleRate * BlockAlign >> 6;
+            ByteRate = (SampleRate * BlockAlign) >> 6;
             BitsPerSample = 4;
             ExtraData = 0x00400002;
         }

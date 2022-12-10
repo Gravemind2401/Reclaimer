@@ -35,28 +35,19 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                switch (FieldDefinition.ValueType)
+                Value = FieldDefinition.ValueType switch
                 {
-                    case MetaValueType.SByte: Value = reader.ReadSByte(); break;
-                    case MetaValueType.Int16: Value = reader.ReadInt16(); break;
-                    case MetaValueType.Int32: Value = reader.ReadInt32(); break;
-                    case MetaValueType.Int64: Value = reader.ReadInt64(); break;
-                    case MetaValueType.Byte: Value = reader.ReadByte(); break;
-                    case MetaValueType.UInt16: Value = reader.ReadUInt16(); break;
-                    case MetaValueType.UInt32: Value = reader.ReadUInt32(); break;
-                    case MetaValueType.UInt64: Value = reader.ReadUInt64(); break;
-
-                    case MetaValueType.Angle:
-                    case MetaValueType.Float32:
-                        Value = reader.ReadSingle();
-                        break;
-
-                    case MetaValueType.Undefined:
-                    default:
-                        Value = reader.ReadInt32();
-                        break;
-                }
-
+                    MetaValueType.SByte => reader.ReadSByte(),
+                    MetaValueType.Int16 => reader.ReadInt16(),
+                    MetaValueType.Int32 => reader.ReadInt32(),
+                    MetaValueType.Int64 => reader.ReadInt64(),
+                    MetaValueType.Byte => reader.ReadByte(),
+                    MetaValueType.UInt16 => reader.ReadUInt16(),
+                    MetaValueType.UInt32 => reader.ReadUInt32(),
+                    MetaValueType.UInt64 => reader.ReadUInt64(),
+                    MetaValueType.Angle or MetaValueType.Float32 => reader.ReadSingle(),
+                    _ => (object)reader.ReadInt32()
+                };
                 IsDirty = false;
             }
             catch { IsEnabled = false; }

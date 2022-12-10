@@ -3,9 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Xml;
@@ -16,7 +13,7 @@ namespace Reclaimer.Utilities
     {
         public static int FirstIndexWhere<TSource>(this IEnumerable<TSource> source, Predicate<TSource> predicate)
         {
-            int index = 0;
+            var index = 0;
 
             foreach (var item in source)
             {
@@ -30,8 +27,8 @@ namespace Reclaimer.Utilities
 
         public static int LastIndexWhere<TSource>(this IEnumerable<TSource> source, Predicate<TSource> predicate)
         {
-            int match = -1;
-            int index = 0;
+            var match = -1;
+            var index = 0;
 
             foreach (var item in source)
             {

@@ -1,12 +1,8 @@
 ﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using Reclaimer.Saber3D.Common;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Saber3D.Halo1X
 {
@@ -27,7 +23,7 @@ namespace Reclaimer.Saber3D.Halo1X
             {
                 var count = reader.ReadInt32();
                 var items = new List<PakItem>(count);
-                for (int i = 0; i < count; i++)
+                for (var i = 0; i < count; i++)
                     items.Add(new PakItem(this, reader));
                 Items = items;
             }

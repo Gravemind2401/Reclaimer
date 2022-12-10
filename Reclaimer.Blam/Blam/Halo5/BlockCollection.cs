@@ -1,12 +1,8 @@
 ﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.Halo5
 {
@@ -45,13 +41,13 @@ namespace Reclaimer.Blam.Halo5
             var blockSize = FixedSizeAttribute.ValueFor(typeof(T));
 
             reader.Seek(block.Offset, SeekOrigin.Begin);
-            for (int i = 0; i < blockCount; i++)
+            for (var i = 0; i < blockCount; i++)
                 Add(reader.ReadObject<T>());
 
             var blockProps = typeof(T).GetProperties()
                 .Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(BlockCollection<>));
 
-            int index = 0;
+            var index = 0;
             foreach (var item in this)
             {
                 var adjustedBase = blockSize * index++;

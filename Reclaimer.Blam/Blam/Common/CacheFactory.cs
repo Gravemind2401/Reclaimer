@@ -20,9 +20,7 @@ namespace Reclaimer.Blam.Common
         {
             get
             {
-                if (halo1Classes == null)
-                    halo1Classes = ReadClassXml(Properties.Resources.Halo1Classes);
-
+                halo1Classes ??= ReadClassXml(Properties.Resources.Halo1Classes);
                 return halo1Classes;
             }
         }
@@ -32,9 +30,7 @@ namespace Reclaimer.Blam.Common
         {
             get
             {
-                if (halo2Classes == null)
-                    halo2Classes = ReadClassXml(Properties.Resources.Halo2Classes);
-
+                halo2Classes ??= ReadClassXml(Properties.Resources.Halo2Classes);
                 return halo2Classes;
             }
         }

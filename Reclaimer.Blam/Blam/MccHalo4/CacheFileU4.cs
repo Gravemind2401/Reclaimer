@@ -3,12 +3,7 @@ using Reclaimer.Blam.Common.Gen3;
 using Reclaimer.Blam.Properties;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.MccHalo4
@@ -48,7 +43,7 @@ namespace Reclaimer.Blam.MccHalo4
 
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
-                
+
                 var offset = args.CacheType >= CacheType.MccHalo4_2212 ? 24 : 712;
                 LocaleIndex = new LocaleIndex(this, offset, 80, 17);
             }
@@ -132,7 +127,7 @@ namespace Reclaimer.Blam.MccHalo4
     public class StringIndexU4 : StringIndex
     {
         internal override StringIdTranslator Translator { get; }
-        
+
         public StringIndexU4(CacheFile cache)
             : base(cache)
         {

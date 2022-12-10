@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 
 /* https://gist.github.com/automatonic/3725443 */
 
@@ -23,14 +19,14 @@ namespace Reclaimer.Blam.Utilities
             const uint c1 = 0xcc9e2d51;
             const uint c2 = 0x1b873593;
 
-            uint h1 = seed;
+            var h1 = seed;
             uint k1 = 0;
             uint streamLength = 0;
 
             using (var ms = new MemoryStream(data))
             using (var reader = new BinaryReader(ms))
             {
-                byte[] chunk = reader.ReadBytes(4);
+                var chunk = reader.ReadBytes(4);
                 while (chunk.Length > 0)
                 {
                     streamLength += (uint)chunk.Length;

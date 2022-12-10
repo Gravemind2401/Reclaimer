@@ -3,10 +3,7 @@ using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.Halo2
 {
@@ -61,17 +58,13 @@ namespace Reclaimer.Blam.Halo2
         {
             get
             {
-                switch (SampleRate)
+                return SampleRate switch
                 {
-                    case SampleRate.x22050Hz:
-                        return 22050;
-                    case SampleRate.x32000Hz:
-                        return 32000;
-                    case SampleRate.x44100Hz:
-                        return 44100;
-                    default:
-                        throw new NotSupportedException("Sample Rate not supported");
-                }
+                    SampleRate.x22050Hz => 22050,
+                    SampleRate.x32000Hz => 32000,
+                    SampleRate.x44100Hz => 44100,
+                    _ => throw new NotSupportedException("Sample Rate not supported")
+                };
             }
         }
 
@@ -100,7 +93,7 @@ namespace Reclaimer.Blam.Halo2
             else if (CompressionCodec == CompressionCodec.WMA)
                 result.DefaultExtension = "wma";
 
-            for (int i = 0; i < pitchRange.PermutationCount; i++)
+            for (var i = 0; i < pitchRange.PermutationCount; i++)
             {
                 var perm = resourceGestalt.SoundPermutations[pitchRange.FirstPermutationIndex + i];
                 var name = resourceGestalt.SoundNames[perm.NameIndex].Name;

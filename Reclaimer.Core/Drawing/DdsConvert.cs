@@ -285,10 +285,10 @@ namespace Reclaimer.Drawing
             }
         }
 
-        private void MaskChannels(byte[] source, DecompressOptions channels)
+        private static void MaskChannels(byte[] source, DecompressOptions channels)
         {
             var bpp = channels.HasFlag(DecompressOptions.Bgr24) ? 3 : 4;
-            int mask = 0;
+            var mask = 0;
 
             if (!channels.HasFlag(DecompressOptions.RemoveBlueChannel))
                 mask |= 1;
@@ -1237,7 +1237,7 @@ namespace Reclaimer.Drawing
 
         private static IEnumerable<T> SkipNth<T>(IEnumerable<T> enumerable, int n)
         {
-            int i = 0;
+            var i = 0;
             foreach (var item in enumerable)
             {
                 if (++i != n)
@@ -1262,7 +1262,7 @@ namespace Reclaimer.Drawing
             }
 
             var output = new byte[len];
-            int i = 0;
+            var i = 0;
             foreach (var b in source)
             {
                 output[i++] = b;
@@ -1280,14 +1280,14 @@ namespace Reclaimer.Drawing
             {
                 get
                 {
-                    switch (index)
+                    return index switch
                     {
-                        case 0: return b;
-                        case 1: return g;
-                        case 2: return r;
-                        case 3: return a;
-                        default: throw new ArgumentOutOfRangeException(nameof(index));
-                    }
+                        0 => b,
+                        1 => g,
+                        2 => r,
+                        3 => a,
+                        _ => throw new ArgumentOutOfRangeException(nameof(index))
+                    };
                 }
                 set
                 {
