@@ -2,12 +2,8 @@
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.Halo4
 {
@@ -91,7 +87,9 @@ namespace Reclaimer.Blam.Halo4
                 switch (cache.CacheType)
                 {
                     case CacheType.MccHalo4U4:
+                    case CacheType.MccHalo4_2212:
                     case CacheType.MccHalo2XU8:
+                    case CacheType.MccHalo2X_2212:
                         reader.Seek(1224, SeekOrigin.Begin);
                         dataTableAddress = reader.ReadUInt32();
                         break;

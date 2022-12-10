@@ -48,7 +48,9 @@ namespace Reclaimer.Blam.MccHalo2X
 
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
-                LocaleIndex = new LocaleIndex(this, 712, 80, 17);
+
+                var offset = args.CacheType >= CacheType.MccHalo2X_2212 ? 24 : 712;
+                LocaleIndex = new LocaleIndex(this, offset, 80, 17);
             }
 
             Task.Factory.StartNew(() =>

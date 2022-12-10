@@ -105,8 +105,10 @@ namespace Reclaimer.Blam.Common
                 case CacheType.Halo4Retail:
                 case CacheType.MccHalo4:
                 case CacheType.MccHalo4U4:
+                case CacheType.MccHalo4_2212:
                 case CacheType.MccHalo2X:
                 case CacheType.MccHalo2XU8:
+                case CacheType.MccHalo2X_2212:
                     content = item.ReadMetadata<Halo4.bitmap>();
                     break;
             }
@@ -165,8 +167,10 @@ namespace Reclaimer.Blam.Common
                     case CacheType.Halo4Retail:
                     case CacheType.MccHalo4:
                     case CacheType.MccHalo4U4:
+                    case CacheType.MccHalo4_2212:
                     case CacheType.MccHalo2X:
                     case CacheType.MccHalo2XU8:
+                    case CacheType.MccHalo2X_2212:
                         content = item.ReadMetadata<Halo4.render_model>();
                         break;
                 }
@@ -209,8 +213,10 @@ namespace Reclaimer.Blam.Common
                     case CacheType.Halo4Retail:
                     case CacheType.MccHalo4:
                     case CacheType.MccHalo4U4:
+                    case CacheType.MccHalo4_2212:
                     case CacheType.MccHalo2X:
                     case CacheType.MccHalo2XU8:
+                    case CacheType.MccHalo2X_2212:
                         content = item.ReadMetadata<Halo4.scenario_structure_bsp>();
                         break;
                 }
