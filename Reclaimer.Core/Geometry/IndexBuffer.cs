@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace Reclaimer.Geometry
 {
-    public class IndexBuffer : DataBuffer<int>, IIndexBuffer
+    public partial class IndexBuffer : DataBuffer<int>, IIndexBuffer
     {
         private delegate int ReadMethod(ReadOnlySpan<byte> buffer);
         private delegate void WriteMethod(int value, Span<byte> buffer);
