@@ -27,12 +27,12 @@ namespace Reclaimer.Geometry.Vectors
 
         public override string ToString() => $"[{X:F6}, {Y:F6}]";
 
-        #region IBufferableVector
+        #region IBufferable
 
-        private static int PackSize => packSize;
-        private static int SizeOf => structureSize;
-        private static RealVector2 ReadFromBuffer(ReadOnlySpan<byte> buffer) => new RealVector2(MemoryMarshal.Cast<byte, float>(buffer));
-        void IBufferable<RealVector2>.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<float, byte>(new[] { X, Y }).CopyTo(buffer);
+        static int IBufferable.PackSize => packSize;
+        static int IBufferable.SizeOf => structureSize;
+        static RealVector2 IBufferable<RealVector2>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new RealVector2(MemoryMarshal.Cast<byte, float>(buffer));
+        void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<float, byte>(new[] { X, Y }).CopyTo(buffer);
 
         #endregion
 

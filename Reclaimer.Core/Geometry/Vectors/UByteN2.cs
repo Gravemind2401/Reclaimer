@@ -59,13 +59,12 @@ namespace Reclaimer.Geometry.Vectors
 
         public override string ToString() => $"[{X:F6}, {Y:F6}]";
 
-        #region IBufferableVector
+        #region IBufferable
 
-        private static int PackSize => packSize;
-        private static int SizeOf => structureSize;
-
-        private static UByteN2 ReadFromBuffer(ReadOnlySpan<byte> buffer) => new UByteN2(buffer);
-        void IBufferable<UByteN2>.WriteToBuffer(Span<byte> buffer) => (buffer[0], buffer[1]) = (xbits, ybits);
+        static int IBufferable.PackSize => packSize;
+        static int IBufferable.SizeOf => structureSize;
+        static UByteN2 IBufferable<UByteN2>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new UByteN2(buffer);
+        void IBufferable.WriteToBuffer(Span<byte> buffer) => (buffer[0], buffer[1]) = (xbits, ybits);
 
         #endregion
 

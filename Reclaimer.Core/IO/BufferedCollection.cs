@@ -1,26 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.IO
 {
-    public class BufferedCollection<T> : DataBuffer<T>, ICollection<T>
-        where T : struct, IBufferable<T>
+    public class BufferedCollection<TBufferable> : DataBuffer<TBufferable>, ICollection<TBufferable>
+        where TBufferable : struct, IBufferable<TBufferable>
     {
-        private delegate T ReadMethod(ReadOnlySpan<byte> buffer);
-
-        protected static readonly int TPack = (int)typeof(T).GetProperty(nameof(IBufferable<T>.PackSize), System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).GetValue(null);
-        protected static readonly int TSize = (int)typeof(T).GetProperty(nameof(IBufferable<T>.SizeOf), System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).GetValue(null);
-        protected static readonly System.Reflection.MethodInfo TReadMethod = typeof(T).GetMethod(nameof(IBufferable<T>.ReadFromBuffer), System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-
-        private static T TReadFromBuffer(ReadOnlySpan<byte> buffer)
-        {
-            var action = TReadMethod.CreateDelegate<ReadMethod>();
-            return action(buffer);
-        }
+        private static int TPack => TBufferable.PackSize;
+        private static int TSize => TBufferable.SizeOf;
 
         protected override int SizeOf => TSize;
 
@@ -48,9 +35,9 @@ namespace Reclaimer.IO
             : base(buffer, count, start, stride, offset)
         { }
 
-        public override T this[int index]
+        public override TBufferable this[int index]
         {
-            get => TReadFromBuffer(CreateSpan(index));
+            get => TBufferable.ReadFromBuffer(CreateSpan(index));
             set => value.WriteToBuffer(CreateSpan(index));
         }
 
@@ -78,7 +65,7 @@ namespace Reclaimer.IO
         public byte[] GetBuffer() => buffer;
 
         #region ICollection
-        public void CopyTo(T[] array, int arrayIndex)
+        public void CopyTo(TBufferable[] array, int arrayIndex)
         {
             if (array == null)
                 throw new ArgumentNullException(nameof(array));
@@ -90,22 +77,11 @@ namespace Reclaimer.IO
                 array[arrayIndex] = this[arrayIndex++];
         }
 
-        bool ICollection<T>.IsReadOnly => true;
-        void ICollection<T>.Add(T item) => throw new NotSupportedException();
-        void ICollection<T>.Clear() => throw new NotSupportedException();
-        bool ICollection<T>.Contains(T item) => throw new NotSupportedException();
-        bool ICollection<T>.Remove(T item) => throw new NotSupportedException();
-        #endregion
-
-        #region IEnumerable
-        protected IEnumerable<T> Enumerate()
-        {
-            for (var i = 0; i < Count; i++)
-                yield return this[i];
-        }
-
-        public IEnumerator<T> GetEnumerator() => Enumerate().GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)Enumerate()).GetEnumerator();
+        bool ICollection<TBufferable>.IsReadOnly => true;
+        void ICollection<TBufferable>.Add(TBufferable item) => throw new NotSupportedException();
+        void ICollection<TBufferable>.Clear() => throw new NotSupportedException();
+        bool ICollection<TBufferable>.Contains(TBufferable item) => throw new NotSupportedException();
+        bool ICollection<TBufferable>.Remove(TBufferable item) => throw new NotSupportedException();
         #endregion
     }
 }

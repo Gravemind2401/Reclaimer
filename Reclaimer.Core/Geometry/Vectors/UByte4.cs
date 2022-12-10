@@ -50,10 +50,10 @@ namespace Reclaimer.Geometry.Vectors
 
         #region IBufferableVector
 
-        private static int PackSize => packSize;
-        private static int SizeOf => structureSize;
-        private static UByte4 ReadFromBuffer(ReadOnlySpan<byte> buffer) => new UByte4(buffer[0], buffer[1], buffer[2], buffer[3]);
-        void IBufferable<UByte4>.WriteToBuffer(Span<byte> buffer) => (buffer[0], buffer[1], buffer[2], buffer[3]) = (X, Y, Z, W);
+        static int IBufferable.PackSize => packSize;
+        static int IBufferable.SizeOf => structureSize;
+        static UByte4 IBufferable<UByte4>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new UByte4(buffer[0], buffer[1], buffer[2], buffer[3]);
+        void IBufferable.WriteToBuffer(Span<byte> buffer) => (buffer[0], buffer[1], buffer[2], buffer[3]) = (X, Y, Z, W);
 
         #endregion
 

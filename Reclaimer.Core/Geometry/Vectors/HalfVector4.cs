@@ -27,12 +27,12 @@ namespace Reclaimer.Geometry.Vectors
 
         public override string ToString() => $"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]";
 
-        #region IBufferableVector
+        #region IBufferable
 
-        private static int PackSize => packSize;
-        private static int SizeOf => structureSize;
-        private static HalfVector4 ReadFromBuffer(ReadOnlySpan<byte> buffer) => new HalfVector4(MemoryMarshal.Cast<byte, Half>(buffer));
-        void IBufferable<HalfVector4>.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<Half, byte>(new[] { X, Y, Z, W }).CopyTo(buffer);
+        static int IBufferable.PackSize => packSize;
+        static int IBufferable.SizeOf => structureSize;
+        static HalfVector4 IBufferable<HalfVector4>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new HalfVector4(MemoryMarshal.Cast<byte, Half>(buffer));
+        void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<Half, byte>(new[] { X, Y, Z, W }).CopyTo(buffer);
 
         #endregion
 

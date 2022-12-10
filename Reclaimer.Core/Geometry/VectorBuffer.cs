@@ -1,6 +1,4 @@
 ﻿using Reclaimer.IO;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,8 +7,6 @@ namespace Reclaimer.Geometry
     public class VectorBuffer<TVector> : BufferedCollection<TVector>, IVectorBuffer
         where TVector : struct, IBufferableVector<TVector>
     {
-        private static readonly int TDimensions = (int)typeof(TVector).GetProperty(nameof(IVector.Dimensions), System.Reflection.BindingFlags.Static).GetValue(null);
-
         public VectorBuffer(int count)
             : base(count)
         { }
@@ -41,7 +37,7 @@ namespace Reclaimer.Geometry
             return new VectorBuffer<TVector>(buffer, count, newStart, stride, offset);
         }
 
-        int IVectorBuffer.Dimensions => TDimensions;
+        int IVectorBuffer.Dimensions => TVector.Dimensions;
         IVectorBuffer IVectorBuffer.Slice(int index, int count) => Slice(index, count);
         IVector IReadOnlyList<IVector>.this[int index] => this[index];
         IEnumerator<IVector> IEnumerable<IVector>.GetEnumerator() => Enumerate().OfType<IVector>().GetEnumerator();

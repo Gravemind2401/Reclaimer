@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace Reclaimer.Blam.Common
@@ -44,9 +42,9 @@ namespace Reclaimer.Blam.Common
             var layout = vertexLayouts[typeId];
             var vertexBuffer = new VertexBuffer();
 
-            var last = layout.Fields.OrderBy(f => f.Offset).Last();
-            var lastType = GetFieldType(last.DataType);
-            var size = last.Offset + (lastType?.GetProperty(nameof(IBufferable<object>.SizeOf), BindingFlags.Static | BindingFlags.NonPublic).GetValue(null) as int?).GetValueOrDefault(4);
+            var lastField = layout.Fields.OrderBy(f => f.Offset).Last();
+            var fieldType = GetFieldType(lastField.DataType);
+            var vertexSize = lastField.Offset + IBufferable.GetSizeOf(fieldType);
 
             foreach (var field in layout.Fields)
             {
@@ -55,7 +53,7 @@ namespace Reclaimer.Blam.Common
                     continue;
 
                 var method = GetType().GetMethod(nameof(CreateBuffer), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(vectorType);
-                var buffer = (IVectorBuffer)method.Invoke(this, new object[] { data, count, 0, size, field.Offset });
+                var buffer = (IVectorBuffer)method.Invoke(this, new object[] { data, count, 0, vertexSize, field.Offset });
                 GetVectorChannel(field.Usage, vertexBuffer).Add(buffer);
             }
 

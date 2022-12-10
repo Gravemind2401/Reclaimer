@@ -1,8 +1,5 @@
-﻿using Reclaimer.Geometry.Vectors;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
 
 namespace Reclaimer.Geometry
 {

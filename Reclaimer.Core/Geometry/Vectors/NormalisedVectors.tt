@@ -96,21 +96,20 @@ namespace Reclaimer.Geometry.Vectors
 
         public override string ToString() => $"[<#= JoinProperties(", ", "{{{0}:F6}}") #>]";
 
-        #region IBufferableVector
+        #region IBufferable
 
-        private static int PackSize => packSize;
-        private static int SizeOf => structureSize;
-
+        static int IBufferable.PackSize => packSize;
+        static int IBufferable.SizeOf => structureSize;
 <#      if (precision == 8)
         {
             var bufferParts = string.Join(", ", Enumerable.Range(0, vector.Dimensions).Select(i => $"buffer[{i}]")); #>
-        private static <#= vector.TypeName #> ReadFromBuffer(ReadOnlySpan<byte> buffer) => new <#= vector.TypeName #>(buffer);
-        void IBufferable<<#= vector.TypeName #>>.WriteToBuffer(Span<byte> buffer) => (<#= bufferParts #>) = (<#= string.Join(", ", storageFields) #>);
+        static <#= vector.TypeName #> IBufferable<<#= vector.TypeName #>>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new <#= vector.TypeName #>(buffer);
+        void IBufferable.WriteToBuffer(Span<byte> buffer) => (<#= bufferParts #>) = (<#= string.Join(", ", storageFields) #>);
 <#      }
         else
         { #>
-        private static <#= vector.TypeName #> ReadFromBuffer(ReadOnlySpan<byte> buffer) => new <#= vector.TypeName #>(MemoryMarshal.Cast<byte, <#= vector.StorageType #>>(buffer));
-        void IBufferable<<#= vector.TypeName #>>.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<<#= vector.StorageType #>, byte>(new[] { <#= string.Join(", ", storageFields) #> }).CopyTo(buffer);
+        static <#= vector.TypeName #> IBufferable<<#= vector.TypeName #>>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new <#= vector.TypeName #>(MemoryMarshal.Cast<byte, <#= vector.StorageType #>>(buffer));
+        void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<<#= vector.StorageType #>, byte>(new[] { <#= string.Join(", ", storageFields) #> }).CopyTo(buffer);
 <#      } #>
 
         #endregion
