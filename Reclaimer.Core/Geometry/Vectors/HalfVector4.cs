@@ -12,7 +12,7 @@ namespace Reclaimer.Geometry.Vectors
     /// A 4-dimensional vector with half-precision floating-point values.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("RealVectors.tt", "")]
-    public record struct HalfVector4(Half X, Half Y, Half Z, Half W) : IVector4, IReadOnlyVector4, IBufferableVector<HalfVector4>
+    public record struct HalfVector4(Half X, Half Y, Half Z, Half W) : IVector4, IBufferableVector<HalfVector4>
     {
         private const int packSize = 2;
         private const int structureSize = 8;
@@ -45,35 +45,29 @@ namespace Reclaimer.Geometry.Vectors
 
         #region IVector4
 
-        float IVector2.X
+        float IVector.X
         {
             get => (float)X;
             set => X = (Half)value;
         }
-        float IVector2.Y
+
+        float IVector.Y
         {
             get => (float)Y;
             set => Y = (Half)value;
         }
-        float IVector3.Z
+
+        float IVector.Z
         {
             get => (float)Z;
             set => Z = (Half)value;
         }
-        float IVector4.W
+
+        float IVector.W
         {
             get => (float)W;
             set => W = (Half)value;
         }
-
-        #endregion
-
-        #region IReadOnlyVector4
-
-        float IReadOnlyVector2.X => (float)X;
-        float IReadOnlyVector2.Y => (float)Y;
-        float IReadOnlyVector3.Z => (float)Z;
-        float IReadOnlyVector4.W => (float)W;
 
         #endregion
     }

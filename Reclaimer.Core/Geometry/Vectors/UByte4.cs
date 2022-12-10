@@ -7,7 +7,7 @@ namespace Reclaimer.Geometry.Vectors
     /// <summary>
     /// A 4-dimensional vector with 8-bit unsigned integer components.
     /// </summary>
-    public record struct UByte4(byte X, byte Y, byte Z, byte W) : IVector4, IReadOnlyVector4, IBufferableVector<UByte4>
+    public record struct UByte4(byte X, byte Y, byte Z, byte W) : IVector4, IBufferableVector<UByte4>
     {
         private const int packSize = 1;
         private const int structureSize = 4;
@@ -20,36 +20,27 @@ namespace Reclaimer.Geometry.Vectors
 
         public override string ToString() => $"[{X}, {Y}, {Z}, {W}]";
 
-        #region IReadOnlyVector4
-
-        float IReadOnlyVector2.X => X;
-        float IReadOnlyVector2.Y => Y;
-        float IReadOnlyVector3.Z => Z;
-        float IReadOnlyVector4.W => W;
-
-        #endregion
-
         #region IVector4
 
-        float IVector2.X
+        float IVector.X
         {
             get => X;
             set => X = Clamp(value);
         }
 
-        float IVector2.Y
+        float IVector.Y
         {
             get => Y;
             set => Y = Clamp(value);
         }
 
-        float IVector3.Z
+        float IVector.Z
         {
             get => Z;
             set => Z = Clamp(value);
         }
 
-        float IVector4.W
+        float IVector.W
         {
             get => W;
             set => W = Clamp(value);

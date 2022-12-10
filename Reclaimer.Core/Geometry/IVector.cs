@@ -1,78 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace Reclaimer.Geometry
 {
     public interface IVector
     {
         static int Dimensions { get; } //TODO: abstract static in C# 11
-        static bool IsReadOnly { get; } //TODO: abstract static in C# 11
 
-        float X
-        {
-            get => default;
-            set => throw new ArgumentOutOfRangeException();
-        }
+        sealed int InstanceDimensions => Dimensions;
 
-        float Y
-        {
-            get => default;
-            set => throw new ArgumentOutOfRangeException();
-        }
+        float X { get; set; }
+        float Y { get; set; }
+        float Z { get; set; }
+        float W { get; set; }
 
-        float Z
-        {
-            get => default;
-            set => throw new ArgumentOutOfRangeException();
-        }
-
-        float W
-        {
-            get => default;
-            set => throw new ArgumentOutOfRangeException();
-        }
+        internal void ThrowInvalidDimension([CallerMemberName] string caller = null) => throw new NotSupportedException($"The {caller} property cannot be set on a {Dimensions}-dimensional vector.");
     }
 
     public interface IVector2 : IVector
     {
-        new float X { get; set; }
-        new float Y { get; set; }
-
-        float IVector.X
-        {
-            get => X;
-            set => X = value;
-        }
-
-        float IVector.Y
-        {
-            get => Y;
-            set => Y = value;
-        }
-    }
-
-    public interface IVector3 : IVector2
-    {
-        new float Z { get; set; }
+        static int Dimensions => 2;
 
         float IVector.Z
         {
-            get => Z;
-            set => Z = value;
+            get => default;
+            set => ThrowInvalidDimension();
         }
-    }
-
-    public interface IVector4 : IVector3
-    {
-        new float W { get; set; }
 
         float IVector.W
         {
-            get => W;
-            set => W = value;
+            get => default;
+            set => ThrowInvalidDimension();
         }
+    }
+
+    public interface IVector3 : IVector
+    {
+        static int Dimensions => 3;
+
+        float IVector.W
+        {
+            get => default;
+            set => ThrowInvalidDimension();
+        }
+    }
+
+    public interface IVector4 : IVector
+    {
+        static int Dimensions => 4;
     }
 }

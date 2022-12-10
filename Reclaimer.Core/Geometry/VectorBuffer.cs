@@ -10,7 +10,6 @@ namespace Reclaimer.Geometry
         where TVector : struct, IBufferableVector<TVector>
     {
         private static readonly int TDimensions = (int)typeof(TVector).GetProperty(nameof(IVector.Dimensions), System.Reflection.BindingFlags.Static).GetValue(null);
-        private static readonly bool TReadOnly = (bool)typeof(TVector).GetProperty(nameof(IVector.IsReadOnly), System.Reflection.BindingFlags.Static).GetValue(null);
 
         public VectorBuffer(int count)
             : base(count)

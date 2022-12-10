@@ -12,7 +12,7 @@ namespace Reclaimer.Geometry.Vectors
     /// A 3-dimensional vector with single-precision floating-point values.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("RealVectors.tt", "")]
-    public record struct RealVector3(float X, float Y, float Z) : IVector3, IReadOnlyVector3, IBufferableVector<RealVector3>
+    public record struct RealVector3(float X, float Y, float Z) : IVector3, IBufferableVector<RealVector3>
     {
         private const int packSize = 4;
         private const int structureSize = 12;

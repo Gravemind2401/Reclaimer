@@ -13,7 +13,7 @@ namespace Reclaimer.Geometry.Vectors
     /// Each axis has a possible value range from -1f to 1f.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("PackedVectors.tt", "")]
-    public record struct HenDN3 : IVector3, IReadOnlyVector3, IBufferableVector<HenDN3>
+    public record struct HenDN3 : IVector3, IBufferableVector<HenDN3>
     {
         private const int packSize = sizeof(uint);
         private const int structureSize = sizeof(uint);

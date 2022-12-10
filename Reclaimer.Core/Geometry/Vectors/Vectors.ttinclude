@@ -89,7 +89,7 @@
             IsSigned = signed;
 
             NumericsType = $"Vector{dimensions}";
-            InterfaceTypes = $"IVector{dimensions}, IReadOnlyVector{dimensions}, IBufferableVector<{TypeName}>";
+            InterfaceTypes = $"IVector{dimensions}, IBufferableVector<{TypeName}>";
         }
     }
 

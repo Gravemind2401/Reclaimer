@@ -13,7 +13,7 @@ namespace Reclaimer.Geometry.Vectors
     /// Each axis has a possible value range from -1f to 1f.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NormalisedVectors.tt", "")]
-    public record struct ByteN2 : IVector2, IReadOnlyVector2, IBufferableVector<ByteN2>
+    public record struct ByteN2 : IVector2, IBufferableVector<ByteN2>
     {
         private const int packSize = 1;
         private const int structureSize = 2;

@@ -8,7 +8,7 @@ namespace Reclaimer.Geometry.Vectors
     /// <summary>
     /// A 2-dimensional vector with 16-bit unsigned integer components.
     /// </summary>
-    public record struct UShort2(ushort X, ushort Y) : IVector2, IReadOnlyVector2, IBufferableVector<UShort2>
+    public record struct UShort2(ushort X, ushort Y) : IVector2, IBufferableVector<UShort2>
     {
         private const int packSize = 2;
         private const int structureSize = 4;
@@ -25,22 +25,15 @@ namespace Reclaimer.Geometry.Vectors
 
         public override string ToString() => $"[{X}, {Y}]";
 
-        #region IReadOnlyVector2
-
-        float IReadOnlyVector2.X => X;
-        float IReadOnlyVector2.Y => Y;
-
-        #endregion
-
         #region IVector2
 
-        float IVector2.X
+        float IVector.X
         {
             get => X;
             set => X = Clamp(value);
         }
 
-        float IVector2.Y
+        float IVector.Y
         {
             get => Y;
             set => Y = Clamp(value);
