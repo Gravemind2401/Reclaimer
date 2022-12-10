@@ -168,7 +168,7 @@ namespace Reclaimer.Blam.Halo5
                                 var block = header.DataBlocks[3 + vertexBufferInfo.Length + lodData.IndexBufferIndex];
                                 reader.Seek(block.Offset, SeekOrigin.Begin);
                                 var data = reader.ReadBytes(block.Size);
-                                var indexBuffer = IndexBuffer.FromByteArray(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort));
+                                var indexBuffer = new IndexBuffer(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort));
 
                                 ib.Add(lodData.IndexBufferIndex, indexBuffer);
                             }

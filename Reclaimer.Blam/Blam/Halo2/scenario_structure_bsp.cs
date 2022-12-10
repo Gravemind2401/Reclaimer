@@ -174,7 +174,7 @@ namespace Reclaimer.Blam.Halo2
             );
 
             reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
-            mesh.IndexBuffer = IndexBuffer.FromCollection(reader.ReadArray<ushort>(indexCount));
+            mesh.IndexBuffer = IndexBuffer.FromArray(reader.ReadArray<ushort>(indexCount));
 
             var positionBuffer = new VectorBuffer<RealVector3>(vertexCount);
             var texCoordsBuffer = new VectorBuffer<RealVector2>(vertexCount);

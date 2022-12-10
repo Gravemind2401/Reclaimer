@@ -12,31 +12,35 @@ namespace Reclaimer.Geometry
         private delegate int ReadMethod(ReadOnlySpan<byte> buffer);
         private delegate void WriteMethod(int value, Span<byte> buffer);
 
-        public static IndexBuffer FromByteArray(byte[] data, Type dataType)
+        private static int CoerceSize(Type dataType)
         {
             if (dataType == typeof(byte))
-                return new IndexBuffer(data, sizeof(byte));
+                return sizeof(byte);
             else if (dataType == typeof(ushort))
-                return new IndexBuffer(data, sizeof(ushort));
+                return sizeof(ushort);
             else if (dataType == typeof(int))
-                return new IndexBuffer(data, sizeof(int));
+                return sizeof(int);
             else
                 throw new ArgumentException("Data type must be byte, ushort or int.", nameof(dataType));
         }
 
-        public static IndexBuffer FromCollection(IEnumerable<int> collection) => FromCollection(collection.ToArray());
-        public static IndexBuffer FromCollection(IEnumerable<ushort> collection) => FromCollection(collection.ToArray());
-        public static IndexBuffer FromCollection(IEnumerable<byte> collection) => FromCollection(collection.ToArray());
+        public static IndexBuffer FromCollection(IEnumerable<int> collection) => FromArray(collection.ToArray());
+        public static IndexBuffer FromCollection(IEnumerable<ushort> collection) => FromArray(collection.ToArray());
+        public static IndexBuffer FromCollection(IEnumerable<byte> collection) => FromArray(collection.ToArray());
 
-        public static IndexBuffer FromCollection(int[] collection) => new IndexBuffer(MemoryMarshal.AsBytes<int>(collection).ToArray(), sizeof(int));
-        public static IndexBuffer FromCollection(ushort[] collection) => new IndexBuffer(MemoryMarshal.AsBytes<ushort>(collection).ToArray(), sizeof(ushort));
-        public static IndexBuffer FromCollection(byte[] collection) => new IndexBuffer(collection, sizeof(byte));
+        public static IndexBuffer FromArray(int[] collection) => new IndexBuffer(MemoryMarshal.AsBytes<int>(collection).ToArray(), sizeof(int));
+        public static IndexBuffer FromArray(ushort[] collection) => new IndexBuffer(MemoryMarshal.AsBytes<ushort>(collection).ToArray(), sizeof(ushort));
+        public static IndexBuffer FromArray(byte[] collection) => new IndexBuffer(collection, sizeof(byte));
 
 
         private readonly ReadMethod GetValue;
         private readonly WriteMethod SetValue;
 
         protected override int SizeOf { get; }
+
+        public IndexBuffer(byte[] buffer, Type dataType)
+            : this(buffer, CoerceSize(dataType))
+        { }
 
         private IndexBuffer(byte[] buffer, int size)
             : this(buffer, buffer.Length / size, 0, size, 0, size)

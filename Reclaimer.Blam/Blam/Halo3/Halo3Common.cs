@@ -220,7 +220,7 @@ namespace Reclaimer.Blam.Halo3
                     {
                         reader.Seek(address, SeekOrigin.Begin);
                         var data = reader.ReadBytes(iInfo.DataLength);
-                        var indexBuffer = IndexBuffer.FromByteArray(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort));
+                        var indexBuffer = new IndexBuffer(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort));
                         ib.Add(section.IndexBufferIndex, indexBuffer);
                     }
                 }

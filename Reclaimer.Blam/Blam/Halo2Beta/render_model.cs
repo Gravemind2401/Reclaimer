@@ -122,7 +122,7 @@ namespace Reclaimer.Blam.Halo2Beta
                     );
 
                     reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
-                    mesh.IndexBuffer = IndexBuffer.FromCollection(reader.ReadArray<ushort>(sectionInfo.IndexCount));
+                    mesh.IndexBuffer = IndexBuffer.FromArray(reader.ReadArray<ushort>(sectionInfo.IndexCount));
 
                     #region Vertices
                     var positionBuffer = new VectorBuffer<UInt16N4>(section.VertexCount);
