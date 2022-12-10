@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ProjectName>$([System.IO.Path]::GetFileName($(MSBuildProjectDirectory)))</ProjectName>
     <OutputType>Library</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <Nullable>disable</Nullable>
 	<UseWPF>true</UseWPF>
 	<SignAssembly>True</SignAssembly>
