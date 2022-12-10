@@ -55,8 +55,8 @@ namespace Reclaimer.Geometry.Vectors
     <# WriteGeneratedCodeAttribute(); #>
     public record struct <#= vector.TypeName #> : <#= vector.InterfaceTypes #>
     {
-        private const int packSize = <#= precision / 8 #>;
-        private const int structureSize = <#= vector.ByteLength #>;
+        private const int packSize = sizeof(<#= vector.StorageType #>);
+        private const int structureSize = sizeof(<#= vector.StorageType #>) * <#= vector.Dimensions #>;
 
         private static readonly PackedVectorHelper helper = PackedVectorHelper.Create<#= vector.IsSigned ? "Signed" : "Unsigned" #>(<#= precision #>);
 

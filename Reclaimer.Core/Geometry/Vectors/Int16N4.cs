@@ -15,8 +15,8 @@ namespace Reclaimer.Geometry.Vectors
     [System.CodeDom.Compiler.GeneratedCode("NormalisedVectors.tt", "")]
     public record struct Int16N4 : IVector4, IBufferableVector<Int16N4>
     {
-        private const int packSize = 2;
-        private const int structureSize = 8;
+        private const int packSize = sizeof(ushort);
+        private const int structureSize = sizeof(ushort) * 4;
 
         private static readonly PackedVectorHelper helper = PackedVectorHelper.CreateSigned(16);
 

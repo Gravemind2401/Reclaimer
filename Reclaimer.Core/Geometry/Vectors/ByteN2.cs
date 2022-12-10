@@ -15,8 +15,8 @@ namespace Reclaimer.Geometry.Vectors
     [System.CodeDom.Compiler.GeneratedCode("NormalisedVectors.tt", "")]
     public record struct ByteN2 : IVector2, IBufferableVector<ByteN2>
     {
-        private const int packSize = 1;
-        private const int structureSize = 2;
+        private const int packSize = sizeof(byte);
+        private const int structureSize = sizeof(byte) * 2;
 
         private static readonly PackedVectorHelper helper = PackedVectorHelper.CreateSigned(8);
 
