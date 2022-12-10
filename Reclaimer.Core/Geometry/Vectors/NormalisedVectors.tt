@@ -20,7 +20,7 @@
     uniformVectors.Add(new VectorDescription("Int16N2", 2, true, 16));
     uniformVectors.Add(new VectorDescription("Int16N4", 4, true, 16));
 
-    uniformVectors.Add(new VectorDescription("UByteN2", 4, false, 8));
+    uniformVectors.Add(new VectorDescription("UByteN2", 2, false, 8));
     uniformVectors.Add(new VectorDescription("UByteN4", 4, false, 8));
 
     uniformVectors.Add(new VectorDescription("UInt16N2", 2, false, 16));

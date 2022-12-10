@@ -9,18 +9,18 @@ using System.Runtime.InteropServices;
 namespace Reclaimer.Geometry.Vectors
 {
     /// <summary>
-    /// A 4-dimensional vector with 8-bit normalised components.
+    /// A 2-dimensional vector with 8-bit normalised components.
     /// Each axis has a possible value range from 0f to 1f.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NormalisedVectors.tt", "")]
-    public struct UByteN2 : IEquatable<UByteN2>, IVector4, IReadOnlyVector4, IBufferableVector<UByteN2>
+    public struct UByteN2 : IEquatable<UByteN2>, IVector2, IReadOnlyVector2, IBufferableVector<UByteN2>
     {
         private const int packSize = 1;
-        private const int structureSize = 4;
+        private const int structureSize = 2;
 
         private static readonly PackedVectorHelper helper = PackedVectorHelper.CreateUnsigned(8);
 
-        private byte xbits, ybits, zbits, wbits;
+        private byte xbits, ybits;
 
         #region Axis Properties
 
@@ -36,40 +36,28 @@ namespace Reclaimer.Geometry.Vectors
             set => helper.SetValue(ref ybits, value);
         }
 
-        public float Z
-        {
-            get => helper.GetValue(in zbits);
-            set => helper.SetValue(ref zbits, value);
-        }
-
-        public float W
-        {
-            get => helper.GetValue(in wbits);
-            set => helper.SetValue(ref wbits, value);
-        }
-
         #endregion
 
-        public UByteN2(byte x, byte y, byte z, byte w)
+        public UByteN2(byte x, byte y)
         {
-            (xbits, ybits, zbits, wbits) = (x, y, z, w);
+            (xbits, ybits) = (x, y);
         }
 
-        public UByteN2(Vector4 value)
-            : this(value.X, value.Y, value.Z, value.W)
+        public UByteN2(Vector2 value)
+            : this(value.X, value.Y)
         { }
 
-        public UByteN2(float x, float y, float z, float w)
+        public UByteN2(float x, float y)
         {
-            xbits = ybits = zbits = wbits = default;
-            (X, Y, Z, W) = (x, y, z, w);
+            xbits = ybits = default;
+            (X, Y) = (x, y);
         }
 
         private UByteN2(ReadOnlySpan<byte> values)
-            : this(values[0], values[1], values[2], values[3])
+            : this(values[0], values[1])
         { }
 
-        public override string ToString() => $"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]";
+        public override string ToString() => $"[{X:F6}, {Y:F6}]";
 
         #region IBufferableVector
 
@@ -77,25 +65,25 @@ namespace Reclaimer.Geometry.Vectors
         private static int SizeOf => structureSize;
 
         private static UByteN2 ReadFromBuffer(ReadOnlySpan<byte> buffer) => new UByteN2(buffer);
-        void IBufferable<UByteN2>.WriteToBuffer(Span<byte> buffer) => (buffer[0], buffer[1], buffer[2], buffer[3]) = (xbits, ybits, zbits, wbits);
+        void IBufferable<UByteN2>.WriteToBuffer(Span<byte> buffer) => (buffer[0], buffer[1]) = (xbits, ybits);
 
         #endregion
 
         #region Cast Operators
 
-        public static explicit operator Vector4(UByteN2 value) => new Vector4(value.X, value.Y, value.Z, value.W);
-        public static explicit operator UByteN2(Vector4 value) => new UByteN2(value);
+        public static explicit operator Vector2(UByteN2 value) => new Vector2(value.X, value.Y);
+        public static explicit operator UByteN2(Vector2 value) => new UByteN2(value);
 
         #endregion
 
         #region Equality Operators
 
-        public static bool operator ==(UByteN2 left, UByteN2 right) => left.xbits == right.xbits && left.ybits == right.ybits && left.zbits == right.zbits && left.wbits == right.wbits;
+        public static bool operator ==(UByteN2 left, UByteN2 right) => left.xbits == right.xbits && left.ybits == right.ybits;
         public static bool operator !=(UByteN2 left, UByteN2 right) => !(left == right);
 
         public override bool Equals(object obj) => obj is UByteN2 other && Equals(other);
-        public bool Equals(UByteN2 other) => xbits == other.xbits && ybits == other.ybits && zbits == other.zbits && wbits == other.wbits;
-        public override int GetHashCode() => HashCode.Combine(xbits, ybits, zbits, wbits);
+        public bool Equals(UByteN2 other) => xbits == other.xbits && ybits == other.ybits;
+        public override int GetHashCode() => HashCode.Combine(xbits, ybits);
 
         #endregion
     }
