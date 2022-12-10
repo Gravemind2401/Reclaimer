@@ -145,12 +145,14 @@ namespace Reclaimer.Blam.Common
                     return new MccHalo4.CacheFile(args);
 
                 case CacheType.MccHalo4U4:
+                case CacheType.MccHalo4_2212:
                     return new MccHalo4.CacheFileU4(args);
 
                 case CacheType.MccHalo2X:
                     return new MccHalo2X.CacheFile(args);
 
                 case CacheType.MccHalo2XU8:
+                case CacheType.MccHalo2X_2212:
                     return new MccHalo2X.CacheFileU8(args);
 
                 default:
