@@ -60,7 +60,7 @@ namespace Reclaimer.Plugins
         public override void Initialise()
         {
             Settings = LoadSettings<BatchExtractSettings>();
-            Settings.DataFolder = Settings.DataFolder.PatternReplace(Constants.PluginsFolderToken, Substrate.PluginsDirectory);
+            Settings.DataFolder = Settings.DataFolder.Replace(Constants.PluginsFolderToken, Substrate.PluginsDirectory, StringComparison.OrdinalIgnoreCase);
             getModelExtensionFunc = new Lazy<GetModelExtension>(() => Substrate.GetSharedFunction<GetModelExtension>(Constants.SharedFuncGetModelExtension));
         }
 
@@ -108,7 +108,7 @@ namespace Reclaimer.Plugins
 
         public override void Suspend()
         {
-            Settings.DataFolder = Settings.DataFolder.PatternReplace(Substrate.PluginsDirectory, Constants.PluginsFolderToken);
+            Settings.DataFolder = Settings.DataFolder.Replace(Substrate.PluginsDirectory, Constants.PluginsFolderToken, StringComparison.OrdinalIgnoreCase);
             SaveSettings(Settings);
         }
 

@@ -51,18 +51,6 @@ namespace Reclaimer.Utilities
             }
         }
 
-        /// <summary>
-        /// Performs a case-insensitive replace.
-        /// </summary>
-        /// <param name="input">The string to search.</param>
-        /// <param name="pattern">The value that will be replaced.</param>
-        /// <param name="replacement">The replacement value.</param>
-        /// <returns></returns>
-        public static string PatternReplace(this string input, string pattern, string replacement)
-        {
-            return Regex.Replace(input, Regex.Escape(pattern), replacement, RegexOptions.IgnoreCase);
-        }
-
         public static void TransitionTo(this Window prev, Window next)
         {
             //if we try to close window A then show and drag window B we get the error 'Can only call DragMove when primary mouse button is down.'
