@@ -3,9 +3,7 @@ using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.IO
 {
@@ -14,8 +12,16 @@ namespace Reclaimer.IO
     /// </summary>
     public class EndianReader : BinaryReader, IEndianStream
     {
+        private static readonly ByteOrder NativeByteOrder = BitConverter.IsLittleEndian ? ByteOrder.LittleEndian : ByteOrder.BigEndian;
+
         private readonly long virtualOrigin;
         private readonly Encoding encoding;
+
+        /// <summary>
+        /// Returns <see langword="true"/> if the current value of the <see cref="ByteOrder"/> property
+        /// matches the byte order of the system's architecture.
+        /// </summary>
+        protected bool IsNativeByteOrder => ByteOrder == NativeByteOrder;
 
         /// <summary>
         /// Gets or sets the endianness used when reading from the stream.
@@ -209,7 +215,7 @@ namespace Reclaimer.IO
         /// <inheritdoc cref="ReadInt32(ByteOrder)"/>
         public virtual Half ReadHalf(ByteOrder byteOrder)
         {
-            if (byteOrder == ByteOrder.LittleEndian)
+            if (byteOrder == NativeByteOrder)
                 return base.ReadHalf();
 
             var bytes = base.ReadBytes(2);
@@ -225,7 +231,7 @@ namespace Reclaimer.IO
         /// <inheritdoc cref="ReadInt32(ByteOrder)"/>
         public virtual float ReadSingle(ByteOrder byteOrder)
         {
-            if (byteOrder == ByteOrder.LittleEndian)
+            if (byteOrder == NativeByteOrder)
                 return base.ReadSingle();
 
             var bytes = base.ReadBytes(4);
@@ -241,7 +247,7 @@ namespace Reclaimer.IO
         /// <inheritdoc cref="ReadInt32(ByteOrder)"/>
         public virtual double ReadDouble(ByteOrder byteOrder)
         {
-            if (byteOrder == ByteOrder.LittleEndian)
+            if (byteOrder == NativeByteOrder)
                 return base.ReadDouble();
 
             var bytes = base.ReadBytes(8);
@@ -257,7 +263,7 @@ namespace Reclaimer.IO
         /// <inheritdoc cref="ReadInt32(ByteOrder)"/>
         public virtual decimal ReadDecimal(ByteOrder byteOrder)
         {
-            if (byteOrder == ByteOrder.LittleEndian)
+            if (byteOrder == NativeByteOrder)
                 return base.ReadDecimal();
 
             var bits = new int[4];
@@ -275,7 +281,7 @@ namespace Reclaimer.IO
         /// </summary>
         /// <inheritdoc cref="BinaryReader.ReadInt16"/>
         /// <inheritdoc cref="ReadInt32(ByteOrder)"/>
-        public virtual short ReadInt16(ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? base.ReadInt16() : BinaryPrimitives.ReverseEndianness(base.ReadInt16());
+        public virtual short ReadInt16(ByteOrder byteOrder) => byteOrder == NativeByteOrder ? base.ReadInt16() : BinaryPrimitives.ReverseEndianness(base.ReadInt16());
 
         /// <summary>
         /// Reads a 4-byte signed integer from the current stream using the specified byte order
@@ -283,7 +289,7 @@ namespace Reclaimer.IO
         /// </summary>
         /// <param name="byteOrder">The byte order to use.</param>
         /// <inheritdoc cref="BinaryReader.ReadInt32"/>
-        public virtual int ReadInt32(ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? base.ReadInt32() : BinaryPrimitives.ReverseEndianness(base.ReadInt32());
+        public virtual int ReadInt32(ByteOrder byteOrder) => byteOrder == NativeByteOrder ? base.ReadInt32() : BinaryPrimitives.ReverseEndianness(base.ReadInt32());
 
         /// <summary>
         /// Reads an 8-byte signed integer from the current stream using the specified byte order
@@ -291,7 +297,7 @@ namespace Reclaimer.IO
         /// </summary>
         /// <inheritdoc cref="BinaryReader.ReadInt64"/>
         /// <inheritdoc cref="ReadInt32(ByteOrder)"/>
-        public virtual long ReadInt64(ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? base.ReadInt64() : BinaryPrimitives.ReverseEndianness(base.ReadInt64());
+        public virtual long ReadInt64(ByteOrder byteOrder) => byteOrder == NativeByteOrder ? base.ReadInt64() : BinaryPrimitives.ReverseEndianness(base.ReadInt64());
 
         /// <summary>
         /// Reads a 2-byte unsigned integer from the current stream using the specified byte order
@@ -299,7 +305,7 @@ namespace Reclaimer.IO
         /// </summary>
         /// <inheritdoc cref="BinaryReader.ReadUInt16"/>
         /// <inheritdoc cref="ReadInt32(ByteOrder)"/>
-        public virtual ushort ReadUInt16(ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? base.ReadUInt16() : BinaryPrimitives.ReverseEndianness(base.ReadUInt16());
+        public virtual ushort ReadUInt16(ByteOrder byteOrder) => byteOrder == NativeByteOrder ? base.ReadUInt16() : BinaryPrimitives.ReverseEndianness(base.ReadUInt16());
 
         /// <summary>
         /// Reads a 4-byte unsigned integer from the current stream using the specified byte order
@@ -307,7 +313,7 @@ namespace Reclaimer.IO
         /// </summary>
         /// <inheritdoc cref="BinaryReader.ReadUInt32"/>
         /// <inheritdoc cref="ReadInt32(ByteOrder)"/>
-        public virtual uint ReadUInt32(ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? base.ReadUInt32() : BinaryPrimitives.ReverseEndianness(base.ReadUInt32());
+        public virtual uint ReadUInt32(ByteOrder byteOrder) => byteOrder == NativeByteOrder ? base.ReadUInt32() : BinaryPrimitives.ReverseEndianness(base.ReadUInt32());
 
         /// <summary>
         /// Reads an 8-byte unsigned integer from the current stream using the specified byte order
@@ -315,7 +321,7 @@ namespace Reclaimer.IO
         /// </summary>
         /// <inheritdoc cref="BinaryReader.ReadUInt64"/>
         /// <inheritdoc cref="ReadInt32(ByteOrder)"/>
-        public virtual ulong ReadUInt64(ByteOrder byteOrder) => byteOrder == ByteOrder.LittleEndian ? base.ReadUInt64() : BinaryPrimitives.ReverseEndianness(base.ReadUInt64());
+        public virtual ulong ReadUInt64(ByteOrder byteOrder) => byteOrder == NativeByteOrder ? base.ReadUInt64() : BinaryPrimitives.ReverseEndianness(base.ReadUInt64());
 
         /// <summary>
         /// Reads a globally unique identifier from the current stream using the specified byte order
