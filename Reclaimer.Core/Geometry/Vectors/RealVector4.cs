@@ -25,6 +25,8 @@ namespace Reclaimer.Geometry.Vectors
             : this(values[0], values[1], values[2], values[3])
         { }
 
+        public RealVector4 Conjugate => new RealVector4(-X, -Y, -Z, W);
+
         public override string ToString() => $"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]";
 
         #region IBufferable
@@ -40,6 +42,7 @@ namespace Reclaimer.Geometry.Vectors
 
         public static explicit operator Vector4(RealVector4 value) => new Vector4(value.X, value.Y, value.Z, value.W);
         public static explicit operator RealVector4(Vector4 value) => new RealVector4(value);
+        public static implicit operator RealVector4((float x, float y, float z, float w) value) => new RealVector4(value.x, value.y, value.z, value.w);
 
         #endregion
     }

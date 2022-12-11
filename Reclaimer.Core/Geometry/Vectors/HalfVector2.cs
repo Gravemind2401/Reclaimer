@@ -40,6 +40,7 @@ namespace Reclaimer.Geometry.Vectors
 
         public static explicit operator Vector2(HalfVector2 value) => new Vector2((float)value.X, (float)value.Y);
         public static explicit operator HalfVector2(Vector2 value) => new HalfVector2(value);
+        public static implicit operator HalfVector2((Half x, Half y) value) => new HalfVector2(value.x, value.y);
 
         #endregion
 

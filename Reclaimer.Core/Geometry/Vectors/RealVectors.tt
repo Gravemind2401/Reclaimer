@@ -63,6 +63,11 @@ namespace Reclaimer.Geometry.Vectors
             : this(<#= string.Join(", ", Enumerable.Range(0, vector.Dimensions).Select(i => $"values[{i}]")) #>)
         { }
 
+<#      if (vector.Dimensions == 4)
+        { #>
+        public <#= vector.TypeName #> Conjugate => new <#= vector.TypeName #>(-X, -Y, -Z, W);
+
+<#      } #>
         public override string ToString() => $"[<#= JoinProperties(", ", "{{{0}:F6}}") #>]";
 
         #region IBufferable
@@ -78,6 +83,7 @@ namespace Reclaimer.Geometry.Vectors
 
         public static explicit operator <#= vector.NumericsType #>(<#= vector.TypeName #> value) => new <#= vector.NumericsType #>(<#= JoinProperties(", ", $"{castBack}value.{{0}}") #>);
         public static explicit operator <#= vector.TypeName #>(<#= vector.NumericsType #> value) => new <#= vector.TypeName #>(value);
+        public static implicit operator <#= vector.TypeName #>((<#= JoinFields(", ", $"{vector.StorageType} {{0}}") #>) value) => new <#= vector.TypeName #>(<#= JoinFields(", ", "value.{0}") #>);
 
         #endregion
 <#      if (vector.StorageType != "float")

@@ -25,6 +25,8 @@ namespace Reclaimer.Geometry.Vectors
             : this(values[0], values[1], values[2], values[3])
         { }
 
+        public HalfVector4 Conjugate => new HalfVector4(-X, -Y, -Z, W);
+
         public override string ToString() => $"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]";
 
         #region IBufferable
@@ -40,6 +42,7 @@ namespace Reclaimer.Geometry.Vectors
 
         public static explicit operator Vector4(HalfVector4 value) => new Vector4((float)value.X, (float)value.Y, (float)value.Z, (float)value.W);
         public static explicit operator HalfVector4(Vector4 value) => new HalfVector4(value);
+        public static implicit operator HalfVector4((Half x, Half y, Half z, Half w) value) => new HalfVector4(value.x, value.y, value.z, value.w);
 
         #endregion
 

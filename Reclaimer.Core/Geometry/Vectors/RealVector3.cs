@@ -40,6 +40,7 @@ namespace Reclaimer.Geometry.Vectors
 
         public static explicit operator Vector3(RealVector3 value) => new Vector3(value.X, value.Y, value.Z);
         public static explicit operator RealVector3(Vector3 value) => new RealVector3(value);
+        public static implicit operator RealVector3((float x, float y, float z) value) => new RealVector3(value.x, value.y, value.z);
 
         #endregion
     }
