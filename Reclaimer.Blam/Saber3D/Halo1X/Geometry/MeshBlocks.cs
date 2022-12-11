@@ -99,7 +99,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         [Offset(5)]
         public byte SecondaryNodeCount { get; set; } //unused on skin compounds?
 
-        protected override object GetDebugProperties() => new { PrimaryNodeId, PrimaryNodeCount, SecondaryNodeId, SecondaryNodeCount };
+        protected override object GetDebugProperties() => new { PrimaryNodeId, PrimaryNodeCount, SecondaryNodeId, SecondaryNodeCount, PrimaryList = Owner.GetDebugObjectNames(PrimaryNodeId, PrimaryNodeCount), SecondaryList = Owner.GetDebugObjectNames(SecondaryNodeId, SecondaryNodeCount) };
     }
 
     [DataBlock(0x3401)]

@@ -1,7 +1,6 @@
 ﻿using Reclaimer.Geometry;
 using Reclaimer.Saber3D.Halo1X.Geometry;
 using System.IO;
-using System.Runtime.InteropServices;
 
 namespace Reclaimer.Saber3D.Halo1X
 {
@@ -38,15 +37,15 @@ namespace Reclaimer.Saber3D.Halo1X
 
             var compoundVertexBuffers = new Dictionary<int, VertexBuffer>();
             var compoundIndexBuffers = new Dictionary<int, IndexBuffer>();
+            var compoundRanges = new Dictionary<(int, int), List<Range>>();
             var skinCompounds = from n in NodeGraph.AllDescendants
                                 where n.ObjectType == ObjectType.SkinCompound
                                 select n;
 
-            //populate VertexRange of each SkinCompound component for later use, also create buffers to pull from
+            //create shared vertex buffers for each skin compound and identify distribution of vertices among dependents
             foreach (var compound in skinCompounds)
             {
                 var indexData = compound.BlendData.IndexData;
-                var blendIndices = MemoryMarshal.Cast<byte, int>(indexData.BlendIndexBuffer.GetBuffer().AsSpan());
 
                 var vb = new VertexBuffer();
                 vb.PositionChannels.Add(compound.Positions.PositionBuffer);
@@ -56,17 +55,24 @@ namespace Reclaimer.Saber3D.Halo1X
                 compoundVertexBuffers.Add(compound.MeshId.Value, vb);
                 compoundIndexBuffers.Add(compound.MeshId.Value, compound.Faces.IndexBuffer);
 
-                var components = Enumerable.Range(indexData.FirstNodeId, indexData.NodeCount)
-                    .Select((id, ordinal) => (ordinal, NodeLookup[id]));
+                //the blend indices point to the dependent meshes that make use of the corresponding vertices
+                //however the indices are not always contiguous, so we need to find all sets of indices per dependent
 
-                foreach (var (ordinal, component) in components)
+                var position = 0;
+                while (position < indexData.BlendIndexBuffer.Count)
                 {
-                    if (!blendIndices.Contains(ordinal))
-                        continue; //not all ids within (FirstNodeId..NodeCount) are always referenced
+                    var offset = position;
+                    while (position < indexData.BlendIndexBuffer.Count && indexData.BlendIndexBuffer[position].X == indexData.BlendIndexBuffer[offset].X)
+                        position++;
 
-                    var vertexRange = blendIndices.IndexOf(ordinal)..(blendIndices.LastIndexOf(ordinal) + 1);
-                    foreach (var submesh in component.SubmeshData.Submeshes.Where(s => s.CompoundSourceId == compound.MeshId))
-                        (submesh.VertexRange.Offset, submesh.VertexRange.Count) = vertexRange.GetOffsetAndLength(blendIndices.Length);
+                    var range = offset..position;
+                    var id = indexData.FirstNodeId + indexData.BlendIndexBuffer[offset].X;
+                    var key = (compound.MeshId.Value, id);
+
+                    if (!compoundRanges.ContainsKey(key))
+                        compoundRanges.Add(key, new List<Range>());
+
+                    compoundRanges[key].Add(range);
                 }
             }
 
@@ -99,20 +105,20 @@ namespace Reclaimer.Saber3D.Halo1X
 
             Mesh GetCompoundMesh(NodeGraphBlock0xF000 host, SubmeshInfo segment)
             {
-                var compound = segment.CompoundSource;
                 var compoundId = segment.CompoundSourceId.Value;
                 var sourceIndices = compoundIndexBuffers[compoundId];
                 var sourceVertices = compoundVertexBuffers[compoundId];
 
-                //doesnt appear to be any way to get exact index offet+count, so this will do
-                var indices = sourceIndices
-                    .Select(i => i - segment.VertexRange.Offset)
-                    .SkipWhile(i => i < 0)
-                    .TakeWhile(i => i < segment.VertexRange.Count);
+                var rangeKey = (compoundId, host.MeshId.Value);
+                var ranges = compoundRanges[rangeKey].Select(r => r.GetOffsetAndLength(sourceVertices.Count));
 
+                //no way to get exact index offet+count, plus there can be multiple ranges, so we need to collate our own triangle list
+                var indices = ranges.SelectMany(r => sourceIndices.Where(i => i >= r.Offset && i < r.Offset + r.Length));
+
+                //TODO: only include vertices that are actually used by the new triangle list
                 var mesh = new Mesh
                 {
-                    VertexBuffer = sourceVertices.Slice(segment.VertexRange.Offset, segment.VertexRange.Count),
+                    VertexBuffer = sourceVertices,
                     IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleList)
                 };
 

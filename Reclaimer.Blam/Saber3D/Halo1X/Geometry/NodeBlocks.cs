@@ -173,7 +173,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         [Offset(6)]
         public int FaceOffset { get; set; }
 
-        protected override object GetDebugProperties() => new { SourceMeshId, VertexOffset, FaceOffset, Name = Owner.NodeLookup[SourceMeshId].MeshName };
+        protected override object GetDebugProperties() => new { SourceMeshId, VertexOffset, FaceOffset, Name = Owner.GetDebugObjectName(SourceMeshId) };
     }
 
     [DataBlock(0x2E01, ExpectedSize = 5)]
@@ -486,7 +486,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             EndRead(reader.Position);
         }
 
-        protected override object GetDebugProperties() => new { FirstNodeId, NodeCount, Nodes = string.Join(" + ", Enumerable.Range(FirstNodeId, NodeCount).Select(i => Owner.NodeLookup[i].MeshName)) };
+        protected override object GetDebugProperties() => new { FirstNodeId, NodeCount, Nodes = Owner.GetDebugObjectNames(FirstNodeId, NodeCount) };
     }
 
     [DataBlock(0x1A01)]
