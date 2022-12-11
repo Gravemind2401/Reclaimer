@@ -47,11 +47,7 @@ namespace Reclaimer.IO
                 return;
 
             for (var i = 0; i < Count; i++)
-            {
-                var span = CreateSpan(i);
-                for (var j = 0; j < TSize; j += TPack)
-                    span.Slice(j, TPack).Reverse();
-            }
+                Utils.ReverseEndianness(CreateSpan(i), TPack);
         }
 
         /// <summary>

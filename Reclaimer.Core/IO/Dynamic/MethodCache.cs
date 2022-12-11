@@ -10,8 +10,8 @@ namespace Reclaimer.IO.Dynamic
 
     internal static class MethodCache
     {
-        public static readonly IReadOnlyDictionary<Type, ReadMethod> ReadMethods = GetPrimitiveReadMethods();
-        public static readonly IReadOnlyDictionary<Type, WriteMethod> WriteMethods = GetPrimitiveWriteMethods();
+        private static readonly IDictionary<Type, ReadMethod> readMethodCache = GetPrimitiveReadMethods();
+        private static readonly IDictionary<Type, WriteMethod> writeMethodCache = GetPrimitiveWriteMethods();
 
         private static Dictionary<Type, ReadMethod> GetPrimitiveReadMethods()
         {
@@ -73,6 +73,43 @@ namespace Reclaimer.IO.Dynamic
                     ? (writer, byteOrder, value) => m.Invoke(writer, new object[] { value })
                     : (writer, byteOrder, value) => m.Invoke(writer, new object[] { value, byteOrder });
             }
+        }
+
+        public static bool TryGetReadMethod(Type type, out ReadMethod readMethod)
+        {
+            if (readMethodCache.TryGetValue(type,out readMethod))
+                return true;
+
+            var bufferableType = typeof(IBufferable<>).MakeGenericType(type);
+            if (!bufferableType.IsAssignableFrom(type))
+                return false;
+
+            var readBufferable = typeof(EndianReader).GetMethods()
+                .Where(m => m.Name == nameof(EndianReader.ReadBufferable) && m.GetParameters().Length == 1)
+                .Single().MakeGenericMethod(type);
+
+            readMethod = (reader, byteOrder) => readBufferable.Invoke(reader, new object[] { byteOrder });
+            readMethodCache.Add(type, readMethod);
+
+            return true;
+        }
+
+        public static bool TryGetWriteMethod(Type type, out WriteMethod writeMethod)
+        {
+            if (writeMethodCache.TryGetValue(type, out writeMethod))
+                return true;
+
+            if (!typeof(IBufferable).IsAssignableFrom(type))
+                return false;
+
+            var writeBufferable = typeof(EndianWriter).GetMethods()
+                .Where(m => m.Name == nameof(EndianWriter.WriteBufferable) && m.GetParameters().Length == 2)
+                .Single().MakeGenericMethod(type);
+
+            writeMethod = (writer, byteOrder, value) => writeBufferable.Invoke(writer, new object[] { value, byteOrder });
+            writeMethodCache.Add(type, writeMethod);
+
+            return true;
         }
     }
 }

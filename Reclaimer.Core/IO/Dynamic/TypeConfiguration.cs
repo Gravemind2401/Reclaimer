@@ -63,8 +63,8 @@ namespace Reclaimer.IO.Dynamic
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
 
-            if (MethodCache.ReadMethods.ContainsKey(type))
-                return MethodCache.ReadMethods[type].Invoke(reader, reader.ByteOrder);
+            if (MethodCache.TryGetReadMethod(type, out var readMethod))
+                return readMethod(reader, reader.ByteOrder);
 
             return GetConfiguration(type).PopulateInternal(obj, reader, version);
         }
@@ -95,8 +95,8 @@ namespace Reclaimer.IO.Dynamic
                 throw new ArgumentNullException(nameof(obj));
 
             var type = obj.GetType();
-            if (MethodCache.WriteMethods.ContainsKey(type))
-                MethodCache.WriteMethods[type].Invoke(writer, writer.ByteOrder, obj);
+            if (MethodCache.TryGetWriteMethod(type, out var writeMethod))
+                writeMethod(writer, writer.ByteOrder, obj);
             else
                 GetConfiguration(type).WriteInternal(obj, writer, version);
         }

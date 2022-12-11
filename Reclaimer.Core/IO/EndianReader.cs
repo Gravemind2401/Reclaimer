@@ -892,6 +892,31 @@ namespace Reclaimer.IO
 
         protected virtual object CreateInstance(Type type, double? version) => Activator.CreateInstance(type);
 
+        /// <inheritdoc cref="ReadBufferable{T}(ByteOrder)"/>
+        public T ReadBufferable<T>() where T : IBufferable<T>
+            => ReadBufferable<T>(ByteOrder);
+
+        /// <summary>
+        /// Reads a bufferable type from the underlying stream and advances the current position of the stream
+        /// by the number of bytes specified by the type's implementation of <see cref="IBufferable.SizeOf"/>.
+        /// </summary>
+        /// <typeparam name="T">The bufferable type to read.</typeparam>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <returns>A new instance of the specified bufferable type.</returns>
+        /// <remarks>
+        /// Bufferable types are expected to be a contiguous span of bytes containing all data required to instanciate the type.
+        /// All relevant properties of the type must be deserialized during <see cref="IBufferable{TBufferable}.ReadFromBuffer(ReadOnlySpan{byte})"/>.
+        /// <see cref="OffsetAttribute"/> and other related attributes will be ignored.
+        /// </remarks>
+        public T ReadBufferable<T>(ByteOrder byteOrder) where T : IBufferable<T>
+        {
+            var buffer = ReadBytes(T.SizeOf);
+            if (T.PackSize > 1 && byteOrder != NativeByteOrder)
+                Utils.ReverseEndianness(buffer, T.PackSize);
+
+            return T.ReadFromBuffer(buffer);
+        }
+
         #endregion
     }
 }

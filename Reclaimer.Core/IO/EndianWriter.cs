@@ -724,6 +724,33 @@ namespace Reclaimer.IO
             TypeConfiguration.Write(value, this, version);
         }
 
+        /// <inheritdoc cref="WriteBufferable{T}(T, ByteOrder)"/>
+        public void WriteBufferable<T>(T value) where T : IBufferable
+            => WriteBufferable(value, ByteOrder);
+
+        /// <summary>
+        /// Writes a bufferable type to the underlying stream and advances the current position of the stream
+        /// by the number of bytes specified by the type's implementation of <see cref="IBufferable.SizeOf"/>.
+        /// </summary>
+        /// <typeparam name="T">The bufferable type to write.</typeparam>
+        /// <param name="value">The object to write.</param>
+        /// <param name="byteOrder">The byte order to use.</param>
+        /// <remarks>
+        /// Bufferable types are expected to be a contiguous span of bytes containing all data required to instanciate the type.
+        /// All relevant properties of the type must be serialized during <see cref="IBufferable.WriteToBuffer(Span{byte})"/>.
+        /// <see cref="OffsetAttribute"/> and other related attributes will be ignored.
+        /// </remarks>
+        public void WriteBufferable<T>(T value, ByteOrder byteOrder) where T : IBufferable
+        {
+            var buffer = new byte[T.SizeOf];
+            value.WriteToBuffer(buffer);
+
+            if (T.PackSize > 1 && byteOrder != NativeByteOrder)
+                Utils.ReverseEndianness(buffer, T.PackSize);
+
+            Write(buffer);
+        }
+
         #endregion
     }
 }
