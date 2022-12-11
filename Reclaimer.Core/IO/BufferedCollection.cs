@@ -54,6 +54,19 @@ namespace Reclaimer.IO
             set => value.WriteToBuffer(CreateSpan(index));
         }
 
+        public void ReverseEndianness()
+        {
+            if (TPack == 1)
+                return;
+
+            for (var i = 0; i < Count; i++)
+            {
+                var span = CreateSpan(i);
+                for (var j = 0; j < TSize; j += TPack)
+                    span.Slice(j, TPack).Reverse();
+            }
+        }
+
         /// <summary>
         /// Returns the array of unsigned bytes from which this collection was created.
         /// </summary>

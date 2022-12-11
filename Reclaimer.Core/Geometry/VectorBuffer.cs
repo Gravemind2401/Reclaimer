@@ -41,19 +41,6 @@ namespace Reclaimer.Geometry
             return new VectorBuffer<TVector>(buffer, count, newStart, stride, offset);
         }
 
-        public void SwapEndianness()
-        {
-            if (TPack == 1)
-                return;
-
-            for (var i = 0; i < Count; i++)
-            {
-                var span = CreateSpan(i);
-                for (var j = 0; j < TSize; j += TPack)
-                    span.Slice(j, TPack).Reverse();
-            }
-        }
-
         int IVectorBuffer.Dimensions => TDimensions;
         IVectorBuffer IVectorBuffer.Slice(int index, int count) => Slice(index, count);
         IVector IReadOnlyList<IVector>.this[int index] => this[index];

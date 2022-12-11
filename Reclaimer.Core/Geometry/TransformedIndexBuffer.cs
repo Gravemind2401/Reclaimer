@@ -31,7 +31,7 @@ namespace Reclaimer.Geometry
             public int Count => source.Count;
 
             IIndexBuffer IIndexBuffer.Slice(int index, int count) => new TransformedIndexBuffer(source.Slice(index, count), offset);
-            void IIndexBuffer.SwapEndianness() => throw new NotSupportedException("Operation not supported on a transformed index buffer");
+            void IIndexBuffer.ReverseEndianness() => throw new NotSupportedException("Operation not supported on a transformed index buffer");
 
             IEnumerator<int> IEnumerable<int>.GetEnumerator() => Enumerator.GetEnumerator();
             IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)Enumerator).GetEnumerator();

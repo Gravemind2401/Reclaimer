@@ -7,7 +7,7 @@ namespace Reclaimer.Geometry
     public interface IIndexBuffer : IReadOnlyList<int>
     {
         IIndexBuffer Slice(int index, int count);
-        void SwapEndianness();
+        void ReverseEndianness();
 
         sealed int this[Index index] => this[index.GetOffset(Count)];
         sealed IEnumerable<int> this[Range range] => Extensions.GetRange(this, range);

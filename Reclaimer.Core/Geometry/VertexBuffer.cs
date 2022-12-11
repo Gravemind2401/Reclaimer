@@ -61,10 +61,10 @@ namespace Reclaimer.Geometry
             return result;
         }
 
-        public void SwapEndianness()
+        public void ReverseEndianness()
         {
             foreach (var buffer in EnumerateChannels().OfType<IVectorBuffer>())
-                buffer.SwapEndianness();
+                buffer.ReverseEndianness();
         }
 
         private IEnumerable<VertexChannel> EnumerateChannels()

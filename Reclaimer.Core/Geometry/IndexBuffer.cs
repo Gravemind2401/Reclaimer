@@ -91,7 +91,7 @@ namespace Reclaimer.Geometry
             return new IndexBuffer(buffer, count, newStart, stride, offset, SizeOf);
         }
 
-        public void SwapEndianness()
+        public void ReverseEndianness()
         {
             if (SizeOf == 1)
                 return;

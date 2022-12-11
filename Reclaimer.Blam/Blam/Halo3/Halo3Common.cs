@@ -229,9 +229,9 @@ namespace Reclaimer.Blam.Halo3
             if (cache.Metadata.Architecture != PlatformArchitecture.x86)
             {
                 foreach (var b in vb.Values)
-                    b.SwapEndianness();
+                    b.ReverseEndianness();
                 foreach (var b in ib.Values)
-                    b.SwapEndianness();
+                    b.ReverseEndianness();
             }
 
             var sectionIndex = -1;

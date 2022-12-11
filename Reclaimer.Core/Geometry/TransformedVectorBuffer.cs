@@ -48,7 +48,7 @@ namespace Reclaimer.Geometry
             public int Count => source.Count;
 
             IVectorBuffer IVectorBuffer.Slice(int index, int count) => new TransformedVectorBuffer(source.Slice(index, count), transform);
-            void IVectorBuffer.SwapEndianness() => throw new NotSupportedException("Operation not supported on a transformed vector buffer");
+            void IVectorBuffer.ReverseEndianness() => throw new NotSupportedException("Operation not supported on a transformed vector buffer");
 
             IEnumerator<IVector> IEnumerable<IVector>.GetEnumerator() => Enumerator.GetEnumerator();
             IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)Enumerator).GetEnumerator();
