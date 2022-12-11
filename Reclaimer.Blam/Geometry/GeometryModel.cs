@@ -71,8 +71,8 @@ namespace Adjutant.Geometry
         public short ParentIndex { get; set; }
         public short FirstChildIndex { get; set; }
         public short NextSiblingIndex { get; set; }
-        public IRealVector3D Position { get; set; }
-        public IRealVector4D Rotation { get; set; }
+        public IVector3 Position { get; set; }
+        public IVector4 Rotation { get; set; }
         public Matrix4x4 OffsetTransform { get; set; }
 
         public override string ToString() => Name;
@@ -141,8 +141,8 @@ namespace Adjutant.Geometry
         public byte RegionIndex { get; set; }
         public byte PermutationIndex { get; set; }
         public byte NodeIndex { get; set; }
-        public IRealVector3D Position { get; set; }
-        public IRealVector4D Rotation { get; set; }
+        public IVector3 Position { get; set; }
+        public IVector4 Rotation { get; set; }
 
         public override string ToString() => Position.ToString();
     }
@@ -210,7 +210,7 @@ namespace Adjutant.Geometry
     {
         public MaterialUsage Usage { get; set; }
         public IBitmap Bitmap { get; set; }
-        public IRealVector2D Tiling { get; set; }
+        public IVector2 Tiling { get; set; }
 
         public override string ToString() => $"[{Usage}] {Bitmap.Name}";
     }

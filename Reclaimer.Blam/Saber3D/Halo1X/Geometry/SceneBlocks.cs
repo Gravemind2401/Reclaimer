@@ -1,4 +1,5 @@
 ﻿using Adjutant.Spatial;
+using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -31,13 +32,13 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public int Unknown2 { get; set; }
 
         [Offset(12)]
-        public RealVector3D MinBounds { get; set; }
+        public RealVector3 MinBounds { get; set; }
         
         [Offset(24)]
-        public RealVector3D MaxBounds { get; set; }
+        public RealVector3 MaxBounds { get; set; }
         
         [Offset(36)]
-        public RealVector4D UnknownVector { get; set; }
+        public RealVector4 UnknownVector { get; set; }
 
         protected override object GetDebugProperties()
         {
@@ -52,7 +53,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             };
         }
 
-        private string GetBoundsString(RealVector3D value)
+        private string GetBoundsString(RealVector3 value)
         {
             return $"{value.X,7:F2}, {value.Y,7:F2}, {value.Z,7:F2}";
         }

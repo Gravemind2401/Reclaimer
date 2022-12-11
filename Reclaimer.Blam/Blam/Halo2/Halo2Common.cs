@@ -1,6 +1,6 @@
 ﻿using Adjutant.Geometry;
-using Adjutant.Spatial;
 using Reclaimer.Blam.Utilities;
+using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -87,7 +87,7 @@ namespace Reclaimer.Blam.Halo2
                 {
                     Usage = MaterialUsage.Diffuse,
                     Bitmap = bitmTag.ReadMetadata<bitmap>(),
-                    Tiling = new RealVector2D(1, 1)
+                    Tiling = new RealVector2(1, 1)
                 });
 
                 yield return material;

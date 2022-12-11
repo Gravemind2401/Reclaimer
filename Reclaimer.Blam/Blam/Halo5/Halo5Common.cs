@@ -1,9 +1,9 @@
 ﻿using Adjutant.Geometry;
-using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Properties;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
+using Reclaimer.Geometry.Vectors;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -73,7 +73,7 @@ namespace Reclaimer.Blam.Halo5
                 }
 
                 //var tile = map.TilingIndex == byte.MaxValue
-                //    ? (RealVector4D?)null
+                //    ? (RealVector4?)null
                 //    : shader.ShaderProperties[0].TilingData[map.TilingIndex];
 
                 try
@@ -82,8 +82,8 @@ namespace Reclaimer.Blam.Halo5
                     {
                         Usage = MaterialUsage.Diffuse,
                         Bitmap = bitmTag.ReadMetadata<bitmap>(),
-                        //Tiling = new RealVector2D(tile?.X ?? 1, tile?.Y ?? 1)
-                        Tiling = new RealVector2D(1, 1)
+                        //Tiling = new RealVector2(tile?.X ?? 1, tile?.Y ?? 1)
+                        Tiling = new RealVector2(1, 1)
                     });
                 }
                 catch { }

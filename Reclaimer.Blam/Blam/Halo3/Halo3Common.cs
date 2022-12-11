@@ -1,5 +1,4 @@
 ﻿using Adjutant.Geometry;
-using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Properties;
 using Reclaimer.Blam.Utilities;
@@ -122,14 +121,14 @@ namespace Reclaimer.Blam.Halo3
                         continue;
 
                     var tile = map.TilingIndex >= props.TilingData.Count
-                        ? (RealVector4D?)null
+                        ? (RealVector4?)null
                         : props.TilingData[map.TilingIndex];
 
                     subMaterials.Add(new SubMaterial
                     {
                         Usage = entry.Value.Value,
                         Bitmap = bitmTag.ReadMetadata<bitmap>(),
-                        Tiling = new RealVector2D(tile?.X ?? 1, tile?.Y ?? 1)
+                        Tiling = new RealVector2(tile?.X ?? 1, tile?.Y ?? 1)
                     });
                 }
 

@@ -1,4 +1,4 @@
-﻿using Adjutant.Spatial;
+﻿using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -28,9 +28,9 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public float Unknown { get; set; }
         public int UnknownAsInt { get; set; }
 
-        public RealVector3D Position => GetUniqueChild<PositionBlock>().Value;
-        public RealVector4D Rotation => GetUniqueChild<RotationBlock>().Value;
-        public RealVector3D UnknownVector0xFC02 => GetUniqueChild<VectorBlock0xFC02>().Value;
+        public RealVector3 Position => GetUniqueChild<PositionBlock>().Value;
+        public RealVector4 Rotation => GetUniqueChild<RotationBlock>().Value;
+        public RealVector3 UnknownVector0xFC02 => GetUniqueChild<VectorBlock0xFC02>().Value;
         public float Scale => GetUniqueChild<ScaleBlock0x0A03>().Value;
 
         public int Index => Owner.Bones.IndexOf(this);
@@ -57,21 +57,21 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     public class PositionBlock : DataBlock
     {
         [Offset(0)]
-        public RealVector3D Value { get; set; }
+        public RealVector3 Value { get; set; }
     }
 
     [DataBlock(0xFB02, ExpectedSize = 4 * 4)]
     public class RotationBlock : DataBlock
     {
         [Offset(0)]
-        public RealVector4D Value { get; set; }
+        public RealVector4 Value { get; set; }
     }
 
     [DataBlock(0xFC02, ExpectedSize = 4 * 3)]
     public class VectorBlock0xFC02 : DataBlock
     {
         [Offset(0)]
-        public RealVector3D Value { get; set; } //usually 1,1,1 (maybe actually scale?)
+        public RealVector3 Value { get; set; } //usually 1,1,1 (maybe actually scale?)
     }
 
     [DataBlock(0x0A03, ExpectedSize = 4)]

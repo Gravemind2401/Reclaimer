@@ -1,5 +1,4 @@
 ﻿using Adjutant.Geometry;
-using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Properties;
 using Reclaimer.Blam.Utilities;
@@ -109,7 +108,7 @@ namespace Reclaimer.Blam.Halo4
                         continue;
 
                     //maybe map.TilingIndex has the wrong offset? can sometimes be out of bounds (other than 0xFF)
-                    var tile = props.TilingData.Cast<RealVector4D?>().ElementAtOrDefault(map.TilingIndex);
+                    var tile = props.TilingData.Cast<RealVector4?>().ElementAtOrDefault(map.TilingIndex);
 
                     try
                     {
@@ -117,7 +116,7 @@ namespace Reclaimer.Blam.Halo4
                         {
                             Usage = usage,
                             Bitmap = bitmTag.ReadMetadata<bitmap>(),
-                            Tiling = new RealVector2D(tile?.X ?? 1, tile?.Y ?? 1)
+                            Tiling = new RealVector2(tile?.X ?? 1, tile?.Y ?? 1)
                         });
                     }
                     catch { }

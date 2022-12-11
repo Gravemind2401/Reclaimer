@@ -29,8 +29,8 @@ namespace Adjutant.Geometry
         short ParentIndex { get; }
         short FirstChildIndex { get; }
         short NextSiblingIndex { get; }
-        IRealVector3D Position { get; }
-        IRealVector4D Rotation { get; }
+        IVector3 Position { get; }
+        IVector4 Rotation { get; }
         Matrix4x4 OffsetTransform { get; }
     }
 
@@ -63,8 +63,8 @@ namespace Adjutant.Geometry
         byte RegionIndex { get; }
         byte PermutationIndex { get; }
         byte NodeIndex { get; }
-        IRealVector3D Position { get; }
-        IRealVector4D Rotation { get; }
+        IVector3 Position { get; }
+        IVector4 Rotation { get; }
     }
 
     public interface IGeometryMesh : IDisposable
@@ -104,6 +104,6 @@ namespace Adjutant.Geometry
     {
         MaterialUsage Usage { get; }
         IBitmap Bitmap { get; }
-        IRealVector2D Tiling { get; }
+        IVector2 Tiling { get; }
     }
 }

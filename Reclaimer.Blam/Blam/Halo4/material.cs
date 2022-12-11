@@ -1,5 +1,5 @@
-﻿using Adjutant.Spatial;
-using Reclaimer.Blam.Common;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ namespace Reclaimer.Blam.Halo4
         public BlockCollection<ShaderMapBlock> ShaderMaps { get; set; }
 
         [Offset(12)]
-        public BlockCollection<RealVector4D> TilingData { get; set; }
+        public BlockCollection<RealVector4> TilingData { get; set; }
     }
 
     [FixedSize(20, MaxVersion = (int)CacheType.Halo4Retail)]

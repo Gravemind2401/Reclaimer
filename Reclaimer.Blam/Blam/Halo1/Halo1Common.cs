@@ -1,13 +1,9 @@
 ﻿using Adjutant.Geometry;
-using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
-using System;
+using Reclaimer.Geometry.Vectors;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.Halo1
 {
@@ -71,7 +67,7 @@ namespace Reclaimer.Blam.Halo1
                 {
                     Usage = MaterialUsage.Diffuse,
                     Bitmap = bitmTag.ReadMetadata<bitmap>(),
-                    Tiling = new RealVector2D(1, 1)
+                    Tiling = new RealVector2(1, 1)
                 });
 
                 yield return material;

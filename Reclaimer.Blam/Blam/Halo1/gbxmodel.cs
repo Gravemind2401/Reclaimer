@@ -1,5 +1,4 @@
 ﻿using Adjutant.Geometry;
-using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
@@ -371,18 +370,18 @@ namespace Reclaimer.Blam.Halo1
         //something here
 
         [Offset(4)]
-        public RealVector3D Position { get; set; }
+        public RealVector3 Position { get; set; }
 
         [Offset(16)]
-        public RealVector4D Rotation { get; set; }
+        public RealVector4 Rotation { get; set; }
 
         public override string ToString() => Position.ToString();
 
         #region IGeometryMarker
 
-        IRealVector3D IGeometryMarker.Position => Position;
+        IVector3 IGeometryMarker.Position => Position;
 
-        IRealVector4D IGeometryMarker.Rotation => Rotation;
+        IVector4 IGeometryMarker.Rotation => Rotation;
 
         #endregion
     }
@@ -406,10 +405,10 @@ namespace Reclaimer.Blam.Halo1
         //int16 here
 
         [Offset(40)]
-        public RealVector3D Position { get; set; }
+        public RealVector3 Position { get; set; }
 
         [Offset(52)]
-        public RealVector4D Rotation { get; set; }
+        public RealVector4 Rotation { get; set; }
 
         [Offset(68)]
         public float DistanceFromParent { get; set; }
@@ -418,9 +417,9 @@ namespace Reclaimer.Blam.Halo1
 
         #region IGeometryNode
 
-        IRealVector3D IGeometryNode.Position => Position;
+        IVector3 IGeometryNode.Position => Position;
 
-        IRealVector4D IGeometryNode.Rotation => Rotation.Conjugate;
+        IVector4 IGeometryNode.Rotation => Rotation.Conjugate;
 
         Matrix4x4 IGeometryNode.OffsetTransform => Matrix4x4.Identity;
 

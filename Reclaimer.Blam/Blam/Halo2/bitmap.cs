@@ -1,7 +1,7 @@
-﻿using Adjutant.Spatial;
-using Reclaimer.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Drawing;
+using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -161,7 +161,7 @@ namespace Reclaimer.Blam.Halo2
         public float Bottom { get; set; }
 
         [Offset(24)]
-        public RealVector2D RegPoint { get; set; }
+        public RealVector2 RegPoint { get; set; }
     }
 
     [FixedSize(116)]

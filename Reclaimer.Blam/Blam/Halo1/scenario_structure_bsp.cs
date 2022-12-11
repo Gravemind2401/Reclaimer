@@ -241,10 +241,10 @@ namespace Reclaimer.Blam.Halo1
         public string Name { get; set; }
 
         [Offset(32)]
-        public RealVector4D Rotation { get; set; }
+        public RealVector4 Rotation { get; set; }
 
         [Offset(48)]
-        public RealVector3D Position { get; set; }
+        public RealVector3 Position { get; set; }
 
         #region IGeometryMarker
 
@@ -254,9 +254,9 @@ namespace Reclaimer.Blam.Halo1
 
         byte IGeometryMarker.NodeIndex => byte.MaxValue;
 
-        IRealVector3D IGeometryMarker.Position => Position;
+        IVector3 IGeometryMarker.Position => Position;
 
-        IRealVector4D IGeometryMarker.Rotation => Rotation;
+        IVector4 IGeometryMarker.Rotation => Rotation;
 
         #endregion
     }

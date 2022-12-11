@@ -390,10 +390,10 @@ namespace Reclaimer.Blam.Halo2
         public short NextSiblingIndex { get; set; }
 
         [Offset(12)]
-        public RealVector3D Position { get; set; }
+        public RealVector3 Position { get; set; }
 
         [Offset(24)]
-        public RealVector4D Rotation { get; set; }
+        public RealVector4 Rotation { get; set; }
 
         [Offset(40)]
         public float TransformScale { get; set; }
@@ -410,9 +410,9 @@ namespace Reclaimer.Blam.Halo2
 
         string IGeometryNode.Name => Name;
 
-        IRealVector3D IGeometryNode.Position => Position;
+        IVector3 IGeometryNode.Position => Position;
 
-        IRealVector4D IGeometryNode.Rotation => Rotation;
+        IVector4 IGeometryNode.Rotation => Rotation;
 
         Matrix4x4 IGeometryNode.OffsetTransform => Transform;
 
@@ -452,10 +452,10 @@ namespace Reclaimer.Blam.Halo2
         public byte NodeIndex { get; set; }
 
         [Offset(4)]
-        public RealVector3D Position { get; set; }
+        public RealVector3 Position { get; set; }
 
         [Offset(16)]
-        public RealVector4D Rotation { get; set; }
+        public RealVector4 Rotation { get; set; }
 
         [Offset(32)]
         public float Scale { get; set; }
@@ -464,9 +464,9 @@ namespace Reclaimer.Blam.Halo2
 
         #region IGeometryMarker
 
-        IRealVector3D IGeometryMarker.Position => Position;
+        IVector3 IGeometryMarker.Position => Position;
 
-        IRealVector4D IGeometryMarker.Rotation => Rotation;
+        IVector4 IGeometryMarker.Rotation => Rotation;
 
         #endregion
     }

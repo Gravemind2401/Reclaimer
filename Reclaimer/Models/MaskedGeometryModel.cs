@@ -1,5 +1,6 @@
 ﻿using Adjutant.Geometry;
 using Adjutant.Spatial;
+using Reclaimer.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -135,8 +136,8 @@ namespace Reclaimer.Models
             byte IGeometryMarker.RegionIndex => regionIndex;
             byte IGeometryMarker.PermutationIndex => permutationIndex;
             byte IGeometryMarker.NodeIndex => sourceMarker.NodeIndex;
-            IRealVector3D IGeometryMarker.Position => sourceMarker.Position;
-            IRealVector4D IGeometryMarker.Rotation => sourceMarker.Rotation;
+            IVector3 IGeometryMarker.Position => sourceMarker.Position;
+            IVector4 IGeometryMarker.Rotation => sourceMarker.Rotation;
         }
     }
 }

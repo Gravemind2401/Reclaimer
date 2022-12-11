@@ -1,4 +1,4 @@
-﻿using Adjutant.Spatial;
+﻿using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
@@ -160,10 +160,10 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public int Unknown0 { get; set; } //count? always 1?
 
         [Offset(4)]
-        public RealVector3D MinBound { get; set; }
+        public RealVector3 MinBound { get; set; }
 
         [Offset(16)]
-        public RealVector3D MaxBound { get; set; }
+        public RealVector3 MaxBound { get; set; }
 
         public bool IsEmpty => MinBound == MaxBound;
 

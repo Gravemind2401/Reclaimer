@@ -1,5 +1,4 @@
 ﻿using Adjutant.Geometry;
-using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Halo2;
 using Reclaimer.Blam.Utilities;
@@ -348,10 +347,10 @@ namespace Reclaimer.Blam.Halo2Beta
         public short SomethingIndex { get; set; }
 
         [Offset(40)]
-        public RealVector3D Position { get; set; }
+        public RealVector3 Position { get; set; }
 
         [Offset(52)]
-        public RealVector4D Rotation { get; set; }
+        public RealVector4 Rotation { get; set; }
 
         [Offset(68)]
         public float TransformScale { get; set; }
@@ -368,9 +367,9 @@ namespace Reclaimer.Blam.Halo2Beta
 
         string IGeometryNode.Name => Name;
 
-        IRealVector3D IGeometryNode.Position => Position;
+        IVector3 IGeometryNode.Position => Position;
 
-        IRealVector4D IGeometryNode.Rotation => Rotation;
+        IVector4 IGeometryNode.Rotation => Rotation;
 
         Matrix4x4 IGeometryNode.OffsetTransform => Transform;
 
