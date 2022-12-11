@@ -1,27 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.IO.Dynamic
 {
     internal static class Extensions
     {
-        public static bool IsVersioned(this IVersionAttribute attr) => attr.HasMinVersion || attr.HasMaxVersion;
-        public static bool NotVersioned(this IVersionAttribute attr) => !attr.HasMinVersion && !attr.HasMaxVersion;
-
-        public static bool AllNotEmpty<T>(this IEnumerable<T> source, Func<T, bool> predicate) => source.Any() && source.All(predicate);
-
-        public static bool ValidateOverlap(this IEnumerable<IVersionAttribute> attributes)
+        public static bool SupportsNullVersion<T>(this IEnumerable<T> source) where T : IVersionAttribute
         {
-            if (!attributes.Any())
+            return !source.Any() || source.Any(a => !a.IsVersioned);
+        }
+
+        public static bool HasVersion<T>(this IEnumerable<T> source, double? version) where T : IVersionAttribute
+        {
+            return source.Any(a => ValidateVersion(a, version));
+        }
+
+        public static T GetVersion<T>(this IEnumerable<T> source, double? version) where T : IVersionAttribute
+        {
+            return source.OrderByDescending(a => a.IsVersioned)
+                .FirstOrDefault(a => ValidateVersion(a, version));
+        }
+
+        public static bool ValidateVersion(this IVersionAttribute attr, double? version) => ValidateVersion(version, attr.HasMinVersion ? attr.MinVersion : null, attr.HasMaxVersion ? attr.MaxVersion : null);
+
+        public static bool ValidateVersion(double? version, double? min, double? max)
+        {
+            return (version >= min || !min.HasValue) && (version < max || !max.HasValue || max == min);
+        }
+
+        public static bool ValidateOverlap(this IEnumerable<IVersionAttribute> source)
+        {
+            if (!source.Any())
                 return true;
 
-            if (attributes.Count(NotVersioned) > 1)
+            if (source.Count(a => !a.IsVersioned) > 1)
                 return false;
 
-            var boundaries = attributes.Where(IsVersioned)
+            var boundaries = source.Where(a => a.IsVersioned)
                 .Select(a => new
                 {
                     Attribute = a,
