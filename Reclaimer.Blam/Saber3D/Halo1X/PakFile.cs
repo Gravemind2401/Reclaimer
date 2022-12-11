@@ -1,7 +1,6 @@
 ﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using Reclaimer.Saber3D.Common;
-using System.Collections.Generic;
 using System.IO;
 
 namespace Reclaimer.Saber3D.Halo1X

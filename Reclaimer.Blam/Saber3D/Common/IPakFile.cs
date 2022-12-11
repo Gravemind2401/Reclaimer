@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Reclaimer.Saber3D.Common
+﻿namespace Reclaimer.Saber3D.Common
 {
     public interface IPakFile
     {

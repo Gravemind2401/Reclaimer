@@ -1,7 +1,6 @@
 ﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Reclaimer.Blam.Common

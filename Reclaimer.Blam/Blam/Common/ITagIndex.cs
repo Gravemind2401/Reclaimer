@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Reclaimer.Blam.Common
+﻿namespace Reclaimer.Blam.Common
 {
     public interface ITagIndex<out TIndexItem> : IEnumerable<TIndexItem> where TIndexItem : IIndexItem
     {

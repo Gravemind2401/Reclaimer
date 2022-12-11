@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Reclaimer.Saber3D.Halo1X.Geometry
+﻿namespace Reclaimer.Saber3D.Halo1X.Geometry
 {
     [DataBlock(0x0100, ExpectedSize = 0)]
     public class EmptyBlock : DataBlock

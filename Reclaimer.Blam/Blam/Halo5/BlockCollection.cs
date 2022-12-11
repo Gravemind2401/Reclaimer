@@ -2,7 +2,6 @@
 using Reclaimer.IO;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 
 namespace Reclaimer.Blam.Halo5
 {

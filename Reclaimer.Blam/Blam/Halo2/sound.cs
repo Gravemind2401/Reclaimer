@@ -2,8 +2,6 @@
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
-using System;
-using System.Linq;
 
 namespace Reclaimer.Blam.Halo2
 {

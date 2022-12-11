@@ -1,5 +1,4 @@
 ﻿using Reclaimer.IO;
-using System;
 
 namespace Reclaimer.Blam.Halo5
 {

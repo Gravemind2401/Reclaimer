@@ -1,10 +1,5 @@
 ﻿using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Saber3D.Halo1X.Geometry
 {

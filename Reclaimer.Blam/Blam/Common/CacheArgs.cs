@@ -1,12 +1,7 @@
 ﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.Common
 {

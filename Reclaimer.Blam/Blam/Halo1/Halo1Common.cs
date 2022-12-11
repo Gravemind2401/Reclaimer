@@ -2,7 +2,6 @@
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry.Vectors;
-using System.Collections.Generic;
 using System.IO;
 
 namespace Reclaimer.Blam.Halo1

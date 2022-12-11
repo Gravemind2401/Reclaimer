@@ -1,8 +1,6 @@
 ﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace Reclaimer.Blam.Common.Gen3
 {

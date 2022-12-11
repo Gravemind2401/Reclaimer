@@ -3,13 +3,8 @@ using Reclaimer.Blam.Utilities;
 using Reclaimer.Drawing;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.Halo1
 {

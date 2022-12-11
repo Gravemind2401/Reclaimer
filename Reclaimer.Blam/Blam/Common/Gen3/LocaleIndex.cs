@@ -1,10 +1,7 @@
 ﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Reclaimer.Blam.Common.Gen3
 {

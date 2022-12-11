@@ -1,6 +1,5 @@
 ﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
-using System;
 using System.IO;
 
 namespace Reclaimer.Blam.Common

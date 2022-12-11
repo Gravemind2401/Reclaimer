@@ -2,10 +2,7 @@
 using Reclaimer;
 using Reclaimer.Geometry;
 using Reclaimer.IO;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Numerics;
 
 namespace Adjutant.Geometry

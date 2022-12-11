@@ -1,7 +1,6 @@
 ﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
-using System;
 using System.Globalization;
 using System.IO;
 
