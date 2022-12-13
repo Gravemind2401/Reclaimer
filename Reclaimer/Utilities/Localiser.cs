@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Utilities
 {
@@ -25,12 +21,12 @@ namespace Reclaimer.Utilities
                     Default = p.GetCustomAttribute<DefaultValueAttribute>()?.Value as string ?? p.Name
                 }).ToList();
 
-            var userValues = valueLookup.ValueOrDefault(type.FullName);
+            var userValues = valueLookup.GetValueOrDefault(type.FullName);
 
             foreach (var prop in props)
             {
                 var key = prop.Info.Name;
-                var value = userValues?.ValueOrDefault(key);
+                var value = userValues?.GetValueOrDefault(key);
 
                 if (string.IsNullOrEmpty(value))
                     value = prop.Default;
