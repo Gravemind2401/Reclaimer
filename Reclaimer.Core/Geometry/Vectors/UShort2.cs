@@ -13,7 +13,7 @@ namespace Reclaimer.Geometry.Vectors
         private const int packSize = 2;
         private const int structureSize = 4;
 
-        private static ushort Clamp(float value) => (ushort)Utils.Clamp(value, 0f, ushort.MaxValue);
+        private static ushort Clamp(in float value) => (ushort)Utils.Clamp(value, 0f, ushort.MaxValue);
 
         public UShort2(Vector2 value)
             : this(Clamp(value.X), Clamp(value.Y))
