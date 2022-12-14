@@ -9,6 +9,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
+
+using Numerics = System.Numerics;
 using Keys = System.Windows.Forms.Keys;
 
 namespace Reclaimer.Controls
@@ -18,10 +20,7 @@ namespace Reclaimer.Controls
     {
         private const string PART_Viewport = "PART_Viewport";
 
-        private const double RAD_089 = 1.5706217940;
-        private const double RAD_090 = 1.5707963268;
-        private const double RAD_360 = 6.2831853072;
-        private const double SpeedMultipler = 0.001;
+        private const double SpeedMultipler = 0.0013;
         private const double MinFarPlaneDistance = 50;
         private const double MinNearPlaneDistance = 0.01;
 
@@ -89,16 +88,12 @@ namespace Reclaimer.Controls
 
         private PerspectiveCamera Camera => Viewport.Camera as PerspectiveCamera;
         
-        private readonly DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Send) { Interval = new TimeSpan(0, 0, 0, 0, 10) };
+        private readonly DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Send) { Interval = new TimeSpan(0, 0, 0, 0, 15) };
         private readonly List<Visual3D> children = new List<Visual3D>();
 
         private Point lastPoint;
 
-
-        public Point3D MaxPosition { get; private set; } = new Point3D(500, 500, 500);
-        public Point3D MinPosition { get; private set; } = new Point3D(-500, -500, -500);
-
-        public Renderer() : base()
+        public Renderer()
         {
             Loaded += delegate { timer.Start(); };
             Unloaded += delegate { timer.Stop(); };
@@ -299,19 +294,15 @@ namespace Reclaimer.Controls
             Viewport?.Children.Clear();
         }
 
-        private void NormalizeSet()
-        {
-            var len = Camera.LookDirection.Length;
-            Camera.LookDirection = new Vector3D(Camera.LookDirection.X / len, Camera.LookDirection.Y / len, Camera.LookDirection.Z / len);
-            Yaw = Math.Atan2(Camera.LookDirection.X, Camera.LookDirection.Z);
-            Pitch = Math.Atan(Camera.LookDirection.Y);
-        }
-
         private void MoveCamera(Point3D position, Vector3D direction)
         {
             Camera.Position = position;
             Camera.LookDirection = direction;
-            NormalizeSet();
+
+            var len = Camera.LookDirection.Length;
+            Camera.LookDirection = new Vector3D(Camera.LookDirection.X / len, Camera.LookDirection.Y / len, Camera.LookDirection.Z / len);
+            Yaw = Math.Atan2(Camera.LookDirection.X, Camera.LookDirection.Z);
+            Pitch = Math.Atan(Camera.LookDirection.Y);
         }
 
         private void UpdateCameraPosition()
@@ -338,9 +329,14 @@ namespace Reclaimer.Controls
 
             if (CheckKeyState(Keys.W) || CheckKeyState(Keys.A) || CheckKeyState(Keys.S) || CheckKeyState(Keys.D) || CheckKeyState(Keys.R) || CheckKeyState(Keys.F))
             {
-                var nextPosition = Camera.Position;
-                var len = Camera.LookDirection.Length;
-                var lookDirection = Camera.LookDirection = new Vector3D(Camera.LookDirection.X / len, Camera.LookDirection.Y / len, Camera.LookDirection.Z / len);
+                var moveVector = new Vector3D();
+                var upVector = Camera.UpDirection;
+                var forwardVector = Camera.LookDirection;
+                var rightVector = Vector3D.CrossProduct(forwardVector, upVector);
+
+                upVector.Normalize();
+                forwardVector.Normalize();
+                rightVector.Normalize();
 
                 var dist = CameraSpeed * SpeedMultipler;
                 if (CheckKeyState(Keys.ShiftKey))
@@ -348,60 +344,29 @@ namespace Reclaimer.Controls
                 if (CheckKeyState(Keys.Space))
                     dist /= 3;
 
-                #region Check WASD
+                #region Check WASD/RF
 
                 if (CheckKeyState(Keys.W))
-                {
-                    nextPosition.X += lookDirection.X * dist;
-                    nextPosition.Y += lookDirection.Y * dist;
-                    nextPosition.Z += lookDirection.Z * dist;
-                }
+                    moveVector += forwardVector * dist;
 
                 if (CheckKeyState(Keys.A))
-                {
-                    nextPosition.X -= Math.Sin(Yaw + RAD_090) * dist;
-                    nextPosition.Y -= Math.Cos(Yaw + RAD_090) * dist;
-                }
+                    moveVector -= rightVector * dist;
 
                 if (CheckKeyState(Keys.S))
-                {
-                    nextPosition.X -= lookDirection.X * dist;
-                    nextPosition.Y -= lookDirection.Y * dist;
-                    nextPosition.Z -= lookDirection.Z * dist;
-                }
+                    moveVector -= forwardVector * dist;
 
                 if (CheckKeyState(Keys.D))
-                {
-                    nextPosition.X += Math.Sin(Yaw + RAD_090) * dist;
-                    nextPosition.Y += Math.Cos(Yaw + RAD_090) * dist;
-                }
-                #endregion
-
-                #region Check RF
+                    moveVector += rightVector * dist;
 
                 if (CheckKeyState(Keys.R))
-                {
-                    var upAxis = Vector3D.CrossProduct(Camera.LookDirection, Vector3D.CrossProduct(Camera.LookDirection, Camera.UpDirection));
-                    upAxis.Normalize();
-                    nextPosition.X -= upAxis.X * dist;
-                    nextPosition.Y -= upAxis.Y * dist;
-                    nextPosition.Z -= upAxis.Z * dist;
-                }
+                    moveVector += upVector * dist;
 
                 if (CheckKeyState(Keys.F))
-                {
-                    var upAxis = Vector3D.CrossProduct(Camera.LookDirection, Vector3D.CrossProduct(Camera.LookDirection, Camera.UpDirection));
-                    upAxis.Normalize();
-                    nextPosition.X += upAxis.X * dist;
-                    nextPosition.Y += upAxis.Y * dist;
-                    nextPosition.Z += upAxis.Z * dist;
-                }
+                    moveVector -= upVector * dist;
+
                 #endregion
 
-                Camera.Position = new Point3D(
-                    ClipValue(nextPosition.X, MinPosition.X, MaxPosition.X),
-                    ClipValue(nextPosition.Y, MinPosition.Y, MaxPosition.Y),
-                    ClipValue(nextPosition.Z, MinPosition.Z, MaxPosition.Z));
+                Camera.Position += moveVector;
             }
         }
 
@@ -410,16 +375,30 @@ namespace Reclaimer.Controls
             if (!IsMouseCaptured || lastPoint.Equals(mousePos))
                 return;
 
-            var deltaX = mousePos.X - lastPoint.X;
-            var deltaY = mousePos.Y - lastPoint.Y;
+            var deltaX = (float)(mousePos.X - lastPoint.X) * (float)SpeedMultipler * 2;
+            var deltaY = (float)(mousePos.Y - lastPoint.Y) * (float)SpeedMultipler * 2;
 
-            Yaw += deltaX * 0.01;
-            Pitch -= deltaY * 0.01;
+            var upAnchor = new Numerics.Vector3(0, 0, 1);
+            var upVector = Numerics.Vector3.Normalize(new Numerics.Vector3((float)Camera.UpDirection.X, (float)Camera.UpDirection.Y, (float)Camera.UpDirection.Z));
+            var forwardVector = Numerics.Vector3.Normalize(new Numerics.Vector3((float)Camera.LookDirection.X, (float)Camera.LookDirection.Y, (float)Camera.LookDirection.Z));
+            var rightVector = Numerics.Vector3.Normalize(Numerics.Vector3.Cross(forwardVector, upVector));
 
-            Yaw %= RAD_360;
-            Pitch = ClipValue(Pitch, -RAD_089, RAD_089);
+            var yaw = Numerics.Matrix4x4.CreateFromAxisAngle(upAnchor, -deltaX);
 
-            Camera.LookDirection = new Vector3D(Math.Sin(Yaw), Math.Cos(Yaw), Math.Tan(Pitch));
+            forwardVector = Numerics.Vector3.TransformNormal(forwardVector, yaw);
+            rightVector = Numerics.Vector3.TransformNormal(rightVector, yaw);
+
+            var pitch = Numerics.Matrix4x4.CreateFromAxisAngle(rightVector, -deltaY);
+
+            forwardVector = Numerics.Vector3.TransformNormal(forwardVector, pitch);
+            upVector = Numerics.Vector3.Normalize(Numerics.Vector3.Cross(rightVector, forwardVector));
+
+            Camera.LookDirection = new Vector3D(forwardVector.X, forwardVector.Y, forwardVector.Z);
+            Camera.UpDirection = new Vector3D(upVector.X, upVector.Y, upVector.Z);
+
+            Yaw = Math.Atan2(forwardVector.X, forwardVector.Y);
+            Pitch = Math.Asin(-forwardVector.Z);
+
             NativeMethods.SetCursorPos((int)lastPoint.X, (int)lastPoint.Y);
         }
 
