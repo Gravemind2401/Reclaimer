@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:Reclaimer.Controls"
              xmlns:s="clr-namespace:Studio.Controls;assembly=Studio"
              xmlns:u="clr-namespace:Reclaimer.Utilities"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
              mc:Ignorable="d" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
              d:DesignHeight="500" d:DesignWidth="900">
 
@@ -81,6 +82,7 @@
                 </Button>
             </ToolBar>
         </ToolBarTray>
+        
         <ToolBarTray DockPanel.Dock="Bottom" IsLocked="True">
             <ToolBar>
                 <ToolBar.Resources>
@@ -102,11 +104,11 @@
                     </Grid.ColumnDefinitions>
                     <Label Content="Position:" />
                     <Label Grid.Column="1" HorizontalAlignment="Right" MouseDoubleClick="PosLabel_MouseDoubleClick"
-                           Content="{Binding Position.X, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F2'}" />
+                           Content="{Binding Viewport.Camera.Position.X, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F2'}" />
                     <Label Grid.Column="2" HorizontalAlignment="Right" MouseDoubleClick="PosLabel_MouseDoubleClick"
-                           Content="{Binding Position.Y, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F2'}" />
+                           Content="{Binding Viewport.Camera.Position.Y, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F2'}" />
                     <Label Grid.Column="3" HorizontalAlignment="Right" MouseDoubleClick="PosLabel_MouseDoubleClick"
-                           Content="{Binding Position.Z, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F2'}" />
+                           Content="{Binding Viewport.Camera.Position.Z, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F2'}" />
                 </Grid>
                 <Separator />
                 <Grid>
@@ -139,7 +141,7 @@
                     </Grid.ColumnDefinitions>
                     <Label Content="FOV:" />
                     <Label Grid.Column="1" HorizontalAlignment="Right" 
-                           Content="{Binding FieldOfView, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F0'}" />
+                           Content="{Binding Viewport.Camera.FieldOfView, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F0'}" />
                 </Grid>
                 <Separator />
                 <Grid>
@@ -149,11 +151,12 @@
                     </Grid.ColumnDefinitions>
                     <Label Content="Far Plane:" />
                     <Label Grid.Column="1" HorizontalAlignment="Right" 
-                           Content="{Binding FarPlaneDistance, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F0'}" />
+                           Content="{Binding Viewport.Camera.FarPlaneDistance, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F0'}" />
                 </Grid>
                 <Separator />
             </ToolBar>
         </ToolBarTray>
+        
         <s:SplitPanel x:Name="splitPanel" x:FieldModifier="private" SplitterThickness="3">
             <s:SplitPanel.Resources>
                 <Style TargetType="s:SplitPanelSplitter">
@@ -196,7 +199,9 @@
                 <ToggleButton Style="{StaticResource showHideStyle}"
                               HorizontalAlignment="Left" VerticalAlignment="Center"
                               Padding="2,20" Click="btnToggleDetails_Click">
-
+                    <ToggleButton.CacheMode>
+                        <BitmapCache />
+                    </ToggleButton.CacheMode>
                 </ToggleButton>
             </Grid>
         </s:SplitPanel>

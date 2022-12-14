@@ -13,15 +13,6 @@
                             <Viewport3D x:Name="PART_Viewport"
                                         IsHitTestVisible="False"
                                         RenderOptions.EdgeMode="Aliased">
-                                <Viewport3D.Camera>
-                                    <PerspectiveCamera
-                                        Position="{Binding Position, RelativeSource={RelativeSource TemplatedParent}}"
-                                        LookDirection="{Binding LookDirection, RelativeSource={RelativeSource TemplatedParent}}"
-                                        NearPlaneDistance="{Binding NearPlaneDistance, RelativeSource={RelativeSource TemplatedParent}}"
-                                        FarPlaneDistance="{Binding FarPlaneDistance, RelativeSource={RelativeSource TemplatedParent}}"
-                                        FieldOfView="{Binding FieldOfView, RelativeSource={RelativeSource TemplatedParent}}"
-                                        UpDirection="{Binding UpDirection, RelativeSource={RelativeSource TemplatedParent}}" />
-                                </Viewport3D.Camera>
                                 <ModelVisual3D>
                                     <ModelVisual3D.Content>
                                         <DirectionalLight Color="White" Direction="-2,-3,-1" />

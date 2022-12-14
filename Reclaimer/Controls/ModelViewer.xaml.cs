@@ -10,9 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -83,10 +80,9 @@ namespace Reclaimer.Controls
 
         public ModelViewer()
         {
-            InitializeComponent();
             TabModel = new TabModel(this, TabItemType.Document);
             TreeViewItems = new ObservableCollection<TreeItemModel>();
-            DataContext = this;
+            InitializeComponent();
 
             visual.Content = modelGroup;
             renderer.AddChild(visual);
@@ -420,6 +416,7 @@ namespace Reclaimer.Controls
                 item.IsChecked = false;
         }
 
+        #region Export Functions
         private bool PromptFileSave(out string fileName, out string formatId)
         {
             var exportFormats = ModelViewerPlugin.GetExportFormats()
@@ -488,7 +485,10 @@ namespace Reclaimer.Controls
 
             export.Invoke(geometry, matIndices);
         }
+        #endregion
+        #endregion
 
+        #region Control Events
         private void txtSearch_SearchChanged(object sender, RoutedEventArgs e)
         {
             foreach (var parent in TreeViewItems)
@@ -510,7 +510,6 @@ namespace Reclaimer.Controls
                 SetState(item.Items.First(), false);
             isWorking = false;
         }
-        #endregion
 
         private void btnToggleDetails_Click(object sender, RoutedEventArgs e)
         {
@@ -543,6 +542,7 @@ namespace Reclaimer.Controls
             Clipboard.SetText(label.Content?.ToString());
             label.BeginAnimation(OpacityProperty, anim);
         }
+        #endregion
 
         #region IDisposable
         public void Dispose()
@@ -556,7 +556,7 @@ namespace Reclaimer.Controls
         }
         #endregion
 
-        private class MeshTag
+        private sealed class MeshTag
         {
             public Model3DGroup Mesh { get; }
             public IGeometryPermutation Permutation { get; }

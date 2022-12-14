@@ -4,8 +4,6 @@ using Reclaimer.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -27,14 +25,10 @@ namespace Reclaimer.Controls
 
         #region Dependency Properties
 
-        public static readonly DependencyProperty PositionProperty =
-            DependencyProperty.Register(nameof(Position), typeof(Point3D), typeof(Renderer), new PropertyMetadata());
+        public static readonly DependencyPropertyKey ViewportPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(Viewport), typeof(Viewport3D), typeof(Renderer), new PropertyMetadata((object)null));
 
-        public static readonly DependencyProperty LookDirectionProperty =
-            DependencyProperty.Register(nameof(LookDirection), typeof(Vector3D), typeof(Renderer), new PropertyMetadata(new Vector3D(0, 1, 0)));
-
-        public static readonly DependencyProperty UpDirectionProperty =
-            DependencyProperty.Register(nameof(UpDirection), typeof(Vector3D), typeof(Renderer), new PropertyMetadata(new Vector3D(0, 0, 1)));
+        public static readonly DependencyProperty ViewportProperty = ViewportPropertyKey.DependencyProperty;
 
         private static readonly DependencyPropertyKey YawPropertyKey =
             DependencyProperty.RegisterReadOnly(nameof(Yaw), typeof(double), typeof(Renderer), new PropertyMetadata(0.0));
@@ -46,24 +40,15 @@ namespace Reclaimer.Controls
 
         public static readonly DependencyProperty PitchProperty = PitchPropertyKey.DependencyProperty;
 
-        public static readonly DependencyProperty NearPlaneDistanceProperty =
-            DependencyProperty.Register(nameof(NearPlaneDistance), typeof(double), typeof(Renderer), new PropertyMetadata(0.01));
-
         private static readonly DependencyPropertyKey MinFarPlaneDistancePropertyKey =
             DependencyProperty.RegisterReadOnly(nameof(MinFarPlaneDistance), typeof(double), typeof(Renderer), new PropertyMetadata(200.0));
 
         public static readonly DependencyProperty MinFarPlaneDistanceProperty = MinFarPlaneDistancePropertyKey.DependencyProperty;
 
-        public static readonly DependencyProperty FarPlaneDistanceProperty =
-            DependencyProperty.Register(nameof(FarPlaneDistance), typeof(double), typeof(Renderer), new PropertyMetadata(1000.0));
-
         private static readonly DependencyPropertyKey MaxFarPlaneDistancePropertyKey =
             DependencyProperty.RegisterReadOnly(nameof(MaxFarPlaneDistance), typeof(double), typeof(Renderer), new PropertyMetadata(5000.0));
 
         public static readonly DependencyProperty MaxFarPlaneDistanceProperty = MaxFarPlaneDistancePropertyKey.DependencyProperty;
-
-        public static readonly DependencyProperty FieldOfViewProperty =
-            DependencyProperty.Register(nameof(FieldOfView), typeof(double), typeof(Renderer), new PropertyMetadata(90.0));
 
         public static readonly DependencyProperty CameraSpeedProperty =
             DependencyProperty.Register(nameof(CameraSpeed), typeof(double), typeof(Renderer), new PropertyMetadata(0.015));
@@ -73,22 +58,10 @@ namespace Reclaimer.Controls
 
         public static readonly DependencyProperty MaxCameraSpeedProperty = MaxCameraSpeedPropertyKey.DependencyProperty;
 
-        public Point3D Position
+        public Viewport3D Viewport
         {
-            get => (Point3D)GetValue(PositionProperty);
-            set => SetValue(PositionProperty, value);
-        }
-
-        public Vector3D LookDirection
-        {
-            get => (Vector3D)GetValue(LookDirectionProperty);
-            set => SetValue(LookDirectionProperty, value);
-        }
-
-        public Vector3D UpDirection
-        {
-            get => (Vector3D)GetValue(UpDirectionProperty);
-            set => SetValue(UpDirectionProperty, value);
+            get => (Viewport3D)GetValue(ViewportProperty);
+            private set => SetValue(ViewportPropertyKey, value);
         }
 
         public double Yaw
@@ -103,34 +76,16 @@ namespace Reclaimer.Controls
             private set => SetValue(PitchPropertyKey, value);
         }
 
-        public double NearPlaneDistance
-        {
-            get => (double)GetValue(NearPlaneDistanceProperty);
-            set => SetValue(NearPlaneDistanceProperty, value);
-        }
-
         public double MinFarPlaneDistance
         {
             get => (double)GetValue(MinFarPlaneDistanceProperty);
             private set => SetValue(MinFarPlaneDistancePropertyKey, value);
         }
 
-        public double FarPlaneDistance
-        {
-            get => (double)GetValue(FarPlaneDistanceProperty);
-            set => SetValue(FarPlaneDistanceProperty, value);
-        }
-
         public double MaxFarPlaneDistance
         {
             get => (double)GetValue(MaxFarPlaneDistanceProperty);
             private set => SetValue(MaxFarPlaneDistancePropertyKey, value);
-        }
-
-        public double FieldOfView
-        {
-            get => (double)GetValue(FieldOfViewProperty);
-            set => SetValue(FieldOfViewProperty, value);
         }
 
         public double CameraSpeed
@@ -152,20 +107,19 @@ namespace Reclaimer.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(Renderer), new FrameworkPropertyMetadata(typeof(Renderer)));
         }
 
-        private readonly DispatcherTimer timer;
+        private PerspectiveCamera Camera => Viewport.Camera as PerspectiveCamera;
+        
+        private readonly DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Send) { Interval = new TimeSpan(0, 0, 0, 0, 10) };
+        private readonly List<Visual3D> children = new List<Visual3D>();
 
         private Point lastPoint;
 
-        private Viewport3D Viewport { get; set; }
-        private readonly List<Visual3D> children = new List<Visual3D>();
 
         public Point3D MaxPosition { get; private set; } = new Point3D(500, 500, 500);
         public Point3D MinPosition { get; private set; } = new Point3D(-500, -500, -500);
 
         public Renderer() : base()
         {
-            NormalizeSet();
-            timer = new DispatcherTimer(DispatcherPriority.Send) { Interval = new TimeSpan(0, 0, 0, 0, 10) };
             timer.Tick += Timer_Tick;
             timer.Start();
         }
@@ -213,6 +167,8 @@ namespace Reclaimer.Controls
             if (Viewport == null)
                 return;
 
+            Viewport.Loaded -= Viewport_Loaded;
+            
             foreach (var c in children)
                 Viewport.Children.Remove(c);
         }
@@ -224,11 +180,16 @@ namespace Reclaimer.Controls
 
             foreach (var c in children)
                 Viewport.Children.Add(c);
+
+            Viewport.Loaded += Viewport_Loaded;
         }
         #endregion
 
         public void ScaleToContent(IEnumerable<Model3DGroup> content)
         {
+            if (Viewport == null)
+                return;
+
             var bounds = new RealBounds3D
             {
                 XBounds = new RealBounds
@@ -266,7 +227,7 @@ namespace Reclaimer.Controls
                 bounds.ZBounds.Min - len * 3);
 
             MinFarPlaneDistance = 100;
-            FarPlaneDistance = Math.Max(MinFarPlaneDistance, Math.Ceiling(len));
+            Camera.FarPlaneDistance = Math.Max(MinFarPlaneDistance, Math.Ceiling(len));
             MaxFarPlaneDistance = Math.Max(MinFarPlaneDistance, Math.Ceiling(len * 3));
         }
 
@@ -344,16 +305,16 @@ namespace Reclaimer.Controls
 
         private void NormalizeSet()
         {
-            var len = LookDirection.Length;
-            LookDirection = new Vector3D(LookDirection.X / len, LookDirection.Y / len, LookDirection.Z / len);
-            Yaw = Math.Atan2(LookDirection.X, LookDirection.Z);
-            Pitch = Math.Atan(LookDirection.Y);
+            var len = Camera.LookDirection.Length;
+            Camera.LookDirection = new Vector3D(Camera.LookDirection.X / len, Camera.LookDirection.Y / len, Camera.LookDirection.Z / len);
+            Yaw = Math.Atan2(Camera.LookDirection.X, Camera.LookDirection.Z);
+            Pitch = Math.Atan(Camera.LookDirection.Y);
         }
 
         private void MoveCamera(Point3D position, Vector3D direction)
         {
-            Position = position;
-            LookDirection = direction;
+            Camera.Position = position;
+            Camera.LookDirection = direction;
             NormalizeSet();
         }
 
@@ -364,16 +325,16 @@ namespace Reclaimer.Controls
 
             #region Set FOV
             if (CheckKeyState(Keys.NumPad6))
-                FieldOfView = ClipValue(FieldOfView + FieldOfView / 100.0, 45, 120);
+                Camera.FieldOfView = ClipValue(Camera.FieldOfView + Camera.FieldOfView / 100.0, 45, 120);
             if (CheckKeyState(Keys.NumPad4))
-                FieldOfView = ClipValue(FieldOfView - FieldOfView / 100.0, 45, 120);
+                Camera.FieldOfView = ClipValue(Camera.FieldOfView - Camera.FieldOfView / 100.0, 45, 120);
             #endregion
 
             #region Set FPD
             if (CheckKeyState(Keys.NumPad8))
-                FarPlaneDistance = ClipValue(FarPlaneDistance * 1.01, MinFarPlaneDistance, MaxFarPlaneDistance);
+                Camera.FarPlaneDistance = ClipValue(Camera.FarPlaneDistance * 1.01, MinFarPlaneDistance, MaxFarPlaneDistance);
             if (CheckKeyState(Keys.NumPad2))
-                FarPlaneDistance = ClipValue(FarPlaneDistance * 0.99, MinFarPlaneDistance, MaxFarPlaneDistance);
+                Camera.FarPlaneDistance = ClipValue(Camera.FarPlaneDistance * 0.99, MinFarPlaneDistance, MaxFarPlaneDistance);
             #endregion
 
             if (!IsMouseCaptured)
@@ -381,9 +342,9 @@ namespace Reclaimer.Controls
 
             if (CheckKeyState(Keys.W) || CheckKeyState(Keys.A) || CheckKeyState(Keys.S) || CheckKeyState(Keys.D) || CheckKeyState(Keys.R) || CheckKeyState(Keys.F))
             {
-                var nextPosition = Position;
-                var len = LookDirection.Length;
-                var lookDirection = LookDirection = new Vector3D(LookDirection.X / len, LookDirection.Y / len, LookDirection.Z / len);
+                var nextPosition = Camera.Position;
+                var len = Camera.LookDirection.Length;
+                var lookDirection = Camera.LookDirection = new Vector3D(Camera.LookDirection.X / len, Camera.LookDirection.Y / len, Camera.LookDirection.Z / len);
 
                 var dist = CameraSpeed * SpeedMultipler;
                 if (CheckKeyState(Keys.ShiftKey))
@@ -424,7 +385,7 @@ namespace Reclaimer.Controls
 
                 if (CheckKeyState(Keys.R))
                 {
-                    var upAxis = Vector3D.CrossProduct(LookDirection, Vector3D.CrossProduct(LookDirection, UpDirection));
+                    var upAxis = Vector3D.CrossProduct(Camera.LookDirection, Vector3D.CrossProduct(Camera.LookDirection, Camera.UpDirection));
                     upAxis.Normalize();
                     nextPosition.X -= upAxis.X * dist;
                     nextPosition.Y -= upAxis.Y * dist;
@@ -433,7 +394,7 @@ namespace Reclaimer.Controls
 
                 if (CheckKeyState(Keys.F))
                 {
-                    var upAxis = Vector3D.CrossProduct(LookDirection, Vector3D.CrossProduct(LookDirection, UpDirection));
+                    var upAxis = Vector3D.CrossProduct(Camera.LookDirection, Vector3D.CrossProduct(Camera.LookDirection, Camera.UpDirection));
                     upAxis.Normalize();
                     nextPosition.X += upAxis.X * dist;
                     nextPosition.Y += upAxis.Y * dist;
@@ -441,7 +402,7 @@ namespace Reclaimer.Controls
                 }
                 #endregion
 
-                Position = new Point3D(
+                Camera.Position = new Point3D(
                     ClipValue(nextPosition.X, MinPosition.X, MaxPosition.X),
                     ClipValue(nextPosition.Y, MinPosition.Y, MaxPosition.Y),
                     ClipValue(nextPosition.Z, MinPosition.Z, MaxPosition.Z));
@@ -462,10 +423,11 @@ namespace Reclaimer.Controls
             Yaw %= RAD_360;
             Pitch = ClipValue(Pitch, -RAD_089, RAD_089);
 
-            LookDirection = new Vector3D(Math.Sin(Yaw), Math.Cos(Yaw), Math.Tan(Pitch));
+            Camera.LookDirection = new Vector3D(Math.Sin(Yaw), Math.Cos(Yaw), Math.Tan(Pitch));
             NativeMethods.SetCursorPos((int)lastPoint.X, (int)lastPoint.Y);
         }
 
+        #region Event Handlers
         private void Timer_Tick(object sender, EventArgs e)
         {
             NativeMethods.GetCursorPos(out var cursorPos);
@@ -473,6 +435,14 @@ namespace Reclaimer.Controls
             UpdateCameraPosition();
             UpdateCameraDirection(new Point(cursorPos.X, cursorPos.Y));
         }
+
+        private void Viewport_Loaded(object sender, RoutedEventArgs e)
+        {
+            Viewport.Loaded -= Viewport_Loaded;
+            Viewport.Camera = new PerspectiveCamera(default, default, new Vector3D(0, 0, 1), 90);
+            ScaleToContent(children.OfType<ModelVisual3D>().Select(v => v.Content).OfType<Model3DGroup>());
+        }
+        #endregion
 
         private static double ClipValue(double val, double min, double max)
         {
