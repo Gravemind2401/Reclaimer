@@ -175,8 +175,6 @@ namespace Reclaimer.Controls
                 if (regNode.HasItems)
                     TreeViewItems.Add(regNode);
             }
-
-            renderer.ScaleToContent(new[] { modelGroup });
         }
 
         private static IEnumerable<Material> GetMaterials(IGeometryModel model)

@@ -22,6 +22,8 @@ namespace Reclaimer.Controls
         private const double RAD_090 = 1.5707963268;
         private const double RAD_360 = 6.2831853072;
         private const double SpeedMultipler = 0.001;
+        private const double MinFarPlaneDistance = 50;
+        private const double MinNearPlaneDistance = 0.01;
 
         #region Dependency Properties
 
@@ -39,16 +41,6 @@ namespace Reclaimer.Controls
             DependencyProperty.RegisterReadOnly(nameof(Pitch), typeof(double), typeof(Renderer), new PropertyMetadata(0.0));
 
         public static readonly DependencyProperty PitchProperty = PitchPropertyKey.DependencyProperty;
-
-        private static readonly DependencyPropertyKey MinFarPlaneDistancePropertyKey =
-            DependencyProperty.RegisterReadOnly(nameof(MinFarPlaneDistance), typeof(double), typeof(Renderer), new PropertyMetadata(200.0));
-
-        public static readonly DependencyProperty MinFarPlaneDistanceProperty = MinFarPlaneDistancePropertyKey.DependencyProperty;
-
-        private static readonly DependencyPropertyKey MaxFarPlaneDistancePropertyKey =
-            DependencyProperty.RegisterReadOnly(nameof(MaxFarPlaneDistance), typeof(double), typeof(Renderer), new PropertyMetadata(5000.0));
-
-        public static readonly DependencyProperty MaxFarPlaneDistanceProperty = MaxFarPlaneDistancePropertyKey.DependencyProperty;
 
         public static readonly DependencyProperty CameraSpeedProperty =
             DependencyProperty.Register(nameof(CameraSpeed), typeof(double), typeof(Renderer), new PropertyMetadata(0.015));
@@ -74,18 +66,6 @@ namespace Reclaimer.Controls
         {
             get => (double)GetValue(PitchProperty);
             private set => SetValue(PitchPropertyKey, value);
-        }
-
-        public double MinFarPlaneDistance
-        {
-            get => (double)GetValue(MinFarPlaneDistanceProperty);
-            private set => SetValue(MinFarPlaneDistancePropertyKey, value);
-        }
-
-        public double MaxFarPlaneDistance
-        {
-            get => (double)GetValue(MaxFarPlaneDistanceProperty);
-            private set => SetValue(MaxFarPlaneDistancePropertyKey, value);
         }
 
         public double CameraSpeed
@@ -120,8 +100,9 @@ namespace Reclaimer.Controls
 
         public Renderer() : base()
         {
+            Loaded += delegate { timer.Start(); };
+            Unloaded += delegate { timer.Stop(); };
             timer.Tick += Timer_Tick;
-            timer.Start();
         }
 
         #region Overrides
@@ -143,6 +124,8 @@ namespace Reclaimer.Controls
             Cursor = Cursors.None;
             lastPoint = PointToScreen(e.GetPosition(this));
             lastPoint = new Point((int)lastPoint.X, (int)lastPoint.Y);
+
+            e.Handled = true;
         }
 
         protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
@@ -151,6 +134,8 @@ namespace Reclaimer.Controls
 
             ReleaseMouseCapture();
             Cursor = Cursors.Cross;
+
+            e.Handled = true;
         }
 
         protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
@@ -160,6 +145,8 @@ namespace Reclaimer.Controls
             CameraSpeed = e.Delta > 0
                 ? ClipValue(Math.Ceiling(CameraSpeed * 1050) / 1000, 0.001, MaxCameraSpeed)
                 : ClipValue(Math.Floor(CameraSpeed * 0950) / 1000, 0.001, MaxCameraSpeed);
+
+            e.Handled = true;
         }
 
         private void OnViewportUnset()
@@ -185,10 +172,29 @@ namespace Reclaimer.Controls
         }
         #endregion
 
-        public void ScaleToContent(IEnumerable<Model3DGroup> content)
+        #region Event Handlers
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            NativeMethods.GetCursorPos(out var cursorPos);
+
+            UpdateCameraPosition();
+            UpdateCameraDirection(new Point(cursorPos.X, cursorPos.Y));
+        }
+
+        private void Viewport_Loaded(object sender, RoutedEventArgs e)
+        {
+            Viewport.Loaded -= Viewport_Loaded;
+            Viewport.Camera = new PerspectiveCamera(default, default, new Vector3D(0, 0, 1), 90);
+            ScaleToContent();
+        }
+        #endregion
+
+        public void ScaleToContent()
         {
             if (Viewport == null)
                 return;
+
+            var content = children.OfType<ModelVisual3D>().Select(v => v.Content).OfType<Model3DGroup>();
 
             var bounds = new RealBounds3D
             {
@@ -211,24 +217,36 @@ namespace Reclaimer.Controls
                 }
             };
 
+            Camera.FarPlaneDistance = Math.Max(MinFarPlaneDistance, bounds.Length * 2);
+            Camera.NearPlaneDistance = MinNearPlaneDistance;
+
             ZoomToBounds(bounds);
 
             var len = bounds.Length;
-
             CameraSpeed = Math.Ceiling(len);
             MaxCameraSpeed = Math.Ceiling(len * 6);
-            MaxPosition = new Point3D(
-                bounds.XBounds.Max + len * 3,
-                bounds.YBounds.Max + len * 3,
-                bounds.ZBounds.Max + len * 3);
-            MinPosition = new Point3D(
-                bounds.XBounds.Min - len * 3,
-                bounds.YBounds.Min - len * 3,
-                bounds.ZBounds.Min - len * 3);
+        }
 
-            MinFarPlaneDistance = 100;
-            Camera.FarPlaneDistance = Math.Max(MinFarPlaneDistance, Math.Ceiling(len));
-            MaxFarPlaneDistance = Math.Max(MinFarPlaneDistance, Math.Ceiling(len * 3));
+        private void ZoomToBounds(RealBounds3D bounds)
+        {
+            var len = bounds.Length;
+
+            if (bounds.XBounds.Length / 2 > bounds.YBounds.Length) //side view for long models like weapons
+            {
+                var p = new Point3D(
+                    bounds.XBounds.Midpoint,
+                    bounds.YBounds.Max + len * 0.5,
+                    bounds.ZBounds.Midpoint);
+                MoveCamera(p, new Vector3D(0, 0, -2));
+            }
+            else //normal camera position
+            {
+                var p = new Point3D(
+                    bounds.XBounds.Max + len * 0.5,
+                    bounds.YBounds.Midpoint,
+                    bounds.ZBounds.Midpoint);
+                MoveCamera(p, new Vector3D(-1, 0, 0));
+            }
         }
 
         public void LocateObject(Model3DGroup m)
@@ -281,28 +299,6 @@ namespace Reclaimer.Controls
             Viewport?.Children.Clear();
         }
 
-        private void ZoomToBounds(RealBounds3D bounds)
-        {
-            var len = bounds.Length;
-
-            if (bounds.XBounds.Length / 2 > bounds.YBounds.Length) //side view for long models like weapons
-            {
-                var p = new Point3D(
-                    bounds.XBounds.Midpoint,
-                    bounds.YBounds.Max + len * 0.5,
-                    bounds.ZBounds.Midpoint);
-                MoveCamera(p, new Vector3D(0, 0, -2));
-            }
-            else //normal camera position
-            {
-                var p = new Point3D(
-                    bounds.XBounds.Max + len * 0.5,
-                    bounds.YBounds.Midpoint,
-                    bounds.ZBounds.Midpoint);
-                MoveCamera(p, new Vector3D(-1, 0, 0));
-            }
-        }
-
         private void NormalizeSet()
         {
             var len = Camera.LookDirection.Length;
@@ -323,19 +319,19 @@ namespace Reclaimer.Controls
             if (!IsMouseCaptured && !IsFocused)
                 return;
 
-            #region Set FOV
-            if (CheckKeyState(Keys.NumPad6))
-                Camera.FieldOfView = ClipValue(Camera.FieldOfView + Camera.FieldOfView / 100.0, 45, 120);
-            if (CheckKeyState(Keys.NumPad4))
-                Camera.FieldOfView = ClipValue(Camera.FieldOfView - Camera.FieldOfView / 100.0, 45, 120);
-            #endregion
-
-            #region Set FPD
-            if (CheckKeyState(Keys.NumPad8))
-                Camera.FarPlaneDistance = ClipValue(Camera.FarPlaneDistance * 1.01, MinFarPlaneDistance, MaxFarPlaneDistance);
-            if (CheckKeyState(Keys.NumPad2))
-                Camera.FarPlaneDistance = ClipValue(Camera.FarPlaneDistance * 0.99, MinFarPlaneDistance, MaxFarPlaneDistance);
-            #endregion
+            //#region Set FOV
+            //if (CheckKeyState(Keys.NumPad6))
+            //    Camera.FieldOfView = ClipValue(Camera.FieldOfView + Camera.FieldOfView / 100.0, 45, 120);
+            //if (CheckKeyState(Keys.NumPad4))
+            //    Camera.FieldOfView = ClipValue(Camera.FieldOfView - Camera.FieldOfView / 100.0, 45, 120);
+            //#endregion
+            //
+            //#region Set FPD
+            //if (CheckKeyState(Keys.NumPad8))
+            //    Camera.FarPlaneDistance = ClipValue(Camera.FarPlaneDistance * 1.01, MinFarPlaneDistance, MaxFarPlaneDistance);
+            //if (CheckKeyState(Keys.NumPad2))
+            //    Camera.FarPlaneDistance = ClipValue(Camera.FarPlaneDistance * 0.99, MinFarPlaneDistance, MaxFarPlaneDistance);
+            //#endregion
 
             if (!IsMouseCaptured)
                 return;
@@ -426,23 +422,6 @@ namespace Reclaimer.Controls
             Camera.LookDirection = new Vector3D(Math.Sin(Yaw), Math.Cos(Yaw), Math.Tan(Pitch));
             NativeMethods.SetCursorPos((int)lastPoint.X, (int)lastPoint.Y);
         }
-
-        #region Event Handlers
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-            NativeMethods.GetCursorPos(out var cursorPos);
-
-            UpdateCameraPosition();
-            UpdateCameraDirection(new Point(cursorPos.X, cursorPos.Y));
-        }
-
-        private void Viewport_Loaded(object sender, RoutedEventArgs e)
-        {
-            Viewport.Loaded -= Viewport_Loaded;
-            Viewport.Camera = new PerspectiveCamera(default, default, new Vector3D(0, 0, 1), 90);
-            ScaleToContent(children.OfType<ModelVisual3D>().Select(v => v.Content).OfType<Model3DGroup>());
-        }
-        #endregion
 
         private static double ClipValue(double val, double min, double max)
         {
