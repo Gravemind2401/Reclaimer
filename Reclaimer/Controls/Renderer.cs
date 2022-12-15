@@ -224,24 +224,27 @@ namespace Reclaimer.Controls
 
         private void ZoomToBounds(RealBounds3D bounds)
         {
-            var len = bounds.Length;
+            if (bounds.Length == 0)
+                return;
 
-            if (bounds.XBounds.Length / 2 > bounds.YBounds.Length) //side view for long models like weapons
-            {
-                var p = new Point3D(
-                    bounds.XBounds.Midpoint,
-                    bounds.YBounds.Max + len * 0.5,
-                    bounds.ZBounds.Midpoint);
-                MoveCamera(p, new Vector3D(0, 0, -2));
-            }
-            else //normal camera position
-            {
-                var p = new Point3D(
-                    bounds.XBounds.Max + len * 0.5,
-                    bounds.YBounds.Midpoint,
-                    bounds.ZBounds.Midpoint);
-                MoveCamera(p, new Vector3D(-1, 0, 0));
-            }
+            var center = new Point3D(bounds.XBounds.Midpoint, bounds.YBounds.Midpoint, bounds.ZBounds.Midpoint);
+            var radius = bounds.Length / 2;
+
+            var hDistance = radius / Math.Tan(0.5 * Camera.FieldOfView * Math.PI / 180);
+            var vFov = Camera.FieldOfView / Viewport.ActualWidth * Viewport.ActualHeight;
+            var vDistance = radius / Math.Tan(0.5 * vFov * Math.PI / 180);
+
+            //adjust angle and distance to side view for long models like weapons
+            var adjust = vDistance > hDistance ? 0.75 : 1;
+            var camDistance = Math.Max(hDistance, vDistance) * adjust;
+            var lookDirection = (bounds.XBounds.Length > bounds.YBounds.Length * 1.5)
+                ? new Vector3D(0, -Math.Sign(center.Y), 0)
+                : new Vector3D(-Math.Sign(center.X), 0, 0);
+
+            if (lookDirection.Length == 0)
+                lookDirection = new Vector3D(-1, 0, 0);
+
+            MoveCamera(center - lookDirection * camDistance, lookDirection);
         }
 
         public void LocateObject(Model3DGroup m)
