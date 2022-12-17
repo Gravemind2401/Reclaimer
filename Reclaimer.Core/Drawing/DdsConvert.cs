@@ -255,8 +255,8 @@ namespace Reclaimer.Drawing
 
             if (header.PixelFormat.FourCC == (uint)FourCC.DX10)
             {
-                if (decompressMethodsDxgi.ContainsKey(dx10Header.DxgiFormat))
-                    return decompressMethodsDxgi[dx10Header.DxgiFormat](data, virtualHeight, Width, bgr24);
+                if (decompressMethodsDxgi.TryGetValue(dx10Header.DxgiFormat, out var dxgiDecode))
+                    return dxgiDecode(data, virtualHeight, Width, bgr24);
                 else
                 {
                     switch (dx10Header.DxgiFormat)
@@ -272,15 +272,15 @@ namespace Reclaimer.Drawing
             }
             else if (header.PixelFormat.FourCC == (uint)FourCC.XBOX)
             {
-                return decompressMethodsXbox.ContainsKey(xboxHeader.XboxFormat)
-                    ? decompressMethodsXbox[xboxHeader.XboxFormat](data, virtualHeight, Width, bgr24)
+                return decompressMethodsXbox.TryGetValue(xboxHeader.XboxFormat, out var xboxDecode)
+                    ? xboxDecode(data, virtualHeight, Width, bgr24)
                     : throw new NotSupportedException($"The {nameof(XboxFormat)} is not supported.");
             }
             else
             {
                 var fourcc = (FourCC)header.PixelFormat.FourCC;
-                return decompressMethodsFourCC.ContainsKey(fourcc)
-                    ? decompressMethodsFourCC[fourcc](data, virtualHeight, Width, bgr24)
+                return decompressMethodsFourCC.TryGetValue(fourcc, out var fourccDecode)
+                    ? fourccDecode(data, virtualHeight, Width, bgr24)
                     : throw new NotSupportedException($"The {nameof(FourCC)} is not supported.");
             }
         }

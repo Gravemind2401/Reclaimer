@@ -402,16 +402,16 @@ namespace Reclaimer.Blam.Utilities
 
 
             DdsImage dds;
-            if (dxgiLookup.ContainsKey(bitmapFormat))
-                dds = new DdsImage(props.Height, props.Width, dxgiLookup[bitmapFormat], data);
-            else if (xboxLookup.ContainsKey(bitmapFormat))
-                dds = new DdsImage(props.Height, props.Width, xboxLookup[bitmapFormat], data);
+            if (dxgiLookup.TryGetValue(bitmapFormat, out var dxgiFormat))
+                dds = new DdsImage(props.Height, props.Width, dxgiFormat, data);
+            else if (xboxLookup.TryGetValue(bitmapFormat, out var xboxFormat))
+                dds = new DdsImage(props.Height, props.Width, xboxFormat, data);
             else
                 throw Exceptions.BitmapFormatNotSupported(bitmapFormat.ToString());
 
             if (textureType == KnownTextureType.CubeMap)
                 dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
-            if (textureType == KnownTextureType.Array)
+            if (textureType == KnownTextureType.Array || textureType == KnownTextureType.Texture3D)
                 dds.ArraySize = props.FrameCount;
             if (includeMips)
                 dds.MipmapCount = props.MipmapCount + 1;
