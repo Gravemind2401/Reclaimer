@@ -1,19 +1,23 @@
-﻿using Adjutant.Spatial;
-using Reclaimer.Geometry;
-using Reclaimer.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 
 using Numerics = System.Numerics;
-using Keys = System.Windows.Forms.Keys;
+using Helix = HelixToolkit.Wpf.SharpDX;
+using HelixCore = HelixToolkit.SharpDX.Core;
+using Media3D = System.Windows.Media.Media3D;
 
-namespace Reclaimer.Controls
+using Keys = System.Windows.Forms.Keys;
+using NativeMethods = Reclaimer.Utilities.NativeMethods;
+
+using static HelixToolkit.Wpf.SharpDX.Media3DExtension;
+using static HelixToolkit.Wpf.SharpDX.CameraExtensions;
+
+namespace Reclaimer.Controls.DirectX
 {
     [TemplatePart(Name = PART_Viewport, Type = typeof(FrameworkElement))]
     public class Renderer : Control, IDisposable
@@ -24,10 +28,12 @@ namespace Reclaimer.Controls
         private const double MinFarPlaneDistance = 50;
         private const double MinNearPlaneDistance = 0.01;
 
+        private static readonly HelixCore.IEffectsManager effectsManager = new HelixCore.DefaultEffectsManager();
+
         #region Dependency Properties
 
         public static readonly DependencyPropertyKey ViewportPropertyKey =
-            DependencyProperty.RegisterReadOnly(nameof(Viewport), typeof(Viewport3D), typeof(Renderer), new PropertyMetadata((object)null));
+            DependencyProperty.RegisterReadOnly(nameof(Viewport), typeof(Helix.Viewport3DX), typeof(Renderer), new PropertyMetadata((object)null));
 
         public static readonly DependencyProperty ViewportProperty = ViewportPropertyKey.DependencyProperty;
 
@@ -49,9 +55,9 @@ namespace Reclaimer.Controls
 
         public static readonly DependencyProperty MaxCameraSpeedProperty = MaxCameraSpeedPropertyKey.DependencyProperty;
 
-        public Viewport3D Viewport
+        public Helix.Viewport3DX Viewport
         {
-            get => (Viewport3D)GetValue(ViewportProperty);
+            get => (Helix.Viewport3DX)GetValue(ViewportProperty);
             private set => SetValue(ViewportPropertyKey, value);
         }
 
@@ -86,10 +92,10 @@ namespace Reclaimer.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(Renderer), new FrameworkPropertyMetadata(typeof(Renderer)));
         }
 
-        private PerspectiveCamera Camera => Viewport.Camera as PerspectiveCamera;
-        
         private readonly DispatcherTimer timer = new DispatcherTimer(DispatcherPriority.Send) { Interval = new TimeSpan(0, 0, 0, 0, 15) };
-        private readonly List<Visual3D> children = new List<Visual3D>();
+        private readonly List<Helix.Element3D> children = new List<Helix.Element3D>();
+
+        private Helix.PerspectiveCamera Camera => Viewport.Camera as Helix.PerspectiveCamera;
 
         private Point lastPoint;
 
@@ -106,7 +112,7 @@ namespace Reclaimer.Controls
             base.OnApplyTemplate();
 
             OnViewportUnset();
-            Viewport = Template.FindName(PART_Viewport, this) as Viewport3D;
+            Viewport = Template.FindName(PART_Viewport, this) as Helix.Viewport3DX;
             OnViewportSet();
         }
 
@@ -149,10 +155,12 @@ namespace Reclaimer.Controls
             if (Viewport == null)
                 return;
 
-            Viewport.Loaded -= Viewport_Loaded;
-            
+            Viewport.OnRendered -= Viewport_OnRendered;
+
             foreach (var c in children)
-                Viewport.Children.Remove(c);
+                Viewport.Items.Remove(c);
+
+            Viewport.EffectsManager = null;
         }
 
         private void OnViewportSet()
@@ -161,9 +169,10 @@ namespace Reclaimer.Controls
                 return;
 
             foreach (var c in children)
-                Viewport.Children.Add(c);
+                Viewport.Items.Add(c);
 
-            Viewport.Loaded += Viewport_Loaded;
+            Viewport.EffectsManager = effectsManager;
+            Viewport.OnRendered += Viewport_OnRendered;
         }
         #endregion
 
@@ -176,59 +185,41 @@ namespace Reclaimer.Controls
             UpdateCameraDirection(new Point(cursorPos.X, cursorPos.Y));
         }
 
-        private void Viewport_Loaded(object sender, RoutedEventArgs e)
+        private void Viewport_OnRendered(object sender, EventArgs e)
         {
-            Viewport.Loaded -= Viewport_Loaded;
-            Viewport.Camera = new PerspectiveCamera(default, default, new Vector3D(0, 0, 1), 90);
+            Viewport.OnRendered -= Viewport_OnRendered;
+            Camera.FieldOfView = 90;
             ScaleToContent();
         }
         #endregion
+
+        public void LocateObject(Helix.Element3D m) => ZoomToBounds(Enumerable.Repeat(m, 1).GetTotalBounds());
 
         public void ScaleToContent()
         {
             if (Viewport == null)
                 return;
 
-            var content = children.OfType<ModelVisual3D>().Select(v => v.Content).OfType<Model3DGroup>();
+            var bounds = children.GetTotalBounds();
 
-            var bounds = new RealBounds3D
-            {
-                XBounds = new RealBounds
-                {
-                    Min = (float)content.Min(m => m?.Bounds.X),
-                    Max = (float)content.Max(m => m?.Bounds.X + m?.Bounds.SizeX)
-                },
-
-                YBounds = new RealBounds
-                {
-                    Min = (float)content.Min(m => m?.Bounds.Y),
-                    Max = (float)content.Max(m => m?.Bounds.Y + m?.Bounds.SizeY)
-                },
-
-                ZBounds = new RealBounds
-                {
-                    Min = (float)content.Min(m => m?.Bounds.Z),
-                    Max = (float)content.Max(m => m?.Bounds.Z + m?.Bounds.SizeZ)
-                }
-            };
-
-            Camera.FarPlaneDistance = Math.Max(MinFarPlaneDistance, bounds.Length * 2);
+            Viewport.FixedRotationPoint = bounds.Center.ToPoint3D();
+            Camera.FarPlaneDistance = Math.Max(MinFarPlaneDistance, bounds.Size.Length() * 2);
             Camera.NearPlaneDistance = MinNearPlaneDistance;
 
             ZoomToBounds(bounds);
 
-            var len = bounds.Length;
+            var len = bounds.Size.Length();
             CameraSpeed = Math.Ceiling(len);
             MaxCameraSpeed = Math.Ceiling(len * 6);
         }
 
-        private void ZoomToBounds(RealBounds3D bounds)
+        private void ZoomToBounds(SharpDX.BoundingBox bounds)
         {
-            if (bounds.Length == 0)
+            if (Viewport == null || bounds.Size.Length() == 0)
                 return;
 
-            var center = new Point3D(bounds.XBounds.Midpoint, bounds.YBounds.Midpoint, bounds.ZBounds.Midpoint);
-            var radius = bounds.Length / 2;
+            var center = bounds.Center.ToPoint3D();
+            var radius = bounds.Size.Length() / 2;
 
             var hDistance = radius / Math.Tan(0.5 * Camera.FieldOfView * Math.PI / 180);
             var vFov = Camera.FieldOfView / Viewport.ActualWidth * Viewport.ActualHeight;
@@ -237,52 +228,26 @@ namespace Reclaimer.Controls
             //adjust angle and distance to side view for long models like weapons
             var adjust = vDistance > hDistance ? 0.75 : 1;
             var camDistance = Math.Max(hDistance, vDistance) * adjust;
-            var lookDirection = (bounds.XBounds.Length > bounds.YBounds.Length * 1.5)
-                ? new Vector3D(0, -Math.Sign(center.Y), 0)
-                : new Vector3D(-Math.Sign(center.X), 0, 0);
+            var lookDirection = bounds.Size.X > bounds.Size.Y * 1.5
+                ? new Media3D.Vector3D(0, -Math.Sign(center.Y), 0)
+                : new Media3D.Vector3D(-Math.Sign(center.X), 0, 0);
 
             if (lookDirection.Length == 0)
-                lookDirection = new Vector3D(-1, 0, 0);
+                lookDirection = new Media3D.Vector3D(-1, 0, 0);
 
-            MoveCamera(center - lookDirection * camDistance, lookDirection);
+            Camera.LookAt(center, lookDirection * camDistance, Viewport.ModelUpDirection, default);
         }
 
-        public void LocateObject(Model3DGroup m)
-        {
-            var bounds = new RealBounds3D
-            {
-                XBounds = new RealBounds
-                {
-                    Min = (float)m.Bounds.X,
-                    Max = (float)(m.Bounds.X + m.Bounds.SizeX)
-                },
-
-                YBounds = new RealBounds
-                {
-                    Min = (float)m.Bounds.Y,
-                    Max = (float)(m.Bounds.Y + m.Bounds.SizeY)
-                },
-
-                ZBounds = new RealBounds
-                {
-                    Min = (float)m.Bounds.Z,
-                    Max = (float)(m.Bounds.Z + m.Bounds.SizeZ)
-                }
-            };
-
-            ZoomToBounds(bounds);
-        }
-
-        public void AddChild(ModelVisual3D child)
+        public void AddChild(Helix.Element3D child)
         {
             children.Add(child);
-            Viewport?.Children.Add(child);
+            Viewport?.Items.Add(child);
         }
 
-        public void RemoveChild(ModelVisual3D child)
+        public void RemoveChild(Helix.Element3D child)
         {
             children.Remove(child);
-            Viewport?.Children.Remove(child);
+            Viewport?.Items.Remove(child);
         }
 
         public void ClearChildren()
@@ -294,18 +259,16 @@ namespace Reclaimer.Controls
         public void Dispose()
         {
             timer.Stop();
-            Viewport?.Children.Clear();
-        }
 
-        private void MoveCamera(Point3D position, Vector3D direction)
-        {
-            Camera.Position = position;
-            Camera.LookDirection = direction;
+            if (Viewport != null)
+            {
+                foreach (var item in Viewport.Items)
+                    item.Dispose();
 
-            var len = Camera.LookDirection.Length;
-            Camera.LookDirection = new Vector3D(Camera.LookDirection.X / len, Camera.LookDirection.Y / len, Camera.LookDirection.Z / len);
-            Yaw = Math.Atan2(Camera.LookDirection.X, Camera.LookDirection.Z);
-            Pitch = Math.Atan(Camera.LookDirection.Y);
+                Viewport.Items.Clear();
+                Viewport.Dispose();
+                ClearChildren();
+            }
         }
 
         private void UpdateCameraPosition()
@@ -332,10 +295,10 @@ namespace Reclaimer.Controls
 
             if (CheckKeyState(Keys.W) || CheckKeyState(Keys.A) || CheckKeyState(Keys.S) || CheckKeyState(Keys.D) || CheckKeyState(Keys.R) || CheckKeyState(Keys.F))
             {
-                var moveVector = new Vector3D();
+                var moveVector = new Media3D.Vector3D();
                 var upVector = Camera.UpDirection;
                 var forwardVector = Camera.LookDirection;
-                var rightVector = Vector3D.CrossProduct(forwardVector, upVector);
+                var rightVector = Media3D.Vector3D.CrossProduct(forwardVector, upVector);
 
                 upVector.Normalize();
                 forwardVector.Normalize();
@@ -381,9 +344,9 @@ namespace Reclaimer.Controls
             var deltaX = (float)(mousePos.X - lastPoint.X) * (float)SpeedMultipler * 2;
             var deltaY = (float)(mousePos.Y - lastPoint.Y) * (float)SpeedMultipler * 2;
 
-            var upAnchor = new Numerics.Vector3(0, 0, 1);
-            var upVector = Numerics.Vector3.Normalize(new Numerics.Vector3((float)Camera.UpDirection.X, (float)Camera.UpDirection.Y, (float)Camera.UpDirection.Z));
-            var forwardVector = Numerics.Vector3.Normalize(new Numerics.Vector3((float)Camera.LookDirection.X, (float)Camera.LookDirection.Y, (float)Camera.LookDirection.Z));
+            var upAnchor = Viewport.ModelUpDirection.ToNumericsVector3();
+            var upVector = Camera.UpDirection.ToNumericsVector3();
+            var forwardVector = Camera.LookDirection.ToNumericsVector3();
             var rightVector = Numerics.Vector3.Normalize(Numerics.Vector3.Cross(forwardVector, upVector));
 
             var yaw = Numerics.Matrix4x4.CreateFromAxisAngle(upAnchor, -deltaX);
@@ -396,8 +359,8 @@ namespace Reclaimer.Controls
             forwardVector = Numerics.Vector3.TransformNormal(forwardVector, pitch);
             upVector = Numerics.Vector3.Normalize(Numerics.Vector3.Cross(rightVector, forwardVector));
 
-            Camera.LookDirection = new Vector3D(forwardVector.X, forwardVector.Y, forwardVector.Z);
-            Camera.UpDirection = new Vector3D(upVector.X, upVector.Y, upVector.Z);
+            Camera.LookDirection = new Media3D.Vector3D(forwardVector.X, forwardVector.Y, forwardVector.Z);
+            Camera.UpDirection = new Media3D.Vector3D(upVector.X, upVector.Y, upVector.Z);
 
             Yaw = Math.Atan2(forwardVector.X, forwardVector.Y);
             Pitch = Math.Asin(-forwardVector.Z);

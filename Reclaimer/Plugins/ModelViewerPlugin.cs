@@ -105,7 +105,7 @@ namespace Reclaimer.Plugins
 
             try
             {
-                var viewer = new Controls.ModelViewer
+                var viewer = new Controls.DirectX.ModelViewer
                 {
                     LogOutput = LogOutput,
                     LogError = LogError,
