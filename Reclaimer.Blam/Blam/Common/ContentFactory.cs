@@ -339,7 +339,7 @@ namespace Reclaimer.Blam.Common
 
                 var startSize = compressedSize;
                 var endSize = decompressedSize;
-                var decompressionContext = 0;
+                var decompressionContext = 0L;
                 XCompress.XMemCreateDecompressionContext(XCompress.XMemCodecType.LZX, 0, 0, ref decompressionContext);
                 XCompress.XMemResetDecompressionContext(decompressionContext);
                 XCompress.XMemDecompressStream(decompressionContext, decompressed, ref endSize, compressed, ref startSize);
