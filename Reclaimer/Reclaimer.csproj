@@ -16,7 +16,6 @@
     <RootNamespace>$(ProjectName.Split(".")[0])</RootNamespace>
     <ApplicationIcon>Resources\Reclaimer.ico</ApplicationIcon>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
 
   <ItemGroup>
