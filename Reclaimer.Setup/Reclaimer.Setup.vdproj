@@ -15,12 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_562B781D11444E6AB11C59A5F4076C69"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_635435B8A0E041B1BFE3CFA10E5934B5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -28,18 +22,6 @@
         "Entry"
         {
         "MsmKey" = "8:_D7085246395C4B9AAA83EAE32A701041"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_F415CDE9BD3846E6B8E5B36DB40736D4"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_FD06B594005F404A9DDF9409C641D6BB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -70,10 +52,15 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.DesktopRuntime.6.0.x64"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.5 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.5"
+                    "Name" = "8:.NET Desktop Runtime 6.0.11 (x64)"
+                    "ProductCode" = "8:Microsoft.NetCore.DesktopRuntime.6.0.x64"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.NetCore.DesktopRuntime.6.0.x86"
+                    {
+                    "Name" = "8:.NET Desktop Runtime 6.0.11 (x86)"
+                    "ProductCode" = "8:Microsoft.NetCore.DesktopRuntime.6.0.x86"
                     }
                 }
             }
@@ -126,38 +113,20 @@
         {
             "LaunchCondition"
             {
-                "{A06ECF26-33A3-4562-8140-9B0E340D4F24}:_FFEDE50CC2524A2ABFD6B0B2C02C549D"
+                "{A06ECF26-33A3-4562-8140-9B0E340D4F24}:_F8F483F7C2F8458BA4F7EC018091A454"
                 {
-                "Name" = "8:.NET Framework"
-                "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:.NETFramework,Version=v4.8"
+                "Name" = "8:.NET Core"
+                "Message" = "8:[VSDNETCOREMSG]"
                 "AllowLaterVersions" = "11:FALSE"
-                "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=395269"
+                "InstallUrl" = "8:https://dotnet.microsoft.com/download/dotnet-core/[NetCoreVerMajorDotMinor]"
+                "IsNETCore" = "11:TRUE"
+                "Architecture" = "2:0"
+                "Runtime" = "2:0"
                 }
             }
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_562B781D11444E6AB11C59A5F4076C69"
-            {
-            "SourcePath" = "8:..\\Reclaimer\\bin\\Release\\net6.0-windows\\runtimes\\win-x86\\native\\assimp.dll"
-            "TargetName" = "8:assimp.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_6A29CAA878B64EA8B4F970A5CD5E302F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_635435B8A0E041B1BFE3CFA10E5934B5"
             {
             "SourcePath" = "8:..\\Reclaimer\\Resources\\Reclaimer.ico"
@@ -174,7 +143,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
@@ -187,26 +156,6 @@
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:FALSE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FD06B594005F404A9DDF9409C641D6BB"
-            {
-            "SourcePath" = "8:..\\Reclaimer\\bin\\Release\\net6.0-windows\\runtimes\\win-x64\\native\\assimp.dll"
-            "TargetName" = "8:assimp.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_4E0F548A07484CA89B290B455037C6CC"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
             "Hidden" = "11:FALSE"
             "System" = "11:FALSE"
@@ -300,61 +249,6 @@
                         {
                         }
                     }
-                    "{9EF0B969-E518-4E46-987F-47570745A589}:_B9D9EDBB58BF4772BD98821053D4AFD9"
-                    {
-                    "Name" = "8:runtimes"
-                    "AlwaysCreate" = "11:TRUE"
-                    "Condition" = "8:"
-                    "Transitive" = "11:FALSE"
-                    "Property" = "8:_37A6E52706824CB7ADC0D98174EC5D8C"
-                        "Folders"
-                        {
-                            "{9EF0B969-E518-4E46-987F-47570745A589}:_E0A92F12C90B45C4B769F2E5288D3D94"
-                            {
-                            "Name" = "8:win-x64"
-                            "AlwaysCreate" = "11:FALSE"
-                            "Condition" = "8:"
-                            "Transitive" = "11:FALSE"
-                            "Property" = "8:_EC43DB094BD842C4A639502C61FF6B89"
-                                "Folders"
-                                {
-                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_4E0F548A07484CA89B290B455037C6CC"
-                                    {
-                                    "Name" = "8:native"
-                                    "AlwaysCreate" = "11:FALSE"
-                                    "Condition" = "8:"
-                                    "Transitive" = "11:FALSE"
-                                    "Property" = "8:_AB6BFAF0B824439BA63ABB7FF23D4F18"
-                                        "Folders"
-                                        {
-                                        }
-                                    }
-                                }
-                            }
-                            "{9EF0B969-E518-4E46-987F-47570745A589}:_EE8747C412404EEF8605E690D88D4101"
-                            {
-                            "Name" = "8:win-x86"
-                            "AlwaysCreate" = "11:FALSE"
-                            "Condition" = "8:"
-                            "Transitive" = "11:FALSE"
-                            "Property" = "8:_59E1D9C60E274E8488F93CB63B07FE95"
-                                "Folders"
-                                {
-                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_6A29CAA878B64EA8B4F970A5CD5E302F"
-                                    {
-                                    "Name" = "8:native"
-                                    "AlwaysCreate" = "11:FALSE"
-                                    "Condition" = "8:"
-                                    "Transitive" = "11:FALSE"
-                                    "Property" = "8:_FC9F2AC993BD4AF48FD230F7F4674EC7"
-                                        "Folders"
-                                        {
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -374,7 +268,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Reclaimer"
         "ProductCode" = "8:{57A9F617-E17C-404E-B175-45688AF966BB}"
-        "PackageCode" = "8:{D81A9398-67A1-4C15-8167-FA99EEE00508}"
+        "PackageCode" = "8:{EB735D3F-A75E-4EF0-9A6C-F87FF21AB234}"
         "UpgradeCode" = "8:{FBBE75A5-B290-459D-AFEE-4B97449AE820}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -385,12 +279,12 @@
         "Manufacturer" = "8:Gravemind2401"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:Reclaimer"
+        "Title" = "8:Reclaimer Setup"
         "Subject" = "8:"
         "ARPCONTACT" = "8:Gravemind2401"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
-        "ARPURLINFOABOUT" = "8:"
+        "ARPURLINFOABOUT" = "8:https://github.com/Gravemind2401/Reclaimer"
         "ARPPRODUCTICON" = "8:_635435B8A0E041B1BFE3CFA10E5934B5"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
@@ -502,7 +396,7 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_F415CDE9BD3846E6B8E5B36DB40736D4"
+            "Target" = "8:_0CE6D01DACC540D6A733FD5E6ABC6EF3"
             "Folder" = "8:_BBA0A6A172DC44659EBDC49CCA6AD40D"
             "WorkingFolder" = "8:_CFD6E818CB474C0B97D0387E639CC05D"
             "Icon" = "8:_635435B8A0E041B1BFE3CFA10E5934B5"
@@ -909,7 +803,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_0CE6D01DACC540D6A733FD5E6ABC6EF3"
             {
-            "SourcePath" = "8:"
+            "SourcePath" = "8:..\\Reclaimer\\obj\\Debug\\net6.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_CFD6E818CB474C0B97D0387E639CC05D"
@@ -929,34 +823,6 @@
             "ProjectOutputGroupRegister" = "3:1"
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:PublishItems"
-            "OutputProjectGuid" = "8:{F05A3EB2-3336-47BC-8F5A-0DBB4E2EDABB}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F415CDE9BD3846E6B8E5B36DB40736D4"
-            {
-            "SourcePath" = "8:..\\Reclaimer\\obj\\Release\\net48\\Reclaimer.exe"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_CFD6E818CB474C0B97D0387E639CC05D"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:Built"
             "OutputProjectGuid" = "8:{F05A3EB2-3336-47BC-8F5A-0DBB4E2EDABB}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
