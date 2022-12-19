@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Adjutant.Spatial;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Numerics = System.Numerics;
-using Media3D = System.Windows.Media.Media3D;
 using Helix = HelixToolkit.Wpf.SharpDX;
 using HelixCore = HelixToolkit.SharpDX.Core;
-using Adjutant.Spatial;
+using Media3D = System.Windows.Media.Media3D;
+using Numerics = System.Numerics;
 
 namespace Reclaimer.Controls.DirectX
 {
@@ -24,6 +24,29 @@ namespace Reclaimer.Controls.DirectX
         public static Numerics.Vector3 ToNumericsVector3(this Media3D.Vector3D vector)
         {
             return new Numerics.Vector3((float)vector.X, (float)vector.Y, (float)vector.Z);
+        }
+
+        public static SharpDX.Matrix ToMatrix3(this Numerics.Matrix4x4 matrix)
+        {
+            return new SharpDX.Matrix
+            {
+                M11 = matrix.M11,
+                M12 = matrix.M12,
+                M13 = matrix.M13,
+                M14 = matrix.M14,
+                M21 = matrix.M21,
+                M22 = matrix.M22,
+                M23 = matrix.M23,
+                M24 = matrix.M24,
+                M31 = matrix.M31,
+                M32 = matrix.M32,
+                M33 = matrix.M33,
+                M34 = matrix.M34,
+                M41 = matrix.M41,
+                M42 = matrix.M42,
+                M43 = matrix.M43,
+                M44 = matrix.M44,
+            };
         }
 
         public static SharpDX.Matrix ToMatrix3(this IRealBounds5D bounds)

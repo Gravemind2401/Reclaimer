@@ -213,7 +213,7 @@ namespace Reclaimer.Controls.DirectX
             MaxCameraSpeed = Math.Ceiling(len * 6);
         }
 
-        private void ZoomToBounds(SharpDX.BoundingBox bounds)
+        public void ZoomToBounds(SharpDX.BoundingBox bounds)
         {
             if (Viewport == null || bounds.Size.Length() == 0)
                 return;
@@ -347,17 +347,8 @@ namespace Reclaimer.Controls.DirectX
             var upAnchor = Viewport.ModelUpDirection.ToNumericsVector3();
             var upVector = Camera.UpDirection.ToNumericsVector3();
             var forwardVector = Camera.LookDirection.ToNumericsVector3();
-            var rightVector = Numerics.Vector3.Normalize(Numerics.Vector3.Cross(forwardVector, upVector));
 
-            var yaw = Numerics.Matrix4x4.CreateFromAxisAngle(upAnchor, -deltaX);
-
-            forwardVector = Numerics.Vector3.TransformNormal(forwardVector, yaw);
-            rightVector = Numerics.Vector3.TransformNormal(rightVector, yaw);
-
-            var pitch = Numerics.Matrix4x4.CreateFromAxisAngle(rightVector, -deltaY);
-
-            forwardVector = Numerics.Vector3.TransformNormal(forwardVector, pitch);
-            upVector = Numerics.Vector3.Normalize(Numerics.Vector3.Cross(rightVector, forwardVector));
+            MoveLookDirection(in upAnchor, ref upVector, ref forwardVector, in deltaX, in deltaY);
 
             Camera.LookDirection = new Media3D.Vector3D(forwardVector.X, forwardVector.Y, forwardVector.Z);
             Camera.UpDirection = new Media3D.Vector3D(upVector.X, upVector.Y, upVector.Z);
@@ -366,6 +357,23 @@ namespace Reclaimer.Controls.DirectX
             Pitch = Math.Asin(-forwardVector.Z);
 
             NativeMethods.SetCursorPos((int)lastPoint.X, (int)lastPoint.Y);
+        }
+
+        private static void MoveLookDirection(in Numerics.Vector3 worldUp, ref Numerics.Vector3 cameraUp, ref Numerics.Vector3 cameraForward, in float deltaX, in float deltaY)
+        {
+            cameraUp = Numerics.Vector3.Normalize(cameraUp);
+            cameraForward = Numerics.Vector3.Normalize(cameraForward);
+
+            var rightVector = Numerics.Vector3.Normalize(Numerics.Vector3.Cross(cameraForward, cameraUp));
+            var yawTransform = Numerics.Matrix4x4.CreateFromAxisAngle(worldUp, -deltaX);
+
+            cameraForward = Numerics.Vector3.TransformNormal(cameraForward, yawTransform);
+            rightVector = Numerics.Vector3.TransformNormal(rightVector, yawTransform);
+
+            var pitchTransform = Numerics.Matrix4x4.CreateFromAxisAngle(rightVector, -deltaY);
+
+            cameraForward = Numerics.Vector3.TransformNormal(cameraForward, pitchTransform);
+            cameraUp = Numerics.Vector3.Normalize(Numerics.Vector3.Cross(rightVector, cameraForward));
         }
 
         private static double ClipValue(double val, double min, double max)
