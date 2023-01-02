@@ -1,23 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Utilities
 {
     public static class Utils
     {
         /// <summary>
-        /// Like <see cref="System.IO.Path.GetFileName"/> but allows invalid characters.
+        /// Like <see cref="Path.GetFileName"/> but allows invalid characters.
         /// </summary>
         public static string GetFileName(string path) => path?.Split('\\').Last();
 
         /// <summary>
-        /// Like <see cref="System.IO.Path.GetFileNameWithoutExtension"/> but allows invalid characters.
+        /// Like <see cref="Path.GetFileNameWithoutExtension"/> but allows invalid characters.
         /// </summary>
         public static string GetFileNameWithoutExtension(string path)
         {
@@ -38,6 +36,19 @@ namespace Reclaimer.Utilities
         /// </summary>
         /// <param name="fileName">The file name to convert.</param>
         public static string GetSafeFileName(string fileName) => string.Join("_", fileName.Split(Path.GetInvalidPathChars()));
+
+        /// <summary>
+        /// Wrapper for <see cref="Process.Start(string)"/> to work around permissions exception.
+        /// </summary>
+        /// <inheritdoc cref="Process.Start(string)"/>
+        public static void StartProcess(string fileName)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = fileName,
+                UseShellExecute = true
+            });
+        }
 
         /// <summary>
         /// Converts radian values to degree values.
