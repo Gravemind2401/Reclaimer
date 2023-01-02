@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Reclaimer.IO.Dynamic
+﻿namespace Reclaimer.IO.Dynamic
 {
     internal static class Extensions
     {

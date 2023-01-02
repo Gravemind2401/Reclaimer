@@ -1,5 +1,4 @@
 ﻿using Reclaimer.IO;
-using System;
 using System.Numerics;
 
 namespace Reclaimer.Geometry.Vectors

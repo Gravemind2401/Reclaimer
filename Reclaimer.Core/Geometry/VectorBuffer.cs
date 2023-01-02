@@ -1,6 +1,4 @@
 ﻿using Reclaimer.IO;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Reclaimer.Geometry
 {

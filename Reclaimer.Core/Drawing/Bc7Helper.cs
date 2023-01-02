@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Reclaimer.Drawing.Bc7
+﻿namespace Reclaimer.Drawing.Bc7
 {
     [Flags]
     internal enum BlockMode

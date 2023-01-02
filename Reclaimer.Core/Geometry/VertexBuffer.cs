@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using VertexChannel = System.Collections.Generic.IReadOnlyList<Reclaimer.Geometry.IVector>;
+﻿using VertexChannel = System.Collections.Generic.IReadOnlyList<Reclaimer.Geometry.IVector>;
 
 namespace Reclaimer.Geometry
 {

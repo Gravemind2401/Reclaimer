@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Reclaimer.Geometry
+﻿namespace Reclaimer.Geometry
 {
     public interface IVectorBuffer : IReadOnlyList<IVector>
     {

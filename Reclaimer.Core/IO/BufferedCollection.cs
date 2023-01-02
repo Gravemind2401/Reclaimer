@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Reclaimer.IO
+﻿namespace Reclaimer.IO
 {
     public class BufferedCollection<TBufferable> : DataBuffer<TBufferable>, ICollection<TBufferable>
         where TBufferable : struct, IBufferable<TBufferable>
