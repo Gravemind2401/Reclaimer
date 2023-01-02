@@ -1,5 +1,4 @@
-﻿using MahApps.Metro.Controls;
-using Octokit;
+﻿using Octokit;
 using Reclaimer.Models;
 using Reclaimer.Plugins;
 using Reclaimer.Utilities;
@@ -7,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,7 +17,7 @@ namespace Reclaimer.Windows
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow, ITabContentHost
+    public partial class MainWindow : MahApps.Metro.Controls.MetroWindow, ITabContentHost
     {
         #region Dependency Properties
         private static readonly DependencyPropertyKey HasUpdatePropertyKey =
@@ -81,8 +79,8 @@ namespace Reclaimer.Windows
 
         #region Event Handlers
         private void menuOutput_Click(object sender, RoutedEventArgs e) => Substrate.ShowOutput();
-        private void menuAppDir_Click(object sender, RoutedEventArgs e) => System.Diagnostics.Process.Start(Settings.AppBaseDirectory);
-        private void menuAppDataDir_Click(object sender, RoutedEventArgs e) => System.Diagnostics.Process.Start(Settings.AppDataDirectory);
+        private void menuAppDir_Click(object sender, RoutedEventArgs e) => Utils.StartProcess(Settings.AppBaseDirectory);
+        private void menuAppDataDir_Click(object sender, RoutedEventArgs e) => Utils.StartProcess(Settings.AppDataDirectory);
 
         private void menuSettings_Click(object sender, RoutedEventArgs e)
         {
@@ -115,7 +113,7 @@ namespace Reclaimer.Windows
             });
         }
 
-        private void menuIssue_Click(object sender, RoutedEventArgs e) => System.Diagnostics.Process.Start("https://github.com/Gravemind2401/Reclaimer/issues");
+        private void menuIssue_Click(object sender, RoutedEventArgs e) => Utils.StartProcess("https://github.com/Gravemind2401/Reclaimer/issues");
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
@@ -237,7 +235,7 @@ namespace Reclaimer.Windows
             RecentsMenuItem.Items.Clear();
             fileMenu.Items.Remove(RecentsMenuItem);
 
-            foreach (var fileName in App.Settings.RecentFiles.Where(s => File.Exists(s)))
+            foreach (var fileName in App.Settings.RecentFiles.Where(File.Exists))
             {
                 var displayName = fileName;
                 if (displayName.Length > maxChars)

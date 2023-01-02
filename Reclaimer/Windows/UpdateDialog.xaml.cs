@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Reclaimer.Utilities;
 using System.Windows;
 
 namespace Reclaimer.Windows
@@ -28,7 +24,7 @@ namespace Reclaimer.Windows
             window.ShowDialog();
         }
 
-        private void btnOk_Click(object sender, RoutedEventArgs e) => System.Diagnostics.Process.Start(App.Settings.LatestRelease.DetailsUrl);
+        private void btnOk_Click(object sender, RoutedEventArgs e) => Utils.StartProcess(App.Settings.LatestRelease.DetailsUrl);
         private void btnCancel_Click(object sender, RoutedEventArgs e) => Close();
     }
 }
