@@ -48,7 +48,7 @@ namespace Reclaimer.Geometry
         public Matrix4x4 Transform { get; set; } = Matrix4x4.Identity;
     }
 
-    public class Mesh
+    public class Mesh : IMeshCompat
     {
         public VertexBuffer VertexBuffer { get; set; }
         public IIndexBuffer IndexBuffer { get; set; }
@@ -60,9 +60,10 @@ namespace Reclaimer.Geometry
         public Vector2 MaxTexBounds { get; set; }
     }
 
-    public class MeshSegment
+    public class MeshSegment : ISubmeshCompat
     {
-        public Range IndexRange { get; set; }
+        public int IndexStart { get; set; }
+        public int IndexLength { get; set; }
         public Material Material { get; set; }
     }
 }

@@ -62,29 +62,20 @@ namespace Adjutant.Geometry
         IVector4 Rotation { get; }
     }
 
-    public interface IGeometryMesh : IDisposable
+    public interface IGeometryMesh : IMeshCompat, IDisposable
     {
         bool IsInstancing { get; }
 
         VertexWeights VertexWeights { get; }
-        IndexFormat IndexFormat { get; }
-
-        VertexBuffer VertexBuffer { get; }
-        IIndexBuffer IndexBuffer { get; }
-
-        int VertexCount => VertexBuffer?.Count ?? 0;
-        int IndexCount => IndexBuffer?.Count ?? 0;
 
         byte? NodeIndex { get; }
         short? BoundsIndex { get; }
         IReadOnlyList<IGeometrySubmesh> Submeshes { get; }
     }
 
-    public interface IGeometrySubmesh
+    public interface IGeometrySubmesh : ISubmeshCompat
     {
         short MaterialIndex { get; }
-        int IndexStart { get; }
-        int IndexLength { get; }
     }
 
     public interface IGeometryMaterial
