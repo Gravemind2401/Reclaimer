@@ -10,16 +10,23 @@ namespace Reclaimer.Geometry
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<Texture> Textures { get; } = new();
+        public List<TextureMapping> TextureMappings { get; } = new();
         public List<MaterialTint> Tints { get; } = new();
+    }
+
+    public class TextureMapping
+    {
+        public int Usage { get; set; }
+        public Texture Texture { get; set; }
+        public Vector2 Tiling { get; set; } = Vector2.One;
+        public ChannelMask ChannelMask { get; set; }
     }
 
     public class Texture
     {
-        public int Usage { get; set; }
-        public Func<DdsImage> Action { get; set; }
-        public Vector2 Tiling { get; set; } = Vector2.One;
-        public ChannelMask ChannelMask { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public Func<DdsImage> GetDds { get; set; }
     }
 
     public class MaterialTint

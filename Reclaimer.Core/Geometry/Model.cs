@@ -24,7 +24,7 @@ namespace Reclaimer.Geometry
     public class ModelPermutation
     {
         public string Name { get; set; }
-        public Range MeshRange { get; set; }
+        public (int Index, int Count) MeshRange { get; set; }
         public Matrix4x4 Transform { get; set; } = Matrix4x4.Identity;
     }
 
@@ -52,7 +52,7 @@ namespace Reclaimer.Geometry
     {
         public VertexBuffer VertexBuffer { get; set; }
         public IIndexBuffer IndexBuffer { get; set; }
-        public List<MeshSegment> MeshSegments { get; } = new();
+        public List<MeshSegment> Segments { get; } = new();
 
         public Vector3 MinBounds { get; set; }
         public Vector3 MaxBounds { get; set; }
