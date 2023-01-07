@@ -459,19 +459,12 @@ namespace Reclaimer.IO
         /// <exception cref="ObjectDisposedException"/>
         public void Seek(long offset, SeekOrigin origin)
         {
-            long address = 0;
-            switch (origin)
+            var address = origin switch
             {
-                case SeekOrigin.Begin:
-                    address = virtualOrigin + offset;
-                    break;
-                case SeekOrigin.Current:
-                    address = BaseStream.Position + offset;
-                    break;
-                case SeekOrigin.End:
-                    address = BaseStream.Length + offset;
-                    break;
-            }
+                SeekOrigin.Current => BaseStream.Position + offset,
+                SeekOrigin.End => BaseStream.Length + offset,
+                _ => virtualOrigin + offset
+            };
 
             SeekAbsolute(address);
         }
