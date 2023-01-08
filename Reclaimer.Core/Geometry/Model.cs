@@ -58,6 +58,8 @@ namespace Reclaimer.Geometry
         public Vector3 MaxBounds { get; set; }
         public Vector2 MinTexBounds { get; set; }
         public Vector2 MaxTexBounds { get; set; }
+
+        public bool IsCompressed => MinBounds.LengthSquared() != 0 && MaxBounds.LengthSquared() != 0;
     }
 
     public class MeshSegment : ISubmeshCompat

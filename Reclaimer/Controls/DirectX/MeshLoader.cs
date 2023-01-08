@@ -1,6 +1,7 @@
 ﻿using Adjutant.Geometry;
 using HelixToolkit.SharpDX.Core;
 using HelixToolkit.Wpf.SharpDX;
+using Reclaimer.Geometry;
 using System.Collections.ObjectModel;
 
 using Media3D = System.Windows.Media.Media3D;
@@ -11,36 +12,36 @@ namespace Reclaimer.Controls.DirectX
     {
         private sealed class MeshLoader
         {
+            //TODO: support instanced geometry
             private readonly Dictionary<int, List<InstancedPermutation>> instanceIds = new();
             private readonly Dictionary<int, GroupModel3D> meshLookup = new();
 
-            public MeshLoader(IGeometryModel model, TextureLoader textureLoader)
+            public MeshLoader(Model model, TextureLoader textureLoader)
             {
                 var indexes = model.Regions.SelectMany(r => r.Permutations)
-                    .SelectMany(p => Enumerable.Range(p.MeshIndex, p.MeshCount)).Distinct();
+                    .SelectMany(p => Enumerable.Range(p.MeshRange.Index, p.MeshRange.Count)).Distinct();
 
                 foreach (var i in indexes)
                 {
                     var mesh = model.Meshes.ElementAtOrDefault(i);
-                    if (mesh == null || mesh.Submeshes.Count == 0)
+                    if (mesh == null || mesh.Segments.Count == 0)
                         continue;
 
-                    if (mesh.IsInstancing)
-                        instanceIds.Add(i, new List<InstancedPermutation>());
+                    //if (mesh.IsInstancing)
+                    //    instanceIds.Add(i, new List<InstancedPermutation>());
 
                     var mGroup = new GroupModel3D();
 
                     var texMatrix = SharpDX.Matrix.Identity;
                     var boundsMatrix = SharpDX.Matrix.Identity;
 
-                    if (mesh.BoundsIndex >= 0)
+                    if (mesh.IsCompressed)
                     {
-                        var bounds = model.Bounds[mesh.BoundsIndex.Value];
-                        boundsMatrix = bounds.ToMatrix3();
-                        texMatrix = bounds.ToMatrix2();
+                        boundsMatrix = (mesh.MinBounds, mesh.MaxBounds).ToMatrix3();
+                        texMatrix = (mesh.MinTexBounds, mesh.MaxTexBounds).ToMatrix2();
                     }
 
-                    foreach (var sub in mesh.Submeshes)
+                    foreach (var sub in mesh.Segments)
                     {
                         try
                         {
@@ -73,12 +74,13 @@ namespace Reclaimer.Controls.DirectX
                             
                             geom.UpdateOctree();
 
-                            var element = mesh.IsInstancing
-                                ? new InstancingMeshGeometryModel3D()
-                                : new MeshGeometryModel3D();
+                            var element = new MeshGeometryModel3D();
+                            //var element = mesh.IsInstancing
+                            //    ? new InstancingMeshGeometryModel3D()
+                            //    : new MeshGeometryModel3D();
 
                             element.Geometry = geom;
-                            element.Material = textureLoader[sub.MaterialIndex];
+                            element.Material = textureLoader[sub.Material.Id];
 
                             mGroup.Children.Add(element);
                         }
@@ -89,26 +91,26 @@ namespace Reclaimer.Controls.DirectX
                 }
             }
 
-            public MeshTag GetMesh(IGeometryPermutation permutation)
+            public MeshTag GetMesh(ModelPermutation permutation)
             {
-                if (instanceIds.TryGetValue(permutation.MeshIndex, out var instances))
-                {
-                    var source = meshLookup[permutation.MeshIndex];
-                    var matrix = GetTransform(permutation).ToMatrix(); // /*SharpDX.Matrix.Scaling(permutation.TransformScale) **/ permutation.Transform.ToMatrix3();
-                    var instance = new InstancedPermutation(source, matrix);
-                    instances.Add(instance);
-                    return new MeshTag(permutation, source, instance);
-                }
+                //if (instanceIds.TryGetValue(permutation.MeshIndex, out var instances))
+                //{
+                //    var source = meshLookup[permutation.MeshIndex];
+                //    var matrix = GetTransform(permutation).ToMatrix(); // /*SharpDX.Matrix.Scaling(permutation.TransformScale) **/ permutation.Transform.ToMatrix3();
+                //    var instance = new InstancedPermutation(source, matrix);
+                //    instances.Add(instance);
+                //    return new MeshTag(permutation, source, instance);
+                //}
 
                 var transformGroup = GetTransform(permutation);
 
                 GroupElement3D elementGroup;
-                if (transformGroup.Children.Count == 0 && permutation.MeshCount == 1)
-                    elementGroup = meshLookup.GetValueOrDefault(permutation.MeshIndex);
+                if (transformGroup.Children.Count == 0 && permutation.MeshRange.Count == 1)
+                    elementGroup = meshLookup.GetValueOrDefault(permutation.MeshRange.Index);
                 else
                 {
                     elementGroup = new GroupModel3D();
-                    var parts = Enumerable.Range(permutation.MeshIndex, permutation.MeshCount)
+                    var parts = Enumerable.Range(permutation.MeshRange.Index, permutation.MeshRange.Count)
                         .Where(meshLookup.ContainsKey)
                         .Select(i => meshLookup[i]);
 
@@ -124,17 +126,16 @@ namespace Reclaimer.Controls.DirectX
                 return new MeshTag(permutation, elementGroup);
             }
 
-            private static Media3D.Transform3DGroup GetTransform(IGeometryPermutation permutation)
+            private static Media3D.Transform3DGroup GetTransform(ModelPermutation permutation)
             {
                 var transformGroup = new Media3D.Transform3DGroup();
 
-                if (permutation.TransformScale != 1)
-                {
-                    var tform = new Media3D.ScaleTransform3D(permutation.TransformScale, permutation.TransformScale, permutation.TransformScale);
-
-                    tform.Freeze();
-                    transformGroup.Children.Add(tform);
-                }
+                //if (permutation.TransformScale != 1)
+                //{
+                //    var tform = new Media3D.ScaleTransform3D(permutation.TransformScale, permutation.TransformScale, permutation.TransformScale);
+                //    tform.Freeze();
+                //    transformGroup.Children.Add(tform);
+                //}
 
                 if (!permutation.Transform.IsIdentity)
                 {

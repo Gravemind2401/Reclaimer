@@ -2,6 +2,7 @@
 using HelixToolkit.Wpf.SharpDX;
 using Microsoft.Win32;
 using Reclaimer.Blam.Utilities;
+using Reclaimer.Geometry;
 using Reclaimer.Models;
 using Reclaimer.Plugins;
 using Reclaimer.Utilities;
@@ -91,7 +92,8 @@ namespace Reclaimer.Controls.DirectX
             TreeViewItems.Clear();
             ClearChildren();
 
-            model = geometry.ReadGeometry(index);
+            this.model = geometry.ReadGeometry(index);
+            var model = this.model.ConvertToScene();
 
             textureLoader = new TextureLoader(model);
             meshLoader = new MeshLoader(model, textureLoader);
@@ -102,7 +104,7 @@ namespace Reclaimer.Controls.DirectX
 
                 foreach (var perm in region.Permutations)
                 {
-                    if (perm.MeshCount <= 0)
+                    if (perm.MeshRange.Count <= 0)
                         continue;
 
                     var tag = meshLoader.GetMesh(perm);
@@ -122,7 +124,7 @@ namespace Reclaimer.Controls.DirectX
             }
         }
 
-        private IEnumerable<IGeometryPermutation> GetSelectedPermutations()
+        private IEnumerable<ModelPermutation> GetSelectedPermutations()
         {
             return TreeViewItems.Where(i => i.IsChecked != false)
                 .SelectMany(i => i.Items.Where(ii => ii.IsChecked == true))
@@ -264,8 +266,9 @@ namespace Reclaimer.Controls.DirectX
             if (!PromptFileSave(out var fileName, out var formatId))
                 return;
 
-            var masked = new MaskedGeometryModel(model, GetSelectedPermutations());
-            ModelViewerPlugin.WriteModelFile(masked, fileName, formatId);
+            //TODO: export only selected permutations
+            //var masked = new MaskedGeometryModel(model, GetSelectedPermutations());
+            //ModelViewerPlugin.WriteModelFile(masked, fileName, formatId);
         }
 
         private void btnExportBitmaps_Click(object sender, RoutedEventArgs e)
@@ -278,7 +281,7 @@ namespace Reclaimer.Controls.DirectX
         {
             var export = Substrate.GetSharedFunction<ExportSelectedBitmaps>(Constants.SharedFuncExportSelectedBitmaps);
             var matIndices = GetSelectedPermutations()
-                .SelectMany(p => Enumerable.Range(p.MeshIndex, p.MeshCount))
+                .SelectMany(p => Enumerable.Range(p.MeshRange.Index, p.MeshRange.Count))
                 .Select(i => model.Meshes.ElementAtOrDefault(i))
                 .Where(m => m != null)
                 .SelectMany(m => m.Submeshes.Select(s => (int)s.MaterialIndex))
@@ -370,23 +373,23 @@ namespace Reclaimer.Controls.DirectX
 
         private sealed class MeshTag
         {
-            public IGeometryPermutation Permutation { get; }
+            public ModelPermutation Permutation { get; }
             public GroupElement3D Mesh { get; }
             public MeshLoader.InstancedPermutation Instance { get; }
 
-            public MeshTag(IGeometryPermutation permutation, GroupElement3D mesh)
+            public MeshTag(ModelPermutation permutation, GroupElement3D mesh)
             {
                 Permutation = permutation;
                 Mesh = mesh;
             }
 
-            public MeshTag(IGeometryPermutation permutation, GroupElement3D mesh, MeshLoader.InstancedPermutation instance)
+            public MeshTag(ModelPermutation permutation, GroupElement3D mesh, MeshLoader.InstancedPermutation instance)
                 : this(permutation, mesh)
             {
                 Instance = instance;
             }
 
-            public MeshTag(IGeometryPermutation permutation, InstancingMeshGeometryModel3D mesh, Guid instanceId)
+            public MeshTag(ModelPermutation permutation, InstancingMeshGeometryModel3D mesh, Guid instanceId)
             {
                 Permutation = permutation;
             }

@@ -1,9 +1,11 @@
 ﻿using Adjutant.Geometry;
 using HelixToolkit.SharpDX.Core;
 using HelixToolkit.Wpf.SharpDX;
-using Reclaimer.Blam.Utilities;
 using Reclaimer.Drawing;
+using Reclaimer.Geometry;
 using System.IO;
+
+using Material = HelixToolkit.Wpf.SharpDX.Material;
 
 namespace Reclaimer.Controls.DirectX
 {
@@ -16,40 +18,37 @@ namespace Reclaimer.Controls.DirectX
             private readonly Dictionary<int, Material> materials = new();
             private readonly Dictionary<int, TextureModel> textureLookup = new();
 
-            public Material this[int matIndex] => materials.GetValueOrDefault(matIndex, ErrorMaterial);
+            public Material this[int id] => materials.GetValueOrDefault(id, ErrorMaterial);
 
-            public TextureLoader(IGeometryModel model)
+            public TextureLoader(Model model)
             {
-                var indexes = model.Meshes
+                var mats = model.Meshes.Where(m => m != null)
+                    .SelectMany(m => m.Segments)
+                    .Select(s => s.Material)
                     .Where(m => m != null)
-                    .SelectMany(m => m.Submeshes)
-                    .Select(s => s.MaterialIndex).Distinct();
+                    .Distinct();
 
-                foreach (var i in indexes)
+                foreach (var mat in mats)
                 {
-                    var mat = model.Materials.ElementAtOrDefault(i);
-                    if (mat == null)
-                        continue;
-
                     try
                     {
-                        var diffuse = mat.Submaterials.FirstOrDefault(m => m.Usage == MaterialUsage.Diffuse);
+                        var diffuse = mat.TextureMappings.FirstOrDefault(m => m.Usage == (int)MaterialUsage.Diffuse);
                         if (diffuse == null)
                             continue;
 
                         var material = new DiffuseMaterial
                         {
-                            DiffuseMap = GetTextureForBitmap(diffuse.Bitmap)
+                            DiffuseMap = GetTextureForBitmap(diffuse.Texture)
                         };
 
                         material.Freeze();
-                        materials.Add(i, material);
+                        materials.Add(mat.Id, material);
                     }
                     catch { }
                 }
             }
 
-            private TextureModel GetTextureForBitmap(IBitmap bitmap)
+            private TextureModel GetTextureForBitmap(Texture bitmap)
             {
                 if (bitmap == null)
                     return null;
@@ -58,7 +57,7 @@ namespace Reclaimer.Controls.DirectX
                 {
                     var args = new DdsOutputArgs(DecompressOptions.Bgr24);
                     var stream = new MemoryStream();
-                    bitmap.ToDds(0).WriteToStream(stream, System.Drawing.Imaging.ImageFormat.Png, args);
+                    bitmap.GetDds().WriteToStream(stream, System.Drawing.Imaging.ImageFormat.Png, args);
                     textureLookup.Add(bitmap.Id, textureModel = new TextureModel(stream));
                 }
 

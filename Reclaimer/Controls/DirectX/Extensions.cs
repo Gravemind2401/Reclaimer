@@ -68,6 +68,32 @@ namespace Reclaimer.Controls.DirectX
             };
         }
 
+        public static SharpDX.Matrix ToMatrix3(this (Numerics.Vector3 Min, Numerics.Vector3 Max) bounds)
+        {
+            return new SharpDX.Matrix
+            {
+                M11 = bounds.Max.X - bounds.Min.X,
+                M22 = bounds.Max.Y - bounds.Min.Y,
+                M33 = bounds.Max.Z - bounds.Min.Z,
+                M41 = bounds.Min.X,
+                M42 = bounds.Min.Y,
+                M43 = bounds.Min.Z,
+                M44 = 1
+            };
+        }
+
+        public static SharpDX.Matrix ToMatrix2(this (Numerics.Vector2 Min, Numerics.Vector2 Max) bounds)
+        {
+            return new SharpDX.Matrix
+            {
+                M11 = bounds.Max.X - bounds.Min.X,
+                M22 = bounds.Max.Y - bounds.Min.Y,
+                M41 = bounds.Min.X,
+                M42 = bounds.Min.Y,
+                M44 = 1
+            };
+        }
+
         public static SharpDX.BoundingBox GetTotalBounds(this IEnumerable<Helix.Element3D> elements, bool original = false)
         {
             return GetTotalBounds(elements.Select(e => e.SceneNode), original);
