@@ -1,7 +1,7 @@
-﻿using Ionic.Zlib;
-using Reclaimer.Blam.Utilities;
+﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 
 namespace Reclaimer.Blam.Halo5
@@ -138,8 +138,9 @@ namespace Reclaimer.Blam.Halo5
                         decompressed.Write(reader.ReadBytes((int)block.UncompressedSize), 0, (int)block.UncompressedSize);
                     else
                     {
-                        using (var zstream = new ZlibStream(decompressed, CompressionMode.Decompress, true))
-                            zstream.Write(reader.ReadBytes((int)block.CompressedSize), 0, (int)block.CompressedSize);
+                        using (var ms = new MemoryStream(reader.ReadBytes((int)block.CompressedSize)))
+                        using (var zstream = new ZLibStream(ms, CompressionMode.Decompress))
+                            zstream.CopyTo(decompressed);
                     }
                 }
 
