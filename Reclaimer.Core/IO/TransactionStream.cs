@@ -134,7 +134,7 @@ namespace Reclaimer.IO
             if (count <= 0) // in case the virtual length has been set to less than the source length
                 return 0;
 
-            source.Read(buffer, offset, count); // read in the original data
+            source.ReadAll(buffer, offset, count); // read in the original data
             Position = start + count; // in case we are beyond the source length, source.Read will not advance the position by itself
 
             // apply any changes that have been made
