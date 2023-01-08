@@ -1,4 +1,6 @@
-﻿namespace Adjutant.Spatial
+﻿using Reclaimer.Geometry;
+
+namespace Adjutant.Spatial
 {
     public class RealBounds3D
     {

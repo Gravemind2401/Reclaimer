@@ -276,20 +276,6 @@ namespace Reclaimer.Blam.Halo2
 
         [Offset(32)]
         public RealBounds VBounds { get; set; }
-
-        #region IRealBounds5D
-
-        IRealBounds IRealBounds5D.XBounds => XBounds;
-
-        IRealBounds IRealBounds5D.YBounds => YBounds;
-
-        IRealBounds IRealBounds5D.ZBounds => ZBounds;
-
-        IRealBounds IRealBounds5D.UBounds => UBounds;
-
-        IRealBounds IRealBounds5D.VBounds => VBounds;
-
-        #endregion
     }
 
     [FixedSize(16)]

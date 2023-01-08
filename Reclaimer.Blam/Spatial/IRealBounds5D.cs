@@ -1,11 +1,13 @@
-﻿namespace Adjutant.Spatial
+﻿using Reclaimer.Geometry;
+
+namespace Adjutant.Spatial
 {
     public interface IRealBounds5D
     {
-        IRealBounds XBounds { get; }
-        IRealBounds YBounds { get; }
-        IRealBounds ZBounds { get; }
-        IRealBounds UBounds { get; }
-        IRealBounds VBounds { get; }
+        RealBounds XBounds { get; }
+        RealBounds YBounds { get; }
+        RealBounds ZBounds { get; }
+        RealBounds UBounds { get; }
+        RealBounds VBounds { get; }
     }
 }
