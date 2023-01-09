@@ -2,6 +2,7 @@
 using Reclaimer.Annotations;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Controls.Editors;
+using Reclaimer.Geometry;
 using Reclaimer.Utilities;
 using Reclaimer.Windows;
 using System.ComponentModel;
