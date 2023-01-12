@@ -32,14 +32,8 @@ namespace Reclaimer.Controls.DirectX
 
                     var mGroup = new GroupModel3D();
 
-                    var texMatrix = SharpDX.Matrix.Identity;
-                    var boundsMatrix = SharpDX.Matrix.Identity;
-
-                    if (mesh.IsCompressed)
-                    {
-                        boundsMatrix = (mesh.MinBounds, mesh.MaxBounds).ToMatrix3();
-                        texMatrix = (mesh.MinTexBounds, mesh.MaxTexBounds).ToMatrix2();
-                    }
+                    var boundsMatrix = mesh.PositionBounds.CreateExpansionMatrix().ToMatrix3();
+                    var texMatrix = mesh.TextureBounds.CreateExpansionMatrix().ToMatrix3();
 
                     foreach (var sub in mesh.Segments)
                     {

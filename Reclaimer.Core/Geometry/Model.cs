@@ -54,12 +54,10 @@ namespace Reclaimer.Geometry
         public IIndexBuffer IndexBuffer { get; set; }
         public List<MeshSegment> Segments { get; } = new();
 
-        public Vector3 MinBounds { get; set; }
-        public Vector3 MaxBounds { get; set; }
-        public Vector2 MinTexBounds { get; set; }
-        public Vector2 MaxTexBounds { get; set; }
+        public RealBounds3D PositionBounds { get; set; }
+        public RealBounds2D TextureBounds { get; set; }
 
-        public bool IsCompressed => MinBounds.LengthSquared() != 0 && MaxBounds.LengthSquared() != 0;
+        public bool IsCompressed => !PositionBounds.IsEmpty || !TextureBounds.IsEmpty;
     }
 
     public class MeshSegment : ISubmeshCompat

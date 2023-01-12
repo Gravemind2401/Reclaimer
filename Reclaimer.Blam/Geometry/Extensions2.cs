@@ -101,10 +101,8 @@ namespace Adjutant.Geometry
                 if (m.BoundsIndex.HasValue)
                 {
                     var bounds = source.Bounds[m.BoundsIndex.Value];
-                    mesh.MinBounds = new Vector3(bounds.XBounds.Min, bounds.YBounds.Min, bounds.ZBounds.Min);
-                    mesh.MaxBounds = new Vector3(bounds.XBounds.Max, bounds.YBounds.Max, bounds.ZBounds.Max);
-                    mesh.MinTexBounds = new Vector2(bounds.UBounds.Min, bounds.VBounds.Min);
-                    mesh.MaxTexBounds = new Vector2(bounds.UBounds.Max, bounds.VBounds.Max);
+                    mesh.PositionBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
+                    mesh.TextureBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
                 }
 
                 foreach (var s in m.Submeshes)
