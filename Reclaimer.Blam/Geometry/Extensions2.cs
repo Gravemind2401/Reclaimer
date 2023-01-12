@@ -15,12 +15,15 @@ namespace Adjutant.Geometry
 
             foreach (var b in source.Nodes)
             {
-                var rotation = new Quaternion(b.Rotation.X, b.Rotation.Y, b.Rotation.Z, b.Rotation.W);
-                var position = new Vector3(b.Position.X, b.Position.Y, b.Position.Z);
                 model.Bones.Add(new Bone
                 {
                     Name = b.Name,
-                    Transform = Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(position)
+                    ParentIndex = b.ParentIndex,
+                    FirstChildIndex = b.FirstChildIndex,
+                    NextSiblingIndex = b.NextSiblingIndex,
+                    Position = new Vector3(b.Position.X, b.Position.Y, b.Position.Z),
+                    Rotation = new Quaternion(b.Rotation.X, b.Rotation.Y, b.Rotation.Z, b.Rotation.W),
+                    Transform = b.OffsetTransform
                 });
             }
 
@@ -33,6 +36,9 @@ namespace Adjutant.Geometry
                 {
                     marker.Instances.Add(new MarkerInstance
                     {
+                        RegionIndex = m.RegionIndex,
+                        PermutationIndex = m.PermutationIndex,
+                        BoneIndex = m.NodeIndex,
                         Position = new Vector3(m.Position.X, m.Position.Y, m.Position.Z),
                         Rotation = new Quaternion(m.Rotation.X, m.Rotation.Y, m.Rotation.Z, m.Rotation.W)
                     });
@@ -44,7 +50,7 @@ namespace Adjutant.Geometry
                 if (m == null)
                     return null;
 
-                var mat = new Material { Id = index, Name = m.Name };
+                var mat = new Material { Id = index, Name = m.Name, Flags = (int)m.Flags };
 
                 foreach (var s in m.Submaterials)
                 {
@@ -94,7 +100,8 @@ namespace Adjutant.Geometry
                 var mesh = new Mesh
                 {
                     IndexBuffer = m.IndexBuffer,
-                    VertexBuffer = m.VertexBuffer
+                    VertexBuffer = m.VertexBuffer,
+                    BoneIndex = m.NodeIndex
                 };
                 model.Meshes.Add(mesh);
 

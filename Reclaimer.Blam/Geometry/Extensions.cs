@@ -42,6 +42,7 @@ namespace Adjutant.Geometry
             };
         }
 
+        [Obsolete("legacy")]
         private class MultiMesh : IGeometryMesh
         {
             private readonly IGeometryModel model;
@@ -204,8 +205,12 @@ namespace Adjutant.Geometry
             }
         }
 
+        [Obsolete("legacy")]
         public static void WriteAMF(this IGeometryModel model, string fileName, float scale)
         {
+            model.ConvertToScene().WriteAMF(fileName, scale);
+            return;
+
             if (!Directory.GetParent(fileName).Exists)
                 Directory.GetParent(fileName).Create();
             if (!fileName.EndsWith(".amf", StringComparison.CurrentCultureIgnoreCase))

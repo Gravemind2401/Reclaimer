@@ -12,6 +12,9 @@ namespace Reclaimer.Geometry
         public string Name { get; set; }
         public List<TextureMapping> TextureMappings { get; } = new();
         public List<MaterialTint> Tints { get; } = new();
+
+        [Obsolete("legacy")]
+        public int Flags { get; set; }
     }
 
     public class TextureMapping
