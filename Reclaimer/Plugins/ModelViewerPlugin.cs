@@ -397,7 +397,7 @@ namespace Reclaimer.Plugins
                     var boneLookup = new Dictionary<int, Assimp.Bone>();
                     for (var vIndex = 0; i < vertCount; vIndex++)
                     {
-                        if (geom.VertexWeights == VertexWeights.None && !geom.NodeIndex.HasValue)
+                        if (geom.VertexWeights == VertexWeights.None)
                             continue;
 
                         #region Vertex Weights

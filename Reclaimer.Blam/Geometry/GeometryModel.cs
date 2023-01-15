@@ -146,7 +146,7 @@ namespace Adjutant.Geometry
     {
         public bool IsInstancing { get; set; }
 
-        public VertexWeights VertexWeights { get; set; }
+        public VertexWeights VertexWeights => NodeIndex < byte.MaxValue || VertexBuffer.HasBlendIndices ? VertexBuffer.HasBlendWeights ? VertexWeights.Skinned : VertexWeights.Rigid : VertexWeights.None;
         public IndexFormat IndexFormat => IndexBuffer.Layout;
 
         public VertexBuffer VertexBuffer { get; set; }

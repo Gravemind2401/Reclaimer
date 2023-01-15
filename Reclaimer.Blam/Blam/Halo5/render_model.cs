@@ -117,7 +117,6 @@ namespace Reclaimer.Blam.Halo5
                 var subset = section.SectionLods[localLod].Subsets[i];
                 var mesh = new GeometryMesh
                 {
-                    VertexWeights = VertexWeights.Rigid,
                     NodeIndex = (byte)GeometryInstances[i].NodeIndex,
                     BoundsIndex = 0
                 };

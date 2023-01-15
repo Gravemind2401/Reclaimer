@@ -133,7 +133,6 @@ namespace Reclaimer.Blam.Halo3
                 var subset = section.Subsets[i];
                 var mesh = new GeometryMesh
                 {
-                    VertexWeights = VertexWeights.Rigid,
                     NodeIndex = (byte)GeometryInstances[i].NodeIndex,
                     BoundsIndex = 0
                 };

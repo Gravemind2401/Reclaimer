@@ -188,7 +188,6 @@ namespace Reclaimer.Blam.Halo5
 
                         var mesh = new GeometryMesh
                         {
-                            VertexWeights = VertexWeights.None,
                             NodeIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
                             BoundsIndex = 0,
                             VertexBuffer = vb[lodData.VertexBufferIndex],

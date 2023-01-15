@@ -209,16 +209,10 @@ namespace Reclaimer.Blam.Halo4
 
                 var mesh = new GeometryMesh
                 {
-                    VertexWeights = VertexWeights.None,
                     NodeIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
                     VertexBuffer = vb[section.VertexBufferIndex],
                     IndexBuffer = ib[section.IndexBufferIndex]
                 };
-
-                if (mesh.VertexBuffer.HasBlendIndices)
-                    mesh.VertexWeights = mesh.VertexBuffer.HasBlendWeights ? VertexWeights.Skinned : VertexWeights.Rigid;
-                else if (section.NodeIndex < byte.MaxValue)
-                    mesh.VertexWeights = VertexWeights.Rigid;
 
                 setProps(section, mesh);
 

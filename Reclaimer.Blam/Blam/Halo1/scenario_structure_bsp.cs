@@ -119,7 +119,6 @@ namespace Reclaimer.Blam.Halo1
 
                 model.Meshes.Add(new GeometryMesh
                 {
-                    VertexWeights = VertexWeights.None,
                     IndexBuffer = IndexBuffer.FromCollection(localIndices, IndexFormat.TriangleList),
                     VertexBuffer = vertexBuffer,
                     Submeshes = submeshes

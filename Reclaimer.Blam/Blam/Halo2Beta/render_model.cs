@@ -155,7 +155,6 @@ namespace Reclaimer.Blam.Halo2Beta
         {
             if (section.GeometryClassification == GeometryClassification.Rigid)
             {
-                mesh.VertexWeights = VertexWeights.Rigid;
                 if (section.NodesPerVertex == 0)
                     mesh.NodeIndex = 0;
                 else if (section.NodesPerVertex == 1 && nodeMap.Length > 0)
@@ -181,14 +180,12 @@ namespace Reclaimer.Blam.Halo2Beta
 
                 if (section.GeometryClassification == GeometryClassification.RigidBoned)
                 {
-                    mesh.VertexWeights = VertexWeights.Skinned;
                     blendIndices = new UByte4(reader.ReadByte(), default, default, default);
                     blendWeights = new RealVector4(1f, default, default, default);
                     reader.ReadByte();
                 }
                 else if (section.GeometryClassification == GeometryClassification.Skinned)
                 {
-                    mesh.VertexWeights = VertexWeights.Skinned;
                     if (section.NodesPerVertex == 2 || section.NodesPerVertex == 4)
                         reader.ReadInt16();
 
