@@ -147,7 +147,7 @@ namespace Adjutant.Geometry
         public bool IsInstancing { get; set; }
 
         public VertexWeights VertexWeights { get; set; }
-        public IndexFormat IndexFormat { get; set; }
+        public IndexFormat IndexFormat => IndexBuffer.Layout;
 
         public VertexBuffer VertexBuffer { get; set; }
         public IIndexBuffer IndexBuffer { get; set; }

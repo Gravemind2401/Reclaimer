@@ -6,6 +6,8 @@ namespace Reclaimer.Geometry
 {
     public interface IIndexBuffer : IReadOnlyList<int>
     {
+        IndexFormat Layout { get; }
+
         IIndexBuffer Slice(int index, int count);
         void ReverseEndianness();
 

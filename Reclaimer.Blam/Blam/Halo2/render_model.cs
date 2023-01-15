@@ -85,13 +85,7 @@ namespace Reclaimer.Blam.Halo2
                     reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
                     var submeshes = reader.ReadArray<SubmeshDataBlock>(submeshResource.Size / 72);
 
-                    var mesh = new GeometryMesh
-                    {
-                        BoundsIndex = 0,
-                        IndexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
-                            ? IndexFormat.TriangleList
-                            : IndexFormat.TriangleStrip
-                    };
+                    var mesh = new GeometryMesh { BoundsIndex = 0 };
 
                     mesh.Submeshes.AddRange(
                         submeshes.Select(s => new GeometrySubmesh
@@ -102,8 +96,12 @@ namespace Reclaimer.Blam.Halo2
                         })
                     );
 
+                    var indexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
+                        ? IndexFormat.TriangleList
+                        : IndexFormat.TriangleStrip;
+
                     reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
-                    mesh.IndexBuffer = IndexBuffer.FromArray(reader.ReadArray<ushort>(sectionInfo.IndexCount));
+                    mesh.IndexBuffer = IndexBuffer.FromArray(reader.ReadArray<ushort>(sectionInfo.IndexCount), indexFormat);
 
                     #region Vertices
                     var positionBuffer = new VectorBuffer<UInt16N4>(section.VertexCount);

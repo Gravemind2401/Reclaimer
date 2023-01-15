@@ -163,7 +163,7 @@ namespace Reclaimer.Blam.Halo5
                                 var block = header.DataBlocks[3 + vertexBufferInfo.Length + lodData.IndexBufferIndex];
                                 reader.Seek(block.Offset, SeekOrigin.Begin);
                                 var data = reader.ReadBytes(block.Size);
-                                var indexBuffer = new IndexBuffer(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort));
+                                var indexBuffer = new IndexBuffer(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort)) { Layout = section.IndexFormat };
 
                                 ib.Add(lodData.IndexBufferIndex, indexBuffer);
                             }
@@ -188,7 +188,6 @@ namespace Reclaimer.Blam.Halo5
 
                         var mesh = new GeometryMesh
                         {
-                            IndexFormat = section.IndexFormat,
                             VertexWeights = VertexWeights.None,
                             NodeIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
                             BoundsIndex = 0,

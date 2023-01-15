@@ -64,14 +64,13 @@ namespace Reclaimer.Blam.Halo2
                 {
                     var sectionInfo = reader.ReadObject<MeshResourceDetailsBlock>();
 
-                    var mesh = new GeometryMesh
-                    {
-                        IndexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
-                            ? IndexFormat.TriangleList
-                            : IndexFormat.TriangleStrip
-                    };
+                    var mesh = new GeometryMesh();
 
-                    PopulateMeshData(reader, mesh, baseAddress, sectionInfo.IndexCount, section.VertexCount, section.Resources);
+                    var indexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
+                        ? IndexFormat.TriangleList
+                        : IndexFormat.TriangleStrip;
+
+                    PopulateMeshData(reader, mesh, baseAddress, sectionInfo.IndexCount, section.VertexCount, section.Resources, indexFormat);
 
                     var perm = new GeometryPermutation
                     {
@@ -103,15 +102,13 @@ namespace Reclaimer.Blam.Halo2
                 {
                     var sectionInfo = reader.ReadObject<MeshResourceDetailsBlock>();
 
-                    var mesh = new GeometryMesh
-                    {
-                        IsInstancing = true,
-                        IndexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
-                            ? IndexFormat.TriangleList
-                            : IndexFormat.TriangleStrip
-                    };
+                    var mesh = new GeometryMesh { IsInstancing = true };
 
-                    PopulateMeshData(reader, mesh, baseAddress, sectionInfo.IndexCount, section.VertexCount, section.Resources);
+                    var indexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
+                        ? IndexFormat.TriangleList
+                        : IndexFormat.TriangleStrip;
+
+                    PopulateMeshData(reader, mesh, baseAddress, sectionInfo.IndexCount, section.VertexCount, section.Resources, indexFormat);
 
                     var perms = GeometryInstances
                         .Where(i => i.SectionIndex == sectionIndex)
@@ -136,7 +133,7 @@ namespace Reclaimer.Blam.Halo2
             return model;
         }
 
-        private static void PopulateMeshData(EndianReader reader, GeometryMesh mesh, int baseAddress, int indexCount, int vertexCount, IReadOnlyList<ResourceInfoBlock> resourceBlocks)
+        private static void PopulateMeshData(EndianReader reader, GeometryMesh mesh, int baseAddress, int indexCount, int vertexCount, IReadOnlyList<ResourceInfoBlock> resourceBlocks, IndexFormat indexFormat)
         {
             var submeshResource = resourceBlocks[0];
             var indexResource = resourceBlocks.FirstOrDefault(r => r.Type0 == 32);
@@ -157,7 +154,7 @@ namespace Reclaimer.Blam.Halo2
             );
 
             reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
-            mesh.IndexBuffer = IndexBuffer.FromArray(reader.ReadArray<ushort>(indexCount));
+            mesh.IndexBuffer = IndexBuffer.FromArray(reader.ReadArray<ushort>(indexCount), indexFormat);
 
             var positionBuffer = new VectorBuffer<RealVector3>(vertexCount);
             var texCoordsBuffer = new VectorBuffer<RealVector2>(vertexCount);

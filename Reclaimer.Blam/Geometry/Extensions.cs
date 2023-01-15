@@ -205,7 +205,7 @@ namespace Adjutant.Geometry
                             offset += mesh.VertexCount;
                         }
 
-                        mergedIndexBuffer = Reclaimer.Geometry.IndexBuffer.FromCollection(mergedIndices);
+                        mergedIndexBuffer = Reclaimer.Geometry.IndexBuffer.FromCollection(mergedIndices, IndexFormat.TriangleStrip);
                     }
 
                     return mergedIndexBuffer;

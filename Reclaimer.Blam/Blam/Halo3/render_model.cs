@@ -133,7 +133,6 @@ namespace Reclaimer.Blam.Halo3
                 var subset = section.Subsets[i];
                 var mesh = new GeometryMesh
                 {
-                    IndexFormat = sourceMesh.IndexFormat,
                     VertexWeights = VertexWeights.Rigid,
                     NodeIndex = (byte)GeometryInstances[i].NodeIndex,
                     BoundsIndex = 0
@@ -145,7 +144,7 @@ namespace Reclaimer.Blam.Halo3
                 var max = strip.Max();
                 var len = max - min + 1;
 
-                mesh.IndexBuffer = IndexBuffer.FromCollection(strip.Select(j => j - min));
+                mesh.IndexBuffer = IndexBuffer.FromCollection(strip.Select(j => j - min), sourceMesh.IndexFormat);
                 mesh.VertexBuffer = sourceMesh.VertexBuffer.Slice(min, len);
 
                 var submesh = section.Submeshes[subset.SubmeshIndex];

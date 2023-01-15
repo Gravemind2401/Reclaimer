@@ -24,18 +24,20 @@ namespace Reclaimer.Geometry
                 throw new ArgumentException("Data type must be byte, ushort or int.", nameof(dataType));
         }
 
-        public static IndexBuffer FromCollection(IEnumerable<int> collection) => FromArray(collection.ToArray());
-        public static IndexBuffer FromCollection(IEnumerable<ushort> collection) => FromArray(collection.ToArray());
-        public static IndexBuffer FromCollection(IEnumerable<byte> collection) => FromArray(collection.ToArray());
+        public static IndexBuffer FromCollection(IEnumerable<int> collection, IndexFormat layout) => FromArray(collection.ToArray(), layout);
+        public static IndexBuffer FromCollection(IEnumerable<ushort> collection, IndexFormat layout) => FromArray(collection.ToArray(), layout);
+        public static IndexBuffer FromCollection(IEnumerable<byte> collection, IndexFormat layout) => FromArray(collection.ToArray(), layout);
 
-        public static IndexBuffer FromArray(int[] collection) => new IndexBuffer(MemoryMarshal.AsBytes<int>(collection).ToArray(), sizeof(int));
-        public static IndexBuffer FromArray(ushort[] collection) => new IndexBuffer(MemoryMarshal.AsBytes<ushort>(collection).ToArray(), sizeof(ushort));
-        public static IndexBuffer FromArray(byte[] collection) => new IndexBuffer(collection, sizeof(byte));
+        public static IndexBuffer FromArray(int[] collection, IndexFormat layout) => new IndexBuffer(MemoryMarshal.AsBytes<int>(collection).ToArray(), sizeof(int)) { Layout = layout };
+        public static IndexBuffer FromArray(ushort[] collection, IndexFormat layout) => new IndexBuffer(MemoryMarshal.AsBytes<ushort>(collection).ToArray(), sizeof(ushort)) { Layout = layout };
+        public static IndexBuffer FromArray(byte[] collection, IndexFormat layout) => new IndexBuffer(collection, sizeof(byte)) { Layout = layout };
 
         private readonly ReadMethod GetValue;
         private readonly WriteMethod SetValue;
 
         protected override int SizeOf { get; }
+
+        public IndexFormat Layout { get; set; }
 
         public IndexBuffer(byte[] buffer, Type dataType)
             : this(buffer, CoerceSize(dataType))
@@ -74,7 +76,7 @@ namespace Reclaimer.Geometry
             }
             else
             {
-                GetValue = data => BitConverter.ToInt32(data);
+                GetValue = BitConverter.ToInt32;
                 SetValue = (i, data) => BitConverter.GetBytes(i).CopyTo(data);
             }
         }

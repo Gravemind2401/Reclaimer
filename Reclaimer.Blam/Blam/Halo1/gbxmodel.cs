@@ -184,9 +184,8 @@ namespace Reclaimer.Blam.Halo1
 
                 yield return new GeometryMesh
                 {
-                    IndexFormat = IndexFormat.TriangleStrip,
                     VertexWeights = VertexWeights.Skinned,
-                    IndexBuffer = IndexBuffer.FromCollection(indices),
+                    IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleStrip),
                     VertexBuffer = vertexBuffer,
                     Submeshes = submeshes
                 };
@@ -277,9 +276,8 @@ namespace Reclaimer.Blam.Halo1
 
                 yield return new GeometryMesh
                 {
-                    IndexFormat = IndexFormat.TriangleList,
                     VertexWeights = VertexWeights.Skinned,
-                    IndexBuffer = IndexBuffer.FromCollection(indices),
+                    IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleList),
                     VertexBuffer = vertexBuffer,
                     Submeshes = submeshes
                 };

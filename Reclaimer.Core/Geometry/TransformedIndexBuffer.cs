@@ -30,6 +30,8 @@ namespace Reclaimer.Geometry
             public int this[int index] => source[index] + offset;
             public int Count => source.Count;
 
+            IndexFormat IIndexBuffer.Layout => source.Layout;
+
             IIndexBuffer IIndexBuffer.Slice(int index, int count) => new TransformedIndexBuffer(source.Slice(index, count), offset);
             void IIndexBuffer.ReverseEndianness() => throw new NotSupportedException("Operation not supported on a transformed index buffer");
 

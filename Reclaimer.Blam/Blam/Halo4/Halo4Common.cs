@@ -182,7 +182,7 @@ namespace Reclaimer.Blam.Halo4
                     {
                         reader.Seek(address, SeekOrigin.Begin);
                         var data = reader.ReadBytes(iInfo.DataLength);
-                        var indexBuffer = new IndexBuffer(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort));
+                        var indexBuffer = new IndexBuffer(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort)) { Layout = indexBufferInfo[section.IndexBufferIndex].IndexFormat };
                         ib.Add(section.IndexBufferIndex, indexBuffer);
                     }
                 }
@@ -209,7 +209,6 @@ namespace Reclaimer.Blam.Halo4
 
                 var mesh = new GeometryMesh
                 {
-                    IndexFormat = indexBufferInfo[section.IndexBufferIndex].IndexFormat,
                     VertexWeights = VertexWeights.None,
                     NodeIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
                     VertexBuffer = vb[section.VertexBufferIndex],
