@@ -9,16 +9,11 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.Halo1
 {
-    public class gbxmodel : IRenderGeometry
+    public class gbxmodel : ContentTagDefinition, IRenderGeometry
     {
-        private readonly ICacheFile cache;
-        private readonly IIndexItem item;
-
-        public gbxmodel(ICacheFile cache, IIndexItem item)
-        {
-            this.cache = cache;
-            this.item = item;
-        }
+        public gbxmodel(IIndexItem item)
+            : base(item)
+        { }
 
         [Offset(0)]
         public ModelFlags Flags { get; set; }
@@ -46,14 +41,6 @@ namespace Reclaimer.Blam.Halo1
 
         #region IRenderGeometry
 
-        string IRenderGeometry.SourceFile => item.CacheFile.FileName;
-
-        int IRenderGeometry.Id => item.Id;
-
-        string IRenderGeometry.Name => item.FullPath;
-
-        string IRenderGeometry.Class => item.ClassName;
-
         int IRenderGeometry.LodCount => Regions.SelectMany(r => r.Permutations).Max(p => p.LodCount);
 
         public IGeometryModel ReadGeometry(int lod)
@@ -61,9 +48,9 @@ namespace Reclaimer.Blam.Halo1
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            using var reader = cache.CreateReader(cache.DefaultAddressTranslator);
+            using var reader = Cache.CreateReader(Cache.DefaultAddressTranslator);
 
-            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
 
             model.Nodes.AddRange(Nodes);
             model.MarkerGroups.AddRange(MarkerGroups);
@@ -86,7 +73,7 @@ namespace Reclaimer.Blam.Halo1
                 model.Regions.Add(gRegion);
             }
 
-            if (cache.CacheType == CacheType.Halo1Xbox)
+            if (Cache.CacheType == CacheType.Halo1Xbox)
                 model.Meshes.AddRange(ReadXboxMeshes(reader));
             else
                 model.Meshes.AddRange(ReadPCMeshes(reader));
@@ -96,7 +83,7 @@ namespace Reclaimer.Blam.Halo1
 
         private IEnumerable<GeometryMesh> ReadXboxMeshes(DependencyReader reader)
         {
-            if (cache.TagIndex is not ITagIndexGen1 tagIndex)
+            if (Cache.TagIndex is not ITagIndexGen1 tagIndex)
                 throw new NotSupportedException();
 
             foreach (var section in Sections)
@@ -208,7 +195,7 @@ namespace Reclaimer.Blam.Halo1
 
         private IEnumerable<GeometryMesh> ReadPCMeshes(DependencyReader reader)
         {
-            if (cache.TagIndex is not ITagIndexGen1 tagIndex)
+            if (Cache.TagIndex is not ITagIndexGen1 tagIndex)
                 throw new NotSupportedException();
 
             const int submeshSize = 132;
@@ -308,7 +295,7 @@ namespace Reclaimer.Blam.Halo1
                 yield break;
 
             var complete = new List<int>();
-            using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
+            using (var reader = Cache.CreateReader(Cache.DefaultAddressTranslator))
             {
                 foreach (var s in selection)
                 {

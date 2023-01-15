@@ -7,16 +7,11 @@ using System.Drawing;
 
 namespace Reclaimer.Blam.Halo2
 {
-    public class bitmap : IBitmap
+    public class bitmap : ContentTagDefinition, IBitmap
     {
-        private readonly ICacheFile cache;
-        private readonly IIndexItem item;
-
-        public bitmap(ICacheFile cache, IIndexItem item)
-        {
-            this.cache = cache;
-            this.item = item;
-        }
+        public bitmap(IIndexItem item)
+            : base(item)
+        { }
 
         [Offset(60)]
         [MinVersion((int)CacheType.Halo2Xbox)] //ignore h2b
@@ -41,14 +36,6 @@ namespace Reclaimer.Blam.Halo2
             Orientation3 = RotateFlipType.Rotate180FlipNone,
             Orientation6 = RotateFlipType.Rotate180FlipNone
         };
-
-        string IBitmap.SourceFile => item.CacheFile.FileName;
-
-        int IBitmap.Id => item.Id;
-
-        string IBitmap.Name => item.FullPath;
-
-        string IBitmap.Class => item.ClassName;
 
         int IBitmap.SubmapCount => Bitmaps.Count;
 
@@ -101,7 +88,7 @@ namespace Reclaimer.Blam.Halo2
 
             var props = new BitmapProperties(submap.Width, submap.Height, format, submap.BitmapType)
             {
-                ByteOrder = cache.ByteOrder,
+                ByteOrder = Cache.ByteOrder,
                 Depth = submap.BitmapType == TextureType.Texture3D ? submap.Depth : 1,
                 FrameCount = submap.BitmapType == TextureType.CubeMap ? 6 : submap.Depth,
                 MipmapCount = submap.BitmapType == TextureType.CubeMap ? 0 : submap.MipmapCount,

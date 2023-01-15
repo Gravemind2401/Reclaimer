@@ -9,18 +9,13 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.HaloReach
 {
-    public class scenario_structure_bsp : IRenderGeometry
+    public class scenario_structure_bsp : ContentTagDefinition, IRenderGeometry
     {
-        private readonly ICacheFile cache;
-        private readonly IIndexItem item;
-
         private bool loadedInstances;
 
-        public scenario_structure_bsp(ICacheFile cache, IIndexItem item)
-        {
-            this.cache = cache;
-            this.item = item;
-        }
+        public scenario_structure_bsp(IIndexItem item)
+            : base(item)
+        { }
 
         [Offset(236, MaxVersion = (int)CacheType.MccHaloReach)]
         [Offset(240, MinVersion = (int)CacheType.MccHaloReach)]
@@ -64,14 +59,6 @@ namespace Reclaimer.Blam.HaloReach
 
         #region IRenderGeometry
 
-        string IRenderGeometry.SourceFile => item.CacheFile.FileName;
-
-        int IRenderGeometry.Id => item.Id;
-
-        string IRenderGeometry.Name => item.FullPath;
-
-        string IRenderGeometry.Class => item.ClassName;
-
         int IRenderGeometry.LodCount => 1;
 
         public IGeometryModel ReadGeometry(int lod)
@@ -79,10 +66,10 @@ namespace Reclaimer.Blam.HaloReach
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var scenario = cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
-            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var scenario = Cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
+            var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
 
-            var bspBlock = scenario.StructureBsps.First(s => s.BspReference.TagId == item.Id);
+            var bspBlock = scenario.StructureBsps.First(s => s.BspReference.TagId == Item.Id);
             var bspIndex = scenario.StructureBsps.IndexOf(bspBlock);
 
             var lightmap = scenario.ScenarioLightmapReference.Tag.ReadMetadata<scenario_lightmap>();
@@ -103,13 +90,13 @@ namespace Reclaimer.Blam.HaloReach
             );
             model.Regions.Add(clusterRegion);
 
-            if (cache.CacheType >= CacheType.HaloReachRetail && !loadedInstances)
+            if (Cache.CacheType >= CacheType.HaloReachRetail && !loadedInstances)
             {
-                var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
+                var resourceGestalt = Cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
                 var entry = resourceGestalt.ResourceEntries[InstancesResourcePointer.ResourceIndex];
                 var address = entry.FixupOffset + entry.ResourceFixups[entry.ResourceFixups.Count - 10].Offset & 0x0FFFFFFF;
 
-                using (var cacheReader = cache.CreateReader(cache.DefaultAddressTranslator))
+                using (var cacheReader = Cache.CreateReader(Cache.DefaultAddressTranslator))
                 using (var reader = cacheReader.CreateVirtualReader(resourceGestalt.FixupDataPointer.Address))
                 {
                     for (var i = 0; i < GeometryInstances.Count; i++)
@@ -143,7 +130,7 @@ namespace Reclaimer.Blam.HaloReach
                 model.Regions.Add(sectionRegion);
             }
 
-            model.Meshes.AddRange(HaloReachCommon.GetMeshes(cache, lightmapData.ResourcePointer, lightmapData.Sections, (s, m) =>
+            model.Meshes.AddRange(HaloReachCommon.GetMeshes(Cache, lightmapData.ResourcePointer, lightmapData.Sections, (s, m) =>
             {
                 var index = (short)lightmapData.Sections.IndexOf(s);
                 m.BoundsIndex = index >= BoundingBoxes.Count ? (short?)null : index;

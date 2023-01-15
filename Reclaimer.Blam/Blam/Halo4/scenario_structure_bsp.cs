@@ -9,18 +9,13 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.Halo4
 {
-    public class scenario_structure_bsp : IRenderGeometry
+    public class scenario_structure_bsp : ContentTagDefinition, IRenderGeometry
     {
-        private readonly ICacheFile cache;
-        private readonly IIndexItem item;
-
         private bool loadedInstances;
 
-        public scenario_structure_bsp(ICacheFile cache, IIndexItem item)
-        {
-            this.cache = cache;
-            this.item = item;
-        }
+        public scenario_structure_bsp(IIndexItem item)
+            : base(item)
+        { }
 
         [Offset(268)]
         public RealBounds XBounds { get; set; }
@@ -77,14 +72,6 @@ namespace Reclaimer.Blam.Halo4
 
         #region IRenderGeometry
 
-        string IRenderGeometry.SourceFile => item.CacheFile.FileName;
-
-        int IRenderGeometry.Id => item.Id;
-
-        string IRenderGeometry.Name => item.FullPath;
-
-        string IRenderGeometry.Class => item.ClassName;
-
         int IRenderGeometry.LodCount => 1;
 
         public IGeometryModel ReadGeometry(int lod)
@@ -92,10 +79,10 @@ namespace Reclaimer.Blam.Halo4
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var scenario = cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
-            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var scenario = Cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
+            var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
 
-            var bspBlock = scenario.StructureBsps.First(s => s.BspReference.TagId == item.Id);
+            var bspBlock = scenario.StructureBsps.First(s => s.BspReference.TagId == Item.Id);
             var bspIndex = scenario.StructureBsps.IndexOf(bspBlock);
 
             var lightmap = scenario.ScenarioLightmapReference.Tag.ReadMetadata<scenario_lightmap>();
@@ -118,14 +105,14 @@ namespace Reclaimer.Blam.Halo4
 
             if (!loadedInstances)
             {
-                var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
+                var resourceGestalt = Cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
                 var entry = resourceGestalt.ResourceEntries[InstancesResourcePointer.ResourceIndex];
                 var address = entry.ResourceFixups[entry.ResourceFixups.Count - 10].Offset & 0x0FFFFFFF;
 
                 using (var ms = new MemoryStream(InstancesResourcePointer.ReadData(PageType.Auto)))
-                using (var reader = new EndianReader(ms, cache.ByteOrder))
+                using (var reader = new EndianReader(ms, Cache.ByteOrder))
                 {
-                    var blockSize = cache.CacheType == CacheType.Halo4Beta ? 164 : 148;
+                    var blockSize = Cache.CacheType == CacheType.Halo4Beta ? 164 : 148;
                     for (var i = 0; i < GeometryInstances.Count; i++)
                     {
                         reader.Seek(address + blockSize * i, SeekOrigin.Begin);
@@ -174,7 +161,7 @@ namespace Reclaimer.Blam.Halo4
                 model.Regions.Add(sectionRegion);
             }
 
-            model.Meshes.AddRange(Halo4Common.GetMeshes(cache, lightmapData.ResourcePointer, lightmapData.Sections, (s, m) =>
+            model.Meshes.AddRange(Halo4Common.GetMeshes(Cache, lightmapData.ResourcePointer, lightmapData.Sections, (s, m) =>
             {
                 var index = (short)lightmapData.Sections.IndexOf(s);
                 m.BoundsIndex = index >= lightmapData.BoundingBoxes.Count ? (short?)null : index;

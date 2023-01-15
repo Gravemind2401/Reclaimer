@@ -10,14 +10,11 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.Halo2
 {
-    public class render_model : IRenderGeometry
+    public class render_model : ContentTagDefinition, IRenderGeometry
     {
-        private readonly IIndexItem item;
-
         public render_model(IIndexItem item)
-        {
-            this.item = item;
-        }
+            : base(item)
+        { }
 
         [Offset(20)]
         public BlockCollection<BoundingBoxBlock> BoundingBoxes { get; set; }
@@ -39,14 +36,6 @@ namespace Reclaimer.Blam.Halo2
 
         #region IRenderGeometry
 
-        string IRenderGeometry.SourceFile => item.CacheFile.FileName;
-
-        int IRenderGeometry.Id => item.Id;
-
-        string IRenderGeometry.Name => item.FullPath;
-
-        string IRenderGeometry.Class => item.ClassName;
-
         int IRenderGeometry.LodCount => 6;
 
         public IGeometryModel ReadGeometry(int lod)
@@ -54,7 +43,7 @@ namespace Reclaimer.Blam.Halo2
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
 
             model.Nodes.AddRange(Nodes);
             model.MarkerGroups.AddRange(MarkerGroups);

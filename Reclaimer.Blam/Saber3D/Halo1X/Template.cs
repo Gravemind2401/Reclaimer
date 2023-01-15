@@ -1,13 +1,12 @@
 ﻿using Reclaimer.IO;
-﻿using Reclaimer.Saber3D.Halo1X.Geometry;
+using Reclaimer.Saber3D.Common;
+using Reclaimer.Saber3D.Halo1X.Geometry;
 using System.IO;
 
 namespace Reclaimer.Saber3D.Halo1X
 {
-    public class Template : INodeGraph
+    public class Template : ItemDefinition, INodeGraph
     {
-        private readonly PakItem item;
-
         public List<DataBlock> Blocks { get; }
         public Dictionary<int, NodeGraphBlock0xF000> NodeLookup { get; }
 
@@ -20,9 +19,8 @@ namespace Reclaimer.Saber3D.Halo1X
         public BoundsBlock0x0803 Bounds => Blocks.OfType<BoundsBlock0x0803>().SingleOrDefault();
 
         public Template(PakItem item)
+            : base(item)
         {
-            this.item = item;
-
             using (var x = CreateReader())
             using (var reader = x.CreateVirtualReader(item.Address))
             {
@@ -36,9 +34,9 @@ namespace Reclaimer.Saber3D.Halo1X
 
         private EndianReader CreateReader()
         {
-            var reader = item.Container.CreateReader();
+            var reader = Container.CreateReader();
             reader.RegisterInstance(this);
-            reader.RegisterInstance(item);
+            reader.RegisterInstance(Item);
             return reader;
         }
     }

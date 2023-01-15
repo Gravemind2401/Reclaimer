@@ -5,33 +5,16 @@ using System.IO;
 
 namespace Reclaimer.Blam.Halo5
 {
-    public class bitmap : IBitmap
+    public class bitmap : ContentTagDefinition, IBitmap
     {
-        private readonly Module module;
-        private readonly ModuleItem item;
-
-        public MetadataHeader Header { get; }
-
-        public bitmap(Module module, ModuleItem item, MetadataHeader header)
-        {
-            this.module = module;
-            this.item = item;
-
-            Header = header;
-        }
+        public bitmap(ModuleItem item, MetadataHeader header)
+            : base(item, header)
+        { }
 
         [Offset(240)]
         public BlockCollection<BitmapDataBlock> Bitmaps { get; set; }
 
         #region IBitmap
-
-        string IBitmap.SourceFile => item.Module.FileName;
-
-        int IBitmap.Id => item.GlobalTagId;
-
-        string IBitmap.Name => item.FullPath;
-
-        string IBitmap.Class => item.ClassName;
 
         int IBitmap.SubmapCount => Bitmaps.Count;
 
@@ -41,12 +24,12 @@ namespace Reclaimer.Blam.Halo5
         {
             var isChunk = false;
 
-            var resourceIndex = module.Resources[item.ResourceIndex];
-            var resource = module.Items[resourceIndex]; //this will be the [bitmap resource handle*] tag
+            var resourceIndex = Module.Resources[Item.ResourceIndex];
+            var resource = Module.Items[resourceIndex]; //this will be the [bitmap resource handle*] tag
             if (resource.ResourceCount > 0)
             {
                 //get the last [bitmap resource handle*.chunk#] tag (mips from smallest to largest?)
-                resource = module.Items.Last(i => i.ParentIndex == resourceIndex);
+                resource = Module.Items.Last(i => i.ParentIndex == resourceIndex);
                 isChunk = true;
             }
 

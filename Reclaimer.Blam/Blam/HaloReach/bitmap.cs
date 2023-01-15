@@ -6,16 +6,11 @@ using Reclaimer.IO;
 
 namespace Reclaimer.Blam.HaloReach
 {
-    public class bitmap : IBitmap
+    public class bitmap : ContentTagDefinition, IBitmap
     {
-        private readonly ICacheFile cache;
-        private readonly IIndexItem item;
-
-        public bitmap(ICacheFile cache, IIndexItem item)
-        {
-            this.cache = cache;
-            this.item = item;
-        }
+        public bitmap(IIndexItem item)
+            : base(item)
+        { }
 
         [Offset(96, MaxVersion = (int)CacheType.HaloReachRetail)]
         [Offset(112, MinVersion = (int)CacheType.HaloReachRetail)]
@@ -35,17 +30,9 @@ namespace Reclaimer.Blam.HaloReach
 
         #region IBitmap
 
-        string IBitmap.SourceFile => item.CacheFile.FileName;
-
-        int IBitmap.Id => item.Id;
-
-        string IBitmap.Name => item.FullPath;
-
-        string IBitmap.Class => item.ClassName;
-
         int IBitmap.SubmapCount => Bitmaps.Count;
 
-        CubemapLayout IBitmap.CubeLayout => cache.Metadata.IsMcc ? CacheFactory.MccGen3CubeLayout : CacheFactory.Gen3CubeLayout;
+        CubemapLayout IBitmap.CubeLayout => Cache.Metadata.IsMcc ? CacheFactory.MccGen3CubeLayout : CacheFactory.Gen3CubeLayout;
 
         public DdsImage ToDds(int index)
         {
@@ -58,19 +45,19 @@ namespace Reclaimer.Blam.HaloReach
                 ? InterleavedResources[submap.InterleavedIndex].ResourcePointer
                 : Resources[index].ResourcePointer;
 
-            var format = TextureUtils.DXNSwap(submap.BitmapFormat, cache.Metadata.Platform == CachePlatform.PC);
+            var format = TextureUtils.DXNSwap(submap.BitmapFormat, Cache.Metadata.Platform == CachePlatform.PC);
             var props = new BitmapProperties(submap.Width, submap.Height, format, submap.BitmapType)
             {
-                ByteOrder = cache.ByteOrder,
-                UsesPadding = !cache.Metadata.IsMcc,
+                ByteOrder = Cache.ByteOrder,
+                UsesPadding = !Cache.Metadata.IsMcc,
                 Swizzled = submap.Flags.HasFlag(BitmapFlags.Swizzled),
                 Depth = submap.BitmapType == TextureType.Texture3D ? submap.Depth : 1,
                 FrameCount = submap.BitmapType == TextureType.CubeMap ? 6 : submap.Depth,
                 MipmapCount = submap.MipmapCount,
-                ArrayMipLayout = cache.Metadata.IsMcc ? MipmapLayout.Fragmented : MipmapLayout.None
+                ArrayMipLayout = Cache.Metadata.IsMcc ? MipmapLayout.Fragmented : MipmapLayout.None
             };
 
-            var useMips = cache.Metadata.IsMcc && submap.BitmapType == TextureType.Array;
+            var useMips = Cache.Metadata.IsMcc && submap.BitmapType == TextureType.Array;
             var data = resource.ReadData(PageType.Auto, TextureUtils.GetBitmapDataLength(props, useMips));
             return TextureUtils.GetDds(props, data, useMips);
         }

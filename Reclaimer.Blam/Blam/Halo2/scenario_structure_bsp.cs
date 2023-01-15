@@ -1,5 +1,4 @@
 ﻿using Adjutant.Geometry;
-using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
@@ -11,14 +10,11 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.Halo2
 {
-    public class scenario_structure_bsp : IRenderGeometry
+    public class scenario_structure_bsp : ContentTagDefinition, IRenderGeometry
     {
-        private readonly IIndexItem item;
-
         public scenario_structure_bsp(IIndexItem item)
-        {
-            this.item = item;
-        }
+            : base(item)
+        { }
 
         [Offset(68)]
         public RealBounds XBounds { get; set; }
@@ -43,14 +39,6 @@ namespace Reclaimer.Blam.Halo2
 
         #region IRenderGeometry
 
-        string IRenderGeometry.SourceFile => item.CacheFile.FileName;
-
-        int IRenderGeometry.Id => item.Id;
-
-        string IRenderGeometry.Name => item.FullPath;
-
-        string IRenderGeometry.Class => item.ClassName;
-
         int IRenderGeometry.LodCount => 1;
 
         public IGeometryModel ReadGeometry(int lod)
@@ -58,7 +46,7 @@ namespace Reclaimer.Blam.Halo2
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
             model.Materials.AddRange(Halo2Common.GetMaterials(Shaders));
 
             #region Clusters

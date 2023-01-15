@@ -8,20 +8,11 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.Halo5
 {
-    public class render_model : IRenderGeometry
+    public class render_model : ContentTagDefinition, IRenderGeometry
     {
-        private readonly Module module;
-        private readonly ModuleItem item;
-
-        public MetadataHeader Header { get; }
-
-        public render_model(Module module, ModuleItem item, MetadataHeader header)
-        {
-            this.module = module;
-            this.item = item;
-
-            Header = header;
-        }
+        public render_model(ModuleItem item, MetadataHeader header)
+            : base(item, header)
+        { }
 
         [Offset(32)]
         public BlockCollection<RegionBlock> Regions { get; set; }
@@ -50,17 +41,9 @@ namespace Reclaimer.Blam.Halo5
         [Offset(356)]
         public BlockCollection<NodeMapBlock> NodeMaps { get; set; }
 
-        public override string ToString() => Utils.GetFileName(item.FullPath);
+        public override string ToString() => Utils.GetFileName(Item.FullPath);
 
         #region IRenderGeometry
-
-        string IRenderGeometry.SourceFile => item.Module.FileName;
-
-        int IRenderGeometry.Id => item.GlobalTagId;
-
-        string IRenderGeometry.Name => item.FullPath;
-
-        string IRenderGeometry.Class => item.ClassName;
 
         int IRenderGeometry.LodCount => Sections.Max(s => s.SectionLods.Count);
 
@@ -69,7 +52,7 @@ namespace Reclaimer.Blam.Halo5
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var model = new GeometryModel(Utils.GetFileName(item.FullPath)) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(Utils.GetFileName(Item.FullPath)) { CoordinateSystem = CoordinateSystem.Default };
 
             model.Nodes.AddRange(Nodes);
             model.MarkerGroups.AddRange(MarkerGroups);
@@ -92,7 +75,7 @@ namespace Reclaimer.Blam.Halo5
             }
 
             Func<int, int, int> mapNodeFunc = null;
-            model.Meshes.AddRange(Halo5Common.GetMeshes(module, item, Sections, lod, s => 0, mapNodeFunc));
+            model.Meshes.AddRange(Halo5Common.GetMeshes(Module, Item, Sections, lod, s => 0, mapNodeFunc));
 
             CreateInstanceMeshes(model, lod);
 

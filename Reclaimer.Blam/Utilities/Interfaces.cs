@@ -4,23 +4,23 @@ using Reclaimer.Drawing;
 
 namespace Reclaimer.Blam.Utilities
 {
-    public interface IBitmap
+    public interface IExtractable
     {
+        string SourceFile { get; }
         int Id { get; }
         string Name { get; }
         string Class { get; }
-        string SourceFile { get; }
+    }
+
+    public interface IBitmap : IExtractable
+    {
         int SubmapCount { get; }
         CubemapLayout CubeLayout { get; }
         DdsImage ToDds(int index);
     }
 
-    public interface IRenderGeometry
+    public interface IRenderGeometry : IExtractable
     {
-        string SourceFile { get; }
-        int Id { get; }
-        string Name { get; }
-        string Class { get; }
         int LodCount { get; }
         IGeometryModel ReadGeometry(int lod);
         IEnumerable<IBitmap> GetAllBitmaps();

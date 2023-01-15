@@ -9,16 +9,11 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.Halo4
 {
-    public class render_model : IRenderGeometry
+    public class render_model : ContentTagDefinition, IRenderGeometry
     {
-        private readonly ICacheFile cache;
-        private readonly IIndexItem item;
-
-        public render_model(ICacheFile cache, IIndexItem item)
-        {
-            this.cache = cache;
-            this.item = item;
-        }
+        public render_model(IIndexItem item)
+            : base(item)
+        { }
 
         [Offset(0)]
         public StringId Name { get; set; }
@@ -64,14 +59,6 @@ namespace Reclaimer.Blam.Halo4
 
         #region IRenderGeometry
 
-        string IRenderGeometry.SourceFile => item.CacheFile.FileName;
-
-        int IRenderGeometry.Id => item.Id;
-
-        string IRenderGeometry.Name => item.FullPath;
-
-        string IRenderGeometry.Class => item.ClassName;
-
         int IRenderGeometry.LodCount => 1;
 
         public IGeometryModel ReadGeometry(int lod)
@@ -109,7 +96,7 @@ namespace Reclaimer.Blam.Halo4
             if (Flags.HasFlag(ModelFlags.UseLocalNodes))
                 mapNodeFunc = (si, i) => NodeMaps.ElementAtOrDefault(si)?.Indices.Cast<byte?>().ElementAtOrDefault(i) ?? i;
 
-            model.Meshes.AddRange(Halo4Common.GetMeshes(cache, ResourcePointer, Sections, (s, m) => m.BoundsIndex = 0, mapNodeFunc));
+            model.Meshes.AddRange(Halo4Common.GetMeshes(Cache, ResourcePointer, Sections, (s, m) => m.BoundsIndex = 0, mapNodeFunc));
 
             CreateInstanceMeshes(model);
 

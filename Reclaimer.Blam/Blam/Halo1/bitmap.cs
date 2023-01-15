@@ -8,16 +8,11 @@ using System.IO;
 
 namespace Reclaimer.Blam.Halo1
 {
-    public class bitmap : IBitmap
+    public class bitmap : ContentTagDefinition, IBitmap
     {
-        private readonly ICacheFile cache;
-        private readonly IIndexItem item;
-
-        public bitmap(ICacheFile cache, IIndexItem item)
-        {
-            this.cache = cache;
-            this.item = item;
-        }
+        public bitmap(IIndexItem item)
+            : base(item)
+        { }
 
         [Offset(84)]
         public BlockCollection<SequenceBlock> Sequences { get; set; }
@@ -41,14 +36,6 @@ namespace Reclaimer.Blam.Halo1
             Orientation6 = RotateFlipType.Rotate180FlipNone
         };
 
-        string IBitmap.SourceFile => item.CacheFile.FileName;
-
-        int IBitmap.Id => item.Id;
-
-        string IBitmap.Name => item.FullPath;
-
-        string IBitmap.Class => item.ClassName;
-
         int IBitmap.SubmapCount => Bitmaps.Count;
 
         CubemapLayout IBitmap.CubeLayout => Halo1CubeLayout;
@@ -60,14 +47,14 @@ namespace Reclaimer.Blam.Halo1
 
             var submap = Bitmaps[index];
 
-            var dir = Directory.GetParent(cache.FileName).FullName;
+            var dir = Directory.GetParent(Cache.FileName).FullName;
             var bitmapSource = Path.Combine(dir, CacheFile.BitmapsMap);
 
             //Xbox maps and player-made CE maps use internal bitmap resources
-            if (cache.CacheType == CacheType.Halo1Xbox
-                || (cache.CacheType == CacheType.Halo1CE && item.MetaPointer.Address > 0 && !submap.Flags.HasFlag(BitmapFlags.External))
-                || (cache.CacheType == CacheType.MccHalo1 && submap.Flags == BitmapFlags.MccInternal))
-                bitmapSource = cache.FileName;
+            if (Cache.CacheType == CacheType.Halo1Xbox
+                || (Cache.CacheType == CacheType.Halo1CE && Item.MetaPointer.Address > 0 && !submap.Flags.HasFlag(BitmapFlags.External))
+                || (Cache.CacheType == CacheType.MccHalo1 && submap.Flags == BitmapFlags.MccInternal))
+                bitmapSource = Cache.FileName;
 
             byte[] data;
             using (var fs = new FileStream(bitmapSource, FileMode.Open, FileAccess.Read))
@@ -80,7 +67,7 @@ namespace Reclaimer.Blam.Halo1
             var type = submap.BitmapType == TextureType.CubeMap ? submap.BitmapType : TextureType.Texture2D;
             var props = new BitmapProperties(submap.Width, submap.Height, submap.BitmapFormat, type)
             {
-                ByteOrder = cache.ByteOrder,
+                ByteOrder = Cache.ByteOrder,
                 Depth = submap.BitmapType == TextureType.Texture3D ? submap.Depth : 1,
                 FrameCount = submap.BitmapType == TextureType.CubeMap ? 6 : submap.Depth,
                 MipmapCount = submap.MipmapCount,

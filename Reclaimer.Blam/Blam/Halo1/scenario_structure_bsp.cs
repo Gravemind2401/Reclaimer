@@ -1,5 +1,4 @@
 ﻿using Adjutant.Geometry;
-using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
@@ -10,16 +9,11 @@ using System.IO;
 
 namespace Reclaimer.Blam.Halo1
 {
-    public class scenario_structure_bsp : IRenderGeometry
+    public class scenario_structure_bsp : ContentTagDefinition, IRenderGeometry
     {
-        private readonly ICacheFile cache;
-        private readonly IIndexItem item;
-
-        public scenario_structure_bsp(ICacheFile cache, IIndexItem item)
-        {
-            this.cache = cache;
-            this.item = item;
-        }
+        public scenario_structure_bsp(IIndexItem item)
+            : base(item)
+        { }
 
         [Offset(224)]
         public RealBounds XBounds { get; set; }
@@ -44,14 +38,6 @@ namespace Reclaimer.Blam.Halo1
 
         #region IRenderGeometry
 
-        string IRenderGeometry.SourceFile => item.CacheFile.FileName;
-
-        int IRenderGeometry.Id => item.Id;
-
-        string IRenderGeometry.Name => item.FullPath;
-
-        string IRenderGeometry.Class => item.ClassName;
-
         int IRenderGeometry.LodCount => 1;
 
         public IGeometryModel ReadGeometry(int lod)
@@ -59,9 +45,9 @@ namespace Reclaimer.Blam.Halo1
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            using var reader = cache.CreateReader(cache.DefaultAddressTranslator);
+            using var reader = Cache.CreateReader(Cache.DefaultAddressTranslator);
 
-            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
 
             var shaderRefs = Lightmaps.SelectMany(m => m.Materials)
                 .Where(m => m.ShaderReference.TagId >= 0)
@@ -157,7 +143,7 @@ namespace Reclaimer.Blam.Halo1
                 yield break;
 
             var complete = new List<int>();
-            using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
+            using (var reader = Cache.CreateReader(Cache.DefaultAddressTranslator))
             {
                 foreach (var mat in selection.SelectMany(lm => lm.Materials))
                 {

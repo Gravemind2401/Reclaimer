@@ -1,22 +1,21 @@
 ﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.Drawing;
 using Reclaimer.IO;
+using Reclaimer.Saber3D.Common;
 using System.IO;
 
 namespace Reclaimer.Saber3D.Halo1X
 {
-    public class Texture : IBitmap
+    public class Texture : ContentItemDefinition, IBitmap
     {
         private const int LittleHeader = 0x50494354; //TCIP
         private const int BigHeader = 0x54434950; //PICT
 
-        private readonly PakItem item;
         private readonly bool isBigEndian;
 
         public Texture(PakItem item)
+            : base(item)
         {
-            this.item = item;
-
             using (var x = item.Container.CreateReader())
             using (var reader = x.CreateVirtualReader(item.Address))
             {
@@ -61,14 +60,6 @@ namespace Reclaimer.Saber3D.Halo1X
 
         #region IBitmap
 
-        string IBitmap.SourceFile => item.Container.FileName;
-
-        int IBitmap.Id => item.Address;
-
-        string IBitmap.Name => item.Name;
-
-        string IBitmap.Class => item.ItemType.ToString();
-
         int IBitmap.SubmapCount => 1;
 
         CubemapLayout IBitmap.CubeLayout => CubemapLayout.NonCubemap;
@@ -85,9 +76,9 @@ namespace Reclaimer.Saber3D.Halo1X
             };
 
             byte[] data;
-            using (var reader = item.Container.CreateReader())
+            using (var reader = Container.CreateReader())
             {
-                reader.Seek(item.Address + DataOffset, SeekOrigin.Begin);
+                reader.Seek(Item.Address + DataOffset, SeekOrigin.Begin);
                 data = reader.ReadBytes(TextureUtils.GetBitmapDataLength(props, false));
             }
 

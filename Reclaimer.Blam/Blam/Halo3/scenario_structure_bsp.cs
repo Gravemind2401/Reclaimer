@@ -9,16 +9,11 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.Halo3
 {
-    public class scenario_structure_bsp : IRenderGeometry
+    public class scenario_structure_bsp : ContentTagDefinition, IRenderGeometry
     {
-        private readonly ICacheFile cache;
-        private readonly IIndexItem item;
-
-        public scenario_structure_bsp(ICacheFile cache, IIndexItem item)
-        {
-            this.cache = cache;
-            this.item = item;
-        }
+        public scenario_structure_bsp(IIndexItem item)
+            : base(item)
+        { }
 
         [Offset(60, MaxVersion = (int)CacheType.MccHalo3U4)]
         [Offset(64, MinVersion = (int)CacheType.MccHalo3U4)]
@@ -74,14 +69,6 @@ namespace Reclaimer.Blam.Halo3
 
         #region IRenderGeometry
 
-        string IRenderGeometry.SourceFile => item.CacheFile.FileName;
-
-        int IRenderGeometry.Id => item.Id;
-
-        string IRenderGeometry.Name => item.FullPath;
-
-        string IRenderGeometry.Class => item.ClassName;
-
         int IRenderGeometry.LodCount => 1;
 
         public IGeometryModel ReadGeometry(int lod)
@@ -89,19 +76,19 @@ namespace Reclaimer.Blam.Halo3
             if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
                 throw new ArgumentOutOfRangeException(nameof(lod));
 
-            var scenario = cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
-            var model = new GeometryModel(item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var scenario = Cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
+            var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
 
-            var bspBlock = scenario.StructureBsps.First(s => s.BspReference.TagId == item.Id);
+            var bspBlock = scenario.StructureBsps.First(s => s.BspReference.TagId == Item.Id);
             var bspIndex = scenario.StructureBsps.IndexOf(bspBlock);
 
             var lightmap = scenario.ScenarioLightmapReference.Tag.ReadMetadata<scenario_lightmap>();
-            var lightmapData = cache.CacheType < CacheType.MccHalo3U4
+            var lightmapData = Cache.CacheType < CacheType.MccHalo3U4
                 ? lightmap.LightmapData.First(lbsp => lbsp.BspIndex == bspIndex)
                 : lightmap.LightmapRefs.Where(t => t.TagId >= 0)
                     .Select(lbsp => lbsp.Tag.ReadMetadata<scenario_lightmap_bsp_data>())
                     .FirstOrDefault(lbsp => lbsp.BspIndex == bspIndex)
-                    ?? cache.TagIndex.FirstOrDefault(t => t.ClassCode == "Lbsp" && t.FullPath == item.FullPath)?.ReadMetadata<scenario_lightmap_bsp_data>();
+                    ?? Cache.TagIndex.FirstOrDefault(t => t.ClassCode == "Lbsp" && t.FullPath == Item.FullPath)?.ReadMetadata<scenario_lightmap_bsp_data>();
 
             model.Bounds.AddRange(BoundingBoxes);
             model.Materials.AddRange(Halo3Common.GetMaterials(Shaders));
@@ -136,7 +123,7 @@ namespace Reclaimer.Blam.Halo3
                 model.Regions.Add(sectionRegion);
             }
 
-            model.Meshes.AddRange(Halo3Common.GetMeshes(cache, lightmapData.ResourcePointer, lightmapData.Sections, (s, m) =>
+            model.Meshes.AddRange(Halo3Common.GetMeshes(Cache, lightmapData.ResourcePointer, lightmapData.Sections, (s, m) =>
             {
                 var index = (short)lightmapData.Sections.IndexOf(s);
                 m.BoundsIndex = index >= BoundingBoxes.Count ? (short?)null : index;
