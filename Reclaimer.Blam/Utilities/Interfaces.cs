@@ -4,11 +4,31 @@ using Reclaimer.Drawing;
 
 namespace Reclaimer.Blam.Utilities
 {
+    public interface IContentProvider<TContent> : IExtractable
+    {
+        TContent GetContent();
+    }
+
     public interface IExtractable
     {
+        /// <summary>
+        /// The full path of the file this content originates from.
+        /// </summary>
         string SourceFile { get; }
+
+        /// <summary>
+        /// The ID associated with this content that is unique within the source file.
+        /// </summary>
         int Id { get; }
+
+        /// <summary>
+        /// The name of the content.
+        /// </summary>
         string Name { get; }
+
+        /// <summary>
+        /// The class or category that the content is associated with.
+        /// </summary>
         string Class { get; }
     }
 

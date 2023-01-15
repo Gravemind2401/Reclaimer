@@ -13,4 +13,15 @@ namespace Reclaimer.Blam.Common
         string IExtractable.Name => Item.TagName;
         string IExtractable.Class => Item.ClassName;
     }
+
+    public abstract class ContentTagDefinition<TContent> : ContentTagDefinition, IContentProvider<TContent>
+    {
+        protected ContentTagDefinition(IIndexItem item)
+            : base(item)
+        { }
+
+        public abstract TContent GetContent();
+
+        TContent IContentProvider<TContent>.GetContent() => GetContent();
+    }
 }
