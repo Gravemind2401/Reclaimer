@@ -6,6 +6,7 @@ using Reclaimer.Blam.Halo5;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Controls.Editors;
 using Reclaimer.Drawing;
+using Reclaimer.Geometry;
 using Reclaimer.Models;
 using Reclaimer.Saber3D.Common;
 using Reclaimer.Utilities;
@@ -38,7 +39,7 @@ namespace Reclaimer.Plugins
         private delegate string GetModelExtension(string formatId);
         private Lazy<GetModelExtension> getModelExtensionFunc;
 
-        private delegate void WriteModelFile(IGeometryModel model, string fileName, string formatId);
+        private delegate void WriteModelFile(IContentProvider<Model> provider, string fileName, string formatId);
         private WriteModelFile writeModelFileFunc;
 
         private delegate bool WriteSoundFile(GameSound sound, string directory, bool overwrite);
@@ -399,7 +400,7 @@ namespace Reclaimer.Plugins
         #region Models
         private bool SaveModel(IExtractable item)
         {
-            if (item.GetGeometryContent(out var geometry) && SaveModel(geometry, item.Destination))
+            if (item.GetGeometryContent(out var provider) && SaveModel(provider, item.Destination))
             {
                 LogOutput($"Extracted {item.DisplayName}");
                 return true;
@@ -409,15 +410,15 @@ namespace Reclaimer.Plugins
         }
 
         [SharedFunction]
-        private bool SaveModel(IRenderGeometry geometry, string baseDir)
+        private bool SaveModel(IContentProvider<Model> provider, string baseDir)
         {
-            var fileName = MakePath(geometry.Class, geometry.Name, baseDir);
+            var fileName = MakePath(provider.Class, provider.Name, baseDir);
             var ext = getModelExtensionFunc?.Value(Settings.ModelFormat);
 
             if (!Settings.OverwriteExisting && File.Exists($"{fileName}.{ext}"))
                 return false;
 
-            writeModelFileFunc?.Invoke(geometry.ReadGeometry(0), fileName, Settings.ModelFormat);
+            writeModelFileFunc?.Invoke(provider, fileName, Settings.ModelFormat);
             return true;
         }
         #endregion
@@ -556,7 +557,7 @@ namespace Reclaimer.Plugins
             string Destination { get; }
             int GetContentType();
             bool GetBitmapContent(out IBitmap bitmap);
-            bool GetGeometryContent(out IRenderGeometry geometry);
+            bool GetGeometryContent(out IContentProvider<Model> provider);
             bool GetSoundContent(out ISoundContainer container);
         }
 
@@ -588,7 +589,7 @@ namespace Reclaimer.Plugins
             }
 
             public bool GetBitmapContent(out IBitmap bitmap) => BlamContentFactory.TryGetBitmapContent(item, out bitmap);
-            public bool GetGeometryContent(out IRenderGeometry geometry) => BlamContentFactory.TryGetGeometryContent(item, out geometry);
+            public bool GetGeometryContent(out IContentProvider<Model> provider) => BlamContentFactory.TryGetGeometryContent(item, out provider);
             public bool GetSoundContent(out ISoundContainer container) => BlamContentFactory.TryGetSoundContent(item, out container);
         }
 
@@ -620,7 +621,7 @@ namespace Reclaimer.Plugins
             }
 
             public bool GetBitmapContent(out IBitmap bitmap) => BlamContentFactory.TryGetBitmapContent(item, out bitmap);
-            public bool GetGeometryContent(out IRenderGeometry geometry) => BlamContentFactory.TryGetGeometryContent(item, out geometry);
+            public bool GetGeometryContent(out IContentProvider<Model> provider) => BlamContentFactory.TryGetGeometryContent(item, out provider);
             public bool GetSoundContent(out ISoundContainer container)
             {
                 container = null;
@@ -655,9 +656,9 @@ namespace Reclaimer.Plugins
 
             public bool GetBitmapContent(out IBitmap bitmap) => SaberContentFactory.TryGetBitmapContent(item, out bitmap);
 
-            public bool GetGeometryContent(out IRenderGeometry geometry)
+            public bool GetGeometryContent(out IContentProvider<Model> provider)
             {
-                geometry = null;
+                provider = null;
                 return false;
             }
 

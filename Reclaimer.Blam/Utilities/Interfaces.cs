@@ -1,6 +1,7 @@
 ﻿using Adjutant.Geometry;
 using Reclaimer.Audio;
 using Reclaimer.Drawing;
+using Reclaimer.Geometry;
 
 namespace Reclaimer.Blam.Utilities
 {
@@ -39,12 +40,14 @@ namespace Reclaimer.Blam.Utilities
         DdsImage ToDds(int index);
     }
 
-    public interface IRenderGeometry : IExtractable
+    public interface IRenderGeometry : IContentProvider<Model>
     {
         int LodCount { get; }
         IGeometryModel ReadGeometry(int lod);
         IEnumerable<IBitmap> GetAllBitmaps();
         IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes);
+
+        Model IContentProvider<Model>.GetContent() => ReadGeometry(0).ConvertToScene();
     }
 
     public interface ISoundContainer

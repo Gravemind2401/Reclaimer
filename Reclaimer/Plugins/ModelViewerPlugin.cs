@@ -42,11 +42,11 @@ namespace Reclaimer.Plugins
 
         public override void Suspend() => SaveSettings(Settings);
 
-        public override bool CanOpenFile(OpenFileArgs args) => args.File.Any(i => i is IRenderGeometry);
+        public override bool CanOpenFile(OpenFileArgs args) => args.File.Any(i => i is IContentProvider<Model>);
 
         public override void OpenFile(OpenFileArgs args)
         {
-            var model = args.File.OfType<IRenderGeometry>().FirstOrDefault();
+            var model = args.File.OfType<IContentProvider<Model>>().FirstOrDefault();
             DisplayModel(args.TargetWindow, model, args.FileName);
         }
 
@@ -89,7 +89,7 @@ namespace Reclaimer.Plugins
         }
 
         [SharedFunction]
-        public void DisplayModel(ITabContentHost targetWindow, IRenderGeometry model, string fileName)
+        public void DisplayModel(ITabContentHost targetWindow, IContentProvider<Model> model, string fileName)
         {
             var tabId = $"{Key}::{model.SourceFile}::{model.Id}";
             if (Substrate.ShowTabById(tabId))
@@ -110,7 +110,8 @@ namespace Reclaimer.Plugins
                 };
 
                 viewer.TabModel.ContentId = tabId;
-                viewer.LoadGeometry(model, $"{fileName}");
+                //TODO
+                //viewer.LoadGeometry(model, $"{fileName}");
 
                 container.AddItem(viewer.TabModel);
 
@@ -124,10 +125,11 @@ namespace Reclaimer.Plugins
 
         #region Model Exports
 
+        //TODO: IContentProvider output
         private static readonly ExportFormat[] StandardFormats = new[]
         {
-            new ExportFormat(FormatId.AMF,              "amf",  "AMF Files", (model, fileName) => model.WriteAMF(fileName, Settings.GeometryScale)),
-            new ExportFormat(FormatId.JMS,              "jms",  "JMS Files", (model, fileName) => model.WriteJMS(fileName, Settings.GeometryScale)),
+            new ExportFormat(FormatId.AMF,              "amf",  "AMF Files", (model, fileName) => { return; }),//model.WriteAMF(fileName, Settings.GeometryScale)),
+            new ExportFormat(FormatId.JMS,              "jms",  "JMS Files", (model, fileName) => { return; }),//model.WriteJMS(fileName, Settings.GeometryScale)),
             new ExportFormat(FormatId.OBJNoMaterials,   "obj",  "OBJ Files"),
             new ExportFormat(FormatId.OBJ,              "obj",  "OBJ Files with materials"),
             new ExportFormat(FormatId.Collada,          "dae",  "COLLADA Files"),
@@ -147,7 +149,7 @@ namespace Reclaimer.Plugins
         public static string GetFormatDescription(string formatId) => ExportFormats.FirstOrDefault(f => f.FormatId == formatId.ToLower()).Description;
 
         [SharedFunction]
-        public static void RegisterExportFormat(string formatId, string extension, string description, Action<IGeometryModel, string> exportFunction)
+        public static void RegisterExportFormat(string formatId, string extension, string description, Action<IContentProvider<Model>, string> exportFunction)
         {
             Exceptions.ThrowIfNullOrWhiteSpace(formatId);
             Exceptions.ThrowIfNullOrWhiteSpace(extension);
@@ -163,9 +165,9 @@ namespace Reclaimer.Plugins
         }
 
         [SharedFunction]
-        public static void WriteModelFile(IGeometryModel model, string fileName, string formatId)
+        public static void WriteModelFile(IContentProvider<Model> provider, string fileName, string formatId)
         {
-            ArgumentNullException.ThrowIfNull(model);
+            ArgumentNullException.ThrowIfNull(provider);
             Exceptions.ThrowIfNullOrWhiteSpace(fileName);
 
             formatId = (formatId ?? Settings.DefaultSaveFormat).ToLower();
@@ -179,14 +181,15 @@ namespace Reclaimer.Plugins
             var format = ExportFormats.First(f => f.FormatId == formatId);
 
             if (format.ExportFunction != null)
-                format.ExportFunction(model, fileName);
+                format.ExportFunction(provider, fileName);
             else
             {
-                using (var context = new Assimp.AssimpContext())
-                {
-                    var scene = model.CreateAssimpScene(context, formatId);
-                    context.ExportFile(scene, fileName, formatId);
-                }
+                //TODO: assimp support
+                //using (var context = new Assimp.AssimpContext())
+                //{
+                //    var scene = model.CreateAssimpScene(context, formatId);
+                //    context.ExportFile(scene, fileName, formatId);
+                //}
             }
         }
 
@@ -195,9 +198,9 @@ namespace Reclaimer.Plugins
             public string FormatId { get; }
             public string Extension { get; }
             public string Description { get; }
-            public Action<IGeometryModel, string> ExportFunction { get; }
+            public Action<IContentProvider<Model>, string> ExportFunction { get; }
 
-            public ExportFormat(string formatId, string extension, string description, Action<IGeometryModel, string> exportFunction = null)
+            public ExportFormat(string formatId, string extension, string description, Action<IContentProvider<Model>, string> exportFunction = null)
             {
                 FormatId = formatId;
                 Extension = extension;

@@ -1,4 +1,5 @@
 ﻿using Reclaimer.Blam.Utilities;
+using Reclaimer.Geometry;
 using Reclaimer.IO;
 using System.IO;
 using System.IO.Compression;
@@ -76,7 +77,7 @@ namespace Reclaimer.Blam.Common
             return content != null;
         }
 
-        public static bool TryGetGeometryContent(IIndexItem item, out IRenderGeometry content)
+        public static bool TryGetGeometryContent(IIndexItem item, out IContentProvider<Model> content)
         {
             content = null;
 
@@ -188,7 +189,7 @@ namespace Reclaimer.Blam.Common
             return content != null;
         }
 
-        public static bool TryGetGeometryContent(Halo5.ModuleItem item, out IRenderGeometry content)
+        public static bool TryGetGeometryContent(Halo5.ModuleItem item, out IContentProvider<Model> content)
         {
             content = null;
 
