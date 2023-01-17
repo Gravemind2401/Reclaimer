@@ -19,6 +19,28 @@ namespace Reclaimer.Controls.DirectX
             return new Numerics.Vector3((float)vector.X, (float)vector.Y, (float)vector.Z);
         }
 
+        public static Media3D.Transform3D ToMediaTransform(this Numerics.Matrix4x4 matrix)
+        {
+            return new Media3D.MatrixTransform3D(new Media3D.Matrix3D
+            {
+                M11 = matrix.M11,
+                M12 = matrix.M12,
+                M13 = matrix.M13,
+
+                M21 = matrix.M21,
+                M22 = matrix.M22,
+                M23 = matrix.M23,
+
+                M31 = matrix.M31,
+                M32 = matrix.M32,
+                M33 = matrix.M33,
+
+                OffsetX = matrix.M41,
+                OffsetY = matrix.M42,
+                OffsetZ = matrix.M43
+            });
+        }
+
         public static SharpDX.Matrix ToMatrix3(this Numerics.Matrix4x4 matrix)
         {
             return new SharpDX.Matrix

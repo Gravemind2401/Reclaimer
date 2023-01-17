@@ -24,8 +24,11 @@ namespace Reclaimer.Geometry
     public class ModelPermutation
     {
         public string Name { get; set; }
+        public bool IsInstanced { get; set; }
         public (int Index, int Count) MeshRange { get; set; }
         public Matrix4x4 Transform { get; set; } = Matrix4x4.Identity;
+
+        public IEnumerable<int> MeshIndices => MeshRange.Index >= 0 ? Enumerable.Range(MeshRange.Index, MeshRange.Count) : Enumerable.Empty<int>();
     }
 
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]

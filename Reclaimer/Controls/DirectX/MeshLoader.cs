@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using HelixToolkit.SharpDX.Core;
+﻿using HelixToolkit.SharpDX.Core;
 using HelixToolkit.Wpf.SharpDX;
 using Reclaimer.Geometry;
 using System.Collections.ObjectModel;
@@ -12,23 +11,20 @@ namespace Reclaimer.Controls.DirectX
     {
         private sealed class MeshLoader
         {
-            //TODO: support instanced geometry
-            private readonly Dictionary<int, List<InstancedPermutation>> instanceIds = new();
             private readonly Dictionary<int, GroupModel3D> meshLookup = new();
+            private readonly Dictionary<int, GroupModel3D> instanceLookup = new();
 
             public MeshLoader(Model model, TextureLoader textureLoader)
             {
                 var indexes = model.Regions.SelectMany(r => r.Permutations)
-                    .SelectMany(p => Enumerable.Range(p.MeshRange.Index, p.MeshRange.Count)).Distinct();
+                    .SelectMany(p => p.MeshIndices.Select(i => (i, p.IsInstanced)))
+                    .Distinct();
 
-                foreach (var i in indexes)
+                foreach (var (i, isInstance) in indexes)
                 {
                     var mesh = model.Meshes.ElementAtOrDefault(i);
                     if (mesh == null || mesh.Segments.Count == 0)
                         continue;
-
-                    //if (mesh.IsInstancing)
-                    //    instanceIds.Add(i, new List<InstancedPermutation>());
 
                     var mGroup = new GroupModel3D();
 
@@ -65,13 +61,12 @@ namespace Reclaimer.Controls.DirectX
 
                             if (normals != null)
                                 geom.Normals = new Vector3Collection(normals);
-                            
+
                             geom.UpdateOctree();
 
-                            var element = new MeshGeometryModel3D();
-                            //var element = mesh.IsInstancing
-                            //    ? new InstancingMeshGeometryModel3D()
-                            //    : new MeshGeometryModel3D();
+                            var element = isInstance
+                                ? new InstancingMeshGeometryModel3D()
+                                : new MeshGeometryModel3D();
 
                             element.Geometry = geom;
                             element.Material = textureLoader[sub.Material.Id];
@@ -81,83 +76,38 @@ namespace Reclaimer.Controls.DirectX
                         catch { }
                     }
 
-                    meshLookup.Add(i, mGroup);
+                    if (isInstance)
+                        instanceLookup.Add(i, mGroup);
+                    else
+                        meshLookup.Add(i, mGroup);
                 }
             }
 
             public MeshTag GetMesh(ModelPermutation permutation)
             {
-                //if (instanceIds.TryGetValue(permutation.MeshIndex, out var instances))
-                //{
-                //    var source = meshLookup[permutation.MeshIndex];
-                //    var matrix = GetTransform(permutation).ToMatrix(); // /*SharpDX.Matrix.Scaling(permutation.TransformScale) **/ permutation.Transform.ToMatrix3();
-                //    var instance = new InstancedPermutation(source, matrix);
-                //    instances.Add(instance);
-                //    return new MeshTag(permutation, source, instance);
-                //}
-
-                var transformGroup = GetTransform(permutation);
-
-                GroupElement3D elementGroup;
-                if (transformGroup.Children.Count == 0 && permutation.MeshRange.Count == 1)
-                    elementGroup = meshLookup.GetValueOrDefault(permutation.MeshRange.Index);
-                else
+                if (permutation.IsInstanced)
                 {
-                    elementGroup = new GroupModel3D();
-                    var parts = Enumerable.Range(permutation.MeshRange.Index, permutation.MeshRange.Count)
-                        .Where(meshLookup.ContainsKey)
-                        .Select(i => meshLookup[i]);
+                    if (!instanceLookup.TryGetValue(permutation.MeshRange.Index, out var source))
+                        return null;
 
-                    elementGroup.Children.AddRange(parts);
-
-                    if (transformGroup.Children.Count > 0)
-                        elementGroup.Transform = transformGroup;
+                    var instance = new InstancedPermutation(source, permutation.Transform.ToMatrix3());
+                    return new MeshTag(permutation, source, instance);
                 }
+
+                var transform = permutation.Transform.ToMediaTransform();
+                transform.Freeze();
+
+                var elementGroup = new GroupModel3D { Transform = transform };
+                elementGroup.Children.AddRange(
+                    permutation.MeshIndices
+                        .Where(meshLookup.ContainsKey)
+                        .Select(i => meshLookup[i])
+                );
 
                 if (elementGroup == null || elementGroup.Children.Count == 0)
                     return null;
 
                 return new MeshTag(permutation, elementGroup);
-            }
-
-            private static Media3D.Transform3DGroup GetTransform(ModelPermutation permutation)
-            {
-                var transformGroup = new Media3D.Transform3DGroup();
-
-                //if (permutation.TransformScale != 1)
-                //{
-                //    var tform = new Media3D.ScaleTransform3D(permutation.TransformScale, permutation.TransformScale, permutation.TransformScale);
-                //    tform.Freeze();
-                //    transformGroup.Children.Add(tform);
-                //}
-
-                if (!permutation.Transform.IsIdentity)
-                {
-                    var transform = new Media3D.MatrixTransform3D(new Media3D.Matrix3D
-                    {
-                        M11 = permutation.Transform.M11,
-                        M12 = permutation.Transform.M12,
-                        M13 = permutation.Transform.M13,
-
-                        M21 = permutation.Transform.M21,
-                        M22 = permutation.Transform.M22,
-                        M23 = permutation.Transform.M23,
-
-                        M31 = permutation.Transform.M31,
-                        M32 = permutation.Transform.M32,
-                        M33 = permutation.Transform.M33,
-
-                        OffsetX = permutation.Transform.M41,
-                        OffsetY = permutation.Transform.M42,
-                        OffsetZ = permutation.Transform.M43
-                    });
-
-                    transform.Freeze();
-                    transformGroup.Children.Add(transform);
-                }
-
-                transformGroup.Freeze();
-                return transformGroup;
             }
 
             public sealed class InstancedPermutation

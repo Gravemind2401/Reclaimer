@@ -86,11 +86,20 @@ namespace Adjutant.Geometry
 
                 foreach (var p in r.Permutations)
                 {
+                    //not sure why but p.Transform doesnt work as-is for instance transforms in Helix
+                    //seems that decomposing and recomposing results in a different matrix which does work
+                    Matrix4x4.Decompose(p.Transform, out var scale, out var rotation, out var translation);
+
+                    var t1 = Matrix4x4.CreateScale(p.TransformScale) * p.Transform;
+                    var t2 = Matrix4x4.CreateScale(p.TransformScale) * Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(translation);
+                    var t3 = Matrix4x4.CreateScale(p.TransformScale) * Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(translation);
+
                     reg.Permutations.Add(new ModelPermutation
                     {
                         Name = p.Name,
                         MeshRange = (p.MeshIndex, p.MeshCount),
-                        Transform = Matrix4x4.CreateScale(p.TransformScale) * p.Transform
+                        Transform = t3,
+                        IsInstanced = source.Meshes[p.MeshIndex].IsInstancing
                     });
                 }
             }
