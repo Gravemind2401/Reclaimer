@@ -110,8 +110,7 @@ namespace Reclaimer.Plugins
                 };
 
                 viewer.TabModel.ContentId = tabId;
-                //TODO
-                //viewer.LoadGeometry(model, $"{fileName}");
+                viewer.LoadGeometry(model, $"{fileName}");
 
                 container.AddItem(viewer.TabModel);
 

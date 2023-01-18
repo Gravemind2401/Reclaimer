@@ -57,8 +57,8 @@ namespace Reclaimer.Controls.DirectX
 
         private TextureLoader textureLoader;
         private MeshLoader meshLoader;
-        private IRenderGeometry geometry;
-        private IGeometryModel model;
+        private IContentProvider<Model> provider;
+        private Model model;
 
         public TabModel TabModel { get; }
         public ObservableCollection<TreeItemModel> TreeViewItems { get; }
@@ -77,13 +77,13 @@ namespace Reclaimer.Controls.DirectX
             renderer.AddChild(modelGroup);
         }
 
-        public void LoadGeometry(IRenderGeometry geometry, string fileName)
+        public void LoadGeometry(IContentProvider<Model> provider, string fileName)
         {
             TabModel.ToolTip = fileName;
             TabModel.Header = Utils.GetFileName(fileName);
-            this.geometry = geometry;
+            this.provider = provider;
 
-            AvailableLods = AllLods.Take(geometry.LodCount);
+            AvailableLods = AllLods.Take(1); // model.LodCount);
             SetLod(0);
         }
 
@@ -92,8 +92,7 @@ namespace Reclaimer.Controls.DirectX
             TreeViewItems.Clear();
             ClearChildren();
 
-            this.model = geometry.ReadGeometry(index);
-            var model = this.model.ConvertToScene();
+            model = provider.GetContent();
 
             textureLoader = new TextureLoader(model);
             meshLoader = new MeshLoader(model, textureLoader);
@@ -258,7 +257,7 @@ namespace Reclaimer.Controls.DirectX
             if (!PromptFileSave(out var fileName, out var formatId))
                 return;
 
-            ModelViewerPlugin.WriteModelFile(model, fileName, formatId);
+            ModelViewerPlugin.WriteModelFile(provider, fileName, formatId);
         }
 
         private void btnExportSelected_Click(object sender, RoutedEventArgs e)
@@ -271,23 +270,24 @@ namespace Reclaimer.Controls.DirectX
             //ModelViewerPlugin.WriteModelFile(masked, fileName, formatId);
         }
 
+        //TODO: bitmap exports
         private void btnExportBitmaps_Click(object sender, RoutedEventArgs e)
         {
             var export = Substrate.GetSharedFunction<ExportBitmaps>(Constants.SharedFuncExportBitmaps);
-            export.Invoke(geometry);
+            //export.Invoke(geometry);
         }
 
         private void btnExportSelectedBitmaps_Click(object sender, RoutedEventArgs e)
         {
             var export = Substrate.GetSharedFunction<ExportSelectedBitmaps>(Constants.SharedFuncExportSelectedBitmaps);
-            var matIndices = GetSelectedPermutations()
-                .SelectMany(p => Enumerable.Range(p.MeshRange.Index, p.MeshRange.Count))
-                .Select(i => model.Meshes.ElementAtOrDefault(i))
-                .Where(m => m != null)
-                .SelectMany(m => m.Submeshes.Select(s => (int)s.MaterialIndex))
-                .Distinct();
-
-            export.Invoke(geometry, matIndices);
+            //var matIndices = GetSelectedPermutations()
+            //    .SelectMany(p => Enumerable.Range(p.MeshRange.Index, p.MeshRange.Count))
+            //    .Select(i => model.Meshes.ElementAtOrDefault(i))
+            //    .Where(m => m != null)
+            //    .SelectMany(m => m.Submeshes.Select(s => (int)s.MaterialIndex))
+            //    .Distinct();
+            //
+            //export.Invoke(geometry, matIndices);
         }
         #endregion
         #endregion
@@ -364,7 +364,6 @@ namespace Reclaimer.Controls.DirectX
             ClearChildren();
             modelGroup.Dispose();
             renderer.Dispose();
-            geometry = null;
             model = null;
             GC.Collect();
             GC.WaitForPendingFinalizers();
