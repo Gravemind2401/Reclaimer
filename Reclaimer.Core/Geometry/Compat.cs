@@ -526,5 +526,143 @@ namespace Reclaimer.Geometry
                 #endregion
             }
         }
+
+        public static void WriteJMS(this Model model, string fileName, float scale)
+        {
+            const string float4 = "{0:F6}\t{1:F6}\t{2:F6}\t{3:F6}";
+            const string float3 = "{0:F6}\t{1:F6}\t{2:F6}";
+            const string float1 = "{0:F6}";
+
+            var modelName = Path.GetFileNameWithoutExtension(fileName);
+            var directory = Path.Combine(Directory.GetParent(fileName).FullName, "models");
+            Directory.CreateDirectory(directory);
+
+            var permNames = model.Regions.SelectMany(r => r.Permutations)
+                .Select(p => p.Name)
+                .Distinct();
+
+            var allMaterials = model.Meshes
+                .SelectMany(m => m.Segments)
+                .Select(s => s.Material)
+                .Distinct().ToList();
+
+            foreach (var permName in permNames)
+            {
+                var allRegions = model.Regions.Where(r => r.Permutations.Any(p => p.Name == permName)).ToList();
+                var allPerms = model.Regions.SelectMany(r => r.Permutations).Where(p => p.Name == permName).ToList();
+
+                using (var sw = new StreamWriter(Path.Combine(directory, permName + ".jms")))
+                {
+                    sw.WriteLine("8200");
+                    sw.WriteLine("14689795");
+
+                    sw.WriteLine(model.Bones.Count);
+                    foreach (var node in model.Bones)
+                    {
+                        sw.WriteLine(node.Name);
+                        sw.WriteLine(node.FirstChildIndex);
+                        sw.WriteLine(node.NextSiblingIndex);
+                        sw.WriteLine("{0}\t{1}\t{2}\t{3}", -node.Rotation.X, -node.Rotation.Y, -node.Rotation.Z, node.Rotation.W);
+                        sw.WriteLine(float3, node.Position.X * scale, node.Position.Y * scale, node.Position.Z * scale);
+                    }
+
+                    sw.WriteLine(allMaterials.Count);
+                    foreach (var mat in allMaterials)
+                    {
+                        sw.WriteLine(mat?.Name ?? "unused");
+                        sw.WriteLine("<none>"); //unknown
+                    }
+
+                    sw.WriteLine(model.Markers.Sum(g => g.Instances.Count));
+                    foreach (var group in model.Markers)
+                    {
+                        foreach (var marker in group.Instances)
+                        {
+                            sw.WriteLine(group.Name);
+                            sw.WriteLine(-1); //unknown
+                            sw.WriteLine(marker.BoneIndex);
+                            sw.WriteLine(float4, marker.Rotation.X, marker.Rotation.Y, marker.Rotation.Z, marker.Rotation.W);
+                            sw.WriteLine(float3, marker.Position.X * scale, marker.Position.Y * scale, marker.Position.Z * scale);
+                            sw.WriteLine(1); //radius
+                        }
+                    }
+
+                    sw.WriteLine(allRegions.Count);
+                    foreach (var region in allRegions)
+                        sw.WriteLine(region.Name);
+
+                    #region Vertices
+                    sw.WriteLine(allPerms.SelectMany(p => p.MeshIndices.Select(i => model.Meshes[i])).Sum(m => m.VertexBuffer.Count));
+                    foreach (var perm in allPerms)
+                    {
+                        var mesh = model.Meshes[perm.MeshRange.Index];
+
+                        var posTransform = mesh.PositionBounds.CreateExpansionMatrix();
+                        var texTransform = mesh.TextureBounds.CreateExpansionMatrix();
+
+                        var positions = mesh.GetPositions()?.Select(v => Vector3.Transform(v, posTransform) * scale).ToList();
+                        var texcoords = mesh.GetTexCoords()?.Select(v => Vector2.Transform(v, texTransform)).ToList();
+                        var normals = mesh.GetNormals()?.ToList();
+                        var blendIndices = mesh.GetBlendIndices()?.ToList();
+                        var blendWeights = mesh.GetBlendWeights()?.ToList();
+
+                        for (var i = 0; i < mesh.VertexBuffer.Count; i++)
+                        {
+                            var pos = positions?[i] ?? default;
+                            var norm = normals?[i] ?? default;
+                            var tex = texcoords?[i] ?? default;
+                            var weights = blendIndices?[i] ?? default;
+                            var nodes = blendWeights?[i] ?? default;
+
+                            var node1 = nodes.X;
+                            if (mesh.BoneIndex < byte.MaxValue)
+                                node1 = mesh.BoneIndex.Value;
+
+                            sw.WriteLine("{0:F0}", node1);
+
+                            sw.WriteLine(float3, pos.X, pos.Y, pos.Z);
+                            sw.WriteLine(float3, norm.X, norm.Y, norm.Z);
+
+                            sw.WriteLine(nodes.Y);
+                            sw.WriteLine(float1, weights.Y);
+
+                            sw.WriteLine(float1, tex.X);
+                            sw.WriteLine(float1, 1 - tex.Y);
+                            sw.WriteLine(0);
+                        }
+                    }
+                    #endregion
+
+                    #region Triangles
+                    var totalEdges = allPerms.SelectMany(p =>
+                    {
+                        var mesh = model.Meshes[p.MeshRange.Index];
+                        return mesh.IndexBuffer.Layout == IndexFormat.TriangleList
+                            ? mesh.IndexBuffer
+                            : mesh.Segments.SelectMany(s => mesh.IndexBuffer.GetSubset(s.IndexStart, s.IndexLength).Unstrip());
+                    }).Count();
+
+                    sw.WriteLine(totalEdges / 3);
+                    var offset = 0;
+                    foreach (var perm in allPerms)
+                    {
+                        var regIndex = allRegions.TakeWhile(r => !r.Permutations.Contains(perm)).Count();
+                        var mesh = model.Meshes[perm.MeshRange.Index];
+                        foreach (var sub in mesh.Segments)
+                        {
+                            var indices = mesh.GetTriangleIndicies(sub).ToList();
+                            for (var i = 0; i < indices.Count; i += 3)
+                            {
+                                sw.WriteLine(regIndex);
+                                sw.WriteLine(allMaterials.IndexOf(sub.Material));
+                                sw.WriteLine("{0}\t{1}\t{2}", offset + indices[i], offset + indices[i + 1], offset + indices[i + 2]);
+                            }
+                        }
+                        offset += mesh.VertexBuffer.Count;
+                    }
+                    #endregion
+                }
+            }
+        }
     }
 }

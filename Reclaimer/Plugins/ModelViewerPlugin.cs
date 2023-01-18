@@ -125,11 +125,10 @@ namespace Reclaimer.Plugins
 
         #region Model Exports
 
-        //TODO: IContentProvider output
         private static readonly ExportFormat[] StandardFormats = new[]
         {
-            new ExportFormat(FormatId.AMF,              "amf",  "AMF Files", (model, fileName) => { return; }),//model.WriteAMF(fileName, Settings.GeometryScale)),
-            new ExportFormat(FormatId.JMS,              "jms",  "JMS Files", (model, fileName) => { return; }),//model.WriteJMS(fileName, Settings.GeometryScale)),
+            new ExportFormat(FormatId.AMF,              "amf",  "AMF Files", (model, fileName) => model.GetContent().WriteAMF(fileName, Settings.GeometryScale)),
+            new ExportFormat(FormatId.JMS,              "jms",  "JMS Files", (model, fileName) => model.GetContent().WriteJMS(fileName, Settings.GeometryScale)),
             new ExportFormat(FormatId.OBJNoMaterials,   "obj",  "OBJ Files"),
             new ExportFormat(FormatId.OBJ,              "obj",  "OBJ Files with materials"),
             new ExportFormat(FormatId.Collada,          "dae",  "COLLADA Files"),
