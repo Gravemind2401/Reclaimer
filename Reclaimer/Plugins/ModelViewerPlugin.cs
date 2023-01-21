@@ -42,11 +42,12 @@ namespace Reclaimer.Plugins
 
         public override void Suspend() => SaveSettings(Settings);
 
-        public override bool CanOpenFile(OpenFileArgs args) => args.File.Any(i => i is IContentProvider<Model>);
+        public override bool CanOpenFile(OpenFileArgs args) => args.File.Any(i => i is IContentProvider<Scene> || i is IContentProvider<Model>);
 
         public override void OpenFile(OpenFileArgs args)
         {
-            var model = args.File.OfType<IContentProvider<Model>>().FirstOrDefault();
+            var model = (IExtractable)args.File.OfType<IContentProvider<Scene>>().FirstOrDefault()
+                ?? args.File.OfType<IContentProvider<Model>>().FirstOrDefault();
             DisplayModel(args.TargetWindow, model, args.FileName);
         }
 
@@ -89,7 +90,7 @@ namespace Reclaimer.Plugins
         }
 
         [SharedFunction]
-        public void DisplayModel(ITabContentHost targetWindow, IContentProvider<Model> model, string fileName)
+        public void DisplayModel(ITabContentHost targetWindow, IExtractable model, string fileName)
         {
             var tabId = $"{Key}::{model.SourceFile}::{model.Id}";
             if (Substrate.ShowTabById(tabId))
@@ -110,7 +111,10 @@ namespace Reclaimer.Plugins
                 };
 
                 viewer.TabModel.ContentId = tabId;
-                viewer.LoadGeometry(model, $"{fileName}");
+                if (model is IContentProvider<Scene> s)
+                    viewer.LoadGeometry(s);
+                else if (model is IContentProvider<Model> m)
+                    viewer.LoadGeometry(m);
 
                 container.AddItem(viewer.TabModel);
 

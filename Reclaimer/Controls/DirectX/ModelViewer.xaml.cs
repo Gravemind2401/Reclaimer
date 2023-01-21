@@ -46,19 +46,20 @@ namespace Reclaimer.Controls.DirectX
             set => SetValue(SelectedLodProperty, value);
         }
 
+        //TODO: LODs
         public static void SelectedLodChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = (ModelViewer)d;
-            control.SetLod((int)e.NewValue);
+            //var control = (ModelViewer)d;
+            //control.SetLod((int)e.NewValue);
         }
         #endregion
 
         private readonly GroupModel3D modelGroup = new GroupModel3D { IsHitTestVisible = false };
 
-        private TextureLoader textureLoader;
-        private MeshLoader meshLoader;
-        private IContentProvider<Model> provider;
-        private Model model;
+        //private TextureLoader textureLoader;
+        //private MeshLoader meshLoader;
+        private IExtractable contentProvider;
+        //private Model model;
 
         public TabModel TabModel { get; }
         public ObservableCollection<TreeItemModel> TreeViewItems { get; }
@@ -77,25 +78,76 @@ namespace Reclaimer.Controls.DirectX
             renderer.AddChild(modelGroup);
         }
 
-        public void LoadGeometry(IContentProvider<Model> provider, string fileName)
+        private void Initialise(IExtractable source)
         {
-            TabModel.ToolTip = fileName;
-            TabModel.Header = Utils.GetFileName(fileName);
-            this.provider = provider;
+            contentProvider = source;
+            TabModel.ToolTip = source.Name;
+            TabModel.Header = Utils.GetFileName(source.Name);
 
             AvailableLods = AllLods.Take(1); // model.LodCount);
-            SetLod(0);
-        }
 
-        private void SetLod(int index)
-        {
             TreeViewItems.Clear();
             ClearChildren();
+        }
 
-            model = provider.GetContent();
+        public void LoadGeometry(IContentProvider<Scene> provider)
+        {
+            Initialise(provider);
 
-            textureLoader = new TextureLoader(model);
-            meshLoader = new MeshLoader(model, textureLoader);
+            var scene = provider.GetContent();
+            var textureLoader = new TextureLoader(scene);
+
+            foreach (var group in scene.ObjectGroups)
+            {
+                var groupNode = new TreeItemModel { Header = group.Name, IsChecked = true };
+
+                foreach (var obj in group.ChildObjects)
+                {
+                    var objNode = new TreeItemModel { Header = obj.Name, IsChecked = true };
+
+                    var model = obj.Model;
+                    var meshLoader = new MeshLoader(model, textureLoader);
+
+                    var objGroup = new GroupModel3D();
+
+                    foreach (var region in model.Regions)
+                    {
+                        foreach (var perm in region.Permutations)
+                        {
+                            if (perm.MeshRange.Count <= 0)
+                                continue;
+
+                            var tag = meshLoader.GetMesh(perm);
+                            if (tag == null)
+                                continue;
+
+                            if (!objGroup.Children.Contains(tag.Mesh))
+                                objGroup.Children.Add(tag.Mesh);
+                        }
+                    }
+
+                    if (!objGroup.Children.Any())
+                        continue;
+
+                    modelGroup.Children.Add(objGroup);
+
+                    var objTag = new MeshTag(null, objGroup);
+                    objNode.Tag = objTag;
+                    groupNode.Items.Add(objNode);
+                }
+
+                if (groupNode.HasItems)
+                    TreeViewItems.Add(groupNode);
+            }
+        }
+
+        public void LoadGeometry(IContentProvider<Model> provider)
+        {
+            Initialise(provider);
+
+            var model = provider.GetContent();
+            var textureLoader = new TextureLoader(Scene.WrapSingleModel(model));
+            var meshLoader = new MeshLoader(model, textureLoader);
 
             foreach (var region in model.Regions)
             {
@@ -166,30 +218,36 @@ namespace Reclaimer.Controls.DirectX
 
         private void SetState(TreeItemModel item, bool updateRender)
         {
-            if (item.HasItems == false) //permutation
+            foreach (var child in EnumerateDescendents(item).Prepend(item))
             {
-                var parent = item.Parent;
-                var children = parent.Items.Where(i => i.IsVisible);
-
-                if (children.All(i => i.IsChecked == true))
-                    parent.IsChecked = true;
-                else if (children.All(i => i.IsChecked == false))
-                    parent.IsChecked = false;
-                else
-                    parent.IsChecked = null;
-
-                if (updateRender)
-                    (item.Tag as MeshTag).SetVisible(item.IsChecked.GetValueOrDefault());
+                child.IsChecked = item.IsChecked;
+                if (updateRender && child.Tag is MeshTag tag)
+                    tag.SetVisible(child.IsChecked.GetValueOrDefault());
             }
-            else //region
-            {
-                foreach (var i in item.Items.Where(i => i.IsVisible))
-                {
-                    i.IsChecked = item.IsChecked;
-                    if (updateRender)
-                        (i.Tag as MeshTag).SetVisible(i.IsChecked.GetValueOrDefault());
-                }
-            }
+
+            RefreshState(item.Parent);
+        }
+
+        private void RefreshState(TreeItemModel item)
+        {
+            if (item == null || !item.HasItems)
+                return;
+
+            var prev = item.IsChecked;
+            item.IsChecked = item.Items
+                .Where(i => i.IsVisible)
+                .Select(i => i.IsChecked)
+                .Aggregate(item.Items[0].IsChecked, (a, b) => a == null || a != b ? null : a);
+
+            //if this node changed state then the parent needs to refresh state too
+            if (item.IsChecked != prev)
+                RefreshState(item.Parent);
+        }
+
+        private IEnumerable<TreeItemModel> EnumerateDescendents(TreeItemModel item)
+        {
+            var visible = item.Items.Where(i => i.IsVisible);
+            return visible.Concat(visible.SelectMany(EnumerateDescendents));
         }
         #endregion
 
@@ -234,7 +292,7 @@ namespace Reclaimer.Controls.DirectX
             var sfd = new SaveFileDialog
             {
                 OverwritePrompt = true,
-                FileName = model.Name,
+                FileName = contentProvider.Name,
                 Filter = filter,
                 FilterIndex = 1 + exportFormats.TakeWhile(f => f.FormatId != ModelViewerPlugin.Settings.DefaultSaveFormat).Count(),
                 AddExtension = true
@@ -254,10 +312,14 @@ namespace Reclaimer.Controls.DirectX
 
         private void btnExportAll_Click(object sender, RoutedEventArgs e)
         {
+            //TODO: export as scene
+            if (contentProvider is not IContentProvider<Model> modelProvider)
+                return;
+
             if (!PromptFileSave(out var fileName, out var formatId))
                 return;
 
-            ModelViewerPlugin.WriteModelFile(provider, fileName, formatId);
+            ModelViewerPlugin.WriteModelFile(modelProvider, fileName, formatId);
         }
 
         private void btnExportSelected_Click(object sender, RoutedEventArgs e)
@@ -364,7 +426,6 @@ namespace Reclaimer.Controls.DirectX
             ClearChildren();
             modelGroup.Dispose();
             renderer.Dispose();
-            model = null;
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }

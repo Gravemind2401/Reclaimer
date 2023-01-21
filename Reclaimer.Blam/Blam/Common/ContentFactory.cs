@@ -11,6 +11,7 @@ namespace Reclaimer.Blam.Common
         private const string bitmap = "bitm";
         private const string gbxmodel = "mod2";
         private const string render_model = "mode";
+        private const string scenario = "scnr";
         private const string scenario_structure_bsp = "sbsp";
         private const string sound = "snd!";
 
@@ -29,6 +30,7 @@ namespace Reclaimer.Blam.Common
                     break;
                 case gbxmodel:
                 case render_model:
+                case scenario:
                 case scenario_structure_bsp:
                     if (TryGetGeometryContent(item, out var geometryContent))
                     {
@@ -77,7 +79,7 @@ namespace Reclaimer.Blam.Common
             return content != null;
         }
 
-        public static bool TryGetGeometryContent(IIndexItem item, out IContentProvider<Model> content)
+        public static bool TryGetGeometryContent(IIndexItem item, out IExtractable content)
         {
             content = null;
 
@@ -113,6 +115,15 @@ namespace Reclaimer.Blam.Common
                     HaloGame.HaloReach => item.ReadMetadata<HaloReach.scenario_structure_bsp>(),
                     HaloGame.Halo4 => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
                     HaloGame.Halo2X => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
+                    _ => null
+                };
+            }
+            else if (item.ClassCode == scenario)
+            {
+                content = gameType switch
+                {
+                    HaloGame.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario>(),
+                    HaloGame.Halo3ODST => item.ReadMetadata<Halo3.scenario>(),
                     _ => null
                 };
             }

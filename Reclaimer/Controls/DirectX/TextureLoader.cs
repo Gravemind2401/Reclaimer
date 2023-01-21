@@ -20,15 +20,9 @@ namespace Reclaimer.Controls.DirectX
 
             public Material this[int id] => materials.GetValueOrDefault(id, ErrorMaterial);
 
-            public TextureLoader(Model model)
+            public TextureLoader(Scene scene)
             {
-                var mats = model.Meshes.Where(m => m != null)
-                    .SelectMany(m => m.Segments)
-                    .Select(s => s.Material)
-                    .Where(m => m != null)
-                    .Distinct();
-
-                foreach (var mat in mats)
+                foreach (var mat in scene.EnumerateMaterials())
                 {
                     try
                     {

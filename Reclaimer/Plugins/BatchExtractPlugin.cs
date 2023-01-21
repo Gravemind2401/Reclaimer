@@ -588,8 +588,9 @@ namespace Reclaimer.Plugins
                 };
             }
 
+            //TODO
             public bool GetBitmapContent(out IBitmap bitmap) => BlamContentFactory.TryGetBitmapContent(item, out bitmap);
-            public bool GetGeometryContent(out IContentProvider<Model> provider) => BlamContentFactory.TryGetGeometryContent(item, out provider);
+            public bool GetGeometryContent(out IContentProvider<Model> provider) => throw new NotImplementedException(); // BlamContentFactory.TryGetGeometryContent(item, out provider);
             public bool GetSoundContent(out ISoundContainer container) => BlamContentFactory.TryGetSoundContent(item, out container);
         }
 
