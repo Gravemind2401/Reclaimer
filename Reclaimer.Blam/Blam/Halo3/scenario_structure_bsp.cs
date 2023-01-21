@@ -1,6 +1,4 @@
-﻿using Adjutant.Geometry;
-using Adjutant.Spatial;
-using Reclaimer.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using System.Globalization;
@@ -8,7 +6,7 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.Halo3
 {
-    public partial class scenario_structure_bsp : ContentTagDefinition, IRenderGeometry
+    public partial class scenario_structure_bsp : ContentTagDefinition<Model>
     {
         public scenario_structure_bsp(IIndexItem item)
             : base(item)
@@ -30,16 +28,12 @@ namespace Reclaimer.Blam.Halo3
         public ResourceIdentifier ResourcePointer2 { get; set; }
         public ResourceIdentifier ResourcePointer3 { get; set; }
 
-        #region IRenderGeometry
+        #region IContentProvider
 
-        int IRenderGeometry.LodCount => 1;
-
-        public IGeometryModel ReadGeometry(int lod)
+        public override Model GetContent()
         {
-            Exceptions.ThrowIfIndexOutOfRange(lod, ((IRenderGeometry)this).LodCount);
-
             var scenario = Cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
-            var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new Model { Name = Item.FileName };
 
             var bspBlock = scenario.StructureBsps.First(s => s.BspReference.TagId == Item.Id);
             var bspIndex = scenario.StructureBsps.IndexOf(bspBlock);
@@ -52,45 +46,54 @@ namespace Reclaimer.Blam.Halo3
                     .FirstOrDefault(lbsp => lbsp.BspIndex == bspIndex)
                     ?? Cache.TagIndex.FirstOrDefault(t => t.ClassCode == "Lbsp" && t.TagName == Item.TagName)?.ReadMetadata<scenario_lightmap_bsp_data>();
 
-            model.Bounds.AddRange(BoundingBoxes);
-            model.Materials.AddRange(Halo3Common.GetMaterials(Shaders));
+            var geoParams = new Halo3GeometryArgs
+            {
+                Cache = Cache,
+                Shaders = Shaders,
+                Sections = lightmapData.Sections,
+                ResourcePointer = lightmapData.ResourcePointer
+            };
 
-            var clusterRegion = new GeometryRegion { Name = BlamConstants.SbspClustersGroupName };
+            var clusterRegion = new ModelRegion { Name = BlamConstants.SbspClustersGroupName };
             clusterRegion.Permutations.AddRange(
-                Clusters.Select((c, i) => new GeometryPermutation
+                Clusters.Select((c, i) => new ModelPermutation
                 {
-                    SourceIndex = i,
                     Name = Clusters.IndexOf(c).ToString("D3", CultureInfo.CurrentCulture),
-                    MeshIndex = c.SectionIndex,
-                    MeshCount = 1
+                    MeshRange = (c.SectionIndex, 1)
                 })
             );
+
             model.Regions.Add(clusterRegion);
 
             foreach (var instanceGroup in BlamUtils.GroupGeometryInstances(GeometryInstances, i => i.Name))
             {
-                var sectionRegion = new GeometryRegion { Name = instanceGroup.Key };
+                var sectionRegion = new ModelRegion { Name = instanceGroup.Key };
                 sectionRegion.Permutations.AddRange(
-                    instanceGroup.Select(i => new GeometryPermutation
+                    instanceGroup.Select(i => new ModelPermutation
                     {
-                        SourceIndex = GeometryInstances.IndexOf(i),
                         Name = i.Name,
                         Transform = i.Transform,
-                        TransformScale = i.TransformScale,
-                        MeshIndex = i.SectionIndex,
-                        MeshCount = 1
+                        UniformScale = i.TransformScale,
+                        MeshRange = (i.SectionIndex, 1),
+                        IsInstanced = true
                     })
                 );
 
                 model.Regions.Add(sectionRegion);
             }
 
-            model.Meshes.AddRange(Halo3Common.GetMeshes(Cache, lightmapData.ResourcePointer, lightmapData.Sections, (s, m) =>
+            model.Meshes.AddRange(Halo3Common.GetMeshes(geoParams, out _));
+            foreach (var i in Enumerable.Range(0, BoundingBoxes.Count))
             {
-                var index = (short)lightmapData.Sections.IndexOf(s);
-                m.BoundsIndex = index >= BoundingBoxes.Count ? null : index;
-                m.IsInstancing = index < BoundingBoxes.Count;
-            }));
+                if (model.Meshes[i] == null)
+                    continue;
+
+                var bounds = BoundingBoxes[i];
+                var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
+                var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
+
+                (model.Meshes[i].PositionBounds, model.Meshes[i].TextureBounds) = (posBounds, texBounds);
+            }
 
             return model;
         }
@@ -119,7 +122,7 @@ namespace Reclaimer.Blam.Halo3
         public StringId Name { get; set; }
     }
 
-    public partial class BspBoundingBoxBlock : IRealBounds5D
+    public partial class BspBoundingBoxBlock
     {
         public RealBounds XBounds { get; set; }
         public RealBounds YBounds { get; set; }
