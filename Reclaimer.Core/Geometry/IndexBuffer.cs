@@ -90,7 +90,7 @@ namespace Reclaimer.Geometry
         public IndexBuffer Slice(int index, int count)
         {
             var newStart = start + (index * stride);
-            return new IndexBuffer(buffer, count, newStart, stride, offset, SizeOf);
+            return new IndexBuffer(buffer, count, newStart, stride, offset, SizeOf) { Layout = Layout };
         }
 
         public void ReverseEndianness()
