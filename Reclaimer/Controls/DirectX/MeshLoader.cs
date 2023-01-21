@@ -90,11 +90,11 @@ namespace Reclaimer.Controls.DirectX
                     if (!instanceLookup.TryGetValue(permutation.MeshRange.Index, out var source))
                         return null;
 
-                    var instance = new InstancedPermutation(source, permutation.Transform.ToMatrix3());
+                    var instance = new InstancedPermutation(source, permutation.GetFinalTransform().ToMatrix3());
                     return new MeshTag(permutation, source, instance);
                 }
 
-                var transform = permutation.Transform.ToMediaTransform();
+                var transform = permutation.GetFinalTransform().ToMediaTransform();
                 transform.Freeze();
 
                 var elementGroup = new GroupModel3D { Transform = transform };

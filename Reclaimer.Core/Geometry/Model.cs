@@ -26,9 +26,22 @@ namespace Reclaimer.Geometry
         public string Name { get; set; }
         public bool IsInstanced { get; set; }
         public (int Index, int Count) MeshRange { get; set; }
+        public Vector3 Scale { get; set; } = Vector3.One;
         public Matrix4x4 Transform { get; set; } = Matrix4x4.Identity;
 
+        public float UniformScale
+        {
+            get => Scale.Y == Scale.X && Scale.Z == Scale.X ? Scale.X : float.NaN;
+            set => Scale = new Vector3(value);
+        }
+
         public IEnumerable<int> MeshIndices => MeshRange.Index >= 0 ? Enumerable.Range(MeshRange.Index, MeshRange.Count) : Enumerable.Empty<int>();
+
+        public Matrix4x4 GetFinalTransform()
+        {
+            Matrix4x4.Decompose(Transform, out var scale, out var rotation, out var translation);
+            return Matrix4x4.CreateScale(Scale) * Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(translation);
+        }
     }
 
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
