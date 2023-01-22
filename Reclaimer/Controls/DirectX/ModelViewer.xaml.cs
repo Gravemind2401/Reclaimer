@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using HelixToolkit.Wpf.SharpDX;
+﻿using HelixToolkit.Wpf.SharpDX;
 using Microsoft.Win32;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
@@ -56,10 +55,8 @@ namespace Reclaimer.Controls.DirectX
 
         private readonly GroupModel3D modelGroup = new GroupModel3D { IsHitTestVisible = false };
 
-        //private TextureLoader textureLoader;
-        //private MeshLoader meshLoader;
-        private IExtractable contentProvider;
-        //private Model model;
+        private ICachedContentProvider<Scene> sceneProvider;
+        private TextureLoader textureLoader;
 
         public TabModel TabModel { get; }
         public ObservableCollection<TreeItemModel> TreeViewItems { get; }
@@ -78,36 +75,34 @@ namespace Reclaimer.Controls.DirectX
             renderer.AddChild(modelGroup);
         }
 
-        private void Initialise(IExtractable source)
+        public void LoadGeometry(IContentProvider<Scene> provider)
         {
-            contentProvider = source;
-            TabModel.ToolTip = source.Name;
-            TabModel.Header = Utils.GetFileName(source.Name);
+            sceneProvider = provider.AsCached();
+            TabModel.ToolTip = provider.Name;
+            TabModel.Header = Utils.GetFileName(provider.Name);
 
             AvailableLods = AllLods.Take(1); // model.LodCount);
 
             TreeViewItems.Clear();
             ClearChildren();
-        }
 
-        public void LoadGeometry(IContentProvider<Scene> provider)
-        {
-            Initialise(provider);
+            var scene = sceneProvider.Content;
+            textureLoader = new TextureLoader(scene);
 
-            var scene = provider.GetContent();
-            var textureLoader = new TextureLoader(scene);
+            if (scene.ChildGroups.Count == 0 && scene.ChildObjects.Count == 1 && scene.ChildObjects[0] is Model m)
+            {
+                LoadGeometry(m);
+                return;
+            }
 
-            foreach (var group in scene.ObjectGroups)
+            foreach (var group in scene.ChildGroups)
             {
                 var groupNode = new TreeItemModel { Header = group.Name, IsChecked = true };
 
-                foreach (var obj in group.ChildObjects)
+                foreach (var model in group.ChildObjects.OfType<Model>())
                 {
-                    var objNode = new TreeItemModel { Header = obj.Name, IsChecked = true };
-
-                    var model = obj.Model;
+                    var objNode = new TreeItemModel { Header = model.Name, IsChecked = true };
                     var meshLoader = new MeshLoader(model, textureLoader);
-
                     var objGroup = new GroupModel3D();
 
                     foreach (var region in model.Regions)
@@ -141,12 +136,8 @@ namespace Reclaimer.Controls.DirectX
             }
         }
 
-        public void LoadGeometry(IContentProvider<Model> provider)
+        public void LoadGeometry(Model model)
         {
-            Initialise(provider);
-
-            var model = provider.GetContent();
-            var textureLoader = new TextureLoader(Scene.WrapSingleModel(model));
             var meshLoader = new MeshLoader(model, textureLoader);
 
             foreach (var region in model.Regions)
@@ -292,7 +283,7 @@ namespace Reclaimer.Controls.DirectX
             var sfd = new SaveFileDialog
             {
                 OverwritePrompt = true,
-                FileName = contentProvider.Name,
+                FileName = Utils.GetFileName(string.IsNullOrWhiteSpace(sceneProvider.Content.Name) ? sceneProvider.Name : sceneProvider.Content.Name),
                 Filter = filter,
                 FilterIndex = 1 + exportFormats.TakeWhile(f => f.FormatId != ModelViewerPlugin.Settings.DefaultSaveFormat).Count(),
                 AddExtension = true
@@ -312,14 +303,10 @@ namespace Reclaimer.Controls.DirectX
 
         private void btnExportAll_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: export as scene
-            if (contentProvider is not IContentProvider<Model> modelProvider)
-                return;
-
             if (!PromptFileSave(out var fileName, out var formatId))
                 return;
 
-            ModelViewerPlugin.WriteModelFile(modelProvider, fileName, formatId);
+            ModelViewerPlugin.WriteModelFile(sceneProvider, fileName, formatId);
         }
 
         private void btnExportSelected_Click(object sender, RoutedEventArgs e)

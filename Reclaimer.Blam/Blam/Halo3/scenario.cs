@@ -1,4 +1,5 @@
 ﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 
 namespace Reclaimer.Blam.Halo3
@@ -17,18 +18,12 @@ namespace Reclaimer.Blam.Halo3
             var scene = new Scene { Name = Item.FileName };
             var group = new SceneGroup { Name = nameof(scenario_structure_bsp) };
 
-            scene.ObjectGroups.Add(group);
+            scene.ChildGroups.Add(group);
 
             foreach (var bspTag in StructureBsps.Select(b => b.BspReference.Tag))
             {
-                var bspData = bspTag.ReadMetadata<scenario_structure_bsp>();
-                var sceneObj = new SceneObject
-                {
-                    Name = bspTag.FileName,
-                    Model = bspData.GetContent()
-                };
-
-                group.ChildObjects.Add(sceneObj);
+                var bspData = bspTag.ReadMetadata<scenario_structure_bsp>() as IContentProvider<Model>;
+                group.ChildObjects.Add(bspData.GetContent());
             }
 
             return scene;

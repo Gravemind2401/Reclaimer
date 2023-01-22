@@ -9,7 +9,7 @@ using System.Numerics;
 namespace Reclaimer.Blam.Halo3
 {
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class render_model : ContentTagDefinition<Model>
+    public class render_model : ContentTagDefinition<Scene>, IContentProvider<Model>
     {
         public render_model(IIndexItem item)
             : base(item)
@@ -53,7 +53,11 @@ namespace Reclaimer.Blam.Halo3
 
         #region IContentProvider
 
-        public override Model GetContent()
+        Model IContentProvider<Model>.GetContent() => GetModelContent();
+
+        public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent());
+
+        private Model GetModelContent()
         {
             if (Sections.All(s => s.IndexBufferIndex < 0))
                 throw Exceptions.GeometryHasNoEdges();

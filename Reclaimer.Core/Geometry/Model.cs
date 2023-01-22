@@ -3,14 +3,21 @@ using System.Numerics;
 
 namespace Reclaimer.Geometry
 {
-    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class Model
+    public class Model : SceneObject
     {
-        public string Name { get; set; }
         public List<ModelRegion> Regions { get; } = new();
         public List<Marker> Markers { get; } = new();
         public List<Bone> Bones { get; } = new();
         public List<Mesh> Meshes { get; } = new();
+
+        public IEnumerable<Material> EnumerateMaterials()
+        {
+            return Meshes.Where(m => m != null)
+                .SelectMany(m => m.Segments)
+                .Select(s => s.Material)
+                .Where(m => m != null)
+                .DistinctBy(m => m.Id);
+        }
     }
 
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]

@@ -4,41 +4,30 @@ using System.Numerics;
 namespace Reclaimer.Geometry
 {
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class Scene
+    public class Scene : SceneGroup
     {
         public CoordinateSystem2 CoordinateSystem { get; set; } = CoordinateSystem2.Default;
 
-        public string Name { get; set; }
-        public List<SceneGroup> ObjectGroups { get; } = new();
         public List<Marker> Markers { get; } = new();
 
         public static Scene WrapSingleModel(Model model)
         {
             var scene = new Scene { Name = model.Name };
-            var group = new SceneGroup { Name = model.Name };
-            var obj = new SceneObject { Name = model.Name };
-
-            obj.Model = model;
-            group.ChildObjects.Add(obj);
-            scene.ObjectGroups.Add(group);
+            scene.ChildObjects.Add(model);
 
             return scene;
         }
 
         private IEnumerable<SceneGroup> EnumerateDescendants(SceneGroup group) => group.ChildGroups.Concat(group.ChildGroups.SelectMany(EnumerateDescendants));
 
-        public IEnumerable<SceneGroup> EnumerateGroupHierarchy() => ObjectGroups.Concat(ObjectGroups.SelectMany(EnumerateDescendants));
+        public IEnumerable<SceneGroup> EnumerateGroupHierarchy() => ChildGroups.Prepend(this).Concat(ChildGroups.SelectMany(EnumerateDescendants));
 
         public IEnumerable<Material> EnumerateMaterials()
         {
             return EnumerateGroupHierarchy()
                 .SelectMany(g => g.ChildObjects)
-                .Select(o => o.Model)
-                .SelectMany(m => m.Meshes)
-                .Where(m => m != null)
-                .SelectMany(m => m.Segments)
-                .Select(s => s.Material)
-                .Where(m => m != null)
+                .OfType<Model>()
+                .SelectMany(m => m.EnumerateMaterials())
                 .DistinctBy(m => m.Id);
         }
     }
@@ -59,9 +48,8 @@ namespace Reclaimer.Geometry
     }
 
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class SceneObject
+    public abstract class SceneObject
     {
         public string Name { get; set; }
-        public Model Model { get; set; }
     }
 }

@@ -6,7 +6,7 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.Halo3
 {
-    public partial class scenario_structure_bsp : ContentTagDefinition<Model>
+    public partial class scenario_structure_bsp : ContentTagDefinition<Scene>, IContentProvider<Model>
     {
         public scenario_structure_bsp(IIndexItem item)
             : base(item)
@@ -30,7 +30,11 @@ namespace Reclaimer.Blam.Halo3
 
         #region IContentProvider
 
-        public override Model GetContent()
+        Model IContentProvider<Model>.GetContent() => GetModelContent();
+
+        public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent());
+
+        private Model GetModelContent()
         {
             var scenario = Cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
             var model = new Model { Name = Item.FileName };

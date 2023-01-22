@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.Annotations;
+﻿using Reclaimer.Annotations;
 using Reclaimer.Audio;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Halo5;
@@ -39,7 +38,7 @@ namespace Reclaimer.Plugins
         private delegate string GetModelExtension(string formatId);
         private Lazy<GetModelExtension> getModelExtensionFunc;
 
-        private delegate void WriteModelFile(IContentProvider<Model> provider, string fileName, string formatId);
+        private delegate void WriteModelFile(IContentProvider<Scene> provider, string fileName, string formatId);
         private WriteModelFile writeModelFileFunc;
 
         private delegate bool WriteSoundFile(GameSound sound, string directory, bool overwrite);
@@ -410,7 +409,7 @@ namespace Reclaimer.Plugins
         }
 
         [SharedFunction]
-        private bool SaveModel(IContentProvider<Model> provider, string baseDir)
+        private bool SaveModel(IContentProvider<Scene> provider, string baseDir)
         {
             var fileName = MakePath(provider.Class, provider.Name, baseDir);
             var ext = getModelExtensionFunc?.Value(Settings.ModelFormat);
@@ -557,7 +556,7 @@ namespace Reclaimer.Plugins
             string Destination { get; }
             int GetContentType();
             bool GetBitmapContent(out IBitmap bitmap);
-            bool GetGeometryContent(out IContentProvider<Model> provider);
+            bool GetGeometryContent(out IContentProvider<Scene> provider);
             bool GetSoundContent(out ISoundContainer container);
         }
 
@@ -590,7 +589,7 @@ namespace Reclaimer.Plugins
 
             //TODO
             public bool GetBitmapContent(out IBitmap bitmap) => BlamContentFactory.TryGetBitmapContent(item, out bitmap);
-            public bool GetGeometryContent(out IContentProvider<Model> provider) => throw new NotImplementedException(); // BlamContentFactory.TryGetGeometryContent(item, out provider);
+            public bool GetGeometryContent(out IContentProvider<Scene> provider) => BlamContentFactory.TryGetGeometryContent(item, out provider);
             public bool GetSoundContent(out ISoundContainer container) => BlamContentFactory.TryGetSoundContent(item, out container);
         }
 
@@ -622,7 +621,7 @@ namespace Reclaimer.Plugins
             }
 
             public bool GetBitmapContent(out IBitmap bitmap) => BlamContentFactory.TryGetBitmapContent(item, out bitmap);
-            public bool GetGeometryContent(out IContentProvider<Model> provider) => BlamContentFactory.TryGetGeometryContent(item, out provider);
+            public bool GetGeometryContent(out IContentProvider<Scene> provider) => BlamContentFactory.TryGetGeometryContent(item, out provider);
             public bool GetSoundContent(out ISoundContainer container)
             {
                 container = null;
@@ -657,7 +656,7 @@ namespace Reclaimer.Plugins
 
             public bool GetBitmapContent(out IBitmap bitmap) => SaberContentFactory.TryGetBitmapContent(item, out bitmap);
 
-            public bool GetGeometryContent(out IContentProvider<Model> provider)
+            public bool GetGeometryContent(out IContentProvider<Scene> provider)
             {
                 provider = null;
                 return false;

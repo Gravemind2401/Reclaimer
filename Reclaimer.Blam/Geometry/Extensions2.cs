@@ -5,13 +5,9 @@ namespace Adjutant.Geometry
 {
     public static class Extensions2
     {
-        public static Model ConvertToScene(this IGeometryModel source)
+        public static Scene ConvertToScene(this IGeometryModel source)
         {
-            var scene = new Scene();
-            var group = new SceneGroup();
-
-            var obj = new SceneObject();
-            var model = obj.Model = new Model { Name = source.Name };
+            var model = new Model { Name = source.Name };
 
             foreach (var b in source.Nodes)
             {
@@ -125,10 +121,7 @@ namespace Adjutant.Geometry
                 }
             }
 
-            scene.ObjectGroups.Add(group);
-            group.ChildObjects.Add(obj);
-
-            return model;
+            return Scene.WrapSingleModel(model);
         }
     }
 }

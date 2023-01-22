@@ -42,12 +42,11 @@ namespace Reclaimer.Plugins
 
         public override void Suspend() => SaveSettings(Settings);
 
-        public override bool CanOpenFile(OpenFileArgs args) => args.File.Any(i => i is IContentProvider<Scene> || i is IContentProvider<Model>);
+        public override bool CanOpenFile(OpenFileArgs args) => args.File.Any(i => i is IContentProvider<Scene>);
 
         public override void OpenFile(OpenFileArgs args)
         {
-            var model = (IExtractable)args.File.OfType<IContentProvider<Scene>>().FirstOrDefault()
-                ?? args.File.OfType<IContentProvider<Model>>().FirstOrDefault();
+            var model = args.File.OfType<IContentProvider<Scene>>().FirstOrDefault();
             DisplayModel(args.TargetWindow, model, args.FileName);
         }
 
@@ -90,7 +89,7 @@ namespace Reclaimer.Plugins
         }
 
         [SharedFunction]
-        public void DisplayModel(ITabContentHost targetWindow, IExtractable model, string fileName)
+        public void DisplayModel(ITabContentHost targetWindow, IContentProvider<Scene> model, string fileName)
         {
             var tabId = $"{Key}::{model.SourceFile}::{model.Id}";
             if (Substrate.ShowTabById(tabId))
@@ -111,10 +110,7 @@ namespace Reclaimer.Plugins
                 };
 
                 viewer.TabModel.ContentId = tabId;
-                if (model is IContentProvider<Scene> s)
-                    viewer.LoadGeometry(s);
-                else if (model is IContentProvider<Model> m)
-                    viewer.LoadGeometry(m);
+                viewer.LoadGeometry(model);
 
                 container.AddItem(viewer.TabModel);
 
@@ -151,7 +147,7 @@ namespace Reclaimer.Plugins
         public static string GetFormatDescription(string formatId) => ExportFormats.FirstOrDefault(f => f.FormatId == formatId.ToLower()).Description;
 
         [SharedFunction]
-        public static void RegisterExportFormat(string formatId, string extension, string description, Action<IContentProvider<Model>, string> exportFunction)
+        public static void RegisterExportFormat(string formatId, string extension, string description, Action<IContentProvider<Scene>, string> exportFunction)
         {
             Exceptions.ThrowIfNullOrWhiteSpace(formatId);
             Exceptions.ThrowIfNullOrWhiteSpace(extension);
@@ -167,7 +163,7 @@ namespace Reclaimer.Plugins
         }
 
         [SharedFunction]
-        public static void WriteModelFile(IContentProvider<Model> provider, string fileName, string formatId)
+        public static void WriteModelFile(IContentProvider<Scene> provider, string fileName, string formatId)
         {
             ArgumentNullException.ThrowIfNull(provider);
             Exceptions.ThrowIfNullOrWhiteSpace(fileName);
@@ -200,9 +196,9 @@ namespace Reclaimer.Plugins
             public string FormatId { get; }
             public string Extension { get; }
             public string Description { get; }
-            public Action<IContentProvider<Model>, string> ExportFunction { get; }
+            public Action<IContentProvider<Scene>, string> ExportFunction { get; }
 
-            public ExportFormat(string formatId, string extension, string description, Action<IContentProvider<Model>, string> exportFunction = null)
+            public ExportFormat(string formatId, string extension, string description, Action<IContentProvider<Scene>, string> exportFunction = null)
             {
                 FormatId = formatId;
                 Extension = extension;

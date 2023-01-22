@@ -79,7 +79,7 @@ namespace Reclaimer.Blam.Common
             return content != null;
         }
 
-        public static bool TryGetGeometryContent(IIndexItem item, out IExtractable content)
+        public static bool TryGetGeometryContent(IIndexItem item, out IContentProvider<Scene> content)
         {
             content = null;
 
@@ -200,7 +200,7 @@ namespace Reclaimer.Blam.Common
             return content != null;
         }
 
-        public static bool TryGetGeometryContent(Halo5.ModuleItem item, out IContentProvider<Model> content)
+        public static bool TryGetGeometryContent(Halo5.ModuleItem item, out IContentProvider<Scene> content)
         {
             content = null;
 

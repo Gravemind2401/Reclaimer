@@ -50,6 +50,18 @@ namespace Reclaimer.Geometry
             public const int Specular = 2;
         }
 
+        public static void WriteAMF(this Scene scene, string fileName, float scale)
+        {
+            var model = scene.EnumerateGroupHierarchy().SelectMany(g => g.ChildObjects.OfType<Model>()).First();
+            WriteAMF(model, fileName, scale);
+        }
+
+        public static void WriteJMS(this Scene scene, string fileName, float scale)
+        {
+            var model = scene.EnumerateGroupHierarchy().SelectMany(g => g.ChildObjects.OfType<Model>()).First();
+            WriteJMS(model, fileName, scale);
+        }
+
         public static void WriteAMF(this Model model, string fileName, float scale)
         {
             if (!Directory.GetParent(fileName).Exists)
