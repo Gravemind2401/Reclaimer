@@ -25,6 +25,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="reclaimer\src\FileReader.py" />
     <Compile Include="reclaimer\src\PackedVector.py" />
     <Compile Include="reclaimer\src\__init__.py" />
     <Compile Include="reclaimer\tests\test_1.py" />

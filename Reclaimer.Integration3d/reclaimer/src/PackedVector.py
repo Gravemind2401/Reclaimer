@@ -1,5 +1,3 @@
-from typing import Tuple
-
 class BitConfig:
 
     def __init__(self, offset: int, length: int, signed: bool):
@@ -29,7 +27,7 @@ class BitConfig:
         return shifted / self.scale
 
     @staticmethod
-    def create_set(signed: bool, *precision: int) -> Tuple['BitConfig']:
+    def create_set(signed: bool, *precision: int) -> tuple['BitConfig']:
         axes = []
 
         offset = 0
@@ -45,7 +43,7 @@ UHenDN3 = BitConfig.create_set(False, 11, 11, 10)
 
 class PackedVector:
 
-    def __init__(self, value: int, config: Tuple[BitConfig]):
+    def __init__(self, value: int, config: tuple[BitConfig]):
         self._bits = value
         self._config = config
 
