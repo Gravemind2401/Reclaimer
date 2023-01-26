@@ -116,24 +116,7 @@ namespace Reclaimer.Blam.Halo4
                     {
                         reader.Seek(address + blockSize * i, SeekOrigin.Begin);
                         GeometryInstances[i].TransformScale = reader.ReadSingle();
-                        GeometryInstances[i].Transform = new Matrix4x4
-                        {
-                            M11 = reader.ReadSingle(),
-                            M12 = reader.ReadSingle(),
-                            M13 = reader.ReadSingle(),
-
-                            M21 = reader.ReadSingle(),
-                            M22 = reader.ReadSingle(),
-                            M23 = reader.ReadSingle(),
-
-                            M31 = reader.ReadSingle(),
-                            M32 = reader.ReadSingle(),
-                            M33 = reader.ReadSingle(),
-
-                            M41 = reader.ReadSingle(),
-                            M42 = reader.ReadSingle(),
-                            M43 = reader.ReadSingle(),
-                        };
+                        GeometryInstances[i].Transform = reader.ReadMatrix3x4();
                         reader.Seek(10, SeekOrigin.Current);
                         GeometryInstances[i].SectionIndex = reader.ReadInt16();
                     }

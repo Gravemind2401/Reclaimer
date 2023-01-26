@@ -36,28 +36,5 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
             return block;
         }
-
-        public static Matrix4x4 ReadMatrix4x4(this EndianReader reader)
-        {
-            return new Matrix4x4
-            {
-                M11 = reader.ReadSingle(),
-                M12 = reader.ReadSingle(),
-                M13 = reader.ReadSingle(),
-                M14 = reader.ReadSingle(),
-                M21 = reader.ReadSingle(),
-                M22 = reader.ReadSingle(),
-                M23 = reader.ReadSingle(),
-                M24 = reader.ReadSingle(),
-                M31 = reader.ReadSingle(),
-                M32 = reader.ReadSingle(),
-                M33 = reader.ReadSingle(),
-                M34 = reader.ReadSingle(),
-                M41 = reader.ReadSingle(),
-                M42 = reader.ReadSingle(),
-                M43 = reader.ReadSingle(),
-                M44 = reader.ReadSingle()
-            };
-        }
     }
 }

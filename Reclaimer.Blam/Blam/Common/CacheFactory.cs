@@ -129,26 +129,7 @@ namespace Reclaimer.Blam.Common
             reader.RegisterInstance(translator);
 
             if (cache.CacheType >= CacheType.Halo2Xbox)
-            {
-                reader.RegisterType(() => new Matrix4x4
-                {
-                    M11 = reader.ReadSingle(),
-                    M12 = reader.ReadSingle(),
-                    M13 = reader.ReadSingle(),
-
-                    M21 = reader.ReadSingle(),
-                    M22 = reader.ReadSingle(),
-                    M23 = reader.ReadSingle(),
-
-                    M31 = reader.ReadSingle(),
-                    M32 = reader.ReadSingle(),
-                    M33 = reader.ReadSingle(),
-
-                    M41 = reader.ReadSingle(),
-                    M42 = reader.ReadSingle(),
-                    M43 = reader.ReadSingle(),
-                });
-            }
+                reader.RegisterType(reader.ReadMatrix3x4);
 
             return reader;
         }
