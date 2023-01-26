@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Reclaimer.Integration3d", "Reclaimer.Integration3d\Reclaimer.Integration3d.pyproj", "{80C4C8B8-7846-4D75-9A2F-09A1A3955B86}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +62,8 @@ Global
 		{341F1E52-F911-499E-BE8D-3B9BA569D190}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{341F1E52-F911-499E-BE8D-3B9BA569D190}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{341F1E52-F911-499E-BE8D-3B9BA569D190}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80C4C8B8-7846-4D75-9A2F-09A1A3955B86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80C4C8B8-7846-4D75-9A2F-09A1A3955B86}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
