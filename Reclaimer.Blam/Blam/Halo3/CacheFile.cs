@@ -5,7 +5,6 @@ using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System.Collections;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.Halo3
 {
