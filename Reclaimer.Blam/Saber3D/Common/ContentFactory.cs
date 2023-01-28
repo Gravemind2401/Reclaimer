@@ -9,8 +9,7 @@ namespace Reclaimer.Saber3D.Common
             switch (item.ItemType)
             {
                 case PakItemType.Textures:
-                    IBitmap bitmapContent;
-                    if (TryGetBitmapContent(item, out bitmapContent))
+                    if (TryGetBitmapContent(item, out var bitmapContent))
                     {
                         content = bitmapContent;
                         return true;

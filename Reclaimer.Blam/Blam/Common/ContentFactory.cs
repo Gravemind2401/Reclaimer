@@ -20,8 +20,7 @@ namespace Reclaimer.Blam.Common
             switch (item.ClassCode)
             {
                 case bitmap:
-                    IBitmap bitmapContent;
-                    if (TryGetBitmapContent(item, out bitmapContent))
+                    if (TryGetBitmapContent(item, out var bitmapContent))
                     {
                         content = bitmapContent;
                         return true;
@@ -30,16 +29,14 @@ namespace Reclaimer.Blam.Common
                 case gbxmodel:
                 case render_model:
                 case scenario_structure_bsp:
-                    IRenderGeometry geometryContent;
-                    if (TryGetGeometryContent(item, out geometryContent))
+                    if (TryGetGeometryContent(item, out var geometryContent))
                     {
                         content = geometryContent;
                         return true;
                     }
                     break;
                 case sound:
-                    ISoundContainer soundContent;
-                    if (TryGetSoundContent(item, out soundContent))
+                    if (TryGetSoundContent(item, out var soundContent))
                     {
                         content = soundContent;
                         return true;
@@ -258,16 +255,14 @@ namespace Reclaimer.Blam.Common
             switch (item.ClassCode)
             {
                 case bitmap:
-                    IBitmap bitmapContent;
-                    if (TryGetBitmapContent(item, out bitmapContent))
+                    if (TryGetBitmapContent(item, out var bitmapContent))
                     {
                         content = bitmapContent;
                         return true;
                     }
                     break;
                 case render_model:
-                    IRenderGeometry geometryContent;
-                    if (TryGetGeometryContent(item, out geometryContent))
+                    if (TryGetGeometryContent(item, out var geometryContent))
                     {
                         content = geometryContent;
                         return true;
