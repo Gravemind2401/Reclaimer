@@ -1,4 +1,7 @@
-﻿using System.Numerics;
+﻿using Reclaimer.Geometry.Utilities;
+using Reclaimer.IO;
+using System.IO;
+using System.Numerics;
 
 namespace Reclaimer.Geometry
 {
@@ -74,6 +77,24 @@ namespace Reclaimer.Geometry
         public static IEnumerable<Vector4> GetBlendWeights(this IMeshCompat mesh, int index, int count)
         {
             return mesh.VertexBuffer.HasBlendWeights ? mesh.VertexBuffer.BlendWeightChannels[0].GetSubset(index, count).Select(v => new Vector4(v.X, v.Y, v.Z, v.W)) : null;
+        }
+
+        public static void WriteRMF(this Scene scene, string fileName)
+        {
+            ArgumentNullException.ThrowIfNull(scene);
+            ArgumentException.ThrowIfNullOrEmpty(fileName);
+
+            if (!fileName.EndsWith(".rmf", StringComparison.CurrentCultureIgnoreCase))
+                fileName += ".rmf";
+
+            Directory.GetParent(fileName).Create();
+
+            using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var bw = new EndianWriter(fs, ByteOrder.LittleEndian))
+            {
+                var sceneWriter = new SceneWriter(bw);
+                sceneWriter.Write(scene);
+            }
         }
     }
 }
