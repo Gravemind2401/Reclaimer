@@ -23,8 +23,7 @@ namespace Reclaimer.IO
         /// </param>
         public TransactionStream(Stream source)
         {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
+            ArgumentNullException.ThrowIfNull(source);
 
             if (!source.CanRead)
                 throw new ArgumentException("Source must be readable.");
@@ -270,8 +269,7 @@ namespace Reclaimer.IO
         /// </param>
         public void CopyChanges(TransactionStream target)
         {
-            if (target == null)
-                throw new ArgumentNullException(nameof(target));
+            ArgumentNullException.ThrowIfNull(target);
 
             if (!target.IsOpen)
                 throw new ArgumentException("Target stream is closed.");

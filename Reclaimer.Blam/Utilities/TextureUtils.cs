@@ -274,8 +274,7 @@ namespace Reclaimer.Blam.Utilities
 
         public static byte[] ApplyCrop(byte[] data, object format, int faces, int inWidth, int inHeight, int outWidth, int outHeight)
         {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data));
+            ArgumentNullException.ThrowIfNull(data);
 
             if (outWidth >= inWidth && outHeight >= inHeight)
                 return data;
@@ -458,8 +457,7 @@ namespace Reclaimer.Blam.Utilities
 
         public static byte[] Swizzle(byte[] data, int width, int height, int depth, int bpp, bool deswizzle)
         {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data));
+            ArgumentNullException.ThrowIfNull(data);
 
             int a, b;
             var output = new byte[data.Length];
@@ -524,8 +522,7 @@ namespace Reclaimer.Blam.Utilities
 
         public static byte[] XTextureScramble(byte[] data, int width, int height, object format, bool toLinear)
         {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data));
+            ArgumentNullException.ThrowIfNull(data);
 
             var knownFormat = format.ParseToEnum<KnownTextureFormat>();
             if (knownFormat == KnownTextureFormat.Unknown)

@@ -51,14 +51,9 @@ namespace Reclaimer.Drawing
         /// <exception cref="NotSupportedException" />
         public void WriteToDisk(string fileName, ImageFormat format, DdsOutputArgs args)
         {
-            if (fileName == null)
-                throw new ArgumentNullException(nameof(fileName));
-
-            if (format == null)
-                throw new ArgumentNullException(nameof(format));
-
-            if (args == null)
-                throw new ArgumentNullException(nameof(args));
+            ArgumentNullException.ThrowIfNull(fileName);
+            ArgumentNullException.ThrowIfNull(format);
+            ArgumentNullException.ThrowIfNull(args);
 
             var dir = Directory.GetParent(fileName).FullName;
 
@@ -91,14 +86,11 @@ namespace Reclaimer.Drawing
         /// <exception cref="NotSupportedException" />
         public void WriteToStream(Stream stream, ImageFormat format, DdsOutputArgs args)
         {
-            if (stream == null)
-                throw new ArgumentNullException(nameof(stream));
+            ArgumentNullException.ThrowIfNull(stream);
 
-            if (format == null)
-                throw new ArgumentNullException(nameof(format));
+            ArgumentNullException.ThrowIfNull(format);
 
-            if (args == null)
-                throw new ArgumentNullException(nameof(args));
+            ArgumentNullException.ThrowIfNull(args);
 
             BitmapEncoder encoder;
             if (format.Equals(ImageFormat.Bmp))
@@ -126,14 +118,11 @@ namespace Reclaimer.Drawing
         /// <exception cref="ArgumentNullException" />
         public void WriteToStream(Stream stream, BitmapEncoder encoder, DdsOutputArgs args)
         {
-            if (stream == null)
-                throw new ArgumentNullException(nameof(stream));
+            ArgumentNullException.ThrowIfNull(stream);
 
-            if (encoder == null)
-                throw new ArgumentNullException(nameof(encoder));
+            ArgumentNullException.ThrowIfNull(encoder);
 
-            if (args == null)
-                throw new ArgumentNullException(nameof(args));
+            ArgumentNullException.ThrowIfNull(args);
 
             var source = ToBitmapSource(args);
             encoder.Frames.Add(BitmapFrame.Create(source));
@@ -155,8 +144,7 @@ namespace Reclaimer.Drawing
         /// <exception cref="NotSupportedException" />
         public BitmapSource ToBitmapSource(DdsOutputArgs args)
         {
-            if (args == null)
-                throw new ArgumentNullException(nameof(args));
+            ArgumentNullException.ThrowIfNull(args);
 
             const double dpi = 96;
             var virtualHeight = Height;

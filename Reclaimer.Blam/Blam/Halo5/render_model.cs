@@ -49,8 +49,7 @@ namespace Reclaimer.Blam.Halo5
 
         public IGeometryModel ReadGeometry(int lod)
         {
-            if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
-                throw new ArgumentOutOfRangeException(nameof(lod));
+            Exceptions.ThrowIfIndexOutOfRange(lod, ((IRenderGeometry)this).LodCount);
 
             var model = new GeometryModel(Utils.GetFileName(Item.FullPath)) { CoordinateSystem = CoordinateSystem.Default };
 

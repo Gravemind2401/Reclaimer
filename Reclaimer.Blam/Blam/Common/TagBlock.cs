@@ -26,11 +26,8 @@ namespace Reclaimer.Blam.Common
 
         public TagBlock(DependencyReader reader, ICacheFile cache, IAddressTranslator translator, IPointerExpander expander)
         {
-            if (reader == null)
-                throw new ArgumentNullException(nameof(reader));
-
-            if (translator == null)
-                throw new ArgumentNullException(nameof(translator));
+            ArgumentNullException.ThrowIfNull(reader);
+            ArgumentNullException.ThrowIfNull(translator);
 
             Count = reader.ReadInt32();
             Pointer = new Pointer(reader.ReadInt32(), translator, expander);

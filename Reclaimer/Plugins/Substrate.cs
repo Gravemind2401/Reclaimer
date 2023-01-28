@@ -316,8 +316,7 @@ namespace Reclaimer.Plugins
         /// <param name="fileName">The full path of the file to add.</param>
         public static void AddRecentFile(string fileName)
         {
-            if (!File.Exists(fileName))
-                throw Exceptions.FileNotFound(fileName);
+            Exceptions.ThrowIfFileNotFound(fileName);
 
             App.Settings.RecentFiles.RemoveAll(s => s.Equals(fileName, StringComparison.OrdinalIgnoreCase));
             App.Settings.RecentFiles.Insert(0, fileName);
@@ -338,8 +337,7 @@ namespace Reclaimer.Plugins
         /// <param name="targetDock">The dock area the tool will be added to.</param>
         public static void AddTool(TabModel item, ITabContentHost host, Dock targetDock)
         {
-            if (host == null)
-                throw new ArgumentNullException(nameof(host));
+            ArgumentNullException.ThrowIfNull(host);
 
             AddTool(item, host, targetDock, new GridLength(DockContainerModel.DefaultDockSize));
         }
@@ -354,11 +352,8 @@ namespace Reclaimer.Plugins
         /// <param name="targetDock">The dock area the tool will be added to.</param>
         public static void AddTool(TabModel item, ITabContentHost host, Dock targetDock, GridLength targetSize)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
-
-            if (host == null)
-                throw new ArgumentNullException(nameof(host));
+            ArgumentNullException.ThrowIfNull(item);
+            ArgumentNullException.ThrowIfNull(host);
 
             if (item.Usage != TabItemType.Tool)
                 throw new ArgumentException("item Usage must be TabItemType.Tool", nameof(item));

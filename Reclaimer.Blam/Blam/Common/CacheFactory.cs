@@ -72,11 +72,8 @@ namespace Reclaimer.Blam.Common
 
         public static ICacheFile ReadCacheFile(string fileName)
         {
-            if (fileName == null)
-                throw new ArgumentNullException(nameof(fileName));
-
-            if (!File.Exists(fileName))
-                throw Exceptions.FileNotFound(fileName);
+            ArgumentNullException.ThrowIfNull(fileName);
+            Exceptions.ThrowIfFileNotFound(fileName);
 
             var args = CacheArgs.FromFile(fileName);
             switch (args.Metadata?.CacheType)

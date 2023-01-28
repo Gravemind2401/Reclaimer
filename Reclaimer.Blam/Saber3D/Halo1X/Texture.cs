@@ -66,8 +66,7 @@ namespace Reclaimer.Saber3D.Halo1X
 
         DdsImage IBitmap.ToDds(int index)
         {
-            if (index < 0 || index >= 1)
-                throw new ArgumentOutOfRangeException(nameof(index));
+            Exceptions.ThrowIfIndexOutOfRange(index, 1);
 
             var props = new BitmapProperties(Width, Height, Format, "Texture2D")
             {

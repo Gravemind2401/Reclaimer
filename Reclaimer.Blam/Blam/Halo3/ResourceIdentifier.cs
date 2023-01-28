@@ -28,8 +28,7 @@ namespace Reclaimer.Blam.Halo3
 
         public ResourceIdentifier(DependencyReader reader, ICacheFile cache)
         {
-            if (reader == null)
-                throw new ArgumentNullException(nameof(reader));
+            ArgumentNullException.ThrowIfNull(reader);
             this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
             identifier = reader.ReadInt32();
         }
@@ -41,8 +40,7 @@ namespace Reclaimer.Blam.Halo3
 
         public byte[] ReadData(PageType mode, int maxLength)
         {
-            if (maxLength < 0)
-                throw new ArgumentOutOfRangeException(nameof(maxLength));
+            Exceptions.ThrowIfNegative(maxLength);
 
             if (cache.CacheType <= CacheType.Halo3Beta)
                 return ReadDataHalo3Beta(mode, maxLength);

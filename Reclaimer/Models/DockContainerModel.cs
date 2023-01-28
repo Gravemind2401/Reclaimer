@@ -145,8 +145,7 @@ namespace Reclaimer.Models
 
         public void AddTool(TabModel item, TabOwnerModelBase target, Dock dock)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             var group = new ToolWellModel() { Width = item.Width, Height = item.Height, Dock = dock };
             group.Children.Add(item);
@@ -171,8 +170,7 @@ namespace Reclaimer.Models
 
         public void AddTool2(TabModel item, Dock targetDock, GridLength defaultSize)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
             if (item.Usage == TabItemType.Document)
                 throw new InvalidOperationException();
 

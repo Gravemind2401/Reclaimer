@@ -32,11 +32,8 @@ namespace Reclaimer.Blam.Common
 
         public static CacheArgs FromFile(string fileName)
         {
-            if (fileName == null)
-                throw new ArgumentNullException(nameof(fileName));
-
-            if (!File.Exists(fileName))
-                throw Exceptions.FileNotFound(fileName);
+            ArgumentNullException.ThrowIfNull(fileName);
+            Exceptions.ThrowIfFileNotFound(fileName);
 
             using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
             using (var reader = new EndianReader(fs, ByteOrder.LittleEndian))

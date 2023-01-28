@@ -27,10 +27,8 @@ namespace Reclaimer.Blam.Common
 
         public TagReference(ICacheFile cache, EndianReader reader)
         {
-            if (reader == null)
-                throw new ArgumentNullException(nameof(reader));
-
             this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
+            ArgumentNullException.ThrowIfNull(reader);
 
             classId = reader.ReadInt32();
 

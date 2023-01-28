@@ -29,8 +29,7 @@ namespace Reclaimer.Blam.MccHalo3
 
         protected CacheFile(string fileName, ByteOrder byteOrder, string buildString, CacheType cacheType, CacheMetadata metadata)
         {
-            if (!File.Exists(fileName))
-                throw Exceptions.FileNotFound(fileName);
+            Exceptions.ThrowIfFileNotFound(fileName);
 
             FileName = fileName;
             ByteOrder = byteOrder;

@@ -26,8 +26,7 @@ namespace Reclaimer.Blam.HaloReach
 
         public ResourceIdentifier(DependencyReader reader, ICacheFile cache)
         {
-            if (reader == null)
-                throw new ArgumentNullException(nameof(reader));
+            ArgumentNullException.ThrowIfNull(reader);
             this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
             identifier = reader.ReadInt32();
         }

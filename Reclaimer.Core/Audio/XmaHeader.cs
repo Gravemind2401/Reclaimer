@@ -14,8 +14,7 @@ namespace Reclaimer.Audio
 
         public XmaHeader(int sampleRate, byte[] channelCounts)
         {
-            if (channelCounts == null)
-                throw new ArgumentNullException(nameof(channelCounts));
+            ArgumentNullException.ThrowIfNull(channelCounts);
 
             BitsPerSample = 16;
             Streams = new List<XmaStreamInfo>();

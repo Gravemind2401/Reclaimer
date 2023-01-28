@@ -113,7 +113,7 @@ namespace Reclaimer.IO.Dynamic
             }
 
             if (value == null && !storageType.IsValueType)
-                throw new InvalidOperationException($"Null reference types cannot be written to stream");
+                throw new InvalidOperationException("Null reference types cannot be written to stream");
 
             if (value != null && prop.PropertyType != storageType && !Utils.TryConvert(ref value, prop.PropertyType, storageType))
                 throw new InvalidCastException($"The value in {prop.Property.Name} could not be stored as {storageType}");

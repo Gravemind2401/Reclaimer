@@ -161,8 +161,7 @@ namespace Reclaimer.Plugins
         /// <param name="status">The status to display.</param>
         protected internal void SetWorkingStatus(string status)
         {
-            if (string.IsNullOrWhiteSpace(status))
-                throw Exceptions.MissingStringParameter(nameof(status));
+            Exceptions.ThrowIfNullOrWhiteSpace(status);
 
             WorkingStatus = status;
             Substrate.RaiseWorkingStatusChanged(this);

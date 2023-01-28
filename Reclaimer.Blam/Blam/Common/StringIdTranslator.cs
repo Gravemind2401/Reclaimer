@@ -67,7 +67,7 @@ namespace Reclaimer.Blam.Common
         private StringIdTranslator(IMccCacheFile cache, XmlNode node)
         {
             if (cache.Header is not IMccGen3Header header)
-                throw new ArgumentException(null, nameof(cache));
+                throw new NotSupportedException($"'{nameof(cache)}' parameter must be a Gen3 cache file or later.");
 
             indexBits = int.Parse(node.Attributes["indexBits"].Value);
             namespaceBits = int.Parse(node.Attributes["namespaceBits"].Value);

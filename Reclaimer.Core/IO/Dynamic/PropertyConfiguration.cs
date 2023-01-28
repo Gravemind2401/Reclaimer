@@ -67,26 +67,24 @@ namespace Reclaimer.IO.Dynamic
             if (OffsetAttributes.Count == 0)
                 return false;
 
-            static Exception AttributeOverlapException(Type attributeType) => new InvalidOperationException($"Multiple {attributeType.Name}s matching the current read version");
-
             if (GetMethod == null || SetMethod == null)
-                throw new InvalidOperationException("Property must have both a public getter and setter");
+                throw Exceptions.NonPublicGetSet(Property.Name);
             if (IsVersionNumber && !IsVersionNullable)
                 throw new InvalidOperationException();
             if (!DataLengthAttributes.ValidateOverlap())
-                throw AttributeOverlapException(typeof(DataLengthAttribute));
+                throw Exceptions.AttributeVersionOverlap(Property.Name, typeof(DataLengthAttribute));
             if (!OffsetAttributes.ValidateOverlap())
-                throw AttributeOverlapException(typeof(OffsetAttribute));
+                throw Exceptions.AttributeVersionOverlap(Property.Name, typeof(OffsetAttribute));
             if (!ByteOrderAttributes.ValidateOverlap())
-                throw AttributeOverlapException(typeof(ByteOrderAttribute));
+                throw Exceptions.AttributeVersionOverlap(Property.Name, typeof(ByteOrderAttribute));
             if (!StoreTypeAttributes.ValidateOverlap())
-                throw AttributeOverlapException(typeof(StoreTypeAttribute));
+                throw Exceptions.AttributeVersionOverlap(Property.Name, typeof(StoreTypeAttribute));
 
             var stringConstraints = Convert.ToInt32(IsLengthPrefixed) + Convert.ToInt32(FixedLengthAttribute != null) + Convert.ToInt32(NullTerminatedAttribute != null);
             if (PropertyType != typeof(string) && stringConstraints > 0)
                 throw new InvalidOperationException("String type attributes applied to a non-string property");
             if (PropertyType == typeof(string) && stringConstraints != 1)
-                throw new InvalidOperationException("More than one string type attribute applied");
+                throw Exceptions.StringTypeOverlap(Property.Name);
 
             return true;
         }

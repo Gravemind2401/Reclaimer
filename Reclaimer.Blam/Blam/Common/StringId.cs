@@ -17,11 +17,8 @@ namespace Reclaimer.Blam.Common
 
         public StringId(EndianReader reader, ICacheFile cache)
         {
-            if (reader == null)
-                throw new ArgumentNullException(nameof(reader));
-
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
+            ArgumentNullException.ThrowIfNull(reader);
+            ArgumentNullException.ThrowIfNull(cache);
 
             Id = cache.CacheType < CacheType.Halo3Alpha ? reader.ReadInt16() : reader.ReadInt32();
             this.cache = cache;

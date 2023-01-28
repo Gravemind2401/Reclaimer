@@ -1,4 +1,6 @@
-﻿namespace Reclaimer.Saber3D.Halo1X.Geometry
+﻿using Reclaimer.Blam.Utilities;
+
+namespace Reclaimer.Saber3D.Halo1X.Geometry
 {
     [AttributeUsage(AttributeTargets.Class)]
     internal class DataBlockAttribute : Attribute
@@ -11,9 +13,7 @@
 
         public DataBlockAttribute(int blockType)
         {
-            if (blockType < 0 || blockType > ushort.MaxValue)
-                throw new ArgumentOutOfRangeException(nameof(blockType));
-
+            Exceptions.ThrowIfOutOfRange(blockType, 0, ushort.MaxValue + 1);
             BlockType = blockType;
         }
     }

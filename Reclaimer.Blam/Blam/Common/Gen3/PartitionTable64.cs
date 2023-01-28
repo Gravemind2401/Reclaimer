@@ -10,11 +10,8 @@ namespace Reclaimer.Blam.Common.Gen3
 
         public PartitionTable64(ICacheFile cache, EndianReader reader)
         {
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
-            if (reader == null)
-                throw new ArgumentNullException(nameof(reader));
+            ArgumentNullException.ThrowIfNull(cache);
+            ArgumentNullException.ThrowIfNull(reader);
 
             partitions = new IPartitionLayout[6];
 

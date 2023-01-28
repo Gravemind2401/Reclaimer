@@ -29,8 +29,7 @@ namespace Reclaimer.Blam.Utilities
         protected DependencyReader(DependencyReader parent, long virtualOrigin)
             : base(parent, virtualOrigin)
         {
-            if (parent == null)
-                throw new ArgumentNullException(nameof(parent));
+            ArgumentNullException.ThrowIfNull(parent);
 
             registeredTypes = parent.registeredTypes;
             registeredInstances = parent.registeredInstances;

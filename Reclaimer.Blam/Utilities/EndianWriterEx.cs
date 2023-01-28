@@ -9,9 +9,7 @@ namespace Reclaimer.Blam.Utilities
 
         public EndianWriterEx(Stream input, ByteOrder byteOrder)
             : this(input, byteOrder, false)
-        {
-
-        }
+        { }
 
         public EndianWriterEx(Stream input, ByteOrder byteOrder, bool leaveOpen)
             : base(input, byteOrder, leaveOpen)
@@ -22,9 +20,7 @@ namespace Reclaimer.Blam.Utilities
         protected EndianWriterEx(EndianWriterEx parent, long virtualOrigin)
             : base(parent, virtualOrigin)
         {
-            if (parent == null)
-                throw new ArgumentNullException(nameof(parent));
-
+            ArgumentNullException.ThrowIfNull(parent);
             registeredTypes = parent.registeredTypes;
         }
 

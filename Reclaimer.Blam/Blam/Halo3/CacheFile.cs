@@ -28,8 +28,7 @@ namespace Reclaimer.Blam.Halo3
 
         internal CacheFile(CacheArgs args)
         {
-            if (!File.Exists(args.FileName))
-                throw Exceptions.FileNotFound(args.FileName);
+            Exceptions.ThrowIfFileNotFound(args.FileName);
 
             FileName = args.FileName;
             ByteOrder = args.ByteOrder;

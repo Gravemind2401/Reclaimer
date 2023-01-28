@@ -31,8 +31,7 @@ namespace Reclaimer.Blam.Utilities
 
         public Pointer(DependencyReader reader, IAddressTranslator translator, IPointerExpander expander)
         {
-            if (reader == null)
-                throw new ArgumentNullException(nameof(reader));
+            ArgumentNullException.ThrowIfNull(reader);
 
             Value = reader.ReadInt32();
             this.translator = translator ?? throw new ArgumentNullException(nameof(translator));

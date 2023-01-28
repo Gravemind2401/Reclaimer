@@ -1,5 +1,6 @@
 ﻿using Adjutant.Spatial;
 using Reclaimer;
+using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.IO;
 using System.IO;
@@ -123,14 +124,9 @@ namespace Adjutant.Geometry
 
             public MultiMesh(IGeometryModel model, int meshIndex, int meshCount)
             {
-                if (model == null)
-                    throw new ArgumentNullException(nameof(model));
-
-                if (meshIndex < 0 || meshIndex >= model.Meshes.Count)
-                    throw new ArgumentOutOfRangeException(nameof(meshIndex));
-
-                if (meshCount < 1 || meshIndex + meshCount > model.Meshes.Count)
-                    throw new ArgumentOutOfRangeException(nameof(meshCount));
+                ArgumentNullException.ThrowIfNull(model);
+                Exceptions.ThrowIfIndexOutOfRange(meshIndex, model.Meshes.Count);
+                Exceptions.ThrowIfOutOfRange(meshIndex, 1, model.Meshes.Count - meshIndex);
 
                 this.model = model;
                 this.meshIndex = meshIndex;

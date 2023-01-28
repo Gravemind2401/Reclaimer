@@ -29,7 +29,10 @@ namespace Reclaimer.IO.Dynamic
                 .ToList();
 
             if (!properties.SelectMany(p => p.DataLengthAttributes).ValidateOverlap())
-                throw new InvalidOperationException();
+                throw Exceptions.AttributeVersionOverlap(type.Name, typeof(DataLengthAttribute));
+
+            if (properties.Where(p => p.IsVersionNumber).Skip(1).Any())
+                throw Exceptions.MultipleVersionsSpecified(type.Name);
 
             versionProperty = properties.SingleOrDefault(p => p.IsVersionNumber);
             if (versionProperty != null)
@@ -56,8 +59,7 @@ namespace Reclaimer.IO.Dynamic
 
         public static object Populate(object obj, Type type, EndianReader reader, double? version)
         {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
+            ArgumentNullException.ThrowIfNull(type);
 
             if (MethodCache.TryGetReadMethod(type, out var readMethod))
                 return readMethod(reader, reader.ByteOrder);
@@ -87,8 +89,7 @@ namespace Reclaimer.IO.Dynamic
 
         public static void Write(object obj, EndianWriter writer, double? version)
         {
-            if (obj == null)
-                throw new ArgumentNullException(nameof(obj));
+            ArgumentNullException.ThrowIfNull(obj);
 
             var type = obj.GetType();
             if (MethodCache.TryGetWriteMethod(type, out var writeMethod))

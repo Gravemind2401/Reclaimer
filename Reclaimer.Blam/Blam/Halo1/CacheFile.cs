@@ -26,8 +26,7 @@ namespace Reclaimer.Blam.Halo1
 
         internal CacheFile(CacheArgs args)
         {
-            if (!File.Exists(args.FileName))
-                throw Exceptions.FileNotFound(args.FileName);
+            Exceptions.ThrowIfFileNotFound(args.FileName);
 
             FileName = args.FileName;
             ByteOrder = args.ByteOrder;
@@ -63,9 +62,7 @@ namespace Reclaimer.Blam.Halo1
 
         public DependencyReader CreateReader(IAddressTranslator translator)
         {
-            if (translator == null)
-                throw new ArgumentNullException(nameof(translator));
-
+            ArgumentNullException.ThrowIfNull(translator);
             return CreateReader(FileName, translator);
         }
 

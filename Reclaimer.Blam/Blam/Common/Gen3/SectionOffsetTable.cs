@@ -10,11 +10,8 @@ namespace Reclaimer.Blam.Common.Gen3
 
         public SectionOffsetTable(ICacheFile cache, EndianReader reader)
         {
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
-
-            if (reader == null)
-                throw new ArgumentNullException(nameof(reader));
+            ArgumentNullException.ThrowIfNull(cache);
+            ArgumentNullException.ThrowIfNull(reader);
 
             if (cache.Metadata.Generation < CacheGeneration.Gen3)
                 throw new ArgumentException();

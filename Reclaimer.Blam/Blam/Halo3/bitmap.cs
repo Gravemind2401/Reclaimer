@@ -32,8 +32,7 @@ namespace Reclaimer.Blam.Halo3
 
         public DdsImage ToDds(int index)
         {
-            if (index < 0 || index >= Bitmaps.Count)
-                throw new ArgumentOutOfRangeException(nameof(index));
+            Exceptions.ThrowIfIndexOutOfRange(index, Bitmaps.Count);
 
             var submap = Bitmaps[index];
 

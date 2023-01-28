@@ -73,8 +73,7 @@ namespace Reclaimer.Blam.Halo3
 
         public IGeometryModel ReadGeometry(int lod)
         {
-            if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
-                throw new ArgumentOutOfRangeException(nameof(lod));
+            Exceptions.ThrowIfIndexOutOfRange(lod, ((IRenderGeometry)this).LodCount);
 
             var scenario = Cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
             var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };

@@ -153,20 +153,15 @@ namespace Reclaimer.Plugins
         [SharedFunction]
         public static void RegisterExportFormat(string formatId, string extension, string description, Action<IGeometryModel, string> exportFunction)
         {
-            if (string.IsNullOrWhiteSpace(formatId))
-                throw Exceptions.MissingStringParameter(nameof(formatId));
-
-            if (string.IsNullOrWhiteSpace(extension))
-                throw Exceptions.MissingStringParameter(nameof(extension));
-
-            if (exportFunction == null)
-                throw new ArgumentNullException(nameof(exportFunction));
+            Exceptions.ThrowIfNullOrWhiteSpace(formatId);
+            Exceptions.ThrowIfNullOrWhiteSpace(extension);
+            ArgumentNullException.ThrowIfNull(exportFunction);
 
             formatId = formatId.ToLower();
             extension = extension.ToLower();
 
             if (UserFormats.ContainsKey(formatId))
-                throw new ArgumentException("A format the same ID has already been added.", nameof(formatId));
+                throw new ArgumentException("A format with the same ID has already been added.", nameof(formatId));
 
             UserFormats.Add(formatId, new ExportFormat(formatId, extension, description, exportFunction));
         }
@@ -174,11 +169,8 @@ namespace Reclaimer.Plugins
         [SharedFunction]
         public static void WriteModelFile(IGeometryModel model, string fileName, string formatId)
         {
-            if (model == null)
-                throw new ArgumentNullException(nameof(model));
-
-            if (string.IsNullOrWhiteSpace(fileName))
-                throw new ArgumentNullException(nameof(fileName));
+            ArgumentNullException.ThrowIfNull(model);
+            Exceptions.ThrowIfNullOrWhiteSpace(fileName);
 
             formatId = (formatId ?? Settings.DefaultSaveFormat).ToLower();
             if (!ExportFormats.Any(f => f.FormatId == formatId))

@@ -57,8 +57,7 @@ namespace Reclaimer.Blam.Halo5
 
         public int GetSectionOffset(int section)
         {
-            if (section < 0 || section >= SectionCount)
-                throw new ArgumentOutOfRangeException(nameof(section));
+            Exceptions.ThrowIfIndexOutOfRange(section, SectionCount);
 
             //treat 0 as being the header
             if (section == 0)

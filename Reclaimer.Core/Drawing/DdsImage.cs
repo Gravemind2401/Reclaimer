@@ -379,8 +379,7 @@ namespace Reclaimer.Drawing
         /// <exception cref="ArgumentNullException" />
         public void WriteToDisk(string fileName)
         {
-            if (fileName == null)
-                throw new ArgumentNullException(nameof(fileName));
+            ArgumentNullException.ThrowIfNull(fileName);
 
             var dir = Directory.GetParent(fileName).FullName;
 
@@ -398,8 +397,7 @@ namespace Reclaimer.Drawing
         /// <exception cref="ArgumentNullException" />
         public void WriteToStream(Stream stream)
         {
-            if (stream == null)
-                throw new ArgumentNullException(nameof(stream));
+            ArgumentNullException.ThrowIfNull(stream);
 
             using (var writer = new BinaryWriter(stream, Encoding.UTF8, true))
             {
@@ -476,8 +474,7 @@ namespace Reclaimer.Drawing
         /// <exception cref="InvalidDataException" />
         public static DdsImage ReadFromStream(Stream stream)
         {
-            if (stream == null)
-                throw new ArgumentNullException(nameof(stream));
+            ArgumentNullException.ThrowIfNull(stream);
 
             using var reader = new BinaryReader(stream, Encoding.UTF8, true);
 

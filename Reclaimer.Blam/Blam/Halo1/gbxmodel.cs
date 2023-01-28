@@ -45,8 +45,7 @@ namespace Reclaimer.Blam.Halo1
 
         public IGeometryModel ReadGeometry(int lod)
         {
-            if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
-                throw new ArgumentOutOfRangeException(nameof(lod));
+            Exceptions.ThrowIfIndexOutOfRange(lod, ((IRenderGeometry)this).LodCount);
 
             using var reader = Cache.CreateReader(Cache.DefaultAddressTranslator);
 
@@ -445,8 +444,7 @@ namespace Reclaimer.Blam.Halo1
 
         internal short LodIndex(int lod)
         {
-            if (lod < 0 || lod > 4)
-                throw new ArgumentOutOfRangeException(nameof(lod));
+            Exceptions.ThrowIfIndexOutOfRange(lod, LodArray.Length);
 
             return LodArray.Take(lod + 1)
                 .Reverse()

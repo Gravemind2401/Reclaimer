@@ -17,8 +17,7 @@ namespace Reclaimer.Blam.Utilities
 
         public Pointer64(DependencyReader reader, IAddressTranslator translator)
         {
-            if (reader == null)
-                throw new ArgumentNullException(nameof(reader));
+            ArgumentNullException.ThrowIfNull(reader);
 
             Value = reader.ReadInt64();
             this.translator = translator ?? throw new ArgumentNullException(nameof(translator));

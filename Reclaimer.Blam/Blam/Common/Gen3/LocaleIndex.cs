@@ -15,8 +15,7 @@ namespace Reclaimer.Blam.Common.Gen3
 
         public LocaleIndex(IGen3CacheFile cache, int offset, int size, int count)
         {
-            if (cache == null)
-                throw new ArgumentNullException(nameof(cache));
+            ArgumentNullException.ThrowIfNull(cache);
 
             this.offset = offset;
             this.size = size;
