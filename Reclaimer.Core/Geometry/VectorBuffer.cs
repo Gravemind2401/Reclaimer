@@ -37,6 +37,11 @@ namespace Reclaimer.Geometry
 
         int IVectorBuffer.Dimensions => TVector.Dimensions;
         IVectorBuffer IVectorBuffer.Slice(int index, int count) => Slice(index, count);
+
+        Type IVectorBuffer.VectorType => typeof(TVector);
+        int IVectorBuffer.VectorSize => TVector.SizeOf;
+        ReadOnlySpan<byte> IVectorBuffer.GetBytes(int index) => CreateSpan(index);
+
         IVector IReadOnlyList<IVector>.this[int index] => this[index];
         IEnumerator<IVector> IEnumerable<IVector>.GetEnumerator() => Enumerate().OfType<IVector>().GetEnumerator();
     }
