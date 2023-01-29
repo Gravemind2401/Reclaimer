@@ -13,14 +13,13 @@ namespace Reclaimer.Geometry.Utilities
 
         public abstract void Write(T obj);
 
-        protected BlockMarker BlockMarker(string code) => throw new NotImplementedException();
-        protected BlockMarker BlockMarker(int identifier) => new BlockMarker(Writer, identifier);
+        protected BlockMarker BlockMarker(BlockCode code) => new BlockMarker(Writer, code);
+        protected BlockMarker BlockMarker(int identifier) => throw new NotImplementedException();
 
-        protected void WriteList<TItem>(IList<TItem> list, Action<TItem> writeFunc, string code)
+        protected void WriteList<TItem>(IList<TItem> list, Action<TItem> writeFunc, BlockCode code)
         {
-            using (BlockMarker(code))
+            using (new ListBlockMarker(Writer, code, list.Count))
             {
-                Writer.Write(list.Count);
                 foreach (var item in list)
                     writeFunc(item);
             }
@@ -29,7 +28,7 @@ namespace Reclaimer.Geometry.Utilities
 
     internal class SceneWriter : SceneWriter<Scene>
     {
-        private static readonly Version version = new Version(0, 0, 0, 0);
+        private static readonly Version version = new Version();
 
         //TODO: treat ID 0 as always unique? ie dont force creator to provide unique ids
 
@@ -47,21 +46,27 @@ namespace Reclaimer.Geometry.Utilities
             texturePool.Clear();
             modelPool.Clear();
 
-            using (BlockMarker("RMF!"))
+            using (BlockMarker(SceneCodes.FileHeader))
             {
                 Writer.Write((byte)version.Major);
                 Writer.Write((byte)version.Minor);
-                Writer.Write((byte)version.Build);
-                Writer.Write((byte)version.Revision);
+                Writer.Write((byte)Math.Min(0, version.Build));
+                Writer.Write((byte)Math.Min(0, version.Revision));
                 Write(scene.CoordinateSystem);
                 Writer.Write(scene.Name);
+
+                //TODO
                 //write markers
+                using (new ListBlockMarker(Writer, null, 0))
+                { }
                 //write hierarchy
+                using (new ListBlockMarker(Writer, null, 0))
+                { }
 
                 var modelWriter = new ModelWriter(Writer, materialPool);
-                WriteList(modelPool, modelWriter.Write, "model list");
-                WriteList(materialPool, Write, "material list");
-                WriteList(texturePool, Write, "texture list");
+                WriteList(modelPool, modelWriter.Write, SceneCodes.Model);
+                WriteList(materialPool, Write, SceneCodes.Material);
+                WriteList(texturePool, Write, SceneCodes.Texture);
             }
         }
 
@@ -82,11 +87,11 @@ namespace Reclaimer.Geometry.Utilities
 
         private void Write(Material material)
         {
-            using (BlockMarker("material"))
+            using (BlockMarker(SceneCodes.Material))
             {
                 Writer.Write(material.Name);
-                WriteList(material.TextureMappings, Write, "tex map list");
-                WriteList(material.Tints, Write, "tint list");
+                WriteList(material.TextureMappings, Write, SceneCodes.TextureMapping);
+                WriteList(material.Tints, Write, SceneCodes.Tint);
             }
         }
 
@@ -113,7 +118,11 @@ namespace Reclaimer.Geometry.Utilities
 
         private void Write(Texture texture)
         {
-            throw new NotImplementedException();
+            using (BlockMarker(SceneCodes.Texture))
+            {
+                Writer.Write(texture.Name);
+                Writer.Write(0); //binary size if embedded
+            }
         }
     }
 
@@ -138,30 +147,30 @@ namespace Reclaimer.Geometry.Utilities
             vertexBuffers.AddRange(model.Meshes.Select(m => m.VertexBuffer).Distinct());
             indexBuffers.AddRange(model.Meshes.Select(m => m.IndexBuffer).Distinct());
 
-            using (BlockMarker("model"))
+            using (BlockMarker(SceneCodes.Model))
             {
                 Writer.Write(model.Name);
-                WriteList(model.Regions, Write, "region list");
-                WriteList(model.Markers, Write, "marker list");
-                WriteList(model.Bones, Write, "bone list");
-                WriteList(model.Meshes, Write, "mesh list");
-                WriteList(vertexBuffers, Write, "vertex buffer list");
-                WriteList(indexBuffers, Write, "index buffer list");
+                WriteList(model.Regions, Write, SceneCodes.Region);
+                WriteList(model.Markers, Write, SceneCodes.Marker);
+                WriteList(model.Bones, Write, SceneCodes.Bone);
+                WriteList(model.Meshes, Write, SceneCodes.Mesh);
+                WriteList(vertexBuffers, Write, SceneCodes.VertexBuffer);
+                WriteList(indexBuffers, Write, SceneCodes.IndexBuffer);
             }
         }
 
         private void Write(ModelRegion region)
         {
-            using (BlockMarker("region"))
+            using (BlockMarker(SceneCodes.Region))
             {
                 Writer.Write(region.Name);
-                WriteList(region.Permutations, Write, "permutation list");
+                WriteList(region.Permutations, Write, SceneCodes.Permutation);
             }
         }
 
         private void Write(ModelPermutation permutation)
         {
-            using (BlockMarker("permutation"))
+            using (BlockMarker(SceneCodes.Permutation))
             {
                 Writer.Write(permutation.Name);
                 Writer.Write(permutation.IsInstanced);
@@ -173,16 +182,16 @@ namespace Reclaimer.Geometry.Utilities
 
         private void Write(Marker marker)
         {
-            using (BlockMarker("marker"))
+            using (BlockMarker(SceneCodes.Marker))
             {
                 Writer.Write(marker.Name);
-                WriteList(marker.Instances, Write, "marker instance list");
+                WriteList(marker.Instances, Write, SceneCodes.MarkerInstance);
             }
         }
 
         private void Write(MarkerInstance instance)
         {
-            using (BlockMarker("marker instance"))
+            using (BlockMarker(SceneCodes.MarkerInstance))
             {
                 Writer.Write(instance.RegionIndex);
                 Writer.Write(instance.PermutationIndex);
@@ -194,7 +203,7 @@ namespace Reclaimer.Geometry.Utilities
 
         private void Write(Bone bone)
         {
-            using (BlockMarker("marker instance"))
+            using (BlockMarker(SceneCodes.Bone))
             {
                 Writer.Write(bone.Name);
                 Writer.Write(bone.ParentIndex);
@@ -204,7 +213,7 @@ namespace Reclaimer.Geometry.Utilities
 
         private void Write(Mesh mesh)
         {
-            using (BlockMarker("mesh"))
+            using (BlockMarker(SceneCodes.Mesh))
             {
                 Writer.Write(vertexBuffers.IndexOf(mesh.VertexBuffer));
                 Writer.Write(indexBuffers.IndexOf(mesh.IndexBuffer));
@@ -212,27 +221,89 @@ namespace Reclaimer.Geometry.Utilities
                 Writer.WriteMatrix3x4(mesh.PositionBounds.CreateExpansionMatrix());
                 Writer.WriteMatrix3x4(mesh.TextureBounds.CreateExpansionMatrix());
 
-                WriteList(mesh.Segments, Write, "mesh segment list");
+                WriteList(mesh.Segments, Write, SceneCodes.MeshSegment);
+            }
+        }
+
+        private void Write(MeshSegment segment)
+        {
+            using (BlockMarker(SceneCodes.MeshSegment))
+            {
+                Writer.Write(segment.IndexStart);
+                Writer.Write(segment.IndexLength);
+                Writer.Write(materialPool.IndexOf(segment.Material));
             }
         }
 
         private void Write(VertexBuffer vertexBuffer)
         {
-            throw new NotImplementedException();
+            using (BlockMarker(SceneCodes.VertexBuffer))
+            {
+                Writer.Write(vertexBuffer.Count);
+
+                WriteChannels(vertexBuffer.PositionChannels, VertexChannelCodes.Position);
+                WriteChannels(vertexBuffer.TextureCoordinateChannels, VertexChannelCodes.TextureCoordinate);
+                WriteChannels(vertexBuffer.NormalChannels, VertexChannelCodes.Normal);
+                WriteChannels(vertexBuffer.BlendIndexChannels, VertexChannelCodes.BlendIndex);
+                WriteChannels(vertexBuffer.BlendWeightChannels, VertexChannelCodes.BlendWeight);
+            }
+
+            void WriteChannels(IList<IReadOnlyList<IVector>> vertexChannel, BlockCode code)
+            {
+                foreach (var vectorBuffer in vertexChannel)
+                {
+                    using (BlockMarker(code))
+                        WriteBuffer(vectorBuffer);
+                }
+            }
+
+            void WriteBuffer(IReadOnlyList<IVector> vectorBuffer)
+            {
+                var vb = vectorBuffer as IVectorBuffer;
+                var typeCode = VectorTypeCodes.FromType(vb?.VectorType);
+                if (typeCode == null)
+                {
+                    //no choice but to assume float, use known vector width if possible
+                    var width = vb?.Dimensions ?? 4;
+                    Writer.Write(VectorTypeCodes.FromDimensions(width).Value);
+                    foreach (var vec in vectorBuffer)
+                    {
+                        Writer.Write(vec.X);
+                        Writer.Write(vec.Y);
+                        if (width > 2)
+                            Writer.Write(vec.Z);
+                        if (width > 3)
+                            Writer.Write(vec.W);
+                    }
+                }
+                else
+                {
+                    Writer.Write(typeCode.Value);
+                    for (var i = 0; i < vb.Count; i++)
+                        Writer.Write(vb.GetBytes(i));
+                }
+            }
         }
 
         private void Write(IIndexBuffer indexBuffer)
         {
-            throw new NotImplementedException();
-        }
-
-        private void Write(MeshSegment segment)
-        {
-            using (BlockMarker("mesh segment"))
+            using (BlockMarker(SceneCodes.IndexBuffer))
             {
-                Writer.Write(segment.IndexStart);
-                Writer.Write(segment.IndexLength);
-                Writer.Write(materialPool.IndexOf(segment.Material));
+                var max = indexBuffer.DefaultIfEmpty().Max();
+                var width = max <= byte.MaxValue ? sizeof(byte) : max <= ushort.MaxValue ? sizeof(ushort) : sizeof(int);
+                Action<int> writeFunc = width switch
+                {
+                    sizeof(byte) => i => Writer.Write((byte)i),
+                    sizeof(ushort) => i => Writer.Write((ushort)i),
+                    _ => Writer.Write
+                };
+
+                Writer.Write((byte)indexBuffer.Layout);
+                Writer.Write((byte)width);
+                Writer.Write(indexBuffer.Count);
+
+                foreach (var index in indexBuffer)
+                    writeFunc(index);
             }
         }
     }
