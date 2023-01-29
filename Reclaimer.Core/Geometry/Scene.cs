@@ -4,23 +4,27 @@ using System.Numerics;
 namespace Reclaimer.Geometry
 {
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class Scene : SceneGroup
+    public class Scene
     {
         public CoordinateSystem2 CoordinateSystem { get; set; } = CoordinateSystem2.Default;
 
+        public string Name { get; set; }
         public List<Marker> Markers { get; } = new();
+        public SceneGroup RootNode { get; } = new() { Name = "Root" };
+
+        public List<SceneGroup> ChildGroups => RootNode.ChildGroups;
+        public List<SceneObject> ChildObjects => RootNode.ChildObjects;
 
         public static Scene WrapSingleModel(Model model)
         {
             var scene = new Scene { Name = model.Name };
             scene.ChildObjects.Add(model);
-
             return scene;
         }
 
         private IEnumerable<SceneGroup> EnumerateDescendants(SceneGroup group) => group.ChildGroups.Concat(group.ChildGroups.SelectMany(EnumerateDescendants));
 
-        public IEnumerable<SceneGroup> EnumerateGroupHierarchy() => ChildGroups.Prepend(this).Concat(ChildGroups.SelectMany(EnumerateDescendants));
+        public IEnumerable<SceneGroup> EnumerateGroupHierarchy() => ChildGroups.Prepend(RootNode).Concat(ChildGroups.SelectMany(EnumerateDescendants));
 
         public IEnumerable<Material> EnumerateMaterials()
         {

@@ -31,6 +31,8 @@ namespace Reclaimer.Geometry.Utilities
     {
         public static readonly BlockCode FileHeader = new BlockCode("RMF!");
         public static readonly BlockCode List = new BlockCode("list");
+        public static readonly BlockCode SceneGroup = new BlockCode("NODE");
+        public static readonly BlockCode ModelReference = new BlockCode("MOD*");
 
         public static readonly BlockCode Model = new BlockCode("MODL");
         public static readonly BlockCode Material = new BlockCode("MATL");
@@ -75,6 +77,11 @@ namespace Reclaimer.Geometry.Utilities
         public static readonly BlockCode UDHenN3 = new BlockCode("UDH3");
         public static readonly BlockCode UHenDN3 = new BlockCode("UHD3");
 
+        public static readonly BlockCode Int16N2 = new BlockCode("S162");
+        public static readonly BlockCode Int16N4 = new BlockCode("S164");
+        public static readonly BlockCode UInt16N2 = new BlockCode("U162");
+        public static readonly BlockCode UInt16N4 = new BlockCode("U164");
+
         public static BlockCode FromDimensions(int dimensions)
         {
             return dimensions switch
@@ -98,6 +105,11 @@ namespace Reclaimer.Geometry.Utilities
                 _ when vectorType == typeof(UDecN4) => UDecN4,
                 _ when vectorType == typeof(UDHenN3) => UDHenN3,
                 _ when vectorType == typeof(UHenDN3) => UHenDN3,
+
+                _ when vectorType == typeof(Int16N2) => Int16N2,
+                _ when vectorType == typeof(Int16N4) => Int16N4,
+                _ when vectorType == typeof(UInt16N2) => UInt16N2,
+                _ when vectorType == typeof(UInt16N4) => UInt16N4,
                 _ => null
             };
         }

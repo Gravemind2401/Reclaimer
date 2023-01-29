@@ -83,6 +83,23 @@ namespace Reclaimer.IO
         public static Quaternion ReadQuaternion(this BinaryReader reader) => new Quaternion(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
 
         /// <summary>
+        /// Reads nine consecutive <see cref="float"/> values from the current stream that form the first three columns of a <see cref="Matrix4x4"/>.
+        /// </summary>
+        /// <remarks>
+        /// The components of the <see cref="Matrix4x4"/> are read in order from M11 to M33 except for M14 and M24. The translation component (row 4) is set to [0, 0, 0, 1].
+        /// </remarks>
+        /// <inheritdoc cref="ReadVector2(BinaryReader)"/>
+        public static Matrix4x4 ReadMatrix3x3(this BinaryReader reader)
+        {
+            return new Matrix4x4(
+                reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 0,
+                reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 0,
+                reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), 0,
+                0, 0, 0, 1
+            );
+        }
+
+        /// <summary>
         /// Reads twelve consecutive <see cref="float"/> values from the current stream that form the first three columns of a <see cref="Matrix4x4"/>.
         /// </summary>
         /// <remarks>
@@ -164,6 +181,27 @@ namespace Reclaimer.IO
             writer.Write(value.Y);
             writer.Write(value.Z);
             writer.Write(value.W);
+        }
+
+        /// <summary>
+        /// Writes the first three columns of a <see cref="Matrix4x4"/> to the current stream as nine consecutive <see cref="float"/> values.
+        /// </summary>
+        /// <remarks>
+        /// The components of the <see cref="Matrix4x4"/> are written in order from M11 to M33 except for M14 and M24. The translation component (row 4) is omitted.
+        /// </remarks>
+        /// <param name="value">The matrix value to write.</param>
+        /// <inheritdoc cref="Write(BinaryWriter, Vector2)"/>
+        public static void WriteMatrix3x3(this BinaryWriter writer, Matrix4x4 value)
+        {
+            writer.Write(value.M11);
+            writer.Write(value.M12);
+            writer.Write(value.M13);
+            writer.Write(value.M21);
+            writer.Write(value.M22);
+            writer.Write(value.M23);
+            writer.Write(value.M31);
+            writer.Write(value.M32);
+            writer.Write(value.M33);
         }
 
         /// <summary>

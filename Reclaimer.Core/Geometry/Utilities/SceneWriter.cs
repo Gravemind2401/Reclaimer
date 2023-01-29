@@ -14,7 +14,7 @@ namespace Reclaimer.Geometry.Utilities
         public abstract void Write(T obj);
 
         protected BlockMarker BlockMarker(BlockCode code) => new BlockMarker(Writer, code);
-        protected BlockMarker BlockMarker(int identifier) => throw new NotImplementedException();
+        protected BlockMarker BlockMarker(int identifier) => new BlockMarker(Writer, new BlockCode("NULL", "Unknown"));
 
         protected void WriteList<TItem>(IList<TItem> list, Action<TItem> writeFunc, BlockCode code)
         {
@@ -50,17 +50,18 @@ namespace Reclaimer.Geometry.Utilities
             {
                 Writer.Write((byte)version.Major);
                 Writer.Write((byte)version.Minor);
-                Writer.Write((byte)Math.Min(0, version.Build));
-                Writer.Write((byte)Math.Min(0, version.Revision));
-                Write(scene.CoordinateSystem);
+                Writer.Write((byte)Math.Max(0, version.Build));
+                Writer.Write((byte)Math.Max(0, version.Revision));
+                Writer.Write(scene.CoordinateSystem.UnitScale);
+                Writer.WriteMatrix3x3(scene.CoordinateSystem.WorldMatrix);
                 Writer.Write(scene.Name);
 
-                //TODO
-                //write markers
-                using (new ListBlockMarker(Writer, null, 0))
-                { }
-                //write hierarchy
-                using (new ListBlockMarker(Writer, null, 0))
+                //everything from here on must be a block
+
+                Write(scene.RootNode);
+
+                //TODO (global markers such as bsp markers)
+                using (new ListBlockMarker(Writer, SceneCodes.Marker, 0))
                 { }
 
                 var modelWriter = new ModelWriter(Writer, materialPool);
@@ -70,19 +71,30 @@ namespace Reclaimer.Geometry.Utilities
             }
         }
 
-        private void Write(CoordinateSystem2 coordsys)
-        {
-            throw new NotImplementedException();
-        }
-
         private void Write(SceneGroup sceneGroup)
         {
-            throw new NotImplementedException();
+            using (BlockMarker(SceneCodes.SceneGroup))
+            {
+                Writer.Write(sceneGroup.Name);
+                Writer.Write(sceneGroup.ChildGroups.Count + sceneGroup.ChildObjects.Count);
+
+                foreach (var child in sceneGroup.ChildGroups)
+                    Write(child);
+
+                foreach (var child in sceneGroup.ChildObjects)
+                    Write(child);
+            }
         }
 
         private void Write(SceneObject sceneObject)
         {
-            throw new NotImplementedException();
+            if (sceneObject is Model model)
+            {
+                using (BlockMarker(SceneCodes.ModelReference))
+                    Writer.Write(modelPool.IndexOf(model));
+            }
+            else
+                throw new NotImplementedException();
         }
 
         private void Write(Material material)
@@ -128,10 +140,13 @@ namespace Reclaimer.Geometry.Utilities
 
     internal class ModelWriter : SceneWriter<Model>
     {
-        private readonly List<VertexBuffer> vertexBuffers = new();
-        private readonly List<IIndexBuffer> indexBuffers = new();
+        private readonly LazyList<VertexBuffer> vertexBufferPool = new();
+        private readonly LazyList<IIndexBuffer> indexBufferPool = new();
+        private readonly LazyList<Mesh> meshPool = new();
 
         private readonly LazyList<int, Material> materialPool;
+
+        private Model model;
 
         public ModelWriter(EndianWriter writer, LazyList<int, Material> materialPool)
             : base(writer)
@@ -141,11 +156,9 @@ namespace Reclaimer.Geometry.Utilities
 
         public override void Write(Model model)
         {
-            vertexBuffers.Clear();
-            indexBuffers.Clear();
-
-            vertexBuffers.AddRange(model.Meshes.Select(m => m.VertexBuffer).Distinct());
-            indexBuffers.AddRange(model.Meshes.Select(m => m.IndexBuffer).Distinct());
+            vertexBufferPool.Clear();
+            indexBufferPool.Clear();
+            this.model = model;
 
             using (BlockMarker(SceneCodes.Model))
             {
@@ -153,9 +166,9 @@ namespace Reclaimer.Geometry.Utilities
                 WriteList(model.Regions, Write, SceneCodes.Region);
                 WriteList(model.Markers, Write, SceneCodes.Marker);
                 WriteList(model.Bones, Write, SceneCodes.Bone);
-                WriteList(model.Meshes, Write, SceneCodes.Mesh);
-                WriteList(vertexBuffers, Write, SceneCodes.VertexBuffer);
-                WriteList(indexBuffers, Write, SceneCodes.IndexBuffer);
+                WriteList(meshPool, Write, SceneCodes.Mesh);
+                WriteList(vertexBufferPool, Write, SceneCodes.VertexBuffer);
+                WriteList(indexBufferPool, Write, SceneCodes.IndexBuffer);
             }
         }
 
@@ -170,13 +183,24 @@ namespace Reclaimer.Geometry.Utilities
 
         private void Write(ModelPermutation permutation)
         {
+            var meshes = permutation.MeshIndices.Select(i => model.Meshes.ElementAtOrDefault(i));
+
+            var meshRange = permutation.MeshRange;
+            if (!meshes.Any() || meshes.Any(m => m == null))
+                meshRange = (0, 0); //normalize to 0,0 in case of negatives or bad indices
+            else
+            {
+                meshPool.AddRange(meshes);
+                meshRange.Index = meshPool.IndexOf(meshes.First());
+            }
+
             using (BlockMarker(SceneCodes.Permutation))
             {
                 Writer.Write(permutation.Name);
                 Writer.Write(permutation.IsInstanced);
-                Writer.Write(permutation.MeshRange.Index);
-                Writer.Write(permutation.MeshRange.Count);
-                Writer.WriteMatrix4x4(permutation.GetFinalTransform());
+                Writer.Write(meshRange.Index);
+                Writer.Write(meshRange.Count);
+                Writer.WriteMatrix3x4(permutation.GetFinalTransform());
             }
         }
 
@@ -215,8 +239,8 @@ namespace Reclaimer.Geometry.Utilities
         {
             using (BlockMarker(SceneCodes.Mesh))
             {
-                Writer.Write(vertexBuffers.IndexOf(mesh.VertexBuffer));
-                Writer.Write(indexBuffers.IndexOf(mesh.IndexBuffer));
+                Writer.Write(vertexBufferPool.IndexOf(mesh.VertexBuffer));
+                Writer.Write(indexBufferPool.IndexOf(mesh.IndexBuffer));
                 Writer.Write(mesh.BoneIndex ?? -1);
                 Writer.WriteMatrix3x4(mesh.PositionBounds.CreateExpansionMatrix());
                 Writer.WriteMatrix3x4(mesh.TextureBounds.CreateExpansionMatrix());

@@ -41,6 +41,12 @@ namespace Reclaimer.Geometry.Utilities
             return key;
         }
 
+        public void AddRange(IEnumerable<TValue> items)
+        {
+            foreach (var item in items)
+                AddIfNew(item);
+        }
+
         public void Add(TValue item) => AddIfNew(item);
         public bool Contains(TValue item) => valueLookup.ContainsKey(keySelector(item));
 

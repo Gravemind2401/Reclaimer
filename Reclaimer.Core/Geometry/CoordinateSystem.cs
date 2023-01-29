@@ -22,14 +22,25 @@ namespace Reclaimer.Geometry
             if (origin == destination)
                 return Matrix4x4.Identity;
 
-            return Matrix4x4.Invert(origin.WorldMatrix, out var inverse)
-                ? inverse * destination.WorldMatrix
+            return Matrix4x4.Invert(origin.ScaledWorldMatrix, out var inverse)
+                ? inverse * destination.ScaledWorldMatrix
                 : throw new InvalidOperationException("No conversion exists between the given coordinate systems.");
         }
 
         /// <summary>
         /// Gets a transform representing the world matrix of the current coordinate system.
         /// </summary>
+        /// <remarks>
+        /// The scale component is expressed in world units (1 world unit = <see cref="UnitScale"/>).
+        /// </remarks>
         public readonly Matrix4x4 WorldMatrix => new Matrix4x4(ForwardVector.X, ForwardVector.Y, ForwardVector.Z, 0, RightVector.X, RightVector.Y, RightVector.Z, 0, UpVector.X, UpVector.Y, UpVector.Z, 0, 0, 0, 0, 1);
+
+        /// <summary>
+        /// Gets a transform representing the world matrix of the current coordinate system.
+        /// </summary>
+        /// <remarks>
+        /// The scale component is expressed in millimeters (1 world unit = 1 millimeter).
+        /// </remarks>
+        public readonly Matrix4x4 ScaledWorldMatrix => Matrix4x4.CreateScale(UnitScale) * WorldMatrix;
     }
 }

@@ -126,6 +126,7 @@ namespace Reclaimer.Plugins
 
         private static readonly ExportFormat[] StandardFormats = new[]
         {
+            new ExportFormat(FormatId.RMF,              "rmf",  "RMF Files", (model, fileName) => model.GetContent().WriteRMF(fileName)),
             new ExportFormat(FormatId.AMF,              "amf",  "AMF Files", (model, fileName) => model.GetContent().WriteAMF(fileName, Settings.GeometryScale)),
             new ExportFormat(FormatId.JMS,              "jms",  "JMS Files", (model, fileName) => model.GetContent().WriteJMS(fileName, Settings.GeometryScale)),
             new ExportFormat(FormatId.OBJNoMaterials,   "obj",  "OBJ Files"),
@@ -212,6 +213,7 @@ namespace Reclaimer.Plugins
 
     internal static class FormatId
     {
+        public const string RMF = "rmf";
         public const string AMF = "amf";
         public const string JMS = "jms";
         public const string OBJNoMaterials = "objnomtl";
@@ -223,7 +225,7 @@ namespace Reclaimer.Plugins
     {
         [ItemsSource(typeof(ModelFormatItemsSource))]
         [DisplayName("Default Save Format")]
-        [DefaultValue(FormatId.AMF)]
+        [DefaultValue(FormatId.RMF)]
         public string DefaultSaveFormat { get; set; }
 
         [DisplayName("Embedded Material Extension")]
