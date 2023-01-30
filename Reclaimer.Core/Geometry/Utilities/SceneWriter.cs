@@ -14,6 +14,11 @@ namespace Reclaimer.Geometry.Utilities
         private readonly LazyList<int, Texture> texturePool = new(t => t.Id);
         private readonly LazyList<Model> modelPool = new();
 
+        private readonly LazyList<VertexBuffer> vertexBufferPool = new();
+        private readonly LazyList<IIndexBuffer> indexBufferPool = new(IIndexBuffer.EqualityComparer);
+        private readonly LazyList<Mesh> meshPool = new();
+        private Model currentModel;
+
         public SceneWriter(EndianWriter writer)
         {
             this.writer = writer;
@@ -56,6 +61,8 @@ namespace Reclaimer.Geometry.Utilities
                 { }
 
                 WriteList(modelPool, Write, SceneCodes.Model);
+                WriteList(vertexBufferPool, Write, SceneCodes.VertexBuffer);
+                WriteList(indexBufferPool, Write, SceneCodes.IndexBuffer);
                 WriteList(materialPool, Write, SceneCodes.Material);
                 WriteList(texturePool, Write, SceneCodes.Texture);
             }
@@ -86,6 +93,8 @@ namespace Reclaimer.Geometry.Utilities
             else
                 throw new NotImplementedException();
         }
+
+        #region Materials
 
         private void Write(Material material)
         {
@@ -127,15 +136,12 @@ namespace Reclaimer.Geometry.Utilities
             }
         }
 
-        private readonly LazyList<VertexBuffer> vertexBufferPool = new();
-        private readonly LazyList<IIndexBuffer> indexBufferPool = new();
-        private readonly LazyList<Mesh> meshPool = new();
-        private Model currentModel;
+        #endregion
+
+        #region Models
 
         private void Write(Model model)
         {
-            vertexBufferPool.Clear();
-            indexBufferPool.Clear();
             meshPool.Clear();
             currentModel = model;
 
@@ -146,8 +152,6 @@ namespace Reclaimer.Geometry.Utilities
                 WriteList(model.Markers, Write, SceneCodes.Marker);
                 WriteList(model.Bones, Write, SceneCodes.Bone);
                 WriteList(meshPool, Write, SceneCodes.Mesh);
-                WriteList(vertexBufferPool, Write, SceneCodes.VertexBuffer);
-                WriteList(indexBufferPool, Write, SceneCodes.IndexBuffer);
             }
         }
 
@@ -306,5 +310,7 @@ namespace Reclaimer.Geometry.Utilities
                     writeFunc(index);
             }
         }
+
+        #endregion
     }
 }

@@ -95,7 +95,6 @@ namespace Reclaimer.Geometry.Utilities
                 _ when vectorType == typeof(UDecN4) => UDecN4,
                 _ when vectorType == typeof(UDHenN3) => UDHenN3,
                 _ when vectorType == typeof(UHenDN3) => UHenDN3,
-
                 _ when vectorType == typeof(Int16N2) => Int16N2,
                 _ when vectorType == typeof(Int16N4) => Int16N4,
                 _ when vectorType == typeof(UInt16N2) => UInt16N2,

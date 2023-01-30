@@ -1,44 +1,59 @@
 ﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Reclaimer.Geometry.Utilities
 {
-    internal class LazyList<TValue> : LazyList<TValue, TValue>
+    internal class LazyList<TKey, TValue> : LazyList<TValue>
     {
-        public LazyList()
-            : base(obj => obj)
+        public LazyList(Func<TValue, TKey> keySelector)
+            : base(new LambdaEqualityComparer(keySelector))
         { }
+
+        private sealed class LambdaEqualityComparer : IEqualityComparer<TValue>
+        {
+            private readonly Func<TValue, TKey> keySelector;
+
+            public LambdaEqualityComparer(Func<TValue, TKey> keySelector)
+            {
+                this.keySelector = keySelector;
+            }
+
+            public bool Equals(TValue x, TValue y) => keySelector(x).Equals(keySelector(y));
+            public int GetHashCode([DisallowNull] TValue obj) => keySelector(obj).GetHashCode();
+        }
     }
 
-    internal class LazyList<TKey, TValue> : IList<TValue>
+    internal class LazyList<TValue> : IList<TValue>
     {
-        private readonly Func<TValue, TKey> keySelector;
-        private readonly List<TKey> keyList = new();
-        private readonly Dictionary<TKey, TValue> valueLookup = new();
+        private readonly Dictionary<TValue, int> indexLookup;
+        private readonly List<TValue> valueList = new();
 
-        public int Count => keyList.Count;
+        public int Count => valueList.Count;
         public bool IsReadOnly => true;
 
-        public LazyList(Func<TValue, TKey> keySelector)
+        public LazyList() : this(EqualityComparer<TValue>.Default)
+        { }
+
+        public LazyList(IEqualityComparer<TValue> comparer)
         {
-            this.keySelector = keySelector;
+            indexLookup = new Dictionary<TValue, int>(comparer);
         }
 
         public TValue this[int index]
         {
-            get => valueLookup[keyList[index]];
+            get => valueList[index];
             set => throw new NotSupportedException();
         }
 
-        private TKey AddIfNew(TValue value)
+        private int AddIfNew(TValue value)
         {
-            var key = keySelector(value);
-            if (!valueLookup.ContainsKey(key))
+            if (!indexLookup.TryGetValue(value, out var index))
             {
-                valueLookup.Add(key, value);
-                keyList.Add(key);
+                indexLookup.Add(value, index = valueList.Count);
+                valueList.Add(value);
             }
 
-            return key;
+            return index;
         }
 
         public void AddRange(IEnumerable<TValue> items)
@@ -48,21 +63,16 @@ namespace Reclaimer.Geometry.Utilities
         }
 
         public void Add(TValue item) => AddIfNew(item);
-        public bool Contains(TValue item) => valueLookup.ContainsKey(keySelector(item));
-
-        public int IndexOf(TValue value)
-        {
-            var key = AddIfNew(value);
-            return keyList.IndexOf(key);
-        }
+        public bool Contains(TValue item) => indexLookup.ContainsKey(item);
+        public int IndexOf(TValue value) => AddIfNew(value);
 
         public void Clear()
         {
-            keyList.Clear();
-            valueLookup.Clear();
+            valueList.Clear();
+            indexLookup.Clear();
         }
 
-        public IEnumerator<TValue> GetEnumerator() => keyList.Select(k => valueLookup[k]).GetEnumerator();
+        public IEnumerator<TValue> GetEnumerator() => valueList.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)this).GetEnumerator();
 
         void IList<TValue>.Insert(int index, TValue item) => throw new NotSupportedException();
