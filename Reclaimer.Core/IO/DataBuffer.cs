@@ -2,7 +2,7 @@
 
 namespace Reclaimer.IO
 {
-    public abstract class DataBuffer<T> : IReadOnlyList<T>
+    public abstract class DataBuffer<T> : IDataBuffer, IReadOnlyList<T>
         where T : struct
     {
         protected readonly byte[] buffer;
@@ -53,6 +53,17 @@ namespace Reclaimer.IO
 
         public IEnumerable<T> Subset(Range range) => Extensions.GetRange(this, range);
         public IEnumerable<T> Subset(int index, int length) => Extensions.GetSubset(this, index, length);
+
+        #region IDataBuffer
+        Type IDataBuffer.DataType => typeof(T);
+        int IDataBuffer.Count => Count;
+        int IDataBuffer.SizeOf => SizeOf;
+        ReadOnlySpan<byte> IDataBuffer.Buffer => buffer;
+        int IDataBuffer.Start => start;
+        int IDataBuffer.Stride => stride;
+        int IDataBuffer.Offset => offset;
+        ReadOnlySpan<byte> IDataBuffer.GetBytes(int index) => CreateSpan(index);
+        #endregion
 
         #region IEnumerable
         protected IEnumerable<T> Enumerate()

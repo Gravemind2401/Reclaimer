@@ -82,16 +82,6 @@ namespace Reclaimer.Geometry.Utilities
         public static readonly BlockCode UInt16N2 = new BlockCode("U162");
         public static readonly BlockCode UInt16N4 = new BlockCode("U164");
 
-        public static BlockCode FromDimensions(int dimensions)
-        {
-            return dimensions switch
-            {
-                < 3 => Float2,
-                < 4 => Float3,
-                _ => Float4
-            };
-        }
-
         public static BlockCode FromType(Type vectorType)
         {
             return vectorType switch

@@ -262,21 +262,18 @@ namespace Reclaimer.Geometry.Utilities
 
             void WriteBuffer(IReadOnlyList<IVector> vectorBuffer)
             {
-                var vb = vectorBuffer as IVectorBuffer;
-                var typeCode = VectorTypeCodes.FromType(vb?.VectorType);
+                var vb = vectorBuffer as IDataBuffer;
+                var typeCode = VectorTypeCodes.FromType(vb?.DataType);
                 if (typeCode == null)
                 {
-                    //no choice but to assume float, use known vector width if possible
-                    var width = vb?.Dimensions ?? 4;
-                    writer.Write(VectorTypeCodes.FromDimensions(width).Value);
+                    //no choice but to assume float4
+                    writer.Write(VectorTypeCodes.Float4.Value);
                     foreach (var vec in vectorBuffer)
                     {
                         writer.Write(vec.X);
                         writer.Write(vec.Y);
-                        if (width > 2)
-                            writer.Write(vec.Z);
-                        if (width > 3)
-                            writer.Write(vec.W);
+                        writer.Write(vec.Z);
+                        writer.Write(vec.W);
                     }
                 }
                 else
