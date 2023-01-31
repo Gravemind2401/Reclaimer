@@ -19,6 +19,7 @@ namespace Reclaimer.Geometry
         {
             public bool Equals(IIndexBuffer x, IIndexBuffer y)
             {
+                //ReferenceEquals() || underlying type equals || IDataBuffer equals
                 return ReferenceEquals(x, y) || (x.GetHashCode() == y.GetHashCode() && x.Equals(y))
                     || (x is IDataBuffer bx && y is IDataBuffer by && IDataBuffer.Equals(bx, by));
             }

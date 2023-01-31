@@ -1,9 +1,13 @@
-﻿using VertexChannel = System.Collections.Generic.IReadOnlyList<Reclaimer.Geometry.IVector>;
+﻿using Reclaimer.IO;
+using System.Diagnostics.CodeAnalysis;
+using VertexChannel = System.Collections.Generic.IReadOnlyList<Reclaimer.Geometry.IVector>;
 
 namespace Reclaimer.Geometry
 {
     public class VertexBuffer
     {
+        internal static readonly IEqualityComparer<VertexBuffer> EqualityComparer = new CustomEqualityComparer();
+
         public int Count => EnumerateChannels().Max(c => c?.Count) ?? default;
 
         public IList<VertexChannel> PositionChannels { get; } = new List<VertexChannel>();
@@ -26,7 +30,9 @@ namespace Reclaimer.Geometry
 
         public VertexBuffer Slice(int index, int count)
         {
-            void CopySubsets(IList<VertexChannel> from, IList<VertexChannel> to)
+            var result = new VertexBuffer();
+
+            foreach (var (from, to) in EnumerateChannelSets().Zip(result.EnumerateChannelSets()))
             {
                 foreach (var channel in from)
                 {
@@ -41,17 +47,6 @@ namespace Reclaimer.Geometry
                 }
             }
 
-            var result = new VertexBuffer();
-
-            CopySubsets(PositionChannels, result.PositionChannels);
-            CopySubsets(TextureCoordinateChannels, result.TextureCoordinateChannels);
-            CopySubsets(NormalChannels, result.NormalChannels);
-            CopySubsets(TangentChannels, result.TangentChannels);
-            CopySubsets(BinormalChannels, result.BinormalChannels);
-            CopySubsets(BlendIndexChannels, result.BlendIndexChannels);
-            CopySubsets(BlendWeightChannels, result.BlendWeightChannels);
-            CopySubsets(ColorChannels, result.ColorChannels);
-
             return result;
         }
 
@@ -61,10 +56,55 @@ namespace Reclaimer.Geometry
                 buffer.ReverseEndianness();
         }
 
-        private IEnumerable<VertexChannel> EnumerateChannels()
+        private IEnumerable<IList<VertexChannel>> EnumerateChannelSets()
         {
-            return PositionChannels.Concat(NormalChannels).Concat(TangentChannels).Concat(BinormalChannels)
-                .Concat(TextureCoordinateChannels).Concat(BlendIndexChannels).Concat(BlendWeightChannels).Concat(ColorChannels);
+            yield return PositionChannels;
+            yield return TextureCoordinateChannels;
+            yield return NormalChannels;
+            yield return TangentChannels;
+            yield return BinormalChannels;
+            yield return BlendIndexChannels;
+            yield return BlendWeightChannels;
+            yield return ColorChannels;
+        }
+
+        private IEnumerable<VertexChannel> EnumerateChannels() => EnumerateChannelSets().SelectMany(s => s);
+
+        private sealed class CustomEqualityComparer : IEqualityComparer<VertexBuffer>
+        {
+            public bool Equals(VertexBuffer x, VertexBuffer y)
+            {
+                if (ReferenceEquals(x, y))
+                    return true;
+
+                foreach (var (a, b) in x.EnumerateChannelSets().Zip(y.EnumerateChannelSets()))
+                {
+                    if (a.Count != b.Count)
+                        return false;
+
+                    if (ReferenceEquals(a, b) || (a.GetHashCode() == b.GetHashCode() && a.Equals(b)))
+                        continue; //this set is equal, move to next
+
+                    if (!a.Zip(b).All(t => CompareBuffers(t.First, t.Second)))
+                        return false;
+                }
+
+                return true;
+            }
+
+            private static bool CompareBuffers(VertexChannel x, VertexChannel y)
+            {
+                //ReferenceEquals() || underlying type equals || IDataBuffer equals
+                return ReferenceEquals(x, y) || (x.GetHashCode() == y.GetHashCode() && x.Equals(y))
+                    || (x is IDataBuffer bx && y is IDataBuffer by && IDataBuffer.Equals(bx, by));
+            }
+
+            public int GetHashCode([DisallowNull] VertexBuffer obj)
+            {
+                var normals = HashCode.Combine(obj.NormalChannels.Count, obj.TangentChannels.Count, obj.BinormalChannels.Count);
+                var blend = HashCode.Combine(obj.BlendIndexChannels.Count, obj.BlendWeightChannels.Count);
+                return HashCode.Combine(obj.Count, obj.PositionChannels.Count, obj.TextureCoordinateChannels.Count, normals, blend, obj.ColorChannels.Count);
+            }
         }
     }
 }

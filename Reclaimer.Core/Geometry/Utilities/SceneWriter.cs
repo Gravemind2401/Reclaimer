@@ -14,7 +14,7 @@ namespace Reclaimer.Geometry.Utilities
         private readonly LazyList<int, Texture> texturePool = new(t => t.Id);
         private readonly LazyList<Model> modelPool = new();
 
-        private readonly LazyList<VertexBuffer> vertexBufferPool = new();
+        private readonly LazyList<VertexBuffer> vertexBufferPool = new(VertexBuffer.EqualityComparer);
         private readonly LazyList<IIndexBuffer> indexBufferPool = new(IIndexBuffer.EqualityComparer);
         private readonly LazyList<Mesh> meshPool = new();
         private Model currentModel;
