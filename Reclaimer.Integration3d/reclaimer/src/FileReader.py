@@ -1,27 +1,33 @@
-import io
 import struct
-from enum import IntEnum, StrEnum
-from sys import byteorder
+from io import BufferedReader, SEEK_SET
+from enum import IntEnum #, StrEnum
+
+__all__ = [
+    'SeekOrigin',
+    #'ByteOrder',
+    'FileReader'
+]
 
 class SeekOrigin(IntEnum):
     BEGIN = 0
     CURRENT = 1
     END = 2
 
-class ByteOrder(StrEnum):
-    LITTLE_ENDIAN = '<'
-    BIG_ENDIAN = '>'
+#TODO: StrEnum only in 3.11+?
+#class ByteOrder(StrEnum):
+#    LITTLE_ENDIAN = '<'
+#    BIG_ENDIAN = '>'
 
 class FileReader:
-    _stream: io.BufferedReader
+    _stream: BufferedReader
 
     def __init__(self, fileName: str):
         self._stream = open(fileName, 'rb') # 'rb' = read+binary mode
 
-    def _read(self, byteOrder: ByteOrder, format: str, length: int):
+    def _read(self, byteOrder: str, format: str, length: int):
         return struct.unpack(f'{byteOrder}{format}', self._stream.read(length))[0]
 
-    def seek(self, offset: int, origin: SeekOrigin = 0):
+    def seek(self, offset: int, origin: SeekOrigin = SEEK_SET):
         self._stream.seek(offset, origin)
 
     def close(self):
@@ -29,7 +35,7 @@ class FileReader:
         self._stream = None
 
     @property
-    def position(self):
+    def position(self) -> int:
         return self._stream.tell()
 
     @position.setter
@@ -39,25 +45,31 @@ class FileReader:
     def read_bytes(self, length: int) -> bytes:
         return self._stream.read(length)
 
-    def read_byte(self, byteOrder: ByteOrder = '<') -> int:
+    def read_byte(self, byteOrder: str = '<') -> int:
         return self._read(byteOrder, 'B', 1)
 
-    def read_uint16(self, byteOrder: ByteOrder = '<') -> int:
+    def read_uint16(self, byteOrder: str = '<') -> int:
         return self._read(byteOrder, 'H', 2)
 
-    def read_int16(self, byteOrder: ByteOrder = '<') -> int:
+    def read_int16(self, byteOrder: str = '<') -> int:
         return self._read(byteOrder, 'h', 2)
 
-    def read_uint32(self, byteOrder: ByteOrder = '<') -> int:
+    def read_uint32(self, byteOrder: str = '<') -> int:
         return self._read(byteOrder, 'I', 4)
 
-    def read_int32(self, byteOrder: ByteOrder = '<') -> int:
+    def read_int32(self, byteOrder: str = '<') -> int:
         return self._read(byteOrder, 'i', 4)
 
-    def read_float(self, byteOrder: ByteOrder = '<') -> float:
+    def read_float(self, byteOrder: str = '<') -> float:
         return self._read(byteOrder, 'f', 4)
 
+    def read_chars(self, count: int) -> str:
+        return self._stream.read(count).decode()
+
     def read_string(self):
+        return self.read_chars(self.read_int32())
+
+    def read_string_nullterminated(self):
         chars = []
         nextChar = self._stream.read(1).decode()
         while nextChar != chr(0):

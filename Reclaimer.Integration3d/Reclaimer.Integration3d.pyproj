@@ -26,9 +26,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="reclaimer\src\FileReader.py" />
+    <Compile Include="reclaimer\src\Model.py" />
     <Compile Include="reclaimer\src\PackedVector.py" />
+    <Compile Include="reclaimer\src\Scene.py" />
+    <Compile Include="reclaimer\src\SceneReader.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="reclaimer\src\__init__.py" />
-    <Compile Include="reclaimer\tests\test_1.py" />
+    <Compile Include="reclaimer\tests\Test_SceneReader.py" />
+    <Compile Include="reclaimer\tests\Test_PackedVector.py" />
     <Compile Include="reclaimer\tests\__init__.py" />
     <Compile Include="reclaimer\__init__.py" />
   </ItemGroup>
