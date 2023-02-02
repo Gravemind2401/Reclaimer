@@ -32,7 +32,7 @@ class DataBlock:
         self.start_address = reader.position
 
         if self.is_list:
-            self.child_blocks = list[DataBlock]()
+            self.child_blocks = []
             for _ in range(self.count):
                 self.child_blocks.append(DataBlock(reader))
 
@@ -87,11 +87,12 @@ class SceneReader:
         self._reader.position = block.start_address
         self._scene.version = Version(self._reader.read_byte(), self._reader.read_byte(), self._reader.read_byte(), self._reader.read_byte())
         self._scene.unit_scale = self._reader.read_float()
-        self._reader.position += 4 * 3 * 3 #world matrix here
+        self._reader.position += 4 * 3 * 3 #TODO: world matrix here
         self._scene.name = self._reader.read_string()
 
         props = self._read_property_blocks(block.end_address)
-        modelPool = props['MODL[]']
+
+        self._scene.model_pool = [self._read_model(b) for b in props['MODL[]'].child_blocks]
         vertexBufferPool = props['VBUF[]']
         indexBufferPool = props['IBUF[]']
 
@@ -101,12 +102,61 @@ class SceneReader:
         childCount = self._reader.read_int32()
         childBlocks = self._read_block_list(childCount)
 
-    def _read_model(self, block: DataBlock):
+    def _read_model(self, block: DataBlock) -> Model:
+        model = Model()
         self._reader.position = block.start_address
-        name = self._reader.read_string()
-        flags = self._reader.read_int32()
+        model.name = self._reader.read_string()
+        model.flags = self._reader.read_int32()
         props = self._read_property_blocks(block.end_address)
-        regions = props['REGN[]']
-        markers = props['MARK[]']
-        bones = props['BONE[]']
-        meshPool = props['MESH[]']
+        model.regions = [self._read_region(b) for b in props['REGN[]'].child_blocks]
+        model.markers = [self._read_marker(b) for b in props['MARK[]'].child_blocks]
+        model.bones = [self._read_bone(b) for b in props['BONE[]'].child_blocks]
+        model.meshes = [self._read_mesh(b) for b in props['MESH[]'].child_blocks]
+        return model
+
+    def _read_region(self, block: DataBlock) -> List[ModelRegion]:
+        region = ModelRegion()
+        self._reader.position = block.start_address
+        region.name = self._reader.read_string()
+        region.permutations = []
+        props = self._read_property_blocks(block.end_address)
+        for perm_block in props['PERM[]'].child_blocks:
+            perm = ModelPermutation()
+            self._reader.position = perm_block.start_address
+            perm.name = self._reader.read_string()
+            perm.instanced = self._reader.read_bool()
+            perm.mesh_index = self._reader.read_int32()
+            perm.mesh_count = self._reader.read_int32()
+            #TODO: read transform here
+            region.permutations.append(perm)
+
+        return region
+
+    def _read_marker(self, block: DataBlock) -> List[Marker]:
+        marker = Marker()
+        self._reader.position = block.start_address
+        marker.name = self._reader.read_string()
+        marker.instances = []
+        props = self._read_property_blocks(block.end_address)
+        for inst_block in props['MKIN[]'].child_blocks:
+            inst = MarkerInstance()
+            self._reader.position = inst_block.start_address
+            inst.region_index = self._reader.read_int32()
+            inst.permutation_index = self._reader.read_int32()
+            inst.bone_index = self._reader.read_int32()
+            self._reader.position += 4 * 3 #TODO: position here
+            self._reader.position += 4 * 4 #TODO: rotation here
+            marker.instances.append(inst)
+        return marker
+
+    def _read_bone(self, block: DataBlock) -> List[Bone]:
+        bone = Bone()
+        self._reader.position = block.start_address
+        bone.name = self._reader.read_string()
+        bone.parent_index = self._reader.read_int32()
+        #TODO: read transform here
+        return bone
+
+    def _read_mesh(self, block: DataBlock) -> List[Mesh]:
+        mesh = Mesh()
+        return mesh

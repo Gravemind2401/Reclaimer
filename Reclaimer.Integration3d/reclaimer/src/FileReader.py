@@ -48,6 +48,12 @@ class FileReader:
     def read_byte(self, byteOrder: str = '<') -> int:
         return self._read(byteOrder, 'B', 1)
 
+    def read_bool(self) -> bool:
+        return self._read('<', 'B', 1) != 0
+
+    def read_bool32(self, byteOrder: str = '<') -> bool:
+        return self.read_int32(byteOrder) != 0
+
     def read_uint16(self, byteOrder: str = '<') -> int:
         return self._read(byteOrder, 'H', 2)
 

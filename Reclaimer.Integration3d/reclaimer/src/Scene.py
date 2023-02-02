@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from .Model import Marker
+from .Model import *
 
 __all__ = [
     'Version',
@@ -21,5 +21,19 @@ class Scene:
     version: Version = Version()
     unit_scale: float = 1
     name: str = None
+    root_node: 'SceneGroup' = None
     markers: list[Marker] = None
+    model_pool: list[Model] = None
+
+    def __str__(self) -> str:
+        return self.name
+
+@dataclass
+class SceneGroup:
+    name: str = None
+    child_groups: list['SceneGroup'] = None
+    #child_objects: list[Marker] = None
+
+    def __str__(self) -> str:
+        return self.name
 
