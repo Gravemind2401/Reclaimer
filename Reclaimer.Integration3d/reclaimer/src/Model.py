@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 
 __all__ = [
     'Model',
@@ -15,10 +16,10 @@ __all__ = [
 class Model:
     name: str
     flags: int
-    regions: list['ModelRegion']
-    markers: list['Marker']
-    bones: list['Bone']
-    meshes: list['Mesh']
+    regions: List['ModelRegion']
+    markers: List['Marker']
+    bones: List['Bone']
+    meshes: List['Mesh']
 
     def __init__(self):
         pass
@@ -30,7 +31,7 @@ class Model:
 @dataclass
 class ModelRegion:
     name: str
-    permutations: list['ModelPermutation']
+    permutations: List['ModelPermutation']
 
     def __init__(self):
         pass
@@ -57,7 +58,7 @@ class ModelPermutation:
 @dataclass
 class Marker:
     name: str
-    instances: list['MarkerInstance']
+    instances: List['MarkerInstance']
 
     def __init__(self):
         pass
@@ -97,7 +98,7 @@ class Mesh:
     index_buffer_index: int
     vertex_transform: float
     texture_transform: float
-    segments: list['MeshSegment']
+    segments: List['MeshSegment']
 
     def __init__(self):
         pass

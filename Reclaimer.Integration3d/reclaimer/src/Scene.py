@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 from .Model import *
 
 __all__ = [
@@ -22,8 +23,8 @@ class Scene:
     unit_scale: float = 1
     name: str = None
     root_node: 'SceneGroup' = None
-    markers: list[Marker] = None
-    model_pool: list[Model] = None
+    markers: List[Marker] = None
+    model_pool: List[Model] = None
 
     def __str__(self) -> str:
         return self.name
@@ -31,8 +32,8 @@ class Scene:
 @dataclass
 class SceneGroup:
     name: str = None
-    child_groups: list['SceneGroup'] = None
-    #child_objects: list[Marker] = None
+    child_groups: List['SceneGroup'] = None
+    #child_objects: List[Marker] = None
 
     def __str__(self) -> str:
         return self.name

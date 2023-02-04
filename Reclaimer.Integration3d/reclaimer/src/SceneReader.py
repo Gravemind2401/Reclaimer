@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Dict
 from .FileReader import *
 from .Scene import *
 from .Model import *
@@ -65,7 +65,7 @@ class SceneReader:
 
     #helper functions
 
-    def _read_property_blocks(self, end_address: int) -> dict[str, DataBlock]:
+    def _read_property_blocks(self, end_address: int) -> Dict[str, DataBlock]:
         values = self._read_remaining_blocks(end_address)
         return { block.code:block for block in values }
 
