@@ -26,6 +26,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="reclaimer\src\FileReader.py" />
+    <Compile Include="reclaimer\src\Material.py" />
     <Compile Include="reclaimer\src\Model.py" />
     <Compile Include="reclaimer\src\PackedVector.py" />
     <Compile Include="reclaimer\src\Scene.py" />

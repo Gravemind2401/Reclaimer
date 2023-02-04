@@ -1,6 +1,7 @@
 from typing import Tuple
 
 __all__ = [
+    'Color',
     'Float2',
     'Float3',
     'Float4',
@@ -9,6 +10,7 @@ __all__ = [
     'Matrix4x4'
 ]
 
+Color = Tuple[int, int, int, int]
 Float2 = Tuple[float, float]
 Float3 = Tuple[float, float, float]
 Float4 = Tuple[float, float, float, float]

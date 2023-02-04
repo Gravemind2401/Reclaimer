@@ -1,13 +1,16 @@
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import List, Dict, Callable, TypeVar
 
 from .FileReader import *
 from .Scene import *
 from .Model import *
+from .Material import *
 
 __all__ = [
     'SceneReader'
 ]
+
+T = TypeVar('T')
 
 @dataclass
 class DataBlock:
@@ -82,6 +85,9 @@ class SceneReader:
             values.append(DataBlock(self._reader))
         return values
 
+    def _decode_list_prop(self, block: DataBlock, read_func: Callable[[DataBlock], T]) -> List[T]:
+        return [read_func(b) for b in block.child_blocks]
+
     #block parse functions
 
     def _read_scene(self, block: DataBlock):
@@ -93,9 +99,13 @@ class SceneReader:
 
         props = self._read_property_blocks(block.end_address)
 
-        self._scene.model_pool = [self._read_model(b) for b in props['MODL[]'].child_blocks]
+        self._scene.model_pool = self._decode_list_prop(props['MODL[]'], self._read_model)
         vertexBufferPool = props['VBUF[]']
         indexBufferPool = props['IBUF[]']
+        materialPool = props['MATL[]']
+        texturePool = props['BITM[]']
+
+        return
 
     def _read_node(self, block: DataBlock):
         self._reader.position = block.start_address
@@ -109,13 +119,13 @@ class SceneReader:
         model.name = self._reader.read_string()
         model.flags = self._reader.read_int32()
         props = self._read_property_blocks(block.end_address)
-        model.regions = [self._read_region(b) for b in props['REGN[]'].child_blocks]
-        model.markers = [self._read_marker(b) for b in props['MARK[]'].child_blocks]
-        model.bones = [self._read_bone(b) for b in props['BONE[]'].child_blocks]
-        model.meshes = [self._read_mesh(b) for b in props['MESH[]'].child_blocks]
+        model.regions = self._decode_list_prop(props['REGN[]'], self._read_region)
+        model.markers = self._decode_list_prop(props['MARK[]'], self._read_marker)
+        model.bones = self._decode_list_prop(props['BONE[]'], self._read_bone)
+        model.meshes = self._decode_list_prop(props['MESH[]'], self._read_mesh)
         return model
 
-    def _read_region(self, block: DataBlock) -> List[ModelRegion]:
+    def _read_region(self, block: DataBlock) -> ModelRegion:
         region = ModelRegion()
         self._reader.position = block.start_address
         region.name = self._reader.read_string()
@@ -130,10 +140,9 @@ class SceneReader:
             perm.mesh_count = self._reader.read_int32()
             perm.transform = self._reader.read_matrix3x4()
             region.permutations.append(perm)
-
         return region
 
-    def _read_marker(self, block: DataBlock) -> List[Marker]:
+    def _read_marker(self, block: DataBlock) -> Marker:
         marker = Marker()
         self._reader.position = block.start_address
         marker.name = self._reader.read_string()
@@ -150,7 +159,7 @@ class SceneReader:
             marker.instances.append(inst)
         return marker
 
-    def _read_bone(self, block: DataBlock) -> List[Bone]:
+    def _read_bone(self, block: DataBlock) -> Bone:
         bone = Bone()
         self._reader.position = block.start_address
         bone.name = self._reader.read_string()
@@ -158,6 +167,21 @@ class SceneReader:
         bone.transform = self._reader.read_matrix4x4()
         return bone
 
-    def _read_mesh(self, block: DataBlock) -> List[Mesh]:
+    def _read_mesh(self, block: DataBlock) -> Mesh:
         mesh = Mesh()
         return mesh
+
+    def _read_material(self, block: DataBlock) -> Material:
+        material = Material()
+        self._reader.position = block.start_address
+        material.name = self._reader.read_string()
+        material.texture_mappings = []
+        material.tints = []
+        return material
+
+    def _read_texture(self, block: DataBlock) -> Texture:
+        texture = Texture()
+        self._reader.position = block.start_address
+        texture.name = self._reader.read_string()
+        texture.size = self._reader.read_int32()
+        return texture

@@ -3,10 +3,12 @@ from typing import List
 
 from .Types import *
 from .Model import *
+from .Material import *
 
 __all__ = [
     'Version',
-    'Scene'
+    'Scene',
+    'SceneGroup'
 ]
 
 @dataclass
@@ -27,6 +29,10 @@ class Scene:
     root_node: 'SceneGroup'
     markers: List[Marker]
     model_pool: List[Model]
+    vertex_buffer_pool: List[int]
+    index_buffer_pool: List[int]
+    material_pool: List[Material]
+    texture_pool: List[Texture]
 
     def __str__(self) -> str:
         return self.name
