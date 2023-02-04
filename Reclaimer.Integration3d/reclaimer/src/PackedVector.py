@@ -1,7 +1,6 @@
 from typing import Tuple
 
 class BitConfig:
-
     def __init__(self, offset: int, length: int, signed: bool):
         self.offset = offset
         self.length = length
@@ -44,7 +43,6 @@ UDecN4 = BitConfig.create_set(False, 10, 10, 10, 2)
 UHenDN3 = BitConfig.create_set(False, 11, 11, 10)
 
 class PackedVector:
-
     def __init__(self, value: int, config: Tuple[BitConfig]):
         self._bits = value
         self._config = config

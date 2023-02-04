@@ -90,6 +90,7 @@ class Bone:
 class Mesh:
     vertex_buffer_index: int
     index_buffer_index: int
+    bone_index: int # -1 if N/A
     vertex_transform: Matrix3x4
     texture_transform: Matrix3x4
     segments: List['MeshSegment']

@@ -30,6 +30,7 @@
     <Compile Include="reclaimer\src\Model.py" />
     <Compile Include="reclaimer\src\PackedVector.py" />
     <Compile Include="reclaimer\src\Scene.py" />
+    <Compile Include="reclaimer\src\DataBlock.py" />
     <Compile Include="reclaimer\src\SceneReader.py">
       <SubType>Code</SubType>
     </Compile>

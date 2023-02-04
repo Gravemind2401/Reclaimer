@@ -8,8 +8,10 @@ from .Material import *
 __all__ = [
     'Version',
     'Scene',
-    'SceneGroup'
+    'SceneGroup',
+    'ModelRef'
 ]
+
 
 @dataclass
 class Version:
@@ -20,6 +22,7 @@ class Version:
 
     def __str__(self) -> str:
         return f'{self.major}.{self.minor}.{self.build}.{self.revision}'
+
 
 class Scene:
     version: Version
@@ -40,14 +43,20 @@ class Scene:
     def __repr__(self) -> str:
         return f'<{str(self)}>'
 
+
 class SceneGroup:
-    name: str = None
-    child_groups: List['SceneGroup'] = None
-    #child_objects: List[Marker] = None
+    name: str
+    child_groups: List['SceneGroup']
+    child_objects: List
 
     def __str__(self) -> str:
         return self.name
 
     def __repr__(self) -> str:
         return f'<{str(self)}>'
+
+
+@dataclass
+class ModelRef:
+    model_index: int
 

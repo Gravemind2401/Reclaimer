@@ -85,6 +85,9 @@ class FileReader:
             nextChar = self._stream.read(1).decode()
         return ''.join(chars)
 
+    def read_color(self, byteOrder: str = '<') -> Color:
+        return (self.read_byte(byteOrder), self.read_byte(byteOrder), self.read_byte(byteOrder), self.read_byte(byteOrder))
+
     def read_float2(self, byteOrder: str = '<') -> Float2:
         return (self.read_float(byteOrder), self.read_float(byteOrder))
 
