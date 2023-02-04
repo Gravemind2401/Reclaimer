@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 from typing import List
+
+from .Types import *
 from .Model import *
 
 __all__ = [
@@ -17,19 +19,18 @@ class Version:
     def __str__(self) -> str:
         return f'{self.major}.{self.minor}.{self.build}.{self.revision}'
 
-@dataclass
 class Scene:
-    version: Version = Version()
-    unit_scale: float = 1
-    name: str = None
-    root_node: 'SceneGroup' = None
-    markers: List[Marker] = None
-    model_pool: List[Model] = None
+    version: Version
+    unit_scale: float
+    world_matrix: Matrix3x3
+    name: str
+    root_node: 'SceneGroup'
+    markers: List[Marker]
+    model_pool: List[Model]
 
     def __str__(self) -> str:
         return self.name
 
-@dataclass
 class SceneGroup:
     name: str = None
     child_groups: List['SceneGroup'] = None

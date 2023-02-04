@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Dict
+
 from .FileReader import *
 from .Scene import *
 from .Model import *
@@ -87,7 +88,7 @@ class SceneReader:
         self._reader.position = block.start_address
         self._scene.version = Version(self._reader.read_byte(), self._reader.read_byte(), self._reader.read_byte(), self._reader.read_byte())
         self._scene.unit_scale = self._reader.read_float()
-        self._reader.position += 4 * 3 * 3 #TODO: world matrix here
+        self._scene.world_matrix = self._reader.read_matrix3x3()
         self._scene.name = self._reader.read_string()
 
         props = self._read_property_blocks(block.end_address)
@@ -127,7 +128,7 @@ class SceneReader:
             perm.instanced = self._reader.read_bool()
             perm.mesh_index = self._reader.read_int32()
             perm.mesh_count = self._reader.read_int32()
-            #TODO: read transform here
+            perm.transform = self._reader.read_matrix3x4()
             region.permutations.append(perm)
 
         return region
@@ -144,8 +145,8 @@ class SceneReader:
             inst.region_index = self._reader.read_int32()
             inst.permutation_index = self._reader.read_int32()
             inst.bone_index = self._reader.read_int32()
-            self._reader.position += 4 * 3 #TODO: position here
-            self._reader.position += 4 * 4 #TODO: rotation here
+            inst.position = self._reader.read_float3()
+            inst.rotation = self._reader.read_float4()
             marker.instances.append(inst)
         return marker
 
@@ -154,7 +155,7 @@ class SceneReader:
         self._reader.position = block.start_address
         bone.name = self._reader.read_string()
         bone.parent_index = self._reader.read_int32()
-        #TODO: read transform here
+        bone.transform = self._reader.read_matrix4x4()
         return bone
 
     def _read_mesh(self, block: DataBlock) -> List[Mesh]:

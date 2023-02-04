@@ -2,6 +2,8 @@ import struct
 from io import BufferedReader, SEEK_SET
 from enum import IntEnum #, StrEnum
 
+from .Types import *
+
 __all__ = [
     'SeekOrigin',
     #'ByteOrder',
@@ -83,15 +85,20 @@ class FileReader:
             nextChar = self._stream.read(1).decode()
         return ''.join(chars)
 
-    #def read_vec2(self, endian = '<'):
-    #    return Vector([self.read_float(endian), self.read_float(endian)])
+    def read_float2(self, byteOrder: str = '<') -> Float2:
+        return (self.read_float(byteOrder), self.read_float(byteOrder))
 
-    #def read_vec3(self, endian = '<'):
-    #    return Vector([self.read_float(endian), self.read_float(endian), self.read_float(endian)])
+    def read_float3(self, byteOrder: str = '<') -> Float3:
+        return (self.read_float(byteOrder), self.read_float(byteOrder), self.read_float(byteOrder))
 
-    #def read_vec4(self, endian = '<'):
-    #    return Vector([self.read_float(endian), self.read_float(endian), self.read_float(endian), self.read_float(endian)])
+    def read_float4(self, byteOrder: str = '<') -> Float4:
+        return (self.read_float(byteOrder), self.read_float(byteOrder), self.read_float(byteOrder), self.read_float(byteOrder))
 
-    #def read_quat(self, endian = '<'):
-    #    vec = self.read_vec4(endian)
-    #    return Quaternion([vec.w, vec.x, vec.y, vec.z])
+    def read_matrix3x3(self, byteOrder: str = '<') -> Matrix3x3:
+        return (self.read_float3(byteOrder), self.read_float3(byteOrder), self.read_float3(byteOrder))
+
+    def read_matrix3x4(self, byteOrder: str = '<') -> Matrix3x4:
+        return (self.read_float3(byteOrder), self.read_float3(byteOrder), self.read_float3(byteOrder), self.read_float3(byteOrder))
+
+    def read_matrix4x4(self, byteOrder: str = '<') -> Matrix4x4:
+        return (self.read_float4(byteOrder), self.read_float4(byteOrder), self.read_float4(byteOrder), self.read_float4(byteOrder))

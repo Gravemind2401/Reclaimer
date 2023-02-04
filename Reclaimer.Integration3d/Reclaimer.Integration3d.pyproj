@@ -32,6 +32,9 @@
     <Compile Include="reclaimer\src\SceneReader.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="reclaimer\src\Types.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="reclaimer\src\__init__.py" />
     <Compile Include="reclaimer\tests\Test_SceneReader.py" />
     <Compile Include="reclaimer\tests\Test_PackedVector.py" />
