@@ -401,8 +401,6 @@ namespace Reclaimer.Blam.Halo3
 
         public string ClassName => cache.TagIndex.Classes[ClassIndex].ClassName.Value;
 
-        public string FileName => Utils.GetFileName(FullPath);
-
         public string FullPath => cache.TagIndex.Filenames[Id];
 
         public T ReadMetadata<T>()

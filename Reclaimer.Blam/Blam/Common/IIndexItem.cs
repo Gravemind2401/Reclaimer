@@ -15,6 +15,6 @@ namespace Reclaimer.Blam.Common
 
         T ReadMetadata<T>();
 
-        sealed string FileName => Utilities.Utils.GetFileName(FullPath);
+        sealed string FileName => Utils.GetFileName(FullPath);
     }
 }

@@ -52,7 +52,7 @@ namespace Reclaimer.Blam.Halo1
 
                 var material = new GeometryMaterial
                 {
-                    Name = Utils.GetFileName(shaderRef.Tag.FullPath)
+                    Name = shaderRef.Tag.FileName
                 };
 
                 var bitmTag = GetShaderDiffuse(shaderRef, reader);

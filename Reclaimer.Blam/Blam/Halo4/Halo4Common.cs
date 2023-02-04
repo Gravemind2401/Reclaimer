@@ -69,7 +69,7 @@ namespace Reclaimer.Blam.Halo4
 
                 var material = new GeometryMaterial
                 {
-                    Name = Utils.GetFileName(tag.FullPath)
+                    Name = tag.FileName
                 };
 
                 var shader = tag?.ReadMetadata<material>();
