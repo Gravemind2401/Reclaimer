@@ -37,6 +37,9 @@ class Scene:
     def __str__(self) -> str:
         return self.name
 
+    def __repr__(self) -> str:
+        return f'<{str(self)}>'
+
 class SceneGroup:
     name: str = None
     child_groups: List['SceneGroup'] = None
@@ -44,4 +47,7 @@ class SceneGroup:
 
     def __str__(self) -> str:
         return self.name
+
+    def __repr__(self) -> str:
+        return f'<{str(self)}>'
 

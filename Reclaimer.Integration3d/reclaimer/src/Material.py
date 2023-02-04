@@ -9,6 +9,7 @@ __all__ = [
     'Texture'
 ]
 
+
 class Material:
     name: str
     texture_mappings: List['TextureMapping']
@@ -16,6 +17,9 @@ class Material:
 
     def __str__(self) -> str:
         return self.name
+
+    def __repr__(self) -> str:
+        return f'<{str(self)}>'
 
 
 @dataclass
@@ -25,10 +29,12 @@ class TextureMapping:
     channel_mask: int = 0
 
 
-@dataclass
 class Texture:
-    name: str = None
-    size: int = 0
+    name: str
+    size: int
 
     def __str__(self) -> str:
         return self.name
+
+    def __repr__(self) -> str:
+        return f'<{str(self)}>'

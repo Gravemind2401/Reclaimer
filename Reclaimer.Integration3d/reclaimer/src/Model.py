@@ -14,6 +14,7 @@ __all__ = [
     'MeshSegment'
 ]
 
+
 class Model:
     name: str
     flags: int
@@ -25,6 +26,9 @@ class Model:
     def __str__(self) -> str:
         return self.name
 
+    def __repr__(self) -> str:
+        return f'<{str(self)}>'
+
 
 class ModelRegion:
     name: str
@@ -32,6 +36,9 @@ class ModelRegion:
 
     def __str__(self) -> str:
         return self.name
+
+    def __repr__(self) -> str:
+        return f'<{str(self)}>'
 
 
 class ModelPermutation:
@@ -44,6 +51,9 @@ class ModelPermutation:
     def __str__(self) -> str:
         return self.name
 
+    def __repr__(self) -> str:
+        return f'<{str(self)}>'
+
 
 class Marker:
     name: str
@@ -51,6 +61,9 @@ class Marker:
 
     def __str__(self) -> str:
         return self.name
+
+    def __repr__(self) -> str:
+        return f'<{str(self)}>'
 
 
 @dataclass
@@ -69,6 +82,9 @@ class Bone:
 
     def __str__(self) -> str:
         return self.name
+
+    def __repr__(self) -> str:
+        return f'<{str(self)}>'
 
 
 class Mesh:
