@@ -68,7 +68,7 @@ namespace Reclaimer.Blam.Halo2
 
         #region ISoundContainer
 
-        string ISoundContainer.Name => item.FullPath;
+        string ISoundContainer.Name => item.TagName;
 
         string ISoundContainer.Class => item.ClassName;
 

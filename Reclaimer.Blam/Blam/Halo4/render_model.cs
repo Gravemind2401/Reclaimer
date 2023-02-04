@@ -323,7 +323,7 @@ namespace Reclaimer.Blam.Halo4
         [Offset(0)]
         public TagReference MaterialReference { get; set; }
 
-        public override string ToString() => MaterialReference.Tag?.FullPath;
+        public override string ToString() => MaterialReference.Tag?.TagName;
     }
 
     [FixedSize(112)]

@@ -55,8 +55,8 @@ namespace Reclaimer.Controls
 
         public void LoadMetadata(IIndexItem tag, string xmlFileName)
         {
-            TabModel.ToolTip = $"{tag.FullPath}.{tag.ClassCode}";
-            TabModel.Header = $"{Utils.GetFileName(tag.FullPath)}.{tag.ClassCode}";
+            TabModel.ToolTip = $"{tag.TagName}.{tag.ClassCode}";
+            TabModel.Header = $"{Utils.GetFileName(tag.TagName)}.{tag.ClassCode}";
 
             item = tag;
             fileName = xmlFileName;
@@ -66,8 +66,8 @@ namespace Reclaimer.Controls
 
         public void LoadMetadata(ModuleItem tag, string xmlFileName)
         {
-            TabModel.ToolTip = $"{tag.FullPath}.{tag.ClassCode}";
-            TabModel.Header = $"{Utils.GetFileName(tag.FullPath)}.{tag.ClassCode}";
+            TabModel.ToolTip = $"{tag.TagName}.{tag.ClassCode}";
+            TabModel.Header = $"{tag.FileName}.{tag.ClassCode}";
 
             item = tag;
             fileName = xmlFileName;

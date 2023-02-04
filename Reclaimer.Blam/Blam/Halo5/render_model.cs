@@ -41,7 +41,7 @@ namespace Reclaimer.Blam.Halo5
         [Offset(356)]
         public BlockCollection<NodeMapBlock> NodeMaps { get; set; }
 
-        public override string ToString() => Utils.GetFileName(Item.FullPath);
+        public override string ToString() => Item.FileName;
 
         #region IRenderGeometry
 
@@ -51,7 +51,7 @@ namespace Reclaimer.Blam.Halo5
         {
             Exceptions.ThrowIfIndexOutOfRange(lod, ((IRenderGeometry)this).LodCount);
 
-            var model = new GeometryModel(Utils.GetFileName(Item.FullPath)) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
 
             model.Nodes.AddRange(Nodes);
             model.MarkerGroups.AddRange(MarkerGroups);
@@ -315,7 +315,7 @@ namespace Reclaimer.Blam.Halo5
         [Offset(0)]
         public TagReference MaterialReference { get; set; }
 
-        public override string ToString() => MaterialReference.Tag?.FullPath;
+        public override string ToString() => MaterialReference.Tag?.TagName;
     }
 
     [FixedSize(128)]

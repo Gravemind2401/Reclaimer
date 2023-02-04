@@ -74,17 +74,17 @@ namespace Reclaimer.Blam.Halo5
 
         public string ClassCode => (ClassId == -1) ? null : Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId));
 
-        private string fileName => Module.Strings[NameOffset];
+        private string tagName => Module.Strings[NameOffset];
 
-        public string FullPath
+        public string TagName
         {
             get
             {
                 if (GlobalTagId == -1)
-                    return fileName;
+                    return tagName;
 
-                var len = fileName.LastIndexOf('.');
-                return fileName.Substring(0, len);
+                var len = tagName.LastIndexOf('.');
+                return tagName[..len];
             }
         }
 
@@ -95,10 +95,12 @@ namespace Reclaimer.Blam.Halo5
                 if (GlobalTagId == -1)
                     return null;
 
-                var index = fileName.LastIndexOf('.') + 1;
-                return fileName.Substring(index, fileName.Length - index);
+                var index = tagName.LastIndexOf('.') + 1;
+                return tagName[index..];
             }
         }
+
+        public string FileName => Utils.GetFileName(TagName);
 
         public ModuleItem(Module module)
         {
@@ -177,6 +179,6 @@ namespace Reclaimer.Blam.Halo5
             }
         }
 
-        public override string ToString() => FullPath;
+        public override string ToString() => TagName;
     }
 }

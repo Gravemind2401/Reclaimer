@@ -64,11 +64,11 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             TagOptions.Insert(0, externalTagOption);
 
             var classTags = from t in item.Module.GetItemsByClass(SelectedClass.Context.ClassCode)
-                            orderby t.FullPath
+                            orderby t.TagName
                             select t;
 
             foreach (var t in classTags)
-                TagOptions.Add(new ComboBoxItem<ModuleItem>(t.FullPath, t));
+                TagOptions.Add(new ComboBoxItem<ModuleItem>(t.TagName, t));
 
             SelectedItem = TagOptions.Skip(1).FirstOrDefault();
         }

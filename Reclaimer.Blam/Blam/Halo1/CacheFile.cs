@@ -113,7 +113,7 @@ namespace Reclaimer.Blam.Halo1
 
         public int HeaderSize => cache.CacheType == CacheType.Halo1Xbox ? 36 : 40;
 
-        internal Dictionary<int, string> Filenames { get; }
+        internal Dictionary<int, string> TagNames { get; }
 
         [Offset(0)]
         public int Magic { get; set; }
@@ -138,7 +138,7 @@ namespace Reclaimer.Blam.Halo1
             this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
             items = new List<IndexItem>();
             sysItems = new Dictionary<string, IndexItem>();
-            Filenames = new Dictionary<int, string>();
+            TagNames = new Dictionary<int, string>();
         }
 
         internal void ReadItems(DependencyReader reader)
@@ -157,7 +157,7 @@ namespace Reclaimer.Blam.Halo1
                     sysItems.Add(item.ClassCode, item);
 
                 reader.Seek(item.FileNamePointer.Address, SeekOrigin.Begin);
-                Filenames.Add(item.Id, reader.ReadNullTerminatedString());
+                TagNames.Add(item.Id, reader.ReadNullTerminatedString());
             }
         }
 
@@ -219,7 +219,7 @@ namespace Reclaimer.Blam.Halo1
             }
         }
 
-        public string FullPath => cache.TagIndex.Filenames[Id];
+        public string TagName => cache.TagIndex.TagNames[Id];
 
         public T ReadMetadata<T>()
         {
@@ -261,9 +261,6 @@ namespace Reclaimer.Blam.Halo1
             }
         }
 
-        public override string ToString()
-        {
-            return Utils.CurrentCulture($"[{ClassCode}] {FullPath}");
-        }
+        public override string ToString() => Utils.CurrentCulture($"[{ClassCode}] {TagName}");
     }
 }

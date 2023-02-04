@@ -10,7 +10,7 @@ namespace Reclaimer.Blam.Halo5
 
         string IExtractable.SourceFile => Item.Module.FileName;
         int IExtractable.Id => Item.GlobalTagId;
-        string IExtractable.Name => Item.FullPath;
+        string IExtractable.Name => Item.TagName;
         string IExtractable.Class => Item.ClassName;
     }
 }

@@ -127,11 +127,11 @@ namespace Reclaimer.Controls
             foreach (var g in classGroups.OrderBy(g => g.Key))
             {
                 var node = new TreeItemModel { Header = g.Key };
-                foreach (var i in g.OrderBy(i => i.FullPath))
+                foreach (var i in g.OrderBy(i => i.TagName))
                 {
                     node.Items.Add(new TreeItemModel
                     {
-                        Header = i.FullPath,
+                        Header = i.TagName,
                         Tag = i
                     });
                 }
@@ -146,9 +146,9 @@ namespace Reclaimer.Controls
             var result = new List<TreeItemModel>();
             var lookup = new Dictionary<string, TreeItemModel>();
 
-            foreach (var tag in module.Items.Where(i => FilterTag(filter, i)).OrderBy(i => i.FullPath))
+            foreach (var tag in module.Items.Where(i => FilterTag(filter, i)).OrderBy(i => i.TagName))
             {
-                var node = MakeNode(result, lookup, $"{tag.FullPath}.{tag.ClassName}");
+                var node = MakeNode(result, lookup, $"{tag.TagName}.{tag.ClassName}");
                 node.Tag = tag;
             }
 
@@ -160,7 +160,7 @@ namespace Reclaimer.Controls
             if (tag.GlobalTagId == -1)
                 return false;
 
-            return string.IsNullOrEmpty(filter) || tag.FullPath.ToUpper().Contains(filter.ToUpper()) || tag.ClassCode.ToUpper() == filter.ToUpper() || tag.ClassName.ToUpper() == filter.ToUpper();
+            return string.IsNullOrEmpty(filter) || tag.TagName.ToUpper().Contains(filter.ToUpper()) || tag.ClassCode.ToUpper() == filter.ToUpper() || tag.ClassName.ToUpper() == filter.ToUpper();
         }
 
         private TreeItemModel MakeNode(IList<TreeItemModel> root, IDictionary<string, TreeItemModel> lookup, string path, bool inner = false)
@@ -215,7 +215,7 @@ namespace Reclaimer.Controls
 
         private OpenFileArgs GetSelectedArgs(ModuleItem item)
         {
-            var fileName = $"{item.FullPath}.{item.ClassName}";
+            var fileName = $"{item.TagName}.{item.ClassName}";
             var fileKey = $"Blam.{module.ModuleType}.{item.ClassCode}";
             return new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), GetFileFormats(item).ToArray());
         }
@@ -336,7 +336,7 @@ namespace Reclaimer.Controls
 
         private void ContextItem_Click(object sender, RoutedEventArgs e)
         {
-            if (!(sender is MenuItem item))
+            if (sender is not MenuItem item)
                 return;
 
             var args = GetSelectedArgs();
@@ -349,7 +349,7 @@ namespace Reclaimer.Controls
             else if (sender == CopyPathContextItem)
             {
                 var tag = args.File.OfType<ModuleItem>().First();
-                Clipboard.SetText($"{tag.FullPath}.{tag.ClassName}");
+                Clipboard.SetText($"{tag.TagName}.{tag.ClassName}");
             }
             else
                 ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(args);

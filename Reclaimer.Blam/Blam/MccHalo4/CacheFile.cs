@@ -175,7 +175,7 @@ namespace Reclaimer.Blam.MccHalo4
         private readonly Dictionary<int, IndexItem> items;
         private readonly Dictionary<string, IndexItem> sysItems;
 
-        internal Dictionary<int, string> Filenames { get; }
+        internal Dictionary<int, string> TagNames { get; }
         internal List<TagClass> Classes { get; }
 
         [Offset(0)]
@@ -209,7 +209,7 @@ namespace Reclaimer.Blam.MccHalo4
             sysItems = new Dictionary<string, IndexItem>();
 
             Classes = new List<TagClass>();
-            Filenames = new Dictionary<int, string>();
+            TagNames = new Dictionary<int, string>();
         }
 
         internal void ReadItems()
@@ -249,19 +249,19 @@ namespace Reclaimer.Blam.MccHalo4
                     {
                         if (indices[i] == -1)
                         {
-                            Filenames.Add(i, null);
+                            TagNames.Add(i, null);
                             continue;
                         }
 
                         tempReader.Seek(indices[i], SeekOrigin.Begin);
-                        Filenames.Add(i, tempReader.ReadNullTerminatedString());
+                        TagNames.Add(i, tempReader.ReadNullTerminatedString());
                     }
                 }
             }
 
             try
             {
-                sysItems[CacheFactory.ScenarioClass] = items.Values.Single(i => i.ClassCode == CacheFactory.ScenarioClass && i.FullPath == cache.Header.ScenarioName);
+                sysItems[CacheFactory.ScenarioClass] = items.Values.Single(i => i.ClassCode == CacheFactory.ScenarioClass && i.TagName == cache.Header.ScenarioName);
             }
             catch
             {
@@ -358,10 +358,7 @@ namespace Reclaimer.Blam.MccHalo4
             }
         }
 
-        public override string ToString()
-        {
-            return Utils.CurrentCulture($"[{ClassCode}] {ClassName.Value}");
-        }
+        public override string ToString() => Utils.CurrentCulture($"[{ClassCode}] {ClassName.Value}");
     }
 
     [FixedSize(8)]
@@ -396,7 +393,7 @@ namespace Reclaimer.Blam.MccHalo4
 
         public string ClassName => cache.TagIndex.Classes[ClassIndex].ClassName.Value;
 
-        public string FullPath => cache.TagIndex.Filenames[Id];
+        public string TagName => cache.TagIndex.TagNames[Id];
 
         public T ReadMetadata<T>()
         {
@@ -410,7 +407,7 @@ namespace Reclaimer.Blam.MccHalo4
                     if (lazy != null)
                         return lazy.Value;
                     else
-                        metadataCache = lazy = new Lazy<T>(() => ReadMetadataInternal<T>());
+                        metadataCache = lazy = new Lazy<T>(ReadMetadataInternal<T>);
                 }
 
                 return lazy.Value;
@@ -430,9 +427,6 @@ namespace Reclaimer.Blam.MccHalo4
             }
         }
 
-        public override string ToString()
-        {
-            return Utils.CurrentCulture($"[{ClassCode}] {FullPath}");
-        }
+        public override string ToString() => Utils.CurrentCulture($"[{ClassCode}] {TagName}");
     }
 }

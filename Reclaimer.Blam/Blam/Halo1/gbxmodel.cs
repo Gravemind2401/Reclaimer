@@ -488,6 +488,6 @@ namespace Reclaimer.Blam.Halo1
         [Offset(0)]
         public TagReference ShaderReference { get; set; }
 
-        public override string ToString() => ShaderReference.Tag?.FullPath;
+        public override string ToString() => ShaderReference.Tag?.TagName;
     }
 }

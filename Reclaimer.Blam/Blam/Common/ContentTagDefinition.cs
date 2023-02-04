@@ -10,7 +10,7 @@ namespace Reclaimer.Blam.Common
 
         string IExtractable.SourceFile => Item.CacheFile.FileName;
         int IExtractable.Id => Item.Id;
-        string IExtractable.Name => Item.FullPath;
+        string IExtractable.Name => Item.TagName;
         string IExtractable.Class => Item.ClassName;
     }
 }

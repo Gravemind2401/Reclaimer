@@ -570,7 +570,7 @@ namespace Reclaimer.Plugins
         {
             private readonly IIndexItem item;
 
-            public string ItemKey => $"{item.FullPath}.{item.ClassName}";
+            public string ItemKey => $"{item.TagName}.{item.ClassName}";
 
             public string DisplayName => ItemKey;
 
@@ -602,7 +602,7 @@ namespace Reclaimer.Plugins
         {
             private readonly ModuleItem item;
 
-            public string ItemKey => $"{item.FullPath}.{item.ClassName}";
+            public string ItemKey => $"{item.TagName}.{item.ClassName}";
 
             public string DisplayName => ItemKey;
 

@@ -320,7 +320,7 @@ namespace Reclaimer.Blam.HaloReach
         [Offset(0)]
         public TagReference ShaderReference { get; set; }
 
-        public override string ToString() => ShaderReference.Tag?.FullPath;
+        public override string ToString() => ShaderReference.Tag?.TagName;
     }
 
     [FixedSize(92)]

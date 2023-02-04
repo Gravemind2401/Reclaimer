@@ -30,7 +30,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             set => SetProperty(ref selectedClass, value, OnClassChanged);
         }
 
-        public override string EntryString => Utils.GetFileName(SelectedItem?.Context?.FullPath);
+        public override string EntryString => Utils.GetFileName(SelectedItem?.Context?.TagName);
 
         public ObservableCollection<ComboBoxItem> ClassOptions { get; }
         public ObservableCollection<ComboBoxItem<IIndexItem>> TagOptions { get; }
@@ -55,11 +55,11 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             TagOptions.Clear();
             var classTags = from t in context.Cache.TagIndex
                             where t.ClassName == SelectedClass.Label
-                            orderby t.FullPath
+                            orderby t.TagName
                             select t;
 
             foreach (var t in classTags)
-                TagOptions.Add(new ComboBoxItem<IIndexItem>(t.FullPath, t));
+                TagOptions.Add(new ComboBoxItem<IIndexItem>(t.TagName, t));
 
             SelectedItem = TagOptions.First();
         }

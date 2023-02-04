@@ -443,6 +443,6 @@ namespace Reclaimer.Blam.Halo2
         [Offset(8, MinVersion = (int)CacheType.Halo2Xbox)]
         public TagReference ShaderReference { get; set; }
 
-        public override string ToString() => ShaderReference.Tag?.FullPath;
+        public override string ToString() => ShaderReference.Tag?.TagName;
     }
 }

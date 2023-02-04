@@ -9,12 +9,12 @@ namespace Reclaimer.Blam.Common
         int Id { get; }
         int ClassId { get; }
         Pointer MetaPointer { get; }
-        string FullPath { get; }
+        string TagName { get; }
         string ClassCode { get; }
         string ClassName { get; }
 
         T ReadMetadata<T>();
 
-        sealed string FileName => Utils.GetFileName(FullPath);
+        sealed string FileName => Utils.GetFileName(TagName);
     }
 }

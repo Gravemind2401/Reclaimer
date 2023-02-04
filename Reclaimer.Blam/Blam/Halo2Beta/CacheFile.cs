@@ -146,7 +146,7 @@ namespace Reclaimer.Blam.Halo2Beta
                     item.FileNamePointer = new Pointer(item.FileNamePointer.Value, cache.HeaderTranslator);
 
                     reader.Seek(item.FileNamePointer.Address, SeekOrigin.Begin);
-                    item.FullPath = reader.ReadNullTerminatedString();
+                    item.TagName = reader.ReadNullTerminatedString();
                 }
             }
         }
@@ -253,7 +253,7 @@ namespace Reclaimer.Blam.Halo2Beta
             }
         }
 
-        public string FullPath { get; internal set; }
+        public string TagName { get; internal set; }
 
         public T ReadMetadata<T>()
         {
@@ -267,7 +267,7 @@ namespace Reclaimer.Blam.Halo2Beta
                     if (lazy != null)
                         return lazy.Value;
                     else
-                        metadataCache = lazy = new Lazy<T>(() => ReadMetadataInternal<T>());
+                        metadataCache = lazy = new Lazy<T>(ReadMetadataInternal<T>);
                 }
 
                 return lazy.Value;
@@ -306,9 +306,6 @@ namespace Reclaimer.Blam.Halo2Beta
             }
         }
 
-        public override string ToString()
-        {
-            return Utils.CurrentCulture($"[{ClassCode}] {FullPath}");
-        }
+        public override string ToString() => Utils.CurrentCulture($"[{ClassCode}] {TagName}");
     }
 }

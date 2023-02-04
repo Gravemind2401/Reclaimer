@@ -130,7 +130,7 @@ namespace Reclaimer.Blam.Halo2
 
         public static int HeaderSize => 32;
 
-        internal Dictionary<int, string> Filenames { get; }
+        internal Dictionary<int, string> TagNames { get; }
 
         [Offset(0)]
         public int Magic { get; set; }
@@ -149,7 +149,7 @@ namespace Reclaimer.Blam.Halo2
             this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
             items = new Dictionary<int, IndexItem>();
             sysItems = new Dictionary<string, IndexItem>();
-            Filenames = new Dictionary<int, string>();
+            TagNames = new Dictionary<int, string>();
         }
 
         internal void ReadItems()
@@ -180,7 +180,7 @@ namespace Reclaimer.Blam.Halo2
                 for (var i = 0; i < TagCount; i++)
                 {
                     reader.Seek(cache.Header.FileTableAddress + indices[i], SeekOrigin.Begin);
-                    Filenames.Add(i, reader.ReadNullTerminatedString());
+                    TagNames.Add(i, reader.ReadNullTerminatedString());
                 }
             }
         }
@@ -279,7 +279,7 @@ namespace Reclaimer.Blam.Halo2
             }
         }
 
-        public string FullPath => cache.TagIndex.Filenames[Id];
+        public string TagName => cache.TagIndex.TagNames[Id];
 
         public T ReadMetadata<T>()
         {
@@ -293,7 +293,7 @@ namespace Reclaimer.Blam.Halo2
                     if (lazy != null)
                         return lazy.Value;
                     else
-                        metadataCache = lazy = new Lazy<T>(() => ReadMetadataInternal<T>());
+                        metadataCache = lazy = new Lazy<T>(ReadMetadataInternal<T>);
                 }
 
                 return lazy.Value;
@@ -332,9 +332,6 @@ namespace Reclaimer.Blam.Halo2
             }
         }
 
-        public override string ToString()
-        {
-            return Utils.CurrentCulture($"[{ClassCode}] {FullPath}");
-        }
+        public override string ToString() => Utils.CurrentCulture($"[{ClassCode}] {TagName}");
     }
 }
