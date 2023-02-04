@@ -75,7 +75,7 @@ namespace Reclaimer.Blam.Common.Gen3
                 if (!isInitialised)
                     ReadItems();
 
-                return values.ContainsKey(key.Id) ? values[key.Id][0] : null;
+                return values.TryGetValue(key.Id, out var value) ? value[0] : null;
             }
         }
 

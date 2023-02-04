@@ -87,7 +87,7 @@ namespace Reclaimer.Plugins
                     yield return ExtractMultipleContextItem;
                 else
                 {
-                    if (context.File.Any(f => IsExtractable(f)))
+                    if (context.File.Any(IsExtractable))
                         yield return ExtractSingleContextItem;
                 }
             }
@@ -100,7 +100,7 @@ namespace Reclaimer.Plugins
                     yield return ExtractMultipleContextItem;
                 else
                 {
-                    if (context.File.Any(f => IsExtractable(f)))
+                    if (context.File.Any(IsExtractable))
                         yield return ExtractSingleContextItem;
                 }
             }

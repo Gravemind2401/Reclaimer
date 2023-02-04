@@ -58,14 +58,13 @@ namespace Reclaimer.Blam.Utilities
 
         protected override object CreateInstance(Type type, double? version)
         {
-            if (registeredTypes.ContainsKey(type))
-                return registeredTypes[type]();
+            if (registeredTypes.TryGetValue(type, out var factory))
+                return factory.Invoke();
 
             var constructor = FindConstructor(type);
-            if (constructor == null)
-                return base.CreateInstance(type, version);
-            else
-                return Construct(type, constructor);
+            return constructor == null
+                ? base.CreateInstance(type, version)
+                : Construct(type, constructor);
         }
 
         private object Construct(Type type, ConstructorInfo constructor)

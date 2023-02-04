@@ -42,18 +42,16 @@ namespace Reclaimer.Blam.Utilities
 
         public static long XMemResetDecompressionContext(long context)
         {
-            if (Is64Bit)
-                return XMemResetDecompressionContext64(context);
-            else
-                return XMemResetDecompressionContext32((int)context);
+            return Is64Bit
+                ? XMemResetDecompressionContext64(context)
+                : XMemResetDecompressionContext32((int)context);
         }
 
         public static long XMemDecompressStream(long context, byte[] pDestination, ref int pDestSize, byte[] pSource, ref int pSrcSize)
         {
-            if (Is64Bit)
-                return XMemDecompressStream64(context, pDestination, ref pDestSize, pSource, ref pSrcSize);
-            else
-                return XMemDecompressStream32((int)context, pDestination, ref pDestSize, pSource, ref pSrcSize);
+            return Is64Bit
+                ? XMemDecompressStream64(context, pDestination, ref pDestSize, pSource, ref pSrcSize)
+                : XMemDecompressStream32((int)context, pDestination, ref pDestSize, pSource, ref pSrcSize);
         }
 
         #region x86

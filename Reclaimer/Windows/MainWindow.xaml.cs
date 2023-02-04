@@ -283,14 +283,14 @@ namespace Reclaimer.Windows
         private readonly Dictionary<string, MenuItem> menuLookup = new Dictionary<string, MenuItem>();
         private MenuItem GetMenuItem(string path)
         {
-            if (menuLookup.ContainsKey(path))
-                return menuLookup[path];
+            if (menuLookup.TryGetValue(path, out var item))
+                return item;
 
             var index = path.LastIndexOf('\\');
-            var branch = index < 0 ? null : path.Substring(0, index);
-            var leaf = index < 0 ? path : path.Substring(index + 1);
+            var branch = index < 0 ? null : path[..index];
+            var leaf = index < 0 ? path : path[(index + 1)..];
 
-            var item = new MenuItem { Header = leaf };
+            item = new MenuItem { Header = leaf };
             menuLookup.Add(path, item);
 
             if (branch == null)
@@ -302,10 +302,9 @@ namespace Reclaimer.Windows
             return item;
         }
 
-        private MenuItem GetRoot(MenuItem item)
+        private static MenuItem GetRoot(MenuItem item)
         {
-            var temp = item;
-            while ((temp = temp.Parent as MenuItem) != null)
+            while (item.Parent is MenuItem temp)
                 item = temp;
 
             return item;

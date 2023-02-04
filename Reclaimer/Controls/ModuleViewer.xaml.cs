@@ -155,7 +155,7 @@ namespace Reclaimer.Controls
             rootNode.Items.Reset(result);
         }
 
-        private bool FilterTag(string filter, ModuleItem tag)
+        private static bool FilterTag(string filter, ModuleItem tag)
         {
             if (tag.GlobalTagId == -1)
                 return false;
@@ -165,14 +165,14 @@ namespace Reclaimer.Controls
 
         private TreeItemModel MakeNode(IList<TreeItemModel> root, IDictionary<string, TreeItemModel> lookup, string path, bool inner = false)
         {
-            if (lookup.ContainsKey(path))
-                return lookup[path];
+            if (lookup.TryGetValue(path, out var item))
+                return item;
 
             var index = path.LastIndexOf('\\');
-            var branch = index < 0 ? null : path.Substring(0, index);
-            var leaf = index < 0 ? path : path.Substring(index + 1);
+            var branch = index < 0 ? null : path[..index];
+            var leaf = index < 0 ? path : path[(index + 1)..];
 
-            var item = new TreeItemModel(leaf);
+            item = new TreeItemModel(leaf);
             lookup.Add(path, item);
 
             if (branch == null)
@@ -207,10 +207,9 @@ namespace Reclaimer.Controls
         private OpenFileArgs GetSelectedArgs()
         {
             var node = tv.SelectedItem as TreeItemModel;
-            if (node.HasItems) //folder
-                return GetFolderArgs(node);
-
-            return GetSelectedArgs(node.Tag as ModuleItem);
+            return node.HasItems
+                ? GetFolderArgs(node) //folder
+                : GetSelectedArgs(node.Tag as ModuleItem);
         }
 
         private OpenFileArgs GetSelectedArgs(ModuleItem item)
@@ -279,7 +278,7 @@ namespace Reclaimer.Controls
             if ((sender as TreeViewItem)?.DataContext != tv.SelectedItem)
                 return; //because this event bubbles to the parent node
 
-            if (!((tv.SelectedItem as TreeItemModel)?.Tag is ModuleItem))
+            if ((tv.SelectedItem as TreeItemModel)?.Tag is not ModuleItem)
                 return;
 
             Substrate.OpenWithDefault(GetSelectedArgs());

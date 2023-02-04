@@ -59,7 +59,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             try
             {
                 if (string.IsNullOrEmpty(targetId))
-                    throw new ArgumentException();
+                    throw new InvalidOperationException();
 
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 

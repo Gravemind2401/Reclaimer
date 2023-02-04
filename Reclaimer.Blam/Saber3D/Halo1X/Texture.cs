@@ -28,10 +28,9 @@ namespace Reclaimer.Saber3D.Halo1X
                     reader.Seek(8, SeekOrigin.Begin);
                     head = reader.ReadInt32();
 
-                    if (head == BigHeader)
-                        reader.ByteOrder = ByteOrder.BigEndian;
-                    else
-                        throw Exceptions.NotASaberTextureItem(item);
+                    reader.ByteOrder = head == BigHeader
+                        ? ByteOrder.BigEndian
+                        : throw Exceptions.NotASaberTextureItem(item);
 
                     isBigEndian = true;
                 }

@@ -158,14 +158,14 @@ namespace Reclaimer.Controls
 
         private TreeItemModel MakeNode(IList<TreeItemModel> root, IDictionary<string, TreeItemModel> lookup, string path, bool inner = false)
         {
-            if (lookup.ContainsKey(path))
-                return lookup[path];
+            if (lookup.TryGetValue(path, out var item))
+                return item;
 
             var index = path.LastIndexOf('\\');
-            var branch = index < 0 ? null : path.Substring(0, index);
-            var leaf = index < 0 ? path : path.Substring(index + 1);
+            var branch = index < 0 ? null : path[..index];
+            var leaf = index < 0 ? path : path[(index + 1)..];
 
-            var item = new TreeItemModel(leaf);
+            item = new TreeItemModel(leaf);
             lookup.Add(path, item);
 
             if (branch == null)

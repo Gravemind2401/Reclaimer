@@ -22,7 +22,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
             if (int.TryParse(strVal, out var intVal))
                 return intVal;
-            else if (int.TryParse(strVal.Substring(2), NumberStyles.HexNumber, CultureInfo.CurrentCulture, out intVal))
+            else if (int.TryParse(strVal[2..], NumberStyles.HexNumber, CultureInfo.CurrentCulture, out intVal))
                 return intVal;
             else
                 return null;

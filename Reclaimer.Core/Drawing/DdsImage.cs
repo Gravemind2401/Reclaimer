@@ -202,13 +202,7 @@ namespace Reclaimer.Drawing
         /// </summary>
         public int? LinearSize
         {
-            get
-            {
-                if (!header.Flags.HasFlag(HeaderFlags.LinearSize))
-                    return null;
-
-                return header.PitchOrLinearSize;
-            }
+            get => header.Flags.HasFlag(HeaderFlags.LinearSize) ? header.PitchOrLinearSize : null;
             set
             {
                 if (value <= 0)
@@ -227,13 +221,7 @@ namespace Reclaimer.Drawing
         /// </summary>
         public int? Depth
         {
-            get
-            {
-                if (!header.Flags.HasFlag(HeaderFlags.Depth))
-                    return null;
-
-                return header.Depth;
-            }
+            get => header.Flags.HasFlag(HeaderFlags.Depth) ? header.Depth : null;
             set
             {
                 if (value <= 0)
@@ -255,13 +243,7 @@ namespace Reclaimer.Drawing
         /// </summary>
         public int? MipmapCount
         {
-            get
-            {
-                if (!header.Flags.HasFlag(HeaderFlags.MipmapCount))
-                    return null;
-
-                return header.MipmapCount;
-            }
+            get => header.Flags.HasFlag(HeaderFlags.MipmapCount) ? header.MipmapCount : null;
             set
             {
                 if (value <= 0)

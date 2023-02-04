@@ -51,7 +51,8 @@ namespace Reclaimer
 
         private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            var assemblyName = args.Name.Substring(0, args.Name.IndexOf(','));
+            var splitIndex = args.Name.IndexOf(',');
+            var assemblyName = args.Name[..splitIndex];
 
             if (assemblyName.EndsWith(".resources"))
                 return null;
@@ -60,7 +61,7 @@ namespace Reclaimer
             if (assembly != null)
                 return assembly;
 
-            assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.FullName.Substring(0, args.Name.IndexOf(',')) == assemblyName);
+            assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.FullName[..splitIndex] == assemblyName);
             if (assembly != null)
                 return assembly;
 

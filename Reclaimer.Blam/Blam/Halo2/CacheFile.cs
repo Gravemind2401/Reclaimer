@@ -268,16 +268,7 @@ namespace Reclaimer.Blam.Halo2
 
         public string ClassCode => System.Text.Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId).Reverse().ToArray());
 
-        public string ClassName
-        {
-            get
-            {
-                if (CacheFactory.Halo2Classes.ContainsKey(ClassCode))
-                    return CacheFactory.Halo2Classes[ClassCode];
-
-                return ClassCode;
-            }
-        }
+        public string ClassName => CacheFactory.Halo2Classes.TryGetValue(ClassCode, out var className) ? className : ClassCode;
 
         public string TagName => cache.TagIndex.TagNames[Id];
 

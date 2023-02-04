@@ -17,23 +17,22 @@ namespace Reclaimer.Blam.Halo4
     public readonly record struct ResourceIdentifier
     {
         private readonly ICacheFile cache;
-        private readonly int identifier; //actually two shorts
 
         public ResourceIdentifier(int identifier, ICacheFile cache)
         {
             this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
-            this.identifier = identifier;
+            Value = identifier;
         }
 
         public ResourceIdentifier(DependencyReader reader, ICacheFile cache)
         {
             ArgumentNullException.ThrowIfNull(reader);
             this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
-            identifier = reader.ReadInt32();
+            Value = reader.ReadInt32();
         }
 
-        public int Value => identifier;
-        public int ResourceIndex => identifier & ushort.MaxValue;
+        public int Value { get; } //actually two shorts
+        public int ResourceIndex => Value & ushort.MaxValue;
 
         public byte[] ReadData(PageType mode) => ReadData(mode, int.MaxValue);
 

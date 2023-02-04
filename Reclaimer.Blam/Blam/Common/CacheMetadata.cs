@@ -64,23 +64,16 @@ namespace Reclaimer.Blam.Common
                 return CacheType.Unknown;
 
             //TODO: detect latest enum for each game instead of hardcoding
-            switch (parent.Parent.Name)
+            return parent.Parent.Name switch
             {
-                case "halo1":
-                    return CacheType.MccHalo1;
-                case "halo3":
-                    return CacheType.MccHalo3U9;
-                case "halo3odst":
-                    return CacheType.MccHalo3ODSTU4;
-                case "haloreach":
-                    return CacheType.MccHaloReachU10;
-                case "halo4":
-                    return CacheType.MccHalo4U4;
-                case "groundhog":
-                    return CacheType.MccHalo2XU8;
-            }
-
-            return CacheType.Unknown;
+                "halo1" => CacheType.MccHalo1,
+                "halo3" => CacheType.MccHalo3U9,
+                "halo3odst" => CacheType.MccHalo3ODSTU4,
+                "haloreach" => CacheType.MccHaloReachU10,
+                "halo4" => CacheType.MccHalo4U4,
+                "groundhog" => CacheType.MccHalo2XU8,
+                _ => CacheType.Unknown
+            };
         }
     }
 }

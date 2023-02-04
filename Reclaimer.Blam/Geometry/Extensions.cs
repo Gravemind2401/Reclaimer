@@ -218,7 +218,7 @@ namespace Adjutant.Geometry
 
                     if (mergedVertexBuffer == null)
                     {
-                        IEnumerable<IReadOnlyList<IVector>> MergeChannels(IEnumerable<IList<IReadOnlyList<IVector>>> channels)
+                        static IEnumerable<IReadOnlyList<IVector>> MergeChannels(IEnumerable<IList<IReadOnlyList<IVector>>> channels)
                         {
                             return channels.Aggregate(
                                 new List<List<IVector>>(),
@@ -406,9 +406,7 @@ namespace Adjutant.Geometry
                     permValueList.Add(bw.BaseStream.Position);
                     foreach (var perm in region.Permutations)
                     {
-                        var part = fauxMeshes.ContainsKey(perm.MeshIndex)
-                            ? fauxMeshes[perm.MeshIndex]
-                            : model.Meshes[perm.MeshIndex];
+                        var part = fauxMeshes.TryGetValue(perm.MeshIndex, out var value) ? value : model.Meshes[perm.MeshIndex];
 
                         bw.WriteStringNullTerminated(perm.Name);
                         bw.Write((byte)part.VertexWeights);
@@ -460,10 +458,7 @@ namespace Adjutant.Geometry
                 {
                     foreach (var perm in region.Permutations)
                     {
-                        var part = fauxMeshes.ContainsKey(perm.MeshIndex)
-                            ? fauxMeshes[perm.MeshIndex]
-                            : model.Meshes[perm.MeshIndex];
-
+                        var part = fauxMeshes.TryGetValue(perm.MeshIndex, out var value) ? value : model.Meshes[perm.MeshIndex];
                         var scale1 = perm.Transform.IsIdentity && perm.TransformScale == 1 ? scale : 1;
 
                         if (dupeDic.TryGetValue(perm.MeshIndex, out var address))
@@ -565,9 +560,7 @@ namespace Adjutant.Geometry
                 {
                     foreach (var perm in region.Permutations)
                     {
-                        var part = fauxMeshes.ContainsKey(perm.MeshIndex)
-                            ? fauxMeshes[perm.MeshIndex]
-                            : model.Meshes[perm.MeshIndex];
+                        var part = fauxMeshes.TryGetValue(perm.MeshIndex, out var value) ? value : model.Meshes[perm.MeshIndex];
 
                         if (dupeDic.TryGetValue(perm.MeshIndex, out var address))
                         {
@@ -601,9 +594,7 @@ namespace Adjutant.Geometry
                     {
                         meshValueList.Add(bw.BaseStream.Position);
 
-                        var part = fauxMeshes.ContainsKey(perm.MeshIndex)
-                            ? fauxMeshes[perm.MeshIndex]
-                            : model.Meshes[perm.MeshIndex];
+                        var part = fauxMeshes.TryGetValue(perm.MeshIndex, out var value) ? value : model.Meshes[perm.MeshIndex];
 
                         var currentPosition = 0;
                         foreach (var mesh in part.Submeshes)

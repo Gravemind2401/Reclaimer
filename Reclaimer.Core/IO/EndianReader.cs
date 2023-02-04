@@ -412,10 +412,8 @@ namespace Reclaimer.IO
                 return string.Empty;
 
             var value = encoding.GetString(base.ReadBytes(maxLength));
-
-            return value.Contains('\0')
-                ? value.Substring(0, value.IndexOf('\0'))
-                : value;
+            var nullIndex = value.IndexOf('\0');
+            return nullIndex >= 0 ? value[..nullIndex] : value;
         }
 
         #endregion

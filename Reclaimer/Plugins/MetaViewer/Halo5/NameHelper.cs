@@ -34,7 +34,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             if (end < 0)
                 end = value.Length;
 
-            return value.Substring(start + 1, end - (start + 1));
+            return value[(start + 1)..end];
         }
     }
 }

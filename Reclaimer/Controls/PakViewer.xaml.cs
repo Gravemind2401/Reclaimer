@@ -110,7 +110,7 @@ namespace Reclaimer.Controls
             rootNode.Items.Reset(result);
         }
 
-        private bool FilterTag(string filter, IPakItem item)
+        private static bool FilterTag(string filter, IPakItem item)
         {
             return string.IsNullOrEmpty(filter) || item.Name.ToUpper() == filter.ToUpper();
         }
@@ -122,7 +122,7 @@ namespace Reclaimer.Controls
             node.IsExpanded = false;
         }
 
-        private OpenFileArgs GetFolderArgs(TreeItemModel node) => new OpenFileArgs(node.Header, $"Saber3D.Halo1X.*", node);
+        private static OpenFileArgs GetFolderArgs(TreeItemModel node) => new OpenFileArgs(node.Header, $"Saber3D.Halo1X.*", node);
 
         private OpenFileArgs GetSelectedArgs()
         {
@@ -136,7 +136,7 @@ namespace Reclaimer.Controls
             return new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), GetFileFormats(item).ToArray());
         }
 
-        private IEnumerable<object> GetFileFormats(IPakItem item)
+        private static IEnumerable<object> GetFileFormats(IPakItem item)
         {
             yield return item;
 
@@ -171,7 +171,7 @@ namespace Reclaimer.Controls
 
         private void TreeItemContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            foreach (MenuItem item in ContextItems.Where(i => i is MenuItem))
+            foreach (var item in ContextItems.OfType<MenuItem>())
                 item.Click -= ContextItem_Click;
 
             var menu = sender as ContextMenu;
@@ -192,7 +192,7 @@ namespace Reclaimer.Controls
             foreach (var item in customItems)
                 ContextItems.Add(new MenuItem { Header = item.Path, Tag = item });
 
-            foreach (MenuItem item in ContextItems.Where(i => i is MenuItem))
+            foreach (var item in ContextItems.OfType<MenuItem>())
                 item.Click += ContextItem_Click;
 
             if (!ContextItems.Any())

@@ -25,10 +25,7 @@ namespace Reclaimer.Utilities
             var fileName = path.Split('\\').Last();
             var index = fileName.LastIndexOf('.');
 
-            if (index < 0)
-                return fileName;
-            else
-                return fileName.Substring(0, index);
+            return index < 0 ? fileName : fileName[..index];
         }
 
         /// <summary>
