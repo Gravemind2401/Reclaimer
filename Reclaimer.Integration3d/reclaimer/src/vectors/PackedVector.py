@@ -1,5 +1,19 @@
 from typing import Tuple
 
+from .IVector import IVector
+
+__all__ = [
+    'BitConfig',
+    'PackedVector',
+    'DecN4',
+    'DHenN3',
+    'HenDN3',
+    'UDecN4',
+    'UDHenN3',
+    'UHenDN3'
+]
+
+
 class BitConfig:
     def __init__(self, offset: int, length: int, signed: bool):
         self.offset = offset
@@ -39,32 +53,19 @@ class BitConfig:
         return tuple(axes)
 
 DecN4 = BitConfig.create_set(True, 10, 10, 10, 2)
+DHenN3 = BitConfig.create_set(True, 10, 11, 11)
+HenDN3 = BitConfig.create_set(True, 11, 11, 10)
 UDecN4 = BitConfig.create_set(False, 10, 10, 10, 2)
+UDHenN3 = BitConfig.create_set(False, 10, 11, 11)
 UHenDN3 = BitConfig.create_set(False, 11, 11, 10)
 
-class PackedVector:
+class PackedVector(IVector):
     def __init__(self, value: int, config: Tuple[BitConfig]):
         self._bits = value
         self._config = config
 
-    def __repr__(self) -> str:
-        return f'[{self.x:f}, {self.y:f}, {self.z:f}, {self.w:f}]'
+    def _width(self) -> int:
+        return len(self._config)
 
     def _get_axis(self, axis: int) -> float:
         return 0 if len(self._config) <= axis else self._config[axis].get_value(self._bits)
-
-    @property
-    def x(self) -> float:
-        return self._get_axis(0)
-
-    @property
-    def y(self) -> float:
-        return self._get_axis(1)
-
-    @property
-    def z(self) -> float:
-        return self._get_axis(2)
-
-    @property
-    def w(self) -> float:
-        return self._get_axis(3)

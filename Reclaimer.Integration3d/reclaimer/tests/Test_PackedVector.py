@@ -1,5 +1,5 @@
 import unittest
-from ..src.PackedVector import PackedVector, DecN4, UDecN4, UHenDN3
+from ..src.vectors.PackedVector import PackedVector, DecN4, UDecN4, UHenDN3
 
 class Test_PackedVector(unittest.TestCase):
     def test_DecN4(self):
@@ -44,22 +44,22 @@ class Test_PackedVector(unittest.TestCase):
 
     def test_UHenDN3(self):
         vec = PackedVector(0x00000000, UHenDN3)
-        self.assertEqual(repr(vec), '[0.000000, 0.000000, 0.000000, 0.000000]')
+        self.assertEqual(repr(vec), '[0.000000, 0.000000, 0.000000]')
         
         vec = PackedVector(0x00000F00, UHenDN3)
-        self.assertEqual(repr(vec), '[0.875427, 0.000489, 0.000000, 0.000000]')
+        self.assertEqual(repr(vec), '[0.875427, 0.000489, 0.000000]')
         
         vec = PackedVector(0x00FFF000, UHenDN3)
-        self.assertEqual(repr(vec), '[0.000000, 0.999511, 0.002933, 0.000000]')
+        self.assertEqual(repr(vec), '[0.000000, 0.999511, 0.002933]')
         
         vec = PackedVector(0xF00F00FF, UHenDN3)
-        self.assertEqual(repr(vec), '[0.124573, 0.234489, 0.938416, 0.000000]')
+        self.assertEqual(repr(vec), '[0.124573, 0.234489, 0.938416]')
         
         vec = PackedVector(0xFFF00F00, UHenDN3)
-        self.assertEqual(repr(vec), '[0.875427, 0.750855, 1.000000, 0.000000]')
+        self.assertEqual(repr(vec), '[0.875427, 0.750855, 1.000000]')
         
         vec = PackedVector(0xFFFFFFFF, UHenDN3)
-        self.assertEqual(repr(vec), '[1.000000, 1.000000, 1.000000, 0.000000]')
+        self.assertEqual(repr(vec), '[1.000000, 1.000000, 1.000000]')
 
 if __name__ == '__main__':
     unittest.main()

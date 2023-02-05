@@ -26,9 +26,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="reclaimer\src\FileReader.py" />
+    <Compile Include="reclaimer\src\vectors\IVector.py" />
+    <Compile Include="reclaimer\src\VertexBuffer.py" />
+    <Compile Include="reclaimer\src\IndexBuffer.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="reclaimer\src\Material.py" />
     <Compile Include="reclaimer\src\Model.py" />
-    <Compile Include="reclaimer\src\PackedVector.py" />
+    <Compile Include="reclaimer\src\vectors\PackedVector.py" />
     <Compile Include="reclaimer\src\Scene.py" />
     <Compile Include="reclaimer\src\DataBlock.py" />
     <Compile Include="reclaimer\src\SceneReader.py">
@@ -45,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="reclaimer\" />
+    <Folder Include="reclaimer\src\vectors\" />
     <Folder Include="reclaimer\tests\" />
     <Folder Include="reclaimer\src\" />
   </ItemGroup>
