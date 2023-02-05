@@ -1,10 +1,11 @@
 import struct
-from typing import List, Tuple, Iterable, Iterator, Callable
+from typing import List, Tuple, Iterator, Callable
 from collections.abc import Sequence
 
 from .vectors.BitConfig import BitConfig
 from .vectors.PackedVector import *
 from .vectors.NormalisedVector import *
+from .vectors.UByte4 import *
 
 __all__ = [
     'VertexBuffer',
@@ -28,7 +29,8 @@ _decode_functions = {
     'SBN2': (lambda b, i: _get_normalised(b, i, 'B', 1, 2, ByteN)),
     'SBN4': (lambda b, i: _get_normalised(b, i, 'B', 1, 4, ByteN)),
     'UBN2': (lambda b, i: _get_normalised(b, i, 'B', 1, 2, UByteN)),
-    'UBN4': (lambda b, i: _get_normalised(b, i, 'B', 1, 4, UByteN))
+    'UBN4': (lambda b, i: _get_normalised(b, i, 'B', 1, 4, UByteN)),
+    'BYT4': (lambda b, i: _get_ubyte4(b, i))
 }
 
 def _get_struct_bytes(data: bytes, offset: int, size: int) -> bytes:
@@ -44,6 +46,9 @@ def _get_packed(data: bytes, index: int, config: BitConfig) -> Iterator[float]:
 def _get_normalised(data: bytes, index: int, fmt: str, width: int, count: int, config: BitConfig) -> Iterator[float]:
     values = struct.unpack('<' + (fmt * count), _get_struct_bytes(data, index, width * count))
     return NormalisedVector(values, config)
+
+def _get_ubyte4(data: bytes, index: int) -> Iterator[int]:
+    return UByte4(_get_struct_bytes(data, index, 4))
 
 
 class VertexBuffer:

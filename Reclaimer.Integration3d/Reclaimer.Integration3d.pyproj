@@ -28,6 +28,7 @@
     <Compile Include="reclaimer\src\FileReader.py" />
     <Compile Include="reclaimer\src\vectors\IVector.py" />
     <Compile Include="reclaimer\src\vectors\BitConfig.py" />
+    <Compile Include="reclaimer\src\vectors\UByte4.py" />
     <Compile Include="reclaimer\src\vectors\NormalisedVector.py" />
     <Compile Include="reclaimer\src\VertexBuffer.py" />
     <Compile Include="reclaimer\src\IndexBuffer.py">

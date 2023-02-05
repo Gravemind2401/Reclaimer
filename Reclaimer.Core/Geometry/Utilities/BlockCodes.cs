@@ -83,6 +83,13 @@ namespace Reclaimer.Geometry.Utilities
         public static readonly BlockCode UInt16N2 = new BlockCode("U162");
         public static readonly BlockCode UInt16N4 = new BlockCode("U164");
 
+        public static readonly BlockCode ByteN2 = new BlockCode("SBN2");
+        public static readonly BlockCode ByteN4 = new BlockCode("SBN4");
+        public static readonly BlockCode UByteN2 = new BlockCode("UBN2");
+        public static readonly BlockCode UByteN4 = new BlockCode("UBN4");
+
+        public static readonly BlockCode UByte4 = new BlockCode("BYT4");
+
         public static BlockCode FromType(Type vectorType)
         {
             return vectorType switch
@@ -100,6 +107,11 @@ namespace Reclaimer.Geometry.Utilities
                 _ when vectorType == typeof(Int16N4) => Int16N4,
                 _ when vectorType == typeof(UInt16N2) => UInt16N2,
                 _ when vectorType == typeof(UInt16N4) => UInt16N4,
+                _ when vectorType == typeof(ByteN2) => ByteN2,
+                _ when vectorType == typeof(ByteN4) => ByteN4,
+                _ when vectorType == typeof(UByteN2) => UByteN2,
+                _ when vectorType == typeof(UByteN4) => UByteN4,
+                _ when vectorType == typeof(UByte4) => UByte4,
                 _ => null
             };
         }
