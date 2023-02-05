@@ -5,6 +5,7 @@ from .Types import *
 from .Model import *
 from .Material import *
 from .VertexBuffer import *
+from .IndexBuffer import *
 
 __all__ = [
     'Version',
@@ -34,7 +35,7 @@ class Scene:
     markers: List[Marker]
     model_pool: List[Model]
     vertex_buffer_pool: List[VertexBuffer]
-    index_buffer_pool: List[int]
+    index_buffer_pool: List[IndexBuffer]
     material_pool: List[Material]
     texture_pool: List[Texture]
 

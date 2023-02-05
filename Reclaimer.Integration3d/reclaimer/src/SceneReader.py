@@ -7,6 +7,7 @@ from .Scene import *
 from .Model import *
 from .Material import *
 from .VertexBuffer import *
+from .IndexBuffer import *
 
 __all__ = [
     'SceneReader'
@@ -50,7 +51,7 @@ def _read_scene(reader: FileReader, block: DataBlock) -> Scene:
     scene.root_node = _decode_block(reader, props['NODE'], _read_node)
     scene.model_pool = _decode_list(reader, props['MODL[]'], _read_model)
     scene.vertex_buffer_pool = _decode_list(reader, props['VBUF[]'], _read_vertex_buffer)
-    indexBufferPool = props['IBUF[]']
+    scene.index_buffer_pool = _decode_list(reader, props['IBUF[]'], _read_index_buffer)
     scene.material_pool = _decode_list(reader, props['MATL[]'], _read_material)
     scene.texture_pool = _decode_list(reader, props['BITM[]'], _read_texture)
 
@@ -163,6 +164,13 @@ def _read_texture(reader: FileReader, block: DataBlock) -> Texture:
     texture.name = reader.read_string()
     texture.size = reader.read_int32()
     return texture
+
+def _read_index_buffer(reader: FileReader, block: DataBlock) -> IndexBuffer:
+    layout = IndexLayout(reader.read_byte())
+    width = reader.read_byte()
+    count = reader.read_int32()
+    data = reader.read_bytes(width * count)
+    return IndexBuffer(layout, width, data)
 
 def _read_vertex_buffer(reader: FileReader, block: DataBlock) -> VertexBuffer:
     buf = VertexBuffer()

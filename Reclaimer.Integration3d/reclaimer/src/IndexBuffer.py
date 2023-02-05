@@ -18,18 +18,18 @@ class IndexLayout(IntEnum):
     QUAD_LIST = 6
     RECT_LIST = 7
 
-_index_widths = ('B', 'H', None, 'I')
+_index_widths = (None, 'B', 'H', None, 'I')
 
 class IndexBuffer:
     index_layout: IndexLayout
     indices: List[int]
 
-    def __init__(self, index_layout: IndexLayout, width: int, binary: bytes):
-        if width < 0 or width > 4 or width == 3:
+    def __init__(self, index_layout: IndexLayout, width: int, data: bytes):
+        if width <= 0 or width > 4 or width == 3:
             raise Exception('Unsupported binary width')
 
         self.index_layout = index_layout
-        self.indices = list(t[0] for t in struct.iter_unpack(_index_widths[width], binary))
+        self.indices = list(t[0] for t in struct.iter_unpack(_index_widths[width], data))
 
     def __repr__(self) -> str:
         return f'<{self.__class__.name}|{IndexLayout(self.index_layout).name}|{self.indices.count}>'
