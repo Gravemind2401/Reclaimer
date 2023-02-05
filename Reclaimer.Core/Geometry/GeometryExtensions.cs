@@ -12,32 +12,26 @@ namespace Reclaimer.Geometry
 
         public static IEnumerable<int> Unstrip(this IEnumerable<int> strip)
         {
-            var position = 0;
-            int i0, i1 = 0, i2 = 0;
+            var (position, i0, i1, i2) = (0, 0, 0, 0);
 
             foreach (var index in strip)
             {
-                i0 = i1;
-                i1 = i2;
-                i2 = index;
+                (i0, i1, i2) = (i1, i2, index);
 
-                if (position++ < 2)
+                if (position++ < 2 || i0 == i1 || i0 == i2 || i1 == i2)
                     continue;
 
-                if (i0 != i1 && i0 != i2 && i1 != i2)
-                {
-                    yield return i0;
+                yield return i0;
 
-                    if (position % 2 == 1)
-                    {
-                        yield return i1;
-                        yield return i2;
-                    }
-                    else
-                    {
-                        yield return i2;
-                        yield return i1;
-                    }
+                if (position % 2 == 1)
+                {
+                    yield return i1;
+                    yield return i2;
+                }
+                else
+                {
+                    yield return i2;
+                    yield return i1;
                 }
             }
         }

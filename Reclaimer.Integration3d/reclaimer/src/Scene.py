@@ -4,6 +4,7 @@ from typing import List
 from .Types import *
 from .Model import *
 from .Material import *
+from .VertexBuffer import *
 
 __all__ = [
     'Version',
@@ -32,7 +33,7 @@ class Scene:
     root_node: 'SceneGroup'
     markers: List[Marker]
     model_pool: List[Model]
-    vertex_buffer_pool: List[int]
+    vertex_buffer_pool: List[VertexBuffer]
     index_buffer_pool: List[int]
     material_pool: List[Material]
     texture_pool: List[Texture]
