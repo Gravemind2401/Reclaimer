@@ -1,31 +1,28 @@
-from typing import Iterator
+from collections.abc import Sequence
 
-class IVector:
+class IVector(Sequence):
     def __repr__(self) -> str:
         values = ', '.join(format(f, 'f') for f in self)
         return f'[{values}]'
 
-    def __iter__(self) -> Iterator[float]:
-        return (self._get_axis(i) for i in range(self._width()))
-
-    def _width(self) -> int:
-        return 4
-
-    def _get_axis(self, axis: int) -> float:
+    def __getitem__(self, i: int) -> float:
         return 0.0
+
+    def __len__(self) -> int:
+        return 4
 
     @property
     def x(self) -> float:
-        return self._get_axis(0)
+        return self[0]
 
     @property
     def y(self) -> float:
-        return self._get_axis(1)
+        return self[1]
 
     @property
     def z(self) -> float:
-        return self._get_axis(2)
+        return self[2]
 
     @property
     def w(self) -> float:
-        return self._get_axis(3)
+        return self[3]

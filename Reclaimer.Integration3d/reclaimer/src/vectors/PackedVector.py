@@ -29,8 +29,8 @@ class PackedVector(IVector):
         self._bits = value
         self._config = config
 
-    def _width(self) -> int:
-        return len(self._config)
+    def __getitem__(self, i: int) -> float:
+        return 0 if i > len(self._config) else self._config[i].get_value(self._bits)
 
-    def _get_axis(self, axis: int) -> float:
-        return 0 if axis > self._width() else self._config[axis].get_value(self._bits)
+    def __len__(self) -> int:
+        return len(self._config)
