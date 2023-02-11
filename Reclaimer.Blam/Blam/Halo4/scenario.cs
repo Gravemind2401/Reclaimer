@@ -6,14 +6,18 @@ namespace Reclaimer.Blam.Halo4
     public class scenario
     {
         [Offset(152, MaxVersion = (int)CacheType.Halo4Retail)]
-        [Offset(160, MinVersion = (int)CacheType.Halo4Retail)]
-        [Offset(164, MinVersion = (int)CacheType.MccHalo4U6)]
+        [Offset(160, MinVersion = (int)CacheType.Halo4Retail, MaxVersion = (int)CacheType.MccHalo4U6)]
+        [Offset(164, MinVersion = (int)CacheType.MccHalo4U6, MaxVersion = (int)CacheType.MccHalo2X)]
+        [Offset(160, MinVersion = (int)CacheType.MccHalo2X, MaxVersion = (int)CacheType.MccHalo2XU10)]
         [Offset(164, MinVersion = (int)CacheType.MccHalo2XU10)]
         public BlockCollection<StructureBspBlock> StructureBsps { get; set; }
 
         [Offset(1884, MaxVersion = (int)CacheType.Halo4Retail)]
         [Offset(1896, MinVersion = (int)CacheType.Halo4Retail, MaxVersion = (int)CacheType.MccHalo4)]
-        [Offset(1908, MinVersion = (int)CacheType.MccHalo4)]
+        [Offset(1908, MinVersion = (int)CacheType.MccHalo4, MaxVersion = (int)CacheType.MccHalo4U6)]
+        [Offset(1868, MinVersion = (int)CacheType.MccHalo4U6, MaxVersion = (int)CacheType.MccHalo2X)]
+        [Offset(1908, MinVersion = (int)CacheType.MccHalo2X, MaxVersion = (int)CacheType.MccHalo2XU10)]
+        [Offset(1868, MinVersion = (int)CacheType.MccHalo2XU10)]
         public TagReference ScenarioLightmapReference { get; set; }
     }
 
