@@ -874,9 +874,12 @@ namespace Reclaimer.IO
             if (type.Equals(typeof(string)))
                 throw Exceptions.NotValidForStringTypes();
 
+            //take note of origin before creating instance in case a derived class moves the stream.
+            //this is important for attributes like FixedSizeAttribute to ensure the final position is correct.
+            var origin = Position;
             instance ??= CreateInstance(type, version);
 
-            return TypeConfiguration.Populate(instance, type, this, version);
+            return TypeConfiguration.Populate(instance, type, this, origin, version);
         }
 
         protected virtual object CreateInstance(Type type, double? version) => Activator.CreateInstance(type);
