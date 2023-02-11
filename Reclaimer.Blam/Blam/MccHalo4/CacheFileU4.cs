@@ -49,7 +49,7 @@ namespace Reclaimer.Blam.MccHalo4
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
                 
-                var offset = args.CacheType >= CacheType.MccHalo4_2212 ? 24 : 712;
+                var offset = args.CacheType >= CacheType.MccHalo4U6 ? 24 : 712;
                 LocaleIndex = new LocaleIndex(this, offset, 80, 17);
             }
 

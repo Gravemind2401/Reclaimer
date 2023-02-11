@@ -152,7 +152,6 @@ namespace Reclaimer.Blam.Halo3
         public IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes) => Halo3Common.GetBitmaps(Shaders, shaderIndexes);
 
         #endregion
-
     }
 
     [FixedSize(236, MaxVersion = (int)CacheType.Halo3Retail)]

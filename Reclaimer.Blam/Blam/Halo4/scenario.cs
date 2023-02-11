@@ -1,10 +1,5 @@
 ﻿using Reclaimer.Blam.Common;
 using Reclaimer.IO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.Halo4
 {
@@ -12,6 +7,8 @@ namespace Reclaimer.Blam.Halo4
     {
         [Offset(152, MaxVersion = (int)CacheType.Halo4Retail)]
         [Offset(160, MinVersion = (int)CacheType.Halo4Retail)]
+        [Offset(164, MinVersion = (int)CacheType.MccHalo4U6)]
+        [Offset(164, MinVersion = (int)CacheType.MccHalo2XU10)]
         public BlockCollection<StructureBspBlock> StructureBsps { get; set; }
 
         [Offset(1884, MaxVersion = (int)CacheType.Halo4Retail)]

@@ -74,15 +74,15 @@ namespace Reclaimer.Blam.Common
                 case "halo1":
                     return CacheType.MccHalo1;
                 case "halo3":
-                    return CacheType.MccHalo3U9;
+                    return CacheType.MccHalo3U12;
                 case "halo3odst":
-                    return CacheType.MccHalo3ODSTU4;
+                    return CacheType.MccHalo3ODSTU7;
                 case "haloreach":
                     return CacheType.MccHaloReachU10;
                 case "halo4":
-                    return CacheType.MccHalo4U4;
+                    return CacheType.MccHalo4U6;
                 case "groundhog":
-                    return CacheType.MccHalo2XU8;
+                    return CacheType.MccHalo2XU10;
             }
 
             return CacheType.Unknown;

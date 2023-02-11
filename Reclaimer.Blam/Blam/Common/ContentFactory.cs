@@ -86,11 +86,13 @@ namespace Reclaimer.Blam.Common
                 case CacheType.MccHalo3F6:
                 case CacheType.MccHalo3U6:
                 case CacheType.MccHalo3U9:
+                case CacheType.MccHalo3U12:
                 case CacheType.Halo3ODST:
                 case CacheType.MccHalo3ODST:
                 case CacheType.MccHalo3ODSTF3:
                 case CacheType.MccHalo3ODSTU3:
                 case CacheType.MccHalo3ODSTU4:
+                case CacheType.MccHalo3ODSTU7:
                     content = item.ReadMetadata<Halo3.bitmap>();
                     break;
                 case CacheType.HaloReachBeta:
@@ -105,10 +107,10 @@ namespace Reclaimer.Blam.Common
                 case CacheType.Halo4Retail:
                 case CacheType.MccHalo4:
                 case CacheType.MccHalo4U4:
-                case CacheType.MccHalo4_2212:
+                case CacheType.MccHalo4U6:
                 case CacheType.MccHalo2X:
                 case CacheType.MccHalo2XU8:
-                case CacheType.MccHalo2X_2212:
+                case CacheType.MccHalo2XU10:
                     content = item.ReadMetadata<Halo4.bitmap>();
                     break;
             }
@@ -148,11 +150,13 @@ namespace Reclaimer.Blam.Common
                     case CacheType.MccHalo3F6:
                     case CacheType.MccHalo3U6:
                     case CacheType.MccHalo3U9:
+                    case CacheType.MccHalo3U12:
                     case CacheType.Halo3ODST:
                     case CacheType.MccHalo3ODST:
                     case CacheType.MccHalo3ODSTF3:
                     case CacheType.MccHalo3ODSTU3:
                     case CacheType.MccHalo3ODSTU4:
+                    case CacheType.MccHalo3ODSTU7:
                         content = item.ReadMetadata<Halo3.render_model>();
                         break;
                     case CacheType.HaloReachBeta:
@@ -167,10 +171,10 @@ namespace Reclaimer.Blam.Common
                     case CacheType.Halo4Retail:
                     case CacheType.MccHalo4:
                     case CacheType.MccHalo4U4:
-                    case CacheType.MccHalo4_2212:
+                    case CacheType.MccHalo4U6:
                     case CacheType.MccHalo2X:
                     case CacheType.MccHalo2XU8:
-                    case CacheType.MccHalo2X_2212:
+                    case CacheType.MccHalo2XU10:
                         content = item.ReadMetadata<Halo4.render_model>();
                         break;
                 }
@@ -194,11 +198,13 @@ namespace Reclaimer.Blam.Common
                     case CacheType.MccHalo3F6:
                     case CacheType.MccHalo3U6:
                     case CacheType.MccHalo3U9:
+                    case CacheType.MccHalo3U12:
                     case CacheType.Halo3ODST:
                     case CacheType.MccHalo3ODST:
                     case CacheType.MccHalo3ODSTF3:
                     case CacheType.MccHalo3ODSTU3:
                     case CacheType.MccHalo3ODSTU4:
+                    case CacheType.MccHalo3ODSTU7:
                         content = item.ReadMetadata<Halo3.scenario_structure_bsp>();
                         break;
                     case CacheType.HaloReachBeta:
@@ -213,10 +219,10 @@ namespace Reclaimer.Blam.Common
                     case CacheType.Halo4Retail:
                     case CacheType.MccHalo4:
                     case CacheType.MccHalo4U4:
-                    case CacheType.MccHalo4_2212:
+                    case CacheType.MccHalo4U6:
                     case CacheType.MccHalo2X:
                     case CacheType.MccHalo2XU8:
-                    case CacheType.MccHalo2X_2212:
+                    case CacheType.MccHalo2XU10:
                         content = item.ReadMetadata<Halo4.scenario_structure_bsp>();
                         break;
                 }
