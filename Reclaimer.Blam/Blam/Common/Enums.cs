@@ -158,7 +158,16 @@
         [BuildString("May  3 2022 12:38:41", "U1")] //U10
         [BuildString("Jun  8 2022 16:05:04", "U1")] //U10 custom maps 1
         [BuildString("Jun  8 2022 16:06:30", "U1")] //U10 custom maps 2
+        [BuildString("Jul 21 2022 21:15:27", "U1")] //U11
+        [BuildString("Aug 21 2022 17:23:29", "U1")] //U11 custom maps 1
+        [BuildString("Aug 21 2022 17:24:39", "U1")] //U11 custom maps 2
         MccHalo3U9,
+
+        [CacheMetadata(CacheGeneration.Gen3, PC, Mcc)]
+        [BuildString("Oct 11 2022 04:34:53", "U1")] //U12
+        [BuildString("Nov 16 2022 21:16:57", "U1")] //U12 custom maps 1
+        [BuildString("Nov 16 2022 21:18:10", "U1")] //U12 custom maps 2
+        MccHalo3U12,
 
         [CacheMetadata(CacheGeneration.Gen3, Xbox360)]
         [BuildString("13895.09.04.27.2201.atlas_relea", "odst")]
@@ -188,7 +197,16 @@
         [BuildString("Apr 20 2022 11:53:15", "ODST U0")] //update 5
         [BuildString("May  3 2022 12:27:08", "ODST U0")] //update 5 custom maps 1
         [BuildString("May  3 2022 12:27:56", "ODST U0")] //update 5 custom maps 2
+        [BuildString("Jul 22 2022 05:55:30", "ODST U0")] //update 6
+        [BuildString("Aug 21 2022 17:29:59", "ODST U0")] //update 6 custom maps 1
+        [BuildString("Aug 21 2022 17:30:28", "ODST U0")] //update 6 custom maps 2
         MccHalo3ODSTU4,
+
+        [CacheMetadata(CacheGeneration.Gen3, PC, Mcc)]
+        [BuildString("Oct 24 2022 03:07:19", "ODST U0")] //update 7
+        [BuildString("Nov 16 2022 20:57:46", "ODST U0")] //update 7 custom maps 1
+        [BuildString("Nov 16 2022 20:59:16", "ODST U0")] //update 7 custom maps 2
+        MccHalo3ODSTU7,
 
         [CacheMetadata(CacheGeneration.Gen3, Xbox360, Beta)]
         [BuildString("09449.10.03.25.1545.omaha_beta", "beta", PreBeta)]
@@ -223,6 +241,12 @@
 
         [CacheMetadata(CacheGeneration.Gen3, PC, Mcc)]
         [BuildString("Jan 13 2022 00:54:50", "U6")] //update 10
+        [BuildString("Aug  5 2022 20:35:02", "U6")] //update 11
+        [BuildString("Aug 31 2022 11:53:49", "U6")] //update 11 custom maps 1
+        [BuildString("Aug 31 2022 11:53:19", "U6")] //update 11 custom maps 2
+        [BuildString("Oct 12 2022 01:55:01", "U6")] //update 12
+        [BuildString("Nov 16 2022 21:11:25", "U6")] //update 12 custom maps 1
+        [BuildString("Nov 16 2022 21:13:04", "U6")] //update 12 custom maps 2
         MccHaloReachU10,
 
         [CacheMetadata(Gen4, Xbox360, Beta)]
@@ -259,11 +283,14 @@
 
         [CacheMetadata(Gen4, PC, Deflate, Mcc)]
         [BuildString("Feb  3 2022 19:02:31", "U3")] //update 4
+        [BuildString("Aug  8 2022 17:28:57", "U3")] //update 5
         MccHalo4U4,
 
         [CacheMetadata(Gen4, PC, Deflate, Mcc)]
-        [BuildString("Oct 17 2022 21:26:14", "U3")] //update Dec 22
-        MccHalo4_2212,
+        [BuildString("Oct 17 2022 21:26:14", "U3")] //update 6
+        [BuildString("Dec  6 2022 11:23:50", "U6")] //update 6 custom maps 1
+        [BuildString("Dec  6 2022 11:26:37", "U6")] //update 6 custom maps 2
+        MccHalo4U6,
 
         [CacheMetadata(Gen4, PC, UnknownDeflate, Mcc)]
         [BuildString("Apr  9 2020 01:36:04", "U0", MccFlight)] //flight 1
@@ -279,11 +306,14 @@
 
         [CacheMetadata(Gen4, PC, Deflate, Mcc)]
         [BuildString("Feb 14 2022 19:18:28", "U6")] //update 8
+        [BuildString("Jun 13 2022 13:44:24", "U6")] //update 9
         MccHalo2XU8,
 
         [CacheMetadata(Gen4, PC, Deflate, Mcc)]
-        [BuildString("Oct 14 2022 21:11:35", "U6")] //update Dec 22
-        MccHalo2X_2212,
+        [BuildString("Oct 14 2022 21:11:35", "U6")] //update 10
+        [BuildString("Dec  6 2022 11:13:38", "U6")] //update 10 custom maps 1
+        [BuildString("Dec  6 2022 11:13:46", "U6")] //update 10 custom maps 2
+        MccHalo2XU10,
     }
 
     public enum Language

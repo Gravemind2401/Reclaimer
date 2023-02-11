@@ -67,11 +67,11 @@ namespace Reclaimer.Blam.Common
             return parent.Parent.Name switch
             {
                 "halo1" => CacheType.MccHalo1,
-                "halo3" => CacheType.MccHalo3U9,
-                "halo3odst" => CacheType.MccHalo3ODSTU4,
+                "halo3" => CacheType.MccHalo3U12,
+                "halo3odst" => CacheType.MccHalo3ODSTU7,
                 "haloreach" => CacheType.MccHaloReachU10,
-                "halo4" => CacheType.MccHalo4U4,
-                "groundhog" => CacheType.MccHalo2XU8,
+                "halo4" => CacheType.MccHalo4U6,
+                "groundhog" => CacheType.MccHalo2XU10,
                 _ => CacheType.Unknown
             };
         }
