@@ -11,7 +11,7 @@ namespace Reclaimer.IO.Dynamic
     internal class DataContext
     {
         public object Target { get; }
-        public long Origin { get; }
+        public long Origin { get; init; }
         public IEndianStream Stream { get; }
         public EndianReader Reader { get; }
         public EndianWriter Writer { get; }
@@ -19,23 +19,23 @@ namespace Reclaimer.IO.Dynamic
         public double? Version { get; set; }
         public long? DataLength { get; set; }
 
-        private DataContext(TypeConfiguration manager, object instance, double? version, IEndianStream stream)
+        private DataContext(TypeConfiguration manager, object instance, long origin, double? version, IEndianStream stream)
         {
             Target = instance;
-            Origin = stream.Position;
+            Origin = origin;
             Stream = stream;
             Version = version;
             ByteOrder = manager.ByteOrderAttributes.FirstOrDefault(ValidateVersion)?.ByteOrder ?? stream.ByteOrder;
         }
 
-        public DataContext(TypeConfiguration manager, object instance, double? version, EndianReader reader)
-            : this(manager, instance, version, (IEndianStream)reader)
+        public DataContext(TypeConfiguration manager, object instance, long origin, double? version, EndianReader reader)
+            : this(manager, instance, origin, version, (IEndianStream)reader)
         {
             Reader = reader;
         }
 
-        public DataContext(TypeConfiguration manager, object instance, double? version, EndianWriter writer)
-            : this(manager, instance, version, (IEndianStream)writer)
+        public DataContext(TypeConfiguration manager, object instance, long origin, double? version, EndianWriter writer)
+            : this(manager, instance, origin, version, (IEndianStream)writer)
         {
             Writer = writer;
         }

@@ -129,7 +129,7 @@ namespace Reclaimer.IO
             if (type.Equals(typeof(string)))
                 throw Exceptions.NotValidForStringTypes();
 
-            TypeConfiguration.Write(value, this, version);
+            TypeConfiguration.Write(value, this, Position, version);
         }
     }
 }

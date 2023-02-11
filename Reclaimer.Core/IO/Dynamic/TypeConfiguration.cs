@@ -58,20 +58,20 @@ namespace Reclaimer.IO.Dynamic
                    select prop;
         }
 
-        public static object Populate(object obj, Type type, EndianReader reader, double? version)
+        public static object Populate(object obj, Type type, EndianReader reader, long origin, double? version)
         {
             if (type == null)
                 throw new ArgumentNullException(nameof(type));
 
-            if (MethodCache.ReadMethods.ContainsKey(type))
-                return MethodCache.ReadMethods[type].Invoke(reader, reader.ByteOrder);
+            if (MethodCache.ReadMethods.TryGetValue(type, out var readMethod))
+                return readMethod.Invoke(reader, reader.ByteOrder);
 
-            return TypeConfiguration.ForType(type).PopulateInternal(obj, reader, version);
+            return TypeConfiguration.ForType(type).PopulateInternal(obj, reader, origin, version);
         }
 
-        private object PopulateInternal(object obj, EndianReader reader, double? version)
+        private object PopulateInternal(object obj, EndianReader reader, long origin, double? version)
         {
-            var context = new DataContext(this, obj ?? Activator.CreateInstance(targetType), version, reader);
+            var context = new DataContext(this, obj ?? Activator.CreateInstance(targetType), origin, version, reader);
 
             if (versionProperty != null)
                 context.ReadValue(versionProperty);
@@ -89,7 +89,7 @@ namespace Reclaimer.IO.Dynamic
             return context.Target;
         }
 
-        public static void Write(object obj, EndianWriter writer, double? version)
+        public static void Write(object obj, EndianWriter writer, long origin, double? version)
         {
             if (obj == null)
                 throw new ArgumentNullException(nameof(obj));
@@ -98,15 +98,15 @@ namespace Reclaimer.IO.Dynamic
             if (MethodCache.WriteMethods.ContainsKey(type))
                 MethodCache.WriteMethods[type].Invoke(writer, writer.ByteOrder, obj);
             else
-                TypeConfiguration.ForType(type).WriteInternal(obj, writer, version);
+                TypeConfiguration.ForType(type).WriteInternal(obj, writer, origin, version);
         }
 
-        private void WriteInternal(object obj, EndianWriter writer, double? version)
+        private void WriteInternal(object obj, EndianWriter writer, long origin, double? version)
         {
             if (!version.HasValue && FixedSizeAttributes.AllNotEmpty(Extensions.IsVersioned))
                 throw new InvalidOperationException();
 
-            var context = new DataContext(this, obj, version, writer);
+            var context = new DataContext(this, obj, origin, version, writer);
 
             if (versionProperty != null)
             {
