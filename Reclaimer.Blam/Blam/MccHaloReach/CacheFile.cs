@@ -17,15 +17,15 @@ namespace Reclaimer.Blam.MccHaloReach
         public CacheType CacheType { get; }
         public CacheMetadata Metadata { get; }
 
-        public virtual CacheHeader Header { get; }
-        public virtual TagIndex TagIndex { get; }
-        public virtual StringIndex StringIndex { get; }
-        public virtual LocaleIndex LocaleIndex { get; }
+        public CacheHeader Header { get; init; }
+        public TagIndex TagIndex { get; init; }
+        public StringIndex StringIndex { get; init; }
+        public LocaleIndex LocaleIndex { get; init; }
 
-        public virtual SectionAddressTranslator HeaderTranslator { get; }
-        public virtual TagAddressTranslator MetadataTranslator { get; }
+        public SectionAddressTranslator HeaderTranslator { get; init; }
+        public TagAddressTranslator MetadataTranslator { get; init; }
 
-        public virtual PointerExpander PointerExpander { get; }
+        public PointerExpander PointerExpander { get; init; }
 
         protected CacheFile(string fileName, ByteOrder byteOrder, string buildString, CacheType cacheType, CacheMetadata metadata)
         {
@@ -284,7 +284,7 @@ namespace Reclaimer.Blam.MccHaloReach
         private readonly CacheFile cache;
         private readonly string[] items;
 
-        internal virtual StringIdTranslator Translator { get; }
+        internal StringIdTranslator Translator { get; init; }
 
         public StringIndex(CacheFile cache)
         {

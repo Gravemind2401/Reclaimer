@@ -9,16 +9,6 @@ namespace Reclaimer.Blam.MccHaloReach
 {
     public class CacheFileU8 : CacheFile
     {
-        public override CacheHeader Header { get; }
-        public override TagIndex TagIndex { get; }
-        public override StringIndex StringIndex { get; }
-        public override LocaleIndex LocaleIndex { get; }
-
-        public override SectionAddressTranslator HeaderTranslator { get; }
-        public override TagAddressTranslator MetadataTranslator { get; }
-
-        public override PointerExpander PointerExpander { get; }
-
         public CacheFileU8(string fileName) : this(CacheArgs.FromFile(fileName)) { }
 
         internal CacheFileU8(CacheArgs args)
@@ -126,8 +116,6 @@ namespace Reclaimer.Blam.MccHaloReach
 
     public class StringIndexU8 : StringIndex
     {
-        internal override StringIdTranslator Translator { get; }
-
         public StringIndexU8(CacheFileU8 cache)
             : base(cache)
         {
