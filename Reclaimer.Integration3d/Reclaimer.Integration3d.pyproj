@@ -25,6 +25,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="reclaimer\blender\MenuOperator.py" />
+    <Compile Include="reclaimer\blender\ImportHelper.py" />
+    <Compile Include="reclaimer\blender\__init__.py" />
+    <Compile Include="reclaimer\__init__.py" />
     <Compile Include="reclaimer\src\FileReader.py" />
     <Compile Include="reclaimer\src\vectors\IVector.py" />
     <Compile Include="reclaimer\src\vectors\BitConfig.py" />
@@ -49,10 +53,10 @@
     <Compile Include="reclaimer\tests\Test_SceneReader.py" />
     <Compile Include="reclaimer\tests\Test_PackedVector.py" />
     <Compile Include="reclaimer\tests\__init__.py" />
-    <Compile Include="reclaimer\__init__.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="reclaimer\" />
+    <Folder Include="reclaimer\blender\" />
     <Folder Include="reclaimer\src\vectors\" />
     <Folder Include="reclaimer\tests\" />
     <Folder Include="reclaimer\src\" />
