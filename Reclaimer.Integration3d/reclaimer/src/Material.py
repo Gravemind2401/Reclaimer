@@ -10,16 +10,9 @@ __all__ = [
 ]
 
 
-class Material:
-    name: str
+class Material(INamed):
     texture_mappings: List['TextureMapping']
     tints: List[Color]
-
-    def __str__(self) -> str:
-        return self.name
-
-    def __repr__(self) -> str:
-        return f'<{str(self)}>'
 
 
 @dataclass
@@ -29,12 +22,5 @@ class TextureMapping:
     channel_mask: int = 0
 
 
-class Texture:
-    name: str
+class Texture(INamed):
     size: int
-
-    def __str__(self) -> str:
-        return self.name
-
-    def __repr__(self) -> str:
-        return f'<{str(self)}>'

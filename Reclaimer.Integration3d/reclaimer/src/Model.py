@@ -15,55 +15,28 @@ __all__ = [
 ]
 
 
-class Model:
-    name: str
+class Model(INamed):
     flags: int
     regions: List['ModelRegion']
     markers: List['Marker']
     bones: List['Bone']
     meshes: List['Mesh']
 
-    def __str__(self) -> str:
-        return self.name
 
-    def __repr__(self) -> str:
-        return f'<{str(self)}>'
-
-
-class ModelRegion:
-    name: str
+class ModelRegion(INamed):
     permutations: List['ModelPermutation']
 
-    def __str__(self) -> str:
-        return self.name
 
-    def __repr__(self) -> str:
-        return f'<{str(self)}>'
-
-
-class ModelPermutation:
-    name: str
+class ModelPermutation(INamed):
     instanced: bool
     mesh_index: int
     mesh_count: int
     transform: Matrix3x4
 
-    def __str__(self) -> str:
-        return self.name
 
-    def __repr__(self) -> str:
-        return f'<{str(self)}>'
-
-
-class Marker:
+class Marker(INamed):
     name: str
     instances: List['MarkerInstance']
-
-    def __str__(self) -> str:
-        return self.name
-
-    def __repr__(self) -> str:
-        return f'<{str(self)}>'
 
 
 @dataclass
@@ -75,16 +48,9 @@ class MarkerInstance:
     rotation: Float4 = None
 
 
-class Bone:
-    name: str
+class Bone(INamed):
     parent_index: int
     transform: Matrix4x4
-
-    def __str__(self) -> str:
-        return self.name
-
-    def __repr__(self) -> str:
-        return f'<{str(self)}>'
 
 
 class Mesh:

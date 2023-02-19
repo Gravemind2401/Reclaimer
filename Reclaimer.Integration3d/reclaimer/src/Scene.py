@@ -26,11 +26,10 @@ class Version:
         return f'{self.major}.{self.minor}.{self.build}.{self.revision}'
 
 
-class Scene:
+class Scene(INamed):
     version: Version
     unit_scale: float
     world_matrix: Matrix3x3
-    name: str
     root_node: 'SceneGroup'
     markers: List[Marker]
     model_pool: List[Model]
@@ -39,23 +38,10 @@ class Scene:
     material_pool: List[Material]
     texture_pool: List[Texture]
 
-    def __str__(self) -> str:
-        return self.name
 
-    def __repr__(self) -> str:
-        return f'<{str(self)}>'
-
-
-class SceneGroup:
-    name: str
+class SceneGroup(INamed):
     child_groups: List['SceneGroup']
     child_objects: List
-
-    def __str__(self) -> str:
-        return self.name
-
-    def __repr__(self) -> str:
-        return f'<{str(self)}>'
 
 
 @dataclass
