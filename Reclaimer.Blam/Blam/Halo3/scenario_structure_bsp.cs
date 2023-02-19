@@ -92,7 +92,7 @@ namespace Reclaimer.Blam.Halo3
             model.Bounds.AddRange(BoundingBoxes);
             model.Materials.AddRange(Halo3Common.GetMaterials(Shaders));
 
-            var clusterRegion = new GeometryRegion { Name = "Clusters" };
+            var clusterRegion = new GeometryRegion { Name = BlamConstants.SbspClustersGroupName };
             clusterRegion.Permutations.AddRange(
                 Clusters.Select((c, i) => new GeometryPermutation
                 {
@@ -104,10 +104,9 @@ namespace Reclaimer.Blam.Halo3
             );
             model.Regions.Add(clusterRegion);
 
-            foreach (var instanceGroup in GeometryInstances.GroupBy(i => i.SectionIndex))
+            foreach (var instanceGroup in BlamUtils.GroupGeometryInstances(GeometryInstances, i => i.Name))
             {
-                var section = lightmapData.Sections[instanceGroup.Key];
-                var sectionRegion = new GeometryRegion { Name = Utils.CurrentCulture($"Instances {instanceGroup.Key:D3}") };
+                var sectionRegion = new GeometryRegion { Name = instanceGroup.Key };
                 sectionRegion.Permutations.AddRange(
                     instanceGroup.Select(i => new GeometryPermutation
                     {
@@ -119,13 +118,14 @@ namespace Reclaimer.Blam.Halo3
                         MeshCount = 1
                     })
                 );
+
                 model.Regions.Add(sectionRegion);
             }
 
             model.Meshes.AddRange(Halo3Common.GetMeshes(Cache, lightmapData.ResourcePointer, lightmapData.Sections, (s, m) =>
             {
                 var index = (short)lightmapData.Sections.IndexOf(s);
-                m.BoundsIndex = index >= BoundingBoxes.Count ? (short?)null : index;
+                m.BoundsIndex = index >= BoundingBoxes.Count ? null : index;
                 m.IsInstancing = index < BoundingBoxes.Count;
             }));
 

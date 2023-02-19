@@ -49,7 +49,7 @@ namespace Reclaimer.Blam.Halo2
             model.Materials.AddRange(Halo2Common.GetMaterials(Shaders));
 
             #region Clusters
-            var clusterRegion = new GeometryRegion { Name = "Clusters" };
+            var clusterRegion = new GeometryRegion { Name = BlamConstants.SbspClustersGroupName };
 
             foreach (var section in Clusters.Where(s => s.VertexCount > 0))
             {

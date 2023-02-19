@@ -114,7 +114,7 @@ namespace Reclaimer.Blam.Halo4
              * to make things easier for the model rendering and exporting 
              */
 
-            var gRegion = new GeometryRegion { Name = "Instances" };
+            var gRegion = new GeometryRegion { Name = BlamConstants.ModelInstancesGroupName };
             gRegion.Permutations.AddRange(GeometryInstances.Select(i =>
                 new GeometryPermutation
                 {

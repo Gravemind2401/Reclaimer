@@ -31,27 +31,6 @@ namespace Reclaimer.Blam.HaloReach
 
     internal static class HaloReachCommon
     {
-        private static readonly Dictionary<string, MaterialUsage> usageLookup = new Dictionary<string, MaterialUsage>
-        {
-            { "blend_map", MaterialUsage.BlendMap },
-            { "base_map", MaterialUsage.Diffuse },
-            { "detail_map", MaterialUsage.DiffuseDetail },
-            { "detail_map_overlay", MaterialUsage.DiffuseDetail },
-            { "change_color_map", MaterialUsage.ColourChange },
-            { "bump_map", MaterialUsage.Normal },
-            { "bump_detail_map", MaterialUsage.NormalDetail },
-            { "self_illum_map", MaterialUsage.SelfIllumination },
-            { "specular_map", MaterialUsage.Specular },
-            { "foam_texture", MaterialUsage.Diffuse }
-        };
-
-        private static readonly Dictionary<string, TintUsage> tintLookup = new Dictionary<string, TintUsage>
-        {
-            { "albedo_color", TintUsage.Albedo },
-            { "self_illum_color", TintUsage.SelfIllumination },
-            { "specular_tint", TintUsage.Specular }
-        };
-
         public static IEnumerable<IBitmap> GetBitmaps(IReadOnlyList<ShaderBlock> shaders) => GetBitmaps(shaders, Enumerable.Range(0, shaders?.Count ?? 0));
         public static IEnumerable<IBitmap> GetBitmaps(IReadOnlyList<ShaderBlock> shaders, IEnumerable<int> shaderIndexes)
         {
@@ -106,7 +85,7 @@ namespace Reclaimer.Blam.HaloReach
                 for (var j = 0; j < template.Usages.Count; j++)
                 {
                     var usage = template.Usages[j].Value;
-                    var entry = usageLookup.FirstOrNull(p => usage.StartsWith(p.Key));
+                    var entry = BlamConstants.Gen3Materials.UsageLookup.FirstOrNull(p => usage.StartsWith(p.Key));
                     if (!entry.HasValue)
                         continue;
 
@@ -137,12 +116,12 @@ namespace Reclaimer.Blam.HaloReach
 
                 for (var j = 0; j < template.Arguments.Count; j++)
                 {
-                    if (!tintLookup.ContainsKey(template.Arguments[j].Value))
+                    if (!BlamConstants.Gen3Materials.TintLookup.TryGetValue(template.Arguments[j].Value, out var tintUsage))
                         continue;
 
                     material.TintColours.Add(new TintColour
                     {
-                        Usage = tintLookup[template.Arguments[j].Value],
+                        Usage = tintUsage,
                         R = (byte)(props.TilingData[j].X * byte.MaxValue),
                         G = (byte)(props.TilingData[j].Y * byte.MaxValue),
                         B = (byte)(props.TilingData[j].Z * byte.MaxValue),

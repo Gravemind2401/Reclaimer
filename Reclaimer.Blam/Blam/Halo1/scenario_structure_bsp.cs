@@ -61,7 +61,7 @@ namespace Reclaimer.Blam.Halo1
             reader.Seek(SurfacePointer.Address, SeekOrigin.Begin);
             var indices = reader.ReadArray<ushort>(SurfaceCount * 3);
 
-            var gRegion = new GeometryRegion { Name = "Clusters" };
+            var gRegion = new GeometryRegion { Name = BlamConstants.SbspClustersGroupName };
 
             const int vertexSize = 56;
 
