@@ -1,6 +1,10 @@
 import struct
+import itertools
 from enum import IntEnum
-from typing import List, Iterable, Iterator
+from typing import List, Iterable, Iterator, overload
+
+from .Types import Triangle
+from .Model import Mesh, MeshSegment
 
 __all__ = [
     'IndexLayout',
@@ -34,15 +38,49 @@ class IndexBuffer:
     def __repr__(self) -> str:
         return f'<{self.__class__.name}|{IndexLayout(self.index_layout).name}|{self.indices.count}>'
 
-    def get_triangles(self, offset: int = 0, count: int = -1) -> Iterator[int]:
-        end = self.indices.count if count < 0 else offset + count
-        subset = (self.indices[i] for i in range(offset, end))
-        if self.index_layout == IndexLayout.TRIANGLE_LIST:
-            return subset
-        elif self.index_layout == IndexLayout.TRIANGLE_STRIP:
-            return self._unpack_triangle_list(subset)
-        else:
-            raise Exception('Unsupported index layout')
+    @overload
+    def get_triangles(self, offset: int = 0, count: int = -1) -> Iterator[Triangle]:
+        ''' Iterates the triangles for a given range of source indices '''
+        ...
+
+    @overload
+    def get_triangles(self, segment: MeshSegment) -> Iterator[Triangle]:
+        ''' Iterates the triangles for the index range defined in a `MeshSegment` '''
+        ...
+
+    @overload
+    def get_triangles(self, mesh: Mesh) -> Iterator[Triangle]:
+        ''' Iterates the triangles across every index range defined by the `MeshSegments` of a given `Mesh` '''
+        ...
+
+    def get_triangles(self, arg1, arg2 = None) -> Iterator[Triangle]:
+        def get_indices(offset: int, count: int) -> Iterator[int]:
+            end = self.indices.count if count < 0 else offset + count
+            subset = (self.indices[i] for i in range(offset, end))
+            if self.index_layout == IndexLayout.TRIANGLE_LIST:
+                return subset
+            elif self.index_layout == IndexLayout.TRIANGLE_STRIP:
+                return self._unpack_triangle_list(subset)
+            else:
+                raise Exception('Unsupported index layout')
+
+        def from_range(offset: int, count: int) -> Iterator[Triangle]:
+            indices = get_indices(offset, count)
+            return iter(lambda: tuple(itertools.islice(indices, 3)), ())
+        
+        def from_segment(segment: MeshSegment) -> Iterator[Triangle]:
+            return from_range(segment.index_start, segment.index_length)
+        
+        def from_mesh(mesh: Mesh) -> Iterator[Triangle]:
+            for segment in mesh.segments:
+                for t in from_segment(segment):
+                    yield t
+
+        if isinstance(arg1, MeshSegment):
+            return from_segment(arg1)
+        if isinstance(arg1, Mesh):
+            return from_mesh(arg1)
+        return from_range(arg1, arg2)
 
     def _unpack_triangle_list(self, indices: Iterable[int]) -> Iterator[int]:
         i0, i1, i2 = 0, 0, 0

@@ -12,6 +12,7 @@ __all__ = [
 ]
 
 
+Triangle = Tuple[int, int, int]
 Color = Tuple[int, int, int, int]
 Float2 = Tuple[float, float]
 Float3 = Tuple[float, float, float]

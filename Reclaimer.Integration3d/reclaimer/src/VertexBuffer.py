@@ -44,7 +44,7 @@ def _get_packed(data: bytes, index: int, config: BitConfig) -> Iterator[float]:
     return PackedVector(value, config)
 
 def _get_normalised(data: bytes, index: int, fmt: str, width: int, count: int, config: BitConfig) -> Iterator[float]:
-    values = struct.unpack('<' + (fmt * count), _get_struct_bytes(data, index, width * count))
+    values = struct.unpack('<' + fmt * count, _get_struct_bytes(data, index, width * count))
     return NormalisedVector(values, config)
 
 def _get_ubyte4(data: bytes, index: int) -> Iterator[int]:
@@ -73,6 +73,8 @@ class VectorBuffer(Sequence):
         self._decode = _decode_functions[self.vector_format]
 
     def __getitem__(self, i: int) -> Iterator[float]:
+        if i < 0 or i >= self._count:
+            raise IndexError('Index out of range')
         return self._decode(self._binary, i)
 
     def __len__(self) -> int:
