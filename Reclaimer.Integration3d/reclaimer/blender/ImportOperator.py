@@ -6,6 +6,7 @@ from bpy.types import Context, Operator
 from bpy.props import BoolProperty, FloatProperty, StringProperty, EnumProperty
 
 from ..src.SceneReader import SceneReader
+from . import SceneBuilder
 
 class RmfImportOperator(Operator, bpy_extras.io_utils.ImportHelper):
     '''Import an RMF file'''
@@ -121,6 +122,8 @@ class RmfImportOperator(Operator, bpy_extras.io_utils.ImportHelper):
         #main(context, self.filepath, options)
         scene = SceneReader.open_scene(self.filepath)
         print(f'scene name: {scene.name}')
+        for m in scene.model_pool:
+            SceneBuilder.create_model(context, scene, m)
 
         return {'FINISHED'}
 

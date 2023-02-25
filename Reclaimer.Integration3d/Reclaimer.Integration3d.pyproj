@@ -27,6 +27,7 @@
   <ItemGroup>
     <Compile Include="reclaimer\blender\ImportOperator.py" />
     <Compile Include="reclaimer\blender\MenuOperator.py" />
+    <Compile Include="reclaimer\blender\SceneBuilder.py" />
     <Compile Include="reclaimer\blender\__init__.py" />
     <Compile Include="reclaimer\__init__.py" />
     <Compile Include="reclaimer\src\FileReader.py" />
