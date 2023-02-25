@@ -7,7 +7,7 @@ from bpy.props import BoolProperty, FloatProperty, StringProperty, EnumProperty
 
 from ..src.SceneReader import SceneReader
 
-class IMPORT_SCENE_OT_rmf(Operator, bpy_extras.io_utils.ImportHelper):
+class RmfImportOperator(Operator, bpy_extras.io_utils.ImportHelper):
     '''Import an RMF file'''
     bl_idname: str = 'import_scene.rmf'
     bl_label: str = 'Import RMF'
