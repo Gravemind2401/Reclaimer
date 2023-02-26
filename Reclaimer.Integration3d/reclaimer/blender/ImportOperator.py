@@ -129,7 +129,7 @@ class RmfImportOperator(Operator, bpy_extras.io_utils.ImportHelper):
 
     def draw(self, context: Context):
         layout = self.layout
-
+        return
         box = layout.box()
         box.label(icon = 'WORLD_DATA', text = 'Scale')
         box.prop(self, 'import_units')
