@@ -97,11 +97,20 @@ class FileReader:
     def read_float4(self, byteOrder: str = '<') -> Float4:
         return (self.read_float(byteOrder), self.read_float(byteOrder), self.read_float(byteOrder), self.read_float(byteOrder))
 
-    def read_matrix3x3(self, byteOrder: str = '<') -> Matrix3x3:
-        return (self.read_float3(byteOrder), self.read_float3(byteOrder), self.read_float3(byteOrder))
+    def read_matrix3x3(self, byteOrder: str = '<') -> Matrix4x4:
+        def read_row():
+            return (self.read_float(byteOrder), self.read_float(byteOrder), self.read_float(byteOrder), 0)
 
-    def read_matrix3x4(self, byteOrder: str = '<') -> Matrix3x4:
-        return (self.read_float3(byteOrder), self.read_float3(byteOrder), self.read_float3(byteOrder), self.read_float3(byteOrder))
+        return (read_row(), read_row(), read_row(), (0, 0, 0, 1))
+
+    def read_matrix3x4(self, byteOrder: str = '<') -> Matrix4x4:
+        def read_row(last: float = 0):
+            return (self.read_float(byteOrder), self.read_float(byteOrder), self.read_float(byteOrder), last)
+
+        return (read_row(), read_row(), read_row(), read_row(1))
 
     def read_matrix4x4(self, byteOrder: str = '<') -> Matrix4x4:
-        return (self.read_float4(byteOrder), self.read_float4(byteOrder), self.read_float4(byteOrder), self.read_float4(byteOrder))
+        def read_row():
+            return self.read_float4(byteOrder)
+
+        return (read_row(), read_row(), read_row(), read_row())

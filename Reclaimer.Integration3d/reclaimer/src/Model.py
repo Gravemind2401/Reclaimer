@@ -31,7 +31,7 @@ class ModelPermutation(INamed):
     instanced: bool
     mesh_index: int
     mesh_count: int
-    transform: Matrix3x4
+    transform: Matrix4x4
 
 
 class Marker(INamed):
@@ -57,8 +57,8 @@ class Mesh:
     vertex_buffer_index: int
     index_buffer_index: int
     bone_index: int # -1 if N/A
-    vertex_transform: Matrix3x4
-    texture_transform: Matrix3x4
+    vertex_transform: Matrix4x4
+    texture_transform: Matrix4x4
     segments: List['MeshSegment']
 
 

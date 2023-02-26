@@ -29,7 +29,7 @@ class Version:
 class Scene(INamed):
     version: Version
     unit_scale: float
-    world_matrix: Matrix3x3
+    world_matrix: Matrix4x4
     root_node: 'SceneGroup'
     markers: List[Marker]
     model_pool: List[Model]
