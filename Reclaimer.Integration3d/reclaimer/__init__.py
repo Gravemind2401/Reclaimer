@@ -2,6 +2,8 @@
 Reclaimer RMF Import Utility
 """
 
+from importlib import util as importutil
+
 # blender appears to parse this directly from the python file
 # as text so it cannot be imported from within a submodule
 bl_info = {
@@ -15,10 +17,18 @@ bl_info = {
     'support': 'TESTING'
 }
 
-# these imports are unused locally, but need to be
-# imported so blender can find them
-from . import blender
-from .blender import register, unregister
+if importutil.find_spec('bpy'):
+    # these imports are unused locally, but need to be
+    # imported so blender can find them
+    from . import blender
+    from .blender import register, unregister
 
-if __name__ == '__main__':
-    blender.reset()
+    if __name__ == '__main__':
+        blender.reset()
+
+if importutil.find_spec('pymxs'):
+    from . import autodesk
+    from .autodesk import import_rmf
+
+    if __name__ == '__main__':
+        autodesk.import_rmf()
