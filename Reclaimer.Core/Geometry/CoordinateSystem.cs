@@ -28,6 +28,12 @@ namespace Reclaimer.Geometry
         }
 
         /// <summary>
+        /// Gets a copy of the current coordinate system with the <see cref="UnitScale"/> property set to a new value.
+        /// </summary>
+        /// <param name="unitScale">The new scale value.</param>
+        public readonly CoordinateSystem2 WithScale(float unitScale) => this with { UnitScale = unitScale };
+
+        /// <summary>
         /// Gets a transform representing the world matrix of the current coordinate system.
         /// </summary>
         /// <remarks>

@@ -15,7 +15,7 @@ namespace Reclaimer.Blam.Halo3
 
         public override Scene GetContent()
         {
-            var scene = new Scene { Name = Item.FileName };
+            var scene = new Scene { Name = Item.FileName, CoordinateSystem = CoordinateSystem2.Default.WithScale(BlamConstants.Gen3UnitScale) };
             var group = new SceneGroup { Name = nameof(scenario_structure_bsp) };
 
             scene.ChildGroups.Add(group);

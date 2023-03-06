@@ -15,9 +15,9 @@ namespace Reclaimer.Geometry
         public List<SceneGroup> ChildGroups => RootNode.ChildGroups;
         public List<SceneObject> ChildObjects => RootNode.ChildObjects;
 
-        public static Scene WrapSingleModel(Model model)
+        public static Scene WrapSingleModel(Model model, float unitScale = 1)
         {
-            var scene = new Scene { Name = model.Name };
+            var scene = new Scene { Name = model.Name, CoordinateSystem = CoordinateSystem2.Default.WithScale(unitScale) };
             scene.ChildObjects.Add(model);
             return scene;
         }

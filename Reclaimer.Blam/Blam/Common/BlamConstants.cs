@@ -7,6 +7,9 @@ namespace Reclaimer.Blam.Common
         public const string SbspClustersGroupName = "<Clusters>";
         public const string ModelInstancesGroupName = "<Instances>";
 
+        //1 world unit = 10 feet
+        public const float Gen3UnitScale = 10 * Geometry.StandardUnits.Feet;
+
         public static class Gen3Materials
         {
             public const string BlendMap = "blend_map";
