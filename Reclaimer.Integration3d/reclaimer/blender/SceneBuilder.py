@@ -10,18 +10,15 @@ from ..src.Scene import *
 from ..src.Model import *
 from ..src.Material import *
 
+BL_UNITS = 1000.0 # 1 blender unit = 1000mm
+
 def create_model(context: Context, scene: Scene, model: Model):
     builder = ModelBuilder(context, scene, model)
-    model_col = bpy.data.collections.new(model.name)
-    context.collection.children.link(model_col)
-    for r in model.regions:
-        region_col = bpy.data.collections.new(r.name)
-        model_col.children.link(region_col)
-        for p in r.permutations:
-            builder.build_mesh(region_col, r, p)
+    builder.create_meshes()
 
 class ModelBuilder:
     _context: Context
+    _collection: Collection
     _scene: Scene
     _model: Model
     _armature: Armature
@@ -29,10 +26,12 @@ class ModelBuilder:
 
     def __init__(self, context: Context, scene: Scene, model: Model):
         self._context = context
+        self._collection = bpy.data.collections.new(model.name)
         self._scene = scene
         self._model = model
         self._armature = None
         self._instances = dict()
+        bpy.context.scene.collection.children.link(self._collection)
 
     def create_bones(self) -> Armature:
         context, model = self._context, self._model
@@ -69,9 +68,19 @@ class ModelBuilder:
             for inst in m.instances:
                 pass # TODO
 
-    def build_mesh(self, collection: Collection, region: ModelRegion, permutation: ModelPermutation):
+    def create_meshes(self):
+        collection, model = self._collection, self._model
+
+        for r in model.regions:
+            region_col = bpy.data.collections.new(r.name)
+            collection.children.link(region_col)
+            for p in r.permutations:
+                self._build_mesh(region_col, r, p)
+
+    def _build_mesh(self, collection: Collection, region: ModelRegion, permutation: ModelPermutation):
         context, scene, model = self._context, self._scene, self._model
         
+        UNIT_SCALE = scene.unit_scale / BL_UNITS
         SPLIT_MODE = False # TODO
 
         for mesh_index in range(permutation.mesh_index, permutation.mesh_index + permutation.mesh_count):
@@ -90,17 +99,16 @@ class ModelBuilder:
             index_buffer = scene.index_buffer_pool[mesh_data.index_buffer_index]
             vertex_buffer = scene.vertex_buffer_pool[mesh_data.vertex_buffer_index]
 
-            positions = list(Vector(v) for v in vertex_buffer.position_channels[0])
-            normals = list(Vector(v) for v in vertex_buffer.normal_channels[0])
+            # note blender doesnt like if we provide too many dimensions
+            positions = list(Vector(v).to_3d() for v in vertex_buffer.position_channels[0])
+            normals = list(Vector(v).to_3d() for v in vertex_buffer.normal_channels[0])
             faces = list(index_buffer.get_triangles(mesh_data))
-
-            # blender doesnt like if we provide too many dimensions
-            for v in itertools.chain(positions, normals):
-                v.resize_3d()
 
             mesh = bpy.data.meshes.new(MESH_NAME)
             mesh.from_pydata(positions, [], faces)
-            mesh.transform(mesh_data.vertex_transform)
+
+            mesh_transform = Matrix.Scale(UNIT_SCALE, 4) @ Matrix(mesh_data.vertex_transform).transposed()
+            mesh.transform(mesh_transform)
 
             for p in mesh.polygons:
                 p.use_smooth = True
