@@ -22,13 +22,8 @@ if importutil.find_spec('bpy'):
     # imported so blender can find them
     from . import blender
     from .blender import register, unregister
-
-    if __name__ == '__main__':
-        blender.reset()
+    from .blender import reset as import_rmf
 
 if importutil.find_spec('pymxs'):
     from . import autodesk
     from .autodesk import import_rmf
-
-    if __name__ == '__main__':
-        autodesk.import_rmf()
