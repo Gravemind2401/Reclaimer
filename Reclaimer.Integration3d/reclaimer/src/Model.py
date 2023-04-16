@@ -22,6 +22,18 @@ class Model(INamed):
     bones: List['Bone']
     meshes: List['Mesh']
 
+    def get_bone_lineage(self, bone: 'Bone') -> List['Bone']:
+        lineage = [bone]
+        while bone.parent_index >= 0:
+            bone = self.bones[bone.parent_index]
+            lineage.append(bone)
+        lineage.reverse()
+        return lineage
+    
+    def get_bone_children(self, bone: 'Bone') -> List['Bone']:
+        index = self.bones.index(bone)
+        return [b for b in self.bones if b.parent_index == index]
+
 
 class ModelRegion(INamed):
     permutations: List['ModelPermutation']

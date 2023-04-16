@@ -1,10 +1,12 @@
 import bpy
 import bmesh
 import itertools
+import operator
 from typing import cast
 from typing import Dict, Tuple
-from mathutils import Vector
+from mathutils import Vector, Matrix
 from bpy.types import Context, Collection, Armature, EditBone, Object
+from functools import reduce
 
 from ..src.Scene import *
 from ..src.Model import *
@@ -14,6 +16,7 @@ BL_UNITS = 1000.0 # 1 blender unit = 1000mm
 
 def create_model(context: Context, scene: Scene, model: Model):
     builder = ModelBuilder(context, scene, model)
+    builder.create_bones()
     builder.create_meshes()
 
 class ModelBuilder:
@@ -33,28 +36,51 @@ class ModelBuilder:
         self._instances = dict()
         bpy.context.scene.collection.children.link(self._collection)
 
-    def create_bones(self) -> Armature:
-        context, model = self._context, self._model
+    def create_bones(self):
+        context, collection, scene, model = self._context, self._collection, self._scene, self._model
         print('creating armature')
 
+        UNIT_SCALE = scene.unit_scale / BL_UNITS
         PREFIX = '' # TODO
-        TAIL_VECTOR = (0.0, 5.0, 0.0)
+        TAIL_VECTOR = (0.03 * UNIT_SCALE, 0.0, 0.0)
 
         bpy.ops.object.add(type = 'ARMATURE', enter_editmode = True)
+        obj = context.object
         armature = self._armature = cast(Armature, context.object.data)
         armature.name = f'{model.name} armature'
 
+        def makemat(mat) -> Matrix:
+            m = Matrix(mat).transposed()
+            translation, rotation, scale = m.decompose()
+            return Matrix.Translation(translation * UNIT_SCALE) @ rotation.to_matrix().to_4x4()
+        
+        bone_transforms = []
         for b in model.bones:
-            bone = armature.edit_bones.new(PREFIX + b.name)
-            bone.tail = TAIL_VECTOR
+            lineage = model.get_bone_lineage(b)
+            lst = [makemat(x.transform) for x in lineage]
+            bone_transforms.append(reduce(operator.matmul, lst))
 
+        editbones = [armature.edit_bones.new(PREFIX + b.name) for b in model.bones]
         for i, b in enumerate(model.bones):
+            editbone = editbones[i]
+            editbone.tail = TAIL_VECTOR
+            
+            children = model.get_bone_children(b)
+            if children:
+                size = max((Vector(b.transform[3]).to_3d().length for b in children))
+                editbone.tail = (size * UNIT_SCALE, 0, 0)
+
+            editbone.transform(bone_transforms[i])
+
             if b.parent_index >= 0:
-                armature.edit_bones[i].parent = armature.edit_bones[b.parent_index]
+                editbone.parent = editbones[b.parent_index]
 
         bpy.ops.object.mode_set(mode = 'OBJECT')
 
-        return armature
+        # bpy.ops.object.add() will automatically add it to the active collection
+        # so remove it and add it to the custom collection instead
+        context.collection.objects.unlink(obj)
+        collection.objects.link(obj)
 
     def create_markers(self):
         context, model = self._context, self._model
