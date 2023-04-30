@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using Newtonsoft.Json.Linq;
+using Prism.Mvvm;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
 using System;
@@ -101,6 +102,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
             IsDirty = false;
         }
+
+        public override JToken GetJValue() => new JValue(Value);
 
         private void RefreshOptions()
         {

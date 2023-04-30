@@ -1,4 +1,5 @@
-﻿using Reclaimer.Blam.Halo5;
+﻿using Newtonsoft.Json.Linq;
+using Reclaimer.Blam.Halo5;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
 using System;
@@ -134,6 +135,24 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         public override void WriteValue(EndianWriter writer)
         {
             throw new NotImplementedException();
+        }
+
+        public override JToken GetJValue()
+        {
+            var result = new JArray();
+            if (BlockCount <= 0 || !HasChildren)
+                return result;
+
+            for (var i = 0; i < BlockCount; i++)
+            {
+                BlockIndex = i;
+                var obj = new JObject();
+                foreach (var item in Children.Where(c => c.FieldDefinition.ValueType != MetaValueType.Comment))
+                    obj.Add(item.Name, item.GetJValue());
+                result.Add(obj);
+            }
+
+            return result;
         }
 
         private void RefreshChildren()

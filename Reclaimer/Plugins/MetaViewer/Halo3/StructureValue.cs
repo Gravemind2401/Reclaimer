@@ -1,4 +1,6 @@
-﻿using Reclaimer.Blam.Common.Gen3;
+﻿using Newtonsoft.Json.Linq;
+using Prism.Regions;
+using Reclaimer.Blam.Common.Gen3;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
@@ -135,6 +137,24 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         public override void WriteValue(EndianWriter writer)
         {
             throw new NotImplementedException();
+        }
+
+        public override JToken GetJValue()
+        {
+            var result = new JArray();
+            if (BlockCount <= 0 || !HasChildren)
+                return result;
+
+            for (var i = 0; i < BlockCount; i++)
+            {
+                BlockIndex = i;
+                var obj = new JObject();
+                foreach (var item in Children.Where(c => c.FieldDefinition.ValueType != MetaValueType.Comment))
+                    obj.Add(item.Name, item.GetJValue());
+                result.Add(obj);
+            }
+
+            return result;
         }
 
         private static string GetEntryString(int index, MetaValue value)

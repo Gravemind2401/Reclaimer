@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using Newtonsoft.Json.Linq;
+using Prism.Mvvm;
 using Reclaimer.Blam.Halo5;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
@@ -97,6 +98,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
             IsDirty = false;
         }
+
+        public override JToken GetJValue() => new JValue(Value);
 
         private void RefreshOptions()
         {

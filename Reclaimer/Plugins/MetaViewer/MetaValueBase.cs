@@ -179,5 +179,7 @@ namespace Reclaimer.Plugins.MetaViewer
         {
             throw new NotImplementedException();
         }
+
+        public virtual Newtonsoft.Json.Linq.JToken GetJValue() => null;
     }
 }

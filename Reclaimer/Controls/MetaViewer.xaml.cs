@@ -1,4 +1,6 @@
-﻿using Reclaimer.Blam.Common;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
+using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Halo5;
 using Reclaimer.Models;
 using Reclaimer.Plugins.MetaViewer;
@@ -7,6 +9,7 @@ using Studio.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,6 +56,23 @@ namespace Reclaimer.Controls
             ShowInvisibles = MetaViewerPlugin.Settings.ShowInvisibles;
         }
 
+        public void ExportJson(string fileName)
+        {
+            var tempMetadata = new ObservableCollection<MetaValueBase>();
+            var tempContext = default(Plugins.MetaViewer.Halo3.MetaContext);
+
+            if (item is IIndexItem)
+                LoadDataHalo3(tempMetadata, ref tempContext);
+            else if (item is ModuleItem)
+                LoadDataHalo5(tempMetadata);
+
+            var root = new JObject();
+            foreach (var item in tempMetadata)
+                root.Add(item.Name, item.GetJValue());
+
+            File.WriteAllText(fileName, root.ToString());
+        }
+
         public void LoadMetadata(IIndexItem tag, string xmlFileName)
         {
             TabModel.ToolTip = $"{tag.TagName}.{tag.ClassCode}";
@@ -78,15 +98,15 @@ namespace Reclaimer.Controls
         private void LoadData()
         {
             if (item is IIndexItem)
-                LoadDataHalo3();
+                LoadDataHalo3(Metadata, ref context);
             else if (item is ModuleItem)
-                LoadDataHalo5();
+                LoadDataHalo5(Metadata);
         }
 
-        private void LoadDataHalo3()
+        private void LoadDataHalo3(IList<MetaValueBase> collection, ref Plugins.MetaViewer.Halo3.MetaContext context)
         {
             var tag = item as IIndexItem;
-            Metadata.Clear();
+            collection.Clear();
 
             var doc = new XmlDocument();
             doc.Load(fileName);
@@ -99,7 +119,7 @@ namespace Reclaimer.Controls
                 try
                 {
                     var meta = MetaValueBase.GetMetaValue(n, context, tag.MetaPointer.Address);
-                    Metadata.Add(meta);
+                    collection.Add(meta);
                 }
                 catch { }
             }
@@ -107,10 +127,10 @@ namespace Reclaimer.Controls
             context.UpdateBlockIndices();
         }
 
-        private void LoadDataHalo5()
+        private void LoadDataHalo5(IList<MetaValueBase> collection)
         {
             var tag = item as ModuleItem;
-            Metadata.Clear();
+            collection.Clear();
 
             var doc = new XmlDocument();
             doc.Load(fileName);
@@ -130,7 +150,7 @@ namespace Reclaimer.Controls
                         {
                             var def = FieldDefinition.GetHalo5Definition(n);
                             var meta = MetaValueBase.GetMetaValue(n, tag, header, mainBlock, reader, mainBlock.Offset, offset);
-                            Metadata.Add(meta);
+                            collection.Add(meta);
                             offset += def.Size;
                         }
                         catch { break; }
@@ -149,6 +169,22 @@ namespace Reclaimer.Controls
         }
 
         private void btnReload_Click(object sender, RoutedEventArgs e) => LoadData();
+        
+        private void btnExport_Click(object sender, RoutedEventArgs e)
+        {
+            var sfd = new SaveFileDialog
+            {
+                OverwritePrompt = true,
+                FileName = (item as IIndexItem)?.FileName ?? (item as ModuleItem).FileName,
+                Filter = "JSON Files|*.json",
+                FilterIndex = 1,
+                AddExtension = true
+            };
+
+            if (sfd.ShowDialog() == true)
+                ExportJson(sfd.FileName);
+        }
+
         private void btnCollapseAll_Click(object sender, RoutedEventArgs e) => RecursiveToggle(Metadata, false);
         private void btnExpandAll_Click(object sender, RoutedEventArgs e) => RecursiveToggle(Metadata, true);
 

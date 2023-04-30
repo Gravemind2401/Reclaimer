@@ -354,6 +354,9 @@
                 <Button Click="btnReload_Click" ToolTip="Reload data">
                     <ContentControl Template="{StaticResource ic_Refresh_16x}" />
                 </Button>
+                <Button Click="btnExport_Click" ToolTip="Export data">
+                    <ContentControl Template="{StaticResource ic_ResultToText_16x}" />
+                </Button>
                 <Separator />
                 <ToggleButton IsChecked="{Binding ShowInvisibles}" ToolTip="Show hidden">
                     <ContentControl Template="{StaticResource ic_ShowAllFiles_16x}" />

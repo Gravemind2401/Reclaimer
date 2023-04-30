@@ -1,4 +1,5 @@
-﻿using Reclaimer.IO;
+﻿using Newtonsoft.Json.Linq;
+using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -95,6 +96,17 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 writer.Write(Value4);
 
             IsDirty = false;
+        }
+
+        public override JToken GetJValue()
+        {
+            var values = new[] { Value1, Value2, Value3, Value4 };
+            var result = new JObject();
+
+            for (var i = 0; i < Labels.Length; i++)
+                result.Add(Labels[i], new JValue(values[i]));
+
+            return result;
         }
     }
 }

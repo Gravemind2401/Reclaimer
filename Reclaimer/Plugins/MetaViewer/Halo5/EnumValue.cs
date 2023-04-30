@@ -1,4 +1,5 @@
-﻿using Reclaimer.Blam.Halo5;
+﻿using Newtonsoft.Json.Linq;
+using Reclaimer.Blam.Halo5;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
 using System;
@@ -96,5 +97,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
             IsDirty = false;
         }
+
+        public override JToken GetJValue() => new JValue(Value);
     }
 }
