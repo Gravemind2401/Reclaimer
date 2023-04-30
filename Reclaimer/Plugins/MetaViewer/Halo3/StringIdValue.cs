@@ -1,4 +1,5 @@
-﻿using Reclaimer.Blam.Common;
+﻿using Newtonsoft.Json.Linq;
+using Reclaimer.Blam.Common;
 using Reclaimer.Controls;
 using Reclaimer.IO;
 using System;
@@ -55,6 +56,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
             IsDirty = false;
         }
+
+        public override JToken GetJValue() => new JValue(Value);
 
         private int GetStringId(string value)
         {

@@ -1,4 +1,5 @@
-﻿using Reclaimer.Blam.Halo5;
+﻿using Newtonsoft.Json.Linq;
+using Reclaimer.Blam.Halo5;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
 using System;
@@ -103,5 +104,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         {
             throw new NotImplementedException();
         }
+
+        public override JToken GetJValue() => SelectedItem == null ? null : new JValue($"{SelectedItem.Context.FullPath}.{SelectedItem.Context.ClassName}");
     }
 }

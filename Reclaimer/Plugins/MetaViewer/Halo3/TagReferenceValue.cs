@@ -1,4 +1,5 @@
-﻿using Reclaimer.Blam.Common;
+﻿using Newtonsoft.Json.Linq;
+using Reclaimer.Blam.Common;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
 using System;
@@ -95,5 +96,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             writer.Seek(ValueAddress, SeekOrigin.Begin);
             referenceValue.Write(writer);
         }
+
+        public override JToken GetJValue() => SelectedItem == null ? null : new JValue($"{SelectedItem.Context.FullPath}.{SelectedItem.Context.ClassName}");
     }
 }

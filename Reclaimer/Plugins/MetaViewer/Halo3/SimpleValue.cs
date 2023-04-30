@@ -1,4 +1,5 @@
-﻿using Reclaimer.IO;
+﻿using Newtonsoft.Json.Linq;
+using Reclaimer.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -94,6 +95,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
             IsDirty = false;
         }
+
+        public override JToken GetJValue() => new JValue(Value);
 
         public void SetValue(object value)
         {
