@@ -11,6 +11,7 @@ from functools import reduce
 from ..src.Scene import *
 from ..src.Model import *
 from ..src.Material import *
+from ..src.Types import *
 
 BL_UNITS = 1000.0 # 1 blender unit = 1000mm
 
@@ -20,6 +21,7 @@ def create_model(context: Context, scene: Scene, model: Model):
     builder.create_meshes()
 
 class ModelBuilder:
+    UNIT_SCALE: float
     _context: Context
     _collection: Collection
     _scene: Scene
@@ -28,6 +30,7 @@ class ModelBuilder:
     _instances: Dict[Tuple[int, int], Object]
 
     def __init__(self, context: Context, scene: Scene, model: Model):
+        self.UNIT_SCALE = scene.unit_scale / BL_UNITS
         self._context = context
         self._collection = bpy.data.collections.new(model.name)
         self._scene = scene
@@ -36,28 +39,32 @@ class ModelBuilder:
         self._instances = dict()
         bpy.context.scene.collection.children.link(self._collection)
 
+    def _convert_transform_units(self, transform: Matrix4x4, bone_mode: bool = False) -> Matrix:
+        ''' Converts a transform from model units to blender units '''
+        if not bone_mode:
+            return Matrix.Scale(self.UNIT_SCALE, 4) @ Matrix(transform).transposed()
+
+        # for bones we want to keep the scale component at 1x, but still need to convert the translation component
+        m = Matrix(transform).transposed()
+        translation, rotation, scale = m.decompose()
+        return Matrix.Translation(translation * self.UNIT_SCALE) @ rotation.to_matrix().to_4x4()
+
     def create_bones(self):
         context, collection, scene, model = self._context, self._collection, self._scene, self._model
         print('creating armature')
 
-        UNIT_SCALE = scene.unit_scale / BL_UNITS
         PREFIX = '' # TODO
-        TAIL_VECTOR = (0.03 * UNIT_SCALE, 0.0, 0.0)
+        TAIL_VECTOR = (0.03 * self.UNIT_SCALE, 0.0, 0.0)
 
         bpy.ops.object.add(type = 'ARMATURE', enter_editmode = True)
         armature_obj = context.object
         armature_data = self._armature_data = cast(Armature, context.object.data)
         armature_data.name = f'{model.name} armature'
 
-        def makemat(mat) -> Matrix:
-            m = Matrix(mat).transposed()
-            translation, rotation, scale = m.decompose()
-            return Matrix.Translation(translation * UNIT_SCALE) @ rotation.to_matrix().to_4x4()
-        
         bone_transforms = []
         for b in model.bones:
             lineage = model.get_bone_lineage(b)
-            lst = [makemat(x.transform) for x in lineage]
+            lst = [self._convert_transform_units(x.transform, True) for x in lineage]
             bone_transforms.append(reduce(operator.matmul, lst))
 
         editbones = [armature_data.edit_bones.new(PREFIX + b.name) for b in model.bones]
@@ -68,7 +75,7 @@ class ModelBuilder:
             children = model.get_bone_children(b)
             if children:
                 size = max((Vector(b.transform[3]).to_3d().length for b in children))
-                editbone.tail = (size * UNIT_SCALE, 0, 0)
+                editbone.tail = (size * self.UNIT_SCALE, 0, 0)
 
             editbone.transform(bone_transforms[i])
 
@@ -105,9 +112,10 @@ class ModelBuilder:
 
     def _build_mesh(self, collection: Collection, region: ModelRegion, permutation: ModelPermutation):
         context, scene, model = self._context, self._scene, self._model
-        
-        UNIT_SCALE = scene.unit_scale / BL_UNITS
+
         SPLIT_MODE = False # TODO
+
+        world_transform = self._convert_transform_units(permutation.transform)
 
         for mesh_index in range(permutation.mesh_index, permutation.mesh_index + permutation.mesh_count):
             MESH_NAME = f'{region.name}:{permutation.name}'
@@ -117,7 +125,7 @@ class ModelBuilder:
                 source = self._instances.get(INSTANCE_KEY)
                 copy = cast(Object, source.copy()) # note: use source.data.copy() for a deep copy
                 copy.name = MESH_NAME
-                copy.matrix_world = permutation.transform
+                copy.matrix_world = world_transform
                 collection.objects.link(copy)
                 continue
 
@@ -133,7 +141,7 @@ class ModelBuilder:
             mesh_data = bpy.data.meshes.new(MESH_NAME)
             mesh_data.from_pydata(positions, [], faces)
 
-            mesh_transform = Matrix.Scale(UNIT_SCALE, 4) @ Matrix(mesh.vertex_transform).transposed()
+            mesh_transform = Matrix(mesh.vertex_transform).transposed()
             mesh_data.transform(mesh_transform)
 
             for p in mesh_data.polygons:
@@ -143,7 +151,7 @@ class ModelBuilder:
             mesh_data.use_auto_smooth = True # this is required in order for custom normals to take effect
 
             mesh_obj = bpy.data.objects.new(mesh_data.name, mesh_data)
-            mesh_obj.matrix_world = permutation.transform
+            mesh_obj.matrix_world = world_transform
             collection.objects.link(mesh_obj)
 
             self._instances[INSTANCE_KEY] = mesh_obj
