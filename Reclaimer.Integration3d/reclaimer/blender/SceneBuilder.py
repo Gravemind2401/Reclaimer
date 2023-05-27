@@ -24,7 +24,7 @@ class ModelBuilder:
     _collection: Collection
     _scene: Scene
     _model: Model
-    _armature: Armature
+    _armature_data: Armature
     _instances: Dict[Tuple[int, int], Object]
 
     def __init__(self, context: Context, scene: Scene, model: Model):
@@ -32,7 +32,7 @@ class ModelBuilder:
         self._collection = bpy.data.collections.new(model.name)
         self._scene = scene
         self._model = model
-        self._armature = None
+        self._armature_data = None
         self._instances = dict()
         bpy.context.scene.collection.children.link(self._collection)
 
@@ -45,9 +45,9 @@ class ModelBuilder:
         TAIL_VECTOR = (0.03 * UNIT_SCALE, 0.0, 0.0)
 
         bpy.ops.object.add(type = 'ARMATURE', enter_editmode = True)
-        obj = context.object
-        armature = self._armature = cast(Armature, context.object.data)
-        armature.name = f'{model.name} armature'
+        armature_obj = context.object
+        armature_data = self._armature_data = cast(Armature, context.object.data)
+        armature_data.name = f'{model.name} armature'
 
         def makemat(mat) -> Matrix:
             m = Matrix(mat).transposed()
@@ -60,7 +60,7 @@ class ModelBuilder:
             lst = [makemat(x.transform) for x in lineage]
             bone_transforms.append(reduce(operator.matmul, lst))
 
-        editbones = [armature.edit_bones.new(PREFIX + b.name) for b in model.bones]
+        editbones = [armature_data.edit_bones.new(PREFIX + b.name) for b in model.bones]
         for i, b in enumerate(model.bones):
             editbone = editbones[i]
             editbone.tail = TAIL_VECTOR
@@ -79,8 +79,8 @@ class ModelBuilder:
 
         # bpy.ops.object.add() will automatically add it to the active collection
         # so remove it and add it to the custom collection instead
-        context.collection.objects.unlink(obj)
-        collection.objects.link(obj)
+        context.collection.objects.unlink(armature_obj)
+        collection.objects.link(armature_obj)
 
     def create_markers(self):
         context, model = self._context, self._model
@@ -121,29 +121,29 @@ class ModelBuilder:
                 collection.objects.link(copy)
                 continue
 
-            mesh_data = model.meshes[mesh_index]
-            index_buffer = scene.index_buffer_pool[mesh_data.index_buffer_index]
-            vertex_buffer = scene.vertex_buffer_pool[mesh_data.vertex_buffer_index]
+            mesh = model.meshes[mesh_index]
+            index_buffer = scene.index_buffer_pool[mesh.index_buffer_index]
+            vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
 
             # note blender doesnt like if we provide too many dimensions
             positions = list(Vector(v).to_3d() for v in vertex_buffer.position_channels[0])
             normals = list(Vector(v).to_3d() for v in vertex_buffer.normal_channels[0])
-            faces = list(index_buffer.get_triangles(mesh_data))
+            faces = list(index_buffer.get_triangles(mesh))
 
-            mesh = bpy.data.meshes.new(MESH_NAME)
-            mesh.from_pydata(positions, [], faces)
+            mesh_data = bpy.data.meshes.new(MESH_NAME)
+            mesh_data.from_pydata(positions, [], faces)
 
-            mesh_transform = Matrix.Scale(UNIT_SCALE, 4) @ Matrix(mesh_data.vertex_transform).transposed()
-            mesh.transform(mesh_transform)
+            mesh_transform = Matrix.Scale(UNIT_SCALE, 4) @ Matrix(mesh.vertex_transform).transposed()
+            mesh_data.transform(mesh_transform)
 
-            for p in mesh.polygons:
+            for p in mesh_data.polygons:
                 p.use_smooth = True
 
-            mesh.normals_split_custom_set_from_vertices(normals)
-            mesh.use_auto_smooth = True # this is required in order for custom normals to take effect
+            mesh_data.normals_split_custom_set_from_vertices(normals)
+            mesh_data.use_auto_smooth = True # this is required in order for custom normals to take effect
 
-            obj = bpy.data.objects.new(mesh.name, mesh)
-            obj.matrix_world = permutation.transform
-            collection.objects.link(obj)
+            mesh_obj = bpy.data.objects.new(mesh_data.name, mesh_data)
+            mesh_obj.matrix_world = permutation.transform
+            collection.objects.link(mesh_obj)
 
-            self._instances[INSTANCE_KEY] = obj
+            self._instances[INSTANCE_KEY] = mesh_obj
