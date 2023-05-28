@@ -9,9 +9,6 @@ def import_rmf():
         return
     
     scene = SceneReader.open_scene(fileName)
-    print(f'scene name: {scene.name}')
-    print(f'scene scale: {scene.unit_scale}')
-    for m in scene.model_pool:
-        SceneBuilder.create_model(scene, m)
+    SceneBuilder.create_scene(scene)
 
     rt.completeRedraw()

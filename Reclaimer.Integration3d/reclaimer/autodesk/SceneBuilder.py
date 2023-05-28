@@ -5,17 +5,38 @@ import operator
 
 from pymxs import runtime as rt
 
+from ..src.ImportOptions import *
 from ..src.Scene import *
 from ..src.Model import *
 from ..src.Material import *
 from ..src.Types import *
 from .Utils import *
 
+__all__ = [
+    'create_scene'
+]
+
 MX_UNITS = 100.0 # 1 max unit = 100mm?
 
-def create_model(scene: Scene, model: Model):
-    builder = ModelBuilder(scene, model)
-    builder.create_bones()
+UNIT_SCALE: float = 1.0
+OPTIONS: ImportOptions = ImportOptions()
+
+def create_scene(scene: Scene, options: ImportOptions = None):
+    global UNIT_SCALE, OPTIONS
+    UNIT_SCALE = scene.unit_scale / MX_UNITS
+    # OPTIONS = options
+
+    print(f'scene name: {scene.name}')
+    print(f'scene scale: {scene.unit_scale}')
+
+    for model in scene.model_pool:
+        builder = ModelBuilder(scene, model)
+        if OPTIONS.IMPORT_BONES and model.bones:
+            builder.create_bones()
+        # if OPTIONS.IMPORT_MARKERS and model.markers:
+        #     builder.create_markers()
+        # if OPTIONS.IMPORT_MESHES and model.meshes:
+        #     builder.create_meshes()
 
 class ModelBuilder:
     _scene: Scene
@@ -29,8 +50,6 @@ class ModelBuilder:
         scene, model = self._scene, self._model
         print('creating skeleton')
 
-        UNIT_SCALE = scene.unit_scale / MX_UNITS
-        PREFIX = '' # TODO
         BONE_SIZE = 0.03 * UNIT_SCALE
         TAIL_VECTOR = rt.Point3(BONE_SIZE, 0.0, 0.0)
 
@@ -48,7 +67,7 @@ class ModelBuilder:
         for i, b in enumerate(model.bones):
             maxbone = rt.BoneSys.createBone(rt.Point3(0, 0, 0), TAIL_VECTOR, rt.Point3(0, 0, 1))
             maxbone.setBoneEnable(False, 0)
-            maxbone.name = b.name
+            maxbone.name = OPTIONS.BONE_PREFIX + b.name
             maxbone.height = maxbone.width = maxbone.length = BONE_SIZE
             maxbones.append(maxbone)
 

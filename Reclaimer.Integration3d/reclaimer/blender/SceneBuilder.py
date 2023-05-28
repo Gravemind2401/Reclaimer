@@ -8,22 +8,51 @@ from mathutils import Vector, Matrix
 from bpy.types import Context, Collection, Armature, EditBone, Object
 from functools import reduce
 
+from ..src.ImportOptions import *
 from ..src.Scene import *
 from ..src.Model import *
 from ..src.Material import *
 from ..src.Types import *
 
-BL_UNITS = 1000.0 # 1 blender unit = 1000mm
+__all__ = [
+    'create_scene'
+]
 
-def create_model(context: Context, scene: Scene, model: Model):
-    builder = ModelBuilder(context, scene, model)
-    if model.bones:
-        builder.create_bones()
-    if model.meshes:
-        builder.create_meshes()
+BL_UNITS: float = 1000.0 # 1 blender unit = 1000mm
+
+UNIT_SCALE: float = 1.0
+OPTIONS: ImportOptions = ImportOptions()
+
+def create_scene(context: Context, scene: Scene, options: ImportOptions = None):
+    global UNIT_SCALE, OPTIONS
+    UNIT_SCALE = scene.unit_scale / BL_UNITS
+    # OPTIONS = options
+
+    print(f'scene name: {scene.name}')
+    print(f'scene scale: {scene.unit_scale}')
+
+    for model in scene.model_pool:
+        print(f'creating model: {model.name}...')
+        builder = ModelBuilder(context, scene, model)
+        if OPTIONS.IMPORT_BONES and model.bones:
+            builder.create_bones()
+        # if OPTIONS.IMPORT_MARKERS and model.markers:
+        #     builder.create_markers()
+        if OPTIONS.IMPORT_MESHES and model.meshes:
+            builder.create_meshes()
+
+def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> Matrix:
+    ''' Converts a transform from model units to blender units '''
+    if not bone_mode:
+        return Matrix.Scale(UNIT_SCALE, 4) @ Matrix(transform).transposed()
+
+    # for bones we want to keep the scale component at 1x, but still need to convert the translation component
+    m = Matrix(transform).transposed()
+    translation, rotation, scale = m.decompose()
+    return Matrix.Translation(translation * UNIT_SCALE) @ rotation.to_matrix().to_4x4()
+
 
 class ModelBuilder:
-    UNIT_SCALE: float
     _context: Context
     _collection: Collection
     _scene: Scene
@@ -32,7 +61,6 @@ class ModelBuilder:
     _instances: Dict[Tuple[int, int], Object]
 
     def __init__(self, context: Context, scene: Scene, model: Model):
-        self.UNIT_SCALE = scene.unit_scale / BL_UNITS
         self._context = context
         self._collection = bpy.data.collections.new(model.name)
         self._scene = scene
@@ -41,22 +69,11 @@ class ModelBuilder:
         self._instances = dict()
         bpy.context.scene.collection.children.link(self._collection)
 
-    def _convert_transform_units(self, transform: Matrix4x4, bone_mode: bool = False) -> Matrix:
-        ''' Converts a transform from model units to blender units '''
-        if not bone_mode:
-            return Matrix.Scale(self.UNIT_SCALE, 4) @ Matrix(transform).transposed()
-
-        # for bones we want to keep the scale component at 1x, but still need to convert the translation component
-        m = Matrix(transform).transposed()
-        translation, rotation, scale = m.decompose()
-        return Matrix.Translation(translation * self.UNIT_SCALE) @ rotation.to_matrix().to_4x4()
-
     def create_bones(self):
         context, collection, scene, model = self._context, self._collection, self._scene, self._model
         print('creating armature')
 
-        PREFIX = '' # TODO
-        TAIL_VECTOR = (0.03 * self.UNIT_SCALE, 0.0, 0.0)
+        TAIL_VECTOR = (0.03 * UNIT_SCALE, 0.0, 0.0)
 
         bpy.ops.object.add(type = 'ARMATURE', enter_editmode = True)
         armature_obj = self._armature_obj = context.object
@@ -66,10 +83,10 @@ class ModelBuilder:
         bone_transforms: list[Matrix] = []
         for b in model.bones:
             lineage = model.get_bone_lineage(b)
-            lst = [self._convert_transform_units(x.transform, True) for x in lineage]
+            lst = [_convert_transform_units(x.transform, True) for x in lineage]
             bone_transforms.append(reduce(operator.matmul, lst))
 
-        editbones = [armature_data.edit_bones.new(PREFIX + b.name) for b in model.bones]
+        editbones = [armature_data.edit_bones.new(OPTIONS.BONE_PREFIX + b.name) for b in model.bones]
         for i, b in enumerate(model.bones):
             editbone = editbones[i]
             editbone.tail = TAIL_VECTOR
@@ -77,7 +94,7 @@ class ModelBuilder:
             children = model.get_bone_children(b)
             if children:
                 size = max((Vector(b.transform[3]).to_3d().length for b in children))
-                editbone.tail = (size * self.UNIT_SCALE, 0, 0)
+                editbone.tail = (size * UNIT_SCALE, 0, 0)
 
             editbone.transform(bone_transforms[i])
 
@@ -94,12 +111,11 @@ class ModelBuilder:
     def create_markers(self):
         context, model = self._context, self._model
         print('creating markers')
-        
-        PREFIX = '' # TODO
+
         MODE = 'MESH' # TODO
 
         for m in model.markers:
-            NAME = PREFIX + m.name
+            NAME = OPTIONS.MARKER_PREFIX + m.name
             for inst in m.instances:
                 pass # TODO
 
@@ -116,9 +132,8 @@ class ModelBuilder:
         context, scene, model = self._context, self._scene, self._model
 
         SPLIT_MODE = False # TODO
-        SKIN_MODE = True
 
-        world_transform = self._convert_transform_units(permutation.transform)
+        world_transform = _convert_transform_units(permutation.transform)
 
         for mesh_index in range(permutation.mesh_index, permutation.mesh_index + permutation.mesh_count):
             MESH_NAME = f'{region.name}:{permutation.name}'
@@ -157,7 +172,7 @@ class ModelBuilder:
             mesh_obj.matrix_world = world_transform
             collection.objects.link(mesh_obj)
 
-            if SKIN_MODE and self._armature_obj and (vertex_buffer.blendindex_channels or mesh.bone_index >= 0):
+            if OPTIONS.IMPORT_BONES and OPTIONS.IMPORT_SKIN and self._armature_obj and (vertex_buffer.blendindex_channels or mesh.bone_index >= 0):
                 modifier = cast(bpy.types.ArmatureModifier, mesh_obj.modifiers.new(f'{mesh_data.name}::armature', 'ARMATURE'))
                 modifier.object = self._armature_obj
 

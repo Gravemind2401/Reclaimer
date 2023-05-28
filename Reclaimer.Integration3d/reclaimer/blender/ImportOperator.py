@@ -121,10 +121,7 @@ class RmfImportOperator(Operator, bpy_extras.io_utils.ImportHelper):
 
         #main(context, self.filepath, options)
         scene = SceneReader.open_scene(self.filepath)
-        print(f'scene name: {scene.name}')
-        print(f'scene scale: {scene.unit_scale}')
-        for m in scene.model_pool:
-            SceneBuilder.create_model(context, scene, m)
+        SceneBuilder.create_scene(context, scene)
 
         return {'FINISHED'}
 
