@@ -17,8 +17,10 @@ BL_UNITS = 1000.0 # 1 blender unit = 1000mm
 
 def create_model(context: Context, scene: Scene, model: Model):
     builder = ModelBuilder(context, scene, model)
-    builder.create_bones()
-    builder.create_meshes()
+    if model.bones:
+        builder.create_bones()
+    if model.meshes:
+        builder.create_meshes()
 
 class ModelBuilder:
     UNIT_SCALE: float
@@ -26,7 +28,7 @@ class ModelBuilder:
     _collection: Collection
     _scene: Scene
     _model: Model
-    _armature_data: Armature
+    _armature_obj: Object
     _instances: Dict[Tuple[int, int], Object]
 
     def __init__(self, context: Context, scene: Scene, model: Model):
@@ -35,7 +37,7 @@ class ModelBuilder:
         self._collection = bpy.data.collections.new(model.name)
         self._scene = scene
         self._model = model
-        self._armature_data = None
+        self._armature_obj = None
         self._instances = dict()
         bpy.context.scene.collection.children.link(self._collection)
 
@@ -57,11 +59,11 @@ class ModelBuilder:
         TAIL_VECTOR = (0.03 * self.UNIT_SCALE, 0.0, 0.0)
 
         bpy.ops.object.add(type = 'ARMATURE', enter_editmode = True)
-        armature_obj = context.object
-        armature_data = self._armature_data = cast(Armature, context.object.data)
+        armature_obj = self._armature_obj = context.object
+        armature_data = cast(Armature, context.object.data)
         armature_data.name = f'{model.name} armature'
 
-        bone_transforms = []
+        bone_transforms: list[Matrix] = []
         for b in model.bones:
             lineage = model.get_bone_lineage(b)
             lst = [self._convert_transform_units(x.transform, True) for x in lineage]
@@ -114,6 +116,7 @@ class ModelBuilder:
         context, scene, model = self._context, self._scene, self._model
 
         SPLIT_MODE = False # TODO
+        SKIN_MODE = True
 
         world_transform = self._convert_transform_units(permutation.transform)
 
@@ -153,5 +156,25 @@ class ModelBuilder:
             mesh_obj = bpy.data.objects.new(mesh_data.name, mesh_data)
             mesh_obj.matrix_world = world_transform
             collection.objects.link(mesh_obj)
+
+            if SKIN_MODE and self._armature_obj and (vertex_buffer.blendindex_channels or mesh.bone_index >= 0):
+                modifier = cast(bpy.types.ArmatureModifier, mesh_obj.modifiers.new(f'{mesh_data.name}::armature', 'ARMATURE'))
+                modifier.object = self._armature_obj
+
+                if mesh.bone_index >= 0:
+                    # only need one vertex group
+                    bone = model.bones[mesh.bone_index]
+                    group = mesh_obj.vertex_groups.new(name=bone.name)
+                    group.add(range(len(positions)), 1.0, 'ADD') # set every vertex to 1.0 in one go
+                else:
+                    blend_indicies = vertex_buffer.blendindex_channels[0]
+                    blend_weights = vertex_buffer.blendweight_channels[0]
+                    # create a vertex group for each bone so the bone indices are 1:1 with the vertex groups
+                    for bone in model.bones:
+                        mesh_obj.vertex_groups.new(name=bone.name)
+                    for i in range(len(positions)):
+                        for bi, bw in zip(blend_indicies[i], blend_weights[i]):
+                            if bw > 0:
+                                mesh_obj.vertex_groups[bi].add([i], bw, 'ADD')
 
             self._instances[INSTANCE_KEY] = mesh_obj
