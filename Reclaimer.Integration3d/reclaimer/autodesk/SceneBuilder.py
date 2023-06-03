@@ -34,9 +34,9 @@ def create_scene(scene: Scene, options: ImportOptions = None):
         if OPTIONS.IMPORT_BONES and model.bones:
             print('creating skeleton')
             builder.create_bones()
-        # if OPTIONS.IMPORT_MESHES and model.meshes:
-        #     print('creating meshes')
-        #     builder.create_meshes()
+        if OPTIONS.IMPORT_MESHES and model.meshes:
+            print('creating meshes')
+            builder.create_meshes()
         # if OPTIONS.IMPORT_MARKERS and model.markers:
         #     print('creating markers')
         #     builder.create_markers()
@@ -54,10 +54,12 @@ def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> r
 class ModelBuilder:
     _scene: Scene
     _model: Model
+    _instances: Dict[Tuple[int, int], rt.Mesh]
 
     def __init__(self, scene: Scene, model: Model):
         self._scene = scene
         self._model = model
+        self._instances = dict()
 
     def _get_bone_transforms(self) -> List[rt.Matrix3]:
         result = []
@@ -93,3 +95,37 @@ class ModelBuilder:
 
             if b.parent_index >= 0:
                 maxbone.parent = maxbones[b.parent_index]
+
+    def create_meshes(self):
+        model = self._model
+
+        for r in model.regions:
+            # TODO: some kind of object hierarchy equivalent of blender's collections
+            for p in r.permutations:
+                self._build_mesh(r, p)
+
+    def _build_mesh(self, region: ModelRegion, permutation: ModelPermutation):
+        scene, model = self._scene, self._model
+
+        world_transform = _convert_transform_units(permutation.transform)
+
+        for mesh_index in range(permutation.mesh_index, permutation.mesh_index + permutation.mesh_count):
+            INSTANCE_KEY = (mesh_index, -1) # TODO: second element reserved for submesh index if mesh splitting enabled
+
+            mesh = model.meshes[mesh_index]
+            index_buffer = scene.index_buffer_pool[mesh.index_buffer_index]
+            vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+
+            # note 3dsMax uses 1-based triangle indices!
+
+            positions = list(toPoint3(v) for v in vertex_buffer.position_channels[0])
+            normals = list(toPoint3(v) for v in vertex_buffer.normal_channels[0])
+            faces = list(toPoint3(t) + 1 for t in index_buffer.get_triangles(mesh))
+
+            mesh_obj = cast(rt.Editable_Mesh, rt.Mesh(vertices=positions, faces=faces))
+            mesh_obj.name = OPTIONS.permutation_name(region, permutation, mesh_index)
+
+            mesh_obj.transform = toMatrix3(mesh.vertex_transform)
+            mesh_obj.transform *= world_transform
+
+            self._instances[INSTANCE_KEY] = mesh_obj
