@@ -12,8 +12,15 @@ class ImportOptions:
     IMPORT_BONES: bool = True
     IMPORT_MARKERS: bool = True
     IMPORT_MESHES: bool = True
+    IMPORT_NORMALS: bool = True
     IMPORT_SKIN: bool = True
+    IMPORT_UVW: bool = True
     IMPORT_MATERIALS: bool = True
+
+    SPLIT_MESHES: bool = False
+
+    BONE_SCALE: float = 1.0
+    MARKER_SCALE: float = 1.0
 
     BONE_PREFIX: str = ''
     MARKER_PREFIX: str = '#'

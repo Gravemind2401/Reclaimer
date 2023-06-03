@@ -87,6 +87,7 @@ class ModelBuilder:
     def create_bones(self):
         context, collection, scene, model = self._context, self._root_collection, self._scene, self._model
 
+        # OPTIONS.BONE_SCALE not relevant to blender since you cant set bone width?
         TAIL_VECTOR = (0.03 * UNIT_SCALE, 0.0, 0.0)
 
         set_active_collection(self._root_collection)
@@ -118,7 +119,7 @@ class ModelBuilder:
         context, model = self._context, self._model
 
         MODE = 'EMPTY_SPHERE' # TODO
-        MARKER_SIZE = 0.01 * UNIT_SCALE
+        MARKER_SIZE = 0.01 * UNIT_SCALE * OPTIONS.MARKER_SCALE
 
         set_active_collection(self._root_collection)
         bone_transforms = self._get_bone_transforms()
@@ -201,8 +202,9 @@ class ModelBuilder:
             for p in mesh_data.polygons:
                 p.use_smooth = True
 
-            mesh_data.normals_split_custom_set_from_vertices(normals)
-            mesh_data.use_auto_smooth = True # this is required in order for custom normals to take effect
+            if OPTIONS.IMPORT_NORMALS:
+                mesh_data.normals_split_custom_set_from_vertices(normals)
+                mesh_data.use_auto_smooth = True # this is required in order for custom normals to take effect
 
             mesh_obj = bpy.data.objects.new(mesh_data.name, mesh_data)
             mesh_obj.matrix_world = world_transform
