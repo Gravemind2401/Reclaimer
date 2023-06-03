@@ -62,7 +62,7 @@ class ModelBuilder:
 
     def __init__(self, context: Context, scene: Scene, model: Model):
         self._context = context
-        self._collection = bpy.data.collections.new(model.name)
+        self._collection = bpy.data.collections.new(OPTIONS.model_name(model))
         self._scene = scene
         self._model = model
         self._armature_obj = None
@@ -78,7 +78,7 @@ class ModelBuilder:
         bpy.ops.object.add(type = 'ARMATURE', enter_editmode = True)
         armature_obj = self._armature_obj = context.object
         armature_data = cast(Armature, context.object.data)
-        armature_data.name = f'{model.name} armature'
+        armature_data.name = f'{OPTIONS.model_name(model)} armature'
 
         bone_transforms: list[Matrix] = []
         for b in model.bones:
@@ -86,7 +86,7 @@ class ModelBuilder:
             lst = [_convert_transform_units(x.transform, True) for x in lineage]
             bone_transforms.append(reduce(operator.matmul, lst))
 
-        editbones = [armature_data.edit_bones.new(OPTIONS.BONE_PREFIX + b.name) for b in model.bones]
+        editbones = [armature_data.edit_bones.new(OPTIONS.bone_name(b)) for b in model.bones]
         for i, b in enumerate(model.bones):
             editbone = editbones[i]
             editbone.tail = TAIL_VECTOR
@@ -115,7 +115,7 @@ class ModelBuilder:
         MODE = 'MESH' # TODO
 
         for m in model.markers:
-            NAME = OPTIONS.MARKER_PREFIX + m.name
+            NAME = OPTIONS.marker_name(m, 0)
             for inst in m.instances:
                 pass # TODO
 
@@ -123,7 +123,7 @@ class ModelBuilder:
         collection, model = self._collection, self._model
 
         for r in model.regions:
-            region_col = bpy.data.collections.new(r.name)
+            region_col = bpy.data.collections.new(OPTIONS.region_name(r))
             collection.children.link(region_col)
             for p in r.permutations:
                 self._build_mesh(region_col, r, p)
@@ -136,7 +136,7 @@ class ModelBuilder:
         world_transform = _convert_transform_units(permutation.transform)
 
         for mesh_index in range(permutation.mesh_index, permutation.mesh_index + permutation.mesh_count):
-            MESH_NAME = f'{region.name}:{permutation.name}'
+            MESH_NAME = OPTIONS.permutation_name(region, permutation, mesh_index)
             INSTANCE_KEY = (mesh_index, -1) # TODO: second element reserved for submesh index if mesh splitting enabled
 
             if INSTANCE_KEY in self._instances.keys():
