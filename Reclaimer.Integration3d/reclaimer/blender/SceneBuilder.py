@@ -13,6 +13,7 @@ from ..src.Scene import *
 from ..src.Model import *
 from ..src.Material import *
 from ..src.Types import *
+from .Utils import *
 
 __all__ = [
     'create_scene'
@@ -54,7 +55,8 @@ def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> M
 
 class ModelBuilder:
     _context: Context
-    _collection: Collection
+    _root_collection: Collection
+    _region_collections: Dict[int, Collection]
     _scene: Scene
     _model: Model
     _armature_obj: Object
@@ -62,21 +64,25 @@ class ModelBuilder:
 
     def __init__(self, context: Context, scene: Scene, model: Model):
         self._context = context
-        self._collection = bpy.data.collections.new(OPTIONS.model_name(model))
+        self._root_collection = bpy.data.collections.new(OPTIONS.model_name(model))
+        self._region_collections = dict()
         self._scene = scene
         self._model = model
         self._armature_obj = None
         self._instances = dict()
-        bpy.context.scene.collection.children.link(self._collection)
+
+        bpy.context.scene.collection.children.link(self._root_collection)
 
     def create_bones(self):
-        context, collection, scene, model = self._context, self._collection, self._scene, self._model
+        context, collection, scene, model = self._context, self._root_collection, self._scene, self._model
         print('creating armature')
 
         TAIL_VECTOR = (0.03 * UNIT_SCALE, 0.0, 0.0)
 
+        set_active_collection(self._root_collection)
+
         bpy.ops.object.add(type = 'ARMATURE', enter_editmode = True)
-        armature_obj = self._armature_obj = context.object
+        self._armature_obj = context.object
         armature_data = cast(Armature, context.object.data)
         armature_data.name = f'{OPTIONS.model_name(model)} armature'
 
@@ -103,11 +109,6 @@ class ModelBuilder:
 
         bpy.ops.object.mode_set(mode = 'OBJECT')
 
-        # bpy.ops.object.add() will automatically add it to the active collection
-        # so remove it and add it to the custom collection instead
-        context.collection.objects.unlink(armature_obj)
-        collection.objects.link(armature_obj)
-
     def create_markers(self):
         context, model = self._context, self._model
         print('creating markers')
@@ -120,11 +121,15 @@ class ModelBuilder:
                 pass # TODO
 
     def create_meshes(self):
-        collection, model = self._collection, self._model
+        collection, model = self._root_collection, self._model
 
-        for r in model.regions:
+        for i, r in enumerate(model.regions):
             region_col = bpy.data.collections.new(OPTIONS.region_name(r))
+            self._region_collections[i] = region_col
             collection.children.link(region_col)
+
+        for i, r in enumerate(model.regions):
+            region_col = self._region_collections[i]
             for p in r.permutations:
                 self._build_mesh(region_col, r, p)
 
