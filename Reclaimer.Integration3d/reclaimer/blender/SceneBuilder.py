@@ -3,8 +3,8 @@ import bmesh
 import itertools
 import operator
 from typing import cast
-from typing import Dict, Tuple
-from mathutils import Vector, Matrix
+from typing import Dict, Tuple, List
+from mathutils import Vector, Matrix, Quaternion
 from bpy.types import Context, Collection, Armature, EditBone, Object
 from functools import reduce
 
@@ -36,11 +36,14 @@ def create_scene(context: Context, scene: Scene, options: ImportOptions = None):
         print(f'creating model: {model.name}...')
         builder = ModelBuilder(context, scene, model)
         if OPTIONS.IMPORT_BONES and model.bones:
+            print('creating armature')
             builder.create_bones()
-        # if OPTIONS.IMPORT_MARKERS and model.markers:
-        #     builder.create_markers()
         if OPTIONS.IMPORT_MESHES and model.meshes:
+            print('creating meshes')
             builder.create_meshes()
+        if OPTIONS.IMPORT_MARKERS and model.markers:
+            print('creating markers')
+            builder.create_markers()
 
 def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> Matrix:
     ''' Converts a transform from model units to blender units '''
@@ -73,24 +76,26 @@ class ModelBuilder:
 
         bpy.context.scene.collection.children.link(self._root_collection)
 
+    def _get_bone_transforms(self) -> List[Matrix]:
+        result = []
+        for bone in self._model.bones:
+            lineage = self._model.get_bone_lineage(bone)
+            transforms = [_convert_transform_units(x.transform, True) for x in lineage]
+            result.append(reduce(operator.matmul, transforms))
+        return result
+
     def create_bones(self):
         context, collection, scene, model = self._context, self._root_collection, self._scene, self._model
-        print('creating armature')
 
         TAIL_VECTOR = (0.03 * UNIT_SCALE, 0.0, 0.0)
 
         set_active_collection(self._root_collection)
+        bone_transforms = self._get_bone_transforms()
 
         bpy.ops.object.add(type = 'ARMATURE', enter_editmode = True)
         self._armature_obj = context.object
         armature_data = cast(Armature, context.object.data)
         armature_data.name = f'{OPTIONS.model_name(model)} armature'
-
-        bone_transforms: list[Matrix] = []
-        for b in model.bones:
-            lineage = model.get_bone_lineage(b)
-            lst = [_convert_transform_units(x.transform, True) for x in lineage]
-            bone_transforms.append(reduce(operator.matmul, lst))
 
         editbones = [armature_data.edit_bones.new(OPTIONS.bone_name(b)) for b in model.bones]
         for i, b in enumerate(model.bones):
@@ -111,14 +116,40 @@ class ModelBuilder:
 
     def create_markers(self):
         context, model = self._context, self._model
-        print('creating markers')
 
-        MODE = 'MESH' # TODO
+        MODE = 'EMPTY_SPHERE' # TODO
+        MARKER_SIZE = 0.01 * UNIT_SCALE
 
-        for m in model.markers:
-            NAME = OPTIONS.marker_name(m, 0)
-            for inst in m.instances:
-                pass # TODO
+        set_active_collection(self._root_collection)
+        bone_transforms = self._get_bone_transforms()
+
+        for marker in model.markers:
+            for i, instance in enumerate(marker.instances):
+                # attempt to creat the marker within the appropriate collection based on region/permutation
+                # note that the collection acts like a 'parent' so if the marker gets parented to a bone it gets removed from the collection
+                if instance.region_index >= 0 and instance.region_index < 255:
+                    set_active_collection(self._region_collections[instance.region_index])
+                else:
+                    set_active_collection(self._root_collection)
+
+                if MODE == 'EMPTY_SPHERE':
+                    # despite the parameter being named 'radius' it comes out the same size as a uvsphere's diameter
+                    bpy.ops.object.empty_add(type = 'SPHERE', radius = MARKER_SIZE)
+                    marker_obj = context.object
+                    marker_obj.name = OPTIONS.marker_name(marker, i)
+                # else: TODO
+
+                world_transform = Matrix.Translation([v * UNIT_SCALE for v in instance.position]) @ Quaternion(instance.rotation).to_matrix().to_4x4()
+
+                if instance.bone_index >= 0:
+                    world_transform = bone_transforms[instance.bone_index] @ world_transform
+                    if OPTIONS.IMPORT_BONES and self._armature_obj:
+                        marker_obj.parent = self._armature_obj
+                        marker_obj.parent_type = 'BONE'
+                        marker_obj.parent_bone = OPTIONS.bone_name(model.bones[instance.bone_index])
+
+                marker_obj.hide_render = True
+                marker_obj.matrix_world = world_transform
 
     def create_meshes(self):
         collection, model = self._root_collection, self._model
