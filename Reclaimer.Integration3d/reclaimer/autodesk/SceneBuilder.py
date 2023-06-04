@@ -3,6 +3,7 @@ from typing import Dict, Tuple, List
 from functools import reduce
 import operator
 
+import pymxs
 from pymxs import runtime as rt
 
 from ..src.ImportOptions import *
@@ -107,25 +108,39 @@ class ModelBuilder:
     def _build_mesh(self, region: ModelRegion, permutation: ModelPermutation):
         scene, model = self._scene, self._model
 
-        world_transform = _convert_transform_units(permutation.transform)
+        WORLD_TRANSFORM = _convert_transform_units(permutation.transform)
 
         for mesh_index in range(permutation.mesh_index, permutation.mesh_index + permutation.mesh_count):
+            MESH_NAME = OPTIONS.permutation_name(region, permutation, mesh_index)
+            SELF_TRANSFORM = toMatrix3(model.meshes[mesh_index].vertex_transform) * WORLD_TRANSFORM
             INSTANCE_KEY = (mesh_index, -1) # TODO: second element reserved for submesh index if mesh splitting enabled
+
+            if INSTANCE_KEY in self._instances.keys():
+                source = self._instances.get(INSTANCE_KEY)
+                # methods with byref params return a tuple of (return_value, byref1, byref2, ...)
+                _, newNodes = rt.MaxOps.cloneNodes(source, cloneType = rt.Name('instance'), newNodes = pymxs.byref(None))
+                copy = cast(rt.Mesh, newNodes[0])
+                copy.name = MESH_NAME
+                copy.transform = SELF_TRANSFORM
+                continue
 
             mesh = model.meshes[mesh_index]
             index_buffer = scene.index_buffer_pool[mesh.index_buffer_index]
             vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
 
-            # note 3dsMax uses 1-based triangle indices!
+            # note 3dsMax uses 1-based indices for triangles, vertices etc
 
             positions = list(toPoint3(v) for v in vertex_buffer.position_channels[0])
             normals = list(toPoint3(v) for v in vertex_buffer.normal_channels[0])
             faces = list(toPoint3(t) + 1 for t in index_buffer.get_triangles(mesh))
 
             mesh_obj = cast(rt.Editable_Mesh, rt.Mesh(vertices=positions, faces=faces))
-            mesh_obj.name = OPTIONS.permutation_name(region, permutation, mesh_index)
+            mesh_obj.name = MESH_NAME
+            mesh_obj.transform = SELF_TRANSFORM
 
-            mesh_obj.transform = toMatrix3(mesh.vertex_transform)
-            mesh_obj.transform *= world_transform
+            if OPTIONS.IMPORT_NORMALS:
+                for i, normal in enumerate(normals):
+                    # note: prior to 2015, this was only temporary
+                    rt.setNormal(mesh_obj, i + 1, normal)
 
             self._instances[INSTANCE_KEY] = mesh_obj

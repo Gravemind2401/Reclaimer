@@ -170,7 +170,7 @@ class ModelBuilder:
 
         SPLIT_MODE = False # TODO
 
-        world_transform = _convert_transform_units(permutation.transform)
+        WORLD_TRANSFORM = _convert_transform_units(permutation.transform)
 
         for mesh_index in range(permutation.mesh_index, permutation.mesh_index + permutation.mesh_count):
             MESH_NAME = OPTIONS.permutation_name(region, permutation, mesh_index)
@@ -180,7 +180,7 @@ class ModelBuilder:
                 source = self._instances.get(INSTANCE_KEY)
                 copy = cast(Object, source.copy()) # note: use source.data.copy() for a deep copy
                 copy.name = MESH_NAME
-                copy.matrix_world = world_transform
+                copy.matrix_world = WORLD_TRANSFORM
                 collection.objects.link(copy)
                 continue
 
@@ -196,8 +196,8 @@ class ModelBuilder:
             mesh_data = bpy.data.meshes.new(MESH_NAME)
             mesh_data.from_pydata(positions, [], faces)
 
-            mesh_transform = Matrix(mesh.vertex_transform).transposed()
-            mesh_data.transform(mesh_transform)
+            SELF_TRANSFORM = Matrix(mesh.vertex_transform).transposed()
+            mesh_data.transform(SELF_TRANSFORM)
 
             for p in mesh_data.polygons:
                 p.use_smooth = True
@@ -207,7 +207,7 @@ class ModelBuilder:
                 mesh_data.use_auto_smooth = True # this is required in order for custom normals to take effect
 
             mesh_obj = bpy.data.objects.new(mesh_data.name, mesh_data)
-            mesh_obj.matrix_world = world_transform
+            mesh_obj.matrix_world = WORLD_TRANSFORM
             collection.objects.link(mesh_obj)
 
             if OPTIONS.IMPORT_BONES and OPTIONS.IMPORT_SKIN and self._armature_obj and (vertex_buffer.blendindex_channels or mesh.bone_index >= 0):
