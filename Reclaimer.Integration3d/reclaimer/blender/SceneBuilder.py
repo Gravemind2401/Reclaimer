@@ -113,7 +113,7 @@ class ModelBuilder:
         for i, b in enumerate(model.bones):
             editbone = editbones[i]
             editbone.tail = TAIL_VECTOR
-            
+
             children = model.get_bone_children(b)
             if children:
                 size = max((Vector(b.transform[3]).to_3d().length for b in children))
@@ -212,6 +212,8 @@ class ModelBuilder:
 
             mc: MeshContext = (scene, model, mesh, mesh_data, mesh_obj)
             self._build_normals(mc)
+            self._build_uvw(mc, faces)
+            self._build_matindex(mc)
             self._build_skin(mc)
 
     def _build_normals(self, mc: MeshContext):
@@ -224,6 +226,48 @@ class ModelBuilder:
         normals = list(Vector(v).to_3d() for v in vertex_buffer.normal_channels[0])
         mesh_data.normals_split_custom_set_from_vertices(normals)
         mesh_data.use_auto_smooth = True # this is required in order for custom normals to take effect
+
+    def _build_uvw(self, mc: MeshContext, faces: List[Tuple[int, int, int]]):
+        scene, model, mesh, mesh_data, mesh_obj = mc
+        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+
+        if not (OPTIONS.IMPORT_UVW and vertex_buffer.texcoord_channels):
+            return
+
+        for texcoord_buffer in vertex_buffer.texcoord_channels:
+            # note blender wants 3 uvs per triangle rather than one per vertex
+            # so we iterate the triangle indices rather than directly iterating the buffer
+            uv_layer = mesh_data.uv_layers.new()
+            for i, ti in enumerate(itertools.chain(*faces)):
+                # blender uses inverse V coord
+                v = texcoord_buffer[ti]
+                uv_layer.data[i].uv = Vector((v[0], 1 - v[1]))
+
+    def _build_matindex(self, mc: MeshContext):
+        scene, model, mesh, mesh_data, mesh_obj = mc
+        index_buffer = scene.index_buffer_pool[mesh.index_buffer_index]
+
+        if not OPTIONS.IMPORT_MATERIALS:
+            return
+
+        # build a lookup of global mat index -> local mat index
+        mat_lookup = dict()
+        for loc, glob in enumerate(set(s.material_index for s in mesh.segments if s.material_index >= 0)):
+            mat_lookup[glob] = loc
+
+        if not mat_lookup:
+            return # no materials on this mesh
+
+        # TODO: append materials to mesh here
+
+        face_start = 0
+        for s in mesh.segments:
+            # TODO: more efficient triangle count
+            face_end = face_start + sum(1 for _ in index_buffer.get_triangles(s))
+            if s.material_index >= 0:
+                for i in range(face_start, face_end):
+                    mesh_data.polygons[i].material_index = mat_lookup[s.material_index]
+            face_start = face_end
 
     def _build_skin(self, mc: MeshContext):
         scene, model, mesh, mesh_data, mesh_obj = mc
