@@ -190,6 +190,7 @@ class ModelBuilder:
 
             mc: MeshContext = (scene, model, mesh, mesh_obj)
             self._build_normals(mc)
+            self._build_skin(mc)
 
     def _build_normals(self, mc: MeshContext):
         scene, model, mesh, mesh_obj = mc
@@ -202,3 +203,47 @@ class ModelBuilder:
         for i, normal in enumerate(normals):
             # note: prior to 2015, this was only temporary
             rt.setNormal(mesh_obj, i + 1, normal)
+
+    def _build_skin(self, mc: MeshContext):
+        scene, model, mesh, mesh_obj = mc
+        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+
+        if not (
+            OPTIONS.IMPORT_BONES
+            and OPTIONS.IMPORT_SKIN
+            and model.bones
+            and (vertex_buffer.blendindex_channels or mesh.bone_index >= 0)
+        ):
+            return
+
+        vertex_count = len(vertex_buffer.position_channels[0])
+
+        modifier = rt.Skin()
+        rt.addModifier(mesh_obj, modifier)
+
+        if mesh.bone_index >= 0:
+            modifier.rigid_vertices = True
+            rt.SkinOps.addBone(modifier, self._maxbones[mesh.bone_index], 0)
+            rt.redrawViews()
+            bi, bw = [1], [1.0]
+            for vi in range(vertex_count): # set every vertex to 1.0
+                rt.SkinOps.replaceVertexWeights(modifier, vi + 1, bi, bw)
+        else:
+            blend_indicies = vertex_buffer.blendindex_channels[0]
+            blend_weights = vertex_buffer.blendweight_channels[0] # TODO: rigid_boned doesnt have weights
+            # add every bone so the bone indices are 1:1 with the skin modifier
+            for b in self._maxbones:
+                rt.SkinOps.addBone(modifier, b, 0)
+            # unfortunately it seems a redraw is required for the added bones to take effect
+            rt.redrawViews()
+            bi, bw = [], []
+            for vi in range(vertex_count):
+                bi.clear()
+                bw.clear()
+                for i, w in enumerate(blend_weights[vi]):
+                    if w > 0:
+                        bi.append(blend_indicies[vi][i] + 1)
+                        bw.append(w)
+                rt.SkinOps.replaceVertexWeights(modifier, vi + 1, bi, bw)
+
+        rt.SkinOps.removeUnusedBones(modifier)

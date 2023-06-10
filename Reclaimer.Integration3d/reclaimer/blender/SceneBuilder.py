@@ -300,7 +300,7 @@ class ModelBuilder:
             # create a vertex group for each bone so the bone indices are 1:1 with the vertex groups
             for bone in model.bones:
                 mesh_obj.vertex_groups.new(name=bone.name)
-            for i in range(vertex_count):
-                for bi, bw in zip(blend_indicies[i], blend_weights[i]):
+            for vi in range(vertex_count):
+                for bi, bw in zip(blend_indicies[vi], blend_weights[vi]):
                     if bw > 0:
-                        mesh_obj.vertex_groups[bi].add([i], bw, 'ADD')
+                        mesh_obj.vertex_groups[bi].add([vi], bw, 'ADD')
