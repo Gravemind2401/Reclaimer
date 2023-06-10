@@ -38,13 +38,13 @@ def create_scene(context: Context, scene: Scene, options: ImportOptions = None):
         print(f'creating model: {model.name}...')
         builder = ModelBuilder(context, scene, model)
         if OPTIONS.IMPORT_BONES and model.bones:
-            print('creating armature')
+            print(f'creating {model.name}/armature')
             builder.create_bones()
         if OPTIONS.IMPORT_MESHES and model.meshes:
-            print('creating meshes')
+            print(f'creating {model.name}/meshes')
             builder.create_meshes()
         if OPTIONS.IMPORT_MARKERS and model.markers:
-            print('creating markers')
+            print(f'creating {model.name}/markers')
             builder.create_markers()
 
 def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> Matrix:
@@ -164,10 +164,13 @@ class ModelBuilder:
                 marker_obj.matrix_world = world_transform
 
     def create_meshes(self):
+        mesh_count = 0
         for i, r in enumerate(self._model.regions):
             region_col = self._create_collection(OPTIONS.region_name(r), i)
-            for p in r.permutations:
+            for j, p in enumerate(r.permutations):
+                print(f'creating mesh {mesh_count:03d}: {self._model.name}/{r.name}/{p.name} [{i:02d}/{j:02d}]')
                 self._build_mesh(region_col, r, p)
+                mesh_count += 1
 
     def _build_mesh(self, collection: Collection, region: ModelRegion, permutation: ModelPermutation):
         context, scene, model = self._context, self._scene, self._model
