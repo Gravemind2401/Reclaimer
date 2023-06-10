@@ -19,6 +19,8 @@ __all__ = [
     'create_scene'
 ]
 
+MeshContext = Tuple[Scene, Model, Mesh, bpy.types.Mesh, Object]
+
 BL_UNITS: float = 1000.0 # 1 blender unit = 1000mm
 
 UNIT_SCALE: float = 1.0
@@ -192,7 +194,6 @@ class ModelBuilder:
 
             # note blender doesnt like if we provide too many dimensions
             positions = list(Vector(v).to_3d() for v in vertex_buffer.position_channels[0])
-            normals = list(Vector(v).to_3d() for v in vertex_buffer.normal_channels[0])
             faces = list(index_buffer.get_triangles(mesh))
 
             mesh_data = bpy.data.meshes.new(MESH_NAME)
@@ -204,32 +205,55 @@ class ModelBuilder:
             for p in mesh_data.polygons:
                 p.use_smooth = True
 
-            if OPTIONS.IMPORT_NORMALS:
-                mesh_data.normals_split_custom_set_from_vertices(normals)
-                mesh_data.use_auto_smooth = True # this is required in order for custom normals to take effect
-
             mesh_obj = bpy.data.objects.new(mesh_data.name, mesh_data)
             mesh_obj.matrix_world = WORLD_TRANSFORM
             collection.objects.link(mesh_obj)
-
-            if OPTIONS.IMPORT_BONES and OPTIONS.IMPORT_SKIN and self._armature_obj and (vertex_buffer.blendindex_channels or mesh.bone_index >= 0):
-                modifier = cast(bpy.types.ArmatureModifier, mesh_obj.modifiers.new(f'{mesh_data.name}::armature', 'ARMATURE'))
-                modifier.object = self._armature_obj
-
-                if mesh.bone_index >= 0:
-                    # only need one vertex group
-                    bone = model.bones[mesh.bone_index]
-                    group = mesh_obj.vertex_groups.new(name=bone.name)
-                    group.add(range(len(positions)), 1.0, 'ADD') # set every vertex to 1.0 in one go
-                else:
-                    blend_indicies = vertex_buffer.blendindex_channels[0]
-                    blend_weights = vertex_buffer.blendweight_channels[0]
-                    # create a vertex group for each bone so the bone indices are 1:1 with the vertex groups
-                    for bone in model.bones:
-                        mesh_obj.vertex_groups.new(name=bone.name)
-                    for i in range(len(positions)):
-                        for bi, bw in zip(blend_indicies[i], blend_weights[i]):
-                            if bw > 0:
-                                mesh_obj.vertex_groups[bi].add([i], bw, 'ADD')
-
             self._instances[INSTANCE_KEY] = mesh_obj
+
+            mc: MeshContext = (scene, model, mesh, mesh_data, mesh_obj)
+            self._build_normals(mc)
+            self._build_skin(mc)
+
+    def _build_normals(self, mc: MeshContext):
+        scene, model, mesh, mesh_data, mesh_obj = mc
+        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+
+        if not (OPTIONS.IMPORT_NORMALS and vertex_buffer.normal_channels):
+            return
+
+        normals = list(Vector(v).to_3d() for v in vertex_buffer.normal_channels[0])
+        mesh_data.normals_split_custom_set_from_vertices(normals)
+        mesh_data.use_auto_smooth = True # this is required in order for custom normals to take effect
+
+    def _build_skin(self, mc: MeshContext):
+        scene, model, mesh, mesh_data, mesh_obj = mc
+        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+
+        if not (
+            OPTIONS.IMPORT_BONES
+            and OPTIONS.IMPORT_SKIN
+            and model.bones
+            and (vertex_buffer.blendindex_channels or mesh.bone_index >= 0)
+        ):
+            return
+
+        vertex_count = len(vertex_buffer.position_channels[0])
+
+        modifier = cast(bpy.types.ArmatureModifier, mesh_obj.modifiers.new(f'{mesh_data.name}::armature', 'ARMATURE'))
+        modifier.object = self._armature_obj
+
+        if mesh.bone_index >= 0:
+            # only need one vertex group
+            bone = model.bones[mesh.bone_index]
+            group = mesh_obj.vertex_groups.new(name=bone.name)
+            group.add(range(vertex_count), 1.0, 'ADD') # set every vertex to 1.0 in one go
+        else:
+            blend_indicies = vertex_buffer.blendindex_channels[0]
+            blend_weights = vertex_buffer.blendweight_channels[0] # TODO: rigid_boned doesnt have weights
+            # create a vertex group for each bone so the bone indices are 1:1 with the vertex groups
+            for bone in model.bones:
+                mesh_obj.vertex_groups.new(name=bone.name)
+            for i in range(vertex_count):
+                for bi, bw in zip(blend_indicies[i], blend_weights[i]):
+                    if bw > 0:
+                        mesh_obj.vertex_groups[bi].add([i], bw, 'ADD')

@@ -17,6 +17,8 @@ __all__ = [
     'create_scene'
 ]
 
+MeshContext = Tuple[Scene, Model, Mesh, rt.Editable_Mesh]
+
 MX_UNITS = 100.0 # 1 max unit = 100mm?
 
 UNIT_SCALE: float = 1.0
@@ -145,17 +147,25 @@ class ModelBuilder:
             # note 3dsMax uses 1-based indices for triangles, vertices etc
 
             positions = list(toPoint3(v) for v in vertex_buffer.position_channels[0])
-            normals = list(toPoint3(v) for v in vertex_buffer.normal_channels[0])
             faces = list(toPoint3(t) + 1 for t in index_buffer.get_triangles(mesh))
 
             mesh_obj = cast(rt.Editable_Mesh, rt.Mesh(vertices=positions, faces=faces))
             mesh_obj.name = MESH_NAME
             mesh_obj.transform = SELF_TRANSFORM
             layer.addnode(mesh_obj)
-
-            if OPTIONS.IMPORT_NORMALS:
-                for i, normal in enumerate(normals):
-                    # note: prior to 2015, this was only temporary
-                    rt.setNormal(mesh_obj, i + 1, normal)
-
             self._instances[INSTANCE_KEY] = mesh_obj
+
+            mc: MeshContext = (scene, model, mesh, mesh_obj)
+            self._build_normals(mc)
+
+    def _build_normals(self, mc: MeshContext):
+        scene, model, mesh, mesh_obj = mc
+        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+
+        if not (OPTIONS.IMPORT_NORMALS and vertex_buffer.normal_channels):
+            return
+
+        normals = list(toPoint3(v) for v in vertex_buffer.normal_channels[0])
+        for i, normal in enumerate(normals):
+            # note: prior to 2015, this was only temporary
+            rt.setNormal(mesh_obj, i + 1, normal)
