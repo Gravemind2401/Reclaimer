@@ -137,8 +137,8 @@ class ModelBuilder:
 
         for marker in model.markers:
             for i, instance in enumerate(marker.instances):
-                # attempt to creat the marker within the appropriate collection based on region/permutation
-                # note that the collection acts like a 'parent' so if the marker gets parented to a bone it gets removed from the collection
+                # attempt to create the marker within the appropriate collection based on region/permutation
+                # note that in blender the collection acts like a 'parent' so if the marker gets parented to a bone it gets removed from the collection
                 if instance.region_index >= 0 and instance.region_index < 255:
                     set_active_collection(self._region_collections[instance.region_index])
                 else:
@@ -153,9 +153,9 @@ class ModelBuilder:
 
                 world_transform = Matrix.Translation([v * UNIT_SCALE for v in instance.position]) @ Quaternion(instance.rotation).to_matrix().to_4x4()
 
-                if instance.bone_index >= 0:
+                if instance.bone_index >= 0 and self._model.bones:
                     world_transform = bone_transforms[instance.bone_index] @ world_transform
-                    if OPTIONS.IMPORT_BONES and self._armature_obj:
+                    if OPTIONS.IMPORT_BONES:
                         marker_obj.parent = self._armature_obj
                         marker_obj.parent_type = 'BONE'
                         marker_obj.parent_bone = OPTIONS.bone_name(model.bones[instance.bone_index])
