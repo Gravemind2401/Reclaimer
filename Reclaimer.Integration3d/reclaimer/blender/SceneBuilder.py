@@ -67,7 +67,7 @@ class ModelBuilder:
 
     def __init__(self, context: Context, scene: Scene, model: Model):
         self._context = context
-        self._root_collection = bpy.data.collections.new(OPTIONS.model_name(model))
+        self._root_collection = self._create_collection(OPTIONS.model_name(model))
         self._region_collections = dict()
         self._scene = scene
         self._model = model
@@ -75,6 +75,15 @@ class ModelBuilder:
         self._instances = dict()
 
         bpy.context.scene.collection.children.link(self._root_collection)
+
+    def _create_collection(self, name: str, key: int = None) -> Collection:
+        if key != None:
+            name = f'{self._root_collection.name}::{name}'
+        collection = bpy.data.collections.new(name) # TODO: enforce unique model names
+        if key != None:
+            self._region_collections[key] = collection
+            self._root_collection.children.link(collection)
+        return collection
 
     def _get_bone_transforms(self) -> List[Matrix]:
         result = []
@@ -153,15 +162,8 @@ class ModelBuilder:
                 marker_obj.matrix_world = world_transform
 
     def create_meshes(self):
-        collection, model = self._root_collection, self._model
-
-        for i, r in enumerate(model.regions):
-            region_col = bpy.data.collections.new(OPTIONS.region_name(r))
-            self._region_collections[i] = region_col
-            collection.children.link(region_col)
-
-        for i, r in enumerate(model.regions):
-            region_col = self._region_collections[i]
+        for i, r in enumerate(self._model.regions):
+            region_col = self._create_collection(OPTIONS.region_name(r), i)
             for p in r.permutations:
                 self._build_mesh(region_col, r, p)
 
