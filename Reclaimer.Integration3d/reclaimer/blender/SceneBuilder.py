@@ -242,7 +242,6 @@ class ModelBuilder:
             # so we iterate the triangle indices rather than directly iterating the buffer
             uv_layer = mesh_data.uv_layers.new()
             for i, ti in enumerate(itertools.chain(*faces)):
-                # blender uses inverse V coord
                 v = texcoord_buffer[ti]
                 uv_layer.data[i].uv = Vector((v[0], 1 - v[1]))
 

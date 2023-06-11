@@ -206,6 +206,8 @@ class ModelBuilder:
 
             mc: MeshContext = (scene, model, mesh, mesh_obj)
             self._build_normals(mc)
+            self._build_uvw(mc)
+            self._build_matindex(mc)
             self._build_skin(mc)
 
     def _build_normals(self, mc: MeshContext):
@@ -219,6 +221,37 @@ class ModelBuilder:
         for i, normal in enumerate(normals):
             # note: prior to 2015, this was only temporary
             rt.setNormal(mesh_obj, i + 1, normal)
+
+    def _build_uvw(self, mc: MeshContext):
+        scene, model, mesh, mesh_obj = mc
+        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+
+        if not (OPTIONS.IMPORT_UVW and vertex_buffer.texcoord_channels):
+            return
+
+        # unlike other areas, uvw maps/channels use 0-based indexing
+        # however channel 0 is always reserved for vertex color
+        rt.Meshop.setNumMaps(mesh_obj, len(vertex_buffer.texcoord_channels) + 1)
+
+        for i, texcoord_buffer in enumerate(vertex_buffer.texcoord_channels):
+            rt.Meshop.defaultMapFaces(mesh_obj, i + 1) # sets vert/face count to same as mesh, copies triangle indices from mesh
+            for vi, v in enumerate(texcoord_buffer):
+                rt.Meshop.setMapVert(mesh_obj, i + 1, vi + 1, rt.Point3(v[0], 1 - v[1], 0))
+
+    def _build_matindex(self, mc: MeshContext):
+        scene, model, mesh, mesh_obj = mc
+        index_buffer = scene.index_buffer_pool[mesh.index_buffer_index]
+
+        if not OPTIONS.IMPORT_MATERIALS:
+            return
+
+        material_ids = []
+        for s in mesh.segments:
+            # TODO: more efficient triangle count
+            mi = min(1, s.material_index + 1) # default to 1 for meshes with no material
+            material_ids.extend(mi for _ in range(index_buffer.count_triangles(s)))
+
+        rt.setMesh(mesh_obj, materialIds=material_ids)
 
     def _build_skin(self, mc: MeshContext):
         scene, model, mesh, mesh_obj = mc

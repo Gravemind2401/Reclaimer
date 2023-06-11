@@ -39,6 +39,46 @@ class IndexBuffer:
         return f'<{self.__class__.name}|{IndexLayout(self.index_layout).name}|{self.indices.count}>'
 
     @overload
+    def count_triangles(self, offset: int = 0, count: int = -1) -> int:
+        ''' Gets the number of triangles in a given range of source indices '''
+        ...
+
+    @overload
+    def count_triangles(self, segment: MeshSegment) -> int:
+        ''' Gets the number of triangles in the index range defined in a `MeshSegment` '''
+        ...
+
+    @overload
+    def count_triangles(self, mesh: Mesh) -> int:
+        ''' Gets the total number of triangles across every index range defined by the `MeshSegments` of a given `Mesh` '''
+        ...
+
+    def count_triangles(self, arg1, arg2 = None) -> int:
+        def get_count(offset: int, count: int) -> int:
+            if self.index_layout == IndexLayout.TRIANGLE_LIST:
+                return count / 3
+            elif self.index_layout == IndexLayout.TRIANGLE_STRIP:
+                # count the number of unpacked triangles returned
+                return sum(1 for _ in self.get_triangles(offset, count))
+            else:
+                raise Exception('Unsupported index layout')
+
+        def from_range(offset: int, count: int) -> int:
+            return get_count(offset, count)
+        
+        def from_segment(segment: MeshSegment) -> int:
+            return from_range(segment.index_start, segment.index_length)
+        
+        def from_mesh(mesh: Mesh) -> int:
+            return sum(from_segment(s) for s in mesh.segments)
+
+        if isinstance(arg1, MeshSegment):
+            return from_segment(arg1)
+        if isinstance(arg1, Mesh):
+            return from_mesh(arg1)
+        return from_range(arg1, arg2)
+
+    @overload
     def get_triangles(self, offset: int = 0, count: int = -1) -> Iterator[Triangle]:
         ''' Iterates the triangles for a given range of source indices '''
         ...
