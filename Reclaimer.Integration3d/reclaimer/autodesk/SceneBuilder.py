@@ -29,6 +29,21 @@ def create_scene(scene: Scene, options: ImportOptions = None):
     UNIT_SCALE = scene.unit_scale / MX_UNITS
     # OPTIONS = options
 
+    error: Exception = None
+
+    with pymxs.animate(False):
+        with pymxs.undo(False):
+            # if an unhandled exception happens inside the animate/undo context
+            # then it will not revert the context, so we need to catch and re-throw
+            try:
+                _create_scene(scene)
+            except Exception as e:
+                error = e
+
+    if error:
+        raise error
+
+def _create_scene(scene: Scene):
     print(f'scene name: {scene.name}')
     print(f'scene scale: {scene.unit_scale}')
 
@@ -152,6 +167,7 @@ class ModelBuilder:
                 print(f'creating mesh {mesh_count:03d}: {self._model.name}/{r.name}/{p.name} [{i:02d}/{j:02d}]')
                 self._build_mesh(region_layer, r, p)
                 mesh_count += 1
+            rt.gc()
 
     def _build_mesh(self, layer: rt.MixinInterface, region: ModelRegion, permutation: ModelPermutation):
         scene, model = self._scene, self._model
@@ -221,11 +237,12 @@ class ModelBuilder:
         modifier = rt.Skin()
         rt.addModifier(mesh_obj, modifier)
 
+        # note replaceVertexWeights() can take either bone indices or bone references
         if mesh.bone_index >= 0:
             modifier.rigid_vertices = True
-            rt.SkinOps.addBone(modifier, self._maxbones[mesh.bone_index], 0)
+            bi, bw = [self._maxbones[mesh.bone_index]], [1.0]
+            rt.SkinOps.addBone(modifier, bi[0], 0)
             rt.redrawViews()
-            bi, bw = [1], [1.0]
             for vi in range(vertex_count): # set every vertex to 1.0
                 rt.SkinOps.replaceVertexWeights(modifier, vi + 1, bi, bw)
         else:
@@ -235,6 +252,7 @@ class ModelBuilder:
             for b in self._maxbones:
                 rt.SkinOps.addBone(modifier, b, 0)
             # unfortunately it seems a redraw is required for the added bones to take effect
+            # otherwise trying to set weights gives the error "Runtime error: Exceeded the vertex countSkin:Skin"
             rt.redrawViews()
             bi, bw = [], []
             for vi in range(vertex_count):
@@ -242,7 +260,7 @@ class ModelBuilder:
                 bw.clear()
                 for i, w in enumerate(blend_weights[vi]):
                     if w > 0:
-                        bi.append(blend_indicies[vi][i] + 1)
+                        bi.append(self._maxbones[blend_indicies[vi][i]])
                         bw.append(w)
                 rt.SkinOps.replaceVertexWeights(modifier, vi + 1, bi, bw)
 
