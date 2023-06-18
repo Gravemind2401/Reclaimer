@@ -1,7 +1,4 @@
 ﻿using Adjutant.Spatial;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 using Helix = HelixToolkit.Wpf.SharpDX;
 using HelixCore = HelixToolkit.SharpDX.Core;

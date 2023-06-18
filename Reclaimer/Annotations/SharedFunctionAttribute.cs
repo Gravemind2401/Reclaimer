@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Reclaimer.Annotations
+﻿namespace Reclaimer.Annotations
 {
     /// <summary>
     /// Specifies that a plugin function should be made available for use by other plugins.

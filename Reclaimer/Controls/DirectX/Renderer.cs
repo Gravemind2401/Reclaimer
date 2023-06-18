@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-
-using Numerics = System.Numerics;
+using static HelixToolkit.Wpf.SharpDX.CameraExtensions;
+using static HelixToolkit.Wpf.SharpDX.Media3DExtension;
 using Helix = HelixToolkit.Wpf.SharpDX;
 using HelixCore = HelixToolkit.SharpDX.Core;
-using Media3D = System.Windows.Media.Media3D;
-
 using Keys = System.Windows.Forms.Keys;
+using Media3D = System.Windows.Media.Media3D;
 using NativeMethods = Reclaimer.Utilities.NativeMethods;
-
-using static HelixToolkit.Wpf.SharpDX.Media3DExtension;
-using static HelixToolkit.Wpf.SharpDX.CameraExtensions;
+using Numerics = System.Numerics;
 
 namespace Reclaimer.Controls.DirectX
 {

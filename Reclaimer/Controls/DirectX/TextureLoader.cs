@@ -3,10 +3,7 @@ using HelixToolkit.SharpDX.Core;
 using HelixToolkit.Wpf.SharpDX;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Drawing;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Reclaimer.Controls.DirectX
 {

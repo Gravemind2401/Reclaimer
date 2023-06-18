@@ -1,10 +1,7 @@
 ﻿using Adjutant.Geometry;
 using HelixToolkit.SharpDX.Core;
 using HelixToolkit.Wpf.SharpDX;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 using Media3D = System.Windows.Media.Media3D;
 
