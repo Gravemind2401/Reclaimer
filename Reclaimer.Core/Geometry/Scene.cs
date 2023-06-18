@@ -55,5 +55,13 @@ namespace Reclaimer.Geometry
     public abstract class SceneObject
     {
         public string Name { get; set; }
+        public SceneFlags Flags { get; set; }
+    }
+
+    [Flags]
+    public enum SceneFlags
+    {
+        None = 0,
+        SkyFlag = 1,
     }
 }

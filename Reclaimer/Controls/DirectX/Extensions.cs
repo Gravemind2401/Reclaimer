@@ -64,6 +64,8 @@ namespace Reclaimer.Controls.DirectX
             };
         }
 
+        public static SharpDX.BoundingBox GetTotalBounds(this Helix.Element3D element, bool original = false) => GetTotalBounds(Enumerable.Repeat(element, 1), original);
+
         public static SharpDX.BoundingBox GetTotalBounds(this IEnumerable<Helix.Element3D> elements, bool original = false)
         {
             return GetTotalBounds(elements.Select(e => e.SceneNode), original);
@@ -71,44 +73,31 @@ namespace Reclaimer.Controls.DirectX
 
         public static SharpDX.BoundingBox GetTotalBounds(this IEnumerable<HelixCore.Model.Scene.SceneNode> nodes, bool original = false)
         {
-            var boundsList = new List<SharpDX.BoundingBox>();
-            foreach (var node in nodes)
-                CollectChildBounds(node, boundsList, original);
-
-            return GetTotalBounds(boundsList);
-
-            static void CollectChildBounds(HelixCore.Model.Scene.SceneNode node, List<SharpDX.BoundingBox> boundsList, bool original)
-            {
-                if (node.HasBound)
-                    boundsList.Add(original ? node.OriginalBounds : node.BoundsWithTransform);
-                else if (node.ItemsCount > 0)
-                {
-                    foreach (var child in node.Items.Where(i => i.Visible))
-                        CollectChildBounds(child, boundsList, original);
-                }
-            }
-        }
-
-        private static SharpDX.BoundingBox GetTotalBounds(this IEnumerable<SharpDX.BoundingBox> bounds)
-        {
-            var boundsList = bounds as IList<SharpDX.BoundingBox> ?? bounds.ToList();
-
-            if (!boundsList.Any())
+            var enumerator = nodes.SelectMany(EnumerateChildBounds).GetEnumerator();
+            if (!enumerator.MoveNext())
                 return default;
 
-            var min = new SharpDX.Vector3(
-                boundsList.Min(b => b.Minimum.X),
-                boundsList.Min(b => b.Minimum.Y),
-                boundsList.Min(b => b.Minimum.Z)
-            );
+            var current = enumerator.Current;
+            var result = current;
 
-            var max = new SharpDX.Vector3(
-                boundsList.Max(b => b.Maximum.X),
-                boundsList.Max(b => b.Maximum.Y),
-                boundsList.Max(b => b.Maximum.Z)
-            );
+            while (enumerator.MoveNext())
+            {
+                current = enumerator.Current;
+                SharpDX.BoundingBox.Merge(ref result, ref current, out result);
+            }
 
-            return new SharpDX.BoundingBox(min, max);
+            return result;
+
+            IEnumerable<SharpDX.BoundingBox> EnumerateChildBounds(HelixCore.Model.Scene.SceneNode node)
+            {
+                if (node.HasBound)
+                    yield return original ? node.OriginalBounds : node.BoundsWithTransform;
+                else if (node.ItemsCount > 0)
+                {
+                    foreach (var box in node.Items.Where(i => i.Visible).SelectMany(EnumerateChildBounds))
+                        yield return box;
+                }
+            }
         }
     }
 }

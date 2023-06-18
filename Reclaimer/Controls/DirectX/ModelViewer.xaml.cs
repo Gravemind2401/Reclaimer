@@ -91,10 +91,15 @@ namespace Reclaimer.Controls.DirectX
 
             if (scene.ChildGroups.Count == 0 && scene.ChildObjects.Count == 1 && scene.ChildObjects[0] is Model m)
             {
+                //load in single-model mode - displays permutation tree instead of object tree
                 LoadGeometry(m);
                 return;
             }
 
+            var isFirst = true;
+            var sceneBounds = default(SharpDX.BoundingBox);
+
+            //TODO: support nested groups
             foreach (var group in scene.ChildGroups)
             {
                 var groupNode = new TreeItemModel { Header = group.Name, IsChecked = true };
@@ -126,6 +131,18 @@ namespace Reclaimer.Controls.DirectX
 
                     modelGroup.Children.Add(objGroup);
 
+                    if (!model.Flags.HasFlag(SceneFlags.SkyFlag))
+                    {
+                        var objBounds = objGroup.GetTotalBounds();
+                        if (!isFirst)
+                            SharpDX.BoundingBox.Merge(ref sceneBounds, ref objBounds, out sceneBounds);
+                        else
+                        {
+                            isFirst = false;
+                            sceneBounds = objBounds;
+                        }
+                    }
+
                     var objTag = new MeshTag(null, objGroup);
                     objNode.Tag = objTag;
                     groupNode.Items.Add(objNode);
@@ -134,6 +151,8 @@ namespace Reclaimer.Controls.DirectX
                 if (groupNode.HasItems)
                     TreeViewItems.Add(groupNode);
             }
+
+            renderer.SetDefaultBounds(sceneBounds);
         }
 
         public void LoadGeometry(Model model)

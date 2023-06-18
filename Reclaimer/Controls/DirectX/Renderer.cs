@@ -91,7 +91,8 @@ namespace Reclaimer.Controls.DirectX
 
         private Helix.PerspectiveCamera Camera => Viewport.Camera as Helix.PerspectiveCamera;
 
-        private Point lastPoint;
+        private SharpDX.BoundingBox defaultBounds;
+        private Point lastMousePoint;
 
         public Renderer()
         {
@@ -117,8 +118,8 @@ namespace Reclaimer.Controls.DirectX
             Focus();
             CaptureMouse();
             Cursor = Cursors.None;
-            lastPoint = PointToScreen(e.GetPosition(this));
-            lastPoint = new Point((int)lastPoint.X, (int)lastPoint.Y);
+            lastMousePoint = PointToScreen(e.GetPosition(this));
+            lastMousePoint = new Point((int)lastMousePoint.X, (int)lastMousePoint.Y);
 
             e.Handled = true;
         }
@@ -187,6 +188,8 @@ namespace Reclaimer.Controls.DirectX
         }
         #endregion
 
+        public void SetDefaultBounds(SharpDX.BoundingBox bounds) => defaultBounds = bounds;
+
         public void LocateObject(Helix.Element3D m) => ZoomToBounds(Enumerable.Repeat(m, 1).GetTotalBounds());
 
         public void ScaleToContent()
@@ -194,17 +197,23 @@ namespace Reclaimer.Controls.DirectX
             if (Viewport == null)
                 return;
 
-            var bounds = children.GetTotalBounds();
+            //this determines how far the camera can move in any given direction
+            var totalBounds = children.GetTotalBounds();
 
-            Viewport.FixedRotationPoint = bounds.Center.ToPoint3D();
-            Camera.FarPlaneDistance = Math.Max(MinFarPlaneDistance, bounds.Size.Length() * 2);
+            Viewport.FixedRotationPoint = totalBounds.Center.ToPoint3D();
+            Camera.FarPlaneDistance = Math.Max(MinFarPlaneDistance, totalBounds.Size.Length() * 2);
             Camera.NearPlaneDistance = MinNearPlaneDistance;
 
-            ZoomToBounds(bounds);
+            //this determines the intitial camera location, direction and speed
+            var scaleBounds = defaultBounds;
+            if (scaleBounds.Width == 0 || scaleBounds.Height == 0 || scaleBounds.Depth == 0)
+                scaleBounds = totalBounds;
 
-            var len = bounds.Size.Length();
+            var len = scaleBounds.Size.Length();
             CameraSpeed = Math.Ceiling(len);
             MaxCameraSpeed = Math.Ceiling(len * 6);
+
+            ZoomToBounds(scaleBounds);
         }
 
         public void ZoomToBounds(SharpDX.BoundingBox bounds)
@@ -332,11 +341,11 @@ namespace Reclaimer.Controls.DirectX
 
         private void UpdateCameraDirection(Point mousePos)
         {
-            if (!IsMouseCaptured || lastPoint.Equals(mousePos))
+            if (!IsMouseCaptured || lastMousePoint.Equals(mousePos))
                 return;
 
-            var deltaX = (float)(mousePos.X - lastPoint.X) * (float)SpeedMultipler * 2;
-            var deltaY = (float)(mousePos.Y - lastPoint.Y) * (float)SpeedMultipler * 2;
+            var deltaX = (float)(mousePos.X - lastMousePoint.X) * (float)SpeedMultipler * 2;
+            var deltaY = (float)(mousePos.Y - lastMousePoint.Y) * (float)SpeedMultipler * 2;
 
             var upAnchor = Viewport.ModelUpDirection.ToNumericsVector3();
             var upVector = Camera.UpDirection.ToNumericsVector3();
@@ -350,7 +359,7 @@ namespace Reclaimer.Controls.DirectX
             Yaw = Math.Atan2(forwardVector.X, forwardVector.Y);
             Pitch = Math.Asin(-forwardVector.Z);
 
-            NativeMethods.SetCursorPos((int)lastPoint.X, (int)lastPoint.Y);
+            NativeMethods.SetCursorPos((int)lastMousePoint.X, (int)lastMousePoint.Y);
         }
 
         private static void MoveLookDirection(in Numerics.Vector3 worldUp, ref Numerics.Vector3 cameraUp, ref Numerics.Vector3 cameraForward, in float deltaX, in float deltaY)
@@ -370,14 +379,7 @@ namespace Reclaimer.Controls.DirectX
             cameraUp = Numerics.Vector3.Normalize(Numerics.Vector3.Cross(rightVector, cameraForward));
         }
 
-        private static double ClipValue(double val, double min, double max)
-        {
-            return Math.Min(Math.Max(min, val), max);
-        }
-
-        private static bool CheckKeyState(Keys keys)
-        {
-            return (NativeMethods.GetAsyncKeyState((int)keys) & 32768) != 0;
-        }
+        private static double ClipValue(double val, double min, double max) => Math.Min(Math.Max(min, val), max);
+        private static bool CheckKeyState(Keys keys) => (NativeMethods.GetAsyncKeyState((int)keys) & 32768) != 0;
     }
 }
