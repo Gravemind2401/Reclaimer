@@ -232,6 +232,7 @@ namespace Reclaimer.Blam.Halo2Beta
     }
 
     [FixedSize(48)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class RegionBlock
     {
         [Offset(0)]
@@ -240,11 +241,10 @@ namespace Reclaimer.Blam.Halo2Beta
 
         [Offset(36)]
         public BlockCollection<PermutationBlock> Permutations { get; set; }
-
-        public override string ToString() => Name;
     }
 
     [FixedSize(44)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class PermutationBlock
     {
         [Offset(0)]
@@ -270,8 +270,6 @@ namespace Reclaimer.Blam.Halo2Beta
         public short SuperHighSectionIndex { get; set; }
 
         internal short[] LodArray => new[] { SuperHighSectionIndex, HighSectionIndex, MediumSectionIndex, LowSectionIndex, SuperLowSectionIndex, PotatoSectionIndex };
-
-        public override string ToString() => Name;
     }
 
     [FixedSize(104)]
@@ -306,6 +304,7 @@ namespace Reclaimer.Blam.Halo2Beta
     }
 
     [FixedSize(124)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class NodeBlock : IGeometryNode
     {
         [Offset(0)]
@@ -339,8 +338,6 @@ namespace Reclaimer.Blam.Halo2Beta
         [Offset(120)]
         public float DistanceFromParent { get; set; }
 
-        public override string ToString() => Name;
-
         #region IGeometryNode
 
         string IGeometryNode.Name => Name;
@@ -355,6 +352,7 @@ namespace Reclaimer.Blam.Halo2Beta
     }
 
     [FixedSize(44)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class MarkerGroupBlock : IGeometryMarkerGroup
     {
         [Offset(0)]
@@ -363,8 +361,6 @@ namespace Reclaimer.Blam.Halo2Beta
 
         [Offset(32)]
         public BlockCollection<Halo2.MarkerBlock> Markers { get; set; }
-
-        public override string ToString() => Name;
 
         #region IGeometryMarkerGroup
 

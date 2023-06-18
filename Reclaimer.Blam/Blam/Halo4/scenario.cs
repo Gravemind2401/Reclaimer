@@ -23,6 +23,7 @@ namespace Reclaimer.Blam.Halo4
 
     [FixedSize(296, MaxVersion = (int)CacheType.Halo4Retail)]
     [FixedSize(336, MinVersion = (int)CacheType.Halo4Retail)]
+    [DebuggerDisplay($"{{{nameof(BspReference)},nq}}")]
     public class StructureBspBlock
     {
         [Offset(0)]

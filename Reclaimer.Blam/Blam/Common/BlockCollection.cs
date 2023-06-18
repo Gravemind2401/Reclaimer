@@ -8,6 +8,7 @@ namespace Reclaimer.Blam.Common
     [FixedSize(12, MaxVersion = (int)CacheType.Halo2Xbox)]
     [FixedSize(8, MinVersion = (int)CacheType.Halo2Xbox, MaxVersion = (int)CacheType.Halo3Beta)]
     [FixedSize(12, MinVersion = (int)CacheType.Halo3Beta)]
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public class BlockCollection<T> : TagBlock, IReadOnlyList<T>
     {
         private readonly Collection<T> items = new Collection<T>();
@@ -27,7 +28,7 @@ namespace Reclaimer.Blam.Common
                 items.Add((T)reader.ReadObject(typeof(T), (int)cache.CacheType));
         }
 
-        public override string ToString() => items.ToString();
+        private string GetDebuggerDisplay() => $"{nameof(items.Count)} = {items.Count}";
 
         #region IReadOnlyList
         public T this[int index] => items[index];

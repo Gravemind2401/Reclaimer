@@ -27,6 +27,7 @@ namespace Reclaimer.Blam.HaloReach
     }
 
     [FixedSize(24)]
+    [DebuggerDisplay($"{{{nameof(BitmapReference)},nq}}")]
     public class ShaderMapBlock
     {
         [Offset(0)]

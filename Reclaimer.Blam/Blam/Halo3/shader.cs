@@ -29,6 +29,7 @@ namespace Reclaimer.Blam.Halo3
     [FixedSize(24, MaxVersion = (int)CacheType.MccHalo3U4)]
     [FixedSize(28, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
     [FixedSize(24, MinVersion = (int)CacheType.Halo3ODST)]
+    [DebuggerDisplay($"{{{nameof(BitmapReference)},nq}}")]
     public class ShaderMapBlock
     {
         [Offset(0)]

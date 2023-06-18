@@ -207,6 +207,7 @@ namespace Reclaimer.Blam.Halo4
     }
 
     [FixedSize(4)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class BspGeometryInstanceBlock
     {
         [Offset(0)]
@@ -216,7 +217,5 @@ namespace Reclaimer.Blam.Halo4
         public float TransformScale { get; set; }
         public Matrix4x4 Transform { get; set; }
         public short SectionIndex { get; set; }
-
-        public override string ToString() => Name;
     }
 }

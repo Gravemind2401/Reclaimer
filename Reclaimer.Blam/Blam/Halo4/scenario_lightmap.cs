@@ -10,6 +10,7 @@ namespace Reclaimer.Blam.Halo4
     }
 
     [FixedSize(32)]
+    [DebuggerDisplay($"{{{nameof(LightmapDataReference)},nq}}")]
     public class LightmapDataInfoBlock
     {
         [Offset(0)]

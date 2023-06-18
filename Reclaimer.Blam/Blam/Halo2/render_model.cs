@@ -262,6 +262,7 @@ namespace Reclaimer.Blam.Halo2
     }
 
     [FixedSize(16)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class RegionBlock
     {
         [Offset(0)]
@@ -269,11 +270,10 @@ namespace Reclaimer.Blam.Halo2
 
         [Offset(8)]
         public BlockCollection<PermutationBlock> Permutations { get; set; }
-
-        public override string ToString() => Name;
     }
 
     [FixedSize(16)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class PermutationBlock
     {
         [Offset(0)]
@@ -298,8 +298,6 @@ namespace Reclaimer.Blam.Halo2
         public short SuperHighSectionIndex { get; set; }
 
         internal short[] LodArray => new[] { SuperHighSectionIndex, HighSectionIndex, MediumSectionIndex, LowSectionIndex, SuperLowSectionIndex, PotatoSectionIndex };
-
-        public override string ToString() => Name;
     }
 
     public enum GeometryClassification : short
@@ -339,6 +337,7 @@ namespace Reclaimer.Blam.Halo2
     }
 
     [FixedSize(96)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class NodeBlock : IGeometryNode
     {
         [Offset(0)]
@@ -368,8 +367,6 @@ namespace Reclaimer.Blam.Halo2
         [Offset(92)]
         public float DistanceFromParent { get; set; }
 
-        public override string ToString() => Name;
-
         #region IGeometryNode
 
         string IGeometryNode.Name => Name;
@@ -384,6 +381,7 @@ namespace Reclaimer.Blam.Halo2
     }
 
     [FixedSize(12)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class MarkerGroupBlock : IGeometryMarkerGroup
     {
         [Offset(0)]
@@ -391,8 +389,6 @@ namespace Reclaimer.Blam.Halo2
 
         [Offset(4)]
         public BlockCollection<MarkerBlock> Markers { get; set; }
-
-        public override string ToString() => Name;
 
         #region IGeometryMarkerGroup
 
@@ -437,12 +433,11 @@ namespace Reclaimer.Blam.Halo2
 
     [FixedSize(52, MaxVersion = (int)CacheType.Halo2Xbox)]
     [FixedSize(32, MinVersion = (int)CacheType.Halo2Xbox)]
+    [DebuggerDisplay($"{{{nameof(ShaderReference)},nq}}")]
     public class ShaderBlock
     {
         [Offset(16, MaxVersion = (int)CacheType.Halo2Xbox)]
         [Offset(8, MinVersion = (int)CacheType.Halo2Xbox)]
         public TagReference ShaderReference { get; set; }
-
-        public override string ToString() => ShaderReference.Tag?.TagName;
     }
 }

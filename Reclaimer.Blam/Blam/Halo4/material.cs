@@ -25,6 +25,7 @@ namespace Reclaimer.Blam.Halo4
 
     [FixedSize(20, MaxVersion = (int)CacheType.Halo4Retail)]
     [FixedSize(24, MinVersion = (int)CacheType.Halo4Retail)]
+    [DebuggerDisplay($"{{{nameof(BitmapReference)},nq}}")]
     public class ShaderMapBlock
     {
         [Offset(0)]

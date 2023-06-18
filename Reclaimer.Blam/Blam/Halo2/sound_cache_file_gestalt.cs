@@ -19,12 +19,11 @@ namespace Reclaimer.Blam.Halo2
     }
 
     [FixedSize(4)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class SoundName
     {
         [Offset(0)]
         public StringId Name { get; set; }
-
-        public override string ToString() => Name;
     }
 
     [FixedSize(12)]

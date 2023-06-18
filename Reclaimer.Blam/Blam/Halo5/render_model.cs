@@ -163,6 +163,7 @@ namespace Reclaimer.Blam.Halo5
     }
 
     [FixedSize(32)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class RegionBlock
     {
         [Offset(0)]
@@ -170,11 +171,10 @@ namespace Reclaimer.Blam.Halo5
 
         [Offset(4)]
         public BlockCollection<PermutationBlock> Permutations { get; set; }
-
-        public override string ToString() => Name;
     }
 
     [FixedSize(28)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class PermutationBlock
     {
         [Offset(0)]
@@ -185,11 +185,10 @@ namespace Reclaimer.Blam.Halo5
 
         [Offset(6)]
         public short SectionCount { get; set; }
-
-        public override string ToString() => Name;
     }
 
     [FixedSize(60)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class GeometryInstanceBlock
     {
         [Offset(0)]
@@ -203,11 +202,10 @@ namespace Reclaimer.Blam.Halo5
 
         [Offset(12)]
         public Matrix4x4 Transform { get; set; }
-
-        public override string ToString() => Name;
     }
 
     [FixedSize(124)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class NodeBlock : IGeometryNode
     {
         [Offset(0)]
@@ -237,8 +235,6 @@ namespace Reclaimer.Blam.Halo5
         [Offset(92)]
         public float DistanceFromParent { get; set; }
 
-        public override string ToString() => Name;
-
         #region IGeometryNode
 
         string IGeometryNode.Name => Name;
@@ -253,6 +249,7 @@ namespace Reclaimer.Blam.Halo5
     }
 
     [FixedSize(32)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class MarkerGroupBlock : IGeometryMarkerGroup
     {
         [Offset(0)]
@@ -260,8 +257,6 @@ namespace Reclaimer.Blam.Halo5
 
         [Offset(4)]
         public BlockCollection<MarkerBlock> Markers { get; set; }
-
-        public override string ToString() => Name;
 
         #region IGeometryMarkerGroup
 
@@ -310,12 +305,11 @@ namespace Reclaimer.Blam.Halo5
     }
 
     [FixedSize(32)]
+    [DebuggerDisplay($"{{{nameof(MaterialReference)},nq}}")]
     public class MaterialBlock
     {
         [Offset(0)]
         public TagReference MaterialReference { get; set; }
-
-        public override string ToString() => MaterialReference.Tag?.TagName;
     }
 
     [FixedSize(128)]

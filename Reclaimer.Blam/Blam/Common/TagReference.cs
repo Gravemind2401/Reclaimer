@@ -7,6 +7,7 @@ namespace Reclaimer.Blam.Common
     [FixedSize(16, MaxVersion = (int)CacheType.Halo2Xbox)]
     [FixedSize(8, MinVersion = (int)CacheType.Halo2Xbox, MaxVersion = (int)CacheType.Halo3Beta)]
     [FixedSize(16, MinVersion = (int)CacheType.Halo3Beta)]
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public readonly record struct TagReference : IWriteable
     {
         public static TagReference NullReference { get; } = new TagReference(null, -1, -1);
@@ -16,7 +17,8 @@ namespace Reclaimer.Blam.Common
         private readonly int tagId;
 
         public int TagId => (short)(tagId & ushort.MaxValue);
-        public IIndexItem Tag => TagId >= 0 ? cache?.TagIndex[TagId] : null;
+        public IIndexItem Tag => IsValid ? cache.TagIndex[TagId] : null;
+        public bool IsValid => TagId >= 0 && cache != null;
 
         public TagReference(ICacheFile cache, int classId, int tagId)
         {
@@ -60,6 +62,10 @@ namespace Reclaimer.Blam.Common
             writer.Write(tagId);
         }
 
-        public override string ToString() => Tag?.ToString();
+        private string GetDebuggerDisplay()
+        {
+            var tag = Tag;
+            return tag == null ? "{null reference}" : $"{{[{tag.ClassCode}] {tag.TagName}}}";
+        }
     }
 }

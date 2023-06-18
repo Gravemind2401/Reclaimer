@@ -165,6 +165,7 @@ namespace Reclaimer.Blam.Halo1
     }
 
     [FixedSize(256)]
+    [DebuggerDisplay($"{{{nameof(ShaderReference)},nq}}")]
     public class MaterialBlock
     {
         [Offset(0)]
@@ -181,8 +182,6 @@ namespace Reclaimer.Blam.Halo1
 
         [Offset(228)]
         public Pointer VertexPointer { get; set; }
-
-        public override string ToString() => ShaderReference.ToString();
     }
 
     [FixedSize(104)]

@@ -10,6 +10,7 @@ namespace Reclaimer.Blam.Halo1
     }
 
     [FixedSize(32)]
+    [DebuggerDisplay($"{{{nameof(BSPReference)},nq}}")]
     public class StructureBspBlock
     {
         [Offset(0)]

@@ -314,6 +314,7 @@ namespace Reclaimer.Blam.Halo1
     }
 
     [FixedSize(64)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class MarkerGroupBlock : IGeometryMarkerGroup
     {
         [Offset(0)]
@@ -322,8 +323,6 @@ namespace Reclaimer.Blam.Halo1
 
         [Offset(52)]
         public BlockCollection<MarkerBlock> Markers { get; set; }
-
-        public override string ToString() => Name;
 
         #region IGeometryMarkerGroup
 
@@ -364,6 +363,7 @@ namespace Reclaimer.Blam.Halo1
     }
 
     [FixedSize(156)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class NodeBlock : IGeometryNode
     {
         [Offset(0)]
@@ -390,8 +390,6 @@ namespace Reclaimer.Blam.Halo1
         [Offset(68)]
         public float DistanceFromParent { get; set; }
 
-        public override string ToString() => Name;
-
         #region IGeometryNode
 
         IVector3 IGeometryNode.Position => Position;
@@ -404,6 +402,7 @@ namespace Reclaimer.Blam.Halo1
     }
 
     [FixedSize(76)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class RegionBlock
     {
         [Offset(0)]
@@ -412,11 +411,10 @@ namespace Reclaimer.Blam.Halo1
 
         [Offset(64)]
         public BlockCollection<PermutationBlock> Permutations { get; set; }
-
-        public override string ToString() => Name;
     }
 
     [FixedSize(88)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class PermutationBlock
     {
         [Offset(0)]
@@ -450,8 +448,6 @@ namespace Reclaimer.Blam.Halo1
                 .Reverse()
                 .FirstOrDefault(i => i >= 0);
         }
-
-        public override string ToString() => Name;
     }
 
     [FixedSize(48)]
@@ -483,11 +479,10 @@ namespace Reclaimer.Blam.Halo1
     }
 
     [FixedSize(32)]
+    [DebuggerDisplay($"{{{nameof(ShaderReference)},nq}}")]
     public class ShaderBlock
     {
         [Offset(0)]
         public TagReference ShaderReference { get; set; }
-
-        public override string ToString() => ShaderReference.Tag?.TagName;
     }
 }

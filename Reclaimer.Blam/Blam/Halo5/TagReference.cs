@@ -4,6 +4,7 @@ using System.Text;
 namespace Reclaimer.Blam.Halo5
 {
     [FixedSize(32)]
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public readonly record struct TagReference
     {
         private readonly Module module;
@@ -29,6 +30,10 @@ namespace Reclaimer.Blam.Halo5
             reader.BaseStream.Position += 4; //padding
         }
 
-        public override string ToString() => Tag?.ToString();
+        private string GetDebuggerDisplay()
+        {
+            var tag = Tag;
+            return tag == null ? "{null reference}" : $"{{[{tag.ClassCode}] {tag.TagName}}}";
+        }
     }
 }

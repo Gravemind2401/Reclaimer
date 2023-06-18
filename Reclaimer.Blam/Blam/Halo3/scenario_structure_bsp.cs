@@ -164,6 +164,7 @@ namespace Reclaimer.Blam.Halo3
     }
 
     [FixedSize(120)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class BspGeometryInstanceBlock
     {
         [Offset(0)]
@@ -177,8 +178,6 @@ namespace Reclaimer.Blam.Halo3
 
         [Offset(84)]
         public StringId Name { get; set; }
-
-        public override string ToString() => Name;
     }
 
     [FixedSize(44)]

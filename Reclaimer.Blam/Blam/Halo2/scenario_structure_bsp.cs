@@ -223,6 +223,7 @@ namespace Reclaimer.Blam.Halo2
     }
 
     [FixedSize(88)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class GeometryInstanceBlock
     {
         [Offset(0)]
@@ -236,7 +237,5 @@ namespace Reclaimer.Blam.Halo2
 
         [Offset(80)]
         public StringId Name { get; set; }
-
-        public override string ToString() => Name;
     }
 }

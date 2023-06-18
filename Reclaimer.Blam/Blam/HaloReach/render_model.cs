@@ -9,6 +9,7 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.HaloReach
 {
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class render_model : ContentTagDefinition, IRenderGeometry
     {
         public render_model(IIndexItem item)
@@ -51,8 +52,6 @@ namespace Reclaimer.Blam.HaloReach
         [Offset(236, MaxVersion = (int)CacheType.HaloReachRetail)]
         [Offset(248, MinVersion = (int)CacheType.HaloReachRetail)]
         public ResourceIdentifier ResourcePointer { get; set; }
-
-        public override string ToString() => Name;
 
         #region IRenderGeometry
 
@@ -173,6 +172,7 @@ namespace Reclaimer.Blam.HaloReach
     }
 
     [FixedSize(16)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class RegionBlock
     {
         [Offset(0)]
@@ -180,11 +180,10 @@ namespace Reclaimer.Blam.HaloReach
 
         [Offset(4)]
         public BlockCollection<PermutationBlock> Permutations { get; set; }
-
-        public override string ToString() => Name;
     }
 
     [FixedSize(24)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class PermutationBlock
     {
         [Offset(0)]
@@ -195,11 +194,10 @@ namespace Reclaimer.Blam.HaloReach
 
         [Offset(6)]
         public short SectionCount { get; set; }
-
-        public override string ToString() => Name;
     }
 
     [FixedSize(60)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class GeometryInstanceBlock
     {
         [Offset(0)]
@@ -213,11 +211,10 @@ namespace Reclaimer.Blam.HaloReach
 
         [Offset(12)]
         public Matrix4x4 Transform { get; set; }
-
-        public override string ToString() => Name;
     }
 
     [FixedSize(96)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class NodeBlock : IGeometryNode
     {
         [Offset(0)]
@@ -247,8 +244,6 @@ namespace Reclaimer.Blam.HaloReach
         [Offset(92)]
         public float DistanceFromParent { get; set; }
 
-        public override string ToString() => Name;
-
         #region IGeometryNode
 
         string IGeometryNode.Name => Name;
@@ -263,6 +258,7 @@ namespace Reclaimer.Blam.HaloReach
     }
 
     [FixedSize(16)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class MarkerGroupBlock : IGeometryMarkerGroup
     {
         [Offset(0)]
@@ -270,8 +266,6 @@ namespace Reclaimer.Blam.HaloReach
 
         [Offset(4)]
         public BlockCollection<MarkerBlock> Markers { get; set; }
-
-        public override string ToString() => Name;
 
         #region IGeometryMarkerGroup
 
@@ -315,12 +309,11 @@ namespace Reclaimer.Blam.HaloReach
     }
 
     [FixedSize(44)]
+    [DebuggerDisplay($"{{{nameof(ShaderReference)},nq}}")]
     public class ShaderBlock
     {
         [Offset(0)]
         public TagReference ShaderReference { get; set; }
-
-        public override string ToString() => ShaderReference.Tag?.TagName;
     }
 
     [FixedSize(92)]

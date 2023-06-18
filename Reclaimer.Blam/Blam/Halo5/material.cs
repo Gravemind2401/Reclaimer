@@ -16,6 +16,7 @@ namespace Reclaimer.Blam.Halo5
     }
 
     [FixedSize(56)]
+    [DebuggerDisplay($"{{{nameof(BitmapReference)},nq}}")]
     public class TexturesBlock
     {
         [Offset(0)]

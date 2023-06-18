@@ -165,6 +165,7 @@ namespace Reclaimer.Blam.HaloReach
 
     [FixedSize(168, MaxVersion = (int)CacheType.HaloReachRetail)]
     [FixedSize(4, MinVersion = (int)CacheType.HaloReachRetail)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class BspGeometryInstanceBlock
     {
         [Offset(0)]
@@ -182,7 +183,5 @@ namespace Reclaimer.Blam.HaloReach
         [Offset(124, MaxVersion = (int)CacheType.HaloReachRetail)]
         [Offset(0, MinVersion = (int)CacheType.HaloReachRetail)]
         public StringId Name { get; set; }
-
-        public override string ToString() => Name;
     }
 }

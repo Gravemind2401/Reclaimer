@@ -16,13 +16,12 @@ namespace Reclaimer.Blam.Halo4
     }
 
     [FixedSize(264)]
+    [DebuggerDisplay($"{{{nameof(FileName)},nq}}")]
     public class SharedCacheBlock
     {
         [Offset(0)]
         [NullTerminated(Length = 32)]
         public string FileName { get; set; }
-
-        public override string ToString() => FileName;
     }
 
     [FixedSize(88)]

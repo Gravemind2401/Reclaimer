@@ -27,6 +27,9 @@
   <ItemGroup>
     <Using Remove="System.IO" />
     <Using Remove="System.Net.Http" />
+    <Using Include="System.Diagnostics.DebuggerDisplayAttribute">
+      <Alias>DebuggerDisplayAttribute</Alias>
+    </Using>
   </ItemGroup>
 
   <ItemGroup>

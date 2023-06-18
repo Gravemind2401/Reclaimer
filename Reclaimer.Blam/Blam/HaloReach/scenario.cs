@@ -16,6 +16,7 @@ namespace Reclaimer.Blam.HaloReach
     }
 
     [FixedSize(172)]
+    [DebuggerDisplay($"{{{nameof(BspReference)},nq}}")]
     public class StructureBspBlock
     {
         [Offset(0)]
