@@ -194,15 +194,14 @@ namespace Reclaimer.Blam.Halo2
         IEnumerator IEnumerable.GetEnumerator() => items.Values.GetEnumerator();
     }
 
-    public class StringIndex : IStringIndex
+    public class StringIndex : StringIndexBase
     {
         private readonly CacheFile cache;
-        private readonly string[] items;
 
         public StringIndex(CacheFile cache)
         {
             this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
-            items = new string[cache.Header.StringCount];
+            Items = new string[cache.Header.StringCount];
         }
 
         internal void ReadItems()
@@ -222,21 +221,13 @@ namespace Reclaimer.Blam.Halo2
                             continue;
 
                         reader2.Seek(indices[i], SeekOrigin.Begin);
-                        items[i] = reader2.ReadNullTerminatedString();
+                        Items[i] = reader2.ReadNullTerminatedString();
                     }
                 }
             }
         }
 
-        public int StringCount => items.Length;
-
-        public string this[int id] => items[id];
-
-        public int GetStringId(string value) => Array.IndexOf(items, value);
-
-        public IEnumerator<string> GetEnumerator() => items.AsEnumerable().GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
+        public override int GetStringId(string value) => Array.IndexOf(Items, value);
     }
 
     [FixedSize(16)]

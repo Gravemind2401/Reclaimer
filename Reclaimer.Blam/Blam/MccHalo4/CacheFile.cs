@@ -278,17 +278,16 @@ namespace Reclaimer.Blam.MccHalo4
         IEnumerator IEnumerable.GetEnumerator() => items.Values.GetEnumerator();
     }
 
-    public class StringIndex : IStringIndex
+    public class StringIndex : StringIndexBase
     {
         private readonly CacheFile cache;
-        private readonly string[] items;
 
         internal StringIdTranslator Translator { get; init; }
 
         public StringIndex(CacheFile cache)
         {
             this.cache = cache ?? throw new ArgumentNullException(nameof(cache));
-            items = new string[cache.Header.StringCount];
+            Items = new string[cache.Header.StringCount];
             Translator = new StringIdTranslator(Resources.MccHalo4Strings, cache.Metadata.StringIds);
         }
 
@@ -308,21 +307,15 @@ namespace Reclaimer.Blam.MccHalo4
                             continue;
 
                         tempReader.Seek(indices[i], SeekOrigin.Begin);
-                        items[i] = tempReader.ReadNullTerminatedString();
+                        Items[i] = tempReader.ReadNullTerminatedString();
                     }
                 }
             }
         }
 
-        public int StringCount => items.Length;
+        protected override int GetStringIndex(int id) => Translator.GetStringIndex(id);
 
-        public string this[int id] => items[Translator.GetStringIndex(id)];
-
-        public int GetStringId(string value) => Translator.GetStringId(Array.IndexOf(items, value));
-
-        public IEnumerator<string> GetEnumerator() => items.AsEnumerable().GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
+        public override int GetStringId(string value) => Translator.GetStringId(Array.IndexOf(Items, value));
     }
 
     [FixedSize(16)]
