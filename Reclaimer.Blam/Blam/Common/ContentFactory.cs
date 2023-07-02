@@ -71,6 +71,7 @@ namespace Reclaimer.Blam.Common
                     content = item.ReadMetadata<Halo2.bitmap>();
                     break;
                 case CacheType.Halo3Alpha:
+                case CacheType.Halo3Delta:
                 case CacheType.Halo3Beta:
                 case CacheType.Halo3Retail:
                 case CacheType.MccHalo3:
@@ -135,6 +136,7 @@ namespace Reclaimer.Blam.Common
                         content = item.ReadMetadata<Halo2.render_model>();
                         break;
                     case CacheType.Halo3Alpha:
+                    case CacheType.Halo3Delta:
                     case CacheType.Halo3Beta:
                     case CacheType.Halo3Retail:
                     case CacheType.MccHalo3:
@@ -182,7 +184,7 @@ namespace Reclaimer.Blam.Common
                     case CacheType.Halo2Xbox:
                         content = item.ReadMetadata<Halo2.scenario_structure_bsp>();
                         break;
-                    case CacheType.Halo3Alpha:
+                    case CacheType.Halo3Delta:
                     case CacheType.Halo3Beta:
                     case CacheType.Halo3Retail:
                     case CacheType.MccHalo3:

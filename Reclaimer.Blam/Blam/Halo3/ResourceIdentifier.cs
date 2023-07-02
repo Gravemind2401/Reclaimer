@@ -139,7 +139,9 @@ namespace Reclaimer.Blam.Halo3
             var address = useSecondary ? entry.SecondaryOffset : entry.PrimaryOffset;
             var size = useSecondary ? entry.SecondarySize : entry.PrimarySize;
 
-            var targetFile = entry.CacheIndex == -1 ? cache.FileName : Path.Combine(directory, shared_map);
+            var targetFile = entry.CacheIndex == -1 || cache.CacheType < CacheType.Halo3Delta 
+                ? cache.FileName
+                : Path.Combine(directory, shared_map);
 
             using (var fs = new FileStream(targetFile, FileMode.Open, FileAccess.Read))
             using (var reader = new EndianReader(fs))

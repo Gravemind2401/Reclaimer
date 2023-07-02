@@ -62,6 +62,12 @@ namespace Reclaimer.Blam.Halo3
             if (Sections.All(s => s.IndexBufferIndex < 0))
                 throw Exceptions.GeometryHasNoEdges();
 
+            if (Cache.CacheType < CacheType.Halo3Delta)
+            {
+                foreach (var section in Sections)
+                    section.VertexBufferIndex = section.VertexBufferIndices[0];
+            }
+
             var model = new GeometryModel(Name) { CoordinateSystem = CoordinateSystem.Default };
 
             model.Nodes.AddRange(Nodes);
@@ -315,7 +321,8 @@ namespace Reclaimer.Blam.Halo3
         public TagReference ShaderReference { get; set; }
     }
 
-    [FixedSize(76)]
+    [FixedSize(56, MaxVersion = (int)CacheType.Halo3Delta)]
+    [FixedSize(76, MinVersion = (int)CacheType.Halo3Delta)]
     public class SectionBlock
     {
         [Offset(0)]
@@ -325,25 +332,24 @@ namespace Reclaimer.Blam.Halo3
         public BlockCollection<SubsetBlock> Subsets { get; set; }
 
         [Offset(24)]
+        [MaxVersion((int)CacheType.Halo3Delta)]
+        public BlockCollection<short> VertexBufferIndices { get; set; }
+
+        [Offset(24)]
+        [MinVersion((int)CacheType.Halo3Delta)]
         public short VertexBufferIndex { get; set; }
 
-        [Offset(30)]
-        public short UnknownIndex { get; set; }
-
-        [Offset(40)]
+        [Offset(36, MaxVersion = (int)CacheType.Halo3Delta)]
+        [Offset(40, MinVersion = (int)CacheType.Halo3Delta)]
         public short IndexBufferIndex { get; set; }
 
-        [Offset(44)]
-        public byte TransparentNodesPerVertex { get; set; }
-
-        [Offset(45)]
+        [Offset(41, MaxVersion = (int)CacheType.Halo3Delta)]
+        [Offset(45, MinVersion = (int)CacheType.Halo3Delta)]
         public byte NodeIndex { get; set; }
 
-        [Offset(46)]
+        [Offset(42, MaxVersion = (int)CacheType.Halo3Delta)]
+        [Offset(46, MinVersion = (int)CacheType.Halo3Delta)]
         public byte VertexFormat { get; set; }
-
-        [Offset(47)]
-        public byte OpaqueNodesPerVertex { get; set; }
     }
 
     [FixedSize(16)]

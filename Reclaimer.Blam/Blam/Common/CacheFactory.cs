@@ -93,6 +93,7 @@ namespace Reclaimer.Blam.Common
                     return new Halo2.CacheFile(args);
 
                 case CacheType.Halo3Alpha:
+                case CacheType.Halo3Delta:
                     return new Halo3Alpha.CacheFile(args);
 
                 case CacheType.Halo3Beta:

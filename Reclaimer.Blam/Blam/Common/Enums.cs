@@ -103,9 +103,14 @@
         MccHalo2,
 
         [CacheMetadata(CacheGeneration.Gen3, Xbox360, Uncompressed, PreBeta)]
+        [BuildString("06481.06.11.17.1330.alpha_relea", "alpha_1117")]
+        Halo3Alpha,
+
+        [CacheMetadata(CacheGeneration.Gen3, Xbox360, Uncompressed, PreBeta)]
+        [BuildString("06481.06.11.17.1330.alpha_relea", "alpha_1117")]
         [BuildString("08117.07.03.07.1702.delta", "alpha_0307")]
         [BuildString("08172.07.03.08.2240.delta", "alpha_0308")]
-        Halo3Alpha,
+        Halo3Delta,
 
         [CacheMetadata(CacheGeneration.Gen3, Xbox360, Uncompressed, Beta)]
         [BuildString("Mar  9 2007 22:22:32", "alpha_0308", PreBeta)] //not really beta but matches for the tags we need
