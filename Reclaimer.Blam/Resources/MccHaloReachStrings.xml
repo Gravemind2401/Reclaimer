@@ -72,4 +72,8 @@
         <namespace id="0xF" startIndex="0x166F" />
         <namespace id="0x10" startIndex="0x16D1" />
     </stringIDs>
+
+    <!-- from U8 onwards, namespaces are in the header (but bit layout is not, so still need a definition for it) -->
+    <stringIDs id="U8" indexBits="17" namespaceBits="8" lengthBits="7" />
+    <stringIDs id="U13" indexBits="19" namespaceBits="8" lengthBits="5" />
 </stringDefinitions>

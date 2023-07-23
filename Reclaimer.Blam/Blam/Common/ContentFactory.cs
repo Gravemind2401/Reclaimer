@@ -80,12 +80,14 @@ namespace Reclaimer.Blam.Common
                 case CacheType.MccHalo3U6:
                 case CacheType.MccHalo3U9:
                 case CacheType.MccHalo3U12:
+                case CacheType.MccHalo3U13:
                 case CacheType.Halo3ODST:
                 case CacheType.MccHalo3ODST:
                 case CacheType.MccHalo3ODSTF3:
                 case CacheType.MccHalo3ODSTU3:
                 case CacheType.MccHalo3ODSTU4:
                 case CacheType.MccHalo3ODSTU7:
+                case CacheType.MccHalo3ODSTU8:
                     content = item.ReadMetadata<Halo3.bitmap>();
                     break;
                 case CacheType.HaloReachBeta:
@@ -94,6 +96,7 @@ namespace Reclaimer.Blam.Common
                 case CacheType.MccHaloReachU3:
                 case CacheType.MccHaloReachU8:
                 case CacheType.MccHaloReachU10:
+                case CacheType.MccHaloReachU13:
                     content = item.ReadMetadata<HaloReach.bitmap>();
                     break;
                 case CacheType.Halo4Beta:
@@ -145,12 +148,14 @@ namespace Reclaimer.Blam.Common
                     case CacheType.MccHalo3U6:
                     case CacheType.MccHalo3U9:
                     case CacheType.MccHalo3U12:
+                    case CacheType.MccHalo3U13:
                     case CacheType.Halo3ODST:
                     case CacheType.MccHalo3ODST:
                     case CacheType.MccHalo3ODSTF3:
                     case CacheType.MccHalo3ODSTU3:
                     case CacheType.MccHalo3ODSTU4:
                     case CacheType.MccHalo3ODSTU7:
+                    case CacheType.MccHalo3ODSTU8:
                         content = item.ReadMetadata<Halo3.render_model>();
                         break;
                     case CacheType.HaloReachBeta:
@@ -159,6 +164,7 @@ namespace Reclaimer.Blam.Common
                     case CacheType.MccHaloReachU3:
                     case CacheType.MccHaloReachU8:
                     case CacheType.MccHaloReachU10:
+                    case CacheType.MccHaloReachU13:
                         content = item.ReadMetadata<HaloReach.render_model>();
                         break;
                     case CacheType.Halo4Beta:
@@ -193,12 +199,14 @@ namespace Reclaimer.Blam.Common
                     case CacheType.MccHalo3U6:
                     case CacheType.MccHalo3U9:
                     case CacheType.MccHalo3U12:
+                    case CacheType.MccHalo3U13:
                     case CacheType.Halo3ODST:
                     case CacheType.MccHalo3ODST:
                     case CacheType.MccHalo3ODSTF3:
                     case CacheType.MccHalo3ODSTU3:
                     case CacheType.MccHalo3ODSTU4:
                     case CacheType.MccHalo3ODSTU7:
+                    case CacheType.MccHalo3ODSTU8:
                         content = item.ReadMetadata<Halo3.scenario_structure_bsp>();
                         break;
                     case CacheType.HaloReachBeta:
@@ -207,6 +215,7 @@ namespace Reclaimer.Blam.Common
                     case CacheType.MccHaloReachU3:
                     case CacheType.MccHaloReachU8:
                     case CacheType.MccHaloReachU10:
+                    case CacheType.MccHaloReachU13:
                         content = item.ReadMetadata<HaloReach.scenario_structure_bsp>();
                         break;
                     case CacheType.Halo4Beta:

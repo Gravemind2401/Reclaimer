@@ -16,7 +16,7 @@ namespace Reclaimer.Blam.Common
             var doc = new XmlDocument();
             doc.LoadXml(xml);
 
-            return doc.DocumentElement.ChildNodes.OfType<XmlNode>();
+            return doc.DocumentElement.ChildNodes.OfType<XmlElement>();
         }
 
         #region Xml-Based
