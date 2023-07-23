@@ -81,26 +81,42 @@ namespace Reclaimer.Blam.HaloReach
             using (var fs = new FileStream(targetFile, FileMode.Open, FileAccess.Read))
             using (var reader = new EndianReader(fs, cache.ByteOrder))
             {
-                switch (cache.CacheType)
-                {
-                    case CacheType.MccHaloReach:
-                        reader.Seek(1208, SeekOrigin.Begin);
-                        break;
-                    case CacheType.MccHaloReachU3:
-                    case CacheType.MccHaloReachU8:
-                        reader.Seek(1200, SeekOrigin.Begin);
-                        break;
-                    case CacheType.MccHaloReachU10:
-                        reader.Seek(1232, SeekOrigin.Begin);
-                        break;
-                    default:
-                        reader.Seek(1136, SeekOrigin.Begin); //xbox
-                        break;
-                }
-
-                var dataTableAddress = reader.ReadUInt32();
+                var dataTableAddress = GetDataTableAddress(cache, reader);
                 reader.Seek(dataTableAddress + page.DataOffset, SeekOrigin.Begin);
                 return ContentFactory.GetResourceData(reader, cache.Metadata.ResourceCodec, maxLength, segmentOffset, page.CompressedSize, page.DecompressedSize);
+            }
+
+            static uint GetDataTableAddress(ICacheFile cache, EndianReader reader)
+            {
+                //latest mcc
+                if (cache.CacheType >= CacheType.MccHaloReachU10)
+                {
+                    reader.Seek(1232, SeekOrigin.Begin);
+                    return reader.ReadUInt32();
+                }
+
+                //mcc U3+
+                if (cache.CacheType >= CacheType.MccHaloReachU3)
+                {
+                    reader.Seek(1200, SeekOrigin.Begin);
+                    return reader.ReadUInt32();
+                }
+
+                //early mcc
+                if (cache.Metadata.IsMcc)
+                {
+                    reader.Seek(1208, SeekOrigin.Begin);
+                    return reader.ReadUInt32();
+                }
+
+                //xbox
+                if (cache.Metadata.Platform == CachePlatform.Xbox360)
+                {
+                    reader.Seek(1136, SeekOrigin.Begin);
+                    return reader.ReadUInt32();
+                }
+
+                throw Exceptions.ResourceDataNotSupported(cache);
             }
         }
 
