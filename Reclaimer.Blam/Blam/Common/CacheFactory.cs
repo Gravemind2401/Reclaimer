@@ -76,79 +76,37 @@ namespace Reclaimer.Blam.Common
             Exceptions.ThrowIfFileNotFound(fileName);
 
             var args = CacheArgs.FromFile(fileName);
-            switch (args.Metadata?.CacheType)
+            var (game, cacheType, isMcc) = (args.Metadata?.Game ?? HaloGame.Unknown, args.Metadata?.CacheType ?? CacheType.Unknown, args.Metadata?.IsMcc ?? false);
+
+            return game switch
             {
-                case CacheType.Halo1Xbox:
-                case CacheType.Halo1PC:
-                case CacheType.Halo1CE:
-                case CacheType.Halo1AE:
-                case CacheType.MccHalo1:
-                    return new Halo1.CacheFile(args);
+                HaloGame.Halo1 => new Halo1.CacheFile(args),
 
-                case CacheType.Halo2Beta:
-                    return new Halo2Beta.CacheFile(args);
+                HaloGame.Halo2 when cacheType == CacheType.Halo2Beta => new Halo2Beta.CacheFile(args),
+                HaloGame.Halo2 => new Halo2.CacheFile(args),
 
-                case CacheType.Halo2Xbox:
-                case CacheType.Halo2Vista:
-                    return new Halo2.CacheFile(args);
+                HaloGame.Halo3 when cacheType <= CacheType.Halo3Delta => new Halo3Alpha.CacheFile(args),
+                HaloGame.Halo3 when !isMcc => new Halo3.CacheFile(args),
+                HaloGame.Halo3 when cacheType < CacheType.MccHalo3F6 => new MccHalo3.CacheFile(args),
+                HaloGame.Halo3 => new MccHalo3.CacheFileU6(args),
 
-                case CacheType.Halo3Alpha:
-                case CacheType.Halo3Delta:
-                    return new Halo3Alpha.CacheFile(args);
+                HaloGame.Halo3ODST when !isMcc => new Halo3.CacheFile(args),
+                HaloGame.Halo3ODST when cacheType < CacheType.MccHalo3ODSTF3 => new MccHalo3.CacheFile(args),
+                HaloGame.Halo3ODST => new MccHalo3.CacheFileU6(args),
 
-                case CacheType.Halo3Beta:
-                case CacheType.Halo3Retail:
-                case CacheType.Halo3ODST:
-                    return new Halo3.CacheFile(args);
+                HaloGame.HaloReach when !isMcc => new HaloReach.CacheFile(args),
+                HaloGame.HaloReach when cacheType < CacheType.MccHaloReachU8 => new MccHaloReach.CacheFile(args),
+                HaloGame.HaloReach => new MccHaloReach.CacheFileU8(args),
 
-                case CacheType.MccHalo3:
-                case CacheType.MccHalo3U4:
-                case CacheType.MccHalo3ODST:
-                    return new MccHalo3.CacheFile(args);
+                HaloGame.Halo4 when !isMcc => new Halo4.CacheFile(args),
+                HaloGame.Halo4 when cacheType < CacheType.MccHalo4U4 => new MccHalo4.CacheFile(args),
+                HaloGame.Halo4 => new MccHalo4.CacheFileU4(args),
 
-                case CacheType.MccHalo3F6:
-                case CacheType.MccHalo3U6:
-                case CacheType.MccHalo3U9:
-                case CacheType.MccHalo3U12:
-                case CacheType.MccHalo3ODSTF3:
-                case CacheType.MccHalo3ODSTU3:
-                case CacheType.MccHalo3ODSTU4:
-                case CacheType.MccHalo3ODSTU7:
-                    return new MccHalo3.CacheFileU6(args);
-
-                case CacheType.HaloReachBeta:
-                case CacheType.HaloReachRetail:
-                    return new HaloReach.CacheFile(args);
-
-                case CacheType.MccHaloReach:
-                case CacheType.MccHaloReachU3:
-                    return new MccHaloReach.CacheFile(args);
-
-                case CacheType.MccHaloReachU8:
-                case CacheType.MccHaloReachU10:
-                    return new MccHaloReach.CacheFileU8(args);
-
-                case CacheType.Halo4Beta:
-                case CacheType.Halo4Retail:
-                    return new Halo4.CacheFile(args);
-
-                case CacheType.MccHalo4:
-                    return new MccHalo4.CacheFile(args);
-
-                case CacheType.MccHalo4U4:
-                case CacheType.MccHalo4U6:
-                    return new MccHalo4.CacheFileU4(args);
-
-                case CacheType.MccHalo2X:
-                    return new MccHalo2X.CacheFile(args);
-
-                case CacheType.MccHalo2XU8:
-                case CacheType.MccHalo2XU10:
-                    return new MccHalo2X.CacheFileU8(args);
-
-                default:
-                    throw Exceptions.UnknownMapFile(fileName);
-            }
+                HaloGame.Halo2X when cacheType < CacheType.MccHalo2XU8 => new MccHalo2X.CacheFile(args),
+                HaloGame.Halo2X => new MccHalo2X.CacheFileU8(args),
+                
+                _ => throw Exceptions.UnknownMapFile(fileName)
+            };
         }
 
         public static int GetHeaderSize(this Gen3.IGen3CacheFile cache) => (int)FixedSizeAttribute.ValueFor(cache.Header.GetType(), (int)cache.CacheType);

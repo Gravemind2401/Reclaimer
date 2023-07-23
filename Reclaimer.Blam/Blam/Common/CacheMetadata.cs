@@ -6,6 +6,7 @@ namespace Reclaimer.Blam.Common
     {
         private const CacheMetadataFlags PreRelease = CacheMetadataFlags.PreBeta | CacheMetadataFlags.Beta | CacheMetadataFlags.Flight;
 
+        public HaloGame Game { get; }
         public CacheType CacheType { get; }
         public CacheGeneration Generation { get; }
         public CachePlatform Platform { get; }
@@ -20,6 +21,7 @@ namespace Reclaimer.Blam.Common
         private CacheMetadata(CacheType cacheType, CacheMetadataAttribute meta, BuildStringAttribute build)
         {
             CacheType = cacheType;
+            Game = meta.Game;
             Generation = meta.Generation;
             Platform = meta.Platform;
             Architecture = Platform == CachePlatform.Xbox360 ? PlatformArchitecture.PowerPC : PlatformArchitecture.x86;
@@ -63,17 +65,32 @@ namespace Reclaimer.Blam.Common
             if (parent.Name != "maps")
                 return CacheType.Unknown;
 
-            //TODO: detect latest enum for each game instead of hardcoding
-            return parent.Parent.Name switch
+            var game = parent.Parent.Name switch
             {
-                "halo1" => CacheType.MccHalo1,
-                "halo3" => CacheType.MccHalo3U12,
-                "halo3odst" => CacheType.MccHalo3ODSTU7,
-                "haloreach" => CacheType.MccHaloReachU10,
-                "halo4" => CacheType.MccHalo4U6,
-                "groundhog" => CacheType.MccHalo2XU10,
-                _ => CacheType.Unknown
+                "halo1" => HaloGame.Halo1,
+                "halo3" => HaloGame.Halo3,
+                "halo3odst" => HaloGame.Halo3ODST,
+                "haloreach" => HaloGame.HaloReach,
+                "halo4" => HaloGame.Halo4,
+                "groundhog" => HaloGame.Halo2X,
+                _ => HaloGame.Unknown
             };
+
+            if (game == HaloGame.Unknown)
+                return CacheType.Unknown;
+
+            //find highest CacheType for the matching HaloGame
+            var maxEnum = Enum.GetValues<CacheType>()
+                .Where(e => e != CacheType.Unknown)
+                .Select(e => new
+                {
+                    CacheType = e,
+                    Meta = Utils.GetEnumAttributes<CacheType, CacheMetadataAttribute>(e).Single()
+                }).Where(x => x.Meta.Game == game)
+                .OrderBy(x => x.CacheType)
+                .LastOrDefault();
+
+            return maxEnum?.CacheType ?? CacheType.Unknown;
         }
     }
 }
