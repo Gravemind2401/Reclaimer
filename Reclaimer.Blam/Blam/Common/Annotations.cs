@@ -8,33 +8,43 @@ namespace Reclaimer.Blam.Common
 {
     using static CacheMetadataFlags;
     using static CacheResourceCodec;
+    using static HaloGame;
 
     [AttributeUsage(AttributeTargets.Field)]
     internal sealed class CacheMetadataAttribute : Attribute
     {
+        public HaloGame Game { get; }
         public CacheGeneration Generation { get; }
         public CachePlatform Platform { get; }
         public CacheResourceCodec ResourceCodec { get; }
         public CacheMetadataFlags Flags { get; }
 
-        public CacheMetadataAttribute(CacheGeneration generation, CachePlatform platform)
-            : this(generation, platform, generation < CacheGeneration.Gen3 ? Uncompressed : Deflate, None)
+        public CacheMetadataAttribute(HaloGame game, CachePlatform platform)
+            : this(game, platform, game < Halo3 ? Uncompressed : Deflate, None)
         { }
 
-        public CacheMetadataAttribute(CacheGeneration generation, CachePlatform platform, CacheMetadataFlags flags)
-            : this(generation, platform, generation < CacheGeneration.Gen3 ? Uncompressed : Deflate, flags)
+        public CacheMetadataAttribute(HaloGame game, CachePlatform platform, CacheMetadataFlags flags)
+            : this(game, platform, game < Halo3 ? Uncompressed : Deflate, flags)
         { }
 
-        public CacheMetadataAttribute(CacheGeneration generation, CachePlatform platform, CacheResourceCodec codec)
-             : this(generation, platform, codec, None)
+        public CacheMetadataAttribute(HaloGame game, CachePlatform platform, CacheResourceCodec codec)
+             : this(game, platform, codec, None)
         { }
 
-        public CacheMetadataAttribute(CacheGeneration generation, CachePlatform platform, CacheResourceCodec codec, CacheMetadataFlags flags)
+        public CacheMetadataAttribute(HaloGame game, CachePlatform platform, CacheResourceCodec codec, CacheMetadataFlags flags)
         {
-            Generation = generation;
+            Game = game;
             Platform = platform;
             ResourceCodec = codec;
             Flags = flags;
+            Generation = game switch
+            {
+                Halo1 => CacheGeneration.Gen1,
+                Halo2 => CacheGeneration.Gen2,
+                Halo3 or Halo3ODST or HaloReach => CacheGeneration.Gen3,
+                Halo4 or Halo2X => CacheGeneration.Gen4,
+                _ => throw new NotImplementedException()
+            };
         }
     }
 
