@@ -48,7 +48,9 @@ namespace Reclaimer.Blam.MccHaloReach
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
 
-                LocaleIndex = new LocaleIndex(this, 664, 80, 12);
+                LocaleIndex = args.CacheType >= CacheType.MccHaloReachU13
+                    ? new LocaleIndex(this, 24, 80, 12)
+                    : new LocaleIndex(this, 664, 80, 12);
             }
 
             Task.Factory.StartNew(() =>

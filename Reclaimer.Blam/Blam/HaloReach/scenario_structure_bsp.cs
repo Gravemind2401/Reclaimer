@@ -49,22 +49,26 @@ namespace Reclaimer.Blam.HaloReach
 
         [Offset(620, MaxVersion = (int)CacheType.HaloReachRetail)]
         [Offset(608, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
-        [Offset(612, MinVersion = (int)CacheType.MccHaloReach)]
+        [Offset(612, MinVersion = (int)CacheType.MccHaloReach, MaxVersion = (int)CacheType.MccHaloReachU13)]
+        [Offset(600, MinVersion = (int)CacheType.MccHaloReachU13)]
         public BlockCollection<BspGeometryInstanceBlock> GeometryInstances { get; set; }
 
         [Offset(1112, MaxVersion = (int)CacheType.HaloReachRetail)]
         [Offset(1100, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
-        [Offset(1128, MinVersion = (int)CacheType.MccHaloReach)]
+        [Offset(1128, MinVersion = (int)CacheType.MccHaloReach, MaxVersion = (int)CacheType.MccHaloReachU13)]
+        [Offset(1104, MinVersion = (int)CacheType.MccHaloReachU13)]
         public BlockCollection<SectionBlock> Sections { get; set; }
 
         [Offset(1124, MaxVersion = (int)CacheType.HaloReachRetail)]
         [Offset(1112, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
-        [Offset(1140, MinVersion = (int)CacheType.MccHaloReach)]
+        [Offset(1140, MinVersion = (int)CacheType.MccHaloReach, MaxVersion = (int)CacheType.MccHaloReachU13)]
+        [Offset(1116, MinVersion = (int)CacheType.MccHaloReachU13)]
         public BlockCollection<BoundingBoxBlock> BoundingBoxes { get; set; }
 
         [MinVersion((int)CacheType.HaloReachRetail)]
         [Offset(1296, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
-        [Offset(1336, MinVersion = (int)CacheType.MccHaloReach)]
+        [Offset(1336, MinVersion = (int)CacheType.MccHaloReach, MaxVersion = (int)CacheType.MccHaloReachU13)]
+        [Offset(1312, MinVersion = (int)CacheType.MccHaloReachU13)]
         public ResourceIdentifier InstancesResourcePointer { get; set; }
 
         #region IRenderGeometry

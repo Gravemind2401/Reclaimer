@@ -149,30 +149,35 @@ namespace Reclaimer.Blam.Common
         MccHalo3F6,
 
         [CacheMetadata(HaloGame.Halo3, PC, Mcc)]
-        [BuildString("Sep 29 2021 09:17:56", "U1")] //update 6
-        [BuildString("Oct 11 2021 04:58:42", "U1")] //U7 (U6 custom maps)
-        [BuildString("Nov  1 2021 06:16:14", "U1")] //U8
+        [BuildString("Sep 29 2021 09:17:56", "U6")] //update 6
+        [BuildString("Oct 11 2021 04:58:42", "U6")] //U7 (U6 custom maps)
+        [BuildString("Nov  1 2021 06:16:14", "U6")] //U8
         MccHalo3U6,
 
         [CacheMetadata(HaloGame.Halo3, PC, Mcc)]
-        [BuildString("Feb 15 2022 01:35:34", "U1")] //U9
-        [BuildString("Apr  6 2022 10:48:27", "U1")] //U9 custom maps 1
-        [BuildString("Apr  6 2022 10:48:46", "U1")] //U9 custom maps 2
-        [BuildString("Apr 20 2022 11:55:21", "U1")] //U9 custom maps 3
-        [BuildString("Apr 20 2022 11:56:23", "U1")] //U9 custom maps 4
-        [BuildString("May  3 2022 12:38:41", "U1")] //U10
-        [BuildString("Jun  8 2022 16:05:04", "U1")] //U10 custom maps 1
-        [BuildString("Jun  8 2022 16:06:30", "U1")] //U10 custom maps 2
-        [BuildString("Jul 21 2022 21:15:27", "U1")] //U11
-        [BuildString("Aug 21 2022 17:23:29", "U1")] //U11 custom maps 1
-        [BuildString("Aug 21 2022 17:24:39", "U1")] //U11 custom maps 2
+        [BuildString("Feb 15 2022 01:35:34", "U6")] //U9
+        [BuildString("Apr  6 2022 10:48:27", "U6")] //U9 custom maps 1
+        [BuildString("Apr  6 2022 10:48:46", "U6")] //U9 custom maps 2
+        [BuildString("Apr 20 2022 11:55:21", "U6")] //U9 custom maps 3
+        [BuildString("Apr 20 2022 11:56:23", "U6")] //U9 custom maps 4
+        [BuildString("May  3 2022 12:38:41", "U6")] //U10
+        [BuildString("Jun  8 2022 16:05:04", "U6")] //U10 custom maps 1
+        [BuildString("Jun  8 2022 16:06:30", "U6")] //U10 custom maps 2
+        [BuildString("Jul 21 2022 21:15:27", "U6")] //U11
+        [BuildString("Aug 21 2022 17:23:29", "U6")] //U11 custom maps 1
+        [BuildString("Aug 21 2022 17:24:39", "U6")] //U11 custom maps 2
         MccHalo3U9,
 
         [CacheMetadata(HaloGame.Halo3, PC, Mcc)]
-        [BuildString("Oct 11 2022 04:34:53", "U1")] //U12
-        [BuildString("Nov 16 2022 21:16:57", "U1")] //U12 custom maps 1
-        [BuildString("Nov 16 2022 21:18:10", "U1")] //U12 custom maps 2
+        [BuildString("Oct 11 2022 04:34:53", "U6")] //U12
+        [BuildString("Nov 16 2022 21:16:57", "U6")] //U12 custom maps 1
+        [BuildString("Nov 16 2022 21:18:10", "U6")] //U12 custom maps 2
         MccHalo3U12,
+
+        [CacheMetadata(HaloGame.Halo3, PC, Mcc)]
+        [BuildString("May 22 2023 20:10:02", "U13")] //U13
+        [BuildString("Jun 27 2023 08:39:36", "U13")] //U13 custom maps
+        MccHalo3U13,
 
         [CacheMetadata(HaloGame.Halo3ODST, Xbox360)]
         [BuildString("13895.09.04.27.2201.atlas_relea", "odst")]
@@ -196,22 +201,28 @@ namespace Reclaimer.Blam.Common
         MccHalo3ODSTU3,
 
         [CacheMetadata(HaloGame.Halo3ODST, PC, Mcc)]
-        [BuildString("Feb 15 2022 01:59:47", "ODST U0")] //update 4
-        [BuildString("Apr  5 2022 14:16:52", "ODST U0")] //update 4 custom maps 1
-        [BuildString("Apr  5 2022 14:16:35", "ODST U0")] //update 4 custom maps 2
-        [BuildString("Apr 20 2022 11:53:15", "ODST U0")] //update 5
-        [BuildString("May  3 2022 12:27:08", "ODST U0")] //update 5 custom maps 1
-        [BuildString("May  3 2022 12:27:56", "ODST U0")] //update 5 custom maps 2
-        [BuildString("Jul 22 2022 05:55:30", "ODST U0")] //update 6
-        [BuildString("Aug 21 2022 17:29:59", "ODST U0")] //update 6 custom maps 1
-        [BuildString("Aug 21 2022 17:30:28", "ODST U0")] //update 6 custom maps 2
+        [BuildString("Feb 15 2022 01:59:47", "ODST U3")] //update 4
+        [BuildString("Apr  5 2022 14:16:52", "ODST U3")] //update 4 custom maps 1
+        [BuildString("Apr  5 2022 14:16:35", "ODST U3")] //update 4 custom maps 2
+        [BuildString("Apr 20 2022 11:53:15", "ODST U3")] //update 5
+        [BuildString("May  3 2022 12:27:08", "ODST U3")] //update 5 custom maps 1
+        [BuildString("May  3 2022 12:27:56", "ODST U3")] //update 5 custom maps 2
+        [BuildString("Jul 22 2022 05:55:30", "ODST U3")] //update 6
+        [BuildString("Aug 21 2022 17:29:59", "ODST U3")] //update 6 custom maps 1
+        [BuildString("Aug 21 2022 17:30:28", "ODST U3")] //update 6 custom maps 2
         MccHalo3ODSTU4,
 
         [CacheMetadata(HaloGame.Halo3ODST, PC, Mcc)]
-        [BuildString("Oct 24 2022 03:07:19", "ODST U0")] //update 7
-        [BuildString("Nov 16 2022 20:57:46", "ODST U0")] //update 7 custom maps 1
-        [BuildString("Nov 16 2022 20:59:16", "ODST U0")] //update 7 custom maps 2
+        [BuildString("Oct 24 2022 03:07:19", "ODST U3")] //update 7
+        [BuildString("Nov 16 2022 20:57:46", "ODST U3")] //update 7 custom maps 1
+        [BuildString("Nov 16 2022 20:59:16", "ODST U3")] //update 7 custom maps 2
         MccHalo3ODSTU7,
+
+        [CacheMetadata(HaloGame.Halo3ODST, PC, Mcc)]
+        [BuildString("May 16 2023 11:44:41", "ODST U8")] //update 8
+        [BuildString("Jun 27 2023 08:39:51", "ODST U8")] //update 8 custom maps 1
+        [BuildString("Jun 27 2023 08:39:50", "ODST U8")] //update 8 custom maps 2
+        MccHalo3ODSTU8,
 
         [CacheMetadata(HaloGame.HaloReach, Xbox360, Beta)]
         [BuildString("09449.10.03.25.1545.omaha_beta", "beta", PreBeta)]
@@ -239,20 +250,28 @@ namespace Reclaimer.Blam.Common
         MccHaloReachU3,
 
         [CacheMetadata(HaloGame.HaloReach, PC, Mcc)]
-        [BuildString("Aug 11 2021 15:50:30", "U6", MccFlight)] //flight 4
-        [BuildString("Sep 13 2021 09:49:52", "U6")] //update 8
-        [BuildString("Sep 17 2021 13:25:40", "U6")] //update 9
+        [BuildString("Aug 11 2021 15:50:30", "U8", MccFlight)] //flight 4
+        [BuildString("Sep 13 2021 09:49:52", "U8")] //update 8
+        [BuildString("Sep 17 2021 13:25:40", "U8")] //update 9
         MccHaloReachU8,
 
         [CacheMetadata(HaloGame.HaloReach, PC, Mcc)]
-        [BuildString("Jan 13 2022 00:54:50", "U6")] //update 10
-        [BuildString("Aug  5 2022 20:35:02", "U6")] //update 11
-        [BuildString("Aug 31 2022 11:53:49", "U6")] //update 11 custom maps 1
-        [BuildString("Aug 31 2022 11:53:19", "U6")] //update 11 custom maps 2
-        [BuildString("Oct 12 2022 01:55:01", "U6")] //update 12
-        [BuildString("Nov 16 2022 21:11:25", "U6")] //update 12 custom maps 1
-        [BuildString("Nov 16 2022 21:13:04", "U6")] //update 12 custom maps 2
+        [BuildString("Jan 13 2022 00:54:50", "U8")] //update 10
+        [BuildString("Aug  5 2022 20:35:02", "U8")] //update 11
+        [BuildString("Aug 31 2022 11:53:49", "U8")] //update 11 custom maps 1
+        [BuildString("Aug 31 2022 11:53:19", "U8")] //update 11 custom maps 2
+        [BuildString("Oct 12 2022 01:55:01", "U8")] //update 12
+        [BuildString("Nov 16 2022 21:11:25", "U8")] //update 12 custom maps 1
+        [BuildString("Nov 16 2022 21:13:04", "U8")] //update 12 custom maps 2
         MccHaloReachU10,
+
+        [CacheMetadata(HaloGame.HaloReach, PC, Mcc)]
+        [BuildString("Jun 21 2023 15:35:31", "U13")] //update 13
+        [BuildString("Jun 27 2023 08:55:51", "U13")] //update 13 custom maps 1
+        [BuildString("Jun 27 2023 08:55:19", "U13")] //update 13 custom maps 2
+        [BuildString("Jul 16 2023 16:12:13", "U13")] //update 13 custom maps 3
+        [BuildString("Jul 16 2023 16:08:14", "U13")] //update 13 custom maps 4
+        MccHaloReachU13,
 
         [CacheMetadata(HaloGame.Halo4, Xbox360, Beta)]
         [BuildString("14064.12.05.05.1011.beta", "beta")]
@@ -293,8 +312,11 @@ namespace Reclaimer.Blam.Common
 
         [CacheMetadata(HaloGame.Halo4, PC, Deflate, Mcc)]
         [BuildString("Oct 17 2022 21:26:14", "U3")] //update 6
-        [BuildString("Dec  6 2022 11:23:50", "U6")] //update 6 custom maps 1
-        [BuildString("Dec  6 2022 11:26:37", "U6")] //update 6 custom maps 2
+        [BuildString("Dec  6 2022 11:23:50", "U3")] //update 6 custom maps 1
+        [BuildString("Dec  6 2022 11:26:37", "U3")] //update 6 custom maps 2
+        [BuildString("Apr  1 2023 17:35:22", "U3")] //update 7
+        [BuildString("Jun 27 2023 08:46:47", "U3")] //update 7 custom maps 1
+        [BuildString("Jun 27 2023 08:47:24", "U3")] //update 7 custom maps 2
         MccHalo4U6,
 
         [CacheMetadata(HaloGame.Halo2X, PC, UnknownDeflate, Mcc)]
@@ -318,6 +340,9 @@ namespace Reclaimer.Blam.Common
         [BuildString("Oct 14 2022 21:11:35", "U6")] //update 10
         [BuildString("Dec  6 2022 11:13:38", "U6")] //update 10 custom maps 1
         [BuildString("Dec  6 2022 11:13:46", "U6")] //update 10 custom maps 2
+        [BuildString("Jun 13 2023 20:21:18", "U6")] //update 11
+        [BuildString("Jun 27 2023 08:47:43", "U6")] //update 11 custom maps 1
+        [BuildString("Jun 27 2023 08:47:52", "U6")] //update 11 custom maps 2
         MccHalo2XU10,
     }
 

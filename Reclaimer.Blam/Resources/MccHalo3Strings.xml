@@ -38,4 +38,10 @@
     <namespace id="0x8" startIndex="0xE8B" />
     <namespace id="0xA" startIndex="0xE98" />
   </stringIDs>
+
+  <!-- from U6 (ODST U3) onwards, namespaces are in the header (but bit layout is not, so still need a definition for it) -->
+  <stringIDs id="U6" indexBits="17" namespaceBits="8" lengthBits="7" />
+  <stringIDs id="U13" indexBits="19" namespaceBits="8" lengthBits="5" />
+  <stringIDs id="ODST U3" indexBits="17" namespaceBits="8" lengthBits="7" />
+  <stringIDs id="ODST U8" indexBits="19" namespaceBits="8" lengthBits="5" />
 </stringDefinitions>

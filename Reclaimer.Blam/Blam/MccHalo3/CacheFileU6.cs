@@ -48,17 +48,15 @@ namespace Reclaimer.Blam.MccHalo3
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
 
-                switch (CacheType)
+                LocaleIndex = args.Metadata.Game switch
                 {
-                    case CacheType.MccHalo3F6:
-                    case CacheType.MccHalo3U6:
-                        LocaleIndex = new LocaleIndex(this, 464, 80, 12);
-                        break;
-                    case CacheType.MccHalo3ODSTF3:
-                    case CacheType.MccHalo3ODSTU3:
-                        LocaleIndex = new LocaleIndex(this, 520, 80, 12);
-                        break;
-                }
+                    HaloGame.Halo3 when args.CacheType < CacheType.MccHalo3U12 => new LocaleIndex(this, 464, 80, 12),
+                    HaloGame.Halo3 => new LocaleIndex(this, 24, 80, 12),
+
+                    HaloGame.Halo3ODST when args.CacheType < CacheType.MccHalo3ODSTU7 => new LocaleIndex(this, 520, 80, 12),
+                    HaloGame.Halo3ODST => new LocaleIndex(this, 24, 80, 12),
+                    _ => null
+                };
             }
 
             Task.Factory.StartNew(() =>
