@@ -1,5 +1,4 @@
 ﻿using Reclaimer.Blam.Common.Gen3;
-using System.Diagnostics;
 using System.Xml;
 
 namespace Reclaimer.Blam.Common
@@ -23,15 +22,11 @@ namespace Reclaimer.Blam.Common
         #region Xml-Based
         public StringIdTranslator(string xml)
             : this(GetNodes(xml).First())
-        {
-
-        }
+        { }
 
         public StringIdTranslator(string xml, string collectionId)
             : this(GetNodes(xml).First(n => n.Attributes["id"].Value == collectionId))
-        {
-
-        }
+        { }
 
         private StringIdTranslator(XmlNode node)
         {
@@ -52,17 +47,9 @@ namespace Reclaimer.Blam.Common
         #endregion
 
         #region Header-Based
-        public StringIdTranslator(IMccCacheFile cache, string xml)
-            : this(cache, GetNodes(xml).First())
-        {
-
-        }
-
         public StringIdTranslator(IMccCacheFile cache, string xml, string collectionId)
             : this(cache, GetNodes(xml).First(n => n.Attributes["id"].Value == collectionId))
-        {
-
-        }
+        { }
 
         private StringIdTranslator(IMccCacheFile cache, XmlNode node)
         {
@@ -117,21 +104,6 @@ namespace Reclaimer.Blam.Common
             return index - ns.Start + nsFirst;
         }
 
-        [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-        private class Namespace
-        {
-            public int Id { get; }
-            public int Min { get; }
-            public int Start { get; }
-
-            public Namespace(int id, int min, int start)
-            {
-                Id = id;
-                Min = min;
-                Start = start;
-            }
-
-            private string GetDebuggerDisplay() => new { Id, Min, Start }.ToString();
-        }
+        private record class Namespace(int Id, int Min, int Start);
     }
 }
