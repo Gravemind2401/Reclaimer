@@ -1,4 +1,5 @@
-﻿using Reclaimer.Saber3D.Common;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Saber3D.Common;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -14,6 +15,7 @@ namespace Reclaimer.Blam.Utilities
         public static ArgumentException NotASaberTextureItem(IPakItem item) => new ArgumentException($"'{item.Name}' is not a texture file.");
         public static NotSupportedException AmbiguousScenarioReference() => new NotSupportedException("Could not determine primary scenario tag.");
         public static InvalidOperationException GeometryHasNoEdges() => new InvalidOperationException("Geometry contains no edges.");
+        public static NotSupportedException ResourceDataNotSupported(ICacheFile cache) => new NotSupportedException($"Cannot read resource data for {nameof(CacheType)}.{cache.CacheType}");
 
         public static void ThrowIfFileNotFound(string argument)
         {
