@@ -76,7 +76,7 @@ namespace Reclaimer.IO
         public FixedSizeAttribute(long size)
         {
             if (size <= 0)
-                throw Exceptions.ParamMustBePositive(nameof(size), size);
+                throw Exceptions.ParamMustBePositive(size);
 
             Size = size;
         }
@@ -212,7 +212,7 @@ namespace Reclaimer.IO
         public OffsetAttribute(long offset)
         {
             if (offset < 0)
-                throw Exceptions.ParamMustBeNonNegative(nameof(offset), offset);
+                throw Exceptions.ParamMustBeNonNegative(offset);
 
             Offset = offset;
         }
@@ -417,7 +417,7 @@ namespace Reclaimer.IO
         public FixedLengthAttribute(int length)
         {
             if (length <= 0)
-                throw Exceptions.ParamMustBePositive(nameof(length), length);
+                throw Exceptions.ParamMustBePositive(length);
 
             Length = length;
             Padding = ' ';

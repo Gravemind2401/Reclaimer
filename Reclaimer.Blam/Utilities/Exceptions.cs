@@ -23,25 +23,25 @@ namespace Reclaimer.Blam.Utilities
                 throw new FileNotFoundException("The file does not exist.", argument);
         }
 
-        public static void ThrowIfNegative(int argument, [CallerArgumentExpression("argument")] string paramName = null)
+        public static void ThrowIfNegative(int argument, [CallerArgumentExpression(nameof(argument))] string paramName = null)
         {
             if (argument < 0)
                 throw new ArgumentOutOfRangeException(paramName, $"'{paramName}' must be non-negative.");
         }
 
-        public static void ThrowIfNonPositive(int argument, [CallerArgumentExpression("argument")] string paramName = null)
+        public static void ThrowIfNonPositive(int argument, [CallerArgumentExpression(nameof(argument))] string paramName = null)
         {
             if (argument <= 0)
                 throw new ArgumentOutOfRangeException(paramName, $"'{paramName}' must be greater than zero.");
         }
 
-        public static void ThrowIfOutOfRange<T>(T argument, T inclusiveMin, T exclusiveMax, [CallerArgumentExpression("argument")] string paramName = null) where T : IComparable<T>
+        public static void ThrowIfOutOfRange<T>(T argument, T inclusiveMin, T exclusiveMax, [CallerArgumentExpression(nameof(argument))] string paramName = null) where T : IComparable<T>
         {
             if (argument.CompareTo(inclusiveMin) < 0 || argument.CompareTo(exclusiveMax) >= 0)
                 throw new ArgumentOutOfRangeException(paramName, $"'{paramName}' must be greater than or equal to {inclusiveMin} and less than {exclusiveMax}.");
         }
 
-        public static void ThrowIfIndexOutOfRange(int argument, int count, [CallerArgumentExpression("argument")] string paramName = null)
+        public static void ThrowIfIndexOutOfRange(int argument, int count, [CallerArgumentExpression(nameof(argument))] string paramName = null)
         {
             if (argument < 0 || argument >= count)
                 throw new ArgumentOutOfRangeException(paramName, "Index was out of range. Must be non-negative and less than the size of the collection.");
