@@ -3,7 +3,7 @@
 namespace Reclaimer.IO.Dynamic
 {
     internal class PrimitiveFieldDefinition<TClass, TField> : FieldDefinition<TClass, TField>
-        where TField : struct, IConvertible
+        where TField : struct
     {
         private delegate TField ReadMethod(EndianReader reader, ByteOrder byteOrder);
         private delegate void WriteMethod(EndianWriter writer, TField value, ByteOrder byteOrder);
@@ -25,6 +25,8 @@ namespace Reclaimer.IO.Dynamic
                 TypeCode.UInt64 => CreateReadDelegate((r, o) => r.ReadUInt64(o)),
                 TypeCode.Single => CreateReadDelegate((r, o) => r.ReadSingle(o)),
                 TypeCode.Double => CreateReadDelegate((r, o) => r.ReadDouble(o)),
+                _ when typeof(TField) == typeof(Guid) => CreateReadDelegate((r, o) => r.ReadGuid(o)),
+                _ when typeof(TField) == typeof(decimal) => CreateReadDelegate((r, o) => r.ReadDecimal(o)),
                 _ => throw new NotSupportedException()
             };
 
@@ -38,6 +40,8 @@ namespace Reclaimer.IO.Dynamic
                 TypeCode.UInt64 => CreateWriteDelegate<ulong>((w, o, v) => w.Write(v, o)),
                 TypeCode.Single => CreateWriteDelegate<float>((w, o, v) => w.Write(v, o)),
                 TypeCode.Double => CreateWriteDelegate<double>((w, o, v) => w.Write(v, o)),
+                _ when typeof(TField) == typeof(Guid) => CreateWriteDelegate<Guid>((w, o, v) => w.Write(v, o)),
+                _ when typeof(TField) == typeof(decimal) => CreateWriteDelegate<decimal>((w, o, v) => w.Write(v, o)),
                 _ => throw new NotSupportedException()
             };
 

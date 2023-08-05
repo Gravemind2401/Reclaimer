@@ -15,12 +15,22 @@ namespace Reclaimer.IO.Dynamic
 
         protected virtual string GetDebuggerDisplay() => $"@{Offset,4} (0x{Offset:X4}) : [{TargetProperty.PropertyType.Name}] {typeof(TClass).Name}.{TargetProperty.Name}";
 
-        public static FieldDefinition<TClass> Create(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder, Type storeType)
+        private static Type GetUnderlyingType(Type storeType)
         {
-            storeType ??= targetProperty.PropertyType;
-
             if (storeType.IsGenericType && storeType.GetGenericTypeDefinition() == typeof(Nullable<>))
                 storeType = storeType.GetGenericArguments()[0];
+
+            if (storeType.IsEnum)
+                storeType = Enum.GetUnderlyingType(storeType);
+
+            return storeType;
+        }
+
+        protected static bool SupportsDirectAssignment(Type type1, Type type2) => GetUnderlyingType(type1) == GetUnderlyingType(type2);
+
+        public static FieldDefinition<TClass> Create(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder, Type storeType)
+        {
+            storeType = GetUnderlyingType(storeType ?? targetProperty.PropertyType);
 
             if (storeType == typeof(string))
             {
@@ -84,7 +94,7 @@ namespace Reclaimer.IO.Dynamic
         }
 
         private static FieldDefinition<TClass> CreatePrimitive<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
-            where TField : struct, IConvertible
+            where TField : struct
         {
             return new PrimitiveFieldDefinition<TClass, TField>
             {
@@ -111,6 +121,7 @@ namespace Reclaimer.IO.Dynamic
         private delegate TField GetMethod(TClass target);
         private delegate void SetMethod(TClass target, TField value);
 
+        private bool IsNullable { get; init; }
         private GetMethod InvokeGet { get; init; }
         private SetMethod InvokeSet { get; init; }
 
@@ -120,6 +131,7 @@ namespace Reclaimer.IO.Dynamic
             init
             {
                 base.TargetProperty = value;
+                IsNullable = TargetProperty.PropertyType.IsGenericType && TargetProperty.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
                 InvokeGet = CreateGetterDelegate();
                 InvokeSet = CreateSetterDelegate();
             }
@@ -139,30 +151,56 @@ namespace Reclaimer.IO.Dynamic
 
         private GetMethod CreateGetterDelegate()
         {
-            if (TargetProperty.PropertyType == typeof(TField))
-                return TargetProperty.GetMethod.CreateDelegate<GetMethod>();
+            if (SupportsDirectAssignment(TargetProperty.PropertyType, typeof(TField)))
+            {
+                if (IsNullable)
+                    return GetViaNullable;
 
-            return (obj) =>
+                return TargetProperty.GetMethod.CreateDelegate<GetMethod>();
+            }
+
+            return GetViaConversion;
+
+            TField GetViaNullable(TClass obj)
+            {
+                //same net result as {return obj.Property.GetValueOrDefault()}
+                return TargetProperty.GetValue(obj) is TField result ? result : default;
+            }
+
+            TField GetViaConversion(TClass obj)
             {
                 var value = TargetProperty.GetValue(obj);
                 if (!Utils.TryConvert(ref value, TargetProperty.PropertyType, typeof(TField)))
                     throw new InvalidCastException($"The value in {TargetProperty.Name} could not be stored as {typeof(TField)}");
                 return (TField)value;
-            };
+            }
         }
 
         private SetMethod CreateSetterDelegate()
         {
-            if (TargetProperty.PropertyType == typeof(TField))
-                return TargetProperty.SetMethod.CreateDelegate<SetMethod>();
+            if (SupportsDirectAssignment(TargetProperty.PropertyType, typeof(TField)))
+            {
+                if (IsNullable)
+                    return SetViaNullable;
 
-            return (obj, value) =>
+                return TargetProperty.SetMethod.CreateDelegate<SetMethod>();
+            }
+
+            return SetViaConversion;
+
+            void SetViaNullable(TClass obj, TField value)
+            {
+                //delegate isnt compatable, but it can be set via SetValue with boxing
+                TargetProperty.SetValue(obj, value);
+            }
+
+            void SetViaConversion(TClass obj, TField value)
             {
                 var converted = (object)value;
                 if (!Utils.TryConvert(ref converted, typeof(TField), TargetProperty.PropertyType))
                     throw new InvalidCastException($"The value in {TargetProperty.Name} could not be stored as {typeof(TField)}");
                 TargetProperty.SetValue(obj, converted);
-            };
+            }
         }
 
         protected abstract TField StreamRead(EndianReader reader, ByteOrder byteOrder);
