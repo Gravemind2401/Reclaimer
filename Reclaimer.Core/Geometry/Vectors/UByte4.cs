@@ -11,7 +11,7 @@ namespace Reclaimer.Geometry.Vectors
         private const int packSize = 1;
         private const int structureSize = 4;
 
-        private static byte Clamp(in float value) => (byte)Utils.Clamp(value, 0f, byte.MaxValue);
+        private static byte Clamp(in float value) => (byte)Math.Clamp(value, 0f, byte.MaxValue);
 
         public UByte4(Vector4 value)
             : this(Clamp(value.X), Clamp(value.Y), Clamp(value.Z), Clamp(value.W))

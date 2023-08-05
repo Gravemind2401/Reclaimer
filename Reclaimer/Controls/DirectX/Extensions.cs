@@ -9,10 +9,6 @@ namespace Reclaimer.Controls.DirectX
 {
     internal static class Extensions
     {
-        public static float Clamp(float value, float min, float max) => Math.Min(Math.Max(min, value), max);
-
-        public static double Clamp(double value, double min, double max) => Math.Min(Math.Max(min, value), max);
-
         public static Numerics.Vector3 ToNumericsVector3(this Media3D.Point3D point)
         {
             return new Numerics.Vector3((float)point.X, (float)point.Y, (float)point.Z);

@@ -9,16 +9,6 @@ namespace Reclaimer
     {
         public static string CurrentCulture(FormattableString formattable) => formattable?.ToString(CultureInfo.CurrentCulture) ?? throw new ArgumentNullException(nameof(formattable));
 
-        public static T Clamp<T>(in T value, T min, T max) where T : IComparable<T>
-        {
-            if (value.CompareTo(min) < 0)
-                return min;
-            else if (value.CompareTo(max) > 0)
-                return max;
-            else
-                return value;
-        }
-
         public static bool TryConvert(ref object value, Type fromType, Type toType)
         {
             if (value?.GetType() == toType)

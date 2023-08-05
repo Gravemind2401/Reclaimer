@@ -10,8 +10,6 @@ namespace Reclaimer.Blam.Utilities
                 ?? throw new ArgumentNullException(nameof(formattable));
         }
 
-        public static float Clamp(float value, float min, float max) => Math.Min(Math.Max(min, value), max);
-
         public static string GetFileName(this string value) => value?.Split('\\').Last();
 
         public static TSource? FirstOrNull<TSource>(this IEnumerable<TSource> source, Predicate<TSource> predicate) where TSource : struct

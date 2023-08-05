@@ -27,8 +27,8 @@
         private float Normalise(in float value, in BitRange bitRange)
         {
             return signed
-                ? Utils.Clamp(value, -1f, 1f) * bitRange.SignedScale
-                : Utils.Clamp(value, 0f, 1f) * bitRange.UnsignedScale;
+                ? Math.Clamp(value, -1f, 1f) * bitRange.SignedScale
+                : Math.Clamp(value, 0f, 1f) * bitRange.UnsignedScale;
         }
 
         #region 8 or 16-bit Normalised
