@@ -28,13 +28,16 @@
         public ulong? Property8 { get; set; }
 
         [Offset(0x80)]
-        public float? Property9 { get; set; }
+        public Half? Property9 { get; set; }
 
         [Offset(0x90)]
-        public double? Property10 { get; set; }
+        public float? Property10 { get; set; }
 
         [Offset(0xA0)]
-        public Guid? Property11 { get; set; }
+        public double? Property11 { get; set; }
+
+        [Offset(0xB0)]
+        public Guid? Property12 { get; set; }
     }
 
     public class NullablesClass02
@@ -63,13 +66,16 @@
         [Offset(0x80)]
         public ulong? Property8 { get; set; }
 
+        [Offset(0xB0)]
+        public Half? Property9 { get; set; }
+
         [Offset(0x20)]
-        public float? Property9 { get; set; }
+        public float? Property10 { get; set; }
 
         [Offset(0x50)]
-        public double? Property10 { get; set; }
+        public double? Property11 { get; set; }
 
         [Offset(0x60)]
-        public Guid? Property11 { get; set; }
+        public Guid? Property12 { get; set; }
     }
 }

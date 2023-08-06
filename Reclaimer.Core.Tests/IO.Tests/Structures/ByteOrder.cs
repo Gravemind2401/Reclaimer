@@ -30,10 +30,16 @@
         public ulong Property8 { get; set; }
 
         [Offset(0x80)]
-        public float Property9 { get; set; }
+        public Half Property9 { get; set; }
 
         [Offset(0x90)]
-        public double Property10 { get; set; }
+        public float Property10 { get; set; }
+
+        [Offset(0xA0)]
+        public double Property11 { get; set; }
+
+        [Offset(0xB0)]
+        public Guid Property12 { get; set; }
     }
 
     public class ByteOrderClass02
@@ -54,7 +60,7 @@
         [Offset(0x90)]
         public byte Property5 { get; set; }
 
-        [Offset(0x60)]
+        [Offset(0xA0)]
         public ushort Property6 { get; set; }
 
         [Offset(0x00)]
@@ -64,10 +70,16 @@
         [ByteOrder(ByteOrder.BigEndian)]
         public ulong Property8 { get; set; }
 
+        [Offset(0xB0)]
+        public Half Property9 { get; set; }
+
         [Offset(0x20)]
-        public float Property9 { get; set; }
+        public float Property10 { get; set; }
 
         [Offset(0x50)]
-        public double Property10 { get; set; }
+        public double Property11 { get; set; }
+
+        [Offset(0x60)]
+        public Guid Property12 { get; set; }
     }
 }

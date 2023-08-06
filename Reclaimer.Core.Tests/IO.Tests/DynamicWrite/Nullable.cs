@@ -18,9 +18,10 @@
                 Property6 = (ushort)rng.Next(ushort.MinValue, ushort.MaxValue),
                 Property7 = unchecked((uint)rng.Next(int.MinValue, int.MaxValue)),
                 Property8 = (ulong)unchecked((uint)rng.Next(int.MinValue, int.MaxValue)),
-                Property9 = (float)rng.NextDouble(),
-                Property10 = (double)rng.NextDouble(),
-                Property11 = Guid.NewGuid()
+                Property9 = (Half)rng.NextDouble(),
+                Property10 = (float)rng.NextDouble(),
+                Property11 = (double)rng.NextDouble(),
+                Property12 = Guid.NewGuid()
             };
 
             using (var stream = new MemoryStream(new byte[500]))
@@ -57,13 +58,16 @@
                 Assert.AreEqual(obj.Property8, reader.ReadUInt64());
 
                 reader.Seek(0x80, SeekOrigin.Begin);
-                Assert.AreEqual(obj.Property9, reader.ReadSingle());
+                Assert.AreEqual(obj.Property9, reader.ReadHalf());
 
                 reader.Seek(0x90, SeekOrigin.Begin);
-                Assert.AreEqual(obj.Property10, reader.ReadDouble());
+                Assert.AreEqual(obj.Property10, reader.ReadSingle());
 
                 reader.Seek(0xA0, SeekOrigin.Begin);
-                Assert.AreEqual(obj.Property11, reader.ReadGuid());
+                Assert.AreEqual(obj.Property11, reader.ReadDouble());
+
+                reader.Seek(0xB0, SeekOrigin.Begin);
+                Assert.AreEqual(obj.Property12, reader.ReadGuid());
             }
         }
 
@@ -83,9 +87,10 @@
                 Property6 = (ushort)rng.Next(ushort.MinValue, ushort.MaxValue),
                 Property7 = unchecked((uint)rng.Next(int.MinValue, int.MaxValue)),
                 Property8 = (ulong)unchecked((uint)rng.Next(int.MinValue, int.MaxValue)),
-                Property9 = (float)rng.NextDouble(),
-                Property10 = (double)rng.NextDouble(),
-                Property11 = null
+                Property9 = (Half)rng.NextDouble(),
+                Property10 = (float)rng.NextDouble(),
+                Property11 = (double)rng.NextDouble(),
+                Property12 = null
             };
 
             using (var stream = new MemoryStream(new byte[500]))
@@ -97,7 +102,7 @@
                 //the highest offset should always be read last
                 //so if no size is specified the position should end
                 //up at the highest offset + the size of the property
-                Assert.AreEqual(0xA2, stream.Position);
+                Assert.AreEqual(0xB2, stream.Position);
 
                 reader.Seek(0x70, SeekOrigin.Begin);
                 Assert.AreEqual(obj.Property1, reader.ReadSByte());
@@ -123,11 +128,14 @@
                 reader.Seek(0x80, SeekOrigin.Begin);
                 Assert.AreEqual(obj.Property8, reader.ReadUInt64());
 
+                reader.Seek(0xB0, SeekOrigin.Begin);
+                Assert.AreEqual(obj.Property9, reader.ReadHalf());
+
                 reader.Seek(0x20, SeekOrigin.Begin);
-                Assert.AreEqual(obj.Property9, reader.ReadSingle());
+                Assert.AreEqual(obj.Property10, reader.ReadSingle());
 
                 reader.Seek(0x50, SeekOrigin.Begin);
-                Assert.AreEqual(obj.Property10, reader.ReadDouble());
+                Assert.AreEqual(obj.Property11, reader.ReadDouble());
 
                 reader.Seek(0x60, SeekOrigin.Begin);
                 Assert.AreEqual(Guid.Empty, reader.ReadGuid());

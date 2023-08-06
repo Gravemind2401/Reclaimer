@@ -12,7 +12,7 @@
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                var rand = new object[11];
+                var rand = new object[12];
 
                 rand[0] = (sbyte)rng.Next(sbyte.MinValue, sbyte.MaxValue);
                 writer.Seek(0x00, SeekOrigin.Begin);
@@ -46,17 +46,21 @@
                 writer.Seek(0x70, SeekOrigin.Begin);
                 writer.Write((ulong)rand[7]);
 
-                rand[8] = (float)rng.NextDouble();
+                rand[8] = (Half)rng.NextDouble();
                 writer.Seek(0x80, SeekOrigin.Begin);
-                writer.Write((float)rand[8]);
+                writer.Write((Half)rand[8]);
 
-                rand[9] = rng.NextDouble();
+                rand[9] = (float)rng.NextDouble();
                 writer.Seek(0x90, SeekOrigin.Begin);
-                writer.Write((double)rand[9]);
+                writer.Write((float)rand[9]);
 
-                rand[10] = Guid.NewGuid();
+                rand[10] = rng.NextDouble();
                 writer.Seek(0xA0, SeekOrigin.Begin);
-                writer.Write((Guid)rand[10]);
+                writer.Write((double)rand[10]);
+
+                rand[11] = Guid.NewGuid();
+                writer.Seek(0xB0, SeekOrigin.Begin);
+                writer.Write((Guid)rand[11]);
 
                 stream.Position = 0;
                 var obj = reader.ReadObject<NullablesClass01>();
@@ -72,6 +76,8 @@
                 Assert.AreEqual(rand[7], obj.Property8);
                 Assert.AreEqual(rand[8], obj.Property9);
                 Assert.AreEqual(rand[9], obj.Property10);
+                Assert.AreEqual(rand[10], obj.Property11);
+                Assert.AreEqual(rand[11], obj.Property12);
             }
         }
 
@@ -85,7 +91,7 @@
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                var rand = new object[11];
+                var rand = new object[12];
 
                 rand[0] = (sbyte)rng.Next(sbyte.MinValue, sbyte.MaxValue);
                 writer.Seek(0x70, SeekOrigin.Begin);
@@ -119,17 +125,21 @@
                 writer.Seek(0x80, SeekOrigin.Begin);
                 writer.Write((ulong)rand[7]);
 
-                rand[8] = (float)rng.NextDouble();
+                rand[8] = (Half)rng.NextDouble();
+                writer.Seek(0xB0, SeekOrigin.Begin);
+                writer.Write((Half)rand[8]);
+
+                rand[9] = (float)rng.NextDouble();
                 writer.Seek(0x20, SeekOrigin.Begin);
-                writer.Write((float)rand[8]);
+                writer.Write((float)rand[9]);
 
-                rand[9] = rng.NextDouble();
+                rand[10] = rng.NextDouble();
                 writer.Seek(0x50, SeekOrigin.Begin);
-                writer.Write((double)rand[9]);
+                writer.Write((double)rand[10]);
 
-                rand[10] = Guid.NewGuid();
+                rand[11] = Guid.NewGuid();
                 writer.Seek(0x60, SeekOrigin.Begin);
-                writer.Write((Guid)rand[10]);
+                writer.Write((Guid)rand[11]);
 
                 stream.Position = 0;
                 var obj = reader.ReadObject<NullablesClass02>();
@@ -137,7 +147,7 @@
                 //the highest offset should always be read last
                 //so if no size is specified the position should end
                 //up at the highest offset + the size of the property
-                Assert.AreEqual(0xA2, stream.Position);
+                Assert.AreEqual(0xB2, stream.Position);
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(rand[1], obj.Property2);
                 Assert.AreEqual(rand[2], obj.Property3);
@@ -148,6 +158,8 @@
                 Assert.AreEqual(rand[7], obj.Property8);
                 Assert.AreEqual(rand[8], obj.Property9);
                 Assert.AreEqual(rand[9], obj.Property10);
+                Assert.AreEqual(rand[10], obj.Property11);
+                Assert.AreEqual(rand[11], obj.Property12);
             }
         }
     }
