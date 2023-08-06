@@ -36,6 +36,7 @@ namespace Reclaimer.IO.Dynamic
                 TypeCode.Single => CreateReadDelegate(r => r.ReadSingle()),
                 TypeCode.Double => CreateReadDelegate(r => r.ReadDouble()),
                 TypeCode.Decimal => CreateReadDelegate(r => r.ReadDecimal()),
+                _ when typeof(TStruct) == typeof(Half) => CreateReadDelegate(r => r.ReadHalf()),
                 _ when typeof(TStruct) == typeof(Guid) => CreateReadDelegate(r => r.ReadGuid()),
                 _ => throw new NotSupportedException()
             };
@@ -52,6 +53,7 @@ namespace Reclaimer.IO.Dynamic
                 TypeCode.Single => CreateReadDelegate((r, o) => r.ReadSingle(o)),
                 TypeCode.Double => CreateReadDelegate((r, o) => r.ReadDouble(o)),
                 TypeCode.Decimal => CreateReadDelegate((r, o) => r.ReadDecimal(o)),
+                _ when typeof(TStruct) == typeof(Half) => CreateReadDelegate((r, o) => r.ReadHalf(o)),
                 _ when typeof(TStruct) == typeof(Guid) => CreateReadDelegate((r, o) => r.ReadGuid(o)),
                 _ => throw new NotSupportedException()
             };
@@ -71,6 +73,7 @@ namespace Reclaimer.IO.Dynamic
                 TypeCode.Single => CreateWriteDelegate<float>((w, v) => w.Write(v)),
                 TypeCode.Double => CreateWriteDelegate<double>((w, v) => w.Write(v)),
                 TypeCode.Decimal => CreateWriteDelegate<decimal>((w, v) => w.Write(v)),
+                _ when typeof(TStruct) == typeof(Half) => CreateWriteDelegate<Half>((w, v) => w.Write(v)),
                 _ when typeof(TStruct) == typeof(Guid) => CreateWriteDelegate<Guid>((w, v) => w.Write(v)),
                 _ => throw new NotSupportedException()
             };
@@ -87,6 +90,7 @@ namespace Reclaimer.IO.Dynamic
                 TypeCode.Single => CreateWriteDelegate<float>((w, v, o) => w.Write(v, o)),
                 TypeCode.Double => CreateWriteDelegate<double>((w, v, o) => w.Write(v, o)),
                 TypeCode.Decimal => CreateWriteDelegate<decimal>((w, v, o) => w.Write(v, o)),
+                _ when typeof(TStruct) == typeof(Half) => CreateWriteDelegate<Half>((w, v, o) => w.Write(v, o)),
                 _ when typeof(TStruct) == typeof(Guid) => CreateWriteDelegate<Guid>((w, v, o) => w.Write(v, o)),
                 _ => throw new NotSupportedException()
             };

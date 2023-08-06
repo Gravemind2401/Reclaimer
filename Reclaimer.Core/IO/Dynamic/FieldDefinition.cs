@@ -42,16 +42,6 @@ namespace Reclaimer.IO.Dynamic
                 };
             }
 
-            if (storeType == typeof(Half))
-            {
-                return new HalfFieldDefinition<TClass>
-                {
-                    TargetProperty = targetProperty,
-                    Offset = offset,
-                    ByteOrder = byteOrder
-                };
-            }
-
             string methodName;
             if (storeType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IBufferable<>) && i.GetGenericArguments().SequenceEqual(Enumerable.Repeat(storeType, 1))))
                 methodName = nameof(CreateBufferable);
