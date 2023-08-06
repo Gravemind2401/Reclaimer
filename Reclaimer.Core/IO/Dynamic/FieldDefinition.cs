@@ -6,9 +6,16 @@ namespace Reclaimer.IO.Dynamic
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     internal abstract class FieldDefinition<TClass>
     {
-        public virtual PropertyInfo TargetProperty { get; init; }
-        public long Offset { get; init; }
-        public ByteOrder? ByteOrder { get; init; }
+        public PropertyInfo TargetProperty { get; }
+        public long Offset { get; }
+        public ByteOrder? ByteOrder { get; }
+
+        protected FieldDefinition(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
+        {
+            TargetProperty = targetProperty;
+            Offset = offset;
+            ByteOrder = byteOrder;
+        }
 
         public abstract void ReadValue(TClass target, EndianReader reader, ByteOrder byteOrder);
         public abstract void WriteValue(TClass target, EndianWriter writer, ByteOrder byteOrder);
@@ -33,14 +40,7 @@ namespace Reclaimer.IO.Dynamic
             storeType = GetUnderlyingType(storeType ?? targetProperty.PropertyType);
 
             if (storeType == typeof(string))
-            {
-                return new StringFieldDefinition<TClass>
-                {
-                    TargetProperty = targetProperty,
-                    Offset = offset,
-                    ByteOrder = byteOrder
-                };
-            }
+                return new StringFieldDefinition<TClass>(targetProperty, offset, byteOrder);
 
             string methodName;
             if (storeType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IBufferable<>) && i.GetGenericArguments().SequenceEqual(Enumerable.Repeat(storeType, 1))))
@@ -58,34 +58,19 @@ namespace Reclaimer.IO.Dynamic
         private static FieldDefinition<TClass> CreateBufferable<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
             where TField : IBufferable<TField>
         {
-            return new BufferableFieldDefinition<TClass, TField>
-            {
-                TargetProperty = targetProperty,
-                Offset = offset,
-                ByteOrder = byteOrder
-            };
+            return new BufferableFieldDefinition<TClass, TField>(targetProperty, offset, byteOrder);
         }
 
         private static FieldDefinition<TClass> CreatePrimitive<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
             where TField : struct, IComparable, IComparable<TField>, IEquatable<TField>
         {
-            return new PrimitiveFieldDefinition<TClass, TField>
-            {
-                TargetProperty = targetProperty,
-                Offset = offset,
-                ByteOrder = byteOrder
-            };
+            return new PrimitiveFieldDefinition<TClass, TField>(targetProperty, offset, byteOrder);
         }
 
         private static FieldDefinition<TClass> CreateNullable<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
             where TField : struct, IComparable, IComparable<TField>, IEquatable<TField>
         {
-            return new PrimitiveFieldDefinition<TClass, TField>
-            {
-                TargetProperty = targetProperty,
-                Offset = offset,
-                ByteOrder = byteOrder
-            };
+            return new PrimitiveFieldDefinition<TClass, TField>(targetProperty, offset, byteOrder);
         }
     }
 
@@ -94,20 +79,16 @@ namespace Reclaimer.IO.Dynamic
         private delegate TField GetMethod(TClass target);
         private delegate void SetMethod(TClass target, TField value);
 
-        private bool IsNullable { get; init; }
-        private GetMethod InvokeGet { get; init; }
-        private SetMethod InvokeSet { get; init; }
+        private readonly bool isNullable;
+        private readonly GetMethod InvokeGet;
+        private readonly SetMethod InvokeSet;
 
-        public override PropertyInfo TargetProperty
+        protected FieldDefinition(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
+            : base(targetProperty, offset, byteOrder)
         {
-            get => base.TargetProperty;
-            init
-            {
-                base.TargetProperty = value;
-                IsNullable = TargetProperty.PropertyType.IsGenericType && TargetProperty.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
-                InvokeGet = CreateGetterDelegate();
-                InvokeSet = CreateSetterDelegate();
-            }
+            isNullable = TargetProperty.PropertyType.IsGenericType && TargetProperty.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
+            InvokeGet = CreateGetterDelegate();
+            InvokeSet = CreateSetterDelegate();
         }
 
         public override void ReadValue(TClass target, EndianReader reader, ByteOrder byteOrder)
@@ -126,7 +107,7 @@ namespace Reclaimer.IO.Dynamic
         {
             if (SupportsDirectAssignment(TargetProperty.PropertyType, typeof(TField)))
             {
-                if (IsNullable)
+                if (isNullable)
                     return GetViaNullable;
 
                 return TargetProperty.GetMethod.CreateDelegate<GetMethod>();
@@ -153,7 +134,7 @@ namespace Reclaimer.IO.Dynamic
         {
             if (SupportsDirectAssignment(TargetProperty.PropertyType, typeof(TField)))
             {
-                if (IsNullable)
+                if (isNullable)
                     return SetViaNullable;
 
                 return TargetProperty.SetMethod.CreateDelegate<SetMethod>();

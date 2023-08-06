@@ -4,70 +4,65 @@ namespace Reclaimer.IO.Dynamic
 {
     internal class StringFieldDefinition<TClass> : FieldDefinition<TClass, string>
     {
-        public bool IsFixedLength { get; init; }
-        public bool IsNullTerminated { get; init; }
-        public bool IsLengthPrefixed { get; init; }
-        public bool TrimEnabled { get; init; }
-        public char PaddingChar { get; init; }
-        public int Length { get; init; }
+        private readonly bool isFixedLength;
+        private readonly bool isNullTerminated;
+        private readonly bool isLengthPrefixed;
+        private readonly bool trimEnabled;
+        private readonly char paddingChar;
+        private readonly int length;
 
-        public override PropertyInfo TargetProperty
+        public StringFieldDefinition(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
+            : base(targetProperty, offset, byteOrder)
         {
-            get => base.TargetProperty;
-            init
+            if (Attribute.IsDefined(targetProperty, typeof(LengthPrefixedAttribute)))
             {
-                base.TargetProperty = value;
+                isLengthPrefixed = true;
+                return;
+            }
 
-                if (Attribute.IsDefined(value, typeof(LengthPrefixedAttribute)))
-                {
-                    IsLengthPrefixed = true;
-                    return;
-                }
+            var fixedLength = targetProperty.GetCustomAttribute<FixedLengthAttribute>();
+            if (fixedLength != null)
+            {
+                isFixedLength = true;
+                length = fixedLength.Length;
+                paddingChar = fixedLength.Padding;
+                trimEnabled = fixedLength.Trim;
+                return;
+            }
 
-                var fixedLength = value.GetCustomAttribute<FixedLengthAttribute>();
-                if (fixedLength != null)
-                {
-                    IsFixedLength = true;
-                    Length = fixedLength.Length;
-                    PaddingChar = fixedLength.Padding;
-                    TrimEnabled = fixedLength.Trim;
-                    return;
-                }
-
-                var nullTerminated = value.GetCustomAttribute<NullTerminatedAttribute>();
-                if (nullTerminated != null)
-                {
-                    IsNullTerminated = true;
-                    Length = nullTerminated.Length;
-                    return;
-                }
+            var nullTerminated = targetProperty.GetCustomAttribute<NullTerminatedAttribute>();
+            if (nullTerminated != null)
+            {
+                isNullTerminated = true;
+                length = nullTerminated.Length;
+                return;
             }
         }
 
         protected override string StreamRead(EndianReader reader, ByteOrder byteOrder)
         {
-            if (IsFixedLength)
-                return reader.ReadString(Length, TrimEnabled);
-            else if (IsLengthPrefixed)
+            if (isFixedLength)
+                return reader.ReadString(length, trimEnabled);
+            else if (isLengthPrefixed)
                 return reader.ReadString(byteOrder);
             else
             {
-                return Length > 0
-                    ? reader.ReadNullTerminatedString(Length)
+                return length > 0
+                    ? reader.ReadNullTerminatedString(length)
                     : reader.ReadNullTerminatedString();
             }
         }
 
         protected override void StreamWrite(EndianWriter writer, string value, ByteOrder byteOrder)
         {
-            if (IsFixedLength)
-                writer.WriteStringFixedLength(value, Length, PaddingChar);
-            else if (IsLengthPrefixed)
+            if (isFixedLength)
+                writer.WriteStringFixedLength(value, length, paddingChar);
+            else if (isLengthPrefixed)
                 writer.Write(value, byteOrder);
             else
             {
-                if (Length > 0 && value?.Length > Length)
-                    value = value[..Length];
+                if (length > 0 && value?.Length > length)
+                    value = value[..length];
                 writer.WriteStringNullTerminated(value);
             }
         }
