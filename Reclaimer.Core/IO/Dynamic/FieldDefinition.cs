@@ -56,13 +56,7 @@ namespace Reclaimer.IO.Dynamic
             if (storeType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IBufferable<>) && i.GetGenericArguments().SequenceEqual(Enumerable.Repeat(storeType, 1))))
                 methodName = nameof(CreateBufferable);
             else
-            {
-                var typeCode = Type.GetTypeCode(storeType);
-                if (typeCode is TypeCode.Boolean or TypeCode.Char or TypeCode.SByte or TypeCode.Byte)
-                    methodName = nameof(CreateByte);
-                else
-                    methodName = nameof(CreatePrimitive);
-            }
+                methodName = nameof(CreatePrimitive);
 
             var methodInfo = typeof(FieldDefinition<TClass>)
                 .GetMethod(methodName, BindingFlags.Static | BindingFlags.NonPublic)
@@ -82,19 +76,8 @@ namespace Reclaimer.IO.Dynamic
             };
         }
 
-        private static FieldDefinition<TClass> CreateByte<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
-            where TField : struct, IConvertible
-        {
-            return new ByteFieldDefinition<TClass, TField>
-            {
-                TargetProperty = targetProperty,
-                Offset = offset,
-                ByteOrder = byteOrder
-            };
-        }
-
         private static FieldDefinition<TClass> CreatePrimitive<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
-            where TField : struct
+            where TField : struct, IComparable, IComparable<TField>, IEquatable<TField>
         {
             return new PrimitiveFieldDefinition<TClass, TField>
             {
@@ -105,7 +88,7 @@ namespace Reclaimer.IO.Dynamic
         }
 
         private static FieldDefinition<TClass> CreateNullable<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
-            where TField : struct, IConvertible
+            where TField : struct, IComparable, IComparable<TField>, IEquatable<TField>
         {
             return new PrimitiveFieldDefinition<TClass, TField>
             {
