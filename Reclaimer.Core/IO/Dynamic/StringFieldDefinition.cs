@@ -39,12 +39,12 @@ namespace Reclaimer.IO.Dynamic
             }
         }
 
-        protected override string StreamRead(EndianReader reader, ByteOrder byteOrder)
+        protected override string StreamRead(EndianReader reader, in ByteOrder? byteOrder)
         {
             if (isFixedLength)
                 return reader.ReadString(length, trimEnabled);
             else if (isLengthPrefixed)
-                return reader.ReadString(byteOrder);
+                return byteOrder.HasValue ? reader.ReadString(byteOrder.Value) : reader.ReadString();
             else
             {
                 return length > 0
@@ -53,12 +53,17 @@ namespace Reclaimer.IO.Dynamic
             }
         }
 
-        protected override void StreamWrite(EndianWriter writer, string value, ByteOrder byteOrder)
+        protected override void StreamWrite(EndianWriter writer, string value, in ByteOrder? byteOrder)
         {
             if (isFixedLength)
                 writer.WriteStringFixedLength(value, length, paddingChar);
             else if (isLengthPrefixed)
-                writer.Write(value, byteOrder);
+            {
+                if (byteOrder.HasValue)
+                    writer.Write(value, byteOrder.Value);
+                else
+                    writer.Write(value);
+            }
             else
             {
                 if (length > 0 && value?.Length > length)

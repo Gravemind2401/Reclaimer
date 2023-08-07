@@ -156,7 +156,7 @@ namespace Reclaimer.IO.Dynamic
                 foreach (var field in fields)
                 {
                     reader.Seek(origin + field.Offset, SeekOrigin.Begin);
-                    field.ReadValue(value, reader, field.ByteOrder ?? byteOrder ?? reader.ByteOrder);
+                    field.ReadValue(value, reader, field.ByteOrder ?? byteOrder);
                 }
 
                 if (size.HasValue)
@@ -169,7 +169,7 @@ namespace Reclaimer.IO.Dynamic
                 foreach (var field in fields)
                 {
                     writer.Seek(origin + field.Offset, SeekOrigin.Begin);
-                    field.WriteValue(value, writer, field.ByteOrder ?? byteOrder ?? writer.ByteOrder);
+                    field.WriteValue(value, writer, field.ByteOrder ?? byteOrder);
                 }
 
                 if (size.HasValue)

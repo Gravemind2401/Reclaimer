@@ -9,16 +9,17 @@ namespace Reclaimer.IO.Dynamic
             : base(targetProperty, offset, byteOrder)
         { }
 
-        protected override TField StreamRead(EndianReader reader, ByteOrder byteOrder)
+        protected override TField StreamRead(EndianReader reader, in ByteOrder? byteOrder)
         {
-            return DelegateHelper<TField>.InvokeByteOrderRead?.Invoke(reader, byteOrder)
-                ?? DelegateHelper<TField>.InvokeDefaultRead(reader);
+            return byteOrder.HasValue && DelegateHelper<TField>.InvokeByteOrderRead != null
+                ? DelegateHelper<TField>.InvokeByteOrderRead.Invoke(reader, byteOrder.Value)
+                : DelegateHelper<TField>.InvokeDefaultRead(reader);
         }
 
-        protected override void StreamWrite(EndianWriter writer, TField value, ByteOrder byteOrder)
+        protected override void StreamWrite(EndianWriter writer, TField value, in ByteOrder? byteOrder)
         {
-            if (DelegateHelper<TField>.InvokeByteOrderWrite != null)
-                DelegateHelper<TField>.InvokeByteOrderWrite(writer, value, byteOrder);
+            if (byteOrder.HasValue && DelegateHelper<TField>.InvokeByteOrderWrite != null)
+                DelegateHelper<TField>.InvokeByteOrderWrite(writer, value, byteOrder.Value);
             else
                 DelegateHelper<TField>.InvokeDefaultWrite(writer, value);
         }

@@ -17,8 +17,8 @@ namespace Reclaimer.IO.Dynamic
             ByteOrder = byteOrder;
         }
 
-        public abstract void ReadValue(TClass target, EndianReader reader, ByteOrder byteOrder);
-        public abstract void WriteValue(TClass target, EndianWriter writer, ByteOrder byteOrder);
+        public abstract void ReadValue(TClass target, EndianReader reader, in ByteOrder? byteOrder);
+        public abstract void WriteValue(TClass target, EndianWriter writer, in ByteOrder? byteOrder);
 
         protected virtual string GetDebuggerDisplay() => $"@{Offset,4} (0x{Offset:X4}) : [{TargetProperty.PropertyType.Name}] {typeof(TClass).Name}.{TargetProperty.Name}";
 
@@ -79,13 +79,13 @@ namespace Reclaimer.IO.Dynamic
             InvokeSet = CreateSetterDelegate();
         }
 
-        public override void ReadValue(TClass target, EndianReader reader, ByteOrder byteOrder)
+        public override void ReadValue(TClass target, EndianReader reader, in ByteOrder? byteOrder)
         {
             var value = StreamRead(reader, byteOrder);
             InvokeSet(target, value);
         }
 
-        public override void WriteValue(TClass target, EndianWriter writer, ByteOrder byteOrder)
+        public override void WriteValue(TClass target, EndianWriter writer, in ByteOrder? byteOrder)
         {
             var value = InvokeGet(target);
             StreamWrite(writer, value, byteOrder);
@@ -145,8 +145,8 @@ namespace Reclaimer.IO.Dynamic
             }
         }
 
-        protected abstract TField StreamRead(EndianReader reader, ByteOrder byteOrder);
-        protected abstract void StreamWrite(EndianWriter writer, TField value, ByteOrder byteOrder);
+        protected abstract TField StreamRead(EndianReader reader, in ByteOrder? byteOrder);
+        protected abstract void StreamWrite(EndianWriter writer, TField value, in ByteOrder? byteOrder);
 
         protected override string GetDebuggerDisplay() => $"@{Offset,4} (0x{Offset:X4}) : [{typeof(TField).Name}] {typeof(TClass).Name}.{TargetProperty.Name}";
     }
