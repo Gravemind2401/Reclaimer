@@ -42,33 +42,21 @@ namespace Reclaimer.IO.Dynamic
             if (storeType == typeof(string))
                 return new StringFieldDefinition<TClass>(targetProperty, offset, byteOrder);
 
-            string methodName;
-            if (storeType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IBufferable<>) && i.GetGenericArguments().SequenceEqual(Enumerable.Repeat(storeType, 1))))
-                methodName = nameof(CreateBufferable);
-            else
-                methodName = nameof(CreatePrimitive);
-
             var methodInfo = typeof(FieldDefinition<TClass>)
-                .GetMethod(methodName, BindingFlags.Static | BindingFlags.NonPublic)
+                .GetMethod(nameof(CreatePrimitive), BindingFlags.Static | BindingFlags.NonPublic)
                 .MakeGenericMethod(storeType);
 
             return (FieldDefinition<TClass>)methodInfo.Invoke(null, new object[] { targetProperty, offset, byteOrder });
         }
 
-        private static FieldDefinition<TClass> CreateBufferable<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
-            where TField : IBufferable<TField>
-        {
-            return new BufferableFieldDefinition<TClass, TField>(targetProperty, offset, byteOrder);
-        }
-
         private static FieldDefinition<TClass> CreatePrimitive<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
-            where TField : struct, IComparable, IComparable<TField>, IEquatable<TField>
+            where TField : struct
         {
             return new PrimitiveFieldDefinition<TClass, TField>(targetProperty, offset, byteOrder);
         }
 
         private static FieldDefinition<TClass> CreateNullable<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
-            where TField : struct, IComparable, IComparable<TField>, IEquatable<TField>
+            where TField : struct
         {
             return new PrimitiveFieldDefinition<TClass, TField>(targetProperty, offset, byteOrder);
         }

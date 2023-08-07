@@ -3,11 +3,11 @@
 namespace Reclaimer.IO.Dynamic
 {
     internal class DelegateHelper<TStruct>
-        where TStruct : struct, IComparable, IComparable<TStruct>, IEquatable<TStruct>
+        where TStruct : struct
     {
         public delegate TStruct DefaultReadMethod(EndianReader reader);
         public delegate TStruct ByteOrderReadMethod(EndianReader reader, ByteOrder byteOrder);
-        
+
         public delegate void DefaultWriteMethod(EndianWriter writer, TStruct value);
         public delegate void ByteOrderWriteMethod(EndianWriter writer, TStruct value, ByteOrder byteOrder);
 
@@ -19,6 +19,31 @@ namespace Reclaimer.IO.Dynamic
 
         static DelegateHelper()
         {
+            if (default(TStruct) is IBufferable<TStruct>)
+            {
+                var methods = typeof(EndianReader).GetMethods();
+
+                InvokeDefaultRead = methods.First(m => m.Name == nameof(EndianReader.ReadBufferable) && m.GetParameters().Length == 0)
+                    .MakeGenericMethod(typeof(TStruct))
+                    .CreateDelegate<DefaultReadMethod>();
+
+                InvokeByteOrderRead = methods.First(m => m.Name == nameof(EndianReader.ReadBufferable) && m.GetParameters().Length == 1)
+                    .MakeGenericMethod(typeof(TStruct))
+                    .CreateDelegate<ByteOrderReadMethod>();
+
+                methods = typeof(EndianWriter).GetMethods();
+
+                InvokeDefaultWrite = methods.First(m => m.Name == nameof(EndianWriter.WriteBufferable) && m.GetParameters().Length == 1)
+                    .MakeGenericMethod(typeof(TStruct))
+                    .CreateDelegate<DefaultWriteMethod>();
+
+                InvokeByteOrderWrite = methods.First(m => m.Name == nameof(EndianWriter.WriteBufferable) && m.GetParameters().Length == 2)
+                    .MakeGenericMethod(typeof(TStruct))
+                    .CreateDelegate<ByteOrderWriteMethod>();
+
+                return;
+            }
+
             var typeCode = Type.GetTypeCode(typeof(TStruct));
 
             InvokeDefaultRead = typeCode switch
