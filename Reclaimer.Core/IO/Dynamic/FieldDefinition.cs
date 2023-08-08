@@ -17,8 +17,8 @@ namespace Reclaimer.IO.Dynamic
             ByteOrder = byteOrder;
         }
 
-        public abstract void ReadValue(TClass target, EndianReader reader, in ByteOrder? byteOrder);
-        public abstract void WriteValue(TClass target, EndianWriter writer, in ByteOrder? byteOrder);
+        public abstract void ReadValue(ref TClass target, EndianReader reader, in ByteOrder? byteOrder);
+        public abstract void WriteValue(ref TClass target, EndianWriter writer, in ByteOrder? byteOrder);
 
         protected virtual string GetDebuggerDisplay() => $"@{Offset,4} (0x{Offset:X4}) : [{TargetProperty.PropertyType.Name}] {typeof(TClass).Name}.{TargetProperty.Name}";
 
@@ -64,41 +64,63 @@ namespace Reclaimer.IO.Dynamic
 
     internal abstract class FieldDefinition<TClass, TField> : FieldDefinition<TClass>
     {
-        private delegate TField GetMethod(TClass target);
-        private delegate void SetMethod(TClass target, TField value);
+        private delegate TField ReferenceTypeGetMethod(TClass target);
+        private delegate void ReferenceTypeSetMethod(TClass target, TField value);
+
+        private delegate TField ValueTypeGetMethod(ref TClass target);
+        private delegate void ValueTypeSetMethod(ref TClass target, TField value);
 
         private readonly bool isNullable;
-        private readonly GetMethod InvokeGet;
-        private readonly SetMethod InvokeSet;
+
+        private readonly ReferenceTypeGetMethod InvokeReferenceTypeGet;
+        private readonly ReferenceTypeSetMethod InvokeReferenceTypeSet;
+
+        private readonly ValueTypeGetMethod InvokeValueTypeGet;
+        private readonly ValueTypeSetMethod InvokeValueTypeSet;
 
         protected FieldDefinition(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
             : base(targetProperty, offset, byteOrder)
         {
             isNullable = TargetProperty.PropertyType.IsGenericType && TargetProperty.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
-            InvokeGet = CreateGetterDelegate();
-            InvokeSet = CreateSetterDelegate();
+            if (typeof(TClass).IsValueType)
+            {
+                InvokeValueTypeGet = CreateValueTypeGetterDelegate();
+                InvokeValueTypeSet = CreateValueTypeSetterDelegate();
+            }
+            else
+            {
+                InvokeReferenceTypeGet = CreateReferenceTypeGetterDelegate();
+                InvokeReferenceTypeSet = CreateReferenceTypeSetterDelegate();
+            }
         }
 
-        public override void ReadValue(TClass target, EndianReader reader, in ByteOrder? byteOrder)
+        public override void ReadValue(ref TClass target, EndianReader reader, in ByteOrder? byteOrder)
         {
             var value = StreamRead(reader, byteOrder);
-            InvokeSet(target, value);
+
+            if (typeof(TClass).IsValueType)
+                InvokeValueTypeSet(ref target, value);
+            else
+                InvokeReferenceTypeSet(target, value);
         }
 
-        public override void WriteValue(TClass target, EndianWriter writer, in ByteOrder? byteOrder)
+        public override void WriteValue(ref TClass target, EndianWriter writer, in ByteOrder? byteOrder)
         {
-            var value = InvokeGet(target);
+            var value = typeof(TClass).IsValueType
+                ? InvokeValueTypeGet(ref target)
+                : InvokeReferenceTypeGet(target);
+
             StreamWrite(writer, value, byteOrder);
         }
 
-        private GetMethod CreateGetterDelegate()
+        private ReferenceTypeGetMethod CreateReferenceTypeGetterDelegate()
         {
             if (SupportsDirectAssignment(TargetProperty.PropertyType, typeof(TField)))
             {
                 if (isNullable)
                     return GetViaNullable;
 
-                return TargetProperty.GetMethod.CreateDelegate<GetMethod>();
+                return TargetProperty.GetMethod.CreateDelegate<ReferenceTypeGetMethod>();
             }
 
             return GetViaConversion;
@@ -118,14 +140,14 @@ namespace Reclaimer.IO.Dynamic
             }
         }
 
-        private SetMethod CreateSetterDelegate()
+        private ReferenceTypeSetMethod CreateReferenceTypeSetterDelegate()
         {
             if (SupportsDirectAssignment(TargetProperty.PropertyType, typeof(TField)))
             {
                 if (isNullable)
                     return SetViaNullable;
 
-                return TargetProperty.SetMethod.CreateDelegate<SetMethod>();
+                return TargetProperty.SetMethod.CreateDelegate<ReferenceTypeSetMethod>();
             }
 
             return SetViaConversion;
@@ -137,6 +159,60 @@ namespace Reclaimer.IO.Dynamic
             }
 
             void SetViaConversion(TClass obj, TField value)
+            {
+                var converted = (object)value;
+                if (!Utils.TryConvert(ref converted, typeof(TField), TargetProperty.PropertyType))
+                    throw new InvalidCastException($"The value in {TargetProperty.Name} could not be stored as {typeof(TField)}");
+                TargetProperty.SetValue(obj, converted);
+            }
+        }
+
+        private ValueTypeGetMethod CreateValueTypeGetterDelegate()
+        {
+            if (SupportsDirectAssignment(TargetProperty.PropertyType, typeof(TField)))
+            {
+                if (isNullable)
+                    return GetViaNullable;
+
+                return TargetProperty.GetMethod.CreateDelegate<ValueTypeGetMethod>();
+            }
+
+            return GetViaConversion;
+
+            TField GetViaNullable(ref TClass obj)
+            {
+                //same net result as {return obj.Property.GetValueOrDefault()}
+                return TargetProperty.GetValue(obj) is TField result ? result : default;
+            }
+
+            TField GetViaConversion(ref TClass obj)
+            {
+                var value = TargetProperty.GetValue(obj);
+                if (!Utils.TryConvert(ref value, TargetProperty.PropertyType, typeof(TField)))
+                    throw new InvalidCastException($"The value in {TargetProperty.Name} could not be stored as {typeof(TField)}");
+                return (TField)value;
+            }
+        }
+
+        private ValueTypeSetMethod CreateValueTypeSetterDelegate()
+        {
+            if (SupportsDirectAssignment(TargetProperty.PropertyType, typeof(TField)))
+            {
+                if (isNullable)
+                    return SetViaNullable;
+
+                return TargetProperty.SetMethod.CreateDelegate<ValueTypeSetMethod>();
+            }
+
+            return SetViaConversion;
+
+            void SetViaNullable(ref TClass obj, TField value)
+            {
+                //delegate isnt compatable, but it can be set via SetValue with boxing
+                TargetProperty.SetValue(obj, value);
+            }
+
+            void SetViaConversion(ref TClass obj, TField value)
             {
                 var converted = (object)value;
                 if (!Utils.TryConvert(ref converted, typeof(TField), TargetProperty.PropertyType))

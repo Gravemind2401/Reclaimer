@@ -10,12 +10,13 @@ namespace Reclaimer.IO.Dynamic
 
         private readonly List<VersionDefinition> versions = new();
 
-        public static void Populate(ref TClass value, EndianReader reader, double? version)
+        public static TClass Populate(ref TClass value, EndianReader reader, double? version)
         {
             instance ??= FromAttributes();
 
             var definition = instance.versions.FirstOrDefault(d => d.ValidFor(version));
             definition.ReadValue(ref value, reader);
+            return value;
         }
 
         public static void Write(ref TClass value, EndianWriter writer, double? version)
@@ -156,7 +157,7 @@ namespace Reclaimer.IO.Dynamic
                 foreach (var field in fields)
                 {
                     reader.Seek(origin + field.Offset, SeekOrigin.Begin);
-                    field.ReadValue(value, reader, field.ByteOrder ?? byteOrder);
+                    field.ReadValue(ref value, reader, field.ByteOrder ?? byteOrder);
                 }
 
                 if (size.HasValue)
@@ -169,7 +170,7 @@ namespace Reclaimer.IO.Dynamic
                 foreach (var field in fields)
                 {
                     writer.Seek(origin + field.Offset, SeekOrigin.Begin);
-                    field.WriteValue(value, writer, field.ByteOrder ?? byteOrder);
+                    field.WriteValue(ref value, writer, field.ByteOrder ?? byteOrder);
                 }
 
                 if (size.HasValue)
