@@ -1,6 +1,7 @@
 ﻿using Reclaimer.IO.Dynamic;
 using System.Buffers.Binary;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace Reclaimer.IO
@@ -771,17 +772,17 @@ namespace Reclaimer.IO
         #region Dynamic Read
 
         /// <inheritdoc cref="ReadObject{T}(double)"/>
-        public T ReadObject<T>() => (T)ReadObject(null, typeof(T), null);
+        public T ReadObject<T>() => ReadObjectGeneric(default(T), null);
 
         /// <typeparam name="T">The type of object to read.</typeparam>
         /// <inheritdoc cref="ReadObject(Type, double)"/>
-        public T ReadObject<T>(double version) => (T)ReadObject(null, typeof(T), version);
+        public T ReadObject<T>(double version) => ReadObjectGeneric(default(T), version);
 
         /// <inheritdoc cref="ReadObject(Type, double)"/>
         public object ReadObject(Type type)
         {
             ArgumentNullException.ThrowIfNull(type);
-            return ReadObject(null, type, null);
+            return InvokeReadObject(null, type, null);
         }
 
         /// <summary>
@@ -798,14 +799,14 @@ namespace Reclaimer.IO
         public object ReadObject(Type type, double version)
         {
             ArgumentNullException.ThrowIfNull(type);
-            return ReadObject(null, type, version);
+            return InvokeReadObject(null, type, version);
         }
 
         /// <inheritdoc cref="ReadObject{T}(T, double)"/>
         public T ReadObject<T>(T instance)
         {
             ArgumentNullException.ThrowIfNull(instance);
-            return (T)ReadObject(instance, instance.GetType(), null);
+            return ReadObjectGeneric(instance, null);
         }
 
         /// <typeparam name="T">The type of object to read.</typeparam>
@@ -813,14 +814,14 @@ namespace Reclaimer.IO
         public T ReadObject<T>(T instance, double version)
         {
             ArgumentNullException.ThrowIfNull(instance);
-            return (T)ReadObject(instance, instance.GetType(), version);
+            return ReadObjectGeneric(instance, version);
         }
 
         /// <inheritdoc cref="ReadObject(object, double)"/>
         public object ReadObject(object instance)
         {
             ArgumentNullException.ThrowIfNull(instance);
-            return ReadObject(instance, instance.GetType(), null);
+            return InvokeReadObject(instance, instance.GetType(), null);
         }
 
         /// <summary>
@@ -848,35 +849,45 @@ namespace Reclaimer.IO
         public object ReadObject(object instance, double version)
         {
             ArgumentNullException.ThrowIfNull(instance);
-            return ReadObject(instance, instance.GetType(), version);
+            return InvokeReadObject(instance, instance.GetType(), version);
+        }
+
+        private static readonly MethodInfo DynamicReadMethod = typeof(EndianReader)
+            .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
+            .First(m => m.Name == nameof(ReadObjectGeneric) && m.IsGenericMethodDefinition);
+
+        private object InvokeReadObject(object instance, Type type, double? version)
+        {
+            return DynamicReadMethod.MakeGenericMethod(type)
+                .Invoke(this, new object[] { instance, version });
         }
 
         /// <summary>
         /// This function is called by all public ReadObject overloads.
         /// </summary>
+        /// <typeparam name="T">The type of object to read.</typeparam>
         /// <param name="instance">The object to populate. This value will be null if no instance was provided.</param>
-        /// <param name="type">The type of object to read.</param>
         /// <param name="version">
         /// The version that was used to store the object.
         /// This determines which properties will be read, how they will be
         /// read and at what location in the stream to read them from.
         /// This value will be null if no version was provided.
         /// </param>
-        protected virtual object ReadObject(object instance, Type type, double? version)
+        protected virtual T ReadObjectGeneric<T>(T instance, double? version)
         {
             //cannot detect string type automatically (fixed/prefixed/terminated)
-            if (type.Equals(typeof(string)))
+            if (typeof(T).Equals(typeof(string)))
                 throw Exceptions.NotValidForStringTypes();
 
             //take note of origin before creating instance in case a derived class moves the stream.
             //this is important for attributes like FixedSizeAttribute to ensure the final position is correct.
             var origin = Position;
-            instance ??= CreateInstance(type, version);
+            instance ??= CreateInstance<T>(version);
 
-            return TypeConfiguration.Populate(instance, type, this, origin, version);
+            return (T)TypeConfiguration.Populate(instance, typeof(T), this, origin, version);
         }
 
-        protected virtual object CreateInstance(Type type, double? version) => Activator.CreateInstance(type);
+        protected virtual T CreateInstance<T>(double? version) => Activator.CreateInstance<T>();
 
         /// <inheritdoc cref="ReadBufferable{T}(ByteOrder)"/>
         public T ReadBufferable<T>() where T : IBufferable<T>

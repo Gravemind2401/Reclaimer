@@ -36,14 +36,14 @@ namespace Reclaimer.Blam.Utilities
 
         public override EndianWriter CreateVirtualWriter(long origin) => new EndianWriterEx(this, origin);
 
-        protected override void WriteObject(object value, double? version)
+        protected override void WriteObjectGeneric<T>(T value, double? version)
         {
             if (value is IWriteable writeable)
                 writeable.Write(this, version);
-            else if (registeredTypes.ContainsKey(value.GetType()))
-                registeredTypes[value.GetType()](value, version);
+            else if (registeredTypes.TryGetValue(typeof(T), out var writeFunc))
+                writeFunc(value, version);
             else
-                base.WriteObject(value, version);
+                base.WriteObjectGeneric(value, version);
         }
     }
 }

@@ -6,18 +6,18 @@
             : base(input, byteOrder)
         { }
 
-        protected override object CreateInstance(Type type, double? version)
+        protected override T CreateInstance<T>(double? version)
         {
-            if (type == typeof(DerivedTestClass01))
-                return new DerivedTestClass01(this);
+            if (typeof(T) == typeof(DerivedTestClass01))
+                return (T)(object)new DerivedTestClass01(this);
 
-            if (type == typeof(DerivedTestClass02))
-                return new DerivedTestClass02(this);
+            if (typeof(T) == typeof(DerivedTestClass02))
+                return (T)(object)new DerivedTestClass02(this);
 
-            if (type == typeof(DerivedTestClass03))
-                return new DerivedTestClass03(this);
+            if (typeof(T) == typeof(DerivedTestClass03))
+                return (T)(object)new DerivedTestClass03(this);
 
-            return base.CreateInstance(type, version);
+            return base.CreateInstance<T>(version);
         }
     }
 

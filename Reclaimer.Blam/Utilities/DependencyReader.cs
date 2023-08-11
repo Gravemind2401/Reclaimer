@@ -56,15 +56,15 @@ namespace Reclaimer.Blam.Utilities
 
         public override EndianReader CreateVirtualReader(long origin) => new DependencyReader(this, origin);
 
-        protected override object CreateInstance(Type type, double? version)
+        protected override T CreateInstance<T>(double? version)
         {
-            if (registeredTypes.TryGetValue(type, out var factory))
-                return factory.Invoke();
+            if (registeredTypes.TryGetValue(typeof(T), out var factory))
+                return (T)factory.Invoke();
 
-            var constructor = FindConstructor(type);
+            var constructor = FindConstructor(typeof(T));
             return constructor == null
-                ? base.CreateInstance(type, version)
-                : Construct(type, constructor);
+                ? base.CreateInstance<T>(version)
+                : (T)Construct(typeof(T), constructor);
         }
 
         private object Construct(Type type, ConstructorInfo constructor)
@@ -74,10 +74,10 @@ namespace Reclaimer.Blam.Utilities
 
             foreach (var p in info)
             {
-                if (registeredTypes.ContainsKey(p.ParameterType))
-                    args.Add(registeredTypes[p.ParameterType]());
-                else if (registeredInstances.ContainsKey(p.ParameterType))
-                    args.Add(registeredInstances[p.ParameterType]);
+                if (registeredTypes.TryGetValue(p.ParameterType, out var factory))
+                    args.Add(factory());
+                else if (registeredInstances.TryGetValue(p.ParameterType, out var instance))
+                    args.Add(instance);
                 else if (CanCastTo(p.ParameterType))
                     args.Add(this);
                 else

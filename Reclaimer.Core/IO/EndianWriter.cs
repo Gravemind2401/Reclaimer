@@ -1,6 +1,7 @@
 ﻿using Reclaimer.IO.Dynamic;
 using System.Buffers.Binary;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace Reclaimer.IO
@@ -633,7 +634,7 @@ namespace Reclaimer.IO
         public void WriteObject<T>(T value)
         {
             ArgumentNullException.ThrowIfNull(value);
-            WriteObject(value, null);
+            WriteObjectGeneric(value, null);
         }
 
         /// <typeparam name="T">The type of object to write.</typeparam>
@@ -641,14 +642,14 @@ namespace Reclaimer.IO
         public void WriteObject<T>(T value, double version)
         {
             ArgumentNullException.ThrowIfNull(value);
-            WriteObject(value, (double?)version);
+            WriteObjectGeneric(value, version);
         }
 
         /// <inheritdoc cref="WriteObject(object, double)"/>
         public void WriteObject(object value)
         {
             ArgumentNullException.ThrowIfNull(value);
-            WriteObject(value, null);
+            InvokeWriteObject(value, null);
         }
 
         /// <summary>
@@ -676,25 +677,35 @@ namespace Reclaimer.IO
         public void WriteObject(object value, double version)
         {
             ArgumentNullException.ThrowIfNull(value);
-            WriteObject(value, (double?)version);
+            InvokeWriteObject(value, version);
+        }
+
+        private static readonly MethodInfo DynamicWriteMethod = typeof(EndianWriter)
+            .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
+            .First(m => m.Name == nameof(WriteObjectGeneric) && m.IsGenericMethodDefinition);
+
+        protected void InvokeWriteObject(object value, double? version)
+        {
+            DynamicWriteMethod.MakeGenericMethod(value.GetType())
+                .Invoke(this, new object[] { value, version });
         }
 
         /// <summary>
         /// This function is called by all public WriteObject overloads.
         /// </summary>
+        /// <typeparam name="T">The type of object to write.</typeparam>
         /// <param name="value">The object to write.</param>
         /// <param name="version">
         /// The version that should be used to store the object.
         /// This determines which properties will be written, how they will be
         /// written and at what location in the stream to write them to.
         /// </param>
-        protected virtual void WriteObject(object value, double? version)
+        protected virtual void WriteObjectGeneric<T>(T value, double? version)
         {
             ArgumentNullException.ThrowIfNull(value);
 
             //cannot detect string type automatically (fixed/prefixed/terminated)
-            var type = value.GetType();
-            if (type.Equals(typeof(string)))
+            if (typeof(T).Equals(typeof(string)))
                 throw Exceptions.NotValidForStringTypes();
 
             TypeConfiguration.Write(value, this, Position, version);
