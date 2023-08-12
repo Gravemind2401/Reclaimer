@@ -10,13 +10,12 @@ namespace Reclaimer.IO.Dynamic
 
         private readonly List<VersionDefinition> versions = new();
 
-        public static TClass Populate(ref TClass value, EndianReader reader, double? version)
+        public static void Populate(ref TClass value, EndianReader reader, double? version)
         {
             instance ??= FromAttributes();
 
             var definition = instance.versions.FirstOrDefault(d => d.ValidFor(version));
             definition.ReadValue(ref value, reader);
-            return value;
         }
 
         public static void Write(ref TClass value, EndianWriter writer, double? version)

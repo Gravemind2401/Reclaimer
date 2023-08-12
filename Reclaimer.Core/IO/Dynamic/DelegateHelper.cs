@@ -1,9 +1,34 @@
 ﻿using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Reclaimer.IO.Dynamic
 {
-    internal class DelegateHelper<TStruct>
-        where TStruct : struct
+    internal static class DelegateHelper
+    {
+        private static readonly MethodInfo GenericTypeCheckMethod = typeof(DelegateHelper)
+            .GetMethod(nameof(IsTypeSupported), BindingFlags.Static | BindingFlags.Public, Type.EmptyTypes);
+
+        public static bool IsTypeSupported(Type type)
+        {
+            return (bool)GenericTypeCheckMethod
+                .MakeGenericMethod(type)
+                .Invoke(null, null);
+        }
+
+        public static bool IsTypeSupported<TStruct>()
+        {
+            var typeCode = Type.GetTypeCode(typeof(TStruct));
+
+            return (typeCode >= TypeCode.Boolean && typeCode <= TypeCode.Decimal)
+                || typeof(TStruct) == typeof(Half)
+                || typeof(TStruct) == typeof(Guid)
+                || default(TStruct) is IBufferable<TStruct>;
+        }
+    }
+
+    //no struct constraint so it can easily be called from unconstrained generics after a type check.
+    //since it is an internal class so we can be sure it is only ever used with the correct types.
+    internal static class DelegateHelper<TStruct>
     {
         public delegate TStruct DefaultReadMethod(EndianReader reader);
         public delegate TStruct ByteOrderReadMethod(EndianReader reader, ByteOrder byteOrder);

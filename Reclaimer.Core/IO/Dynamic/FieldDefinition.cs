@@ -49,23 +49,24 @@ namespace Reclaimer.IO.Dynamic
             if (storeType == typeof(string))
                 return new StringFieldDefinition<TClass>(targetProperty, offset, byteOrder);
 
+            //since we have a type object that may not necessarily be TClass, we need to construct the appropriate generic method with reflection.
+            //rather than make a generic class and find the constructor, its easier to just forward it to the methods below so they can use the generic type params.
+            var methodName = DelegateHelper.IsTypeSupported(storeType) ? nameof(CreatePrimitive) : nameof(CreateDynamic);
             var methodInfo = typeof(FieldDefinition<TClass>)
-                .GetMethod(nameof(CreatePrimitive), BindingFlags.Static | BindingFlags.NonPublic)
+                .GetMethod(methodName, BindingFlags.Static | BindingFlags.NonPublic)
                 .MakeGenericMethod(storeType);
 
             return (FieldDefinition<TClass>)methodInfo.Invoke(null, new object[] { targetProperty, offset, byteOrder });
         }
 
         private static FieldDefinition<TClass> CreatePrimitive<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
-            where TField : struct
         {
             return new PrimitiveFieldDefinition<TClass, TField>(targetProperty, offset, byteOrder);
         }
 
-        private static FieldDefinition<TClass> CreateNullable<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
-            where TField : struct
+        private static FieldDefinition<TClass> CreateDynamic<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
         {
-            return new PrimitiveFieldDefinition<TClass, TField>(targetProperty, offset, byteOrder);
+            return new DynamicFieldDefinition<TClass, TField>(targetProperty, offset, byteOrder);
         }
     }
 
