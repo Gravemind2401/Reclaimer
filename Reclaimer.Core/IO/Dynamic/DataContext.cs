@@ -146,7 +146,7 @@ namespace Reclaimer.IO.Dynamic
             else if (Version.HasValue)
                 Writer.WriteObject(value, Version.Value);
             else
-                Writer.WriteObject(storageType);
+                Writer.WriteObject(value);
         }
 
         private string GetDebuggerDisplay() => $"{Target.GetType().Name} v{Version?.ToString() ?? "NULL"} @ {Origin}";
