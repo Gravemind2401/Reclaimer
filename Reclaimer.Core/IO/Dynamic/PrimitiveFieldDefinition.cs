@@ -2,6 +2,10 @@
 
 namespace Reclaimer.IO.Dynamic
 {
+    /// <summary>
+    /// Defines a field that is stored using a primitive type, an enum type or a type that implements <see cref="IBufferable{TBufferable}"/>.
+    /// </summary>
+    /// <inheritdoc cref="FieldDefinition{TClass, TField}"/>
     internal class PrimitiveFieldDefinition<TClass, TField> : FieldDefinition<TClass, TField>
     {
         public PrimitiveFieldDefinition(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)

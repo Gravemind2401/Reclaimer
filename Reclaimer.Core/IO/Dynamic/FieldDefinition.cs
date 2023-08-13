@@ -3,22 +3,41 @@ using System.Reflection;
 
 namespace Reclaimer.IO.Dynamic
 {
+    /// <summary>
+    /// The base class for all field definitions, regardless of property type.
+    /// <br/>There is no generic type parameter for the field type, allowing definitions for different property types to be added to the same list.
+    /// </summary>
+    /// <typeparam name="TClass">The <see langword="class"/> or <see langword="struct"/> that the property is a member of.</typeparam>
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     internal abstract class FieldDefinition<TClass>
     {
         public delegate void FieldReadMethod(ref TClass target, EndianReader reader, in ByteOrder? byteOrder);
         public delegate void FieldWriteMethod(ref TClass target, EndianWriter writer, in ByteOrder? byteOrder);
 
+        /// <summary>
+        /// Reads the property value from stream and stores it in the target property of the target object.
+        /// </summary>
         public readonly FieldReadMethod ReadValue;
+
+        /// <summary>
+        /// Gets the value from the target property of the target object and writes it to stream.
+        /// </summary>
         public readonly FieldWriteMethod WriteValue;
+
+        /// <summary>
+        /// The type used to store the property value in a stream.
+        /// <br/>This may not necessarily be the same as the property type.
+        /// </summary>
+        public Type TargetType { get; }
 
         public PropertyInfo TargetProperty { get; }
         public long Offset { get; }
         public ByteOrder? ByteOrder { get; }
 
-        protected FieldDefinition(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
+        protected FieldDefinition(PropertyInfo targetProperty, Type targetType, long offset, ByteOrder? byteOrder)
         {
             TargetProperty = targetProperty;
+            TargetType = targetType;
             Offset = offset;
             ByteOrder = byteOrder;
 
@@ -27,7 +46,7 @@ namespace Reclaimer.IO.Dynamic
 
         protected abstract void Configure(out FieldReadMethod readFunc, out FieldWriteMethod writeFunc);
 
-        protected virtual string GetDebuggerDisplay() => $"@{Offset,4} (0x{Offset:X4}) : [{TargetProperty.PropertyType.Name}] {typeof(TClass).Name}.{TargetProperty.Name}";
+        protected virtual string GetDebuggerDisplay() => $"0x{Offset:X4} / {Offset:D4} : [{TargetType.Name}] {typeof(TClass).Name}.{TargetProperty.Name}";
 
         private static Type GetUnderlyingType(Type storeType)
         {
@@ -70,6 +89,14 @@ namespace Reclaimer.IO.Dynamic
         }
     }
 
+    /// <summary>
+    /// The base class for all strongly typed field definitions.
+    /// </summary>
+    /// <typeparam name="TClass">The <see langword="class"/> or <see langword="struct"/> that the property is a member of.</typeparam>
+    /// <typeparam name="TField">
+    /// The type used to store the property value in a stream.
+    /// <br/>This may not necessarily be the same as the property type.
+    /// </typeparam>
     internal abstract class FieldDefinition<TClass, TField> : FieldDefinition<TClass>
     {
         private delegate TField ReferenceTypeGetter(TClass target);
@@ -79,7 +106,7 @@ namespace Reclaimer.IO.Dynamic
         private delegate void ValueTypeSetter(ref TClass target, TField value);
 
         protected FieldDefinition(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
-            : base(targetProperty, offset, byteOrder)
+            : base(targetProperty, typeof(TField), offset, byteOrder)
         { }
 
         protected override void Configure(out FieldReadMethod readFunc, out FieldWriteMethod writeFunc)
@@ -90,6 +117,7 @@ namespace Reclaimer.IO.Dynamic
                 ConfigureReferenceType(out readFunc, out writeFunc);
         }
 
+        //when TClass is a class
         private void ConfigureReferenceType(out FieldReadMethod readFunc, out FieldWriteMethod writeFunc)
         {
             var isNullable = TargetProperty.PropertyType.IsGenericType && TargetProperty.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
@@ -164,6 +192,7 @@ namespace Reclaimer.IO.Dynamic
             }
         }
 
+        //when TClass is a struct
         private void ConfigureValueType(out FieldReadMethod readFunc, out FieldWriteMethod writeFunc)
         {
             var isNullable = TargetProperty.PropertyType.IsGenericType && TargetProperty.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>);
@@ -240,7 +269,5 @@ namespace Reclaimer.IO.Dynamic
 
         protected abstract TField StreamRead(EndianReader reader, in ByteOrder? byteOrder);
         protected abstract void StreamWrite(EndianWriter writer, TField value, in ByteOrder? byteOrder);
-
-        protected override string GetDebuggerDisplay() => $"@{Offset,4} (0x{Offset:X4}) : [{typeof(TField).Name}] {typeof(TClass).Name}.{TargetProperty.Name}";
     }
 }
