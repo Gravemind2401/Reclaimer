@@ -68,23 +68,23 @@ namespace Reclaimer.IO.Dynamic
                 return false;
 
             if (GetMethod == null || SetMethod == null)
-                throw Exceptions.NonPublicGetSet(Property.Name);
+                throw Exceptions.NonPublicGetSet(Property);
             if (IsVersionNumber && !IsVersionNullable)
                 throw new InvalidOperationException();
             if (!DataLengthAttributes.ValidateOverlap())
-                throw Exceptions.AttributeVersionOverlap(Property.Name, typeof(DataLengthAttribute));
+                throw Exceptions.AttributeVersionOverlap(Property, typeof(DataLengthAttribute));
             if (!OffsetAttributes.ValidateOverlap())
-                throw Exceptions.AttributeVersionOverlap(Property.Name, typeof(OffsetAttribute));
+                throw Exceptions.AttributeVersionOverlap(Property, typeof(OffsetAttribute));
             if (!ByteOrderAttributes.ValidateOverlap())
-                throw Exceptions.AttributeVersionOverlap(Property.Name, typeof(ByteOrderAttribute));
+                throw Exceptions.AttributeVersionOverlap(Property, typeof(ByteOrderAttribute));
             if (!StoreTypeAttributes.ValidateOverlap())
-                throw Exceptions.AttributeVersionOverlap(Property.Name, typeof(StoreTypeAttribute));
+                throw Exceptions.AttributeVersionOverlap(Property, typeof(StoreTypeAttribute));
 
             var stringConstraints = Convert.ToInt32(IsLengthPrefixed) + Convert.ToInt32(FixedLengthAttribute != null) + Convert.ToInt32(NullTerminatedAttribute != null);
             if (PropertyType != typeof(string) && stringConstraints > 0)
                 throw new InvalidOperationException("String type attributes applied to a non-string property");
             if (PropertyType == typeof(string) && stringConstraints != 1)
-                throw Exceptions.StringTypeOverlap(Property.Name);
+                throw Exceptions.StringTypeOverlap(Property);
 
             return true;
         }

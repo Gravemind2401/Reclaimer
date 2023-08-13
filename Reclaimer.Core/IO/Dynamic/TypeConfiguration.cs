@@ -29,10 +29,10 @@ namespace Reclaimer.IO.Dynamic
                 .ToList();
 
             if (!properties.SelectMany(p => p.DataLengthAttributes).ValidateOverlap())
-                throw Exceptions.AttributeVersionOverlap(type.Name, typeof(DataLengthAttribute));
+                throw Exceptions.AttributeVersionOverlap(type, typeof(DataLengthAttribute));
 
             if (properties.Where(p => p.IsVersionNumber).Skip(1).Any())
-                throw Exceptions.MultipleVersionsSpecified(type.Name);
+                throw Exceptions.MultipleVersionsSpecified(type);
 
             versionProperty = properties.SingleOrDefault(p => p.IsVersionNumber);
             if (versionProperty != null)
