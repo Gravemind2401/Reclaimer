@@ -128,7 +128,13 @@ namespace Reclaimer.IO
             if (count <= 0) // in case the virtual length has been set to less than the source length
                 return 0;
 
-            source.ReadAll(buffer, offset, count); // read in the original data
+            var readCount = source.ReadAll(buffer, offset, count); // read in the original data
+            
+            //apparently the buffer we receive may already have values in it,
+            //so clear out anything that wasnt already overwritten by ReadAll()
+            if (readCount < count)
+                buffer.AsSpan().Slice(offset + readCount, count - readCount).Clear();
+
             Position = start + count; // in case we are beyond the source length, source.Read will not advance the position by itself
 
             // apply any changes that have been made
