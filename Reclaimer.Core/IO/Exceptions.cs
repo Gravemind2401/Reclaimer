@@ -7,6 +7,13 @@ namespace Reclaimer.IO
     {
         #region Generic Errors
 
+        public static void ThrowIfNotPositive<T>(T paramValue, [CallerArgumentExpression(nameof(paramValue))] string paramName = null)
+            where T : System.Numerics.INumber<T>
+        {
+            if (!T.IsPositive(paramValue))
+                throw ParamMustBePositive(paramValue, paramName);
+        }
+
         public static ArgumentOutOfRangeException ParamMustBePositive(object paramValue, [CallerArgumentExpression(nameof(paramValue))] string paramName = null)
         {
             return new ArgumentOutOfRangeException(paramName, paramValue, Utils.CurrentCulture($"The {paramName} value must be greater than zero."));

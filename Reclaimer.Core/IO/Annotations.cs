@@ -1,4 +1,5 @@
 ﻿using Reclaimer.IO.Dynamic;
+using System.IO;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -75,9 +76,7 @@ namespace Reclaimer.IO
         /// <exception cref="ArgumentOutOfRangeException"/>
         public FixedSizeAttribute(long size)
         {
-            if (size <= 0)
-                throw Exceptions.ParamMustBePositive(size);
-
+            Exceptions.ThrowIfNotPositive(size);
             Size = size;
         }
 
@@ -101,7 +100,7 @@ namespace Reclaimer.IO
 
     /// <summary>
     /// Specifies that the property value represents the number of bytes used to store its containing instance.
-    /// This attribute is only valid for integer valued properties.
+    /// <br/>This attribute is only valid for integer typed properties. The property value must be a positive integer less than <see cref="long.MaxValue"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
     public sealed class DataLengthAttribute : Attribute, IVersionAttribute
@@ -147,6 +146,13 @@ namespace Reclaimer.IO
 
                 maxVersion = value;
             }
+        }
+
+        internal static void ThrowIfInvalidPropertyType(Type type)
+        {
+            var typeCode = Type.GetTypeCode(type);
+            if (typeCode < TypeCode.SByte || typeCode > TypeCode.UInt64)
+                throw new InvalidDataException($"{nameof(DataLengthAttribute)} is not valid for properties stored as {type.Name}.");
         }
     }
 

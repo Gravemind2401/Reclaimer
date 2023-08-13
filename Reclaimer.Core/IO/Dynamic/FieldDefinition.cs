@@ -33,6 +33,7 @@ namespace Reclaimer.IO.Dynamic
         public PropertyInfo TargetProperty { get; }
         public long Offset { get; }
         public ByteOrder? ByteOrder { get; }
+        public bool IsDataLengthProperty { get; }
 
         protected FieldDefinition(PropertyInfo targetProperty, Type targetType, long offset, ByteOrder? byteOrder)
         {
@@ -40,6 +41,12 @@ namespace Reclaimer.IO.Dynamic
             TargetType = targetType;
             Offset = offset;
             ByteOrder = byteOrder;
+
+            if (Attribute.IsDefined(targetProperty, typeof(DataLengthAttribute)))
+            {
+                DataLengthAttribute.ThrowIfInvalidPropertyType(TargetType);
+                IsDataLengthProperty = true;
+            }
 
             Configure(out ReadValue, out WriteValue);
         }
