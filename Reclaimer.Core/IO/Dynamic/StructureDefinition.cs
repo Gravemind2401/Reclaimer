@@ -14,6 +14,20 @@ namespace Reclaimer.IO.Dynamic
         {
             instance ??= FromAttributes();
 
+            //if a version was provided, always use it
+            //otherwise, try to use the version from the version field, if applicable
+            if (!version.HasValue)
+            {
+                var defaultVersion = instance.versions[^1];
+                var versionField = defaultVersion.VersionField;
+                if (versionField != null)
+                {
+                    reader.Seek(versionField.Offset, SeekOrigin.Begin);
+                    version = versionField.StreamReadVersionField(reader, versionField.ByteOrder ?? defaultVersion.ByteOrder);
+                    reader.Seek(origin, SeekOrigin.Begin);
+                }
+            }
+
             var definition = FindVersionDefinition(version);
 
             foreach (var field in definition.Fields)
@@ -36,13 +50,31 @@ namespace Reclaimer.IO.Dynamic
         {
             instance ??= FromAttributes();
 
-            var definition = FindVersionDefinition(version);
-
             var origin = writer.Position;
+
+            //if a version was provided, always use it
+            //otherwise, try to use the version from the version field, if applicable
+            if (!version.HasValue)
+            {
+                var defaultVersion = instance.versions[^1];
+                var versionField = defaultVersion.VersionField;
+                if (versionField != null)
+                    version = Convert.ToDouble(versionField.TargetProperty.GetValue(value));
+            }
+
+            var definition = FindVersionDefinition(version);
             foreach (var field in definition.Fields)
             {
+                var byteOrder = field.ByteOrder ?? definition.ByteOrder;
+
                 writer.Seek(origin + field.Offset, SeekOrigin.Begin);
-                field.WriteValue(ref value, writer, field.ByteOrder ?? definition.ByteOrder);
+                if (field.IsVersionProperty)
+                {
+                    //ensure that the version written to stream always reflects the version the structure was written with
+                    field.StreamWriteVersionField(writer, version.GetValueOrDefault(), byteOrder);
+                }
+                else
+                    field.WriteValue(ref value, writer, byteOrder);
             }
 
             if (definition.Size.HasValue)
@@ -194,6 +226,7 @@ namespace Reclaimer.IO.Dynamic
             public readonly ByteOrder? ByteOrder;
             public readonly long? Size;
 
+            public FieldDefinition<TClass> VersionField { get; private set; }
             public FieldDefinition<TClass> DataLengthField { get; private set; }
 
             public VersionDefinition(double? minVersion, double? maxVersion, ByteOrder? byteOrder, long? size)
@@ -208,6 +241,13 @@ namespace Reclaimer.IO.Dynamic
 
             public void AddField(FieldDefinition<TClass> definition)
             {
+                if (definition.IsVersionProperty)
+                {
+                    if (VersionField != null)
+                        throw new InvalidDataException($"{nameof(VersionNumberAttribute)} can only be applied to one property at a time.");
+                    VersionField = definition;
+                }
+
                 if (definition.IsDataLengthProperty)
                 {
                     if (DataLengthField != null)

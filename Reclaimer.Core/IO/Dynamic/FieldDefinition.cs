@@ -33,6 +33,7 @@ namespace Reclaimer.IO.Dynamic
         public PropertyInfo TargetProperty { get; }
         public long Offset { get; }
         public ByteOrder? ByteOrder { get; }
+        public bool IsVersionProperty { get; }
         public bool IsDataLengthProperty { get; }
 
         protected FieldDefinition(PropertyInfo targetProperty, Type targetType, long offset, ByteOrder? byteOrder)
@@ -41,6 +42,12 @@ namespace Reclaimer.IO.Dynamic
             TargetType = targetType;
             Offset = offset;
             ByteOrder = byteOrder;
+
+            if (Attribute.IsDefined(targetProperty, typeof(VersionNumberAttribute)))
+            {
+                VersionNumberAttribute.ThrowIfInvalidPropertyType(TargetType);
+                IsVersionProperty = true;
+            }
 
             if (Attribute.IsDefined(targetProperty, typeof(DataLengthAttribute)))
             {
@@ -52,6 +59,19 @@ namespace Reclaimer.IO.Dynamic
         }
 
         protected abstract void Configure(out FieldReadMethod readFunc, out FieldWriteMethod writeFunc);
+
+        /// <summary>
+        /// Reads the target value from the stream and converts it to a <see cref="double"/>.
+        /// <br/>Does not set the value against the target property.
+        /// <br/>Only to be used when the target property has <see cref="VersionNumberAttribute"/> applied.
+        /// </summary>
+        internal abstract double StreamReadVersionField(EndianReader reader, in ByteOrder? byteOrder);
+
+        /// <summary>
+        /// Converts the version number to the target property type and writes it to stream as if it was the value of the target property.
+        /// <br/>Only to be used when the target property has <see cref="VersionNumberAttribute"/> applied.
+        /// </summary>
+        internal abstract void StreamWriteVersionField(EndianWriter writer, double value, in ByteOrder? byteOrder);
 
         protected virtual string GetDebuggerDisplay() => $"0x{Offset:X4} / {Offset:D4} : [{TargetType.Name}] {typeof(TClass).Name}.{TargetProperty.Name}";
 
@@ -116,7 +136,7 @@ namespace Reclaimer.IO.Dynamic
             : base(targetProperty, typeof(TField), offset, byteOrder)
         { }
 
-        protected override void Configure(out FieldReadMethod readFunc, out FieldWriteMethod writeFunc)
+        protected sealed override void Configure(out FieldReadMethod readFunc, out FieldWriteMethod writeFunc)
         {
             if (typeof(TClass).IsValueType)
                 ConfigureValueType(out readFunc, out writeFunc);
@@ -272,6 +292,16 @@ namespace Reclaimer.IO.Dynamic
                     TargetProperty.SetValue(obj, converted);
                 }
             }
+        }
+
+        internal sealed override double StreamReadVersionField(EndianReader reader, in ByteOrder? byteOrder)
+        {
+            return Convert.ToDouble(StreamRead(reader, byteOrder));
+        }
+
+        internal sealed override void StreamWriteVersionField(EndianWriter writer, double value, in ByteOrder? byteOrder)
+        {
+            StreamWrite(writer, (TField)Convert.ChangeType(value, typeof(TField)), byteOrder);
         }
 
         protected abstract TField StreamRead(EndianReader reader, in ByteOrder? byteOrder);
