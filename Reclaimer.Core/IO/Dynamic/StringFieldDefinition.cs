@@ -8,6 +8,7 @@ namespace Reclaimer.IO.Dynamic
     /// <inheritdoc cref="FieldDefinition{TClass, TField}"/>
     internal class StringFieldDefinition<TClass> : FieldDefinition<TClass, string>
     {
+        private readonly bool isInterned;
         private readonly bool isFixedLength;
         private readonly bool isNullTerminated;
         private readonly bool isLengthPrefixed;
@@ -18,6 +19,8 @@ namespace Reclaimer.IO.Dynamic
         public StringFieldDefinition(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
             : base(targetProperty, offset, byteOrder)
         {
+            isInterned = Attribute.IsDefined(targetProperty, typeof(InternedAttribute));
+
             if (Attribute.IsDefined(targetProperty, typeof(LengthPrefixedAttribute)))
             {
                 isLengthPrefixed = true;
@@ -45,16 +48,23 @@ namespace Reclaimer.IO.Dynamic
 
         protected override string StreamRead(EndianReader reader, in ByteOrder? byteOrder)
         {
+            string value;
+
             if (isFixedLength)
-                return reader.ReadString(length, trimEnabled);
+                value = reader.ReadString(length, trimEnabled);
             else if (isLengthPrefixed)
-                return byteOrder.HasValue ? reader.ReadString(byteOrder.Value) : reader.ReadString();
+                value = byteOrder.HasValue ? reader.ReadString(byteOrder.Value) : reader.ReadString();
             else
             {
-                return length > 0
+                value = length > 0
                     ? reader.ReadNullTerminatedString(length)
                     : reader.ReadNullTerminatedString();
             }
+
+            if (isInterned)
+                value = string.Intern(value);
+
+            return value;
         }
 
         protected override void StreamWrite(EndianWriter writer, string value, in ByteOrder? byteOrder)
