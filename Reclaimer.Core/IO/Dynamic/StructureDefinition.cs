@@ -10,20 +10,42 @@ namespace Reclaimer.IO.Dynamic
 
         private readonly List<VersionDefinition> versions = new();
 
-        public static void Populate(ref TClass value, EndianReader reader, double? version)
+        public static void Populate(ref TClass value, EndianReader reader, double? version, long origin)
         {
             instance ??= FromAttributes();
 
-            var definition = instance.versions.FirstOrDefault(d => d.ValidFor(version));
-            definition.ReadValue(ref value, reader);
+            var definition = FindVersionDefinition(version);
+
+            foreach (var field in definition.Fields)
+            {
+                reader.Seek(origin + field.Offset, SeekOrigin.Begin);
+                field.ReadValue(ref value, reader, field.ByteOrder ?? definition.ByteOrder);
+            }
+
+            if (definition.Size.HasValue)
+                reader.Seek(origin + definition.Size.Value, SeekOrigin.Begin);
         }
 
         public static void Write(ref TClass value, EndianWriter writer, double? version)
         {
             instance ??= FromAttributes();
 
-            var definition = instance.versions.FirstOrDefault(d => d.ValidFor(version));
-            definition.WriteValue(ref value, writer);
+            var definition = FindVersionDefinition(version);
+
+            var origin = writer.Position;
+            foreach (var field in definition.Fields)
+            {
+                writer.Seek(origin + field.Offset, SeekOrigin.Begin);
+                field.WriteValue(ref value, writer, field.ByteOrder ?? definition.ByteOrder);
+            }
+
+            if (definition.Size.HasValue)
+                writer.Seek(origin + definition.Size.Value, SeekOrigin.Begin);
+        }
+
+        private static VersionDefinition FindVersionDefinition(double? version)
+        {
+            return instance.versions.First(d => Extensions.ValidateVersion(version, d.MinVersion, d.MaxVersion));
         }
 
         public static StructureDefinition<TClass> FromAttributes()
@@ -154,20 +176,21 @@ namespace Reclaimer.IO.Dynamic
         {
             private readonly List<FieldDefinition<TClass>> fields = new();
 
-            private readonly double? minVersion;
-            private readonly double? maxVersion;
-            private readonly ByteOrder? byteOrder;
-            private readonly long? size;
+            public readonly IReadOnlyList<FieldDefinition<TClass>> Fields;
+            public readonly double? MinVersion;
+            public readonly double? MaxVersion;
+            public readonly ByteOrder? ByteOrder;
+            public readonly long? Size;
 
             public VersionDefinition(double? minVersion, double? maxVersion, ByteOrder? byteOrder, long? size)
             {
-                this.minVersion = minVersion;
-                this.maxVersion = maxVersion;
-                this.byteOrder = byteOrder;
-                this.size = size;
+                fields = new();
+                Fields = fields.AsReadOnly();
+                MinVersion = minVersion;
+                MaxVersion = maxVersion;
+                ByteOrder = byteOrder;
+                Size = size;
             }
-
-            public bool ValidFor(double? version) => Extensions.ValidateVersion(version, minVersion, maxVersion);
 
             public void AddField(FieldDefinition<TClass> definition)
             {
@@ -179,33 +202,7 @@ namespace Reclaimer.IO.Dynamic
                     fields.Add(definition);
             }
 
-            public void ReadValue(ref TClass value, EndianReader reader)
-            {
-                var origin = reader.Position;
-                foreach (var field in fields)
-                {
-                    reader.Seek(origin + field.Offset, SeekOrigin.Begin);
-                    field.ReadValue(ref value, reader, field.ByteOrder ?? byteOrder);
-                }
-
-                if (size.HasValue)
-                    reader.Seek(origin + size.Value, SeekOrigin.Begin);
-            }
-
-            public void WriteValue(ref TClass value, EndianWriter writer)
-            {
-                var origin = writer.Position;
-                foreach (var field in fields)
-                {
-                    writer.Seek(origin + field.Offset, SeekOrigin.Begin);
-                    field.WriteValue(ref value, writer, field.ByteOrder ?? byteOrder);
-                }
-
-                if (size.HasValue)
-                    writer.Seek(origin + size.Value, SeekOrigin.Begin);
-            }
-
-            private string GetDebuggerDisplay() => minVersion.HasValue || maxVersion.HasValue ? new { Min = minVersion, Max = maxVersion }.ToString() : "{Default}";
+            private string GetDebuggerDisplay() => MinVersion.HasValue || MaxVersion.HasValue ? new { Min = MinVersion, Max = MaxVersion }.ToString() : "{Default}";
         }
     }
 }
