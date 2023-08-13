@@ -192,7 +192,7 @@ namespace Reclaimer.IO.Dynamic
                 {
                     var value = TargetProperty.GetValue(obj);
                     if (!Utils.TryConvert(ref value, TargetProperty.PropertyType, typeof(TField)))
-                        throw new InvalidCastException($"The value in {TargetProperty.Name} could not be stored as {typeof(TField)}");
+                        throw Exceptions.PropertyNotConvertable(TargetProperty, typeof(TField));
                     return (TField)value;
                 }
             }
@@ -213,7 +213,7 @@ namespace Reclaimer.IO.Dynamic
                 {
                     var converted = (object)value;
                     if (!Utils.TryConvert(ref converted, typeof(TField), TargetProperty.PropertyType))
-                        throw new InvalidCastException($"The value in {TargetProperty.Name} could not be stored as {typeof(TField)}");
+                        throw Exceptions.PropertyNotConvertable(TargetProperty, typeof(TField));
                     TargetProperty.SetValue(obj, converted);
                 }
             }

@@ -103,6 +103,34 @@ namespace Reclaimer.IO.Dynamic
             var propAttributes = properties
                 .ToDictionary(p => p, p => p.GetCustomAttributes().OfType<Attribute>().ToList());
 
+            #region Attribute Validation
+
+            foreach (var g in classAttributes.OfType<IVersionAttribute>().GroupBy(a => a.GetType()))
+            {
+                if (!g.ValidateOverlap())
+                    throw Exceptions.AttributeVersionOverlap(typeof(TClass), g.Key);
+            }
+
+            if (propAttributes.SelectMany(kv => kv.Value).OfType<VersionNumberAttribute>().Skip(1).Any())
+                throw Exceptions.MultipleVersionsSpecified(typeof(TClass));
+
+            foreach (var (prop, attributes) in propAttributes)
+            {
+                if (prop.GetGetMethod() == null || prop.GetSetMethod() == null)
+                    throw Exceptions.NonPublicGetSet(prop);
+
+                foreach (var g in attributes.OfType<IVersionAttribute>().GroupBy(a => a.GetType()))
+                {
+                    if (!g.ValidateOverlap())
+                        throw Exceptions.AttributeVersionOverlap(prop, g.Key);
+                }
+
+                if (attributes.OfType<IStringTypeAttribute>().Skip(1).Any())
+                    throw Exceptions.StringTypeOverlap(prop);
+            }
+
+            #endregion
+
             var result = new StructureDefinition<TClass>();
 
             foreach (var (min, max) in GetVersionRanges().Distinct())
