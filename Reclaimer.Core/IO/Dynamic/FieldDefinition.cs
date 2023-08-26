@@ -93,7 +93,7 @@ namespace Reclaimer.IO.Dynamic
             storeType = GetUnderlyingType(storeType ?? targetProperty.PropertyType);
 
             if (storeType == typeof(string))
-                return new StringFieldDefinition<TClass>(targetProperty, offset, byteOrder);
+                return StringFieldDefinition<TClass>.FromAttributes(targetProperty, offset, byteOrder);
 
             //since we have a type object that may not necessarily be TClass, we need to construct the appropriate generic method with reflection.
             //rather than make a generic class and find the constructor, its easier to just forward it to the methods below so they can use the generic type params.

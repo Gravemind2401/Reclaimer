@@ -9,41 +9,66 @@ namespace Reclaimer.IO.Dynamic
     internal class StringFieldDefinition<TClass> : FieldDefinition<TClass, string>
     {
         private readonly bool isInterned;
-        private readonly bool isFixedLength;
-        private readonly bool isNullTerminated;
         private readonly bool isLengthPrefixed;
+        private readonly bool isNullTerminated;
+        private readonly bool isFixedLength;
         private readonly bool trimEnabled;
         private readonly char paddingChar;
         private readonly int length;
 
-        public StringFieldDefinition(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
+        private StringFieldDefinition(
+            PropertyInfo targetProperty,
+            long offset,
+            ByteOrder? byteOrder,
+            bool isInterned = default,
+            bool isLengthPrefixed = default,
+            bool isFixedLength = default,
+            bool isNullTerminated = default,
+            int length = default,
+            char paddingChar = default,
+            bool trimEnabled = default)
             : base(targetProperty, offset, byteOrder)
         {
-            isInterned = Attribute.IsDefined(targetProperty, typeof(InternedAttribute));
+            this.isInterned = isInterned;
+            this.isLengthPrefixed = isLengthPrefixed;
+            this.isFixedLength = isFixedLength;
+            this.isNullTerminated = isNullTerminated;
+            this.length = length;
+            this.paddingChar = paddingChar;
+            this.trimEnabled = trimEnabled;
+        }
+
+        public static StringFieldDefinition<TClass> FromAttributes(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
+        {
+            var isInterned = Attribute.IsDefined(targetProperty, typeof(InternedAttribute));
 
             if (Attribute.IsDefined(targetProperty, typeof(LengthPrefixedAttribute)))
-            {
-                isLengthPrefixed = true;
-                return;
-            }
+                return new StringFieldDefinition<TClass>(targetProperty, offset, byteOrder, isInterned, isLengthPrefixed: true);
 
             var fixedLength = targetProperty.GetCustomAttribute<FixedLengthAttribute>();
             if (fixedLength != null)
-            {
-                isFixedLength = true;
-                length = fixedLength.Length;
-                paddingChar = fixedLength.Padding;
-                trimEnabled = fixedLength.Trim;
-                return;
-            }
+                return new StringFieldDefinition<TClass>(targetProperty, offset, byteOrder, isInterned, isFixedLength: true, length: fixedLength.Length, paddingChar: fixedLength.Padding, trimEnabled: fixedLength.Trim);
 
             var nullTerminated = targetProperty.GetCustomAttribute<NullTerminatedAttribute>();
             if (nullTerminated != null)
-            {
-                isNullTerminated = true;
-                length = nullTerminated.Length;
-                return;
-            }
+                return new StringFieldDefinition<TClass>(targetProperty, offset, byteOrder, isInterned, isNullTerminated: true, length: nullTerminated.Length);
+
+            throw Exceptions.StringTypeUnknown(targetProperty);
+        }
+
+        public static StringFieldDefinition<TClass> LengthPrefixed(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder, bool isInterned)
+        {
+            return new StringFieldDefinition<TClass>(targetProperty, offset, byteOrder, isInterned, isLengthPrefixed: true);
+        }
+
+        public static StringFieldDefinition<TClass> FixedLength(PropertyInfo targetProperty, long offset, bool isInterned, int length, char paddingChar, bool trimEnabled)
+        {
+            return new StringFieldDefinition<TClass>(targetProperty, offset, default, isInterned, isFixedLength: true, length: length, paddingChar: paddingChar, trimEnabled: trimEnabled);
+        }
+
+        public static StringFieldDefinition<TClass> NullTerminated(PropertyInfo targetProperty, long offset, bool isInterned, int length)
+        {
+            return new StringFieldDefinition<TClass>(targetProperty, offset, default, isInterned, isNullTerminated: true, length: length);
         }
 
         protected override string StreamRead(EndianReader reader, in ByteOrder? byteOrder)
