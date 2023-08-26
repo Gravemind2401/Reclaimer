@@ -25,7 +25,7 @@ namespace Reclaimer.IO.Dynamic
 
         private VersionBuilder AddVersionInternal(double? minVersion, double? maxVersion)
         {
-            var version = new VersionBuilder();
+            var version = new VersionBuilder(minVersion, maxVersion);
             versions.Add(version);
             return version;
         }
@@ -39,17 +39,36 @@ namespace Reclaimer.IO.Dynamic
         {
             private readonly Dictionary<PropertyInfo, FieldBuilderBase> fields = new();
 
-            public double? MinVersion { get; set; }
-            public double? MaxVersion { get; set; }
-            public ByteOrder? ByteOrder { get; set; }
-            public int? Size { get; set; }
+            private readonly double? minVersion;
+            private readonly double? maxVersion;
+
+            private ByteOrder? byteOrder;
+            private int? size;
+
+            internal VersionBuilder(double? minVersion, double? maxVersion)
+            {
+                this.minVersion = minVersion;
+                this.maxVersion = maxVersion;
+            }
+
+            public VersionBuilder HasFixedSize(int size)
+            {
+                this.size = size;
+                return this;
+            }
+
+            public VersionBuilder HasByteOrder(ByteOrder byteOrder)
+            {
+                this.byteOrder = byteOrder;
+                return this;
+            }
 
             //TODO: differentiate between primitive and dynamic
             public PrimitiveFieldBuilder Property<TProperty>(Expression<Func<TClass, TProperty>> propertyExpression)
             {
                 var property = Utils.PropertyFromExpression(propertyExpression);
                 if (!fields.TryGetValue(property, out var map))
-                    fields.Add(property, map = new PrimitiveFieldBuilder());
+                    fields.Add(property, map = new PrimitiveFieldBuilder(property));
                 return (PrimitiveFieldBuilder)map;
             }
 
@@ -57,13 +76,13 @@ namespace Reclaimer.IO.Dynamic
             {
                 var property = Utils.PropertyFromExpression(propertyExpression);
                 if (!fields.TryGetValue(property, out var map))
-                    fields.Add(property, map = new StringFieldBuilder());
+                    fields.Add(property, map = new StringFieldBuilder(property));
                 return (StringFieldBuilder)map;
             }
 
             internal StructureDefinition<TClass>.VersionDefinition ToVersionDefinition()
             {
-                var versionDef = new StructureDefinition<TClass>.VersionDefinition(MinVersion, MaxVersion, ByteOrder, Size);
+                var versionDef = new StructureDefinition<TClass>.VersionDefinition(minVersion, maxVersion, byteOrder, size);
 
                 foreach (var fieldInfo in fields.Values)
                     versionDef.AddField(fieldInfo.GetFieldDefinition());
@@ -79,12 +98,21 @@ namespace Reclaimer.IO.Dynamic
             internal long? Offset { get; private protected set; }
             internal ByteOrder? ByteOrder { get; private protected set; }
 
+            internal FieldBuilderBase(PropertyInfo targetProperty)
+            {
+                TargetProperty = targetProperty;
+            }
+
             internal abstract FieldDefinition<TClass> GetFieldDefinition();
         }
 
         public abstract class FieldBuilderBase<TSelf> : FieldBuilderBase
             where TSelf : FieldBuilderBase<TSelf>
         {
+            internal FieldBuilderBase(PropertyInfo targetProperty)
+                : base(targetProperty)
+            { }
+
             public TSelf HasOffset(long offset)
             {
                 Offset = offset;
@@ -102,6 +130,10 @@ namespace Reclaimer.IO.Dynamic
         {
             private Type storeType;
             private bool isDataLength; //TODO: apply this to resulting field definition
+            
+            internal PrimitiveFieldBuilder(PropertyInfo targetProperty)
+                : base(targetProperty)
+            { }
 
             public PrimitiveFieldBuilder StoreType(Type storeType)
             {
@@ -126,6 +158,10 @@ namespace Reclaimer.IO.Dynamic
 
         public sealed class DynamicFieldBuilder : FieldBuilderBase<DynamicFieldBuilder>
         {
+            internal DynamicFieldBuilder(PropertyInfo targetProperty)
+                : base(targetProperty)
+            { }
+
             internal override FieldDefinition<TClass> GetFieldDefinition()
             {
                 return FieldDefinition<TClass>.Create(TargetProperty, Offset.GetValueOrDefault(), ByteOrder, null);
@@ -141,6 +177,10 @@ namespace Reclaimer.IO.Dynamic
             private bool trimEnabled;
             private char paddingChar;
             private int length;
+
+            internal StringFieldBuilder(PropertyInfo targetProperty)
+                : base(targetProperty)
+            { }
 
             public StringFieldBuilder IsInterned() => IsInterned(true);
             public StringFieldBuilder IsInterned(bool isInterned)
