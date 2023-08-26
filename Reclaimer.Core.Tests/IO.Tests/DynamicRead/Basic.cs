@@ -6,7 +6,7 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Attributes_Basic01(ByteOrder order)
+        public void Attributes_ClassBasic01(ByteOrder order)
         {
             Basic01<BasicClass01>(order);
         }
@@ -14,7 +14,7 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Builder_Basic01(ByteOrder order)
+        public void Builder_ClassBasic01(ByteOrder order)
         {
             Basic01<BasicClass01_Builder>(order);
         }
@@ -22,7 +22,7 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Attributes_Basic02(ByteOrder order)
+        public void Attributes_ClassBasic02(ByteOrder order)
         {
             Basic02<BasicClass02>(order);
         }
@@ -30,9 +30,41 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Builder_Basic02(ByteOrder order)
+        public void Builder_ClassBasic02(ByteOrder order)
         {
             Basic02<BasicClass02_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_StructBasic01(ByteOrder order)
+        {
+            Basic01<BasicStruct01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_StructBasic01(ByteOrder order)
+        {
+            Basic01<BasicStruct01_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_StructBasic02(ByteOrder order)
+        {
+            Basic02<BasicStruct02>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_StructBasic02(ByteOrder order)
+        {
+            Basic02<BasicStruct02_Builder>(order);
         }
 
         [DataTestMethod]
@@ -52,7 +84,7 @@
         }
 
         private static void Basic01<T>(ByteOrder order)
-            where T : BasicClass01
+            where T : IBasicType
         {
             var rng = new Random();
             using (var stream = new MemoryStream(new byte[500]))
@@ -129,7 +161,7 @@
         }
 
         private static void Basic02<T>(ByteOrder order)
-            where T : BasicClass02
+            where T : IBasicType
         {
             var rng = new Random();
             using (var stream = new MemoryStream(new byte[500]))
