@@ -35,7 +35,7 @@
                 writer.Write((double)rand[5]);
 
                 stream.Position = 0;
-                var obj = (DataClass09)reader.ReadObject(typeof(DataClass09));
+                var obj = (VersionedClass01)reader.ReadObject(typeof(VersionedClass01));
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(1, obj.Version);
@@ -47,7 +47,7 @@
                 writer.Write(2);
                 stream.Position = 0;
 
-                obj = (DataClass09)reader.ReadObject(typeof(DataClass09));
+                obj = (VersionedClass01)reader.ReadObject(typeof(VersionedClass01));
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(2, obj.Version);
@@ -59,7 +59,7 @@
                 writer.Write(3);
                 stream.Position = 0;
 
-                obj = (DataClass09)reader.ReadObject(typeof(DataClass09));
+                obj = (VersionedClass01)reader.ReadObject(typeof(VersionedClass01));
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(3, obj.Version);
@@ -71,7 +71,7 @@
                 writer.Write(4);
                 stream.Position = 0;
 
-                obj = (DataClass09)reader.ReadObject(typeof(DataClass09));
+                obj = (VersionedClass01)reader.ReadObject(typeof(VersionedClass01));
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(4, obj.Version);
@@ -112,7 +112,7 @@
                 writer.Write((double)rand[4]);
 
                 stream.Position = 0;
-                var obj = (DataClass10)reader.ReadObject(typeof(DataClass10), 1);
+                var obj = (VersionedClass02a)reader.ReadObject(typeof(VersionedClass02a), 1);
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(0, obj.Version);
@@ -121,7 +121,7 @@
                 Assert.IsNull(obj.Property4);
 
                 stream.Position = 0;
-                obj = (DataClass10)reader.ReadObject(typeof(DataClass10), 2);
+                obj = (VersionedClass02a)reader.ReadObject(typeof(VersionedClass02a), 2);
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(0, obj.Version);
@@ -130,7 +130,7 @@
                 Assert.IsNull(obj.Property4);
 
                 stream.Position = 0;
-                obj = (DataClass10)reader.ReadObject(typeof(DataClass10), 3);
+                obj = (VersionedClass02a)reader.ReadObject(typeof(VersionedClass02a), 3);
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(0, obj.Version);
@@ -139,7 +139,7 @@
                 Assert.IsNull(obj.Property4);
 
                 stream.Position = 0;
-                obj = (DataClass10)reader.ReadObject(typeof(DataClass10), 4);
+                obj = (VersionedClass02a)reader.ReadObject(typeof(VersionedClass02a), 4);
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(0, obj.Version);
@@ -147,56 +147,6 @@
                 Assert.IsNull(obj.Property3);
                 Assert.AreEqual(rand[4], obj.Property4);
             }
-        }
-
-        public class DataClass09
-        {
-            [Offset(0x00)]
-            public int Property1 { get; set; }
-
-            [Offset(0x04)]
-            [VersionNumber]
-            public int Version { get; set; }
-
-            [Offset(0x08, MaxVersion = 2)]
-            [Offset(0x0C, MinVersion = 2)]
-            public float Property2 { get; set; }
-
-            [Offset(0x10)]
-            [MinVersion(2)]
-            [MaxVersion(4)]
-            public float? Property3 { get; set; }
-
-            [Offset(0x14)]
-            [VersionSpecific(4)]
-            public double? Property4 { get; set; }
-
-            [Offset(0x1C)]
-            [MinVersion(4)]
-            [MaxVersion(4)]
-            public double? Property5 { get; set; }
-        }
-
-        public class DataClass10
-        {
-            [Offset(0x00)]
-            public int Property1 { get; set; }
-
-            [Offset(0x04)]
-            public int Version { get; set; }
-
-            [Offset(0x08, MaxVersion = 2)]
-            [Offset(0x0C, MinVersion = 2)]
-            public float Property2 { get; set; }
-
-            [Offset(0x10)]
-            [MinVersion(2)]
-            [MaxVersion(4)]
-            public float? Property3 { get; set; }
-
-            [Offset(0x14)]
-            [VersionSpecific(4)]
-            public double? Property4 { get; set; }
         }
     }
 }

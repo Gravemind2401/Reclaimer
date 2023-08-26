@@ -8,7 +8,7 @@
         public void ByteOrder01(ByteOrder order)
         {
             var rng = new Random();
-            var obj = new DataClass03
+            var obj = new ByteOrderClass01
             {
                 Property1 = (sbyte)rng.Next(sbyte.MinValue, sbyte.MaxValue),
                 Property2 = (short)rng.Next(short.MinValue, short.MaxValue),
@@ -68,7 +68,7 @@
         public void ByteOrder02(ByteOrder order)
         {
             var rng = new Random();
-            var obj = new DataClass04
+            var obj = new ByteOrderClass02
             {
                 Property1 = (sbyte)rng.Next(sbyte.MinValue, sbyte.MaxValue),
                 Property2 = (short)rng.Next(short.MinValue, short.MaxValue),
@@ -123,77 +123,6 @@
                 reader.Seek(0x50, SeekOrigin.Begin);
                 Assert.AreEqual(obj.Property10, reader.ReadDouble());
             }
-        }
-
-        [FixedSize(0xFF)]
-        [ByteOrder(ByteOrder.BigEndian)]
-        public class DataClass03
-        {
-            [Offset(0x00)]
-            public sbyte Property1 { get; set; }
-
-            [Offset(0x10)]
-            public short Property2 { get; set; }
-
-            [Offset(0x20)]
-            public int Property3 { get; set; }
-
-            [Offset(0x30)]
-            [ByteOrder(ByteOrder.LittleEndian)]
-            public long Property4 { get; set; }
-
-            [Offset(0x40)]
-            public byte Property5 { get; set; }
-
-            [Offset(0x50)]
-            public ushort Property6 { get; set; }
-
-            [Offset(0x60)]
-            public uint Property7 { get; set; }
-
-            [Offset(0x70)]
-            public ulong Property8 { get; set; }
-
-            [Offset(0x80)]
-            public float Property9 { get; set; }
-
-            [Offset(0x90)]
-            public double Property10 { get; set; }
-        }
-
-        public class DataClass04
-        {
-            [Offset(0x70)]
-            public sbyte Property1 { get; set; }
-
-            [Offset(0x40)]
-            public short Property2 { get; set; }
-
-            [Offset(0x30)]
-            public int Property3 { get; set; }
-
-            [Offset(0x10)]
-            [ByteOrder(ByteOrder.LittleEndian)]
-            public long Property4 { get; set; }
-
-            [Offset(0x90)]
-            public byte Property5 { get; set; }
-
-            [Offset(0x60)]
-            public ushort Property6 { get; set; }
-
-            [Offset(0x00)]
-            public uint Property7 { get; set; }
-
-            [Offset(0x80)]
-            [ByteOrder(ByteOrder.BigEndian)]
-            public ulong Property8 { get; set; }
-
-            [Offset(0x20)]
-            public float Property9 { get; set; }
-
-            [Offset(0x50)]
-            public double Property10 { get; set; }
         }
     }
 }

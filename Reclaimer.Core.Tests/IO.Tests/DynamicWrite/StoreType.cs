@@ -8,7 +8,7 @@
         public void StoreType01(ByteOrder order)
         {
             var rng = new Random();
-            var obj = new DataClass11
+            var obj = new StoreTypeClass01
             {
                 Property1 = rng.Next(short.MinValue, short.MaxValue),
                 Property2 = rng.Next(byte.MinValue, byte.MaxValue),
@@ -26,21 +26,6 @@
                 Assert.AreEqual((byte)obj.Property2, reader.ReadByte());
                 Assert.AreEqual((float)obj.Property3, reader.ReadSingle());
             }
-        }
-
-        public class DataClass11
-        {
-            [Offset(0x00)]
-            [StoreType(typeof(short))]
-            public int Property1 { get; set; }
-
-            [Offset(0x02)]
-            [StoreType(typeof(byte))]
-            public int Property2 { get; set; }
-
-            [Offset(0x03)]
-            [StoreType(typeof(float))]
-            public double Property3 { get; set; }
         }
     }
 }

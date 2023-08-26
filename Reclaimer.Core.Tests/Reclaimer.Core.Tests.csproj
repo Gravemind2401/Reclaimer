@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+    <Using Include="Reclaimer.IO.Tests.Structures" />
   </ItemGroup>
 
 </Project>

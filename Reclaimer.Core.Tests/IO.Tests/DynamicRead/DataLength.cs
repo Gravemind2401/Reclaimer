@@ -15,7 +15,7 @@
                 writer.Write(100);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<DataClass14>();
+                var obj = reader.ReadObject<DataLengthClass01>();
 
                 Assert.AreEqual(5, obj.Property1);
                 Assert.AreEqual(100, obj.Property2);
@@ -26,22 +26,12 @@
                 writer.Write(45);
 
                 stream.Position = 0;
-                obj = reader.ReadObject<DataClass14>();
+                obj = reader.ReadObject<DataLengthClass01>();
 
                 Assert.AreEqual(7, obj.Property1);
                 Assert.AreEqual(45, obj.Property2);
                 Assert.AreEqual(45, stream.Position);
             }
-        }
-
-        public class DataClass14
-        {
-            [Offset(0x00)]
-            public int Property1 { get; set; }
-
-            [DataLength]
-            [Offset(0x04)]
-            public int Property2 { get; set; }
         }
     }
 }

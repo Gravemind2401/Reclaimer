@@ -11,7 +11,7 @@
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                var obj = new DataClass14
+                var obj = new DataLengthClass01
                 {
                     Property1 = 5,
                     Property2 = 100
@@ -25,7 +25,7 @@
                 Assert.AreEqual(100, reader.ReadInt32());
 
                 stream.Position = 0;
-                obj = new DataClass14
+                obj = new DataLengthClass01
                 {
                     Property1 = 7,
                     Property2 = 45
@@ -38,16 +38,6 @@
                 Assert.AreEqual(7, reader.ReadInt32());
                 Assert.AreEqual(45, reader.ReadInt32());
             }
-        }
-
-        public class DataClass14
-        {
-            [Offset(0x00)]
-            public int Property1 { get; set; }
-
-            [DataLength]
-            [Offset(0x04)]
-            public int Property2 { get; set; }
         }
     }
 }

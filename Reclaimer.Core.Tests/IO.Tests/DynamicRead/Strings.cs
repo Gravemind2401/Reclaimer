@@ -21,16 +21,22 @@
                 writer.WriteStringFixedLength(value2, 32);
 
                 stream.Position = 0x40;
-                writer.WriteStringNullTerminated(value3);
+                writer.WriteStringFixedLength(value2, 32);
 
                 stream.Position = 0x60;
-                writer.Write(value1, ByteOrder.LittleEndian);
+                writer.WriteStringNullTerminated(value3);
 
                 stream.Position = 0x80;
+                writer.WriteStringNullTerminated(value3);
+
+                stream.Position = 0xC0;
+                writer.Write(value1, ByteOrder.LittleEndian);
+
+                stream.Position = 0xE0;
                 writer.Write(value1, ByteOrder.BigEndian);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<DataClass05>();
+                var obj = reader.ReadObject<StringsClass01>();
 
                 Assert.AreEqual(value1, obj.Property1);
 
@@ -69,63 +75,12 @@
                 writer.Write(value3, ByteOrder.BigEndian);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<DataClass06>();
+                var obj = reader.ReadObject<StringsClass02>();
 
                 Assert.AreEqual(value1, obj.Property1);
                 Assert.AreEqual(value2, obj.Property2);
                 Assert.AreEqual(value3, obj.Property3);
             }
-        }
-
-        public class DataClass05
-        {
-            [Offset(0x00)]
-            [LengthPrefixed]
-            public string Property1 { get; set; }
-
-            [Offset(0x20)]
-            [FixedLength(32, Trim = true)]
-            public string Property2 { get; set; }
-
-            [Offset(0x20)]
-            [FixedLength(32)]
-            public string Property3 { get; set; }
-
-            [Offset(0x40)]
-            [NullTerminated]
-            public string Property4 { get; set; }
-
-            [Offset(0x40)]
-            [NullTerminated(Length = 64)]
-            public string Property5 { get; set; }
-
-            [Offset(0x60)]
-            [LengthPrefixed]
-            [ByteOrder(ByteOrder.LittleEndian)]
-            public string Property6 { get; set; }
-
-            [Offset(0x80)]
-            [LengthPrefixed]
-            [ByteOrder(ByteOrder.BigEndian)]
-            public string Property7 { get; set; }
-        }
-
-        [ByteOrder(ByteOrder.BigEndian)]
-        public class DataClass06
-        {
-            [Offset(0x00)]
-            [LengthPrefixed]
-            public string Property1 { get; set; }
-
-            [Offset(0x20)]
-            [LengthPrefixed]
-            [ByteOrder(ByteOrder.LittleEndian)]
-            public string Property2 { get; set; }
-
-            [Offset(0x40)]
-            [LengthPrefixed]
-            [ByteOrder(ByteOrder.BigEndian)]
-            public string Property3 { get; set; }
         }
     }
 }

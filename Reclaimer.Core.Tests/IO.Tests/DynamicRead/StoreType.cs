@@ -24,27 +24,12 @@
                 writer.Write((float)rand[2]);
 
                 stream.Position = 0;
-                var obj = (DataClass11)reader.ReadObject(typeof(DataClass11));
+                var obj = (StoreTypeClass01)reader.ReadObject(typeof(StoreTypeClass01));
 
                 Assert.AreEqual(rand[0], (short)obj.Property1);
                 Assert.AreEqual(rand[1], (byte)obj.Property2);
                 Assert.AreEqual(rand[2], (float)obj.Property3);
             }
-        }
-
-        public class DataClass11
-        {
-            [Offset(0x00)]
-            [StoreType(typeof(short))]
-            public int Property1 { get; set; }
-
-            [Offset(0x02)]
-            [StoreType(typeof(byte))]
-            public int Property2 { get; set; }
-
-            [Offset(0x03)]
-            [StoreType(typeof(float))]
-            public double Property3 { get; set; }
         }
     }
 }
