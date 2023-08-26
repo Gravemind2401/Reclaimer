@@ -5,7 +5,37 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Struct01(ByteOrder order)
+        public void Attributes_Struct01(ByteOrder order)
+        {
+            Struct01<BasicStruct01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Struct01(ByteOrder order)
+        {
+            Struct01<BasicStruct01_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Struct02(ByteOrder order)
+        {
+            Struct02<BasicStruct02>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Struct02(ByteOrder order)
+        {
+            Struct02<BasicStruct02_Builder>(order);
+        }
+
+        private static void Struct01<T>(ByteOrder order)
+            where T : struct, IBasicStruct
         {
             var rng = new Random();
             var obj = new BasicStruct01
@@ -70,10 +100,8 @@
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Struct02(ByteOrder order)
+        private static void Struct02<T>(ByteOrder order)
+            where T : struct, IBasicStruct
         {
             var rng = new Random();
             var obj = new BasicStruct02

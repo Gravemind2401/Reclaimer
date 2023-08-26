@@ -5,7 +5,37 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Struct01(ByteOrder order)
+        public void Attributes_Struct01(ByteOrder order)
+        {
+            Struct01<BasicStruct01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Struct01(ByteOrder order)
+        {
+            Struct01<BasicStruct01_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Struct02(ByteOrder order)
+        {
+            Struct02<BasicStruct02>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Struct02(ByteOrder order)
+        {
+            Struct02<BasicStruct02_Builder>(order);
+        }
+
+        private static void Struct01<T>(ByteOrder order)
+            where T : struct, IBasicStruct
         {
             var rng = new Random();
             using (var stream = new MemoryStream(new byte[500]))
@@ -63,7 +93,7 @@
                 writer.Write((Guid)rand[11]);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<BasicStruct01>();
+                var obj = reader.ReadObject<T>();
 
                 Assert.AreEqual(0xFF, stream.Position);
                 Assert.AreEqual(rand[0], obj.Property1);
@@ -80,11 +110,8 @@
                 Assert.AreEqual(rand[11], obj.Property12);
             }
         }
-
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Struct02(ByteOrder order)
+        private static void Struct02<T>(ByteOrder order)
+            where T : struct, IBasicStruct
         {
             var rng = new Random();
             using (var stream = new MemoryStream(new byte[500]))
@@ -142,7 +169,7 @@
                 writer.Write((Guid)rand[11]);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<BasicStruct02>();
+                var obj = reader.ReadObject<T>();
 
                 //the highest offset should always be read last
                 //so if no size is specified the position should end

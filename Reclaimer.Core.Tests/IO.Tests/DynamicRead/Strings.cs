@@ -5,7 +5,37 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Strings01(ByteOrder order)
+        public void Attributes_Strings01(ByteOrder order)
+        {
+            Strings01<StringsClass01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Strings01(ByteOrder order)
+        {
+            Strings01<StringsClass01_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Strings02(ByteOrder order)
+        {
+            Strings02<StringsClass02>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Strings02(ByteOrder order)
+        {
+            Strings02<StringsClass02_Builder>(order);
+        }
+
+        private static void Strings01<T>(ByteOrder order)
+            where T : StringsClass01
         {
             var value1 = "Length_Prefixed_String_#01!";
             var value2 = "Fixed_Length_String_#01!";
@@ -36,7 +66,7 @@
                 writer.Write(value1, ByteOrder.BigEndian);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<StringsClass01>();
+                var obj = reader.ReadObject<T>();
 
                 Assert.AreEqual(value1, obj.Property1);
 
@@ -53,10 +83,8 @@
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Strings02(ByteOrder order)
+        private static void Strings02<T>(ByteOrder order)
+            where T : StringsClass02
         {
             var value1 = "Length_Prefixed_String_#01!";
             var value2 = "Length_Prefixed_String_#02!";
@@ -75,7 +103,7 @@
                 writer.Write(value3, ByteOrder.BigEndian);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<StringsClass02>();
+                var obj = reader.ReadObject<T>();
 
                 Assert.AreEqual(value1, obj.Property1);
                 Assert.AreEqual(value2, obj.Property2);

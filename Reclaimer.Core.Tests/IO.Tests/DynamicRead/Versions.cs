@@ -7,7 +7,85 @@ namespace Reclaimer.IO.Tests.DynamicRead
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Versions01(ByteOrder order)
+        public void Attributes_Versions01(ByteOrder order)
+        {
+            Versions01<VersionedClass01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Versions02(ByteOrder order)
+        {
+            Versions02<VersionedClass02a>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Versions03(ByteOrder order)
+        {
+            Versions03<VersionedClass03>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Versions04(ByteOrder order)
+        {
+            Versions04<VersionedClass04>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Versions05(ByteOrder order)
+        {
+            Versions05<VersionedClass05>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Versions01(ByteOrder order)
+        {
+            Versions01<VersionedClass01_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Versions02(ByteOrder order)
+        {
+            Versions02<VersionedClass02a_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Versions03(ByteOrder order)
+        {
+            Versions03<VersionedClass03_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Versions04(ByteOrder order)
+        {
+            Versions04<VersionedClass04_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Versions05(ByteOrder order)
+        {
+            Versions05<VersionedClass05_Builder>(order);
+        }
+
+        private static void Versions01<T>(ByteOrder order)
+            where T : VersionedClass01
         {
             var rng = new Random();
             using (var stream = new MemoryStream())
@@ -37,7 +115,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
                 writer.Write((double)rand[5]);
 
                 stream.Position = 0;
-                var obj = (VersionedClass01)reader.ReadObject(typeof(VersionedClass01));
+                var obj = (T)reader.ReadObject(typeof(T));
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(1, obj.Version);
@@ -49,7 +127,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
                 writer.Write(2);
                 stream.Position = 0;
 
-                obj = (VersionedClass01)reader.ReadObject(typeof(VersionedClass01));
+                obj = (T)reader.ReadObject(typeof(T));
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(2, obj.Version);
@@ -61,7 +139,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
                 writer.Write(3);
                 stream.Position = 0;
 
-                obj = (VersionedClass01)reader.ReadObject(typeof(VersionedClass01));
+                obj = (T)reader.ReadObject(typeof(T));
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(3, obj.Version);
@@ -73,7 +151,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
                 writer.Write(4);
                 stream.Position = 0;
 
-                obj = (VersionedClass01)reader.ReadObject(typeof(VersionedClass01));
+                obj = (T)reader.ReadObject(typeof(T));
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(4, obj.Version);
@@ -84,10 +162,8 @@ namespace Reclaimer.IO.Tests.DynamicRead
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Versions02(ByteOrder order)
+        private static void Versions02<T>(ByteOrder order)
+            where T : VersionedClass02a
         {
             var rng = new Random();
             using (var stream = new MemoryStream())
@@ -114,7 +190,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
                 writer.Write((double)rand[4]);
 
                 stream.Position = 0;
-                var obj = (VersionedClass02a)reader.ReadObject(typeof(VersionedClass02a), 1);
+                var obj = (T)reader.ReadObject(typeof(T), 1);
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(0, obj.Version);
@@ -123,7 +199,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
                 Assert.IsNull(obj.Property4);
 
                 stream.Position = 0;
-                obj = (VersionedClass02a)reader.ReadObject(typeof(VersionedClass02a), 2);
+                obj = (T)reader.ReadObject(typeof(T), 2);
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(0, obj.Version);
@@ -132,7 +208,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
                 Assert.IsNull(obj.Property4);
 
                 stream.Position = 0;
-                obj = (VersionedClass02a)reader.ReadObject(typeof(VersionedClass02a), 3);
+                obj = (T)reader.ReadObject(typeof(T), 3);
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(0, obj.Version);
@@ -141,7 +217,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
                 Assert.IsNull(obj.Property4);
 
                 stream.Position = 0;
-                obj = (VersionedClass02a)reader.ReadObject(typeof(VersionedClass02a), 4);
+                obj = (T)reader.ReadObject(typeof(T), 4);
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(0, obj.Version);
@@ -151,10 +227,8 @@ namespace Reclaimer.IO.Tests.DynamicRead
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Versions03(ByteOrder order)
+        private static void Versions03<T>(ByteOrder order)
+            where T : VersionedClass03
         {
             var rng = new Random();
             var rand = new int[3];
@@ -174,53 +248,51 @@ namespace Reclaimer.IO.Tests.DynamicRead
                 writer.Write(rand[2]);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<VersionedClass03>(0);
+                var obj = reader.ReadObject<T>(0);
 
                 Assert.AreEqual(0x20, stream.Position);
                 Assert.AreEqual(rand[0], obj.Property1);
 
                 stream.Position = 0;
-                obj = (VersionedClass03)reader.ReadObject(typeof(VersionedClass03), 1);
+                obj = (T)reader.ReadObject(typeof(T), 1);
 
                 Assert.AreEqual(0x20, stream.Position);
                 Assert.AreEqual(rand[0], obj.Property1);
 
                 stream.Position = 0;
-                obj = reader.ReadObject<VersionedClass03>(2);
+                obj = reader.ReadObject<T>(2);
 
                 Assert.AreEqual(0x20, stream.Position);
                 Assert.AreEqual(rand[1], obj.Property1);
 
                 stream.Position = 0;
-                obj = (VersionedClass03)reader.ReadObject(typeof(VersionedClass03), 3);
+                obj = (T)reader.ReadObject(typeof(T), 3);
 
                 Assert.AreEqual(0x30, stream.Position);
                 Assert.AreEqual(rand[1], obj.Property1);
 
                 stream.Position = 0;
-                obj = reader.ReadObject<VersionedClass03>(4);
+                obj = reader.ReadObject<T>(4);
 
                 Assert.AreEqual(0x30, stream.Position);
                 Assert.AreEqual(rand[2], obj.Property1);
 
                 stream.Position = 0;
-                obj = (VersionedClass03)reader.ReadObject(typeof(VersionedClass03), 5);
+                obj = (T)reader.ReadObject(typeof(T), 5);
 
                 Assert.AreEqual(0x40, stream.Position);
                 Assert.AreEqual(rand[2], obj.Property1);
 
                 stream.Position = 0;
-                obj = reader.ReadObject<VersionedClass03>(6);
+                obj = reader.ReadObject<T>(6);
 
                 Assert.AreEqual(0x40, stream.Position);
                 Assert.AreEqual(rand[2], obj.Property1);
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Versions04(ByteOrder order)
+        private static void Versions04<T>(ByteOrder order)
+            where T : VersionedClass04
         {
             var rng = new Random();
             var rand = new int[1];
@@ -234,53 +306,51 @@ namespace Reclaimer.IO.Tests.DynamicRead
                 writer.Write(rand[0]);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<VersionedClass04>(0);
+                var obj = reader.ReadObject<T>(0);
 
                 Assert.AreEqual(0x20, stream.Position);
                 Assert.AreEqual(rand[0], obj.Property1);
 
                 stream.Position = 0;
-                obj = (VersionedClass04)reader.ReadObject(typeof(VersionedClass04), 1);
+                obj = (T)reader.ReadObject(typeof(T), 1);
 
                 Assert.AreEqual(0x20, stream.Position);
                 Assert.AreEqual(rand[0], obj.Property1);
 
                 stream.Position = 0;
-                obj = reader.ReadObject<VersionedClass04>(2);
+                obj = reader.ReadObject<T>(2);
 
                 Assert.AreEqual(0x20, stream.Position);
                 Assert.AreEqual(rand[0], obj.Property1);
 
                 stream.Position = 0;
-                obj = (VersionedClass04)reader.ReadObject(typeof(VersionedClass04), 3);
+                obj = (T)reader.ReadObject(typeof(T), 3);
 
                 Assert.AreEqual(0x30, stream.Position);
                 Assert.AreEqual(rand[0], obj.Property1);
 
                 stream.Position = 0;
-                obj = reader.ReadObject<VersionedClass04>(4);
+                obj = reader.ReadObject<T>(4);
 
                 Assert.AreEqual(0x30, stream.Position);
                 Assert.AreEqual(rand[0], obj.Property1);
 
                 stream.Position = 0;
-                obj = (VersionedClass04)reader.ReadObject(typeof(VersionedClass04), 5);
+                obj = (T)reader.ReadObject(typeof(T), 5);
 
                 Assert.AreEqual(0x40, stream.Position);
                 Assert.AreEqual(rand[0], obj.Property1);
 
                 stream.Position = 0;
-                obj = reader.ReadObject<VersionedClass04>(6);
+                obj = reader.ReadObject<T>(6);
 
                 Assert.AreEqual(0x40, stream.Position);
                 Assert.AreEqual(rand[0], obj.Property1);
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Versions05(ByteOrder order)
+        private static void Versions05<T>(ByteOrder order)
+            where T : VersionedClass05
         {
             var rng = new Random();
             var rand = new int[1];
@@ -294,37 +364,37 @@ namespace Reclaimer.IO.Tests.DynamicRead
                 writer.Write(rand[0]);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<VersionedClass05>(0);
+                var obj = reader.ReadObject<T>(0);
 
                 Assert.AreEqual(rand[0], obj.Property1a);
                 Assert.IsNull(obj.Property1b);
 
                 stream.Position = 0;
-                obj = (VersionedClass05)reader.ReadObject(typeof(VersionedClass05), 1);
+                obj = (T)reader.ReadObject(typeof(T), 1);
 
                 Assert.AreEqual(rand[0], obj.Property1a);
                 Assert.IsNull(obj.Property1b);
 
                 stream.Position = 0;
-                obj = reader.ReadObject<VersionedClass05>(2);
+                obj = reader.ReadObject<T>(2);
 
                 Assert.AreEqual(rand[0], obj.Property1a);
                 Assert.IsNull(obj.Property1b);
 
                 stream.Position = 0;
-                obj = (VersionedClass05)reader.ReadObject(typeof(VersionedClass05), 3);
+                obj = (T)reader.ReadObject(typeof(T), 3);
 
                 Assert.IsNull(obj.Property1a);
                 Assert.AreEqual(rand[0], obj.Property1b);
 
                 stream.Position = 0;
-                obj = reader.ReadObject<VersionedClass05>(4);
+                obj = reader.ReadObject<T>(4);
 
                 Assert.IsNull(obj.Property1a);
                 Assert.AreEqual(rand[0], obj.Property1b);
 
                 stream.Position = 0;
-                obj = (VersionedClass05)reader.ReadObject(typeof(VersionedClass05), 5);
+                obj = (T)reader.ReadObject(typeof(T), 5);
 
                 Assert.IsNull(obj.Property1a);
                 Assert.AreEqual(rand[0], obj.Property1b);

@@ -9,6 +9,17 @@ namespace Reclaimer
     {
         public static string CurrentCulture(FormattableString formattable) => formattable?.ToString(CultureInfo.CurrentCulture) ?? throw new ArgumentNullException(nameof(formattable));
 
+        public static Type GetUnderlyingType(Type type)
+        {
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                type = type.GetGenericArguments()[0];
+
+            if (type.IsEnum)
+                type = Enum.GetUnderlyingType(type);
+
+            return type;
+        }
+
         public static bool TryConvert(ref object value, Type fromType, Type toType)
         {
             if (value?.GetType() == toType)

@@ -33,8 +33,8 @@ namespace Reclaimer.IO.Dynamic
         public PropertyInfo TargetProperty { get; }
         public long Offset { get; }
         public ByteOrder? ByteOrder { get; }
-        public bool IsVersionProperty { get; }
-        public bool IsDataLengthProperty { get; }
+        public bool IsVersionProperty { get; init; }
+        public bool IsDataLengthProperty { get; init; }
 
         protected FieldDefinition(PropertyInfo targetProperty, Type targetType, long offset, ByteOrder? byteOrder)
         {
@@ -42,18 +42,6 @@ namespace Reclaimer.IO.Dynamic
             TargetType = targetType;
             Offset = offset;
             ByteOrder = byteOrder;
-
-            if (Attribute.IsDefined(targetProperty, typeof(VersionNumberAttribute)))
-            {
-                VersionNumberAttribute.ThrowIfInvalidPropertyType(TargetType);
-                IsVersionProperty = true;
-            }
-
-            if (Attribute.IsDefined(targetProperty, typeof(DataLengthAttribute)))
-            {
-                DataLengthAttribute.ThrowIfInvalidPropertyType(TargetType);
-                IsDataLengthProperty = true;
-            }
 
             Configure(out ReadValue, out WriteValue);
         }
@@ -75,22 +63,11 @@ namespace Reclaimer.IO.Dynamic
 
         protected virtual string GetDebuggerDisplay() => $"0x{Offset:X4} / {Offset:D4} : [{TargetType.Name}] {typeof(TClass).Name}.{TargetProperty.Name}";
 
-        private static Type GetUnderlyingType(Type storeType)
-        {
-            if (storeType.IsGenericType && storeType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                storeType = storeType.GetGenericArguments()[0];
-
-            if (storeType.IsEnum)
-                storeType = Enum.GetUnderlyingType(storeType);
-
-            return storeType;
-        }
-
-        protected static bool SupportsDirectAssignment(Type type1, Type type2) => GetUnderlyingType(type1) == GetUnderlyingType(type2);
+        protected static bool SupportsDirectAssignment(Type type1, Type type2) => Utils.GetUnderlyingType(type1) == Utils.GetUnderlyingType(type2);
 
         public static FieldDefinition<TClass> Create(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder, Type storeType)
         {
-            storeType = GetUnderlyingType(storeType ?? targetProperty.PropertyType);
+            storeType = Utils.GetUnderlyingType(storeType ?? targetProperty.PropertyType);
 
             if (storeType == typeof(string))
                 return StringFieldDefinition<TClass>.FromAttributes(targetProperty, offset, byteOrder);
@@ -107,7 +84,29 @@ namespace Reclaimer.IO.Dynamic
 
         private static FieldDefinition<TClass> CreatePrimitive<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
         {
-            return new PrimitiveFieldDefinition<TClass, TField>(targetProperty, offset, byteOrder);
+            return new PrimitiveFieldDefinition<TClass, TField>(targetProperty, offset, byteOrder)
+            {
+                IsVersionProperty = IsVersionProperty(),
+                IsDataLengthProperty = IsDataLengthProperty()
+            };
+
+            bool IsVersionProperty()
+            {
+                if (!Attribute.IsDefined(targetProperty, typeof(VersionNumberAttribute)))
+                    return false;
+
+                VersionNumberAttribute.ThrowIfInvalidPropertyType(typeof(TField));
+                return true;
+            }
+
+            bool IsDataLengthProperty()
+            {
+                if (!Attribute.IsDefined(targetProperty, typeof(DataLengthAttribute)))
+                    return false;
+
+                DataLengthAttribute.ThrowIfInvalidPropertyType(typeof(TField));
+                return true;
+            }
         }
 
         private static FieldDefinition<TClass> CreateDynamic<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)

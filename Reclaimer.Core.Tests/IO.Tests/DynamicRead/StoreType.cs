@@ -5,7 +5,21 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void StoreType01(ByteOrder order)
+        public void Attributes_StoreType01(ByteOrder order)
+        {
+            StoreType01<StoreTypeClass01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_StoreType01(ByteOrder order)
+        {
+            StoreType01<StoreTypeClass01_Builder>(order);
+        }
+
+        private static void StoreType01<T>(ByteOrder order)
+            where T : StoreTypeClass01
         {
             var rng = new Random();
             using (var stream = new MemoryStream())
@@ -24,7 +38,7 @@
                 writer.Write((float)rand[2]);
 
                 stream.Position = 0;
-                var obj = (StoreTypeClass01)reader.ReadObject(typeof(StoreTypeClass01));
+                var obj = (T)reader.ReadObject(typeof(T));
 
                 Assert.AreEqual(rand[0], (short)obj.Property1);
                 Assert.AreEqual(rand[1], (byte)obj.Property2);

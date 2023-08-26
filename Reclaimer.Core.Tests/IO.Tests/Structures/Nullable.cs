@@ -78,4 +78,54 @@
         [Offset(0x60)]
         public Guid? Property12 { get; set; }
     }
+
+    [StructureDefinition<NullablesClass01_Builder, DefinitionBuilder>]
+    public class NullablesClass01_Builder : NullablesClass01
+    {
+        private class DefinitionBuilder : Dynamic.DefinitionBuilder<NullablesClass01_Builder>
+        {
+            public DefinitionBuilder()
+            {
+                var v = AddDefaultVersion().HasFixedSize(0xFF);
+
+                v.Property(x => x.Property1).HasOffset(0x00);
+                v.Property(x => x.Property2).HasOffset(0x10);
+                v.Property(x => x.Property3).HasOffset(0x20);
+                v.Property(x => x.Property4).HasOffset(0x30);
+                v.Property(x => x.Property5).HasOffset(0x40);
+                v.Property(x => x.Property6).HasOffset(0x50);
+                v.Property(x => x.Property7).HasOffset(0x60);
+                v.Property(x => x.Property8).HasOffset(0x70);
+                v.Property(x => x.Property9).HasOffset(0x80);
+                v.Property(x => x.Property10).HasOffset(0x90);
+                v.Property(x => x.Property11).HasOffset(0xA0);
+                v.Property(x => x.Property12).HasOffset(0xB0);
+            }
+        }
+    }
+
+    [StructureDefinition<NullablesClass02_Builder, DefinitionBuilder>]
+    public class NullablesClass02_Builder : NullablesClass02
+    {
+        private class DefinitionBuilder : Dynamic.DefinitionBuilder<NullablesClass02_Builder>
+        {
+            public DefinitionBuilder()
+            {
+                var v = AddDefaultVersion();
+
+                v.Property(x => x.Property1).HasOffset(0x70);
+                v.Property(x => x.Property2).HasOffset(0x40);
+                v.Property(x => x.Property3).HasOffset(0x30);
+                v.Property(x => x.Property4).HasOffset(0x10);
+                v.Property(x => x.Property5).HasOffset(0x90);
+                v.Property(x => x.Property6).HasOffset(0xA0);
+                v.Property(x => x.Property7).HasOffset(0x00);
+                v.Property(x => x.Property8).HasOffset(0x80);
+                v.Property(x => x.Property9).HasOffset(0xB0);
+                v.Property(x => x.Property10).HasOffset(0x20);
+                v.Property(x => x.Property11).HasOffset(0x50);
+                v.Property(x => x.Property12).HasOffset(0x60);
+            }
+        }
+    }
 }

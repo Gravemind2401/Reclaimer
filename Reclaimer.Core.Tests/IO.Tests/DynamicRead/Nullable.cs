@@ -5,7 +5,37 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Nullable01(ByteOrder order)
+        public void Attributes_Nullable01(ByteOrder order)
+        {
+            Nullable01<NullablesClass01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Nullable01(ByteOrder order)
+        {
+            Nullable01<NullablesClass01_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Nullable02(ByteOrder order)
+        {
+            Nullable02<NullablesClass02>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Nullable02(ByteOrder order)
+        {
+            Nullable02<NullablesClass02_Builder>(order);
+        }
+
+        private static void Nullable01<T>(ByteOrder order)
+            where T : NullablesClass01
         {
             var rng = new Random();
             using (var stream = new MemoryStream(new byte[500]))
@@ -63,7 +93,7 @@
                 writer.Write((Guid)rand[11]);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<NullablesClass01>();
+                var obj = reader.ReadObject<T>();
 
                 Assert.AreEqual(0xFF, stream.Position);
                 Assert.AreEqual(rand[0], obj.Property1);
@@ -81,10 +111,8 @@
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Nullable02(ByteOrder order)
+        private static void Nullable02<T>(ByteOrder order)
+            where T : NullablesClass02
         {
             var rng = new Random();
             using (var stream = new MemoryStream(new byte[500]))
@@ -142,7 +170,7 @@
                 writer.Write((Guid)rand[11]);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<NullablesClass02>();
+                var obj = reader.ReadObject<T>();
 
                 //the highest offset should always be read last
                 //so if no size is specified the position should end

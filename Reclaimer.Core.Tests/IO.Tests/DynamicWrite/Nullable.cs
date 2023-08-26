@@ -5,10 +5,40 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Nullable01(ByteOrder order)
+        public void Attributes_Nullable01(ByteOrder order)
+        {
+            Nullable01<NullablesClass01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Nullable01(ByteOrder order)
+        {
+            Nullable01<NullablesClass01_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Nullable02(ByteOrder order)
+        {
+            Nullable02<NullablesClass02>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Nullable02(ByteOrder order)
+        {
+            Nullable02<NullablesClass02_Builder>(order);
+        }
+
+        private static void Nullable01<T>(ByteOrder order)
+            where T : NullablesClass01, new()
         {
             var rng = new Random();
-            var obj = new NullablesClass01
+            var obj = new T
             {
                 Property1 = (sbyte)rng.Next(sbyte.MinValue, sbyte.MaxValue),
                 Property2 = (short)rng.Next(short.MinValue, short.MaxValue),
@@ -74,10 +104,11 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Nullable02(ByteOrder order)
+        private static void Nullable02<T>(ByteOrder order)
+            where T : NullablesClass02, new()
         {
             var rng = new Random();
-            var obj = new NullablesClass02
+            var obj = new T
             {
                 Property1 = (sbyte)rng.Next(sbyte.MinValue, sbyte.MaxValue),
                 Property2 = (short)rng.Next(short.MinValue, short.MaxValue),

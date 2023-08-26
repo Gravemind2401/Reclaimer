@@ -5,10 +5,88 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Versions01(ByteOrder order)
+        public void Attributes_Versions01(ByteOrder order)
+        {
+            Versions01<VersionedClass01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Versions02(ByteOrder order)
+        {
+            Versions02<VersionedClass02b>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Versions03(ByteOrder order)
+        {
+            Versions03<VersionedClass03>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Versions04(ByteOrder order)
+        {
+            Versions04<VersionedClass04>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Versions05(ByteOrder order)
+        {
+            Versions05<VersionedClass05>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Versions01(ByteOrder order)
+        {
+            Versions01<VersionedClass01_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Versions02(ByteOrder order)
+        {
+            Versions02<VersionedClass02b_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Versions03(ByteOrder order)
+        {
+            Versions03<VersionedClass03_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Versions04(ByteOrder order)
+        {
+            Versions04<VersionedClass04_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Versions05(ByteOrder order)
+        {
+            Versions05<VersionedClass05_Builder>(order);
+        }
+
+        private static void Versions01<T>(ByteOrder order)
+            where T : VersionedClass01, new()
         {
             var rng = new Random();
-            var obj = new VersionedClass01
+            var obj = new T
             {
                 Version = 1,
                 Property1 = rng.Next(int.MinValue, int.MaxValue),
@@ -78,13 +156,11 @@
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Versions02(ByteOrder order)
+        private static void Versions02<T>(ByteOrder order)
+            where T : VersionedClass02b, new()
         {
             var rng = new Random();
-            var obj = new VersionedClass02b
+            var obj = new T
             {
                 Version = 0,
                 Property1 = rng.Next(int.MinValue, int.MaxValue),
@@ -149,13 +225,11 @@
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Versions03(ByteOrder order)
+        private static void Versions03<T>(ByteOrder order)
+            where T : VersionedClass03, new()
         {
             var rng = new Random();
-            var obj = new VersionedClass03
+            var obj = new T
             {
                 Property1 = rng.Next(int.MinValue, int.MaxValue)
             };
@@ -232,13 +306,11 @@
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Versions04(ByteOrder order)
+        private static void Versions04<T>(ByteOrder order)
+            where T : VersionedClass04, new()
         {
             var rng = new Random();
-            var obj = new VersionedClass04
+            var obj = new T
             {
                 Property1 = rng.Next(int.MinValue, int.MaxValue)
             };
@@ -315,13 +387,11 @@
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Versions05(ByteOrder order)
+        private static void Versions05<T>(ByteOrder order)
+            where T : VersionedClass05, new()
         {
             var rng = new Random();
-            var obj = new VersionedClass05
+            var obj = new T
             {
                 Property1a = rng.Next(int.MinValue, int.MaxValue),
                 Property1b = rng.Next(int.MinValue, int.MaxValue)

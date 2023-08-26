@@ -5,9 +5,39 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Strings01(ByteOrder order)
+        public void Attributes_Strings01(ByteOrder order)
         {
-            var obj = new StringsClass01();
+            Strings01<StringsClass01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Strings01(ByteOrder order)
+        {
+            Strings01<StringsClass01_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Strings02(ByteOrder order)
+        {
+            Strings02<StringsClass02>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Strings02(ByteOrder order)
+        {
+            Strings02<StringsClass02_Builder>(order);
+        }
+
+        private static void Strings01<T>(ByteOrder order)
+            where T : StringsClass01, new()
+        {
+            var obj = new T();
 
             obj.Property1 = obj.Property6 = obj.Property7 = "Length_Prefixed_String_#01!";
             obj.Property2 = obj.Property3 = "Fixed_Length_String_#01!";
@@ -42,12 +72,10 @@
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Strings02(ByteOrder order)
+        private static void Strings02<T>(ByteOrder order)
+            where T : StringsClass02, new()
         {
-            var obj = new StringsClass02
+            var obj = new T
             {
                 Property1 = "Length_Prefixed_String_#01!",
                 Property2 = "Length_Prefixed_String_#02!",

@@ -63,7 +63,9 @@ namespace Reclaimer.IO.Dynamic
                 return this;
             }
 
-            //TODO: differentiate between primitive and dynamic
+            //while TProperty could be primitive OR dynamic, the generic constraints cant be overloaded and we can only return one type
+            //even if we added overloads for every possible primtive type (like the string overload below) this wouldnt account for IBufferable types
+            //so PrimitiveFieldBuilder will therefore have to handle both primitive and dynamic fields
             public PrimitiveFieldBuilder Property<TProperty>(Expression<Func<TClass, TProperty>> propertyExpression)
             {
                 var property = Utils.PropertyFromExpression(propertyExpression);
@@ -129,8 +131,9 @@ namespace Reclaimer.IO.Dynamic
         public sealed class PrimitiveFieldBuilder : FieldBuilderBase<PrimitiveFieldBuilder>
         {
             private Type storeType;
-            private bool isDataLength; //TODO: apply this to resulting field definition
-            
+            private bool isVersionNumber;
+            private bool isDataLength;
+
             internal PrimitiveFieldBuilder(PropertyInfo targetProperty)
                 : base(targetProperty)
             { }
@@ -138,6 +141,13 @@ namespace Reclaimer.IO.Dynamic
             public PrimitiveFieldBuilder StoreType(Type storeType)
             {
                 this.storeType = storeType;
+                return this;
+            }
+
+            public PrimitiveFieldBuilder IsVersionNumber() => IsVersionNumber(true);
+            public PrimitiveFieldBuilder IsVersionNumber(bool isVersionNumber)
+            {
+                this.isVersionNumber = isVersionNumber;
                 return this;
             }
 
@@ -150,21 +160,49 @@ namespace Reclaimer.IO.Dynamic
 
             internal override FieldDefinition<TClass> GetFieldDefinition()
             {
-                //not creating definition directly because TField may differ depending on StoreType
-                //and that logic is already handled in FieldDefinition<TClass>.Create()
-                return FieldDefinition<TClass>.Create(TargetProperty, Offset.GetValueOrDefault(), ByteOrder, storeType);
+                var storeType = Utils.GetUnderlyingType(this.storeType ?? TargetProperty.PropertyType);
+
+                //since we have a type object that may not necessarily be TClass, we need to construct the appropriate generic method with reflection.
+                //rather than make a generic class and find the constructor, its easier to just forward it to the methods below so they can use the generic type params.
+                var methodName = DelegateHelper.IsTypeSupported(storeType) ? nameof(CreatePrimitive) : nameof(CreateDynamic);
+                var methodInfo = GetType()
+                    .GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic)
+                    .MakeGenericMethod(storeType);
+
+                return (FieldDefinition<TClass>)methodInfo.Invoke(this, new object[] { TargetProperty, Offset.GetValueOrDefault(), ByteOrder });
             }
-        }
 
-        public sealed class DynamicFieldBuilder : FieldBuilderBase<DynamicFieldBuilder>
-        {
-            internal DynamicFieldBuilder(PropertyInfo targetProperty)
-                : base(targetProperty)
-            { }
-
-            internal override FieldDefinition<TClass> GetFieldDefinition()
+            private FieldDefinition<TClass> CreatePrimitive<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
             {
-                return FieldDefinition<TClass>.Create(TargetProperty, Offset.GetValueOrDefault(), ByteOrder, null);
+                return new PrimitiveFieldDefinition<TClass, TField>(targetProperty, offset, byteOrder)
+                {
+                    IsVersionProperty = IsVersionProperty(),
+                    IsDataLengthProperty = IsDataLengthProperty()
+                };
+
+                bool IsVersionProperty()
+                {
+                    if (!isVersionNumber)
+                        return false;
+
+                    VersionNumberAttribute.ThrowIfInvalidPropertyType(typeof(TField));
+                    return true;
+                }
+
+                bool IsDataLengthProperty()
+                {
+                    if (!isDataLength)
+                        return false;
+
+                    DataLengthAttribute.ThrowIfInvalidPropertyType(typeof(TField));
+                    return true;
+                }
+            }
+
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Access via reflection using instance binding flags")]
+            private FieldDefinition<TClass> CreateDynamic<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
+            {
+                return new DynamicFieldDefinition<TClass, TField>(targetProperty, offset, byteOrder);
             }
         }
 

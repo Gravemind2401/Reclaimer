@@ -7,7 +7,39 @@ namespace Reclaimer.IO.Tests.DynamicRead
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Nested01(ByteOrder order)
+        public void Attributes_Nested01(ByteOrder order)
+        {
+            Nested01<OuterClass01, InnerClass01, InnerStruct01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Nested01(ByteOrder order)
+        {
+            Nested01<OuterClass01_Builder, InnerClass01_Builder, InnerStruct01_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Nested02(ByteOrder order)
+        {
+            Nested02<OuterStruct01, InnerClass01, InnerStruct01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Nested02(ByteOrder order)
+        {
+            Nested02<OuterStruct01_Builder, InnerClass01_Builder, InnerStruct01_Builder>(order);
+        }
+
+        private static void Nested01<TOuter, TInnerClass, TInnerStruct>(ByteOrder order)
+            where TOuter : class, IOuterType<TInnerClass, TInnerStruct>
+            where TInnerClass : class, IInnerType
+            where TInnerStruct : struct, IInnerType
         {
             var rng = new Random();
             var rand = new int[9];
@@ -22,7 +54,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
                     writer.Write(i);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<OuterClass01>();
+                var obj = reader.ReadObject<TOuter>();
 
                 Assert.AreEqual(rand[0], obj.Property1);
                 Assert.AreEqual(rand[1], obj.Property2.Property1);
@@ -36,10 +68,10 @@ namespace Reclaimer.IO.Tests.DynamicRead
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Nested02(ByteOrder order)
+        private static void Nested02<TOuter, TInnerClass, TInnerStruct>(ByteOrder order)
+            where TOuter : struct, IOuterType<TInnerClass, TInnerStruct>
+            where TInnerClass : class, IInnerType
+            where TInnerStruct : struct, IInnerType
         {
             var rng = new Random();
             var rand = new int[9];
