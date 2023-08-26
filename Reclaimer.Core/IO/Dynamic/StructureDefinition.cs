@@ -8,12 +8,16 @@ namespace Reclaimer.IO.Dynamic
     {
         #region Static Members
 
-        private static StructureDefinition<TClass> instance;
+        private static readonly StructureDefinition<TClass> instance;
+
+        static StructureDefinition()
+        {
+            var attr = typeof(TClass).GetCustomAttribute<StructureDefinitionAttribute<TClass>>();
+            instance = attr?.GetStructureDefinition() ?? FromAttributes();
+        }
 
         public static void Populate(ref TClass value, EndianReader reader, ref double? version, in long origin)
         {
-            instance ??= FromAttributes();
-
             //if a version was provided, always use it
             //otherwise, try to use the version from the version field, if applicable
             if (!version.HasValue)
@@ -48,8 +52,6 @@ namespace Reclaimer.IO.Dynamic
 
         public static void Write(ref TClass value, EndianWriter writer, ref double? version)
         {
-            instance ??= FromAttributes();
-
             var origin = writer.Position;
 
             //if a version was provided, always use it

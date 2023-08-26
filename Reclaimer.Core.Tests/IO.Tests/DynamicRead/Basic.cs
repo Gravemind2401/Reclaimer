@@ -6,7 +6,37 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Basic01(ByteOrder order)
+        public void Basic01Attributes(ByteOrder order)
+        {
+            Basic01<BasicClass01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Basic01Builder(ByteOrder order)
+        {
+            Basic01<BasicClass01_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Basic02Attributes(ByteOrder order)
+        {
+            Basic02<BasicClass02>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Basic02Builder(ByteOrder order)
+        {
+            Basic02<BasicClass02_Builder>(order);
+        }
+
+        private static void Basic01<T>(ByteOrder order)
+            where T : BasicClass01
         {
             var rng = new Random();
             using (var stream = new MemoryStream(new byte[500]))
@@ -64,7 +94,7 @@
                 writer.Write((Guid)rand[11]);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<BasicClass01>();
+                var obj = reader.ReadObject<T>();
 
                 Assert.AreEqual(0xFF, stream.Position);
                 Assert.AreEqual(rand[0], obj.Property1);
@@ -82,10 +112,8 @@
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Basic02(ByteOrder order)
+        private static void Basic02<T>(ByteOrder order)
+            where T : BasicClass02
         {
             var rng = new Random();
             using (var stream = new MemoryStream(new byte[500]))
@@ -143,7 +171,7 @@
                 writer.Write((Guid)rand[11]);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<BasicClass02>();
+                var obj = reader.ReadObject<T>();
 
                 //the highest offset should always be read last
                 //so if no size is specified the position should end

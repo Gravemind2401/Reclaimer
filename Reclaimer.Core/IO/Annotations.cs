@@ -547,4 +547,29 @@ namespace Reclaimer.IO
             StoreType = storeType;
         }
     }
+
+    //this base class exists as a way to do easy type checks without knowing the builder type (like GetCustomAttribute<StructureDefinitionAttribute<TSelf>>)
+    public abstract class StructureDefinitionAttribute<TSelf> : Attribute
+    {
+        internal abstract StructureDefinition<TSelf> GetStructureDefinition();
+    }
+
+    /// <summary>
+    /// Indicates that the <typeparamref name="TBuilder"/> type can be used to generate a structure definition for <typeparamref name="TSelf"/>.
+    /// <br/>When a definition builder is defined, all other dynamic IO attribute are ignored and only the resulting structure definition will be used when reading or writing instances of <typeparamref name="TSelf"/>.
+    /// </summary>
+    /// <typeparam name="TSelf">
+    /// The type that the definition builder corresponds to.
+    /// <br/>This should always be the same type that the attribute is being applied to.
+    /// </typeparam>
+    /// <typeparam name="TBuilder">
+    /// A type derived from <see cref="DefinitionBuilder{TSelf}"/> that sets up a structure definition for the <typeparamref name="TSelf"/> type.
+    /// <br/>This type must have a public parameterless constructor.
+    /// </typeparam>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true, Inherited = false)]
+    public sealed class StructureDefinitionAttribute<TSelf, TBuilder> : StructureDefinitionAttribute<TSelf>
+        where TBuilder : DefinitionBuilder<TSelf>, new()
+    {
+        internal override StructureDefinition<TSelf> GetStructureDefinition() => new TBuilder().ToStructureDefinition();
+    }
 }
