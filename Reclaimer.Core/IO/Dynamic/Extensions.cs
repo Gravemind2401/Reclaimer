@@ -22,7 +22,7 @@
 
         public static bool ValidateVersion(double? version, double? min, double? max)
         {
-            return (version >= min || !min.HasValue) && (version < max || !max.HasValue || max == min);
+            return (version >= min || !min.HasValue) && (version < max || !max.HasValue || (version == max && max == min));
         }
 
         public static bool ValidateOverlap(this IEnumerable<IVersionAttribute> source)
