@@ -5,7 +5,21 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Enums01(ByteOrder order)
+        public void Attributes_Enums01(ByteOrder order)
+        {
+            Enums01<EnumClass01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Enums01(ByteOrder order)
+        {
+            Enums01<EnumClass01_Builder>(order);
+        }
+
+        private static void Enums01<T>(ByteOrder order)
+            where T : EnumClass01
         {
             var rng = new Random();
             using (var stream = new MemoryStream())
@@ -27,7 +41,7 @@
                 writer.Write((long)(Enum64)rand[3]);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<EnumClass01>();
+                var obj = reader.ReadObject<T>();
 
                 Assert.AreEqual((Enum8)rand[0], obj.Property1);
                 Assert.AreEqual((Enum16)rand[1], obj.Property2);

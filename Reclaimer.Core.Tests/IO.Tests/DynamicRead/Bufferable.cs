@@ -5,7 +5,7 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Bufferable01(ByteOrder order)
+        public void Bufferable_Bufferable01(ByteOrder order)
         {
             var rng = new Random();
             using (var stream = new MemoryStream(new byte[500]))
@@ -47,7 +47,21 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Bufferable02(ByteOrder order)
+        public void Attributes_Bufferable02(ByteOrder order)
+        {
+            Bufferable02<ClassWithBufferable01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Bufferable02(ByteOrder order)
+        {
+            Bufferable02<ClassWithBufferable01_Builder>(order);
+        }
+
+        private static void Bufferable02<T>(ByteOrder order)
+            where T : ClassWithBufferable01
         {
             var rng = new Random();
             using (var stream = new MemoryStream(new byte[500]))
@@ -77,7 +91,7 @@
                 writer.Write((float)rand[4]);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<ClassWithBufferable01>();
+                var obj = reader.ReadObject<T>();
 
                 Assert.AreEqual(0x20 + BufferableStruct01.SizeOf, stream.Position);
                 Assert.AreEqual(obj.Property1, rand[0]);

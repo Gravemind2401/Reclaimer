@@ -36,4 +36,20 @@
         [Offset(0x20)]
         public BufferableStruct01 Property3 { get; set; }
     }
+
+    [StructureDefinition<ClassWithBufferable01_Builder, DefinitionBuilder>]
+    public class ClassWithBufferable01_Builder : ClassWithBufferable01
+    {
+        private class DefinitionBuilder : Dynamic.DefinitionBuilder<ClassWithBufferable01_Builder>
+        {
+            public DefinitionBuilder()
+            {
+                var v = AddDefaultVersion();
+
+                v.Property(x => x.Property1).HasOffset(0x00);
+                v.Property(x => x.Property2).HasOffset(0x10);
+                v.Property(x => x.Property3).HasOffset(0x20);
+            }
+        }
+    }
 }

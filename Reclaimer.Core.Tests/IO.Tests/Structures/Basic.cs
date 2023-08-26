@@ -80,18 +80,13 @@
     }
 
     [FixedSize(0xFF)]
-    public class FactoryClass01
+    public class FactoryClass01 : IFactoryClass<FactoryClass01>
     {
         //no public or parameterless constructors
-        private FactoryClass01(int param)
-        {
+        protected FactoryClass01(int param)
+        { }
 
-        }
-
-        public static FactoryClass01 GetInstance()
-        {
-            return new FactoryClass01(0);
-        }
+        public static FactoryClass01 GetInstance() => new FactoryClass01(0);
 
         [Offset(0x00)]
         public sbyte Property1 { get; set; }
@@ -128,6 +123,11 @@
 
         [Offset(0xB0)]
         public Guid Property12 { get; set; }
+    }
+
+    public interface IFactoryClass<TSelf>
+    {
+        static abstract TSelf GetInstance();
     }
 
     [StructureDefinition<BasicClass01_Builder, DefinitionBuilder>]
@@ -176,6 +176,38 @@
                 v.Property(x => x.Property10).HasOffset(0x20);
                 v.Property(x => x.Property11).HasOffset(0x50);
                 v.Property(x => x.Property12).HasOffset(0x60);
+            }
+        }
+    }
+
+    [StructureDefinition<FactoryClass01_Builder, DefinitionBuilder>]
+    public class FactoryClass01_Builder : FactoryClass01, IFactoryClass<FactoryClass01_Builder>
+    {
+        //no public or parameterless constructors
+        private FactoryClass01_Builder(int param)
+            : base(param)
+        { }
+
+        new public static FactoryClass01_Builder GetInstance() => new FactoryClass01_Builder(0);
+
+        private class DefinitionBuilder : Dynamic.DefinitionBuilder<FactoryClass01_Builder>
+        {
+            public DefinitionBuilder()
+            {
+                var v = AddDefaultVersion().HasFixedSize(0xFF);
+
+                v.Property(x => x.Property1).HasOffset(0x00);
+                v.Property(x => x.Property2).HasOffset(0x10);
+                v.Property(x => x.Property3).HasOffset(0x20);
+                v.Property(x => x.Property4).HasOffset(0x30);
+                v.Property(x => x.Property5).HasOffset(0x40);
+                v.Property(x => x.Property6).HasOffset(0x50);
+                v.Property(x => x.Property7).HasOffset(0x60);
+                v.Property(x => x.Property8).HasOffset(0x70);
+                v.Property(x => x.Property9).HasOffset(0x80);
+                v.Property(x => x.Property10).HasOffset(0x90);
+                v.Property(x => x.Property11).HasOffset(0xA0);
+                v.Property(x => x.Property12).HasOffset(0xB0);
             }
         }
     }

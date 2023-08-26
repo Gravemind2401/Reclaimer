@@ -5,10 +5,24 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Enums01(ByteOrder order)
+        public void Attributes_Enums01(ByteOrder order)
+        {
+            Enums01<EnumClass01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Enums01(ByteOrder order)
+        {
+            Enums01<EnumClass01_Builder>(order);
+        }
+
+        private static void Enums01<T>(ByteOrder order)
+            where T : EnumClass01, new()
         {
             var rng = new Random();
-            var obj = new EnumClass01
+            var obj = new T
             {
                 Property1 = (Enum8)rng.Next(1, 4),
                 Property2 = (Enum16)rng.Next(4, 7),

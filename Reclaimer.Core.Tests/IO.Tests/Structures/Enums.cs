@@ -42,4 +42,21 @@
         Value02 = 11,
         Value03 = 12,
     }
+
+    [StructureDefinition<EnumClass01_Builder, DefinitionBuilder>]
+    public class EnumClass01_Builder : EnumClass01
+    {
+        private class DefinitionBuilder : Dynamic.DefinitionBuilder<EnumClass01_Builder>
+        {
+            public DefinitionBuilder()
+            {
+                var v = AddDefaultVersion();
+
+                v.Property(x => x.Property1).HasOffset(0x00);
+                v.Property(x => x.Property2).HasOffset(0x01);
+                v.Property(x => x.Property3).HasOffset(0x03);
+                v.Property(x => x.Property4).HasOffset(0x07);
+            }
+        }
+    }
 }

@@ -82,4 +82,54 @@
         [Offset(0x60)]
         public Guid Property12 { get; set; }
     }
+
+    [StructureDefinition<ByteOrderClass01_Builder, DefinitionBuilder>]
+    public class ByteOrderClass01_Builder : ByteOrderClass01
+    {
+        private class DefinitionBuilder : Dynamic.DefinitionBuilder<ByteOrderClass01_Builder>
+        {
+            public DefinitionBuilder()
+            {
+                var v = AddDefaultVersion().HasFixedSize(0xFF).HasByteOrder(ByteOrder.BigEndian);
+
+                v.Property(x => x.Property1).HasOffset(0x00);
+                v.Property(x => x.Property2).HasOffset(0x10);
+                v.Property(x => x.Property3).HasOffset(0x20);
+                v.Property(x => x.Property4).HasOffset(0x30).HasByteOrder(ByteOrder.LittleEndian);
+                v.Property(x => x.Property5).HasOffset(0x40);
+                v.Property(x => x.Property6).HasOffset(0x50);
+                v.Property(x => x.Property7).HasOffset(0x60);
+                v.Property(x => x.Property8).HasOffset(0x70);
+                v.Property(x => x.Property9).HasOffset(0x80);
+                v.Property(x => x.Property10).HasOffset(0x90);
+                v.Property(x => x.Property11).HasOffset(0xA0);
+                v.Property(x => x.Property12).HasOffset(0xB0);
+            }
+        }
+    }
+
+    [StructureDefinition<ByteOrderClass02_Builder, DefinitionBuilder>]
+    public class ByteOrderClass02_Builder : ByteOrderClass02
+    {
+        private class DefinitionBuilder : Dynamic.DefinitionBuilder<ByteOrderClass02_Builder>
+        {
+            public DefinitionBuilder()
+            {
+                var v = AddDefaultVersion();
+
+                v.Property(x => x.Property1).HasOffset(0x70);
+                v.Property(x => x.Property2).HasOffset(0x40);
+                v.Property(x => x.Property3).HasOffset(0x30);
+                v.Property(x => x.Property4).HasOffset(0x10).HasByteOrder(ByteOrder.LittleEndian);
+                v.Property(x => x.Property5).HasOffset(0x90);
+                v.Property(x => x.Property6).HasOffset(0xA0);
+                v.Property(x => x.Property7).HasOffset(0x00);
+                v.Property(x => x.Property8).HasOffset(0x80).HasByteOrder(ByteOrder.BigEndian);
+                v.Property(x => x.Property9).HasOffset(0xB0);
+                v.Property(x => x.Property10).HasOffset(0x20);
+                v.Property(x => x.Property11).HasOffset(0x50);
+                v.Property(x => x.Property12).HasOffset(0x60);
+            }
+        }
+    }
 }

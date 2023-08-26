@@ -6,10 +6,40 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Basic01(ByteOrder order)
+        public void Attributes_Basic01(ByteOrder order)
+        {
+            Basic01<BasicClass01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Basic01(ByteOrder order)
+        {
+            Basic01<BasicClass01_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Basic02(ByteOrder order)
+        {
+            Basic02<BasicClass02>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Basic02(ByteOrder order)
+        {
+            Basic02<BasicClass02_Builder>(order);
+        }
+
+        private static void Basic01<T>(ByteOrder order)
+            where T : BasicClass01, new()
         {
             var rng = new Random();
-            var obj = new BasicClass01
+            var obj = new T
             {
                 Property1 = (sbyte)rng.Next(sbyte.MinValue, sbyte.MaxValue),
                 Property2 = (short)rng.Next(short.MinValue, short.MaxValue),
@@ -71,13 +101,11 @@
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Basic02(ByteOrder order)
+        private static void Basic02<T>(ByteOrder order)
+            where T : BasicClass02, new()
         {
             var rng = new Random();
-            var obj = new BasicClass02
+            var obj = new T
             {
                 Property1 = (sbyte)rng.Next(sbyte.MinValue, sbyte.MaxValue),
                 Property2 = (short)rng.Next(short.MinValue, short.MaxValue),

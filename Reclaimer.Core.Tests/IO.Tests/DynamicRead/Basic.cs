@@ -6,7 +6,7 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Basic01Attributes(ByteOrder order)
+        public void Attributes_Basic01(ByteOrder order)
         {
             Basic01<BasicClass01>(order);
         }
@@ -14,7 +14,7 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Basic01Builder(ByteOrder order)
+        public void Builder_Basic01(ByteOrder order)
         {
             Basic01<BasicClass01_Builder>(order);
         }
@@ -22,7 +22,7 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Basic02Attributes(ByteOrder order)
+        public void Attributes_Basic02(ByteOrder order)
         {
             Basic02<BasicClass02>(order);
         }
@@ -30,9 +30,25 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Basic02Builder(ByteOrder order)
+        public void Builder_Basic02(ByteOrder order)
         {
             Basic02<BasicClass02_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_Factory01(ByteOrder order)
+        {
+            Factory01<FactoryClass01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Factory01(ByteOrder order)
+        {
+            Factory01<FactoryClass01_Builder>(order);
         }
 
         private static void Basic01<T>(ByteOrder order)
@@ -192,10 +208,8 @@
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void Basic03(ByteOrder order)
+        private static void Factory01<T>(ByteOrder order)
+            where T : FactoryClass01, IFactoryClass<T>
         {
             var rng = new Random();
             using (var stream = new MemoryStream(new byte[500]))
@@ -253,7 +267,7 @@
                 writer.Write((Guid)rand[11]);
 
                 stream.Position = 0;
-                var obj = FactoryClass01.GetInstance();
+                var obj = T.GetInstance();
                 reader.ReadObject(obj);
 
                 Assert.AreEqual(0xFF, stream.Position);

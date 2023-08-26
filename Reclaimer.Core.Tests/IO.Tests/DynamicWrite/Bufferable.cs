@@ -5,7 +5,7 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Bufferable01(ByteOrder order)
+        public void Bufferable_Bufferable01(ByteOrder order)
         {
             var rng = new Random();
             var obj = new BufferableStruct01
@@ -51,10 +51,24 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void Bufferable02(ByteOrder order)
+        public void Attributes_Bufferable02(ByteOrder order)
+        {
+            Bufferable02<ClassWithBufferable01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_Bufferable02(ByteOrder order)
+        {
+            Bufferable02<ClassWithBufferable01_Builder>(order);
+        }
+
+        private static void Bufferable02<T>(ByteOrder order)
+            where T : ClassWithBufferable01, new()
         {
             var rng = new Random();
-            var obj = new ClassWithBufferable01
+            var obj = new T
             {
                 Property1 = (int)rng.Next(int.MinValue, int.MaxValue),
                 Property2 = unchecked((uint)rng.Next(int.MinValue, int.MaxValue)),

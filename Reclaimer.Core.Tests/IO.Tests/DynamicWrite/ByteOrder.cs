@@ -5,10 +5,40 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void ByteOrder01(ByteOrder order)
+        public void Attributes_ByteOrder01(ByteOrder order)
+        {
+            ByteOrder01<ByteOrderClass01>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_ByteOrder01(ByteOrder order)
+        {
+            ByteOrder01<ByteOrderClass01_Builder>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Attributes_ByteOrder02(ByteOrder order)
+        {
+            ByteOrder02<ByteOrderClass02>(order);
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Builder_ByteOrder02(ByteOrder order)
+        {
+            ByteOrder02<ByteOrderClass02_Builder>(order);
+        }
+
+        private static void ByteOrder01<T>(ByteOrder order)
+            where T : ByteOrderClass01, new()
         {
             var rng = new Random();
-            var obj = new ByteOrderClass01
+            var obj = new T
             {
                 Property1 = (sbyte)rng.Next(sbyte.MinValue, sbyte.MaxValue),
                 Property2 = (short)rng.Next(short.MinValue, short.MaxValue),
@@ -70,13 +100,11 @@
             }
         }
 
-        [DataTestMethod]
-        [DataRow(ByteOrder.LittleEndian)]
-        [DataRow(ByteOrder.BigEndian)]
-        public void ByteOrder02(ByteOrder order)
+        private static void ByteOrder02<T>(ByteOrder order)
+            where T : ByteOrderClass02, new()
         {
             var rng = new Random();
-            var obj = new ByteOrderClass02
+            var obj = new T
             {
                 Property1 = (sbyte)rng.Next(sbyte.MinValue, sbyte.MaxValue),
                 Property2 = (short)rng.Next(short.MinValue, short.MaxValue),
