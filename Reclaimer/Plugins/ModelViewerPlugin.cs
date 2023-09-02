@@ -382,7 +382,7 @@ namespace Reclaimer.Plugins
                         m.TextureCoordinateChannels[0].AddRange(texcoords.Select(v => v.ToAssimpUV()));
 
                     var boneLookup = new Dictionary<int, Assimp.Bone>();
-                    for (var vIndex = 0; i < vertCount; vIndex++)
+                    for (var vIndex = 0; vIndex < vertCount; vIndex++)
                     {
                         if (geom.VertexWeights == VertexWeights.None)
                             continue;
