@@ -1,8 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-
-namespace Reclaimer.IO.Tests
+﻿namespace Reclaimer.IO.Tests
 {
     [TestClass]
     public class TestInt64

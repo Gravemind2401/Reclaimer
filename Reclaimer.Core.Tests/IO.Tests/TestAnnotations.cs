@@ -1,7 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-
-namespace Reclaimer.IO.Tests
+﻿namespace Reclaimer.IO.Tests
 {
     [TestClass]
     public class TestAnnotations

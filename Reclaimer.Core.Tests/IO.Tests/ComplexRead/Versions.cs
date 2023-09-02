@@ -1,9 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-using System.Linq;
-
-namespace Reclaimer.IO.Tests.ComplexRead
+﻿namespace Reclaimer.IO.Tests.ComplexRead
 {
     public partial class ComplexRead
     {
@@ -17,7 +12,6 @@ namespace Reclaimer.IO.Tests.ComplexRead
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-
                 var rand = new object[6];
 
                 rand[0] = rng.Next(int.MinValue, int.MaxValue);

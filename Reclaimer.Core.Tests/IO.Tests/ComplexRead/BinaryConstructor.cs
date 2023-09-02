@@ -1,9 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-using System.Linq;
-
-namespace Reclaimer.IO.Tests.ComplexRead
+﻿namespace Reclaimer.IO.Tests.ComplexRead
 {
     //TODO: re-implement BinaryConstructor or remove this
 

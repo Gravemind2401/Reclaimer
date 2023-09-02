@@ -1,12 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Reclaimer.IO.Tests
+﻿namespace Reclaimer.IO.Tests
 {
     [TestClass]
     public class TestTransactionStream
@@ -256,7 +248,7 @@ namespace Reclaimer.IO.Tests
 
             tran.Position = 0;
             data = reader.ReadBytes(original.Length);
-            for (byte i = byte.MinValue; i < byte.MaxValue; i++)
+            for (var i = byte.MinValue; i < byte.MaxValue; i++)
                 Assert.AreEqual(byte.MinValue, data[i]);
 
             Assert.AreEqual(255L, tran.Length);
@@ -452,7 +444,7 @@ namespace Reclaimer.IO.Tests
             var data = reader.ReadBytes(30);
             Assert.AreEqual(300L, tran.Position);
 
-            for (int i = 0; i < 30; i++)
+            for (var i = 0; i < 30; i++)
                 Assert.AreEqual(byte.MinValue, data[i]);
 
             //read beyond the source stream including patches
@@ -462,11 +454,11 @@ namespace Reclaimer.IO.Tests
 
             for (byte i = 0; i < 240; i++)
                 Assert.AreEqual(i, data[i]);
-            for (int i = 240; i < 270; i++)
+            for (var i = 240; i < 270; i++)
                 Assert.AreEqual((byte)99, data[i]);
-            for (int i = 270; i < 300; i++)
+            for (var i = 270; i < 300; i++)
                 Assert.AreEqual(byte.MinValue, data[i]);
-            for (int i = 300; i < 330; i++)
+            for (var i = 300; i < 330; i++)
                 Assert.AreEqual((byte)77, data[i]);
         }
 
@@ -489,7 +481,7 @@ namespace Reclaimer.IO.Tests
             Assert.AreEqual(55, data.Length);
             Assert.AreEqual(255L, tran.Position);
 
-            for (int i = 0; i < 55; i++)
+            for (var i = 0; i < 55; i++)
                 Assert.AreEqual((byte)(200 + i), data[i]);
 
             //seek past the end of the source stream, then start writing
@@ -504,9 +496,9 @@ namespace Reclaimer.IO.Tests
             Assert.AreEqual(100, data.Length);
             Assert.AreEqual(300L, tran.Position);
 
-            for (int i = 0; i < 55; i++)
+            for (var i = 0; i < 55; i++)
                 Assert.AreEqual((byte)(200 + i), data[i]);
-            for (int i = 55; i < 100; i++)
+            for (var i = 55; i < 100; i++)
                 Assert.AreEqual(byte.MinValue, data[i]);
 
             // start in virtual space, then try to read past the virtual end
@@ -515,9 +507,9 @@ namespace Reclaimer.IO.Tests
             Assert.AreEqual(75, data.Length);
             Assert.AreEqual(350L, tran.Position);
 
-            for (int i = 0; i < 25; i++)
+            for (var i = 0; i < 25; i++)
                 Assert.AreEqual(byte.MinValue, data[i]);
-            for (int i = 25; i < 75; i++)
+            for (var i = 25; i < 75; i++)
                 Assert.AreEqual((byte)99, data[i]);
         }
 

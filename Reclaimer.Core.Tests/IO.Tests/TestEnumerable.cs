@@ -1,9 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-using System.Linq;
-
-namespace Reclaimer.IO.Tests
+﻿namespace Reclaimer.IO.Tests
 {
     [TestClass]
     public class TestEnumerable
@@ -12,7 +7,7 @@ namespace Reclaimer.IO.Tests
         {
             var rng = new Random();
             var result = new int[count];
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
                 result[i] = rng.Next(int.MinValue, int.MaxValue);
             return result;
         }
@@ -31,7 +26,7 @@ namespace Reclaimer.IO.Tests
                     writer.Write(i);
 
                 stream.Position = 0;
-                int index = 0;
+                var index = 0;
                 var enumerable = reader.ReadEnumerable<int>(100).ToArray();
                 Assert.AreEqual(100, enumerable.Length);
 
@@ -53,7 +48,7 @@ namespace Reclaimer.IO.Tests
                 writer.WriteEnumerable(rand);
 
                 stream.Position = 0;
-                for (int i = 0; i < 100; i++)
+                for (var i = 0; i < 100; i++)
                     Assert.AreEqual(rand[i], reader.ReadInt32());
             }
         }

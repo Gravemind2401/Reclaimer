@@ -1,9 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
-using System.Linq;
-
-namespace Reclaimer.IO.Tests
+﻿namespace Reclaimer.IO.Tests
 {
     [TestClass]
     public class TestDecimal
@@ -20,7 +15,7 @@ namespace Reclaimer.IO.Tests
                 var rng = new Random();
                 var rands = new decimal[4];
 
-                for (int i = 0; i < 4; i++)
+                for (var i = 0; i < 4; i++)
                     rands[i] = (decimal)(ulong.MaxValue * Math.Pow(rng.NextDouble(), 3));
 
                 writer.Write(rands[0]);
