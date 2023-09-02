@@ -1,7 +1,7 @@
-﻿namespace Reclaimer.IO.Tests.ComplexRead
+﻿namespace Reclaimer.IO.Tests.DynamicRead
 {
     [TestClass]
-    public partial class ComplexRead
+    public partial class DynamicRead
     {
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]

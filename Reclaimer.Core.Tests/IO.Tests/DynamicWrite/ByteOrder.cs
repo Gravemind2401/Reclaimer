@@ -1,6 +1,6 @@
-﻿namespace Reclaimer.IO.Tests.ComplexWrite
+﻿namespace Reclaimer.IO.Tests.DynamicWrite
 {
-    public partial class ComplexWrite
+    public partial class DynamicWrite
     {
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]

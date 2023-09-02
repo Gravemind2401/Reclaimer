@@ -1,11 +1,11 @@
-﻿namespace Reclaimer.IO.Tests.ComplexWrite
+﻿namespace Reclaimer.IO.Tests.DynamicWrite
 {
-    public partial class ComplexWrite
+    public partial class DynamicWrite
     {
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void WriteStrings01(ByteOrder order)
+        public void Strings01(ByteOrder order)
         {
             var obj = new DataClass05();
 
@@ -45,7 +45,7 @@
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
-        public void WriteStrings02(ByteOrder order)
+        public void Strings02(ByteOrder order)
         {
             var obj = new DataClass06
             {

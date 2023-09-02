@@ -1,8 +1,8 @@
-﻿namespace Reclaimer.IO.Tests.ComplexRead
+﻿namespace Reclaimer.IO.Tests.DynamicRead
 {
     //TODO: re-implement BinaryConstructor or remove this
 
-    public partial class ComplexRead
+    public partial class DynamicRead
     {
         //[DataTestMethod]
         //[DataRow(ByteOrder.LittleEndian)]

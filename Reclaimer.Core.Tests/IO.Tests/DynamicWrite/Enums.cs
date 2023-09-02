@@ -1,6 +1,6 @@
-﻿namespace Reclaimer.IO.Tests.ComplexRead
+﻿namespace Reclaimer.IO.Tests.DynamicWrite
 {
-    public partial class ComplexRead
+    public partial class DynamicWrite
     {
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
@@ -8,31 +8,25 @@
         public void Enums01(ByteOrder order)
         {
             var rng = new Random();
+            var obj = new DataClass12
+            {
+                Property1 = (Enum01)rng.Next(1, 4),
+                Property2 = (Enum02)rng.Next(4, 7),
+                Property3 = (Enum03)rng.Next(7, 10),
+                Property4 = (Enum04)rng.Next(10, 13),
+            };
+
             using (var stream = new MemoryStream())
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                var rand = new object[4];
-
-                rand[0] = (Enum01)rng.Next(1, 4);
-                writer.Write((byte)(Enum01)rand[0]);
-
-                rand[1] = (Enum02)rng.Next(4, 7);
-                writer.Write((short)(Enum02)rand[1]);
-
-                rand[2] = (Enum03)rng.Next(7, 10);
-                writer.Write((int)(Enum03)rand[2]);
-
-                rand[3] = (Enum04)rng.Next(10, 13);
-                writer.Write((long)(Enum04)rand[3]);
+                writer.WriteObject(obj);
 
                 stream.Position = 0;
-                var obj = reader.ReadObject<DataClass12>();
-
-                Assert.AreEqual((Enum01)rand[0], obj.Property1);
-                Assert.AreEqual((Enum02)rand[1], obj.Property2);
-                Assert.AreEqual((Enum03)rand[2], obj.Property3);
-                Assert.AreEqual((Enum04)rand[3], obj.Property4);
+                Assert.AreEqual((byte)obj.Property1, reader.ReadByte());
+                Assert.AreEqual((short)obj.Property2, reader.ReadInt16());
+                Assert.AreEqual((int)obj.Property3, reader.ReadInt32());
+                Assert.AreEqual((long)obj.Property4, reader.ReadInt64());
             }
         }
 

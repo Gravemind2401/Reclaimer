@@ -1,6 +1,6 @@
-﻿namespace Reclaimer.IO.Tests.ComplexRead
+﻿namespace Reclaimer.IO.Tests.DynamicWrite
 {
-    public partial class ComplexRead
+    public partial class DynamicWrite
     {
         [DataTestMethod]
         [DataRow(ByteOrder.LittleEndian)]
@@ -11,26 +11,32 @@
             using (var reader = new EndianReader(stream, order))
             using (var writer = new EndianWriter(stream, order))
             {
-                writer.Write(5);
-                writer.Write(100);
+                var obj = new DataClass14
+                {
+                    Property1 = 5,
+                    Property2 = 100
+                };
 
-                stream.Position = 0;
-                var obj = reader.ReadObject<DataClass14>();
+                writer.WriteObject(obj);
 
-                Assert.AreEqual(5, obj.Property1);
-                Assert.AreEqual(100, obj.Property2);
                 Assert.AreEqual(100, stream.Position);
+                stream.Position = 0;
+                Assert.AreEqual(5, reader.ReadInt32());
+                Assert.AreEqual(100, reader.ReadInt32());
 
                 stream.Position = 0;
-                writer.Write(7);
-                writer.Write(45);
+                obj = new DataClass14
+                {
+                    Property1 = 7,
+                    Property2 = 45
+                };
 
-                stream.Position = 0;
-                obj = reader.ReadObject<DataClass14>();
+                writer.WriteObject(obj);
 
-                Assert.AreEqual(7, obj.Property1);
-                Assert.AreEqual(45, obj.Property2);
                 Assert.AreEqual(45, stream.Position);
+                stream.Position = 0;
+                Assert.AreEqual(7, reader.ReadInt32());
+                Assert.AreEqual(45, reader.ReadInt32());
             }
         }
 
