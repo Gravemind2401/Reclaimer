@@ -1,4 +1,6 @@
-﻿namespace Reclaimer.IO.Tests.DynamicRead
+﻿using System.Runtime.InteropServices;
+
+namespace Reclaimer.IO.Tests.DynamicRead
 {
     public partial class DynamicRead
     {
@@ -146,6 +148,186 @@
                 Assert.AreEqual(rand[2], obj.Property2);
                 Assert.IsNull(obj.Property3);
                 Assert.AreEqual(rand[4], obj.Property4);
+            }
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Versions03(ByteOrder order)
+        {
+            var rng = new Random();
+            var rand = new int[3];
+            rng.NextBytes(MemoryMarshal.AsBytes<int>(rand));
+
+            using (var stream = new MemoryStream())
+            using (var reader = new EndianReader(stream, order))
+            using (var writer = new EndianWriter(stream, order))
+            {
+                writer.Seek(0x08, SeekOrigin.Begin);
+                writer.Write(rand[0]);
+
+                writer.Seek(0x18, SeekOrigin.Begin);
+                writer.Write(rand[1]);
+
+                writer.Seek(0x28, SeekOrigin.Begin);
+                writer.Write(rand[2]);
+
+                stream.Position = 0;
+                var obj = reader.ReadObject<VersionedClass03>(0);
+
+                Assert.AreEqual(0x20, stream.Position);
+                Assert.AreEqual(rand[0], obj.Property1);
+
+                stream.Position = 0;
+                obj = (VersionedClass03)reader.ReadObject(typeof(VersionedClass03), 1);
+
+                Assert.AreEqual(0x20, stream.Position);
+                Assert.AreEqual(rand[0], obj.Property1);
+
+                stream.Position = 0;
+                obj = reader.ReadObject<VersionedClass03>(2);
+
+                Assert.AreEqual(0x20, stream.Position);
+                Assert.AreEqual(rand[1], obj.Property1);
+
+                stream.Position = 0;
+                obj = (VersionedClass03)reader.ReadObject(typeof(VersionedClass03), 3);
+
+                Assert.AreEqual(0x30, stream.Position);
+                Assert.AreEqual(rand[1], obj.Property1);
+
+                stream.Position = 0;
+                obj = reader.ReadObject<VersionedClass03>(4);
+
+                Assert.AreEqual(0x30, stream.Position);
+                Assert.AreEqual(rand[2], obj.Property1);
+
+                stream.Position = 0;
+                obj = (VersionedClass03)reader.ReadObject(typeof(VersionedClass03), 5);
+
+                Assert.AreEqual(0x40, stream.Position);
+                Assert.AreEqual(rand[2], obj.Property1);
+
+                stream.Position = 0;
+                obj = reader.ReadObject<VersionedClass03>(6);
+
+                Assert.AreEqual(0x40, stream.Position);
+                Assert.AreEqual(rand[2], obj.Property1);
+            }
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Versions04(ByteOrder order)
+        {
+            var rng = new Random();
+            var rand = new int[1];
+            rng.NextBytes(MemoryMarshal.AsBytes<int>(rand));
+
+            using (var stream = new MemoryStream())
+            using (var reader = new EndianReader(stream, order))
+            using (var writer = new EndianWriter(stream, order))
+            {
+                writer.Seek(0x10, SeekOrigin.Begin);
+                writer.Write(rand[0]);
+
+                stream.Position = 0;
+                var obj = reader.ReadObject<VersionedClass04>(0);
+
+                Assert.AreEqual(0x20, stream.Position);
+                Assert.AreEqual(rand[0], obj.Property1);
+
+                stream.Position = 0;
+                obj = (VersionedClass04)reader.ReadObject(typeof(VersionedClass04), 1);
+
+                Assert.AreEqual(0x20, stream.Position);
+                Assert.AreEqual(rand[0], obj.Property1);
+
+                stream.Position = 0;
+                obj = reader.ReadObject<VersionedClass04>(2);
+
+                Assert.AreEqual(0x20, stream.Position);
+                Assert.AreEqual(rand[0], obj.Property1);
+
+                stream.Position = 0;
+                obj = (VersionedClass04)reader.ReadObject(typeof(VersionedClass04), 3);
+
+                Assert.AreEqual(0x30, stream.Position);
+                Assert.AreEqual(rand[0], obj.Property1);
+
+                stream.Position = 0;
+                obj = reader.ReadObject<VersionedClass04>(4);
+
+                Assert.AreEqual(0x30, stream.Position);
+                Assert.AreEqual(rand[0], obj.Property1);
+
+                stream.Position = 0;
+                obj = (VersionedClass04)reader.ReadObject(typeof(VersionedClass04), 5);
+
+                Assert.AreEqual(0x40, stream.Position);
+                Assert.AreEqual(rand[0], obj.Property1);
+
+                stream.Position = 0;
+                obj = reader.ReadObject<VersionedClass04>(6);
+
+                Assert.AreEqual(0x40, stream.Position);
+                Assert.AreEqual(rand[0], obj.Property1);
+            }
+        }
+
+        [DataTestMethod]
+        [DataRow(ByteOrder.LittleEndian)]
+        [DataRow(ByteOrder.BigEndian)]
+        public void Versions05(ByteOrder order)
+        {
+            var rng = new Random();
+            var rand = new int[1];
+            rng.NextBytes(MemoryMarshal.AsBytes<int>(rand));
+
+            using (var stream = new MemoryStream())
+            using (var reader = new EndianReader(stream, order))
+            using (var writer = new EndianWriter(stream, order))
+            {
+                writer.Seek(0x10, SeekOrigin.Begin);
+                writer.Write(rand[0]);
+
+                stream.Position = 0;
+                var obj = reader.ReadObject<VersionedClass05>(0);
+
+                Assert.AreEqual(rand[0], obj.Property1a);
+                Assert.IsNull(obj.Property1b);
+
+                stream.Position = 0;
+                obj = (VersionedClass05)reader.ReadObject(typeof(VersionedClass05), 1);
+
+                Assert.AreEqual(rand[0], obj.Property1a);
+                Assert.IsNull(obj.Property1b);
+
+                stream.Position = 0;
+                obj = reader.ReadObject<VersionedClass05>(2);
+
+                Assert.AreEqual(rand[0], obj.Property1a);
+                Assert.IsNull(obj.Property1b);
+
+                stream.Position = 0;
+                obj = (VersionedClass05)reader.ReadObject(typeof(VersionedClass05), 3);
+
+                Assert.IsNull(obj.Property1a);
+                Assert.AreEqual(rand[0], obj.Property1b);
+
+                stream.Position = 0;
+                obj = reader.ReadObject<VersionedClass05>(4);
+
+                Assert.IsNull(obj.Property1a);
+                Assert.AreEqual(rand[0], obj.Property1b);
+
+                stream.Position = 0;
+                obj = (VersionedClass05)reader.ReadObject(typeof(VersionedClass05), 5);
+
+                Assert.IsNull(obj.Property1a);
+                Assert.AreEqual(rand[0], obj.Property1b);
             }
         }
     }
