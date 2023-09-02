@@ -63,17 +63,17 @@
                 var obj = reader.ReadObject<BasicClass01>();
 
                 Assert.AreEqual(0xFF, stream.Position);
-                Assert.AreEqual(obj.Property1, rand[0]);
-                Assert.AreEqual(obj.Property2, rand[1]);
-                Assert.AreEqual(obj.Property3, rand[2]);
-                Assert.AreEqual(obj.Property4, rand[3]);
-                Assert.AreEqual(obj.Property5, rand[4]);
-                Assert.AreEqual(obj.Property6, rand[5]);
-                Assert.AreEqual(obj.Property7, rand[6]);
-                Assert.AreEqual(obj.Property8, rand[7]);
-                Assert.AreEqual(obj.Property9, rand[8]);
-                Assert.AreEqual(obj.Property10, rand[9]);
-                Assert.AreEqual(obj.Property11, rand[10]);
+                Assert.AreEqual(rand[0], obj.Property1);
+                Assert.AreEqual(rand[1], obj.Property2);
+                Assert.AreEqual(rand[2], obj.Property3);
+                Assert.AreEqual(rand[3], obj.Property4);
+                Assert.AreEqual(rand[4], obj.Property5);
+                Assert.AreEqual(rand[5], obj.Property6);
+                Assert.AreEqual(rand[6], obj.Property7);
+                Assert.AreEqual(rand[7], obj.Property8);
+                Assert.AreEqual(rand[8], obj.Property9);
+                Assert.AreEqual(rand[9], obj.Property10);
+                Assert.AreEqual(rand[10], obj.Property11);
             }
         }
 
@@ -140,17 +140,17 @@
                 //so if no size is specified the position should end
                 //up at the highest offset + the size of the property
                 Assert.AreEqual(0xA2, stream.Position);
-                Assert.AreEqual(obj.Property1, rand[0]);
-                Assert.AreEqual(obj.Property2, rand[1]);
-                Assert.AreEqual(obj.Property3, rand[2]);
-                Assert.AreEqual(obj.Property4, rand[3]);
-                Assert.AreEqual(obj.Property5, rand[4]);
-                Assert.AreEqual(obj.Property6, rand[5]);
-                Assert.AreEqual(obj.Property7, rand[6]);
-                Assert.AreEqual(obj.Property8, rand[7]);
-                Assert.AreEqual(obj.Property9, rand[8]);
-                Assert.AreEqual(obj.Property10, rand[9]);
-                Assert.AreEqual(obj.Property11, rand[10]);
+                Assert.AreEqual(rand[0], obj.Property1);
+                Assert.AreEqual(rand[1], obj.Property2);
+                Assert.AreEqual(rand[2], obj.Property3);
+                Assert.AreEqual(rand[3], obj.Property4);
+                Assert.AreEqual(rand[4], obj.Property5);
+                Assert.AreEqual(rand[5], obj.Property6);
+                Assert.AreEqual(rand[6], obj.Property7);
+                Assert.AreEqual(rand[7], obj.Property8);
+                Assert.AreEqual(rand[8], obj.Property9);
+                Assert.AreEqual(rand[9], obj.Property10);
+                Assert.AreEqual(rand[10], obj.Property11);
             }
         }
 
@@ -215,17 +215,17 @@
                 reader.ReadObject(obj);
 
                 Assert.AreEqual(0xFF, stream.Position);
-                Assert.AreEqual(obj.Property1, rand[0]);
-                Assert.AreEqual(obj.Property2, rand[1]);
-                Assert.AreEqual(obj.Property3, rand[2]);
-                Assert.AreEqual(obj.Property4, rand[3]);
-                Assert.AreEqual(obj.Property5, rand[4]);
-                Assert.AreEqual(obj.Property6, rand[5]);
-                Assert.AreEqual(obj.Property7, rand[6]);
-                Assert.AreEqual(obj.Property8, rand[7]);
-                Assert.AreEqual(obj.Property9, rand[8]);
-                Assert.AreEqual(obj.Property10, rand[9]);
-                Assert.AreEqual(obj.Property11, rand[10]);
+                Assert.AreEqual(rand[0], obj.Property1);
+                Assert.AreEqual(rand[1], obj.Property2);
+                Assert.AreEqual(rand[2], obj.Property3);
+                Assert.AreEqual(rand[3], obj.Property4);
+                Assert.AreEqual(rand[4], obj.Property5);
+                Assert.AreEqual(rand[5], obj.Property6);
+                Assert.AreEqual(rand[6], obj.Property7);
+                Assert.AreEqual(rand[7], obj.Property8);
+                Assert.AreEqual(rand[8], obj.Property9);
+                Assert.AreEqual(rand[9], obj.Property10);
+                Assert.AreEqual(rand[10], obj.Property11);
             }
         }
     }
