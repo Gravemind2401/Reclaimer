@@ -9,7 +9,7 @@ namespace Reclaimer.IO.Dynamic
     /// </summary>
     /// <typeparam name="TClass">The <see langword="class"/> or <see langword="struct"/> that the property is a member of.</typeparam>
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-    internal abstract class FieldDefinition<TClass>
+    internal abstract class FieldDefinition<TClass> : IFieldDefinition
     {
         public delegate void FieldReadMethod(ref TClass target, EndianReader reader, in ByteOrder? byteOrder);
         public delegate void FieldWriteMethod(ref TClass target, EndianWriter writer, in ByteOrder? byteOrder);

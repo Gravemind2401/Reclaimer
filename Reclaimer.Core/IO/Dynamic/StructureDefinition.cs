@@ -1,11 +1,88 @@
 ﻿using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 
 namespace Reclaimer.IO.Dynamic
 {
-    internal class StructureDefinition<TClass>
+    internal static class StructureDefinition
     {
+        //this class is for debugging purposes to help inspect structure definitions
+
+        public static readonly Dictionary<Type, IStructureDefinition> InstanceLookup = new();
+
+        public static IEnumerable<IStructureDefinition> Instances => InstanceLookup.Values.OrderBy(s => IStructureDefinition.GetTypeDisplayName(s.TargetType));
+
+        [Conditional("DEBUG")]
+        public static void AddInstance(IStructureDefinition definition)
+        {
+            InstanceLookup[definition.TargetType] = definition;
+
+            Task.Run(() =>
+            {
+                var dir = Path.GetDirectoryName(typeof(StructureDefinition).Assembly.Location);
+                dir = Path.Combine(dir, "StructureDefinitions");
+                Directory.CreateDirectory(dir);
+
+                var fileName = string.Join("_", IStructureDefinition.GetTypeDisplayName(definition.TargetType).Replace('<', '[').Replace('>', ']').Split(Path.GetInvalidFileNameChars()));
+                fileName = Path.Combine(dir, fileName + ".json");
+
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                };
+
+                var json = new JsonObject();
+
+                foreach (var v in definition.Versions.Reverse())
+                {
+                    var name = v.MinVersion.HasValue && v.MaxVersion.HasValue
+                        ? $"{v.MinVersion}..{v.MaxVersion}"
+                        : v.MinVersion.HasValue || v.MaxVersion.HasValue
+                            ? (v.MinVersion?.ToString() ?? "..") + (v.MaxVersion?.ToString() ?? "..")
+                            : "default";
+
+                    var node = JsonSerializer.SerializeToNode(new
+                    {
+                        v.ByteOrder,
+                        FixedSize = v.Size,
+                        VersionField = v.VersionField?.TargetProperty.Name,
+                        DataLengthField = v.DataLengthField?.TargetProperty.Name
+                    }, options) as JsonObject;
+
+                    var fields = from f in v.Fields
+                                 let props = new
+                                 {
+                                     Type = IStructureDefinition.GetTypeDisplayName(f.TargetType),
+                                     f.TargetProperty.Name,
+                                     f.ByteOrder
+                                 }
+                                 orderby f.Offset
+                                 group props by f.Offset into g
+                                 select new KeyValuePair<string, JsonNode>(g.Key.ToString(), JsonSerializer.SerializeToNode(g, options));
+
+                    node.Add(nameof(v.Fields), new JsonObject(fields));
+                    json.Add(name, node);
+                }
+
+                File.WriteAllText(fileName, json.ToJsonString(options));
+            });
+        }
+    }
+
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+    internal class StructureDefinition<TClass> : IStructureDefinition
+    {
+        #region IStructureDefinition
+
+        Type IStructureDefinition.TargetType => typeof(TClass);
+        IEnumerable<IVersionDefinition> IStructureDefinition.Versions => versions;
+
+        #endregion
+
         #region Static Members
 
         private static readonly StructureDefinition<TClass> instance;
@@ -133,7 +210,7 @@ namespace Reclaimer.IO.Dynamic
 
             #endregion
 
-            var result = new StructureDefinition<TClass>();
+            var versions = new List<VersionDefinition>();
 
             foreach (var (min, max) in GetVersionRanges().Distinct())
             {
@@ -146,7 +223,7 @@ namespace Reclaimer.IO.Dynamic
                     .SingleOrDefault(a => a.ValidateVersion(versionTest))?.Size;
 
                 var def = new VersionDefinition(min, max, byteOrder, size);
-                result.versions.Add(def);
+                versions.Add(def);
 
                 foreach (var prop in properties)
                 {
@@ -176,7 +253,7 @@ namespace Reclaimer.IO.Dynamic
                 }
             }
 
-            return result;
+            return new StructureDefinition<TClass>(versions);
 
             IEnumerable<(double?, double?)> GetVersionRanges()
             {
@@ -242,14 +319,13 @@ namespace Reclaimer.IO.Dynamic
             }
         }
 
+        private static string GetDebuggerDisplay() => $"{{{IStructureDefinition.GetTypeDisplayName(typeof(TClass))}}}";
+
         #endregion
 
         #region Instance Members
 
         private readonly List<VersionDefinition> versions = new();
-
-        private StructureDefinition()
-        { }
 
         internal StructureDefinition(IEnumerable<VersionDefinition> versions)
         {
@@ -261,6 +337,8 @@ namespace Reclaimer.IO.Dynamic
                 .ThenBy(v => v.MaxVersion);
 
             this.versions.AddRange(sorted);
+
+            StructureDefinition.AddInstance(this);
         }
 
         #endregion
@@ -269,15 +347,23 @@ namespace Reclaimer.IO.Dynamic
         /// Contains the settings and field definitions to use when reading or writing a particular version of a <typeparamref name="TClass"/> value.
         /// </summary>
         [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-        public sealed class VersionDefinition
+        public sealed class VersionDefinition : IVersionDefinition
         {
+            #region IVersionDefinition
+
+            IEnumerable<IFieldDefinition> IVersionDefinition.Fields => Fields;
+            IFieldDefinition IVersionDefinition.VersionField => VersionField;
+            IFieldDefinition IVersionDefinition.DataLengthField => DataLengthField;
+
+            #endregion
+
             private readonly List<FieldDefinition<TClass>> fields = new();
 
-            public readonly IReadOnlyList<FieldDefinition<TClass>> Fields;
-            public readonly double? MinVersion;
-            public readonly double? MaxVersion;
-            public readonly ByteOrder? ByteOrder;
-            public readonly long? Size;
+            public IReadOnlyList<FieldDefinition<TClass>> Fields { get; }
+            public double? MinVersion { get; }
+            public double? MaxVersion { get; }
+            public ByteOrder? ByteOrder { get; }
+            public long? Size { get; }
 
             public FieldDefinition<TClass> VersionField { get; private set; }
             public FieldDefinition<TClass> DataLengthField { get; private set; }
