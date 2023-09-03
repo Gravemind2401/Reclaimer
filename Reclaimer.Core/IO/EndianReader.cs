@@ -767,17 +767,17 @@ namespace Reclaimer.IO
         #region Dynamic Read
 
         /// <inheritdoc cref="ReadObject{T}(double)"/>
-        public T ReadObject<T>() => ReadObjectGeneric(CreateInstanceInternal<T>(), null);
+        public T ReadObject<T>() => PopulateNewObject<T>(null);
 
         /// <typeparam name="T">The type of object to read.</typeparam>
         /// <inheritdoc cref="ReadObject(Type, double)"/>
-        public T ReadObject<T>(double version) => ReadObjectGeneric(CreateInstanceInternal<T>(version), version);
+        public T ReadObject<T>(double version) => PopulateNewObject<T>(version);
 
         /// <inheritdoc cref="ReadObject(Type, double)"/>
         public object ReadObject(Type type)
         {
             ArgumentNullException.ThrowIfNull(type);
-            return InvokeReadObject(null, type, null);
+            return InvokePopulateObject(null, type, null);
         }
 
         /// <summary>
@@ -794,14 +794,14 @@ namespace Reclaimer.IO
         public object ReadObject(Type type, double version)
         {
             ArgumentNullException.ThrowIfNull(type);
-            return InvokeReadObject(null, type, version);
+            return InvokePopulateObject(null, type, version);
         }
 
         /// <inheritdoc cref="ReadObject{T}(T, double)"/>
         public T ReadObject<T>(T instance)
         {
             ArgumentNullException.ThrowIfNull(instance);
-            return ReadObjectGeneric(instance, null);
+            return PopulateObject(instance, null, Position);
         }
 
         /// <typeparam name="T">The type of object to read.</typeparam>
@@ -809,14 +809,14 @@ namespace Reclaimer.IO
         public T ReadObject<T>(T instance, double version)
         {
             ArgumentNullException.ThrowIfNull(instance);
-            return ReadObjectGeneric(instance, version);
+            return PopulateObject(instance, version, Position);
         }
 
         /// <inheritdoc cref="ReadObject(object, double)"/>
         public object ReadObject(object instance)
         {
             ArgumentNullException.ThrowIfNull(instance);
-            return InvokeReadObject(instance, instance.GetType(), null);
+            return InvokePopulateObject(instance, instance.GetType(), null);
         }
 
         /// <summary>
@@ -844,18 +844,30 @@ namespace Reclaimer.IO
         public object ReadObject(object instance, double version)
         {
             ArgumentNullException.ThrowIfNull(instance);
-            return InvokeReadObject(instance, instance.GetType(), version);
+            return InvokePopulateObject(instance, instance.GetType(), version);
         }
 
-        private static readonly MethodInfo DynamicReadMethod = typeof(EndianReader)
+        private static readonly MethodInfo PopulateMethod = typeof(EndianReader)
             .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
-            .First(m => m.Name == nameof(ReadObjectGeneric) && m.IsGenericMethodDefinition);
+            .First(m => m.Name == nameof(PopulateObject) && m.IsGenericMethodDefinition);
 
-        private object InvokeReadObject(object instance, Type type, double? version)
+        private object InvokePopulateObject(object instance, Type type, double? version)
         {
+            //take note of origin before creating instance in case a derived class moves the stream.
+            //this is important for attributes like FixedSizeAttribute to ensure the final position is correct.
+            var origin = Position;
+
             instance ??= InvokeCreateInstance(type, version);
-            return DynamicReadMethod.MakeGenericMethod(type)
-                .Invoke(this, new object[] { instance, version });
+            return PopulateMethod.MakeGenericMethod(type)
+                .Invoke(this, new object[] { instance, version, origin });
+        }
+
+        private T PopulateNewObject<T>(double? version)
+        {
+            //take note of origin before creating instance in case a derived class moves the stream.
+            //this is important for attributes like FixedSizeAttribute to ensure the final position is correct.
+            var origin = Position;
+            return PopulateObject(CreateInstanceInternal<T>(version), version, origin);
         }
 
         /// <summary>
@@ -868,17 +880,18 @@ namespace Reclaimer.IO
         /// </param>
         /// <param name="version">
         /// The version that was used to store the object.
-        /// This determines which properties will be read, how they will be
+        /// <br/>This determines which properties will be read, how they will be
         /// read and at what location in the stream to read them from.
-        /// This value will be null if no version was provided.
+        /// <br/>This value will be null if no version was provided.
         /// </param>
-        protected virtual T ReadObjectGeneric<T>(T instance, double? version)
+        /// <param name="origin">The position of the stream prior to any reading or object instanciation taking place.</param>
+        protected virtual T PopulateObject<T>(T instance, double? version, long origin)
         {
             //cannot detect string type automatically (fixed/prefixed/terminated)
             if (typeof(T).Equals(typeof(string)))
                 throw Exceptions.NotValidForStringTypes();
 
-            return (T)TypeConfiguration.Populate(instance, typeof(T), this, Position, version);
+            return (T)TypeConfiguration.Populate(instance, typeof(T), this, origin, version);
         }
 
         private static readonly MethodInfo CreateInstanceMethod = typeof(EndianReader)
@@ -893,12 +906,7 @@ namespace Reclaimer.IO
 
         private T CreateInstanceInternal<T>(double? version = default)
         {
-            //take note of origin before creating instance in case a derived class moves the stream.
-            //this is important for attributes like FixedSizeAttribute to ensure the final position is correct.
-            var origin = Position;
-            var instance = CreateInstance<T>(version) ?? throw new InvalidOperationException($"{nameof(CreateInstance)}() must not return null");
-            Seek(origin, SeekOrigin.Begin); //return to origin after the instance has been created
-            return instance;
+            return CreateInstance<T>(version) ?? throw new InvalidOperationException($"{nameof(CreateInstance)}() must not return null");
         }
 
         protected virtual T CreateInstance<T>(double? version) => Activator.CreateInstance<T>();
