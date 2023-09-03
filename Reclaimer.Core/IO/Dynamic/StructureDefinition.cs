@@ -329,12 +329,15 @@ namespace Reclaimer.IO.Dynamic
 
         internal StructureDefinition(IEnumerable<VersionDefinition> versions)
         {
+            //sort by exact versions descending, then ranges descending, then null version last
+            //this ensure the first match found will be the highest possible matching version (in case of multiple matches)
             var sorted = versions
                 .OrderByDescending(v => v.MinVersion.HasValue || v.MaxVersion.HasValue) //null range last
-                .ThenBy(v => v.MinVersion.HasValue) //null MinVersion first
-                .ThenBy(v => v.MinVersion)
-                .ThenByDescending(v => v.MaxVersion.HasValue) //null MaxVersion last
-                .ThenBy(v => v.MaxVersion);
+                .ThenByDescending(v => v.MinVersion == v.MaxVersion) //exact versions first
+                .ThenByDescending(v => v.MinVersion.HasValue) //null MinVersion last
+                .ThenByDescending(v => v.MinVersion)
+                .ThenBy(v => v.MaxVersion.HasValue) //null MaxVersion first
+                .ThenByDescending(v => v.MaxVersion);
 
             this.versions.AddRange(sorted);
 
