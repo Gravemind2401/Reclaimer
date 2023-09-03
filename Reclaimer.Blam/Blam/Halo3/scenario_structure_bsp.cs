@@ -3,68 +3,31 @@ using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
-using Reclaimer.IO;
 using System.Globalization;
 using System.Numerics;
 
 namespace Reclaimer.Blam.Halo3
 {
-    public class scenario_structure_bsp : ContentTagDefinition, IRenderGeometry
+    public partial class scenario_structure_bsp : ContentTagDefinition, IRenderGeometry
     {
         public scenario_structure_bsp(IIndexItem item)
             : base(item)
         { }
 
-        [Offset(60, MaxVersion = (int)CacheType.MccHalo3U4)]
-        [Offset(64, MinVersion = (int)CacheType.MccHalo3U4)]
         public RealBounds XBounds { get; set; }
-
-        [Offset(68, MaxVersion = (int)CacheType.MccHalo3U4)]
-        [Offset(72, MinVersion = (int)CacheType.MccHalo3U4)]
         public RealBounds YBounds { get; set; }
-
-        [Offset(76, MaxVersion = (int)CacheType.MccHalo3U4)]
-        [Offset(80, MinVersion = (int)CacheType.MccHalo3U4)]
         public RealBounds ZBounds { get; set; }
 
-        [Offset(180, MaxVersion = (int)CacheType.MccHalo3U4)]
-        [Offset(196, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(184, MinVersion = (int)CacheType.Halo3ODST)]
         public BlockCollection<ClusterBlock> Clusters { get; set; }
-
-        [Offset(192, MaxVersion = (int)CacheType.MccHalo3U4)]
-        [Offset(208, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(196, MinVersion = (int)CacheType.Halo3ODST)]
         public BlockCollection<ShaderBlock> Shaders { get; set; }
-
-        [Offset(432, MaxVersion = (int)CacheType.MccHalo3U4)]
-        [Offset(448, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(436, MinVersion = (int)CacheType.Halo3ODST)]
         public BlockCollection<BspGeometryInstanceBlock> GeometryInstances { get; set; }
 
-        [Offset(580, MaxVersion = (int)CacheType.MccHalo3U4)]
-        [Offset(596, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(584, MinVersion = (int)CacheType.Halo3ODST)]
         public ResourceIdentifier ResourcePointer1 { get; set; }
 
-        [Offset(740, MaxVersion = (int)CacheType.MccHalo3U4)]
-        [Offset(756, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(744, MinVersion = (int)CacheType.Halo3ODST)]
         public BlockCollection<SectionBlock> Sections { get; set; }
-
-        [Offset(752, MaxVersion = (int)CacheType.MccHalo3U4)]
-        [Offset(768, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(756, MinVersion = (int)CacheType.Halo3ODST)]
         public BlockCollection<BspBoundingBoxBlock> BoundingBoxes { get; set; }
 
-        [Offset(860, MaxVersion = (int)CacheType.MccHalo3U4)]
-        [Offset(876, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(864, MinVersion = (int)CacheType.Halo3ODST)]
         public ResourceIdentifier ResourcePointer2 { get; set; }
-
-        [Offset(892, MaxVersion = (int)CacheType.MccHalo3U4)]
-        [Offset(908, MinVersion = (int)CacheType.MccHalo3U4, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(896, MinVersion = (int)CacheType.Halo3ODST)]
         public ResourceIdentifier ResourcePointer3 { get; set; }
 
         #region IRenderGeometry
@@ -139,63 +102,29 @@ namespace Reclaimer.Blam.Halo3
         #endregion
     }
 
-    [FixedSize(236, MaxVersion = (int)CacheType.Halo3Retail)]
-    [FixedSize(220, MinVersion = (int)CacheType.Halo3Retail, MaxVersion = (int)CacheType.MccHalo3)]
-    [FixedSize(280, MinVersion = (int)CacheType.MccHalo3, MaxVersion = (int)CacheType.Halo3ODST)]
-    [FixedSize(220, MinVersion = (int)CacheType.Halo3ODST, MaxVersion = (int)CacheType.MccHalo3ODST)]
-    [FixedSize(280, MinVersion = (int)CacheType.MccHalo3ODST)]
-    public class ClusterBlock
+    public partial class ClusterBlock
     {
-        [Offset(0)]
         public RealBounds XBounds { get; set; }
-
-        [Offset(8)]
         public RealBounds YBounds { get; set; }
-
-        [Offset(16)]
         public RealBounds ZBounds { get; set; }
-
-        [Offset(172, MaxVersion = (int)CacheType.Halo3Retail)]
-        [Offset(156, MinVersion = (int)CacheType.Halo3Retail, MaxVersion = (int)CacheType.MccHalo3)]
-        [Offset(216, MinVersion = (int)CacheType.MccHalo3, MaxVersion = (int)CacheType.Halo3ODST)]
-        [Offset(156, MinVersion = (int)CacheType.Halo3ODST, MaxVersion = (int)CacheType.MccHalo3ODST)]
-        [Offset(216, MinVersion = (int)CacheType.MccHalo3ODST)]
         public short SectionIndex { get; set; }
     }
 
-    [FixedSize(120)]
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class BspGeometryInstanceBlock
+    public partial class BspGeometryInstanceBlock
     {
-        [Offset(0)]
         public float TransformScale { get; set; }
-
-        [Offset(4)]
         public Matrix4x4 Transform { get; set; }
-
-        [Offset(52)]
         public short SectionIndex { get; set; }
-
-        [Offset(84)]
         public StringId Name { get; set; }
     }
 
-    [FixedSize(44)]
-    public class BspBoundingBoxBlock : IRealBounds5D
+    public partial class BspBoundingBoxBlock : IRealBounds5D
     {
-        [Offset(4)]
         public RealBounds XBounds { get; set; }
-
-        [Offset(12)]
         public RealBounds YBounds { get; set; }
-
-        [Offset(20)]
         public RealBounds ZBounds { get; set; }
-
-        [Offset(28)]
         public RealBounds UBounds { get; set; }
-
-        [Offset(36)]
         public RealBounds VBounds { get; set; }
     }
 }

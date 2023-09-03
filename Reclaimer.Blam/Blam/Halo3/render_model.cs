@@ -1,4 +1,5 @@
 ﻿using Adjutant.Geometry;
+using Adjutant.Spatial;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
@@ -391,9 +392,22 @@ namespace Reclaimer.Blam.Halo3
     }
 
     [FixedSize(56)]
-    public class BoundingBoxBlock : BspBoundingBoxBlock
+    public class BoundingBoxBlock : IRealBounds5D
     {
+        [Offset(4)]
+        public RealBounds XBounds { get; set; }
 
+        [Offset(12)]
+        public RealBounds YBounds { get; set; }
+
+        [Offset(20)]
+        public RealBounds ZBounds { get; set; }
+
+        [Offset(28)]
+        public RealBounds UBounds { get; set; }
+
+        [Offset(36)]
+        public RealBounds VBounds { get; set; }
     }
 
     [FixedSize(12)]
