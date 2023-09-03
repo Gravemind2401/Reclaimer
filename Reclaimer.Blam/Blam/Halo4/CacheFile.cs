@@ -401,22 +401,22 @@ namespace Reclaimer.Blam.Halo4
                     if (lazy != null)
                         return lazy.Value;
                     else
-                        metadataCache = lazy = new Lazy<T>(ReadMetadataInternal<T>);
+                        metadataCache = lazy = new Lazy<T>(ReadMetadataInternal);
                 }
 
                 return lazy.Value;
             }
             else
-                return ReadMetadataInternal<T>();
-        }
+                return ReadMetadataInternal();
 
-        private T ReadMetadataInternal<T>()
-        {
-            using (var reader = cache.CreateReader(cache.MetadataTranslator))
+            T ReadMetadataInternal()
             {
-                reader.RegisterInstance<IIndexItem>(this);
-                reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
-                return (T)reader.ReadObject(typeof(T), (int)cache.CacheType);
+                using (var reader = cache.CreateReader(cache.MetadataTranslator))
+                {
+                    reader.RegisterInstance<IIndexItem>(this);
+                    reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
+                    return reader.ReadObject<T>((int)cache.CacheType);
+                }
             }
         }
 

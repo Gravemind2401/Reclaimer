@@ -275,42 +275,42 @@ namespace Reclaimer.Blam.Halo2
                     if (lazy != null)
                         return lazy.Value;
                     else
-                        metadataCache = lazy = new Lazy<T>(ReadMetadataInternal<T>);
+                        metadataCache = lazy = new Lazy<T>(ReadMetadataInternal);
                 }
 
                 return lazy.Value;
             }
             else
-                return ReadMetadataInternal<T>();
-        }
+                return ReadMetadataInternal();
 
-        private T ReadMetadataInternal<T>()
-        {
-            long address;
-            DependencyReader reader;
-
-            if (ClassCode == "sbsp")
+            T ReadMetadataInternal()
             {
-                var translator = new BSPAddressTranslator(cache, Id);
-                reader = cache.CreateReader(translator);
-                address = translator.TagAddress;
-            }
-            else
-            {
-                reader = cache.CreateReader(cache.MetadataTranslator);
-                address = MetaPointer.Address;
-            }
+                long address;
+                DependencyReader reader;
 
-            using (reader)
-            {
-                reader.RegisterInstance<IIndexItem>(this);
-                reader.Seek(address, SeekOrigin.Begin);
-                var result = (T)reader.ReadObject(typeof(T), (int)cache.CacheType);
+                if (ClassCode == "sbsp")
+                {
+                    var translator = new BSPAddressTranslator(cache, Id);
+                    reader = cache.CreateReader(translator);
+                    address = translator.TagAddress;
+                }
+                else
+                {
+                    reader = cache.CreateReader(cache.MetadataTranslator);
+                    address = MetaPointer.Address;
+                }
 
-                if (CacheFactory.SystemClasses.Contains(ClassCode))
-                    metadataCache = result;
+                using (reader)
+                {
+                    reader.RegisterInstance<IIndexItem>(this);
+                    reader.Seek(address, SeekOrigin.Begin);
+                    var result = reader.ReadObject<T>((int)cache.CacheType);
 
-                return result;
+                    if (CacheFactory.SystemClasses.Contains(ClassCode))
+                        metadataCache = result;
+
+                    return result;
+                }
             }
         }
 

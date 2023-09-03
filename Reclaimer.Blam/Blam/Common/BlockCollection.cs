@@ -25,7 +25,7 @@ namespace Reclaimer.Blam.Common
 
             reader.BaseStream.Position = Pointer.Address;
             for (var i = 0; i < Count; i++)
-                items.Add((T)reader.ReadObject(typeof(T), (int)cache.CacheType));
+                items.Add(reader.ReadObject<T>((int)cache.CacheType));
         }
 
         private string GetDebuggerDisplay() => $"{nameof(items.Count)} = {items.Count}";

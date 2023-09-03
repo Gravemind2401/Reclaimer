@@ -400,23 +400,23 @@ namespace Reclaimer.Blam.MccHalo2X
                     if (lazy != null)
                         return lazy.Value;
                     else
-                        metadataCache = lazy = new Lazy<T>(ReadMetadataInternal<T>);
+                        metadataCache = lazy = new Lazy<T>(ReadMetadataInternal);
                 }
 
                 return lazy.Value;
             }
             else
-                return ReadMetadataInternal<T>();
-        }
+                return ReadMetadataInternal();
 
-        private T ReadMetadataInternal<T>()
-        {
-            using (var reader = cache.CreateReader(cache.MetadataTranslator, cache.PointerExpander))
+            T ReadMetadataInternal()
             {
-                reader.RegisterInstance<IIndexItem>(this);
+                using (var reader = cache.CreateReader(cache.MetadataTranslator, cache.PointerExpander))
+                {
+                    reader.RegisterInstance<IIndexItem>(this);
 
-                reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
-                return (T)reader.ReadObject(typeof(T), (int)cache.CacheType);
+                    reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
+                    return reader.ReadObject<T>((int)cache.CacheType);
+                }
             }
         }
 

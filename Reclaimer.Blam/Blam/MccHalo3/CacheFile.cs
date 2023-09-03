@@ -387,28 +387,28 @@ namespace Reclaimer.Blam.MccHalo3
                     if (lazy != null)
                         return lazy.Value;
                     else
-                        metadataCache = lazy = new Lazy<T>(ReadMetadataInternal<T>);
+                        metadataCache = lazy = new Lazy<T>(ReadMetadataInternal);
                 }
 
                 return lazy.Value;
             }
             else
-                return ReadMetadataInternal<T>();
-        }
+                return ReadMetadataInternal();
 
-        private T ReadMetadataInternal<T>()
-        {
-            using (var reader = cache.CreateReader(cache.MetadataTranslator, cache.PointerExpander))
+            T ReadMetadataInternal()
             {
-                reader.RegisterInstance<IIndexItem>(this);
+                using (var reader = cache.CreateReader(cache.MetadataTranslator, cache.PointerExpander))
+                {
+                    reader.RegisterInstance<IIndexItem>(this);
 
-                // hack to redirect any play tag reads to the start of the zone tag when there is no play tag
-                if (ClassCode == "play" && MetaPointer.Value == 0)
-                    reader.Seek(cache.TagIndex.GetGlobalTag("zone").MetaPointer.Address + 28, SeekOrigin.Begin);
-                else
-                    reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
+                    // hack to redirect any play tag reads to the start of the zone tag when there is no play tag
+                    if (ClassCode == "play" && MetaPointer.Value == 0)
+                        reader.Seek(cache.TagIndex.GetGlobalTag("zone").MetaPointer.Address + 28, SeekOrigin.Begin);
+                    else
+                        reader.Seek(MetaPointer.Address, SeekOrigin.Begin);
 
-                return (T)reader.ReadObject(typeof(T), (int)cache.CacheType);
+                    return reader.ReadObject<T>((int)cache.CacheType);
+                }
             }
         }
 
