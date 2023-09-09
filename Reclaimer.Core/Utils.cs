@@ -31,6 +31,9 @@ namespace Reclaimer
                 value = Convert.ChangeType(value, fromType);
             }
 
+            if (toType.IsEnum)
+                toType = toType.GetEnumUnderlyingType();
+
             if (toType.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 var nullableType = toType.GetGenericArguments().Single();
