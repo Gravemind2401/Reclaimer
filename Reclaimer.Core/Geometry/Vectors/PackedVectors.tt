@@ -63,7 +63,7 @@ namespace Reclaimer.Geometry.Vectors
         { #>
         public float <#= propertyNames[index] #>
         {
-            get => helper.Get<#= propertyNames[index] #>(in bits);
+            readonly get => helper.Get<#= propertyNames[index] #>(in bits);
             set => helper.Set<#= propertyNames[index] #>(ref bits, value);
         }
 
@@ -85,14 +85,14 @@ namespace Reclaimer.Geometry.Vectors
             (<#= JoinProperties(", ") #>) = (<#= JoinFields(", ") #>);
         }
 
-        public override string ToString() => $"[<#= JoinProperties(", ", "{{{0}:F6}}") #>]";
+        public override readonly string ToString() => $"[<#= JoinProperties(", ", "{{{0}:F6}}") #>]";
 
         #region IBufferable
 
         static int IBufferable.PackSize => packSize;
         static int IBufferable.SizeOf => structureSize;
         static <#= vector.TypeName #> IBufferable<<#= vector.TypeName #>>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new <#= vector.TypeName #>(BitConverter.ToUInt32(buffer));
-        void IBufferable.WriteToBuffer(Span<byte> buffer) => BitConverter.GetBytes(bits).CopyTo(buffer);
+        readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => BitConverter.GetBytes(bits).CopyTo(buffer);
 
         #endregion
 

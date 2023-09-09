@@ -26,14 +26,14 @@ namespace Reclaimer.Geometry.Vectors
 
         public RealVector4 Conjugate => new RealVector4(-X, -Y, -Z, W);
 
-        public override string ToString() => $"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]";
+        public override readonly string ToString() => $"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]";
 
         #region IBufferable
 
         static int IBufferable.PackSize => packSize;
         static int IBufferable.SizeOf => structureSize;
         static RealVector4 IBufferable<RealVector4>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new RealVector4(MemoryMarshal.Cast<byte, float>(buffer));
-        void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<float, byte>(new[] { X, Y, Z, W }).CopyTo(buffer);
+        readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<float, byte>(new[] { X, Y, Z, W }).CopyTo(buffer);
 
         #endregion
 

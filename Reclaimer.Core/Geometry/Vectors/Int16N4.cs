@@ -25,25 +25,25 @@ namespace Reclaimer.Geometry.Vectors
 
         public float X
         {
-            get => helper.GetValue(in xbits);
+            readonly get => helper.GetValue(in xbits);
             set => helper.SetValue(ref xbits, value);
         }
 
         public float Y
         {
-            get => helper.GetValue(in ybits);
+            readonly get => helper.GetValue(in ybits);
             set => helper.SetValue(ref ybits, value);
         }
 
         public float Z
         {
-            get => helper.GetValue(in zbits);
+            readonly get => helper.GetValue(in zbits);
             set => helper.SetValue(ref zbits, value);
         }
 
         public float W
         {
-            get => helper.GetValue(in wbits);
+            readonly get => helper.GetValue(in wbits);
             set => helper.SetValue(ref wbits, value);
         }
 
@@ -68,14 +68,14 @@ namespace Reclaimer.Geometry.Vectors
             : this(values[0], values[1], values[2], values[3])
         { }
 
-        public override string ToString() => $"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]";
+        public override readonly string ToString() => $"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]";
 
         #region IBufferable
 
         static int IBufferable.PackSize => packSize;
         static int IBufferable.SizeOf => structureSize;
         static Int16N4 IBufferable<Int16N4>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new Int16N4(MemoryMarshal.Cast<byte, ushort>(buffer));
-        void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<ushort, byte>(new[] { xbits, ybits, zbits, wbits }).CopyTo(buffer);
+        readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<ushort, byte>(new[] { xbits, ybits, zbits, wbits }).CopyTo(buffer);
 
         #endregion
 

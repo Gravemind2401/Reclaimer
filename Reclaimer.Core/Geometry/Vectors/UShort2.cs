@@ -22,19 +22,19 @@ namespace Reclaimer.Geometry.Vectors
             : this(values[0], values[1])
         { }
 
-        public override string ToString() => $"[{X}, {Y}]";
+        public override readonly string ToString() => $"[{X}, {Y}]";
 
         #region IVector2
 
         float IVector.X
         {
-            get => X;
+            readonly get => X;
             set => X = Clamp(value);
         }
 
         float IVector.Y
         {
-            get => Y;
+            readonly get => Y;
             set => Y = Clamp(value);
         }
 
@@ -45,7 +45,7 @@ namespace Reclaimer.Geometry.Vectors
         static int IBufferable.PackSize => packSize;
         static int IBufferable.SizeOf => structureSize;
         static UShort2 IBufferable<UShort2>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new UShort2(MemoryMarshal.Cast<byte, ushort>(buffer));
-        void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<ushort, byte>(new[] { X, Y }).CopyTo(buffer);
+        readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<ushort, byte>(new[] { X, Y }).CopyTo(buffer);
 
         #endregion
 

@@ -25,25 +25,25 @@ namespace Reclaimer.Geometry.Vectors
 
         public float X
         {
-            get => helper.GetX(in bits);
+            readonly get => helper.GetX(in bits);
             set => helper.SetX(ref bits, value);
         }
 
         public float Y
         {
-            get => helper.GetY(in bits);
+            readonly get => helper.GetY(in bits);
             set => helper.SetY(ref bits, value);
         }
 
         public float Z
         {
-            get => helper.GetZ(in bits);
+            readonly get => helper.GetZ(in bits);
             set => helper.SetZ(ref bits, value);
         }
 
         public float W
         {
-            get => helper.GetW(in bits);
+            readonly get => helper.GetW(in bits);
             set => helper.SetW(ref bits, value);
         }
 
@@ -64,14 +64,14 @@ namespace Reclaimer.Geometry.Vectors
             (X, Y, Z, W) = (x, y, z, w);
         }
 
-        public override string ToString() => $"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]";
+        public override readonly string ToString() => $"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]";
 
         #region IBufferable
 
         static int IBufferable.PackSize => packSize;
         static int IBufferable.SizeOf => structureSize;
         static DecN4 IBufferable<DecN4>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new DecN4(BitConverter.ToUInt32(buffer));
-        void IBufferable.WriteToBuffer(Span<byte> buffer) => BitConverter.GetBytes(bits).CopyTo(buffer);
+        readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => BitConverter.GetBytes(bits).CopyTo(buffer);
 
         #endregion
 

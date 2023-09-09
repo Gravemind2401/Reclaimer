@@ -17,31 +17,31 @@ namespace Reclaimer.Geometry.Vectors
             : this(Clamp(value.X), Clamp(value.Y), Clamp(value.Z), Clamp(value.W))
         { }
 
-        public override string ToString() => $"[{X}, {Y}, {Z}, {W}]";
+        public override readonly string ToString() => $"[{X}, {Y}, {Z}, {W}]";
 
         #region IVector4
 
         float IVector.X
         {
-            get => X;
+            readonly get => X;
             set => X = Clamp(value);
         }
 
         float IVector.Y
         {
-            get => Y;
+            readonly get => Y;
             set => Y = Clamp(value);
         }
 
         float IVector.Z
         {
-            get => Z;
+            readonly get => Z;
             set => Z = Clamp(value);
         }
 
         float IVector.W
         {
-            get => W;
+            readonly get => W;
             set => W = Clamp(value);
         }
 
@@ -52,7 +52,7 @@ namespace Reclaimer.Geometry.Vectors
         static int IBufferable.PackSize => packSize;
         static int IBufferable.SizeOf => structureSize;
         static UByte4 IBufferable<UByte4>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new UByte4(buffer[0], buffer[1], buffer[2], buffer[3]);
-        void IBufferable.WriteToBuffer(Span<byte> buffer) => (buffer[0], buffer[1], buffer[2], buffer[3]) = (X, Y, Z, W);
+        readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => (buffer[0], buffer[1], buffer[2], buffer[3]) = (X, Y, Z, W);
 
         #endregion
 

@@ -24,14 +24,14 @@ namespace Reclaimer.Geometry.Vectors
             : this(values[0], values[1])
         { }
 
-        public override string ToString() => $"[{X:F6}, {Y:F6}]";
+        public override readonly string ToString() => $"[{X:F6}, {Y:F6}]";
 
         #region IBufferable
 
         static int IBufferable.PackSize => packSize;
         static int IBufferable.SizeOf => structureSize;
         static RealVector2 IBufferable<RealVector2>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new RealVector2(MemoryMarshal.Cast<byte, float>(buffer));
-        void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<float, byte>(new[] { X, Y }).CopyTo(buffer);
+        readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<float, byte>(new[] { X, Y }).CopyTo(buffer);
 
         #endregion
 

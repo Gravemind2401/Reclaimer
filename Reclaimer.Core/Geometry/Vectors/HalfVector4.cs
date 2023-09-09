@@ -26,14 +26,14 @@ namespace Reclaimer.Geometry.Vectors
 
         public HalfVector4 Conjugate => new HalfVector4(-X, -Y, -Z, W);
 
-        public override string ToString() => $"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]";
+        public override readonly string ToString() => $"[{X:F6}, {Y:F6}, {Z:F6}, {W:F6}]";
 
         #region IBufferable
 
         static int IBufferable.PackSize => packSize;
         static int IBufferable.SizeOf => structureSize;
         static HalfVector4 IBufferable<HalfVector4>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new HalfVector4(MemoryMarshal.Cast<byte, Half>(buffer));
-        void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<Half, byte>(new[] { X, Y, Z, W }).CopyTo(buffer);
+        readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<Half, byte>(new[] { X, Y, Z, W }).CopyTo(buffer);
 
         #endregion
 

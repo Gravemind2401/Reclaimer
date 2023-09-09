@@ -25,13 +25,13 @@ namespace Reclaimer.Geometry.Vectors
 
         public float X
         {
-            get => helper.GetValue(in xbits);
+            readonly get => helper.GetValue(in xbits);
             set => helper.SetValue(ref xbits, value);
         }
 
         public float Y
         {
-            get => helper.GetValue(in ybits);
+            readonly get => helper.GetValue(in ybits);
             set => helper.SetValue(ref ybits, value);
         }
 
@@ -56,14 +56,14 @@ namespace Reclaimer.Geometry.Vectors
             : this(values[0], values[1])
         { }
 
-        public override string ToString() => $"[{X:F6}, {Y:F6}]";
+        public override readonly string ToString() => $"[{X:F6}, {Y:F6}]";
 
         #region IBufferable
 
         static int IBufferable.PackSize => packSize;
         static int IBufferable.SizeOf => structureSize;
         static UInt16N2 IBufferable<UInt16N2>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new UInt16N2(MemoryMarshal.Cast<byte, ushort>(buffer));
-        void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<ushort, byte>(new[] { xbits, ybits }).CopyTo(buffer);
+        readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<ushort, byte>(new[] { xbits, ybits }).CopyTo(buffer);
 
         #endregion
 
