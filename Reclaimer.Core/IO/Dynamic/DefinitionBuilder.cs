@@ -10,20 +10,27 @@ namespace Reclaimer.IO.Dynamic
 
         internal IEnumerable<VersionBuilder> GetVersions() => versions.AsEnumerable();
 
-        public VersionBuilder AddDefaultVersion() => AddVersionInternal(null, null);
+        public VersionBuilder AddDefaultVersion() => AddVersionNumeric(null, null);
 
         public VersionBuilder AddVersion<TNumber>(TNumber version)
             where TNumber : struct, INumber<TNumber>
-            => AddVersionInternal(Convert.ToInt32(version), Convert.ToInt32(version));
+            => AddVersionNumeric(Convert.ToInt32(version), Convert.ToInt32(version));
 
         public VersionBuilder AddVersion<TNumber>(TNumber? minVersion, TNumber? maxVersion)
             where TNumber : struct, INumber<TNumber>
-            => AddVersionInternal(minVersion.HasValue ? Convert.ToInt32(minVersion) : null, maxVersion.HasValue ? Convert.ToInt32(maxVersion) : null);
+            => AddVersionNumeric(minVersion.HasValue ? Convert.ToInt32(minVersion) : null, maxVersion.HasValue ? Convert.ToInt32(maxVersion) : null);
 
-        public VersionBuilder AddVersion(Enum version) => AddVersionInternal(Convert.ToInt32(version), Convert.ToInt32(version));
-        public VersionBuilder AddVersion(Enum minVersion, Enum maxVersion) => AddVersionInternal(minVersion == null ? null : Convert.ToInt32(minVersion), maxVersion == null ? null : Convert.ToInt32(maxVersion));
+        public VersionBuilder AddVersion(Enum version) => AddVersionEnum(version, version);
+        public VersionBuilder AddVersion(Enum minVersion, Enum maxVersion) => AddVersionEnum(minVersion, maxVersion);
 
-        private VersionBuilder AddVersionInternal(double? minVersion, double? maxVersion)
+        private VersionBuilder AddVersionNumeric(double? minVersion, double? maxVersion)
+        {
+            var version = new VersionBuilder(minVersion, maxVersion);
+            versions.Add(version);
+            return version;
+        }
+
+        private VersionBuilder AddVersionEnum(Enum minVersion, Enum maxVersion)
         {
             var version = new VersionBuilder(minVersion, maxVersion);
             versions.Add(version);
@@ -42,6 +49,9 @@ namespace Reclaimer.IO.Dynamic
             private readonly double? minVersion;
             private readonly double? maxVersion;
 
+            private readonly string minVersionDisplay;
+            private readonly string maxVersionDisplay;
+
             private ByteOrder? byteOrder;
             private int? size;
 
@@ -49,6 +59,13 @@ namespace Reclaimer.IO.Dynamic
             {
                 this.minVersion = minVersion;
                 this.maxVersion = maxVersion;
+            }
+
+            internal VersionBuilder(Enum minVersion, Enum maxVersion)
+                : this(minVersion == null ? null : Convert.ToInt32(minVersion), maxVersion == null ? null : Convert.ToInt32(maxVersion))
+            {
+                minVersionDisplay = minVersion?.ToString();
+                maxVersionDisplay = maxVersion?.ToString();
             }
 
             /// <summary>
@@ -94,7 +111,7 @@ namespace Reclaimer.IO.Dynamic
 
             internal StructureDefinition<TClass>.VersionDefinition ToVersionDefinition()
             {
-                var versionDef = new StructureDefinition<TClass>.VersionDefinition(minVersion, maxVersion, byteOrder, size);
+                var versionDef = new StructureDefinition<TClass>.VersionDefinition(minVersion, maxVersion, byteOrder, size, minVersionDisplay, maxVersionDisplay);
 
                 foreach (var fieldInfo in fields.Values)
                     versionDef.AddField(fieldInfo.GetFieldDefinition());

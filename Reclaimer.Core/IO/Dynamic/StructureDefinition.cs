@@ -40,9 +40,9 @@ namespace Reclaimer.IO.Dynamic
                 foreach (var v in definition.Versions.Reverse())
                 {
                     var name = v.MinVersion.HasValue && v.MaxVersion.HasValue
-                        ? $"{v.MinVersion}..{v.MaxVersion}"
+                        ? $"{v.MinVersionDisplay}..{v.MaxVersionDisplay}"
                         : v.MinVersion.HasValue || v.MaxVersion.HasValue
-                            ? (v.MinVersion?.ToString() ?? "..") + (v.MaxVersion?.ToString() ?? "..")
+                            ? (v.MinVersionDisplay ?? "..") + (v.MaxVersionDisplay ?? "..")
                             : "default";
 
                     var node = JsonSerializer.SerializeToNode(new
@@ -361,6 +361,8 @@ namespace Reclaimer.IO.Dynamic
             #endregion
 
             private readonly List<FieldDefinition<TClass>> fields = new();
+            private readonly string minVersionDisplay;
+            private readonly string maxVersionDisplay;
 
             public IReadOnlyList<FieldDefinition<TClass>> Fields { get; }
             public double? MinVersion { get; }
@@ -368,10 +370,13 @@ namespace Reclaimer.IO.Dynamic
             public ByteOrder? ByteOrder { get; }
             public long? Size { get; }
 
+            public string MinVersionDisplay => minVersionDisplay ?? MinVersion?.ToString();
+            public string MaxVersionDisplay => maxVersionDisplay ?? MaxVersion?.ToString();
+
             public FieldDefinition<TClass> VersionField { get; private set; }
             public FieldDefinition<TClass> DataLengthField { get; private set; }
 
-            public VersionDefinition(double? minVersion, double? maxVersion, ByteOrder? byteOrder, long? size)
+            public VersionDefinition(double? minVersion, double? maxVersion, ByteOrder? byteOrder, long? size, string minVersionDisplay = null, string maxVersionDisplay = null)
             {
                 fields = new();
                 Fields = fields.AsReadOnly();
@@ -379,6 +384,9 @@ namespace Reclaimer.IO.Dynamic
                 MaxVersion = maxVersion;
                 ByteOrder = byteOrder;
                 Size = size;
+
+                this.minVersionDisplay = minVersionDisplay;
+                this.maxVersionDisplay = maxVersionDisplay;
             }
 
             public void AddField(FieldDefinition<TClass> definition)
@@ -405,7 +413,7 @@ namespace Reclaimer.IO.Dynamic
                     fields.Add(definition);
             }
 
-            private string GetDebuggerDisplay() => MinVersion.HasValue || MaxVersion.HasValue ? new { Min = MinVersion, Max = MaxVersion }.ToString() : "{Default}";
+            private string GetDebuggerDisplay() => MinVersion.HasValue || MaxVersion.HasValue ? new { Min = MinVersionDisplay, Max = MaxVersionDisplay }.ToString() : "{Default}";
         }
     }
 }
