@@ -58,58 +58,20 @@ namespace Reclaimer.Blam.Common
             if (item.ClassCode != bitmap)
                 return false;
 
-            switch (item.CacheFile.CacheType)
+            var gameType = item.CacheFile.Metadata.Game;
+            var cacheType = item.CacheFile.CacheType;
+
+            content = gameType switch
             {
-                case CacheType.Halo1Xbox:
-                case CacheType.Halo1CE:
-                case CacheType.Halo1PC:
-                case CacheType.MccHalo1:
-                    content = item.ReadMetadata<Halo1.bitmap>();
-                    break;
-                case CacheType.Halo2Beta:
-                case CacheType.Halo2Xbox:
-                    content = item.ReadMetadata<Halo2.bitmap>();
-                    break;
-                case CacheType.Halo3Alpha:
-                case CacheType.Halo3Delta:
-                case CacheType.Halo3Beta:
-                case CacheType.Halo3Retail:
-                case CacheType.MccHalo3:
-                case CacheType.MccHalo3U4:
-                case CacheType.MccHalo3F6:
-                case CacheType.MccHalo3U6:
-                case CacheType.MccHalo3U9:
-                case CacheType.MccHalo3U12:
-                case CacheType.MccHalo3U13:
-                case CacheType.Halo3ODST:
-                case CacheType.MccHalo3ODST:
-                case CacheType.MccHalo3ODSTF3:
-                case CacheType.MccHalo3ODSTU3:
-                case CacheType.MccHalo3ODSTU4:
-                case CacheType.MccHalo3ODSTU7:
-                case CacheType.MccHalo3ODSTU8:
-                    content = item.ReadMetadata<Halo3.bitmap>();
-                    break;
-                case CacheType.HaloReachBeta:
-                case CacheType.HaloReachRetail:
-                case CacheType.MccHaloReach:
-                case CacheType.MccHaloReachU3:
-                case CacheType.MccHaloReachU8:
-                case CacheType.MccHaloReachU10:
-                case CacheType.MccHaloReachU13:
-                    content = item.ReadMetadata<HaloReach.bitmap>();
-                    break;
-                case CacheType.Halo4Beta:
-                case CacheType.Halo4Retail:
-                case CacheType.MccHalo4:
-                case CacheType.MccHalo4U4:
-                case CacheType.MccHalo4U6:
-                case CacheType.MccHalo2X:
-                case CacheType.MccHalo2XU8:
-                case CacheType.MccHalo2XU10:
-                    content = item.ReadMetadata<Halo4.bitmap>();
-                    break;
-            }
+                HaloGame.Halo1 when cacheType != CacheType.Halo1AE => item.ReadMetadata<Halo1.bitmap>(),
+                HaloGame.Halo2 when cacheType is CacheType.Halo2Beta or CacheType.Halo2Xbox => item.ReadMetadata<Halo2.bitmap>(),
+                HaloGame.Halo3 => item.ReadMetadata<Halo3.bitmap>(),
+                HaloGame.Halo3ODST => item.ReadMetadata<Halo3.bitmap>(),
+                HaloGame.HaloReach => item.ReadMetadata<HaloReach.bitmap>(),
+                HaloGame.Halo4 => item.ReadMetadata<Halo4.bitmap>(),
+                HaloGame.Halo2X => item.ReadMetadata<Halo4.bitmap>(),
+                _ => null
+            };
 
             return content != null;
         }
@@ -121,114 +83,37 @@ namespace Reclaimer.Blam.Common
             if (item == null)
                 return false;
 
-            if (item.ClassCode == gbxmodel || item.ClassCode == render_model)
+            var gameType = item.CacheFile.Metadata.Game;
+            var cacheType = item.CacheFile.CacheType;
+
+            if (item.ClassCode is gbxmodel or render_model)
             {
-                switch (item.CacheFile.CacheType)
+                content = gameType switch
                 {
-                    case CacheType.Halo1Xbox:
-                    case CacheType.Halo1CE:
-                    case CacheType.Halo1PC:
-                    case CacheType.Halo1AE:
-                    case CacheType.MccHalo1:
-                        content = item.ReadMetadata<Halo1.gbxmodel>();
-                        break;
-                    case CacheType.Halo2Beta:
-                        content = item.ReadMetadata<Halo2Beta.render_model>();
-                        break;
-                    case CacheType.Halo2Xbox:
-                        content = item.ReadMetadata<Halo2.render_model>();
-                        break;
-                    case CacheType.Halo3Alpha:
-                    case CacheType.Halo3Delta:
-                    case CacheType.Halo3Beta:
-                    case CacheType.Halo3Retail:
-                    case CacheType.MccHalo3:
-                    case CacheType.MccHalo3U4:
-                    case CacheType.MccHalo3F6:
-                    case CacheType.MccHalo3U6:
-                    case CacheType.MccHalo3U9:
-                    case CacheType.MccHalo3U12:
-                    case CacheType.MccHalo3U13:
-                    case CacheType.Halo3ODST:
-                    case CacheType.MccHalo3ODST:
-                    case CacheType.MccHalo3ODSTF3:
-                    case CacheType.MccHalo3ODSTU3:
-                    case CacheType.MccHalo3ODSTU4:
-                    case CacheType.MccHalo3ODSTU7:
-                    case CacheType.MccHalo3ODSTU8:
-                        content = item.ReadMetadata<Halo3.render_model>();
-                        break;
-                    case CacheType.HaloReachBeta:
-                    case CacheType.HaloReachRetail:
-                    case CacheType.MccHaloReach:
-                    case CacheType.MccHaloReachU3:
-                    case CacheType.MccHaloReachU8:
-                    case CacheType.MccHaloReachU10:
-                    case CacheType.MccHaloReachU13:
-                        content = item.ReadMetadata<HaloReach.render_model>();
-                        break;
-                    case CacheType.Halo4Beta:
-                    case CacheType.Halo4Retail:
-                    case CacheType.MccHalo4:
-                    case CacheType.MccHalo4U4:
-                    case CacheType.MccHalo4U6:
-                    case CacheType.MccHalo2X:
-                    case CacheType.MccHalo2XU8:
-                    case CacheType.MccHalo2XU10:
-                        content = item.ReadMetadata<Halo4.render_model>();
-                        break;
-                }
+                    HaloGame.Halo1 => item.ReadMetadata<Halo1.gbxmodel>(),
+                    HaloGame.Halo2 when cacheType == CacheType.Halo2Beta => item.ReadMetadata<Halo2Beta.render_model>(),
+                    HaloGame.Halo2 when cacheType == CacheType.Halo2Xbox => item.ReadMetadata<Halo2.render_model>(),
+                    HaloGame.Halo3 => item.ReadMetadata<Halo3.render_model>(),
+                    HaloGame.Halo3ODST => item.ReadMetadata<Halo3.render_model>(),
+                    HaloGame.HaloReach => item.ReadMetadata<HaloReach.render_model>(),
+                    HaloGame.Halo4 => item.ReadMetadata<Halo4.render_model>(),
+                    HaloGame.Halo2X => item.ReadMetadata<Halo4.render_model>(),
+                    _ => null
+                };
             }
             else if (item.ClassCode == scenario_structure_bsp)
             {
-                switch (item.CacheFile.CacheType)
+                content = gameType switch
                 {
-                    case CacheType.Halo1CE:
-                    case CacheType.Halo1PC:
-                        content = item.ReadMetadata<Halo1.scenario_structure_bsp>();
-                        break;
-                    case CacheType.Halo2Xbox:
-                        content = item.ReadMetadata<Halo2.scenario_structure_bsp>();
-                        break;
-                    case CacheType.Halo3Delta:
-                    case CacheType.Halo3Beta:
-                    case CacheType.Halo3Retail:
-                    case CacheType.MccHalo3:
-                    case CacheType.MccHalo3U4:
-                    case CacheType.MccHalo3F6:
-                    case CacheType.MccHalo3U6:
-                    case CacheType.MccHalo3U9:
-                    case CacheType.MccHalo3U12:
-                    case CacheType.MccHalo3U13:
-                    case CacheType.Halo3ODST:
-                    case CacheType.MccHalo3ODST:
-                    case CacheType.MccHalo3ODSTF3:
-                    case CacheType.MccHalo3ODSTU3:
-                    case CacheType.MccHalo3ODSTU4:
-                    case CacheType.MccHalo3ODSTU7:
-                    case CacheType.MccHalo3ODSTU8:
-                        content = item.ReadMetadata<Halo3.scenario_structure_bsp>();
-                        break;
-                    case CacheType.HaloReachBeta:
-                    case CacheType.HaloReachRetail:
-                    case CacheType.MccHaloReach:
-                    case CacheType.MccHaloReachU3:
-                    case CacheType.MccHaloReachU8:
-                    case CacheType.MccHaloReachU10:
-                    case CacheType.MccHaloReachU13:
-                        content = item.ReadMetadata<HaloReach.scenario_structure_bsp>();
-                        break;
-                    case CacheType.Halo4Beta:
-                    case CacheType.Halo4Retail:
-                    case CacheType.MccHalo4:
-                    case CacheType.MccHalo4U4:
-                    case CacheType.MccHalo4U6:
-                    case CacheType.MccHalo2X:
-                    case CacheType.MccHalo2XU8:
-                    case CacheType.MccHalo2XU10:
-                        content = item.ReadMetadata<Halo4.scenario_structure_bsp>();
-                        break;
-                }
+                    HaloGame.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE => item.ReadMetadata<Halo1.gbxmodel>(),
+                    HaloGame.Halo2 when cacheType == CacheType.Halo2Xbox => item.ReadMetadata<Halo2.scenario_structure_bsp>(),
+                    HaloGame.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
+                    HaloGame.Halo3ODST => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
+                    HaloGame.HaloReach => item.ReadMetadata<HaloReach.scenario_structure_bsp>(),
+                    HaloGame.Halo4 => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
+                    HaloGame.Halo2X => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
+                    _ => null
+                };
             }
 
             return content != null;
