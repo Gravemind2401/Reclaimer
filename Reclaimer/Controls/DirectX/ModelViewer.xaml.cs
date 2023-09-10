@@ -104,11 +104,23 @@ namespace Reclaimer.Controls.DirectX
             {
                 var groupNode = new TreeItemModel { Header = group.Name, IsChecked = true };
 
-                foreach (var model in group.ChildObjects.OfType<Model>())
+                foreach (var obj in group.ChildObjects)
                 {
+                    var placement = obj as ObjectPlacement;
+                    var model = (placement?.Object ?? obj) as Model;
+
+                    if (model == null)
+                        continue;
+
                     var objNode = new TreeItemModel { Header = model.Name, IsChecked = true };
                     var meshLoader = new MeshLoader(model, textureLoader);
                     var objGroup = new GroupModel3D();
+
+                    if (placement != null && !placement.Transform.IsIdentity)
+                    {
+                        objGroup.Transform = placement.Transform.ToMediaTransform();
+                        objGroup.Transform.Freeze();
+                    }
 
                     foreach (var region in model.Regions)
                     {

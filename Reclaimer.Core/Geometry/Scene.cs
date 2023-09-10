@@ -30,7 +30,9 @@ namespace Reclaimer.Geometry
         {
             return EnumerateGroupHierarchy()
                 .SelectMany(g => g.ChildObjects)
+                .Select(o => (o as ObjectPlacement)?.Object ?? o)
                 .OfType<Model>()
+                .Distinct()
                 .SelectMany(m => m.EnumerateMaterials())
                 .DistinctBy(m => m.Id);
         }
@@ -44,11 +46,25 @@ namespace Reclaimer.Geometry
         public List<SceneObject> ChildObjects { get; } = new();
     }
 
-    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class ObjectPlacement
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+    public class ObjectPlacement : SceneObject
     {
-        public string Name { get; set; }
+        public SceneObject Object { get; }
         public Matrix4x4 Transform { get; set; } = Matrix4x4.Identity;
+
+        public ObjectPlacement(SceneObject sceneObject)
+        {
+            ArgumentNullException.ThrowIfNull(sceneObject);
+            Object = sceneObject;
+        }
+
+        public void SetTransform(float scale, Vector3 translation, Quaternion rotation) => SetTransform(new Vector3(scale == 0 ? 1 : scale), translation, rotation);
+        public void SetTransform(Vector3 scale3d, Vector3 translation, Quaternion rotation)
+        {
+            Transform = Matrix4x4.CreateScale(scale3d) * Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(translation);
+        }
+        
+        private string GetDebuggerDisplay() => string.IsNullOrWhiteSpace(Name) ? $"[[{Object.Name}]]" : Name;
     }
 
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]

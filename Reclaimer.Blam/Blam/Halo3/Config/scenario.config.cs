@@ -26,11 +26,17 @@ namespace Reclaimer.Blam.Halo3
                 builder = AddVersion(CacheType.Halo3Delta);
                 builder.Property(x => x.StructureBsps).HasOffset(12);
                 builder.Property(x => x.Skies).HasOffset(40);
+                builder.Property(x => x.ObjectNames).HasOffset(156);
+                builder.Property(x => x.Scenery).HasOffset(168);
+                builder.Property(x => x.SceneryPalette).HasOffset(180);
                 builder.Property(x => x.ScenarioLightmapReference).HasOffset(1736);
                 
                 builder = AddVersion(CacheType.Halo3Beta);
                 builder.Property(x => x.StructureBsps).HasOffset(12);
                 builder.Property(x => x.Skies).HasOffset(40);
+                builder.Property(x => x.ObjectNames).HasOffset(156);
+                builder.Property(x => x.Scenery).HasOffset(168);
+                builder.Property(x => x.SceneryPalette).HasOffset(180);
                 builder.Property(x => x.ScenarioLightmapReference).HasOffset(1720);
             }
 
@@ -39,21 +45,33 @@ namespace Reclaimer.Blam.Halo3
                 var builder = AddVersion(CacheType.Halo3Retail, null);
                 builder.Property(x => x.StructureBsps).HasOffset(20);
                 builder.Property(x => x.Skies).HasOffset(48);
+                builder.Property(x => x.ObjectNames).HasOffset(176);
+                builder.Property(x => x.Scenery).HasOffset(188);
+                builder.Property(x => x.SceneryPalette).HasOffset(200);
                 builder.Property(x => x.ScenarioLightmapReference).HasOffset(1776);
 
                 builder = AddVersion(CacheType.MccHalo3F6, null);
                 builder.Property(x => x.StructureBsps).HasOffset(20);
                 builder.Property(x => x.Skies).HasOffset(48);
+                //builder.Property(x => x.ObjectNames).HasOffset(???); //TODO
+                //builder.Property(x => x.Scenery).HasOffset(???); //TODO
+                //builder.Property(x => x.SceneryPalette).HasOffset(???); //TODO
                 builder.Property(x => x.ScenarioLightmapReference).HasOffset(1764);
 
                 builder = AddVersion(CacheType.MccHalo3U12, null);
                 builder.Property(x => x.StructureBsps).HasOffset(24);
                 builder.Property(x => x.Skies).HasOffset(52);
+                //builder.Property(x => x.ObjectNames).HasOffset(???); //TODO
+                //builder.Property(x => x.Scenery).HasOffset(???); //TODO
+                //builder.Property(x => x.SceneryPalette).HasOffset(???); //TODO
                 builder.Property(x => x.ScenarioLightmapReference).HasOffset(1700);
 
                 builder = AddVersion(CacheType.MccHalo3U13, null);
                 builder.Property(x => x.StructureBsps).HasOffset(24);
                 builder.Property(x => x.Skies).HasOffset(52);
+                builder.Property(x => x.ObjectNames).HasOffset(168);
+                builder.Property(x => x.Scenery).HasOffset(180);
+                builder.Property(x => x.SceneryPalette).HasOffset(192);
                 builder.Property(x => x.ScenarioLightmapReference).HasOffset(1708);
             }
 
@@ -62,21 +80,33 @@ namespace Reclaimer.Blam.Halo3
                 var builder = AddVersion(CacheType.Halo3ODST, null);
                 builder.Property(x => x.StructureBsps).HasOffset(20);
                 builder.Property(x => x.Skies).HasOffset(76);
+                builder.Property(x => x.ObjectNames).HasOffset(216);
+                builder.Property(x => x.Scenery).HasOffset(228);
+                builder.Property(x => x.SceneryPalette).HasOffset(240);
                 builder.Property(x => x.ScenarioLightmapReference).HasOffset(1852);
 
                 builder = AddVersion(CacheType.MccHalo3ODSTF3, null);
                 builder.Property(x => x.StructureBsps).HasOffset(20);
                 builder.Property(x => x.Skies).HasOffset(76);
+                //builder.Property(x => x.ObjectNames).HasOffset(???); //TODO
+                //builder.Property(x => x.Scenery).HasOffset(???); //TODO
+                //builder.Property(x => x.SceneryPalette).HasOffset(???); //TODO
                 builder.Property(x => x.ScenarioLightmapReference).HasOffset(1840);
 
                 builder = AddVersion(CacheType.MccHalo3ODSTU7, null);
                 builder.Property(x => x.StructureBsps).HasOffset(24);
                 builder.Property(x => x.Skies).HasOffset(80);
+                //builder.Property(x => x.ObjectNames).HasOffset(???); //TODO
+                //builder.Property(x => x.Scenery).HasOffset(???); //TODO
+                //builder.Property(x => x.SceneryPalette).HasOffset(???); //TODO
                 builder.Property(x => x.ScenarioLightmapReference).HasOffset(1776);
 
                 builder = AddVersion(CacheType.MccHalo3ODSTU8, null);
                 builder.Property(x => x.StructureBsps).HasOffset(24);
                 builder.Property(x => x.Skies).HasOffset(80);
+                builder.Property(x => x.ObjectNames).HasOffset(196);
+                builder.Property(x => x.Scenery).HasOffset(208);
+                builder.Property(x => x.SceneryPalette).HasOffset(220);
                 builder.Property(x => x.ScenarioLightmapReference).HasOffset(1772);
             }
         }
@@ -107,6 +137,89 @@ namespace Reclaimer.Blam.Halo3
             {
                 var builder = AddDefaultVersion().HasFixedSize(20);
                 builder.Property(x => x.SkyReference).HasOffset(0);
+            }
+        }
+    }
+
+    [StructureDefinition<ObjectNameBlock, DefinitionBuilder>]
+    public partial class ObjectNameBlock
+    {
+        private sealed class DefinitionBuilder : DefinitionBuilder<ObjectNameBlock>
+        {
+            public DefinitionBuilder()
+            {
+                var builder = AddDefaultVersion().HasFixedSize(36);
+                builder.Property(x => x.Name).HasOffset(0).IsNullTerminated(32);
+                builder.Property(x => x.ObjectType).HasOffset(32);
+                builder.Property(x => x.PlacementIndex).HasOffset(34);
+            }
+        }
+    }
+
+    public partial class PlacementBlockBase
+    {
+        protected abstract class DefinitionBuilderBase<TBlock> : DefinitionBuilder<TBlock>
+            where TBlock : PlacementBlockBase
+        {
+            private static void Common(VersionBuilder builder)
+            {
+                builder.Property(x => x.PaletteIndex).HasOffset(0);
+                builder.Property(x => x.NameIndex).HasOffset(2);
+                builder.Property(x => x.Position).HasOffset(8);
+                builder.Property(x => x.Rotation).HasOffset(20);
+                builder.Property(x => x.Scale).HasOffset(32);
+            }
+
+            protected void Halo3Beta(VersionBuilder builder)
+            {
+                Common(builder);
+            }
+
+            protected void Halo3Retail(VersionBuilder builder)
+            {
+                Common(builder);
+            }
+        }
+    }
+
+    [StructureDefinition<SceneryPlacementBlock, DefinitionBuilder>]
+    public partial class SceneryPlacementBlock
+    {
+        private sealed class DefinitionBuilder : DefinitionBuilderBase<SceneryPlacementBlock>
+        {
+            public DefinitionBuilder()
+            {
+                var builder = AddVersion(CacheType.Halo3Delta, null).HasFixedSize(160);
+                Halo3Beta(builder);
+                builder.Property(x => x.VariantName).HasOffset(76);
+
+                builder = AddVersion(CacheType.Halo3Retail, null).HasFixedSize(180);
+                Halo3Retail(builder);
+                builder.Property(x => x.VariantName).HasOffset(84);
+            }
+        }
+    }
+
+    [StructureDefinition<SceneryPaletteBlock, DefinitionBuilder>]
+    public partial class SceneryPaletteBlock
+    {
+        private sealed class DefinitionBuilder : DefinitionBuilder<SceneryPaletteBlock>
+        {
+            public DefinitionBuilder()
+            {
+                var builder = AddVersion(CacheType.Halo3Delta, null).HasFixedSize(48);
+                builder.Property(x => x.TagReference).HasOffset(0);
+
+                //TODO: confirm which version this changed in
+                builder = AddVersion(CacheType.MccHalo3U13, null).HasFixedSize(16);
+                builder.Property(x => x.TagReference).HasOffset(0);
+
+                builder = AddVersion(CacheType.Halo3ODST, null).HasFixedSize(48);
+                builder.Property(x => x.TagReference).HasOffset(0);
+
+                //TODO: confirm which version this changed in
+                builder = AddVersion(CacheType.MccHalo3ODSTU8, null).HasFixedSize(16);
+                builder.Property(x => x.TagReference).HasOffset(0);
             }
         }
     }

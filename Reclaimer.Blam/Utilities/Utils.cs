@@ -12,6 +12,8 @@ namespace Reclaimer.Blam.Utilities
 
         public static string GetFileName(this string value) => value?.Split('\\').Last();
 
+        public static IEnumerable<TSource> EmptyIfNull<TSource>(this IEnumerable<TSource> source) => source ?? Enumerable.Empty<TSource>();
+
         public static TSource? FirstOrNull<TSource>(this IEnumerable<TSource> source, Predicate<TSource> predicate) where TSource : struct
         {
             foreach (var item in source)

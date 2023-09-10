@@ -1,6 +1,9 @@
 ﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
+using Reclaimer.Geometry.Vectors;
+using Reclaimer.IO;
+using System.Numerics;
 
 namespace Reclaimer.Blam.Halo3
 {
@@ -12,6 +15,9 @@ namespace Reclaimer.Blam.Halo3
 
         public BlockCollection<StructureBspBlock> StructureBsps { get; set; }
         public BlockCollection<SkyReferenceBlock> Skies { get; set; }
+        public BlockCollection<ObjectNameBlock> ObjectNames { get; set; }
+        public BlockCollection<SceneryPlacementBlock> Scenery { get; set; }
+        public BlockCollection<SceneryPaletteBlock> SceneryPalette { get; set; }
         public TagReference ScenarioLightmapReference { get; set; }
 
         public override Scene GetContent()
@@ -19,6 +25,7 @@ namespace Reclaimer.Blam.Halo3
             var scene = new Scene { Name = Item.FileName, CoordinateSystem = CoordinateSystem2.Default.WithScale(BlamConstants.Gen3UnitScale) };
             var bspGroup = new SceneGroup { Name = BlamConstants.ScenarioBspGroupName };
             var skyGroup = new SceneGroup { Name = BlamConstants.ScenarioSkyGroupName };
+            var sceneryGroup = new SceneGroup { Name = BlamConstants.ScenarioSceneryGroupName };
 
             //TODO: display error models in some way
 
@@ -44,16 +51,54 @@ namespace Reclaimer.Blam.Halo3
                 catch { }
             }
 
+            var palette = SceneryPalette.EmptyIfNull()
+                .Select(p => p.TagReference.IsValid ? p.TagReference.Tag.ReadMetadata<scenery>() : null)
+                .Select(t =>
+                {
+                    try
+                    {
+                        return (t?.ReadRenderModel() as IContentProvider<Model>)?.GetContent();
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                }).ToList();
+
+            foreach (var placement in Scenery.EmptyIfNull())
+            {
+                try
+                {
+                    if (palette.ElementAtOrDefault(placement.PaletteIndex) == null)
+                        continue;
+
+                    var model = palette[placement.PaletteIndex];
+                    model.Flags |= SceneFlags.SkyFlag;
+                    var x = new ObjectPlacement(model);
+                    x.SetTransform(placement.Scale, placement.Position.ToVector3(), (Quaternion)placement.Rotation);
+                    sceneryGroup.ChildObjects.Add(x);
+                }
+                catch { }
+            }
+
             if (bspGroup.ChildObjects.Count > 0)
                 scene.ChildGroups.Add(bspGroup);
 
             if (skyGroup.ChildObjects.Count > 0)
                 scene.ChildGroups.Add(skyGroup);
 
+            if (sceneryGroup.ChildObjects.Count > 0)
+                scene.ChildGroups.Add(sceneryGroup);
+
             return scene;
         }
 
-        private static IEnumerable<T> ReadTags<T>(IEnumerable<TagReference> collection) => collection.Where(t => t.IsValid).DistinctBy(t => t.TagId).Select(t => t.Tag.ReadMetadata<T>());
+        private static IEnumerable<T> ReadTags<T>(IEnumerable<TagReference> collection)
+        {
+            return collection.Where(t => t.IsValid)
+                .DistinctBy(t => t.TagId)
+                .Select(t => t.Tag.ReadMetadata<T>());
+        }
     }
 
     [DebuggerDisplay($"{{{nameof(BspReference)},nq}}")]
@@ -66,5 +111,40 @@ namespace Reclaimer.Blam.Halo3
     public partial class SkyReferenceBlock
     {
         public TagReference SkyReference { get; set; }
+    }
+
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+    public partial class ObjectNameBlock
+    {
+        public string Name { get; set; }
+        public short ObjectType { get; set; }
+        public short PlacementIndex { get; set; }
+
+        private string GetDebuggerDisplay() => $"[{ObjectType:X2}] {Name}";
+    }
+
+    public abstract partial class PlacementBlockBase
+    {
+        public short PaletteIndex { get; set; }
+        public short NameIndex { get; set; }
+        public RealVector3 Position { get; set; }
+        public EulerAngles Rotation { get; set; }
+        public float Scale { get; set; }
+    }
+
+    [DebuggerDisplay($"{{{nameof(TagReference)},nq}}")]
+    public abstract class PaletteBlockBase
+    {
+        public TagReference TagReference { get; set; }
+    }
+
+    public partial class SceneryPlacementBlock : PlacementBlockBase
+    {
+        public StringId VariantName { get; set; }
+    }
+
+    public partial class SceneryPaletteBlock : PaletteBlockBase
+    {
+
     }
 }

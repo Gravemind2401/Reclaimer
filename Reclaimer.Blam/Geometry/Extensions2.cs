@@ -17,8 +17,8 @@ namespace Adjutant.Geometry
                     ParentIndex = b.ParentIndex,
                     FirstChildIndex = b.FirstChildIndex,
                     NextSiblingIndex = b.NextSiblingIndex,
-                    Position = new Vector3(b.Position.X, b.Position.Y, b.Position.Z),
-                    Rotation = new Quaternion(b.Rotation.X, b.Rotation.Y, b.Rotation.Z, b.Rotation.W),
+                    Position = b.Position.ToVector3(),
+                    Rotation = b.Rotation.ToQuaternion(),
                     Transform = b.OffsetTransform
                 });
             }
@@ -35,8 +35,8 @@ namespace Adjutant.Geometry
                         RegionIndex = m.RegionIndex,
                         PermutationIndex = m.PermutationIndex,
                         BoneIndex = m.NodeIndex,
-                        Position = new Vector3(m.Position.X, m.Position.Y, m.Position.Z),
-                        Rotation = new Quaternion(m.Rotation.X, m.Rotation.Y, m.Rotation.Z, m.Rotation.W)
+                        Position = m.Position.ToVector3(),
+                        Rotation = m.Rotation.ToQuaternion()
                     });
                 }
             }
