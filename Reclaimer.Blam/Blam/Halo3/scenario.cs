@@ -51,43 +51,48 @@ namespace Reclaimer.Blam.Halo3
                 catch { }
             }
 
-            var palette = SceneryPalette.EmptyIfNull()
-                .Select(p => p.TagReference.IsValid ? p.TagReference.Tag.ReadMetadata<scenery>() : null)
-                .Select(t =>
+            foreach (var group in Scenery.EmptyIfNull().GroupBy(x => x.PaletteIndex))
+            {
+                var tagRef = SceneryPalette?.ElementAtOrDefault(group.Key)?.TagReference;
+                if (!tagRef.HasValue || !tagRef.Value.IsValid)
+                    continue;
+
+                Model model = null;
+                try
+                {
+                    var tag = tagRef.Value.Tag.ReadMetadata<scenery>();
+                    model = (tag.ReadRenderModel() as IContentProvider<Model>)?.GetContent();
+                    model.Flags |= SceneFlags.SkyFlag;
+                }
+                catch
+                {
+                    continue;
+                }
+
+                var placementGroup = new SceneGroup { Name = model.Name };
+
+                foreach (var placement in group)
                 {
                     try
                     {
-                        return (t?.ReadRenderModel() as IContentProvider<Model>)?.GetContent();
+                        var sceneItem = new ObjectPlacement(model);
+                        sceneItem.SetTransform(placement.Scale, placement.Position.ToVector3(), (Quaternion)placement.Rotation);
+                        placementGroup.ChildObjects.Add(sceneItem);
                     }
-                    catch
-                    {
-                        return null;
-                    }
-                }).ToList();
-
-            foreach (var placement in Scenery.EmptyIfNull())
-            {
-                try
-                {
-                    if (palette.ElementAtOrDefault(placement.PaletteIndex) == null)
-                        continue;
-
-                    var model = palette[placement.PaletteIndex];
-                    model.Flags |= SceneFlags.SkyFlag;
-                    var x = new ObjectPlacement(model);
-                    x.SetTransform(placement.Scale, placement.Position.ToVector3(), (Quaternion)placement.Rotation);
-                    sceneryGroup.ChildObjects.Add(x);
+                    catch { }
                 }
-                catch { }
+
+                if (placementGroup.HasItems)
+                    sceneryGroup.ChildGroups.Add(placementGroup);
             }
 
-            if (bspGroup.ChildObjects.Count > 0)
+            if (bspGroup.HasItems)
                 scene.ChildGroups.Add(bspGroup);
 
-            if (skyGroup.ChildObjects.Count > 0)
+            if (skyGroup.HasItems)
                 scene.ChildGroups.Add(skyGroup);
 
-            if (sceneryGroup.ChildObjects.Count > 0)
+            if (sceneryGroup.HasItems)
                 scene.ChildGroups.Add(sceneryGroup);
 
             return scene;

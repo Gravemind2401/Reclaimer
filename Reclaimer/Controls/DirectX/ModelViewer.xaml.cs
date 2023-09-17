@@ -99,72 +99,77 @@ namespace Reclaimer.Controls.DirectX
             var isFirst = true;
             var sceneBounds = default(SharpDX.BoundingBox);
 
-            //TODO: support nested groups
-            foreach (var group in scene.ChildGroups)
-            {
-                var groupNode = new TreeItemModel { Header = group.Name, IsChecked = true };
-
-                foreach (var obj in group.ChildObjects)
-                {
-                    var placement = obj as ObjectPlacement;
-                    var model = (placement?.Object ?? obj) as Model;
-
-                    if (model == null)
-                        continue;
-
-                    var objNode = new TreeItemModel { Header = model.Name, IsChecked = true };
-                    var meshLoader = new MeshLoader(model, textureLoader);
-                    var objGroup = new GroupModel3D();
-
-                    if (placement != null && !placement.Transform.IsIdentity)
-                    {
-                        objGroup.Transform = placement.Transform.ToMediaTransform();
-                        objGroup.Transform.Freeze();
-                    }
-
-                    foreach (var region in model.Regions)
-                    {
-                        foreach (var perm in region.Permutations)
-                        {
-                            if (perm.MeshRange.Count <= 0)
-                                continue;
-
-                            var tag = meshLoader.GetMesh(perm);
-                            if (tag == null)
-                                continue;
-
-                            if (!objGroup.Children.Contains(tag.Mesh))
-                                objGroup.Children.Add(tag.Mesh);
-                        }
-                    }
-
-                    if (!objGroup.Children.Any())
-                        continue;
-
-                    modelGroup.Children.Add(objGroup);
-
-                    if (!model.Flags.HasFlag(SceneFlags.SkyFlag))
-                    {
-                        var objBounds = objGroup.GetTotalBounds();
-                        if (!isFirst)
-                            SharpDX.BoundingBox.Merge(ref sceneBounds, ref objBounds, out sceneBounds);
-                        else
-                        {
-                            isFirst = false;
-                            sceneBounds = objBounds;
-                        }
-                    }
-
-                    var objTag = new MeshTag(null, objGroup);
-                    objNode.Tag = objTag;
-                    groupNode.Items.Add(objNode);
-                }
-
-                if (groupNode.HasItems)
-                    TreeViewItems.Add(groupNode);
-            }
-
+            AppendSceneGroups(scene.ChildGroups, TreeViewItems);
             renderer.SetDefaultBounds(sceneBounds);
+            return;
+
+            void AppendSceneGroups(List<SceneGroup> groups, ObservableCollection<TreeItemModel> destination)
+            {
+                foreach (var group in groups.OrderBy(g => g.Name))
+                {
+                    var groupNode = new TreeItemModel { Header = group.Name, IsChecked = true };
+
+                    AppendSceneGroups(group.ChildGroups, groupNode.Items);
+
+                    foreach (var obj in group.ChildObjects.OrderBy(o => o.Name))
+                    {
+                        var placement = obj as ObjectPlacement;
+
+                        if ((placement?.Object ?? obj) is not Model model)
+                            continue;
+
+                        var objNode = new TreeItemModel { Header = model.Name, IsChecked = true };
+                        var meshLoader = new MeshLoader(model, textureLoader);
+                        var objGroup = new GroupModel3D();
+
+                        if (placement != null && !placement.Transform.IsIdentity)
+                        {
+                            objGroup.Transform = placement.Transform.ToMediaTransform();
+                            objGroup.Transform.Freeze();
+                        }
+
+                        foreach (var region in model.Regions)
+                        {
+                            foreach (var perm in region.Permutations)
+                            {
+                                if (perm.MeshRange.Count <= 0)
+                                    continue;
+
+                                var tag = meshLoader.GetMesh(perm);
+                                if (tag == null)
+                                    continue;
+
+                                if (!objGroup.Children.Contains(tag.Mesh))
+                                    objGroup.Children.Add(tag.Mesh);
+                            }
+                        }
+
+                        if (!objGroup.Children.Any())
+                            continue;
+
+                        modelGroup.Children.Add(objGroup);
+
+                        if (!model.Flags.HasFlag(SceneFlags.SkyFlag))
+                        {
+                            var objBounds = objGroup.GetTotalBounds();
+                            if (!isFirst)
+                                SharpDX.BoundingBox.Merge(ref sceneBounds, ref objBounds, out sceneBounds);
+                            else
+                            {
+                                isFirst = false;
+                                sceneBounds = objBounds;
+                            }
+                        }
+
+                        var objTag = new MeshTag(null, objGroup);
+                        objNode.Tag = objTag;
+                        groupNode.Items.Add(objNode);
+                    }
+
+                    if (groupNode.HasItems)
+                        destination.Add(groupNode);
+                }
+            }
         }
 
         public void LoadGeometry(Model model)

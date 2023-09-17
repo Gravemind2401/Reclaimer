@@ -22,9 +22,7 @@ namespace Reclaimer.Geometry
             return scene;
         }
 
-        private IEnumerable<SceneGroup> EnumerateDescendants(SceneGroup group) => group.ChildGroups.Concat(group.ChildGroups.SelectMany(EnumerateDescendants));
-
-        public IEnumerable<SceneGroup> EnumerateGroupHierarchy() => ChildGroups.Prepend(RootNode).Concat(ChildGroups.SelectMany(EnumerateDescendants));
+        public IEnumerable<SceneGroup> EnumerateGroupHierarchy() => RootNode.EnumerateHierarchy();
 
         public IEnumerable<Material> EnumerateMaterials()
         {
@@ -44,6 +42,10 @@ namespace Reclaimer.Geometry
         public string Name { get; set; }
         public List<SceneGroup> ChildGroups { get; } = new();
         public List<SceneObject> ChildObjects { get; } = new();
+
+        public bool HasItems => EnumerateHierarchy().Any(g => g.ChildObjects.Count > 0);
+
+        public IEnumerable<SceneGroup> EnumerateHierarchy() => ChildGroups.SelectMany(g => g.EnumerateHierarchy()).Prepend(this);
     }
 
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
