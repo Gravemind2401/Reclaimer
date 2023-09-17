@@ -103,11 +103,11 @@ namespace Reclaimer.Controls
             }
 
             rootNode.Items.Reset(result);
-        }
 
-        private static bool FilterTag(string filter, IPakItem item)
-        {
-            return string.IsNullOrEmpty(filter) || item.Name.ToUpper() == filter.ToUpper();
+            static bool FilterTag(string filter, IPakItem item)
+            {
+                return string.IsNullOrEmpty(filter) || item.Name.Equals(filter, StringComparison.OrdinalIgnoreCase);
+            }
         }
 
         private void RecursiveCollapseNode(TreeItemModel node)

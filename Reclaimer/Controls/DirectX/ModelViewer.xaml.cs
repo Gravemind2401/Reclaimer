@@ -211,19 +211,19 @@ namespace Reclaimer.Controls.DirectX
             if (item != tv.SelectedItem)
                 return; //because this event bubbles to the parent node
 
-            if (item.Tag is MeshTag t)
+            if (item.Tag is not MeshTag t)
+                return;
+
+            if (t.Instance != null)
             {
-                if (t.Instance != null)
-                {
-                    var bounds = Enumerable.Repeat(t.Mesh, 1).GetTotalBounds(true);
-                    var newMin = SharpDX.Vector3.TransformCoordinate(bounds.Minimum, t.Instance.Transform);
-                    var newMax = SharpDX.Vector3.TransformCoordinate(bounds.Maximum, t.Instance.Transform);
-                    var box = new SharpDX.BoundingBox(newMin, newMax);
-                    renderer.ZoomToBounds(box);
-                }
-                else
-                    renderer.LocateObject(t.Mesh);
+                var bounds = Enumerable.Repeat(t.Mesh, 1).GetTotalBounds(true);
+                var newMin = SharpDX.Vector3.TransformCoordinate(bounds.Minimum, t.Instance.Transform);
+                var newMax = SharpDX.Vector3.TransformCoordinate(bounds.Maximum, t.Instance.Transform);
+                var box = new SharpDX.BoundingBox(newMin, newMax);
+                renderer.ZoomToBounds(box);
             }
+            else
+                renderer.LocateObject(t.Mesh);
         }
 
         private bool isWorking = false;
@@ -248,28 +248,28 @@ namespace Reclaimer.Controls.DirectX
             }
 
             RefreshState(item.Parent);
-        }
 
-        private void RefreshState(TreeItemModel item)
-        {
-            if (item == null || !item.HasItems)
-                return;
+            void RefreshState(TreeItemModel item)
+            {
+                if (item == null || !item.HasItems)
+                    return;
 
-            var prev = item.IsChecked;
-            item.IsChecked = item.Items
-                .Where(i => i.IsVisible)
-                .Select(i => i.IsChecked)
-                .Aggregate(item.Items[0].IsChecked, (a, b) => a == null || a != b ? null : a);
+                var prev = item.IsChecked;
+                item.IsChecked = item.Items
+                    .Where(i => i.IsVisible)
+                    .Select(i => i.IsChecked)
+                    .Aggregate(item.Items[0].IsChecked, (a, b) => a == null || a != b ? null : a);
 
-            //if this node changed state then the parent needs to refresh state too
-            if (item.IsChecked != prev)
-                RefreshState(item.Parent);
-        }
+                //if this node changed state then the parent needs to refresh state too
+                if (item.IsChecked != prev)
+                    RefreshState(item.Parent);
+            }
 
-        private IEnumerable<TreeItemModel> EnumerateDescendents(TreeItemModel item)
-        {
-            var visible = item.Items.Where(i => i.IsVisible);
-            return visible.Concat(visible.SelectMany(EnumerateDescendents));
+            IEnumerable<TreeItemModel> EnumerateDescendents(TreeItemModel item)
+            {
+                var visible = item.Items.Where(i => i.IsVisible);
+                return visible.Concat(visible.SelectMany(EnumerateDescendents));
+            }
         }
         #endregion
 

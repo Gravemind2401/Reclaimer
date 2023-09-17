@@ -106,81 +106,84 @@ namespace Reclaimer.Controls
                 BuildHierarchyTree(filter);
             else
                 BuildClassTree(filter);
-        }
 
-        private void BuildClassTree(string filter)
-        {
-            var result = new List<TreeItemModel>();
-            var classGroups = cache.TagIndex
-                .Where(i => FilterTag(filter, i))
-                .GroupBy(i => i.ClassName);
-
-            foreach (var g in classGroups.OrderBy(g => g.Key))
+            void BuildClassTree(string filter)
             {
-                var node = new TreeItemModel { Header = g.Key };
-                foreach (var i in g.OrderBy(i => i.TagName))
+                var result = new List<TreeItemModel>();
+                var classGroups = cache.TagIndex
+                    .Where(i => FilterTag(filter, i))
+                    .GroupBy(i => i.ClassName);
+
+                foreach (var g in classGroups.OrderBy(g => g.Key))
                 {
-                    node.Items.Add(new TreeItemModel
+                    var node = new TreeItemModel { Header = g.Key };
+                    foreach (var i in g.OrderBy(i => i.TagName))
                     {
-                        Header = i.TagName,
-                        Tag = i
-                    });
+                        node.Items.Add(new TreeItemModel
+                        {
+                            Header = i.TagName,
+                            Tag = i
+                        });
+                    }
+                    result.Add(node);
                 }
-                result.Add(node);
+
+                rootNode.Items.Reset(result);
             }
 
-            rootNode.Items.Reset(result);
-        }
-
-        private void BuildHierarchyTree(string filter)
-        {
-            var result = new List<TreeItemModel>();
-            var lookup = new Dictionary<string, TreeItemModel>();
-
-            foreach (var tag in cache.TagIndex.Where(i => FilterTag(filter, i)).OrderBy(i => i.TagName))
+            void BuildHierarchyTree(string filter)
             {
-                var node = MakeNode(result, lookup, $"{tag.TagName}.{tag.ClassName}");
-                node.Tag = tag;
+                var result = new List<TreeItemModel>();
+                var lookup = new Dictionary<string, TreeItemModel>();
+
+                foreach (var tag in cache.TagIndex.Where(i => FilterTag(filter, i)).OrderBy(i => i.TagName))
+                {
+                    var node = MakeNode(result, lookup, $"{tag.TagName}.{tag.ClassName}");
+                    node.Tag = tag;
+                }
+
+                rootNode.Items.Reset(result);
             }
 
-            rootNode.Items.Reset(result);
-        }
-
-        private static bool FilterTag(string filter, IIndexItem tag)
-        {
-            return string.IsNullOrEmpty(filter) || tag.TagName.ToUpper().Contains(filter.ToUpper()) || tag.ClassCode.ToUpper() == filter.ToUpper() || tag.ClassName.ToUpper() == filter.ToUpper();
-        }
-
-        private TreeItemModel MakeNode(IList<TreeItemModel> root, IDictionary<string, TreeItemModel> lookup, string path, bool inner = false)
-        {
-            if (lookup.TryGetValue(path, out var item))
-                return item;
-
-            var index = path.LastIndexOf('\\');
-            var branch = index < 0 ? null : path[..index];
-            var leaf = index < 0 ? path : path[(index + 1)..];
-
-            item = new TreeItemModel(leaf);
-            lookup.Add(path, item);
-
-            if (branch == null)
+            static bool FilterTag(string filter, IIndexItem tag)
             {
+                return string.IsNullOrEmpty(filter)
+                    || tag.TagName.Contains(filter, StringComparison.OrdinalIgnoreCase)
+                    || tag.ClassCode.Equals(filter, StringComparison.OrdinalIgnoreCase)
+                    || tag.ClassName.Equals(filter, StringComparison.OrdinalIgnoreCase);
+            }
+
+            TreeItemModel MakeNode(IList<TreeItemModel> root, IDictionary<string, TreeItemModel> lookup, string path, bool inner = false)
+            {
+                if (lookup.TryGetValue(path, out var item))
+                    return item;
+
+                var index = path.LastIndexOf('\\');
+                var branch = index < 0 ? null : path[..index];
+                var leaf = index < 0 ? path : path[(index + 1)..];
+
+                item = new TreeItemModel(leaf);
+                lookup.Add(path, item);
+
+                if (branch == null)
+                {
+                    if (inner)
+                        root.Insert(root.LastIndexWhere(n => n.HasItems) + 1, item);
+                    else
+                        root.Add(item);
+
+                    return item;
+                }
+
+                var parent = MakeNode(root, lookup, branch, true);
+
                 if (inner)
-                    root.Insert(root.LastIndexWhere(n => n.HasItems) + 1, item);
+                    parent.Items.Insert(parent.Items.LastIndexWhere(n => n.HasItems) + 1, item);
                 else
-                    root.Add(item);
+                    parent.Items.Add(item);
 
                 return item;
             }
-
-            var parent = MakeNode(root, lookup, branch, true);
-
-            if (inner)
-                parent.Items.Insert(parent.Items.LastIndexWhere(n => n.HasItems) + 1, item);
-            else
-                parent.Items.Add(item);
-
-            return item;
         }
 
         private void RecursiveCollapseNode(TreeItemModel node)
