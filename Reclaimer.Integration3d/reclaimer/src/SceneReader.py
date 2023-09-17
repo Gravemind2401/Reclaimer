@@ -1,4 +1,4 @@
-from typing import List, Dict, Callable, TypeVar
+from typing import List, Dict, Union, Callable, TypeVar
 
 from .Types import *
 from .FileReader import FileReader
@@ -66,17 +66,34 @@ def _read_node(reader: FileReader, block: DataBlock):
     for b in child_blocks:
         if b.code == 'NODE':
             node.child_groups.append(_decode_block(reader, b, _read_node))
-        elif b.code == 'MOD*':
-            node.child_objects.append(_decode_block(reader, b, _read_modelref))
+        else:
+            node.child_objects.append(_read_object(reader, b))
     return node
+
+def _read_object(reader: FileReader, block: DataBlock) -> Union[SceneObject, ModelRef]:
+    if block.code == 'MOD*':
+        return _decode_block(reader, block, _read_modelref)
+    elif block.code == 'PLAC':
+        return _decode_block(reader, block, _read_placement)
+
+def _read_base_props(reader: FileReader, obj: SceneObject):
+    obj.name = reader.read_string()
+    obj.flags = reader.read_int32()
+
+def _read_placement(reader: FileReader, block: DataBlock) -> Placement:
+    placement = Placement()
+    _read_base_props(reader, placement)
+    placement.transform = reader.read_matrix3x4()
+    object_block = DataBlock(reader)
+    placement.object = _read_object(reader, object_block)
+    return placement
 
 def _read_modelref(reader: FileReader, block: DataBlock) -> ModelRef:
     return ModelRef(reader.read_int32())
 
 def _read_model(reader: FileReader, block: DataBlock) -> Model:
     model = Model()
-    model.name = reader.read_string()
-    model.flags = reader.read_int32()
+    _read_base_props(reader, model)
     props = _read_property_blocks(reader, block)
     model.regions = _decode_list(reader, props['REGN[]'], _read_region)
     model.markers = _decode_list(reader, props['MARK[]'], _read_marker)

@@ -15,8 +15,7 @@ __all__ = [
 ]
 
 
-class Model(INamed):
-    flags: int
+class Model(SceneObject):
     regions: List['ModelRegion']
     markers: List['Marker']
     bones: List['Bone']

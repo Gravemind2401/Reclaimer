@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Union
 
 from .Types import *
 from .Model import *
@@ -11,6 +11,7 @@ __all__ = [
     'Version',
     'Scene',
     'SceneGroup',
+    'Placement',
     'ModelRef'
 ]
 
@@ -41,7 +42,12 @@ class Scene(INamed):
 
 class SceneGroup(INamed):
     child_groups: List['SceneGroup']
-    child_objects: List
+    child_objects: List[SceneObject]
+
+
+class Placement(SceneObject):
+    transform: Matrix4x4
+    object: Union[SceneObject, 'ModelRef']
 
 
 @dataclass

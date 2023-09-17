@@ -6,7 +6,8 @@ __all__ = [
     'Float3',
     'Float4',
     'Matrix4x4',
-    'INamed'
+    'INamed',
+    'SceneObject'
 ]
 
 
@@ -26,3 +27,6 @@ class INamed:
 
     def __repr__(self) -> str:
         return f'<{str(self)}>'
+
+class SceneObject(INamed):
+    flags: int = 0
