@@ -32,6 +32,7 @@ namespace Reclaimer.Geometry.Utilities
         public static readonly BlockCode FileHeader = new BlockCode("RMF!");
         public static readonly BlockCode List = new BlockCode("list");
         public static readonly BlockCode SceneGroup = new BlockCode("NODE");
+        public static readonly BlockCode Placement = new BlockCode("PLAC");
         public static readonly BlockCode ModelReference = new BlockCode("MOD*");
 
         public static readonly BlockCode Model = new BlockCode("MODL");

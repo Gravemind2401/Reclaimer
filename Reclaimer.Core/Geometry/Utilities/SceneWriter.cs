@@ -36,6 +36,8 @@ namespace Reclaimer.Geometry.Utilities
             }
         }
 
+        private void WriteString(string value) => writer.Write(value ?? string.Empty);
+
         public void Write(Scene scene)
         {
             materialPool.Clear();
@@ -50,7 +52,7 @@ namespace Reclaimer.Geometry.Utilities
                 writer.Write((byte)Math.Max(0, version.Revision));
                 writer.Write(scene.CoordinateSystem.UnitScale);
                 writer.WriteMatrix3x3(scene.CoordinateSystem.WorldMatrix);
-                writer.Write(scene.Name);
+                WriteString(scene.Name);
 
                 //everything from here on must be a block
 
@@ -72,7 +74,7 @@ namespace Reclaimer.Geometry.Utilities
         {
             using (BlockMarker(SceneCodes.SceneGroup))
             {
-                writer.Write(sceneGroup.Name);
+                WriteString(sceneGroup.Name);
                 writer.Write(sceneGroup.ChildGroups.Count + sceneGroup.ChildObjects.Count);
 
                 foreach (var child in sceneGroup.ChildGroups)
@@ -90,6 +92,8 @@ namespace Reclaimer.Geometry.Utilities
                 using (BlockMarker(SceneCodes.ModelReference))
                     writer.Write(modelPool.IndexOf(model));
             }
+            else if (sceneObject is ObjectPlacement placement)
+                Write(placement);
             else
                 throw new NotImplementedException();
         }
@@ -100,7 +104,7 @@ namespace Reclaimer.Geometry.Utilities
         {
             using (BlockMarker(SceneCodes.Material))
             {
-                writer.Write(material.Name);
+                WriteString(material.Name);
                 WriteList(material.TextureMappings, Write, SceneCodes.TextureMapping);
                 WriteList(material.Tints, Write, SceneCodes.Tint);
             }
@@ -131,7 +135,7 @@ namespace Reclaimer.Geometry.Utilities
         {
             using (BlockMarker(SceneCodes.Texture))
             {
-                writer.Write(texture.Name);
+                WriteString(texture.Name);
                 writer.Write(0); //binary size if embedded
             }
         }
@@ -140,6 +144,22 @@ namespace Reclaimer.Geometry.Utilities
 
         #region Models
 
+        private void WriteBaseProps(SceneObject obj)
+        {
+            WriteString(obj.Name);
+            writer.Write((int)obj.Flags);
+        }
+
+        private void Write(ObjectPlacement placement)
+        {
+            using (BlockMarker(SceneCodes.Placement))
+            {
+                WriteBaseProps(placement);
+                writer.WriteMatrix3x4(placement.Transform);
+                Write(placement.Object);
+            }
+        }
+
         private void Write(Model model)
         {
             meshPool.Clear();
@@ -147,7 +167,7 @@ namespace Reclaimer.Geometry.Utilities
 
             using (BlockMarker(SceneCodes.Model))
             {
-                writer.Write(model.Name);
+                WriteBaseProps(model);
                 WriteList(model.Regions, Write, SceneCodes.Region);
                 WriteList(model.Markers, Write, SceneCodes.Marker);
                 WriteList(model.Bones, Write, SceneCodes.Bone);
@@ -159,7 +179,7 @@ namespace Reclaimer.Geometry.Utilities
         {
             using (BlockMarker(SceneCodes.Region))
             {
-                writer.Write(region.Name);
+                WriteString(region.Name);
                 WriteList(region.Permutations, Write, SceneCodes.Permutation);
             }
         }
@@ -179,7 +199,7 @@ namespace Reclaimer.Geometry.Utilities
 
             using (BlockMarker(SceneCodes.Permutation))
             {
-                writer.Write(permutation.Name);
+                WriteString(permutation.Name);
                 writer.Write(permutation.IsInstanced);
                 writer.Write(meshRange.Index);
                 writer.Write(meshRange.Count);
@@ -191,7 +211,7 @@ namespace Reclaimer.Geometry.Utilities
         {
             using (BlockMarker(SceneCodes.Marker))
             {
-                writer.Write(marker.Name);
+                WriteString(marker.Name);
                 WriteList(marker.Instances, Write, SceneCodes.MarkerInstance);
             }
         }
@@ -212,7 +232,7 @@ namespace Reclaimer.Geometry.Utilities
         {
             using (BlockMarker(SceneCodes.Bone))
             {
-                writer.Write(bone.Name);
+                WriteString(bone.Name);
                 writer.Write(bone.ParentIndex);
                 writer.WriteMatrix4x4(bone.Transform);
             }
