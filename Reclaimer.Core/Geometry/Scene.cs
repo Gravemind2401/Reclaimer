@@ -80,6 +80,6 @@ namespace Reclaimer.Geometry
     public enum SceneFlags
     {
         None = 0,
-        SkyFlag = 1,
+        PrimaryFocus = 1,
     }
 }

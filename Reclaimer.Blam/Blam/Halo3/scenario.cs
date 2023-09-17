@@ -34,7 +34,9 @@ namespace Reclaimer.Blam.Halo3
                 try
                 {
                     var provider = bspTag as IContentProvider<Model>;
-                    bspGroup.ChildObjects.Add(provider.GetContent());
+                    var model = provider.GetContent();
+                    model.Flags |= SceneFlags.PrimaryFocus;
+                    bspGroup.ChildObjects.Add(model);
                 }
                 catch { }
             }
@@ -44,9 +46,7 @@ namespace Reclaimer.Blam.Halo3
                 try
                 {
                     var provider = skyTag.ReadRenderModel() as IContentProvider<Model>;
-                    var model = provider.GetContent();
-                    model.Flags |= SceneFlags.SkyFlag;
-                    skyGroup.ChildObjects.Add(model);
+                    skyGroup.ChildObjects.Add(provider.GetContent());
                 }
                 catch { }
             }
@@ -62,12 +62,11 @@ namespace Reclaimer.Blam.Halo3
                 {
                     var tag = tagRef.Value.Tag.ReadMetadata<scenery>();
                     model = (tag.ReadRenderModel() as IContentProvider<Model>)?.GetContent();
-                    model.Flags |= SceneFlags.SkyFlag;
                 }
-                catch
-                {
+                catch { }
+
+                if (model == null)
                     continue;
-                }
 
                 var placementGroup = new SceneGroup { Name = model.Name };
 

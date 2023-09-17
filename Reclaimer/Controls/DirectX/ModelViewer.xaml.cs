@@ -149,7 +149,7 @@ namespace Reclaimer.Controls.DirectX
 
                         modelGroup.Children.Add(objGroup);
 
-                        if (!model.Flags.HasFlag(SceneFlags.SkyFlag))
+                        if (model.Flags.HasFlag(SceneFlags.PrimaryFocus))
                         {
                             var objBounds = objGroup.GetTotalBounds();
                             if (!isFirst)
