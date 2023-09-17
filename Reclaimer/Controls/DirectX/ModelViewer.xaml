@@ -173,7 +173,7 @@
                     <TreeView.ItemContainerStyle>
                         <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
                             <Setter Property="Visibility" Value="{Binding Visibility}" />
-                            <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                             <Setter Property="ItemsSource" Value="{Binding Items}" />
                             <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick" />
                         </Style>
