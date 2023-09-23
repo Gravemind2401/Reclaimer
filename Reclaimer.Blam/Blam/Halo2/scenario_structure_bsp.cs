@@ -2,10 +2,8 @@
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
-using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System.Globalization;
-using System.IO;
 using System.Numerics;
 
 namespace Reclaimer.Blam.Halo2
@@ -44,144 +42,79 @@ namespace Reclaimer.Blam.Halo2
         public IGeometryModel ReadGeometry(int lod)
         {
             Exceptions.ThrowIfIndexOutOfRange(lod, ((IRenderGeometry)this).LodCount);
+            var geoParams = new Halo2GeometryArgs
+            {
+                Cache = Cache,
+                Shaders = Shaders,
+                Sections = Clusters.Select(c => new SectionArgs
+                {
+                    DataPointer = c.DataPointer,
+                    DataSize = c.DataSize,
+                    VertexCount = c.VertexCount,
+                    FaceCount = c.FaceCount,
+                    Resources = c.Resources,
+                    BaseAddress = c.HeaderSize + 8
+                }).Concat(Sections.Select(s => new SectionArgs
+                {
+                    DataPointer = s.DataPointer,
+                    DataSize = s.DataSize,
+                    VertexCount = s.VertexCount,
+                    FaceCount = s.FaceCount,
+                    Resources = s.Resources,
+                    IsInstancing = true,
+                    BaseAddress = s.HeaderSize + 8
+                })).ToList()
+            };
 
             var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
             model.Materials.AddRange(Halo2Common.GetMaterials(Shaders));
+            model.Meshes.AddRange(Halo2Common.GetMeshes(geoParams));
 
-            #region Clusters
             var clusterRegion = new GeometryRegion { Name = BlamConstants.SbspClustersGroupName };
 
             foreach (var section in Clusters.Where(s => s.VertexCount > 0))
             {
                 var sectionIndex = Clusters.IndexOf(section);
 
-                var data = section.DataPointer.ReadData(section.DataSize);
-                var baseAddress = section.HeaderSize + 8;
-
-                using (var ms = new MemoryStream(data))
-                using (var reader = new EndianReader(ms, ByteOrder.LittleEndian))
+                var perm = new GeometryPermutation
                 {
-                    var sectionInfo = reader.ReadObject<MeshResourceDetailsBlock>();
+                    SourceIndex = sectionIndex,
+                    Name = sectionIndex.ToString("D3", CultureInfo.CurrentCulture),
+                    MeshIndex = sectionIndex,
+                    MeshCount = 1
+                };
 
-                    var mesh = new GeometryMesh();
-
-                    var indexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
-                        ? IndexFormat.TriangleList
-                        : IndexFormat.TriangleStrip;
-
-                    PopulateMeshData(reader, mesh, baseAddress, sectionInfo.IndexCount, section.VertexCount, section.Resources, indexFormat);
-
-                    var perm = new GeometryPermutation
-                    {
-                        SourceIndex = Clusters.IndexOf(section),
-                        Name = sectionIndex.ToString("D3", CultureInfo.CurrentCulture),
-                        MeshIndex = model.Meshes.Count,
-                        MeshCount = 1
-                    };
-
-                    clusterRegion.Permutations.Add(perm);
-                    model.Meshes.Add(mesh);
-                }
+                clusterRegion.Permutations.Add(perm);
             }
 
-            model.Regions.Add(clusterRegion);
-            #endregion
+            if (clusterRegion.Permutations.Count > 0)
+                model.Regions.Add(clusterRegion);
 
-            #region Instances
             foreach (var section in Sections.Where(s => s.VertexCount > 0))
             {
                 var sectionIndex = Sections.IndexOf(section);
                 var sectionRegion = new GeometryRegion { Name = Utils.CurrentCulture($"Instances {sectionIndex:D3}") };
 
-                var data = section.DataPointer.ReadData(section.DataSize);
-                var baseAddress = section.HeaderSize + 8;
+                var perms = GeometryInstances
+                    .Where(i => i.SectionIndex == sectionIndex)
+                    .Select(i => new GeometryPermutation
+                    {
+                        SourceIndex = GeometryInstances.IndexOf(i),
+                        Name = i.Name,
+                        Transform = i.Transform,
+                        TransformScale = i.TransformScale,
+                        MeshIndex = Clusters.Count + sectionIndex,
+                        MeshCount = 1
+                    }).ToList();
 
-                using (var ms = new MemoryStream(data))
-                using (var reader = new EndianReader(ms, ByteOrder.LittleEndian))
+                if (perms.Count > 0)
                 {
-                    var sectionInfo = reader.ReadObject<MeshResourceDetailsBlock>();
-
-                    var mesh = new GeometryMesh { IsInstancing = true };
-
-                    var indexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
-                        ? IndexFormat.TriangleList
-                        : IndexFormat.TriangleStrip;
-
-                    PopulateMeshData(reader, mesh, baseAddress, sectionInfo.IndexCount, section.VertexCount, section.Resources, indexFormat);
-
-                    var perms = GeometryInstances
-                        .Where(i => i.SectionIndex == sectionIndex)
-                        .Select(i => new GeometryPermutation
-                        {
-                            SourceIndex = GeometryInstances.IndexOf(i),
-                            Name = i.Name,
-                            Transform = i.Transform,
-                            TransformScale = i.TransformScale,
-                            MeshIndex = model.Meshes.Count,
-                            MeshCount = 1
-                        }).ToList();
-
                     sectionRegion.Permutations.AddRange(perms);
-                    model.Meshes.Add(mesh);
+                    model.Regions.Add(sectionRegion);
                 }
-
-                model.Regions.Add(sectionRegion);
             }
-            #endregion
 
             return model;
-        }
-
-        private static void PopulateMeshData(EndianReader reader, GeometryMesh mesh, int baseAddress, int indexCount, int vertexCount, IReadOnlyList<ResourceInfoBlock> resourceBlocks, IndexFormat indexFormat)
-        {
-            var submeshResource = resourceBlocks[0];
-            var indexResource = resourceBlocks.FirstOrDefault(r => r.Type0 == 32);
-            var vertexResource = resourceBlocks.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 0);
-            var uvResource = resourceBlocks.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 1);
-            var normalsResource = resourceBlocks.FirstOrDefault(r => r.Type0 == 56 && r.Type1 == 2);
-
-            reader.Seek(baseAddress + submeshResource.Offset, SeekOrigin.Begin);
-            var submeshes = reader.ReadArray<SubmeshDataBlock>(submeshResource.Size / 72);
-
-            mesh.Submeshes.AddRange(
-                submeshes.Select(s => new GeometrySubmesh
-                {
-                    MaterialIndex = s.ShaderIndex,
-                    IndexStart = s.IndexStart,
-                    IndexLength = s.IndexLength
-                })
-            );
-
-            reader.Seek(baseAddress + indexResource.Offset, SeekOrigin.Begin);
-            mesh.IndexBuffer = IndexBuffer.FromArray(reader.ReadArray<ushort>(indexCount), indexFormat);
-
-            var positionBuffer = new VectorBuffer<RealVector3>(vertexCount);
-            var texCoordsBuffer = new VectorBuffer<RealVector2>(vertexCount);
-            var normalBuffer = new VectorBuffer<HenDN3>(vertexCount);
-
-            mesh.VertexBuffer = new VertexBuffer();
-            mesh.VertexBuffer.PositionChannels.Add(positionBuffer);
-            mesh.VertexBuffer.TextureCoordinateChannels.Add(texCoordsBuffer);
-            mesh.VertexBuffer.NormalChannels.Add(normalBuffer);
-
-            var vertexSize = vertexResource.Size / vertexCount;
-            for (var i = 0; i < vertexCount; i++)
-            {
-                reader.Seek(baseAddress + vertexResource.Offset + i * vertexSize, SeekOrigin.Begin);
-                positionBuffer[i] = new RealVector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-            }
-
-            for (var i = 0; i < vertexCount; i++)
-            {
-                reader.Seek(baseAddress + uvResource.Offset + i * 8, SeekOrigin.Begin);
-                texCoordsBuffer[i] = new RealVector2(reader.ReadSingle(), reader.ReadSingle());
-            }
-
-            for (var i = 0; i < vertexCount; i++)
-            {
-                reader.Seek(baseAddress + normalsResource.Offset + i * 12, SeekOrigin.Begin);
-                normalBuffer[i] = new HenDN3(reader.ReadUInt32());
-            }
         }
 
         public IEnumerable<IBitmap> GetAllBitmaps() => Halo2Common.GetBitmaps(Shaders);

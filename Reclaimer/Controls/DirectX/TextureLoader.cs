@@ -20,7 +20,9 @@ namespace Reclaimer.Controls.DirectX
 
             public TextureLoader(IGeometryModel model)
             {
-                var indexes = model.Meshes.SelectMany(m => m.Submeshes)
+                var indexes = model.Meshes
+                    .Where(m => m != null)
+                    .SelectMany(m => m.Submeshes)
                     .Select(s => s.MaterialIndex).Distinct();
 
                 foreach (var i in indexes)
