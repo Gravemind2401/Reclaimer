@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using Prism.Commands;
+using Prism.Mvvm;
 using Reclaimer.Utilities;
 using System.Windows;
 
@@ -6,6 +7,7 @@ namespace Reclaimer.Models
 {
     public class TreeItemModel : BindableBase
     {
+        public DelegateCommand ToggleCommand { get; }
         public BulkObservableCollection<TreeItemModel> Items { get; }
 
         public bool HasItems => Items.Count > 0;
@@ -60,6 +62,7 @@ namespace Reclaimer.Models
 
         public TreeItemModel()
         {
+            ToggleCommand = new DelegateCommand(() => IsChecked = !IsChecked);
             Items = new BulkObservableCollection<TreeItemModel>();
             Items.CollectionChanged += Items_CollectionChanged;
         }

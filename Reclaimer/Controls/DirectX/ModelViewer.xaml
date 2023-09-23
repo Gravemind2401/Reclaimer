@@ -4,7 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Reclaimer.Controls.DirectX"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:c="clr-namespace:Reclaimer.Controls"
              xmlns:s="clr-namespace:Studio.Controls;assembly=Studio"
+             xmlns:m="clr-namespace:Reclaimer.Models"
              xmlns:u="clr-namespace:Reclaimer.Utilities"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              mc:Ignorable="d" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
@@ -169,27 +172,33 @@
                         SearchAccepted="txtSearch_SearchChanged" SearchCanceled="txtSearch_SearchChanged" />
                 <TreeView x:Name="tv" s:SplitPanel.DesiredSize="250"
                         ItemsSource="{Binding TreeViewItems}"
-                        VerticalContentAlignment="Center">
+                        VerticalContentAlignment="Center"
+                        VirtualizingStackPanel.IsVirtualizing="True"
+                        VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
+                        VirtualizingStackPanel.VirtualizationMode="Recycling">
                     <TreeView.ItemContainerStyle>
                         <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
                             <Setter Property="Visibility" Value="{Binding Visibility}" />
                             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                            <Setter Property="ItemsSource" Value="{Binding Items}" />
                             <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick" />
                         </Style>
                     </TreeView.ItemContainerStyle>
                     <TreeView.ItemTemplate>
-                        <DataTemplate>
+                        <HierarchicalDataTemplate DataType="m:TreeItemModel" ItemsSource="{Binding Items}">
                             <StackPanel Orientation="Horizontal">
                                 <CheckBox IsChecked="{Binding IsChecked}"
                                           VerticalAlignment="Center"
+                                          Focusable="False"
                                           Checked="TreeViewItem_Checked"
                                           Unchecked="TreeViewItem_Checked" />
                                 <TextBlock Text="{Binding Header}" Margin="5,0,0,0"
                                            VerticalAlignment="Center" />
                             </StackPanel>
-                        </DataTemplate>
+                        </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
+                    <b:Interaction.Behaviors>
+                        <c:ToggleOnSpaceBehavior ToggleCommand="{Binding SelectedItem.ToggleCommand, ElementName=tv}" />
+                    </b:Interaction.Behaviors>
                 </TreeView>
             </DockPanel>
             <Grid>
