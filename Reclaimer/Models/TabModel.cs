@@ -12,6 +12,7 @@ namespace Reclaimer.Models
             get => parent;
             internal set => SetProperty(ref parent, value);
         }
+
         private string contentId;
         public string ContentId
         {

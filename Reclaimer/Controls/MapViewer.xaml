@@ -3,10 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Reclaimer.Controls"
              xmlns:m="clr-namespace:Reclaimer.Models"
              xmlns:c="clr-namespace:Reclaimer.Controls"
-             xmlns:studio="clr-namespace:Studio.Controls;assembly=Studio"
+             xmlns:s="clr-namespace:Studio.Controls;assembly=Studio"
              xmlns:su="clr-namespace:Studio.Utilities;assembly=Studio"
              mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -32,7 +31,7 @@
             </ToolBar>
         </ToolBarTray>
         <Grid DockPanel.Dock="Top" Background="{DynamicResource Environment.CommandBar.Gradient}">
-            <studio:SearchControl x:Name="txtSearch" x:FieldModifier="private" Margin="0,2" 
+            <s:SearchControl x:Name="txtSearch" x:FieldModifier="private" Margin="0,2" 
                     WatermarkText="Search Tags" LiveSearchEnabled="True" LiveSearchDelay="500"
                     SearchAccepted="txtSearch_SearchChanged" SearchCanceled="txtSearch_SearchChanged" />
         </Grid>
