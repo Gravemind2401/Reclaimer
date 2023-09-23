@@ -1261,7 +1261,7 @@ namespace Reclaimer.Drawing
 
             public byte this[int index]
             {
-                get
+                readonly get
                 {
                     return index switch
                     {
@@ -1285,7 +1285,7 @@ namespace Reclaimer.Drawing
                 }
             }
 
-            public IEnumerable<byte> AsEnumerable(bool bgr24)
+            public readonly IEnumerable<byte> AsEnumerable(bool bgr24)
             {
                 yield return b;
                 yield return g;
@@ -1294,7 +1294,7 @@ namespace Reclaimer.Drawing
                     yield return a;
             }
 
-            public void Copy(byte[] destination, int destinationIndex, bool bgr24)
+            public readonly void Copy(byte[] destination, int destinationIndex, bool bgr24)
             {
                 destination[destinationIndex] = b;
                 destination[destinationIndex + 1] = g;
@@ -1350,7 +1350,7 @@ namespace Reclaimer.Drawing
                 };
             }
 
-            public override string ToString()
+            public override readonly string ToString()
             {
                 return string.Format("{{ {0,3}, {1,3}, {2,3}, {3,3} }} #{0:X2}{1:X2}{2:X2}{3:X2}", b, g, r, a);
             }

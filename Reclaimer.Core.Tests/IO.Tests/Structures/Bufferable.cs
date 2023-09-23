@@ -19,7 +19,7 @@
             };
         }
 
-        public void WriteToBuffer(Span<byte> buffer)
+        public readonly void WriteToBuffer(Span<byte> buffer)
         {
             BitConverter.GetBytes(Property1).CopyTo(buffer);
             BitConverter.GetBytes(Property2).CopyTo(buffer[4..]);
