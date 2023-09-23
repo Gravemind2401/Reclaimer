@@ -41,31 +41,6 @@ namespace Reclaimer.Blam.Halo3
 
     internal static class Halo3Common
     {
-        public static IEnumerable<IBitmap> GetBitmaps(IReadOnlyList<ShaderBlock> shaders) => GetBitmaps(shaders, Enumerable.Range(0, shaders?.Count ?? 0));
-        public static IEnumerable<IBitmap> GetBitmaps(IReadOnlyList<ShaderBlock> shaders, IEnumerable<int> shaderIndexes)
-        {
-            var selection = shaderIndexes?.Distinct().Where(i => i >= 0 && i < shaders?.Count).Select(i => shaders[i]);
-            if (selection?.Any() != true)
-                yield break;
-
-            var complete = new List<int>();
-            foreach (var s in selection)
-            {
-                var rmsh = s.ShaderReference.Tag?.ReadMetadata<shader>();
-                if (rmsh == null)
-                    continue;
-
-                foreach (var map in rmsh.ShaderProperties.SelectMany(p => p.ShaderMaps))
-                {
-                    if (map.BitmapReference.Tag == null || complete.Contains(map.BitmapReference.TagId))
-                        continue;
-
-                    complete.Add(map.BitmapReference.TagId);
-                    yield return map.BitmapReference.Tag.ReadMetadata<bitmap>();
-                }
-            }
-        }
-
         public static IEnumerable<Material> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
         {
             for (var i = 0; i < shaders.Count; i++)

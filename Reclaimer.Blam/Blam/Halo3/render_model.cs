@@ -189,10 +189,6 @@ namespace Reclaimer.Blam.Halo3
             }
         }
 
-        public IEnumerable<IBitmap> GetAllBitmaps() => Halo3Common.GetBitmaps(Shaders);
-
-        public IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes) => Halo3Common.GetBitmaps(Shaders, shaderIndexes);
-
         #endregion
     }
 
@@ -390,7 +386,7 @@ namespace Reclaimer.Blam.Halo3
     }
 
     [FixedSize(56)]
-    public class BoundingBoxBlock : IRealBounds5D
+    public class BoundingBoxBlock
     {
         [Offset(4)]
         public RealBounds XBounds { get; set; }

@@ -102,10 +102,6 @@ namespace Reclaimer.Blam.Halo3
             return model;
         }
 
-        public IEnumerable<IBitmap> GetAllBitmaps() => Halo3Common.GetBitmaps(Shaders);
-
-        public IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes) => Halo3Common.GetBitmaps(Shaders, shaderIndexes);
-
         #endregion
     }
 
