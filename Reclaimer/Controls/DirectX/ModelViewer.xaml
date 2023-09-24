@@ -101,6 +101,16 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition MinWidth="35" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="FPS:" />
+                    <Label Grid.Column="1" HorizontalAlignment="Right" 
+                           Content="{Binding Viewport.FrameRate, ElementName=renderer, Converter={StaticResource stringConverter}, ConverterParameter='F1'}" />
+                </Grid>
+                <Separator />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition MinWidth="65" />
                         <ColumnDefinition MinWidth="65" />
                         <ColumnDefinition MinWidth="65" />
