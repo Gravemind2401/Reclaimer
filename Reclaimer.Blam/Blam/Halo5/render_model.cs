@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Adjutant.Spatial;
+﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
@@ -8,7 +7,7 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.Halo5
 {
-    public class render_model : ContentTagDefinition, IRenderGeometry
+    public class render_model : ContentTagDefinition<Scene>, IContentProvider<Model>
     {
         public render_model(ModuleItem item, MetadataHeader header)
             : base(item, header)
@@ -43,45 +42,76 @@ namespace Reclaimer.Blam.Halo5
 
         public override string ToString() => Item.FileName;
 
-        #region IRenderGeometry
+        #region IContentProvider
 
-        int IRenderGeometry.LodCount => Sections.Max(s => s.SectionLods.Count);
+        Model IContentProvider<Model>.GetContent() => GetModelContent();
 
-        public IGeometryModel ReadGeometry(int lod)
+        public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent(), BlamConstants.Gen3UnitScale);
+
+        private Model GetModelContent()
         {
-            Exceptions.ThrowIfIndexOutOfRange(lod, ((IRenderGeometry)this).LodCount);
+            const int lod = 0;
 
-            var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
-
-            model.Nodes.AddRange(Nodes);
-            model.MarkerGroups.AddRange(MarkerGroups);
-            model.Bounds.AddRange(BoundingBoxes);
-            model.Materials.AddRange(Halo5Common.GetMaterials(Materials));
-
-            foreach (var region in Regions)
+            var geoParams = new Halo5GeometryArgs
             {
-                var gRegion = new GeometryRegion { Name = region.Name };
-                gRegion.Permutations.AddRange(region.Permutations.Where(p => p.SectionIndex >= 0).Select(p =>
-                    new GeometryPermutation
-                    {
-                        Name = p.Name,
-                        MeshIndex = p.SectionIndex,
-                        MeshCount = p.SectionCount
-                    }));
+                Module = Module,
+                Materials = Materials,
+                Sections = Sections,
+                NodeMaps = NodeMaps,
+                ResourceIndex = Item.ResourceIndex
+            };
 
-                if (gRegion.Permutations.Any())
-                    model.Regions.Add(gRegion);
-            }
+            var model = new Model { Name = Item.FileName };
 
-            Func<int, int, int> mapNodeFunc = null;
-            model.Meshes.AddRange(Halo5Common.GetMeshes(Module, Item, Sections, lod, s => 0, mapNodeFunc));
+            model.Bones.AddRange(Nodes.Select(n => new Bone
+            {
+                Name = n.Name,
+                Transform = n.Transform,
+                ParentIndex = n.ParentIndex
+            }));
 
-            CreateInstanceMeshes(model, lod);
+            model.Markers.AddRange(MarkerGroups.Select(g =>
+            {
+                var marker = new Marker { Name = g.Name };
+                marker.Instances.AddRange(g.Markers.Select(m => new MarkerInstance
+                {
+                    Position = (Vector3)m.Position,
+                    Rotation = new Quaternion(m.Rotation.X, m.Rotation.Y, m.Rotation.Z, m.Rotation.W),
+                    RegionIndex = m.RegionIndex,
+                    PermutationIndex = m.PermutationIndex,
+                    BoneIndex = m.NodeIndex
+                }));
+
+                return marker;
+            }));
+
+            model.Regions.AddRange(Regions.Select(r =>
+            {
+                var region = new ModelRegion { Name = r.Name };
+                region.Permutations.AddRange(r.Permutations.Select(p => new ModelPermutation
+                {
+                    Name = p.Name,
+                    MeshRange = (p.SectionIndex, p.SectionCount)
+                }));
+
+                return region;
+            }));
+
+            model.Meshes.AddRange(Halo5Common.GetMeshes(geoParams, out var materials));
+
+            var bounds = BoundingBoxes[0];
+            var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
+            var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
+
+            foreach (var mesh in model.Meshes)
+                (mesh.PositionBounds, mesh.TextureBounds) = (posBounds, texBounds);
+
+            CreateInstanceMeshes(model, materials, lod);
 
             return model;
         }
 
-        private void CreateInstanceMeshes(GeometryModel model, int lod)
+        private void CreateInstanceMeshes(Model model, List<Material> materials, int lod)
         {
             if (InstancedGeometrySectionIndex < 0)
                 return;
@@ -93,31 +123,33 @@ namespace Reclaimer.Blam.Halo5
              * to make things easier for the model rendering and exporting 
              */
 
-            var gRegion = new GeometryRegion { Name = "Instances" };
-            gRegion.Permutations.AddRange(GeometryInstances.Select(i =>
-                new GeometryPermutation
+            var region = new ModelRegion { Name = BlamConstants.ModelInstancesGroupName };
+            region.Permutations.AddRange(GeometryInstances.Select(i =>
+                new ModelPermutation
                 {
                     Name = i.Name,
                     Transform = i.Transform,
-                    TransformScale = i.TransformScale,
-                    MeshIndex = InstancedGeometrySectionIndex + GeometryInstances.IndexOf(i),
-                    MeshCount = 1
+                    UniformScale = i.TransformScale,
+                    MeshRange = (InstancedGeometrySectionIndex + GeometryInstances.IndexOf(i), 1)
                 }));
 
-            model.Regions.Add(gRegion);
+            model.Regions.Add(region);
 
             var sourceMesh = model.Meshes[InstancedGeometrySectionIndex];
             model.Meshes.Remove(sourceMesh);
+
+            var bounds = BoundingBoxes[0];
 
             var section = Sections[InstancedGeometrySectionIndex];
             var localLod = Math.Min(lod, section.SectionLods.Count - 1);
             for (var i = 0; i < GeometryInstances.Count; i++)
             {
                 var subset = section.SectionLods[localLod].Subsets[i];
-                var mesh = new GeometryMesh
+                var mesh = new Mesh
                 {
-                    NodeIndex = (byte)GeometryInstances[i].NodeIndex,
-                    BoundsIndex = 0
+                    BoneIndex = (byte)GeometryInstances[i].NodeIndex,
+                    PositionBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds),
+                    TextureBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds)
                 };
 
                 var strip = sourceMesh.IndexBuffer.GetSubset(subset.IndexStart, subset.IndexLength);
@@ -126,13 +158,13 @@ namespace Reclaimer.Blam.Halo5
                 var max = strip.Max();
                 var len = max - min + 1;
 
-                mesh.IndexBuffer = IndexBuffer.FromCollection(strip.Select(j => j - min), sourceMesh.IndexFormat);
+                mesh.IndexBuffer = IndexBuffer.Transform(sourceMesh.IndexBuffer.Slice(subset.IndexStart, subset.IndexLength), -min);
                 mesh.VertexBuffer = sourceMesh.VertexBuffer.Slice(min, len);
 
                 var submesh = section.SectionLods[localLod].Submeshes[subset.SubmeshIndex];
-                mesh.Submeshes.Add(new GeometrySubmesh
+                mesh.Segments.Add(new MeshSegment
                 {
-                    MaterialIndex = submesh.ShaderIndex,
+                    Material = materials.ElementAtOrDefault(submesh.ShaderIndex),
                     IndexStart = 0,
                     IndexLength = mesh.IndexBuffer.Count
                 });
@@ -140,10 +172,6 @@ namespace Reclaimer.Blam.Halo5
                 model.Meshes.Add(mesh);
             }
         }
-
-        public IEnumerable<IBitmap> GetAllBitmaps() => Halo5Common.GetBitmaps(Materials);
-
-        public IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes) => Halo5Common.GetBitmaps(Materials, shaderIndexes);
 
         #endregion
     }
@@ -206,7 +234,7 @@ namespace Reclaimer.Blam.Halo5
 
     [FixedSize(124)]
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class NodeBlock : IGeometryNode
+    public class NodeBlock
     {
         [Offset(0)]
         public StringHash Name { get; set; }
@@ -234,41 +262,21 @@ namespace Reclaimer.Blam.Halo5
 
         [Offset(92)]
         public float DistanceFromParent { get; set; }
-
-        #region IGeometryNode
-
-        string IGeometryNode.Name => Name;
-
-        IVector3 IGeometryNode.Position => Position;
-
-        IVector4 IGeometryNode.Rotation => Rotation;
-
-        Matrix4x4 IGeometryNode.OffsetTransform => Transform;
-
-        #endregion
     }
 
     [FixedSize(32)]
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class MarkerGroupBlock : IGeometryMarkerGroup
+    public class MarkerGroupBlock
     {
         [Offset(0)]
         public StringHash Name { get; set; }
 
         [Offset(4)]
         public BlockCollection<MarkerBlock> Markers { get; set; }
-
-        #region IGeometryMarkerGroup
-
-        string IGeometryMarkerGroup.Name => Name;
-
-        IReadOnlyList<IGeometryMarker> IGeometryMarkerGroup.Markers => Markers;
-
-        #endregion
     }
 
     [FixedSize(56)]
-    public class MarkerBlock : IGeometryMarker
+    public class MarkerBlock
     {
         [Offset(0)]
         public byte RegionIndex { get; set; }
@@ -292,16 +300,6 @@ namespace Reclaimer.Blam.Halo5
         public RealVector3 Direction { get; set; }
 
         public override string ToString() => Position.ToString();
-
-        #region IGeometryMarker
-
-        byte IGeometryMarker.PermutationIndex => (byte)PermutationIndex;
-
-        IVector3 IGeometryMarker.Position => Position;
-
-        IVector4 IGeometryMarker.Rotation => Rotation;
-
-        #endregion
     }
 
     [FixedSize(32)]
@@ -384,7 +382,7 @@ namespace Reclaimer.Blam.Halo5
     }
 
     [FixedSize(52)]
-    public class BoundingBoxBlock : IRealBounds5D
+    public class BoundingBoxBlock
     {
         //short flags, short padding
 

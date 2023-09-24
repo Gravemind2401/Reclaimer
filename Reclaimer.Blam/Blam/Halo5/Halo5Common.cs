@@ -1,41 +1,24 @@
 ﻿using Adjutant.Geometry;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Properties;
-using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
-using Reclaimer.Geometry.Vectors;
 using System.IO;
+using System.Numerics;
 
 namespace Reclaimer.Blam.Halo5
 {
+    public class Halo5GeometryArgs
+    {
+        public Module Module { get; init; }
+        public IReadOnlyList<MaterialBlock> Materials { get; init; }
+        public IReadOnlyList<SectionBlock> Sections { get; init; }
+        public IReadOnlyList<NodeMapBlock> NodeMaps { get; init; }
+        public int ResourceIndex { get; init; }
+    }
+
     internal static class Halo5Common
     {
-        public static IEnumerable<IBitmap> GetBitmaps(IReadOnlyList<MaterialBlock> materials) => GetBitmaps(materials, Enumerable.Range(0, materials?.Count ?? 0));
-        public static IEnumerable<IBitmap> GetBitmaps(IReadOnlyList<MaterialBlock> materials, IEnumerable<int> matIndexes)
-        {
-            var selection = matIndexes?.Distinct().Where(i => i >= 0 && i < materials?.Count).Select(i => materials[i]);
-            if (selection?.Any() != true)
-                yield break;
-
-            var complete = new List<int>();
-            foreach (var m in selection)
-            {
-                var mat = m.MaterialReference.Tag?.ReadMetadata<material>();
-                if (mat == null)
-                    continue;
-
-                foreach (var tex in mat.PostprocessDefinitions.SelectMany(p => p.Textures))
-                {
-                    if (tex.BitmapReference.Tag == null || complete.Contains(tex.BitmapReference.TagId))
-                        continue;
-
-                    complete.Add(tex.BitmapReference.TagId);
-                    yield return tex.BitmapReference.Tag.ReadMetadata<bitmap>();
-                }
-            }
-        }
-
-        public static IEnumerable<GeometryMaterial> GetMaterials(IList<MaterialBlock> materials)
+        public static IEnumerable<Material> GetMaterials(IReadOnlyList<MaterialBlock> materials)
         {
             for (var i = 0; i < materials.Count; i++)
             {
@@ -46,8 +29,9 @@ namespace Reclaimer.Blam.Halo5
                     continue;
                 }
 
-                var material = new GeometryMaterial
+                var material = new Material
                 {
+                    Id = tag.GlobalTagId,
                     Name = tag.FileName
                 };
 
@@ -58,7 +42,6 @@ namespace Reclaimer.Blam.Halo5
                     continue;
                 }
 
-                var subMaterials = new List<ISubmaterial>();
                 var map = mat.PostprocessDefinitions.FirstOrDefault()?.Textures.FirstOrDefault();
                 var bitmTag = map?.BitmapReference.Tag;
                 if (bitmTag == null)
@@ -68,40 +51,38 @@ namespace Reclaimer.Blam.Halo5
                 }
 
                 //var tile = map.TilingIndex == byte.MaxValue
-                //    ? (RealVector4?)null
+                //    ? (Vector4?)null
                 //    : shader.ShaderProperties[0].TilingData[map.TilingIndex];
 
                 try
                 {
-                    subMaterials.Add(new SubMaterial
+                    material.TextureMappings.Add(new TextureMapping
                     {
-                        Usage = MaterialUsage.Diffuse,
-                        Bitmap = bitmTag.ReadMetadata<bitmap>(),
-                        //Tiling = new RealVector2(tile?.X ?? 1, tile?.Y ?? 1)
-                        Tiling = new RealVector2(1, 1)
+                        Usage = (int)MaterialUsage.Diffuse,
+                        Tiling = Vector2.One,
+                        Texture = new Texture
+                        {
+                            Id = bitmTag.GlobalTagId,
+                            Name = bitmTag.FileName,
+                            GetDds = () => bitmTag.ReadMetadata<bitmap>().ToDds(0)
+                        }
                     });
                 }
                 catch { }
-
-                if (subMaterials.Count == 0)
-                {
-                    yield return material;
-                    continue;
-                }
-
-                material.Submaterials = subMaterials;
 
                 yield return material;
             }
         }
 
-        public static IEnumerable<GeometryMesh> GetMeshes(Module module, ModuleItem item, IList<SectionBlock> sections, int lod, Func<SectionBlock, short?> boundsIndex, Func<int, int, int> mapNode = null)
+        public static List<Mesh> GetMeshes(Halo5GeometryArgs args, out List<Material> materials)
         {
+            const int lod = 0;
+
             VertexBufferInfo[] vertexBufferInfo;
             IndexBufferInfo[] indexBufferInfo;
 
-            var resourceIndex = module.Resources[item.ResourceIndex];
-            var resource = module.Items[resourceIndex]; //this will be the [mesh resource!*] tag
+            var resourceIndex = args.Module.Resources[args.ResourceIndex];
+            var resource = args.Module.Items[resourceIndex]; //this will be the [mesh resource!*] tag
             if (resource.ResourceCount > 0)
                 System.Diagnostics.Debugger.Break();
 
@@ -137,7 +118,7 @@ namespace Reclaimer.Blam.Halo5
 
                 using (var reader = blockReader.CreateVirtualReader(header.GetSectionOffset(2)))
                 {
-                    foreach (var section in sections)
+                    foreach (var section in args.Sections)
                     {
                         var lodData = section.SectionLods[Math.Min(lod, section.SectionLods.Count - 1)];
 
@@ -174,37 +155,36 @@ namespace Reclaimer.Blam.Halo5
                         }
                     }
 
-                    var sectionIndex = -1;
-                    foreach (var section in sections)
-                    {
-                        sectionIndex++;
+                    var matLookup = materials = new List<Material>(args.Materials.Count);
+                    materials.AddRange(GetMaterials(args.Materials));
 
+                    var meshList = new List<Mesh>(args.Sections.Count);
+                    meshList.AddRange(args.Sections.Select((section, sectionIndex) =>
+                    {
                         var lodData = section.SectionLods[Math.Min(lod, section.SectionLods.Count - 1)];
                         if (!vb.ContainsKey(lodData.VertexBufferIndex) || !ib.ContainsKey(lodData.IndexBufferIndex))
-                        {
-                            yield return new GeometryMesh();
-                            continue;
-                        }
+                            return null;
 
-                        var mesh = new GeometryMesh
+                        var mesh = new Mesh
                         {
-                            NodeIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
-                            BoundsIndex = 0,
+                            BoneIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
                             VertexBuffer = vb[lodData.VertexBufferIndex],
                             IndexBuffer = ib[lodData.IndexBufferIndex]
                         };
 
-                        mesh.Submeshes.AddRange(
-                            lodData.Submeshes.Select(s => new GeometrySubmesh
+                        mesh.Segments.AddRange(
+                            lodData.Submeshes.Select(s => new MeshSegment
                             {
-                                MaterialIndex = s.ShaderIndex,
+                                Material = matLookup.ElementAtOrDefault(s.ShaderIndex),
                                 IndexStart = s.IndexStart,
                                 IndexLength = s.IndexLength
                             })
                         );
 
-                        yield return mesh;
-                    }
+                        return mesh;
+                    }));
+
+                    return meshList;
                 }
             }
         }
