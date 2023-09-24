@@ -1,6 +1,5 @@
 ﻿using Adjutant.Geometry;
 using Adjutant.Spatial;
-using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.Saber3D.Halo1X.Geometry;
@@ -10,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace Reclaimer.Saber3D.Halo1X
 {
-    public class Template : CeaModelBase, INodeGraph
+    public class Template : CeaModelBase
     {
         public string Name => Blocks.OfType<StringBlock0xE502>().SingleOrDefault()?.Value;
         public List<BoneBlock> Bones => Blocks.OfType<BoneListBlock>().SingleOrDefault()?.Bones;
@@ -32,25 +31,13 @@ namespace Reclaimer.Saber3D.Halo1X
             }
         }
 
-        #region IRenderGeometry
-
-        PakItem INodeGraph.Item => Item;
-
-        int IRenderGeometry.LodCount => 1;
-
-        IGeometryModel IRenderGeometry.ReadGeometry(int lod)
+        protected override Model GetModelContent()
         {
-            Exceptions.ThrowIfIndexOutOfRange(lod, ((IRenderGeometry)this).LodCount);
-
-            using var x = CreateReader();
-            using var reader = x.CreateVirtualReader(Item.Address);
-
-            var model = new GeometryModel(Item.Name) { CoordinateSystem = CoordinateSystem.HaloCEX };
+            var model = new Model { Name = Item.Name };
             var defaultTransform = CoordinateSystem.GetTransform(CoordinateSystem.HaloCEX, CoordinateSystem.Default);
+            var materials = GetMaterials();
 
-            model.Materials.AddRange(Materials.Select(GetMaterial));
-
-            var region = new GeometryRegion { Name = Name };
+            var region = new ModelRegion { Name = Name };
 
             var compoundVertexBuffers = new Dictionary<int, VertexBuffer>();
             var compoundIndexBuffers = new Dictionary<int, IndexBuffer>();
@@ -100,22 +87,19 @@ namespace Reclaimer.Saber3D.Halo1X
                 while (next != null);
 
                 var transform = Matrix4x4.Transpose(node.Transform ?? Matrix4x4.Identity);
-                var perm = new GeometryPermutation
+                var perm = new ModelPermutation
                 {
                     Name = node.MeshName,
-                    MeshIndex = model.Meshes.Count,
-                    MeshCount = meshCount,
-                    Transform = transform * defaultTransform,
-                    TransformScale = 1
+                    MeshRange = (model.Meshes.Count, meshCount),
+                    Transform = transform * defaultTransform
                 };
 
                 if (node.ObjectType == ObjectType.StandardMesh)
                 {
-                    var mesh = GetMesh(node);
+                    var mesh = GetMesh(node, materials);
 
-                    mesh.BoundsIndex = (short)model.Bounds.Count;
                     var bounds = node.Bounds.IsEmpty ? new DummyBounds(30) : new DummyBounds(node.Bounds.MinBound, node.Bounds.MaxBound);
-                    model.Bounds.Add(bounds);
+                    SetBounds(mesh, bounds);
 
                     model.Meshes.Add(mesh);
                 }
@@ -132,7 +116,14 @@ namespace Reclaimer.Saber3D.Halo1X
 
             return model;
 
-            GeometryMesh GetCompoundMesh(NodeGraphBlock0xF000 host, SubmeshInfo segment)
+            void SetBounds(Mesh mesh, DummyBounds bounds)
+            {
+                var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
+                var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
+                (mesh.PositionBounds, mesh.TextureBounds) = (posBounds, texBounds);
+            }
+
+            Mesh GetCompoundMesh(NodeGraphBlock0xF000 host, SubmeshInfo segment)
             {
                 var compound = segment.CompoundSource;
                 var compoundId = segment.CompoundSourceId.Value;
@@ -145,18 +136,17 @@ namespace Reclaimer.Saber3D.Halo1X
                     .SkipWhile(i => i < 0)
                     .TakeWhile(i => i < segment.VertexRange.Count);
 
-                var mesh = new GeometryMesh
+                var mesh = new Mesh
                 {
                     VertexBuffer = sourceVertices.Slice(segment.VertexRange.Offset, segment.VertexRange.Count),
-                    IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleList),
-                    BoundsIndex = (short)model.Bounds.Count
+                    IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleList)
                 };
 
-                model.Bounds.Add(new DummyBounds(30));
+                SetBounds(mesh, new DummyBounds(30));
 
-                mesh.Submeshes.Add(new GeometrySubmesh
+                mesh.Segments.Add(new MeshSegment
                 {
-                    MaterialIndex = (short)segment.Materials[0].MaterialIndex,
+                    Material = materials.ElementAtOrDefault(segment.Materials[0].MaterialIndex),
                     IndexStart = 0,
                     IndexLength = mesh.IndexBuffer.Count
                 });
@@ -186,7 +176,5 @@ namespace Reclaimer.Saber3D.Halo1X
                 ZBounds = (min.Z, max.Z);
             }
         }
-
-        #endregion
     }
 }

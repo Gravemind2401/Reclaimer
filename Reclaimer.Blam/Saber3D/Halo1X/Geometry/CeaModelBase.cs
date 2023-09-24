@@ -1,13 +1,13 @@
 ﻿using Adjutant.Geometry;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
-using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using Reclaimer.Saber3D.Common;
+using System.Numerics;
 
 namespace Reclaimer.Saber3D.Halo1X.Geometry
 {
-    public abstract class CeaModelBase : ContentItemDefinition
+    public abstract class CeaModelBase : ContentItemDefinition, INodeGraph, IContentProvider<Reclaimer.Geometry.Scene>, IContentProvider<Model>
     {
         public List<DataBlock> Blocks { get; protected init; }
         public Dictionary<int, NodeGraphBlock0xF000> NodeLookup { get; protected init; }
@@ -43,24 +43,31 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
                    select new Texture(i);
         }
 
-        protected GeometryMaterial GetMaterial(MaterialReferenceBlock block)
+        protected List<Material> GetMaterials()
         {
-            var index = Materials.IndexOf(block);
-            var material = new GeometryMaterial { Name = block.Value };
-
-            material.Submaterials.Add(new SubMaterial
+            return Materials.Select((m, i) =>
             {
-                Usage = MaterialUsage.Diffuse,
-                Bitmap = GetBitmaps(Enumerable.Repeat(index, 1)).FirstOrDefault(),
-                Tiling = new RealVector2(1, 1)
-            });
+                var material = new Material { Id = i, Name = m.Value };
 
-            return material;
+                material.TextureMappings.Add(new TextureMapping
+                {
+                    Usage = (int)MaterialUsage.Diffuse,
+                    Tiling = Vector2.One,
+                    Texture = new Reclaimer.Geometry.Texture
+                    {
+                        Id = i,
+                        Name = m.Value,
+                        GetDds = () => GetBitmaps(Enumerable.Repeat(i, 1)).FirstOrDefault()?.ToDds(0)
+                    }
+                });
+
+                return material;
+            }).ToList();
         }
 
-        protected static GeometryMesh GetMesh(NodeGraphBlock0xF000 block)
+        protected static Mesh GetMesh(NodeGraphBlock0xF000 block, List<Material> materials)
         {
-            var mesh = new GeometryMesh
+            var mesh = new Mesh
             {
                 VertexBuffer = new VertexBuffer(),
                 IndexBuffer = block.Faces.IndexBuffer
@@ -72,9 +79,9 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
             foreach (var submesh in block.SubmeshData.Submeshes)
             {
-                mesh.Submeshes.Add(new GeometrySubmesh
+                mesh.Segments.Add(new MeshSegment
                 {
-                    MaterialIndex = (short)submesh.Materials[0].MaterialIndex,
+                    Material = materials.ElementAtOrDefault(submesh.Materials[0].MaterialIndex),
                     IndexStart = submesh.FaceRange.Offset * 3,
                     IndexLength = submesh.FaceRange.Count * 3
                 });
@@ -82,5 +89,17 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
             return mesh;
         }
+
+        PakItem INodeGraph.Item => Item;
+
+        #region IContentProvider
+
+        Model IContentProvider<Model>.GetContent() => GetModelContent();
+
+        Reclaimer.Geometry.Scene IContentProvider<Reclaimer.Geometry.Scene>.GetContent() => Reclaimer.Geometry.Scene.WrapSingleModel(GetModelContent());
+
+        protected abstract Model GetModelContent();
+
+        #endregion
     }
 }

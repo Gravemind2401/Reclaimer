@@ -41,7 +41,7 @@ namespace Reclaimer.Saber3D.Common
             return content != null;
         }
 
-        public static bool TryGetGeometryContent(IPakItem item, out IRenderGeometry content)
+        public static bool TryGetGeometryContent(IPakItem item, out IContentProvider<Geometry.Scene> content)
         {
             content = null;
 

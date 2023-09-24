@@ -1,16 +1,13 @@
 ﻿using Adjutant.Geometry;
-using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Saber3D.Halo1X.Geometry;
 using System.IO;
 
 namespace Reclaimer.Saber3D.Halo1X
 {
-    public class Scene : CeaModelBase, INodeGraph
+    public class Scene : CeaModelBase
     {
         public UnknownBoundsBlock0x2002 Bounds => Blocks.OfType<UnknownListBlock0x1F01>().SingleOrDefault().Bounds;
-
-        List<BoneBlock> INodeGraph.Bones { get; }
 
         public Scene(PakItem item)
             : base(item)
@@ -29,40 +26,26 @@ namespace Reclaimer.Saber3D.Halo1X
             }
         }
 
-        #region IRenderGeometry
-
-        PakItem INodeGraph.Item => Item;
-
-        int IRenderGeometry.LodCount => 1;
-
-        IGeometryModel IRenderGeometry.ReadGeometry(int lod)
+        protected override Model GetModelContent()
         {
-            if (lod < 0 || lod >= ((IRenderGeometry)this).LodCount)
-                throw new ArgumentOutOfRangeException(nameof(lod));
-
-            using var x = CreateReader();
-            using var reader = x.CreateVirtualReader(Item.Address);
-
-            var model = new GeometryModel(Item.Name) { CoordinateSystem = CoordinateSystem.HaloCEX };
+            var model = new Model { Name = Item.Name };
             var defaultTransform = CoordinateSystem.GetTransform(CoordinateSystem.HaloCEX, CoordinateSystem.Default);
+            var materials = GetMaterials();
 
-            model.Materials.AddRange(Materials.Select(GetMaterial));
-
-            var region = new GeometryRegion { Name = Item.Name };
+            var region = new ModelRegion { Name = Item.Name };
 
             foreach (var node in NodeGraph.AllDescendants.Where(n => n.ObjectType is ObjectType.StandardMesh or ObjectType.DeferredSceneMesh))
             {
-                var perm = new GeometryPermutation
+                var perm = new ModelPermutation
                 {
                     Name = node.MeshName,
-                    MeshIndex = model.Meshes.Count,
-                    MeshCount = 1,
+                    MeshRange = (model.Meshes.Count, 1),
                     Transform = defaultTransform,
-                    TransformScale = 50
+                    UniformScale = 50
                 };
 
                 if (node.ObjectType == ObjectType.StandardMesh)
-                    model.Meshes.Add(GetMesh(node));
+                    model.Meshes.Add(GetMesh(node, materials));
                 else
                 {
                     foreach (var submesh in node.SubmeshData.Submeshes)
@@ -73,10 +56,9 @@ namespace Reclaimer.Saber3D.Halo1X
             }
 
             model.Regions.Add(region);
-
             return model;
 
-            GeometryMesh GetCompoundMesh(NodeGraphBlock0xF000 host, SubmeshInfo segment)
+            Mesh GetCompoundMesh(NodeGraphBlock0xF000 host, SubmeshInfo segment)
             {
                 var source = NodeLookup[host.MeshDataSource.SourceMeshId];
 
@@ -93,15 +75,15 @@ namespace Reclaimer.Saber3D.Halo1X
                 var indices = Enumerable.Range(faceStart * 3, faceCount * 3)
                     .Select(i => sourceIndices[i]);
 
-                var mesh = new GeometryMesh
+                var mesh = new Mesh
                 {
                     VertexBuffer = sourceVertices.Slice(vertStart, vertCount),
                     IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleList)
                 };
 
-                mesh.Submeshes.Add(new GeometrySubmesh
+                mesh.Segments.Add(new MeshSegment
                 {
-                    MaterialIndex = (short)segment.Materials[0].MaterialIndex,
+                    Material = materials.ElementAtOrDefault(segment.Materials[0].MaterialIndex),
                     IndexStart = 0,
                     IndexLength = mesh.IndexBuffer.Count
                 });
@@ -109,7 +91,5 @@ namespace Reclaimer.Saber3D.Halo1X
                 return mesh;
             }
         }
-
-        #endregion
     }
 }
