@@ -22,7 +22,7 @@ namespace Reclaimer.Blam.Halo3
 
         public override Scene GetContent()
         {
-            var scene = new Scene { Name = Item.FileName, CoordinateSystem = CoordinateSystem2.Default.WithScale(BlamConstants.Gen3UnitScale) };
+            var scene = new Scene { Name = Item.FileName, CoordinateSystem = CoordinateSystem.Default.WithScale(BlamConstants.Gen3UnitScale) };
             var bspGroup = new SceneGroup { Name = BlamConstants.ScenarioBspGroupName };
             var skyGroup = new SceneGroup { Name = BlamConstants.ScenarioSkyGroupName };
             var sceneryGroup = new SceneGroup { Name = BlamConstants.ScenarioSceneryGroupName };

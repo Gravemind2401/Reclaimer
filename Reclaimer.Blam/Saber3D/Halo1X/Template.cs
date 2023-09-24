@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Adjutant.Spatial;
+﻿using Adjutant.Spatial;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.Saber3D.Halo1X.Geometry;
@@ -34,7 +33,6 @@ namespace Reclaimer.Saber3D.Halo1X
         protected override Model GetModelContent()
         {
             var model = new Model { Name = Item.Name };
-            var defaultTransform = CoordinateSystem.GetTransform(CoordinateSystem.HaloCEX, CoordinateSystem.Default);
             var materials = GetMaterials();
 
             var region = new ModelRegion { Name = Name };
@@ -86,12 +84,11 @@ namespace Reclaimer.Saber3D.Halo1X
                 }
                 while (next != null);
 
-                var transform = Matrix4x4.Transpose(node.Transform ?? Matrix4x4.Identity);
                 var perm = new ModelPermutation
                 {
                     Name = node.MeshName,
                     MeshRange = (model.Meshes.Count, meshCount),
-                    Transform = transform * defaultTransform
+                    Transform = Matrix4x4.Transpose(node.Transform ?? Matrix4x4.Identity)
                 };
 
                 if (node.ObjectType == ObjectType.StandardMesh)

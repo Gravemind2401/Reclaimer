@@ -1,6 +1,4 @@
-﻿using Adjutant.Spatial;
-
-using Helix = HelixToolkit.Wpf.SharpDX;
+﻿using Helix = HelixToolkit.Wpf.SharpDX;
 using HelixCore = HelixToolkit.SharpDX.Core;
 using Media3D = System.Windows.Media.Media3D;
 using Numerics = System.Numerics;

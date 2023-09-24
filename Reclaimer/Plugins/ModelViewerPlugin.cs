@@ -308,7 +308,7 @@ namespace Reclaimer.Plugins
             scene.RootNode = new Assimp.Node($"{scenPrefix}{model.Name}");
 
             //Assimp is Y-up in inches by default - this forces it to export as Z-up in meters
-            scene.RootNode.Transform = (CoordinateSystem.HaloCEX * ModelViewerPlugin.Settings.AssimpScale).ToAssimp4x4();
+            scene.RootNode.Transform = (CoordinateSystem.HaloCEX.WorldMatrix * ModelViewerPlugin.Settings.AssimpScale).ToAssimp4x4();
 
             #region Nodes
             var allNodes = new List<Assimp.Node>();

@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.Geometry;
+﻿using Reclaimer.Geometry;
 using Reclaimer.Saber3D.Halo1X.Geometry;
 using System.IO;
 
@@ -29,7 +28,6 @@ namespace Reclaimer.Saber3D.Halo1X
         protected override Model GetModelContent()
         {
             var model = new Model { Name = Item.Name };
-            var defaultTransform = CoordinateSystem.GetTransform(CoordinateSystem.HaloCEX, CoordinateSystem.Default);
             var materials = GetMaterials();
 
             var region = new ModelRegion { Name = Item.Name };
@@ -40,7 +38,6 @@ namespace Reclaimer.Saber3D.Halo1X
                 {
                     Name = node.MeshName,
                     MeshRange = (model.Meshes.Count, 1),
-                    Transform = defaultTransform,
                     UniformScale = 50
                 };
 

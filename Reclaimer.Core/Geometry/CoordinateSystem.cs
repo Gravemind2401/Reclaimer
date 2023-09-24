@@ -2,7 +2,14 @@
 
 namespace Reclaimer.Geometry
 {
-    public record struct CoordinateSystem2(Vector3 ForwardVector, Vector3 RightVector, Vector3 UpVector, float UnitScale)
+    /// <summary>
+    /// A structure representing the orientation and scale of a 3d scene.
+    /// </summary>
+    /// <param name="ForwardVector">A unit vector pointing in the forward direction.</param>
+    /// <param name="RightVector">A unit vector pointing in the right-hand direction.</param>
+    /// <param name="UpVector">A unit vector pointing in the up direction.</param>
+    /// <param name="UnitScale">The number of millimeters per world unit.</param>
+    public record struct CoordinateSystem(Vector3 ForwardVector, Vector3 RightVector, Vector3 UpVector, float UnitScale)
     {
         /// <summary>
         /// The default coordinate system. This is equivalent to using a world matrix of <see cref="Matrix4x4.Identity"/>.
@@ -10,20 +17,38 @@ namespace Reclaimer.Geometry
         /// <remarks>
         /// The forward, right and up vectors are <see cref="Vector3.UnitX"/>, <see cref="Vector3.UnitY"/> and <see cref="Vector3.UnitZ"/> respectively.
         /// </remarks>
-        public static readonly CoordinateSystem2 Default = new CoordinateSystem2(Vector3.UnitX, Vector3.UnitY, Vector3.UnitZ, StandardUnits.Default);
+        public static readonly CoordinateSystem Default = new CoordinateSystem(Vector3.UnitX, Vector3.UnitY, Vector3.UnitZ, StandardUnits.Default);
+
+        /// <summary>
+        /// The coordinate system used by Saber3D geometry in Halo CE Anniversary.
+        /// </summary>
+        /// <remarks>
+        /// The forward, right and up vectors are <see cref="Vector3.UnitX"/>, -<see cref="Vector3.UnitZ"/> and <see cref="Vector3.UnitY"/> respectively.
+        /// </remarks>
+        public static readonly CoordinateSystem HaloCEX = new CoordinateSystem(Vector3.UnitX, -Vector3.UnitZ, Vector3.UnitY, StandardUnits.Default);
+
+        /// <summary>
+        /// The coordinate system used by Halo Wars geometry.
+        /// </summary>
+        /// <remarks>
+        /// The forward, right and up vectors are <see cref="Vector3.UnitZ"/>, -<see cref="Vector3.UnitX"/> and <see cref="Vector3.UnitY"/> respectively.
+        /// </remarks>
+        public static readonly CoordinateSystem HaloWars = new CoordinateSystem(Vector3.UnitZ, -Vector3.UnitX, Vector3.UnitY, StandardUnits.Default);
 
         /// <summary>
         /// Returns a transform matrix that can be used to convert from one coordinate system to another.
         /// </summary>
         /// <param name="origin">The origin coordinate system.</param>
         /// <param name="destination">The destination coordinate system.</param>
-        public static Matrix4x4 GetTransform(CoordinateSystem2 origin, CoordinateSystem2 destination)
+        /// <param name="scaled">If <see langword="true"/>, the <see cref="UnitScale"/> transform will be included in the resulting matrix.</param>
+        public static Matrix4x4 GetTransform(CoordinateSystem origin, CoordinateSystem destination, bool scaled)
         {
-            if (origin == destination)
+            var (origMatrix, destMatrix) = scaled ? (origin.ScaledWorldMatrix, destination.ScaledWorldMatrix) : (origin.WorldMatrix, destination.WorldMatrix);
+            if (origMatrix == destMatrix)
                 return Matrix4x4.Identity;
 
-            return Matrix4x4.Invert(origin.ScaledWorldMatrix, out var inverse)
-                ? inverse * destination.ScaledWorldMatrix
+            return Matrix4x4.Invert(origMatrix, out var inverse)
+                ? inverse * destMatrix
                 : throw new InvalidOperationException("No conversion exists between the given coordinate systems.");
         }
 
@@ -31,7 +56,7 @@ namespace Reclaimer.Geometry
         /// Gets a copy of the current coordinate system with the <see cref="UnitScale"/> property set to a new value.
         /// </summary>
         /// <param name="unitScale">The new scale value.</param>
-        public readonly CoordinateSystem2 WithScale(float unitScale) => this with { UnitScale = unitScale };
+        public readonly CoordinateSystem WithScale(float unitScale) => this with { UnitScale = unitScale };
 
         /// <summary>
         /// Gets a transform representing the world matrix of the current coordinate system.

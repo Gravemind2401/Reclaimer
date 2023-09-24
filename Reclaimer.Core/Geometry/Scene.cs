@@ -6,7 +6,7 @@ namespace Reclaimer.Geometry
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class Scene
     {
-        public CoordinateSystem2 CoordinateSystem { get; set; } = CoordinateSystem2.Default;
+        public CoordinateSystem CoordinateSystem { get; set; } = CoordinateSystem.Default;
 
         public string Name { get; set; }
         public List<Marker> Markers { get; } = new();
@@ -15,9 +15,11 @@ namespace Reclaimer.Geometry
         public List<SceneGroup> ChildGroups => RootNode.ChildGroups;
         public List<SceneObject> ChildObjects => RootNode.ChildObjects;
 
-        public static Scene WrapSingleModel(Model model, float unitScale = 1)
+        public static Scene WrapSingleModel(Model model, float unitScale = 1) => WrapSingleModel(model, CoordinateSystem.Default, unitScale);
+
+        public static Scene WrapSingleModel(Model model, CoordinateSystem coordinateSystem, float unitScale = 1)
         {
-            var scene = new Scene { Name = model.Name, CoordinateSystem = CoordinateSystem2.Default.WithScale(unitScale) };
+            var scene = new Scene { Name = model.Name, CoordinateSystem = coordinateSystem.WithScale(unitScale) };
             scene.ChildObjects.Add(model);
             return scene;
         }

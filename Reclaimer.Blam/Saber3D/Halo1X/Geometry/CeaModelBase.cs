@@ -96,7 +96,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         Model IContentProvider<Model>.GetContent() => GetModelContent();
 
-        Reclaimer.Geometry.Scene IContentProvider<Reclaimer.Geometry.Scene>.GetContent() => Reclaimer.Geometry.Scene.WrapSingleModel(GetModelContent());
+        Reclaimer.Geometry.Scene IContentProvider<Reclaimer.Geometry.Scene>.GetContent() => Reclaimer.Geometry.Scene.WrapSingleModel(GetModelContent(), CoordinateSystem.HaloCEX);
 
         protected abstract Model GetModelContent();
 
