@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
@@ -9,7 +8,7 @@ using System.IO;
 
 namespace Reclaimer.Blam.Halo1
 {
-    public class scenario_structure_bsp : ContentTagDefinition, IRenderGeometry
+    public class scenario_structure_bsp : ContentTagDefinition<Scene>, IContentProvider<Model>
     {
         public scenario_structure_bsp(IIndexItem item)
             : base(item)
@@ -36,17 +35,17 @@ namespace Reclaimer.Blam.Halo1
         [Offset(600)]
         public BlockCollection<BspMarkerBlock> Markers { get; set; }
 
-        #region IRenderGeometry
+        #region IContentProvider
 
-        int IRenderGeometry.LodCount => 1;
+        Model IContentProvider<Model>.GetContent() => GetModelContent();
 
-        public IGeometryModel ReadGeometry(int lod)
+        public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent(), BlamConstants.Gen3UnitScale);
+
+        private Model GetModelContent()
         {
-            Exceptions.ThrowIfIndexOutOfRange(lod, ((IRenderGeometry)this).LodCount);
-
             using var reader = Cache.CreateReader(Cache.DefaultAddressTranslator);
 
-            var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new Model { Name = Item.FileName };
 
             var shaderRefs = Lightmaps.SelectMany(m => m.Materials)
                 .Where(m => m.ShaderReference.TagId >= 0)
@@ -55,13 +54,12 @@ namespace Reclaimer.Blam.Halo1
                 .ToList();
 
             var shaderIds = shaderRefs.Select(r => r.TagId).ToList();
-
-            model.Materials.AddRange(Halo1Common.GetMaterials(shaderRefs, reader));
+            var materials = Halo1Common.GetMaterials(shaderRefs, reader).ToList();
 
             reader.Seek(SurfacePointer.Address, SeekOrigin.Begin);
             var indices = reader.ReadArray<ushort>(SurfaceCount * 3);
 
-            var gRegion = new GeometryRegion { Name = BlamConstants.SbspClustersGroupName };
+            var region = new ModelRegion { Name = BlamConstants.SbspClustersGroupName };
 
             const int vertexSize = 56;
 
@@ -81,15 +79,13 @@ namespace Reclaimer.Blam.Halo1
                 vertexBuffer.TangentChannels.Add(new VectorBuffer<RealVector3>(vertexData, vertexCount, vertexSize, 36));
                 vertexBuffer.TextureCoordinateChannels.Add(new VectorBuffer<RealVector2>(vertexData, vertexCount, vertexSize, 48));
 
+                var mesh = new Mesh();
                 var localIndices = new List<int>();
-                var submeshes = new List<IGeometrySubmesh>();
 
-                var gPermutation = new GeometryPermutation
+                var permutation = new ModelPermutation
                 {
-                    SourceIndex = Lightmaps.IndexOf(section),
                     Name = sectionIndex.ToString("D3", CultureInfo.CurrentCulture),
-                    MeshIndex = sectionIndex,
-                    MeshCount = 1
+                    MeshRange = (sectionIndex, 1)
                 };
 
                 var vertexTally = 0;
@@ -98,9 +94,9 @@ namespace Reclaimer.Blam.Halo1
                     reader.Seek(submesh.VertexPointer.Address, SeekOrigin.Begin);
                     reader.ReadBytes(vertexSize * submesh.VertexCount).CopyTo(vertexData, vertexTally * vertexSize);
 
-                    submeshes.Add(new GeometrySubmesh
+                    mesh.Segments.Add(new MeshSegment
                     {
-                        MaterialIndex = (short)shaderIds.IndexOf(submesh.ShaderReference.TagId),
+                        Material = materials.ElementAtOrDefault(shaderIds.IndexOf(submesh.ShaderReference.TagId)),
                         IndexStart = localIndices.Count,
                         IndexLength = submesh.SurfaceCount * 3
                     });
@@ -114,44 +110,18 @@ namespace Reclaimer.Blam.Halo1
                     vertexTally += submesh.VertexCount;
                 }
 
-                gRegion.Permutations.Add(gPermutation);
+                region.Permutations.Add(permutation);
 
-                model.Meshes.Add(new GeometryMesh
-                {
-                    IndexBuffer = IndexBuffer.FromCollection(localIndices, IndexFormat.TriangleList),
-                    VertexBuffer = vertexBuffer,
-                    Submeshes = submeshes
-                });
+                mesh.IndexBuffer = IndexBuffer.FromCollection(localIndices, IndexFormat.TriangleList);
+                mesh.VertexBuffer = vertexBuffer;
+                model.Meshes.Add(mesh);
 
                 sectionIndex++;
             }
 
-            model.Regions.Add(gRegion);
+            model.Regions.Add(region);
 
             return model;
-        }
-
-        public IEnumerable<IBitmap> GetAllBitmaps() => GetBitmaps(Enumerable.Range(0, Lightmaps?.Count ?? 0));
-
-        public IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes)
-        {
-            var selection = shaderIndexes?.Distinct().Where(i => i >= 0 && i < Lightmaps?.Count).Select(i => Lightmaps[i]);
-            if (selection?.Any() != true)
-                yield break;
-
-            var complete = new List<int>();
-            using (var reader = Cache.CreateReader(Cache.DefaultAddressTranslator))
-            {
-                foreach (var mat in selection.SelectMany(lm => lm.Materials))
-                {
-                    var bitmTag = Halo1Common.GetShaderDiffuse(mat.ShaderReference, reader);
-                    if (bitmTag == null || complete.Contains(bitmTag.Id))
-                        continue;
-
-                    complete.Add(bitmTag.Id);
-                    yield return bitmTag.ReadMetadata<bitmap>();
-                }
-            }
         }
 
         #endregion
@@ -211,7 +181,7 @@ namespace Reclaimer.Blam.Halo1
     }
 
     [FixedSize(60)]
-    public class BspMarkerBlock : IGeometryMarker
+    public class BspMarkerBlock
     {
         [Offset(0)]
         [NullTerminated(Length = 32)]
@@ -222,19 +192,5 @@ namespace Reclaimer.Blam.Halo1
 
         [Offset(48)]
         public RealVector3 Position { get; set; }
-
-        #region IGeometryMarker
-
-        byte IGeometryMarker.RegionIndex => byte.MaxValue;
-
-        byte IGeometryMarker.PermutationIndex => byte.MaxValue;
-
-        byte IGeometryMarker.NodeIndex => byte.MaxValue;
-
-        IVector3 IGeometryMarker.Position => Position;
-
-        IVector4 IGeometryMarker.Rotation => Rotation;
-
-        #endregion
     }
 }

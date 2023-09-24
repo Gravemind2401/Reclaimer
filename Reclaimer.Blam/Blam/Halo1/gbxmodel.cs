@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
@@ -9,7 +8,7 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.Halo1
 {
-    public class gbxmodel : ContentTagDefinition, IRenderGeometry
+    public class gbxmodel : ContentTagDefinition<Scene>, IContentProvider<Model>
     {
         public gbxmodel(IIndexItem item)
             : base(item)
@@ -39,56 +38,77 @@ namespace Reclaimer.Blam.Halo1
         [Offset(220)]
         public BlockCollection<ShaderBlock> Shaders { get; set; }
 
-        #region IRenderGeometry
+        #region IContentProvider
 
-        int IRenderGeometry.LodCount => Regions.SelectMany(r => r.Permutations).Max(p => p.LodCount);
+        Model IContentProvider<Model>.GetContent() => GetModelContent();
 
-        public IGeometryModel ReadGeometry(int lod)
+        public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent(), BlamConstants.Gen3UnitScale);
+
+        private Model GetModelContent()
         {
-            Exceptions.ThrowIfIndexOutOfRange(lod, ((IRenderGeometry)this).LodCount);
+            const int lod = 0;
 
             using var reader = Cache.CreateReader(Cache.DefaultAddressTranslator);
 
-            var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new Model { Name = Item.FileName };
 
-            model.Nodes.AddRange(Nodes);
-            model.MarkerGroups.AddRange(MarkerGroups);
-
-            var shaderRefs = Shaders.Select(s => s.ShaderReference);
-            model.Materials.AddRange(Halo1Common.GetMaterials(shaderRefs, reader));
-
-            foreach (var region in Regions)
+            model.Bones.AddRange(Nodes.Select(n =>
             {
-                var gRegion = new GeometryRegion { SourceIndex = Regions.IndexOf(region), Name = region.Name };
-                gRegion.Permutations.AddRange(region.Permutations.Select(p =>
-                    new GeometryPermutation
-                    {
-                        SourceIndex = region.Permutations.IndexOf(p),
-                        Name = p.Name,
-                        MeshIndex = p.LodIndex(lod),
-                        MeshCount = 1
-                    }));
+                var transform = Matrix4x4.CreateFromQuaternion(n.Rotation.Conjugate.ToQuaternion()) * Matrix4x4.CreateTranslation(n.Position.ToVector3());
+                return new Bone
+                {
+                    Name = n.Name,
+                    Transform = transform,
+                    ParentIndex = n.ParentIndex
+                };
+            }));
 
-                model.Regions.Add(gRegion);
-            }
+            model.Markers.AddRange(MarkerGroups.Select(g =>
+            {
+                var marker = new Marker { Name = g.Name };
+                marker.Instances.AddRange(g.Markers.Select(m => new MarkerInstance
+                {
+                    Position = (Vector3)m.Position,
+                    Rotation = new Quaternion(m.Rotation.X, m.Rotation.Y, m.Rotation.Z, m.Rotation.W),
+                    RegionIndex = m.RegionIndex,
+                    PermutationIndex = m.PermutationIndex,
+                    BoneIndex = m.NodeIndex
+                }));
+
+                return marker;
+            }));
+
+            model.Regions.AddRange(Regions.Select(r =>
+            {
+                var region = new ModelRegion { Name = r.Name };
+                region.Permutations.AddRange(r.Permutations.Select(p => new ModelPermutation
+                {
+                    Name = p.Name,
+                    MeshRange = (p.LodIndex(lod), 1)
+                }));
+
+                return region;
+            }));
+
+            var materials = Halo1Common.GetMaterials(Shaders.Select(s => s.ShaderReference), reader).ToList();
 
             if (Cache.CacheType == CacheType.Halo1Xbox)
-                model.Meshes.AddRange(ReadXboxMeshes(reader));
+                model.Meshes.AddRange(ReadXboxMeshes(reader, materials));
             else
-                model.Meshes.AddRange(ReadPCMeshes(reader));
+                model.Meshes.AddRange(ReadPCMeshes(reader, materials));
 
             return model;
         }
 
-        private IEnumerable<GeometryMesh> ReadXboxMeshes(DependencyReader reader)
+        private IEnumerable<Mesh> ReadXboxMeshes(DependencyReader reader, List<Material> materials)
         {
             if (Cache.TagIndex is not ITagIndexGen1 tagIndex)
                 throw new NotSupportedException();
 
             foreach (var section in Sections)
             {
+                var mesh = new Mesh();
                 var indices = new List<int>();
-                var submeshes = new List<IGeometrySubmesh>();
 
                 var vertexBuffer = new VertexBuffer();
                 var positions = new List<IVector>();
@@ -115,20 +135,20 @@ namespace Reclaimer.Blam.Halo1
 
                     try
                     {
-                        var gSubmesh = new GeometrySubmesh
+                        var segment = new MeshSegment
                         {
-                            MaterialIndex = submesh.ShaderIndex,
+                            Material = materials.ElementAtOrDefault(submesh.ShaderIndex),
                             IndexStart = indices.Count,
                             IndexLength = submesh.IndexCount + 2
                         };
 
-                        submeshes.Add(gSubmesh);
+                        mesh.Segments.Add(segment);
 
                         reader.Seek(submesh.IndexOffset - tagIndex.Magic, SeekOrigin.Begin);
                         reader.ReadInt32();
                         reader.Seek(reader.ReadInt32() - tagIndex.Magic, SeekOrigin.Begin);
 
-                        var indicesTemp = reader.ReadArray<ushort>(gSubmesh.IndexLength);
+                        var indicesTemp = reader.ReadArray<ushort>(segment.IndexLength);
                         indices.AddRange(indicesTemp.Select(i => i + vertexTally));
 
                         reader.Seek(submesh.VertexOffset - tagIndex.Magic, SeekOrigin.Begin);
@@ -181,16 +201,14 @@ namespace Reclaimer.Blam.Halo1
                     };
                 }
 
-                yield return new GeometryMesh
-                {
-                    IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleStrip),
-                    VertexBuffer = vertexBuffer,
-                    Submeshes = submeshes
-                };
+                mesh.IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleList);
+                mesh.VertexBuffer = vertexBuffer;
+
+                yield return mesh;
             }
         }
 
-        private IEnumerable<GeometryMesh> ReadPCMeshes(DependencyReader reader)
+        private IEnumerable<Mesh> ReadPCMeshes(DependencyReader reader, List<Material> materials)
         {
             if (Cache.TagIndex is not ITagIndexGen1 tagIndex)
                 throw new NotSupportedException();
@@ -200,8 +218,8 @@ namespace Reclaimer.Blam.Halo1
 
             foreach (var section in Sections)
             {
+                var mesh = new Mesh();
                 var indices = new List<int>();
-                var submeshes = new List<IGeometrySubmesh>();
 
                 var vertexCount = section.Submeshes.Sum(s => s.VertexCount);
                 var vertexData = new byte[vertexSize * vertexCount];
@@ -224,14 +242,14 @@ namespace Reclaimer.Blam.Halo1
                     reader.Seek(tagIndex.VertexDataOffset + tagIndex.IndexDataOffset + submesh.IndexOffset, SeekOrigin.Begin);
                     var subIndices = reader.ReadEnumerable<ushort>(submesh.IndexCount + 2).Select(i => i + vertexTally).Unstrip().Reverse().ToList();
 
-                    var gSubmesh = new GeometrySubmesh
+                    var segment = new MeshSegment
                     {
-                        MaterialIndex = submesh.ShaderIndex,
+                        Material = materials.ElementAtOrDefault(submesh.ShaderIndex),
                         IndexStart = indices.Count,
                         IndexLength = subIndices.Count
                     };
 
-                    submeshes.Add(gSubmesh);
+                    mesh.Segments.Add(segment);
                     indices.AddRange(subIndices);
 
                     reader.Seek(tagIndex.VertexDataOffset + submesh.VertexOffset, SeekOrigin.Begin);
@@ -272,35 +290,10 @@ namespace Reclaimer.Blam.Halo1
                     };
                 }
 
-                yield return new GeometryMesh
-                {
-                    IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleList),
-                    VertexBuffer = vertexBuffer,
-                    Submeshes = submeshes
-                };
-            }
-        }
+                mesh.IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleList);
+                mesh.VertexBuffer = vertexBuffer;
 
-        public IEnumerable<IBitmap> GetAllBitmaps() => GetBitmaps(Enumerable.Range(0, Shaders?.Count ?? 0));
-
-        public IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes)
-        {
-            var selection = shaderIndexes?.Distinct().Where(i => i >= 0 && i < Shaders?.Count).Select(i => Shaders[i]);
-            if (selection?.Any() != true)
-                yield break;
-
-            var complete = new List<int>();
-            using (var reader = Cache.CreateReader(Cache.DefaultAddressTranslator))
-            {
-                foreach (var s in selection)
-                {
-                    var bitmTag = Halo1Common.GetShaderDiffuse(s.ShaderReference, reader);
-                    if (bitmTag == null || complete.Contains(bitmTag.Id))
-                        continue;
-
-                    complete.Add(bitmTag.Id);
-                    yield return bitmTag.ReadMetadata<bitmap>();
-                }
+                yield return mesh;
             }
         }
 
@@ -315,7 +308,7 @@ namespace Reclaimer.Blam.Halo1
 
     [FixedSize(64)]
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class MarkerGroupBlock : IGeometryMarkerGroup
+    public class MarkerGroupBlock
     {
         [Offset(0)]
         [NullTerminated(Length = 32)]
@@ -323,16 +316,10 @@ namespace Reclaimer.Blam.Halo1
 
         [Offset(52)]
         public BlockCollection<MarkerBlock> Markers { get; set; }
-
-        #region IGeometryMarkerGroup
-
-        IReadOnlyList<IGeometryMarker> IGeometryMarkerGroup.Markers => Markers;
-
-        #endregion
     }
 
     [FixedSize(32)]
-    public class MarkerBlock : IGeometryMarker
+    public class MarkerBlock
     {
         [Offset(0)]
         public byte RegionIndex { get; set; }
@@ -352,19 +339,11 @@ namespace Reclaimer.Blam.Halo1
         public RealVector4 Rotation { get; set; }
 
         public override string ToString() => Position.ToString();
-
-        #region IGeometryMarker
-
-        IVector3 IGeometryMarker.Position => Position;
-
-        IVector4 IGeometryMarker.Rotation => Rotation;
-
-        #endregion
     }
 
     [FixedSize(156)]
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class NodeBlock : IGeometryNode
+    public class NodeBlock
     {
         [Offset(0)]
         [NullTerminated(Length = 32)]
@@ -389,16 +368,6 @@ namespace Reclaimer.Blam.Halo1
 
         [Offset(68)]
         public float DistanceFromParent { get; set; }
-
-        #region IGeometryNode
-
-        IVector3 IGeometryNode.Position => Position;
-
-        IVector4 IGeometryNode.Rotation => Rotation.Conjugate;
-
-        Matrix4x4 IGeometryNode.OffsetTransform => Matrix4x4.Identity;
-
-        #endregion
     }
 
     [FixedSize(76)]

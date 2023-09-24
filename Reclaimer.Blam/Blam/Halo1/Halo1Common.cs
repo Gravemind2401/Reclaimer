@@ -1,8 +1,9 @@
 ﻿using Adjutant.Geometry;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
-using Reclaimer.Geometry.Vectors;
+using Reclaimer.Geometry;
 using System.IO;
+using System.Numerics;
 
 namespace Reclaimer.Blam.Halo1
 {
@@ -40,7 +41,7 @@ namespace Reclaimer.Blam.Halo1
             }
         }
 
-        public static IEnumerable<GeometryMaterial> GetMaterials(IEnumerable<TagReference> shaderRefs, DependencyReader reader)
+        public static IEnumerable<Material> GetMaterials(IEnumerable<TagReference> shaderRefs, DependencyReader reader)
         {
             foreach (var shaderRef in shaderRefs)
             {
@@ -50,8 +51,9 @@ namespace Reclaimer.Blam.Halo1
                     continue;
                 }
 
-                var material = new GeometryMaterial
+                var material = new Material
                 {
+                    Id = shaderRef.Tag.Id,
                     Name = shaderRef.Tag.FileName
                 };
 
@@ -62,11 +64,16 @@ namespace Reclaimer.Blam.Halo1
                     continue;
                 }
 
-                material.Submaterials.Add(new SubMaterial
+                material.TextureMappings.Add(new TextureMapping
                 {
-                    Usage = MaterialUsage.Diffuse,
-                    Bitmap = bitmTag.ReadMetadata<bitmap>(),
-                    Tiling = new RealVector2(1, 1)
+                    Usage = (int)MaterialUsage.Diffuse,
+                    Tiling = Vector2.One,
+                    Texture = new Texture
+                    {
+                        Id = bitmTag.Id,
+                        Name = bitmTag.FileName,
+                        GetDds = () => bitmTag.ReadMetadata<bitmap>().ToDds(0)
+                    }
                 });
 
                 yield return material;
