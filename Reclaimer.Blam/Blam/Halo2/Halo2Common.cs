@@ -1,10 +1,10 @@
 ﻿using Adjutant.Geometry;
 using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System.IO;
+using System.Numerics;
 
 namespace Reclaimer.Blam.Halo2
 {
@@ -59,8 +59,6 @@ namespace Reclaimer.Blam.Halo2
         public DataPointer DataPointer { get; init; }
         public int DataSize { get; init; }
         public int BaseAddress { get; init; }
-        public short? BoundsIndex { get; init; }
-        public bool IsInstancing { get; init; }
         public IReadOnlyList<ResourceInfoBlock> Resources { get; init; }
     }
 
@@ -74,32 +72,7 @@ namespace Reclaimer.Blam.Halo2
 
     internal static class Halo2Common
     {
-        public static IEnumerable<IBitmap> GetBitmaps(IReadOnlyList<ShaderBlock> shaders) => GetBitmaps(shaders, Enumerable.Range(0, shaders?.Count ?? 0));
-        public static IEnumerable<IBitmap> GetBitmaps(IReadOnlyList<ShaderBlock> shaders, IEnumerable<int> shaderIndexes)
-        {
-            var selection = shaderIndexes?.Distinct().Where(i => i >= 0 && i < shaders?.Count).Select(i => shaders[i]);
-            if (selection?.Any() != true)
-                yield break;
-
-            var complete = new List<int>();
-            foreach (var s in selection)
-            {
-                var rmsh = s.ShaderReference.Tag?.ReadMetadata<shader>();
-                if (rmsh == null)
-                    continue;
-
-                foreach (var tagRef in rmsh.ShaderMaps.SelectMany(m => m.EnumerateBitmapReferences()))
-                {
-                    if (tagRef.Tag == null || complete.Contains(tagRef.TagId))
-                        continue;
-
-                    complete.Add(tagRef.TagId);
-                    yield return tagRef.Tag.ReadMetadata<bitmap>();
-                }
-            }
-        }
-
-        public static IEnumerable<GeometryMaterial> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
+        public static IEnumerable<Material> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
         {
             for (var i = 0; i < shaders.Count; i++)
             {
@@ -110,8 +83,9 @@ namespace Reclaimer.Blam.Halo2
                     continue;
                 }
 
-                var material = new GeometryMaterial
+                var material = new Material
                 {
+                    Id = tag.Id,
                     Name = tag.FileName
                 };
 
@@ -129,23 +103,28 @@ namespace Reclaimer.Blam.Halo2
                     continue;
                 }
 
-                material.Submaterials.Add(new SubMaterial
+                material.TextureMappings.Add(new TextureMapping
                 {
-                    Usage = MaterialUsage.Diffuse,
-                    Bitmap = bitmTag.ReadMetadata<bitmap>(),
-                    Tiling = new RealVector2(1, 1)
+                    Usage = (int)MaterialUsage.Diffuse,
+                    Tiling = Vector2.One,
+                    Texture = new Texture
+                    {
+                        Id = bitmTag.Id,
+                        Name = bitmTag.FileName,
+                        GetDds = () => bitmTag.ReadMetadata<bitmap>().ToDds(0)
+                    }
                 });
 
                 yield return material;
             }
         }
 
-        public static List<GeometryMesh> GetMeshes(Halo2GeometryArgs args)
+        public static List<Mesh> GetMeshes(Halo2GeometryArgs args, out List<Material> materials)
         {
-            var matLookup = new List<GeometryMaterial>(args.Shaders.Count);
+            var matLookup = materials = new List<Material>(args.Shaders.Count);
             matLookup.AddRange(GetMaterials(args.Shaders));
 
-            var meshList = new List<GeometryMesh>(args.Sections.Count);
+            var meshList = new List<Mesh>(args.Sections.Count);
 
             meshList.AddRange(args.Sections.Select((section, sectionIndex) =>
             {
@@ -162,7 +141,7 @@ namespace Reclaimer.Blam.Halo2
             return meshList;
         }
 
-        private static GeometryMesh ReadMesh(Halo2GeometryArgs args, EndianReader reader, SectionArgs section, List<GeometryMaterial> materials)
+        private static Mesh ReadMesh(Halo2GeometryArgs args, EndianReader reader, SectionArgs section, List<Material> materials)
         {
             if (args.Cache.Metadata.CacheType < CacheType.Halo2Xbox)
                 reader.ReadInt32(); //hklb
@@ -183,16 +162,11 @@ namespace Reclaimer.Blam.Halo2
             reader.Seek(section.BaseAddress + submeshResource.Offset, SeekOrigin.Begin);
             var submeshes = reader.ReadArray<SubmeshDataBlock>(submeshResource.Size / SubmeshDataBlock.SizeOf);
 
-            var mesh = new GeometryMesh
-            {
-                BoundsIndex = section.BoundsIndex,
-                IsInstancing = section.IsInstancing
-            };
-
-            mesh.Submeshes.AddRange(
-                submeshes.Select(s => new GeometrySubmesh
+            var mesh = new Mesh();
+            mesh.Segments.AddRange(
+                submeshes.Select(s => new MeshSegment
                 {
-                    MaterialIndex = s.ShaderIndex,
+                    Material = materials.ElementAtOrDefault(s.ShaderIndex),
                     IndexStart = s.IndexStart,
                     IndexLength = s.IndexLength
                 })
@@ -283,9 +257,9 @@ namespace Reclaimer.Blam.Halo2
                 if (section.GeometryClassification == GeometryClassification.Rigid)
                 {
                     if (section.NodesPerVertex == 0)
-                        mesh.NodeIndex = 0;
+                        mesh.BoneIndex = 0;
                     else if (section.NodesPerVertex == 1 && nodeMap.Length > 0)
-                        mesh.NodeIndex = nodeMap[0];
+                        mesh.BoneIndex = nodeMap[0];
                     else
                         throw new NotSupportedException();
 

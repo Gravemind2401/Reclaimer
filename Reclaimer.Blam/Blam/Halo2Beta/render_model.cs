@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Halo2;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
@@ -10,7 +9,7 @@ using System.Numerics;
 namespace Reclaimer.Blam.Halo2Beta
 {
     //note H2B ascii string fields are actually 32 bytes, but the last 4 are not part of the string
-    public class render_model : ContentTagDefinition, IRenderGeometry
+    public class render_model : ContentTagDefinition<Scene>, IContentProvider<Model>
     {
         public render_model(IIndexItem item)
             : base(item)
@@ -34,13 +33,15 @@ namespace Reclaimer.Blam.Halo2Beta
         [Offset(160)]
         public BlockCollection<Halo2.ShaderBlock> Shaders { get; set; }
 
-        #region IRenderGeometry
+        #region IContentProvider
 
-        int IRenderGeometry.LodCount => 6;
+        Model IContentProvider<Model>.GetContent() => GetModelContent();
 
-        public IGeometryModel ReadGeometry(int lod)
+        public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent());
+
+        private Model GetModelContent()
         {
-            Exceptions.ThrowIfIndexOutOfRange(lod, ((IRenderGeometry)this).LodCount);
+            const int lod = 0;
 
             var geoParams = new Halo2GeometryArgs
             {
@@ -56,40 +57,56 @@ namespace Reclaimer.Blam.Halo2Beta
                     FaceCount = s.FaceCount,
                     NodesPerVertex = s.NodesPerVertex,
                     Resources = s.Resources,
-                    BoundsIndex = 0,
                     BaseAddress = s.HeaderSize + 8
                 }).ToList()
             };
 
-            var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new Model { Name = Item.FileName };
+            model.Meshes.AddRange(Halo2Common.GetMeshes(geoParams, out _));
 
-            model.Nodes.AddRange(Nodes);
-            model.MarkerGroups.AddRange(MarkerGroups);
-            model.Bounds.AddRange(BoundingBoxes);
-            model.Materials.AddRange(Halo2Common.GetMaterials(Shaders));
-            model.Meshes.AddRange(Halo2Common.GetMeshes(geoParams));
-
-            foreach (var region in Regions)
+            model.Bones.AddRange(Nodes.Select(n => new Bone
             {
-                var gRegion = new GeometryRegion { SourceIndex = Regions.IndexOf(region), Name = region.Name };
-                gRegion.Permutations.AddRange(region.Permutations.Select(p =>
-                    new GeometryPermutation
-                    {
-                        SourceIndex = region.Permutations.IndexOf(p),
-                        Name = p.Name,
-                        MeshIndex = p.LodArray[lod],
-                        MeshCount = 1
-                    }));
+                Name = n.Name,
+                Transform = n.Transform,
+                ParentIndex = n.ParentIndex
+            }));
 
-                model.Regions.Add(gRegion);
-            }
+            model.Markers.AddRange(MarkerGroups.Select(g =>
+            {
+                var marker = new Marker { Name = g.Name };
+                marker.Instances.AddRange(g.Markers.Select(m => new MarkerInstance
+                {
+                    Position = (Vector3)m.Position,
+                    Rotation = new Quaternion(m.Rotation.X, m.Rotation.Y, m.Rotation.Z, m.Rotation.W),
+                    RegionIndex = m.RegionIndex,
+                    PermutationIndex = m.PermutationIndex,
+                    BoneIndex = m.NodeIndex
+                }));
+
+                return marker;
+            }));
+
+            model.Regions.AddRange(Regions.Select(r =>
+            {
+                var region = new ModelRegion { Name = r.Name };
+                region.Permutations.AddRange(r.Permutations.Select(p => new ModelPermutation
+                {
+                    Name = p.Name,
+                    MeshRange = (p.LodArray[lod], 1)
+                }));
+
+                return region;
+            }));
+
+            var bounds = BoundingBoxes[0];
+            var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
+            var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
+
+            foreach (var mesh in model.Meshes)
+                (mesh.PositionBounds, mesh.TextureBounds) = (posBounds, texBounds);
 
             return model;
         }
-
-        public IEnumerable<IBitmap> GetAllBitmaps() => Halo2.Halo2Common.GetBitmaps(Shaders);
-
-        public IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes) => Halo2.Halo2Common.GetBitmaps(Shaders, shaderIndexes);
 
         #endregion
     }
@@ -168,7 +185,7 @@ namespace Reclaimer.Blam.Halo2Beta
 
     [FixedSize(124)]
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class NodeBlock : IGeometryNode
+    public class NodeBlock
     {
         [Offset(0)]
         [NullTerminated(Length = 28)]
@@ -200,23 +217,11 @@ namespace Reclaimer.Blam.Halo2Beta
 
         [Offset(120)]
         public float DistanceFromParent { get; set; }
-
-        #region IGeometryNode
-
-        string IGeometryNode.Name => Name;
-
-        IVector3 IGeometryNode.Position => Position;
-
-        IVector4 IGeometryNode.Rotation => Rotation;
-
-        Matrix4x4 IGeometryNode.OffsetTransform => Transform;
-
-        #endregion
     }
 
     [FixedSize(44)]
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class MarkerGroupBlock : IGeometryMarkerGroup
+    public class MarkerGroupBlock
     {
         [Offset(0)]
         [NullTerminated(Length = 28)]
@@ -224,13 +229,5 @@ namespace Reclaimer.Blam.Halo2Beta
 
         [Offset(32)]
         public BlockCollection<Halo2.MarkerBlock> Markers { get; set; }
-
-        #region IGeometryMarkerGroup
-
-        string IGeometryMarkerGroup.Name => Name;
-
-        IReadOnlyList<IGeometryMarker> IGeometryMarkerGroup.Markers => Markers;
-
-        #endregion
     }
 }

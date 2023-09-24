@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.IO;
@@ -8,7 +7,7 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.Halo2
 {
-    public class scenario_structure_bsp : ContentTagDefinition, IRenderGeometry
+    public class scenario_structure_bsp : ContentTagDefinition<Scene>, IContentProvider<Model>
     {
         public scenario_structure_bsp(IIndexItem item)
             : base(item)
@@ -35,13 +34,14 @@ namespace Reclaimer.Blam.Halo2
         [Offset(336)]
         public BlockCollection<GeometryInstanceBlock> GeometryInstances { get; set; }
 
-        #region IRenderGeometry
+        #region IContentProvider
 
-        int IRenderGeometry.LodCount => 1;
+        Model IContentProvider<Model>.GetContent() => GetModelContent();
 
-        public IGeometryModel ReadGeometry(int lod)
+        public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent());
+
+        private Model GetModelContent()
         {
-            Exceptions.ThrowIfIndexOutOfRange(lod, ((IRenderGeometry)this).LodCount);
             var geoParams = new Halo2GeometryArgs
             {
                 Cache = Cache,
@@ -61,65 +61,50 @@ namespace Reclaimer.Blam.Halo2
                     VertexCount = s.VertexCount,
                     FaceCount = s.FaceCount,
                     Resources = s.Resources,
-                    IsInstancing = true,
                     BaseAddress = s.HeaderSize + 8
                 })).ToList()
             };
 
-            var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
-            model.Materials.AddRange(Halo2Common.GetMaterials(Shaders));
-            model.Meshes.AddRange(Halo2Common.GetMeshes(geoParams));
+            var model = new Model { Name = Item.FileName };
 
-            var clusterRegion = new GeometryRegion { Name = BlamConstants.SbspClustersGroupName };
+            model.Meshes.AddRange(Halo2Common.GetMeshes(geoParams, out _));
+
+            var clusterRegion = new ModelRegion { Name = BlamConstants.SbspClustersGroupName };
 
             foreach (var section in Clusters.Where(s => s.VertexCount > 0))
             {
                 var sectionIndex = Clusters.IndexOf(section);
 
-                var perm = new GeometryPermutation
+                var perm = new ModelPermutation
                 {
-                    SourceIndex = sectionIndex,
                     Name = sectionIndex.ToString("D3", CultureInfo.CurrentCulture),
-                    MeshIndex = sectionIndex,
-                    MeshCount = 1
+                    MeshRange = (sectionIndex, 1)
                 };
 
                 clusterRegion.Permutations.Add(perm);
             }
 
-            if (clusterRegion.Permutations.Count > 0)
-                model.Regions.Add(clusterRegion);
+            model.Regions.Add(clusterRegion);
 
-            foreach (var section in Sections.Where(s => s.VertexCount > 0))
+            foreach (var instanceGroup in BlamUtils.GroupGeometryInstances(GeometryInstances, i => i.Name))
             {
-                var sectionIndex = Sections.IndexOf(section);
-                var sectionRegion = new GeometryRegion { Name = Utils.CurrentCulture($"Instances {sectionIndex:D3}") };
-
-                var perms = GeometryInstances
-                    .Where(i => i.SectionIndex == sectionIndex)
-                    .Select(i => new GeometryPermutation
+                var sectionRegion = new ModelRegion { Name = instanceGroup.Key };
+                sectionRegion.Permutations.AddRange(
+                    instanceGroup.Where(i => Sections.ElementAtOrDefault(i.SectionIndex)?.VertexCount > 0)
+                    .Select(i => new ModelPermutation
                     {
-                        SourceIndex = GeometryInstances.IndexOf(i),
                         Name = i.Name,
                         Transform = i.Transform,
-                        TransformScale = i.TransformScale,
-                        MeshIndex = Clusters.Count + sectionIndex,
-                        MeshCount = 1
-                    }).ToList();
-
-                if (perms.Count > 0)
-                {
-                    sectionRegion.Permutations.AddRange(perms);
-                    model.Regions.Add(sectionRegion);
-                }
+                        UniformScale = i.TransformScale,
+                        MeshRange = (Clusters.Count + i.SectionIndex, 1),
+                        IsInstanced = true
+                    })
+                );
+                model.Regions.Add(sectionRegion);
             }
 
             return model;
         }
-
-        public IEnumerable<IBitmap> GetAllBitmaps() => Halo2Common.GetBitmaps(Shaders);
-
-        public IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes) => Halo2Common.GetBitmaps(Shaders, shaderIndexes);
 
         #endregion
     }
