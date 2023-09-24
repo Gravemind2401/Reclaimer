@@ -18,7 +18,7 @@ namespace Reclaimer.Controls.DirectX
             private readonly Dictionary<int, Material> materials = new();
             private readonly Dictionary<int, TextureModel> textureLookup = new();
 
-            public Material this[int id] => materials.GetValueOrDefault(id, ErrorMaterial);
+            public Material this[int? id] => id.HasValue ? materials.GetValueOrDefault(id.Value, ErrorMaterial) : ErrorMaterial;
 
             public TextureLoader(Scene scene)
             {

@@ -69,7 +69,7 @@ namespace Reclaimer.Controls.DirectX
                                 : new MeshGeometryModel3D();
 
                             element.Geometry = geom;
-                            element.Material = textureLoader[sub.Material.Id];
+                            element.Material = textureLoader[sub.Material?.Id];
 
                             mGroup.Children.Add(element);
                         }
