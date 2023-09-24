@@ -1,6 +1,4 @@
-﻿using Adjutant.Geometry;
-using Adjutant.Spatial;
-using Reclaimer.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
@@ -10,7 +8,7 @@ using System.Numerics;
 namespace Reclaimer.Blam.HaloReach
 {
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class render_model : ContentTagDefinition, IRenderGeometry
+    public class render_model : ContentTagDefinition<Scene>, IContentProvider<Model>
     {
         public render_model(IIndexItem item)
             : base(item)
@@ -53,52 +51,77 @@ namespace Reclaimer.Blam.HaloReach
         [Offset(248, MinVersion = (int)CacheType.HaloReachRetail)]
         public ResourceIdentifier ResourcePointer { get; set; }
 
-        #region IRenderGeometry
+        #region IContentProvider
 
-        int IRenderGeometry.LodCount => 1;
+        Model IContentProvider<Model>.GetContent() => GetModelContent();
 
-        public IGeometryModel ReadGeometry(int lod)
+        public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent());
+
+        private Model GetModelContent()
         {
-            Exceptions.ThrowIfIndexOutOfRange(lod, ((IRenderGeometry)this).LodCount);
-
             if (Sections.All(s => s.IndexBufferIndex < 0))
                 throw Exceptions.GeometryHasNoEdges();
 
-            var model = new GeometryModel(Name) { CoordinateSystem = CoordinateSystem.Default };
-
-            model.Nodes.AddRange(Nodes);
-            model.MarkerGroups.AddRange(MarkerGroups);
-            model.Bounds.AddRange(BoundingBoxes);
-            model.Materials.AddRange(HaloReachCommon.GetMaterials(Shaders));
-
-            foreach (var region in Regions)
+            var geoParams = new HaloReachGeometryArgs
             {
-                var gRegion = new GeometryRegion { SourceIndex = Regions.IndexOf(region), Name = region.Name };
-                gRegion.Permutations.AddRange(region.Permutations.Where(p => p.SectionIndex >= 0).Select(p =>
-                    new GeometryPermutation
-                    {
-                        SourceIndex = region.Permutations.IndexOf(p),
-                        Name = p.Name,
-                        MeshIndex = p.SectionIndex,
-                        MeshCount = 1
-                    }));
+                Cache = Cache,
+                Shaders = Shaders,
+                Sections = Sections,
+                NodeMaps = NodeMaps,
+                ResourcePointer = ResourcePointer
+            };
 
-                if (gRegion.Permutations.Any())
-                    model.Regions.Add(gRegion);
-            }
+            var model = new Model { Name = Name };
 
-            Func<int, int, int> mapNodeFunc = null;
-            if (Flags.HasFlag(ModelFlags.UseLocalNodes))
-                mapNodeFunc = (si, i) => NodeMaps.ElementAtOrDefault(si)?.Indices.Cast<byte?>().ElementAtOrDefault(i) ?? i;
+            model.Bones.AddRange(Nodes.Select(n => new Bone
+            {
+                Name = n.Name,
+                Transform = n.Transform,
+                ParentIndex = n.ParentIndex
+            }));
 
-            model.Meshes.AddRange(HaloReachCommon.GetMeshes(Cache, ResourcePointer, Sections, (s, m) => m.BoundsIndex = 0, mapNodeFunc));
+            model.Markers.AddRange(MarkerGroups.Select(g =>
+            {
+                var marker = new Marker { Name = g.Name };
+                marker.Instances.AddRange(g.Markers.Select(m => new MarkerInstance
+                {
+                    Position = (Vector3)m.Position,
+                    Rotation = new Quaternion(m.Rotation.X, m.Rotation.Y, m.Rotation.Z, m.Rotation.W),
+                    RegionIndex = m.RegionIndex,
+                    PermutationIndex = m.PermutationIndex,
+                    BoneIndex = m.NodeIndex
+                }));
 
-            CreateInstanceMeshes(model);
+                return marker;
+            }));
+
+            model.Regions.AddRange(Regions.Select(r =>
+            {
+                var region = new ModelRegion { Name = r.Name };
+                region.Permutations.AddRange(r.Permutations.Select(p => new ModelPermutation
+                {
+                    Name = p.Name,
+                    MeshRange = (p.SectionIndex, p.SectionCount)
+                }));
+
+                return region;
+            }));
+
+            model.Meshes.AddRange(HaloReachCommon.GetMeshes(geoParams, out var materials));
+
+            var bounds = BoundingBoxes[0];
+            var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
+            var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
+
+            foreach (var mesh in model.Meshes)
+                (mesh.PositionBounds, mesh.TextureBounds) = (posBounds, texBounds);
+
+            CreateInstanceMeshes(model, materials);
 
             return model;
         }
 
-        private void CreateInstanceMeshes(GeometryModel model)
+        private void CreateInstanceMeshes(Model model, List<Material> materials)
         {
             if (InstancedGeometrySectionIndex < 0)
                 return;
@@ -110,31 +133,33 @@ namespace Reclaimer.Blam.HaloReach
              * to make things easier for the model rendering and exporting 
              */
 
-            var gRegion = new GeometryRegion { Name = BlamConstants.ModelInstancesGroupName };
-            gRegion.Permutations.AddRange(GeometryInstances.Select(i =>
-                new GeometryPermutation
+            var region = new ModelRegion { Name = BlamConstants.ModelInstancesGroupName };
+            region.Permutations.AddRange(GeometryInstances.Select(i =>
+                new ModelPermutation
                 {
-                    SourceIndex = GeometryInstances.IndexOf(i),
                     Name = i.Name,
                     Transform = i.Transform,
-                    TransformScale = i.TransformScale,
-                    MeshIndex = InstancedGeometrySectionIndex + GeometryInstances.IndexOf(i),
-                    MeshCount = 1
+                    UniformScale = i.TransformScale,
+                    MeshRange = (InstancedGeometrySectionIndex + GeometryInstances.IndexOf(i), 1),
+                    IsInstanced = true
                 }));
 
-            model.Regions.Add(gRegion);
+            model.Regions.Add(region);
 
             var sourceMesh = model.Meshes[InstancedGeometrySectionIndex];
             model.Meshes.Remove(sourceMesh);
 
+            var bounds = BoundingBoxes[0];
+            
             var section = Sections[InstancedGeometrySectionIndex];
             for (var i = 0; i < GeometryInstances.Count; i++)
             {
                 var subset = section.Subsets[i];
-                var mesh = new GeometryMesh
+                var mesh = new Mesh
                 {
-                    NodeIndex = (byte)GeometryInstances[i].NodeIndex,
-                    BoundsIndex = 0
+                    BoneIndex = (byte)GeometryInstances[i].NodeIndex,
+                    PositionBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds),
+                    TextureBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds)
                 };
 
                 var strip = sourceMesh.IndexBuffer.GetSubset(subset.IndexStart, subset.IndexLength);
@@ -143,13 +168,13 @@ namespace Reclaimer.Blam.HaloReach
                 var max = strip.Max();
                 var len = max - min + 1;
 
-                mesh.IndexBuffer = IndexBuffer.FromCollection(strip.Select(j => j - min), sourceMesh.IndexFormat);
+                mesh.IndexBuffer = IndexBuffer.Transform(sourceMesh.IndexBuffer.Slice(subset.IndexStart, subset.IndexLength), -min);
                 mesh.VertexBuffer = sourceMesh.VertexBuffer.Slice(min, len);
 
                 var submesh = section.Submeshes[subset.SubmeshIndex];
-                mesh.Submeshes.Add(new GeometrySubmesh
+                mesh.Segments.Add(new MeshSegment
                 {
-                    MaterialIndex = submesh.ShaderIndex,
+                    Material = materials.ElementAtOrDefault(submesh.ShaderIndex),
                     IndexStart = 0,
                     IndexLength = mesh.IndexBuffer.Count
                 });
@@ -157,10 +182,6 @@ namespace Reclaimer.Blam.HaloReach
                 model.Meshes.Add(mesh);
             }
         }
-
-        public IEnumerable<IBitmap> GetAllBitmaps() => HaloReachCommon.GetBitmaps(Shaders);
-
-        public IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes) => HaloReachCommon.GetBitmaps(Shaders, shaderIndexes);
 
         #endregion
     }
@@ -215,7 +236,7 @@ namespace Reclaimer.Blam.HaloReach
 
     [FixedSize(96)]
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class NodeBlock : IGeometryNode
+    public class NodeBlock
     {
         [Offset(0)]
         public StringId Name { get; set; }
@@ -243,41 +264,21 @@ namespace Reclaimer.Blam.HaloReach
 
         [Offset(92)]
         public float DistanceFromParent { get; set; }
-
-        #region IGeometryNode
-
-        string IGeometryNode.Name => Name;
-
-        IVector3 IGeometryNode.Position => Position;
-
-        IVector4 IGeometryNode.Rotation => Rotation;
-
-        Matrix4x4 IGeometryNode.OffsetTransform => Transform;
-
-        #endregion
     }
 
     [FixedSize(16)]
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class MarkerGroupBlock : IGeometryMarkerGroup
+    public class MarkerGroupBlock
     {
         [Offset(0)]
         public StringId Name { get; set; }
 
         [Offset(4)]
         public BlockCollection<MarkerBlock> Markers { get; set; }
-
-        #region IGeometryMarkerGroup
-
-        string IGeometryMarkerGroup.Name => Name;
-
-        IReadOnlyList<IGeometryMarker> IGeometryMarkerGroup.Markers => Markers;
-
-        #endregion
     }
 
     [FixedSize(48)]
-    public class MarkerBlock : IGeometryMarker
+    public class MarkerBlock
     {
         [Offset(0)]
         public byte RegionIndex { get; set; }
@@ -298,14 +299,6 @@ namespace Reclaimer.Blam.HaloReach
         public float Scale { get; set; }
 
         public override string ToString() => Position.ToString();
-
-        #region IGeometryMarker
-
-        IVector3 IGeometryMarker.Position => Position;
-
-        IVector4 IGeometryMarker.Rotation => Rotation;
-
-        #endregion
     }
 
     [FixedSize(44)]
@@ -386,7 +379,7 @@ namespace Reclaimer.Blam.HaloReach
     }
 
     [FixedSize(52)]
-    public class BoundingBoxBlock : IRealBounds5D
+    public class BoundingBoxBlock
     {
         [Offset(4)]
         public RealBounds XBounds { get; set; }

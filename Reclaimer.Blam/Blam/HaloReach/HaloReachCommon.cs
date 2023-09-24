@@ -6,6 +6,7 @@ using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System.IO;
+using System.Numerics;
 
 namespace Reclaimer.Blam.HaloReach
 {
@@ -29,34 +30,18 @@ namespace Reclaimer.Blam.HaloReach
         public int DataLength { get; set; }
     }
 
+    public class HaloReachGeometryArgs
+    {
+        public ICacheFile Cache { get; init; }
+        public IReadOnlyList<ShaderBlock> Shaders { get; init; }
+        public IReadOnlyList<SectionBlock> Sections { get; init; }
+        public IReadOnlyList<NodeMapBlock> NodeMaps { get; init; }
+        public ResourceIdentifier ResourcePointer { get; init; }
+    }
+
     internal static class HaloReachCommon
     {
-        public static IEnumerable<IBitmap> GetBitmaps(IReadOnlyList<ShaderBlock> shaders) => GetBitmaps(shaders, Enumerable.Range(0, shaders?.Count ?? 0));
-        public static IEnumerable<IBitmap> GetBitmaps(IReadOnlyList<ShaderBlock> shaders, IEnumerable<int> shaderIndexes)
-        {
-            var selection = shaderIndexes?.Distinct().Where(i => i >= 0 && i < shaders?.Count).Select(i => shaders[i]);
-            if (selection?.Any() != true)
-                yield break;
-
-            var complete = new List<int>();
-            foreach (var s in selection)
-            {
-                var rmsh = s.ShaderReference.Tag?.ReadMetadata<shader>();
-                if (rmsh == null)
-                    continue;
-
-                foreach (var map in rmsh.ShaderProperties.SelectMany(p => p.ShaderMaps))
-                {
-                    if (map.BitmapReference.Tag == null || complete.Contains(map.BitmapReference.TagId))
-                        continue;
-
-                    complete.Add(map.BitmapReference.TagId);
-                    yield return map.BitmapReference.Tag.ReadMetadata<bitmap>();
-                }
-            }
-        }
-
-        public static IEnumerable<GeometryMaterial> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
+        public static IEnumerable<Material> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
         {
             for (var i = 0; i < shaders.Count; i++)
             {
@@ -67,8 +52,9 @@ namespace Reclaimer.Blam.HaloReach
                     continue;
                 }
 
-                var material = new GeometryMaterial
+                var material = new Material
                 {
+                    Id = tag.Id,
                     Name = tag.FileName
                 };
 
@@ -79,7 +65,6 @@ namespace Reclaimer.Blam.HaloReach
                     continue;
                 }
 
-                var subMaterials = new List<ISubmaterial>();
                 var props = shader.ShaderProperties[0];
                 var template = props.TemplateReference.Tag.ReadMetadata<render_method_template>();
                 for (var j = 0; j < template.Usages.Count; j++)
@@ -98,57 +83,56 @@ namespace Reclaimer.Blam.HaloReach
                         ? (RealVector4?)null
                         : props.TilingData[map.TilingIndex];
 
-                    subMaterials.Add(new SubMaterial
+                    material.TextureMappings.Add(new TextureMapping
                     {
-                        Usage = entry.Value.Value,
-                        Bitmap = bitmTag.ReadMetadata<bitmap>(),
-                        Tiling = new RealVector2(tile?.X ?? 1, tile?.Y ?? 1)
+                        Usage = (int)entry.Value.Value,
+                        Tiling = new Vector2(tile?.X ?? 1, tile?.Y ?? 1),
+                        Texture = new Texture
+                        {
+                            Id = bitmTag.Id,
+                            Name = bitmTag.FileName,
+                            GetDds = () => bitmTag.ReadMetadata<bitmap>().ToDds(0)
+                        }
                     });
                 }
-
-                if (subMaterials.Count == 0)
-                {
-                    yield return material;
-                    continue;
-                }
-
-                material.Submaterials = subMaterials;
 
                 for (var j = 0; j < template.Arguments.Count; j++)
                 {
                     if (!BlamConstants.Gen3Materials.TintLookup.TryGetValue(template.Arguments[j].Value, out var tintUsage))
                         continue;
 
-                    material.TintColours.Add(new TintColour
+                    material.Tints.Add(new MaterialTint
                     {
-                        Usage = tintUsage,
-                        R = (byte)(props.TilingData[j].X * byte.MaxValue),
-                        G = (byte)(props.TilingData[j].Y * byte.MaxValue),
-                        B = (byte)(props.TilingData[j].Z * byte.MaxValue),
-                        A = (byte)(props.TilingData[j].W * byte.MaxValue),
+                        Usage = (int)tintUsage,
+                        Color = System.Drawing.Color.FromArgb(
+                            (byte)(props.TilingData[j].W * byte.MaxValue),
+                            (byte)(props.TilingData[j].X * byte.MaxValue),
+                            (byte)(props.TilingData[j].Y * byte.MaxValue),
+                            (byte)(props.TilingData[j].Z * byte.MaxValue)
+                        )
                     });
                 }
 
                 if (tag.ClassCode == "rmtr")
-                    material.Flags |= MaterialFlags.TerrainBlend;
+                    material.Flags |= (int)MaterialFlags.TerrainBlend;
                 else if (tag.ClassCode != "rmsh")
-                    material.Flags |= MaterialFlags.Transparent;
+                    material.Flags |= (int)MaterialFlags.Transparent;
 
-                if (subMaterials.Any(m => m.Usage == MaterialUsage.ColourChange) && !subMaterials.Any(m => m.Usage == MaterialUsage.Diffuse))
-                    material.Flags |= MaterialFlags.ColourChange;
+                if (material.TextureMappings.Any(m => m.Usage == (int)MaterialUsage.ColourChange) && !material.TextureMappings.Any(m => m.Usage == (int)MaterialUsage.Diffuse))
+                    material.Flags |= (int)MaterialFlags.ColourChange;
 
                 yield return material;
             }
         }
 
-        public static IEnumerable<GeometryMesh> GetMeshes(ICacheFile cache, ResourceIdentifier resourcePointer, IEnumerable<SectionBlock> sections, Action<SectionBlock, GeometryMesh> setProps, Func<int, int, int> mapNode = null)
+        public static List<Mesh> GetMeshes(HaloReachGeometryArgs args, out List<Material> materials)
         {
             VertexBufferInfo[] vertexBufferInfo;
             IndexBufferInfo[] indexBufferInfo;
 
-            var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
-            var entry = resourceGestalt.ResourceEntries[resourcePointer.ResourceIndex];
-            using (var cacheReader = cache.CreateReader(cache.DefaultAddressTranslator))
+            var resourceGestalt = args.Cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
+            var entry = resourceGestalt.ResourceEntries[args.ResourcePointer.ResourceIndex];
+            using (var cacheReader = args.Cache.CreateReader(args.Cache.DefaultAddressTranslator))
             using (var reader = cacheReader.CreateVirtualReader(resourceGestalt.FixupDataPointer.Address))
             {
                 reader.Seek(entry.FixupOffset + (entry.FixupSize - 24), SeekOrigin.Begin);
@@ -164,14 +148,14 @@ namespace Reclaimer.Blam.HaloReach
                 //4x 12 byte structs here
             }
 
-            var vertexBuilder = new XmlVertexBuilder(cache.Metadata.IsMcc ? Resources.MccHaloReachVertexBuffer : Resources.HaloReachVertexBuffer);
+            var vertexBuilder = new XmlVertexBuilder(args.Cache.Metadata.IsMcc ? Resources.MccHaloReachVertexBuffer : Resources.HaloReachVertexBuffer);
             var vb = new Dictionary<int, VertexBuffer>();
             var ib = new Dictionary<int, IndexBuffer>();
 
-            using (var ms = new MemoryStream(resourcePointer.ReadData(PageType.Auto)))
-            using (var reader = new EndianReader(ms, cache.ByteOrder))
+            using (var ms = new MemoryStream(args.ResourcePointer.ReadData(PageType.Auto)))
+            using (var reader = new EndianReader(ms, args.Cache.ByteOrder))
             {
-                foreach (var section in sections)
+                foreach (var section in args.Sections)
                 {
                     var vInfo = vertexBufferInfo.ElementAtOrDefault(section.VertexBufferIndex);
                     var iInfo = indexBufferInfo.ElementAtOrDefault(section.IndexBufferIndex);
@@ -199,7 +183,7 @@ namespace Reclaimer.Blam.HaloReach
                 }
             }
 
-            if (cache.Metadata.Architecture != PlatformArchitecture.x86)
+            if (args.Cache.Metadata.Architecture != PlatformArchitecture.x86)
             {
                 foreach (var b in vb.Values)
                     b.ReverseEndianness();
@@ -207,56 +191,57 @@ namespace Reclaimer.Blam.HaloReach
                     b.ReverseEndianness();
             }
 
-            var sectionIndex = -1;
-            foreach (var section in sections)
+            var matLookup = materials = new List<Material>(args.Shaders.Count);
+            materials.AddRange(GetMaterials(args.Shaders));
+
+            var meshList = new List<Mesh>(args.Sections.Count);
+            meshList.AddRange(args.Sections.Select((section, sectionIndex) =>
             {
-                sectionIndex++;
-
                 if (!vb.ContainsKey(section.VertexBufferIndex) || !ib.ContainsKey(section.IndexBufferIndex))
-                {
-                    yield return new GeometryMesh();
-                    continue;
-                }
+                    return null;
 
-                var mesh = new GeometryMesh
+                var mesh = new Mesh
                 {
-                    NodeIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
+                    BoneIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
                     VertexBuffer = vb[section.VertexBufferIndex],
                     IndexBuffer = ib[section.IndexBufferIndex]
                 };
 
-                setProps(section, mesh);
-
-                mesh.Submeshes.AddRange(
-                    section.Submeshes.Select(s => new GeometrySubmesh
+                mesh.Segments.AddRange(
+                    section.Submeshes.Select(s => new MeshSegment
                     {
-                        MaterialIndex = s.ShaderIndex,
+                        Material = matLookup.ElementAtOrDefault(s.ShaderIndex),
                         IndexStart = s.IndexStart,
                         IndexLength = s.IndexLength
                     })
                 );
 
-                if (mapNode != null && (mesh.VertexWeights == VertexWeights.Skinned || mesh.VertexWeights == VertexWeights.Rigid))
+                if (args.NodeMaps != null)
                 {
+                    UByte4 MapNodeIndices(UByte4 source)
+                    {
+                        var indices = args.NodeMaps.ElementAtOrDefault(sectionIndex)?.Indices.Cast<byte?>();
+                        return new UByte4
+                        {
+                            X = indices?.ElementAtOrDefault(source.X) ?? source.X,
+                            Y = indices?.ElementAtOrDefault(source.Y) ?? source.Y,
+                            Z = indices?.ElementAtOrDefault(source.Z) ?? source.Z,
+                            W = indices?.ElementAtOrDefault(source.W) ?? source.W
+                        };
+                    }
+
                     foreach (var v in mesh.VertexBuffer.BlendIndexChannels)
                     {
                         var buf = v as VectorBuffer<UByte4>;
                         for (var i = 0; i < v.Count; i++)
-                        {
-                            var bi = buf[i];
-                            buf[i] = new UByte4
-                            {
-                                X = (byte)mapNode(sectionIndex, bi.X),
-                                Y = (byte)mapNode(sectionIndex, bi.Y),
-                                Z = (byte)mapNode(sectionIndex, bi.Z),
-                                W = (byte)mapNode(sectionIndex, bi.W)
-                            };
-                        }
+                            buf[i] = MapNodeIndices(buf[i]);
                     }
                 }
 
-                yield return mesh;
-            }
+                return mesh;
+            }));
+
+            return meshList;
         }
     }
 }

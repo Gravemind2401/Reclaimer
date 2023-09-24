@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.IO;
@@ -9,7 +8,7 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.HaloReach
 {
-    public class scenario_structure_bsp : ContentTagDefinition, IRenderGeometry
+    public class scenario_structure_bsp : ContentTagDefinition<Scene>, IContentProvider<Model>
     {
         private bool loadedInstances;
 
@@ -61,16 +60,16 @@ namespace Reclaimer.Blam.HaloReach
         [Offset(1312, MinVersion = (int)CacheType.MccHaloReachU13)]
         public ResourceIdentifier InstancesResourcePointer { get; set; }
 
-        #region IRenderGeometry
+        #region IContentProvider
 
-        int IRenderGeometry.LodCount => 1;
+        Model IContentProvider<Model>.GetContent() => GetModelContent();
 
-        public IGeometryModel ReadGeometry(int lod)
+        public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent());
+
+        private Model GetModelContent()
         {
-            Exceptions.ThrowIfIndexOutOfRange(lod, ((IRenderGeometry)this).LodCount);
-
             var scenario = Cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
-            var model = new GeometryModel(Item.FileName) { CoordinateSystem = CoordinateSystem.Default };
+            var model = new Model { Name = Item.FileName };
 
             var bspBlock = scenario.StructureBsps.First(s => s.BspReference.TagId == Item.Id);
             var bspIndex = scenario.StructureBsps.IndexOf(bspBlock);
@@ -78,19 +77,23 @@ namespace Reclaimer.Blam.HaloReach
             var lightmap = scenario.ScenarioLightmapReference.Tag.ReadMetadata<scenario_lightmap>();
             var lightmapData = lightmap.LightmapRefs[bspIndex].LightmapDataReference.Tag.ReadMetadata<scenario_lightmap_bsp_data>();
 
-            model.Bounds.AddRange(BoundingBoxes);
-            model.Materials.AddRange(HaloReachCommon.GetMaterials(Shaders));
+            var geoParams = new HaloReachGeometryArgs
+            {
+                Cache = Cache,
+                Shaders = Shaders,
+                Sections = lightmapData.Sections,
+                ResourcePointer = lightmapData.ResourcePointer
+            };
 
-            var clusterRegion = new GeometryRegion { Name = BlamConstants.SbspClustersGroupName };
+            var clusterRegion = new ModelRegion { Name = BlamConstants.SbspClustersGroupName };
             clusterRegion.Permutations.AddRange(
-                Clusters.Select((c, i) => new GeometryPermutation
+                Clusters.Select((c, i) => new ModelPermutation
                 {
-                    SourceIndex = i,
                     Name = Clusters.IndexOf(c).ToString("D3", CultureInfo.CurrentCulture),
-                    MeshIndex = c.SectionIndex,
-                    MeshCount = 1
+                    MeshRange = (c.SectionIndex, 1)
                 })
             );
+
             model.Regions.Add(clusterRegion);
 
             if (Cache.CacheType >= CacheType.HaloReachRetail && !loadedInstances)
@@ -117,34 +120,35 @@ namespace Reclaimer.Blam.HaloReach
 
             foreach (var instanceGroup in BlamUtils.GroupGeometryInstances(GeometryInstances, i => i.Name))
             {
-                var sectionRegion = new GeometryRegion { Name = instanceGroup.Key };
+                var sectionRegion = new ModelRegion { Name = instanceGroup.Key };
                 sectionRegion.Permutations.AddRange(
-                    instanceGroup.Select(i => new GeometryPermutation
+                    instanceGroup.Select(i => new ModelPermutation
                     {
-                        SourceIndex = GeometryInstances.IndexOf(i),
                         Name = i.Name,
                         Transform = i.Transform,
-                        TransformScale = i.TransformScale,
-                        MeshIndex = i.SectionIndex,
-                        MeshCount = 1
+                        UniformScale = i.TransformScale,
+                        MeshRange = (i.SectionIndex, 1),
+                        IsInstanced = true
                     })
                 );
                 model.Regions.Add(sectionRegion);
             }
 
-            model.Meshes.AddRange(HaloReachCommon.GetMeshes(Cache, lightmapData.ResourcePointer, lightmapData.Sections, (s, m) =>
+            model.Meshes.AddRange(HaloReachCommon.GetMeshes(geoParams, out _));
+            foreach (var i in Enumerable.Range(0, BoundingBoxes.Count))
             {
-                var index = (short)lightmapData.Sections.IndexOf(s);
-                m.BoundsIndex = index >= BoundingBoxes.Count ? null : index;
-                m.IsInstancing = index < BoundingBoxes.Count;
-            }));
+                if (model.Meshes[i] == null)
+                    continue;
+
+                var bounds = BoundingBoxes[i];
+                var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
+                var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
+
+                (model.Meshes[i].PositionBounds, model.Meshes[i].TextureBounds) = (posBounds, texBounds);
+            }
 
             return model;
         }
-
-        public IEnumerable<IBitmap> GetAllBitmaps() => HaloReachCommon.GetBitmaps(Shaders);
-
-        public IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes) => HaloReachCommon.GetBitmaps(Shaders, shaderIndexes);
 
         #endregion
     }
