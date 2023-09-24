@@ -89,8 +89,7 @@ namespace Reclaimer.Controls.DirectX
             var scene = sceneProvider.Content;
             textureLoader = new TextureLoader(scene);
 
-            modelGroup.Transform = CoordinateSystem.GetTransform(scene.CoordinateSystem, CoordinateSystem.Default, false).ToMediaTransform();
-            modelGroup.Transform.Freeze();
+            renderer.SetCoordinateSystem(scene.CoordinateSystem);
 
             if (scene.ChildGroups.Count == 0 && scene.ChildObjects.Count == 1 && scene.ChildObjects[0] is Model m)
             {

@@ -17,6 +17,11 @@ namespace Reclaimer.Controls.DirectX
             return new Numerics.Vector3((float)vector.X, (float)vector.Y, (float)vector.Z);
         }
 
+        public static Media3D.Vector3D ToMediaVector3(this Numerics.Vector3 vector)
+        {
+            return new Media3D.Vector3D(vector.X, vector.Y, vector.Z);
+        }
+
         public static Media3D.Transform3D ToMediaTransform(this Numerics.Matrix4x4 matrix)
         {
             return new Media3D.MatrixTransform3D(new Media3D.Matrix3D

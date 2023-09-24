@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Reclaimer.Geometry;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -91,6 +92,8 @@ namespace Reclaimer.Controls.DirectX
 
         private Helix.PerspectiveCamera Camera => Viewport.Camera as Helix.PerspectiveCamera;
 
+        private CoordinateSystem coordinateSystem = CoordinateSystem.Default;
+        private bool isLeftHand = false;
         private SharpDX.BoundingBox defaultBounds;
         private Point lastMousePoint;
 
@@ -166,6 +169,7 @@ namespace Reclaimer.Controls.DirectX
             foreach (var c in children)
                 Viewport.Items.Add(c);
 
+            SetCoordinateSystem(coordinateSystem);
             Viewport.EffectsManager = effectsManager;
             Viewport.OnRendered += Viewport_OnRendered;
         }
@@ -187,6 +191,18 @@ namespace Reclaimer.Controls.DirectX
             ScaleToContent();
         }
         #endregion
+
+        public void SetCoordinateSystem(CoordinateSystem coordinateSystem)
+        {
+            this.coordinateSystem = coordinateSystem;
+            isLeftHand = coordinateSystem.RightVector.Length() < 0;
+            
+            if (Viewport == null)
+                return;
+
+            Viewport.ModelUpDirection = coordinateSystem.UpVector.ToMediaVector3();
+            Camera.CreateLeftHandSystem = isLeftHand;
+        }
 
         public void SetDefaultBounds(SharpDX.BoundingBox bounds) => defaultBounds = bounds;
 
@@ -221,7 +237,10 @@ namespace Reclaimer.Controls.DirectX
             if (Viewport == null || bounds.Size.Length() == 0)
                 return;
 
-            var center = bounds.Center.ToPoint3D();
+            //transform bounds to default coordsys so we know X is depth, Y is width and Z is height
+            bounds = HelixCore.BoundingBoxExtensions.Transform(bounds, CoordinateSystem.GetTransform(coordinateSystem, CoordinateSystem.Default, false).ToMatrix3());
+
+            var center = bounds.Center;
             var radius = bounds.Size.Length() / 2;
 
             var hDistance = radius / Math.Tan(0.5 * Camera.FieldOfView * Math.PI / 180);
@@ -232,13 +251,16 @@ namespace Reclaimer.Controls.DirectX
             var adjust = vDistance > hDistance ? 0.75 : 1;
             var camDistance = Math.Max(hDistance, vDistance) * adjust;
             var lookDirection = bounds.Size.X > bounds.Size.Y * 1.5
-                ? new Media3D.Vector3D(0, -Math.Sign(center.Y), 0)
-                : new Media3D.Vector3D(-Math.Sign(center.X), 0, 0);
+                ? (-Math.Sign(center.Y) * coordinateSystem.RightVector).ToMediaVector3()
+                : (-Math.Sign(center.X) * coordinateSystem.ForwardVector).ToMediaVector3();
 
             if (lookDirection.Length == 0)
-                lookDirection = new Media3D.Vector3D(-1, 0, 0);
+                lookDirection = (-coordinateSystem.ForwardVector).ToMediaVector3();
 
-            Camera.LookAt(center, lookDirection * camDistance, Viewport.ModelUpDirection, default);
+            //transform back to original coordsys
+            center = SharpDX.Vector3.TransformCoordinate(center, CoordinateSystem.GetTransform(CoordinateSystem.Default, coordinateSystem, false).ToMatrix3());
+
+            Camera.LookAt(center.ToPoint3D(), lookDirection * camDistance, Viewport.ModelUpDirection, default);
         }
 
         public void AddChild(Helix.Element3D child)
@@ -301,7 +323,7 @@ namespace Reclaimer.Controls.DirectX
                 var moveVector = new Media3D.Vector3D();
                 var upVector = Camera.UpDirection;
                 var forwardVector = Camera.LookDirection;
-                var rightVector = Media3D.Vector3D.CrossProduct(forwardVector, upVector);
+                var rightVector = Media3D.Vector3D.CrossProduct(forwardVector, upVector) * (isLeftHand ? -1 : 1);
 
                 upVector.Normalize();
                 forwardVector.Normalize();
