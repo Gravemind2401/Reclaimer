@@ -121,7 +121,7 @@ class RmfImportOperator(Operator, bpy_extras.io_utils.ImportHelper):
 
         #main(context, self.filepath, options)
         scene = SceneReader.open_scene(self.filepath)
-        SceneBuilder.create_scene(context, scene)
+        SceneBuilder.create_scene(scene)
 
         return {'FINISHED'}
 

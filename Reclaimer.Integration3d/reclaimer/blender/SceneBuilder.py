@@ -26,7 +26,7 @@ BL_UNITS: float = 1000.0 # 1 blender unit = 1000mm
 UNIT_SCALE: float = 1.0
 OPTIONS: ImportOptions = ImportOptions()
 
-def create_scene(context: Context, scene: Scene, options: ImportOptions = None):
+def create_scene(scene: Scene, options: ImportOptions = None):
     global UNIT_SCALE, OPTIONS
     UNIT_SCALE = scene.unit_scale / BL_UNITS
     # OPTIONS = options
@@ -36,7 +36,7 @@ def create_scene(context: Context, scene: Scene, options: ImportOptions = None):
 
     for model in scene.model_pool:
         print(f'creating model: {model.name}...')
-        builder = ModelBuilder(context, scene, model)
+        builder = ModelBuilder(scene, model)
         if OPTIONS.IMPORT_BONES and model.bones:
             print(f'creating {model.name}/armature')
             builder.create_bones()
@@ -59,7 +59,6 @@ def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> M
 
 
 class ModelBuilder:
-    _context: Context
     _root_collection: Collection
     _region_collections: Dict[int, Collection]
     _scene: Scene
@@ -67,8 +66,7 @@ class ModelBuilder:
     _armature_obj: Object
     _instances: Dict[Tuple[int, int], Object]
 
-    def __init__(self, context: Context, scene: Scene, model: Model):
-        self._context = context
+    def __init__(self, scene: Scene, model: Model):
         self._root_collection = self._create_collection(OPTIONS.model_name(model))
         self._region_collections = dict()
         self._scene = scene
@@ -96,20 +94,25 @@ class ModelBuilder:
         return result
 
     def create_bones(self):
-        context, collection, scene, model = self._context, self._root_collection, self._scene, self._model
+        collection, scene, model = self._root_collection, self._scene, self._model
 
         # OPTIONS.BONE_SCALE not relevant to blender since you cant set bone width?
         TAIL_VECTOR = (0.03 * UNIT_SCALE, 0.0, 0.0)
 
-        set_active_collection(self._root_collection)
         bone_transforms = self._get_bone_transforms()
 
-        bpy.ops.object.add(type = 'ARMATURE', enter_editmode = True)
-        self._armature_obj = context.object
-        armature_data = cast(Armature, context.object.data)
-        armature_data.name = f'{OPTIONS.model_name(model)} armature'
+        model_name = OPTIONS.model_name(model)
+        armature_data = bpy.data.armatures.new(f'{model_name} armature root')
+        armature_obj = self._armature_obj = bpy.data.objects.new(f'{model_name} armature', armature_data)
+        collection.objects.link(armature_obj)
 
-        editbones = [armature_data.edit_bones.new(OPTIONS.bone_name(b)) for b in model.bones]
+        # edit mode is mandatory for edit_bone management, and the armature object needs to be selected to enable edit mode
+        bpy.ops.object.select_all(action = 'DESELECT')
+        armature_obj.select_set(True)
+        bpy.context.view_layer.objects.active = armature_obj
+        bpy.ops.object.mode_set(mode = 'EDIT')
+
+        editbones = list(armature_data.edit_bones.new(OPTIONS.bone_name(b)) for b in model.bones)
         for i, b in enumerate(model.bones):
             editbone = editbones[i]
             editbone.tail = TAIL_VECTOR
@@ -127,28 +130,24 @@ class ModelBuilder:
         bpy.ops.object.mode_set(mode = 'OBJECT')
 
     def create_markers(self):
-        context, model = self._context, self._model
+        model = self._model
 
         MODE = 'EMPTY_SPHERE' # TODO
         MARKER_SIZE = 0.01 * UNIT_SCALE * OPTIONS.MARKER_SCALE
 
-        set_active_collection(self._root_collection)
         bone_transforms = self._get_bone_transforms()
 
         for marker in model.markers:
             for i, instance in enumerate(marker.instances):
                 # attempt to create the marker within the appropriate collection based on region/permutation
                 # note that in blender the collection acts like a 'parent' so if the marker gets parented to a bone it gets removed from the collection
-                if instance.region_index >= 0 and instance.region_index < 255:
-                    set_active_collection(self._region_collections[instance.region_index])
-                else:
-                    set_active_collection(self._root_collection)
+                collection = self._region_collections.get(instance.region_index, self._root_collection)
 
                 if MODE == 'EMPTY_SPHERE':
-                    # despite the parameter being named 'radius' it comes out the same size as a uvsphere's diameter
-                    bpy.ops.object.empty_add(type = 'SPHERE', radius = MARKER_SIZE)
-                    marker_obj = context.object
-                    marker_obj.name = OPTIONS.marker_name(marker, i)
+                    marker_obj = bpy.data.objects.new(OPTIONS.marker_name(marker, i), None)
+                    marker_obj.empty_display_type = 'SPHERE'
+                    marker_obj.empty_display_size = MARKER_SIZE
+                    collection.objects.link(marker_obj)
                 # else: TODO
 
                 world_transform = Matrix.Translation([v * UNIT_SCALE for v in instance.position]) @ Quaternion(instance.rotation).to_matrix().to_4x4()
@@ -173,7 +172,7 @@ class ModelBuilder:
                 mesh_count += 1
 
     def _build_mesh(self, collection: Collection, region: ModelRegion, permutation: ModelPermutation):
-        context, scene, model = self._context, self._scene, self._model
+        scene, model = self._scene, self._model
 
         SPLIT_MODE = False # TODO
 
