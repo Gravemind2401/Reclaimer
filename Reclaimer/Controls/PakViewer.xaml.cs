@@ -110,13 +110,6 @@ namespace Reclaimer.Controls
             }
         }
 
-        private void RecursiveCollapseNode(TreeItemModel node)
-        {
-            foreach (var n in node.Items)
-                RecursiveCollapseNode(n);
-            node.IsExpanded = false;
-        }
-
         private static OpenFileArgs GetFolderArgs(TreeItemModel node) => new OpenFileArgs(node.Header, $"Saber3D.Halo1X.*", node);
 
         private OpenFileArgs GetSelectedArgs()
@@ -143,7 +136,7 @@ namespace Reclaimer.Controls
         private void btnCollapseAll_Click(object sender, RoutedEventArgs e)
         {
             foreach (var node in rootNode.Items)
-                RecursiveCollapseNode(node);
+                node.CollapseAll();
         }
 
         private void txtSearch_SearchChanged(object sender, RoutedEventArgs e) => BuildItemTree(txtSearch.Text);

@@ -94,6 +94,13 @@ namespace Reclaimer.Models
             RaisePropertyChanged(nameof(HasItems));
         }
 
+        public void CollapseAll()
+        {
+            foreach (var n in Items)
+                n.CollapseAll();
+            IsExpanded = false;
+        }
+
         public override string ToString() => Header ?? base.ToString();
     }
 }

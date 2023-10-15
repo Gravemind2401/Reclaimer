@@ -62,13 +62,13 @@
                         <TextBlock Text="{Binding Header}" VerticalAlignment="Center" />
                     </StackPanel>
                     <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding HasItems, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
+                        <DataTrigger Binding="{Binding HasItems}" Value="True">
                             <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_Folder_16x}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
+                        <DataTrigger Binding="{Binding IsExpanded}" Value="True">
                             <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_FolderOpen_16x}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding HasItems, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="False">
+                        <DataTrigger Binding="{Binding HasItems}" Value="False">
                             <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_Document_16x}" />
                         </DataTrigger>
                     </DataTemplate.Triggers>
