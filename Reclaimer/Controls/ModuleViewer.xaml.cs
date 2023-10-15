@@ -193,13 +193,6 @@ namespace Reclaimer.Controls
             }
         }
 
-        private void RecursiveCollapseNode(TreeItemModel node)
-        {
-            foreach (var n in node.Items)
-                RecursiveCollapseNode(n);
-            node.IsExpanded = false;
-        }
-
         private OpenFileArgs GetFolderArgs(TreeItemModel node) => new OpenFileArgs(node.Header, $"Blam.{module.ModuleType}.*", node);
 
         private OpenFileArgs GetSelectedArgs()
@@ -233,7 +226,7 @@ namespace Reclaimer.Controls
         private void btnCollapseAll_Click(object sender, RoutedEventArgs e)
         {
             foreach (var node in rootNode.Items)
-                RecursiveCollapseNode(node);
+                node.CollapseAll();
         }
 
         private void btnAddLink_Click(object sender, RoutedEventArgs e)
