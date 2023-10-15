@@ -1,6 +1,9 @@
-﻿using Reclaimer.Controls.Editors;
+﻿using Microsoft.Win32;
+using Reclaimer.Blam.Halo5;
+using Reclaimer.Controls.Editors;
 using System.ComponentModel;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -13,9 +16,13 @@ namespace Reclaimer.Plugins
         private const string BrowseFileFilter = "Halo Module Files|*.module";
         private const string ModuleFileExtension = "module";
 
+        private const string Halo5TagKeyRegex = @"Blam\.Halo5\w+\..{2,}";
+
         internal static ModuleViewerSettings Settings;
 
         public override string Name => "Module Viewer";
+
+        private PluginContextItem ExtractBinaryContextItem => new PluginContextItem("ExtractBinary", "Extract Tag Binary", OnContextItemClick);
 
         public override void Initialise() => Settings = LoadSettings<ModuleViewerSettings>();
         public override void Suspend() => SaveSettings(Settings);
@@ -25,12 +32,18 @@ namespace Reclaimer.Plugins
             yield return new PluginMenuItem(OpenKey, OpenPath, OnMenuItemClick);
         }
 
+        public override IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
+        {
+            if (Regex.IsMatch(context.FileTypeKey, Halo5TagKeyRegex))
+                yield return ExtractBinaryContextItem;
+        }
+
         private void OnMenuItemClick(string key)
         {
             if (key != OpenKey)
                 return;
 
-            var ofd = new Microsoft.Win32.OpenFileDialog
+            var ofd = new OpenFileDialog
             {
                 Filter = BrowseFileFilter,
                 Multiselect = true,
@@ -45,6 +58,27 @@ namespace Reclaimer.Plugins
 
             foreach (var fileName in ofd.FileNames)
                 OpenPhysicalFile(fileName);
+        }
+
+        private void OnContextItemClick(string key, OpenFileArgs context)
+        {
+            var item = context.File.OfType<ModuleItem>().First();
+
+            var sfd = new SaveFileDialog
+            {
+                OverwritePrompt = true,
+                FileName = item.FileName,
+                Filter = "Binary Files|*.bin",
+                FilterIndex = 1,
+                AddExtension = true
+            };
+
+            if (sfd.ShowDialog() != true)
+                return;
+
+            using (var tagReader = item.CreateReader())
+            using (var fs = File.Open(sfd.FileName, FileMode.Create))
+                tagReader.BaseStream.CopyTo(fs);
         }
 
         public override bool SupportsFileExtension(string extension) => extension.ToLowerInvariant() == ModuleFileExtension;
