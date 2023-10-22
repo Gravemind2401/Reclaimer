@@ -13,6 +13,9 @@ namespace Reclaimer.Blam.Halo5
             : base(item, header)
         { }
 
+        [Offset(24)]
+        public ResourcePackingPolicy MeshResourcePackingPolicy { get; set; }
+
         [Offset(32)]
         public BlockCollection<RegionBlock> Regions { get; set; }
 
@@ -55,10 +58,13 @@ namespace Reclaimer.Blam.Halo5
             var geoParams = new Halo5GeometryArgs
             {
                 Module = Module,
+                ResourcePolicy = MeshResourcePackingPolicy,
+                Regions = Regions,
                 Materials = Materials,
                 Sections = Sections,
                 NodeMaps = NodeMaps,
-                ResourceIndex = Item.ResourceIndex
+                ResourceIndex = Item.ResourceIndex,
+                ResourceCount = Item.ResourceCount
             };
 
             var model = new Model { Name = Item.FileName };
@@ -174,18 +180,10 @@ namespace Reclaimer.Blam.Halo5
         #endregion
     }
 
-    [FixedSize(80)]
-    public struct VertexBufferInfo
+    public enum ResourcePackingPolicy : int
     {
-        [Offset(4)]
-        public int VertexCount { get; set; }
-    }
-
-    [FixedSize(72)]
-    public struct IndexBufferInfo
-    {
-        [Offset(4)]
-        public int IndexCount { get; set; }
+        SingleResource = 0,
+        ResourcePerPermutation = 1
     }
 
     [FixedSize(32)]
