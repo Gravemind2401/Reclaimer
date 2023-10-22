@@ -100,7 +100,7 @@ namespace Reclaimer.Blam.Halo5
         /// <param name="globalTagId">The global identifier used to identify the same tag across different modules.</param>
         public IEnumerable<ModuleItem> FindAlternateTagInstances(int globalTagId)
         {
-            return tagIndex.ItemsById.GetValueOrDefault(globalTagId);
+            return tagIndex.ItemsById.GetValueOrDefault(globalTagId) ?? Enumerable.Empty<ModuleItem>();
         }
 
         /// <summary>

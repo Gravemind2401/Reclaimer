@@ -8,12 +8,12 @@ namespace Reclaimer.Utilities
     public static class Utils
     {
         /// <summary>
-        /// Like <see cref="Path.GetFileName"/> but allows invalid characters.
+        /// Same as <see cref="Path.GetFileName"/> but allows invalid characters.
         /// </summary>
         public static string GetFileName(string path) => path?.Split('\\').Last();
 
         /// <summary>
-        /// Like <see cref="Path.GetFileNameWithoutExtension"/> but allows invalid characters.
+        /// Same as <see cref="Path.GetFileNameWithoutExtension"/> but allows invalid characters.
         /// </summary>
         public static string GetFileNameWithoutExtension(string path)
         {
@@ -24,6 +24,24 @@ namespace Reclaimer.Utilities
             var index = fileName.LastIndexOf('.');
 
             return index < 0 ? fileName : fileName[..index];
+        }
+
+        /// <summary>
+        /// Same as <see cref="Path.ChangeExtension(string, string)"/> but allows invalid characters.
+        /// </summary>
+        public static string ChangeExtension(string path, string extension)
+        {
+            var index = path.LastIndexOf('.');
+            if (index >= 0)
+                path = path[..index];
+
+            if (string.IsNullOrEmpty(extension))
+                return path;
+
+            if (!extension.StartsWith('.'))
+                extension = "." + extension;
+
+            return path + extension;
         }
 
         /// <summary>

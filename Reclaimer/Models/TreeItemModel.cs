@@ -42,6 +42,13 @@ namespace Reclaimer.Models
             set => SetProperty(ref isExpanded, value);
         }
 
+        private int itemType;
+        public int ItemType
+        {
+            get => itemType;
+            set => SetProperty(ref itemType, value);
+        }
+
         private object tag;
         public object Tag
         {
