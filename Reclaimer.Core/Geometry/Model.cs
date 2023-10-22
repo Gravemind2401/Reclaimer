@@ -10,6 +10,22 @@ namespace Reclaimer.Geometry
         public List<Bone> Bones { get; } = new();
         public List<Mesh> Meshes { get; } = new();
 
+        /// <summary>
+        /// Sets the <see cref="Mesh.PositionBounds"/> and <see cref="Mesh.TextureBounds"/>
+        /// of all non-null meshes currently in the mesh list.
+        /// <br/>Does not automatically update new meshes added later on.
+        /// </summary>
+        /// <param name="positionBounds">The compression boundaries for vertex positions.</param>
+        /// <param name="textureBounds">The compression boundaries for texture coordinates.</param>
+        public void SetCompressionBounds(RealBounds3D positionBounds, RealBounds2D textureBounds)
+        {
+            foreach (var mesh in Meshes.Where(m => m != null))
+                (mesh.PositionBounds, mesh.TextureBounds) = (positionBounds, textureBounds);
+        }
+
+        /// <summary>
+        /// Enumerates all distinct materials across all meshes in the model.
+        /// </summary>
         public IEnumerable<Material> EnumerateMaterials()
         {
             return Meshes.Where(m => m != null)

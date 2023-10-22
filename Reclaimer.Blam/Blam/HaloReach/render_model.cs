@@ -112,9 +112,7 @@ namespace Reclaimer.Blam.HaloReach
             var bounds = BoundingBoxes[0];
             var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
             var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
-
-            foreach (var mesh in model.Meshes)
-                (mesh.PositionBounds, mesh.TextureBounds) = (posBounds, texBounds);
+            model.SetCompressionBounds(posBounds, texBounds);
 
             CreateInstanceMeshes(model, materials);
 
