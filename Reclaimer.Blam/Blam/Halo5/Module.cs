@@ -90,9 +90,9 @@ namespace Reclaimer.Blam.Halo5
             }
         }
 
-        public IEnumerable<ModuleItem> FindAlternateTagInstances(int globalTagId)
+        public IReadOnlyList<ModuleItem> FindAlternateTagInstances(int globalTagId)
         {
-            return tagIndex.InstancesById.GetValueOrDefault(globalTagId);
+            return tagIndex.InstancesById.GetValueOrDefault(globalTagId)?.AsReadOnly();
         }
 
         public IEnumerable<TagClass> GetTagClasses() => tagIndex.Classes.Values;
