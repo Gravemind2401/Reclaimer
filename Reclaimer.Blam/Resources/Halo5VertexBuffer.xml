@@ -2,13 +2,13 @@
     <vertex type="0x00" name="s_world_vertex">
         <value stream="0" offset="0x0" type="Float32_4" usage="position" usageIndex="0" />
         <value stream="0" offset="0x10" type="Float16_2" usage="texcoords" usageIndex="0" />
-        <value stream="0" offset="0x14" type="DecN4" usage="normal" usageIndex="0" />
+        <value stream="0" offset="0x14" type="UDecN4" usage="normal" usageIndex="0" />
         <value stream="0" offset="0x18" type="DecN4" usage="tangent" usageIndex="0" />
     </vertex>
     <vertex type="0x01" name="s_rigid_vertex">
         <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
         <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
-        <value stream="0" offset="0xC" type="DecN4" usage="normal" usageIndex="0" />
+        <value stream="0" offset="0xC" type="UDecN4" usage="normal" usageIndex="0" />
         <value stream="0" offset="0x10" type="DecN4" usage="tangent" usageIndex="0" />
 
         <!-- not weights? -->
@@ -17,7 +17,7 @@
     <vertex type="0x02" name="s_skinned_vertex">
         <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
         <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
-        <value stream="0" offset="0xC" type="DecN4" usage="normal" usageIndex="0" />
+        <value stream="0" offset="0xC" type="UDecN4" usage="normal" usageIndex="0" />
         <value stream="0" offset="0x10" type="DecN4" usage="tangent" usageIndex="0" />
         <value stream="0" offset="0x14" type="UInt8_4" usage="blendindices" usageIndex="0" />
 
@@ -34,7 +34,7 @@
 
         <!-- following not confirmed -->
         <value stream="0" offset="0xC" type="UInt16_N2" usage="texcoords" usageIndex="1" />
-        <value stream="0" offset="0x10" type="DecN4" usage="normal" usageIndex="0" />
+        <value stream="0" offset="0x10" type="UDecN4" usage="normal" usageIndex="0" />
         <value stream="0" offset="0x14" type="DecN4" usage="tangent" usageIndex="0" />
 
         <!-- not weights? -->
@@ -54,7 +54,7 @@
 
         <!-- following unconfirmed -->
         <value stream="0" offset="0x10" type="UInt16_N2" usage="texcoords" usageIndex="0" />
-        <value stream="0" offset="0x14" type="DecN4" usage="normal" usageIndex="0" />
+        <value stream="0" offset="0x14" type="UDecN4" usage="normal" usageIndex="0" />
         <value stream="0" offset="0x18" type="UInt8_4" usage="blendindices" usageIndex="0" />
         <value stream="0" offset="0x1C" type="UInt8_N4" usage="blendweight" usageIndex="0" />
 
@@ -65,7 +65,7 @@
     <vertex type="0x1D" name="rigid_boned">
         <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
         <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
-        <value stream="0" offset="0xC" type="DecN4" usage="normal" usageIndex="0" />
+        <value stream="0" offset="0xC" type="UDecN4" usage="normal" usageIndex="0" />
         <value stream="0" offset="0x10" type="DecN4" usage="tangent" usageIndex="0" />
         <value stream="0" offset="0x14" type="UInt8_4" usage="blendindices" usageIndex="0" />
 
@@ -83,7 +83,7 @@
     <vertex type="0x21" name="dq_skinned">
         <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
         <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
-        <value stream="0" offset="0xC" type="DecN4" usage="normal" usageIndex="0" />
+        <value stream="0" offset="0xC" type="UDecN4" usage="normal" usageIndex="0" />
         <value stream="0" offset="0x10" type="DecN4" usage="tangent" usageIndex="0" />
         <value stream="0" offset="0x14" type="UInt8_4" usage="blendindices" usageIndex="0" />
         <value stream="0" offset="0x18" type="UInt8_N4" usage="blendweight" usageIndex="0" />
@@ -98,7 +98,7 @@
     <vertex type="0x26" name="skinned 8 weights">
         <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
         <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
-        <value stream="0" offset="0xC" type="DecN4" usage="normal" usageIndex="0" />
+        <value stream="0" offset="0xC" type="UDecN4" usage="normal" usageIndex="0" />
         <value stream="0" offset="0x10" type="DecN4" usage="tangent" usageIndex="0" />
 
         <value stream="0" offset="0x14" type="UInt8_4" usage="blendindices" usageIndex="0" />
