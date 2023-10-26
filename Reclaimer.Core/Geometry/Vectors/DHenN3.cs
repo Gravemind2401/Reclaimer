@@ -17,7 +17,7 @@ namespace Reclaimer.Geometry.Vectors
         private const int packSize = sizeof(uint);
         private const int structureSize = sizeof(uint);
 
-        private static readonly PackedVectorHelper helper = PackedVectorHelper.CreateSigned(10, 11, 11);
+        private static readonly PackedVectorHelper helper = PackedVectorHelper.CreateSignExtended(10, 11, 11);
 
         private uint bits;
 

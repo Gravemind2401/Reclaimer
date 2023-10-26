@@ -53,7 +53,7 @@ namespace Reclaimer.Geometry.Vectors
         private const int packSize = sizeof(<#= vector.StorageType #>);
         private const int structureSize = sizeof(<#= vector.StorageType #>);
 
-        private static readonly PackedVectorHelper helper = PackedVectorHelper.Create<#= vector.IsSigned ? "Signed" : "Unsigned" #>(<#= formattedLayout #>);
+        private static readonly PackedVectorHelper helper = PackedVectorHelper.Create<#= vector.IsSigned ? "SignExtended" : "Unsigned" #>(<#= formattedLayout #>);
 
         private <#= vector.StorageType #> bits;
 
