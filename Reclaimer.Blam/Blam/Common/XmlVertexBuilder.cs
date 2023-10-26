@@ -20,6 +20,7 @@ namespace Reclaimer.Blam.Common
                 {
                     TypeId = ParseInt(vertexNode.Attributes["type"].Value),
                     Name = vertexNode.Attributes["name"].Value,
+                    Size = vertexNode.Attributes["size"] == null ? null : ParseInt(vertexNode.Attributes["size"].Value),
                     Fields = vertexNode.SelectNodes("./*[local-name()='value']").OfType<XmlNode>()
                         .Select(valueNode => new XmlVertexValue
                         {
@@ -41,7 +42,7 @@ namespace Reclaimer.Blam.Common
 
             var lastField = layout.Fields.OrderBy(f => f.Offset).Last();
             var fieldType = GetFieldType(lastField.DataType);
-            var vertexSize = lastField.Offset + IBufferable.GetSizeOf(fieldType);
+            var vertexSize = layout.Size ?? (lastField.Offset + IBufferable.GetSizeOf(fieldType));
 
             foreach (var field in layout.Fields)
             {
@@ -84,6 +85,7 @@ namespace Reclaimer.Blam.Common
                 VectorType.UInt16_N2 => typeof(UInt16N2),
                 //VectorType.UInt16_N3 => typeof(UInt16N3),
                 VectorType.UInt16_N4 => typeof(UInt16N4),
+                VectorType.XDecN3 => typeof(XDecN3),
                 _ => null
             };
         }
@@ -145,7 +147,9 @@ namespace Reclaimer.Blam.Common
             UInt16_N2,
             UInt16_N4,
 
-            D3DColour
+            D3DColour,
+
+            XDecN3
         }
 
         private static class XmlVertexField
@@ -172,9 +176,11 @@ namespace Reclaimer.Blam.Common
         {
             public int TypeId { get; init; }
             public string Name { get; init; }
+            public int? Size { get; init; }
             public List<XmlVertexValue> Fields { get; init; }
         }
 
+        [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
         private sealed class XmlVertexValue
         {
             public int Stream { get; init; }
@@ -182,6 +188,8 @@ namespace Reclaimer.Blam.Common
             public VectorType DataType { get; init; }
             public string Usage { get; init; }
             public int UsageIndex { get; init; }
+
+            private string GetDebuggerDisplay() => $"[{DataType}] {Usage}";
         }
         #endregion
     }

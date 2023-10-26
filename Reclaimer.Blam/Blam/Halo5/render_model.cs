@@ -58,6 +58,7 @@ namespace Reclaimer.Blam.Halo5
             var geoParams = new Halo5GeometryArgs
             {
                 Module = Module,
+                ModuleItem = Item,
                 ResourcePolicy = MeshResourcePackingPolicy,
                 Regions = Regions,
                 Materials = Materials,

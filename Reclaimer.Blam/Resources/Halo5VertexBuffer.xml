@@ -1,114 +1,125 @@
 <VertexDefinitions>
-    <vertex type="0x00" name="s_world_vertex">
-        <value stream="0" offset="0x0" type="Float32_4" usage="position" usageIndex="0" />
-        <value stream="0" offset="0x10" type="Float16_2" usage="texcoords" usageIndex="0" />
-        <value stream="0" offset="0x14" type="DHenN3" usage="normal" usageIndex="0" />
-        <value stream="0" offset="0x18" type="DecN4" usage="tangent" usageIndex="0" />
+    <vertex type="0x00" name="world" size="0x1C">
+        <value stream="0" offset="0x0" type="Float32_3" usage="position" usageIndex="0" />
+        <value stream="0" offset="0xC" type="Float16_2" usage="texcoords" usageIndex="0" />
+        <value stream="0" offset="0x10" type="XDecN3" usage="normal" usageIndex="0" />
+        <!--<value stream="0" offset="0x14" type="unknown" usage="tangent" usageIndex="0" />-->
+        <!--<value stream="0" offset="0x18" type="UInt8_N4" usage="unknown" usageIndex="0" />-->
     </vertex>
-    <vertex type="0x01" name="s_rigid_vertex">
+    <vertex type="0x01" name="rigid" size="0x18">
         <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
         <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
-        <value stream="0" offset="0xC" type="HenDN3" usage="normal" usageIndex="0" />
-        <value stream="0" offset="0x10" type="DecN4" usage="tangent" usageIndex="0" />
-
-        <!-- not weights? -->
-        <value stream="0" offset="0x14" type="UInt8_N4" usage="blendweight" usageIndex="5" />
+        <value stream="0" offset="0xC" type="XDecN3" usage="normal" usageIndex="0" />
+        <!--<value stream="0" offset="0x10" type="unknown" usage="tangent" usageIndex="0" />-->
+        <!--<value stream="0" offset="0x14" type="UInt8_N4" usage="unknown" usageIndex="0" />-->
     </vertex>
-    <vertex type="0x02" name="s_skinned_vertex">
+    <vertex type="0x02" name="skinned" size="0x20">
         <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
         <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
-        <value stream="0" offset="0xC" type="DHenN3" usage="normal" usageIndex="0" />
-        <value stream="0" offset="0x10" type="DecN4" usage="tangent" usageIndex="0" />
+        <value stream="0" offset="0xC" type="XDecN3" usage="normal" usageIndex="0" />
+        <!--<value stream="0" offset="0x10" type="unknown" usage="tangent" usageIndex="0" />-->
         <value stream="0" offset="0x14" type="UInt8_4" usage="blendindices" usageIndex="0" />
 
         <!-- weights here dont always add to 1? -->
         <value stream="0" offset="0x18" type="UInt8_N4" usage="blendweight" usageIndex="0" />
-
-        <!-- not weights? -->
-        <value stream="0" offset="0x1C" type="UInt8_N4" usage="blendweight" usageIndex="5" />
+        <!--<value stream="0" offset="0x1C" type="UInt8_N4" usage="unknown" usageIndex="0" />-->
     </vertex>
-
-    <vertex type="0x08" name="rigid_2uv">
+    <!--<vertex type="0x03" name="particle_model" />-->
+    <!--<vertex type="0x04" name="screen" />-->
+    <!--<vertex type="0x05" name="debug" />-->
+    <!--<vertex type="0x06" name="transparent" />-->
+    <!--<vertex type="0x07" name="particle" />-->
+    <vertex type="0x08" name="rigid_2uv" size="0x1C">
         <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
         <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
-
-        <!-- following not confirmed -->
         <value stream="0" offset="0xC" type="UInt16_N2" usage="texcoords" usageIndex="1" />
-        <value stream="0" offset="0x10" type="DHenN3" usage="normal" usageIndex="0" />
-        <value stream="0" offset="0x14" type="DecN4" usage="tangent" usageIndex="0" />
-
-        <!-- not weights? -->
-        <value stream="0" offset="0x18" type="UInt8_N4" usage="blendweight" usageIndex="5" />
+        <value stream="0" offset="0x10" type="XDecN3" usage="normal" usageIndex="0" />
+        <!--<value stream="0" offset="0x14" type="unknown" usage="tangent" usageIndex="0" />-->
+        <!--<value stream="0" offset="0x18" type="UInt8_N4" usage="unknown" usageIndex="0" />-->
     </vertex>
-
-    <vertex type="0x12" name="unknown">
+    <!--<vertex type="0x09" name="light_volume" />-->
+    <!--<vertex type="0x0A" name="chud_simple" />-->
+    <!--<vertex type="0x0B" name="chud_fancy" />-->
+    <!--<vertex type="0x0C" name="decorator" />-->
+    <!--<vertex type="0x0D" name="position only" />-->
+    <!--<vertex type="0x0E" name="patchy_fog" />-->
+    <!--<vertex type="0x0F" name="water" />-->
+    <!--<vertex type="0x10" name="ripple" />-->
+    <!--<vertex type="0x11" name="implicit geometry" />-->
+    <vertex type="0x12" name="skinned_2uv" size="0x24">
         <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
         <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
-
-        <!-- not weights? -->
-        <value stream="0" offset="0x20" type="UInt8_N4" usage="blendweight" usageIndex="5" />
-    </vertex>
-
-    <vertex type="0x17" name="skinned uncompressed">
-        <value stream="0" offset="0x0" type="Float32_4" usage="position" usageIndex="0" />
-
-        <!-- following unconfirmed -->
-        <value stream="0" offset="0x10" type="UInt16_N2" usage="texcoords" usageIndex="0" />
-        <value stream="0" offset="0x14" type="DHenN3" usage="normal" usageIndex="0" />
-        <value stream="0" offset="0x18" type="UInt8_4" usage="blendindices" usageIndex="0" />
-        <value stream="0" offset="0x1C" type="UInt8_N4" usage="blendweight" usageIndex="0" />
-
-        <!-- not weights? -->
-        <value stream="0" offset="0x20" type="UInt8_N4" usage="blendweight" usageIndex="5" />
-    </vertex>
-
-    <vertex type="0x1D" name="rigid_boned">
-        <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
-        <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
-        <value stream="0" offset="0xC" type="DHenN3" usage="normal" usageIndex="0" />
-        <value stream="0" offset="0x10" type="DecN4" usage="tangent" usageIndex="0" />
-        <value stream="0" offset="0x14" type="UInt8_4" usage="blendindices" usageIndex="0" />
-
-        <!-- not weights? -->
-        <value stream="0" offset="0x18" type="UInt8_N4" usage="blendweight" usageIndex="5" />
-    </vertex>
-
-    <vertex type="0x1E" name="rigid_boned_2uv">
-        <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
-        <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
-
-        <value stream="0" offset="0x1C" type="UInt16_N2" usage="texcoords" usageIndex="5" />
-    </vertex>
-
-    <vertex type="0x21" name="dq_skinned">
-        <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
-        <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
-        <value stream="0" offset="0xC" type="DHenN3" usage="normal" usageIndex="0" />
-        <value stream="0" offset="0x10" type="DecN4" usage="tangent" usageIndex="0" />
+        <value stream="0" offset="0xC" type="XDecN3" usage="normal" usageIndex="0" />
+        <!--<value stream="0" offset="0x10" type="unknown" usage="tangent" usageIndex="0" />-->
         <value stream="0" offset="0x14" type="UInt8_4" usage="blendindices" usageIndex="0" />
         <value stream="0" offset="0x18" type="UInt8_N4" usage="blendweight" usageIndex="0" />
-
-        <!-- not weights? -->
-        <value stream="0" offset="0x1C" type="UInt8_N4" usage="blendweight" usageIndex="5" />
-
-        <!-- actually a single float, always 1 so far -->
-        <value stream="0" offset="0x20" type="UInt8_N4" usage="blendweight" usageIndex="6" />
+        <value stream="0" offset="0x1C" type="UInt16_N2" usage="texcoords" usageIndex="1" />
+        <!--<value stream="0" offset="0x20" type="UInt8_N4" usage="unknown" usageIndex="0" />-->
     </vertex>
-
-    <vertex type="0x26" name="skinned 8 weights">
+    <!--<vertex type="0x13" name="unused1" />-->
+    <!--<vertex type="0x14" name="structure_instance_imposter" />-->
+    <!--<vertex type="0x15" name="object_instance_imposter" />-->
+    <!--<vertex type="0x16" name="decal" />-->
+    <vertex type="0x17" name="skinned uncompressed" size="0x24">
+        <value stream="0" offset="0x0" type="Float32_3" usage="position" usageIndex="0" />
+        <value stream="0" offset="0xC" type="UInt16_N2" usage="texcoords" usageIndex="0" />
+        <value stream="0" offset="0x10" type="XDecN3" usage="normal" usageIndex="0" />
+        <!--<value stream="0" offset="0x14" type="unknown" usage="tangent" usageIndex="0" />-->
+        <value stream="0" offset="0x18" type="UInt8_4" usage="blendindices" usageIndex="0" />
+        <value stream="0" offset="0x1C" type="UInt8_N4" usage="blendweight" usageIndex="0" />
+        <!--<value stream="0" offset="0x20" type="UInt8_N4" usage="unknown" usageIndex="0" />-->
+    </vertex>
+    <!--<vertex type="0x18" name="light volume precompiled" />-->
+    <!--<vertex type="0x19" name="position_only" />-->
+    <!--<vertex type="0x1A" name="tracer" />-->
+    <!--<vertex type="0x1B" name="polyart" />-->
+    <!--<vertex type="0x1C" name="vectorart" />-->
+    <vertex type="0x1D" name="rigid_boned" size="0x1C">
         <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
         <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
-        <value stream="0" offset="0xC" type="DHenN3" usage="normal" usageIndex="0" />
-        <value stream="0" offset="0x10" type="DecN4" usage="tangent" usageIndex="0" />
-
+        <value stream="0" offset="0xC" type="XDecN3" usage="normal" usageIndex="0" />
+        <!--<value stream="0" offset="0x10" type="unknown" usage="tangent" usageIndex="0" />-->
+        <value stream="0" offset="0x14" type="UInt8_4" usage="blendindices" usageIndex="0" />
+        <!--<value stream="0" offset="0x18" type="UInt8_N4" usage="unknown" usageIndex="0" />-->
+    </vertex>
+    <vertex type="0x1E" name="rigid_boned_2uv" size="0x20">
+        <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
+        <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
+        <value stream="0" offset="0xC" type="XDecN3" usage="normal" usageIndex="0" />
+        <!--<value stream="0" offset="0x10" type="unknown" usage="tangent" usageIndex="0" />-->
+        <value stream="0" offset="0x14" type="UInt8_4" usage="blendindices" usageIndex="0" />
+        <value stream="0" offset="0x18" type="UInt16_N2" usage="texcoords" usageIndex="1" />
+        <!--<value stream="0" offset="0x1C" type="UInt8_N4" usage="unknown" usageIndex="0" />-->
+    </vertex>
+    <!--<vertex type="0x1F" name="polyartUV" />-->
+    <!--<vertex type="0x20" name="CheapParticle" />-->
+    <vertex type="0x21" name="dq_skinned" size="0x24">
+        <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
+        <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
+        <value stream="0" offset="0xC" type="XDecN3" usage="normal" usageIndex="0" />
+        <!--<value stream="0" offset="0x10" type="unknown" usage="tangent" usageIndex="0" />-->
+        <value stream="0" offset="0x14" type="UInt8_4" usage="blendindices" usageIndex="0" />
+        <value stream="0" offset="0x18" type="UInt8_N4" usage="blendweight" usageIndex="0" />
+        <!--<value stream="0" offset="0x1C" type="UInt8_N4" usage="unknown" usageIndex="0" />-->
+        <!-- always 1 so far -->
+        <!--<value stream="0" offset="0x20" type="float" usage="unknown" usageIndex="0" />-->
+    </vertex>
+    <!--<vertex type="0x22" name="wpf_screen" />-->
+    <!--<vertex type="0x23" name="simplePassThrough" />-->
+    <!--<vertex type="0x24" name="edit_decorator" />-->
+    <!--<vertex type="0x25" name="wpfVectorFont" />-->
+    <vertex type="0x26" name="skinned 8 weights" size="0x2C">
+        <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
+        <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
+        <value stream="0" offset="0xC" type="XDecN3" usage="normal" usageIndex="0" />
+        <!--<value stream="0" offset="0x10" type="unknown" usage="tangent" usageIndex="0" />-->
         <value stream="0" offset="0x14" type="UInt8_4" usage="blendindices" usageIndex="0" />
         <value stream="0" offset="0x18" type="UInt8_4" usage="blendindices" usageIndex="1" />
-
         <value stream="0" offset="0x1C" type="UInt8_N4" usage="blendweight" usageIndex="0" />
         <value stream="0" offset="0x20" type="UInt8_N4" usage="blendweight" usageIndex="1" />
-
-        <!-- not weights? x2 -->
-        <value stream="0" offset="0x24" type="UInt8_N4" usage="blendweight" usageIndex="5" />
-        <value stream="0" offset="0x28" type="UInt8_N4" usage="blendweight" usageIndex="6" />
+        <!--<value stream="0" offset="0x24" type="UInt8_N4" usage="unknown" usageIndex="0" />-->
+        <!--<value stream="0" offset="0x28" type="UInt8_N4" usage="unknown" usageIndex="0" />-->
     </vertex>
+    <!--<vertex type="0x27" name="number of standard vertex types" />-->
+    <!--<vertex type="0x28" name="decorator instance" />-->
 </VertexDefinitions>

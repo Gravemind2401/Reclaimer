@@ -2,18 +2,26 @@
 {
     internal class PackedVectorHelper
     {
-        public static PackedVectorHelper CreateSignExtended(byte uniformPrecision) => new PackedVectorHelper(true, uniformPrecision);
-        public static PackedVectorHelper CreateUnsigned(byte uniformPrecision) => new PackedVectorHelper(false, uniformPrecision);
+        private enum SignMode
+        {
+            Unsigned,
+            SignExtended, // negatives use twos compliment
+            SignShifted // negative is <0.5, positive is >=0.5
+        }
 
-        public static PackedVectorHelper CreateSignExtended(params byte[] precision) => new PackedVectorHelper(true, precision);
-        public static PackedVectorHelper CreateUnsigned(params byte[] precision) => new PackedVectorHelper(false, precision);
+        public static PackedVectorHelper CreateSignExtended(byte uniformPrecision) => new PackedVectorHelper(SignMode.SignExtended, uniformPrecision);
+        public static PackedVectorHelper CreateUnsigned(byte uniformPrecision) => new PackedVectorHelper(SignMode.Unsigned, uniformPrecision);
 
-        private readonly bool signed;
+        public static PackedVectorHelper CreateSignExtended(params byte[] precision) => new PackedVectorHelper(SignMode.SignExtended, precision);
+        public static PackedVectorHelper CreateUnsigned(params byte[] precision) => new PackedVectorHelper(SignMode.Unsigned, precision);
+        public static PackedVectorHelper CreateSignShifted(params byte[] precision) => new PackedVectorHelper(SignMode.SignShifted, precision);
+
+        private readonly SignMode signMode;
         private readonly BitRange[] axes;
 
-        private PackedVectorHelper(bool signed, params byte[] precision)
+        private PackedVectorHelper(SignMode signMode, params byte[] precision)
         {
-            this.signed = signed;
+            this.signMode = signMode;
             axes = new BitRange[precision.Length];
 
             var offset = 0;
@@ -26,9 +34,9 @@
 
         private float Normalise(in float value, in BitRange bitRange)
         {
-            return signed
-                ? Math.Clamp(value, -1f, 1f) * bitRange.SignedScale
-                : Math.Clamp(value, 0f, 1f) * bitRange.UnsignedScale;
+            return signMode == SignMode.Unsigned
+                ? Math.Clamp(value, 0f, 1f) * bitRange.UnsignedScale
+                : Math.Clamp(value, -1f, 1f) * bitRange.SignedScale;
         }
 
         #region 8 or 16-bit Normalised
@@ -57,9 +65,11 @@
 
         private float GetValue(in uint bits, int index)
         {
-            return signed
-                ? GetSignedBits(bits, index) / axes[index].SignedScale
-                : GetUnsignedBits(bits, index) / axes[index].UnsignedScale;
+            return signMode == SignMode.SignShifted
+                ? GetUnsignedBits(bits, index) / axes[index].SignedScale - 1
+                : signMode == SignMode.SignExtended
+                    ? GetSignedBits(bits, index) / axes[index].SignedScale
+                    : GetUnsignedBits(bits, index) / axes[index].UnsignedScale;
         }
 
         private uint GetUnsignedBits(in uint bits, int axis) => (bits >> axes[axis].Offset) & axes[axis].LengthMask;
@@ -74,7 +84,11 @@
             ref var bitRange = ref axes[index];
             value = Normalise(value, bitRange);
 
-            if (signed)
+            if (signMode == SignMode.SignShifted)
+            {
+                //TODO
+            }
+            else if (signMode == SignMode.SignExtended)
             {
                 var valueBits = ((int)value & (int)bitRange.LengthMask) << bitRange.Offset;
                 bits = bits & ~bitRange.OffsetMask | unchecked((uint)valueBits);

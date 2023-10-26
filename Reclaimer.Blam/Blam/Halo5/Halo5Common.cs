@@ -31,6 +31,7 @@ namespace Reclaimer.Blam.Halo5
     public class Halo5GeometryArgs
     {
         public Module Module { get; init; }
+        public ModuleItem ModuleItem { get; init; }
         public ResourcePackingPolicy ResourcePolicy { get; init; }
         public IReadOnlyList<RegionBlock> Regions { get; init; }
         public IReadOnlyList<MaterialBlock> Materials { get; init; }
@@ -117,6 +118,11 @@ namespace Reclaimer.Blam.Halo5
             var vb = new Dictionary<int, VertexBuffer>(totalVertexBufferCount);
             var ib = new Dictionary<int, IndexBuffer>(totalIndexBufferCount);
 
+            var dataDir = @"Z:\data\vertex_buffers\x1";
+            var files = Directory.GetFiles(dataDir)
+                .Select(Path.GetFileName)
+                .ToList();
+
             if (args.ResourcePolicy == ResourcePackingPolicy.SingleResource)
             {
                 if (args.ResourceCount > 1)
@@ -151,9 +157,20 @@ namespace Reclaimer.Blam.Halo5
 
                 try
                 {
+                    //if (section.VertexFormat != 0)
+                    //    continue;
                     if (!vb.ContainsKey(lodData.VertexBufferIndex))
                     {
                         var data = rawVertexBuffers[lodData.VertexBufferIndex];
+
+                        var prefix = $"0x{section.VertexFormat:X2}_{section.VertexFormat:D2}__";
+                        if (!files.Any(f => f.StartsWith(prefix)))
+                        {
+                            var fileName = $"{prefix}{args.ModuleItem.FileName}.bin";
+                            File.WriteAllBytes($"{dataDir}\\{fileName}", data);
+                            files.Add(fileName);
+                        }
+
                         var vertexBuffer = vertexBuilder.CreateVertexBuffer(section.VertexFormat, vInfo.VertexCount, data);
                         vb.Add(lodData.VertexBufferIndex, vertexBuffer);
                     }
