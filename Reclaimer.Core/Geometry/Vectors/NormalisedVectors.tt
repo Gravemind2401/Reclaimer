@@ -7,6 +7,8 @@
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
 
+<# //https://learn.microsoft.com/en-us/windows/win32/dxmath/ovw-xnamath-reference-functions-load #>
+
 <#
 
     var fieldNames = VectorDescription.FieldNames;
