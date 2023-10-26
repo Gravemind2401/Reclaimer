@@ -2,10 +2,10 @@
 {
     internal class PackedVectorHelper
     {
-        public static PackedVectorHelper CreateSigned(byte uniformPrecision) => new PackedVectorHelper(true, uniformPrecision);
+        public static PackedVectorHelper CreateSignExtended(byte uniformPrecision) => new PackedVectorHelper(true, uniformPrecision);
         public static PackedVectorHelper CreateUnsigned(byte uniformPrecision) => new PackedVectorHelper(false, uniformPrecision);
 
-        public static PackedVectorHelper CreateSigned(params byte[] precision) => new PackedVectorHelper(true, precision);
+        public static PackedVectorHelper CreateSignExtended(params byte[] precision) => new PackedVectorHelper(true, precision);
         public static PackedVectorHelper CreateUnsigned(params byte[] precision) => new PackedVectorHelper(false, precision);
 
         private readonly bool signed;
