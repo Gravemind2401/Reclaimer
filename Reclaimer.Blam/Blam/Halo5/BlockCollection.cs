@@ -2,6 +2,7 @@
 using Reclaimer.IO;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Reclaimer.Blam.Halo5
 {
@@ -37,7 +38,7 @@ namespace Reclaimer.Blam.Halo5
 
             var block = metadata.DataBlocks[structdef.TargetIndex];
 
-            var blockSize = FixedSizeAttribute.ValueFor(typeof(T));
+            var blockSize = typeof(T).IsPrimitive ? Marshal.SizeOf<T>() : (int)FixedSizeAttribute.ValueFor(typeof(T));
 
             reader.Seek(block.Offset, SeekOrigin.Begin);
             for (var i = 0; i < blockCount; i++)
