@@ -28,6 +28,8 @@ namespace Reclaimer.Geometry
         public bool HasBlendWeights => BlendWeightChannels.Any(c => c?.Count > 0);
         public bool HasColors => ColorChannels.Any(c => c?.Count > 0);
 
+        public bool HasImpliedBlendWeights { get; set; }
+
         public VertexBuffer Slice(int index, int count)
         {
             var result = new VertexBuffer();
