@@ -330,6 +330,16 @@ namespace Reclaimer.Geometry
 
                                 var count = weights.Count(w => w > 0);
 
+                                if (part.VertexBuffer.WeirdBlendWeights)
+                                {
+                                    //normalise
+                                    weights[3] = 1;
+                                    count++;
+                                    var sum = weights.Sum();
+                                    for (var bi = 0; bi < 4; bi++)
+                                        weights[bi] /= sum;
+                                }
+
                                 if (count == 0)
                                 {
                                     bw.Write((byte)0);

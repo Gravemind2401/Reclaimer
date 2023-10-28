@@ -155,6 +155,7 @@ namespace Reclaimer.Blam.Halo5
                     {
                         var data = rawVertexBuffers[lodData.VertexBufferIndex];
                         var vertexBuffer = vertexBuilder.CreateVertexBuffer(section.VertexFormat, vInfo.VertexCount, data);
+                        vertexBuffer.WeirdBlendWeights = true;
                         vb.Add(lodData.VertexBufferIndex, vertexBuffer);
                     }
 

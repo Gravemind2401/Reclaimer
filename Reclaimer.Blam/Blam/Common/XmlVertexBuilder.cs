@@ -86,6 +86,7 @@ namespace Reclaimer.Blam.Common
                 //VectorType.UInt16_N3 => typeof(UInt16N3),
                 VectorType.UInt16_N4 => typeof(UInt16N4),
                 VectorType.NxAAA2 => typeof(NxAAA2),
+                VectorType.Ux0AAC => typeof(Ux0AAC),
                 _ => null
             };
         }
@@ -149,7 +150,8 @@ namespace Reclaimer.Blam.Common
 
             D3DColour,
 
-            NxAAA2
+            NxAAA2,
+            Ux0AAC
         }
 
         private static class XmlVertexField
