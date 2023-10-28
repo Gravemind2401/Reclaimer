@@ -86,11 +86,7 @@ namespace Reclaimer.Geometry
             {
                 var dupeDic = new Dictionary<int, long>();
 
-                var allMaterials = model.Meshes
-                    .SelectMany(m => m.Segments)
-                    .Select(s => s.Material)
-                    .Distinct().ToList();
-
+                var allMaterials = model.EnumerateMaterials().ToList();
                 var validRegions = model.Regions
                     .Select(r => new
                     {
@@ -332,6 +328,17 @@ namespace Reclaimer.Geometry
                                 var weights = new[] { temp.X, temp.Y, temp.Z, temp.W };
 
                                 var count = weights.Count(w => w > 0);
+
+                                if (part.VertexBuffer.WeirdBlendWeights)
+                                {
+                                    //normalise
+                                    weights[3] = 1;
+                                    count++;
+                                    var sum = weights.Sum();
+                                    for (var bi = 0; bi < 4; bi++)
+                                        weights[bi] /= sum;
+                                }
+
 
                                 if (count == 0)
                                 {

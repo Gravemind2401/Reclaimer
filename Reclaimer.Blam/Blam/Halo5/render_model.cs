@@ -70,11 +70,21 @@ namespace Reclaimer.Blam.Halo5
 
             var model = new Model { Name = Item.FileName };
 
+            static Matrix4x4 GetMatrix(RealVector3 pos, RealVector4 rot)
+            {
+                var position = (Vector3)pos;
+                var rotation = new Quaternion(rot.X, rot.Y, rot.Z, rot.W);
+                return Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(position);
+            }
+
             model.Bones.AddRange(Nodes.Select(n => new Bone
             {
                 Name = n.Name,
-                Transform = n.Transform,
-                ParentIndex = n.ParentIndex
+                //TODO: use n.Transform?
+                Transform = GetMatrix(n.Position, n.Rotation),
+                ParentIndex = n.ParentIndex,
+                Position = (Vector3)n.Position,
+                Rotation = new Quaternion(n.Rotation.X, n.Rotation.Y, n.Rotation.Z, n.Rotation.W)
             }));
 
             model.Markers.AddRange(MarkerGroups.Select(g =>

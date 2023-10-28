@@ -118,10 +118,10 @@ namespace Reclaimer.Blam.Halo5
             var vb = new Dictionary<int, VertexBuffer>(totalVertexBufferCount);
             var ib = new Dictionary<int, IndexBuffer>(totalIndexBufferCount);
 
-            var dataDir = @"Z:\data\vertex_buffers\x1";
-            var files = Directory.GetFiles(dataDir)
-                .Select(Path.GetFileName)
-                .ToList();
+            //var dataDir = @"Z:\data\vertex_buffers\pc";
+            //var files = Directory.GetFiles(dataDir)
+            //    .Select(Path.GetFileName)
+            //    .ToList();
 
             if (args.ResourcePolicy == ResourcePackingPolicy.SingleResource)
             {
@@ -144,9 +144,20 @@ namespace Reclaimer.Blam.Halo5
                     AppendBufferData(resourceIndex);
             }
 
+            var sectionMap = (from r in args.Regions
+                              from p in r.Permutations
+                              let name = $"{r.Name}_{p.Name}"
+                              select new { p.SectionIndex, name })
+                             .ToLookup(x => args.Sections[x.SectionIndex], x => x.name);
+
             var vertexBuilder = new XmlVertexBuilder(Resources.Halo5VertexBuffer);
             foreach (var section in args.Sections)
             {
+                //if (section.VertexFormat != 0x21)
+                //    continue;
+
+                var permName = sectionMap[section].FirstOrDefault();
+
                 var lodData = section.SectionLods[Math.Min(lod, section.SectionLods.Count - 1)];
 
                 var vInfo = vertexBufferInfo.ElementAtOrDefault(lodData.VertexBufferIndex);
@@ -157,21 +168,22 @@ namespace Reclaimer.Blam.Halo5
 
                 try
                 {
-                    //if (section.VertexFormat != 0)
-                    //    continue;
                     if (!vb.ContainsKey(lodData.VertexBufferIndex))
                     {
                         var data = rawVertexBuffers[lodData.VertexBufferIndex];
 
-                        var prefix = $"0x{section.VertexFormat:X2}_{section.VertexFormat:D2}__";
-                        if (!files.Any(f => f.StartsWith(prefix)))
-                        {
-                            var fileName = $"{prefix}{args.ModuleItem.FileName}.bin";
-                            File.WriteAllBytes($"{dataDir}\\{fileName}", data);
-                            files.Add(fileName);
-                        }
+                        //var dir = Path.Combine(dataDir, args.ModuleItem.FileName);
+                        //Directory.CreateDirectory(dir);
+                        //var prefix = $"{permName}__f{section.VertexFormat:D2}[0x{section.VertexFormat:X2}]_vb{lodData.VertexBufferIndex:D2}";
+                        ////if (!files.Any(f => f.StartsWith(prefix)))
+                        //{
+                        //    var fileName = $"{prefix}.bin";
+                        //    File.WriteAllBytes($"{dir}\\{fileName}", data);
+                        //    files.Add(fileName);
+                        //}
 
                         var vertexBuffer = vertexBuilder.CreateVertexBuffer(section.VertexFormat, vInfo.VertexCount, data);
+                        vertexBuffer.WeirdBlendWeights = true;
                         vb.Add(lodData.VertexBufferIndex, vertexBuffer);
                     }
 
