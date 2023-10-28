@@ -69,7 +69,7 @@ namespace Reclaimer.Geometry
             if (!fileName.EndsWith(".amf", StringComparison.CurrentCultureIgnoreCase))
                 fileName += ".amf";
 
-            IEnumerable<(string, ModelPermutation, Mesh)> ExpandPermutation(ModelPermutation perm)
+            IEnumerable<(string, ModelPermutation, Mesh, int)> ExpandPermutation(ModelPermutation perm)
             {
                 var (index, count) = perm.MeshRange;
                 for (var i = 0; i < count; i++)
@@ -77,7 +77,7 @@ namespace Reclaimer.Geometry
                     var name = perm.Name;
                     if (count > 1)
                         name += i.ToString("D2");
-                    yield return (name, perm, model.Meshes[index + i]);
+                    yield return (name, perm, model.Meshes[index + i], index + i);
                 }
             }
 
@@ -192,7 +192,7 @@ namespace Reclaimer.Geometry
                 foreach (var region in validRegions)
                 {
                     bw.WriteStringNullTerminated(region.Name);
-                    bw.Write(region.Permutations.Count);
+                    bw.Write(region.Permutations.Sum(p => p.MeshRange.Count));
                     permAddressList.Add(bw.BaseStream.Position);
                     bw.Write(0);
                 }
@@ -202,7 +202,7 @@ namespace Reclaimer.Geometry
                 foreach (var region in validRegions)
                 {
                     permValueList.Add(bw.BaseStream.Position);
-                    foreach (var (permName, perm, part) in region.Permutations.SelectMany(ExpandPermutation))
+                    foreach (var (permName, perm, part, _) in region.Permutations.SelectMany(ExpandPermutation))
                     {
                         bw.WriteStringNullTerminated(permName);
                         bw.Write((byte)part.VertexWeights);
@@ -252,17 +252,17 @@ namespace Reclaimer.Geometry
                 #region Vertices
                 foreach (var region in validRegions)
                 {
-                    foreach (var (permName, perm, part) in region.Permutations.SelectMany(ExpandPermutation))
+                    foreach (var (permName, perm, part, meshIndex) in region.Permutations.SelectMany(ExpandPermutation))
                     {
                         var scale1 = perm.Transform.IsIdentity ? scale : 1;
 
-                        if (dupeDic.TryGetValue(perm.MeshRange.Index, out var address))
+                        if (dupeDic.TryGetValue(meshIndex, out var address))
                         {
                             vertValueList.Add(address);
                             continue;
                         }
                         else
-                            dupeDic.Add(perm.MeshRange.Index, bw.BaseStream.Position);
+                            dupeDic.Add(meshIndex, bw.BaseStream.Position);
 
                         vertValueList.Add(bw.BaseStream.Position);
 
@@ -370,15 +370,15 @@ namespace Reclaimer.Geometry
                 dupeDic.Clear();
                 foreach (var region in validRegions)
                 {
-                    foreach (var (permName, perm, part) in region.Permutations.SelectMany(ExpandPermutation))
+                    foreach (var (permName, perm, part, meshIndex) in region.Permutations.SelectMany(ExpandPermutation))
                     {
-                        if (dupeDic.TryGetValue(perm.MeshRange.Index, out var address))
+                        if (dupeDic.TryGetValue(meshIndex, out var address))
                         {
                             indxValueList.Add(address);
                             continue;
                         }
                         else
-                            dupeDic.Add(perm.MeshRange.Index, bw.BaseStream.Position);
+                            dupeDic.Add(meshIndex, bw.BaseStream.Position);
 
                         indxValueList.Add(bw.BaseStream.Position);
 
@@ -400,7 +400,7 @@ namespace Reclaimer.Geometry
                 #region Submeshes
                 foreach (var region in validRegions)
                 {
-                    foreach (var (permName, perm, part) in region.Permutations.SelectMany(ExpandPermutation))
+                    foreach (var (permName, perm, part, _) in region.Permutations.SelectMany(ExpandPermutation))
                     {
                         meshValueList.Add(bw.BaseStream.Position);
 
