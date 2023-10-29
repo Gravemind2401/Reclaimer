@@ -7,6 +7,8 @@
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
 
+<# //https://learn.microsoft.com/en-us/windows/win32/dxmath/ovw-xnamath-reference-functions-load #>
+
 <#
 
     var fieldNames = VectorDescription.FieldNames;
@@ -57,7 +59,7 @@ namespace Reclaimer.Geometry.Vectors
         private const int packSize = sizeof(<#= vector.StorageType #>);
         private const int structureSize = sizeof(<#= vector.StorageType #>) * <#= vector.Dimensions #>;
 
-        private static readonly PackedVectorHelper helper = PackedVectorHelper.Create<#= vector.IsSigned ? "Signed" : "Unsigned" #>(<#= precision #>);
+        private static readonly PackedVectorHelper helper = PackedVectorHelper.Create<#= vector.IsSigned ? "SignExtended" : "Unsigned" #>(<#= precision #>);
 
         private <#= vector.StorageType #> <#= string.Join(", ", storageFields) #>;
 

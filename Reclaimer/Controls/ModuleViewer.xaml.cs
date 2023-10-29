@@ -16,6 +16,10 @@ namespace Reclaimer.Controls
     /// </summary>
     public partial class ModuleViewer
     {
+        private const int FolderNodeType = 0;
+        private const int TagNodeType = 1;
+        private const int ResourceNodeType = 2;
+
         private readonly MenuItem OpenContextItem;
         private readonly MenuItem OpenWithContextItem;
         private readonly MenuItem OpenFromContextItem;
@@ -120,16 +124,20 @@ namespace Reclaimer.Controls
 
                 foreach (var g in classGroups.OrderBy(g => g.Key))
                 {
-                    var node = new TreeItemModel { Header = g.Key };
+                    var classNode = new TreeItemModel { Header = g.Key, ItemType = FolderNodeType };
                     foreach (var i in g.OrderBy(i => i.TagName))
                     {
-                        node.Items.Add(new TreeItemModel
+                        var tagNode = new TreeItemModel
                         {
                             Header = i.TagName,
+                            ItemType = TagNodeType,
                             Tag = i
-                        });
+                        };
+
+                        AppendResourceNodes(tagNode, i);
+                        classNode.Items.Add(tagNode);
                     }
-                    result.Add(node);
+                    result.Add(classNode);
                 }
 
                 rootNode.Items.Reset(result);
@@ -142,11 +150,19 @@ namespace Reclaimer.Controls
 
                 foreach (var tag in module.Items.Where(i => FilterTag(filter, i)).OrderBy(i => i.TagName))
                 {
-                    var node = MakeNode(result, lookup, $"{tag.TagName}.{tag.ClassName}");
+                    var node = MakeNode(result, lookup, Utils.ChangeExtension(tag.TagName, tag.ClassName));
+                    node.ItemType = TagNodeType;
                     node.Tag = tag;
+                    AppendResourceNodes(node, tag);
                 }
 
                 rootNode.Items.Reset(result);
+            }
+
+            void AppendResourceNodes(TreeItemModel treeItem, ModuleItem tag)
+            {
+                foreach (var resourceItem in Enumerable.Range(tag.ResourceIndex, tag.ResourceCount).Select(i => module.Items[module.Resources[i]]))
+                    treeItem.Items.Add(new TreeItemModel { Header = resourceItem.FileName, ItemType = ResourceNodeType, Tag = resourceItem });
             }
 
             static bool FilterTag(string filter, ModuleItem tag)
@@ -169,7 +185,7 @@ namespace Reclaimer.Controls
                 var branch = index < 0 ? null : path[..index];
                 var leaf = index < 0 ? path : path[(index + 1)..];
 
-                item = new TreeItemModel(leaf);
+                item = new TreeItemModel(leaf) { ItemType = FolderNodeType };
                 lookup.Add(path, item);
 
                 if (branch == null)
@@ -193,21 +209,14 @@ namespace Reclaimer.Controls
             }
         }
 
-        private void RecursiveCollapseNode(TreeItemModel node)
-        {
-            foreach (var n in node.Items)
-                RecursiveCollapseNode(n);
-            node.IsExpanded = false;
-        }
-
         private OpenFileArgs GetFolderArgs(TreeItemModel node) => new OpenFileArgs(node.Header, $"Blam.{module.ModuleType}.*", node);
 
         private OpenFileArgs GetSelectedArgs()
         {
             var node = tv.SelectedItem as TreeItemModel;
-            return node.HasItems
-                ? GetFolderArgs(node) //folder
-                : GetSelectedArgs(node.Tag as ModuleItem);
+            return node.Tag is ModuleItem moduleItem
+                ? GetSelectedArgs(moduleItem)
+                : GetFolderArgs(node); //folder
         }
 
         private OpenFileArgs GetSelectedArgs(ModuleItem item)
@@ -233,7 +242,7 @@ namespace Reclaimer.Controls
         private void btnCollapseAll_Click(object sender, RoutedEventArgs e)
         {
             foreach (var node in rootNode.Items)
-                RecursiveCollapseNode(node);
+                node.CollapseAll();
         }
 
         private void btnAddLink_Click(object sender, RoutedEventArgs e)
@@ -301,16 +310,19 @@ namespace Reclaimer.Controls
                 ContextItems.Add(OpenContextItem);
                 ContextItems.Add(OpenWithContextItem);
 
-                var instances = moduleItem.Module.FindAlternateTagInstances(moduleItem.GlobalTagId).ToList();
-                if (instances.Count > 1)
+                if (moduleItem.GlobalTagId >= 0)
                 {
-                    foreach (var instance in instances)
+                    var instances = moduleItem.Module.FindAlternateTagInstances(moduleItem.GlobalTagId);
+                    if (instances.Count > 1)
                     {
-                        var item = new MenuItem { Header = Utils.GetFileNameWithoutExtension(instance.Module.FileName), Tag = instance };
-                        OpenFromContextItem.Items.Add(item);
-                    }
+                        foreach (var instance in instances)
+                        {
+                            var item = new MenuItem { Header = Utils.GetFileNameWithoutExtension(instance.Module.FileName), Tag = instance };
+                            OpenFromContextItem.Items.Add(item);
+                        }
 
-                    ContextItems.Add(OpenFromContextItem);
+                        ContextItems.Add(OpenFromContextItem);
+                    }
                 }
 
                 ContextItems.Add(CopyPathContextItem);

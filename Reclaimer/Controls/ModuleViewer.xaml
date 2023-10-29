@@ -62,14 +62,29 @@
                         <TextBlock Text="{Binding Header}" VerticalAlignment="Center" />
                     </StackPanel>
                     <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding HasItems, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
-                            <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_Folder_16x}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsExpanded, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="True">
-                            <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_FolderOpen_16x}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding HasItems, RelativeSource={RelativeSource AncestorType=TreeViewItem}}" Value="False">
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding ItemType}" Value="0" />
+                                <Condition Binding="{Binding IsExpanded}" Value="False" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.Setters>
+                                <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_Folder_16x}" />
+                            </MultiDataTrigger.Setters>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding ItemType}" Value="0" />
+                                <Condition Binding="{Binding IsExpanded}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.Setters>
+                                <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_FolderOpen_16x}" />
+                            </MultiDataTrigger.Setters>
+                        </MultiDataTrigger>
+                        <DataTrigger Binding="{Binding ItemType}" Value="1">
                             <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_Document_16x}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ItemType}" Value="2">
+                            <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_UserDefinedDataType_16x}" />
                         </DataTrigger>
                     </DataTemplate.Triggers>
                 </HierarchicalDataTemplate>

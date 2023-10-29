@@ -1,9 +1,6 @@
 ﻿using Reclaimer.IO;
 using System.Numerics;
 
-// This file was automatically generated via the 'PackedVectors.tt' T4 template.
-// Do not modify this file directly - any changes will be lost when the code is regenerated.
-
 namespace Reclaimer.Geometry.Vectors
 {
     /// <summary>
@@ -11,13 +8,12 @@ namespace Reclaimer.Geometry.Vectors
     /// Each axis has a precision of 10, 10, 10, 2 bits respectively.
     /// Each axis has a possible value range from -1f to 1f.
     /// </summary>
-    [System.CodeDom.Compiler.GeneratedCode("PackedVectors.tt", "")]
-    public record struct DecN4 : IVector4, IBufferableVector<DecN4>
+    public record struct NxAAA2 : IVector4, IBufferableVector<NxAAA2>
     {
         private const int packSize = sizeof(uint);
         private const int structureSize = sizeof(uint);
 
-        private static readonly PackedVectorHelper helper = PackedVectorHelper.CreateSignExtended(10, 10, 10, 2);
+        private static readonly PackedVectorHelper helper = PackedVectorHelper.CreateSignShifted(10, 10, 10, 2);
 
         private uint bits;
 
@@ -49,16 +45,16 @@ namespace Reclaimer.Geometry.Vectors
 
         #endregion
 
-        public DecN4(uint value)
+        public NxAAA2(uint value)
         {
             bits = value;
         }
 
-        public DecN4(Vector4 value)
+        public NxAAA2(Vector4 value)
             : this(value.X, value.Y, value.Z, value.W)
         { }
 
-        public DecN4(float x, float y, float z, float w)
+        public NxAAA2(float x, float y, float z, float w)
         {
             bits = default;
             (X, Y, Z, W) = (x, y, z, w);
@@ -70,18 +66,18 @@ namespace Reclaimer.Geometry.Vectors
 
         static int IBufferable.PackSize => packSize;
         static int IBufferable.SizeOf => structureSize;
-        static DecN4 IBufferable<DecN4>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new DecN4(BitConverter.ToUInt32(buffer));
+        static NxAAA2 IBufferable<NxAAA2>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new NxAAA2(BitConverter.ToUInt32(buffer));
         readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => BitConverter.GetBytes(bits).CopyTo(buffer);
 
         #endregion
 
         #region Cast Operators
 
-        public static explicit operator Vector4(DecN4 value) => new Vector4(value.X, value.Y, value.Z, value.W);
-        public static explicit operator DecN4(Vector4 value) => new DecN4(value);
+        public static explicit operator Vector4(NxAAA2 value) => new Vector4(value.X, value.Y, value.Z, value.W);
+        public static explicit operator NxAAA2(Vector4 value) => new NxAAA2(value);
 
-        public static explicit operator uint(DecN4 value) => value.bits;
-        public static explicit operator DecN4(uint value) => new DecN4(value);
+        public static explicit operator uint(NxAAA2 value) => value.bits;
+        public static explicit operator NxAAA2(uint value) => new NxAAA2(value);
 
         #endregion
     }

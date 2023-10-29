@@ -40,6 +40,13 @@ namespace Reclaimer.Models
             set => SetProperty(ref isExpanded, value);
         }
 
+        private int itemType;
+        public int ItemType
+        {
+            get => itemType;
+            set => SetProperty(ref itemType, value);
+        }
+
         private object tag;
         public object Tag
         {
@@ -92,6 +99,13 @@ namespace Reclaimer.Models
             }
 
             RaisePropertyChanged(nameof(HasItems));
+        }
+
+        public void CollapseAll()
+        {
+            foreach (var n in Items)
+                n.CollapseAll();
+            IsExpanded = false;
         }
 
         public override string ToString() => Header ?? base.ToString();

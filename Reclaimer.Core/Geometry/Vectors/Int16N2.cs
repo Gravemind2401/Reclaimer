@@ -17,7 +17,7 @@ namespace Reclaimer.Geometry.Vectors
         private const int packSize = sizeof(ushort);
         private const int structureSize = sizeof(ushort) * 2;
 
-        private static readonly PackedVectorHelper helper = PackedVectorHelper.CreateSigned(16);
+        private static readonly PackedVectorHelper helper = PackedVectorHelper.CreateSignExtended(16);
 
         private ushort xbits, ybits;
 
