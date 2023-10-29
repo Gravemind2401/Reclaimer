@@ -144,11 +144,12 @@ namespace Reclaimer.Blam.Halo5
                     AppendBufferData(resourceIndex);
             }
 
-            var sectionMap = (from r in args.Regions
-                              from p in r.Permutations
-                              let name = $"{r.Name}_{p.Name}"
-                              select new { p.SectionIndex, name })
-                             .ToLookup(x => args.Sections[x.SectionIndex], x => x.name);
+            // this isn't even used???
+            //var sectionMap = (from r in args.Regions
+            //                  from p in r.Permutations
+            //                  let name = $"{r.Name}_{p.Name}"
+            //                  select new { p.SectionIndex, name })
+            //                 .ToLookup(x => args.Sections[x.SectionIndex], x => x.name);
 
             var vertexBuilder = new XmlVertexBuilder(Resources.Halo5VertexBuffer);
             foreach (var section in args.Sections)
@@ -156,7 +157,7 @@ namespace Reclaimer.Blam.Halo5
                 //if (section.VertexFormat != 0x21)
                 //    continue;
 
-                var permName = sectionMap[section].FirstOrDefault();
+                //var permName = sectionMap[section].FirstOrDefault();
 
                 var lodData = section.SectionLods[Math.Min(lod, section.SectionLods.Count - 1)];
 
