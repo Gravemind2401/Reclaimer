@@ -6,6 +6,7 @@ using Reclaimer.IO;
 using Reclaimer.Utilities;
 using System.IO;
 using System.IO.Compression;
+using System.Security.AccessControl;
 
 namespace Reclaimer.Blam.Common
 {
@@ -183,6 +184,8 @@ namespace Reclaimer.Blam.Common
                         return true;
                     }
                     break;
+
+                case scenario_structure_bsp:
                 case render_model:
                     if (TryGetGeometryContent(item, out var geometryContent))
                     {
@@ -212,10 +215,15 @@ namespace Reclaimer.Blam.Common
         {
             content = null;
 
-            if (item.ClassCode != render_model)
-                return false;
-
-            content = item.ReadMetadata<Halo5.render_model>();
+            if (item.ClassCode == render_model)
+            {
+                content = item.ReadMetadata<Halo5.render_model>();
+            } 
+            else if (item.ClassCode == scenario_structure_bsp)
+            {
+                content = item.ReadMetadata<Halo5.scenario_structure_bsp>();
+            }
+            else return false;
 
             return content != null;
         }
