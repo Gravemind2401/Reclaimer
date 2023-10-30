@@ -65,7 +65,7 @@ namespace Reclaimer.Blam.Halo5
                 Sections = Sections,
                 //NodeMaps = NodeMaps,
                 ResourceIndex = Item.ResourceIndex,
-                ResourceCount = Item.ResourceCount - 1
+                ResourceCount = Item.ResourceCount
             };
 
             var model = new Model { Name = Item.FileName };
@@ -89,31 +89,45 @@ namespace Reclaimer.Blam.Halo5
                     instanceGroup.Select(i => new ModelPermutation
                     {
                         Name = i.Name,
+                        //Transform = new Matrix4x4(
+                        //    i.TransformForward.X, i.TransformForward.Y, i.TransformForward.Z, 0,
+                        //    i.TransformLeft.X, i.TransformLeft.Y, i.TransformLeft.Z, 0,
+                        //    i.TransformUp.X, i.TransformUp.Y, i.TransformUp.Z, 0,
+                        //    i.TransformPosition.X, i.TransformPosition.Y, i.TransformPosition.Z, 1
+                        //),
+                        //Scale = i.TransformScale,
+
                         Transform = new Matrix4x4(
-                            i.TransformForward.X, i.TransformForward.Y, i.TransformForward.Z, 0,
-                            i.TransformLeft.X, i.TransformLeft.Y, i.TransformLeft.Z, 0,
-                            i.TransformUp.X, i.TransformUp.Y, i.TransformUp.Z, 0,
-                            i.TransformPosition.X, i.TransformPosition.Y, i.TransformPosition.Z, 1
+                            i.forward1, i.forward2, i.forward3, 0,
+                            i.left1, i.left2, i.left3, 0,
+                            i.up1, i.up2, i.up3, 0,
+                            i.pos1, i.pos2, i.pos3, 1
                         ),
-                        Scale = i.TransformScale,
-                        MeshRange = (i.SectionIndex, 1),
+                        Scale = new Vector3(i.scale1, i.scale2, i.scale3),
+
+                        MeshRange = (i.MeshIndex, 1),
                         IsInstanced = true
                     })
                 );
                 model.Regions.Add(sectionRegion);
             }
 
+            // 1 we need to use the correct mesh indices
+
             model.Meshes.AddRange(Halo5Common.GetMeshes(geoParams, out var materials));
-            foreach (var i in Enumerable.Range(0, BoundingBoxes.Count))
+            //foreach (var i in Enumerable.Range(0, BoundingBoxes.Count))
+            //{
+            //}
+            foreach (var instanceGroup in GeometryInstances)
             {
-                if (model.Meshes[i] == null)
+                if (model.Meshes[instanceGroup.MeshIndex] == null)
                     continue;
 
-                var bounds = BoundingBoxes[i];
+                var bounds = BoundingBoxes[instanceGroup.BoundsIndex];
                 var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
                 var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
 
-                (model.Meshes[i].PositionBounds, model.Meshes[i].TextureBounds) = (posBounds, texBounds);
+                (model.Meshes[instanceGroup.MeshIndex].PositionBounds, model.Meshes[instanceGroup.MeshIndex].TextureBounds) = (posBounds, texBounds);
             }
 
             return model;
@@ -139,16 +153,40 @@ namespace Reclaimer.Blam.Halo5
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public partial class BspGeometryInstanceBlock
     {
-        public Vector3 TransformScale { get; set; }
+        //[Offset(0)]
+        //public Vector3 TransformScale { get; set; }
 
-        
-        public Vector3 TransformForward { get; set; }
-        
-        public Vector3 TransformLeft { get; set; }
-        
-        public Vector3 TransformUp { get; set; }
 
-        public Vector3 TransformPosition { get; set; }
+        //[Offset(12)]
+        //public Vector3 TransformForward { get; set; }
+        //[Offset(24)]
+        //public Vector3 TransformLeft { get; set; }
+        //[Offset(36)]
+        //public Vector3 TransformUp { get; set; }
+        //[Offset(48)]
+        //public Vector3 TransformPosition { get; set; }
+
+
+        [Offset(0)] public float scale1 { get; set; }
+        [Offset(4)] public float scale2 { get; set; }
+        [Offset(8)] public float scale3 { get; set; }
+
+        [Offset(12)] public float forward1 { get; set; }
+        [Offset(16)] public float forward2 { get; set; }
+        [Offset(20)] public float forward3 { get; set; }
+
+        [Offset(24)] public float left1 { get; set; }
+        [Offset(28)] public float left2 { get; set; }
+        [Offset(32)] public float left3 { get; set; }
+
+        [Offset(36)] public float up1 { get; set; }
+        [Offset(40)] public float up2 { get; set; }
+        [Offset(44)] public float up3 { get; set; }
+
+        [Offset(48)] public float pos1 { get; set; }
+        [Offset(52)] public float pos2 { get; set; }
+        [Offset(56)] public float pos3 { get; set; }
+
 
         [Offset(60)]
         public short SectionIndex { get; set; }
