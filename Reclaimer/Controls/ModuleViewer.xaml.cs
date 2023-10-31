@@ -164,7 +164,7 @@ namespace Reclaimer.Controls
                 //TODO: make a setting to enable/disable this, also one day view the resources in the meta viewer?
                 return;
 
-                foreach (var resourceItem in Enumerable.Range(tag.ResourceIndex, tag.ResourceCount).Select(i => module.Items[module.Resources[i]]))
+                foreach (var resourceItem in Enumerable.Range(tag.ResourceIndex, tag.ResourceCount).Select(i => tag.Module.Items[tag.Module.Resources[i]]))
                     treeItem.Items.Add(new TreeItemModel { Header = resourceItem.FileName, ItemType = ResourceNodeType, Tag = resourceItem });
             }
 
