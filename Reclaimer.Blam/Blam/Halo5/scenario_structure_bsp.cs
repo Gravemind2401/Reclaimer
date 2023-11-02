@@ -118,6 +118,7 @@ namespace Reclaimer.Blam.Halo5
             //foreach (var i in Enumerable.Range(0, BoundingBoxes.Count))
             //{
             //}
+            // i changed the old system of getting bounding boxes by using the corresponding mesh index to explicitly use the index provided by the geometry instance
             foreach (var instanceGroup in GeometryInstances)
             {
                 if (model.Meshes[instanceGroup.MeshIndex] == null)

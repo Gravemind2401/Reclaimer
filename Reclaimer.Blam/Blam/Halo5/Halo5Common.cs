@@ -144,7 +144,7 @@ namespace Reclaimer.Blam.Halo5
                     AppendBufferData(resourceIndex);
             }
 
-            // this isn't even used???
+            // this isn't even used??? // commented out because this cant work with BSPs, as they have no region data?
             //var sectionMap = (from r in args.Regions
             //                  from p in r.Permutations
             //                  let name = $"{r.Name}_{p.Name}"

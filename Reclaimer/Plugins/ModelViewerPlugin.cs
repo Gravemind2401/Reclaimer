@@ -1,12 +1,10 @@
 ﻿using Adjutant.Geometry;
 using Reclaimer.Annotations;
-using Reclaimer.Blam.Halo3;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Controls.Editors;
 using Reclaimer.Geometry;
 using Reclaimer.Utilities;
 using Reclaimer.Windows;
-using SharpDX.Direct2D1.Effects;
 using System.ComponentModel;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
@@ -345,6 +343,7 @@ namespace Reclaimer.Plugins
 
             var meshLookup = new List<int>();
 
+            // simple dictionary to prevent duplicate materials, unsure if this is needed
             var matLookup = new Dictionary<Material, int>();
             var matList = new List<Material>();
 
@@ -377,6 +376,7 @@ namespace Reclaimer.Plugins
                     var posTransform = geom.PositionBounds.CreateExpansionMatrix(); // ?? System.Numerics.Matrix4x4.Identity;
                     var texTransform = geom.TextureBounds.CreateExpansionMatrix(); // ?? System.Numerics.Matrix4x4.Identity;
 
+                    // NOTE: these only pull from the first of each channels (this is mainly a note for texcoords & blenddata)
 
                     var positions = geom.GetPositions(minIndex, vertCount)?.Select(v => System.Numerics.Vector3.Transform(v, posTransform)).ToList();
                     var texcoords = geom.GetTexCoords(minIndex, vertCount)?.Select(v => System.Numerics.Vector2.Transform(v, texTransform)).ToList();
@@ -410,11 +410,11 @@ namespace Reclaimer.Plugins
                         #region Vertex Weights
                         var weights = new HashSet<(int Index, float Weight)>(4);
 
-
+                        // apparently that value is legacy? so im assuming weights ar always stored per vertex
                         //if (geom.BoneIndex.HasValue)
                         //    weights.Add((geom.BoneIndex.Value, 1));
                         //else
-                        {
+                        //{
                             var ind = blendIndices[vIndex];
                             var wt = blendWeights?[vIndex] ?? System.Numerics.Vector4.One;
 
@@ -426,7 +426,7 @@ namespace Reclaimer.Plugins
                                 weights.Add(((int)ind.Z, wt.Z));
                             if (wt.W > 0)
                                 weights.Add(((int)ind.W, wt.W));
-                        }
+                        //}
 
                         foreach (var (index, weight) in weights)
                         {
@@ -457,6 +457,7 @@ namespace Reclaimer.Plugins
 
                     m.SetIndices(indices.ToArray(), 3);
 
+                    // if material exists then look to see if its already in the list and get the list index, otherwise add it
                     if (sub.Material != null)
                     {
                         if (!matLookup.TryGetValue(sub.Material, out int mat_index))
@@ -513,7 +514,7 @@ namespace Reclaimer.Plugins
                 var dif = mat?.TextureMappings.FirstOrDefault(s => s.Usage == (int)MaterialUsage.Diffuse);
                 if (dif != null)
                 {
-                    //var suffix = dif.Texture.SubmapCount > 1 ? "[0]" : string.Empty;
+                    //var suffix = dif.Texture.SubmapCount > 1 ? "[0]" : string.Empty; // i couldn't find the corresponding value for this
                     var suffix = "[0]";
                     var filePath = $"{dif.Texture.Name}{suffix}.{ModelViewerPlugin.Settings.MaterialExtension}";
 

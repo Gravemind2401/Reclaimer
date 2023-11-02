@@ -3,7 +3,6 @@ using Reclaimer.Geometry;
 using Reclaimer.IO;
 using System.IO;
 using System.IO.Compression;
-using System.Security.AccessControl;
 
 namespace Reclaimer.Blam.Common
 {
