@@ -6,7 +6,6 @@ using Reclaimer.IO;
 using Reclaimer.Utilities;
 using System.IO;
 using System.IO.Compression;
-using System.Security.AccessControl;
 
 namespace Reclaimer.Blam.Common
 {
