@@ -100,7 +100,7 @@
         <value stream="0" offset="0x18" type="Ux0AAC" usage="blendweight" usageIndex="0" />
         <!--<value stream="0" offset="0x1C" type="UInt8_N4" usage="unknown" usageIndex="0" />-->
         <!-- always 1 so far -->
-        <!--<value stream="0" offset="0x20" type="float" usage="unknown" usageIndex="0" />-->
+        <!--<value stream="0" offset="0x20" type="float" usage="dualquatweight" usageIndex="0" />-->
     </vertex>
     <!--<vertex type="0x22" name="wpf_screen" />-->
     <!--<vertex type="0x23" name="simplePassThrough" />-->
@@ -113,9 +113,8 @@
         <value stream="0" offset="0x10" type="NxAAA2" usage="tangent" usageIndex="0" />
         <value stream="0" offset="0x14" type="UInt8_4" usage="blendindices" usageIndex="0" />
         <value stream="0" offset="0x18" type="UInt8_4" usage="blendindices" usageIndex="1" />
-        <value stream="0" offset="0x1C" type="Ux0AAC" usage="blendweight" usageIndex="0" />
-        <value stream="0" offset="0x20" type="Ux0AAC" usage="blendweight" usageIndex="1" />
-        <!--<value stream="0" offset="0x24" type="UInt8_N4" usage="unknown" usageIndex="0" />-->
+        <value stream="0" offset="0x1C" type="UInt16_N4" usage="blendweight" usageIndex="0" />
+        <value stream="0" offset="0x24" type="UInt8_N4" usage="blendweight" usageIndex="1" />
         <!--<value stream="0" offset="0x28" type="UInt8_N4" usage="unknown" usageIndex="0" />-->
     </vertex>
     <!--<vertex type="0x27" name="number of standard vertex types" />-->

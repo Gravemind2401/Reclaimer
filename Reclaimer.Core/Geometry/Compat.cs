@@ -87,6 +87,7 @@ namespace Reclaimer.Geometry
                 var dupeDic = new Dictionary<int, long>();
 
                 var allMaterials = model.EnumerateMaterials().ToList();
+
                 var validRegions = model.Regions
                     .Select(r => new
                     {
@@ -342,7 +343,6 @@ namespace Reclaimer.Geometry
                                     for (var bi = 0; bi < 4; bi++)
                                         weights[bi] /= sum;
                                 }
-
 
                                 if (count == 0)
                                 {

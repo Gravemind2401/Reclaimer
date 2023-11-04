@@ -31,7 +31,6 @@ namespace Reclaimer.Blam.Halo5
     public class Halo5GeometryArgs
     {
         public Module Module { get; init; }
-        public ModuleItem ModuleItem { get; init; }
         public ResourcePackingPolicy ResourcePolicy { get; init; }
         public IReadOnlyList<RegionBlock> Regions { get; init; }
         public IReadOnlyList<MaterialBlock> Materials { get; init; }
@@ -102,6 +101,7 @@ namespace Reclaimer.Blam.Halo5
         public static List<Mesh> GetMeshes(Halo5GeometryArgs args, out List<Material> materials)
         {
             const int lod = 0;
+            var lodFlag = (LodFlags)(1 << lod);
 
             var totalVertexBufferCount = 1 + args.Sections.SelectMany(s => s.SectionLods).Max(lod => lod.VertexBufferIndex);
             var totalIndexBufferCount = 1 + args.Sections.SelectMany(s => s.SectionLods).Max(lod => lod.IndexBufferIndex);
@@ -117,11 +117,6 @@ namespace Reclaimer.Blam.Halo5
 
             var vb = new Dictionary<int, VertexBuffer>(totalVertexBufferCount);
             var ib = new Dictionary<int, IndexBuffer>(totalIndexBufferCount);
-
-            //var dataDir = @"Z:\data\vertex_buffers\pc";
-            //var files = Directory.GetFiles(dataDir)
-            //    .Select(Path.GetFileName)
-            //    .ToList();
 
             if (args.ResourcePolicy == ResourcePackingPolicy.SingleResource)
             {
@@ -144,20 +139,11 @@ namespace Reclaimer.Blam.Halo5
                     AppendBufferData(resourceIndex);
             }
 
-            // this isn't even used??? // commented out because this cant work with BSPs, as they have no region data?
-            //var sectionMap = (from r in args.Regions
-            //                  from p in r.Permutations
-            //                  let name = $"{r.Name}_{p.Name}"
-            //                  select new { p.SectionIndex, name })
-            //                 .ToLookup(x => args.Sections[x.SectionIndex], x => x.name);
-
             var vertexBuilder = new XmlVertexBuilder(Resources.Halo5VertexBuffer);
             foreach (var section in args.Sections)
             {
-                //if (section.VertexFormat != 0x21)
-                //    continue;
-
-                //var permName = sectionMap[section].FirstOrDefault();
+                if ((section.SectionLods[0].LodFlags & lodFlag) == 0)
+                    continue;
 
                 var lodData = section.SectionLods[Math.Min(lod, section.SectionLods.Count - 1)];
 
@@ -172,17 +158,6 @@ namespace Reclaimer.Blam.Halo5
                     if (!vb.ContainsKey(lodData.VertexBufferIndex))
                     {
                         var data = rawVertexBuffers[lodData.VertexBufferIndex];
-
-                        //var dir = Path.Combine(dataDir, args.ModuleItem.FileName);
-                        //Directory.CreateDirectory(dir);
-                        //var prefix = $"{permName}__f{section.VertexFormat:D2}[0x{section.VertexFormat:X2}]_vb{lodData.VertexBufferIndex:D2}";
-                        ////if (!files.Any(f => f.StartsWith(prefix)))
-                        //{
-                        //    var fileName = $"{prefix}.bin";
-                        //    File.WriteAllBytes($"{dir}\\{fileName}", data);
-                        //    files.Add(fileName);
-                        //}
-
                         var vertexBuffer = vertexBuilder.CreateVertexBuffer(section.VertexFormat, vInfo.VertexCount, data);
                         vertexBuffer.WeirdBlendWeights = true;
                         vb.Add(lodData.VertexBufferIndex, vertexBuffer);
