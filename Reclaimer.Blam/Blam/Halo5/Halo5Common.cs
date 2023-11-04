@@ -101,6 +101,7 @@ namespace Reclaimer.Blam.Halo5
         public static List<Mesh> GetMeshes(Halo5GeometryArgs args, out List<Material> materials)
         {
             const int lod = 0;
+            var lodFlag = (LodFlags)(1 << lod);
 
             var totalVertexBufferCount = 1 + args.Sections.SelectMany(s => s.SectionLods).Max(lod => lod.VertexBufferIndex);
             var totalIndexBufferCount = 1 + args.Sections.SelectMany(s => s.SectionLods).Max(lod => lod.IndexBufferIndex);
@@ -141,6 +142,9 @@ namespace Reclaimer.Blam.Halo5
             var vertexBuilder = new XmlVertexBuilder(Resources.Halo5VertexBuffer);
             foreach (var section in args.Sections)
             {
+                if ((section.SectionLods[0].LodFlags & lodFlag) == 0)
+                    continue;
+
                 var lodData = section.SectionLods[Math.Min(lod, section.SectionLods.Count - 1)];
 
                 var vInfo = vertexBufferInfo.ElementAtOrDefault(lodData.VertexBufferIndex);

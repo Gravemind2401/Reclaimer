@@ -339,6 +339,9 @@ namespace Reclaimer.Blam.Halo5
 
         [Offset(134)]
         public short IndexBufferIndex { get; set; }
+
+        [Offset(136)]
+        public LodFlags LodFlags { get; set; }
     }
 
     [FixedSize(24)]
@@ -405,5 +408,26 @@ namespace Reclaimer.Blam.Halo5
     {
         [Offset(0)]
         public BlockCollection<byte> Indices { get; set; }
+    }
+
+    public enum LodFlags : ushort
+    {
+        None = 0,
+        Lod0 = 1 << 0,
+        Lod1 = 1 << 1,
+        Lod2 = 1 << 2,
+        Lod3 = 1 << 3,
+        Lod4 = 1 << 4,
+        Lod5 = 1 << 5,
+        Lod6 = 1 << 6,
+        Lod7 = 1 << 7,
+        Lod8 = 1 << 8,
+        Lod9 = 1 << 9,
+        Lod10 = 1 << 10,
+        Lod11 = 1 << 11,
+        Lod12 = 1 << 12,
+        Lod13 = 1 << 13,
+        Lod14 = 1 << 14,
+        Lod15 = 1 << 15,
     }
 }
