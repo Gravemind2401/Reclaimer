@@ -28,12 +28,17 @@
     <Compile Include="reclaimer\autodesk\SceneBuilder.py" />
     <Compile Include="reclaimer\autodesk\Utils.py" />
     <Compile Include="reclaimer\autodesk\__init__.py" />
+    <Compile Include="reclaimer\blender\DialogOperator.py" />
     <Compile Include="reclaimer\blender\ImportOperator.py" />
     <Compile Include="reclaimer\blender\MenuOperator.py" />
+    <Compile Include="reclaimer\blender\QtWindowEventLoop.py" />
     <Compile Include="reclaimer\blender\SceneBuilder.py" />
     <Compile Include="reclaimer\blender\Utils.py" />
     <Compile Include="reclaimer\blender\__init__.py" />
     <Compile Include="reclaimer\import_rmf.py" />
+    <Compile Include="reclaimer\ui\RmfDialogManager.py" />
+    <Compile Include="reclaimer\ui\RmfWidget.py" />
+    <Compile Include="reclaimer\ui\__init__.py" />
     <Compile Include="reclaimer\__init__.py" />
     <Compile Include="reclaimer\src\FileReader.py" />
     <Compile Include="reclaimer\src\vectors\IVector.py" />
@@ -67,6 +72,10 @@
     <Folder Include="reclaimer\src\vectors\" />
     <Folder Include="reclaimer\tests\" />
     <Folder Include="reclaimer\src\" />
+    <Folder Include="reclaimer\ui\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="reclaimer\ui\dialog.ui" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

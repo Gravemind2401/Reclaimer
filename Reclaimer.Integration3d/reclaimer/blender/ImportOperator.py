@@ -10,7 +10,8 @@ from . import SceneBuilder
 
 class RmfImportOperator(Operator, bpy_extras.io_utils.ImportHelper):
     '''Import an RMF file'''
-    bl_idname: str = 'import_scene.rmf'
+
+    bl_idname: str = 'rmf.import_operator'
     bl_label: str = 'Import RMF'
     bl_options: Set[str] = {'PRESET', 'UNDO'}
 
@@ -120,8 +121,7 @@ class RmfImportOperator(Operator, bpy_extras.io_utils.ImportHelper):
         #options.MODE_MESHES = self.mesh_mode
 
         #main(context, self.filepath, options)
-        scene = SceneReader.open_scene(self.filepath)
-        SceneBuilder.create_scene(scene)
+        bpy.ops.rmf.dialog_operator('EXEC_DEFAULT', filepath=self.filepath)
 
         return {'FINISHED'}
 
