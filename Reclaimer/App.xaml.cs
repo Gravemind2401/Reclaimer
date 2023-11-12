@@ -1,6 +1,10 @@
-﻿using Reclaimer.Plugins;
+﻿using ControlzEx.Standard;
+using Reclaimer.Blam.Common;
+using Reclaimer.Plugins;
+using Reclaimer.Windows;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Windows;
 
 namespace Reclaimer
@@ -95,10 +99,115 @@ namespace Reclaimer
 
             SetTheme(Settings.Theme);
 
-            MainWindow = new Windows.MainWindow();
-            MainWindow.Show();
+            // Get the command-line arguments
+            var commandLineArgs = Environment.GetCommandLineArgs();
 
-            ProcessCommandLineArguments(Environment.GetCommandLineArgs());
+            // If there are 2 or fewer command-line arguments, create and show the main window
+            if (commandLineArgs.Length <= 2)
+            {
+                MainWindow = new Windows.MainWindow();
+                MainWindow.Show();
+
+                ProcessCommandLineArguments(Environment.GetCommandLineArgs());
+            }
+            else
+            {
+                // Access the 2nd command-line argument using commandLineArgs[1]
+                string secondArg = commandLineArgs[1].ToLower(); // Using ToLower for case-insensitive comparison
+
+                //load plugins for settings etc
+                Substrate.LoadPlugins();
+
+                if (secondArg == "report")
+                {
+                    string mapFile = commandLineArgs[2];
+                    string outputDir = commandLineArgs[3];
+                    string tagType = commandLineArgs[4].ToLower();  // Convert to lowercase for case-insensitive comparison
+
+                    var map = CacheFactory.ReadCacheFile(mapFile);
+                    var tags = map.TagIndex.ToList();
+
+                    StringBuilder sb = new StringBuilder();
+
+                    foreach (var tag in tags)
+                    {
+                        string tagString = tag.ToString();
+
+                        if (tagType == "render_model" && tagString.StartsWith("[mode]"))
+                        {
+                            sb.AppendLine(tagString.Substring(7) + ".render_model");
+                        }
+                        else if (tagType == "scenario_structure_bsp" && tagString.StartsWith("[sbsp]"))
+                        {
+                            sb.AppendLine(tagString.Substring(7) + ".scenario_structure_bsp");
+                        }
+                    }
+
+                    // Generate the output file path
+                    string outputFile = Path.Combine(outputDir, "tags_report.txt");
+
+                    // Write the string data to the file, overwriting if it already exists
+                    File.WriteAllText(outputFile, sb.ToString());
+                }
+                else if (secondArg == "export")
+                {
+                    // Handle the 'export' case here
+                    string mapFile = commandLineArgs[2];  // Assuming 3rd arg is .map file
+                    string tagFile = commandLineArgs[3]; //Assuming 4th arg is Tag File
+                    string outputDir = commandLineArgs[4];  // Assuming 5th arg is output dir
+                    string outputFormat = commandLineArgs[5];  // Assuming 6th arg is output format
+
+                    var map = CacheFactory.ReadCacheFile(mapFile);
+
+                    // maybe make scale be an argument too
+
+
+                    // Remove the period and everything after it from tagFile
+                    string tagType = Path.GetExtension(tagFile).TrimStart('.').ToLower();
+
+                    string outputFilename = string.Empty;
+
+                    outputFilename = Path.GetFileNameWithoutExtension(tagFile);
+
+                    //remove the file extension from the tag path
+                    tagFile = Path.Combine(Path.GetDirectoryName(tagFile), Path.GetFileNameWithoutExtension(tagFile));
+
+
+                    string classCode = string.Empty;
+
+                    // Set classCode based on tagType
+                    if (tagType == "render_model")
+                    {
+                        classCode = "mode";
+                    }
+                    else if (tagType == "scenario_structure_bsp")
+                    {
+                        classCode = "sbsp";
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"Unsupported tag type: {tagType}");
+                    }
+
+                    var tag = map.TagIndex.First(t => t.TagName == tagFile && t.ClassCode == classCode);
+
+                    if (!ContentFactory.TryGetGeometryContent(tag, out var model))
+                    {
+                        throw new NotSupportedException();
+                    }
+
+                    var geometry = model.ReadGeometry(0);
+
+                    ModelViewerPlugin.WriteModelFile(geometry, outputDir + "\\" + outputFilename + "." + outputFormat, outputFormat);
+                }
+                else
+                {
+                    // Handle invalid 2nd argument here
+                    Console.WriteLine("Invalid 2nd command-line argument. Only 'report' or 'export' are allowed.");
+                }
+
+            }
+
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -111,6 +220,7 @@ namespace Reclaimer
         {
             if (Dispatcher == null || arguments == null || arguments.Length == 0)
                 return;
+
 
             Dispatcher.Invoke(() =>
             {
@@ -128,7 +238,11 @@ namespace Reclaimer
                         Substrate.LogOutput($"No handler found for file: {arg}");
                 }
 
-                MainWindow.Activate();
+                // Check if the number of arguments is 2 or fewer, then activate the main window
+                if (arguments.Length <= 2 && MainWindow != null)
+                {
+                    MainWindow.Activate();
+                }
             });
         }
 
