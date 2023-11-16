@@ -74,6 +74,9 @@ namespace Reclaimer.Geometry
                 var (index, count) = perm.MeshRange;
                 for (var i = 0; i < count; i++)
                 {
+                    if (model.Meshes[index + i] == null)
+                        continue;
+
                     var name = perm.Name;
                     if (count > 1)
                         name += i.ToString("D2");
