@@ -2,7 +2,7 @@ bl_info = {
     "name": "AMF format",
     "description": "Import AMF files created by Reclaimer.",
     "author": "Gravemind2401",
-    "version": (2, 0, 6),
+    "version": (2, 0, 7),
     "blender": (2, 80, 0),
     "location": "File > Import > AMF",
     "category": "Import-Export",
@@ -600,7 +600,8 @@ def main(context, import_filename, options):
                 texture.image = bpy.data.images.load(str(texture_path))
                 if not mat.is_transparent:
                     texture.image.alpha_mode = 'CHANNEL_PACKED'
-                    material.node_tree.links.new(bsdf.inputs['Specular'], texture.outputs['Alpha'])
+                    spec_input = bsdf.inputs['Specular'] if bpy.app.version[0] < 4 else bsdf.inputs['Specular IOR Level']
+                    material.node_tree.links.new(spec_input, texture.outputs['Alpha'])
 
             material.node_tree.links.new(bsdf.inputs['Base Color'], texture.outputs['Color'])
             bsdf.location = [0, 300]
