@@ -22,10 +22,9 @@ class DataBlock:
     def __init__(self, reader: FileReader):
         self.code = reader.read_chars(4)
         self.is_list = self.code == 'list'
-        if self.is_list:
-            self.code = reader.read_chars(4) + '[]'
         self.end_address = reader.read_int32()
         if self.is_list:
+            self.code = reader.read_chars(4) + '[]'
             self.count = reader.read_int32()
         else:
             self.count = 0
