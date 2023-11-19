@@ -17,6 +17,7 @@ namespace Reclaimer.Geometry.Utilities
         private readonly LazyList<VertexBuffer> vertexBufferPool = new(VertexBuffer.EqualityComparer);
         private readonly LazyList<IIndexBuffer> indexBufferPool = new(IIndexBuffer.EqualityComparer);
         private readonly LazyList<Mesh> meshPool = new();
+
         private Model currentModel;
 
         public SceneWriter(EndianWriter writer)
@@ -62,6 +63,7 @@ namespace Reclaimer.Geometry.Utilities
                 using (new ListBlockMarker(writer, SceneCodes.Marker, 0))
                 { }
 
+                //note that the order here is important because writing each pool will trigger the lazy list population for subsequent pools
                 WriteList(modelPool, Write, SceneCodes.Model);
                 WriteList(vertexBufferPool, Write, SceneCodes.VertexBuffer);
                 WriteList(indexBufferPool, Write, SceneCodes.IndexBuffer);

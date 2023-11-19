@@ -4,6 +4,9 @@ using System.Runtime.CompilerServices;
 
 namespace Reclaimer.Geometry.Utilities
 {
+    /// <summary>
+    /// A four-character-code used as the header of a data block to indicate what kind of data the block contains.
+    /// </summary>
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     internal class BlockCode
     {
