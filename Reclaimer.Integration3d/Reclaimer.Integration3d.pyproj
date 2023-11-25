@@ -36,22 +36,18 @@
     <Compile Include="reclaimer\blender\Utils.py" />
     <Compile Include="reclaimer\blender\__init__.py" />
     <Compile Include="reclaimer\import_rmf.py" />
+    <Compile Include="reclaimer\src\Vectors.py" />
     <Compile Include="reclaimer\ui\RmfDialogManager.py" />
     <Compile Include="reclaimer\ui\RmfWidget.py" />
     <Compile Include="reclaimer\ui\__init__.py" />
     <Compile Include="reclaimer\__init__.py" />
     <Compile Include="reclaimer\src\FileReader.py" />
-    <Compile Include="reclaimer\src\vectors\IVector.py" />
-    <Compile Include="reclaimer\src\vectors\BitConfig.py" />
-    <Compile Include="reclaimer\src\vectors\UByte4.py" />
-    <Compile Include="reclaimer\src\vectors\NormalisedVector.py" />
     <Compile Include="reclaimer\src\VertexBuffer.py" />
     <Compile Include="reclaimer\src\IndexBuffer.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="reclaimer\src\Material.py" />
     <Compile Include="reclaimer\src\Model.py" />
-    <Compile Include="reclaimer\src\vectors\PackedVector.py" />
     <Compile Include="reclaimer\src\Scene.py" />
     <Compile Include="reclaimer\src\DataBlock.py" />
     <Compile Include="reclaimer\src\SceneReader.py">
@@ -69,7 +65,6 @@
     <Folder Include="reclaimer\" />
     <Folder Include="reclaimer\autodesk\" />
     <Folder Include="reclaimer\blender\" />
-    <Folder Include="reclaimer\src\vectors\" />
     <Folder Include="reclaimer\tests\" />
     <Folder Include="reclaimer\src\" />
     <Folder Include="reclaimer\ui\" />

@@ -1,10 +1,9 @@
 import unittest
 from typing import Tuple
-from ..src.vectors.BitConfig import BitConfig
-from ..src.vectors.PackedVector import PackedVector
+from ..src.Vectors import BitConfig, PackedVector, DescriptorFlags
 
 def create_set(signed: bool, *precision: int) -> Tuple[BitConfig]:
-    FLAGS = (1 | 2) if signed else 1
+    FLAGS = (DescriptorFlags.NORMALIZED | DescriptorFlags.SIGN_EXTENDED) if signed else DescriptorFlags.NORMALIZED
     axes = []
 
     offset = 0

@@ -4,7 +4,7 @@ from typing import List, Union
 from .Types import *
 from .Model import *
 from .Material import *
-from .vectors.VectorDescriptor import VectorDescriptor
+from .Vectors import VectorDescriptor
 from .VertexBuffer import *
 from .IndexBuffer import *
 

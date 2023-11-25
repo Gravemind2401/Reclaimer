@@ -1,7 +1,7 @@
-from typing import List, Iterator, Callable
+from typing import List, Iterable, Callable
 from collections.abc import Sequence
 
-from .vectors.VectorDescriptor import VectorDescriptor
+from .Vectors import VectorDescriptor
 
 __all__ = [
     'VertexBuffer',
@@ -21,7 +21,7 @@ class VertexBuffer:
 class VectorBuffer(Sequence):
     _binary: bytes
     _count: int
-    _decode: Callable[[bytes, int], Iterator[float]]
+    _decode: Callable[[bytes, int], Iterable[float]]
     _descriptor: VectorDescriptor
 
     def __init__(self, descriptor: VectorDescriptor, count: int, data: bytes):
@@ -29,7 +29,7 @@ class VectorBuffer(Sequence):
         self._count = count
         self._binary = data
 
-    def __getitem__(self, i: int) -> Iterator[float]:
+    def __getitem__(self, i: int) -> Iterable[float]:
         if i < 0 or i >= self._count:
             raise IndexError('Index out of range')
         return self._descriptor.decode(self._binary, i)
