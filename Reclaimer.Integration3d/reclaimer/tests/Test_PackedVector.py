@@ -1,5 +1,25 @@
 import unittest
-from ..src.vectors.PackedVector import PackedVector, DecN4, UDecN4, UHenDN3
+from typing import Tuple
+from ..src.vectors.BitConfig import BitConfig
+from ..src.vectors.PackedVector import PackedVector
+
+def create_set(signed: bool, *precision: int) -> Tuple[BitConfig]:
+    FLAGS = (1 | 2) if signed else 1
+    axes = []
+
+    offset = 0
+    for length in precision:
+        axes.append(BitConfig(offset, length, FLAGS))
+        offset += length
+
+    return tuple(axes)
+
+DecN4 = create_set(True, 10, 10, 10, 2)
+DHenN3 = create_set(True, 10, 11, 11)
+HenDN3 = create_set(True, 11, 11, 10)
+UDecN4 = create_set(False, 10, 10, 10, 2)
+UDHenN3 = create_set(False, 10, 11, 11)
+UHenDN3 = create_set(False, 11, 11, 10)
 
 class Test_PackedVector(unittest.TestCase):
     def test_DecN4(self):

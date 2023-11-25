@@ -6,6 +6,7 @@ from .DataBlock import DataBlock
 from .Scene import *
 from .Model import *
 from .Material import *
+from .vectors.VectorDescriptor import VectorDescriptor
 from .VertexBuffer import *
 from .IndexBuffer import *
 
@@ -47,10 +48,13 @@ def _read_scene(reader: FileReader, block: DataBlock) -> Scene:
     scene.unit_scale = reader.read_float()
     scene.world_matrix = reader.read_matrix3x3()
     scene.name = reader.read_string()
+
     props = _read_property_blocks(reader, block)
     scene.root_node = _decode_block(reader, props['NODE'], _read_node)
     scene.model_pool = _decode_list(reader, props['MODL[]'], _read_model)
-    scene.vertex_buffer_pool = _decode_list(reader, props['VBUF[]'], _read_vertex_buffer)
+
+    scene.vector_descriptor_pool = _decode_list(reader, props['VECD[]'], _read_vector_descriptor)
+    scene.vertex_buffer_pool = _decode_list(reader, props['VBUF[]'], _read_vertex_buffer(scene))
     scene.index_buffer_pool = _decode_list(reader, props['IBUF[]'], _read_index_buffer)
     scene.material_pool = _decode_list(reader, props['MATL[]'], _read_material)
     scene.texture_pool = _decode_list(reader, props['BITM[]'], _read_texture)
@@ -189,35 +193,49 @@ def _read_index_buffer(reader: FileReader, block: DataBlock) -> IndexBuffer:
     data = reader.read_bytes(width * count)
     return IndexBuffer(layout, width, data)
 
-def _read_vertex_buffer(reader: FileReader, block: DataBlock) -> VertexBuffer:
-    buf = VertexBuffer()
-    buf.count = reader.read_int32()
-    channel_blocks = _read_remaining_blocks(reader, block)
-    channel_buffers = {
-        'POSN': [],
-        'TEXC': [],
-        'NORM': [],
-        'TANG': [],
-        'BNRM': [],
-        'BLID': [],
-        'BLWT': [],
-        'COLR': []
-    }
+def _read_vector_descriptor(reader: FileReader, block: DataBlock) -> VectorDescriptor:
+    datatype = reader.read_byte()
+    size = reader.read_byte()
+    count = reader.read_int32()
+    dimensions = []
+    for _ in range(count):
+        dimensions.append((reader.read_byte(), reader.read_byte()))
+    return VectorDescriptor(datatype, size, dimensions)
 
-    for b in channel_blocks:
-        reader.position = b.start_address
-        fmt = reader.read_chars(4)
-        data = reader.read_bytes(b.end_address - reader.position)
-        channel = VectorBuffer(fmt, buf.count, data)
-        channel_buffers[b.code].append(channel)
 
-    buf.position_channels = channel_buffers['POSN']
-    buf.texcoord_channels = channel_buffers['TEXC']
-    buf.normal_channels = channel_buffers['NORM']
-    buf.blendindex_channels = channel_buffers['BLID']
-    buf.blendweight_channels = channel_buffers['BLWT']
+def _read_vertex_buffer(scene: Scene) -> Callable[[FileReader, DataBlock], VertexBuffer]:
+    def _read_vertex_buffer(reader: FileReader, block: DataBlock) -> VertexBuffer:
+        buf = VertexBuffer()
+        buf.count = reader.read_int32()
+        channel_blocks = _read_remaining_blocks(reader, block)
+        channel_buffers = {
+            'POSN': [],
+            'TEXC': [],
+            'NORM': [],
+            'TANG': [],
+            'BNRM': [],
+            'BLID': [],
+            'BLWT': [],
+            'COLR': []
+        }
 
-    return buf
+        for b in channel_blocks:
+            reader.position = b.start_address
+            descriptor_index = reader.read_int32()
+            descriptor = scene.vector_descriptor_pool[descriptor_index]
+            data = reader.read_bytes(b.end_address - reader.position)
+            channel = VectorBuffer(descriptor, buf.count, data)
+            channel_buffers[b.code].append(channel)
+
+        buf.position_channels = channel_buffers['POSN']
+        buf.texcoord_channels = channel_buffers['TEXC']
+        buf.normal_channels = channel_buffers['NORM']
+        buf.blendindex_channels = channel_buffers['BLID']
+        buf.blendweight_channels = channel_buffers['BLWT']
+
+        return buf
+
+    return _read_vertex_buffer
 
 
 class SceneReader:

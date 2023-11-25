@@ -52,6 +52,7 @@ namespace Reclaimer.Geometry.Utilities
         public static readonly BlockCode Mesh = new BlockCode("MESH");
         public static readonly BlockCode MeshSegment = new BlockCode("MSEG");
         
+        public static readonly BlockCode VectorDescriptor = new BlockCode("VECD");
         public static readonly BlockCode VertexBuffer = new BlockCode("VBUF");
         public static readonly BlockCode IndexBuffer = new BlockCode("IBUF");
     }
@@ -66,57 +67,5 @@ namespace Reclaimer.Geometry.Utilities
         public static readonly BlockCode BlendIndex = new BlockCode("BLID");
         public static readonly BlockCode BlendWeight = new BlockCode("BLWT");
         public static readonly BlockCode Color = new BlockCode("COLR");
-    }
-
-    internal static class VectorTypeCodes
-    {
-        public static readonly BlockCode Float2 = new BlockCode("VEC2");
-        public static readonly BlockCode Float3 = new BlockCode("VEC3");
-        public static readonly BlockCode Float4 = new BlockCode("VEC4");
-
-        public static readonly BlockCode DecN4 = new BlockCode("SDC4");
-        public static readonly BlockCode DHenN3 = new BlockCode("SDH3");
-        public static readonly BlockCode HenDN3 = new BlockCode("SHD3");
-        public static readonly BlockCode UDecN4 = new BlockCode("UDC4");
-        public static readonly BlockCode UDHenN3 = new BlockCode("UDH3");
-        public static readonly BlockCode UHenDN3 = new BlockCode("UHD3");
-
-        public static readonly BlockCode Int16N2 = new BlockCode("S162");
-        public static readonly BlockCode Int16N4 = new BlockCode("S164");
-        public static readonly BlockCode UInt16N2 = new BlockCode("U162");
-        public static readonly BlockCode UInt16N4 = new BlockCode("U164");
-
-        public static readonly BlockCode ByteN2 = new BlockCode("SBN2");
-        public static readonly BlockCode ByteN4 = new BlockCode("SBN4");
-        public static readonly BlockCode UByteN2 = new BlockCode("UBN2");
-        public static readonly BlockCode UByteN4 = new BlockCode("UBN4");
-
-        public static readonly BlockCode UByte4 = new BlockCode("BYT4");
-
-        public static BlockCode FromType(Type vectorType)
-        {
-            return vectorType switch
-            {
-                _ when vectorType == typeof(RealVector2) => Float2,
-                _ when vectorType == typeof(RealVector3) => Float3,
-                _ when vectorType == typeof(RealVector4) => Float4,
-                _ when vectorType == typeof(DecN4) => DecN4,
-                _ when vectorType == typeof(DHenN3) => DHenN3,
-                _ when vectorType == typeof(HenDN3) => HenDN3,
-                _ when vectorType == typeof(UDecN4) => UDecN4,
-                _ when vectorType == typeof(UDHenN3) => UDHenN3,
-                _ when vectorType == typeof(UHenDN3) => UHenDN3,
-                _ when vectorType == typeof(Int16N2) => Int16N2,
-                _ when vectorType == typeof(Int16N4) => Int16N4,
-                _ when vectorType == typeof(UInt16N2) => UInt16N2,
-                _ when vectorType == typeof(UInt16N4) => UInt16N4,
-                _ when vectorType == typeof(ByteN2) => ByteN2,
-                _ when vectorType == typeof(ByteN4) => ByteN4,
-                _ when vectorType == typeof(UByteN2) => UByteN2,
-                _ when vectorType == typeof(UByteN4) => UByteN4,
-                _ when vectorType == typeof(UByte4) => UByte4,
-                _ => null
-            };
-        }
     }
 }

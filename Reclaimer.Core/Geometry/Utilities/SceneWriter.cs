@@ -1,4 +1,5 @@
-﻿using Reclaimer.IO;
+﻿using Reclaimer.Geometry.Vectors;
+using Reclaimer.IO;
 
 namespace Reclaimer.Geometry.Utilities
 {
@@ -16,6 +17,7 @@ namespace Reclaimer.Geometry.Utilities
 
         private readonly LazyList<VertexBuffer> vertexBufferPool = new(VertexBuffer.EqualityComparer);
         private readonly LazyList<IIndexBuffer> indexBufferPool = new(IIndexBuffer.EqualityComparer);
+        private readonly LazyList<VectorDescriptor> vectorDescriptorPool = new();
         private readonly LazyList<Mesh> meshPool = new();
 
         private Model currentModel;
@@ -44,6 +46,10 @@ namespace Reclaimer.Geometry.Utilities
             materialPool.Clear();
             texturePool.Clear();
             modelPool.Clear();
+            vertexBufferPool.Clear();
+            indexBufferPool.Clear();
+            vectorDescriptorPool.Clear();
+            meshPool.Clear();
 
             using (BlockMarker(SceneCodes.FileHeader))
             {
@@ -67,6 +73,7 @@ namespace Reclaimer.Geometry.Utilities
                 WriteList(modelPool, Write, SceneCodes.Model);
                 WriteList(vertexBufferPool, Write, SceneCodes.VertexBuffer);
                 WriteList(indexBufferPool, Write, SceneCodes.IndexBuffer);
+                WriteList(vectorDescriptorPool, Write, SceneCodes.VectorDescriptor);
                 WriteList(materialPool, Write, SceneCodes.Material);
                 WriteList(texturePool, Write, SceneCodes.Texture);
             }
@@ -288,12 +295,13 @@ namespace Reclaimer.Geometry.Utilities
 
             void WriteBuffer(IReadOnlyList<IVector> vectorBuffer)
             {
-                var vb = vectorBuffer as IDataBuffer;
-                var typeCode = VectorTypeCodes.FromType(vb?.DataType);
-                if (typeCode == null)
+                var dataBuffer = vectorBuffer as IDataBuffer;
+                var descriptor = VectorDescriptor.FromType(dataBuffer?.DataType);
+                if (descriptor == null)
                 {
                     //no choice but to assume float4
-                    writer.Write(VectorTypeCodes.Float4.Value);
+                    descriptor = VectorDescriptor.FromType(typeof(RealVector4));
+                    writer.Write(vectorDescriptorPool.IndexOf(descriptor));
                     foreach (var vec in vectorBuffer)
                     {
                         writer.Write(vec.X);
@@ -304,9 +312,9 @@ namespace Reclaimer.Geometry.Utilities
                 }
                 else
                 {
-                    writer.Write(typeCode.Value);
-                    for (var i = 0; i < vb.Count; i++)
-                        writer.Write(vb.GetBytes(i));
+                    writer.Write(vectorDescriptorPool.IndexOf(descriptor));
+                    for (var i = 0; i < dataBuffer.Count; i++)
+                        writer.Write(dataBuffer.GetBytes(i));
                 }
             }
         }
@@ -330,6 +338,21 @@ namespace Reclaimer.Geometry.Utilities
 
                 foreach (var index in indexBuffer)
                     writeFunc(index);
+            }
+        }
+
+        private void Write(VectorDescriptor descriptor)
+        {
+            using (BlockMarker(SceneCodes.VectorDescriptor))
+            {
+                writer.Write((byte)descriptor.DataType);
+                writer.Write(descriptor.Size);
+                writer.Write(descriptor.Configuration.Length);
+                foreach (var dimens in descriptor.Configuration)
+                {
+                    writer.Write((byte)dimens.Flags);
+                    writer.Write(dimens.BitCount);
+                }
             }
         }
 
