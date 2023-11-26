@@ -52,15 +52,13 @@ namespace Reclaimer.Blam.Halo1
 
             var model = new Model { Name = Item.FileName };
 
-            model.Bones.AddRange(Nodes.Select(n =>
+            model.Bones.AddRange(Nodes.Select(n => new Bone
             {
-                var transform = Matrix4x4.CreateFromQuaternion(n.Rotation.Conjugate.ToQuaternion()) * Matrix4x4.CreateTranslation(n.Position.ToVector3());
-                return new Bone
-                {
-                    Name = n.Name,
-                    Transform = transform,
-                    ParentIndex = n.ParentIndex
-                };
+                Name = n.Name,
+                Transform = Utils.CreateMatrix(n.Position, n.Rotation.Conjugate),
+                ParentIndex = n.ParentIndex,
+                Position = (Vector3)n.Position,
+                Rotation = new Quaternion(n.Rotation.X, n.Rotation.Y, n.Rotation.Z, n.Rotation.W)
             }));
 
             model.Markers.AddRange(MarkerGroups.Select(g =>

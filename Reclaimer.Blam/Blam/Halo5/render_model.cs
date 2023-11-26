@@ -66,8 +66,10 @@ namespace Reclaimer.Blam.Halo5
             model.Bones.AddRange(Nodes.Select(n => new Bone
             {
                 Name = n.Name,
-                Transform = n.Transform,
-                ParentIndex = n.ParentIndex
+                Transform = Utils.CreateMatrix(n.Position, n.Rotation),
+                ParentIndex = n.ParentIndex,
+                Position = (Vector3)n.Position,
+                Rotation = new Quaternion(n.Rotation.X, n.Rotation.Y, n.Rotation.Z, n.Rotation.W)
             }));
 
             model.Markers.AddRange(MarkerGroups.Select(g =>

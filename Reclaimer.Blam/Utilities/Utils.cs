@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using Reclaimer.Geometry.Vectors;
+using System.Globalization;
+using System.Numerics;
 
 namespace Reclaimer.Blam.Utilities
 {
@@ -46,6 +48,13 @@ namespace Reclaimer.Blam.Utilities
                 foreach (var attr in fi.GetCustomAttributes(typeof(TAttribute), false).OfType<TAttribute>())
                     yield return attr;
             }
+        }
+
+        public static Matrix4x4 CreateMatrix(RealVector3 position, RealVector4 rotation)
+        {
+            var position2 = (Vector3)position;
+            var rotation2 = new Quaternion(rotation.X, rotation.Y, rotation.Z, rotation.W);
+            return Matrix4x4.CreateFromQuaternion(rotation2) * Matrix4x4.CreateTranslation(position2);
         }
     }
 }
