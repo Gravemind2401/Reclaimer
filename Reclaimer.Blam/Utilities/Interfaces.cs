@@ -69,14 +69,13 @@ namespace Reclaimer.Blam.Utilities
         DdsImage ToDds(int index);
     }
 
+    [Obsolete("TODO: migrate model bitmap exports to IContentProvider<Scene>")]
     public interface IRenderGeometry : IContentProvider<Scene>
     {
         int LodCount { get; }
         IGeometryModel ReadGeometry(int lod);
         IEnumerable<IBitmap> GetAllBitmaps();
         IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes);
-
-        Scene IContentProvider<Scene>.GetContent() => ReadGeometry(0).ConvertToScene();
     }
 
     public interface ISoundContainer
