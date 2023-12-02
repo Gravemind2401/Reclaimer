@@ -24,7 +24,10 @@ namespace Reclaimer.Blam.Halo5
         {
             var isChunk = false;
 
-            var resourceIndex = Module.Resources[Item.ResourceIndex];
+            if (index >= Item.ResourceCount)
+                System.Diagnostics.Debugger.Break();
+
+            var resourceIndex = Module.Resources[Item.ResourceIndex] + index;
             var resource = Module.Items[resourceIndex]; //this will be the [bitmap resource handle*] tag
             if (resource.ResourceCount > 0)
             {
@@ -34,8 +37,6 @@ namespace Reclaimer.Blam.Halo5
             }
 
             var submap = Bitmaps[index];
-
-            //todo: calculate expected frame size, use it to get data offset for multi-bitmaps
 
             byte[] data;
             using (var reader = resource.CreateReader())
@@ -49,7 +50,6 @@ namespace Reclaimer.Blam.Halo5
                 }
 
                 data = reader.ReadBytes((int)resource.TotalUncompressedSize);
-
             }
 
             //todo: cubemap check
