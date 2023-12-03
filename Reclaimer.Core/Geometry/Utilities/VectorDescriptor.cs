@@ -51,6 +51,9 @@ namespace Reclaimer.Geometry.Utilities
 
         public static VectorDescriptor FromType(Type vectorType)
         {
+            if (vectorType == null)
+                return null;
+
             if (descriptorCache.TryGetValue(vectorType, out var descriptor))
                 return descriptor;
 

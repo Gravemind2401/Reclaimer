@@ -195,15 +195,18 @@ namespace Reclaimer.Geometry.Utilities
 
         private void Write(ModelPermutation permutation)
         {
-            var meshes = permutation.MeshIndices.Select(i => currentModel.Meshes.ElementAtOrDefault(i));
+            var meshes = permutation.MeshIndices
+                .Select(i => currentModel.Meshes.ElementAtOrDefault(i))
+                .Where(m => m != null)
+                .ToList();
 
-            var meshRange = permutation.MeshRange;
-            if (!meshes.Any() || meshes.Any(m => m == null))
-                meshRange = (0, 0); //normalize to 0,0 in case of negatives or bad indices
-            else
+            //default to 0,0 in case of negatives or bad indices
+            var meshRange = (Index: 0, Count: 0);
+
+            if (meshes.Any())
             {
                 meshPool.AddRange(meshes);
-                meshRange.Index = meshPool.IndexOf(meshes.First());
+                meshRange = (meshPool.IndexOf(meshes[0]), meshes.Count);
             }
 
             using (BlockMarker(SceneCodes.Permutation))
