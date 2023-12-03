@@ -289,6 +289,30 @@ namespace Reclaimer.Geometry.Utilities
 
             void WriteChannels(IList<IReadOnlyList<IVector>> vertexChannel, BlockCode code)
             {
+                if (code == VertexChannelCodes.BlendWeight && vertexBuffer.HasImpliedBlendWeights)
+                {
+                    foreach (var vectorBuffer in vertexChannel)
+                    {
+                        var buffer = new List<IVector>(vectorBuffer.Count);
+                        foreach (var vec in vectorBuffer)
+                        {
+                            var replacement = new RealVector4(vec.X, vec.Y, vec.Z, 1);
+                            var len = vec.X + vec.Y + vec.Z + 1;
+                            replacement.X /= len;
+                            replacement.Y /= len;
+                            replacement.Z /= len;
+                            replacement.W /= len;
+
+                            buffer.Add(replacement);
+                        }
+
+                        using (BlockMarker(code))
+                            WriteBuffer(buffer);
+                    }
+
+                    return;
+                }
+
                 foreach (var vectorBuffer in vertexChannel)
                 {
                     using (BlockMarker(code))

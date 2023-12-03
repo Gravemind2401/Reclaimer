@@ -293,12 +293,10 @@ class ModelBuilder:
             group = mesh_obj.vertex_groups.new(name=bone.name)
             group.add(range(vertex_count), 1.0, 'ADD') # set every vertex to 1.0 in one go
         else:
-            blend_indicies = vertex_buffer.blendindex_channels[0]
-            blend_weights = vertex_buffer.blendweight_channels[0] # TODO: rigid_boned doesnt have weights
             # create a vertex group for each bone so the bone indices are 1:1 with the vertex groups
             for bone in model.bones:
                 mesh_obj.vertex_groups.new(name=bone.name)
-            for vi in range(vertex_count):
-                for bi, bw in zip(blend_indicies[vi], blend_weights[vi]):
+            for vi, blend_indicies, blend_weights in vertex_buffer.enumerate_blendpairs():
+                for bi, bw in zip(blend_indicies, blend_weights):
                     if bw > 0:
                         mesh_obj.vertex_groups[bi].add([vi], bw, 'ADD')

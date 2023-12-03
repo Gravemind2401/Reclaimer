@@ -279,8 +279,6 @@ class ModelBuilder:
             for vi in range(vertex_count): # set every vertex to 1.0
                 rt.SkinOps.replaceVertexWeights(modifier, vi + 1, bi, bw)
         else:
-            blend_indicies = vertex_buffer.blendindex_channels[0]
-            blend_weights = vertex_buffer.blendweight_channels[0] # TODO: rigid_boned doesnt have weights
             # add every bone so the bone indices are 1:1 with the skin modifier
             for b in self._maxbones:
                 rt.SkinOps.addBone(modifier, b, 0)
@@ -288,12 +286,12 @@ class ModelBuilder:
             # otherwise trying to set weights gives the error "Runtime error: Exceeded the vertex countSkin:Skin"
             rt.redrawViews()
             bi, bw = [], []
-            for vi in range(vertex_count):
+            for vi, blend_indicies, blend_weights in vertex_buffer.enumerate_blendpairs():
                 bi.clear()
                 bw.clear()
-                for i, w in enumerate(blend_weights[vi]):
+                for i, w in enumerate(blend_weights):
                     if w > 0:
-                        bi.append(self._maxbones[blend_indicies[vi][i]])
+                        bi.append(self._maxbones[blend_indicies[i]])
                         bw.append(w)
                 rt.SkinOps.replaceVertexWeights(modifier, vi + 1, bi, bw)
 
