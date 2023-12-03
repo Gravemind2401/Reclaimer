@@ -62,7 +62,7 @@ namespace Reclaimer.Models
 
         public TreeItemModel()
         {
-            ToggleCommand = new DelegateCommand(() => IsChecked = !IsChecked);
+            ToggleCommand = new DelegateCommand(() => IsChecked = !IsChecked.GetValueOrDefault(true));
             Items = new BulkObservableCollection<TreeItemModel>();
             Items.CollectionChanged += Items_CollectionChanged;
         }
