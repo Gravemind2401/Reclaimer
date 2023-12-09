@@ -83,7 +83,7 @@ namespace Adjutant.Geometry
         string Name { get; }
         MaterialFlags Flags { get; }
         IReadOnlyList<ISubmaterial> Submaterials { get; }
-        IReadOnlyList<TintColour> TintColours { get; }
+        //IReadOnlyList<TintColour> TintColours { get; }
     }
 
     public interface ISubmaterial
