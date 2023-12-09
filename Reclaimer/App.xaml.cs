@@ -114,12 +114,14 @@ namespace Reclaimer
 
             Dispatcher.Invoke(() =>
             {
+                const string excludeExtensions = ".exe|.dll";
+
                 foreach (var arg in arguments)
                 {
                     if (Path.GetInvalidPathChars().Any(c => arg.Contains(c)))
                         continue; // not a file name
 
-                    if (!Path.HasExtension(arg) || Path.GetExtension(arg).ToLower() == ".exe" || !File.Exists(arg))
+                    if (!Path.HasExtension(arg) || excludeExtensions.Contains(Path.GetExtension(arg).ToLower()) || !File.Exists(arg))
                         continue;
 
                     if (Substrate.HandlePhysicalFile(arg))
