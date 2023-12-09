@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Properties;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
@@ -71,7 +70,7 @@ namespace Reclaimer.Blam.Halo4
                     if (bitmTag == null)
                         continue;
 
-                    MaterialUsage usage;
+                    string usage;
                     var name = bitmTag.FileName;
                     if (name.EndsWith("_detail_normal") || name.EndsWith("_detail_bump"))
                         usage = MaterialUsage.NormalDetail;
@@ -93,7 +92,7 @@ namespace Reclaimer.Blam.Halo4
                     {
                         material.TextureMappings.Add(new TextureMapping
                         {
-                            Usage = (int)usage,
+                            Usage = usage,
                             Tiling = new Vector2(tile?.X ?? 1, tile?.Y ?? 1),
                             Texture = new Texture
                             {

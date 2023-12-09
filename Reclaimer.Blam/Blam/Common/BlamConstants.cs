@@ -1,4 +1,4 @@
-﻿using Adjutant.Geometry;
+﻿using Reclaimer.Geometry;
 
 namespace Reclaimer.Blam.Common
 {
@@ -12,7 +12,7 @@ namespace Reclaimer.Blam.Common
         public const string ScenarioSceneryGroupName = "scenery";
 
         //1 world unit = 10 feet
-        public const float Gen3UnitScale = 10 * Geometry.StandardUnits.Feet;
+        public const float Gen3UnitScale = 10 * StandardUnits.Feet;
 
         public static class Gen3Materials
         {
@@ -31,13 +31,13 @@ namespace Reclaimer.Blam.Common
             public const string SelfIllumColor = "self_illum_color";
             public const string SpecularTint = "specular_tint";
 
-            public static readonly Dictionary<string, MaterialUsage> UsageLookup = new()
+            public static readonly Dictionary<string, string> UsageLookup = new()
             {
                 { BlendMap, MaterialUsage.BlendMap },
                 { BaseMap, MaterialUsage.Diffuse },
                 { DetailMap, MaterialUsage.DiffuseDetail },
                 { DetailMapOverlay, MaterialUsage.DiffuseDetail },
-                { ChangeColorMap, MaterialUsage.ColourChange },
+                { ChangeColorMap, MaterialUsage.ColorChange },
                 { BumpMap, MaterialUsage.Normal },
                 { BumpDetailMap, MaterialUsage.NormalDetail },
                 { SelfIllumMap, MaterialUsage.SelfIllumination },
@@ -45,7 +45,7 @@ namespace Reclaimer.Blam.Common
                 { FoamTexture, MaterialUsage.Diffuse }
             };
 
-            public static readonly Dictionary<string, TintUsage> TintLookup = new()
+            public static readonly Dictionary<string, string> TintLookup = new()
             {
                 { AlbedoColor, TintUsage.Albedo },
                 { SelfIllumColor, TintUsage.SelfIllumination },

@@ -121,8 +121,9 @@ namespace Reclaimer.Geometry.Utilities
 
         private void Write(TextureMapping mapping)
         {
-            using (BlockMarker(mapping.Usage))
+            using (BlockMarker(SceneCodes.TextureMapping))
             {
+                WriteString(mapping.Usage);
                 writer.Write(texturePool.IndexOf(mapping.Texture));
                 writer.Write(mapping.Tiling);
                 writer.Write((int)mapping.ChannelMask);
@@ -131,8 +132,9 @@ namespace Reclaimer.Geometry.Utilities
 
         private void Write(MaterialTint tint)
         {
-            using (BlockMarker(tint.Usage))
+            using (BlockMarker(SceneCodes.Tint))
             {
+                WriteString(tint.Usage);
                 writer.Write(tint.Color.R);
                 writer.Write(tint.Color.G);
                 writer.Write(tint.Color.B);

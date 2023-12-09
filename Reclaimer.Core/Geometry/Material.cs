@@ -19,7 +19,7 @@ namespace Reclaimer.Geometry
 
     public class TextureMapping
     {
-        public int Usage { get; set; }
+        public string Usage { get; set; }
         public Texture Texture { get; set; }
         public Vector2 Tiling { get; set; } = Vector2.One;
         public ChannelMask ChannelMask { get; set; }
@@ -34,8 +34,27 @@ namespace Reclaimer.Geometry
 
     public class MaterialTint
     {
-        public int Usage { get; set; }
+        public string Usage { get; set; }
         public Color Color { get; set; }
+    }
+
+    public static class MaterialUsage
+    {
+        public const string BlendMap = "blend";
+        public const string Diffuse = "diffuse";
+        public const string DiffuseDetail = "diffuse_detail";
+        public const string ColorChange = "color_change";
+        public const string Normal = "bump";
+        public const string NormalDetail = "bump_detail";
+        public const string SelfIllumination = "self_illum";
+        public const string Specular = "specular";
+    }
+
+    public static class TintUsage
+    {
+        public const string Albedo = "albedo";
+        public const string SelfIllumination = "self_illum";
+        public const string Specular = "specular";
     }
 
     [Flags]

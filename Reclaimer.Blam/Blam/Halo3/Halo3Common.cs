@@ -70,8 +70,8 @@ namespace Reclaimer.Blam.Halo3
                 for (var j = 0; j < template.Usages.Count; j++)
                 {
                     var usage = template.Usages[j].Value;
-                    var entry = BlamConstants.Gen3Materials.UsageLookup.FirstOrNull(p => usage.StartsWith(p.Key));
-                    if (!entry.HasValue)
+                    var matUsage = BlamConstants.Gen3Materials.UsageLookup.FirstOrNull(p => usage.StartsWith(p.Key))?.Value;
+                    if (matUsage == null)
                         continue;
 
                     var map = props.ShaderMaps[j];
@@ -85,7 +85,7 @@ namespace Reclaimer.Blam.Halo3
 
                     material.TextureMappings.Add(new TextureMapping
                     {
-                        Usage = (int)entry.Value.Value,
+                        Usage = matUsage,
                         Tiling = new Vector2(tile?.X ?? 1, tile?.Y ?? 1),
                         Texture = new Texture
                         {
@@ -103,7 +103,7 @@ namespace Reclaimer.Blam.Halo3
 
                     material.Tints.Add(new MaterialTint
                     {
-                        Usage = (int)tintUsage,
+                        Usage = tintUsage,
                         Color = System.Drawing.Color.FromArgb(
                             (byte)(props.TilingData[j].W * byte.MaxValue),
                             (byte)(props.TilingData[j].X * byte.MaxValue),
@@ -118,7 +118,7 @@ namespace Reclaimer.Blam.Halo3
                 else if (tag.ClassCode != "rmsh")
                     material.Flags |= (int)MaterialFlags.Transparent;
 
-                if (material.TextureMappings.Any(m => m.Usage == (int)MaterialUsage.ColourChange) && !material.TextureMappings.Any(m => m.Usage == (int)MaterialUsage.Diffuse))
+                if (material.TextureMappings.Any(m => m.Usage == MaterialUsage.ColorChange) && !material.TextureMappings.Any(m => m.Usage == MaterialUsage.Diffuse))
                     material.Flags |= (int)MaterialFlags.ColourChange;
 
                 yield return material;

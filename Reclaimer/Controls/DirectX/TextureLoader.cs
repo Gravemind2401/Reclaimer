@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using HelixToolkit.SharpDX.Core;
+﻿using HelixToolkit.SharpDX.Core;
 using HelixToolkit.Wpf.SharpDX;
 using Reclaimer.Drawing;
 using Reclaimer.Geometry;
@@ -26,7 +25,7 @@ namespace Reclaimer.Controls.DirectX
                 {
                     try
                     {
-                        var diffuse = mat.TextureMappings.FirstOrDefault(m => m.Usage == (int)MaterialUsage.Diffuse);
+                        var diffuse = mat.TextureMappings.FirstOrDefault(m => m.Usage == MaterialUsage.Diffuse);
                         if (diffuse == null)
                             continue;
 

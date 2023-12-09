@@ -88,7 +88,7 @@ namespace Adjutant.Geometry
 
     public interface ISubmaterial
     {
-        MaterialUsage Usage { get; }
+        int Usage { get; }
         IBitmap Bitmap { get; }
         IVector2 Tiling { get; }
     }
