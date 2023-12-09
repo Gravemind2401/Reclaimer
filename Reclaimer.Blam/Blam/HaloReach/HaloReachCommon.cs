@@ -90,7 +90,7 @@ namespace Reclaimer.Blam.HaloReach
                         Texture = new Texture
                         {
                             Id = bitmTag.Id,
-                            Name = bitmTag.FileName,
+                            Name = bitmTag.TagName,
                             GetDds = () => bitmTag.ReadMetadata<bitmap>().ToDds(0)
                         }
                     });
