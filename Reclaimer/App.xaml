@@ -50,14 +50,14 @@
                 <ResourceDictionary>
                     <sys:String x:Key="Name">Purple</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Blue.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/Purple.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <sys:String x:Key="Name">Red</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Purple.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/Red.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>

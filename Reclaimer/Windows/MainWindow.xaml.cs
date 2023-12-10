@@ -124,9 +124,9 @@ namespace Reclaimer.Windows
             }
 
             var themeRoot = GetMenuItem(Terminology.Menu.Themes);
-            foreach (var theme in App.Themes)
+            foreach (var themeName in App.ThemeNames)
             {
-                var item = new MenuItem { Header = theme, Tag = theme };
+                var item = new MenuItem { Header = themeName, Tag = themeName };
                 themeRoot.Items.Add(item);
                 item.Click += ThemeMenuItem_Click;
             }

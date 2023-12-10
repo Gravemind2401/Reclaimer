@@ -47,7 +47,7 @@ namespace Reclaimer
 
         public Settings()
         {
-            Theme = App.Themes.First();
+            Theme = App.ThemeNames.First();
             DefaultHandlers = new Dictionary<string, string>();
             PluginSettings = new Dictionary<string, object>();
             RecentFiles = new List<string>();

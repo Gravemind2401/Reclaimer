@@ -87,6 +87,7 @@ namespace Reclaimer
             var embeddedThemes = (ResourceDictionary[])Resources["Themes"];
             foreach (var theme in embeddedThemes.Skip(1))
             {
+                //embeddedThemes[0] is the base styles - merge it into every theme
                 theme.MergedDictionaries.Insert(0, embeddedThemes[0]);
                 AddTheme((string)theme["Name"], theme);
             }
@@ -145,25 +146,25 @@ namespace Reclaimer
 
         #region Themes
 
-        internal static IEnumerable<string> Themes => themes.Keys.AsEnumerable();
+        internal static IEnumerable<string> ThemeNames => themes.Keys.AsEnumerable();
 
-        internal static void AddTheme(string name, ResourceDictionary theme)
+        internal static void AddTheme(string name, ResourceDictionary resources)
         {
-            if (!themes.ContainsKey(name))
-                themes.Add(name, new ResourceDictionary());
+            if (!themes.TryGetValue(name, out var theme))
+                themes.Add(name, theme = new ResourceDictionary());
 
-            themes[name].MergedDictionaries.Add(theme);
+            theme.MergedDictionaries.Add(resources);
         }
 
-        internal static void SetTheme(string theme)
+        internal static void SetTheme(string name)
         {
-            if (!themes.ContainsKey(theme))
-                throw new KeyNotFoundException($"'{theme}' does not exist");
+            if (!themes.TryGetValue(name, out var theme))
+                throw new KeyNotFoundException($"'{name}' theme does not exist");
 
             Instance.Resources.MergedDictionaries.Clear();
-            Instance.Resources.MergedDictionaries.Add(themes[theme]);
+            Instance.Resources.MergedDictionaries.Add(theme);
 
-            Settings.Theme = theme;
+            Settings.Theme = name;
         }
 
         #endregion
