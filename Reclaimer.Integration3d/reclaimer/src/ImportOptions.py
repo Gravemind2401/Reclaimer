@@ -1,5 +1,7 @@
 from dataclasses import dataclass
+from pathlib import Path
 
+from .Material import *
 from .Model import *
 
 __all__ = [
@@ -25,6 +27,9 @@ class ImportOptions:
     BONE_PREFIX: str = ''
     MARKER_PREFIX: str = '#'
 
+    BITMAP_ROOT: str = ''
+    BITMAP_EXT: str = 'tif'
+
     def model_name(self, model: Model):
         return f'{model.name}'
 
@@ -39,3 +44,10 @@ class ImportOptions:
 
     def permutation_name(self, region: ModelRegion, permutation: ModelPermutation, index: int):
         return f'{region.name}:{permutation.name}'
+
+    def material_name(self, material: Material):
+        return f'{material.name}'
+
+    def texture_path(self, texture: Texture):
+        path = Path(self.BITMAP_ROOT).joinpath(texture.name).with_suffix('.' + self.BITMAP_EXT.lstrip('.'))
+        return str(path)

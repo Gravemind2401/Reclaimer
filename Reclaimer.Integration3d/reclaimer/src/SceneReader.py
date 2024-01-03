@@ -173,9 +173,10 @@ def _read_material(reader: FileReader, block: DataBlock) -> Material:
 def _read_texture_mapping(reader: FileReader, block: DataBlock) -> TextureMapping:
     mapping = TextureMapping()
     mapping.texture_usage = reader.read_string()
+    mapping.blend_channel = reader.read_int32()
     mapping.texture_index = reader.read_int32()
-    mapping.tiling = reader.read_float2()
     mapping.channel_mask = reader.read_int32()
+    mapping.tiling = reader.read_float2()
     return mapping
 
 def _read_tint(reader: FileReader, block: DataBlock) -> Color:

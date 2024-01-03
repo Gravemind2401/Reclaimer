@@ -17,14 +17,26 @@ namespace Reclaimer.Geometry
         public int Flags { get; set; }
     }
 
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public class TextureMapping
     {
         public string Usage { get; set; }
+        public ChannelMask BlendChannel { get; set; }
         public Texture Texture { get; set; }
-        public Vector2 Tiling { get; set; } = Vector2.One;
         public ChannelMask ChannelMask { get; set; }
+        public Vector2 Tiling { get; set; } = Vector2.One;
+
+        private string GetDebuggerDisplay()
+        {
+            var result = $"{Usage} {{{Texture?.Name ?? "null"}}}";
+            if (BlendChannel > 0)
+                result = $"[{BlendChannel.ToString()[0]}] {result}";
+
+            return result;
+        }
     }
 
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class Texture
     {
         public int Id { get; set; }

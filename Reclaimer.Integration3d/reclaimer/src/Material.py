@@ -19,9 +19,10 @@ class Material(INamed):
 @dataclass
 class TextureMapping:
     texture_usage: str = None
+    blend_channel: int = 0
     texture_index: int = -1
-    tiling: Float2 = None
     channel_mask: int = 0
+    tiling: Float2 = None
 
 
 @dataclass

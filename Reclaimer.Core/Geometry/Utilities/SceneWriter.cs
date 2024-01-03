@@ -124,9 +124,10 @@ namespace Reclaimer.Geometry.Utilities
             using (BlockMarker(SceneCodes.TextureMapping))
             {
                 WriteString(mapping.Usage);
+                writer.Write((int)mapping.BlendChannel);
                 writer.Write(texturePool.IndexOf(mapping.Texture));
-                writer.Write(mapping.Tiling);
                 writer.Write((int)mapping.ChannelMask);
+                writer.Write(mapping.Tiling);
             }
         }
 
