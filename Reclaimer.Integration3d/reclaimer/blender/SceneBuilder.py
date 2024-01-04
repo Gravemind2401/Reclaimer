@@ -13,6 +13,7 @@ from ..src.Scene import *
 from ..src.Model import *
 from ..src.Material import *
 from ..src.Types import *
+from .CustomShaderNodes import *
 from .MaterialBuilder import *
 from .Utils import *
 
@@ -57,6 +58,7 @@ def create_materials(scene: Scene) -> List[bpy.types.Material]:
 
     print(f'creating {scene.name}/materials')
 
+    init_custom_node_groups()
     builder = MaterialBuilder(scene, OPTIONS)
 
     # TODO: only create materials used by meshes selected for import
