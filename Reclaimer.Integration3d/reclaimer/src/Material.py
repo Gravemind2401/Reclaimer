@@ -4,11 +4,19 @@ from typing import List
 from .Types import *
 
 __all__ = [
+    'TEXTURE_USAGE',
     'Material',
     'TextureMapping',
     'TintColor',
     'Texture'
 ]
+
+
+class TEXTURE_USAGE:
+    BLEND: str = 'blend'
+    DIFFUSE: str = 'diffuse'
+    NORMAL: str = 'bump'
+    SPECULAR: str = 'specular'
 
 
 class Material(INamed):

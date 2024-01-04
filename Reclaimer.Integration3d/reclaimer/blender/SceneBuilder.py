@@ -13,6 +13,7 @@ from ..src.Scene import *
 from ..src.Model import *
 from ..src.Material import *
 from ..src.Types import *
+from .MaterialBuilder import *
 from .Utils import *
 
 __all__ = [
@@ -34,9 +35,11 @@ def create_scene(scene: Scene, options: ImportOptions = None):
     print(f'scene name: {scene.name}')
     print(f'scene scale: {scene.unit_scale}')
 
+    materials = create_materials(scene)
+
     for model in scene.model_pool:
         print(f'creating model: {model.name}...')
-        builder = ModelBuilder(scene, model)
+        builder = ModelBuilder(materials, scene, model)
         if OPTIONS.IMPORT_BONES and model.bones:
             print(f'creating {model.name}/armature')
             builder.create_bones()
@@ -46,6 +49,22 @@ def create_scene(scene: Scene, options: ImportOptions = None):
         if OPTIONS.IMPORT_MARKERS and model.markers:
             print(f'creating {model.name}/markers')
             builder.create_markers()
+
+def create_materials(scene: Scene) -> List[bpy.types.Material]:
+    result = []
+    if not (OPTIONS.IMPORT_MATERIALS and scene.material_pool):
+        return result
+
+    print(f'creating {scene.name}/materials')
+
+    builder = MaterialBuilder(scene, OPTIONS)
+
+    # TODO: only create materials used by meshes selected for import
+    for i, _ in enumerate(scene.material_pool):
+        material = builder.create_material(i)
+        result.append(material)
+
+    return result
 
 def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> Matrix:
     ''' Converts a transform from model units to blender units '''
@@ -61,14 +80,16 @@ def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> M
 class ModelBuilder:
     _root_collection: Collection
     _region_collections: Dict[int, Collection]
+    _materials: List[bpy.types.Material]
     _scene: Scene
     _model: Model
     _armature_obj: Object
     _instances: Dict[Tuple[int, int], Object]
 
-    def __init__(self, scene: Scene, model: Model):
+    def __init__(self, materials: List[bpy.types.Material], scene: Scene, model: Model):
         self._root_collection = self._create_collection(OPTIONS.model_name(model))
         self._region_collections = dict()
+        self._materials = materials
         self._scene = scene
         self._model = model
         self._armature_obj = None
@@ -251,7 +272,8 @@ class ModelBuilder:
         if not OPTIONS.IMPORT_MATERIALS:
             return
 
-        # build a lookup of global mat index -> local mat index
+        # only append materials to the mesh that it actually uses, rather than appening all scene materials
+        # this means we need to build a lookup of global mat index -> local mat index
         mat_lookup = dict()
         for loc, glob in enumerate(set(s.material_index for s in mesh.segments if s.material_index >= 0)):
             mat_lookup[glob] = loc
@@ -259,7 +281,9 @@ class ModelBuilder:
         if not mat_lookup:
             return # no materials on this mesh
 
-        # TODO: append materials to mesh here
+        # append relevant material(s) to mesh
+        for i in mat_lookup.keys():
+            mesh_data.materials.append(self._materials[i])
 
         face_start = 0
         for s in mesh.segments:
