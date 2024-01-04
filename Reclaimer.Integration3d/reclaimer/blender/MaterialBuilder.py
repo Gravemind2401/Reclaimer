@@ -38,16 +38,72 @@ class MaterialBuilder:
 
         bsdf = result.node_tree.nodes["Principled BSDF"]
 
+        factory_lookup = {
+            TEXTURE_USAGE.BLEND: self._create_blend,
+            TEXTURE_USAGE.DIFFUSE: self._create_diffuse,
+            TEXTURE_USAGE.NORMAL: self._create_bump
+        }
+
+        usage_lookup = {
+            TEXTURE_USAGE.BLEND: [],
+            TEXTURE_USAGE.DIFFUSE: [],
+            TEXTURE_USAGE.NORMAL: []
+        }
+
         for input in mat.texture_mappings:
-            if input.texture_usage != TEXTURE_USAGE.DIFFUSE:
-                continue # TODO
+            if not input.texture_usage in factory_lookup:
+                continue
 
-            texture = self._create_diffuse(result, input)
-            result.node_tree.links.new(bsdf.inputs['Base Color'], texture.outputs['Color'])
+            # TODO: node tree layout
+            usage_lookup[input.texture_usage].append(factory_lookup[input.texture_usage](result, input))
 
-            break
+        diffuse_images = usage_lookup[TEXTURE_USAGE.DIFFUSE]
+        bump_images = usage_lookup[TEXTURE_USAGE.NORMAL]
+
+        if usage_lookup[TEXTURE_USAGE.BLEND]:
+            blend_image = usage_lookup[TEXTURE_USAGE.BLEND][0]
+
+            # TODO: assign blend inputs based on specific blend channel rather than index
+
+            if diffuse_images:
+                diffuse_blend = create_group_node(result, 'Blend Mask')
+                result.node_tree.links.new(diffuse_blend.inputs['Mask RGB'], blend_image.outputs['Color'])
+
+                for diffuse_image, blend_input in zip(diffuse_images, ['R', 'G', 'B', 'A']):
+                    result.node_tree.links.new(diffuse_blend.inputs[blend_input], diffuse_image.outputs['Color'])
+
+                result.node_tree.links.new(bsdf.inputs['Base Color'], diffuse_blend.outputs['Color'])
+
+
+            if bump_images:
+                bump_blend = create_group_node(result, 'Blend Mask')
+                result.node_tree.links.new(bump_blend.inputs['Mask RGB'], blend_image.outputs['Color'])
+
+                for bump_image, blend_input in zip(bump_images, ['R', 'G', 'B', 'A']):
+                    result.node_tree.links.new(bump_blend.inputs[blend_input], bump_image.outputs['Color'])
+
+                normal_node = create_group_node(result, 'DX Normal Map')
+                result.node_tree.links.new(normal_node.inputs['Color'], bump_blend.outputs['Color'])
+                result.node_tree.links.new(bsdf.inputs['Normal'], normal_node.outputs['Normal'])
+        else:
+            if diffuse_images:
+                diffuse_image = diffuse_images[0]
+                result.node_tree.links.new(bsdf.inputs['Base Color'], diffuse_image.outputs['Color'])
+            if bump_images:
+                bump_image = bump_images[0]
+                normal_node = create_group_node(result, 'DX Normal Map')
+                result.node_tree.links.new(normal_node.inputs['Color'], bump_image.outputs['Color'])
+                result.node_tree.links.new(bsdf.inputs['Normal'], normal_node.outputs['Normal'])
 
         return result
+
+    def _create_blend(self, material: bpy.types.Material, input: TextureMapping) -> bpy.types.Node:
+        image_node = self._create_texture(material, input)
+        image_node.image.alpha_mode = 'CHANNEL_PACKED'
+
+        scale_node = _create_uvscale_node(material, input, image_node)
+
+        return image_node
 
     def _create_diffuse(self, material: bpy.types.Material, input: TextureMapping) -> bpy.types.Node:
         image_node = self._create_texture(material, input)
