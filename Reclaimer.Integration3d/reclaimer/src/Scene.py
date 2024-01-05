@@ -29,6 +29,7 @@ class Version:
 
 
 class Scene(INamed):
+    _source_file: str
     version: Version
     unit_scale: float
     world_matrix: Matrix4x4

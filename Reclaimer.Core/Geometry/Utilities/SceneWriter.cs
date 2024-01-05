@@ -1,5 +1,6 @@
 ﻿using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
+using System.IO;
 
 namespace Reclaimer.Geometry.Utilities
 {
@@ -21,6 +22,8 @@ namespace Reclaimer.Geometry.Utilities
         private readonly LazyList<Mesh> meshPool = new();
 
         private Model currentModel;
+
+        public bool EmbedTextures { get; set; }
 
         public SceneWriter(EndianWriter writer)
         {
@@ -107,6 +110,15 @@ namespace Reclaimer.Geometry.Utilities
                 throw new NotImplementedException();
         }
 
+        private void WriteData(byte[] data)
+        {
+            using (BlockMarker(SceneCodes.Data))
+            {
+                writer.Write(data.Length);
+                writer.Write(data);
+            }
+        }
+
         #region Materials
 
         private void Write(Material material)
@@ -148,7 +160,18 @@ namespace Reclaimer.Geometry.Utilities
             using (BlockMarker(SceneCodes.Texture))
             {
                 WriteString(texture.Name);
-                writer.Write(0); //binary size if embedded
+
+                //everything from here on must be a block
+
+                if (EmbedTextures)
+                {
+                    var dds = texture.GetDds();
+                    using (var ms = new MemoryStream())
+                    {
+                        dds.WriteToStream(ms, System.Drawing.Imaging.ImageFormat.Png);
+                        WriteData(ms.ToArray());
+                    }
+                }
             }
         }
 

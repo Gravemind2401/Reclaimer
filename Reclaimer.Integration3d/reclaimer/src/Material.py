@@ -39,4 +39,5 @@ class TintColor:
     tint_color: Color = None
 
 class Texture(INamed):
-    size: int
+    address: int = 0
+    size: int = 0

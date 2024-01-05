@@ -55,6 +55,7 @@ namespace Reclaimer.Geometry.Utilities
         public static readonly BlockCode VectorDescriptor = new BlockCode("VECD");
         public static readonly BlockCode VertexBuffer = new BlockCode("VBUF");
         public static readonly BlockCode IndexBuffer = new BlockCode("IBUF");
+        public static readonly BlockCode Data = new BlockCode("DATA");
     }
 
     internal static class VertexChannelCodes

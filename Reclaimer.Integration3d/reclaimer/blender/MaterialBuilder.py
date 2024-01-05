@@ -1,5 +1,6 @@
 import bpy
 
+from ..src.SceneReader import *
 from ..src.ImportOptions import *
 from ..src.Scene import *
 from ..src.Material import *
@@ -125,12 +126,25 @@ class MaterialBuilder:
     def _create_texture(self, material: bpy.types.Material, input: TextureMapping) -> bpy.types.Node:
         scene, OPTIONS = self._scene, self._options
 
+        # TODO: create image list and access with texture index (to ensure no duplicate images being loaded)
+
         src = scene.texture_pool[input.texture_index]
-        src_path = OPTIONS.texture_path(src)
-
-        print(f'loading texture: {src_path}')
-
         result = material.node_tree.nodes.new('ShaderNodeTexImage')
-        result.image = bpy.data.images.load(src_path)
+
+        if src.size > 0:
+            print(f'loading embedded texture: {src.name} @ {src.address}')
+            pixel_data = SceneReader.read_texture(scene, src)
+            print(f'>>> {len(pixel_data)} bytes loaded')
+
+            # create a new empty image and pack it with the embedded pixel data
+            img = bpy.data.images.new(name=src.name, width=1, height=1)
+            img.pack(data=pixel_data, data_len=src.size)
+            img.source = 'FILE' # images.new() initially starts as 'GENERATED'
+
+            result.image = img
+        else:
+            src_path = OPTIONS.texture_path(src)
+            print(f'loading texture: {src_path}')
+            result.image = bpy.data.images.load(src_path)
 
         return result

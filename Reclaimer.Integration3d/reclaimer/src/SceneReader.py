@@ -1,4 +1,4 @@
-from typing import List, Dict, Union, Callable, TypeVar
+from typing import List, Dict, Tuple, Union, Callable, TypeVar
 
 from .Types import *
 from .FileReader import FileReader
@@ -38,6 +38,12 @@ def _decode_block(reader: FileReader, block: DataBlock, read_func: Callable[[Fil
 
 def _decode_list(reader: FileReader, block: DataBlock, read_func: Callable[[FileReader, DataBlock], T]) -> List[T]:
     return [_decode_block(reader, b, read_func) for b in block.child_blocks]
+
+def _decode_data_block(reader: FileReader, block: DataBlock) -> Tuple[int, int]:
+    reader.position = block.start_address
+    size = reader.read_int32()
+    address = reader.position
+    return (address, size)
 
 
 # decode functions #
@@ -188,7 +194,11 @@ def _read_tint(reader: FileReader, block: DataBlock) -> Color:
 def _read_texture(reader: FileReader, block: DataBlock) -> Texture:
     texture = Texture()
     texture.name = reader.read_string()
-    texture.size = reader.read_int32()
+    props = _read_property_blocks(reader, block)
+
+    if 'DATA' in props:
+        texture.address, texture.size = _decode_data_block(reader, props['DATA'])
+
     return texture
 
 def _read_index_buffer(reader: FileReader, block: DataBlock) -> IndexBuffer:
@@ -255,4 +265,17 @@ class SceneReader:
         scene = _decode_block(reader, rootBlock, _read_scene)
         reader.close()
 
+        scene._source_file = fileName
         return scene
+
+    @staticmethod
+    def read_texture(scene: Scene, texture: Texture) -> Union[bytes, None]:
+        if texture.size == 0:
+            return None
+
+        reader = FileReader(scene._source_file)
+        reader.seek(texture.address, 0)
+        result = reader.read_bytes(texture.size)
+        reader.close()
+
+        return result
