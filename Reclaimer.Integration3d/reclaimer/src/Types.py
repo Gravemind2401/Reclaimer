@@ -7,6 +7,7 @@ __all__ = [
     'Float3',
     'Float4',
     'Matrix4x4',
+    'Matrix4x4_IDENTITY',
     'IVector',
     'INamed',
     'SceneObject'
@@ -19,6 +20,8 @@ Float2 = Tuple[float, float]
 Float3 = Tuple[float, float, float]
 Float4 = Tuple[float, float, float, float]
 Matrix4x4 = Tuple[Float4, Float4, Float4, Float4]
+
+Matrix4x4_IDENTITY = ((1., 0., 0., 0.), (0., 1., 0., 0.), (0., 0., 1., 0.), (0., 0., 0., 1.))
 
 
 class IVector(Sequence):

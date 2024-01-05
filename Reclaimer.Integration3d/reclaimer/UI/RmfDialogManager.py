@@ -4,6 +4,7 @@ from ..src.SceneReader import SceneReader
 from ..src.Scene import *
 from ..src.Model import *
 from ..src.ImportOptions import *
+from ..src.SceneFilter import *
 
 from PySide2 import QtCore, QtWidgets
 
@@ -19,9 +20,9 @@ class CustomTreeItem(QtWidgets.QTreeWidgetItem):
     USER_TYPE: int = 1000
 
     _isRefreshing: bool = False
-    dataContext: Any
+    dataContext: IFilterNode
 
-    def __init__(self, parent, data_context):
+    def __init__(self, parent, data_context: IFilterNode):
         super().__init__(parent, type=CustomTreeItem.USER_TYPE)
         self.dataContext = data_context
         self.setCheckState(0, CheckState.Unchecked)
@@ -30,6 +31,8 @@ class CustomTreeItem(QtWidgets.QTreeWidgetItem):
         ''' Override setData() to automatically keep check state in sync between parent/child '''
 
         super().setData(column, role, value)
+        self.dataContext.selected = self.checkState(0) != CheckState.Unchecked
+
         if not self._isRefreshing and column == 0 and role == QtCore.Qt.CheckStateRole:
             self._isRefreshing = True
 
@@ -79,22 +82,15 @@ class CustomTreeItem(QtWidgets.QTreeWidgetItem):
 
 
 class RmfDialogManager():
-    __TYPENAMES = {
-        SceneGroup: 'Group',
-        Placement: 'Placement',
-        ModelRef: 'Model',
-        Model: 'Model',
-        ModelRegion: 'Region',
-        ModelPermutation: 'Permutation'
-    }
-
     dialog: QtWidgets.QDialog
     _scene: Scene
+    _scene_filter: SceneFilter
     _treeWidget: QtWidgets.QTreeWidget
 
     def __init__(self, dialog: QtWidgets.QDialog, filepath: str) -> None:
         self.dialog = dialog
         self._scene = SceneReader.open_scene(filepath)
+        self._scene_filter = SceneFilter(self._scene)
         self._treeWidget = cast(QtWidgets.QTreeWidget, dialog.treeWidget)
 
         dialog.setWindowTitle(filepath)
@@ -106,42 +102,44 @@ class RmfDialogManager():
         # only expand top level items to begin with
         # sort by name from level 2 onwards
         self._treeWidget.collapseAll()
-        for i in range(self._treeWidget.topLevelItemCount()):
-            item = self._treeWidget.topLevelItem(i)
+        for item in self._enumerate_toplevel_items():
             item.setExpanded(True)
             item.sortChildren(0, QtCore.Qt.SortOrder.AscendingOrder)
 
         self._treeWidget.resizeColumnToContents(0)
         self.check_all(CheckState.Checked)
 
-    def check_all(self, state: CheckState):
+    def _enumerate_toplevel_items(self) -> Iterator['CustomTreeItem']:
         for i in range(self._treeWidget.topLevelItemCount()):
-            self._treeWidget.topLevelItem(i).setCheckState(0, state)
+            yield self._treeWidget.topLevelItem(i)
+
+    def check_all(self, state: CheckState):
+        for item in self._enumerate_toplevel_items():
+            item.setCheckState(0, state)
 
     def _connect(self):
         self.dialog.finished.connect(self.onDialogResult)
 
     def _create_hierarchy(self):
-        def build_treeitem(parent: Any, node: Any) -> CustomTreeItem:
+        def build_treeitem(parent: Any, node: IFilterNode) -> CustomTreeItem:
             item = CustomTreeItem(parent, node)
-            item.setText(1, RmfDialogManager.__TYPENAMES[type(node)])
+            item.setText(0, node.label)
+            item.setText(1, node.node_type)
 
-            if type(node) == Placement and len(node.name) == 0:
-                node = node.object
+            if type(node) == FilterGroup:
+                item.addChildren([build_treeitem(item, o) for o in node.groups])
+                item.addChildren([build_treeitem(item, o) for o in node.models])
 
-            if type(node) == ModelRef:
-                node = self._scene.model_pool[node.model_index]
+            if type(node) == ModelFilter:
+                item.addChildren([build_treeitem(item, o) for o in node.regions])
 
-            item.setText(0, str(node))
-
-            if type(node) == SceneGroup:
-                item.addChildren([build_treeitem(item, o) for o in node.child_groups])
-                item.addChildren([build_treeitem(item, o) for o in node.child_objects])
+            if type(node) == RegionFilter:
+                item.addChildren([build_treeitem(item, o) for o in node.permutations])
 
             return item
 
-        self._treeWidget.addTopLevelItems([build_treeitem(self._treeWidget, o) for o in self._scene.root_node.child_groups])
-        self._treeWidget.addTopLevelItems([build_treeitem(self._treeWidget, o) for o in self._scene.root_node.child_objects])
+        self._treeWidget.addTopLevelItems([build_treeitem(self._treeWidget, o) for o in self._scene_filter.groups])
+        self._treeWidget.addTopLevelItems([build_treeitem(self._treeWidget, o) for o in self._scene_filter.models])
 
     def get_import_options(self) -> ImportOptions:
         # TODO: get settings and selected objects to import based on UI state

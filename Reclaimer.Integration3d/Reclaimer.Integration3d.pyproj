@@ -38,6 +38,8 @@
     <Compile Include="reclaimer\blender\Utils.py" />
     <Compile Include="reclaimer\blender\__init__.py" />
     <Compile Include="reclaimer\import_rmf.py" />
+    <Compile Include="reclaimer\src\ImportOptions.py" />
+    <Compile Include="reclaimer\src\SceneFilter.py" />
     <Compile Include="reclaimer\src\Vectors.py" />
     <Compile Include="reclaimer\ui\RmfDialogManager.py" />
     <Compile Include="reclaimer\ui\RmfWidget.py" />
