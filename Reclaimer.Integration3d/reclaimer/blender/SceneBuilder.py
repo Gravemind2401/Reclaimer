@@ -3,12 +3,13 @@ import bmesh
 import itertools
 import operator
 from typing import cast
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Optional
 from mathutils import Vector, Matrix, Quaternion
 from bpy.types import Context, Collection, Armature, EditBone, Object
 from functools import reduce
 
 from ..src.ImportOptions import *
+from ..src.SceneFilter import *
 from ..src.Scene import *
 from ..src.Model import *
 from ..src.Material import *
@@ -27,29 +28,30 @@ BL_UNITS: float = 1000.0 # 1 blender unit = 1000mm
 
 UNIT_SCALE: float = 1.0
 OPTIONS: ImportOptions = ImportOptions()
+MATERIALS: List[bpy.types.Material] = None
 
-def create_scene(scene: Scene, options: ImportOptions = None):
-    global UNIT_SCALE, OPTIONS
+def create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Optional[ImportOptions] = None):
+    global UNIT_SCALE, OPTIONS, MATERIALS
     UNIT_SCALE = scene.unit_scale / BL_UNITS
     # OPTIONS = options
+
+    if not filter:
+        filter = SceneFilter(scene)
+    if not options:
+        options = ImportOptions()
 
     print(f'scene name: {scene.name}')
     print(f'scene scale: {scene.unit_scale}')
 
-    materials = create_materials(scene)
+    MATERIALS = create_materials(scene)
 
-    for model in scene.model_pool:
-        print(f'creating model: {model.name}...')
-        builder = ModelBuilder(materials, scene, model)
-        if OPTIONS.IMPORT_BONES and model.bones:
-            print(f'creating {model.name}/armature')
-            builder.create_bones()
-        if OPTIONS.IMPORT_MESHES and model.meshes:
-            print(f'creating {model.name}/meshes')
-            builder.create_meshes()
-        if OPTIONS.IMPORT_MARKERS and model.markers:
-            print(f'creating {model.name}/markers')
-            builder.create_markers()
+    root_collection = bpy.context.scene.collection
+
+    for group in filter.selected_groups():
+        create_scene_group(root_collection, scene, group, options)
+
+    for model in filter.selected_models():
+        create_model(root_collection, scene, model, options)
 
 def create_materials(scene: Scene) -> List[bpy.types.Material]:
     result = []
@@ -67,6 +69,32 @@ def create_materials(scene: Scene) -> List[bpy.types.Material]:
         result.append(material)
 
     return result
+
+def create_scene_group(parent: Collection, scene: Scene, filter_item: FilterGroup, options: ImportOptions):
+    print(f'creating collection: {filter_item.path}')
+
+    collection = bpy.data.collections.new(filter_item.label) # TODO: enforce unique collection names
+    parent.children.link(collection)
+
+    for group in filter_item.selected_groups():
+        create_scene_group(collection, scene, group, options)
+
+    for model in filter_item.selected_models():
+        create_model(collection, scene, model, options)
+
+def create_model(collection: Collection, scene: Scene, filter_item: ModelFilter, options: ImportOptions):
+    model = filter_item._model
+    print(f'creating model: {model.name}...')
+    builder = ModelBuilder(MATERIALS, collection, scene, model)
+    if OPTIONS.IMPORT_BONES and model.bones:
+        print(f'creating {model.name}/armature')
+        builder.create_bones()
+    if OPTIONS.IMPORT_MESHES and model.meshes:
+        print(f'creating {model.name}/meshes')
+        builder.create_meshes()
+    if OPTIONS.IMPORT_MARKERS and model.markers:
+        print(f'creating {model.name}/markers')
+        builder.create_markers()
 
 def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> Matrix:
     ''' Converts a transform from model units to blender units '''
@@ -88,7 +116,7 @@ class ModelBuilder:
     _armature_obj: Object
     _instances: Dict[Tuple[int, int], Object]
 
-    def __init__(self, materials: List[bpy.types.Material], scene: Scene, model: Model):
+    def __init__(self, materials: List[bpy.types.Material], collection: Collection, scene: Scene, model: Model):
         self._root_collection = self._create_collection(OPTIONS.model_name(model))
         self._region_collections = dict()
         self._materials = materials
@@ -97,7 +125,7 @@ class ModelBuilder:
         self._armature_obj = None
         self._instances = dict()
 
-        bpy.context.scene.collection.children.link(self._root_collection)
+        collection.children.link(self._root_collection)
 
     def _create_collection(self, name: str, key: int = None) -> Collection:
         if key != None:

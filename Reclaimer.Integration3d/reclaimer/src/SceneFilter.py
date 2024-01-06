@@ -1,4 +1,4 @@
-from typing import List, Iterator
+from typing import List, Iterator, Optional
 
 from .Scene import *
 from .Model import *
@@ -32,12 +32,14 @@ class IFilterNode:
 
 class FilterGroup(IFilterNode):
     _node_type: str = 'Group'
+    path: str = None
     groups: List['FilterGroup']
     models: List['ModelFilter']
 
-    def __init__(self, scene: Scene, scene_group: SceneGroup):
+    def __init__(self, scene: Scene, scene_group: SceneGroup, parent_group: Optional['FilterGroup'] = None):
         self.label = scene_group.name
-        self.groups = [FilterGroup(scene, g) for g in scene_group.child_groups]
+        self.path = f'{parent_group.path}\{self.label}' if parent_group else '.'
+        self.groups = [FilterGroup(scene, g, self) for g in scene_group.child_groups]
         self.models = list(self._get_models(scene, scene_group))
 
     def _get_models(self, scene: Scene, scene_group: SceneGroup) -> Iterator['ModelFilter']:
