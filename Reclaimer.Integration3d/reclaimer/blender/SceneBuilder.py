@@ -27,13 +27,11 @@ MeshContext = Tuple[Scene, Model, Mesh, bpy.types.Mesh, Object]
 BL_UNITS: float = 1000.0 # 1 blender unit = 1000mm
 
 UNIT_SCALE: float = 1.0
-OPTIONS: ImportOptions = ImportOptions()
+OPTIONS: ImportOptions = None
 MATERIALS: List[bpy.types.Material] = None
 
 def create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Optional[ImportOptions] = None):
     global UNIT_SCALE, OPTIONS, MATERIALS
-    UNIT_SCALE = scene.unit_scale / BL_UNITS
-    # OPTIONS = options
 
     if not filter:
         filter = SceneFilter(scene)
@@ -43,6 +41,8 @@ def create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Op
     print(f'scene name: {scene.name}')
     print(f'scene scale: {scene.unit_scale}')
 
+    UNIT_SCALE = scene.unit_scale / BL_UNITS
+    OPTIONS = options
     MATERIALS = create_materials(scene)
 
     root_collection = bpy.context.scene.collection
@@ -85,7 +85,7 @@ def create_scene_group(parent: Collection, scene: Scene, filter_item: FilterGrou
 def create_model(collection: Collection, scene: Scene, filter_item: ModelFilter, options: ImportOptions):
     model = filter_item._model
     print(f'creating model: {model.name}...')
-    builder = ModelBuilder(MATERIALS, collection, scene, model)
+    builder = ModelBuilder(MATERIALS, collection, scene, filter_item)
     if OPTIONS.IMPORT_BONES and model.bones:
         print(f'creating {model.name}/armature')
         builder.create_bones()
@@ -111,15 +111,18 @@ class ModelBuilder:
     _root_collection: Collection
     _region_collections: Dict[int, Collection]
     _materials: List[bpy.types.Material]
+    _filter: ModelFilter
     _scene: Scene
     _model: Model
     _armature_obj: Object
     _instances: Dict[Tuple[int, int], Object]
 
-    def __init__(self, materials: List[bpy.types.Material], collection: Collection, scene: Scene, model: Model):
+    def __init__(self, materials: List[bpy.types.Material], collection: Collection, scene: Scene, filter_item: ModelFilter):
+        model = filter_item._model
         self._root_collection = self._create_collection(OPTIONS.model_name(model))
         self._region_collections = dict()
         self._materials = materials
+        self._filter = filter_item
         self._scene = scene
         self._model = model
         self._armature_obj = None
@@ -215,9 +218,11 @@ class ModelBuilder:
 
     def create_meshes(self):
         mesh_count = 0
-        for i, r in enumerate(self._model.regions):
+        for i, rf in enumerate(self._filter.selected_regions()):
+            r = rf._region
             region_col = self._create_collection(OPTIONS.region_name(r), i)
-            for j, p in enumerate(r.permutations):
+            for j, pf in enumerate(rf.selected_permutations()):
+                p = pf._permutation
                 print(f'creating mesh {mesh_count:03d}: {self._model.name}/{r.name}/{p.name} [{i:02d}/{j:02d}]')
                 self._build_mesh(region_col, r, p)
                 mesh_count += 1

@@ -27,4 +27,5 @@ class RmfDialogOperator(QtWindowEventLoop):
     def exit_widget(self, widget: QtWidgets.QWidget):
         dialog = self._manager.dialog # should be the same instance as 'widget'
         if dialog.result() == QtWidgets.QDialog.DialogCode.Accepted:
-            SceneBuilder.create_scene(self._manager._scene, None, self._manager.get_import_options())
+            filter, options = self._manager.get_import_options()
+            SceneBuilder.create_scene(self._manager._scene, filter, options)

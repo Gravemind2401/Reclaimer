@@ -1,4 +1,4 @@
-from typing import Any, cast, Iterator
+from typing import Any, Tuple, cast, Iterator
 
 from ..src.SceneReader import SceneReader
 from ..src.Scene import *
@@ -141,9 +141,9 @@ class RmfDialogManager():
         self._treeWidget.addTopLevelItems([build_treeitem(self._treeWidget, o) for o in self._scene_filter.groups])
         self._treeWidget.addTopLevelItems([build_treeitem(self._treeWidget, o) for o in self._scene_filter.models])
 
-    def get_import_options(self) -> ImportOptions:
-        # TODO: get settings and selected objects to import based on UI state
-        return ImportOptions()
+    def get_import_options(self) -> Tuple[SceneFilter, ImportOptions]:
+        options = ImportOptions() # TODO: get settings based on UI state
+        return (self._scene_filter, options)
 
     def onDialogResult(self, result: QtWidgets.QDialog.DialogCode):
         ''' Override in a base class to be notified when the dialog result is received '''
