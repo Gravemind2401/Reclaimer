@@ -1,7 +1,8 @@
-from typing import List, Iterator, Optional
+from typing import List, Iterator, Optional, Tuple
 
 from .Scene import *
 from .Model import *
+from .Material import *
 from .Types import *
 
 __all__ = [
@@ -58,10 +59,23 @@ class FilterGroup(IFilterNode):
             if g.selected:
                 yield g
 
+    def _selected_groups_recursive(self) -> Iterator['FilterGroup']:
+        for g in self.selected_groups():
+            yield g
+            for g2 in g._selected_groups_recursive():
+                yield g2
+
     def selected_models(self) -> Iterator['ModelFilter']:
         for m in self.models:
             if m.selected:
                 yield m
+
+    def _selected_models_recursive(self) -> Iterator['ModelFilter']:
+        for g in self._selected_groups_recursive():
+            for m in g.selected_models():
+                yield m
+        for m in self.selected_models():
+            yield m
 
 
 class SceneFilter(FilterGroup):
@@ -72,6 +86,31 @@ class SceneFilter(FilterGroup):
         super().__init__(scene, scene.root_node)
         self._scene = scene
         self.label = scene.name
+
+    def selected_materials(self) -> Iterator[Tuple[int, Material]]:
+        ''' Iterates over tuples of (material_index, material) only for materials in use by selected meshes '''
+
+        material_ids = set()
+        for model in self._selected_models_recursive():
+            for region in model.selected_regions():
+                for perm in region.selected_permutations():
+                    for mesh in perm._permutation.get_meshes(model._model):
+                        for segment in mesh.segments:
+                            material_ids.add(segment.material_index)
+
+        for id in material_ids:
+            yield (id, self._scene.material_pool[id])
+
+    def selected_textures(self) -> Iterator[Tuple[int, Texture]]:
+        ''' Iterates over tuples of (texture_index, texture) only for textures in use by selected meshes '''
+
+        texture_ids = set()
+        for _, mat in self.selected_materials():
+            for t in mat.texture_mappings:
+                texture_ids.add(t.texture_index)
+
+        for id in texture_ids:
+            yield (id, self._scene.texture_pool[id])
 
 
 class ModelFilter(IFilterNode):

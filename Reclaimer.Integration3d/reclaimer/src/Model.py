@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Iterator
 
 from .Types import *
 
@@ -43,6 +43,10 @@ class ModelPermutation(INamed):
     mesh_index: int
     mesh_count: int
     transform: Matrix4x4
+
+    def get_meshes(self, model: Model) -> Iterator['Mesh']:
+        for i in range(self.mesh_index, self.mesh_index + self.mesh_count):
+            yield model.meshes[i]
 
 
 class Marker(INamed):

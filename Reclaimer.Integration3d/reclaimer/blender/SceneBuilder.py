@@ -43,7 +43,7 @@ def create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Op
 
     UNIT_SCALE = scene.unit_scale / BL_UNITS
     OPTIONS = options
-    MATERIALS = create_materials(scene)
+    MATERIALS = create_materials(scene, filter)
 
     root_collection = bpy.context.scene.collection
 
@@ -53,9 +53,11 @@ def create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Op
     for model in filter.selected_models():
         create_model(root_collection, scene, model, options)
 
-def create_materials(scene: Scene) -> List[bpy.types.Material]:
-    result = []
-    if not (OPTIONS.IMPORT_MATERIALS and scene.material_pool):
+def create_materials(scene: Scene, filter: SceneFilter) -> List[bpy.types.Material]:
+    # prefill with None to ensure list has correct number of elements
+    result = [None for _ in scene.material_pool]
+
+    if not OPTIONS.IMPORT_MATERIALS:
         return result
 
     print(f'creating {scene.name}/materials')
@@ -63,10 +65,10 @@ def create_materials(scene: Scene) -> List[bpy.types.Material]:
     init_custom_node_groups()
     builder = MaterialBuilder(scene, OPTIONS)
 
-    # TODO: only create materials used by meshes selected for import
-    for i, _ in enumerate(scene.material_pool):
+    for i, m in filter.selected_materials():
+        print(f'creating material: {m.name}')
         material = builder.create_material(i)
-        result.append(material)
+        result[i] = material
 
     return result
 
