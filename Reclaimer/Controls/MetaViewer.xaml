@@ -8,6 +8,10 @@
              xmlns:u="clr-namespace:Studio.Utilities;assembly=Studio"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
+
+    <UserControl.CommandBindings>
+        <CommandBinding Command="Open" Executed="OpenCommand_Executed" />
+    </UserControl.CommandBindings>
     
     <UserControl.Resources>
         <mv:ShowInvisiblesConverter x:Key="invisConverter" />
@@ -130,6 +134,10 @@
                       ToolTipService.ShowOnDisabled="True"
                       ItemsSource="{Binding TagOptions}"
                       SelectedItem="{Binding SelectedItem}" />
+                <Button VerticalAlignment="Center"
+                        Command="Open" CommandParameter="{Binding}">
+                    <ContentControl Template="{StaticResource ic_Open_16x}" />
+                </Button>
             </StackPanel>
         </DataTemplate>
 

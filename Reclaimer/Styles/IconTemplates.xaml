@@ -275,6 +275,26 @@
         </Viewbox>
     </ControlTemplate>
 
+    <ControlTemplate x:Key="ic_Open_16x" TargetType="ContentControl">
+        <Viewbox Width="16" Height="16">
+            <Rectangle Width="16" Height="16">
+                <Rectangle.Fill>
+                    <DrawingBrush>
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <DrawingGroup.Children>
+                                    <GeometryDrawing Brush="#00FFFFFF" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                                    <GeometryDrawing Brush="#FFF6F6F6" Geometry="F1M5.5859,10L8.5859,7 5.9999,7C4.8979,7 3.9999,7.897 3.9999,9 3.9999,10.104 4.8979,11 5.9999,11L6.9999,11 6.9999,15 5.9999,15C2.6909,15 -0.000100000000000655,12.309 -0.000100000000000655,9 -0.000100000000000655,5.691 2.6909,3 5.9999,3L8.5859,3 5.5859,0 11.4139,0 15.9999,4.586 15.9999,5.414 11.4139,10z" />
+                                    <GeometryDrawing Brush="#FF00539C" Geometry="F1M15,5L11,9 8,9 11,6 6,6C4.343,6 3,7.343 3,9 3,10.656 4.343,12 6,12L6,14C3.238,14 1,11.762 1,9 1,6.239 3.238,4 6,4L11,4 8,1 11,1z" />
+                                </DrawingGroup.Children>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Viewbox>
+    </ControlTemplate>
+
     <ControlTemplate x:Key="ic_Save_16x" TargetType="ContentControl">
         <Viewbox Width="16" Height="16">
             <Rectangle Width="16" Height="16">

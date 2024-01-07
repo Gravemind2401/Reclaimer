@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Halo5;
 using Reclaimer.Models;
+using Reclaimer.Plugins;
 using Reclaimer.Plugins.MetaViewer;
 using Reclaimer.Utilities;
 using Studio.Controls;
@@ -154,7 +155,7 @@ namespace Reclaimer.Controls
             }
         }
 
-        private void RecursiveToggle(IEnumerable<MetaValueBase> collection, bool value)
+        private static void RecursiveToggle(IEnumerable<MetaValueBase> collection, bool value)
         {
             foreach (var s in collection.OfType<IExpandable>())
             {
@@ -184,5 +185,25 @@ namespace Reclaimer.Controls
         private void btnExpandAll_Click(object sender, RoutedEventArgs e) => RecursiveToggle(Metadata, true);
 
         public void Dispose() => context?.Dispose();
+
+        private void OpenCommand_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+        {
+            if (e.Parameter is Plugins.MetaViewer.Halo3.TagReferenceValue h3ref)
+            {
+                var item = h3ref.SelectedItem.Context;
+                var fileName = $"{item.TagName}.{item.ClassName}";
+                var fileKey = $"Blam.{item.CacheFile.CacheType}.{item.ClassCode}";
+                var args = new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), item);
+                Substrate.OpenWithDefault(args);
+            }
+            else if (e.Parameter is Plugins.MetaViewer.Halo5.TagReferenceValue h5ref)
+            {
+                var item = h5ref.SelectedItem.Context;
+                var fileName = $"{item.TagName}.{item.ClassName}";
+                var fileKey = $"Blam.{item.Module.ModuleType}.{item.ClassCode}";
+                var args = new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), item);
+                Substrate.OpenWithDefault(args);
+            }
+        }
     }
 }
