@@ -28,24 +28,41 @@ class TextureHelper:
     material: bpy.types.Material = None
     frame_node: bpy.types.NodeFrame = None
     texture_node: bpy.types.ShaderNodeTexImage = None
+    gamma_node: bpy.types.ShaderNodeGamma = None
     scale_node: bpy.types.ShaderNode = None
+    color_output: bpy.types.NodeSocket = None
+    alpha_output: bpy.types.NodeSocket = None
 
-    def __init__(self, input: TextureMapping, material: bpy.types.Material, image: bpy.types.Image):
+    def __init__(self, scene: Scene, input: TextureMapping, material: bpy.types.Material, image: bpy.types.Image):
         self.input = input
         self.material = material
 
+
+        # set up texture node
+        self.texture_node = material.node_tree.nodes.new('ShaderNodeTexImage')
+        self.texture_node.image = image
+        self.color_output = self.texture_node.outputs['Color']
+        self.alpha_output = self.texture_node.outputs['Alpha']
+
         # TODO: set alpha mode depending on channel mask (not 'CHANNEL_PACKED' if transparent)
         # > set alpha mode depending on whether alpha channel included in channel mask
+
+        tex = scene.texture_pool[input.texture_index]
 
         if input.texture_usage == TEXTURE_USAGE.NORMAL:
             image.alpha_mode = 'NONE'
             image.colorspace_settings.name = 'Non-Color'
         else:
             image.alpha_mode = 'CHANNEL_PACKED'
-
-        # set up texture node
-        self.texture_node = material.node_tree.nodes.new('ShaderNodeTexImage')
-        self.texture_node.image = image
+            if tex.gamma == 2.2:
+                image.colorspace_settings.name = 'sRGB'
+            else:
+                image.colorspace_settings.name = 'Linear'
+                if tex.gamma != 1.0:
+                    self.gamma_node = material.node_tree.nodes.new('ShaderNodeGamma')
+                    self.gamma_node.inputs['Gamma'].default_value = tex.gamma
+                    material.node_tree.links.new(self.gamma_node.inputs['Color'], self.texture_node.outputs['Color'])
+                    self.color_output = self.gamma_node.outputs['Color']
 
         # set up frame node
         self.frame_node = self.material.node_tree.nodes.new('NodeFrame')
@@ -57,6 +74,9 @@ class TextureHelper:
         if self.scale_node:
             self.scale_node.parent = self.frame_node
             self.scale_node.location = (-200, -100)
+        if self.gamma_node:
+            self.gamma_node.parent = self.frame_node
+            self.gamma_node.location = (300, 0)
 
 
 class MaterialBuilder:
@@ -97,7 +117,7 @@ class MaterialBuilder:
                 continue
 
             img = self._get_image(input.texture_index)
-            helper = TextureHelper(input, result, img)
+            helper = TextureHelper(scene, input, result, img)
             usage_lookup[input.texture_usage].append(helper)
 
         diffuse_images = usage_lookup[TEXTURE_USAGE.DIFFUSE]
@@ -114,7 +134,7 @@ class MaterialBuilder:
                 return next
 
             blend_helper = usage_lookup[TEXTURE_USAGE.BLEND][0]
-            blend_input, blend_frame, blend_image = blend_helper.input, blend_helper.frame_node, blend_helper.texture_node
+            blend_input, blend_frame = blend_helper.input, blend_helper.frame_node
             blend_frame.location = (-1000, 100)
 
             # TODO: specular for blend
@@ -123,30 +143,30 @@ class MaterialBuilder:
             if diffuse_images:
                 diffuse_blend = create_group_node(result, 'Blend Mask')
                 diffuse_blend.location = (-400, 600)
-                result.node_tree.links.new(diffuse_blend.inputs['Mask RGB'], blend_image.outputs['Color'])
-                result.node_tree.links.new(diffuse_blend.inputs['Mask A'], blend_image.outputs['Alpha'])
+                result.node_tree.links.new(diffuse_blend.inputs['Mask RGB'], blend_helper.color_output)
+                result.node_tree.links.new(diffuse_blend.inputs['Mask A'], blend_helper.alpha_output)
 
                 for helper in diffuse_images:
-                    input, frame, image = helper.input, helper.frame_node, helper.texture_node
+                    input, frame = helper.input, helper.frame_node
                     frame.location = next_position()
                     if input.blend_channel in blend_input_lookup:
                         blend_input = blend_input_lookup[input.blend_channel]
-                        result.node_tree.links.new(diffuse_blend.inputs[blend_input], image.outputs['Color'])
+                        result.node_tree.links.new(diffuse_blend.inputs[blend_input], helper.color_output)
 
                 result.node_tree.links.new(bsdf.inputs['Base Color'], diffuse_blend.outputs['Color'])
 
             if bump_images:
                 bump_blend = create_group_node(result, 'Blend Mask')
                 bump_blend.location = (-400, -400)
-                result.node_tree.links.new(bump_blend.inputs['Mask RGB'], blend_image.outputs['Color'])
-                result.node_tree.links.new(bump_blend.inputs['Mask A'], blend_image.outputs['Alpha'])
+                result.node_tree.links.new(bump_blend.inputs['Mask RGB'], blend_helper.color_output)
+                result.node_tree.links.new(bump_blend.inputs['Mask A'], blend_helper.alpha_output)
 
                 for helper in bump_images:
-                    input, frame, image = helper.input, helper.frame_node, helper.texture_node
+                    input, frame = helper.input, helper.frame_node
                     frame.location = next_position()
                     if input.blend_channel in blend_input_lookup:
                         blend_input = blend_input_lookup[input.blend_channel]
-                        result.node_tree.links.new(bump_blend.inputs[blend_input], image.outputs['Color'])
+                        result.node_tree.links.new(bump_blend.inputs[blend_input], helper.color_output)
 
                 normal_node = create_group_node(result, 'DX Normal Map')
                 normal_node.location = (-200, -400)
@@ -156,14 +176,14 @@ class MaterialBuilder:
             # should only ever be max 1 of each input type
             if diffuse_images:
                 helper = diffuse_images[0]
-                helper.frame_node.location = (-400, 300)
-                result.node_tree.links.new(bsdf.inputs['Base Color'], helper.texture_node.outputs['Color'])
+                helper.frame_node.location = (-700, 300)
+                result.node_tree.links.new(bsdf.inputs['Base Color'], helper.color_output)
             if bump_images:
                 helper = bump_images[0]
-                helper.frame_node.location = (-500, -100)
+                helper.frame_node.location = (-600, -100)
                 normal_node = create_group_node(result, 'DX Normal Map')
-                normal_node.location = (-200, -150)
-                result.node_tree.links.new(normal_node.inputs['Color'], helper.texture_node.outputs['Color'])
+                normal_node.location = (-250, -150)
+                result.node_tree.links.new(normal_node.inputs['Color'], helper.color_output)
                 result.node_tree.links.new(bsdf.inputs['Normal'], normal_node.outputs['Normal'])
 
         return result
