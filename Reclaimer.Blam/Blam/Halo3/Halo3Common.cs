@@ -100,6 +100,7 @@ namespace Reclaimer.Blam.Halo3
                     if (texParam.Tag == null)
                         continue;
 
+                    var bitmap = texParam.Tag.ReadMetadata<bitmap>();
                     material.TextureMappings.Add(new TextureMapping
                     {
                         Usage = Gen3Materials.UsageLookup[texParam.Usage],
@@ -109,6 +110,13 @@ namespace Reclaimer.Blam.Halo3
                         {
                             Id = texParam.Tag.Id,
                             Name = texParam.Tag.TagName,
+                            Gamma = bitmap.Bitmaps[0].Curve switch
+                            {
+                                ColorSpace.Linear => 1f,
+                                ColorSpace.Gamma2 => 2f,
+                                ColorSpace.sRGB => 2.2f,
+                                _ => 1.95f //xRGB, Unknown
+                            },
                             GetDds = () => texParam.Tag.ReadMetadata<bitmap>().ToDds(0)
                         }
                     });
@@ -119,6 +127,7 @@ namespace Reclaimer.Blam.Halo3
                     material.Tints.Add(new MaterialTint
                     {
                         Usage = Gen3Materials.TintLookup[floatParam.Usage],
+                        BlendChannel = floatParam.BlendChannel,
                         Color = floatParam.Value.ToArgb()
                     });
                 }

@@ -41,12 +41,14 @@ namespace Reclaimer.Geometry
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public float Gamma { get; set; } = 2.2f; //default to sRGB
         public Func<DdsImage> GetDds { get; set; }
     }
 
     public class MaterialTint
     {
         public string Usage { get; set; }
+        public ChannelMask BlendChannel { get; set; }
         public Color Color { get; set; }
     }
 

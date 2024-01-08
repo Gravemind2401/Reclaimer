@@ -188,12 +188,14 @@ def _read_texture_mapping(reader: FileReader, block: DataBlock) -> TextureMappin
 def _read_tint(reader: FileReader, block: DataBlock) -> Color:
     tint = TintColor()
     tint.tint_usage = reader.read_string()
+    tint.blend_channel = reader.read_int32()
     tint.tint_color = reader.read_color()
     return tint
 
 def _read_texture(reader: FileReader, block: DataBlock) -> Texture:
     texture = Texture()
     texture.name = reader.read_string()
+    texture.gamma = reader.read_float()
     props = _read_property_blocks(reader, block)
 
     if 'DATA' in props:

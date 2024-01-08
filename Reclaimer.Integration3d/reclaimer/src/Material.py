@@ -49,8 +49,10 @@ class TextureMapping:
 @dataclass
 class TintColor:
     tint_usage: str = None
+    blend_channel: ChannelFlags = ChannelFlags.DEFAULT
     tint_color: Color = None
 
 class Texture(INamed):
+    gamma: float = 2.2
     address: int = 0
     size: int = 0

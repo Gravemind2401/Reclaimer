@@ -148,6 +148,7 @@ namespace Reclaimer.Geometry.Utilities
             using (BlockMarker(SceneCodes.Tint))
             {
                 WriteString(tint.Usage);
+                writer.Write((int)tint.BlendChannel);
                 writer.Write(tint.Color.R);
                 writer.Write(tint.Color.G);
                 writer.Write(tint.Color.B);
@@ -160,6 +161,7 @@ namespace Reclaimer.Geometry.Utilities
             using (BlockMarker(SceneCodes.Texture))
             {
                 WriteString(texture.Name);
+                writer.Write(texture.Gamma);
 
                 //everything from here on must be a block
 
