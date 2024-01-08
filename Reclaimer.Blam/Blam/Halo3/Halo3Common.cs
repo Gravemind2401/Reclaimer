@@ -1,12 +1,13 @@
 ﻿using Adjutant.Geometry;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Properties;
-using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System.IO;
 using System.Numerics;
+using System.Text.RegularExpressions;
+using static Reclaimer.Blam.Common.BlamConstants;
 
 namespace Reclaimer.Blam.Halo3
 {
@@ -41,11 +42,12 @@ namespace Reclaimer.Blam.Halo3
 
     internal static class Halo3Common
     {
+        private static readonly Regex UsageRegex = new Regex(@"^(\w+?)(?:_m_(\d))?$");
+
         public static IEnumerable<Material> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
         {
-            for (var i = 0; i < shaders.Count; i++)
+            foreach (var tag in shaders.Select(s => s.ShaderReference.Tag))
             {
-                var tag = shaders[i].ShaderReference.Tag;
                 if (tag == null)
                 {
                     yield return null;
@@ -67,49 +69,57 @@ namespace Reclaimer.Blam.Halo3
 
                 var props = shader.ShaderProperties[0];
                 var template = props.TemplateReference.Tag.ReadMetadata<render_method_template>();
-                for (var j = 0; j < template.Usages.Count; j++)
+
+                var textureParams = from index in Enumerable.Range(0, template.Usages.Count)
+                                    let usage = template.Usages[index]
+                                    let tileIndex = template.Arguments.IndexOf(usage)
+                                    let match = UsageRegex.Match(usage)
+                                    where Gen3Materials.UsageLookup.ContainsKey(match.Groups[1].Value)
+                                    select new
+                                    {
+                                        Usage = match.Groups[1].Value,
+                                        BlendChannel = match.Groups[2].Success ? (ChannelMask)(1 << int.Parse(match.Groups[2].Value)) : default,
+                                        props.ShaderMaps[index].BitmapReference.Tag,
+                                        TileData = tileIndex >= 0 ? props.TilingData[tileIndex] : new RealVector4(1, 1, 1, 1),
+                                    };
+
+                var floatParams = from index in Enumerable.Range(0, template.Arguments.Count)
+                                  let usage = template.Arguments[index]
+                                  where !template.Usages.Contains(usage)
+                                  let match = UsageRegex.Match(usage)
+                                  where Gen3Materials.TintLookup.ContainsKey(match.Groups[1].Value)
+                                  select new
+                                  {
+                                      Usage = match.Groups[1].Value,
+                                      BlendChannel = match.Groups[2].Success ? (ChannelMask)(1 << int.Parse(match.Groups[2].Value)) : default,
+                                      Value = props.TilingData[index]
+                                  };
+
+                foreach (var texParam in textureParams)
                 {
-                    var usage = template.Usages[j].Value;
-                    var matUsage = BlamConstants.Gen3Materials.UsageLookup.FirstOrNull(p => usage.StartsWith(p.Key))?.Value;
-                    if (matUsage == null)
+                    if (texParam.Tag == null)
                         continue;
-
-                    var map = props.ShaderMaps[j];
-                    var bitmTag = map.BitmapReference.Tag;
-                    if (bitmTag == null)
-                        continue;
-
-                    var tile = map.TilingIndex >= props.TilingData.Count
-                        ? (RealVector4?)null
-                        : props.TilingData[map.TilingIndex];
 
                     material.TextureMappings.Add(new TextureMapping
                     {
-                        Usage = matUsage,
-                        Tiling = new Vector2(tile?.X ?? 1, tile?.Y ?? 1),
+                        Usage = Gen3Materials.UsageLookup[texParam.Usage],
+                        Tiling = new Vector2(texParam.TileData.X, texParam.TileData.Y),
+                        BlendChannel = texParam.BlendChannel,
                         Texture = new Texture
                         {
-                            Id = bitmTag.Id,
-                            Name = bitmTag.TagName,
-                            GetDds = () => bitmTag.ReadMetadata<bitmap>().ToDds(0)
+                            Id = texParam.Tag.Id,
+                            Name = texParam.Tag.TagName,
+                            GetDds = () => texParam.Tag.ReadMetadata<bitmap>().ToDds(0)
                         }
                     });
                 }
 
-                for (var j = 0; j < template.Arguments.Count; j++)
+                foreach (var floatParam in floatParams)
                 {
-                    if (!BlamConstants.Gen3Materials.TintLookup.TryGetValue(template.Arguments[j].Value, out var tintUsage))
-                        continue;
-
                     material.Tints.Add(new MaterialTint
                     {
-                        Usage = tintUsage,
-                        Color = System.Drawing.Color.FromArgb(
-                            (byte)(props.TilingData[j].W * byte.MaxValue),
-                            (byte)(props.TilingData[j].X * byte.MaxValue),
-                            (byte)(props.TilingData[j].Y * byte.MaxValue),
-                            (byte)(props.TilingData[j].Z * byte.MaxValue)
-                        )
+                        Usage = Gen3Materials.TintLookup[floatParam.Usage],
+                        Color = floatParam.Value.ToArgb()
                     });
                 }
 

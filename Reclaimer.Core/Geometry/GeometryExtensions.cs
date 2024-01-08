@@ -9,6 +9,15 @@ namespace Reclaimer.Geometry
     {
         public static Vector3 ToVector3(this IVector3 vector3) => new Vector3(vector3.X, vector3.Y, vector3.Z);
         public static Quaternion ToQuaternion(this IVector4 vector4) => new Quaternion(vector4.X, vector4.Y, vector4.Z, vector4.W);
+        
+        public static System.Drawing.Color ToArgb(this IVector4 vector4)
+        {
+            return System.Drawing.Color.FromArgb(
+                (byte)(vector4.W * byte.MaxValue),
+                (byte)(vector4.X * byte.MaxValue),
+                (byte)(vector4.Y * byte.MaxValue),
+                (byte)(vector4.Z * byte.MaxValue));
+        }
 
         public static IEnumerable<int> Unstrip(this IEnumerable<int> strip)
         {
