@@ -1,5 +1,5 @@
 import bpy
-from typing import cast
+from typing import cast, Union
 
 __all__ = [
     'init_custom_node_groups',
@@ -10,9 +10,13 @@ def init_custom_node_groups():
     _initgroup_uvscale()
     _initgroup_dxnormal()
     _initgroup_blendmask()
+    _initgroup_compositeblendmask()
 
-def create_group_node(material: bpy.types.Material, group_name: str) -> bpy.types.Node:
-    group_node = material.node_tree.nodes.new('ShaderNodeGroup')
+def create_group_node(parent: Union[bpy.types.Material, bpy.types.NodeTree], group_name: str) -> bpy.types.Node:
+    node_tree = parent
+    if type(parent) == bpy.types.Material:
+        node_tree = parent.node_tree
+    group_node = node_tree.nodes.new('ShaderNodeGroup')
     group_node.node_tree = bpy.data.node_groups.get(group_name)
     return group_node
 
@@ -144,3 +148,65 @@ def _initgroup_blendmask():
     add_rgba.location = (600, 100)
 
     group.links.new(group_output.inputs['Color'], add_rgba.outputs['Color'])
+
+def _initgroup_compositeblendmask():
+    group = bpy.data.node_groups.new('Composite Blend', 'ShaderNodeTree')
+
+    group_input = group.nodes.new('NodeGroupInput')
+    group_input.location = (-400, 150)
+
+    group_output = group.nodes.new('NodeGroupOutput')
+    group_output.location = (400, 50)
+
+    channel_list = ['R', 'G', 'B', 'A']
+    socket_list = ['Color', 'Specular', 'Normal']
+    input_type_list = ['Color', 'Float', 'Color']
+    output_type_list = ['Color', 'Float', 'Vector']
+
+    group.inputs.new('NodeSocketColor', 'Mask RGB')
+    group.inputs.new('NodeSocketColor', 'Mask A')
+
+    # create inputs for R Color, G Color ... R Specular, G Specular etc
+    for socket, socket_type in zip(socket_list, input_type_list):
+        for channel in channel_list:
+            group.inputs.new(f'NodeSocket{socket_type}', f'{channel} {socket}')
+
+    # set valid value range for specular inputs
+    for channel in channel_list:
+        input = group.inputs[f'{channel} Specular']
+        input.min_value = 0.0
+        input.default_value = 0.5
+        input.max_value = 1.0
+
+    # create outputs for Color, Specular etc
+    for socket, socket_type in zip(socket_list, output_type_list):
+        group.outputs.new(f'NodeSocket{socket_type}', socket)
+
+    color_blend_node = create_group_node(group, 'Blend Mask')
+    color_blend_node.label = 'Color Blend'
+    color_blend_node.location = (0, 400)
+
+    spec_blend_node = create_group_node(group, 'Blend Mask')
+    spec_blend_node.label = 'Specular Blend'
+    spec_blend_node.location = (0, 0)
+
+    bump_blend_node = create_group_node(group, 'Blend Mask')
+    bump_blend_node.label = 'Normal Blend'
+    bump_blend_node.location = (0, -400)
+
+    normal_node = create_group_node(group, 'DX Normal Map')
+    normal_node.location = (200, -200)
+
+    blend_node_list = [color_blend_node, spec_blend_node, bump_blend_node]
+
+    for blend_node, socket in zip(blend_node_list, socket_list):
+        group.links.new(blend_node.inputs['Mask RGB'], group_input.outputs['Mask RGB'])
+        group.links.new(blend_node.inputs['Mask A'], group_input.outputs['Mask A'])
+        for channel in channel_list:
+            group.links.new(blend_node.inputs[channel], group_input.outputs[f'{channel} {socket}'])
+
+    group.links.new(normal_node.inputs['Color'], bump_blend_node.outputs['Color'])
+
+    group.links.new(group_output.inputs['Color'], color_blend_node.outputs['Color'])
+    group.links.new(group_output.inputs['Specular'], spec_blend_node.outputs['Color'])
+    group.links.new(group_output.inputs['Normal'], normal_node.outputs['Normal'])

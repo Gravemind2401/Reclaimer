@@ -124,7 +124,7 @@ class MaterialBuilder:
         bump_images = usage_lookup[TEXTURE_USAGE.NORMAL]
 
         if usage_lookup[TEXTURE_USAGE.BLEND]:
-            x_position = -1400
+            x_position = -1700
             y_position = 1400
 
             def next_position() -> Tuple[float, float]:
@@ -140,38 +140,29 @@ class MaterialBuilder:
             # TODO: specular for blend
             # TODO: specular for standard mats
 
-            if diffuse_images:
-                diffuse_blend = create_group_node(result, 'Blend Mask')
-                diffuse_blend.location = (-400, 600)
-                result.node_tree.links.new(diffuse_blend.inputs['Mask RGB'], blend_helper.color_output)
-                result.node_tree.links.new(diffuse_blend.inputs['Mask A'], blend_helper.alpha_output)
+            comp_blend = create_group_node(result, 'Composite Blend')
+            comp_blend.location = (-400, 200)
 
+            result.node_tree.links.new(comp_blend.inputs['Mask RGB'], blend_helper.color_output)
+            result.node_tree.links.new(comp_blend.inputs['Mask A'], blend_helper.alpha_output)
+
+            if diffuse_images:
+                result.node_tree.links.new(bsdf.inputs['Base Color'], comp_blend.outputs['Color'])
                 for helper in diffuse_images:
                     input, frame = helper.input, helper.frame_node
                     frame.location = next_position()
                     if input.blend_channel in blend_input_lookup:
-                        blend_input = blend_input_lookup[input.blend_channel]
-                        result.node_tree.links.new(diffuse_blend.inputs[blend_input], helper.color_output)
-
-                result.node_tree.links.new(bsdf.inputs['Base Color'], diffuse_blend.outputs['Color'])
+                        channel = blend_input_lookup[input.blend_channel]
+                        result.node_tree.links.new(comp_blend.inputs[f'{channel} Color'], helper.color_output)
 
             if bump_images:
-                bump_blend = create_group_node(result, 'Blend Mask')
-                bump_blend.location = (-400, -400)
-                result.node_tree.links.new(bump_blend.inputs['Mask RGB'], blend_helper.color_output)
-                result.node_tree.links.new(bump_blend.inputs['Mask A'], blend_helper.alpha_output)
-
+                result.node_tree.links.new(bsdf.inputs['Normal'], comp_blend.outputs['Normal'])
                 for helper in bump_images:
                     input, frame = helper.input, helper.frame_node
                     frame.location = next_position()
                     if input.blend_channel in blend_input_lookup:
-                        blend_input = blend_input_lookup[input.blend_channel]
-                        result.node_tree.links.new(bump_blend.inputs[blend_input], helper.color_output)
-
-                normal_node = create_group_node(result, 'DX Normal Map')
-                normal_node.location = (-200, -400)
-                result.node_tree.links.new(normal_node.inputs['Color'], bump_blend.outputs['Color'])
-                result.node_tree.links.new(bsdf.inputs['Normal'], normal_node.outputs['Normal'])
+                        channel = blend_input_lookup[input.blend_channel]
+                        result.node_tree.links.new(comp_blend.inputs[f'{channel} Normal'], helper.color_output)
         else:
             # should only ever be max 1 of each input type
             if diffuse_images:
@@ -206,7 +197,11 @@ class MaterialBuilder:
             else:
                 src_path = OPTIONS.texture_path(src)
                 print(f'loading texture: {src_path}')
-                img = bpy.data.images.load(src_path)
+                try:
+                    img = bpy.data.images.load(src_path)
+                except:
+                    print('>>> unable to load image')
+                    img = bpy.data.images.new(name=src_path, width=1, height=1)
 
             self._image_lookup[index] = img
 
