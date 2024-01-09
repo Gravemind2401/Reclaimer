@@ -46,6 +46,8 @@ namespace Reclaimer.Blam.Halo3
 
         public static IEnumerable<Material> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
         {
+            var definitions = new Dictionary<int, render_method_definition>();
+
             foreach (var tag in shaders.Select(s => s.ShaderReference.Tag))
             {
                 if (tag == null)
@@ -66,6 +68,16 @@ namespace Reclaimer.Blam.Halo3
                     yield return material;
                     continue;
                 }
+
+                if (!definitions.TryGetValue(shader.RenderMethodDefinitionReference.TagId, out var rmdf))
+                    definitions.Add(shader.RenderMethodDefinitionReference.TagId, rmdf = shader.RenderMethodDefinitionReference.Tag.ReadMetadata<render_method_definition>());
+
+                var options = (from t in rmdf.Categories.Zip(shader.ShaderOptions)
+                               select new
+                               {
+                                   Category = t.First.Name.Value,
+                                   Option = t.First.Options[t.Second.OptionIndex].Name.Value
+                               }).ToDictionary(o => o.Category, o => o.Option);
 
                 var props = shader.ShaderProperties[0];
                 var template = props.TemplateReference.Tag.ReadMetadata<render_method_template>();
@@ -130,6 +142,43 @@ namespace Reclaimer.Blam.Halo3
                         BlendChannel = floatParam.BlendChannel,
                         Color = floatParam.Value.ToArgb()
                     });
+                }
+
+                if (options.GetValueOrDefault(ShaderOptionCategories.SpecularMask) == ShaderOptions.SpecularMask.SpecularMaskFromDiffuse)
+                {
+                    var diffuse = material.TextureMappings.FirstOrDefault(t => t.Usage == MaterialUsage.Diffuse);
+                    if (diffuse != null)
+                    {
+                        material.TextureMappings.Add(new TextureMapping
+                        {
+                            Usage = MaterialUsage.Specular,
+                            Tiling = diffuse.Tiling,
+                            BlendChannel = diffuse.BlendChannel,
+                            ChannelMask = ChannelMask.Alpha,
+                            Texture = diffuse.Texture
+                        });
+                    }
+                }
+
+                //check for specular on terrain diffuse materials
+                for (var i = 0; i < 4; i++)
+                {
+                    if (options.GetValueOrDefault($"material_{i}") != TerrainShaderOptions.MaterialN.Diffuse_plus_specular)
+                        continue;
+
+                    var channel = (ChannelMask)(1 << i);
+                    var diffuse = material.TextureMappings.FirstOrDefault(t => t.Usage == MaterialUsage.Diffuse && t.BlendChannel == channel);
+                    if (diffuse != null)
+                    {
+                        material.TextureMappings.Add(new TextureMapping
+                        {
+                            Usage = MaterialUsage.Specular,
+                            Tiling = diffuse.Tiling,
+                            BlendChannel = diffuse.BlendChannel,
+                            ChannelMask = ChannelMask.Alpha,
+                            Texture = diffuse.Texture
+                        });
+                    }
                 }
 
                 if (tag.ClassCode == "rmtr")
