@@ -1,5 +1,6 @@
 ﻿using Adjutant.Geometry;
 using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Common.Gen3;
 using Reclaimer.Blam.Properties;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
@@ -70,7 +71,7 @@ namespace Reclaimer.Blam.HaloReach
                 for (var j = 0; j < template.Usages.Count; j++)
                 {
                     var usage = template.Usages[j].Value;
-                    var matUsage = BlamConstants.Gen3Materials.UsageLookup.FirstOrNull(p => usage.StartsWith(p.Key))?.Value;
+                    var matUsage = ShaderParameters.UsageLookup.FirstOrNull(p => usage.StartsWith(p.Key))?.Value;
                     if (matUsage == null)
                         continue;
 
@@ -98,7 +99,7 @@ namespace Reclaimer.Blam.HaloReach
 
                 for (var j = 0; j < template.Arguments.Count; j++)
                 {
-                    if (!BlamConstants.Gen3Materials.TintLookup.TryGetValue(template.Arguments[j].Value, out var tintUsage))
+                    if (!ShaderParameters.TintLookup.TryGetValue(template.Arguments[j].Value, out var tintUsage))
                         continue;
 
                     material.Tints.Add(new MaterialTint

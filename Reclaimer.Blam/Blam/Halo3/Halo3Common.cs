@@ -1,5 +1,6 @@
 ﻿using Adjutant.Geometry;
 using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Common.Gen3;
 using Reclaimer.Blam.Properties;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
@@ -7,7 +8,6 @@ using Reclaimer.IO;
 using System.IO;
 using System.Numerics;
 using System.Text.RegularExpressions;
-using static Reclaimer.Blam.Common.BlamConstants;
 
 namespace Reclaimer.Blam.Halo3
 {
@@ -74,7 +74,7 @@ namespace Reclaimer.Blam.Halo3
                                     let usage = template.Usages[index]
                                     let tileIndex = template.Arguments.IndexOf(usage)
                                     let match = UsageRegex.Match(usage)
-                                    where Gen3Materials.UsageLookup.ContainsKey(match.Groups[1].Value)
+                                    where ShaderParameters.UsageLookup.ContainsKey(match.Groups[1].Value)
                                     select new
                                     {
                                         Usage = match.Groups[1].Value,
@@ -87,7 +87,7 @@ namespace Reclaimer.Blam.Halo3
                                   let usage = template.Arguments[index]
                                   where !template.Usages.Contains(usage)
                                   let match = UsageRegex.Match(usage)
-                                  where Gen3Materials.TintLookup.ContainsKey(match.Groups[1].Value)
+                                  where ShaderParameters.TintLookup.ContainsKey(match.Groups[1].Value)
                                   select new
                                   {
                                       Usage = match.Groups[1].Value,
@@ -103,7 +103,7 @@ namespace Reclaimer.Blam.Halo3
                     var bitmap = texParam.Tag.ReadMetadata<bitmap>();
                     material.TextureMappings.Add(new TextureMapping
                     {
-                        Usage = Gen3Materials.UsageLookup[texParam.Usage],
+                        Usage = ShaderParameters.UsageLookup[texParam.Usage],
                         Tiling = new Vector2(texParam.TileData.X, texParam.TileData.Y),
                         BlendChannel = texParam.BlendChannel,
                         Texture = new Texture
@@ -126,7 +126,7 @@ namespace Reclaimer.Blam.Halo3
                 {
                     material.Tints.Add(new MaterialTint
                     {
-                        Usage = Gen3Materials.TintLookup[floatParam.Usage],
+                        Usage = ShaderParameters.TintLookup[floatParam.Usage],
                         BlendChannel = floatParam.BlendChannel,
                         Color = floatParam.Value.ToArgb()
                     });
