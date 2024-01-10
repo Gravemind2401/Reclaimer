@@ -37,7 +37,6 @@ class TextureHelper:
         self.input = input
         self.material = material
 
-
         # set up texture node
         self.texture_node = material.node_tree.nodes.new('ShaderNodeTexImage')
         self.texture_node.image = image
@@ -54,11 +53,11 @@ class TextureHelper:
             image.colorspace_settings.name = 'Non-Color'
         else:
             image.alpha_mode = 'CHANNEL_PACKED'
-            if tex.gamma == 2.2:
+            if tex.gamma == GAMMA_PRESET.SRGB:
                 image.colorspace_settings.name = 'sRGB'
             else:
                 image.colorspace_settings.name = 'Linear'
-                if tex.gamma != 1.0:
+                if tex.gamma != GAMMA_PRESET.LINEAR:
                     self.gamma_node = material.node_tree.nodes.new('ShaderNodeGamma')
                     self.gamma_node.inputs['Gamma'].default_value = tex.gamma
                     material.node_tree.links.new(self.gamma_node.inputs['Color'], self.texture_node.outputs['Color'])
@@ -134,7 +133,7 @@ class MaterialBuilder:
                 return next
 
             blend_helper = usage_lookup[TEXTURE_USAGE.BLEND][0]
-            blend_input, blend_frame = blend_helper.input, blend_helper.frame_node
+            blend_frame = blend_helper.frame_node
             blend_frame.location = (-1000, 100)
 
             # TODO: specular for blend

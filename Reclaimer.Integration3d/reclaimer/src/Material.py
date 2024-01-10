@@ -5,6 +5,7 @@ from enum import IntFlag
 from .Types import *
 
 __all__ = [
+    'GAMMA_PRESET',
     'TEXTURE_USAGE',
     'ChannelFlags',
     'Material',
@@ -12,6 +13,12 @@ __all__ = [
     'TintColor',
     'Texture'
 ]
+
+
+class GAMMA_PRESET:
+    LINEAR = 1.0
+    XRGB = 1.95
+    SRGB = 2.2
 
 
 class TEXTURE_USAGE:
