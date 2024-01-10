@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Union
+from typing import List, Union, Dict, Tuple
 
 from .Types import *
 from .Model import *
@@ -41,6 +41,21 @@ class Scene(INamed):
     index_buffer_pool: List[IndexBuffer]
     material_pool: List[Material]
     texture_pool: List[Texture]
+
+    def create_texture_lookup(self, material: Material, blend_channel: ChannelFlags) -> Dict[int, Tuple[Texture, Dict[str, TextureMapping]]]:
+        channel_inputs = [m for m in material.texture_mappings if m.blend_channel == blend_channel]
+
+        #only include textures that are actually in use
+        unique_indices = set(m.texture_index for m in channel_inputs)
+
+        lookup = dict()
+        for i in unique_indices:
+            lookup[i] = (self.texture_pool[i], dict())
+
+        for m in channel_inputs:
+            lookup[m.texture_index][1][m.texture_usage] = m
+
+        return lookup
 
 
 class SceneGroup(INamed):

@@ -11,6 +11,15 @@ __all__ = [
     'MaterialBuilder'
 ]
 
+SPECULAR_SOCKET_NAME = 'Specular' if bpy.app.version[0] < 4 else 'Specular IOR Level'
+
+__channel_socket_lookup: Dict[ChannelFlags, str] = {
+    ChannelFlags.RGB: 'Color',
+    ChannelFlags.RED: 'R',
+    ChannelFlags.GREEN: 'G',
+    ChannelFlags.BLUE: 'B',
+    ChannelFlags.ALPHA: 'Alpha'
+}
 
 def _create_uvscale_node(material: bpy.types.Material, input: TextureMapping, image_node: bpy.types.Node) -> bpy.types.Node:
     if input.tiling == (1, 1):
@@ -22,60 +31,100 @@ def _create_uvscale_node(material: bpy.types.Material, input: TextureMapping, im
     material.node_tree.links.new(image_node.inputs['Vector'], scale_node.outputs['Vector'])
     return scale_node
 
+def _get_channel_socket(input: TextureMapping):
+    mask = input.channel_mask
+    if mask == ChannelFlags.DEFAULT:
+        mask = ChannelFlags.get_default(input.texture_usage)
+    if mask not in __channel_socket_lookup:
+        mask = ChannelFlags.RGB
+    return __channel_socket_lookup[mask]
 
 class TextureHelper:
-    input: TextureMapping = None
+    texture_data: Texture = None
+    input_data: Dict[str, TextureMapping] = None
+
     material: bpy.types.Material = None
     frame_node: bpy.types.NodeFrame = None
     texture_node: bpy.types.ShaderNodeTexImage = None
     gamma_node: bpy.types.ShaderNodeGamma = None
+    rgb_node: bpy.types.ShaderNodeSeparateRGB = None
     scale_node: bpy.types.ShaderNode = None
-    color_output: bpy.types.NodeSocket = None
-    alpha_output: bpy.types.NodeSocket = None
 
-    def __init__(self, scene: Scene, input: TextureMapping, material: bpy.types.Material, image: bpy.types.Image):
-        self.input = input
+    @property
+    def default_input(self) -> TextureMapping:
+        return next(iter(self.input_data.values()))
+
+    def __init__(self, texture: Texture, usages: Dict[str, TextureMapping], material: bpy.types.Material, image: bpy.types.Image):
+        self.input_data = usages
+        self.texture_data = texture
         self.material = material
 
         # set up texture node
         self.texture_node = material.node_tree.nodes.new('ShaderNodeTexImage')
         self.texture_node.image = image
-        self.color_output = self.texture_node.outputs['Color']
-        self.alpha_output = self.texture_node.outputs['Alpha']
 
-        # TODO: set alpha mode depending on channel mask (not 'CHANNEL_PACKED' if transparent)
-        # > set alpha mode depending on whether alpha channel included in channel mask
+        # append frame first so it can be set as parent for future nodes
+        self._append_frame_node()
+        self._append_scale_node()
 
-        tex = scene.texture_pool[input.texture_index]
-
-        if input.texture_usage == TEXTURE_USAGE.NORMAL:
+        if self.default_input.texture_usage == TEXTURE_USAGE.NORMAL:
             image.alpha_mode = 'NONE'
             image.colorspace_settings.name = 'Non-Color'
         else:
             image.alpha_mode = 'CHANNEL_PACKED'
-            if tex.gamma == GAMMA_PRESET.SRGB:
+            if self.texture_data.gamma == GAMMA_PRESET.SRGB:
                 image.colorspace_settings.name = 'sRGB'
             else:
                 image.colorspace_settings.name = 'Linear'
-                if tex.gamma != GAMMA_PRESET.LINEAR:
-                    self.gamma_node = material.node_tree.nodes.new('ShaderNodeGamma')
-                    self.gamma_node.inputs['Gamma'].default_value = tex.gamma
-                    material.node_tree.links.new(self.gamma_node.inputs['Color'], self.texture_node.outputs['Color'])
-                    self.color_output = self.gamma_node.outputs['Color']
+                if self.texture_data.gamma != GAMMA_PRESET.LINEAR:
+                    self._append_gamma_node()
 
-        # set up frame node
+    def _append_frame_node(self):
         self.frame_node = self.material.node_tree.nodes.new('NodeFrame')
-        self.frame_node.label = self.input.texture_usage
+        self.frame_node.label = self.default_input.texture_usage
         self.texture_node.parent = self.frame_node
 
-        # set up scale node
-        self.scale_node = _create_uvscale_node(material, input, self.texture_node)
+    def _append_scale_node(self):
+        self.scale_node = _create_uvscale_node(self.material, self.default_input, self.texture_node)
         if self.scale_node:
             self.scale_node.parent = self.frame_node
             self.scale_node.location = (-200, -100)
-        if self.gamma_node:
-            self.gamma_node.parent = self.frame_node
-            self.gamma_node.location = (300, 0)
+
+    def _append_gamma_node(self):
+        self.gamma_node = self.material.node_tree.nodes.new('ShaderNodeGamma')
+        self.gamma_node.inputs['Gamma'].default_value = self.texture_data.gamma
+        self.gamma_node.parent = self.frame_node
+        self.gamma_node.location = (300, 0)
+        self.material.node_tree.links.new(self.gamma_node.inputs['Color'], self.texture_node.outputs['Color'])
+
+    def _append_rgb_node(self):
+        self.rgb_node = self.material.node_tree.nodes.new('ShaderNodeSeparateRGB')
+        self.rgb_node.parent = self.frame_node
+        self.rgb_node.location = (300, 200)
+        self.material.node_tree.links.new(self.rgb_node.inputs['Color'], self.get_output('Color'))
+
+    def get_default_output(self, usage: str) -> bpy.types.NodeSocket:
+        input = self.input_data.get(usage, None) or next(iter(self.input_data.items()))[1]
+        output_name = _get_channel_socket(input)
+        return self.get_output(output_name)
+
+    def get_output(self, output_name: str) -> bpy.types.NodeSocket:
+        if output_name == 'Alpha':
+            return self.texture_node.outputs['Alpha']
+        if output_name == 'Color':
+            node = self.gamma_node or self.texture_node
+            return node.outputs['Color']
+        if output_name in ['R', 'G', 'B']:
+            if not self.rgb_node:
+                self._append_rgb_node()
+            return self.rgb_node.outputs[output_name]
+
+    def set_location(self, x: int, y: int = None):
+        if type(x) == tuple:
+            x, y = x
+        frame = self.frame_node
+        if not (frame.location[0] or frame.location[1]):
+            frame.location = (x, y)
 
 
 class MaterialBuilder:
@@ -101,7 +150,9 @@ class MaterialBuilder:
         usage_lookup: Dict[str, List[TextureHelper]] = {
             TEXTURE_USAGE.BLEND: [],
             TEXTURE_USAGE.DIFFUSE: [],
-            TEXTURE_USAGE.NORMAL: []
+            TEXTURE_USAGE.NORMAL: [],
+            TEXTURE_USAGE.SPECULAR: [],
+            TEXTURE_USAGE.TRANSPARENCY: []
         }
 
         blend_input_lookup = {
@@ -111,16 +162,23 @@ class MaterialBuilder:
             ChannelFlags.ALPHA: 'A'
         }
 
-        for input in mat.texture_mappings:
-            if not input.texture_usage in usage_lookup:
-                continue
+        #duplicate textures for different blend channels, but not within the same blend channel
+        for channel in (ChannelFlags.DEFAULT, ChannelFlags.RED, ChannelFlags.GREEN, ChannelFlags.BLUE, ChannelFlags.ALPHA):
+            texture_lookup = scene.create_texture_lookup(mat, channel)
+            for i, (texture, usages) in texture_lookup.items():
+                if not any(u in usage_lookup for u in usages):
+                    continue #ignore texture if no supported usages
 
-            img = self._get_image(input.texture_index)
-            helper = TextureHelper(scene, input, result, img)
-            usage_lookup[input.texture_usage].append(helper)
+                img = self._get_image(i)
+                helper = TextureHelper(texture, usages, result, img)
+                for usage in usages.keys():
+                    if usage in usage_lookup:
+                        usage_lookup[usage].append(helper)
 
         diffuse_images = usage_lookup[TEXTURE_USAGE.DIFFUSE]
         bump_images = usage_lookup[TEXTURE_USAGE.NORMAL]
+        specular_images = usage_lookup[TEXTURE_USAGE.SPECULAR]
+        transparency_images = usage_lookup[TEXTURE_USAGE.TRANSPARENCY]
 
         if usage_lookup[TEXTURE_USAGE.BLEND]:
             x_position = -1700
@@ -136,45 +194,63 @@ class MaterialBuilder:
             blend_frame = blend_helper.frame_node
             blend_frame.location = (-1000, 100)
 
-            # TODO: specular for blend
-            # TODO: specular for standard mats
-
             comp_blend = create_group_node(result, 'Composite Blend')
             comp_blend.location = (-400, 200)
 
-            result.node_tree.links.new(comp_blend.inputs['Mask RGB'], blend_helper.color_output)
-            result.node_tree.links.new(comp_blend.inputs['Mask A'], blend_helper.alpha_output)
+            result.node_tree.links.new(comp_blend.inputs['Mask RGB'], blend_helper.get_output('Color'))
+            result.node_tree.links.new(comp_blend.inputs['Mask A'], blend_helper.get_output('Alpha'))
 
             if diffuse_images:
                 result.node_tree.links.new(bsdf.inputs['Base Color'], comp_blend.outputs['Color'])
                 for helper in diffuse_images:
-                    input, frame = helper.input, helper.frame_node
-                    frame.location = next_position()
+                    input = helper.default_input
+                    helper.set_location(next_position())
                     if input.blend_channel in blend_input_lookup:
                         channel = blend_input_lookup[input.blend_channel]
-                        result.node_tree.links.new(comp_blend.inputs[f'{channel} Color'], helper.color_output)
+                        result.node_tree.links.new(comp_blend.inputs[f'{channel} Color'], helper.get_default_output(TEXTURE_USAGE.DIFFUSE))
 
             if bump_images:
                 result.node_tree.links.new(bsdf.inputs['Normal'], comp_blend.outputs['Normal'])
                 for helper in bump_images:
-                    input, frame = helper.input, helper.frame_node
-                    frame.location = next_position()
+                    input = helper.default_input
+                    helper.set_location(next_position())
                     if input.blend_channel in blend_input_lookup:
                         channel = blend_input_lookup[input.blend_channel]
-                        result.node_tree.links.new(comp_blend.inputs[f'{channel} Normal'], helper.color_output)
+                        result.node_tree.links.new(comp_blend.inputs[f'{channel} Normal'], helper.get_default_output(TEXTURE_USAGE.NORMAL))
+
+            if specular_images:
+                result.node_tree.links.new(bsdf.inputs[SPECULAR_SOCKET_NAME], comp_blend.outputs['Specular'])
+                for helper in specular_images:
+                    input = helper.default_input
+                    helper.set_location(next_position())
+                    if input.blend_channel in blend_input_lookup:
+                        channel = blend_input_lookup[input.blend_channel]
+                        result.node_tree.links.new(comp_blend.inputs[f'{channel} Specular'], helper.get_default_output(TEXTURE_USAGE.SPECULAR))
+
+            #TODO: transparency on terrain blend?
         else:
             # should only ever be max 1 of each input type
             if diffuse_images:
                 helper = diffuse_images[0]
-                helper.frame_node.location = (-700, 300)
-                result.node_tree.links.new(bsdf.inputs['Base Color'], helper.color_output)
+                helper.set_location(-700, 300)
+                result.node_tree.links.new(bsdf.inputs['Base Color'], helper.get_default_output(TEXTURE_USAGE.DIFFUSE))
             if bump_images:
                 helper = bump_images[0]
-                helper.frame_node.location = (-600, -100)
+                helper.set_location(-600, -100)
                 normal_node = create_group_node(result, 'DX Normal Map')
                 normal_node.location = (-250, -150)
-                result.node_tree.links.new(normal_node.inputs['Color'], helper.color_output)
+                result.node_tree.links.new(normal_node.inputs['Color'], helper.get_default_output(TEXTURE_USAGE.NORMAL))
                 result.node_tree.links.new(bsdf.inputs['Normal'], normal_node.outputs['Normal'])
+            if specular_images:
+                helper = specular_images[0]
+                helper.set_location(-1200, -50)
+                result.node_tree.links.new(bsdf.inputs[SPECULAR_SOCKET_NAME], helper.get_default_output(TEXTURE_USAGE.SPECULAR))
+            if transparency_images:
+                #TODO: other blend modes
+                result.blend_method = 'CLIP'
+                helper = transparency_images[0]
+                helper.set_location(-1000, -500)
+                result.node_tree.links.new(bsdf.inputs['Alpha'], helper.get_default_output(TEXTURE_USAGE.TRANSPARENCY))
 
         return result
 

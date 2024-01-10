@@ -26,6 +26,7 @@ class TEXTURE_USAGE:
     DIFFUSE: str = 'diffuse'
     NORMAL: str = 'bump'
     SPECULAR: str = 'specular'
+    TRANSPARENCY: str = 'transparency'
 
 
 class ChannelFlags(IntFlag):
@@ -38,6 +39,13 @@ class ChannelFlags(IntFlag):
 
     RGB = RED | GREEN | BLUE
     RGBA = RGB | ALPHA
+
+    @staticmethod
+    def get_default(usage: str) -> 'ChannelFlags':
+        if usage == TEXTURE_USAGE.TRANSPARENCY:
+            return ChannelFlags.ALPHA
+        return ChannelFlags.RGB
+
 
 class Material(INamed):
     texture_mappings: List['TextureMapping']
