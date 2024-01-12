@@ -171,6 +171,7 @@ def _read_mesh_segment(reader: FileReader, block: DataBlock) -> MeshSegment:
 def _read_material(reader: FileReader, block: DataBlock) -> Material:
     material = Material()
     material.name = reader.read_string()
+    material.alpha_mode = reader.read_string()
     props = _read_property_blocks(reader, block)
     material.texture_mappings = _decode_list(reader, props['TMAP[]'], _read_texture_mapping)
     material.tints = _decode_list(reader, props['TINT[]'], _read_tint)

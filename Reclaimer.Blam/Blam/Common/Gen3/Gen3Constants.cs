@@ -85,6 +85,16 @@ namespace Reclaimer.Blam.Common.Gen3
             public const string SpecularMaskFromTexture = "specular_mask_from_texture";
             public const string SpecularMaskFromColorTexture = "specular_mask_from_color_texture";
         }
+
+        public static class BlendMode
+        {
+            public const string Opaque = "opaque";
+            public const string Additive = "additive";
+            public const string Multiply = "multiply";
+            public const string AlphaBlend = "alpha_blend";
+            public const string DoubleMultiply = "double_multiply";
+            public const string PreMultipliedAlpha = "pre_multiplied_alpha";
+        }
     }
 
     public static class TerrainShaderOptionCategories

@@ -162,6 +162,14 @@ class MaterialBuilder:
             ChannelFlags.ALPHA: 'A'
         }
 
+        #add and multiply not supported anymore?
+        alpha_mode_lookup = {
+            ALPHA_MODE.CLIP: 'CLIP',
+            ALPHA_MODE.ADD: 'BLEND',
+            ALPHA_MODE.BLEND: 'BLEND',
+            ALPHA_MODE.OPAQUE: 'OPAQUE'
+        }
+
         #duplicate textures for different blend channels, but not within the same blend channel
         for channel in (ChannelFlags.DEFAULT, ChannelFlags.RED, ChannelFlags.GREEN, ChannelFlags.BLUE, ChannelFlags.ALPHA):
             texture_lookup = scene.create_texture_lookup(mat, channel)
@@ -226,8 +234,6 @@ class MaterialBuilder:
                     if input.blend_channel in blend_input_lookup:
                         channel = blend_input_lookup[input.blend_channel]
                         result.node_tree.links.new(comp_blend.inputs[f'{channel} Specular'], helper.get_default_output(TEXTURE_USAGE.SPECULAR))
-
-            #TODO: transparency on terrain blend?
         else:
             # should only ever be max 1 of each input type
             if diffuse_images:
@@ -246,8 +252,7 @@ class MaterialBuilder:
                 helper.set_location(-1200, -50)
                 result.node_tree.links.new(bsdf.inputs[SPECULAR_SOCKET_NAME], helper.get_default_output(TEXTURE_USAGE.SPECULAR))
             if transparency_images:
-                #TODO: other blend modes
-                result.blend_method = 'CLIP'
+                result.blend_method = alpha_mode_lookup.get(mat.alpha_mode, 'OPAQUE')
                 helper = transparency_images[0]
                 helper.set_location(-1000, -500)
                 result.node_tree.links.new(bsdf.inputs['Alpha'], helper.get_default_output(TEXTURE_USAGE.TRANSPARENCY))

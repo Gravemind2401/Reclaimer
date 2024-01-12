@@ -10,6 +10,7 @@ namespace Reclaimer.Geometry
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string AlphaMode { get; set; }
         public List<TextureMapping> TextureMappings { get; } = new();
         public List<MaterialTint> Tints { get; } = new();
 
@@ -50,6 +51,16 @@ namespace Reclaimer.Geometry
         public string Usage { get; set; }
         public ChannelMask BlendChannel { get; set; }
         public Color Color { get; set; }
+    }
+
+    public static class AlphaMode
+    {
+        public const string Opaque = "opaque";
+        public const string Clip = "clip";
+        public const string Add = "additive";
+        public const string Multiply = "multiply";
+        public const string Blend = "blend";
+        public const string PreMultiplied = "pre_multiplied";
     }
 
     public static class MaterialUsage

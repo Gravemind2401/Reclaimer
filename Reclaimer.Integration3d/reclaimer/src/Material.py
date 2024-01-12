@@ -6,6 +6,7 @@ from .Types import *
 
 __all__ = [
     'GAMMA_PRESET',
+    'ALPHA_MODE',
     'TEXTURE_USAGE',
     'ChannelFlags',
     'Material',
@@ -19,6 +20,15 @@ class GAMMA_PRESET:
     LINEAR = 1.0
     XRGB = 1.95
     SRGB = 2.2
+
+
+class ALPHA_MODE:
+    OPAQUE: str = 'opaque'
+    CLIP: str = 'clip'
+    ADD: str = 'additive'
+    MULTIPLY: str = 'multiply'
+    BLEND: str = 'blend'
+    PRE_MULTIPLIED: str = 'pre_multiplied'
 
 
 class TEXTURE_USAGE:
@@ -48,6 +58,7 @@ class ChannelFlags(IntFlag):
 
 
 class Material(INamed):
+    alpha_mode: str = None
     texture_mappings: List['TextureMapping']
     tints: List[Color]
 

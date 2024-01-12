@@ -126,6 +126,7 @@ namespace Reclaimer.Geometry.Utilities
             using (BlockMarker(SceneCodes.Material))
             {
                 WriteString(material.Name);
+                WriteString(material.AlphaMode);
                 WriteList(material.TextureMappings, Write, SceneCodes.TextureMapping);
                 WriteList(material.Tints, Write, SceneCodes.Tint);
             }

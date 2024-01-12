@@ -69,6 +69,8 @@ namespace Reclaimer.Blam.Halo3
                     continue;
                 }
 
+                #region Collate Material Settings
+
                 if (!definitions.TryGetValue(shader.RenderMethodDefinitionReference.TagId, out var rmdf))
                     definitions.Add(shader.RenderMethodDefinitionReference.TagId, rmdf = shader.RenderMethodDefinitionReference.Tag.ReadMetadata<render_method_definition>());
 
@@ -107,6 +109,26 @@ namespace Reclaimer.Blam.Halo3
                                       Value = props.TilingData[index]
                                   };
 
+                if (options.TryGetValue(ShaderOptionCategories.BlendMode, out var blendMode))
+                {
+                    material.AlphaMode = blendMode switch
+                    {
+                        ShaderOptions.BlendMode.Additive => AlphaMode.Add,
+                        ShaderOptions.BlendMode.Multiply => AlphaMode.Multiply,
+                        ShaderOptions.BlendMode.AlphaBlend => AlphaMode.Blend,
+                        ShaderOptions.BlendMode.PreMultipliedAlpha => AlphaMode.PreMultiplied,
+                        _ => AlphaMode.Opaque
+                    };
+                }
+
+                if (options.TryGetValue(ShaderOptionCategories.AlphaTest, out var alphaTest) && alphaTest != ShaderOptions.AlphaTest.None)
+                    material.AlphaMode = AlphaMode.Clip;
+
+                if (string.IsNullOrEmpty(material.AlphaMode))
+                    material.AlphaMode = AlphaMode.Opaque;
+
+                #endregion
+
                 foreach (var texParam in textureParams)
                 {
                     if (texParam.Tag == null)
@@ -144,6 +166,7 @@ namespace Reclaimer.Blam.Halo3
                     });
                 }
 
+                //check for specular-from-alpha on regular materials
                 if (options.GetValueOrDefault(ShaderOptionCategories.SpecularMask) == ShaderOptions.SpecularMask.SpecularMaskFromDiffuse)
                 {
                     var diffuse = material.TextureMappings.FirstOrDefault(t => t.Usage == MaterialUsage.Diffuse);
@@ -160,7 +183,7 @@ namespace Reclaimer.Blam.Halo3
                     }
                 }
 
-                //check for specular on terrain diffuse materials
+                //check for specular-from-alpha on terrain diffuse materials
                 for (var i = 0; i < 4; i++)
                 {
                     if (options.GetValueOrDefault($"material_{i}") != TerrainShaderOptions.MaterialN.Diffuse_plus_specular)
@@ -173,6 +196,24 @@ namespace Reclaimer.Blam.Halo3
                         material.TextureMappings.Add(new TextureMapping
                         {
                             Usage = MaterialUsage.Specular,
+                            Tiling = diffuse.Tiling,
+                            BlendChannel = diffuse.BlendChannel,
+                            ChannelMask = ChannelMask.Alpha,
+                            Texture = diffuse.Texture
+                        });
+                    }
+                }
+
+                //add transparency mapping for alpha blending
+                if (material.AlphaMode != AlphaMode.Opaque)
+                {
+                    //should only ever be one diffuse if alpha blending is being used (terrain shaders have no blend mode parameter)
+                    var diffuse = material.TextureMappings.FirstOrDefault(t => t.Usage == MaterialUsage.Diffuse);
+                    if (diffuse != null)
+                    {
+                        material.TextureMappings.Add(new TextureMapping
+                        {
+                            Usage = MaterialUsage.Transparency,
                             Tiling = diffuse.Tiling,
                             BlendChannel = diffuse.BlendChannel,
                             ChannelMask = ChannelMask.Alpha,
