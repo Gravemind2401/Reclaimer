@@ -11,8 +11,9 @@ bl_info = {
     'description': 'Import RMF files created by Reclaimer.',
     'author': 'Gravemind2401',
     'version': (1, 0, 0),
-    'blender': (2, 80, 0),
+    'blender': (2, 91, 0),
     'location': 'File > Import > RMF',
+    'warning': 'Requires installation of PySide2',
     'category': 'Import-Export',
     'support': 'TESTING'
 }

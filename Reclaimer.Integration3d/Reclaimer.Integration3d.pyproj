@@ -29,10 +29,13 @@
     <Compile Include="reclaimer\autodesk\Utils.py" />
     <Compile Include="reclaimer\autodesk\__init__.py" />
     <Compile Include="reclaimer\blender\CustomShaderNodes.py" />
+    <Compile Include="reclaimer\blender\DependencyInstallerOperator.py" />
+    <Compile Include="reclaimer\blender\DependencyUtils.py" />
     <Compile Include="reclaimer\blender\DialogOperator.py" />
     <Compile Include="reclaimer\blender\ImportOperator.py" />
     <Compile Include="reclaimer\blender\MaterialBuilder.py" />
     <Compile Include="reclaimer\blender\MenuOperator.py" />
+    <Compile Include="reclaimer\blender\Preferences.py" />
     <Compile Include="reclaimer\blender\QtWindowEventLoop.py" />
     <Compile Include="reclaimer\blender\SceneBuilder.py" />
     <Compile Include="reclaimer\blender\Utils.py" />
