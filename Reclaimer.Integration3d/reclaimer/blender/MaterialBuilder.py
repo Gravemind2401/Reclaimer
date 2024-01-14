@@ -75,7 +75,7 @@ class TextureHelper:
             if self.texture_data.gamma == GAMMA_PRESET.SRGB:
                 image.colorspace_settings.name = 'sRGB'
             else:
-                image.colorspace_settings.name = 'Linear'
+                image.colorspace_settings.name = 'Linear' if bpy.app.version[0] < 4 else 'Linear Rec.709'
                 if self.texture_data.gamma != GAMMA_PRESET.LINEAR:
                     self._append_gamma_node()
 

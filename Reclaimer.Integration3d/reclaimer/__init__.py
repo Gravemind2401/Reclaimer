@@ -15,7 +15,7 @@ bl_info = {
     'location': 'File > Import > RMF',
     'warning': 'Requires installation of PySide2',
     'category': 'Import-Export',
-    'support': 'TESTING'
+    'support': 'COMMUNITY'
 }
 
 if importutil.find_spec('bpy'):
