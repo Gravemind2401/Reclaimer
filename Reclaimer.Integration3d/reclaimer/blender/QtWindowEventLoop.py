@@ -29,10 +29,9 @@ class QtWindowEventLoop(bpy.types.Operator):
     bl_idname = 'screen.qt_event_loop'
     bl_label = 'Qt Event Loop'
 
-    execution_context: bpy.types.Context
+    dialog: QtWidgets.QDialog
 
-    def __init__(self, widget, *args, **kwargs):
-        self._widget = widget
+    def __init__(self, *args, **kwargs):
         self._args = args
         self._kwargs = kwargs
 
@@ -40,11 +39,11 @@ class QtWindowEventLoop(bpy.types.Operator):
         # bpy.context.window_manager
         wm = context.window_manager
 
-        if not self.widget.isVisible():
+        if not self.dialog.isVisible():
             # if widget is closed
             logger.debug('finish modal operator')
             wm.event_timer_remove(self._timer)
-            self.exit_widget(self.widget)
+            self.dialog_closed()
             return {'FINISHED'}
         else:
             logger.debug('process the events for Qt window')
@@ -69,12 +68,9 @@ class QtWindowEventLoop(bpy.types.Operator):
             self._set_stylesheet(self.app, stylesheet)
 
         self.event_loop = QtCore.QEventLoop()
-        self.widget = self._widget(*self._args, **self._kwargs)
 
-        self.init_widget(self.widget)
-
-        logger.debug(self.app)
-        logger.debug(self.widget)
+        self.dialog = self.create_dialog()
+        self.dialog.show()
 
         # run modal
         wm = context.window_manager
@@ -91,8 +87,8 @@ class QtWindowEventLoop(bpy.types.Operator):
             app.setStyleSheet(stylesheet)
             file_qss.close()
 
-    def init_widget(self, widget: QtWidgets.QWidget):
+    def create_dialog(self) -> QtWidgets.QDialog:
         ''' Override in a base class to configure the widget during initialization '''
 
-    def exit_widget(self, widget: QtWidgets.QWidget):
+    def dialog_closed(self):
         ''' Override in a base class to run any finalization/cleanup code when the widget is closed '''

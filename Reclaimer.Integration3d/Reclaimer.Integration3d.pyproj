@@ -44,8 +44,8 @@
     <Compile Include="reclaimer\src\ImportOptions.py" />
     <Compile Include="reclaimer\src\SceneFilter.py" />
     <Compile Include="reclaimer\src\Vectors.py" />
-    <Compile Include="reclaimer\ui\RmfDialogManager.py" />
-    <Compile Include="reclaimer\ui\RmfWidget.py" />
+    <Compile Include="reclaimer\tests\Test_PySide2.py" />
+    <Compile Include="reclaimer\ui\RmfDialog.py" />
     <Compile Include="reclaimer\ui\__init__.py" />
     <Compile Include="reclaimer\__init__.py" />
     <Compile Include="reclaimer\src\FileReader.py" />
@@ -77,7 +77,7 @@
     <Folder Include="reclaimer\ui\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="reclaimer\ui\dialog.ui" />
+    <Content Include="reclaimer\ui\widget.ui" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

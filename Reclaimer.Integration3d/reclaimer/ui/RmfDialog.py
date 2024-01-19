@@ -1,5 +1,6 @@
-from typing import Any, Tuple, cast, Iterator
+from typing import Any, Tuple, cast, Iterator, Optional
 
+from .. import ui
 from ..src.SceneReader import SceneReader
 from ..src.Scene import *
 from ..src.Model import *
@@ -7,9 +8,10 @@ from ..src.ImportOptions import *
 from ..src.SceneFilter import *
 
 from PySide2 import QtCore, QtWidgets
+from PySide2.QtUiTools import QUiLoader
 
 __all__ = [
-    'RmfDialogManager'
+    'RmfDialog'
 ]
 
 CheckState = QtCore.Qt.CheckState
@@ -81,22 +83,35 @@ class CustomTreeItem(QtWidgets.QTreeWidgetItem):
         parent._refreshAncestors()
 
 
-class RmfDialogManager():
-    dialog: QtWidgets.QDialog
+class RmfDialog(QtWidgets.QDialog):
     _scene: Scene
     _scene_filter: SceneFilter
+    _widget: QtWidgets.QWidget
     _treeWidget: QtWidgets.QTreeWidget
 
-    def __init__(self, dialog: QtWidgets.QDialog, filepath: str) -> None:
-        self.dialog = dialog
+    def __init__(self, filepath: str, parent: Optional[QtWidgets.QWidget] = None, flags: QtCore.Qt.WindowFlags = QtCore.Qt.WindowFlags()):
+        super().__init__(parent, flags)
+        loader = QUiLoader()
+
+        widget = self._widget = loader.load(ui.WIDGET_UI_FILE, None)
+        self._treeWidget = cast(QtWidgets.QTreeWidget, widget.treeWidget)
+
+        layout = QtWidgets.QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(layout)
+        layout.addWidget(widget)
+
+        self.setWindowTitle(filepath)
+        self.setModal(True)
+
+        widget.buttonBox.accepted.connect(self.accept)
+        widget.buttonBox.rejected.connect(self.reject)
+        self.finished.connect(self.onDialogResult)
+
         self._scene = SceneReader.open_scene(filepath)
         self._scene_filter = SceneFilter(self._scene)
-        self._treeWidget = cast(QtWidgets.QTreeWidget, dialog.treeWidget)
 
-        dialog.setWindowTitle(filepath)
         self._treeWidget.clear()
-
-        self._connect()
         self._create_hierarchy()
 
         # only expand top level items to begin with
@@ -109,6 +124,12 @@ class RmfDialogManager():
         self._treeWidget.resizeColumnToContents(0)
         self.check_all(CheckState.Checked)
 
+    def sizeHint(self) -> QtCore.QSize:
+        size = QtCore.QSize()
+        size.setWidth(370)
+        size.setHeight(450)
+        return size
+
     def _enumerate_toplevel_items(self) -> Iterator['CustomTreeItem']:
         for i in range(self._treeWidget.topLevelItemCount()):
             yield self._treeWidget.topLevelItem(i)
@@ -116,9 +137,6 @@ class RmfDialogManager():
     def check_all(self, state: CheckState):
         for item in self._enumerate_toplevel_items():
             item.setCheckState(0, state)
-
-    def _connect(self):
-        self.dialog.finished.connect(self.onDialogResult)
 
     def _create_hierarchy(self):
         def build_treeitem(parent: Any, node: IFilterNode) -> CustomTreeItem:
