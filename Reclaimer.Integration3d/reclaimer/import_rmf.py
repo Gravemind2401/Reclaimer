@@ -5,8 +5,7 @@ import importlib.machinery
 from contextlib import contextmanager
 
 # this file must be in the same directory as the root level __init__ file
-# and the directory must be called 'reclaimer'
-RECLAIMER = 'reclaimer'
+PACKAGE_NAME = os.path.basename(os.path.dirname(__file__))
 
 class TempFinder(importlib.machinery.PathFinder):
     _path = []
@@ -14,7 +13,7 @@ class TempFinder(importlib.machinery.PathFinder):
     @classmethod
     def find_spec(cls, fullname, path=None, target=None):
         return super().find_spec(fullname, cls._path, target)
-    
+
 @contextmanager
 def finder():
     try:
@@ -26,14 +25,14 @@ def finder():
     finally:
         sys.meta_path.remove(TempFinder)
         print('removed temporary PathFinder')
-    
-if RECLAIMER in sys.modules:
+
+if PACKAGE_NAME in sys.modules:
     print('reloading reclaimer module...')
     with finder():
-        importlib.reload(sys.modules[RECLAIMER])
+        importlib.reload(sys.modules[PACKAGE_NAME])
 else:
     print('importing reclaimer module...')
     with finder():
-        importlib.import_module(RECLAIMER)
+        importlib.import_module(PACKAGE_NAME)
 
-getattr(sys.modules[RECLAIMER], 'import_rmf')()
+getattr(sys.modules[PACKAGE_NAME], 'import_rmf')()
