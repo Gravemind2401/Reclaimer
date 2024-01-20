@@ -22,6 +22,5 @@ class MaxRmfDialog(RmfDialog):
             return
 
         filter, options = self.get_import_options()
-        # SceneBuilder.create_scene(self._scene, filter, options)
-        SceneBuilder.create_scene(self._scene, options)
+        SceneBuilder.create_scene(self._scene, filter, options)
         rt.completeRedraw()

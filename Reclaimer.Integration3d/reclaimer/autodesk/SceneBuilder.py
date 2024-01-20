@@ -1,12 +1,13 @@
-from typing import cast
-from typing import Dict, Tuple, List
-from functools import reduce
 import operator
+from typing import cast
+from typing import Dict, Tuple, List, Optional
+from functools import reduce
 
 import pymxs
 from pymxs import runtime as rt
 
 from ..src.ImportOptions import *
+from ..src.SceneFilter import *
 from ..src.Scene import *
 from ..src.Model import *
 from ..src.Material import *
@@ -18,17 +19,15 @@ __all__ = [
 ]
 
 MeshContext = Tuple[Scene, Model, Mesh, rt.Editable_Mesh]
+Layer = rt.MixinInterface
 
 MX_UNITS = 100.0 # 1 max unit = 100mm?
 
 UNIT_SCALE: float = 1.0
 OPTIONS: ImportOptions = ImportOptions()
+MATERIALS: List = None
 
-def create_scene(scene: Scene, options: ImportOptions = None):
-    global UNIT_SCALE, OPTIONS
-    UNIT_SCALE = scene.unit_scale / MX_UNITS
-    # OPTIONS = options
-
+def create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Optional[ImportOptions] = None):
     error: Exception = None
 
     with pymxs.animate(False):
@@ -36,28 +35,72 @@ def create_scene(scene: Scene, options: ImportOptions = None):
             # if an unhandled exception happens inside the animate/undo context
             # then it will not revert the context, so we need to catch and re-throw
             try:
-                _create_scene(scene)
+                _create_scene(scene, filter, options)
             except Exception as e:
                 error = e
 
     if error:
         raise error
 
-def _create_scene(scene: Scene):
+def _create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Optional[ImportOptions] = None):
+    global UNIT_SCALE, OPTIONS, MATERIALS
+
+    if not filter:
+        filter = SceneFilter(scene)
+    if not options:
+        options = ImportOptions()
+
+    UNIT_SCALE = scene.unit_scale / MX_UNITS
+    OPTIONS = options
+    MATERIALS = create_materials(scene, filter)
+
     print(f'scene name: {scene.name}')
     print(f'scene scale: {scene.unit_scale}')
 
-    for model in scene.model_pool:
-        builder = ModelBuilder(scene, model)
-        if OPTIONS.IMPORT_BONES and model.bones:
-            print(f'creating {model.name}/skeleton')
-            builder.create_bones()
-        if OPTIONS.IMPORT_MESHES and model.meshes:
-            print(f'creating {model.name}/meshes')
-            builder.create_meshes()
-        if OPTIONS.IMPORT_MARKERS and model.markers:
-            print(f'creating {model.name}/markers')
-            builder.create_markers()
+    root_layer = rt.LayerManager.newLayerFromName('__scene__')
+
+    for group in filter.selected_groups():
+        create_scene_group(root_layer, scene, group, options)
+
+    for model in filter.selected_models():
+        create_model(root_layer, scene, model, options)
+
+def create_materials(scene: Scene, filter: SceneFilter) -> List:
+    # prefill with None to ensure list has correct number of elements
+    result = [None for _ in scene.material_pool]
+
+    if not OPTIONS.IMPORT_MATERIALS:
+        return result
+
+    #TODO
+
+    return result
+
+def create_scene_group(parent: Layer, scene: Scene, filter_item: FilterGroup, options: ImportOptions):
+    print(f'creating layer: {filter_item.path}')
+
+    layer = rt.LayerManager.newLayerFromName(filter_item.label) # TODO: enforce unique layer names
+    layer.setParent(parent)
+
+    for group in filter_item.selected_groups():
+        create_scene_group(layer, scene, group, options)
+
+    for model in filter_item.selected_models():
+        create_model(layer, scene, model, options)
+
+def create_model(layer: Layer, scene: Scene, filter_item: ModelFilter, options: ImportOptions):
+    model = filter_item._model
+    print(f'creating model: {model.name}...')
+    builder = ModelBuilder(MATERIALS, layer, scene, filter_item)
+    if OPTIONS.IMPORT_BONES and model.bones:
+        print(f'creating {model.name}/skeleton')
+        builder.create_bones()
+    if OPTIONS.IMPORT_MESHES and model.meshes:
+        print(f'creating {model.name}/meshes')
+        builder.create_meshes()
+    if OPTIONS.IMPORT_MARKERS and model.markers:
+        print(f'creating {model.name}/markers')
+        builder.create_markers()
 
 def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> rt.Matrix3:
     ''' Converts a transform from model units to max units '''
@@ -70,21 +113,26 @@ def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> r
 
 
 class ModelBuilder:
-    _root_layer: rt.MixinInterface
-    _region_layers: Dict[int, rt.MixinInterface]
+    _root_layer: Layer
+    _region_layers: Dict[int, Layer]
+    _filter: ModelFilter
     _scene: Scene
     _model: Model
     _instances: Dict[Tuple[int, int], rt.Mesh]
     _maxbones = List[rt.BoneGeometry]
 
-    def __init__(self, scene: Scene, model: Model):
+    def __init__(self, materials: List, layer: Layer, scene: Scene, filter_item: ModelFilter):
+        model = filter_item._model
         self._root_layer = self._create_layer(OPTIONS.model_name(model))
         self._region_layers = dict()
+        self._filter = filter_item
         self._scene = scene
         self._model = model
         self._instances = dict()
 
-    def _create_layer(self, name: str, key: int = None) -> rt.MixinInterface:
+        self._root_layer.setParent(layer)
+
+    def _create_layer(self, name: str, key: int = None) -> Layer:
         if key != None:
             name = f'{self._root_layer.name}::{name}'
         layer = rt.LayerManager.newLayerFromName(name) # TODO: enforce unique model names
@@ -161,9 +209,11 @@ class ModelBuilder:
 
     def create_meshes(self):
         mesh_count = 0
-        for i, r in enumerate(self._model.regions):
+        for i, rf in enumerate(self._filter.selected_regions()):
+            r = rf._region
             region_layer = self._create_layer(OPTIONS.region_name(r), i)
-            for j, p in enumerate(r.permutations):
+            for j, pf in enumerate(rf.selected_permutations()):
+                p = pf._permutation
                 print(f'creating mesh {mesh_count:03d}: {self._model.name}/{r.name}/{p.name} [{i:02d}/{j:02d}]')
                 self._build_mesh(region_layer, r, p)
                 mesh_count += 1
@@ -248,7 +298,7 @@ class ModelBuilder:
         material_ids = []
         for s in mesh.segments:
             # TODO: more efficient triangle count
-            mi = min(1, s.material_index + 1) # default to 1 for meshes with no material
+            mi = max(1, s.material_index + 1) # default to 1 for meshes with no material
             material_ids.extend(mi for _ in range(index_buffer.count_triangles(s)))
 
         rt.setMesh(mesh_obj, materialIds=material_ids)
