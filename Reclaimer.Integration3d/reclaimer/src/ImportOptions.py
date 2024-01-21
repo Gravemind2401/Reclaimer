@@ -21,6 +21,7 @@ class ImportOptions:
 
     SPLIT_MESHES: bool = False
 
+    OBJECT_SCALE: float = 1.0
     BONE_SCALE: float = 1.0
     MARKER_SCALE: float = 1.0
 

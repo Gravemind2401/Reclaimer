@@ -104,9 +104,7 @@ class RmfDialog(QtWidgets.QDialog):
         self.setWindowTitle(filepath)
         self.setModal(True)
 
-        widget.buttonBox.accepted.connect(self.accept)
-        widget.buttonBox.rejected.connect(self.reject)
-        self.finished.connect(self.onDialogResult)
+        self._connect()
 
         self._scene = SceneReader.open_scene(filepath)
         self._scene_filter = SceneFilter(self._scene)
@@ -121,12 +119,19 @@ class RmfDialog(QtWidgets.QDialog):
             item.setExpanded(True)
             item.sortChildren(0, QtCore.Qt.SortOrder.AscendingOrder)
 
-        self._treeWidget.resizeColumnToContents(0)
+        self._treeWidget.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         self.check_all(CheckState.Checked)
+
+    def _connect(self):
+        self._widget.toolButton_checkAll.clicked.connect(lambda: self.check_all(CheckState.Checked))
+        self._widget.toolButton_uncheckAll.clicked.connect(lambda: self.check_all(CheckState.Unchecked))
+        self._widget.buttonBox.accepted.connect(self.accept)
+        self._widget.buttonBox.rejected.connect(self.reject)
+        self.finished.connect(self.onDialogResult)
 
     def sizeHint(self) -> QtCore.QSize:
         size = QtCore.QSize()
-        size.setWidth(370)
+        size.setWidth(490)
         size.setHeight(450)
         return size
 
@@ -160,7 +165,21 @@ class RmfDialog(QtWidgets.QDialog):
         self._treeWidget.addTopLevelItems([build_treeitem(self._treeWidget, o) for o in self._scene_filter.models])
 
     def get_import_options(self) -> Tuple[SceneFilter, ImportOptions]:
-        options = ImportOptions() # TODO: get settings based on UI state
+        options = ImportOptions()
+
+        options.IMPORT_BONES = self._widget.checkBox_importBones.isChecked()
+        options.IMPORT_MARKERS = self._widget.checkBox_importMarkers.isChecked()
+        options.IMPORT_MESHES = self._widget.checkBox_importMeshes.isChecked()
+        options.IMPORT_MATERIALS = self._widget.checkBox_importMaterials.isChecked()
+
+        options.SPLIT_MESHES = self._widget.checkBox_splitMeshes.isChecked()
+        options.IMPORT_NORMALS = self._widget.checkBox_importNormals.isChecked()
+        options.IMPORT_SKIN = self._widget.checkBox_importWeights.isChecked()
+
+        options.OBJECT_SCALE = self._widget.spinBox_objectScale.value()
+        options.BONE_SCALE = self._widget.spinBox_boneScale.value()
+        options.MARKER_SCALE = self._widget.spinBox_markerScale.value()
+
         return (self._scene_filter, options)
 
     def onDialogResult(self, result: QtWidgets.QDialog.DialogCode):
