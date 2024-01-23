@@ -15,6 +15,7 @@ __all__ = [
 ]
 
 CheckState = QtCore.Qt.CheckState
+CheckStates = [CheckState.Unchecked, CheckState.PartiallyChecked, CheckState.Checked]
 
 
 class CustomTreeItem(QtWidgets.QTreeWidgetItem):
@@ -27,60 +28,40 @@ class CustomTreeItem(QtWidgets.QTreeWidgetItem):
     def __init__(self, parent, data_context: IFilterNode):
         super().__init__(parent, type=CustomTreeItem.USER_TYPE)
         self.dataContext = data_context
-        self.setCheckState(0, CheckState.Unchecked)
+        self._refreshState()
 
     def setData(self, column: int, role: int, value: Any):
-        ''' Override setData() to automatically keep check state in sync between parent/child '''
+        ''' Override setData() to push UI state to underlying model when checkState changes '''
 
         super().setData(column, role, value)
-        self.dataContext.selected = self.checkState(0) != CheckState.Unchecked
 
-        if not self._isRefreshing and column == 0 and role == QtCore.Qt.CheckStateRole:
-            self._isRefreshing = True
-
-            self._refreshAncestors()
-            self._refreshDescendents()
-
-            self._isRefreshing = False
-
-    def enumerateChildren(self) -> Iterator['CustomTreeItem']:
-        for i in range(self.childCount()):
-            yield self.child(i)
-
-    def _setCheckStateQuiet(self, state: CheckState):
-        ''' Set own CheckState without causing a refresh '''
-
-        self._isRefreshing = True
-        self.setCheckState(0, state)
-        self._isRefreshing = False
-
-    def _refreshDescendents(self):
-        ''' Show/hide children depending on own CheckState '''
-
-        state = self.checkState(0)
-        if state == CheckState.Unchecked:
-            self.setExpanded(False)
-        for c in self.enumerateChildren():
-            c.setHidden(state == CheckState.Unchecked)
-            if state != CheckState.PartiallyChecked:
-                c.setCheckState(0, state)
-
-    def _refreshAncestors(self):
-        ''' Update parent CheckState depending on own/sibling states'''
-
-        parent = self.parent()
-        if type(parent) != CustomTreeItem or parent._isRefreshing:
+        if self._isRefreshing or column != 0 or role != QtCore.Qt.CheckStateRole:
             return
 
-        states = set(o.checkState(0) for o in parent.enumerateChildren() if not o.isHidden())
-        if len(states) == 0:
-            parent._setCheckStateQuiet(CheckState.Unchecked)
-        elif len(states) > 1:
-            parent._setCheckStateQuiet(CheckState.PartiallyChecked)
-        else:
-            parent._setCheckStateQuiet(states.pop())
+        self.dataContext.toggle(int(self.checkState(0)))
 
-        parent._refreshAncestors()
+        # refresh ancestors
+        p = self.parent()
+        while isinstance(p, CustomTreeItem):
+            p._refreshState()
+            p = p.parent()
+
+        # refresh descendants
+        for c in self._enumerateDescendants():
+            c._refreshState()
+
+    def _enumerateDescendants(self) -> Iterator['CustomTreeItem']:
+        for i in range(self.childCount()):
+            c = self.child(i)
+            if isinstance(c, CustomTreeItem):
+                yield c
+                yield from CustomTreeItem._enumerateDescendants(c)
+
+    def _refreshState(self):
+        ''' Update UI state to match underlying model '''
+        self._isRefreshing = True
+        self.setCheckState(0, CheckStates[self.dataContext.state.value])
+        self._isRefreshing = False
 
 
 class RmfDialog(QtWidgets.QDialog):
@@ -104,8 +85,6 @@ class RmfDialog(QtWidgets.QDialog):
         self.setWindowTitle(filepath)
         self.setModal(True)
 
-        self._connect()
-
         self._scene = SceneReader.open_scene(filepath)
         self._scene_filter = SceneFilter(self._scene)
 
@@ -121,6 +100,8 @@ class RmfDialog(QtWidgets.QDialog):
 
         self._treeWidget.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         self.check_all(CheckState.Checked)
+
+        self._connect()
 
     def _connect(self):
         self._widget.toolButton_checkAll.clicked.connect(lambda: self.check_all(CheckState.Checked))
