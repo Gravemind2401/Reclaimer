@@ -215,56 +215,160 @@
      </widget>
     </item>
     <item>
-     <widget class="QTreeWidget" name="treeWidget">
-      <attribute name="headerStretchLastSection">
-       <bool>false</bool>
-      </attribute>
-      <column>
-       <property name="text">
-        <string>Name</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Type</string>
-       </property>
-      </column>
-      <item>
-       <property name="text">
-        <string>Scene Item 1</string>
-       </property>
-       <property name="text">
-        <string>Scene Item</string>
-       </property>
-       <property name="flags">
-        <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled|ItemIsAutoTristate</set>
-       </property>
-       <item>
-        <property name="text">
-         <string>New Subitem</string>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="tabPosition">
+       <enum>QTabWidget::South</enum>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="documentMode">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Region View</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="leftMargin">
+         <number>0</number>
         </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>New Subitem</string>
+        <property name="topMargin">
+         <number>0</number>
         </property>
-        <item>
-         <property name="text">
-          <string>New Subitem</string>
-         </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QTreeWidget" name="objectTreeWidget">
+          <attribute name="headerStretchLastSection">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Name</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Type</string>
+           </property>
+          </column>
+          <item>
+           <property name="text">
+            <string>Scene Item 1</string>
+           </property>
+           <property name="text">
+            <string>Scene Item</string>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled|ItemIsAutoTristate</set>
+           </property>
+           <item>
+            <property name="text">
+             <string>New Subitem</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>New Subitem</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>New Subitem</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>New Subitem</string>
+             </property>
+            </item>
+           </item>
+           <item>
+            <property name="text">
+             <string>New Subitem</string>
+            </property>
+           </item>
+          </item>
+         </widget>
         </item>
-        <item>
-         <property name="text">
-          <string>New Subitem</string>
-         </property>
-        </item>
-       </item>
-       <item>
-        <property name="text">
-         <string>New Subitem</string>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Permutation View</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <property name="leftMargin">
+         <number>0</number>
         </property>
-       </item>
-      </item>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QTreeWidget" name="permutationTreeWidget">
+          <attribute name="headerStretchLastSection">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Name</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Type</string>
+           </property>
+          </column>
+          <item>
+           <property name="text">
+            <string>Scene Item 1</string>
+           </property>
+           <property name="text">
+            <string>Scene Item</string>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled|ItemIsAutoTristate</set>
+           </property>
+           <item>
+            <property name="text">
+             <string>New Subitem</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>New Subitem</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>New Subitem</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>New Subitem</string>
+             </property>
+            </item>
+           </item>
+           <item>
+            <property name="text">
+             <string>New Subitem</string>
+            </property>
+           </item>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -361,38 +465,6 @@
     <hint type="destinationlabel">
      <x>380</x>
      <y>292</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>toolButton_expandAll</sender>
-   <signal>clicked()</signal>
-   <receiver>treeWidget</receiver>
-   <slot>expandAll()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>63</x>
-     <y>78</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>147</x>
-     <y>177</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>toolButton_collapseAll</sender>
-   <signal>clicked()</signal>
-   <receiver>treeWidget</receiver>
-   <slot>collapseAll()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>119</x>
-     <y>78</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>147</x>
-     <y>177</y>
     </hint>
    </hints>
   </connection>

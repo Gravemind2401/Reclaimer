@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import cast
 from typing import List, Dict, Iterator, Optional, Tuple, Union
 
 from .Scene import *
@@ -42,12 +43,7 @@ class IFilterNode:
     def enumerate_children(self) -> Iterator['IFilterNode']:
         yield from ()
 
-    def _enumerate_descendants(self) -> Iterator['IFilterNode']:
-        for c in self.enumerate_children():
-            yield c
-            yield from c.enumerate_children()
-
-    def _refresh_state(self):
+    def _refresh_state(self, bubble: bool = True):
         ''' Refresh state of self and all anscestors to reflect states of children '''
 
         states = set(c.state for c in self.enumerate_children())
@@ -58,7 +54,7 @@ class IFilterNode:
         else:
             self.state = states.pop()
 
-        if self._parent:
+        if bubble and self._parent:
             self._parent._refresh_state()
 
     def toggle(self, state: Optional[Union[CheckState, int]] = None):
@@ -74,11 +70,17 @@ class IFilterNode:
             self.state = CheckState.CHECKED if self.state != CheckState.CHECKED else CheckState.UNCHECKED
 
         # set all descendants to match the new state
-        for c in self._enumerate_descendants():
-            c.state = self.state
+        self._push_state()
 
         if self._parent:
             self._parent._refresh_state()
+
+    def _push_state(self):
+        ''' Push current state to all descendants '''
+
+        for c in self.enumerate_children():
+            c.state = self.state
+            c._push_state()
 
     def __str__(self) -> str:
         return self.label
@@ -176,6 +178,7 @@ class ModelFilter(IFilterNode):
     _model: Model
     _placement: Placement
     regions: List['RegionFilter']
+    permutation_sets: List['PermutationSetFilter']
 
     @property
     def transform(self) -> Matrix4x4:
@@ -192,6 +195,15 @@ class ModelFilter(IFilterNode):
             self._node_type = 'Placement'
             if placement.name:
                 self.label = placement.name
+
+        sets: Dict[str, List] = {}
+        for r in self.regions:
+            for p in r.permutations:
+                if p.label not in sets.keys():
+                    sets[p.label] = []
+                sets[p.label].append(p)
+
+        self.permutation_sets = [PermutationSetFilter(self, sets[k]) for k in sorted(sets.keys())]
 
     def enumerate_children(self) -> Iterator[IFilterNode]:
         yield from self.regions
@@ -230,3 +242,31 @@ class PermutationFilter(IFilterNode):
         super().__init__(parent)
         self._permutation = permutation
         self.label = permutation.name
+
+    def _push_state(self):
+        model = cast(ModelFilter, self._parent._parent)
+        for s in model.permutation_sets:
+            if self in s._permutations:
+                s._refresh_state()
+                break
+
+
+class PermutationSetFilter(IFilterNode):
+    _node_type: str = 'Permutation Set'
+    _permutations: List[PermutationFilter]
+
+    def __init__(self, parent: IFilterNode, permutations: List[PermutationFilter]):
+        super().__init__(parent)
+        self._permutations = permutations
+        self.label = permutations[0].label
+
+    def enumerate_children(self) -> Iterator[IFilterNode]:
+        yield from self._permutations
+
+    def toggle(self, state: Optional[Union[CheckState, int]] = None):
+        for p in self._permutations:
+            p.toggle(state)
+        self._refresh_state()
+
+    def _refresh_state(self, bubble: bool = True):
+        super()._refresh_state(False)

@@ -17,6 +17,15 @@ __all__ = [
 CheckState = QtCore.Qt.CheckState
 CheckStates = [CheckState.Unchecked, CheckState.PartiallyChecked, CheckState.Checked]
 
+def _enumerate_children_recursive(tree: QtWidgets.QTreeWidget) -> Iterator['CustomTreeItem']:
+    def enumerate_recursive(item: QtWidgets.QTreeWidgetItem):
+        yield item
+        for i in range(item.childCount()):
+            yield from enumerate_recursive(item.child(i))
+
+    for i in range(tree.topLevelItemCount()):
+        yield from enumerate_recursive(tree.topLevelItem(i))
+
 
 class CustomTreeItem(QtWidgets.QTreeWidgetItem):
     SYSTEM_TYPE: int = 0
@@ -68,14 +77,21 @@ class RmfDialog(QtWidgets.QDialog):
     _scene: Scene
     _scene_filter: SceneFilter
     _widget: QtWidgets.QWidget
-    _treeWidget: QtWidgets.QTreeWidget
+    _objectTreeWidget: QtWidgets.QTreeWidget
+    _permTreeWidget: QtWidgets.QTreeWidget
+
+    @property
+    def _current_tree(self) -> QtWidgets.QTreeWidget:
+        idx = cast(QtWidgets.QTabWidget, self._widget.tabWidget).currentIndex()
+        return self._objectTreeWidget if idx == 0 else self._permTreeWidget
 
     def __init__(self, filepath: str, parent: Optional[QtWidgets.QWidget] = None, flags: QtCore.Qt.WindowFlags = QtCore.Qt.WindowFlags()):
         super().__init__(parent, flags)
         loader = QUiLoader()
 
         widget = self._widget = loader.load(ui.WIDGET_UI_FILE, None)
-        self._treeWidget = cast(QtWidgets.QTreeWidget, widget.treeWidget)
+        self._objectTreeWidget = cast(QtWidgets.QTreeWidget, widget.objectTreeWidget)
+        self._permTreeWidget = cast(QtWidgets.QTreeWidget, widget.permutationTreeWidget)
 
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -88,27 +104,35 @@ class RmfDialog(QtWidgets.QDialog):
         self._scene = SceneReader.open_scene(filepath)
         self._scene_filter = SceneFilter(self._scene)
 
-        self._treeWidget.clear()
-        self._create_hierarchy()
+        for tree in [self._objectTreeWidget, self._permTreeWidget]:
+            self._create_hierarchy(tree)
 
         # only expand top level items to begin with
         # sort by name from level 2 onwards
-        self._treeWidget.collapseAll()
-        for item in self._enumerate_toplevel_items():
-            item.setExpanded(True)
-            item.sortChildren(0, QtCore.Qt.SortOrder.AscendingOrder)
+        for tree in [self._objectTreeWidget, self._permTreeWidget]:
+            tree.collapseAll()
+            for item in self._enumerate_toplevel_items(tree):
+                item.setExpanded(True)
+                item.sortChildren(0, QtCore.Qt.SortOrder.AscendingOrder)
 
-        self._treeWidget.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
-        self.check_all(CheckState.Checked)
+            tree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+            self.check_all(tree, CheckState.Checked)
 
         self._connect()
 
     def _connect(self):
-        self._widget.toolButton_checkAll.clicked.connect(lambda: self.check_all(CheckState.Checked))
-        self._widget.toolButton_uncheckAll.clicked.connect(lambda: self.check_all(CheckState.Unchecked))
+        self._widget.toolButton_expandAll.clicked.connect(lambda: self._current_tree.expandAll())
+        self._widget.toolButton_collapseAll.clicked.connect(lambda: self._current_tree.collapseAll())
+        self._widget.toolButton_checkAll.clicked.connect(lambda: self.check_all(self._current_tree, CheckState.Checked))
+        self._widget.toolButton_uncheckAll.clicked.connect(lambda: self.check_all(self._current_tree, CheckState.Unchecked))
+        self._widget.tabWidget.currentChanged.connect(self._onTabChanged)
         self._widget.buttonBox.accepted.connect(self.accept)
         self._widget.buttonBox.rejected.connect(self.reject)
         self.finished.connect(self.onDialogResult)
+
+    def _onTabChanged(self, index: int):
+        for item in _enumerate_children_recursive(self._current_tree):
+            item._refreshState()
 
     def sizeHint(self) -> QtCore.QSize:
         size = QtCore.QSize()
@@ -116,15 +140,15 @@ class RmfDialog(QtWidgets.QDialog):
         size.setHeight(450)
         return size
 
-    def _enumerate_toplevel_items(self) -> Iterator['CustomTreeItem']:
-        for i in range(self._treeWidget.topLevelItemCount()):
-            yield self._treeWidget.topLevelItem(i)
+    def _enumerate_toplevel_items(self, tree: QtWidgets.QTreeWidget) -> Iterator['CustomTreeItem']:
+        for i in range(tree.topLevelItemCount()):
+            yield tree.topLevelItem(i)
 
-    def check_all(self, state: CheckState):
-        for item in self._enumerate_toplevel_items():
+    def check_all(self, tree: QtWidgets.QTreeWidget, state: CheckState):
+        for item in self._enumerate_toplevel_items(tree):
             item.setCheckState(0, state)
 
-    def _create_hierarchy(self):
+    def _create_hierarchy(self, tree: QtWidgets.QTreeWidget):
         def build_treeitem(parent: Any, node: IFilterNode) -> CustomTreeItem:
             item = CustomTreeItem(parent, node)
             item.setText(0, node.label)
@@ -134,16 +158,21 @@ class RmfDialog(QtWidgets.QDialog):
                 item.addChildren([build_treeitem(item, o) for o in node.groups])
                 item.addChildren([build_treeitem(item, o) for o in node.models])
 
-            if type(node) == ModelFilter:
-                item.addChildren([build_treeitem(item, o) for o in node.regions])
+            if tree == self._objectTreeWidget:
+                if type(node) == ModelFilter:
+                    item.addChildren([build_treeitem(item, o) for o in node.regions])
 
-            if type(node) == RegionFilter:
-                item.addChildren([build_treeitem(item, o) for o in node.permutations])
+                if type(node) == RegionFilter:
+                    item.addChildren([build_treeitem(item, o) for o in node.permutations])
+            else:
+                if type(node) == ModelFilter:
+                    item.addChildren([build_treeitem(item, o) for o in node.permutation_sets])
 
             return item
 
-        self._treeWidget.addTopLevelItems([build_treeitem(self._treeWidget, o) for o in self._scene_filter.groups])
-        self._treeWidget.addTopLevelItems([build_treeitem(self._treeWidget, o) for o in self._scene_filter.models])
+        tree.clear()
+        tree.addTopLevelItems([build_treeitem(tree, o) for o in self._scene_filter.groups])
+        tree.addTopLevelItems([build_treeitem(tree, o) for o in self._scene_filter.models])
 
     def get_import_options(self) -> Tuple[SceneFilter, ImportOptions]:
         options = ImportOptions()
