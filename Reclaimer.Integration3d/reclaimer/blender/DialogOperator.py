@@ -4,6 +4,7 @@ from PySide2 import QtWidgets
 
 from . import SceneBuilder
 from .QtWindowEventLoop import QtWindowEventLoop
+from .. import ui
 from ..ui.RmfDialog import RmfDialog
 
 
@@ -16,7 +17,7 @@ class RmfDialogOperator(QtWindowEventLoop):
     filepath: bpy.props.StringProperty(subtype='FILE_PATH')
 
     def create_dialog(self):
-        return RmfDialog(self.filepath)
+        return RmfDialog(self.filepath, stylesheet=ui.resource('bl_stylesheet.qss'))
 
     def dialog_closed(self):
         dialog = cast(RmfDialog, self.dialog)

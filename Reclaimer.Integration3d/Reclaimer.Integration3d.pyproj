@@ -75,8 +75,22 @@
     <Folder Include="reclaimer\tests\" />
     <Folder Include="reclaimer\src\" />
     <Folder Include="reclaimer\ui\" />
+    <Folder Include="reclaimer\ui\resources\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="reclaimer\ui\resources\bl_stylesheet.qss" />
+    <Content Include="reclaimer\ui\resources\CheckboxList_16x.png" />
+    <Content Include="reclaimer\ui\resources\Checklist_16x.png" />
+    <Content Include="reclaimer\ui\resources\checkmark.svg" />
+    <Content Include="reclaimer\ui\resources\checkmark_sm.svg" />
+    <Content Include="reclaimer\ui\resources\CollapseGroup_16x.png" />
+    <Content Include="reclaimer\ui\resources\ExpandAll_16x.png" />
+    <Content Include="reclaimer\ui\resources\radiobut_on.svg" />
+    <Content Include="reclaimer\ui\resources\radiobut_on_sm.svg" />
+    <Content Include="reclaimer\ui\resources\resources.qrc" />
+    <Content Include="reclaimer\ui\resources\Settings_16x.png" />
+    <Content Include="reclaimer\ui\resources\tria_down.svg" />
+    <Content Include="reclaimer\ui\resources\tria_right.svg" />
     <Content Include="reclaimer\ui\widget.ui" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

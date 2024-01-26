@@ -6,15 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>490</width>
-    <height>450</height>
+    <width>500</width>
+    <height>500</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>500</height>
+   </size>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>160</x>
-     <y>410</y>
+     <x>170</x>
+     <y>460</y>
      <width>156</width>
      <height>24</height>
     </rect>
@@ -29,7 +35,7 @@
   <widget class="QGroupBox" name="groupBox_importOptions">
    <property name="geometry">
     <rect>
-     <x>310</x>
+     <x>320</x>
      <y>10</y>
      <width>171</width>
      <height>121</height>
@@ -109,7 +115,7 @@
   <widget class="QGroupBox" name="groupBox_meshOptions">
    <property name="geometry">
     <rect>
-     <x>310</x>
+     <x>320</x>
      <y>140</y>
      <width>171</width>
      <height>101</height>
@@ -169,8 +175,8 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>291</width>
-     <height>391</height>
+     <width>301</width>
+     <height>441</height>
     </rect>
    </property>
    <property name="title">
@@ -185,31 +191,67 @@
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QToolButton" name="toolButton_expandAll">
-         <property name="text">
-          <string>+</string>
+         <property name="toolTip">
+          <string>Expand All</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources/resources.qrc">
+           <normaloff>:/res/ExpandAll_16x.png</normaloff>:/res/ExpandAll_16x.png</iconset>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QToolButton" name="toolButton_collapseAll">
-         <property name="text">
-          <string>-</string>
+         <property name="toolTip">
+          <string>Collapse All</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources/resources.qrc">
+           <normaloff>:/res/CollapseGroup_16x.png</normaloff>:/res/CollapseGroup_16x.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QToolButton" name="toolButton_checkAll">
-         <property name="text">
-          <string>*</string>
+         <property name="toolTip">
+          <string>Check All</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources/resources.qrc">
+           <normaloff>:/res/Checklist_16x.png</normaloff>:/res/Checklist_16x.png</iconset>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QToolButton" name="toolButton_uncheckAll">
-         <property name="text">
-          <string>X</string>
+         <property name="toolTip">
+          <string>Uncheck All</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources/resources.qrc">
+           <normaloff>:/res/CheckboxList_16x.png</normaloff>:/res/CheckboxList_16x.png</iconset>
          </property>
         </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -244,6 +286,12 @@
         </property>
         <item row="0" column="0">
          <widget class="QTreeWidget" name="objectTreeWidget">
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::NoSelection</enum>
+          </property>
           <attribute name="headerStretchLastSection">
            <bool>false</bool>
           </attribute>
@@ -376,10 +424,10 @@
   <widget class="QGroupBox" name="groupBox_scaleOptions">
    <property name="geometry">
     <rect>
-     <x>310</x>
+     <x>320</x>
      <y>250</y>
      <width>171</width>
-     <height>151</height>
+     <height>111</height>
     </rect>
    </property>
    <property name="title">
@@ -434,7 +482,28 @@
    </layout>
   </widget>
  </widget>
- <resources/>
+ <tabstops>
+  <tabstop>checkBox_importBones</tabstop>
+  <tabstop>checkBox_importMarkers</tabstop>
+  <tabstop>checkBox_importMeshes</tabstop>
+  <tabstop>checkBox_importMaterials</tabstop>
+  <tabstop>checkBox_splitMeshes</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>checkBox_importNormals</tabstop>
+  <tabstop>spinBox_objectScale</tabstop>
+  <tabstop>spinBox_boneScale</tabstop>
+  <tabstop>spinBox_markerScale</tabstop>
+  <tabstop>toolButton_expandAll</tabstop>
+  <tabstop>toolButton_collapseAll</tabstop>
+  <tabstop>toolButton_checkAll</tabstop>
+  <tabstop>toolButton_uncheckAll</tabstop>
+  <tabstop>objectTreeWidget</tabstop>
+  <tabstop>permutationTreeWidget</tabstop>
+  <tabstop>checkBox_importWeights</tabstop>
+ </tabstops>
+ <resources>
+  <include location="resources/resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>checkBox_importMeshes</sender>

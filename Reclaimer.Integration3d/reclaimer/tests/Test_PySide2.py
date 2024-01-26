@@ -1,12 +1,10 @@
 import unittest
 import sys
 
-from PySide2 import QtCore
-from PySide2 import QtGui
 from PySide2 import QtWidgets
-from PySide2.QtWidgets import QApplication, QWidget, QMainWindow
+from PySide2.QtWidgets import QApplication
 
-from ..src.SceneReader import SceneReader
+from .. import ui
 from ..ui.RmfDialog import RmfDialog
 
 FILEPATH = 'Z:\\data\\masterchief.rmf'
@@ -18,7 +16,7 @@ class TestDialog(RmfDialog):
 class Test_PySide(unittest.TestCase):
     def test_pyside(self):
         app = QApplication(sys.argv)
-        w = TestDialog(FILEPATH)
+        w = TestDialog(FILEPATH, stylesheet=ui.resource('bl_stylesheet.qss'))
         w.show()
         app.exec_()
 

@@ -1,0 +1,185 @@
+QWidget#Form {
+    background-color: rgb(75, 75, 75);
+}
+
+QFrame#toolboxFrame {
+    border: 1px solid rgb(30, 30, 30);
+}
+
+QToolTip {
+    color: rgb(222, 222, 222);
+    background-color: rgb(27, 27, 28);
+    border: 1px solid rgb(25, 25, 26);
+    border-radius: 5px;
+    padding: 5px;
+}
+
+Line {
+    background: rgb(30, 30, 30);
+}
+
+QDialogButtonBox QPushButton {
+    color: rgb(224, 224, 224);
+    background-color: rgb(88, 88, 88);
+    border: 1px solid rgb(55, 55, 55);
+    border-radius: 5px;
+    padding: 5px;
+    min-width: 60px;
+}
+
+QDialogButtonBox QPushButton:hover {
+    background-color: rgb(106, 106, 106);
+}
+
+QDialogButtonBox QPushButton:default,
+QDialogButtonBox QPushButton:pressed {
+    color: rgb(252, 252, 254);
+    background-color: rgb(86, 128, 194);
+}
+
+QDialogButtonBox QPushButton:default:hover {
+    background-color: rgb(121, 158, 215);
+}
+
+QToolButton {
+    color: rgb(193, 193, 193);
+    background-color: rgb(88, 88, 88);
+    border: 1px solid rgb(55, 55, 55);
+    border-radius: 5px;
+    padding: 3px;
+}
+
+QToolButton:pressed {
+    color: rgb(254, 254, 254);
+    background-color: rgb(85, 123, 182);
+}
+
+QCheckBox {
+    color: rgb(214, 214, 214);
+}
+
+QCheckBox:checked,
+QCheckBox:unchecked:hover {
+    color: rgb(237, 237, 237);
+}
+
+/* apply checkbox styles to all kinds of checkbox indicators (treeview, groupbox etc) */
+*::indicator {
+    border-radius: 2px;
+}
+
+*::indicator:unchecked,
+*::indicator:indeterminate {
+    background-color: rgb(102, 102, 102);
+}
+
+*::indicator:unchecked:hover,
+*::indicator:indeterminate {
+    background-color: rgb(122, 122, 122);
+}
+
+*::indicator:indeterminate {
+    background-color: rgb(83, 121, 181);
+    color: rgb(255, 255, 255);
+    border-image: url(:/res/radiobut_on_sm.svg);
+}
+
+*::indicator:checked {
+    background-color: rgb(83, 121, 181);
+    color: rgb(255, 255, 255);
+    border-image: url(:/res/checkmark_sm.svg);
+}
+
+QGroupBox {
+    background-color: rgb(60, 60, 60);
+    border: 1px solid rgb(68, 68, 68);
+    border-radius: 5px;
+    padding: 15px 0 0 0;
+}
+
+QGroupBox:title {
+    color: rgb(229, 229, 229);
+    margin: 3px 0 3px 8px;
+}
+
+QLabel {
+    color: rgb(228, 228, 228);
+}
+
+QHeaderView {
+    background-color: rgb(51, 51, 51);
+    border: none;
+}
+
+QHeaderView:section {
+    color: rgb(228, 228, 228);
+    background-color: rgb(51, 51, 51);
+    border-right-width: 1px;
+    border-color: solid rgb(30, 30, 30);
+    padding: 0 10px;
+}
+
+QTreeView {
+    background-color: rgb(45, 45, 45);
+    alternate-background-color: rgb(40, 40, 40);
+    border: 1px solid rgb(30, 30, 30);
+}
+
+QTreeView::item {
+    color: rgb(230, 230, 230);
+}
+
+QTreeView::item:hover {
+    background-color: rgb(65, 65, 65);
+}
+
+QTreeView::item:selected {
+    background-color: rgb(67, 93, 132);
+}
+
+QTreeView::branch:has-children:!has-siblings:closed,
+QTreeView::branch:closed:has-children:has-siblings {
+    background-image: url(:/res/tria_right.svg);
+}
+
+QTreeView::branch:open:has-children:!has-siblings,
+QTreeView::branch:open:has-children:has-siblings  {
+    background-image: url(:/res/tria_down.svg);
+}
+
+QTabBar::tab {
+    color: rgb(147, 147, 147);
+    background-color: rgb(43, 43, 43);
+    border-color: rgb(33, 33, 33);
+    border-width: 1px 0 0 0;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 5px 10px;
+    margin: 0 1px;
+}
+
+QTabBar::tab:hover {
+    color: rgb(188, 188, 188);
+    background-color: rgb(52, 52, 52);
+}
+
+QTabBar::tab:selected {
+    color: rgb(250, 250, 250);
+    background-color: rgb(66, 66, 66);
+}
+
+QSpinBox, 
+QDoubleSpinBox {
+    color: rgb(228, 228, 228);
+    background-color: rgb(89, 89, 89);
+    border: 1px solid rgb(68, 68, 68);
+    border-radius: 3px;
+    padding: 0 15px 0 3px;
+}
+
+QSpinBox:hover,
+QDoubleSpinBox:hover {
+    color: rgb(249, 249, 249);
+    background-color: rgb(128, 128, 128);
+    border: 1px solid rgb(78, 78, 78);
+}
