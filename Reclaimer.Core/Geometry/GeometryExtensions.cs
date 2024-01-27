@@ -9,35 +9,38 @@ namespace Reclaimer.Geometry
     {
         public static Vector3 ToVector3(this IVector3 vector3) => new Vector3(vector3.X, vector3.Y, vector3.Z);
         public static Quaternion ToQuaternion(this IVector4 vector4) => new Quaternion(vector4.X, vector4.Y, vector4.Z, vector4.W);
+        
+        public static System.Drawing.Color ToArgb(this IVector4 vector4)
+        {
+            return System.Drawing.Color.FromArgb(
+                (byte)(vector4.W * byte.MaxValue),
+                (byte)(vector4.X * byte.MaxValue),
+                (byte)(vector4.Y * byte.MaxValue),
+                (byte)(vector4.Z * byte.MaxValue));
+        }
 
         public static IEnumerable<int> Unstrip(this IEnumerable<int> strip)
         {
-            var position = 0;
-            int i0, i1 = 0, i2 = 0;
+            var (position, i0, i1, i2) = (0, 0, 0, 0);
 
             foreach (var index in strip)
             {
-                i0 = i1;
-                i1 = i2;
-                i2 = index;
+                (i0, i1, i2) = (i1, i2, index);
 
-                if (position++ < 2)
+                if (position++ < 2 || i0 == i1 || i0 == i2 || i1 == i2)
                     continue;
 
-                if (i0 != i1 && i0 != i2 && i1 != i2)
-                {
-                    yield return i0;
+                yield return i0;
 
-                    if (position % 2 == 1)
-                    {
-                        yield return i1;
-                        yield return i2;
-                    }
-                    else
-                    {
-                        yield return i2;
-                        yield return i1;
-                    }
+                if (position % 2 == 1)
+                {
+                    yield return i1;
+                    yield return i2;
+                }
+                else
+                {
+                    yield return i2;
+                    yield return i1;
                 }
             }
         }

@@ -1,0 +1,15 @@
+<RCC>
+  <qresource prefix="res">
+    <file>radiobut_on.svg</file>
+    <file>radiobut_on_sm.svg</file>
+    <file>checkmark_sm.svg</file>
+    <file>CheckboxList_16x.png</file>
+    <file>Checklist_16x.png</file>
+    <file>checkmark.svg</file>
+    <file>CollapseGroup_16x.png</file>
+    <file>ExpandAll_16x.png</file>
+    <file>Settings_16x.png</file>
+    <file>tria_down.svg</file>
+    <file>tria_right.svg</file>
+  </qresource>
+</RCC>

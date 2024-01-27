@@ -1,5 +1,6 @@
 ﻿using Adjutant.Geometry;
 using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Common.Gen3;
 using Reclaimer.Blam.Properties;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
@@ -70,8 +71,8 @@ namespace Reclaimer.Blam.HaloReach
                 for (var j = 0; j < template.Usages.Count; j++)
                 {
                     var usage = template.Usages[j].Value;
-                    var entry = BlamConstants.Gen3Materials.UsageLookup.FirstOrNull(p => usage.StartsWith(p.Key));
-                    if (!entry.HasValue)
+                    var matUsage = ShaderParameters.UsageLookup.FirstOrNull(p => usage.StartsWith(p.Key))?.Value;
+                    if (matUsage == null)
                         continue;
 
                     var map = props.ShaderMaps[j];
@@ -85,7 +86,7 @@ namespace Reclaimer.Blam.HaloReach
 
                     material.TextureMappings.Add(new TextureMapping
                     {
-                        Usage = (int)entry.Value.Value,
+                        Usage = matUsage,
                         Tiling = new Vector2(tile?.X ?? 1, tile?.Y ?? 1),
                         Texture = new Texture
                         {
@@ -98,12 +99,12 @@ namespace Reclaimer.Blam.HaloReach
 
                 for (var j = 0; j < template.Arguments.Count; j++)
                 {
-                    if (!BlamConstants.Gen3Materials.TintLookup.TryGetValue(template.Arguments[j].Value, out var tintUsage))
+                    if (!ShaderParameters.TintLookup.TryGetValue(template.Arguments[j].Value, out var tintUsage))
                         continue;
 
                     material.Tints.Add(new MaterialTint
                     {
-                        Usage = (int)tintUsage,
+                        Usage = tintUsage,
                         Color = System.Drawing.Color.FromArgb(
                             (byte)(props.TilingData[j].W * byte.MaxValue),
                             (byte)(props.TilingData[j].X * byte.MaxValue),
@@ -118,7 +119,7 @@ namespace Reclaimer.Blam.HaloReach
                 else if (tag.ClassCode != "rmsh")
                     material.Flags |= (int)MaterialFlags.Transparent;
 
-                if (material.TextureMappings.Any(m => m.Usage == (int)MaterialUsage.ColourChange) && !material.TextureMappings.Any(m => m.Usage == (int)MaterialUsage.Diffuse))
+                if (material.TextureMappings.Any(m => m.Usage == MaterialUsage.ColorChange) && !material.TextureMappings.Any(m => m.Usage == MaterialUsage.Diffuse))
                     material.Flags |= (int)MaterialFlags.ColourChange;
 
                 yield return material;

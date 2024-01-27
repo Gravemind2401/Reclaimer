@@ -7,10 +7,20 @@ namespace Reclaimer.Blam.Halo3
     public class shader
     {
         [Offset(0)]
-        public TagReference BaseShaderReference { get; set; }
+        public TagReference RenderMethodDefinitionReference { get; set; }
+
+        [Offset(16)]
+        public BlockCollection<ShaderOptionIndexBlock> ShaderOptions { get; set; }
 
         [Offset(40)]
         public BlockCollection<ShaderPropertiesBlock> ShaderProperties { get; set; }
+    }
+
+    [FixedSize(2)]
+    public class ShaderOptionIndexBlock
+    {
+        [Offset(0)]
+        public short OptionIndex { get; set; }
     }
 
     [FixedSize(132)]

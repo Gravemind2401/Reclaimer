@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>500</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>500</height>
+   </size>
+  </property>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>460</y>
+     <width>156</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+   <property name="centerButtons">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_importOptions">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>10</y>
+     <width>171</width>
+     <height>121</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Import Options</string>
+   </property>
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <widget class="QCheckBox" name="checkBox_importMarkers">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>49</y>
+      <width>110</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Import Markers</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_importBones">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>26</y>
+      <width>110</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Import Bones</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_importMeshes">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>72</y>
+      <width>110</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Import Meshes</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_importMaterials">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>95</y>
+      <width>110</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Import Materials</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_meshOptions">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>140</y>
+     <width>171</width>
+     <height>101</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Mesh Options</string>
+   </property>
+   <widget class="QCheckBox" name="checkBox_splitMeshes">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>26</y>
+      <width>142</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Split By Material</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_importNormals">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>142</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Import Vertex Normals</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_importWeights">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>74</y>
+      <width>142</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Import Vertex Weights</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_3">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>301</width>
+     <height>441</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Import Filter</string>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <widget class="QFrame" name="toolboxFrame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QToolButton" name="toolButton_expandAll">
+         <property name="toolTip">
+          <string>Expand All</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources/resources.qrc">
+           <normaloff>:/res/ExpandAll_16x.png</normaloff>:/res/ExpandAll_16x.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="toolButton_collapseAll">
+         <property name="toolTip">
+          <string>Collapse All</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources/resources.qrc">
+           <normaloff>:/res/CollapseGroup_16x.png</normaloff>:/res/CollapseGroup_16x.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="toolButton_checkAll">
+         <property name="toolTip">
+          <string>Check All</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources/resources.qrc">
+           <normaloff>:/res/Checklist_16x.png</normaloff>:/res/Checklist_16x.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="toolButton_uncheckAll">
+         <property name="toolTip">
+          <string>Uncheck All</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources/resources.qrc">
+           <normaloff>:/res/CheckboxList_16x.png</normaloff>:/res/CheckboxList_16x.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="tabPosition">
+       <enum>QTabWidget::South</enum>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="documentMode">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Region View</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QTreeWidget" name="objectTreeWidget">
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::NoSelection</enum>
+          </property>
+          <attribute name="headerStretchLastSection">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Name</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Type</string>
+           </property>
+          </column>
+          <item>
+           <property name="text">
+            <string>Scene Item 1</string>
+           </property>
+           <property name="text">
+            <string>Scene Item</string>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled|ItemIsAutoTristate</set>
+           </property>
+           <item>
+            <property name="text">
+             <string>New Subitem</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>New Subitem</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>New Subitem</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>New Subitem</string>
+             </property>
+            </item>
+           </item>
+           <item>
+            <property name="text">
+             <string>New Subitem</string>
+            </property>
+           </item>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Permutation View</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QTreeWidget" name="permutationTreeWidget">
+          <attribute name="headerStretchLastSection">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Name</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Type</string>
+           </property>
+          </column>
+          <item>
+           <property name="text">
+            <string>Scene Item 1</string>
+           </property>
+           <property name="text">
+            <string>Scene Item</string>
+           </property>
+           <property name="flags">
+            <set>ItemIsSelectable|ItemIsUserCheckable|ItemIsEnabled|ItemIsAutoTristate</set>
+           </property>
+           <item>
+            <property name="text">
+             <string>New Subitem</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>New Subitem</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>New Subitem</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>New Subitem</string>
+             </property>
+            </item>
+           </item>
+           <item>
+            <property name="text">
+             <string>New Subitem</string>
+            </property>
+           </item>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_scaleOptions">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>250</y>
+     <width>171</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Scale Options</string>
+   </property>
+   <layout class="QFormLayout" name="formLayout">
+    <property name="fieldGrowthPolicy">
+     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+    </property>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_boneScale">
+      <property name="text">
+       <string>Bone Scale</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QDoubleSpinBox" name="spinBox_boneScale">
+      <property name="value">
+       <double>1.000000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_markerScale">
+      <property name="text">
+       <string>Marker Scale</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QDoubleSpinBox" name="spinBox_markerScale">
+      <property name="value">
+       <double>1.000000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QDoubleSpinBox" name="spinBox_objectScale">
+      <property name="value">
+       <double>1.000000000000000</double>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_objectScale">
+      <property name="text">
+       <string>Object Scale</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>checkBox_importBones</tabstop>
+  <tabstop>checkBox_importMarkers</tabstop>
+  <tabstop>checkBox_importMeshes</tabstop>
+  <tabstop>checkBox_importMaterials</tabstop>
+  <tabstop>checkBox_splitMeshes</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>checkBox_importNormals</tabstop>
+  <tabstop>spinBox_objectScale</tabstop>
+  <tabstop>spinBox_boneScale</tabstop>
+  <tabstop>spinBox_markerScale</tabstop>
+  <tabstop>toolButton_expandAll</tabstop>
+  <tabstop>toolButton_collapseAll</tabstop>
+  <tabstop>toolButton_checkAll</tabstop>
+  <tabstop>toolButton_uncheckAll</tabstop>
+  <tabstop>objectTreeWidget</tabstop>
+  <tabstop>permutationTreeWidget</tabstop>
+  <tabstop>checkBox_importWeights</tabstop>
+ </tabstops>
+ <resources>
+  <include location="resources/resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>checkBox_importMeshes</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>groupBox_meshOptions</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>354</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBox_importBones</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>checkBox_importWeights</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>354</x>
+     <y>54</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>292</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

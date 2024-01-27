@@ -140,7 +140,7 @@ namespace Reclaimer.Blam.Halo3
         public byte MipmapCount { get; set; }
 
         [Offset(21)]
-        public byte Curve { get; set; }
+        public ColorSpace Curve { get; set; }
 
         [Offset(22)]
         public byte InterleavedIndex { get; set; }
@@ -226,5 +226,15 @@ namespace Reclaimer.Blam.Halo3
         Unknown42 = 42,
         Unknown43 = 43,
         Unknown44 = 44
+    }
+
+    public enum ColorSpace : byte
+    {
+        Unknown = 0, //same as xRGB
+        xRGB = 1, //1.95
+        Gamma2 = 2, //2.0
+        Linear = 3, //1.0
+        OffsetLog = 4, //???
+        sRGB = 5 //2.2
     }
 }

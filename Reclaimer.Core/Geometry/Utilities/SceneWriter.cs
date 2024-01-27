@@ -1,4 +1,6 @@
-﻿using Reclaimer.IO;
+﻿using Reclaimer.Geometry.Vectors;
+using Reclaimer.IO;
+using System.IO;
 
 namespace Reclaimer.Geometry.Utilities
 {
@@ -16,8 +18,12 @@ namespace Reclaimer.Geometry.Utilities
 
         private readonly LazyList<VertexBuffer> vertexBufferPool = new(VertexBuffer.EqualityComparer);
         private readonly LazyList<IIndexBuffer> indexBufferPool = new(IIndexBuffer.EqualityComparer);
+        private readonly LazyList<VectorDescriptor> vectorDescriptorPool = new();
         private readonly LazyList<Mesh> meshPool = new();
+
         private Model currentModel;
+
+        public bool EmbedTextures { get; set; }
 
         public SceneWriter(EndianWriter writer)
         {
@@ -43,6 +49,10 @@ namespace Reclaimer.Geometry.Utilities
             materialPool.Clear();
             texturePool.Clear();
             modelPool.Clear();
+            vertexBufferPool.Clear();
+            indexBufferPool.Clear();
+            vectorDescriptorPool.Clear();
+            meshPool.Clear();
 
             using (BlockMarker(SceneCodes.FileHeader))
             {
@@ -62,9 +72,11 @@ namespace Reclaimer.Geometry.Utilities
                 using (new ListBlockMarker(writer, SceneCodes.Marker, 0))
                 { }
 
+                //note that the order here is important because writing each pool will trigger the lazy list population for subsequent pools
                 WriteList(modelPool, Write, SceneCodes.Model);
                 WriteList(vertexBufferPool, Write, SceneCodes.VertexBuffer);
                 WriteList(indexBufferPool, Write, SceneCodes.IndexBuffer);
+                WriteList(vectorDescriptorPool, Write, SceneCodes.VectorDescriptor);
                 WriteList(materialPool, Write, SceneCodes.Material);
                 WriteList(texturePool, Write, SceneCodes.Texture);
             }
@@ -98,6 +110,15 @@ namespace Reclaimer.Geometry.Utilities
                 throw new NotImplementedException();
         }
 
+        private void WriteData(byte[] data)
+        {
+            using (BlockMarker(SceneCodes.Data))
+            {
+                writer.Write(data.Length);
+                writer.Write(data);
+            }
+        }
+
         #region Materials
 
         private void Write(Material material)
@@ -105,6 +126,7 @@ namespace Reclaimer.Geometry.Utilities
             using (BlockMarker(SceneCodes.Material))
             {
                 WriteString(material.Name);
+                WriteString(material.AlphaMode);
                 WriteList(material.TextureMappings, Write, SceneCodes.TextureMapping);
                 WriteList(material.Tints, Write, SceneCodes.Tint);
             }
@@ -112,18 +134,22 @@ namespace Reclaimer.Geometry.Utilities
 
         private void Write(TextureMapping mapping)
         {
-            using (BlockMarker(mapping.Usage))
+            using (BlockMarker(SceneCodes.TextureMapping))
             {
+                WriteString(mapping.Usage);
+                writer.Write((int)mapping.BlendChannel);
                 writer.Write(texturePool.IndexOf(mapping.Texture));
-                writer.Write(mapping.Tiling);
                 writer.Write((int)mapping.ChannelMask);
+                writer.Write(mapping.Tiling);
             }
         }
 
         private void Write(MaterialTint tint)
         {
-            using (BlockMarker(tint.Usage))
+            using (BlockMarker(SceneCodes.Tint))
             {
+                WriteString(tint.Usage);
+                writer.Write((int)tint.BlendChannel);
                 writer.Write(tint.Color.R);
                 writer.Write(tint.Color.G);
                 writer.Write(tint.Color.B);
@@ -136,7 +162,19 @@ namespace Reclaimer.Geometry.Utilities
             using (BlockMarker(SceneCodes.Texture))
             {
                 WriteString(texture.Name);
-                writer.Write(0); //binary size if embedded
+                writer.Write(texture.Gamma);
+
+                //everything from here on must be a block
+
+                if (EmbedTextures)
+                {
+                    var dds = texture.GetDds();
+                    using (var ms = new MemoryStream())
+                    {
+                        dds.WriteToStream(ms, System.Drawing.Imaging.ImageFormat.Png);
+                        WriteData(ms.ToArray());
+                    }
+                }
             }
         }
 
@@ -186,15 +224,18 @@ namespace Reclaimer.Geometry.Utilities
 
         private void Write(ModelPermutation permutation)
         {
-            var meshes = permutation.MeshIndices.Select(i => currentModel.Meshes.ElementAtOrDefault(i));
+            var meshes = permutation.MeshIndices
+                .Select(i => currentModel.Meshes.ElementAtOrDefault(i))
+                .Where(m => m != null)
+                .ToList();
 
-            var meshRange = permutation.MeshRange;
-            if (!meshes.Any() || meshes.Any(m => m == null))
-                meshRange = (0, 0); //normalize to 0,0 in case of negatives or bad indices
-            else
+            //default to 0,0 in case of negatives or bad indices
+            var meshRange = (Index: 0, Count: 0);
+
+            if (meshes.Any())
             {
                 meshPool.AddRange(meshes);
-                meshRange.Index = meshPool.IndexOf(meshes.First());
+                meshRange = (meshPool.IndexOf(meshes[0]), meshes.Count);
             }
 
             using (BlockMarker(SceneCodes.Permutation))
@@ -277,6 +318,30 @@ namespace Reclaimer.Geometry.Utilities
 
             void WriteChannels(IList<IReadOnlyList<IVector>> vertexChannel, BlockCode code)
             {
+                if (code == VertexChannelCodes.BlendWeight && vertexBuffer.HasImpliedBlendWeights)
+                {
+                    foreach (var vectorBuffer in vertexChannel)
+                    {
+                        var buffer = new List<IVector>(vectorBuffer.Count);
+                        foreach (var vec in vectorBuffer)
+                        {
+                            var replacement = new RealVector4(vec.X, vec.Y, vec.Z, 1);
+                            var len = vec.X + vec.Y + vec.Z + 1;
+                            replacement.X /= len;
+                            replacement.Y /= len;
+                            replacement.Z /= len;
+                            replacement.W /= len;
+
+                            buffer.Add(replacement);
+                        }
+
+                        using (BlockMarker(code))
+                            WriteBuffer(buffer);
+                    }
+
+                    return;
+                }
+
                 foreach (var vectorBuffer in vertexChannel)
                 {
                     using (BlockMarker(code))
@@ -286,12 +351,13 @@ namespace Reclaimer.Geometry.Utilities
 
             void WriteBuffer(IReadOnlyList<IVector> vectorBuffer)
             {
-                var vb = vectorBuffer as IDataBuffer;
-                var typeCode = VectorTypeCodes.FromType(vb?.DataType);
-                if (typeCode == null)
+                var dataBuffer = vectorBuffer as IDataBuffer;
+                var descriptor = VectorDescriptor.FromType(dataBuffer?.DataType);
+                if (descriptor == null)
                 {
                     //no choice but to assume float4
-                    writer.Write(VectorTypeCodes.Float4.Value);
+                    descriptor = VectorDescriptor.FromType(typeof(RealVector4));
+                    writer.Write(vectorDescriptorPool.IndexOf(descriptor));
                     foreach (var vec in vectorBuffer)
                     {
                         writer.Write(vec.X);
@@ -302,9 +368,9 @@ namespace Reclaimer.Geometry.Utilities
                 }
                 else
                 {
-                    writer.Write(typeCode.Value);
-                    for (var i = 0; i < vb.Count; i++)
-                        writer.Write(vb.GetBytes(i));
+                    writer.Write(vectorDescriptorPool.IndexOf(descriptor));
+                    for (var i = 0; i < dataBuffer.Count; i++)
+                        writer.Write(dataBuffer.GetBytes(i));
                 }
             }
         }
@@ -328,6 +394,21 @@ namespace Reclaimer.Geometry.Utilities
 
                 foreach (var index in indexBuffer)
                     writeFunc(index);
+            }
+        }
+
+        private void Write(VectorDescriptor descriptor)
+        {
+            using (BlockMarker(SceneCodes.VectorDescriptor))
+            {
+                writer.Write((byte)descriptor.DataType);
+                writer.Write(descriptor.Size);
+                writer.Write(descriptor.Configuration.Length);
+                foreach (var dimens in descriptor.Configuration)
+                {
+                    writer.Write((byte)dimens.Flags);
+                    writer.Write(dimens.BitCount);
+                }
             }
         }
 

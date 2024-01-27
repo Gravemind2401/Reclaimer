@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.Blam.Utilities;
+﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.IO;
 using Reclaimer.Saber3D.Common;
@@ -69,7 +68,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
                 material.TextureMappings.Add(new TextureMapping
                 {
-                    Usage = (int)MaterialUsage.Diffuse,
+                    Usage = MaterialUsage.Diffuse,
                     Tiling = Vector2.One,
                     Texture = new Reclaimer.Geometry.Texture
                     {

@@ -481,7 +481,7 @@ namespace Reclaimer.Plugins
                 m.ColorDiffuse = m.ColorTransparent = new Assimp.Color4D(1);
 
                 //max only seems to care about diffuse
-                var dif = mat?.Submaterials.FirstOrDefault(s => s.Usage == MaterialUsage.Diffuse);
+                var dif = mat?.Submaterials.FirstOrDefault(s => s.Usage == 0);
                 if (dif != null)
                 {
                     var suffix = dif.Bitmap.SubmapCount > 1 ? "[0]" : string.Empty;

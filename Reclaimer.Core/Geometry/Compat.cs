@@ -41,6 +41,22 @@ namespace Reclaimer.Geometry
             public const int NormalDetail = 4;
             public const int SelfIllumination = 5;
             public const int Specular = 6;
+
+            public static int GetValue(string value)
+            {
+                return value switch
+                {
+                    MaterialUsage.BlendMap => BlendMap,
+                    MaterialUsage.Diffuse => Diffuse,
+                    MaterialUsage.DiffuseDetail => DiffuseDetail,
+                    MaterialUsage.ColorChange => ColourChange,
+                    MaterialUsage.Normal => Normal,
+                    MaterialUsage.NormalDetail => NormalDetail,
+                    MaterialUsage.SelfIllumination => SelfIllumination,
+                    MaterialUsage.Specular => Specular,
+                    _ => throw new ArgumentException(null, nameof(value))
+                };
+            }
         }
 
         private static class TintUsageCompat
@@ -48,6 +64,17 @@ namespace Reclaimer.Geometry
             public const int Albedo = 0;
             public const int SelfIllumination = 1;
             public const int Specular = 2;
+
+            public static int GetValue(string value)
+            {
+                return value switch
+                {
+                    TintUsage.Albedo => Albedo,
+                    TintUsage.SelfIllumination => SelfIllumination,
+                    TintUsage.Specular => Specular,
+                    _ => throw new ArgumentException(null, nameof(value))
+                };
+            }
         }
 
         public static void WriteAMF(this Scene scene, string fileName, float scale)
@@ -449,10 +476,10 @@ namespace Reclaimer.Geometry
                     {
                         bw.WriteStringNullTerminated("*" + material.Name);
 
-                        var blendInfo = material.TextureMappings.FirstOrDefault(s => s.Usage == MaterialUsageCompat.BlendMap);
-                        var baseInfo = material.TextureMappings.Where(s => s.Usage == MaterialUsageCompat.Diffuse).ToList();
-                        var bumpInfo = material.TextureMappings.Where(s => s.Usage == MaterialUsageCompat.Normal).ToList();
-                        var detailInfo = material.TextureMappings.Where(s => s.Usage == MaterialUsageCompat.DiffuseDetail).ToList();
+                        var blendInfo = material.TextureMappings.FirstOrDefault(s => MaterialUsageCompat.GetValue(s.Usage) == MaterialUsageCompat.BlendMap);
+                        var baseInfo = material.TextureMappings.Where(s => MaterialUsageCompat.GetValue(s.Usage) == MaterialUsageCompat.Diffuse).ToList();
+                        var bumpInfo = material.TextureMappings.Where(s => MaterialUsageCompat.GetValue(s.Usage) == MaterialUsageCompat.Normal).ToList();
+                        var detailInfo = material.TextureMappings.Where(s => MaterialUsageCompat.GetValue(s.Usage) == MaterialUsageCompat.DiffuseDetail).ToList();
 
                         if (blendInfo == null)
                             bw.WriteStringNullTerminated(nullPath);
@@ -479,7 +506,7 @@ namespace Reclaimer.Geometry
                         bw.WriteStringNullTerminated(material.Name);
                         for (var i = 0; i < 8; i++)
                         {
-                            var submat = material.TextureMappings.FirstOrDefault(s => s.Usage == i);
+                            var submat = material.TextureMappings.FirstOrDefault(s => MaterialUsageCompat.GetValue(s.Usage) == i);
                             bw.WriteStringNullTerminated(submat?.Texture.Name ?? nullPath);
                             if (submat != null)
                             {
@@ -490,7 +517,7 @@ namespace Reclaimer.Geometry
 
                         for (var i = 0; i < 4; i++)
                         {
-                            var tint = material.Tints.FirstOrDefault(t => t.Usage == i);
+                            var tint = material.Tints.FirstOrDefault(t => TintUsageCompat.GetValue(t.Usage) == i);
                             if (tint == null)
                             {
                                 bw.Write(0);

@@ -36,6 +36,14 @@ namespace Reclaimer.Geometry
                 .SelectMany(m => m.EnumerateMaterials())
                 .DistinctBy(m => m.Id);
         }
+
+        public IEnumerable<Texture> EnumerateTextures()
+        {
+            return EnumerateMaterials()
+                .SelectMany(m => m.TextureMappings)
+                .Select(i => i.Texture)
+                .DistinctBy(t => t.Id);
+        }
     }
 
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]

@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
@@ -105,7 +104,7 @@ namespace Reclaimer.Blam.Halo2
 
                 material.TextureMappings.Add(new TextureMapping
                 {
-                    Usage = (int)MaterialUsage.Diffuse,
+                    Usage = MaterialUsage.Diffuse,
                     Tiling = Vector2.One,
                     Texture = new Texture
                     {
