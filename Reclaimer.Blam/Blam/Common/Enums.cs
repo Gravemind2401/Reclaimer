@@ -338,10 +338,13 @@
         [BuildString("Oct 14 2022 21:11:35", "U6")] //update 10
         [BuildString("Dec  6 2022 11:13:38", "U6")] //update 10 custom maps 1
         [BuildString("Dec  6 2022 11:13:46", "U6")] //update 10 custom maps 2
+        MccHalo2XU10,
+
+        [CacheMetadata(HaloGame.Halo2X, PC, Deflate, Mcc)]
         [BuildString("Jun 13 2023 20:21:18", "U6")] //update 11
         [BuildString("Jun 27 2023 08:47:43", "U6")] //update 11 custom maps 1
         [BuildString("Jun 27 2023 08:47:52", "U6")] //update 11 custom maps 2
-        MccHalo2XU10,
+        MccHalo2XU11,
     }
 
     public enum Language
