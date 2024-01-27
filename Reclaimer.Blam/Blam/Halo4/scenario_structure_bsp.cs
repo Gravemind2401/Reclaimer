@@ -196,7 +196,8 @@ namespace Reclaimer.Blam.Halo4
         #endregion
     }
 
-    [FixedSize(140)]
+    [FixedSize(140, MaxVersion = (int)CacheType.MccHalo2XU11)]
+    [FixedSize(128, MinVersion = (int)CacheType.MccHalo2XU11)]
     public class ClusterBlock
     {
         [Offset(0)]
@@ -208,7 +209,8 @@ namespace Reclaimer.Blam.Halo4
         [Offset(16)]
         public RealBounds ZBounds { get; set; }
 
-        [Offset(64)]
+        [Offset(64, MaxVersion = (int)CacheType.MccHalo2XU11)]
+        [Offset(52, MinVersion = (int)CacheType.MccHalo2XU11)]
         public short SectionIndex { get; set; }
     }
 
