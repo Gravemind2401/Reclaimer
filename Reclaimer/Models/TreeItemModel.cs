@@ -1,10 +1,12 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
 using Reclaimer.Utilities;
+using System.Diagnostics;
 using System.Windows;
 
 namespace Reclaimer.Models
 {
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public class TreeItemModel : BindableBase
     {
         public DelegateCommand ToggleCommand { get; }
@@ -94,13 +96,33 @@ namespace Reclaimer.Models
             RaisePropertyChanged(nameof(HasItems));
         }
 
-        public void CollapseAll()
+        public void ExpandAll() => ExpandAll(true);
+
+        public void CollapseAll() => ExpandAll(false);
+
+        public void ExpandAll(bool expand)
         {
             foreach (var n in Items)
                 n.CollapseAll();
-            IsExpanded = false;
+            IsExpanded = expand;
         }
 
-        public override string ToString() => Header ?? base.ToString();
+        /// <summary>
+        /// Returns <see langword="this"/>, followed by all descendants recursively.
+        /// </summary>
+        public IEnumerable<TreeItemModel> EnumerateHierarchy() => EnumerateHierarchy(null);
+
+        /// <param name="predicate">
+        /// Items will be skipped (including their descendants) if the predicate returns <see langword="false"/>.
+        /// </param>
+        /// <inheritdoc cref="EnumerateHierarchy()"/>
+        public IEnumerable<TreeItemModel> EnumerateHierarchy(Predicate<TreeItemModel> predicate)
+        {
+            return predicate?.Invoke(this) == false
+                ? Enumerable.Empty<TreeItemModel>()
+                : Items.SelectMany(x => x.EnumerateHierarchy(predicate)).Prepend(this);
+        }
+
+        private string GetDebuggerDisplay() => Header ?? ToString();
     }
 }

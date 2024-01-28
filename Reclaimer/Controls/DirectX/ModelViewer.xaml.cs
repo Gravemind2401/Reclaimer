@@ -241,22 +241,23 @@ namespace Reclaimer.Controls.DirectX
                 return;
 
             isWorking = true;
-            SetState((e.OriginalSource as FrameworkElement).DataContext as TreeItemModel, true);
+            OnStateChanged((e.OriginalSource as FrameworkElement).DataContext as TreeItemModel, true, true);
             isWorking = false;
         }
 
-        private void SetState(TreeItemModel item, bool updateRender)
+        private static void OnStateChanged(TreeItemModel item, bool updateRender, bool refreshParent)
         {
-            foreach (var child in EnumerateDescendents(item).Prepend(item))
+            foreach (var child in item.EnumerateHierarchy(i => i.IsVisible))
             {
                 child.IsChecked = item.IsChecked;
                 if (updateRender && child.Tag is MeshTag tag)
                     tag.SetVisible(child.IsChecked.GetValueOrDefault());
             }
 
-            RefreshState(item.Parent);
+            if (refreshParent)
+                RefreshState(item.Parent);
 
-            void RefreshState(TreeItemModel item)
+            static void RefreshState(TreeItemModel item)
             {
                 if (item == null || !item.HasItems)
                     return;
@@ -271,38 +272,30 @@ namespace Reclaimer.Controls.DirectX
                 if (item.IsChecked != prev)
                     RefreshState(item.Parent);
             }
-
-            IEnumerable<TreeItemModel> EnumerateDescendents(TreeItemModel item)
-            {
-                var visible = item.Items.Where(i => i.IsVisible);
-                return visible.Concat(visible.SelectMany(EnumerateDescendents));
-            }
         }
         #endregion
 
         #region Toolbar Events
-        private void btnCollapseAll_Click(object sender, RoutedEventArgs e)
+        private void btnCollapseAll_Click(object sender, RoutedEventArgs e) => ExpandAll(false);
+        private void btnExpandAll_Click(object sender, RoutedEventArgs e) => ExpandAll(true);
+        private void btnSelectAll_Click(object sender, RoutedEventArgs e) => CheckAll(true);
+        private void btnSelectNone_Click(object sender, RoutedEventArgs e) => CheckAll(false);
+
+        private void ExpandAll(bool expanded)
         {
             foreach (var item in TreeViewItems)
-                item.IsExpanded = false;
+                item.ExpandAll(expanded);
         }
 
-        private void btnExpandAll_Click(object sender, RoutedEventArgs e)
+        private void CheckAll(bool checkState)
         {
-            foreach (var item in TreeViewItems)
-                item.IsExpanded = true;
-        }
-
-        private void btnSelectAll_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var item in TreeViewItems)
-                item.IsChecked = true;
-        }
-
-        private void btnSelectNone_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var item in TreeViewItems)
-                item.IsChecked = false;
+            isWorking = true;
+            foreach (var item in TreeViewItems.Where(i => i.IsVisible))
+            {
+                item.IsChecked = checkState;
+                OnStateChanged(item, true, false);
+            }
+            isWorking = false;
         }
 
         #region Export Functions
@@ -396,9 +389,10 @@ namespace Reclaimer.Controls.DirectX
                     : Visibility.Collapsed;
             }
 
+            //refresh parent item check states to reflect visible children only
             isWorking = true;
             foreach (var item in TreeViewItems)
-                SetState(item.Items.First(), false);
+                OnStateChanged(item.Items.First(), false, true);
             isWorking = false;
         }
 
