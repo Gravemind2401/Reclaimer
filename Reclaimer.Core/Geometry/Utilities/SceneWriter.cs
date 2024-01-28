@@ -86,13 +86,16 @@ namespace Reclaimer.Geometry.Utilities
         {
             using (BlockMarker(SceneCodes.SceneGroup))
             {
-                WriteString(sceneGroup.Name);
-                writer.Write(sceneGroup.ChildGroups.Count + sceneGroup.ChildObjects.Count);
+                var exportedGroups = sceneGroup.ChildGroups.Where(g => g.Export);
+                var exportedObjects = sceneGroup.ChildObjects.Where(o => o.Export);
 
-                foreach (var child in sceneGroup.ChildGroups)
+                WriteString(sceneGroup.Name);
+                writer.Write(exportedGroups.Count() + exportedObjects.Count());
+
+                foreach (var child in exportedGroups)
                     Write(child);
 
-                foreach (var child in sceneGroup.ChildObjects)
+                foreach (var child in exportedObjects)
                     Write(child);
             }
         }
@@ -203,10 +206,11 @@ namespace Reclaimer.Geometry.Utilities
             meshPool.Clear();
             currentModel = model;
 
+            var exportedRegions = model.Regions.Where(r => r.Export && r.Permutations.Any(p => p.Export)).ToList();
             using (BlockMarker(SceneCodes.Model))
             {
                 WriteBaseProps(model);
-                WriteList(model.Regions, Write, SceneCodes.Region);
+                WriteList(exportedRegions, Write, SceneCodes.Region);
                 WriteList(model.Markers, Write, SceneCodes.Marker);
                 WriteList(model.Bones, Write, SceneCodes.Bone);
                 WriteList(meshPool, Write, SceneCodes.Mesh);
@@ -215,10 +219,11 @@ namespace Reclaimer.Geometry.Utilities
 
         private void Write(ModelRegion region)
         {
+            var exportedPermutations = region.Permutations.Where(p => p.Export).ToList();
             using (BlockMarker(SceneCodes.Region))
             {
                 WriteString(region.Name);
-                WriteList(region.Permutations, Write, SceneCodes.Permutation);
+                WriteList(exportedPermutations, Write, SceneCodes.Permutation);
             }
         }
 

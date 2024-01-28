@@ -40,6 +40,7 @@ namespace Reclaimer.Geometry
     public class ModelRegion
     {
         public string Name { get; set; }
+        public bool Export { get; set; } = true;
         public List<ModelPermutation> Permutations { get; } = new();
     }
 
@@ -47,6 +48,7 @@ namespace Reclaimer.Geometry
     public class ModelPermutation
     {
         public string Name { get; set; }
+        public bool Export { get; set; } = true;
         public bool IsInstanced { get; set; }
         public (int Index, int Count) MeshRange { get; set; }
         public Vector3 Scale { get; set; } = Vector3.One;

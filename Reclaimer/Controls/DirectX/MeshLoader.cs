@@ -3,8 +3,6 @@ using HelixToolkit.Wpf.SharpDX;
 using Reclaimer.Geometry;
 using System.Collections.ObjectModel;
 
-using Media3D = System.Windows.Media.Media3D;
-
 namespace Reclaimer.Controls.DirectX
 {
     public partial class ModelViewer

@@ -119,10 +119,11 @@ namespace Reclaimer.Geometry
                 var allMaterials = model.EnumerateMaterials().ToList();
 
                 var validRegions = model.Regions
+                    .Where(r => r.Export)
                     .Select(r => new
                     {
                         r.Name,
-                        Permutations = r.Permutations.Where(p => p.MeshRange.Count > 0 && model.Meshes.ElementAtOrDefault(p.MeshRange.Index)?.Segments.Count > 0).ToList()
+                        Permutations = r.Permutations.Where(p => p.Export && p.MeshRange.Count > 0 && model.Meshes.ElementAtOrDefault(p.MeshRange.Index)?.Segments.Count > 0).ToList()
                     })
                     .Where(r => r.Permutations.Count > 0)
                     .ToList();
@@ -586,7 +587,10 @@ namespace Reclaimer.Geometry
             var directory = Path.Combine(Directory.GetParent(fileName).FullName, "models");
             Directory.CreateDirectory(directory);
 
-            var permNames = model.Regions.SelectMany(r => r.Permutations)
+            var permNames = model.Regions
+                .Where(r => r.Export)
+                .SelectMany(r => r.Permutations)
+                .Where(p => p.Export)
                 .Select(p => p.Name)
                 .Distinct();
 
@@ -597,8 +601,8 @@ namespace Reclaimer.Geometry
 
             foreach (var permName in permNames)
             {
-                var allRegions = model.Regions.Where(r => r.Permutations.Any(p => p.Name == permName)).ToList();
-                var allPerms = model.Regions.SelectMany(r => r.Permutations).Where(p => p.Name == permName).ToList();
+                var allRegions = model.Regions.Where(r => r.Export && r.Permutations.Any(p => p.Export && p.Name == permName)).ToList();
+                var allPerms = model.Regions.Where(r => r.Export).SelectMany(r => r.Permutations).Where(p => p.Export && p.Name == permName).ToList();
 
                 using (var sw = new StreamWriter(Path.Combine(directory, permName + ".jms")))
                 {

@@ -109,7 +109,7 @@ namespace Reclaimer.Controls.DirectX
             {
                 foreach (var group in groups.OrderBy(g => g.Name))
                 {
-                    var groupNode = new TreeItemModel { Header = group.Name, IsChecked = true };
+                    var groupNode = new TreeItemModel { Header = group.Name, IsChecked = true, Tag = new MeshTag(group) };
 
                     AppendSceneGroups(group.ChildGroups, groupNode.Items);
 
@@ -163,7 +163,7 @@ namespace Reclaimer.Controls.DirectX
                             }
                         }
 
-                        var objTag = new MeshTag(null, objGroup);
+                        var objTag = new MeshTag(obj, objGroup);
                         objNode.Tag = objTag;
                         groupNode.Items.Add(objNode);
                     }
@@ -180,7 +180,7 @@ namespace Reclaimer.Controls.DirectX
 
             foreach (var region in model.Regions)
             {
-                var regNode = new TreeItemModel { Header = region.Name, IsChecked = true };
+                var regNode = new TreeItemModel { Header = region.Name, IsChecked = true, Tag = new MeshTag(region) };
 
                 foreach (var perm in region.Permutations)
                 {
@@ -191,10 +191,9 @@ namespace Reclaimer.Controls.DirectX
                     if (tag == null)
                         continue;
 
-                    var permNode = new TreeItemModel { Header = perm.Name, IsChecked = true };
+                    var permNode = new TreeItemModel { Header = perm.Name, IsChecked = true, Tag = tag };
                     regNode.Items.Add(permNode);
 
-                    permNode.Tag = tag;
                     if (!modelGroup.Children.Contains(tag.Mesh))
                         modelGroup.Children.Add(tag.Mesh);
                 }
@@ -202,13 +201,6 @@ namespace Reclaimer.Controls.DirectX
                 if (regNode.HasItems)
                     TreeViewItems.Add(regNode);
             }
-        }
-
-        private IEnumerable<ModelPermutation> GetSelectedPermutations()
-        {
-            return TreeViewItems.Where(i => i.IsChecked != false)
-                .SelectMany(i => i.Items.Where(ii => ii.IsChecked == true))
-                .Select(i => (i.Tag as MeshTag).Permutation);
         }
 
         #region Treeview Events
@@ -299,6 +291,9 @@ namespace Reclaimer.Controls.DirectX
         }
 
         #region Export Functions
+        private void btnExportAll_Click(object sender, RoutedEventArgs e) => ExportScene(false);
+        private void btnExportSelected_Click(object sender, RoutedEventArgs e) => ExportScene(true);
+
         private bool PromptFileSave(out string fileName, out string formatId)
         {
             var exportFormats = ModelViewerPlugin.GetExportFormats()
@@ -332,22 +327,27 @@ namespace Reclaimer.Controls.DirectX
             return true;
         }
 
-        private void btnExportAll_Click(object sender, RoutedEventArgs e)
+        private void ExportScene(bool filtered)
         {
             if (!PromptFileSave(out var fileName, out var formatId))
                 return;
+
+            foreach (var item in TreeViewItems.SelectMany(i => i.EnumerateHierarchy()))
+                SetSelected((item.Tag as MeshTag)?.Context, item.IsChecked.GetValueOrDefault(true) || !filtered);
 
             ModelViewerPlugin.WriteModelFile(sceneProvider, fileName, formatId);
-        }
 
-        private void btnExportSelected_Click(object sender, RoutedEventArgs e)
-        {
-            if (!PromptFileSave(out var fileName, out var formatId))
-                return;
-
-            //TODO: export only selected permutations
-            //var masked = new MaskedGeometryModel(model, GetSelectedPermutations());
-            //ModelViewerPlugin.WriteModelFile(masked, fileName, formatId);
+            static void SetSelected(object context, bool selected)
+            {
+                if (context is ModelPermutation permutation)
+                    permutation.Export = selected;
+                else if (context is ModelRegion region)
+                    region.Export = selected;
+                else if (context is SceneObject obj)
+                    obj.Export = selected;
+                else if (context is SceneGroup group)
+                    group.Export = selected;
+            }
         }
 
         //TODO: bitmap exports
@@ -452,32 +452,32 @@ namespace Reclaimer.Controls.DirectX
 
         private sealed class MeshTag
         {
-            public ModelPermutation Permutation { get; }
+            public object Context { get; }
             public GroupElement3D Mesh { get; }
             public MeshLoader.InstancedPermutation Instance { get; }
 
-            public MeshTag(ModelPermutation permutation, GroupElement3D mesh)
+            public MeshTag(object context)
             {
-                Permutation = permutation;
+                Context = context;
+            }
+
+            public MeshTag(object context, GroupElement3D mesh)
+                : this(context)
+            {
                 Mesh = mesh;
             }
 
-            public MeshTag(ModelPermutation permutation, GroupElement3D mesh, MeshLoader.InstancedPermutation instance)
-                : this(permutation, mesh)
+            public MeshTag(object context, GroupElement3D mesh, MeshLoader.InstancedPermutation instance)
+                : this(context, mesh)
             {
                 Instance = instance;
-            }
-
-            public MeshTag(ModelPermutation permutation, InstancingMeshGeometryModel3D mesh, Guid instanceId)
-            {
-                Permutation = permutation;
             }
 
             public void SetVisible(bool visible)
             {
                 if (Instance != null)
                     Instance.Toggle(visible);
-                else
+                else if (Mesh != null)
                     Mesh.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
             }
         }

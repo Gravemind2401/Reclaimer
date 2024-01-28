@@ -50,6 +50,7 @@ namespace Reclaimer.Geometry
     public class SceneGroup
     {
         public string Name { get; set; }
+        public bool Export { get; set; } = true;
         public List<SceneGroup> ChildGroups { get; } = new();
         public List<SceneObject> ChildObjects { get; } = new();
 
@@ -83,6 +84,7 @@ namespace Reclaimer.Geometry
     public abstract class SceneObject
     {
         public string Name { get; set; }
+        public bool Export { get; set; } = true;
         public SceneFlags Flags { get; set; }
     }
 
