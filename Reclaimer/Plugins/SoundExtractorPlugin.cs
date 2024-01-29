@@ -29,10 +29,7 @@ namespace Reclaimer.Plugins
             Settings = LoadSettings<SoundExtractorSettings>();
 
             if (!Settings.NoConversion && !File.Exists(Settings.FFmpegPath))
-            {
-                SaveSettings(Settings);
-                throw new FileNotFoundException("FFmpeg is required for sound conversion but was not found.");
-            }
+                LogOutput("WARNING: FFmpeg is required for sound conversion but was not found.");
         }
 
         public override void Suspend() => SaveSettings(Settings);
@@ -60,7 +57,8 @@ namespace Reclaimer.Plugins
                 {
                     var process = new Process
                     {
-                        StartInfo =
+                        EnableRaisingEvents = true,
+                        StartInfo = new()
                         {
                             FileName = Settings.FFmpegPath,
                             Arguments = $"-y -i - \"{targetFile}\"",
@@ -68,8 +66,7 @@ namespace Reclaimer.Plugins
                             CreateNoWindow = true,
                             RedirectStandardInput = true,
                             RedirectStandardError = true
-                        },
-                        EnableRaisingEvents = true
+                        }
                     };
 
                     if (Settings.LogFFmpegOutput)
