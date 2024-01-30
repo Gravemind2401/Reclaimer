@@ -4,16 +4,11 @@ using Reclaimer.IO;
 
 namespace Reclaimer.Blam.HaloReach
 {
-    public class sound : ISoundContainer
+    public class sound : ContentTagDefinition<GameSound>
     {
-        private readonly ICacheFile cache;
-        private readonly IIndexItem item;
-
-        public sound(ICacheFile cache, IIndexItem item)
-        {
-            this.cache = cache;
-            this.item = item;
-        }
+        public sound(IIndexItem item)
+            : base(item)
+        { }
 
         [Offset(0)]
         public short Flags { get; set; }
@@ -36,22 +31,18 @@ namespace Reclaimer.Blam.HaloReach
         [Offset(28)]
         public ResourceIdentifier ResourceIdentifier { get; set; }
 
-        #region ISoundContainer
+        #region IContentProvider
 
-        string ISoundContainer.Name => item.TagName;
-
-        string ISoundContainer.Class => item.ClassName;
-
-        public GameSound ReadData()
+        public override GameSound GetContent()
         {
-            var resourceGestalt = cache.TagIndex.GetGlobalTag("ugh!").ReadMetadata<sound_cache_file_gestalt>();
+            var resourceGestalt = Cache.TagIndex.GetGlobalTag("ugh!").ReadMetadata<sound_cache_file_gestalt>();
             var playback = resourceGestalt.Playbacks[PlaybackIndex];
             var codec = resourceGestalt.Codecs[CodecIndex];
             var sourceData = ResourceIdentifier.ReadSoundData();
 
             var result = new GameSound
             {
-                Name = item.FileName,
+                Name = Item.FileName,
                 FormatHeader = new XmaHeader(codec.SampleRateInt, codec.ChannelCounts),
                 DefaultExtension = "xma"
             };

@@ -4,16 +4,11 @@ using Reclaimer.IO;
 
 namespace Reclaimer.Blam.Halo2
 {
-    public class sound : ISoundContainer
+    public class sound : ContentTagDefinition<GameSound>
     {
-        private readonly ICacheFile cache;
-        private readonly IIndexItem item;
-
-        public sound(ICacheFile cache, IIndexItem item)
-        {
-            this.cache = cache;
-            this.item = item;
-        }
+        public sound(IIndexItem item)
+            : base(item)
+        { }
 
         [Offset(0)]
         public short Flags { get; set; }
@@ -65,21 +60,17 @@ namespace Reclaimer.Blam.Halo2
             }
         }
 
-        #region ISoundContainer
+        #region IContentProvider
 
-        string ISoundContainer.Name => item.TagName;
-
-        string ISoundContainer.Class => item.ClassName;
-
-        public GameSound ReadData()
+        public override GameSound GetContent()
         {
             if (CompressionCodec != CompressionCodec.WMA && CompressionCodec != CompressionCodec.XboxAdpcm)
                 throw new NotSupportedException("Unsupported Codec/Encoding");
 
-            var resourceGestalt = cache.TagIndex.GetGlobalTag("ugh!").ReadMetadata<sound_cache_file_gestalt>();
+            var resourceGestalt = Cache.TagIndex.GetGlobalTag("ugh!").ReadMetadata<sound_cache_file_gestalt>();
             var pitchRange = resourceGestalt.PitchRanges[PitchRangeIndex];
 
-            var result = new GameSound { Name = item.FileName };
+            var result = new GameSound { Name = Item.FileName };
             if (CompressionCodec == CompressionCodec.XboxAdpcm)
             {
                 if (Encoding != Encoding.Codec)

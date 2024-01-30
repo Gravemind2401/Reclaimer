@@ -425,7 +425,7 @@ namespace Reclaimer.Plugins
         #region Sounds
         private bool SaveSound(IExtractable item)
         {
-            if (item.GetSoundContent(out var container) && SaveSound(container, item.Destination))
+            if (item.GetSoundContent(out var provider) && SaveSound(provider, item.Destination))
             {
                 LogOutput($"Extracted {item.DisplayName}");
                 return true;
@@ -435,10 +435,10 @@ namespace Reclaimer.Plugins
         }
 
         [SharedFunction]
-        private bool SaveSound(ISoundContainer sound, string baseDir)
+        private bool SaveSound(IContentProvider<GameSound> provider, string baseDir)
         {
-            var dir = Path.GetDirectoryName(MakePath(sound.Class, sound.Name, baseDir));
-            return writeSoundFileFunc?.Invoke(sound.ReadData(), dir, Settings.OverwriteExisting) ?? false;
+            var dir = Path.GetDirectoryName(MakePath(provider.Class, provider.Name, baseDir));
+            return writeSoundFileFunc?.Invoke(provider.GetContent(), dir, Settings.OverwriteExisting) ?? false;
         }
         #endregion
 
@@ -557,7 +557,7 @@ namespace Reclaimer.Plugins
             int GetContentType();
             bool GetBitmapContent(out IContentProvider<IBitmap> provider);
             bool GetGeometryContent(out IContentProvider<Scene> provider);
-            bool GetSoundContent(out ISoundContainer container);
+            bool GetSoundContent(out IContentProvider<GameSound> provider);
         }
 
         private sealed class CacheExtractable : IExtractable
@@ -590,7 +590,7 @@ namespace Reclaimer.Plugins
             //TODO
             public bool GetBitmapContent(out IContentProvider<IBitmap> provider) => BlamContentFactory.TryGetBitmapContent(item, out provider);
             public bool GetGeometryContent(out IContentProvider<Scene> provider) => BlamContentFactory.TryGetGeometryContent(item, out provider);
-            public bool GetSoundContent(out ISoundContainer container) => BlamContentFactory.TryGetSoundContent(item, out container);
+            public bool GetSoundContent(out IContentProvider<GameSound> provider) => BlamContentFactory.TryGetSoundContent(item, out provider);
         }
 
         private sealed class ModuleExtractable : IExtractable
@@ -622,9 +622,9 @@ namespace Reclaimer.Plugins
 
             public bool GetBitmapContent(out IContentProvider<IBitmap> provider) => BlamContentFactory.TryGetBitmapContent(item, out provider);
             public bool GetGeometryContent(out IContentProvider<Scene> provider) => BlamContentFactory.TryGetGeometryContent(item, out provider);
-            public bool GetSoundContent(out ISoundContainer container)
+            public bool GetSoundContent(out IContentProvider<GameSound> provider)
             {
-                container = null;
+                provider = null;
                 return false;
             }
         }
@@ -662,9 +662,9 @@ namespace Reclaimer.Plugins
                 return false;
             }
 
-            public bool GetSoundContent(out ISoundContainer container)
+            public bool GetSoundContent(out IContentProvider<GameSound> provider)
             {
-                container = null;
+                provider = null;
                 return false;
             }
         }

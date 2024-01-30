@@ -134,7 +134,7 @@ namespace Reclaimer.Blam.Common
             return content != null;
         }
 
-        public static bool TryGetSoundContent(IIndexItem item, out ISoundContainer content)
+        public static bool TryGetSoundContent(IIndexItem item, out IContentProvider<GameSound> content)
         {
             content = null;
 
