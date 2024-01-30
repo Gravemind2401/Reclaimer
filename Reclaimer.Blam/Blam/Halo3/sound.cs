@@ -1,6 +1,5 @@
 ﻿using Reclaimer.Audio;
 using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 
 namespace Reclaimer.Blam.Halo3

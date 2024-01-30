@@ -1,5 +1,5 @@
-﻿using Reclaimer.Blam.Utilities;
-using Reclaimer.Saber3D.Halo1X;
+﻿using Reclaimer.Saber3D.Halo1X;
+using Reclaimer.Utilities;
 
 namespace Reclaimer.Saber3D.Common
 {

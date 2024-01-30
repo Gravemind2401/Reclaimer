@@ -1,4 +1,4 @@
-﻿using Reclaimer.Blam.Utilities;
+﻿using Reclaimer.Utilities;
 
 namespace Reclaimer.Blam.Common
 {

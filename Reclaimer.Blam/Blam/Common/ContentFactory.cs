@@ -1,6 +1,9 @@
-﻿using Reclaimer.Blam.Utilities;
+﻿using Reclaimer.Audio;
+using Reclaimer.Blam.Utilities;
+using Reclaimer.Drawing;
 using Reclaimer.Geometry;
 using Reclaimer.IO;
+using Reclaimer.Utilities;
 using System.IO;
 using System.IO.Compression;
 

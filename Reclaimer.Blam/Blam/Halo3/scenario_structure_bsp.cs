@@ -1,6 +1,6 @@
 ﻿using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
+using Reclaimer.Utilities;
 using System.Globalization;
 using System.Numerics;
 

@@ -2,7 +2,7 @@
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
-using Reclaimer.IO;
+using Reclaimer.Utilities;
 using System.Numerics;
 
 namespace Reclaimer.Blam.Halo3
