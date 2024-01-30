@@ -1,4 +1,5 @@
 ﻿using Reclaimer.Drawing;
+using Reclaimer.Utilities;
 using System.Diagnostics;
 using System.Drawing;
 using System.Numerics;
@@ -41,9 +42,10 @@ namespace Reclaimer.Geometry
     public class Texture
     {
         public int Id { get; set; }
-        public string Name { get; set; }
         public float Gamma { get; set; } = 2.2f; //default to sRGB
-        public Func<DdsImage> GetDds { get; set; }
+        public IContentProvider<IBitmap> ContentProvider { get; set; }
+        public string Name => ContentProvider?.Name;
+        public DdsImage GetDds() => ContentProvider?.GetContent().ToDds(0);
     }
 
     public class MaterialTint

@@ -143,15 +143,14 @@ namespace Reclaimer.Blam.Halo3
                         Texture = new Texture
                         {
                             Id = texParam.Tag.Id,
-                            Name = texParam.Tag.TagName,
+                            ContentProvider = texParam.Tag.ReadMetadata<bitmap>(),
                             Gamma = bitmap.Bitmaps[0].Curve switch
                             {
                                 ColorSpace.Linear => 1f,
                                 ColorSpace.Gamma2 => 2f,
                                 ColorSpace.sRGB => 2.2f,
                                 _ => 1.95f //xRGB, Unknown
-                            },
-                            GetDds = () => texParam.Tag.ReadMetadata<bitmap>().ToDds(0)
+                            }
                         }
                     });
                 }

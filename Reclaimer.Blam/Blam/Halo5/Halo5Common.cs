@@ -86,8 +86,7 @@ namespace Reclaimer.Blam.Halo5
                         Texture = new Texture
                         {
                             Id = bitmTag.GlobalTagId,
-                            Name = bitmTag.TagName,
-                            GetDds = () => bitmTag.ReadMetadata<bitmap>().ToDds(0)
+                            ContentProvider = bitmTag.ReadMetadata<bitmap>()
                         }
                     });
                 }

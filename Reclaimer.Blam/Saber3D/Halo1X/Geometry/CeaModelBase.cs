@@ -45,7 +45,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             return tlist.Aggregate((a, b) => a * b);
         }
 
-        public IEnumerable<IBitmap> GetAllBitmaps()
+        public IEnumerable<IContentProvider<IBitmap>> GetAllBitmaps()
         {
             return from m in Materials
                    let i = Container.FindItem(PakItemType.Textures, m.Value, true)
@@ -53,7 +53,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
                    select new Texture(i);
         }
 
-        public  IEnumerable<IBitmap> GetBitmaps(IEnumerable<int> shaderIndexes)
+        public IEnumerable<IContentProvider<IBitmap>> GetBitmaps(IEnumerable<int> shaderIndexes)
         {
             return from m in shaderIndexes.Select(i => Materials[i])
                    let i = Container.FindItem(PakItemType.Textures, m.Value, true)
@@ -74,8 +74,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
                     Texture = new Reclaimer.Geometry.Texture
                     {
                         Id = i,
-                        Name = m.Value,
-                        GetDds = () => GetBitmaps(Enumerable.Repeat(i, 1)).FirstOrDefault()?.ToDds(0)
+                        ContentProvider = GetBitmaps(Enumerable.Repeat(i, 1)).FirstOrDefault()
                     }
                 });
 
