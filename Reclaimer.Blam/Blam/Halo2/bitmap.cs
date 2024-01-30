@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace Reclaimer.Blam.Halo2
 {
-    public class bitmap : ContentTagDefinition, IBitmap
+    public class bitmap : ContentTagDefinition<IBitmap>, IBitmap
     {
         public bitmap(IIndexItem item)
             : base(item)
@@ -21,7 +21,7 @@ namespace Reclaimer.Blam.Halo2
         [Offset(68, MinVersion = (int)CacheType.Halo2Xbox)]
         public BlockCollection<BitmapDataBlock> Bitmaps { get; set; }
 
-        #region IBitmap
+        #region IContentProvider
 
         private static readonly CubemapLayout Halo2CubeLayout = new CubemapLayout
         {
@@ -36,6 +36,8 @@ namespace Reclaimer.Blam.Halo2
             Orientation3 = RotateFlipType.Rotate180FlipNone,
             Orientation6 = RotateFlipType.Rotate180FlipNone
         };
+
+        public override IBitmap GetContent() => this;
 
         int IBitmap.SubmapCount => Bitmaps.Count;
 

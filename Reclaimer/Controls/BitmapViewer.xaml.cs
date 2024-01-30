@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32;
-using Reclaimer.Blam.Utilities;
 using Reclaimer.Drawing;
 using Reclaimer.Models;
 using Reclaimer.Utilities;
@@ -126,9 +125,9 @@ namespace Reclaimer.Controls
             DataContext = this;
         }
 
-        public void LoadImage(IBitmap image, string fileName)
+        public void LoadImage(IContentProvider<IBitmap> provider, string fileName)
         {
-            bitmap = image;
+            bitmap = provider.GetContent();
 
             TabModel.ToolTip = fileName;
             TabModel.Header = Utils.GetFileName(fileName);

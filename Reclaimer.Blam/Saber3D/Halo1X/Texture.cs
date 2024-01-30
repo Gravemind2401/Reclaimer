@@ -2,11 +2,12 @@
 using Reclaimer.Drawing;
 using Reclaimer.IO;
 using Reclaimer.Saber3D.Common;
+using Reclaimer.Utilities;
 using System.IO;
 
 namespace Reclaimer.Saber3D.Halo1X
 {
-    public class Texture : ContentItemDefinition, IBitmap
+    public class Texture : ContentItemDefinition, IContentProvider<IBitmap>, IBitmap
     {
         private const int LittleHeader = 0x50494354; //TCIP
         private const int BigHeader = 0x54434950; //PICT
@@ -57,7 +58,9 @@ namespace Reclaimer.Saber3D.Halo1X
         public TextureFormat Format { get; }
         public int DataOffset { get; }
 
-        #region IBitmap
+        #region IContentProvider
+
+        IBitmap IContentProvider<IBitmap>.GetContent() => this;
 
         int IBitmap.SubmapCount => 1;
 

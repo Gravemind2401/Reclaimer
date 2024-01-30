@@ -2,7 +2,6 @@
 using Reclaimer.Audio;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Halo5;
-using Reclaimer.Blam.Utilities;
 using Reclaimer.Controls.Editors;
 using Reclaimer.Drawing;
 using Reclaimer.Geometry;
@@ -293,7 +292,7 @@ namespace Reclaimer.Plugins
         #region Images
         private bool SaveImage(IExtractable item)
         {
-            if (item.GetBitmapContent(out var bitmap) && SaveImage(bitmap, item.Destination))
+            if (item.GetBitmapContent(out var provider) && SaveImage(provider, item.Destination))
             {
                 LogOutput($"Extracted {item.DisplayName}");
                 return true;
@@ -303,12 +302,13 @@ namespace Reclaimer.Plugins
         }
 
         [SharedFunction]
-        private bool SaveImage(IBitmap bitmap, string baseDir)
+        private bool SaveImage(IContentProvider<IBitmap> provider, string baseDir)
         {
+            var bitmap = provider.GetContent();
             var extracted = 0;
             for (var i = 0; i < bitmap.SubmapCount; i++)
             {
-                var fileName = MakePath(bitmap.Class, bitmap.Name, baseDir);
+                var fileName = MakePath(provider.Class, provider.Name, baseDir);
                 var ext = "." + Settings.BitmapFormat.ToString().ToLower();
 
                 if (bitmap.SubmapCount > 1)
@@ -555,7 +555,7 @@ namespace Reclaimer.Plugins
             string DisplayName { get; }
             string Destination { get; }
             int GetContentType();
-            bool GetBitmapContent(out IBitmap bitmap);
+            bool GetBitmapContent(out IContentProvider<IBitmap> provider);
             bool GetGeometryContent(out IContentProvider<Scene> provider);
             bool GetSoundContent(out ISoundContainer container);
         }
@@ -588,7 +588,7 @@ namespace Reclaimer.Plugins
             }
 
             //TODO
-            public bool GetBitmapContent(out IBitmap bitmap) => BlamContentFactory.TryGetBitmapContent(item, out bitmap);
+            public bool GetBitmapContent(out IContentProvider<IBitmap> provider) => BlamContentFactory.TryGetBitmapContent(item, out provider);
             public bool GetGeometryContent(out IContentProvider<Scene> provider) => BlamContentFactory.TryGetGeometryContent(item, out provider);
             public bool GetSoundContent(out ISoundContainer container) => BlamContentFactory.TryGetSoundContent(item, out container);
         }
@@ -620,7 +620,7 @@ namespace Reclaimer.Plugins
                 };
             }
 
-            public bool GetBitmapContent(out IBitmap bitmap) => BlamContentFactory.TryGetBitmapContent(item, out bitmap);
+            public bool GetBitmapContent(out IContentProvider<IBitmap> provider) => BlamContentFactory.TryGetBitmapContent(item, out provider);
             public bool GetGeometryContent(out IContentProvider<Scene> provider) => BlamContentFactory.TryGetGeometryContent(item, out provider);
             public bool GetSoundContent(out ISoundContainer container)
             {
@@ -654,7 +654,7 @@ namespace Reclaimer.Plugins
                 };
             }
 
-            public bool GetBitmapContent(out IBitmap bitmap) => SaberContentFactory.TryGetBitmapContent(item, out bitmap);
+            public bool GetBitmapContent(out IContentProvider<IBitmap> provider) => SaberContentFactory.TryGetBitmapContent(item, out provider);
 
             public bool GetGeometryContent(out IContentProvider<Scene> provider)
             {

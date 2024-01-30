@@ -6,7 +6,7 @@ using Reclaimer.IO;
 
 namespace Reclaimer.Blam.Halo4
 {
-    public class bitmap : ContentTagDefinition, IBitmap
+    public class bitmap : ContentTagDefinition<IBitmap>, IBitmap
     {
         public bitmap(IIndexItem item)
             : base(item)
@@ -24,7 +24,9 @@ namespace Reclaimer.Blam.Halo4
         [Offset(180)]
         public BlockCollection<BitmapResourceBlock> InterleavedResources { get; set; }
 
-        #region IBitmap
+        #region IContentProvider
+
+        public override IBitmap GetContent() => this;
 
         int IBitmap.SubmapCount => Bitmaps.Count;
 

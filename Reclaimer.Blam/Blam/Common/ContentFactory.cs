@@ -54,7 +54,7 @@ namespace Reclaimer.Blam.Common
             return false;
         }
 
-        public static bool TryGetBitmapContent(IIndexItem item, out IBitmap content)
+        public static bool TryGetBitmapContent(IIndexItem item, out IContentProvider<IBitmap> content)
         {
             content = null;
 
@@ -191,7 +191,7 @@ namespace Reclaimer.Blam.Common
             return false;
         }
 
-        public static bool TryGetBitmapContent(Halo5.ModuleItem item, out IBitmap content)
+        public static bool TryGetBitmapContent(Halo5.ModuleItem item, out IContentProvider<IBitmap> content)
         {
             content = null;
 

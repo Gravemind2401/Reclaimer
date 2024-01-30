@@ -16,7 +16,7 @@ namespace Reclaimer.Plugins
         private delegate bool GetDataFolder(out string dataFolder);
         private GetDataFolder getDataFolderFunc;
 
-        private delegate bool SaveImage(IBitmap bitmap, string baseDir);
+        private delegate bool SaveImage(IContentProvider<IBitmap> provider, string baseDir);
         private SaveImage saveImageFunc;
 
         internal override int? FilePriority => 1;
@@ -68,6 +68,9 @@ namespace Reclaimer.Plugins
             if (!getDataFolderFunc(out var folder))
                 return;
 
+            //TODO: optionally run in sync? (for command line access)
+
+            /*
             Task.Run(() =>
             {
                 foreach (var bitm in getBitmaps(geometry))
@@ -87,6 +90,7 @@ namespace Reclaimer.Plugins
                 ClearWorkingStatus();
                 LogOutput($"Recursive bitmap extract complete for {geometry.Name}.{geometry.Class}");
             });
+            */
         }
 
         [SharedFunction]
@@ -486,7 +490,8 @@ namespace Reclaimer.Plugins
                 if (dif != null)
                 {
                     var suffix = dif.Bitmap.SubmapCount > 1 ? "[0]" : string.Empty;
-                    var filePath = $"{dif.Bitmap.Name}{suffix}.{ModelViewerPlugin.Settings.MaterialExtension}";
+                    //var filePath = $"{dif.Bitmap.Name}{suffix}.{ModelViewerPlugin.Settings.MaterialExtension}";
+                    var filePath = $"{suffix}.{ModelViewerPlugin.Settings.MaterialExtension}"; // TODO
 
                     //collada spec says it requires URI formatting, and Assimp doesn't do it for us
                     //for some reason "new Uri(filePath, UriKind.Relative)" doesnt change the slashes, have to use absolute uri

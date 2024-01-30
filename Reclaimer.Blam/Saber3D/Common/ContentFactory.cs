@@ -30,7 +30,7 @@ namespace Reclaimer.Saber3D.Common
             return false;
         }
 
-        public static bool TryGetBitmapContent(IPakItem item, out IBitmap content)
+        public static bool TryGetBitmapContent(IPakItem item, out IContentProvider<IBitmap> content)
         {
             content = null;
 

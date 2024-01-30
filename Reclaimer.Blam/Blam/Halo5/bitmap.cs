@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Reclaimer.Blam.Halo5
 {
-    public class bitmap : ContentTagDefinition, IBitmap
+    public class bitmap : ContentTagDefinition<IBitmap>, IBitmap
     {
         public bitmap(ModuleItem item, MetadataHeader header)
             : base(item, header)
@@ -14,7 +14,9 @@ namespace Reclaimer.Blam.Halo5
         [Offset(240)]
         public BlockCollection<BitmapDataBlock> Bitmaps { get; set; }
 
-        #region IBitmap
+        #region IContentProvider
+
+        public override IBitmap GetContent() => this;
 
         int IBitmap.SubmapCount => Bitmaps.Count;
 

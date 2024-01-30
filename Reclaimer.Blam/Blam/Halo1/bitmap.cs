@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Reclaimer.Blam.Halo1
 {
-    public class bitmap : ContentTagDefinition, IBitmap
+    public class bitmap : ContentTagDefinition<IBitmap>, IBitmap
     {
         public bitmap(IIndexItem item)
             : base(item)
@@ -20,7 +20,7 @@ namespace Reclaimer.Blam.Halo1
         [Offset(96)]
         public BlockCollection<BitmapDataBlock> Bitmaps { get; set; }
 
-        #region IBitmap
+        #region IContentProvider
 
         private static readonly CubemapLayout Halo1CubeLayout = new CubemapLayout
         {
@@ -35,6 +35,8 @@ namespace Reclaimer.Blam.Halo1
             Orientation3 = RotateFlipType.Rotate90FlipNone,
             Orientation6 = RotateFlipType.Rotate180FlipNone
         };
+        
+        public override IBitmap GetContent() => this;
 
         int IBitmap.SubmapCount => Bitmaps.Count;
 
