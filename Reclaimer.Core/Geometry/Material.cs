@@ -30,7 +30,7 @@ namespace Reclaimer.Geometry
 
         private string GetDebuggerDisplay()
         {
-            var result = $"{Usage} {{{Texture?.Name ?? "null"}}}";
+            var result = $"[{Usage}] {{{Texture?.Name ?? "null"}}}";
             if (BlendChannel > 0)
                 result = $"[{BlendChannel.ToString()[0]}] {result}";
 
@@ -67,6 +67,7 @@ namespace Reclaimer.Geometry
 
     public static class TextureUsage
     {
+        public const string Other = "other";
         public const string BlendMap = "blend";
         public const string Diffuse = "diffuse";
         public const string DiffuseDetail = "diffuse_detail";

@@ -19,8 +19,7 @@ namespace Reclaimer.Controls.DirectX
     /// </summary>
     public partial class ModelViewer : IDisposable
     {
-        private delegate void ExportBitmaps(IRenderGeometry geometry);
-        private delegate void ExportSelectedBitmaps(IRenderGeometry geometry, IEnumerable<int> shaderIndexes);
+        private delegate void ExportBitmaps(IContentProvider<Scene> provider, bool filtered, bool async);
 
         private static readonly string[] AllLods = new[] { "Highest", "High", "Medium", "Low", "Lowest", "Potato" };
 
@@ -327,15 +326,10 @@ namespace Reclaimer.Controls.DirectX
             return true;
         }
 
-        private void ExportScene(bool filtered)
+        private void RefreshExportFlags(bool filtered)
         {
-            if (!PromptFileSave(out var fileName, out var formatId))
-                return;
-
             foreach (var item in TreeViewItems.SelectMany(i => i.EnumerateHierarchy()))
                 SetSelected((item.Tag as MeshTag)?.Context, item.IsChecked.GetValueOrDefault(true) || !filtered);
-
-            ModelViewerPlugin.WriteModelFile(sceneProvider, fileName, formatId);
 
             static void SetSelected(object context, bool selected)
             {
@@ -350,24 +344,26 @@ namespace Reclaimer.Controls.DirectX
             }
         }
 
-        //TODO: bitmap exports
+        private void ExportScene(bool filtered)
+        {
+            if (!PromptFileSave(out var fileName, out var formatId))
+                return;
+
+            RefreshExportFlags(filtered);
+            ModelViewerPlugin.WriteModelFile(sceneProvider, fileName, formatId);
+        }
+
         private void btnExportBitmaps_Click(object sender, RoutedEventArgs e)
         {
             var export = Substrate.GetSharedFunction<ExportBitmaps>(Constants.SharedFuncExportBitmaps);
-            //export.Invoke(geometry);
+            export.Invoke(sceneProvider, false, true);
         }
 
         private void btnExportSelectedBitmaps_Click(object sender, RoutedEventArgs e)
         {
-            var export = Substrate.GetSharedFunction<ExportSelectedBitmaps>(Constants.SharedFuncExportSelectedBitmaps);
-            //var matIndices = GetSelectedPermutations()
-            //    .SelectMany(p => Enumerable.Range(p.MeshRange.Index, p.MeshRange.Count))
-            //    .Select(i => model.Meshes.ElementAtOrDefault(i))
-            //    .Where(m => m != null)
-            //    .SelectMany(m => m.Submeshes.Select(s => (int)s.MaterialIndex))
-            //    .Distinct();
-            //
-            //export.Invoke(geometry, matIndices);
+            RefreshExportFlags(true);
+            var export = Substrate.GetSharedFunction<ExportBitmaps>(Constants.SharedFuncExportBitmaps);
+            export.Invoke(sceneProvider, true, true);
         }
         #endregion
         #endregion

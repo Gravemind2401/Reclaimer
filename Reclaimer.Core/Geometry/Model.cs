@@ -26,13 +26,24 @@ namespace Reclaimer.Geometry
         /// <summary>
         /// Enumerates all distinct materials across all meshes in the model.
         /// </summary>
-        public IEnumerable<Material> EnumerateMaterials()
+        public IEnumerable<Material> EnumerateMaterials() => Meshes.SelectMany(EnumerateMaterials);
+
+        public IEnumerable<Material> EnumerateExportedMaterials()
         {
-            return Meshes.Where(m => m != null)
-                .SelectMany(m => m.Segments)
+            return Regions.Where(r => r.Export)
+                .SelectMany(r => r.Permutations)
+                .Where(p => p.Export)
+                .SelectMany(p => p.MeshIndices)
+                .Select(i => Meshes.ElementAtOrDefault(i))
+                .SelectMany(EnumerateMaterials);
+        }
+
+        private static IEnumerable<Material> EnumerateMaterials(Mesh mesh)
+        {
+            return mesh?.Segments
                 .Select(s => s.Material)
                 .Where(m => m != null)
-                .DistinctBy(m => m.Id);
+                .DistinctBy(m => m.Id) ?? Enumerable.Empty<Material>();
         }
     }
 

@@ -1,6 +1,5 @@
 ﻿using Adjutant.Geometry;
 using Reclaimer.Annotations;
-using Reclaimer.Blam.Utilities;
 using Reclaimer.Controls.Editors;
 using Reclaimer.Drawing;
 using Reclaimer.Geometry;
@@ -37,7 +36,7 @@ namespace Reclaimer.Plugins
 
         public override IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
         {
-            if (context.File.OfType<IRenderGeometry>().Any())
+            if (context.File.OfType<IContentProvider<Scene>>().Any())
                 yield return ExtractBitmapsContextItem;
         }
 
@@ -53,28 +52,30 @@ namespace Reclaimer.Plugins
 
         private void OnContextItemClick(string key, OpenFileArgs context)
         {
-            var geometry = context.File.OfType<IRenderGeometry>().FirstOrDefault();
-            ExportBitmaps(geometry);
+            var provider = context.File.OfType<IContentProvider<Scene>>().FirstOrDefault();
+            ExportBitmaps(provider, false, true);
         }
 
         [SharedFunction]
-        public void ExportBitmaps(IRenderGeometry geometry) => ExportBitmaps(geometry, g => g.GetAllBitmaps());
-
-        [SharedFunction]
-        public void ExportSelectedBitmaps(IRenderGeometry geometry, IEnumerable<int> shaderIndexes) => ExportBitmaps(geometry, g => g.GetBitmaps(shaderIndexes));
-
-        private void ExportBitmaps(IRenderGeometry geometry, Func<IRenderGeometry, IEnumerable<IBitmap>> getBitmaps)
+        public void ExportBitmaps(IContentProvider<Scene> provider, bool filtered, bool async)
         {
             if (!getDataFolderFunc(out var folder))
                 return;
 
-            //TODO: optionally run in sync? (for command line access)
+            //TODO: offload this to batch extractor so it can be cancelled
+            if (async)
+                Task.Run(Execute);
+            else
+                Execute();
 
-            /*
-            Task.Run(() =>
+            void Execute()
             {
-                foreach (var bitm in getBitmaps(geometry))
+                var scene = provider.GetContent();
+                var textures = filtered ? scene.EnumerateExportedTextures() : scene.EnumerateTextures();
+
+                foreach (var tex in textures)
                 {
+                    var bitm = tex.ContentProvider;
                     try
                     {
                         SetWorkingStatus($"Extracting {bitm.Name}");
@@ -88,9 +89,8 @@ namespace Reclaimer.Plugins
                 }
 
                 ClearWorkingStatus();
-                LogOutput($"Recursive bitmap extract complete for {geometry.Name}.{geometry.Class}");
-            });
-            */
+                LogOutput($"Recursive bitmap extract complete for {provider.Name}.{provider.Class}");
+            };
         }
 
         [SharedFunction]

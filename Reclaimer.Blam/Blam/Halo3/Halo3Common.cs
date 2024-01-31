@@ -88,7 +88,6 @@ namespace Reclaimer.Blam.Halo3
                                     let usage = template.Usages[index]
                                     let tileIndex = template.Arguments.IndexOf(usage)
                                     let match = UsageRegex.Match(usage)
-                                    where ShaderParameters.UsageLookup.ContainsKey(match.Groups[1].Value)
                                     select new
                                     {
                                         Usage = match.Groups[1].Value,
@@ -137,7 +136,7 @@ namespace Reclaimer.Blam.Halo3
                     var bitmap = texParam.Tag.ReadMetadata<bitmap>();
                     material.TextureMappings.Add(new TextureMapping
                     {
-                        Usage = ShaderParameters.UsageLookup[texParam.Usage],
+                        Usage = ShaderParameters.UsageLookup.GetValueOrDefault(texParam.Usage, TextureUsage.Other),
                         Tiling = new Vector2(texParam.TileData.X, texParam.TileData.Y),
                         BlendChannel = texParam.BlendChannel,
                         Texture = new Texture

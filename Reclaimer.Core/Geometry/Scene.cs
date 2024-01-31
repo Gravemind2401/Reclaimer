@@ -37,9 +37,24 @@ namespace Reclaimer.Geometry
                 .DistinctBy(m => m.Id);
         }
 
-        public IEnumerable<Texture> EnumerateTextures()
+        public IEnumerable<Material> EnumerateExportedMaterials()
         {
-            return EnumerateMaterials()
+            return EnumerateGroupHierarchy()
+                .Where(g => g.Export)
+                .SelectMany(g => g.ChildObjects.Where(o => o.Export))
+                .Select(o => (o as ObjectPlacement)?.Object ?? o)
+                .OfType<Model>()
+                .Distinct()
+                .SelectMany(m => m.EnumerateExportedMaterials())
+                .DistinctBy(m => m.Id);
+        }
+
+        public IEnumerable<Texture> EnumerateTextures() => EnumerateTextures(EnumerateMaterials());
+        public IEnumerable<Texture> EnumerateExportedTextures() => EnumerateTextures(EnumerateExportedMaterials());
+
+        private static IEnumerable<Texture> EnumerateTextures(IEnumerable<Material> materials)
+        {
+            return materials
                 .SelectMany(m => m.TextureMappings)
                 .Select(i => i.Texture)
                 .DistinctBy(t => t.Id);

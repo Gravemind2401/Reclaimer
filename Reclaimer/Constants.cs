@@ -10,7 +10,6 @@
         public const string SharedFuncWriteModelFile = "Reclaimer.Plugins.ModelViewerPlugin.WriteModelFile";
         public const string SharedFuncWriteSoundFile = "Reclaimer.Plugins.SoundExtractorPlugin.WriteSoundFile";
         public const string SharedFuncExportBitmaps = "Reclaimer.Plugins.ModelViewerPlugin.ExportBitmaps";
-        public const string SharedFuncExportSelectedBitmaps = "Reclaimer.Plugins.ModelViewerPlugin.ExportSelectedBitmaps";
 
         //App.xaml
         public const string ApplicationInstanceKey = "Reclaimer.Application";
