@@ -65,7 +65,7 @@ namespace Reclaimer.Blam.Halo1
 
                 material.TextureMappings.Add(new TextureMapping
                 {
-                    Usage = MaterialUsage.Diffuse,
+                    Usage = TextureUsage.Diffuse,
                     Tiling = Vector2.One,
                     Texture = new Texture
                     {

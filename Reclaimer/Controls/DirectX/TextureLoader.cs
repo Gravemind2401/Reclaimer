@@ -25,7 +25,7 @@ namespace Reclaimer.Controls.DirectX
                 {
                     try
                     {
-                        var diffuse = mat.TextureMappings.FirstOrDefault(m => m.Usage == MaterialUsage.Diffuse);
+                        var diffuse = mat.TextureMappings.FirstOrDefault(m => m.Usage == TextureUsage.Diffuse);
                         if (diffuse == null)
                             continue;
 

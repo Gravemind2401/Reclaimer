@@ -65,7 +65,7 @@ namespace Reclaimer.Geometry
         public const string PreMultiplied = "pre_multiplied";
     }
 
-    public static class MaterialUsage
+    public static class TextureUsage
     {
         public const string BlendMap = "blend";
         public const string Diffuse = "diffuse";

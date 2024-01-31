@@ -168,12 +168,12 @@ namespace Reclaimer.Blam.Halo3
                 //check for specular-from-alpha on regular materials
                 if (options.GetValueOrDefault(ShaderOptionCategories.SpecularMask) == ShaderOptions.SpecularMask.SpecularMaskFromDiffuse)
                 {
-                    var diffuse = material.TextureMappings.FirstOrDefault(t => t.Usage == MaterialUsage.Diffuse);
+                    var diffuse = material.TextureMappings.FirstOrDefault(t => t.Usage == TextureUsage.Diffuse);
                     if (diffuse != null)
                     {
                         material.TextureMappings.Add(new TextureMapping
                         {
-                            Usage = MaterialUsage.Specular,
+                            Usage = TextureUsage.Specular,
                             Tiling = diffuse.Tiling,
                             BlendChannel = diffuse.BlendChannel,
                             ChannelMask = ChannelMask.Alpha,
@@ -189,12 +189,12 @@ namespace Reclaimer.Blam.Halo3
                         continue;
 
                     var channel = (ChannelMask)(1 << i);
-                    var diffuse = material.TextureMappings.FirstOrDefault(t => t.Usage == MaterialUsage.Diffuse && t.BlendChannel == channel);
+                    var diffuse = material.TextureMappings.FirstOrDefault(t => t.Usage == TextureUsage.Diffuse && t.BlendChannel == channel);
                     if (diffuse != null)
                     {
                         material.TextureMappings.Add(new TextureMapping
                         {
-                            Usage = MaterialUsage.Specular,
+                            Usage = TextureUsage.Specular,
                             Tiling = diffuse.Tiling,
                             BlendChannel = diffuse.BlendChannel,
                             ChannelMask = ChannelMask.Alpha,
@@ -207,12 +207,12 @@ namespace Reclaimer.Blam.Halo3
                 if (material.AlphaMode != AlphaMode.Opaque)
                 {
                     //should only ever be one diffuse if alpha blending is being used (terrain shaders have no blend mode parameter)
-                    var diffuse = material.TextureMappings.FirstOrDefault(t => t.Usage == MaterialUsage.Diffuse);
+                    var diffuse = material.TextureMappings.FirstOrDefault(t => t.Usage == TextureUsage.Diffuse);
                     if (diffuse != null)
                     {
                         material.TextureMappings.Add(new TextureMapping
                         {
-                            Usage = MaterialUsage.Transparency,
+                            Usage = TextureUsage.Transparency,
                             Tiling = diffuse.Tiling,
                             BlendChannel = diffuse.BlendChannel,
                             ChannelMask = ChannelMask.Alpha,
@@ -226,7 +226,7 @@ namespace Reclaimer.Blam.Halo3
                 else if (tag.ClassCode != "rmsh")
                     material.Flags |= (int)MaterialFlags.Transparent;
 
-                if (material.TextureMappings.Any(m => m.Usage == MaterialUsage.ColorChange) && !material.TextureMappings.Any(m => m.Usage == MaterialUsage.Diffuse))
+                if (material.TextureMappings.Any(m => m.Usage == TextureUsage.ColorChange) && !material.TextureMappings.Any(m => m.Usage == TextureUsage.Diffuse))
                     material.Flags |= (int)MaterialFlags.ColourChange;
 
                 yield return material;

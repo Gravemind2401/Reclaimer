@@ -69,7 +69,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
                 material.TextureMappings.Add(new TextureMapping
                 {
-                    Usage = MaterialUsage.Diffuse,
+                    Usage = TextureUsage.Diffuse,
                     Tiling = Vector2.One,
                     Texture = new Reclaimer.Geometry.Texture
                     {

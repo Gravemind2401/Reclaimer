@@ -22,17 +22,17 @@ namespace Reclaimer.Blam.Common.Gen3
 
         public static readonly Dictionary<string, string> UsageLookup = new()
         {
-            { BlendMap, MaterialUsage.BlendMap },
-            { BaseMap, MaterialUsage.Diffuse },
-            { DetailMap, MaterialUsage.DiffuseDetail },
-            { DetailMapOverlay, MaterialUsage.DiffuseDetail },
-            { ChangeColorMap, MaterialUsage.ColorChange },
-            { BumpMap, MaterialUsage.Normal },
-            { BumpDetailMap, MaterialUsage.NormalDetail },
-            { SelfIllumMap, MaterialUsage.SelfIllumination },
-            { SpecularMap, MaterialUsage.Specular },
-            { FoamTexture, MaterialUsage.Diffuse },
-            { AlphaTestMap, MaterialUsage.Transparency }
+            { BlendMap, TextureUsage.BlendMap },
+            { BaseMap, TextureUsage.Diffuse },
+            { DetailMap, TextureUsage.DiffuseDetail },
+            { DetailMapOverlay, TextureUsage.DiffuseDetail },
+            { ChangeColorMap, TextureUsage.ColorChange },
+            { BumpMap, TextureUsage.Normal },
+            { BumpDetailMap, TextureUsage.NormalDetail },
+            { SelfIllumMap, TextureUsage.SelfIllumination },
+            { SpecularMap, TextureUsage.Specular },
+            { FoamTexture, TextureUsage.Diffuse },
+            { AlphaTestMap, TextureUsage.Transparency }
         };
 
         public static readonly Dictionary<string, string> TintLookup = new()

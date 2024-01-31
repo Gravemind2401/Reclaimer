@@ -118,7 +118,7 @@ namespace Reclaimer.Blam.HaloReach
                 else if (tag.ClassCode != "rmsh")
                     material.Flags |= (int)MaterialFlags.Transparent;
 
-                if (material.TextureMappings.Any(m => m.Usage == MaterialUsage.ColorChange) && !material.TextureMappings.Any(m => m.Usage == MaterialUsage.Diffuse))
+                if (material.TextureMappings.Any(m => m.Usage == TextureUsage.ColorChange) && !material.TextureMappings.Any(m => m.Usage == TextureUsage.Diffuse))
                     material.Flags |= (int)MaterialFlags.ColourChange;
 
                 yield return material;

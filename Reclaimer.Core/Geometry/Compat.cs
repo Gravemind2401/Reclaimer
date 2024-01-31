@@ -46,14 +46,14 @@ namespace Reclaimer.Geometry
             {
                 return value switch
                 {
-                    MaterialUsage.BlendMap => BlendMap,
-                    MaterialUsage.Diffuse => Diffuse,
-                    MaterialUsage.DiffuseDetail => DiffuseDetail,
-                    MaterialUsage.ColorChange => ColourChange,
-                    MaterialUsage.Normal => Normal,
-                    MaterialUsage.NormalDetail => NormalDetail,
-                    MaterialUsage.SelfIllumination => SelfIllumination,
-                    MaterialUsage.Specular => Specular,
+                    TextureUsage.BlendMap => BlendMap,
+                    TextureUsage.Diffuse => Diffuse,
+                    TextureUsage.DiffuseDetail => DiffuseDetail,
+                    TextureUsage.ColorChange => ColourChange,
+                    TextureUsage.Normal => Normal,
+                    TextureUsage.NormalDetail => NormalDetail,
+                    TextureUsage.SelfIllumination => SelfIllumination,
+                    TextureUsage.Specular => Specular,
                     _ => throw new ArgumentException(null, nameof(value))
                 };
             }

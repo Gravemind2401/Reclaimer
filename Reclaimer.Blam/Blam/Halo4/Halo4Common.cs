@@ -73,15 +73,15 @@ namespace Reclaimer.Blam.Halo4
                     string usage;
                     var name = bitmTag.FileName;
                     if (name.EndsWith("_detail_normal") || name.EndsWith("_detail_bump"))
-                        usage = MaterialUsage.NormalDetail;
+                        usage = TextureUsage.NormalDetail;
                     else if (name.EndsWith("_detail"))
-                        usage = MaterialUsage.DiffuseDetail;
+                        usage = TextureUsage.DiffuseDetail;
                     else if (name.EndsWith("_normal") || name.EndsWith("_bump"))
-                        usage = MaterialUsage.Normal;
+                        usage = TextureUsage.Normal;
                     else if (name.EndsWith("_diff") || name.EndsWith("_color") || name.StartsWith("watersurface_"))
-                        usage = MaterialUsage.Diffuse;
+                        usage = TextureUsage.Diffuse;
                     else if (props.ShaderMaps.Count == 1)
-                        usage = MaterialUsage.Diffuse;
+                        usage = TextureUsage.Diffuse;
                     else
                         continue;
 
