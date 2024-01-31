@@ -22,9 +22,9 @@ namespace Reclaimer.Plugins
             public override void Initialise() => settings = App.UserSettings;
         }
 
-        private static readonly DefaultPlugin defaultPlugin = new DefaultPlugin();
-        private static readonly Dictionary<string, Plugin> plugins = new Dictionary<string, Plugin>();
-        private static readonly Dictionary<string, Tuple<Plugin, MethodInfo>> sharedFunctions = new Dictionary<string, Tuple<Plugin, MethodInfo>>();
+        private static readonly DefaultPlugin defaultPlugin = new();
+        private static readonly Dictionary<string, Plugin> plugins = new();
+        private static readonly Dictionary<string, (Plugin Plugin, MethodInfo Method)> sharedFunctions = new();
 
         private static IEnumerable<Plugin> FindPlugins(Assembly assembly)
         {
@@ -48,7 +48,7 @@ namespace Reclaimer.Plugins
 
         internal static IEnumerable<Plugin> AllPlugins => plugins.Values;
 
-        internal static Plugin GetPlugin(string key) => plugins.ContainsKey(key) ? plugins[key] : null;
+        internal static Plugin GetPlugin(string key) => plugins.GetValueOrDefault(key);
 
         internal static void LoadPlugins()
         {
@@ -96,7 +96,7 @@ namespace Reclaimer.Plugins
                         var key = $"{p.Key}.{funcName}";
 
                         if (!sharedFunctions.ContainsKey(key))
-                            sharedFunctions.Add($"{p.Key}.{funcName}", Tuple.Create(p, m));
+                            sharedFunctions.Add($"{p.Key}.{funcName}", (p, m));
                     }
                 }
                 catch (Exception ex)
@@ -121,7 +121,7 @@ namespace Reclaimer.Plugins
 
         internal static T GetPluginSettings<T>(string key) where T : new()
         {
-            if (!App.Settings.PluginSettings.ContainsKey(key))
+            if (!App.Settings.PluginSettings.TryGetValue(key, out var settingsObj))
                 return GetDefaultPluginSettings<T>();
 
             //we cant just cast it because we cant guarantee it has the correct type
@@ -130,7 +130,7 @@ namespace Reclaimer.Plugins
 
             try
             {
-                var json = JsonConvert.SerializeObject(App.Settings.PluginSettings[key], Settings.SerializerSettings);
+                var json = JsonConvert.SerializeObject(settingsObj, Settings.SerializerSettings);
                 var settings = Utils.CreateDefaultInstance<T>();
                 JsonConvert.PopulateObject(json, settings, Settings.SerializerSettings);
                 (settings as IPluginSettings)?.ApplyDefaultValues(false);
@@ -193,11 +193,10 @@ namespace Reclaimer.Plugins
 
         internal static Plugin GetDefaultHandler(OpenFileArgs args)
         {
-            if (App.Settings.DefaultHandlers.ContainsKey(args.FileTypeKey))
+            if (App.Settings.DefaultHandlers.TryGetValue(args.FileTypeKey, out var handlerKey))
             {
-                var handlerKey = App.Settings.DefaultHandlers[args.FileTypeKey];
-                if (plugins.ContainsKey(handlerKey)) //in case the plugin is no longer installed
-                    return plugins[handlerKey];
+                if (plugins.TryGetValue(handlerKey, out var plugin)) //in case the plugin is no longer installed
+                    return plugin;
             }
 
             var handler = AllPlugins
@@ -209,10 +208,7 @@ namespace Reclaimer.Plugins
             if (handler == null)
                 return handler;
 
-            if (App.Settings.DefaultHandlers.ContainsKey(args.FileTypeKey))
-                App.Settings.DefaultHandlers.Remove(args.FileTypeKey);
-
-            App.Settings.DefaultHandlers.Add(args.FileTypeKey, handler.Key);
+            App.Settings.DefaultHandlers[args.FileTypeKey] = handler.Key;
 
             return handler;
         }
@@ -248,14 +244,12 @@ namespace Reclaimer.Plugins
             if (!typeof(T).IsSubclassOf(typeof(Delegate)))
                 return null;
 
-            if (!sharedFunctions.ContainsKey(key))
+            if (!sharedFunctions.TryGetValue(key, out var t))
                 return null;
-
-            var t = sharedFunctions[key];
 
             try
             {
-                return t.Item2.CreateDelegate(typeof(T), t.Item2.IsStatic ? null : t.Item1) as T;
+                return t.Method.CreateDelegate(typeof(T), t.Method.IsStatic ? null : t.Plugin) as T;
             }
             catch
             {

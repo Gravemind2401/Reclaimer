@@ -153,7 +153,7 @@ namespace Reclaimer.Plugins
         {
             if (!isBusy)
             {
-                System.Windows.Forms.MessageBox.Show("Nothing in progress");
+                MessageBox.Show("Nothing in progress");
                 return;
             }
 
@@ -325,22 +325,21 @@ namespace Reclaimer.Plugins
                     continue;
                 }
 
-                var outputs = new List<Tuple<string, DecompressOptions>>();
+                var format = Settings.BitmapFormat switch
+                {
+                    BitmapFormat.PNG => ImageFormat.Png,
+                    BitmapFormat.TIF => ImageFormat.Tiff,
+                    BitmapFormat.JPEG => ImageFormat.Jpeg,
+                    BitmapFormat.TGA => null,
+                    _ => null
+                };
 
-                ImageFormat format;
-                if (Settings.BitmapFormat == BitmapFormat.PNG)
-                    format = ImageFormat.Png;
-                else if (Settings.BitmapFormat == BitmapFormat.TIF)
-                    format = ImageFormat.Tiff;
-                else if (Settings.BitmapFormat == BitmapFormat.JPEG)
-                    format = ImageFormat.Jpeg;
-                else //if (Settings.BitmapFormat == BitmapFormat.TGA)
-                    format = null;
+                var outputs = new List<(string FileName, DecompressOptions Options)>();
 
                 if (Settings.BitmapMode == BitmapMode.Default)
-                    outputs.Add(Tuple.Create(fileName + ext, DecompressOptions.Default));
+                    outputs.Add((fileName + ext, DecompressOptions.Default));
                 else if (Settings.BitmapMode == BitmapMode.Bgr24)
-                    outputs.Add(Tuple.Create(fileName + ext, DecompressOptions.Bgr24));
+                    outputs.Add((fileName + ext, DecompressOptions.Bgr24));
                 else if (Settings.BitmapMode == BitmapMode.IsolateAlpha)
                     outputs.AddRange(GetParamsIsolateAlpha(fileName, ext));
                 else if (Settings.BitmapMode == BitmapMode.IsolateAll)
@@ -349,18 +348,18 @@ namespace Reclaimer.Plugins
                     outputs.AddRange(GetParamsMixedIsolate(fileName, ext));
 
                 DdsImage dds = null;
-                foreach (var param in outputs)
+                foreach (var (f, o) in outputs)
                 {
-                    if (!Settings.OverwriteExisting && File.Exists(param.Item1))
+                    if (!Settings.OverwriteExisting && File.Exists(f))
                         continue;
 
                     dds ??= bitmap.ToDds(i);
 
-                    var args = new DdsOutputArgs(param.Item2, bitmap.CubeLayout);
+                    var args = new DdsOutputArgs(o, bitmap.CubeLayout);
                     if (format != null)
-                        dds.WriteToDisk(param.Item1, format, args);
+                        dds.WriteToDisk(f, format, args);
                     else //if (Settings.BitmapFormat == BitmapFormat.TGA)
-                        dds.WriteToTarga(param.Item1, args);
+                        dds.WriteToTarga(f, args);
 
                     extracted++;
                 }
@@ -369,22 +368,22 @@ namespace Reclaimer.Plugins
             return extracted > 0;
         }
 
-        private static IEnumerable<Tuple<string, DecompressOptions>> GetParamsIsolateAlpha(string fileName, string extension)
+        private static IEnumerable<(string FileName, DecompressOptions Options)> GetParamsIsolateAlpha(string fileName, string extension)
         {
-            yield return Tuple.Create($"{fileName}_hue{extension}", DecompressOptions.Bgr24);
-            yield return Tuple.Create($"{fileName}_alpha{extension}", DecompressOptions.AlphaChannelOnly);
+            yield return ($"{fileName}_hue{extension}", DecompressOptions.Bgr24);
+            yield return ($"{fileName}_alpha{extension}", DecompressOptions.AlphaChannelOnly);
         }
 
-        private static IEnumerable<Tuple<string, DecompressOptions>> GetParamsIsolateAll(string fileName, string extension)
+        private static IEnumerable<(string FileName, DecompressOptions Options)> GetParamsIsolateAll(string fileName, string extension)
         {
-            yield return Tuple.Create($"{fileName}_blue{extension}", DecompressOptions.BlueChannelOnly);
-            yield return Tuple.Create($"{fileName}_green{extension}", DecompressOptions.GreenChannelOnly);
-            yield return Tuple.Create($"{fileName}_red{extension}", DecompressOptions.RedChannelOnly);
-            yield return Tuple.Create($"{fileName}_alpha{extension}", DecompressOptions.AlphaChannelOnly);
+            yield return ($"{fileName}_blue{extension}", DecompressOptions.BlueChannelOnly);
+            yield return ($"{fileName}_green{extension}", DecompressOptions.GreenChannelOnly);
+            yield return ($"{fileName}_red{extension}", DecompressOptions.RedChannelOnly);
+            yield return ($"{fileName}_alpha{extension}", DecompressOptions.AlphaChannelOnly);
         }
 
         private static readonly string[] shouldIsolate = new[] { "([_ ]multi)$", "([_ ]multipurpose)$", "([_ ]cc)$" };
-        private static IEnumerable<Tuple<string, DecompressOptions>> GetParamsMixedIsolate(string fileName, string extension)
+        private static IEnumerable<(string FileName, DecompressOptions Options)> GetParamsMixedIsolate(string fileName, string extension)
         {
             var imageName = fileName.Split('\\').Last();
             if (imageName.EndsWith("]"))
