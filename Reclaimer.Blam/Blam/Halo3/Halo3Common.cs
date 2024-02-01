@@ -47,6 +47,7 @@ namespace Reclaimer.Blam.Halo3
         public static IEnumerable<Material> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
         {
             var definitions = new Dictionary<int, render_method_definition>();
+            var bitmaps = new Dictionary<int, bitmap>();
 
             foreach (var tag in shaders.Select(s => s.ShaderReference.Tag))
             {
@@ -133,7 +134,10 @@ namespace Reclaimer.Blam.Halo3
                     if (texParam.Tag == null)
                         continue;
 
-                    var bitmap = texParam.Tag.ReadMetadata<bitmap>();
+                    var tagId = texParam.Tag.Id;
+                    if (!bitmaps.TryGetValue(tagId, out var bitmap))
+                        bitmaps.Add(tagId, bitmap = texParam.Tag.ReadMetadata<bitmap>());
+
                     material.TextureMappings.Add(new TextureMapping
                     {
                         Usage = ShaderParameters.UsageLookup.GetValueOrDefault(texParam.Usage, TextureUsage.Other),
@@ -141,8 +145,8 @@ namespace Reclaimer.Blam.Halo3
                         BlendChannel = texParam.BlendChannel,
                         Texture = new Texture
                         {
-                            Id = texParam.Tag.Id,
-                            ContentProvider = texParam.Tag.ReadMetadata<bitmap>(),
+                            Id = tagId,
+                            ContentProvider = bitmap,
                             Gamma = bitmap.Bitmaps[0].Curve switch
                             {
                                 ColorSpace.Linear => 1f,
