@@ -220,7 +220,7 @@ namespace Reclaimer.Controls.DirectX
                 var box = new SharpDX.BoundingBox(newMin, newMax);
                 renderer.ZoomToBounds(box);
             }
-            else
+            else if (t.Mesh != null)
                 renderer.LocateObject(t.Mesh);
         }
 
