@@ -8,7 +8,7 @@ using System.Numerics;
 
 namespace Reclaimer.Blam.HaloReach
 {
-    public class scenario_structure_bsp : ContentTagDefinition<Scene>, IContentProvider<Model>
+    public partial class scenario_structure_bsp : ContentTagDefinition<Scene>, IContentProvider<Model>
     {
         private bool loadedInstances;
 
@@ -16,48 +16,14 @@ namespace Reclaimer.Blam.HaloReach
             : base(item)
         { }
 
-        [Offset(236, MaxVersion = (int)CacheType.MccHaloReach)]
-        [Offset(240, MinVersion = (int)CacheType.MccHaloReach)]
         public RealBounds XBounds { get; set; }
-
-        [Offset(244, MaxVersion = (int)CacheType.MccHaloReach)]
-        [Offset(248, MinVersion = (int)CacheType.MccHaloReach)]
         public RealBounds YBounds { get; set; }
-
-        [Offset(252, MaxVersion = (int)CacheType.MccHaloReach)]
-        [Offset(256, MinVersion = (int)CacheType.MccHaloReach)]
         public RealBounds ZBounds { get; set; }
-
-        [Offset(308, MaxVersion = (int)CacheType.MccHaloReach)]
-        [Offset(312, MinVersion = (int)CacheType.MccHaloReach)]
         public BlockCollection<ClusterBlock> Clusters { get; set; }
-
-        [Offset(320, MaxVersion = (int)CacheType.MccHaloReach)]
-        [Offset(324, MinVersion = (int)CacheType.MccHaloReach)]
         public BlockCollection<ShaderBlock> Shaders { get; set; }
-
-        [Offset(620, MaxVersion = (int)CacheType.HaloReachRetail)]
-        [Offset(608, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
-        [Offset(612, MinVersion = (int)CacheType.MccHaloReach, MaxVersion = (int)CacheType.MccHaloReachU13)]
-        [Offset(600, MinVersion = (int)CacheType.MccHaloReachU13)]
         public BlockCollection<BspGeometryInstanceBlock> GeometryInstances { get; set; }
-
-        [Offset(1112, MaxVersion = (int)CacheType.HaloReachRetail)]
-        [Offset(1100, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
-        [Offset(1128, MinVersion = (int)CacheType.MccHaloReach, MaxVersion = (int)CacheType.MccHaloReachU13)]
-        [Offset(1104, MinVersion = (int)CacheType.MccHaloReachU13)]
         public BlockCollection<SectionBlock> Sections { get; set; }
-
-        [Offset(1124, MaxVersion = (int)CacheType.HaloReachRetail)]
-        [Offset(1112, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
-        [Offset(1140, MinVersion = (int)CacheType.MccHaloReach, MaxVersion = (int)CacheType.MccHaloReachU13)]
-        [Offset(1116, MinVersion = (int)CacheType.MccHaloReachU13)]
         public BlockCollection<BoundingBoxBlock> BoundingBoxes { get; set; }
-
-        [MinVersion((int)CacheType.HaloReachRetail)]
-        [Offset(1296, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
-        [Offset(1336, MinVersion = (int)CacheType.MccHaloReach, MaxVersion = (int)CacheType.MccHaloReachU13)]
-        [Offset(1312, MinVersion = (int)CacheType.MccHaloReachU13)]
         public ResourceIdentifier InstancesResourcePointer { get; set; }
 
         #region IContentProvider

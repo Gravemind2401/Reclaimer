@@ -1,27 +1,20 @@
 ﻿using Reclaimer.Blam.Common;
-using Reclaimer.IO;
 
 namespace Reclaimer.Blam.HaloReach
 {
-    public class scenario
+    public partial class scenario : ContentTagDefinition
     {
-        [Offset(68, MaxVersion = (int)CacheType.HaloReachRetail)]
-        [Offset(76, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReachU13)]
-        [Offset(80, MinVersion = (int)CacheType.MccHaloReachU13)]
-        public BlockCollection<StructureBspBlock> StructureBsps { get; set; }
+        public scenario(IIndexItem item)
+            : base(item)
+        { }
 
-        [Offset(1828, MaxVersion = (int)CacheType.HaloReachRetail)]
-        [Offset(1844, MinVersion = (int)CacheType.HaloReachRetail, MaxVersion = (int)CacheType.MccHaloReach)]
-        [Offset(1856, MinVersion = (int)CacheType.MccHaloReach, MaxVersion = (int)CacheType.MccHaloReachU13)]
-        [Offset(1800, MinVersion = (int)CacheType.MccHaloReachU13)]
+        public BlockCollection<StructureBspBlock> StructureBsps { get; set; }
         public TagReference ScenarioLightmapReference { get; set; }
     }
 
-    [FixedSize(172)]
     [DebuggerDisplay($"{{{nameof(BspReference)},nq}}")]
-    public class StructureBspBlock
+    public partial class StructureBspBlock
     {
-        [Offset(0)]
         public TagReference BspReference { get; set; }
     }
 }
