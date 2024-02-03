@@ -41,7 +41,7 @@ namespace Reclaimer.Blam.Halo3
                 catch { }
             }
 
-            foreach (var skyTag in ReadTags<scenery>(Skies.Select(b => b.SkyReference)))
+            foreach (var skyTag in ReadTags<scenery>(Skies.EmptyIfNull().Select(b => b.SkyReference)))
             {
                 try
                 {

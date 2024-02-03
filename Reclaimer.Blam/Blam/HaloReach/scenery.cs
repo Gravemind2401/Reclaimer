@@ -1,4 +1,4 @@
-﻿namespace Reclaimer.Blam.Halo3
+﻿namespace Reclaimer.Blam.HaloReach
 {
     public class scenery : ObjectTagBase
     {
