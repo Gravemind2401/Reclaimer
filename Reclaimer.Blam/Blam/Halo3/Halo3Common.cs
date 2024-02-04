@@ -76,6 +76,7 @@ namespace Reclaimer.Blam.Halo3
                     definitions.Add(shader.RenderMethodDefinitionReference.TagId, rmdf = shader.RenderMethodDefinitionReference.Tag.ReadMetadata<render_method_definition>());
 
                 var options = (from t in rmdf.Categories.Zip(shader.ShaderOptions)
+                               where t.Second.OptionIndex >= 0 && t.Second.OptionIndex < t.First.Options.Count
                                select new
                                {
                                    Category = t.First.Name.Value,
