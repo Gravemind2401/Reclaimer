@@ -18,6 +18,12 @@ namespace Reclaimer.Blam.Halo3
         public BlockCollection<ObjectNameBlock> ObjectNames { get; set; }
         public BlockCollection<SceneryPlacementBlock> Scenery { get; set; }
         public BlockCollection<ObjectPaletteBlock> SceneryPalette { get; set; }
+        public BlockCollection<MachinePlacementBlock> Machines { get; set; }
+        public BlockCollection<ObjectPaletteBlock> MachinePalette { get; set; }
+        public BlockCollection<ControlPlacementBlock> Controls { get; set; }
+        public BlockCollection<ObjectPaletteBlock> ControlPalette { get; set; }
+        public BlockCollection<CratePlacementBlock> Crates { get; set; }
+        public BlockCollection<ObjectPaletteBlock> CratePalette { get; set; }
         public TagReference ScenarioLightmapReference { get; set; }
 
         public override Scene GetContent()
@@ -67,6 +73,9 @@ namespace Reclaimer.Blam.Halo3
             #endregion
 
             ConfigurePlacements<scenery, SceneryPlacementBlock>(scene, BlamConstants.ScenarioSceneryGroupName, SceneryPalette, Scenery);
+            ConfigurePlacements<device_machine, MachinePlacementBlock>(scene, BlamConstants.ScenarioMachineGroupName, MachinePalette, Machines);
+            ConfigurePlacements<device_control, ControlPlacementBlock>(scene, BlamConstants.ScenarioControlGroupName, ControlPalette, Controls);
+            ConfigurePlacements<crate, CratePlacementBlock>(scene, BlamConstants.ScenarioCrateGroupName, CratePalette, Crates);
 
             return scene;
         }
@@ -169,6 +178,21 @@ namespace Reclaimer.Blam.Halo3
     }
 
     public partial class SceneryPlacementBlock : ObjectPlacementBlockBase
+    {
+
+    }
+
+    public partial class MachinePlacementBlock : ObjectPlacementBlockBase
+    {
+
+    }
+
+    public partial class ControlPlacementBlock : ObjectPlacementBlockBase
+    {
+
+    }
+
+    public partial class CratePlacementBlock : ObjectPlacementBlockBase
     {
 
     }
