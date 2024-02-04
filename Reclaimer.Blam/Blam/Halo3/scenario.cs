@@ -17,17 +17,18 @@ namespace Reclaimer.Blam.Halo3
         public BlockCollection<SkyReferenceBlock> Skies { get; set; }
         public BlockCollection<ObjectNameBlock> ObjectNames { get; set; }
         public BlockCollection<SceneryPlacementBlock> Scenery { get; set; }
-        public BlockCollection<SceneryPaletteBlock> SceneryPalette { get; set; }
+        public BlockCollection<ObjectPaletteBlock> SceneryPalette { get; set; }
         public TagReference ScenarioLightmapReference { get; set; }
 
         public override Scene GetContent()
         {
             var scene = new Scene { Name = Item.FileName, CoordinateSystem = CoordinateSystem.Default.WithScale(BlamConstants.Gen3UnitScale) };
-            var bspGroup = new SceneGroup { Name = BlamConstants.ScenarioBspGroupName };
-            var skyGroup = new SceneGroup { Name = BlamConstants.ScenarioSkyGroupName };
-            var sceneryGroup = new SceneGroup { Name = BlamConstants.ScenarioSceneryGroupName };
 
             //TODO: display error models in some way
+
+            #region StructureBsps
+
+            var bspGroup = new SceneGroup { Name = BlamConstants.ScenarioBspGroupName };
 
             foreach (var bspTag in ReadTags<scenario_structure_bsp>(StructureBsps.Select(b => b.BspReference)))
             {
@@ -41,6 +42,15 @@ namespace Reclaimer.Blam.Halo3
                 catch { }
             }
 
+            if (bspGroup.HasItems)
+                scene.ChildGroups.Add(bspGroup);
+
+            #endregion
+
+            #region Skies
+
+            var skyGroup = new SceneGroup { Name = BlamConstants.ScenarioSkyGroupName };
+
             foreach (var skyTag in ReadTags<scenery>(Skies.EmptyIfNull().Select(b => b.SkyReference)))
             {
                 try
@@ -51,16 +61,42 @@ namespace Reclaimer.Blam.Halo3
                 catch { }
             }
 
-            foreach (var group in Scenery.EmptyIfNull().GroupBy(x => x.PaletteIndex))
+            if (skyGroup.HasItems)
+                scene.ChildGroups.Add(skyGroup);
+
+            #endregion
+
+            ConfigurePlacements<scenery, SceneryPlacementBlock>(scene, BlamConstants.ScenarioSceneryGroupName, SceneryPalette, Scenery);
+
+            return scene;
+        }
+
+        private static IEnumerable<T> ReadTags<T>(IEnumerable<TagReference> collection)
+        {
+            return collection.Where(t => t.IsValid)
+                .DistinctBy(t => t.TagId)
+                .Select(t => t.Tag.ReadMetadata<T>());
+        }
+
+        private static void ConfigurePlacements<TMetadata, TPlacementBlock>(Scene scene, string groupName, IEnumerable<ObjectPaletteBlock> palette, IEnumerable<TPlacementBlock> placements)
+            where TMetadata : ObjectTagBase
+            where TPlacementBlock : PlacementBlockBase
+        {
+            if (palette == null || placements == null)
+                return;
+
+            var parentGroup = new SceneGroup { Name = groupName };
+
+            foreach (var group in placements.GroupBy(x => x.PaletteIndex))
             {
-                var tagRef = SceneryPalette?.ElementAtOrDefault(group.Key)?.TagReference;
+                var tagRef = palette.ElementAtOrDefault(group.Key)?.TagReference;
                 if (!tagRef.HasValue || !tagRef.Value.IsValid)
                     continue;
 
                 Model model = null;
                 try
                 {
-                    var tag = tagRef.Value.Tag.ReadMetadata<scenery>();
+                    var tag = tagRef.Value.Tag.ReadMetadata<TMetadata>();
                     model = (tag.ReadRenderModel() as IContentProvider<Model>)?.GetContent();
                 }
                 catch { }
@@ -82,26 +118,11 @@ namespace Reclaimer.Blam.Halo3
                 }
 
                 if (placementGroup.HasItems)
-                    sceneryGroup.ChildGroups.Add(placementGroup);
+                    parentGroup.ChildGroups.Add(placementGroup);
             }
 
-            if (bspGroup.HasItems)
-                scene.ChildGroups.Add(bspGroup);
-
-            if (skyGroup.HasItems)
-                scene.ChildGroups.Add(skyGroup);
-
-            if (sceneryGroup.HasItems)
-                scene.ChildGroups.Add(sceneryGroup);
-
-            return scene;
-        }
-
-        private static IEnumerable<T> ReadTags<T>(IEnumerable<TagReference> collection)
-        {
-            return collection.Where(t => t.IsValid)
-                .DistinctBy(t => t.TagId)
-                .Select(t => t.Tag.ReadMetadata<T>());
+            if (parentGroup.HasItems)
+                scene.ChildGroups.Add(parentGroup);
         }
     }
 
@@ -136,18 +157,18 @@ namespace Reclaimer.Blam.Halo3
         public float Scale { get; set; }
     }
 
-    [DebuggerDisplay($"{{{nameof(TagReference)},nq}}")]
-    public abstract class PaletteBlockBase
-    {
-        public TagReference TagReference { get; set; }
-    }
-
-    public partial class SceneryPlacementBlock : PlacementBlockBase
+    public abstract partial class ObjectPlacementBlockBase : PlacementBlockBase
     {
         public StringId VariantName { get; set; }
     }
 
-    public partial class SceneryPaletteBlock : PaletteBlockBase
+    [DebuggerDisplay($"{{{nameof(TagReference)},nq}}")]
+    public partial class ObjectPaletteBlock
+    {
+        public TagReference TagReference { get; set; }
+    }
+
+    public partial class SceneryPlacementBlock : ObjectPlacementBlockBase
     {
 
     }

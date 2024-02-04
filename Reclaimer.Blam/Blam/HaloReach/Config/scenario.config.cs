@@ -140,10 +140,10 @@ namespace Reclaimer.Blam.HaloReach
         }
     }
 
-    [StructureDefinition<PaletteBlock, DefinitionBuilder>]
-    public partial class PaletteBlock
+    [StructureDefinition<ObjectPaletteBlock, DefinitionBuilder>]
+    public partial class ObjectPaletteBlock
     {
-        private sealed class DefinitionBuilder : DefinitionBuilder<PaletteBlock>
+        private sealed class DefinitionBuilder : DefinitionBuilder<ObjectPaletteBlock>
         {
             public DefinitionBuilder()
             {

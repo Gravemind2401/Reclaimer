@@ -18,13 +18,13 @@ namespace Reclaimer.Blam.HaloReach
         public BlockCollection<SkyReferenceBlock> Skies { get; set; }
         public BlockCollection<ObjectNameBlock> ObjectNames { get; set; }
         public BlockCollection<SceneryPlacementBlock> Scenery { get; set; }
-        public BlockCollection<PaletteBlock> SceneryPalette { get; set; }
+        public BlockCollection<ObjectPaletteBlock> SceneryPalette { get; set; }
         public BlockCollection<MachinePlacementBlock> Machines { get; set; }
-        public BlockCollection<PaletteBlock> MachinePalette { get; set; }
+        public BlockCollection<ObjectPaletteBlock> MachinePalette { get; set; }
         public BlockCollection<ControlPlacementBlock> Controls { get; set; }
-        public BlockCollection<PaletteBlock> ControlPalette { get; set; }
+        public BlockCollection<ObjectPaletteBlock> ControlPalette { get; set; }
         public BlockCollection<CratePlacementBlock> Crates { get; set; }
-        public BlockCollection<PaletteBlock> CratePalette { get; set; }
+        public BlockCollection<ObjectPaletteBlock> CratePalette { get; set; }
         public TagReference ScenarioLightmapReference { get; set; }
 
         public override Scene GetContent()
@@ -89,7 +89,7 @@ namespace Reclaimer.Blam.HaloReach
                 .Select(t => t.Tag.ReadMetadata<TMetadata>());
         }
 
-        private static void ConfigurePlacements<TMetadata, TPlacementBlock>(Scene scene, string groupName, IEnumerable<PaletteBlock> palette, IEnumerable<TPlacementBlock> placements)
+        private static void ConfigurePlacements<TMetadata, TPlacementBlock>(Scene scene, string groupName, IEnumerable<ObjectPaletteBlock> palette, IEnumerable<TPlacementBlock> placements)
             where TMetadata : ObjectTagBase
             where TPlacementBlock : PlacementBlockBase
         {
@@ -174,7 +174,7 @@ namespace Reclaimer.Blam.HaloReach
     }
 
     [DebuggerDisplay($"{{{nameof(TagReference)},nq}}")]
-    public partial class PaletteBlock
+    public partial class ObjectPaletteBlock
     {
         public TagReference TagReference { get; set; }
     }

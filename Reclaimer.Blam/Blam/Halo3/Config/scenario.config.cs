@@ -182,28 +182,29 @@ namespace Reclaimer.Blam.Halo3
         }
     }
 
-    [StructureDefinition<SceneryPlacementBlock, DefinitionBuilder>]
-    public partial class SceneryPlacementBlock
+    public partial class ObjectPlacementBlockBase
     {
-        private sealed class DefinitionBuilder : DefinitionBuilderBase<SceneryPlacementBlock>
+        new protected abstract class DefinitionBuilderBase<TBlock> : PlacementBlockBase.DefinitionBuilderBase<TBlock>
+            where TBlock : ObjectPlacementBlockBase
         {
-            public DefinitionBuilder()
+            new protected void Halo3Beta(VersionBuilder builder)
             {
-                var builder = AddVersion(CacheType.Halo3Delta, null).HasFixedSize(160);
-                Halo3Beta(builder);
+                base.Halo3Beta(builder);
                 builder.Property(x => x.VariantName).HasOffset(76);
+            }
 
-                builder = AddVersion(CacheType.Halo3Retail, null).HasFixedSize(180);
-                Halo3Retail(builder);
+            new protected void Halo3Retail(VersionBuilder builder)
+            {
+                base.Halo3Retail(builder);
                 builder.Property(x => x.VariantName).HasOffset(84);
             }
         }
     }
 
-    [StructureDefinition<SceneryPaletteBlock, DefinitionBuilder>]
-    public partial class SceneryPaletteBlock
+    [StructureDefinition<ObjectPaletteBlock, DefinitionBuilder>]
+    public partial class ObjectPaletteBlock
     {
-        private sealed class DefinitionBuilder : DefinitionBuilder<SceneryPaletteBlock>
+        private sealed class DefinitionBuilder : DefinitionBuilder<ObjectPaletteBlock>
         {
             public DefinitionBuilder()
             {
@@ -220,6 +221,22 @@ namespace Reclaimer.Blam.Halo3
                 //TODO: confirm which version this changed in
                 builder = AddVersion(CacheType.MccHalo3ODSTU8, null).HasFixedSize(16);
                 builder.Property(x => x.TagReference).HasOffset(0);
+            }
+        }
+    }
+
+    [StructureDefinition<SceneryPlacementBlock, DefinitionBuilder>]
+    public partial class SceneryPlacementBlock
+    {
+        private sealed class DefinitionBuilder : DefinitionBuilderBase<SceneryPlacementBlock>
+        {
+            public DefinitionBuilder()
+            {
+                var builder = AddVersion(CacheType.Halo3Delta, null).HasFixedSize(160);
+                Halo3Beta(builder);
+
+                builder = AddVersion(CacheType.Halo3Retail, null).HasFixedSize(180);
+                Halo3Retail(builder);
             }
         }
     }
