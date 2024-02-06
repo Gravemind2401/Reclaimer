@@ -23,6 +23,17 @@ namespace Reclaimer.Geometry
                 (mesh.PositionBounds, mesh.TextureBounds) = (positionBounds, textureBounds);
         }
 
+
+        public Matrix4x4 GetAbsoluteBoneTransform(int boneIndex)
+        {
+            var bone = Bones[boneIndex];
+            var parentTransform = bone.ParentIndex < 0
+                ? Matrix4x4.Identity
+                : GetAbsoluteBoneTransform(bone.ParentIndex);
+
+            return bone.Transform * parentTransform;
+        }
+
         /// <summary>
         /// Enumerates all distinct materials across all meshes in the model.
         /// </summary>
@@ -107,6 +118,7 @@ namespace Reclaimer.Geometry
     {
         public string Name { get; set; }
         public Matrix4x4 Transform { get; set; } = Matrix4x4.Identity;
+        public Matrix4x4 OffsetTransform { get; set; } = Matrix4x4.Identity;
 
         [Obsolete("legacy")]
         public int ParentIndex { get; set; }

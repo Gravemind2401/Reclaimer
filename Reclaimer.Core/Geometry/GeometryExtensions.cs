@@ -7,6 +7,8 @@ namespace Reclaimer.Geometry
 {
     public static class GeometryExtensions
     {
+        public static Matrix4x4 Inverse(this Matrix4x4 matrix) => Matrix4x4.Invert(matrix, out var inverse) ? inverse : throw new InvalidOperationException("Matrix has no inverse");
+
         public static Vector3 ToVector3(this IVector3 vector3) => new Vector3(vector3.X, vector3.Y, vector3.Z);
         public static Quaternion ToQuaternion(this IVector4 vector4) => new Quaternion(vector4.X, vector4.Y, vector4.Z, vector4.W);
         

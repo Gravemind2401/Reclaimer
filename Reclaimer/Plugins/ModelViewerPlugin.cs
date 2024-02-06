@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.Annotations;
+﻿using Reclaimer.Annotations;
 using Reclaimer.Controls.Editors;
 using Reclaimer.Drawing;
 using Reclaimer.Geometry;
@@ -132,8 +131,8 @@ namespace Reclaimer.Plugins
         private static readonly ExportFormat[] StandardFormats = new[]
         {
             new ExportFormat(FormatId.RMF,              "rmf",  "RMF Files", (model, fileName) => model.GetContent().WriteRMF(fileName)),
-            new ExportFormat(FormatId.AMF,              "amf",  "AMF Files", (model, fileName) => model.GetContent().WriteAMF(fileName, Settings.GeometryScale)),
-            new ExportFormat(FormatId.JMS,              "jms",  "JMS Files", (model, fileName) => model.GetContent().WriteJMS(fileName, Settings.GeometryScale)),
+            new ExportFormat(FormatId.AMF,              "amf",  "AMF Files", (model, fileName) => model.GetContent().WriteAMF(fileName, 100f)),
+            new ExportFormat(FormatId.JMS,              "jms",  "JMS Files", (model, fileName) => model.GetContent().WriteJMS(fileName, 100f)),
             new ExportFormat(FormatId.OBJNoMaterials,   "obj",  "OBJ Files"),
             new ExportFormat(FormatId.OBJ,              "obj",  "OBJ Files with materials"),
             new ExportFormat(FormatId.Collada,          "dae",  "COLLADA Files"),
@@ -188,12 +187,11 @@ namespace Reclaimer.Plugins
                 format.ExportFunction(provider, fileName);
             else
             {
-                //TODO: assimp support
-                //using (var context = new Assimp.AssimpContext())
-                //{
-                //    var scene = model.CreateAssimpScene(context, formatId);
-                //    context.ExportFile(scene, fileName, formatId);
-                //}
+                using (var context = new Assimp.AssimpContext())
+                {
+                    var scene = provider.GetContent().CreateAssimpScene(context, formatId);
+                    context.ExportFile(scene, fileName, formatId);
+                }
             }
         }
 
@@ -236,10 +234,6 @@ namespace Reclaimer.Plugins
         [DisplayName("Embedded Material Extension")]
         [DefaultValue("tif")]
         public string MaterialExtension { get; set; }
-
-        [DisplayName("Geometry Scale")]
-        [DefaultValue(100f)]
-        public float GeometryScale { get; set; }
 
         [DisplayName("Assimp Scale")]
         [DefaultValue(0.03048f)]
@@ -300,205 +294,53 @@ namespace Reclaimer.Plugins
             };
         }
 
-        public static Assimp.Scene CreateAssimpScene(this IGeometryModel model, Assimp.AssimpContext context, string formatId)
+        public static Assimp.Scene CreateAssimpScene(this Scene scene, Assimp.AssimpContext context, string formatId)
         {
-            var scale = ModelViewerPlugin.Settings.GeometryScale;
+            const float scale = 100f;
 
             //either Assimp or collada has issues when there is a name conflict
             const string bonePrefix = "~";
             const string geomPrefix = "-";
             const string scenPrefix = "$";
 
-            var scene = new Assimp.Scene();
-            scene.RootNode = new Assimp.Node($"{scenPrefix}{model.Name}");
+            var assimpScene = new Assimp.Scene();
+            assimpScene.RootNode = new Assimp.Node($"{scenPrefix}{scene.Name}");
 
             //Assimp is Y-up in inches by default - this forces it to export as Z-up in meters
-            scene.RootNode.Transform = (CoordinateSystem.HaloCEX.WorldMatrix * ModelViewerPlugin.Settings.AssimpScale).ToAssimp4x4();
+            assimpScene.RootNode.Transform = (CoordinateSystem.HaloCEX.WorldMatrix * ModelViewerPlugin.Settings.AssimpScale).ToAssimp4x4();
 
-            #region Nodes
-            var allNodes = new List<Assimp.Node>();
-            foreach (var node in model.Nodes)
-            {
-                var result = new Assimp.Node($"{bonePrefix}{node.Name}");
-
-                var q = new System.Numerics.Quaternion(node.Rotation.X, node.Rotation.Y, node.Rotation.Z, node.Rotation.W);
-                var mat = System.Numerics.Matrix4x4.CreateFromQuaternion(q);
-                mat.Translation = new System.Numerics.Vector3(node.Position.X * scale, node.Position.Y * scale, node.Position.Z * scale);
-                result.Transform = mat.ToAssimp4x4();
-
-                allNodes.Add(result);
-            }
-
-            for (var i = 0; i < model.Nodes.Count; i++)
-            {
-                var node = model.Nodes[i];
-                if (node.ParentIndex >= 0)
-                    allNodes[node.ParentIndex].Children.Add(allNodes[i]);
-                else
-                    scene.RootNode.Children.Add(allNodes[i]);
-            }
-            #endregion
-
-            var meshLookup = new List<int>();
-
-            #region Meshes
-            for (var i = 0; i < model.Meshes.Count; i++)
-            {
-                var geom = model.Meshes[i];
-                if (geom.Submeshes.Count == 0)
-                {
-                    meshLookup.Add(-1);
-                    continue;
-                }
-
-                meshLookup.Add(scene.MeshCount);
-
-                foreach (var sub in geom.Submeshes)
-                {
-                    var m = new Assimp.Mesh($"mesh{i:D3}");
-                    var indices = geom.GetTriangleIndicies(sub);
-
-                    var minIndex = indices.Min();
-                    var maxIndex = indices.Max();
-                    var vertCount = maxIndex - minIndex + 1;
-
-                    indices = indices.Select(x => x - minIndex);
-
-                    var posTransform = model.Bounds?.ElementAtOrDefault(geom.BoundsIndex ?? -1)?.AsTransform() ?? System.Numerics.Matrix4x4.Identity;
-                    var texTransform = model.Bounds?.ElementAtOrDefault(geom.BoundsIndex ?? -1)?.AsTextureTransform() ?? System.Numerics.Matrix4x4.Identity;
-
-                    var positions = geom.GetPositions(minIndex, vertCount)?.Select(v => System.Numerics.Vector3.Transform(v, posTransform)).ToList();
-                    var texcoords = geom.GetTexCoords(minIndex, vertCount)?.Select(v => System.Numerics.Vector2.Transform(v, texTransform)).ToList();
-                    var normals = geom.GetNormals(minIndex, vertCount)?.ToList();
-                    var blendIndices = geom.GetBlendIndices(minIndex, vertCount)?.ToList();
-                    var blendWeights = geom.GetBlendWeights(minIndex, vertCount)?.ToList();
-
-                    if (positions != null)
-                    {
-                        m.Vertices.AddRange(positions.Select(v => (v * scale).ToAssimp3D()));
-
-                        //TODO:reimplement this using buffers
-                        ////some Halo shaders use position W as the colour alpha - add it to a colour channel to preserve it
-                        ////also assimp appears to have issues exporting obj when a colour channel exists so only do this for collada
-                        //if (formatId == "collada" && v.Color.Count == 0 && !float.IsNaN(v.Position[0].W))
-                        //    m.VertexColorChannels[0].Add(new Assimp.Color4D { R = v.Position[0].W });
-                    }
-
-                    if (normals != null)
-                        m.Normals.AddRange(normals.Select(v => v.ToAssimp3D()));
-
-                    if (texcoords != null)
-                        m.TextureCoordinateChannels[0].AddRange(texcoords.Select(v => v.ToAssimpUV()));
-
-                    var boneLookup = new Dictionary<int, Assimp.Bone>();
-                    for (var vIndex = 0; vIndex < vertCount; vIndex++)
-                    {
-                        if (geom.VertexWeights == VertexWeights.None)
-                            continue;
-
-                        #region Vertex Weights
-                        var weights = new HashSet<(int Index, float Weight)>(4);
-
-                        if (geom.NodeIndex.HasValue)
-                            weights.Add((geom.NodeIndex.Value, 1));
-                        else
-                        {
-                            var ind = blendIndices[vIndex];
-                            var wt = blendWeights?[vIndex] ?? System.Numerics.Vector4.One;
-
-                            if (wt.X > 0)
-                                weights.Add(((int)ind.X, wt.X));
-                            if (wt.Y > 0)
-                                weights.Add(((int)ind.Y, wt.Y));
-                            if (wt.Z > 0)
-                                weights.Add(((int)ind.Z, wt.Z));
-                            if (wt.W > 0)
-                                weights.Add(((int)ind.W, wt.W));
-                        }
-
-                        foreach (var (index, weight) in weights)
-                        {
-                            Assimp.Bone b;
-                            if (boneLookup.ContainsKey(index))
-                                b = boneLookup[index];
-                            else
-                            {
-                                var t = model.Nodes[index].OffsetTransform;
-                                t.M41 *= scale;
-                                t.M42 *= scale;
-                                t.M43 *= scale;
-
-                                b = new Assimp.Bone
-                                {
-                                    Name = bonePrefix + model.Nodes[index].Name,
-                                    OffsetMatrix = t.ToAssimp4x4()
-                                };
-
-                                m.Bones.Add(b);
-                                boneLookup.Add(index, b);
-                            }
-
-                            b.VertexWeights.Add(new Assimp.VertexWeight(vIndex, weight));
-                        }
-                        #endregion
-                    }
-
-                    m.SetIndices(indices.ToArray(), 3);
-                    m.MaterialIndex = sub.MaterialIndex;
-
-                    scene.Meshes.Add(m);
-                }
-            }
-            #endregion
-
-            #region Regions
-            foreach (var reg in model.Regions)
-            {
-                var regNode = new Assimp.Node($"{geomPrefix}{reg.Name}");
-                foreach (var perm in reg.Permutations)
-                {
-                    var meshStart = meshLookup[perm.MeshIndex];
-                    if (meshStart < 0)
-                        continue;
-
-                    var permNode = new Assimp.Node($"{geomPrefix}{perm.Name}");
-                    if (perm.TransformScale != 1 || !perm.Transform.IsIdentity)
-                        permNode.Transform = Assimp.Matrix4x4.FromScaling(new Assimp.Vector3D(perm.TransformScale)) * perm.Transform.ToAssimp4x4(scale);
-
-                    var meshCount = Enumerable.Range(perm.MeshIndex, perm.MeshCount).Sum(i => model.Meshes[i].Submeshes.Count);
-                    permNode.MeshIndices.AddRange(Enumerable.Range(meshStart, meshCount));
-
-                    regNode.Children.Add(permNode);
-                }
-
-                if (regNode.ChildCount > 0)
-                    scene.RootNode.Children.Add(regNode);
-            }
-            #endregion
+            //material ID -> assimp mat index
+            var materialLookup = new Dictionary<int, int>();
 
             #region Materials
-            foreach (var mat in model.Materials)
+
+            //bitmap ID -> bitmap meta
+            var bitmapLookup = scene.EnumerateExportedTextures()
+                .Select(t => t.ContentProvider.GetContent())
+                .ToDictionary(t => t.Id);
+
+            foreach (var mat in scene.EnumerateExportedMaterials())
             {
-                var m = new Assimp.Material { Name = mat?.Name ?? "unused" };
+                var assimpMaterial = new Assimp.Material { Name = mat?.Name ?? "unused" };
 
                 //prevent max from making every material super shiny
-                m.ColorEmissive = m.ColorReflective = m.ColorSpecular = new Assimp.Color4D(0, 0, 0, 1);
-                m.ColorDiffuse = m.ColorTransparent = new Assimp.Color4D(1);
+                assimpMaterial.ColorEmissive = assimpMaterial.ColorReflective = assimpMaterial.ColorSpecular = new Assimp.Color4D(0, 0, 0, 1);
+                assimpMaterial.ColorDiffuse = assimpMaterial.ColorTransparent = new Assimp.Color4D(1);
 
                 //max only seems to care about diffuse
-                var dif = mat?.Submaterials.FirstOrDefault(s => s.Usage == 0);
+                var dif = mat?.TextureMappings.FirstOrDefault(m => m.Usage == TextureUsage.Diffuse);
                 if (dif != null)
                 {
-                    var suffix = dif.Bitmap.SubmapCount > 1 ? "[0]" : string.Empty;
-                    //var filePath = $"{dif.Bitmap.Name}{suffix}.{ModelViewerPlugin.Settings.MaterialExtension}";
-                    var filePath = $"{suffix}.{ModelViewerPlugin.Settings.MaterialExtension}"; // TODO
+                    var bitmap = bitmapLookup[dif.Texture.Id];
+                    var suffix = bitmap.SubmapCount > 1 ? "[0]" : string.Empty;
+                    var filePath = $"{bitmap.Name}{suffix}.{ModelViewerPlugin.Settings.MaterialExtension}";
 
                     //collada spec says it requires URI formatting, and Assimp doesn't do it for us
                     //for some reason "new Uri(filePath, UriKind.Relative)" doesnt change the slashes, have to use absolute uri
                     if (formatId == FormatId.Collada)
                         filePath = new Uri("X:\\", UriKind.Absolute).MakeRelativeUri(new Uri(System.IO.Path.Combine("X:\\", filePath))).ToString();
 
-                    m.TextureDiffuse = new Assimp.TextureSlot
+                    assimpMaterial.TextureDiffuse = new Assimp.TextureSlot
                     {
                         BlendFactor = 1,
                         FilePath = filePath,
@@ -506,11 +348,196 @@ namespace Reclaimer.Plugins
                     };
                 }
 
-                scene.Materials.Add(m);
+                materialLookup.Add(mat.Id, assimpScene.MaterialCount);
+                assimpScene.Materials.Add(assimpMaterial);
             }
+
             #endregion
 
-            return scene;
+            //(model, mesh index) -> assimp mesh index
+            var meshLookup = new Dictionary<(Model, int), int>();
+
+            #region Meshes
+
+            foreach (var model in scene.EnumerateExportedModels())
+            {
+                foreach (var (mesh, meshIndex) in model.Meshes.Select((m, i) => (m, i)))
+                {
+                    var key = (model, meshIndex);
+
+                    if (mesh == null || mesh.Segments.Count == 0)
+                    {
+                        meshLookup.Add(key, -1);
+                        continue;
+                    }
+
+                    meshLookup.Add(key, assimpScene.MeshCount);
+
+                    foreach (var sub in mesh.Segments)
+                    {
+                        var assimpMesh = new Assimp.Mesh($"mesh{assimpScene.MeshCount:D3}");
+                        var indices = mesh.GetTriangleIndicies(sub);
+
+                        var minIndex = indices.Min();
+                        var maxIndex = indices.Max();
+                        var vertCount = maxIndex - minIndex + 1;
+
+                        indices = indices.Select(x => x - minIndex);
+
+                        var posTransform = mesh.PositionBounds.CreateExpansionMatrix();
+                        var texTransform = mesh.TextureBounds.CreateExpansionMatrix();
+
+                        var positions = mesh.GetPositions(minIndex, vertCount)?.Select(v => System.Numerics.Vector3.Transform(v, posTransform)).ToList();
+                        var texcoords = mesh.GetTexCoords(minIndex, vertCount)?.Select(v => System.Numerics.Vector2.Transform(v, texTransform)).ToList();
+                        var normals = mesh.GetNormals(minIndex, vertCount)?.ToList();
+                        var blendIndices = mesh.GetBlendIndices(minIndex, vertCount)?.ToList();
+                        var blendWeights = mesh.GetBlendWeights(minIndex, vertCount)?.ToList();
+
+                        if (positions != null)
+                        {
+                            assimpMesh.Vertices.AddRange(positions.Select(v => (v * scale).ToAssimp3D()));
+
+                            //TODO:reimplement this using buffers
+                            ////some Halo shaders use position W as the colour alpha - add it to a colour channel to preserve it
+                            ////also assimp appears to have issues exporting obj when a colour channel exists so only do this for collada
+                            //if (formatId == "collada" && v.Color.Count == 0 && !float.IsNaN(v.Position[0].W))
+                            //    m.VertexColorChannels[0].Add(new Assimp.Color4D { R = v.Position[0].W });
+                        }
+
+                        if (normals != null)
+                            assimpMesh.Normals.AddRange(normals.Select(v => v.ToAssimp3D()));
+
+                        if (texcoords != null)
+                            assimpMesh.TextureCoordinateChannels[0].AddRange(texcoords.Select(v => v.ToAssimpUV()));
+
+                        var boneLookup = new Dictionary<int, Assimp.Bone>();
+                        for (var vIndex = 0; vIndex < vertCount; vIndex++)
+                        {
+                            if (mesh.VertexWeights == 0)
+                                continue;
+
+                            #region Vertex Weights
+                            var weights = new HashSet<(int BoneIndex, float Weight)>(4);
+
+                            if (mesh.BoneIndex.HasValue)
+                                weights.Add((mesh.BoneIndex.Value, 1));
+                            else
+                            {
+                                var ind = blendIndices[vIndex];
+                                var wt = blendWeights?[vIndex] ?? System.Numerics.Vector4.One;
+
+                                if (wt.X > 0)
+                                    weights.Add(((int)ind.X, wt.X));
+                                if (wt.Y > 0)
+                                    weights.Add(((int)ind.Y, wt.Y));
+                                if (wt.Z > 0)
+                                    weights.Add(((int)ind.Z, wt.Z));
+                                if (wt.W > 0)
+                                    weights.Add(((int)ind.W, wt.W));
+                            }
+
+                            foreach (var (boneIndex, weight) in weights)
+                            {
+                                if (!boneLookup.TryGetValue(boneIndex, out var assimpBone))
+                                {
+                                    var offsetTransform = model.GetAbsoluteBoneTransform(boneIndex).Inverse();
+
+                                    assimpBone = new Assimp.Bone
+                                    {
+                                        Name = bonePrefix + model.Bones[boneIndex].Name,
+                                        OffsetMatrix = offsetTransform.ToAssimp4x4(scale)
+                                    };
+
+                                    assimpMesh.Bones.Add(assimpBone);
+                                    boneLookup.Add(boneIndex, assimpBone);
+                                }
+
+                                assimpBone.VertexWeights.Add(new Assimp.VertexWeight(vIndex, weight));
+                            }
+                            #endregion
+                        }
+
+                        assimpMesh.SetIndices(indices.ToArray(), 3);
+                        assimpMesh.MaterialIndex = materialLookup[sub.Material.Id];
+
+                        assimpScene.Meshes.Add(assimpMesh);
+                    }
+                }
+            }
+
+            #endregion
+
+            AppendSceneGroup(assimpScene.RootNode, scene.RootNode);
+
+            return assimpScene;
+
+            void AppendSceneGroup(Assimp.Node assimpParentNode, SceneGroup groupNode)
+            {
+                foreach (var childNode in groupNode.ChildGroups.Where(g => g.Export))
+                {
+                    var assimpNode = new Assimp.Node($"{scenPrefix}{childNode.Name}");
+                    assimpParentNode.Children.Add(assimpNode);
+                    AppendSceneGroup(assimpNode, childNode);
+                }
+
+                foreach (var obj in groupNode.ChildObjects.Where(o => o.Export))
+                {
+                    var assimpNode = new Assimp.Node($"{scenPrefix}{obj.Name}");
+                    assimpParentNode.Children.Add(assimpNode);
+
+                    //if (obj is ObjectPlacement placement)
+                    //    assimpNode.Transform = placement.Transform.ToAssimp4x4();
+
+                    var model = (obj as ObjectPlacement)?.Object as Model ?? obj as Model;
+
+                    #region Bones
+
+                    var assimpBones = new List<Assimp.Node>();
+                    foreach (var bone in model.Bones)
+                    {
+                        var result = new Assimp.Node($"{bonePrefix}{bone.Name}");
+                        result.Transform = bone.Transform.ToAssimp4x4(scale);
+                        assimpBones.Add(result);
+                    }
+
+                    for (var i = 0; i < model.Bones.Count; i++)
+                    {
+                        var bone = model.Bones[i];
+                        if (bone.ParentIndex >= 0)
+                            assimpBones[bone.ParentIndex].Children.Add(assimpBones[i]);
+                        else
+                            assimpNode.Children.Add(assimpBones[i]);
+                    }
+
+                    #endregion
+
+                    #region Regions
+
+                    foreach (var reg in model.Regions.Where(r => r.Export))
+                    {
+                        var regNode = new Assimp.Node($"{geomPrefix}{reg.Name}");
+                        foreach (var perm in reg.Permutations.Where(p => p.Export))
+                        {
+                            var meshStart = meshLookup[(model, perm.MeshRange.Index)];
+                            if (meshStart < 0)
+                                continue;
+
+                            var permNode = new Assimp.Node($"{geomPrefix}{perm.Name}");
+                            permNode.Transform = perm.GetFinalTransform().ToAssimp4x4(scale);
+
+                            var meshCount = perm.MeshIndices.Sum(i => model.Meshes[i].Segments.Count);
+                            permNode.MeshIndices.AddRange(Enumerable.Range(meshStart, meshCount));
+
+                            regNode.Children.Add(permNode);
+                        }
+
+                        if (regNode.ChildCount > 0)
+                            assimpNode.Children.Add(regNode);
+                    }
+
+                    #endregion
+                }
+            }
         }
     }
 }

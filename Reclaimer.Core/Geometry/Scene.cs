@@ -26,25 +26,35 @@ namespace Reclaimer.Geometry
 
         public IEnumerable<SceneGroup> EnumerateGroupHierarchy() => RootNode.EnumerateHierarchy();
 
-        public IEnumerable<Material> EnumerateMaterials()
+        public IEnumerable<Model> EnumerateModels()
         {
             return EnumerateGroupHierarchy()
                 .SelectMany(g => g.ChildObjects)
                 .Select(o => (o as ObjectPlacement)?.Object ?? o)
                 .OfType<Model>()
-                .Distinct()
-                .SelectMany(m => m.EnumerateMaterials())
-                .DistinctBy(m => m.Id);
+                .Distinct();
         }
 
-        public IEnumerable<Material> EnumerateExportedMaterials()
+        public IEnumerable<Model> EnumerateExportedModels()
         {
             return EnumerateGroupHierarchy()
                 .Where(g => g.Export)
                 .SelectMany(g => g.ChildObjects.Where(o => o.Export))
                 .Select(o => (o as ObjectPlacement)?.Object ?? o)
                 .OfType<Model>()
-                .Distinct()
+                .Distinct();
+        }
+
+        public IEnumerable<Material> EnumerateMaterials()
+        {
+            return EnumerateModels()
+                .SelectMany(m => m.EnumerateMaterials())
+                .DistinctBy(m => m.Id);
+        }
+
+        public IEnumerable<Material> EnumerateExportedMaterials()
+        {
+            return EnumerateExportedModels()
                 .SelectMany(m => m.EnumerateExportedMaterials())
                 .DistinctBy(m => m.Id);
         }
