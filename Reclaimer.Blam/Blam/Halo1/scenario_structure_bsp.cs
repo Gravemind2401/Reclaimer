@@ -40,7 +40,7 @@ namespace Reclaimer.Blam.Halo1
 
         Model IContentProvider<Model>.GetContent() => GetModelContent();
 
-        public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent(), BlamConstants.Gen3UnitScale);
+        public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent(), BlamConstants.WorldUnitScale);
 
         private Model GetModelContent()
         {

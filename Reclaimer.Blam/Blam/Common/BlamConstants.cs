@@ -15,6 +15,6 @@ namespace Reclaimer.Blam.Common
         public const string ScenarioCrateGroupName = "crates";
 
         //1 world unit = 10 feet
-        public const float Gen3UnitScale = 10 * StandardUnits.Feet;
+        public const float WorldUnitScale = 10 * StandardUnits.Feet;
     }
 }

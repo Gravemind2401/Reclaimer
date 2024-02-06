@@ -38,7 +38,7 @@ namespace Reclaimer.Blam.Halo2Beta
 
         Model IContentProvider<Model>.GetContent() => GetModelContent();
 
-        public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent());
+        public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent(), BlamConstants.WorldUnitScale);
 
         private Model GetModelContent()
         {

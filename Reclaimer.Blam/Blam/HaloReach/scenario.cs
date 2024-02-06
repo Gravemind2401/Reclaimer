@@ -29,7 +29,7 @@ namespace Reclaimer.Blam.HaloReach
 
         public override Scene GetContent()
         {
-            var scene = new Scene { Name = Item.FileName, CoordinateSystem = CoordinateSystem.Default.WithScale(BlamConstants.Gen3UnitScale) };
+            var scene = new Scene { Name = Item.FileName, CoordinateSystem = CoordinateSystem.Default.WithScale(BlamConstants.WorldUnitScale) };
 
             //TODO: display error models in some way
 
