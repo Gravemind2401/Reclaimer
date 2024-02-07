@@ -140,7 +140,7 @@ namespace Reclaimer.Controls
                 var result = new List<TreeItemModel>();
                 var lookup = new Dictionary<string, TreeItemModel>();
 
-                foreach (var tag in module.Items.Where(i => FilterTag(filter, i)).OrderBy(i => i.TagName))
+                foreach (var tag in module.GetLinkedItems().Where(i => FilterTag(filter, i)).OrderBy(i => i.TagName))
                 {
                     var node = MakeNode(result, lookup, $"{tag.TagName}.{tag.ClassName}");
                     node.Tag = tag;

@@ -80,6 +80,10 @@ namespace Reclaimer.Blam.Halo5
             return reader;
         }
 
+        /// <summary>
+        /// Merges the tag list from the target module into the current module instance, allowing cross-module tag references to be resolved.
+        /// </summary>
+        /// <param name="fileName">The file path of the target module.</param>
         public void AddLinkedModule(string fileName)
         {
             if (!linkedModules.Any(m => m.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase)))
@@ -90,21 +94,47 @@ namespace Reclaimer.Blam.Halo5
             }
         }
 
+        /// <summary>
+        /// Returns all tags matching the specified <paramref name="globalTagId"/> across this module and all linked modules.
+        /// </summary>
+        /// <param name="globalTagId">The global identifier used to identify the same tag across different modules.</param>
         public IEnumerable<ModuleItem> FindAlternateTagInstances(int globalTagId)
         {
             return tagIndex.InstancesById.GetValueOrDefault(globalTagId);
         }
 
+        /// <summary>
+        /// Returns all unique tag classes used by any tags in this module or any linked module.
+        /// </summary>
         public IEnumerable<TagClass> GetTagClasses() => tagIndex.Classes.Values;
 
-        public ModuleItem GetItemById(int id) => tagIndex.ItemsById.GetValueOrDefault(id);
+        /// <summary>
+        /// Finds a tag contained either in this module or in a linked module.
+        /// </summary>
+        /// <remarks>
+        /// If the tag is contained in multiple modules, the value returned will come from the first linked module that contained the matching tag.
+        /// </remarks>
+        /// <param name="globalTagId">The global identifier used to identify the same tag across different modules.</param>
+        public ModuleItem GetItemById(int globalTagId) => tagIndex.ItemsById.GetValueOrDefault(globalTagId);
 
+        /// <summary>
+        /// Returns all tags matching the specified tag class across this module and all linked modules.
+        /// </summary>
+        /// <param name="classCode">The <see cref="TagClass.ClassCode"/> value to match on.</param>
         public IEnumerable<ModuleItem> GetItemsByClass(string classCode)
         {
-            return tagIndex.ItemsByClass.ContainsKey(classCode)
-                ? tagIndex.ItemsByClass[classCode]
+            return tagIndex.ItemsByClass.TryGetValue(classCode, out var moduleItem)
+                ? moduleItem
                 : Enumerable.Empty<ModuleItem>();
         }
+
+        /// <summary>
+        /// Returns all unique tag instances from this module and all linked modules.
+        /// </summary>
+        /// <remarks>
+        /// When the same tag is contained in multiple modules, only first copy of each tag will be returned, based on the order the modules were linked in.
+        /// </remarks>
+        public IEnumerable<ModuleItem> GetLinkedItems() => tagIndex.ItemsById.Values;
 
         private class TagIndex
         {
