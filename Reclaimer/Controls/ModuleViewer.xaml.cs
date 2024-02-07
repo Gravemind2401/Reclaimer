@@ -247,7 +247,6 @@ namespace Reclaimer.Controls
             foreach (var fileName in ofd.FileNames)
                 module.AddLinkedModule(fileName);
 
-            txtSearch.Clear();
             BuildTagTree(txtSearch.Text);
         }
 
