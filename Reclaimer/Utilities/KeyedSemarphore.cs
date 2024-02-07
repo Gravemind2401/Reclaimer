@@ -15,13 +15,13 @@
         {
             lock (lookup)
             {
-                if (lookup.ContainsKey(key))
+                if (lookup.TryGetValue(key, out var semaphore))
                 {
                     counter[key]++;
-                    return lookup[key];
+                    return semaphore;
                 }
 
-                var semaphore = new SemaphoreSlim(1, 1);
+                semaphore = new SemaphoreSlim(1, 1);
                 lookup.Add(key, semaphore);
                 counter.Add(key, 1);
                 return semaphore;
@@ -34,10 +34,8 @@
 
             lock (lookup)
             {
-                if (!lookup.ContainsKey(key))
+                if (!lookup.TryGetValue(key, out semaphore))
                     return;
-
-                semaphore = lookup[key];
 
                 counter[key]--;
                 if (counter[key] == 0)

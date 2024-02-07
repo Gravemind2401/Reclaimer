@@ -139,14 +139,13 @@ namespace Reclaimer.Plugins.MetaViewer
             ValueType = node.GetEnumAttribute<MetaValueType>("valueType") ?? MetaValueType.Undefined;
 
             var sizeStr = node.GetStringAttribute("size")?.ToLowerInvariant();
-            if (sizeStr == "length")
-                Size = -1;
-            else if (sizeStr == "sum")
-                Size = -2;
-            else if (sizeStr == "?" || sizeStr == null)
-                Size = -3;
-            else
-                Size = node.GetIntAttribute("size") ?? 0;
+            Size = sizeStr switch
+            {
+                "length" => -1,
+                "sum" => -2,
+                "?" or null => -3,
+                _ => node.GetIntAttribute("size").GetValueOrDefault()
+            };
 
             Components = node.GetIntAttribute("components") ?? 1;
             Axes = node.GetEnumAttribute<AxesDefinition>("axes") ?? AxesDefinition.None;

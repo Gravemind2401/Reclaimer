@@ -353,7 +353,7 @@ namespace Reclaimer.IO
             Write(a, byteOrder);
             Write(b, byteOrder);
             Write(c, byteOrder);
-            Write(bytes.AsSpan().Slice(8));
+            Write(bytes.AsSpan()[8..]);
         }
 
         #endregion

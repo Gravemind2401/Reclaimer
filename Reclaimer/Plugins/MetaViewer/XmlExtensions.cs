@@ -40,16 +40,12 @@ namespace Reclaimer.Plugins.MetaViewer
                 return null;
 
             var strVal = attr.Value;
-
-            if (Enum.TryParse(strVal, true, out TEnum enumVal))
-                return enumVal;
-            else
-                return null;
+            return Enum.TryParse(strVal, true, out TEnum enumVal) ? enumVal : null;
         }
 
         public static XmlAttribute FindAttribute(this XmlNode node, params string[] possibleNames)
         {
-            return node.Attributes.Cast<XmlAttribute>().FirstOrDefault(a => possibleNames.Any(s => s.ToUpper() == a.Name.ToUpper()));
+            return node.Attributes.Cast<XmlAttribute>().FirstOrDefault(a => possibleNames.Any(s => s.Equals(a.Name, StringComparison.OrdinalIgnoreCase)));
         }
     }
 }

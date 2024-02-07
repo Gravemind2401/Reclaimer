@@ -31,7 +31,6 @@ namespace Reclaimer.Geometry.Utilities
         }
 
         private BlockMarker BlockMarker(BlockCode code) => new BlockMarker(writer, code);
-        private BlockMarker BlockMarker(int identifier) => new BlockMarker(writer, new BlockCode("NULL", "Unknown"));
 
         private void WriteList<TItem>(IList<TItem> list, Action<TItem> writeFunc, BlockCode code)
         {

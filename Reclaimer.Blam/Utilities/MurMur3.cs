@@ -20,8 +20,7 @@ namespace Reclaimer.Blam.Utilities
             const uint c2 = 0x1b873593;
 
             var h1 = seed;
-            uint k1 = 0;
-            uint streamLength = 0;
+            uint k1, streamLength = 0;
 
             using (var ms = new MemoryStream(data))
             using (var reader = new BinaryReader(ms))

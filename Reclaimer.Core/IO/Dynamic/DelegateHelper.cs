@@ -150,39 +150,38 @@ namespace Reclaimer.IO.Dynamic
         {
             return typeof(TRead) == typeof(TStruct)
                 ? CreateDelegate<DefaultReadMethod>(expression)
-                : throw new ArgumentException();
+                : throw new ArgumentException(null, nameof(TRead));
         }
 
         private static ByteOrderReadMethod CreateReadDelegate<TRead>(Expression<Func<EndianReader, ByteOrder, TRead>> expression)
         {
             return typeof(TRead) == typeof(TStruct)
                 ? CreateDelegate<ByteOrderReadMethod>(expression)
-                : throw new ArgumentException();
+                : throw new ArgumentException(null, nameof(TRead));
         }
 
         private static DefaultWriteMethod CreateWriteDelegate<TWrite>(Expression<Action<EndianWriter, TWrite>> expression)
         {
             return typeof(TWrite) == typeof(TStruct)
                 ? CreateDelegate<DefaultWriteMethod>(expression)
-                : throw new ArgumentException();
+                : throw new ArgumentException(null, nameof(TWrite));
         }
 
         private static ByteOrderWriteMethod CreateWriteDelegate<TWrite>(Expression<Action<EndianWriter, TWrite, ByteOrder>> expression)
         {
             return typeof(TWrite) == typeof(TStruct)
                 ? CreateDelegate<ByteOrderWriteMethod>(expression)
-                : throw new ArgumentException();
+                : throw new ArgumentException(null, nameof(TWrite));
         }
 
         private static TDelegate CreateDelegate<TDelegate>(LambdaExpression expression)
             where TDelegate : Delegate
         {
             if (expression.Body is not MethodCallExpression methodCall)
-                throw new ArgumentException();
+                throw new ArgumentException(null, nameof(expression));
 
-            var method = methodCall.Method;
-            if (method == null)
-                throw new ArgumentException();
+            var method = methodCall.Method
+                ?? throw new ArgumentException(null, nameof(expression));
 
             return method.CreateDelegate<TDelegate>();
         }

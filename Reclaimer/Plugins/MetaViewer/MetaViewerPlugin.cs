@@ -66,7 +66,7 @@ namespace Reclaimer.Plugins.MetaViewer
             }
         }
 
-        private void InitViewer(string tabId, OpenFileArgs args, Action<Controls.MetaViewer> loadAction)
+        private static void InitViewer(string tabId, OpenFileArgs args, Action<Controls.MetaViewer> loadAction)
         {
             if (Substrate.ShowTabById(tabId))
                 return;

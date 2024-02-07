@@ -35,9 +35,9 @@ namespace Reclaimer.Controls
         private void cmbPlugins_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var plugin = (Plugin)cmbPlugins.SelectedItem;
-            var assembly = plugin.GetType().Assembly.GetName();
-            var origin = System.IO.Path.GetFileName(new Uri(assembly.CodeBase).LocalPath);
-            txtVersion.Text = $"{origin} Version {assembly.Version}";
+            var assembly = plugin.GetType().Assembly;
+            var origin = System.IO.Path.GetFileName(new Uri(assembly.Location).LocalPath);
+            txtVersion.Text = $"{origin} Version {assembly.GetName().Version}";
             propGrid.SelectedObject = plugin.settings;
         }
 

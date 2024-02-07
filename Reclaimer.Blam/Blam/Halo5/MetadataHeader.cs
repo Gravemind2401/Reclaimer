@@ -69,12 +69,12 @@ namespace Reclaimer.Blam.Halo5
 
         internal string GetStringByOffset(int offset)
         {
-            return stringsByOffset.ContainsKey(offset) ? stringTable[stringsByOffset[offset]] : null;
+            return stringsByOffset.TryGetValue(offset, out var index) ? stringTable[index] : null;
         }
 
         internal string GetStringByHash(uint hash)
         {
-            return stringsByHash.ContainsKey(hash) ? stringTable[stringsByHash[hash]] : null;
+            return stringsByHash.TryGetValue(hash, out var index) ? stringTable[index] : null;
         }
     }
 }

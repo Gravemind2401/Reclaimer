@@ -245,7 +245,7 @@ namespace Reclaimer.IO
                 var ordered = overlaps.OrderBy(c => c.Key).ToList();
 
                 var begin = Math.Min(ordered[0].Key, Position);
-                var end = ordered[ordered.Count - 1].Key + ordered[ordered.Count - 1].Value.Length;
+                var end = ordered[^1].Key + ordered[^1].Value.Length;
                 end = Math.Max(end, Position + count);
 
                 patch = new byte[end - begin];

@@ -90,24 +90,13 @@ namespace Reclaimer.Blam.Common.Gen3
 
         private void ReadItems()
         {
-            string key;
-            switch (cache.CacheType)
+            var key = cache.CacheType switch
             {
-                case CacheType.HaloReachBeta:
-                    key = HaloReach.CacheFile.BetaKey;
-                    break;
-                case CacheType.HaloReachRetail:
-                    key = HaloReach.CacheFile.LocalesKey;
-                    break;
-                case CacheType.Halo4Beta:
-                case CacheType.Halo4Retail:
-                    key = Halo4.CacheFile.LocalesKey;
-                    break;
-
-                default:
-                    key = null;
-                    break;
-            }
+                CacheType.HaloReachBeta => HaloReach.CacheFile.BetaKey,
+                CacheType.HaloReachRetail => HaloReach.CacheFile.LocalesKey,
+                CacheType.Halo4Beta or CacheType.Halo4Retail => Halo4.CacheFile.LocalesKey,
+                _ => null,
+            };
 
             using (var reader = cache.CreateReader(cache.DefaultAddressTranslator))
             {

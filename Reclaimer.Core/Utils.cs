@@ -65,9 +65,8 @@ namespace Reclaimer
             if (expr.Body is not MemberExpression member)
                 throw new ArgumentException("Expression does not refer to a property");
 
-            var propInfo = member.Member as PropertyInfo;
-            if (propInfo == null)
-                throw new ArgumentException("Expression does not refer to a property");
+            var propInfo = member.Member as PropertyInfo
+                ?? throw new ArgumentException("Expression does not refer to a property");
 
             if (type != propInfo.ReflectedType && !type.IsSubclassOf(propInfo.ReflectedType))
                 throw new ArgumentException("Property does not belong to type");

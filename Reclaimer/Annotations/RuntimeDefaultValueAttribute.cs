@@ -20,12 +20,10 @@ namespace Reclaimer.Annotations
 
         private static object GetValue(Type type, string propertyName)
         {
-            var property = type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-            if (property == null)
-                throw new InvalidOperationException($"Property \"{type.Name}.{propertyName}\" is not static or does not exist.");
+            var property = type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
+                ?? throw new InvalidOperationException($"Property \"{type.Name}.{propertyName}\" is not static or does not exist.");
 
-            var getter = property.GetGetMethod(true);
-            if (getter == null)
+            if (property.GetGetMethod(true) == null)
                 throw new InvalidOperationException($"Property \"{type.Name}.{propertyName}\" does not have a get method.");
 
             var result = property.GetValue(null);

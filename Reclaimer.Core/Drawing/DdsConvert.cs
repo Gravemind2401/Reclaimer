@@ -282,17 +282,14 @@ namespace Reclaimer.Drawing
             if (!channels.HasFlag(DecompressOptions.RemoveAlphaChannel))
                 mask |= 8;
 
-            int channelIndex;
-            if (mask == 1)
-                channelIndex = 0;
-            else if (mask == 2)
-                channelIndex = 1;
-            else if (mask == 4)
-                channelIndex = 2;
-            else if (mask == 8)
-                channelIndex = 3;
-            else
-                channelIndex = -1;
+            var channelIndex = mask switch
+            {
+                1 => 0,
+                2 => 1,
+                4 => 2,
+                8 => 3,
+                _ => -1
+            };
 
             for (var i = 0; i < source.Length; i += bpp)
             {

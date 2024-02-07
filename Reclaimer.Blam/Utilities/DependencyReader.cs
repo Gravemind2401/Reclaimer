@@ -82,9 +82,7 @@ namespace Reclaimer.Blam.Utilities
                     args.Add(this);
                 else
                 {
-                    var ctor2 = FindConstructor(type);
-                    if (ctor2 == null)
-                        throw new InvalidOperationException();
+                    var ctor2 = FindConstructor(type) ?? throw new InvalidOperationException();
                     args.Add(Construct(p.ParameterType, ctor2));
                 }
             }
@@ -92,7 +90,7 @@ namespace Reclaimer.Blam.Utilities
             return constructor.Invoke(args.ToArray());
         }
 
-        private bool CanCastTo(Type type)
+        private static bool CanCastTo(Type type)
         {
             return typeof(DependencyReader).IsSubclassOf(type) || typeof(DependencyReader) == type;
         }
@@ -104,8 +102,8 @@ namespace Reclaimer.Blam.Utilities
 
         private ConstructorInfo FindConstructor(Type type)
         {
-            if (ctorLookup.ContainsKey(type))
-                return ctorLookup[type];
+            if (ctorLookup.TryGetValue(type, out var ctor))
+                return ctor;
 
             foreach (var constructor in type.GetConstructors().OrderByDescending(c => c.GetParameters().Length))
             {

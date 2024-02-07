@@ -387,7 +387,7 @@ namespace Reclaimer.Plugins
         {
             var imageName = fileName.Split('\\').Last();
             if (imageName.EndsWith("]"))
-                imageName = imageName.Substring(0, imageName.LastIndexOf('['));
+                imageName = imageName[..imageName.LastIndexOf('[')];
 
             return shouldIsolate.Any(s => Regex.IsMatch(imageName, s, RegexOptions.IgnoreCase))
                 ? GetParamsIsolateAll(fileName, extension)
