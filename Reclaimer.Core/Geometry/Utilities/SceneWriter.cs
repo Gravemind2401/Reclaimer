@@ -303,7 +303,7 @@ namespace Reclaimer.Geometry.Utilities
             {
                 writer.Write(segment.IndexStart);
                 writer.Write(segment.IndexLength);
-                writer.Write(materialPool.IndexOf(segment.Material));
+                writer.Write(segment.Material == null ? -1 : materialPool.IndexOf(segment.Material));
             }
         }
 
