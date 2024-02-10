@@ -226,7 +226,7 @@ class ModelBuilder:
 
         for mesh_index in range(permutation.mesh_index, permutation.mesh_index + permutation.mesh_count):
             MESH_NAME = OPTIONS.permutation_name(region, permutation, mesh_index)
-            SELF_TRANSFORM = toMatrix3(model.meshes[mesh_index].vertex_transform) * WORLD_TRANSFORM
+            DECOMPRESSION_TRANSFORM = toMatrix3(model.meshes[mesh_index].vertex_transform) * WORLD_TRANSFORM
             INSTANCE_KEY = (mesh_index, -1) # TODO: second element reserved for submesh index if mesh splitting enabled
 
             if INSTANCE_KEY in self._instances.keys():
@@ -235,7 +235,7 @@ class ModelBuilder:
                 _, newNodes = rt.MaxOps.cloneNodes(source, cloneType = rt.Name('instance'), newNodes = pymxs.byref(None))
                 copy = cast(rt.Mesh, newNodes[0])
                 copy.name = MESH_NAME
-                copy.transform = SELF_TRANSFORM
+                copy.transform = DECOMPRESSION_TRANSFORM
                 layer.addnode(copy)
                 continue
 
@@ -250,7 +250,7 @@ class ModelBuilder:
 
             mesh_obj = cast(rt.Editable_Mesh, rt.Mesh(vertices=positions, faces=faces))
             mesh_obj.name = MESH_NAME
-            mesh_obj.transform = SELF_TRANSFORM
+            mesh_obj.transform = DECOMPRESSION_TRANSFORM
             layer.addnode(mesh_obj)
             self._instances[INSTANCE_KEY] = mesh_obj
 
@@ -279,6 +279,8 @@ class ModelBuilder:
         if not (OPTIONS.IMPORT_UVW and vertex_buffer.texcoord_channels):
             return
 
+        DECOMPRESSION_TRANSFORM = toMatrix3(mesh.texture_transform)
+
         # unlike other areas, uvw maps/channels use 0-based indexing
         # however channel 0 is always reserved for vertex color
         rt.Meshop.setNumMaps(mesh_obj, len(vertex_buffer.texcoord_channels) + 1)
@@ -286,7 +288,8 @@ class ModelBuilder:
         for i, texcoord_buffer in enumerate(vertex_buffer.texcoord_channels):
             rt.Meshop.defaultMapFaces(mesh_obj, i + 1) # sets vert/face count to same as mesh, copies triangle indices from mesh
             for vi, v in enumerate(texcoord_buffer):
-                rt.Meshop.setMapVert(mesh_obj, i + 1, vi + 1, rt.Point3(v[0], 1 - v[1], 0))
+                vec = rt.Point3(v[0], v[1], 0) * DECOMPRESSION_TRANSFORM
+                rt.Meshop.setMapVert(mesh_obj, i + 1, vi + 1, rt.Point3(vec[0], 1 - vec[1], 0))
 
     def _build_matindex(self, mc: MeshContext):
         scene, model, mesh, mesh_obj = mc

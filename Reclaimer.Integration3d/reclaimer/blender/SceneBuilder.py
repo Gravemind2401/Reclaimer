@@ -270,8 +270,8 @@ class ModelBuilder:
             mesh_data = bpy.data.meshes.new(MESH_NAME)
             mesh_data.from_pydata(positions, [], faces)
 
-            SELF_TRANSFORM = Matrix(mesh.vertex_transform).transposed()
-            mesh_data.transform(SELF_TRANSFORM)
+            DECOMPRESSION_TRANSFORM = Matrix(mesh.vertex_transform).transposed()
+            mesh_data.transform(DECOMPRESSION_TRANSFORM)
 
             for p in mesh_data.polygons:
                 p.use_smooth = True
@@ -305,13 +305,16 @@ class ModelBuilder:
         if not (OPTIONS.IMPORT_UVW and vertex_buffer.texcoord_channels):
             return
 
+        DECOMPRESSION_TRANSFORM = Matrix(mesh.texture_transform).transposed()
+
         for texcoord_buffer in vertex_buffer.texcoord_channels:
             # note blender wants 3 uvs per triangle rather than one per vertex
             # so we iterate the triangle indices rather than directly iterating the buffer
             uv_layer = mesh_data.uv_layers.new()
             for i, ti in enumerate(itertools.chain(*faces)):
                 v = texcoord_buffer[ti]
-                uv_layer.data[i].uv = Vector((v[0], 1 - v[1]))
+                vec = DECOMPRESSION_TRANSFORM @ Vector((v[0], v[1], 0))
+                uv_layer.data[i].uv = Vector((vec[0], 1 - vec[1]))
 
     def _build_matindex(self, mc: MeshContext):
         scene, model, mesh, mesh_data, mesh_obj = mc
