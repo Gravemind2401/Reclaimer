@@ -88,6 +88,7 @@ def create_model(collection: Collection, scene: Scene, filter_item: ModelFilter,
     model = filter_item._model
     print(f'creating model: {model.name}...')
     builder = ModelBuilder(MATERIALS, collection, scene, filter_item)
+    
     if OPTIONS.IMPORT_BONES and model.bones:
         print(f'creating {model.name}/armature')
         builder.create_bones()
@@ -97,6 +98,10 @@ def create_model(collection: Collection, scene: Scene, filter_item: ModelFilter,
     if OPTIONS.IMPORT_MARKERS and model.markers:
         print(f'creating {model.name}/markers')
         builder.create_markers()
+
+    builder._root_object.matrix_world = _convert_transform_units(filter_item.transform, True)
+    for c in builder._root_object.children:
+        c.matrix_parent_inverse = Matrix.Identity(4)
 
 def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> Matrix:
     ''' Converts a transform from model units to blender units '''
@@ -110,8 +115,9 @@ def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> M
 
 
 class ModelBuilder:
-    _root_collection: Collection
-    _region_collections: Dict[int, Collection]
+    _parent_collection: Collection
+    _root_object: Object
+    _region_objects: Dict[int, Object]
     _materials: List[bpy.types.Material]
     _filter: ModelFilter
     _scene: Scene
@@ -121,8 +127,9 @@ class ModelBuilder:
 
     def __init__(self, materials: List[bpy.types.Material], collection: Collection, scene: Scene, filter_item: ModelFilter):
         model = filter_item._model
-        self._root_collection = self._create_collection(OPTIONS.model_name(model))
-        self._region_collections = dict()
+        self._parent_collection = collection
+        self._root_object = self._create_group_object(OPTIONS.model_name(model))
+        self._region_objects = dict()
         self._materials = materials
         self._filter = filter_item
         self._scene = scene
@@ -130,16 +137,20 @@ class ModelBuilder:
         self._armature_obj = None
         self._instances = dict()
 
-        collection.children.link(self._root_collection)
+    def _link_object(self, object: Object, parent: Object):
+        self._parent_collection.objects.link(object)
+        object.parent = parent
 
-    def _create_collection(self, name: str, key: int = None) -> Collection:
+    def _create_group_object(self, name: str, key: int = None) -> Object:
         if key != None:
-            name = f'{self._root_collection.name}::{name}'
-        collection = bpy.data.collections.new(name) # TODO: enforce unique model names
+            name = f'{self._root_object.name}::{name}'
+        group = bpy.data.objects.new(name, None) # TODO: enforce unique model names
+        group.hide_render = True
+        self._link_object(group, None)
         if key != None:
-            self._region_collections[key] = collection
-            self._root_collection.children.link(collection)
-        return collection
+            self._region_objects[key] = group
+            group.parent = self._root_object
+        return group
 
     def _get_bone_transforms(self) -> List[Matrix]:
         result = []
@@ -150,7 +161,7 @@ class ModelBuilder:
         return result
 
     def create_bones(self):
-        collection, scene, model = self._root_collection, self._scene, self._model
+        group_obj, scene, model = self._root_object, self._scene, self._model
 
         # OPTIONS.BONE_SCALE not relevant to blender since you cant set bone width?
         TAIL_VECTOR = (0.03 * UNIT_SCALE, 0.0, 0.0)
@@ -160,7 +171,7 @@ class ModelBuilder:
         model_name = OPTIONS.model_name(model)
         armature_data = bpy.data.armatures.new(f'{model_name} armature root')
         armature_obj = self._armature_obj = bpy.data.objects.new(f'{model_name} armature', armature_data)
-        collection.objects.link(armature_obj)
+        self._link_object(armature_obj, group_obj)
 
         # edit mode is mandatory for edit_bone management, and the armature object needs to be selected to enable edit mode
         bpy.ops.object.select_all(action = 'DESELECT')
@@ -197,13 +208,13 @@ class ModelBuilder:
             for i, instance in enumerate(marker.instances):
                 # attempt to create the marker within the appropriate collection based on region/permutation
                 # note that in blender the collection acts like a 'parent' so if the marker gets parented to a bone it gets removed from the collection
-                collection = self._region_collections.get(instance.region_index, self._root_collection)
+                group_obj = self._region_objects.get(instance.region_index, self._root_object)
 
                 if MODE == 'EMPTY_SPHERE':
                     marker_obj = bpy.data.objects.new(OPTIONS.marker_name(marker, i), None)
                     marker_obj.empty_display_type = 'SPHERE'
                     marker_obj.empty_display_size = MARKER_SIZE
-                    collection.objects.link(marker_obj)
+                    self._link_object(marker_obj, group_obj)
                 # else: TODO
 
                 world_transform = Matrix.Translation([v * UNIT_SCALE for v in instance.position]) @ Quaternion(instance.rotation).to_matrix().to_4x4()
@@ -222,14 +233,14 @@ class ModelBuilder:
         mesh_count = 0
         for i, rf in enumerate(self._filter.selected_regions()):
             r = rf._region
-            region_col = self._create_collection(OPTIONS.region_name(r), i)
+            region_obj = self._create_group_object(OPTIONS.region_name(r), i)
             for j, pf in enumerate(rf.selected_permutations()):
                 p = pf._permutation
                 print(f'creating mesh {mesh_count:03d}: {self._model.name}/{r.name}/{p.name} [{i:02d}/{j:02d}]')
-                self._build_mesh(region_col, r, p)
+                self._build_mesh(region_obj, r, p)
                 mesh_count += 1
 
-    def _build_mesh(self, collection: Collection, region: ModelRegion, permutation: ModelPermutation):
+    def _build_mesh(self, group_obj: Object, region: ModelRegion, permutation: ModelPermutation):
         scene, model = self._scene, self._model
 
         SPLIT_MODE = False # TODO
@@ -245,7 +256,7 @@ class ModelBuilder:
                 copy = cast(Object, source.copy()) # note: use source.data.copy() for a deep copy
                 copy.name = MESH_NAME
                 copy.matrix_world = WORLD_TRANSFORM
-                collection.objects.link(copy)
+                self._link_object(copy, group_obj)
                 continue
 
             mesh = model.meshes[mesh_index]
@@ -267,7 +278,7 @@ class ModelBuilder:
 
             mesh_obj = bpy.data.objects.new(mesh_data.name, mesh_data)
             mesh_obj.matrix_world = WORLD_TRANSFORM
-            collection.objects.link(mesh_obj)
+            self._link_object(mesh_obj, group_obj)
             self._instances[INSTANCE_KEY] = mesh_obj
 
             mc: MeshContext = (scene, model, mesh, mesh_data, mesh_obj)
