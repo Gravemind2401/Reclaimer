@@ -172,6 +172,20 @@ class SceneFilter(FilterGroup):
         for id in texture_ids:
             yield (id, self._scene.texture_pool[id])
 
+    def count_objects(self) -> int:
+        return sum(1 for _ in self._selected_models_recursive())
+
+    def count_materials(self) -> int:
+        return sum(1 for _ in self.selected_materials())
+
+    def count_meshes(self) -> int:
+        count = 0
+        for m in self._selected_models_recursive():
+            for r in m.selected_regions():
+                for p in r.selected_permutations():
+                    count = count + p._permutation.mesh_count
+        return count
+
 
 class ModelFilter(IFilterNode):
     _node_type: str = 'Model'

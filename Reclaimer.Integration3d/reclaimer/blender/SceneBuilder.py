@@ -14,6 +14,7 @@ from ..src.Scene import *
 from ..src.Model import *
 from ..src.Material import *
 from ..src.Types import *
+from ..src.Progress import *
 from .CustomShaderNodes import *
 from .MaterialBuilder import *
 from .Utils import *
@@ -29,32 +30,42 @@ BL_UNITS: float = 1000.0 # 1 blender unit = 1000mm
 
 UNIT_SCALE: float = 1.0
 OPTIONS: ImportOptions = None
+PROGRESS: ProgressCallback = None
 MESHES: Dict[MeshKey, Object] = None
 MATERIALS: List[bpy.types.Material] = None
 
-def create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Optional[ImportOptions] = None):
-    global UNIT_SCALE, OPTIONS, MESHES, MATERIALS
+def create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Optional[ImportOptions] = None, callback: Optional[ProgressCallback] = None):
+    global UNIT_SCALE, OPTIONS, PROGRESS, MESHES, MATERIALS
 
     if not filter:
         filter = SceneFilter(scene)
     if not options:
         options = ImportOptions()
+    if not callback:
+        callback = ProgressCallback(filter, options)
 
     print(f'scene name: {scene.name}')
     print(f'scene scale: {scene.unit_scale}')
 
     UNIT_SCALE = scene.unit_scale / BL_UNITS
     OPTIONS = options
+    PROGRESS = callback
     MESHES = dict()
     MATERIALS = create_materials(scene, filter)
 
     root_collection = bpy.context.scene.collection
 
     for group in filter.selected_groups():
+        if PROGRESS.cancel_requested:
+            break
         create_scene_group(root_collection, scene, group, options)
 
     for model in filter.selected_models():
+        if PROGRESS.cancel_requested:
+            break
         create_model(root_collection, scene, model, options)
+
+    PROGRESS.complete()
 
 def create_materials(scene: Scene, filter: SceneFilter) -> List[bpy.types.Material]:
     # prefill with None to ensure list has correct number of elements
@@ -72,6 +83,7 @@ def create_materials(scene: Scene, filter: SceneFilter) -> List[bpy.types.Materi
         print(f'creating material: {m.name}')
         material = builder.create_material(i)
         result[i] = material
+        PROGRESS.increment_materials()
 
     return result
 
@@ -82,16 +94,20 @@ def create_scene_group(parent: Collection, scene: Scene, filter_item: FilterGrou
     parent.children.link(collection)
 
     for group in filter_item.selected_groups():
+        if PROGRESS.cancel_requested:
+            break
         create_scene_group(collection, scene, group, options)
 
     for model in filter_item.selected_models():
+        if PROGRESS.cancel_requested:
+            break
         create_model(collection, scene, model, options)
 
 def create_model(collection: Collection, scene: Scene, filter_item: ModelFilter, options: ImportOptions):
     model = filter_item._model
     print(f'creating model: {model.name}...')
     builder = ModelBuilder(MATERIALS, collection, scene, filter_item)
-    
+
     if OPTIONS.IMPORT_BONES and model.bones:
         print(f'creating {model.name}/armature')
         builder.create_bones()
@@ -105,6 +121,8 @@ def create_model(collection: Collection, scene: Scene, filter_item: ModelFilter,
     builder._root_object.matrix_world = _convert_transform_units(filter_item.transform, True)
     for c in builder._root_object.children:
         c.matrix_parent_inverse = Matrix.Identity(4)
+
+    PROGRESS.increment_objects()
 
 def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> Matrix:
     ''' Converts a transform from model units to blender units '''
@@ -237,9 +255,13 @@ class ModelBuilder:
     def create_meshes(self):
         mesh_count = 0
         for i, rf in enumerate(self._filter.selected_regions()):
+            if PROGRESS.cancel_requested:
+                break
             r = rf._region
             region_obj = self._create_group_object(OPTIONS.region_name(r), i)
             for j, pf in enumerate(rf.selected_permutations()):
+                if PROGRESS.cancel_requested:
+                    break
                 p = pf._permutation
                 print(f'creating mesh {mesh_count:03d}: {self._model.name}/{r.name}/{p.name} [{i:02d}/{j:02d}]')
                 self._build_mesh(region_obj, r, p)
@@ -263,6 +285,7 @@ class ModelBuilder:
                 self._link_object(copy, group_obj)
                 copy.matrix_world = WORLD_TRANSFORM
                 copy.matrix_parent_inverse = Matrix.Identity(4)
+                PROGRESS.increment_meshes()
                 continue
 
             mesh = model.meshes[mesh_index]
@@ -292,6 +315,8 @@ class ModelBuilder:
             self._build_uvw(mc, faces)
             self._build_matindex(mc)
             self._build_skin(mc)
+
+            PROGRESS.increment_meshes()
 
     def _build_normals(self, mc: MeshContext):
         scene, model, mesh, mesh_data, mesh_obj = mc

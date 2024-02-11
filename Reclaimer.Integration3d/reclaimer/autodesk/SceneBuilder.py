@@ -12,6 +12,7 @@ from ..src.Scene import *
 from ..src.Model import *
 from ..src.Material import *
 from ..src.Types import *
+from ..src.Progress import *
 from .Utils import *
 
 __all__ = [
@@ -25,9 +26,10 @@ MX_UNITS = 100.0 # 1 max unit = 100mm?
 
 UNIT_SCALE: float = 1.0
 OPTIONS: ImportOptions = ImportOptions()
+PROGRESS: ProgressCallback = None
 MATERIALS: List = None
 
-def create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Optional[ImportOptions] = None):
+def create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Optional[ImportOptions] = None, callback: Optional[ProgressCallback] = None):
     error: Exception = None
 
     with pymxs.animate(False):
@@ -35,23 +37,26 @@ def create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Op
             # if an unhandled exception happens inside the animate/undo context
             # then it will not revert the context, so we need to catch and re-throw
             try:
-                _create_scene(scene, filter, options)
+                _create_scene(scene, filter, options, callback)
             except Exception as e:
                 error = e
 
     if error:
         raise error
 
-def _create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Optional[ImportOptions] = None):
-    global UNIT_SCALE, OPTIONS, MATERIALS
+def _create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Optional[ImportOptions] = None, callback: Optional[ProgressCallback] = None):
+    global UNIT_SCALE, OPTIONS, PROGRESS, MATERIALS
 
     if not filter:
         filter = SceneFilter(scene)
     if not options:
         options = ImportOptions()
+    if not callback:
+        callback = ProgressCallback(filter, options)
 
     UNIT_SCALE = scene.unit_scale / MX_UNITS
     OPTIONS = options
+    PROGRESS = callback
     MATERIALS = create_materials(scene, filter)
 
     print(f'scene name: {scene.name}')
@@ -60,10 +65,16 @@ def _create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: O
     root_layer = rt.LayerManager.newLayerFromName('__scene__')
 
     for group in filter.selected_groups():
+        if PROGRESS.cancel_requested:
+            break
         create_scene_group(root_layer, scene, group, options)
 
     for model in filter.selected_models():
+        if PROGRESS.cancel_requested:
+            break
         create_model(root_layer, scene, model, options)
+
+    PROGRESS.complete()
 
 def create_materials(scene: Scene, filter: SceneFilter) -> List:
     # prefill with None to ensure list has correct number of elements
@@ -83,15 +94,20 @@ def create_scene_group(parent: Layer, scene: Scene, filter_item: FilterGroup, op
     layer.setParent(parent)
 
     for group in filter_item.selected_groups():
+        if PROGRESS.cancel_requested:
+            break
         create_scene_group(layer, scene, group, options)
 
     for model in filter_item.selected_models():
+        if PROGRESS.cancel_requested:
+            break
         create_model(layer, scene, model, options)
 
 def create_model(layer: Layer, scene: Scene, filter_item: ModelFilter, options: ImportOptions):
     model = filter_item._model
     print(f'creating model: {model.name}...')
     builder = ModelBuilder(MATERIALS, layer, scene, filter_item)
+
     if OPTIONS.IMPORT_BONES and model.bones:
         print(f'creating {model.name}/skeleton')
         builder.create_bones()
@@ -101,6 +117,8 @@ def create_model(layer: Layer, scene: Scene, filter_item: ModelFilter, options: 
     if OPTIONS.IMPORT_MARKERS and model.markers:
         print(f'creating {model.name}/markers')
         builder.create_markers()
+
+    PROGRESS.increment_objects()
 
 def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> rt.Matrix3:
     ''' Converts a transform from model units to max units '''
@@ -210,9 +228,13 @@ class ModelBuilder:
     def create_meshes(self):
         mesh_count = 0
         for i, rf in enumerate(self._filter.selected_regions()):
+            if PROGRESS.cancel_requested:
+                break
             r = rf._region
             region_layer = self._create_layer(OPTIONS.region_name(r), i)
             for j, pf in enumerate(rf.selected_permutations()):
+                if PROGRESS.cancel_requested:
+                    break
                 p = pf._permutation
                 print(f'creating mesh {mesh_count:03d}: {self._model.name}/{r.name}/{p.name} [{i:02d}/{j:02d}]')
                 self._build_mesh(region_layer, r, p)
@@ -237,6 +259,7 @@ class ModelBuilder:
                 copy.name = MESH_NAME
                 copy.transform = DECOMPRESSION_TRANSFORM
                 layer.addnode(copy)
+                PROGRESS.increment_meshes()
                 continue
 
             mesh = model.meshes[mesh_index]
@@ -259,6 +282,8 @@ class ModelBuilder:
             self._build_uvw(mc)
             self._build_matindex(mc)
             self._build_skin(mc)
+
+            PROGRESS.increment_meshes()
 
     def _build_normals(self, mc: MeshContext):
         scene, model, mesh, mesh_obj = mc
