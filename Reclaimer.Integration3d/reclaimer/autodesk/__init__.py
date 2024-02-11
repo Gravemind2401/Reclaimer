@@ -21,6 +21,6 @@ class MaxRmfDialog(RmfDialog):
         if result != QtWidgets.QDialog.DialogCode.Accepted:
             return
 
-        filter, options = self.get_import_options()
-        SceneBuilder.create_scene(self._scene, filter, options)
+        scene, filter, options = self.get_import_options()
+        SceneBuilder.create_scene(scene, filter, options)
         rt.completeRedraw()

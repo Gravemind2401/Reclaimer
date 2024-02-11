@@ -46,6 +46,7 @@
     <Compile Include="reclaimer\src\SceneFilter.py" />
     <Compile Include="reclaimer\src\Vectors.py" />
     <Compile Include="reclaimer\tests\Test_PySide2.py" />
+    <Compile Include="reclaimer\ui\ProgressDialog.py" />
     <Compile Include="reclaimer\ui\RmfDialog.py" />
     <Compile Include="reclaimer\ui\__init__.py" />
     <Compile Include="reclaimer\__init__.py" />
@@ -79,6 +80,7 @@
     <Folder Include="reclaimer\ui\resources\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="reclaimer\ui\progress.ui" />
     <Content Include="reclaimer\ui\resources\bl_stylesheet.qss" />
     <Content Include="reclaimer\ui\resources\CheckboxList_16x.png" />
     <Content Include="reclaimer\ui\resources\Checklist_16x.png" />

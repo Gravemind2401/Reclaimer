@@ -179,7 +179,7 @@ class RmfDialog(QtWidgets.QDialog):
         tree.addTopLevelItems([build_treeitem(tree, o) for o in self._scene_filter.groups])
         tree.addTopLevelItems([build_treeitem(tree, o) for o in self._scene_filter.models])
 
-    def get_import_options(self) -> Tuple[SceneFilter, ImportOptions]:
+    def get_import_options(self) -> Tuple[Scene, SceneFilter, ImportOptions]:
         options = ImportOptions()
 
         options.IMPORT_BONES = self._widget.checkBox_importBones.isChecked()
@@ -195,7 +195,7 @@ class RmfDialog(QtWidgets.QDialog):
         options.BONE_SCALE = self._widget.spinBox_boneScale.value()
         options.MARKER_SCALE = self._widget.spinBox_markerScale.value()
 
-        return (self._scene_filter, options)
+        return (self._scene, self._scene_filter, options)
 
     def onDialogResult(self, result: QtWidgets.QDialog.DialogCode):
         ''' Override in a base class to be notified when the dialog result is received '''
