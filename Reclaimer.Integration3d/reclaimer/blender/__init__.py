@@ -16,9 +16,11 @@ if try_import_dependencies():
     from .ImportOperator import RmfImportOperator
     from .MenuOperator import RmfMenuOperator
     from .DialogOperator import RmfDialogOperator
+    from .ProgressOperator import RmfProgressOperator
 
     __operators__ = [
         RmfDialogOperator,
+        RmfProgressOperator,
         RmfImportOperator,
         RmfMenuOperator
     ]

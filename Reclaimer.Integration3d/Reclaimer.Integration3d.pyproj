@@ -36,6 +36,7 @@
     <Compile Include="reclaimer\blender\MaterialBuilder.py" />
     <Compile Include="reclaimer\blender\MenuOperator.py" />
     <Compile Include="reclaimer\blender\Preferences.py" />
+    <Compile Include="reclaimer\blender\ProgressOperator.py" />
     <Compile Include="reclaimer\blender\QtWindowEventLoop.py" />
     <Compile Include="reclaimer\blender\SceneBuilder.py" />
     <Compile Include="reclaimer\blender\Utils.py" />

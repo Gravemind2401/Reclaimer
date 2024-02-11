@@ -29,6 +29,8 @@ class QtWindowEventLoop(bpy.types.Operator):
     bl_idname = 'screen.qt_event_loop'
     bl_label = 'Qt Event Loop'
 
+    app: QtWidgets.QApplication
+    event_loop: QtCore.QEventLoop
     dialog: QtWidgets.QDialog
 
     def __init__(self, *args, **kwargs):
