@@ -7,7 +7,7 @@ from ..src.Model import *
 from ..src.ImportOptions import *
 from ..src.SceneFilter import *
 
-from PySide2 import QtCore, QtWidgets, QtGui, QtSvg
+from PySide2 import QtCore, QtWidgets
 from PySide2.QtUiTools import QUiLoader
 
 __all__ = [
@@ -25,35 +25,6 @@ def _enumerate_children_recursive(tree: QtWidgets.QTreeWidget) -> Iterator['Cust
 
     for i in range(tree.topLevelItemCount()):
         yield from enumerate_recursive(tree.topLevelItem(i))
-
-def _inject_resource_paths(stylesheet: str) -> str:
-    '''
-    This replaces the :/res/ urls in a stylesheet with full paths.
-    This relies on there being no alias configured for the resource paths.
-    Currently the qrc resource file is only being used for the Qt Designer.
-    '''
-    return stylesheet.replace(':/res', ui.RESOURCE_ROOT.replace('\\', '/'))
-
-def _set_stylesheet(widget: QtWidgets.QWidget, filepath: str):
-    file_qss = QtCore.QFile(filepath)
-    if file_qss.exists():
-        file_qss.open(QtCore.QFile.ReadOnly)
-        stylesheet = QtCore.QTextStream(file_qss).readAll()
-        stylesheet = _inject_resource_paths(stylesheet)
-        widget.setStyleSheet(stylesheet)
-        file_qss.close()
-
-def _create_icon(resource: str) -> QtGui.QIcon:
-    filename = ui.resource(resource)
-    if not resource.endswith('.svg'):
-        return QtGui.QIcon(filename)
-
-    renderer = QtSvg.QSvgRenderer(filename)
-    image = QtGui.QImage(16, 16, QtGui.QImage.Format_ARGB32)
-    image.fill(0)
-    renderer.render(QtGui.QPainter(image))
-    pixmap = QtGui.QPixmap.fromImage(image)
-    return QtGui.QIcon(pixmap)
 
 
 class CustomTreeItem(QtWidgets.QTreeWidgetItem):
@@ -119,13 +90,13 @@ class RmfDialog(QtWidgets.QDialog):
         loader = QUiLoader()
 
         widget = self._widget = loader.load(ui.WIDGET_UI_FILE, None)
-        widget.toolButton_expandAll.setIcon(_create_icon('ExpandAll_16x.png'))
-        widget.toolButton_collapseAll.setIcon(_create_icon('CollapseGroup_16x.png'))
-        widget.toolButton_checkAll.setIcon(_create_icon('Checklist_16x.png'))
-        widget.toolButton_uncheckAll.setIcon(_create_icon('CheckboxList_16x.png'))
+        widget.toolButton_expandAll.setIcon(ui.create_icon('ExpandAll_16x.png'))
+        widget.toolButton_collapseAll.setIcon(ui.create_icon('CollapseGroup_16x.png'))
+        widget.toolButton_checkAll.setIcon(ui.create_icon('Checklist_16x.png'))
+        widget.toolButton_uncheckAll.setIcon(ui.create_icon('CheckboxList_16x.png'))
 
         if stylesheet:
-            _set_stylesheet(widget, stylesheet)
+            ui.set_stylesheet(widget, stylesheet)
 
         self._objectTreeWidget = cast(QtWidgets.QTreeWidget, widget.objectTreeWidget)
         self._permTreeWidget = cast(QtWidgets.QTreeWidget, widget.permutationTreeWidget)
@@ -135,7 +106,7 @@ class RmfDialog(QtWidgets.QDialog):
         self.setLayout(layout)
         layout.addWidget(widget)
 
-        self.setWindowIcon(_create_icon('Settings_16x.png'))
+        self.setWindowIcon(ui.create_icon('Settings_16x.png'))
         self.setWindowTitle(filepath)
         self.setModal(True)
         self.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.MSWindowsFixedSizeDialogHint)
