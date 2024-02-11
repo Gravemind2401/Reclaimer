@@ -23,15 +23,17 @@ __all__ = [
 ]
 
 MeshContext = Tuple[Scene, Model, Mesh, bpy.types.Mesh, Object]
+MeshKey = Tuple[int, int, int] # model index, mesh index, segment index
 
 BL_UNITS: float = 1000.0 # 1 blender unit = 1000mm
 
 UNIT_SCALE: float = 1.0
 OPTIONS: ImportOptions = None
+MESHES: Dict[MeshKey, Object] = None
 MATERIALS: List[bpy.types.Material] = None
 
 def create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Optional[ImportOptions] = None):
-    global UNIT_SCALE, OPTIONS, MATERIALS
+    global UNIT_SCALE, OPTIONS, MESHES, MATERIALS
 
     if not filter:
         filter = SceneFilter(scene)
@@ -43,6 +45,7 @@ def create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Op
 
     UNIT_SCALE = scene.unit_scale / BL_UNITS
     OPTIONS = options
+    MESHES = dict()
     MATERIALS = create_materials(scene, filter)
 
     root_collection = bpy.context.scene.collection
@@ -122,6 +125,7 @@ class ModelBuilder:
     _filter: ModelFilter
     _scene: Scene
     _model: Model
+    _model_id: int
     _armature_obj: Object
     _instances: Dict[Tuple[int, int], Object]
 
@@ -134,6 +138,7 @@ class ModelBuilder:
         self._filter = filter_item
         self._scene = scene
         self._model = model
+        self._model_id = scene.model_pool.index(model)
         self._armature_obj = None
         self._instances = dict()
 
@@ -249,14 +254,15 @@ class ModelBuilder:
 
         for mesh_index in range(permutation.mesh_index, permutation.mesh_index + permutation.mesh_count):
             MESH_NAME = OPTIONS.permutation_name(region, permutation, mesh_index)
-            INSTANCE_KEY = (mesh_index, -1) # TODO: second element reserved for submesh index if mesh splitting enabled
+            MESH_KEY = (self._model_id, mesh_index, -1) # TODO: last element reserved for submesh index if mesh splitting enabled
 
-            if INSTANCE_KEY in self._instances.keys():
-                source = self._instances.get(INSTANCE_KEY)
-                copy = cast(Object, source.copy()) # note: use source.data.copy() for a deep copy
+            existing_mesh = MESHES.get(MESH_KEY, None)
+            if existing_mesh:
+                copy = cast(Object, existing_mesh.copy()) # note: use source.data.copy() for a deep copy
                 copy.name = MESH_NAME
-                copy.matrix_world = WORLD_TRANSFORM
                 self._link_object(copy, group_obj)
+                copy.matrix_world = WORLD_TRANSFORM
+                copy.matrix_parent_inverse = Matrix.Identity(4)
                 continue
 
             mesh = model.meshes[mesh_index]
@@ -279,7 +285,7 @@ class ModelBuilder:
             mesh_obj = bpy.data.objects.new(mesh_data.name, mesh_data)
             mesh_obj.matrix_world = WORLD_TRANSFORM
             self._link_object(mesh_obj, group_obj)
-            self._instances[INSTANCE_KEY] = mesh_obj
+            MESHES[MESH_KEY] = mesh_obj
 
             mc: MeshContext = (scene, model, mesh, mesh_data, mesh_obj)
             self._build_normals(mc)

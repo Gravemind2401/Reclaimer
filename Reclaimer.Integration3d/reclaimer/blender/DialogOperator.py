@@ -14,7 +14,7 @@ class RmfDialogOperator(QtWindowEventLoop):
     bl_idname: str = 'rmf.dialog_operator'
     bl_label: str = 'Import RMF'
 
-    filepath: bpy.props.StringProperty(subtype='FILE_PATH')
+    filepath = bpy.props.StringProperty(subtype='FILE_PATH')
 
     def create_dialog(self):
         return RmfDialog(self.filepath, stylesheet=ui.resource('bl_stylesheet.qss'))
