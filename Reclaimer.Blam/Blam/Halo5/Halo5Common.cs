@@ -307,8 +307,8 @@ namespace Reclaimer.Blam.Halo5
 
                         if (vertexBufferCount == 0 && indexBufferCount == 0)
                             return;
-                        //else if (vertexBufferCount == 0 || indexBufferCount == 0)
-                        //    System.Diagnostics.Debugger.Break();
+                        else if (vertexBufferCount == 0) // || indexBufferCount == 0)
+                            System.Diagnostics.Debugger.Break();
 
                         block = header.DataBlocks[1];
                         reader.Seek(block.Offset, SeekOrigin.Begin);
