@@ -58,7 +58,7 @@ namespace Reclaimer.Blam.Halo5
             var geoParams = new Halo5GeometryArgs
             {
                 Module = Module,
-                ModuleItem = Item,
+                //ModuleItem = Item,
                 ResourcePolicy = ResourcePackingPolicy.SingleResource, // MeshResourcePackingPolicy, // we dont have the exact same block as the model, but i think we do have it in the render geo struct
                 //Regions = Regions,
                 Materials = Materials,
