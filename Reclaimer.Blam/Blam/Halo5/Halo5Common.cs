@@ -312,8 +312,8 @@ namespace Reclaimer.Blam.Halo5
 
                         if (vertexBufferCount == 0 && indexBufferCount == 0)
                             return;
-                        //else if (vertexBufferCount == 0 || indexBufferCount == 0)
-                        //    System.Diagnostics.Debugger.Break(); //decorators have vertices but no indices
+                        else if (vertexBufferCount == 0) // || indexBufferCount == 0)
+                            System.Diagnostics.Debugger.Break(); //decorators have vertices but no indices
 
                         block = header.DataBlocks[1];
                         reader.Seek(block.Offset, SeekOrigin.Begin);
