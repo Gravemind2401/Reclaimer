@@ -145,7 +145,6 @@ class ModelBuilder:
     _model: Model
     _model_id: int
     _armature_obj: Object
-    _instances: Dict[Tuple[int, int], Object]
 
     def __init__(self, materials: List[bpy.types.Material], collection: Collection, scene: Scene, filter_item: ModelFilter):
         model = filter_item._model
@@ -158,7 +157,6 @@ class ModelBuilder:
         self._model = model
         self._model_id = scene.model_pool.index(model)
         self._armature_obj = None
-        self._instances = dict()
 
     def _link_object(self, object: Object, parent: Object):
         self._parent_collection.objects.link(object)
@@ -327,7 +325,11 @@ class ModelBuilder:
 
         normals = list(Vector(v).to_3d() for v in vertex_buffer.normal_channels[0])
         mesh_data.normals_split_custom_set_from_vertices(normals)
-        mesh_data.use_auto_smooth = True # this is required in order for custom normals to take effect
+
+        # prior to 4.1, this is required in order for custom normals to take effect
+        # it was removed in 4.1 and custom normals should work normally
+        if bpy.app.version < (4, 1):
+            mesh_data.use_auto_smooth = True
 
     def _build_uvw(self, mc: MeshContext, faces: List[Tuple[int, int, int]]):
         scene, model, mesh, mesh_data, mesh_obj = mc
