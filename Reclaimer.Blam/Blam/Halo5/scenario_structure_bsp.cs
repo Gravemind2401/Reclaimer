@@ -89,13 +89,6 @@ namespace Reclaimer.Blam.Halo5
                     instanceGroup.Select(i => new ModelPermutation
                     {
                         Name = i.Name,
-                        //Transform = new Matrix4x4(
-                        //    i.TransformForward.X, i.TransformForward.Y, i.TransformForward.Z, 0,
-                        //    i.TransformLeft.X, i.TransformLeft.Y, i.TransformLeft.Z, 0,
-                        //    i.TransformUp.X, i.TransformUp.Y, i.TransformUp.Z, 0,
-                        //    i.TransformPosition.X, i.TransformPosition.Y, i.TransformPosition.Z, 1
-                        //),
-                        //Scale = i.TransformScale,
 
                         Transform = new Matrix4x4(
                             i.forward1, i.forward2, i.forward3, 0,
