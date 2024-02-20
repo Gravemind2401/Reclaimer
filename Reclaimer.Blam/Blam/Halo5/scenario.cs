@@ -26,6 +26,9 @@ namespace Reclaimer.Blam.Halo5
         public BlockCollection<StructureBspsBlock> StructureBsps { get; set; }
 
 
+        [Offset(500)]
+        public BlockCollection<SkyReferenceBlock> Skies { get; set; }
+
         [Offset(808)]
         public BlockCollection<SceneryPlacementBlock> Scenery { get; set; }
 
@@ -36,10 +39,10 @@ namespace Reclaimer.Blam.Halo5
         {
             var scene = new Scene { Name = Item.FileName, CoordinateSystem = CoordinateSystem.Default.WithScale(BlamConstants.Gen3UnitScale) };
             var bspGroup = new SceneGroup { Name = BlamConstants.ScenarioBspGroupName };
+            var skyGroup = new SceneGroup { Name = BlamConstants.ScenarioSkyGroupName };
             var sceneryGroup = new SceneGroup { Name = BlamConstants.ScenarioSceneryGroupName };
 
-            //TODO: display error models in some way
-
+            // bsps
             foreach (var v in StructureBsps)
             {
                 try
@@ -58,7 +61,7 @@ namespace Reclaimer.Blam.Halo5
                         }
                     }
                     catch { stlmItem = null; stlmTag = null; }
-                    // adjust parameters to use geo data from
+                    // adjust where to get mesh resource data from
                     Halo5GeometryArgs geoParams;
                     if (stlmTag == null)
                         geoParams = new Halo5GeometryArgs
@@ -80,7 +83,7 @@ namespace Reclaimer.Blam.Halo5
                             ResourceIndex = stlmItem.ResourceIndex+1, // second resource is the geometry resource
                             ResourceCount = stlmItem.ResourceCount-1
                         };
-
+                    // copied straight from the h5 scenario_structure_bsp.cs
                     var model = new Model { Name = Item.FileName };
 
 
@@ -118,13 +121,8 @@ namespace Reclaimer.Blam.Halo5
                         model.Regions.Add(sectionRegion);
                     }
 
-                    // 1 we need to use the correct mesh indices
 
                     model.Meshes.AddRange(Halo5Common.GetMeshes(geoParams, out var materials));
-                    //foreach (var i in Enumerable.Range(0, BoundingBoxes.Count))
-                    //{
-                    //}
-                    // i changed the old system of getting bounding boxes by using the corresponding mesh index to explicitly use the index provided by the geometry instance
                     foreach (var instanceGroup in bspTag.GeometryInstances)
                     {
                         if (model.Meshes[instanceGroup.MeshIndex] == null)
@@ -144,7 +142,19 @@ namespace Reclaimer.Blam.Halo5
                 catch { }
             }
 
+            // skies
+            foreach (var block in Skies)
+            {
+                try
+                {
+                    var skyTag = block.SkyReference.Tag.ReadMetadata<scenery>();
+                    var provider = skyTag.GetModel() as IContentProvider<Model>;
+                    skyGroup.ChildObjects.Add(provider.GetContent());
+                }
+                catch { }
+            }
 
+            // scenery
             foreach (var group in Scenery.EmptyIfNull().GroupBy(x => x.PaletteIndex))
             {
                 var tagRef = SceneryPalette?.ElementAtOrDefault(group.Key)?.TagReference;
@@ -183,6 +193,9 @@ namespace Reclaimer.Blam.Halo5
             if (bspGroup.HasItems)
                 scene.ChildGroups.Add(bspGroup);
 
+            if (skyGroup.HasItems)
+                scene.ChildGroups.Add(skyGroup);
+
             if (sceneryGroup.HasItems)
                 scene.ChildGroups.Add(sceneryGroup);
 
@@ -207,6 +220,13 @@ namespace Reclaimer.Blam.Halo5
 
 
 
+    [FixedSize(44)]
+    [DebuggerDisplay($"{{{nameof(SkyReference)},nq}}")]
+    public partial class SkyReferenceBlock
+    {
+        [Offset(0)]
+        public TagReference SkyReference { get; set; }
+    }
 
 
     [FixedSize(720)]
