@@ -184,6 +184,7 @@ namespace Reclaimer.Blam.Common
                 case structure_lightmap:
                 case render_model:
                 case particle_model:
+                case scenario:
                     if (TryGetGeometryContent(item, out var geometryContent))
                     {
                         content = geometryContent;
@@ -227,6 +228,10 @@ namespace Reclaimer.Blam.Common
             else if (item.ClassCode == particle_model)
             {
                 content = item.ReadMetadata<Halo5.particle_model>();
+            }
+            else if (item.ClassCode == scenario)
+            {
+                content = item.ReadMetadata<Halo5.scenario>();
             }
             else return false;
 
