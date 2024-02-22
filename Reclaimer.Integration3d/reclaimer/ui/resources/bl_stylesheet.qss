@@ -63,6 +63,26 @@ QCheckBox:unchecked:hover {
     color: rgb(237, 237, 237);
 }
 
+QLineEdit {
+	color: rgb(222, 222, 222);
+	background-color: rgb(29, 29, 29);	
+	selection-color: rgb(252, 252, 252);
+	selection-background-color: rgb(25, 25, 25);
+	border: 1px solid rgb(68, 68, 68);
+    border-radius: 2px;
+}
+
+QLineEdit:hover {
+	color: rgb(255, 255, 255);
+	background-color: rgb(35, 35, 35);	
+	border: 1px solid rgb(78, 78, 78);
+}
+
+QLineEdit:focus {
+	background-color: rgb(78, 78, 78);	
+	border: 1px solid rgb(68, 68, 68);
+}
+
 /* apply checkbox styles to all kinds of checkbox indicators (treeview, groupbox etc) */
 *::indicator {
     border-radius: 2px;

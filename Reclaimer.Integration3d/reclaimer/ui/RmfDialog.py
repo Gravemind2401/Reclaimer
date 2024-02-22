@@ -136,10 +136,17 @@ class RmfDialog(QtWidgets.QDialog):
         self._widget.toolButton_collapseAll.clicked.connect(lambda: self._current_tree.collapseAll())
         self._widget.toolButton_checkAll.clicked.connect(lambda: self.check_all(self._current_tree, CheckState.Checked))
         self._widget.toolButton_uncheckAll.clicked.connect(lambda: self.check_all(self._current_tree, CheckState.Unchecked))
+        self._widget.toolButton_bitmapsFolder.clicked.connect(self._browseBitmaps)
         self._widget.tabWidget.currentChanged.connect(self._onTabChanged)
         self._widget.buttonBox.accepted.connect(self.accept)
         self._widget.buttonBox.rejected.connect(self.reject)
         self.finished.connect(self.onDialogResult)
+
+    def _browseBitmaps(self):
+        dir = self._widget.lineEdit_bitmapsFolder.text()
+        dir = QtWidgets.QFileDialog.getExistingDirectory(self, caption='Select bitmaps folder', dir=dir)
+        if dir:
+            self._widget.lineEdit_bitmapsFolder.setText(dir)
 
     def _onTabChanged(self, index: int):
         for item in _enumerate_children_recursive(self._current_tree):
@@ -190,6 +197,9 @@ class RmfDialog(QtWidgets.QDialog):
         options.SPLIT_MESHES = self._widget.checkBox_splitMeshes.isChecked()
         options.IMPORT_NORMALS = self._widget.checkBox_importNormals.isChecked()
         options.IMPORT_SKIN = self._widget.checkBox_importWeights.isChecked()
+
+        options.BITMAP_ROOT = self._widget.lineEdit_bitmapsFolder.text()
+        options.BITMAP_EXT = self._widget.lineEdit_bitmapsExtension.text()
 
         options.OBJECT_SCALE = self._widget.spinBox_objectScale.value()
         options.BONE_SCALE = self._widget.spinBox_boneScale.value()

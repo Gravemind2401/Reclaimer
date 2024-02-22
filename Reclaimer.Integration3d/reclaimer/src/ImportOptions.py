@@ -50,5 +50,6 @@ class ImportOptions:
         return f'{material.name}'
 
     def texture_path(self, texture: Texture):
-        path = Path(self.BITMAP_ROOT).joinpath(texture.name).with_suffix('.' + self.BITMAP_EXT.lstrip('.'))
+        ext = self.BITMAP_EXT if self.BITMAP_EXT else 'tif'
+        path = Path(self.BITMAP_ROOT).joinpath(texture.name).with_suffix('.' + ext.lstrip('.'))
         return str(path)
