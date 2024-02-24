@@ -1,12 +1,9 @@
 import bpy
-import bmesh
 import bpy_extras
 from typing import Set
 from bpy.types import Context, Operator
 from bpy.props import BoolProperty, FloatProperty, StringProperty, EnumProperty
 
-from ..src.SceneReader import SceneReader
-from . import SceneBuilder
 
 class RmfImportOperator(Operator, bpy_extras.io_utils.ImportHelper):
     '''Import an RMF file'''

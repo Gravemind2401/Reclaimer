@@ -2,7 +2,7 @@ from pymxs import runtime as rt
 from PySide2 import QtWidgets
 from PySide2.QtWidgets import QWidget
 
-from . import SceneBuilder
+from . import AutodeskInterface
 from ..ui.RmfDialog import RmfDialog
 
 
@@ -22,5 +22,5 @@ class MaxRmfDialog(RmfDialog):
             return
 
         scene, filter, options = self.get_import_options()
-        SceneBuilder.create_scene(scene, filter, options)
+        AutodeskInterface.create_scene(scene, filter, options)
         rt.completeRedraw()
