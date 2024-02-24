@@ -1,8 +1,10 @@
+import pymxs
 from pymxs import runtime as rt
 from PySide2 import QtWidgets
 from PySide2.QtWidgets import QWidget
 
-from . import AutodeskInterface
+from .AutodeskInterface import AutodeskInterface
+from ..src.SceneBuilder import SceneBuilder
 from ..ui.RmfDialog import RmfDialog
 
 
@@ -22,5 +24,22 @@ class MaxRmfDialog(RmfDialog):
             return
 
         scene, filter, options = self.get_import_options()
-        AutodeskInterface.create_scene(scene, filter, options)
+
+        interface = AutodeskInterface()
+        builder = SceneBuilder(interface, scene, filter, options)
+
+        error: Exception = None
+
+        with pymxs.animate(False):
+            with pymxs.undo(False):
+                # if an unhandled exception happens inside the animate/undo context
+                # then it will not revert the context, so we need to catch and re-throw
+                try:
+                    builder.create_scene()
+                except Exception as e:
+                    error = e
+
+        if error:
+            raise error
+
         rt.completeRedraw()

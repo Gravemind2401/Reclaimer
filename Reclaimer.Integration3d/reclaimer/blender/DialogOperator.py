@@ -2,10 +2,11 @@ import bpy
 from typing import cast
 from PySide2 import QtWidgets
 
-from . import BlenderInterface
+from .BlenderInterface import BlenderInterface
 from .QtWindowEventLoop import QtWindowEventLoop
 from .. import ui
 from ..ui.RmfDialog import RmfDialog
+from ..src.SceneBuilder import SceneBuilder
 
 
 class RmfDialogOperator(QtWindowEventLoop):
@@ -34,4 +35,6 @@ class RmfDialogOperator(QtWindowEventLoop):
         bpy.ops.rmf.progress_operator('EXEC_DEFAULT')
         progress_callback = bpy.types.Scene.rmf_data['progress']
 
-        BlenderInterface.create_scene(scene, filter, options, progress_callback)
+        interface = BlenderInterface()
+        builder = SceneBuilder(interface, scene, filter, options, progress_callback)
+        builder.create_scene()

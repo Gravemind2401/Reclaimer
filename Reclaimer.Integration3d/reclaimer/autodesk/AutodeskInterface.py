@@ -1,11 +1,12 @@
 import operator
 from typing import cast
-from typing import Dict, Tuple, List, Optional
+from typing import Dict, Tuple, List
 from functools import reduce
 
 import pymxs
 from pymxs import runtime as rt
 
+from .Utils import *
 from ..src.ImportOptions import *
 from ..src.SceneFilter import *
 from ..src.Scene import *
@@ -13,174 +14,97 @@ from ..src.Model import *
 from ..src.Material import *
 from ..src.Types import *
 from ..src.Progress import *
-from .Utils import *
+from ..src.ViewportInterface import *
 
 __all__ = [
-    'create_scene'
+    'AutodeskInterface'
 ]
 
-MeshContext = Tuple[Scene, Model, Mesh, rt.Editable_Mesh]
-Layer = rt.MixinInterface
 
 MX_UNITS = 100.0 # 1 max unit = 100mm?
 
-UNIT_SCALE: float = 1.0
-OPTIONS: ImportOptions = ImportOptions()
-PROGRESS: ProgressCallback = None
-MATERIALS: List = None
-
-def create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Optional[ImportOptions] = None, callback: Optional[ProgressCallback] = None):
-    error: Exception = None
-
-    with pymxs.animate(False):
-        with pymxs.undo(False):
-            # if an unhandled exception happens inside the animate/undo context
-            # then it will not revert the context, so we need to catch and re-throw
-            try:
-                _create_scene(scene, filter, options, callback)
-            except Exception as e:
-                error = e
-
-    if error:
-        raise error
-
-def _create_scene(scene: Scene, filter: Optional[SceneFilter] = None, options: Optional[ImportOptions] = None, callback: Optional[ProgressCallback] = None):
-    global UNIT_SCALE, OPTIONS, PROGRESS, MATERIALS
-
-    if not filter:
-        filter = SceneFilter(scene)
-    if not options:
-        options = ImportOptions()
-    if not callback:
-        callback = ProgressCallback(filter, options)
-
-    UNIT_SCALE = scene.unit_scale / MX_UNITS
-    OPTIONS = options
-    PROGRESS = callback
-    MATERIALS = create_materials(scene, filter)
-
-    print(f'scene name: {scene.name}')
-    print(f'scene scale: {scene.unit_scale}')
-
-    root_layer = rt.LayerManager.newLayerFromName('__scene__')
-
-    for group in filter.selected_groups():
-        if PROGRESS.cancel_requested:
-            break
-        create_scene_group(root_layer, scene, group, options)
-
-    for model in filter.selected_models():
-        if PROGRESS.cancel_requested:
-            break
-        create_model(root_layer, scene, model, options)
-
-    PROGRESS.complete()
-
-def create_materials(scene: Scene, filter: SceneFilter) -> List:
-    # prefill with None to ensure list has correct number of elements
-    result = [None for _ in scene.material_pool]
-
-    if not OPTIONS.IMPORT_MATERIALS:
-        return result
-
-    #TODO
-
-    return result
-
-def create_scene_group(parent: Layer, scene: Scene, filter_item: FilterGroup, options: ImportOptions):
-    print(f'creating layer: {filter_item.path}')
-
-    layer = rt.LayerManager.newLayerFromName(filter_item.label) # TODO: enforce unique layer names
-    layer.setParent(parent)
-
-    for group in filter_item.selected_groups():
-        if PROGRESS.cancel_requested:
-            break
-        create_scene_group(layer, scene, group, options)
-
-    for model in filter_item.selected_models():
-        if PROGRESS.cancel_requested:
-            break
-        create_model(layer, scene, model, options)
-
-def create_model(layer: Layer, scene: Scene, filter_item: ModelFilter, options: ImportOptions):
-    model = filter_item._model
-    print(f'creating model: {model.name}...')
-    builder = ModelBuilder(MATERIALS, layer, scene, filter_item)
-
-    if OPTIONS.IMPORT_BONES and model.bones:
-        print(f'creating {model.name}/skeleton')
-        builder.create_bones()
-    if OPTIONS.IMPORT_MESHES and model.meshes:
-        print(f'creating {model.name}/meshes')
-        builder.create_meshes()
-    if OPTIONS.IMPORT_MARKERS and model.markers:
-        print(f'creating {model.name}/markers')
-        builder.create_markers()
-
-    PROGRESS.increment_objects()
-
-def _convert_transform_units(transform: Matrix4x4, bone_mode: bool = False) -> rt.Matrix3:
-    ''' Converts a transform from model units to max units '''
-    if not bone_mode:
-        return toMatrix3(transform) * rt.scaleMatrix(rt.Point3(UNIT_SCALE, UNIT_SCALE, UNIT_SCALE))
-
-    # for bones we want to keep the scale component at 1x, but still need to convert the translation component
-    m = toMatrix3(transform)
-    return rt.preRotate(rt.transMatrix(m.translationPart * UNIT_SCALE), m.rotationPart)
+MeshContext = Tuple[Scene, 'AutodeskModelState', Mesh, rt.Editable_Mesh]
+Layer = rt.MixinInterface
 
 
-class ModelBuilder:
-    _root_layer: Layer
-    _region_layers: Dict[int, Layer]
-    _filter: ModelFilter
-    _scene: Scene
-    _model: Model
-    _instances: Dict[Tuple[int, int], rt.Mesh]
-    _maxbones = List[rt.BoneGeometry]
+class AutodeskModelState(ModelState):
+    root_layer: Layer
+    region_layers: Dict[int, Layer]
+    maxbones = List[rt.BoneGeometry]
 
-    def __init__(self, materials: List, layer: Layer, scene: Scene, filter_item: ModelFilter):
-        model = filter_item._model
-        self._root_layer = self._create_layer(OPTIONS.model_name(model))
-        self._region_layers = dict()
-        self._filter = filter_item
-        self._scene = scene
-        self._model = model
-        self._instances = dict()
+    def __init__(self, model: Model, filter: ModelFilter, display_name: str, layer: Layer):
+        super().__init__(model, filter, display_name)
+        self.root_layer = self.create_layer(display_name)
+        self.root_layer.setParent(layer)
+        self.region_layers = dict()
 
-        self._root_layer.setParent(layer)
-
-    def _create_layer(self, name: str, key: int = None) -> Layer:
-        if key != None:
-            name = f'{self._root_layer.name}::{name}'
-        layer = rt.LayerManager.newLayerFromName(name) # TODO: enforce unique model names
-        if key != None:
-            self._region_layers[key] = layer
-            layer.setParent(self._root_layer)
+    def create_layer(self, name: str) -> Layer:
+        layer = rt.LayerManager.newLayerFromName(name)
         return layer
 
-    def _get_bone_transforms(self) -> List[rt.Matrix3]:
+
+class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, AutodeskModelState, Layer]):
+    unit_scale: float = 1.0
+    scene: Scene = None
+    options: ImportOptions = None
+    materials: List[rt.Material] = None
+    unique_meshes: Dict[MeshKey, rt.Mesh] = None
+
+    def init_scene(self, scene: Scene, options: ImportOptions) -> None:
+        self.unit_scale = scene.unit_scale / MX_UNITS
+        self.scene = scene
+        self.options = options
+        self.unique_meshes = dict()
+
+    def init_materials(self) -> None:
+        pass
+
+    def create_material(self, material: Material) -> rt.Material:
+        return None
+
+    def set_materials(self, materials: List[rt.Material]) -> None:
+        self.materials = materials
+
+    def create_transform(self, transform: Matrix4x4, bone_mode: bool = False) -> rt.Matrix3:
+        if not bone_mode:
+            return toMatrix3(transform) * rt.scaleMatrix(rt.Point3(self.unit_scale, self.unit_scale, self.unit_scale))
+
+        # for bones we want to keep the scale component at 1x, but still need to convert the translation component
+        m = toMatrix3(transform)
+        return rt.preRotate(rt.transMatrix(m.translationPart * self.unit_scale), m.rotationPart)
+
+    def init_model(self, model: Model, filter: ModelFilter, collection: rt.MixinInterface, display_name: str) -> AutodeskModelState:
+        rt.gc()
+        state = AutodeskModelState(model, filter, display_name, collection)
+        return state
+
+    def apply_transform(self, model_state: AutodeskModelState, transform: rt.Matrix3) -> None:
+        pass
+
+    def _get_bone_transforms(self, model: Model) -> List[rt.Matrix3]:
         result = []
-        for bone in self._model.bones:
-            lineage = self._model.get_bone_lineage(bone)
-            transforms = [_convert_transform_units(x.transform, True) for x in reversed(lineage)]
+        for bone in model.bones:
+            lineage = model.get_bone_lineage(bone)
+            transforms = [self.create_transform(x.transform, True) for x in reversed(lineage)]
             result.append(reduce(operator.mul, transforms))
         return result
 
-    def create_bones(self):
-        scene, model = self._scene, self._model
+    def create_bones(self, model_state: AutodeskModelState) -> None:
+        model = model_state.model
 
-        BONE_SIZE = 0.03 * UNIT_SCALE * OPTIONS.BONE_SCALE
+        BONE_SIZE = 0.03 * self.unit_scale * self.options.BONE_SCALE
         TAIL_VECTOR = rt.Point3(BONE_SIZE, 0.0, 0.0)
 
-        bone_layer = self._create_layer('__bones__', -1)
-        bone_transforms = self._get_bone_transforms()
+        bone_layer = model_state.create_layer('__bones__')
+        bone_layer.setParent(model_state.root_layer)
+        model_state.region_layers[-1] = bone_layer
+        bone_transforms = self._get_bone_transforms(model)
 
-        maxbones = self._maxbones = []
+        maxbones = model_state.maxbones = []
         for i, b in enumerate(model.bones):
             maxbone = rt.BoneSys.createBone(rt.Point3(0, 0, 0), TAIL_VECTOR, rt.Point3(0, 0, 1))
             maxbone.setBoneEnable(False, 0)
-            maxbone.name = OPTIONS.bone_name(b)
+            maxbone.name = self.options.bone_name(b)
             maxbone.height = maxbone.width = maxbone.length = BONE_SIZE
             maxbones.append(maxbone)
             bone_layer.addnode(maxbone)
@@ -188,7 +112,7 @@ class ModelBuilder:
             children = model.get_bone_children(b)
             if children:
                 size = max(rt.length(toPoint3(b.transform[3])) for b in children)
-                maxbone.length = size * UNIT_SCALE
+                maxbone.length = size * self.unit_scale
 
             maxbone.taper = 70 if children else 50
             maxbone.transform = bone_transforms[i]
@@ -196,100 +120,85 @@ class ModelBuilder:
             if b.parent_index >= 0:
                 maxbone.parent = maxbones[b.parent_index]
 
-    def create_markers(self):
-        MARKER_SIZE = 0.01 * UNIT_SCALE * OPTIONS.MARKER_SCALE
+    def create_markers(self, model_state: AutodeskModelState) -> None:
+        options, model = self.options, model_state.model
+
+        MARKER_SIZE = 0.01 * self.unit_scale * options.MARKER_SCALE
 
         marker_layer = None
-        bone_transforms = self._get_bone_transforms()
+        bone_transforms = self._get_bone_transforms(model)
 
-        for marker in self._model.markers:
+        for marker in model.markers:
             for i, instance in enumerate(marker.instances):
                 marker_obj = rt.Sphere(radius = MARKER_SIZE)
-                marker_obj.name = OPTIONS.marker_name(marker, i)
+                marker_obj.name = options.marker_name(marker, i)
 
                 # put the marker in the appropriate layer based on region/permutation
                 if instance.region_index >= 0 and instance.region_index < 255:
-                    self._region_layers[instance.region_index].addnode(marker_obj)
+                    model_state.region_layers[instance.region_index].addnode(marker_obj)
                 else:
                     if not marker_layer:
-                        marker_layer = self._create_layer('__markers__', -2)
+                        marker_layer = model_state.create_layer('__markers__')
+                        marker_layer.setParent(model_state.root_layer)
+                        model_state.region_layers[-2] = marker_layer
                     marker_layer.addnode(marker_obj)
 
-                world_transform = rt.preRotate(rt.transMatrix(toPoint3(instance.position) * UNIT_SCALE), toQuat(instance.rotation))
+                world_transform = rt.preRotate(rt.transMatrix(toPoint3(instance.position) * self.unit_scale), toQuat(instance.rotation))
 
-                if instance.bone_index >= 0 and self._model.bones:
+                if instance.bone_index >= 0 and model.bones:
                     world_transform *= bone_transforms[instance.bone_index]
-                    if OPTIONS.IMPORT_BONES:
-                        marker_obj.parent = self._maxbones[instance.bone_index]
+                    if options.IMPORT_BONES:
+                        marker_obj.parent = model_state.maxbones[instance.bone_index]
 
                 marker_obj.renderable = False
                 marker_obj.transform = world_transform
 
-    def create_meshes(self):
-        mesh_count = 0
-        for i, rf in enumerate(self._filter.selected_regions()):
-            if PROGRESS.cancel_requested:
-                break
-            r = rf._region
-            region_layer = self._create_layer(OPTIONS.region_name(r), i)
-            for j, pf in enumerate(rf.selected_permutations()):
-                if PROGRESS.cancel_requested:
-                    break
-                p = pf._permutation
-                print(f'creating mesh {mesh_count:03d}: {self._model.name}/{r.name}/{p.name} [{i:02d}/{j:02d}]')
-                self._build_mesh(region_layer, r, p)
-                mesh_count += 1
-            rt.gc()
+    def create_region(self, model_state: AutodeskModelState, region: ModelRegion, display_name: str) -> rt.MixinInterface:
+        region_layer = model_state.create_layer(display_name)
+        region_layer.setParent(model_state.root_layer)
+        model_state.region_layers[model_state.model.regions.index(region)] = region_layer
+        return region_layer
 
-    def _build_mesh(self, layer: rt.MixinInterface, region: ModelRegion, permutation: ModelPermutation):
-        scene, model = self._scene, self._model
+    def build_mesh(self, model_state: AutodeskModelState, region_group: Layer, transform: rt.Matrix3, mesh: Mesh, mesh_key: MeshKey, display_name: str) -> None:
+        scene = self.scene
 
-        WORLD_TRANSFORM = _convert_transform_units(permutation.transform)
+        DECOMPRESSION_TRANSFORM = toMatrix3(mesh.vertex_transform) * transform
 
-        for mesh_index in range(permutation.mesh_index, permutation.mesh_index + permutation.mesh_count):
-            MESH_NAME = OPTIONS.permutation_name(region, permutation, mesh_index)
-            DECOMPRESSION_TRANSFORM = toMatrix3(model.meshes[mesh_index].vertex_transform) * WORLD_TRANSFORM
-            INSTANCE_KEY = (mesh_index, -1) # TODO: second element reserved for submesh index if mesh splitting enabled
+        if mesh_key in self.unique_meshes.keys():
+            source = self.unique_meshes.get(mesh_key)
+            # methods with byref params return a tuple of (return_value, byref1, byref2, ...)
+            _, newNodes = rt.MaxOps.cloneNodes(source, cloneType = rt.Name('instance'), newNodes = pymxs.byref(None))
+            copy = cast(rt.Mesh, newNodes[0])
+            copy.name = display_name
+            copy.transform = DECOMPRESSION_TRANSFORM
+            region_group.addnode(copy)
+            return
 
-            if INSTANCE_KEY in self._instances.keys():
-                source = self._instances.get(INSTANCE_KEY)
-                # methods with byref params return a tuple of (return_value, byref1, byref2, ...)
-                _, newNodes = rt.MaxOps.cloneNodes(source, cloneType = rt.Name('instance'), newNodes = pymxs.byref(None))
-                copy = cast(rt.Mesh, newNodes[0])
-                copy.name = MESH_NAME
-                copy.transform = DECOMPRESSION_TRANSFORM
-                layer.addnode(copy)
-                PROGRESS.increment_meshes()
-                continue
-
-            mesh = model.meshes[mesh_index]
-            index_buffer = scene.index_buffer_pool[mesh.index_buffer_index]
-            vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
-
-            # note 3dsMax uses 1-based indices for triangles, vertices etc
-
-            positions = list(toPoint3(v) for v in vertex_buffer.position_channels[0])
-            faces = list(toPoint3(t) + 1 for t in index_buffer.get_triangles(mesh))
-
-            mesh_obj = cast(rt.Editable_Mesh, rt.Mesh(vertices=positions, faces=faces))
-            mesh_obj.name = MESH_NAME
-            mesh_obj.transform = DECOMPRESSION_TRANSFORM
-            layer.addnode(mesh_obj)
-            self._instances[INSTANCE_KEY] = mesh_obj
-
-            mc: MeshContext = (scene, model, mesh, mesh_obj)
-            self._build_normals(mc)
-            self._build_uvw(mc)
-            self._build_matindex(mc)
-            self._build_skin(mc)
-
-            PROGRESS.increment_meshes()
-
-    def _build_normals(self, mc: MeshContext):
-        scene, model, mesh, mesh_obj = mc
+        index_buffer = scene.index_buffer_pool[mesh.index_buffer_index]
         vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
 
-        if not (OPTIONS.IMPORT_NORMALS and vertex_buffer.normal_channels):
+        # note 3dsMax uses 1-based indices for triangles, vertices etc
+
+        positions = list(toPoint3(v) for v in vertex_buffer.position_channels[0])
+        faces = list(toPoint3(t) + 1 for t in index_buffer.get_triangles(mesh))
+
+        mesh_obj = cast(rt.Editable_Mesh, rt.Mesh(vertices=positions, faces=faces))
+        mesh_obj.name = display_name
+        mesh_obj.transform = DECOMPRESSION_TRANSFORM
+        region_group.addnode(mesh_obj)
+        self.unique_meshes[mesh_key] = mesh_obj
+
+        mc: MeshContext = (scene, model_state, mesh, mesh_obj)
+        self._build_normals(mc)
+        self._build_uvw(mc)
+        self._build_matindex(mc)
+        self._build_skin(mc)
+
+    def _build_normals(self, mc: MeshContext):
+        scene, model_state, mesh, mesh_obj = mc
+        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+
+        if not (self.options.IMPORT_NORMALS and vertex_buffer.normal_channels):
             return
 
         normals = list(toPoint3(v) for v in vertex_buffer.normal_channels[0])
@@ -298,10 +207,10 @@ class ModelBuilder:
             rt.setNormal(mesh_obj, i + 1, normal)
 
     def _build_uvw(self, mc: MeshContext):
-        scene, model, mesh, mesh_obj = mc
+        scene, model_state, mesh, mesh_obj = mc
         vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
 
-        if not (OPTIONS.IMPORT_UVW and vertex_buffer.texcoord_channels):
+        if not (self.options.IMPORT_UVW and vertex_buffer.texcoord_channels):
             return
 
         DECOMPRESSION_TRANSFORM = toMatrix3(mesh.texture_transform)
@@ -317,10 +226,10 @@ class ModelBuilder:
                 rt.Meshop.setMapVert(mesh_obj, i + 1, vi + 1, rt.Point3(vec[0], 1 - vec[1], 0))
 
     def _build_matindex(self, mc: MeshContext):
-        scene, model, mesh, mesh_obj = mc
+        scene, model_state, mesh, mesh_obj = mc
         index_buffer = scene.index_buffer_pool[mesh.index_buffer_index]
 
-        if not OPTIONS.IMPORT_MATERIALS:
+        if not self.options.IMPORT_MATERIALS:
             return
 
         material_ids = []
@@ -332,13 +241,13 @@ class ModelBuilder:
         rt.setMesh(mesh_obj, materialIds=material_ids)
 
     def _build_skin(self, mc: MeshContext):
-        scene, model, mesh, mesh_obj = mc
+        scene, model_state, mesh, mesh_obj = mc
         vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
 
         if not (
-            OPTIONS.IMPORT_BONES
-            and OPTIONS.IMPORT_SKIN
-            and model.bones
+            self.options.IMPORT_BONES
+            and self.options.IMPORT_SKIN
+            and model_state.model.bones
             and (vertex_buffer.blendindex_channels or mesh.bone_index >= 0)
         ):
             return
@@ -351,14 +260,14 @@ class ModelBuilder:
         # note replaceVertexWeights() can take either bone indices or bone references
         if mesh.bone_index >= 0:
             modifier.rigid_vertices = True
-            bi, bw = [self._maxbones[mesh.bone_index]], [1.0]
+            bi, bw = [model_state.maxbones[mesh.bone_index]], [1.0]
             rt.SkinOps.addBone(modifier, bi[0], 0)
             rt.redrawViews()
             for vi in range(vertex_count): # set every vertex to 1.0
                 rt.SkinOps.replaceVertexWeights(modifier, vi + 1, bi, bw)
         else:
             # add every bone so the bone indices are 1:1 with the skin modifier
-            for b in self._maxbones:
+            for b in model_state.maxbones:
                 rt.SkinOps.addBone(modifier, b, 0)
             # unfortunately it seems a redraw is required for the added bones to take effect
             # otherwise trying to set weights gives the error "Runtime error: Exceeded the vertex countSkin:Skin"
@@ -369,7 +278,7 @@ class ModelBuilder:
                 bw.clear()
                 for i, w in enumerate(blend_weights):
                     if w > 0:
-                        bi.append(self._maxbones[blend_indicies[i]])
+                        bi.append(model_state.maxbones[blend_indicies[i]])
                         bw.append(w)
                 rt.SkinOps.replaceVertexWeights(modifier, vi + 1, bi, bw)
 

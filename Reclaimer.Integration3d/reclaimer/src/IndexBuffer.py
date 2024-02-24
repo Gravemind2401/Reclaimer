@@ -56,7 +56,7 @@ class IndexBuffer:
     def count_triangles(self, arg1, arg2 = None) -> int:
         def get_count(offset: int, count: int) -> int:
             if self.index_layout == IndexLayout.TRIANGLE_LIST:
-                return count / 3
+                return int(count / 3)
             elif self.index_layout == IndexLayout.TRIANGLE_STRIP:
                 # count the number of unpacked triangles returned
                 return sum(1 for _ in self.get_triangles(offset, count))

@@ -137,10 +137,8 @@ class MaterialBuilder:
         self._options = options
         self._image_lookup = dict()
 
-    def create_material(self, index: int):
+    def create_material(self, mat: Material):
         scene, OPTIONS = self._scene, self._options
-
-        mat = scene.material_pool[index]
 
         result = bpy.data.materials.new(OPTIONS.material_name(mat))
         result.use_nodes = True
