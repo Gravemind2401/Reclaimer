@@ -35,7 +35,10 @@ class MaxRmfDialog(RmfDialog):
                 # if an unhandled exception happens inside the animate/undo context
                 # then it will not revert the context, so we need to catch and re-throw
                 try:
-                    builder.create_scene()
+                    task_queue = builder.begin_create_scene()
+                    while not task_queue.finished():
+                        task_queue.execute_next()
+                    builder.end_create_scene()
                 except Exception as e:
                     error = e
 

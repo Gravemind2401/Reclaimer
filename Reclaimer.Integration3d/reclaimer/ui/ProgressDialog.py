@@ -66,8 +66,6 @@ class ProgressDialog(QtWidgets.QDialog, ProgressCallback):
         self._widget.label_meshes_progress.setText(f'{self.mesh_progress} / {self.mesh_count} ({self.mesh_percent:.0%})')
         self._widget.label_objects_progress.setText(f'{self.object_progress} / {self.object_count} ({self.object_percent:.0%})')
 
-        QtWidgets.QApplication.processEvents()
-
     def _connect(self):
         self._widget.buttonBox.rejected.connect(self.reject)
         self.finished.connect(self.onDialogResult)

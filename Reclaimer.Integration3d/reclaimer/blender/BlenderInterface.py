@@ -58,6 +58,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
     unit_scale: float = 1.0
     scene: Scene = None
     options: ImportOptions = None
+    root_collection: bpy.types.Collection = None
     material_builder: MaterialBuilder = None
     materials: List[bpy.types.Material] = None
     unique_meshes: Dict[MeshKey, Object] = None
@@ -67,6 +68,16 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         self.scene = scene
         self.options = options
         self.unique_meshes = dict()
+
+    def pre_import(self, root_collection: bpy.types.Collection):
+        self.root_collection = root_collection
+
+        # temporarily exclude from view layer so it doesnt redraw constantly - this improves speed a lot
+        # tried setting hide_viewport instead but that causes markers to break for some reason
+        set_collection_exclude(bpy.context.view_layer, self.root_collection, True)
+
+    def post_import(self):
+        set_collection_exclude(bpy.context.view_layer, self.root_collection, False)
 
     def init_materials(self) -> None:
         init_custom_node_groups()
@@ -119,6 +130,10 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
 
         bone_transforms = self._get_bone_transforms(model)
 
+        # armatures only work while they are included in the view layer
+        # so we need to temporaily include the parent collection until the armature is done
+        set_collection_exclude(bpy.context.view_layer, model_state.parent_collection, False)
+
         armature_data = bpy.data.armatures.new(f'{model_state.display_name} armature root')
         armature_obj = model_state.armature_obj = bpy.data.objects.new(f'{model_state.display_name} armature', armature_data)
         model_state.link_object(armature_obj, group_obj)
@@ -145,6 +160,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
                 editbone.parent = editbones[b.parent_index]
 
         bpy.ops.object.mode_set(mode = 'OBJECT')
+        set_collection_exclude(bpy.context.view_layer, model_state.parent_collection, True)
 
     def create_markers(self, model_state: BlenderModelState) -> None:
         options, model = self.options, model_state.model
