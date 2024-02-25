@@ -174,6 +174,7 @@ namespace Reclaimer.Blam.Common
             public const string Color = "color";
         }
 
+        [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
         private sealed class XmlVertexLayout
         {
             public int TypeId { get; init; }
