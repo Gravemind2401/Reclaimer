@@ -318,6 +318,7 @@ namespace Reclaimer.Geometry.Utilities
                 WriteChannels(vertexBuffer.NormalChannels, VertexChannelCodes.Normal);
                 WriteChannels(vertexBuffer.BlendIndexChannels, VertexChannelCodes.BlendIndex);
                 WriteChannels(vertexBuffer.BlendWeightChannels, VertexChannelCodes.BlendWeight);
+                WriteChannels(vertexBuffer.ColorChannels, VertexChannelCodes.Color);
             }
 
             void WriteChannels(IList<IReadOnlyList<IVector>> vertexChannel, BlockCode code)

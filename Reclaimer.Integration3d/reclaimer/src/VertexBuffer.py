@@ -17,6 +17,7 @@ class VertexBuffer:
     normal_channels: List['VectorBuffer']
     blendindex_channels: List['VectorBuffer']
     blendweight_channels: List['VectorBuffer']
+    color_channels: List['VectorBuffer']
 
     def enumerate_blendpairs(self) -> Iterator[Tuple[int, Iterable[float], Iterable[float]]]:
         '''

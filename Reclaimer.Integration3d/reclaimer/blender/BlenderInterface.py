@@ -239,6 +239,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         self._build_uvw(mc, faces)
         self._build_matindex(mc)
         self._build_skin(mc)
+        self._build_colors(mc, faces)
 
     def _build_normals(self, mc: MeshContext):
         scene, model, mesh, mesh_data, mesh_obj = mc
@@ -255,7 +256,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         if bpy.app.version < (4, 1):
             mesh_data.use_auto_smooth = True
 
-    def _build_uvw(self, mc: MeshContext, faces: List[Tuple[int, int, int]]):
+    def _build_uvw(self, mc: MeshContext, faces: List[Triangle]):
         scene, model_state, mesh, mesh_data, mesh_obj = mc
         vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
 
@@ -332,3 +333,18 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
                 for bi, bw in zip(blend_indicies, blend_weights):
                     if bw > 0:
                         mesh_obj.vertex_groups[bi].add([vi], bw, 'ADD')
+
+    def _build_colors(self, mc: MeshContext, faces: List[Triangle]):
+        scene, model_state, mesh, mesh_data, mesh_obj = mc
+        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+
+        if not (self.options.IMPORT_COLORS and vertex_buffer.color_channels):
+            return
+
+        for color_buffer in vertex_buffer.color_channels:
+            # note vertex_colors uses the same triangle loop as uv coords
+            # so we iterate the triangle indices rather than directly iterating the buffer
+            color_layer = mesh_data.vertex_colors.new()
+            for i, ti in enumerate(itertools.chain(*faces)):
+                c = color_buffer[ti]
+                color_layer.data[i].color = c

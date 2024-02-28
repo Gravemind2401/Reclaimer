@@ -2,6 +2,7 @@ from typing import Tuple
 from collections.abc import Sequence
 
 __all__ = [
+    'Triangle',
     'Color',
     'Float2',
     'Float3',

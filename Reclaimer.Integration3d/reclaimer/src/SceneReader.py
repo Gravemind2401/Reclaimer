@@ -250,6 +250,7 @@ def _read_vertex_buffer(scene: Scene) -> Callable[[FileReader, DataBlock], Verte
         buf.normal_channels = channel_buffers['NORM']
         buf.blendindex_channels = channel_buffers['BLID']
         buf.blendweight_channels = channel_buffers['BLWT']
+        buf.color_channels = channel_buffers['COLR']
 
         return buf
 

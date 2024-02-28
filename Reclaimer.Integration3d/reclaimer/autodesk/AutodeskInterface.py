@@ -193,6 +193,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
         self._build_uvw(mc)
         self._build_matindex(mc)
         self._build_skin(mc)
+        self._build_colors(mc)
 
     def _build_normals(self, mc: MeshContext):
         scene, model_state, mesh, mesh_obj = mc
@@ -283,3 +284,6 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
                 rt.SkinOps.replaceVertexWeights(modifier, vi + 1, bi, bw)
 
         rt.SkinOps.removeUnusedBones(modifier)
+
+    def _build_colors(self, mc: MeshContext):
+        pass # TODO

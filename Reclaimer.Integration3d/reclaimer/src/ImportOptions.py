@@ -18,6 +18,7 @@ class ImportOptions:
     IMPORT_SKIN: bool = True
     IMPORT_UVW: bool = True
     IMPORT_MATERIALS: bool = True
+    IMPORT_COLORS: bool = True
 
     SPLIT_MESHES: bool = False
 
