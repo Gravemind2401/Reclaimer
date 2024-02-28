@@ -15,15 +15,15 @@ class ProgressCallback:
 
     @property
     def material_percent(self) -> float:
-        return int(self.material_progress / self.material_count * 100) / 100
+        return 0 if self.material_count == 0 else int(self.material_progress / self.material_count * 100) / 100
 
     @property
     def mesh_percent(self) -> float:
-        return int(self.mesh_progress / self.mesh_count * 100) / 100
+        return 0 if self.mesh_count == 0 else int(self.mesh_progress / self.mesh_count * 100) / 100
 
     @property
     def object_percent(self) -> float:
-        return int(self.object_progress / self.object_count * 100) / 100
+        return 0 if self.object_count == 0 else int(self.object_progress / self.object_count * 100) / 100
 
     def __init__(self, filter: SceneFilter, options: ImportOptions):
         self.object_count = filter.count_objects()
