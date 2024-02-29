@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from pathlib import Path
 
 from .Material import *
@@ -9,18 +8,17 @@ __all__ = [
 ]
 
 
-@dataclass
 class ImportOptions:
     IMPORT_BONES: bool = True
     IMPORT_MARKERS: bool = True
     IMPORT_MESHES: bool = True
+    IMPORT_MATERIALS: bool = True
+
+    SPLIT_MESHES: bool = False
     IMPORT_NORMALS: bool = True
     IMPORT_SKIN: bool = True
     IMPORT_UVW: bool = True
-    IMPORT_MATERIALS: bool = True
     IMPORT_COLORS: bool = True
-
-    SPLIT_MESHES: bool = False
 
     OBJECT_SCALE: float = 1.0
     BONE_SCALE: float = 1.0

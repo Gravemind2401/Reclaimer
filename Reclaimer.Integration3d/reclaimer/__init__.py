@@ -7,7 +7,7 @@ from importlib import util as importutil
 # blender appears to parse this directly from the python file
 # as text so it cannot be imported from within a submodule
 bl_info = {
-    'name': 'RMF Importer',
+    'name': 'RMF format',
     'description': 'Import RMF files created by Reclaimer.',
     'author': 'Gravemind2401',
     'version': (1, 0, 0),

@@ -129,7 +129,22 @@ class RmfDialog(QtWidgets.QDialog):
             tree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
             self.check_all(tree, CheckState.Checked)
 
+        self._load_options(ImportOptions())
         self._connect()
+
+    def _load_options(self, options: ImportOptions):
+        self._widget.checkBox_importBones.setChecked(options.IMPORT_BONES)
+        self._widget.checkBox_importMarkers.setChecked(options.IMPORT_MARKERS)
+        self._widget.checkBox_importMeshes.setChecked(options.IMPORT_MESHES)
+        self._widget.checkBox_importMaterials.setChecked(options.IMPORT_MATERIALS)
+
+        self._widget.checkBox_splitMeshes.setChecked(options.SPLIT_MESHES)
+        self._widget.checkBox_importNormals.setChecked(options.IMPORT_NORMALS)
+        self._widget.checkBox_importWeights.setChecked(options.IMPORT_SKIN)
+
+        self._widget.spinBox_objectScale.setValue(options.OBJECT_SCALE)
+        self._widget.spinBox_boneScale.setValue(options.BONE_SCALE)
+        self._widget.spinBox_markerScale.setValue(options.MARKER_SCALE)
 
     def _connect(self):
         self._widget.toolButton_expandAll.clicked.connect(lambda: self._current_tree.expandAll())
