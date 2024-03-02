@@ -201,7 +201,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         model_state.region_objects[model_state.model.regions.index(region)] = region_obj
         return region_obj
 
-    def build_mesh(self, model_state: BlenderModelState, region_group: Object, transform: Matrix, mesh: Mesh, mesh_key: MeshKey, display_name: str) -> None:
+    def build_mesh(self, model_state: BlenderModelState, region_group: Object, world_transform: Matrix, mesh: Mesh, mesh_key: MeshKey, display_name: str) -> None:
         scene = self.scene
 
         existing_mesh = self.unique_meshes.get(mesh_key, None)
@@ -209,7 +209,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
             copy = cast(Object, existing_mesh.copy()) # note: use source.data.copy() for a deep copy
             copy.name = display_name
             model_state.link_object(copy, region_group)
-            copy.matrix_world = transform
+            copy.matrix_world = world_transform
             copy.matrix_parent_inverse = Matrix.Identity(4)
             return
 
@@ -230,7 +230,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
             p.use_smooth = True
 
         mesh_obj = bpy.data.objects.new(mesh_data.name, mesh_data)
-        mesh_obj.matrix_world = transform
+        mesh_obj.matrix_world = world_transform
         model_state.link_object(mesh_obj, region_group)
         self.unique_meshes[mesh_key] = mesh_obj
 

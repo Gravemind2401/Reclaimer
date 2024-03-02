@@ -38,11 +38,11 @@ class MaxRmfDialog(RmfDialog):
                     task_queue = builder.begin_create_scene()
                     while not task_queue.finished():
                         task_queue.execute_next()
-                    builder.end_create_scene()
                 except Exception as e:
                     error = e
 
+        builder.end_create_scene()
+        rt.completeRedraw()
+
         if error:
             raise error
-
-        rt.completeRedraw()

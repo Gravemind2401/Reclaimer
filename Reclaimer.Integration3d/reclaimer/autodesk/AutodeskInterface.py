@@ -95,7 +95,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
         BONE_SIZE = 0.03 * self.unit_scale * self.options.BONE_SCALE
         TAIL_VECTOR = rt.Point3(BONE_SIZE, 0.0, 0.0)
 
-        bone_layer = model_state.create_layer('__bones__')
+        bone_layer = model_state.create_layer(f'{model_state.display_name}::__bones__')
         bone_layer.setParent(model_state.root_layer)
         model_state.region_layers[-1] = bone_layer
         bone_transforms = self._get_bone_transforms(model)
@@ -138,7 +138,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
                     model_state.region_layers[instance.region_index].addnode(marker_obj)
                 else:
                     if not marker_layer:
-                        marker_layer = model_state.create_layer('__markers__')
+                        marker_layer = model_state.create_layer(f'{model_state.display_name}::__markers__')
                         marker_layer.setParent(model_state.root_layer)
                         model_state.region_layers[-2] = marker_layer
                     marker_layer.addnode(marker_obj)
@@ -159,10 +159,10 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
         model_state.region_layers[model_state.model.regions.index(region)] = region_layer
         return region_layer
 
-    def build_mesh(self, model_state: AutodeskModelState, region_group: Layer, transform: rt.Matrix3, mesh: Mesh, mesh_key: MeshKey, display_name: str) -> None:
+    def build_mesh(self, model_state: AutodeskModelState, region_group: Layer, world_transform: rt.Matrix3, mesh: Mesh, mesh_key: MeshKey, display_name: str) -> None:
         scene = self.scene
 
-        DECOMPRESSION_TRANSFORM = toMatrix3(mesh.vertex_transform) * transform
+        DECOMPRESSION_TRANSFORM = toMatrix3(mesh.vertex_transform)
 
         if mesh_key in self.unique_meshes.keys():
             source = self.unique_meshes.get(mesh_key)
@@ -170,7 +170,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
             _, newNodes = rt.MaxOps.cloneNodes(source, cloneType = rt.Name('instance'), newNodes = pymxs.byref(None))
             copy = cast(rt.Mesh, newNodes[0])
             copy.name = display_name
-            copy.transform = DECOMPRESSION_TRANSFORM
+            copy.transform = DECOMPRESSION_TRANSFORM * world_transform
             region_group.addnode(copy)
             return
 
@@ -194,6 +194,9 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
         self._build_matindex(mc)
         self._build_skin(mc)
         self._build_colors(mc)
+
+        # need to decompress BEFORE applying normals, then apply the instance transform AFTER applying normals
+        mesh_obj.transform = DECOMPRESSION_TRANSFORM * world_transform
 
     def _build_normals(self, mc: MeshContext):
         scene, model_state, mesh, mesh_obj = mc
