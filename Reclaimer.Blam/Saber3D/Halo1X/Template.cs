@@ -84,7 +84,7 @@ namespace Reclaimer.Saber3D.Halo1X
                 {
                     Name = node.MeshName,
                     MeshRange = (model.Meshes.Count, meshCount),
-                    Transform = GetNodeTransform(node)
+                    Transform = node.GetFinalTransform()
                 };
 
                 if (node.ObjectType == ObjectType.StandardMesh)

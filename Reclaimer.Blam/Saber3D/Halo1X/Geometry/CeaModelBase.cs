@@ -27,24 +27,6 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             return reader;
         }
 
-        protected Matrix4x4 GetNodeTransform(NodeGraphBlock0xF000 node)
-        {
-            var tlist = new List<Matrix4x4>();
-            var next = node;
-
-            tlist.Add(Matrix4x4.Identity); //default in case loop doesnt find anything
-
-            do
-            {
-                if (next.Transform.HasValue)
-                    tlist.Add(next.Transform.Value);
-                next = next.ParentNode;
-            }
-            while (next != null);
-
-            return tlist.Aggregate((a, b) => a * b);
-        }
-
         public IEnumerable<IContentProvider<IBitmap>> GetAllBitmaps()
         {
             return from m in Materials

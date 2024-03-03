@@ -79,9 +79,28 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public SceneObjectBoundsBlock0x3501 SceneObjectBounds => GetOptionalChild<SceneObjectBoundsBlock0x3501>();
 
         public NodeGraphBlock0xF000 ParentNode => GetOptionalChild<ParentIdBlock>()?.ParentNode;
+        
         public IEnumerable<NodeGraphBlock0xF000> ChildNodes => IsRootNode
             ? AllDescendants.Where(c => !c.ParentId.HasValue)
             : Owner.NodeGraph.AllDescendants.Where(c => MeshId.HasValue && c.ParentId == MeshId);
+
+        public Matrix4x4 GetFinalTransform()
+        {
+            var tlist = new List<Matrix4x4>();
+            var next = this;
+
+            tlist.Add(Matrix4x4.Identity); //default in case loop doesnt find anything
+
+            do
+            {
+                if (next.Transform.HasValue)
+                    tlist.Add(next.Transform.Value);
+                next = next.ParentNode;
+            }
+            while (next != null);
+
+            return tlist.Aggregate((a, b) => a * b);
+        }
 
         internal override void Read(EndianReader reader)
         {

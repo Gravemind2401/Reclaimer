@@ -40,7 +40,7 @@ namespace Reclaimer.Saber3D.Halo1X
             {
                 //insert the scene transform at the start because it should apply on top of the vertex position transform if applicable
                 var transform = node.SceneObjectBounds?.GetTransform() ?? Matrix4x4.Identity;
-                transform *= GetNodeTransform(node);
+                transform *= node.GetFinalTransform();
 
                 var perm = new ModelPermutation
                 {
