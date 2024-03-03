@@ -59,9 +59,6 @@ namespace Reclaimer.Blam.Halo3
 
         private Model GetModelContent()
         {
-            if (Sections.All(s => s.IndexBufferIndex < 0))
-                throw Exceptions.GeometryHasNoEdges();
-
             if (Cache.CacheType < CacheType.Halo3Delta)
             {
                 foreach (var section in Sections)

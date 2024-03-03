@@ -267,12 +267,12 @@ namespace Reclaimer.Blam.Halo3
             using (var ms = new MemoryStream(args.ResourcePointer.ReadData(PageType.Auto)))
             using (var reader = new EndianReader(ms, args.Cache.ByteOrder))
             {
-                foreach (var section in args.Sections)
+                foreach (var (section, sectionIndex) in args.Sections.Select((s, i) => (s, i)))
                 {
                     var vInfo = vertexBufferInfo.ElementAtOrDefault(section.VertexBufferIndex);
                     var iInfo = indexBufferInfo.ElementAtOrDefault(section.IndexBufferIndex);
 
-                    if (vInfo.VertexCount == 0 || iInfo.DataLength == 0)
+                    if (vInfo.VertexCount == 0)
                         continue;
 
                     var address = entry.ResourceFixups[section.VertexBufferIndex].Offset & 0x0FFFFFFF;
@@ -284,13 +284,21 @@ namespace Reclaimer.Blam.Halo3
                         vb.Add(section.VertexBufferIndex, vertexBuffer);
                     }
 
-                    address = entry.ResourceFixups[vertexBufferInfo.Length * 2 + section.IndexBufferIndex].Offset & 0x0FFFFFFF;
-                    if (!ib.ContainsKey(section.IndexBufferIndex))
+                    if (section.IndexBufferIndex == -1)
                     {
-                        reader.Seek(address, SeekOrigin.Begin);
-                        var data = reader.ReadBytes(iInfo.DataLength);
-                        var indexBuffer = new IndexBuffer(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort)) { Layout = indexBufferInfo[section.IndexBufferIndex].IndexFormat };
-                        ib.Add(section.IndexBufferIndex, indexBuffer);
+                        var indexBuffer = BlamUtils.CreateDecoratorIndexBuffer(vInfo.VertexCount);
+                        ib.Add(-sectionIndex - 1, indexBuffer); //use negative sectionIndex to ensure it doesnt conflict with actual buffer indexes and is unique per mesh
+                    }
+                    else
+                    {
+                        address = entry.ResourceFixups[vertexBufferInfo.Length * 2 + section.IndexBufferIndex].Offset & 0x0FFFFFFF;
+                        if (!ib.ContainsKey(section.IndexBufferIndex))
+                        {
+                            reader.Seek(address, SeekOrigin.Begin);
+                            var data = reader.ReadBytes(iInfo.DataLength);
+                            var indexBuffer = new IndexBuffer(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort)) { Layout = indexBufferInfo[section.IndexBufferIndex].IndexFormat };
+                            ib.Add(section.IndexBufferIndex, indexBuffer);
+                        }
                     }
                 }
             }
@@ -299,7 +307,7 @@ namespace Reclaimer.Blam.Halo3
             {
                 foreach (var b in vb.Values)
                     b.ReverseEndianness();
-                foreach (var b in ib.Values)
+                foreach (var (_, b) in ib.Where(kv => kv.Key >= 0)) //skip negative keys since those are the implied buffers
                     b.ReverseEndianness();
             }
 
@@ -309,14 +317,15 @@ namespace Reclaimer.Blam.Halo3
             var meshList = new List<Mesh>(args.Sections.Count);
             meshList.AddRange(args.Sections.Select((section, sectionIndex) =>
             {
-                if (!vb.ContainsKey(section.VertexBufferIndex) || !ib.ContainsKey(section.IndexBufferIndex))
+                var indexBufferKey = section.IndexBufferIndex == -1 ? -sectionIndex - 1 : section.IndexBufferIndex;
+                if (!vb.ContainsKey(section.VertexBufferIndex) || !ib.ContainsKey(indexBufferKey))
                     return null;
 
                 var mesh = new Mesh
                 {
                     BoneIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
                     VertexBuffer = vb[section.VertexBufferIndex],
-                    IndexBuffer = ib[section.IndexBufferIndex]
+                    IndexBuffer = ib[indexBufferKey]
                 };
 
                 mesh.Segments.AddRange(

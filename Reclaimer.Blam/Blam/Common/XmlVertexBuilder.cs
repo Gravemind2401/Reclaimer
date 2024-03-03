@@ -40,7 +40,7 @@ namespace Reclaimer.Blam.Common
             var layout = vertexLayouts[typeId];
             var vertexBuffer = new VertexBuffer();
 
-            var lastField = layout.Fields.OrderBy(f => f.Offset).Last();
+            var lastField = layout.Fields.Where(f => f.Stream == 0).OrderBy(f => f.Offset).Last();
             var fieldType = GetFieldType(lastField.DataType);
             var vertexSize = layout.Size ?? (lastField.Offset + IBufferable.GetSizeOf(fieldType));
 

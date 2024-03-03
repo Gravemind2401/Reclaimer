@@ -64,7 +64,7 @@ namespace Reclaimer.Geometry
                 GetValue = data => BitConverter.ToUInt16(data);
                 SetValue = (i, data) =>
                 {
-                    if (i > byte.MaxValue)
+                    if (i > ushort.MaxValue)
                         throw new ArgumentOutOfRangeException();
 
                     BitConverter.GetBytes((ushort)i).CopyTo(data);

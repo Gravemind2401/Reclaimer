@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using Reclaimer.Geometry;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace Reclaimer.Blam.Common
 {
@@ -20,20 +22,48 @@ namespace Reclaimer.Blam.Common
                    group i by GetGroupName(name) into g
                    orderby g.Key
                    select g;
+            
+            static string GetSortValue(string value)
+            {
+                var m = RxInstanceNameSort.Match(value);
+                return m.Success ? RxInstanceNumberSort.Replace(m.Value, x => x.Value.PadLeft(3, '0')) : value;
+            }
+
+            static string GetGroupName(string value)
+            {
+                //note the matches are ranked by word count, not string length
+                //this ensures that if only singular words were found, then the leftmost match is the one that gets used
+                var m = RxInstanceGroupName.Matches(value);
+                return m.Count == 0 ? value : m.OfType<Match>().MaxBy(m => m.Value.Count(c => c == '_')).Value;
+            }
         }
 
-        private static string GetSortValue(string value)
+        public static IndexBuffer CreateDecoratorIndexBuffer(int vertexCount)
         {
-            var m = RxInstanceNameSort.Match(value);
-            return m.Success ? RxInstanceNumberSort.Replace(m.Value, x => x.Value.PadLeft(3, '0')) : value;
-        }
+            //decorator models have no explicit index buffer.
+            //instead, the index buffer is implied to be a triangle strip ranging from zero to N-1 where N is the vertex count.
 
-        private static string GetGroupName(string value)
-        {
-            //note the matches are ranked by word count, not string length
-            //this ensures that if only singular words were found, then the leftmost match is the one that gets used
-            var m = RxInstanceGroupName.Matches(value);
-            return m.Count == 0 ? value : m.OfType<Match>().MaxBy(m => m.Value.Count(c => c == '_')).Value;
+            Type indexType;
+            byte[] buffer;
+
+            if (vertexCount > ushort.MaxValue)
+            {
+                indexType = typeof(int);
+                buffer = new byte[vertexCount * sizeof(int)];
+                var indices = MemoryMarshal.Cast<byte, int>(buffer);
+                for (var i = 0; i < indices.Length; i++)
+                    indices[i] = i;
+            }
+            else
+            {
+                indexType = typeof(ushort);
+                buffer = new byte[vertexCount * sizeof(ushort)];
+                var indices = MemoryMarshal.Cast<byte, ushort>(buffer);
+                for (var i = 0; i < indices.Length; i++)
+                    indices[i] = (ushort)i;
+            }
+
+            return new IndexBuffer(buffer, indexType) { Layout = IndexFormat.TriangleStrip };
         }
     }
 }
