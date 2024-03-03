@@ -113,7 +113,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         Model IContentProvider<Model>.GetContent() => GetModelContent();
 
-        Reclaimer.Geometry.Scene IContentProvider<Reclaimer.Geometry.Scene>.GetContent() => Reclaimer.Geometry.Scene.WrapSingleModel(GetModelContent(), CoordinateSystem.HaloCEX);
+        Reclaimer.Geometry.Scene IContentProvider<Reclaimer.Geometry.Scene>.GetContent() => Reclaimer.Geometry.Scene.WrapSingleModel(GetModelContent(), CoordinateSystem.HaloCEX, 0.1f * StandardUnits.Feet);
 
         protected abstract Model GetModelContent();
 

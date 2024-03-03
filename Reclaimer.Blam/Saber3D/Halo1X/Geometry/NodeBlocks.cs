@@ -364,7 +364,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             if (Count == 0)
                 return;
 
-            IndexBuffer = new IndexBuffer(reader.ReadBytes(sizeof(ushort) * 3 * Count), typeof(ushort));
+            IndexBuffer = new IndexBuffer(reader.ReadBytes(sizeof(ushort) * 3 * Count), typeof(ushort)) { Layout = IndexFormat.TriangleList };
         }
 
         protected override object GetDebugProperties() => new { Faces = Count, Size = Header.BlockSize };

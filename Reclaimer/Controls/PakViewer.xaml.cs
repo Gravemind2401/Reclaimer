@@ -106,7 +106,7 @@ namespace Reclaimer.Controls
 
             static bool FilterTag(string filter, IPakItem item)
             {
-                return string.IsNullOrEmpty(filter) || item.Name.Equals(filter, StringComparison.OrdinalIgnoreCase);
+                return string.IsNullOrEmpty(filter) || item.Name.Contains(filter, StringComparison.OrdinalIgnoreCase);
             }
         }
 

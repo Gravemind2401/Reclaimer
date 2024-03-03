@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Reclaimer.Saber3D.Halo1X
 {
-    public class Template : CeaModelBase
+    public class Template : CeaModelBase, INodeGraph
     {
         public string Name => Blocks.OfType<StringBlock0xE502>().SingleOrDefault()?.Value;
         public List<BoneBlock> Bones => Blocks.OfType<BoneListBlock>().SingleOrDefault()?.Bones;
