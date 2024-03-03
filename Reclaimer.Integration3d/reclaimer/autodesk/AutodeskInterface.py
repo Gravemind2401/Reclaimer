@@ -65,6 +65,15 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
     def set_materials(self, materials: List[rt.Material]) -> None:
         self.materials = materials
 
+    def identity_transform(self) -> rt.Matrix3:
+        return rt.Matrix3(1)
+
+    def invert_transform(self, transform: rt.Matrix3) -> rt.Matrix3:
+        return rt.inverse(transform)
+
+    def multiply_transform(self, a: rt.Matrix3, b: rt.Matrix3) -> rt.Matrix3:
+        return b * a
+
     def create_transform(self, transform: Matrix4x4, bone_mode: bool = False) -> rt.Matrix3:
         if not bone_mode:
             return toMatrix3(transform) * rt.scaleMatrix(rt.Point3(self.unit_scale, self.unit_scale, self.unit_scale))
@@ -78,7 +87,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
         state = AutodeskModelState(model, filter, display_name, collection)
         return state
 
-    def apply_transform(self, model_state: AutodeskModelState, transform: rt.Matrix3) -> None:
+    def apply_transform(self, model_state: AutodeskModelState, world_transform: rt.Matrix3) -> None:
         pass
 
     def _get_bone_transforms(self, model: Model) -> List[rt.Matrix3]:

@@ -96,6 +96,15 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         parent.children.link(collection)
         return collection
 
+    def identity_transform(self) -> Matrix:
+        return Matrix.Identity(4)
+
+    def invert_transform(self, transform: Matrix) -> Matrix:
+        return transform.inverted()
+
+    def multiply_transform(self, a: Matrix, b: Matrix) -> Matrix:
+        return a @ b
+
     def create_transform(self, transform: Matrix4x4, bone_mode: bool = False) -> Matrix:
         if not bone_mode:
             return Matrix.Scale(self.unit_scale, 4) @ Matrix(transform).transposed()
@@ -109,8 +118,8 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         state = BlenderModelState(model, filter, display_name, collection)
         return state
 
-    def apply_transform(self, model_state: BlenderModelState, transform: Matrix) -> None:
-        model_state.root_object.matrix_world = transform
+    def apply_transform(self, model_state: BlenderModelState, world_transform: Matrix) -> None:
+        model_state.root_object.matrix_world = world_transform
         for c in model_state.root_object.children:
             c.matrix_parent_inverse = Matrix.Identity(4)
 

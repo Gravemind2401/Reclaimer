@@ -58,13 +58,22 @@ class ViewportInterface(Generic[TMaterial, TCollection, TMatrix, TModelState, TR
     def create_collection(self, display_name: str, parent: TCollection) -> TCollection:
         ...
 
+    def identity_transform(self) -> TMatrix:
+        ...
+
+    def invert_transform(self, transform: TMatrix) -> TMatrix:
+        ...
+
+    def multiply_transform(self, a: TMatrix, b: TMatrix) -> TMatrix:
+        ...
+
     def create_transform(self, transform: Matrix4x4, bone_mode: bool = False) -> TMatrix:
         ...
 
     def init_model(self, model: Model, filter: ModelFilter, collection: TCollection, display_name: str) -> TModelState:
         ...
 
-    def apply_transform(self, model_state: TModelState, transform: TMatrix) -> None:
+    def apply_transform(self, model_state: TModelState, coord_sys: TMatrix, world_transform: TMatrix) -> None:
         ...
 
     def create_bones(self, model_state: TModelState) -> None:

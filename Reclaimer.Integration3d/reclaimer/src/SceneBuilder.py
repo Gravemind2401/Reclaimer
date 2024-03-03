@@ -166,8 +166,14 @@ class SceneBuilder():
             q.put(partial(self._create_markers, model_state))
 
         def transform_func():
-            transform = interface.create_transform(filter_item.transform, True)
-            interface.apply_transform(model_state, transform)
+            target_sys = interface.identity_transform()
+            source_sys = interface.create_transform(self._scene.world_matrix, True)
+            world_transform = interface.create_transform(filter_item.transform, True)
+
+            conversion = interface.multiply_transform(interface.invert_transform(source_sys), target_sys)
+            final_transform = interface.multiply_transform(conversion, world_transform)
+
+            interface.apply_transform(model_state, final_transform)
 
         q.put(partial(transform_func))
         q.put(partial(progress.increment_objects))
@@ -198,7 +204,7 @@ class SceneBuilder():
             for j, pf in enumerate(rf.selected_permutations()):
                 p = pf._permutation
 
-                transform = interface.create_transform(p.transform)
+                world_transform = interface.create_transform(p.transform)
                 for mesh_index in range(p.mesh_index, p.mesh_index + p.mesh_count):
                     mesh = model.meshes[mesh_index]
                     mesh_key = (scene.model_pool.index(model), mesh_index, -1) # TODO: last element reserved for submesh index if mesh splitting enabled
@@ -210,7 +216,7 @@ class SceneBuilder():
                         interface.build_mesh(model_state, region_group, transform, mesh, mesh_key, mesh_name)
                         progress.increment_meshes()
 
-                    q.put(partial(mesh_func, message, model_state, region_group, transform, mesh, mesh_key, mesh_name))
+                    q.put(partial(mesh_func, message, model_state, region_group, world_transform, mesh, mesh_key, mesh_name))
                     total_meshes += 1
 
         return q
