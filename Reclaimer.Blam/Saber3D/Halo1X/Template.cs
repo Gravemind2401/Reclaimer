@@ -1,6 +1,8 @@
 ﻿using Reclaimer.Geometry;
+using Reclaimer.Geometry.Vectors;
 using Reclaimer.Saber3D.Halo1X.Geometry;
 using System.IO;
+using System.Numerics;
 
 namespace Reclaimer.Saber3D.Halo1X
 {
@@ -29,6 +31,22 @@ namespace Reclaimer.Saber3D.Halo1X
         protected override Model GetModelContent()
         {
             var model = new Model { Name = Item.Name };
+
+            model.Bones.AddRange(Bones.Select(n =>
+            {
+                var transform = n.GetNodeBlock().Transform.Value;
+                Matrix4x4.Decompose(transform, out _, out var rotation, out var position);
+
+                return new Bone
+                {
+                    Name = n.Name,
+                    Transform = transform,
+                    ParentIndex = n.ParentIndex,
+                    Position = position,
+                    Rotation = rotation
+                };
+            }));
+
             var materials = GetMaterials();
 
             var defaultRegion = new ModelRegion { Name = Name };
@@ -51,6 +69,17 @@ namespace Reclaimer.Saber3D.Halo1X
                 vb.PositionChannels.Add(compound.Positions.PositionBuffer);
                 if (compound.VertexData?.Count > 0)
                     vb.TextureCoordinateChannels.Add(compound.VertexData.TexCoordsBuffer);
+
+                if (indexData?.BlendIndexBuffer?.Count > 0)
+                {
+                    var indexBuffer = indexData.CreateMappedIndexBuffer();
+                    vb.BlendIndexChannels.Add(indexBuffer);
+
+                    var weightBuffer = new VectorBuffer<UByteN4>(indexBuffer.Count);
+                    for (var i = 0; i < weightBuffer.Count; i++)
+                        weightBuffer[i] = new UByteN4(1f, 0, 0, 0);
+                    vb.BlendWeightChannels.Add(weightBuffer);
+                }
 
                 compoundVertexBuffers.Add(compound.MeshId.Value, vb);
                 compoundIndexBuffers.Add(compound.MeshId.Value, compound.Faces.IndexBuffer);

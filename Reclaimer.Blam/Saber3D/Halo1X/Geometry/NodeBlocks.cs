@@ -102,6 +102,15 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             return tlist.Aggregate((a, b) => a * b);
         }
 
+        public int? GetAncestorBoneIndex()
+        {
+            var node = this;
+            while (node != null && node.ObjectType != ObjectType.Bone)
+                node = node.ParentNode;
+
+            return node?.BoneIndex;
+        }
+
         internal override void Read(EndianReader reader)
         {
             ReadChildren(reader);
@@ -485,7 +494,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     [DataBlock(0x3301)]
     public class BlendIndexBufferBlock : DataBlock
     {
-        //blend indices are relative to NodeIndex and refer to node IDs
+        //blend indices are relative to FirstNodeId and refer to node IDs
         //on skin compound meshes, each vertex has a single blend index (int32?) and is transformed as part of the referenced node
 
         public short FirstNodeId { get; set; }
@@ -493,6 +502,25 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         //UByte4 * vertex count
         public VectorBuffer<UByte4> BlendIndexBuffer { get; set; }
+
+        //creates a copy of the blend index buffer but using actual bone indexes instead of relative node IDs
+        public VectorBuffer<UByte4> CreateMappedIndexBuffer()
+        {
+            var indexMap = (from i in Enumerable.Range(0, NodeCount)
+                            join n in Owner.NodeGraph.AllDescendants on FirstNodeId + i equals n.MeshId
+                            select (Index: i, BoneIndex: n.GetAncestorBoneIndex().Value)).ToDictionary(t => t.Index, t => (byte)t.BoneIndex);
+
+            var indexBytes = (byte[])BlendIndexBuffer.GetBuffer().Clone();
+            var indexBuffer = new VectorBuffer<UByte4>(indexBytes);
+            for (var i = 0; i < indexBuffer.Count; i++)
+            {
+                //doesnt matter that unused indices get mapped since the weights for them will be zero
+                var (x, y, z, w) = indexBuffer[i];
+                indexBuffer[i] = new UByte4(indexMap[x], indexMap[y], indexMap[x], indexMap[w]);
+            }
+
+            return indexBuffer;
+        }
 
         internal override void Read(EndianReader reader)
         {

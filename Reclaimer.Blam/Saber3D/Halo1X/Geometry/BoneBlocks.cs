@@ -1,5 +1,6 @@
 ﻿using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
+using System.Numerics;
 
 namespace Reclaimer.Saber3D.Halo1X.Geometry
 {
@@ -30,13 +31,14 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         public int Index => Owner.Bones.IndexOf(this);
 
-        public string Name
+        public int ParentIndex => GetNodeBlock().ParentNode?.BoneIndex ?? -1;
+
+        public string Name => GetNodeBlock()?.MeshName;
+
+        public NodeGraphBlock0xF000 GetNodeBlock()
         {
-            get
-            {
-                var index = Owner.Bones.IndexOf(this);
-                return Owner.NodeGraph.AllDescendants.FirstOrDefault(c => c.BoneIndex == index)?.MeshName;
-            }
+            var index = Index;
+            return Owner.NodeGraph.AllDescendants.FirstOrDefault(c => c.BoneIndex == index);
         }
 
         internal override void Read(EndianReader reader)

@@ -76,6 +76,15 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             if (block.VertexData?.Count > 0)
                 mesh.VertexBuffer.TextureCoordinateChannels.Add(block.VertexData.TexCoordsBuffer);
 
+            if (block.BlendData == null)
+                mesh.BoneIndex = (byte?)block.GetAncestorBoneIndex();
+            else
+            {
+                var indexBuffer = block.BlendData.IndexData.CreateMappedIndexBuffer();
+                mesh.VertexBuffer.BlendIndexChannels.Add(indexBuffer);
+                mesh.VertexBuffer.BlendWeightChannels.Add(block.BlendData.WeightData.BlendWeightBuffer);
+            }
+
             foreach (var submesh in block.SubmeshData.Submeshes)
             {
                 mesh.Segments.Add(new MeshSegment
