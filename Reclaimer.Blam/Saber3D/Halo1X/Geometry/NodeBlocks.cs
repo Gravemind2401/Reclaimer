@@ -2,7 +2,6 @@
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System.Diagnostics;
-using System.IO;
 using System.Numerics;
 
 namespace Reclaimer.Saber3D.Halo1X.Geometry
@@ -89,15 +88,20 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             var tlist = new List<Matrix4x4>();
             var next = this;
 
-            tlist.Add(Matrix4x4.Identity); //default in case loop doesnt find anything
-
-            do
+            while (next != null)
             {
-                if (next.Transform.HasValue)
-                    tlist.Add(next.Transform.Value);
+                //offset matrices for non-bone objects seem to always be identity and are not world relative, so dont use those ones
+                //also some models have bones but dont have offset matrices
+                if (next.ObjectType == ObjectType.Bone && next.MeshId < Owner.MatrixList?.MatrixCount)
+                {
+                    var offsetMatrix = Owner.MatrixList.Matrices[next.MeshId.Value];
+                    tlist.Add(offsetMatrix.Inverse());
+                    break; //the bone's offset matrix is already world-relative so no need to go further up the hierarchy
+                }
+
+                tlist.Add(next.Transform ?? Matrix4x4.Identity);
                 next = next.ParentNode;
             }
-            while (next != null);
 
             return tlist.Aggregate((a, b) => a * b);
         }

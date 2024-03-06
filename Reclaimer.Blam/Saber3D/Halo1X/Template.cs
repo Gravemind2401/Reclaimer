@@ -72,13 +72,21 @@ namespace Reclaimer.Saber3D.Halo1X
 
                 if (indexData?.BlendIndexBuffer?.Count > 0)
                 {
-                    var indexBuffer = indexData.CreateMappedIndexBuffer();
-                    vb.BlendIndexChannels.Add(indexBuffer);
+                    try
+                    {
+                        var indexBuffer = indexData.CreateMappedIndexBuffer();
+                        vb.BlendIndexChannels.Add(indexBuffer);
 
-                    var weightBuffer = new VectorBuffer<UByteN4>(indexBuffer.Count);
-                    for (var i = 0; i < weightBuffer.Count; i++)
-                        weightBuffer[i] = new UByteN4(1f, 0, 0, 0);
-                    vb.BlendWeightChannels.Add(weightBuffer);
+                        var weightBuffer = new VectorBuffer<UByteN4>(indexBuffer.Count);
+                        for (var i = 0; i < weightBuffer.Count; i++)
+                            weightBuffer[i] = new UByteN4(1f, 0, 0, 0);
+                        vb.BlendWeightChannels.Add(weightBuffer);
+                    }
+                    catch
+                    {
+                        //TODO: sometimes the blend indices point to non-bone objects, even on models with no bones
+                        //probably need to create implied bones for them
+                    }
                 }
 
                 compoundVertexBuffers.Add(compound.MeshId.Value, vb);
