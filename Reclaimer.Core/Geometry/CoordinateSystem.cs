@@ -44,11 +44,17 @@ namespace Reclaimer.Geometry
         public static Matrix4x4 GetTransform(CoordinateSystem origin, CoordinateSystem destination, bool scaled)
         {
             var (origMatrix, destMatrix) = scaled ? (origin.ScaledWorldMatrix, destination.ScaledWorldMatrix) : (origin.WorldMatrix, destination.WorldMatrix);
-            if (origMatrix == destMatrix)
+            return GetTransform(origMatrix, destMatrix);
+        }
+
+        /// <inheritdoc cref="GetTransform(CoordinateSystem, CoordinateSystem, bool)"/>
+        public static Matrix4x4 GetTransform(Matrix4x4 origin, Matrix4x4 destination)
+        {
+            if (origin == destination)
                 return Matrix4x4.Identity;
 
-            return Matrix4x4.Invert(origMatrix, out var inverse)
-                ? inverse * destMatrix
+            return Matrix4x4.Invert(origin, out var inverse)
+                ? destination * inverse
                 : throw new InvalidOperationException("No conversion exists between the given coordinate systems.");
         }
 

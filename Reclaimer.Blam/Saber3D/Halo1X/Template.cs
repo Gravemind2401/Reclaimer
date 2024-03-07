@@ -32,9 +32,29 @@ namespace Reclaimer.Saber3D.Halo1X
         {
             var model = new Model { Name = Item.Name };
 
+            Matrix4x4 GetBoneTransform(int boneIndex)
+            {
+                var bone = Bones.ElementAtOrDefault(boneIndex);
+                if (bone == null)
+                    return Matrix4x4.Identity;
+
+                var block = bone.GetNodeBlock();
+                var transform = block.Transform.Value;
+
+                if (block.MeshId < MatrixList?.MatrixCount)
+                {
+                    var offsetMatrix = MatrixList.Matrices[block.MeshId.Value].Inverse();
+                    if (!offsetMatrix.IsIdentity)
+                        return offsetMatrix;
+                }
+
+                var parent = GetBoneTransform(bone.ParentIndex);
+                return transform * parent;
+            }
+
             model.Bones.AddRange(Bones.Select(n =>
             {
-                var transform = n.GetNodeBlock().Transform.Value;
+                var transform = CoordinateSystem.GetTransform(GetBoneTransform(n.ParentIndex), GetBoneTransform(n.Index));
                 Matrix4x4.Decompose(transform, out _, out var rotation, out var position);
 
                 return new Bone
