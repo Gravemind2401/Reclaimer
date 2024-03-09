@@ -57,8 +57,9 @@ namespace Reclaimer.Geometry.Utilities
             if (descriptorCache.TryGetValue(vectorType, out var descriptor))
                 return descriptor;
 
-            const DescriptorFlags SNorm = DescriptorFlags.Normalized | DescriptorFlags.SignExtended;
-            const DescriptorFlags UNorm = DescriptorFlags.Normalized;
+            const DescriptorFlags snorm = DescriptorFlags.Normalized | DescriptorFlags.SignExtended;
+            const DescriptorFlags unorm = DescriptorFlags.Normalized;
+            const DescriptorFlags nshift = DescriptorFlags.Normalized | DescriptorFlags.SignShifted;
 
             return descriptorCache[vectorType] = vectorType switch
             {
@@ -73,30 +74,34 @@ namespace Reclaimer.Geometry.Utilities
                 //_ when vectorType == typeof(HalfVector4) => new VectorDescriptor(VectorDataType.Real, 2, 4),
 
                 //int16
-                _ when vectorType == typeof(Int16N2) => new VectorDescriptor(VectorDataType.Integer, 2, 2, SNorm),
-                _ when vectorType == typeof(Int16N3) => new VectorDescriptor(VectorDataType.Integer, 2, 3, SNorm),
-                _ when vectorType == typeof(Int16N4) => new VectorDescriptor(VectorDataType.Integer, 2, 4, SNorm),
-                _ when vectorType == typeof(UInt16N2) => new VectorDescriptor(VectorDataType.Integer, 2, 2, UNorm),
-                _ when vectorType == typeof(UInt16N3) => new VectorDescriptor(VectorDataType.Integer, 2, 3, UNorm),
-                _ when vectorType == typeof(UInt16N4) => new VectorDescriptor(VectorDataType.Integer, 2, 4, UNorm),
+                _ when vectorType == typeof(Int16N2) => new VectorDescriptor(VectorDataType.Integer, 2, 2, snorm),
+                _ when vectorType == typeof(Int16N3) => new VectorDescriptor(VectorDataType.Integer, 2, 3, snorm),
+                _ when vectorType == typeof(Int16N4) => new VectorDescriptor(VectorDataType.Integer, 2, 4, snorm),
+                _ when vectorType == typeof(UInt16N2) => new VectorDescriptor(VectorDataType.Integer, 2, 2, unorm),
+                _ when vectorType == typeof(UInt16N3) => new VectorDescriptor(VectorDataType.Integer, 2, 3, unorm),
+                _ when vectorType == typeof(UInt16N4) => new VectorDescriptor(VectorDataType.Integer, 2, 4, unorm),
                 _ when vectorType == typeof(UShort2) => new VectorDescriptor(VectorDataType.Integer, 2, 2),
 
                 //int8
-                _ when vectorType == typeof(ByteN2) => new VectorDescriptor(VectorDataType.Integer, 1, 2, SNorm),
-                _ when vectorType == typeof(ByteN4) => new VectorDescriptor(VectorDataType.Integer, 1, 4, SNorm),
-                _ when vectorType == typeof(UByteN2) => new VectorDescriptor(VectorDataType.Integer, 1, 2, UNorm),
-                _ when vectorType == typeof(UByteN4) => new VectorDescriptor(VectorDataType.Integer, 1, 4, UNorm),
+                _ when vectorType == typeof(ByteN2) => new VectorDescriptor(VectorDataType.Integer, 1, 2, snorm),
+                _ when vectorType == typeof(ByteN4) => new VectorDescriptor(VectorDataType.Integer, 1, 4, snorm),
+                _ when vectorType == typeof(UByteN2) => new VectorDescriptor(VectorDataType.Integer, 1, 2, unorm),
+                _ when vectorType == typeof(UByteN4) => new VectorDescriptor(VectorDataType.Integer, 1, 4, unorm),
                 _ when vectorType == typeof(UByte4) => new VectorDescriptor(VectorDataType.Integer, 1, 4),
 
                 //packed signed
-                _ when vectorType == typeof(DecN4) => new VectorDescriptor(VectorDataType.Packed, 4, 4, SNorm, 10, 10, 10, 2),
-                _ when vectorType == typeof(DHenN3) => new VectorDescriptor(VectorDataType.Packed, 4, 3, SNorm, 10, 11, 11),
-                _ when vectorType == typeof(HenDN3) => new VectorDescriptor(VectorDataType.Packed, 4, 3, SNorm, 11, 11, 10),
+                _ when vectorType == typeof(DecN4) => new VectorDescriptor(VectorDataType.Packed, 4, 4, snorm, 10, 10, 10, 2),
+                _ when vectorType == typeof(DHenN3) => new VectorDescriptor(VectorDataType.Packed, 4, 3, snorm, 10, 11, 11),
+                _ when vectorType == typeof(HenDN3) => new VectorDescriptor(VectorDataType.Packed, 4, 3, snorm, 11, 11, 10),
 
                 //packed unsigned
-                _ when vectorType == typeof(UDecN4) => new VectorDescriptor(VectorDataType.Packed, 4, 4, UNorm, 10, 10, 10, 2),
-                _ when vectorType == typeof(UDHenN3) => new VectorDescriptor(VectorDataType.Packed, 4, 3, UNorm, 10, 11, 11),
-                _ when vectorType == typeof(UHenDN3) => new VectorDescriptor(VectorDataType.Packed, 4, 3, UNorm, 11, 11, 10),
+                _ when vectorType == typeof(UDecN4) => new VectorDescriptor(VectorDataType.Packed, 4, 4, unorm, 10, 10, 10, 2),
+                _ when vectorType == typeof(UDHenN3) => new VectorDescriptor(VectorDataType.Packed, 4, 3, unorm, 10, 11, 11),
+                _ when vectorType == typeof(UHenDN3) => new VectorDescriptor(VectorDataType.Packed, 4, 3, unorm, 11, 11, 10),
+                _ when vectorType == typeof(UxAAC0) => new VectorDescriptor(VectorDataType.Packed, 4, 3, unorm, 10, 10, 12),
+
+                //other packed
+                _ when vectorType == typeof(NxAAA2) => new VectorDescriptor(VectorDataType.Packed, 4, 4, nshift, 10, 10, 10, 2),
 
                 _ => null
             };

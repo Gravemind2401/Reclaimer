@@ -63,7 +63,7 @@ namespace Reclaimer.Blam.Common
             return vectorType switch
             {
                 VectorType.Float16_2 => typeof(HalfVector2),
-                //VectorType.Float16_3 => typeof(HalfVector3),
+                VectorType.Float16_3 => typeof(HalfVector3),
                 VectorType.Float16_4 => typeof(HalfVector4),
                 VectorType.Float32_2 => typeof(RealVector2),
                 VectorType.Float32_3 => typeof(RealVector3),
@@ -75,15 +75,15 @@ namespace Reclaimer.Blam.Common
                 VectorType.UHenDN3 => typeof(UHenDN3),
                 VectorType.UDHenN3 => typeof(UDHenN3),
                 VectorType.UInt8_4 => typeof(UByte4),
-                //VectorType.Int8_N2 => typeof(ByteN2),
+                VectorType.Int8_N2 => typeof(ByteN2),
                 VectorType.Int8_N4 => typeof(ByteN4),
                 VectorType.UInt8_N2 => typeof(UByteN2),
                 VectorType.UInt8_N4 => typeof(UByteN4),
                 VectorType.Int16_N2 => typeof(Int16N2),
-                //VectorType.Int16_N3 => typeof(Int16N3),
+                VectorType.Int16_N3 => typeof(Int16N3),
                 VectorType.Int16_N4 => typeof(Int16N4),
                 VectorType.UInt16_N2 => typeof(UInt16N2),
-                //VectorType.UInt16_N3 => typeof(UInt16N3),
+                VectorType.UInt16_N3 => typeof(UInt16N3),
                 VectorType.UInt16_N4 => typeof(UInt16N4),
                 VectorType.NxAAA2 => typeof(NxAAA2),
                 VectorType.UxAAC0 => typeof(UxAAC0),
@@ -117,6 +117,7 @@ namespace Reclaimer.Blam.Common
         private enum VectorType
         {
             Float16_2,
+            Float16_3,
             Float16_4,
 
             Float32_2,
@@ -132,6 +133,7 @@ namespace Reclaimer.Blam.Common
             DecN4,
             UDecN4,
 
+            Int8_N2,
             Int8_N4,
             UInt8_2,
             UInt8_3,
@@ -146,6 +148,7 @@ namespace Reclaimer.Blam.Common
             UInt16_2,
             UInt16_4,
             UInt16_N2,
+            UInt16_N3,
             UInt16_N4,
 
             D3DColour,
