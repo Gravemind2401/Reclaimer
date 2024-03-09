@@ -20,12 +20,14 @@
     uniformVectors.Add(new VectorDescription("ByteN4", 4, true, 8));
 
     uniformVectors.Add(new VectorDescription("Int16N2", 2, true, 16));
+    uniformVectors.Add(new VectorDescription("Int16N3", 3, true, 16));
     uniformVectors.Add(new VectorDescription("Int16N4", 4, true, 16));
 
     uniformVectors.Add(new VectorDescription("UByteN2", 2, false, 8));
     uniformVectors.Add(new VectorDescription("UByteN4", 4, false, 8));
 
     uniformVectors.Add(new VectorDescription("UInt16N2", 2, false, 16));
+    uniformVectors.Add(new VectorDescription("UInt16N3", 3, false, 16));
     uniformVectors.Add(new VectorDescription("UInt16N4", 4, false, 16));
 
     var fileManager = T4FileManager.Create(this).DisableTemplateMainOutputFile();

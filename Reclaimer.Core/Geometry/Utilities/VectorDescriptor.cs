@@ -74,8 +74,10 @@ namespace Reclaimer.Geometry.Utilities
 
                 //int16
                 _ when vectorType == typeof(Int16N2) => new VectorDescriptor(VectorDataType.Integer, 2, 2, SNorm),
+                _ when vectorType == typeof(Int16N3) => new VectorDescriptor(VectorDataType.Integer, 2, 3, SNorm),
                 _ when vectorType == typeof(Int16N4) => new VectorDescriptor(VectorDataType.Integer, 2, 4, SNorm),
                 _ when vectorType == typeof(UInt16N2) => new VectorDescriptor(VectorDataType.Integer, 2, 2, UNorm),
+                _ when vectorType == typeof(UInt16N3) => new VectorDescriptor(VectorDataType.Integer, 2, 3, UNorm),
                 _ when vectorType == typeof(UInt16N4) => new VectorDescriptor(VectorDataType.Integer, 2, 4, UNorm),
                 _ when vectorType == typeof(UShort2) => new VectorDescriptor(VectorDataType.Integer, 2, 2),
 

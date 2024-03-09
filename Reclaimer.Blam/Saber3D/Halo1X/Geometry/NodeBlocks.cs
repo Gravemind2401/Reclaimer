@@ -227,6 +227,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     {
         None = 0,
         Compressed = 1,
+        HasNormals = 2,
 
         //below are common combinations
 
@@ -296,9 +297,13 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             if (Count == 0)
                 return;
 
+            //when compressed, each vertex takes up 4 shorts
+            //the 4th short contains the normal vector
+            const int stride = sizeof(ushort) * 4;
+
             var bufferBytes = reader.ReadBytes((int)(Header.EndOfBlock - reader.Position));
             PositionBuffer = compressed
-                ? VectorBuffer.Transform3d(new VectorBuffer<Int16N4>(bufferBytes), GetTransform())
+                ? VectorBuffer.Transform3d(new VectorBuffer<Int16N3>(bufferBytes, Count, stride), GetTransform())
                 : new VectorBuffer<RealVector3>(bufferBytes);
 
             if (PositionBuffer.Count != Count)
