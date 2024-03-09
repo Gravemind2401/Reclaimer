@@ -83,27 +83,25 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             ? AllDescendants.Where(c => !c.ParentId.HasValue)
             : Owner.NodeGraph.AllDescendants.Where(c => MeshId.HasValue && c.ParentId == MeshId);
 
+        private Matrix4x4? cachedTransform;
         public Matrix4x4 GetFinalTransform()
         {
-            var tlist = new List<Matrix4x4>();
-            var next = this;
-
-            while (next != null)
+            if (cachedTransform == null)
             {
-                //offset matrices for non-bone objects seem to always be identity and are not world relative, so dont use those ones
-                //also some models have bones but dont have offset matrices
-                if (next.ObjectType == ObjectType.Bone && next.MeshId < Owner.MatrixList?.MatrixCount)
+                if (ObjectType == ObjectType.Bone && MeshId < Owner.MatrixList?.MatrixCount)
                 {
-                    var offsetMatrix = Owner.MatrixList.Matrices[next.MeshId.Value];
-                    tlist.Add(offsetMatrix.Inverse());
-                    break; //the bone's offset matrix is already world-relative so no need to go further up the hierarchy
+                    //the bone's offset matrix is already world-relative so no need to check the parent matrix
+                    var offsetMatrix = Owner.MatrixList.Matrices[MeshId.Value];
+                    cachedTransform = offsetMatrix.Inverse();
                 }
-
-                tlist.Add(next.Transform ?? Matrix4x4.Identity);
-                next = next.ParentNode;
+                else
+                {
+                    var parentTransform = ParentNode?.GetFinalTransform() ?? Matrix4x4.Identity;
+                    cachedTransform = (Transform ?? Matrix4x4.Identity) * parentTransform;
+                }
             }
 
-            return tlist.Aggregate((a, b) => a * b);
+            return cachedTransform.Value;
         }
 
         public int? GetAncestorBoneIndex()

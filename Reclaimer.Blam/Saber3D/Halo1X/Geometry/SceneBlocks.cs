@@ -13,6 +13,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public UnknownBoundsBlock0x2002 Bounds => GetUniqueChild<UnknownBoundsBlock0x2002>();
     }
 
+    //apears to be the bounds of geometry that covers the playable area
     [DataBlock(0x2002, ExpectedSize = 48)]
     public class UnknownBoundsBlock0x2002 : DataBlock
     {
@@ -47,7 +48,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             };
         }
 
-        private string GetBoundsString(RealVector3 value)
+        private static string GetBoundsString(RealVector3 value)
         {
             return $"{value.X,7:F2}, {value.Y,7:F2}, {value.Z,7:F2}";
         }
