@@ -12,8 +12,32 @@ namespace Reclaimer.IO
 
         protected abstract int SizeOf { get; }
 
+        /// <summary>
+        /// The number of elements in the buffer.
+        /// </summary>
         public int Count { get; }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="DataBuffer{T}"/> from a byte array.
+        /// </summary>
+        /// <param name="buffer">
+        /// The byte array representing the buffer to read data from.
+        /// </param>
+        /// <param name="count">
+        /// The number of elements in the buffer.
+        /// </param>
+        /// <param name="start">
+        /// The offset within the byte array to start reading data from. This is where the <paramref name="stride"/> begins from.
+        /// </param>
+        /// <param name="stride">
+        /// The number of bytes between the start of each element in the byte array.
+        /// </param>
+        /// <param name="offset">
+        /// The offset of each element within the <paramref name="stride"/>.
+        /// </param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         protected DataBuffer(byte[] buffer, int count, int start, int stride, int offset)
         {
             this.buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
@@ -41,17 +65,29 @@ namespace Reclaimer.IO
 
         protected Span<byte> CreateSpan(int index) => buffer.AsSpan(start + index * stride + offset, SizeOf);
 
+        /// <summary>
+        /// Gets or sets the element at the specified index.
+        /// </summary>
         public abstract T this[int index] { get; set; }
 
+        /// <inheritdoc cref="this[int]"/>
         public T this[Index index]
         {
             get => this[index.GetOffset(Count)];
             set => this[index.GetOffset(Count)] = value;
         }
 
+        /// <summary>
+        /// Gets the subset of elements within the specified range.
+        /// </summary>
         public IEnumerable<T> this[Range range] => Subset(range);
 
+        /// <inheritdoc cref="this[Range]"/>
         public IEnumerable<T> Subset(Range range) => Extensions.GetRange(this, range);
+        
+        /// <param name="index">The index to begin returning elements from.</param>
+        /// <param name="length">The the number of elements to return.</param>
+        /// <inheritdoc cref="this[Range]"/>
         public IEnumerable<T> Subset(int index, int length) => Extensions.GetSubset(this, index, length);
 
         #region IDataBuffer
