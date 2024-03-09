@@ -53,7 +53,7 @@ namespace Reclaimer.Geometry.Vectors
 {
     /// <summary>
     /// A <#= vector.Dimensions #>-dimensional vector with <#= precision #>-bit normalised components.
-    /// Each axis has a possible value range from <#= vector.IsSigned ? -1 : 0 #>f to 1f.
+    /// <br/> Each axis has a possible value range from <#= vector.IsSigned ? -1 : 0 #>f to 1f.
     /// </summary>
     <# WriteGeneratedCodeAttribute(); #>
     public record struct <#= vector.TypeName #> : <#= vector.InterfaceTypes #>

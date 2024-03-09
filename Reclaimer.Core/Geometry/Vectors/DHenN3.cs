@@ -8,8 +8,8 @@ namespace Reclaimer.Geometry.Vectors
 {
     /// <summary>
     /// A 3-dimensional vector packed into 32 bits.
-    /// Each axis has a precision of 10, 11, 11 bits respectively.
-    /// Each axis has a possible value range from -1f to 1f.
+    /// <br/> Each axis has a precision of 10, 11, 11 bits respectively.
+    /// <br/> Each axis has a possible value range from -1f to 1f.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("PackedVectors.tt", "")]
     public record struct DHenN3 : IVector3, IBufferableVector<DHenN3>

@@ -46,8 +46,8 @@ namespace Reclaimer.Geometry.Vectors
 {
     /// <summary>
     /// A <#= vector.Dimensions #>-dimensional vector packed into <#= vector.BitLength #> bits.
-    /// Each axis has a precision of <#= formattedLayout #> bits respectively.
-    /// Each axis has a possible value range from <#= vector.IsSigned ? -1 : 0 #>f to 1f.
+    /// <br/> Each axis has a precision of <#= formattedLayout #> bits respectively.
+    /// <br/> Each axis has a possible value range from <#= vector.IsSigned ? -1 : 0 #>f to 1f.
     /// </summary>
     <# WriteGeneratedCodeAttribute(); #>
     public record struct <#= vector.TypeName #> : <#= vector.InterfaceTypes #>

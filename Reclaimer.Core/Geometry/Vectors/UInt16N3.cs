@@ -9,7 +9,7 @@ namespace Reclaimer.Geometry.Vectors
 {
     /// <summary>
     /// A 3-dimensional vector with 16-bit normalised components.
-    /// Each axis has a possible value range from 0f to 1f.
+    /// <br/> Each axis has a possible value range from 0f to 1f.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NormalisedVectors.tt", "")]
     public record struct UInt16N3 : IVector3, IBufferableVector<UInt16N3>

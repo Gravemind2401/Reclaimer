@@ -5,8 +5,8 @@ namespace Reclaimer.Geometry.Vectors
 {
     /// <summary>
     /// A 3-dimensional vector packed into 32 bits.
-    /// Each axis has a precision of 10, 10, 12 bits respectively.
-    /// Each axis has a possible value range from 0f to 1f.
+    /// <br/> Each axis has a precision of 10, 10, 12 bits respectively.
+    /// <br/> Each axis has a possible value range from 0f to 1f.
     /// </summary>
     public record struct UxAAC0 : IVector3, IBufferableVector<UxAAC0>
     {

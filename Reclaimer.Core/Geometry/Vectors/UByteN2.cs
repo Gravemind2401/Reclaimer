@@ -9,7 +9,7 @@ namespace Reclaimer.Geometry.Vectors
 {
     /// <summary>
     /// A 2-dimensional vector with 8-bit normalised components.
-    /// Each axis has a possible value range from 0f to 1f.
+    /// <br/> Each axis has a possible value range from 0f to 1f.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NormalisedVectors.tt", "")]
     public record struct UByteN2 : IVector2, IBufferableVector<UByteN2>

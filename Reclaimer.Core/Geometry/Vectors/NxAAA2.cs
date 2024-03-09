@@ -5,8 +5,8 @@ namespace Reclaimer.Geometry.Vectors
 {
     /// <summary>
     /// A 4-dimensional vector packed into 32 bits.
-    /// Each axis has a precision of 10, 10, 10, 2 bits respectively.
-    /// Each axis has a possible value range from -1f to 1f.
+    /// <br/> Each axis has a precision of 10, 10, 10, 2 bits respectively.
+    /// <br/> Each axis has a possible value range from -1f to 1f.
     /// </summary>
     public record struct NxAAA2 : IVector4, IBufferableVector<NxAAA2>
     {
