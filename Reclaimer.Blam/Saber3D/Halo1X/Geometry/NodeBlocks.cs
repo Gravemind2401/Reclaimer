@@ -78,7 +78,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         public SceneObjectBoundsBlock0x3501 SceneObjectBounds => GetOptionalChild<SceneObjectBoundsBlock0x3501>();
 
         public NodeGraphBlock0xF000 ParentNode => GetOptionalChild<ParentIdBlock>()?.ParentNode;
-        
+
         public IEnumerable<NodeGraphBlock0xF000> ChildNodes => IsRootNode
             ? AllDescendants.Where(c => !c.ParentId.HasValue)
             : Owner.NodeGraph.AllDescendants.Where(c => MeshId.HasValue && c.ParentId == MeshId);
@@ -281,6 +281,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         // Count * either [float32 * 3] (uncompressed) or [int16 * 4] (compressed)
         public IVectorBuffer PositionBuffer { get; set; }
+        public IVectorBuffer NormalBuffer { get; set; }
 
         public Matrix4x4 GetTransform() => Matrix4x4.CreateScale(Scale) * Matrix4x4.CreateTranslation(Translation);
 
@@ -288,7 +289,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
         {
             Count = reader.ReadInt32();
 
-            var compressed = ((NodeGraphBlock0xF000)ParentBlock).MeshFlags?.Flags.HasFlag(MeshFlags.Compressed) ?? false;
+            var flags = ((NodeGraphBlock0xF000)ParentBlock).MeshFlags?.Flags ?? default;
+            var compressed = flags.HasFlag(MeshFlags.Compressed);
 
             (Translation, Scale) = compressed
                 ? (new Vector3(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16()), new Vector3(reader.ReadInt16(), reader.ReadInt16(), reader.ReadInt16()))
@@ -302,9 +304,16 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             const int stride = sizeof(ushort) * 4;
 
             var bufferBytes = reader.ReadBytes((int)(Header.EndOfBlock - reader.Position));
-            PositionBuffer = compressed
-                ? VectorBuffer.Transform3d(new VectorBuffer<Int16N3>(bufferBytes, Count, stride), GetTransform())
-                : new VectorBuffer<RealVector3>(bufferBytes);
+            if (compressed)
+            {
+                PositionBuffer = VectorBuffer.Transform3d(new VectorBuffer<Int16N3>(bufferBytes, Count, stride), GetTransform());
+                if (flags.HasFlag(MeshFlags.HasNormals))
+                    NormalBuffer = new VectorBuffer<NormalVector>(bufferBytes, Count, stride, sizeof(ushort) * 3);
+            }
+            else
+            {
+                PositionBuffer = new VectorBuffer<RealVector3>(bufferBytes);
+            }
 
             if (PositionBuffer.Count != Count)
                 Debugger.Break();

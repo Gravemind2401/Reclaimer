@@ -73,6 +73,10 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             };
 
             mesh.VertexBuffer.PositionChannels.Add(block.Positions.PositionBuffer);
+
+            if (block.Positions.NormalBuffer != null)
+                mesh.VertexBuffer.NormalChannels.Add(block.Positions.NormalBuffer);
+
             if (block.VertexData?.Count > 0)
                 mesh.VertexBuffer.TextureCoordinateChannels.Add(block.VertexData.TexCoordsBuffer);
 
