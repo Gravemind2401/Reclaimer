@@ -32,6 +32,19 @@ namespace Reclaimer.Blam.Halo3
 
         CubemapLayout IBitmap.CubeLayout => Cache.Metadata.IsMcc ? CacheFactory.MccGen3CubeLayout : CacheFactory.Gen3CubeLayout;
 
+        float IBitmap.GetSubmapGamma(int index)
+        {
+            Exceptions.ThrowIfIndexOutOfRange(index, Bitmaps.Count);
+
+            return Bitmaps[index].Curve switch
+            {
+                ColorSpace.Linear => 1f,
+                ColorSpace.Gamma2 => 2f,
+                ColorSpace.sRGB => 2.2f,
+                _ => 1.95f //xRGB, Unknown
+            };
+        }
+
         public DdsImage ToDds(int index)
         {
             Exceptions.ThrowIfIndexOutOfRange(index, Bitmaps.Count);

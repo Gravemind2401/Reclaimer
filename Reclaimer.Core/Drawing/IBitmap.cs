@@ -8,6 +8,7 @@ namespace Reclaimer.Drawing
 
         int SubmapCount { get; }
         CubemapLayout CubeLayout { get; }
+        float GetSubmapGamma(int index) => 2.2f; //default to sRGB
         DdsImage ToDds(int index);
     }
 }

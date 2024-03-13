@@ -36,6 +36,19 @@ namespace Reclaimer.Blam.HaloReach
 
         CubemapLayout IBitmap.CubeLayout => Cache.Metadata.IsMcc ? CacheFactory.MccGen3CubeLayout : CacheFactory.Gen3CubeLayout;
 
+        float IBitmap.GetSubmapGamma(int index)
+        {
+            Exceptions.ThrowIfIndexOutOfRange(index, Bitmaps.Count);
+
+            return Bitmaps[index].Curve switch
+            {
+                ColorSpace.Linear => 1f,
+                ColorSpace.Gamma2 => 2f,
+                ColorSpace.sRGB => 2.2f,
+                _ => 1.95f //xRGB, Unknown
+            };
+        }
+
         public DdsImage ToDds(int index)
         {
             Exceptions.ThrowIfIndexOutOfRange(index, Bitmaps.Count);
@@ -159,7 +172,7 @@ namespace Reclaimer.Blam.HaloReach
 
         [Offset(21, MaxVersion = (int)CacheType.HaloReachRetail)]
         [Offset(17, MinVersion = (int)CacheType.HaloReachRetail)]
-        public byte Curve { get; set; }
+        public ColorSpace Curve { get; set; }
 
         [Offset(22, MaxVersion = (int)CacheType.HaloReachRetail)]
         [Offset(18, MinVersion = (int)CacheType.HaloReachRetail)]
@@ -249,5 +262,15 @@ namespace Reclaimer.Blam.HaloReach
         DXT5a_alpha = 42,
         DXT5a_mono = 43,
         DXN_mono_alpha = 44
+    }
+
+    public enum ColorSpace : byte
+    {
+        Unknown = 0, //same as xRGB
+        xRGB = 1, //1.95
+        Gamma2 = 2, //2.0
+        Linear = 3, //1.0
+        OffsetLog = 4, //???
+        sRGB = 5 //2.2
     }
 }

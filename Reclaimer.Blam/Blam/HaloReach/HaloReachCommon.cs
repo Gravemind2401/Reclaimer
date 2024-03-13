@@ -2,12 +2,10 @@
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Common.Gen3;
 using Reclaimer.Blam.Properties;
-using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System.IO;
-using System.Numerics;
 
 namespace Reclaimer.Blam.HaloReach
 {
@@ -44,9 +42,11 @@ namespace Reclaimer.Blam.HaloReach
     {
         public static IEnumerable<Material> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
         {
-            for (var i = 0; i < shaders.Count; i++)
+            var definitions = new Dictionary<int, render_method_definition>();
+            var bitmaps = new Dictionary<int, bitmap>();
+
+            foreach (var tag in shaders.Select(s => s.ShaderReference.Tag))
             {
-                var tag = shaders[i].ShaderReference.Tag;
                 if (tag == null)
                 {
                     yield return null;
@@ -66,52 +66,21 @@ namespace Reclaimer.Blam.HaloReach
                     continue;
                 }
 
+                if (!definitions.TryGetValue(shader.RenderMethodDefinitionReference.TagId, out var rmdf))
+                    definitions.Add(shader.RenderMethodDefinitionReference.TagId, rmdf = shader.RenderMethodDefinitionReference.Tag.ReadMetadata<render_method_definition>());
+
+                var shaderOptions = (from t in rmdf.Categories.Zip(shader.ShaderOptions)
+                                     where t.Second.OptionIndex >= 0 && t.Second.OptionIndex < t.First.Options.Count
+                                     select new
+                                     {
+                                         Category = t.First.Name.Value,
+                                         Option = t.First.Options[t.Second.OptionIndex].Name.Value
+                                     }).ToDictionary(o => o.Category, o => o.Option);
+
                 var props = shader.ShaderProperties[0];
                 var template = props.TemplateReference.Tag.ReadMetadata<render_method_template>();
-                for (var j = 0; j < template.Usages.Count; j++)
-                {
-                    var usage = template.Usages[j].Value;
-                    var matUsage = ShaderParameters.UsageLookup.FirstOrNull(p => usage.StartsWith(p.Key))?.Value;
-                    if (matUsage == null)
-                        continue;
 
-                    var map = props.ShaderMaps[j];
-                    var bitmTag = map.BitmapReference.Tag;
-                    if (bitmTag == null)
-                        continue;
-
-                    var tile = map.TilingIndex >= props.TilingData.Count
-                        ? (RealVector4?)null
-                        : props.TilingData[map.TilingIndex];
-
-                    material.TextureMappings.Add(new TextureMapping
-                    {
-                        Usage = matUsage,
-                        Tiling = new Vector2(tile?.X ?? 1, tile?.Y ?? 1),
-                        Texture = new Texture
-                        {
-                            Id = bitmTag.Id,
-                            ContentProvider = bitmTag.ReadMetadata<bitmap>()
-                        }
-                    });
-                }
-
-                for (var j = 0; j < template.Arguments.Count; j++)
-                {
-                    if (!ShaderParameters.TintLookup.TryGetValue(template.Arguments[j].Value, out var tintUsage))
-                        continue;
-
-                    material.Tints.Add(new MaterialTint
-                    {
-                        Usage = tintUsage,
-                        Color = System.Drawing.Color.FromArgb(
-                            (byte)(props.TilingData[j].W * byte.MaxValue),
-                            (byte)(props.TilingData[j].X * byte.MaxValue),
-                            (byte)(props.TilingData[j].Y * byte.MaxValue),
-                            (byte)(props.TilingData[j].Z * byte.MaxValue)
-                        )
-                    });
-                }
+                Gen3MaterialHelper.PopulateTextureMappings(bitmaps, material, shaderOptions, template.Usages, template.Arguments, props.TilingData, i => props.ShaderMaps[i].BitmapReference.Tag);
 
                 if (tag.ClassCode == "rmtr")
                     material.Flags |= (int)MaterialFlags.TerrainBlend;

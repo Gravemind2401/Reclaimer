@@ -170,11 +170,18 @@ namespace Reclaimer.Geometry.Utilities
 
                 if (EmbedTextures)
                 {
-                    var dds = texture.GetDds();
-                    using (var ms = new MemoryStream())
+                    try
                     {
-                        dds.WriteToStream(ms, System.Drawing.Imaging.ImageFormat.Png);
-                        WriteData(ms.ToArray());
+                        var dds = texture.GetDds();
+                        using (var ms = new MemoryStream())
+                        {
+                            dds.WriteToStream(ms, System.Drawing.Imaging.ImageFormat.Png);
+                            WriteData(ms.ToArray());
+                        }
+                    }
+                    catch
+                    {
+                        return;
                     }
                 }
             }

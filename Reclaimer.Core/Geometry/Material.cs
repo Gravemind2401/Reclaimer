@@ -48,11 +48,21 @@ namespace Reclaimer.Geometry
         public DdsImage GetDds() => ContentProvider?.GetContent().ToDds(0);
     }
 
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public class MaterialTint
     {
         public string Usage { get; set; }
         public ChannelMask BlendChannel { get; set; }
         public Color Color { get; set; }
+
+        private string GetDebuggerDisplay()
+        {
+            var result = $"[{Usage}] {{{Color}}}";
+            if (BlendChannel > 0)
+                result = $"[{BlendChannel.ToString()[0]}] {result}";
+
+            return result;
+        }
     }
 
     public static class AlphaMode
