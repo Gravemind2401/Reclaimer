@@ -100,7 +100,7 @@ namespace Reclaimer.Blam.Halo5
         /// <param name="globalTagId">The global identifier used to identify the same tag across different modules.</param>
         public IEnumerable<ModuleItem> FindAlternateTagInstances(int globalTagId)
         {
-            return tagIndex.InstancesById.GetValueOrDefault(globalTagId);
+            return tagIndex.ItemsById.GetValueOrDefault(globalTagId);
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Reclaimer.Blam.Halo5
         /// If the tag is contained in multiple modules, the value returned will come from the first linked module that contained the matching tag.
         /// </remarks>
         /// <param name="globalTagId">The global identifier used to identify the same tag across different modules.</param>
-        public ModuleItem GetItemById(int globalTagId) => tagIndex.ItemsById.GetValueOrDefault(globalTagId);
+        public ModuleItem GetItemById(int globalTagId) => tagIndex.ItemsById.GetValueOrDefault(globalTagId)?[0];
 
         /// <summary>
         /// Returns all tags matching the specified tag class across this module and all linked modules.
@@ -123,8 +123,8 @@ namespace Reclaimer.Blam.Halo5
         /// <param name="classCode">The <see cref="TagClass.ClassCode"/> value to match on.</param>
         public IEnumerable<ModuleItem> GetItemsByClass(string classCode)
         {
-            return tagIndex.ItemsByClass.TryGetValue(classCode, out var moduleItem)
-                ? moduleItem
+            return tagIndex.ItemsByClass.TryGetValue(classCode, out var classItems)
+                ? classItems.Select(g => g[0])
                 : Enumerable.Empty<ModuleItem>();
         }
 
@@ -132,23 +132,21 @@ namespace Reclaimer.Blam.Halo5
         /// Returns all unique tag instances from this module and all linked modules.
         /// </summary>
         /// <remarks>
-        /// When the same tag is contained in multiple modules, only first copy of each tag will be returned, based on the order the modules were linked in.
+        /// When the same tag is contained in multiple modules, only first copy of each tag will be returned, based on the module file name descending.
         /// </remarks>
-        public IEnumerable<ModuleItem> GetLinkedItems() => tagIndex.ItemsById.Values;
+        public IEnumerable<ModuleItem> GetLinkedItems() => tagIndex.ItemsById.Values.Select(g => g[0]);
 
         private class TagIndex
         {
             public Dictionary<string, TagClass> Classes { get; }
-            public Dictionary<int, ModuleItem> ItemsById { get; }
-            public Dictionary<string, List<ModuleItem>> ItemsByClass { get; }
-            public Dictionary<int, List<ModuleItem>> InstancesById { get; }
+            public Dictionary<int, ModuleItemGroup> ItemsById { get; }
+            public Dictionary<string, List<ModuleItemGroup>> ItemsByClass { get; }
 
             public TagIndex(IEnumerable<ModuleItem> items)
             {
                 Classes = new Dictionary<string, TagClass>();
-                ItemsById = new Dictionary<int, ModuleItem>();
-                ItemsByClass = new Dictionary<string, List<ModuleItem>>();
-                InstancesById = new Dictionary<int, List<ModuleItem>>();
+                ItemsById = new Dictionary<int, ModuleItemGroup>();
+                ItemsByClass = new Dictionary<string, List<ModuleItemGroup>>();
 
                 ImportTags(items);
             }
@@ -160,18 +158,17 @@ namespace Reclaimer.Blam.Halo5
                     if (!Classes.ContainsKey(item.ClassCode))
                     {
                         Classes.Add(item.ClassCode, new TagClass(item.ClassCode, item.ClassName));
-                        ItemsByClass.Add(item.ClassCode, new List<ModuleItem>());
+                        ItemsByClass.Add(item.ClassCode, new List<ModuleItemGroup>());
                     }
 
-                    if (!ItemsById.ContainsKey(item.GlobalTagId))
+                    if (ItemsById.TryGetValue(item.GlobalTagId, out var group))
+                        group.Add(item);
+                    else
                     {
-                        ItemsById.Add(item.GlobalTagId, item);
-                        ItemsByClass[item.ClassCode].Add(item);
-                        InstancesById.Add(item.GlobalTagId, new List<ModuleItem> { item });
+                        group = new ModuleItemGroup(item);
+                        ItemsById.Add(item.GlobalTagId, group);
+                        ItemsByClass[item.ClassCode].Add(group);
                     }
-
-                    if (!InstancesById[item.GlobalTagId].Any(i => i.Module.FileName == item.Module.FileName))
-                        InstancesById[item.GlobalTagId].Add(item);
                 }
             }
         }
