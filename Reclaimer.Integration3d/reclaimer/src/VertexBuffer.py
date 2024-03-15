@@ -25,23 +25,38 @@ class VertexBuffer:
         The returned weights will be normalised and all index/weight channels will be accounted for.
         '''
 
-        # TODO: rigid_boned doesnt have weights
-        # TODO: filter zero weights/indices out before returning the tuples (set 1.0 weights for rigid_boned at the same time)
+        dummy_weights = [1.0]
+        rigid = len(self.blendweight_channels) == 0
+
         if len(self.blendindex_channels) > 1:
             # join the buffers together so we have a single list of indices and a single list of weights
             # where the number of indices/weights per vertex will be the sum across all buffers
             blend_indicies = list(list(itertools.chain(*vectors)) for vectors in zip(*self.blendindex_channels))
-            blend_weights = list(list(itertools.chain(*vectors)) for vectors in zip(*self.blendweight_channels))
+            if not rigid:
+                blend_weights = list(list(itertools.chain(*vectors)) for vectors in zip(*self.blendweight_channels))
         else:
             blend_indicies = self.blendindex_channels[0]
-            blend_weights = self.blendweight_channels[0]
+            if not rigid:
+                blend_weights = self.blendweight_channels[0]
 
         for i in range(len(self.position_channels[0])):
-            # normalise the weights before returning them
-            weight_sum = sum(blend_weights[i])
-            normalised = list(w / weight_sum for w in blend_weights[i]) if weight_sum > 0 else blend_weights[i]
+            indices = blend_indicies[i]
+            weights = dummy_weights if rigid else blend_weights[i]
 
-            yield (i, blend_indicies[i], normalised)
+            if rigid:
+                # only take the first index (dummy_weights already only has one weight)
+                indices = [indices[0]]
+            elif 0 in weights:
+                # filter out any zero weighted indices
+                indices = list(indices[i] for i, w in enumerate(weights) if w > 0)
+                weights = list(weights[i] for i, w in enumerate(weights) if w > 0)
+
+            # normalise the weights before returning them
+            weight_sum = sum(weights)
+            if weight_sum > 0:
+                weights = list(w / weight_sum for w in weights)
+
+            yield (i, indices, weights)
 
 
 class VectorBuffer(Sequence):

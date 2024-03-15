@@ -290,9 +290,8 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
                 bi.clear()
                 bw.clear()
                 for i, w in enumerate(blend_weights):
-                    if w > 0:
-                        bi.append(model_state.maxbones[blend_indicies[i]])
-                        bw.append(w)
+                    bi.append(model_state.maxbones[blend_indicies[i]])
+                    bw.append(w)
                 rt.SkinOps.replaceVertexWeights(modifier, vi + 1, bi, bw)
 
         rt.SkinOps.removeUnusedBones(modifier)

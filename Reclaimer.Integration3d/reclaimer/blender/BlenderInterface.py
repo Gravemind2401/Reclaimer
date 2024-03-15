@@ -340,8 +340,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
                 mesh_obj.vertex_groups.new(name=bone.name)
             for vi, blend_indicies, blend_weights in vertex_buffer.enumerate_blendpairs():
                 for bi, bw in zip(blend_indicies, blend_weights):
-                    if bw > 0:
-                        mesh_obj.vertex_groups[bi].add([vi], bw, 'ADD')
+                    mesh_obj.vertex_groups[bi].add([vi], bw, 'ADD')
 
     def _build_colors(self, mc: MeshContext, faces: List[Triangle]):
         scene, model_state, mesh, mesh_data, mesh_obj = mc
