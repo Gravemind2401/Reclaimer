@@ -38,6 +38,7 @@ class MaxRmfDialog(RmfDialog):
                     task_queue = builder.begin_create_scene()
                     while not task_queue.finished():
                         task_queue.execute_next()
+                    error = task_queue.error
                 except Exception as e:
                     error = e
 

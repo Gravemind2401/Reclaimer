@@ -18,13 +18,15 @@ __all__ = [
 class TaskQueue():
     stack: Stack
     queue: Queue
+    error: Exception
 
     def __init__(self, initial: Queue) -> None:
         self.stack = Stack()
         self.queue = initial
+        self.error = None
 
     def finished(self) -> bool:
-        return self.queue.empty() and self.stack.empty()
+        return self.error or (self.queue.empty() and self.stack.empty())
 
     def execute_batch(self, timeout: float = 0.0167):
         t = time()
@@ -37,18 +39,26 @@ class TaskQueue():
             self.queue = self.stack.get()
 
         # no work remaining
-        if self.queue.empty():
+        if self.finished():
             return
 
-        # execute the task
-        task = self.queue.get()
-        result = task()
+        try:
+            # execute the task
+            task = self.queue.get()
+            result = task()
 
-        # if the task returns another queue, put the current one onto the stack
-        # and execute the new queue first before continuing
-        if isinstance(result, Queue):
-            self.stack.put(self.queue)
-            self.queue = result
+            # if the task returns another queue, put the current one onto the stack
+            # and execute the new queue first before continuing
+            if isinstance(result, Queue):
+                self.stack.put(self.queue)
+                self.queue = result
+        except Exception as ex:
+            # record the error and purge the queues
+            self.error = ex
+            while not self.stack.empty():
+                self.stack.get()
+            while not self.queue.empty():
+                self.queue.get()
 
 
 class SceneBuilder():
@@ -74,7 +84,7 @@ class SceneBuilder():
         self._progress = callback
 
     def begin_create_scene(self) -> TaskQueue:
-        interface, scene, filter, options, progress = self._interface, self._scene, self._filter, self._options, self._progress
+        interface, scene, filter, options = self._interface, self._scene, self._filter, self._options
 
         self._start_time = time()
 
@@ -96,12 +106,11 @@ class SceneBuilder():
         for model in filter.selected_models():
             q.put(partial(self._create_model, model, root_collection))
 
-        q.put(partial(progress.complete))
-
         return TaskQueue(q)
 
     def end_create_scene(self):
         self._interface.post_import()
+        self._progress.complete()
         end_time = time()
         seconds = round(end_time - self._start_time, 3)
         print(f'finished in {seconds} seconds')

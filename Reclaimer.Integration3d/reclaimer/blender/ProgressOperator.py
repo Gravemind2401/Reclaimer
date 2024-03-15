@@ -35,6 +35,10 @@ class RmfProgressOperator(QtWindowEventLoop):
         def execute_next():
             if task_queue.finished() or dialog.cancel_requested:
                 builder.end_create_scene()
+                if task_queue.error:
+                    self.report({'ERROR'}, 'An error occured during the import. See the console window for details.')
+                    print('\n===============\nERROR DETAILS\n===============\n')
+                    raise task_queue.error
                 return
 
             task_queue.execute_batch()
