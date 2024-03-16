@@ -1,5 +1,4 @@
 ﻿using Reclaimer.IO;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 
@@ -11,14 +10,14 @@ namespace Reclaimer.Saber3D.Common
             : base(filePath)
         { }
 
-        protected override IList<(int, int, int)> ReadChunks()
+        protected override IList<ChunkLocator> ReadChunks()
         {
             using var reader = new EndianReader(BaseStream, ByteOrder.LittleEndian, true);
 
             reader.Seek(0, SeekOrigin.Begin);
 
             var chunkCount = reader.ReadInt32();
-            var chunks = new (int, int, int)[chunkCount];
+            var chunks = new ChunkLocator[chunkCount];
 
             var offsets = new int[chunkCount + 1];
             offsets[^1] = (int)BaseStream.Length;
@@ -33,7 +32,7 @@ namespace Reclaimer.Saber3D.Common
                 var chunkAddress = (int)reader.Position;
                 var chunkSize = offsets[i + 1] - chunkAddress;
 
-                chunks[i] = (chunkAddress, chunkSize, dataSize);
+                chunks[i] = new ChunkLocator(chunkAddress, chunkSize, dataSize);
             }
 
             //attempt to correct for x360 files except they arent zlib?

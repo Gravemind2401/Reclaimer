@@ -7,8 +7,9 @@ namespace Reclaimer.Saber3D.Halo1X
 {
     public class PakFile : IPakFile
     {
-        private const string PakStreamFileName = "pak_stream_decompressed.s3dpak";
+        private string PakStreamFileName => isCompressed ? "pak_stream.s3dpak" : "pak_stream_decompressed.s3dpak";
 
+        private readonly bool isCompressed;
         private readonly ILookup<PakItemType, PakItem> itemsByType;
         private PakFile pakStream;
 
@@ -21,6 +22,27 @@ namespace Reclaimer.Saber3D.Halo1X
                 throw new FileNotFoundException();
 
             FileName = fileName;
+
+            using (var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read))
+            using (var reader = new EndianReader(fs, ByteOrder.LittleEndian))
+            {
+                //read the first few fields as if it was uncompressed and see if it makes sense
+
+                //in compressed files this will still be a count
+                var itemCount = reader.ReadInt32();
+
+                //in compressed files this will still be an address
+                var address = reader.ReadInt32();
+
+                //in compressed files this will be an address, which would also look about right as a size so its still ambiguous
+                var size = reader.ReadInt32();
+                
+                //in compressed files this would the third chunk address - way too big for a string length
+                //can also be zero in compressed files that only have one chunk
+                var nameLength = reader.ReadInt32();
+
+                isCompressed = nameLength <= 0 || nameLength > 1024;
+            }
 
             using (var reader = CreateReader())
             {
@@ -36,10 +58,11 @@ namespace Reclaimer.Saber3D.Halo1X
 
         public DependencyReader CreateReader()
         {
-            var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read);
-            var reader = new DependencyReader(fs, ByteOrder.LittleEndian);
+            var dataStream = isCompressed
+                ? (Stream)new PakStream(FileName)
+                : new FileStream(FileName, FileMode.Open, FileAccess.Read);
 
-            return reader;
+            return new DependencyReader(dataStream, ByteOrder.LittleEndian);
         }
 
         public PakItem FindItem(PakItemType itemType, string name, bool external)

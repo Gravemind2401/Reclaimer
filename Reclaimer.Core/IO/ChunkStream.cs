@@ -1,14 +1,11 @@
-﻿using System;
-using System.Buffers;
-using System.Collections.Generic;
+﻿using System.Buffers;
 using System.IO;
-using System.Linq;
 
 namespace Reclaimer.IO
 {
     public abstract class ChunkStream : Stream
     {
-        private readonly ChunkDescriptor[] chunks;
+        private readonly ChunkAddressMapping[] chunks;
         private readonly ChunkTracker chunkTracker;
 
         //set initial value to true to ensure first read triggers a chunk update
@@ -34,8 +31,7 @@ namespace Reclaimer.IO
 
         public ChunkStream(Stream baseStream)
         {
-            if (baseStream == null)
-                throw new ArgumentNullException(nameof(baseStream));
+            ArgumentNullException.ThrowIfNull(baseStream);
 
             if (!baseStream.CanRead || !baseStream.CanSeek)
                 throw new NotSupportedException($"{nameof(baseStream)} must be readable and seekable");
@@ -44,13 +40,13 @@ namespace Reclaimer.IO
             chunkTracker = new ChunkTracker(this);
 
             var chunkDetails = ReadChunks();
-            chunks = new ChunkDescriptor[chunkDetails.Count];
+            chunks = new ChunkAddressMapping[chunkDetails.Count];
 
             var destAddress = 0;
             for (var i = 0; i < chunkDetails.Count; i++)
             {
                 var (sourceAddress, compressedSize, uncompressedSize) = chunkDetails[i];
-                chunks[i] = new ChunkDescriptor(sourceAddress, compressedSize, destAddress, uncompressedSize);
+                chunks[i] = new ChunkAddressMapping(sourceAddress, compressedSize, destAddress, uncompressedSize);
                 destAddress += uncompressedSize;
             }
 
@@ -77,8 +73,7 @@ namespace Reclaimer.IO
 
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if (buffer == null)
-                throw new ArgumentNullException(nameof(buffer));
+            ArgumentNullException.ThrowIfNull(buffer);
 
             if (offset < 0 || offset >= buffer.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
@@ -87,7 +82,7 @@ namespace Reclaimer.IO
                 throw new ArgumentOutOfRangeException(nameof(count));
 
             if (position < 0)
-                throw new ArgumentOutOfRangeException("Attempted to read before the beginning of the stream");
+                throw new InvalidOperationException("Attempted to read before the beginning of the stream");
 
             if (position >= Length)
                 return 0;
@@ -119,24 +114,26 @@ namespace Reclaimer.IO
         public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
         public override void Flush() => throw new NotSupportedException();
 
-        protected abstract IList<(int SourceAddress, int CompressedSize, int UncompressedSize)> ReadChunks();
+        protected abstract IList<ChunkLocator> ReadChunks();
         protected abstract Stream GetChunkStream(byte[] chunkData);
 
-        private record struct ChunkDescriptor(int SourceAddress, int CompressedSize, int DestAddress, int UncompressedSize)
+        protected record struct ChunkLocator(int SourceAddress, int CompressedSize, int UncompressedSize);
+
+        private record struct ChunkAddressMapping(int SourceAddress, int CompressedSize, int DestAddress, int UncompressedSize)
         {
-            public bool Contains(int address) => address >= DestAddress && address < DestAddress + UncompressedSize;
+            public readonly bool ContainsAddress(int address) => address >= DestAddress && address < DestAddress + UncompressedSize;
         }
 
         private sealed class ChunkTracker
         {
             private readonly ChunkStream sourceStream;
 
-            public ChunkDescriptor CurrentChunk { get; private set; }
+            public ChunkAddressMapping CurrentChunk { get; private set; }
             public byte[] CompressedData { get; private set; }
             public Stream ChunkStream { get; private set; }
 
             public long InnerPosition => sourceStream.Position - CurrentChunk.DestAddress;
-            public bool IsEndOfChunk => !CurrentChunk.Contains((int)sourceStream.Position);
+            public bool IsEndOfChunk => !CurrentChunk.ContainsAddress((int)sourceStream.Position);
 
             public ChunkTracker(ChunkStream sourceStream)
             {
@@ -145,7 +142,7 @@ namespace Reclaimer.IO
 
             public void PrepareChunk()
             {
-                var nextChunk = sourceStream.chunks.First(c => c.Contains((int)sourceStream.Position));
+                var nextChunk = sourceStream.chunks.First(c => c.ContainsAddress((int)sourceStream.Position));
                 if (nextChunk != CurrentChunk)
                 {
                     CloseChunk();
