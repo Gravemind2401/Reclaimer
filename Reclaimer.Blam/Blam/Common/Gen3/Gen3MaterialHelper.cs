@@ -1,8 +1,9 @@
-﻿using Reclaimer.Geometry.Vectors;
+﻿using Reclaimer.Drawing;
 using Reclaimer.Geometry;
-using System.Numerics;
+using Reclaimer.Geometry.Compatibility;
+using Reclaimer.Geometry.Vectors;
 using Reclaimer.Utilities;
-using Reclaimer.Drawing;
+using System.Numerics;
 using System.Text.RegularExpressions;
 
 namespace Reclaimer.Blam.Common.Gen3
@@ -12,7 +13,7 @@ namespace Reclaimer.Blam.Common.Gen3
         [GeneratedRegex("^(\\w+?)(?:_m_(\\d))?$")]
         private static partial Regex UsageRegex();
 
-        public static void PopulateTextureMappings<TBitmap>(Dictionary<int, TBitmap> bitmapCache, Material material, Dictionary<string, string> shaderOptions, BlockCollection<StringId> usages, BlockCollection<StringId> arguments, BlockCollection<RealVector4> tilingData, Func<int, IIndexItem> tagFunc)
+        public static void PopulateTextureMappings<TBitmap>(Dictionary<int, TBitmap> bitmapCache, Material material, string tagClassCode, Dictionary<string, string> shaderOptions, BlockCollection<StringId> usages, BlockCollection<StringId> arguments, BlockCollection<RealVector4> tilingData, Func<int, IIndexItem> tagFunc)
             where TBitmap : IContentProvider<IBitmap>, IBitmap
         {
             var textureParams = from index in Enumerable.Range(0, usages.Count)
@@ -145,6 +146,20 @@ namespace Reclaimer.Blam.Common.Gen3
                     });
                 }
             }
+
+            PopulateLegacyFlags(material, tagClassCode);
+        }
+
+        [Obsolete("backwards compatibility for AMF")]
+        public static void PopulateLegacyFlags(Material material, string tagClassCode)
+        {
+            if (tagClassCode == "rmtr")
+                material.LegacyFlags |= MaterialFlagsCompat.TerrainBlend;
+            else if (tagClassCode != "rmsh")
+                material.LegacyFlags |= MaterialFlagsCompat.Transparent;
+
+            if (material.TextureMappings.Any(m => m.Usage == TextureUsage.ColorChange) && !material.TextureMappings.Any(m => m.Usage == TextureUsage.Diffuse))
+                material.LegacyFlags |= MaterialFlagsCompat.ColourChange;
         }
     }
 }

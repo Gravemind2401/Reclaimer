@@ -1,4 +1,5 @@
 ﻿using Reclaimer.Drawing;
+using Reclaimer.Geometry.Compatibility;
 using Reclaimer.Utilities;
 using System.Diagnostics;
 using System.Drawing;
@@ -15,8 +16,8 @@ namespace Reclaimer.Geometry
         public List<TextureMapping> TextureMappings { get; } = new();
         public List<MaterialTint> Tints { get; } = new();
 
-        [Obsolete("legacy")]
-        public int Flags { get; set; }
+        [Obsolete("Backwards compatibility for AMF")]
+        public MaterialFlagsCompat LegacyFlags { get; set; }
     }
 
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]

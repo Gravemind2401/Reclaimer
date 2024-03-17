@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Reclaimer.Geometry.Compatibility;
+using System.Diagnostics;
 using System.Numerics;
 
 namespace Reclaimer.Geometry
@@ -103,13 +104,13 @@ namespace Reclaimer.Geometry
         public Vector3 Position { get; set; }
         public Quaternion Rotation { get; set; }
 
-        [Obsolete("legacy")]
+        //TODO: use reference instead of index
         public int RegionIndex { get; set; }
 
-        [Obsolete("legacy")]
+        //TODO: use reference instead of index
         public int PermutationIndex { get; set; }
 
-        [Obsolete("legacy")]
+        //TODO: use reference instead of index
         public int BoneIndex { get; set; }
     }
 
@@ -120,41 +121,59 @@ namespace Reclaimer.Geometry
         public Matrix4x4 Transform { get; set; } = Matrix4x4.Identity;
         public Matrix4x4 OffsetTransform { get; set; } = Matrix4x4.Identity;
 
-        [Obsolete("legacy")]
+        //TODO: use reference instead of index
         public int ParentIndex { get; set; }
 
-        [Obsolete("legacy")]
+        [Obsolete("Backwards compatibility for AMF")]
         public int FirstChildIndex { get; set; }
 
-        [Obsolete("legacy")]
+        [Obsolete("Backwards compatibility for AMF")]
         public int NextSiblingIndex { get; set; }
 
-        [Obsolete("legacy")]
-        public Quaternion Rotation { get; set; }
+        [Obsolete("Backwards compatibility for AMF")]
+        public Quaternion Rotation
+        {
+            get
+            {
+                Matrix4x4.Decompose(Transform, out _, out var rotation, out _);
+                return rotation;
+            }
+        }
 
-        [Obsolete("legacy")]
-        public Vector3 Position { get; set; }
+        [Obsolete("Backwards compatibility for AMF")]
+        public Vector3 Position
+        {
+            get
+            {
+                Matrix4x4.Decompose(Transform, out _, out _, out var translation);
+                return translation;
+            }
+        }
     }
 
-    public class Mesh : IMeshCompat
+    public class Mesh
     {
-        public VertexBuffer VertexBuffer { get; set; }
-        public IIndexBuffer IndexBuffer { get; set; }
         public List<MeshSegment> Segments { get; } = new();
 
-        [Obsolete("legacy")]
+        public VertexBuffer VertexBuffer { get; set; }
+        public IIndexBuffer IndexBuffer { get; set; }
+
+        //TODO: use reference instead of index
         public byte? BoneIndex { get; set; }
 
-        [Obsolete("legacy")]
-        public int VertexWeights => (VertexBuffer.HasBlendIndices || BoneIndex.HasValue) ? VertexBuffer.HasBlendWeights ? 1 : 2 : 0; //skinned : rigid : none
+        [Obsolete("Backwards compatibility for AMF")]
+        public VertexWeightsCompat VertexWeights => (VertexBuffer.HasBlendIndices || BoneIndex.HasValue) ? VertexBuffer.HasBlendWeights ? VertexWeightsCompat.Skinned : VertexWeightsCompat.Rigid : VertexWeightsCompat.None;
 
         public RealBounds3D PositionBounds { get; set; }
         public RealBounds2D TextureBounds { get; set; }
 
+        public int VertexCount => VertexBuffer?.Count ?? 0;
+        public int IndexCount => IndexBuffer?.Count ?? 0;
+
         public bool IsCompressed => !PositionBounds.IsEmpty || !TextureBounds.IsEmpty;
     }
 
-    public class MeshSegment : ISubmeshCompat
+    public class MeshSegment
     {
         public int IndexStart { get; set; }
         public int IndexLength { get; set; }

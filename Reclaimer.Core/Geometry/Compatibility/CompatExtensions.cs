@@ -2,91 +2,21 @@
 using System.IO;
 using System.Numerics;
 
-namespace Reclaimer.Geometry
+namespace Reclaimer.Geometry.Compatibility
 {
-    public interface IMeshCompat
-    {
-        sealed IndexFormat IndexFormat => IndexBuffer.Layout;
-
-        VertexBuffer VertexBuffer { get; }
-        IIndexBuffer IndexBuffer { get; }
-
-        int VertexCount => VertexBuffer?.Count ?? 0;
-        int IndexCount => IndexBuffer?.Count ?? 0;
-    }
-
-    public interface ISubmeshCompat
-    {
-        int IndexStart { get; }
-        int IndexLength { get; }
-    }
-
+    [Obsolete("Backwards compatibility for AMF")]
     public static class CompatExtensions
     {
-        private static class MaterialFlagsCompat
-        {
-            public const int None = 0;
-            public const int Transparent = 1;
-            public const int ColourChange = 2;
-            public const int TerrainBlend = 4;
-        }
-
-        private static class MaterialUsageCompat
-        {
-            public const int BlendMap = -1;
-            public const int Diffuse = 0;
-            public const int DiffuseDetail = 1;
-            public const int ColourChange = 2;
-            public const int Normal = 3;
-            public const int NormalDetail = 4;
-            public const int SelfIllumination = 5;
-            public const int Specular = 6;
-
-            public static int GetValue(string value)
-            {
-                return value switch
-                {
-                    TextureUsage.BlendMap => BlendMap,
-                    TextureUsage.Diffuse => Diffuse,
-                    TextureUsage.DiffuseDetail => DiffuseDetail,
-                    TextureUsage.ColorChange => ColourChange,
-                    TextureUsage.Normal => Normal,
-                    TextureUsage.NormalDetail => NormalDetail,
-                    TextureUsage.SelfIllumination => SelfIllumination,
-                    TextureUsage.Specular => Specular,
-                    _ => throw new ArgumentException(null, nameof(value))
-                };
-            }
-        }
-
-        private static class TintUsageCompat
-        {
-            public const int Albedo = 0;
-            public const int SelfIllumination = 1;
-            public const int Specular = 2;
-
-            public static int GetValue(string value)
-            {
-                return value switch
-                {
-                    TintUsage.Albedo => Albedo,
-                    TintUsage.SelfIllumination => SelfIllumination,
-                    TintUsage.Specular => Specular,
-                    _ => throw new ArgumentException(null, nameof(value))
-                };
-            }
-        }
-
         public static void WriteAMF(this Scene scene, string fileName, float scale)
         {
             var model = scene.EnumerateGroupHierarchy().SelectMany(g => g.ChildObjects.OfType<Model>()).First();
-            WriteAMF(model, fileName, scale);
+            model.WriteAMF(fileName, scale);
         }
 
         public static void WriteJMS(this Scene scene, string fileName, float scale)
         {
             var model = scene.EnumerateGroupHierarchy().SelectMany(g => g.ChildObjects.OfType<Model>()).First();
-            WriteJMS(model, fileName, scale);
+            model.WriteJMS(fileName, scale);
         }
 
         public static void WriteAMF(this Model model, string fileName, float scale)
@@ -325,10 +255,10 @@ namespace Reclaimer.Geometry
                             bw.Write(vector2.X);
                             bw.Write(1 - vector2.Y);
 
-                            if (part.VertexWeights == 0)
+                            if (part.VertexWeights == VertexWeightsCompat.None)
                                 continue;
 
-                            if (part.VertexWeights == 2)
+                            if (part.VertexWeights == VertexWeightsCompat.Rigid)
                             {
                                 var indices = new List<int>();
                                 var bi = blendIndices?[i] ?? default;
@@ -351,7 +281,7 @@ namespace Reclaimer.Geometry
                                 if (indices.Count < 4)
                                     bw.Write(byte.MaxValue);
                             }
-                            else if (part.VertexWeights == 1)
+                            else if (part.VertexWeights == VertexWeightsCompat.Skinned)
                             {
                                 var temp = blendIndices?[i] ?? default;
                                 var indices = new[] { temp.X, temp.Y, temp.Z, temp.W };
@@ -473,7 +403,7 @@ namespace Reclaimer.Geometry
                         continue;
                     }
 
-                    if ((material.Flags & MaterialFlagsCompat.TerrainBlend) > 0)
+                    if (material.LegacyFlags.HasFlag(MaterialFlagsCompat.TerrainBlend))
                     {
                         bw.WriteStringNullTerminated("*" + material.Name);
 
@@ -531,8 +461,8 @@ namespace Reclaimer.Geometry
                             bw.Write(tint.Color.A);
                         }
 
-                        bw.Write(Convert.ToByte((material.Flags & MaterialFlagsCompat.Transparent) > 0));
-                        bw.Write(Convert.ToByte((material.Flags & MaterialFlagsCompat.ColourChange) > 0));
+                        bw.Write(Convert.ToByte(material.LegacyFlags.HasFlag(MaterialFlagsCompat.Transparent)));
+                        bw.Write(Convert.ToByte(material.LegacyFlags.HasFlag(MaterialFlagsCompat.ColourChange)));
                     }
                 }
                 #endregion

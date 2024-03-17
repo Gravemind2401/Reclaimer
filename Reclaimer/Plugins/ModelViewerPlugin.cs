@@ -2,6 +2,7 @@
 using Reclaimer.Controls.Editors;
 using Reclaimer.Drawing;
 using Reclaimer.Geometry;
+using Reclaimer.Geometry.Compatibility;
 using Reclaimer.Utilities;
 using Reclaimer.Windows;
 using System.ComponentModel;
@@ -413,7 +414,7 @@ namespace Reclaimer.Plugins
                         var boneLookup = new Dictionary<int, Assimp.Bone>();
                         for (var vIndex = 0; vIndex < vertCount; vIndex++)
                         {
-                            if (mesh.VertexWeights == 0)
+                            if (mesh.VertexWeights == VertexWeightsCompat.None)
                                 continue;
 
                             #region Vertex Weights
@@ -496,7 +497,7 @@ namespace Reclaimer.Plugins
                     foreach (var bone in model.Bones)
                     {
                         var result = new Assimp.Node($"{bonePrefix}{bone.Name}");
-                        result.Transform = bone.Transform.ToAssimp4x4(scale);
+                        result.Transform = bone.LocalTransform.ToAssimp4x4(scale);
                         assimpBones.Add(result);
                     }
 

@@ -47,42 +47,42 @@ namespace Reclaimer.Geometry
             }
         }
 
-        public static IEnumerable<int> GetTriangleIndicies(this IMeshCompat mesh, ISubmeshCompat submesh)
+        public static IEnumerable<int> GetTriangleIndicies(this Mesh mesh, MeshSegment submesh)
         {
             var indices = mesh.IndexBuffer.GetSubset(submesh.IndexStart, submesh.IndexLength);
 
-            if (mesh.IndexFormat == IndexFormat.TriangleStrip)
+            if (mesh.IndexBuffer.Layout == IndexFormat.TriangleStrip)
                 indices = Unstrip(indices);
 
             return indices;
         }
 
-        public static IEnumerable<Vector3> GetPositions(this IMeshCompat mesh) => GetPositions(mesh, 0, mesh.VertexCount);
-        public static IEnumerable<Vector3> GetPositions(this IMeshCompat mesh, int index, int count)
+        public static IEnumerable<Vector3> GetPositions(this Mesh mesh) => GetPositions(mesh, 0, mesh.VertexCount);
+        public static IEnumerable<Vector3> GetPositions(this Mesh mesh, int index, int count)
         {
             return mesh.VertexBuffer.HasPositions ? mesh.VertexBuffer.PositionChannels[0].GetSubset(index, count).Select(v => new Vector3(v.X, v.Y, v.Z)) : null;
         }
 
-        public static IEnumerable<Vector2> GetTexCoords(this IMeshCompat mesh) => GetTexCoords(mesh, 0, mesh.VertexCount);
-        public static IEnumerable<Vector2> GetTexCoords(this IMeshCompat mesh, int index, int count)
+        public static IEnumerable<Vector2> GetTexCoords(this Mesh mesh) => GetTexCoords(mesh, 0, mesh.VertexCount);
+        public static IEnumerable<Vector2> GetTexCoords(this Mesh mesh, int index, int count)
         {
             return mesh.VertexBuffer.HasTextureCoordinates ? mesh.VertexBuffer.TextureCoordinateChannels[0].GetSubset(index, count).Select(v => new Vector2(v.X, v.Y)) : null;
         }
 
-        public static IEnumerable<Vector3> GetNormals(this IMeshCompat mesh) => GetNormals(mesh, 0, mesh.VertexCount);
-        public static IEnumerable<Vector3> GetNormals(this IMeshCompat mesh, int index, int count)
+        public static IEnumerable<Vector3> GetNormals(this Mesh mesh) => GetNormals(mesh, 0, mesh.VertexCount);
+        public static IEnumerable<Vector3> GetNormals(this Mesh mesh, int index, int count)
         {
             return mesh.VertexBuffer.HasNormals ? mesh.VertexBuffer.NormalChannels[0].GetSubset(index, count).Select(v => new Vector3(v.X, v.Y, v.Z)) : null;
         }
 
-        public static IEnumerable<Vector4> GetBlendIndices(this IMeshCompat mesh) => GetBlendIndices(mesh, 0, mesh.VertexCount);
-        public static IEnumerable<Vector4> GetBlendIndices(this IMeshCompat mesh, int index, int count)
+        public static IEnumerable<Vector4> GetBlendIndices(this Mesh mesh) => GetBlendIndices(mesh, 0, mesh.VertexCount);
+        public static IEnumerable<Vector4> GetBlendIndices(this Mesh mesh, int index, int count)
         {
             return mesh.VertexBuffer.HasBlendIndices ? mesh.VertexBuffer.BlendIndexChannels[0].GetSubset(index, count).Select(v => new Vector4(v.X, v.Y, v.Z, v.W)) : null;
         }
 
-        public static IEnumerable<Vector4> GetBlendWeights(this IMeshCompat mesh) => GetBlendWeights(mesh, 0, mesh.VertexCount);
-        public static IEnumerable<Vector4> GetBlendWeights(this IMeshCompat mesh, int index, int count)
+        public static IEnumerable<Vector4> GetBlendWeights(this Mesh mesh) => GetBlendWeights(mesh, 0, mesh.VertexCount);
+        public static IEnumerable<Vector4> GetBlendWeights(this Mesh mesh, int index, int count)
         {
             return mesh.VertexBuffer.HasBlendWeights ? mesh.VertexBuffer.BlendWeightChannels[0].GetSubset(index, count).Select(v => new Vector4(v.X, v.Y, v.Z, v.W)) : null;
         }

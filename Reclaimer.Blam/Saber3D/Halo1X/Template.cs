@@ -55,15 +55,12 @@ namespace Reclaimer.Saber3D.Halo1X
             model.Bones.AddRange(Bones.Select(n =>
             {
                 var transform = CoordinateSystem.GetTransform(GetBoneTransform(n.ParentIndex), GetBoneTransform(n.Index));
-                Matrix4x4.Decompose(transform, out _, out var rotation, out var position);
 
                 return new Bone
                 {
                     Name = n.Name,
                     Transform = transform,
-                    ParentIndex = n.ParentIndex,
-                    Position = position,
-                    Rotation = rotation
+                    ParentIndex = n.ParentIndex
                 };
             }));
 

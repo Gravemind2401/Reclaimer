@@ -1,5 +1,4 @@
-﻿using Adjutant.Geometry;
-using Reclaimer.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Common.Gen3;
 using Reclaimer.Blam.Properties;
 using Reclaimer.Geometry;
@@ -80,15 +79,7 @@ namespace Reclaimer.Blam.HaloReach
                 var props = shader.ShaderProperties[0];
                 var template = props.TemplateReference.Tag.ReadMetadata<render_method_template>();
 
-                Gen3MaterialHelper.PopulateTextureMappings(bitmaps, material, shaderOptions, template.Usages, template.Arguments, props.TilingData, i => props.ShaderMaps[i].BitmapReference.Tag);
-
-                if (tag.ClassCode == "rmtr")
-                    material.Flags |= (int)MaterialFlags.TerrainBlend;
-                else if (tag.ClassCode != "rmsh")
-                    material.Flags |= (int)MaterialFlags.Transparent;
-
-                if (material.TextureMappings.Any(m => m.Usage == TextureUsage.ColorChange) && !material.TextureMappings.Any(m => m.Usage == TextureUsage.Diffuse))
-                    material.Flags |= (int)MaterialFlags.ColourChange;
+                Gen3MaterialHelper.PopulateTextureMappings(bitmaps, material, tag.ClassCode, shaderOptions, template.Usages, template.Arguments, props.TilingData, i => props.ShaderMaps[i].BitmapReference.Tag);
 
                 yield return material;
             }

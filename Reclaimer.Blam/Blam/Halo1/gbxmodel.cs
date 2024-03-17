@@ -57,9 +57,7 @@ namespace Reclaimer.Blam.Halo1
             {
                 Name = n.Name,
                 Transform = Utils.CreateMatrix(n.Position, n.Rotation.Conjugate),
-                ParentIndex = n.ParentIndex,
-                Position = (Vector3)n.Position,
-                Rotation = new Quaternion(n.Rotation.X, n.Rotation.Y, n.Rotation.Z, n.Rotation.W)
+                ParentIndex = n.ParentIndex
             }));
 
             model.Markers.AddRange(MarkerGroups.Select(g =>
