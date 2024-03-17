@@ -441,7 +441,7 @@ namespace Reclaimer.Plugins
                             {
                                 if (!boneLookup.TryGetValue(boneIndex, out var assimpBone))
                                 {
-                                    var offsetTransform = model.GetAbsoluteBoneTransform(boneIndex).Inverse();
+                                    var offsetTransform = model.GetBoneWorldTransform(boneIndex).Inverse();
 
                                     assimpBone = new Assimp.Bone
                                     {

@@ -59,7 +59,8 @@ namespace Reclaimer.Saber3D.Halo1X
                 return new Bone
                 {
                     Name = n.Name,
-                    Transform = transform,
+                    LocalTransform = transform,
+                    WorldTransform = GetBoneTransform(n.Index),
                     ParentIndex = n.ParentIndex
                 };
             }));

@@ -56,7 +56,7 @@ namespace Reclaimer.Blam.Halo1
             model.Bones.AddRange(Nodes.Select(n => new Bone
             {
                 Name = n.Name,
-                Transform = Utils.CreateMatrix(n.Position, n.Rotation.Conjugate),
+                LocalTransform = Utils.CreateMatrix(n.Position, n.Rotation.Conjugate),
                 ParentIndex = n.ParentIndex
             }));
 

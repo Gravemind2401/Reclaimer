@@ -23,14 +23,18 @@ namespace Reclaimer.Geometry
         }
 
 
-        public Matrix4x4 GetAbsoluteBoneTransform(int boneIndex)
+        public Matrix4x4 GetBoneWorldTransform(int boneIndex)
         {
             var bone = Bones[boneIndex];
+
+            if (bone.WorldTransform != default && !bone.WorldTransform.IsIdentity)
+                return bone.WorldTransform;
+
             var parentTransform = bone.ParentIndex < 0
                 ? Matrix4x4.Identity
-                : GetAbsoluteBoneTransform(bone.ParentIndex);
+                : GetBoneWorldTransform(bone.ParentIndex);
 
-            return bone.Transform * parentTransform;
+            return bone.LocalTransform * parentTransform;
         }
 
         /// <summary>
@@ -116,8 +120,8 @@ namespace Reclaimer.Geometry
     public class Bone
     {
         public string Name { get; set; }
-        public Matrix4x4 Transform { get; set; } = Matrix4x4.Identity;
-        public Matrix4x4 OffsetTransform { get; set; } = Matrix4x4.Identity;
+        public Matrix4x4 LocalTransform { get; set; } = Matrix4x4.Identity;
+        public Matrix4x4 WorldTransform { get; set; } = Matrix4x4.Identity;
 
         //TODO: use reference instead of index
         public int ParentIndex { get; set; }
@@ -133,7 +137,7 @@ namespace Reclaimer.Geometry
         {
             get
             {
-                Matrix4x4.Decompose(Transform, out _, out var rotation, out _);
+                Matrix4x4.Decompose(LocalTransform, out _, out var rotation, out _);
                 return rotation;
             }
         }
@@ -143,7 +147,7 @@ namespace Reclaimer.Geometry
         {
             get
             {
-                Matrix4x4.Decompose(Transform, out _, out _, out var translation);
+                Matrix4x4.Decompose(LocalTransform, out _, out _, out var translation);
                 return translation;
             }
         }

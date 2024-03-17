@@ -56,5 +56,14 @@ namespace Reclaimer.Blam.Utilities
             var rotation2 = new Quaternion(rotation.X, rotation.Y, rotation.Z, rotation.W);
             return Matrix4x4.CreateFromQuaternion(rotation2) * Matrix4x4.CreateTranslation(position2);
         }
+
+        public static Matrix4x4 CreateWorldMatrix(Matrix4x4 offsetMatrix, float offsetScale)
+        {
+            if (!Matrix4x4.Invert(offsetMatrix, out var inverted))
+                return Matrix4x4.Identity;
+
+            //TODO: incorporate scale? seems to always be 1 (or very close to 1)
+            return inverted;
+        }
     }
 }

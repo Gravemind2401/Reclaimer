@@ -68,7 +68,8 @@ namespace Reclaimer.Blam.Halo2Beta
             model.Bones.AddRange(Nodes.Select(n => new Bone
             {
                 Name = n.Name,
-                Transform = Utils.CreateMatrix(n.Position, n.Rotation),
+                LocalTransform = Utils.CreateMatrix(n.Position, n.Rotation),
+                WorldTransform = Utils.CreateWorldMatrix(n.InverseTransform, n.InverseScale),
                 ParentIndex = n.ParentIndex
             }));
 
@@ -209,10 +210,10 @@ namespace Reclaimer.Blam.Halo2Beta
         public RealVector4 Rotation { get; set; }
 
         [Offset(68)]
-        public float TransformScale { get; set; }
+        public float InverseScale { get; set; }
 
         [Offset(72)]
-        public Matrix4x4 Transform { get; set; }
+        public Matrix4x4 InverseTransform { get; set; }
 
         [Offset(120)]
         public float DistanceFromParent { get; set; }

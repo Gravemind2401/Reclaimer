@@ -286,7 +286,8 @@ namespace Reclaimer.Geometry.Utilities
             {
                 WriteString(bone.Name);
                 writer.Write(bone.ParentIndex);
-                writer.WriteMatrix4x4(bone.Transform);
+                writer.WriteMatrix4x4(bone.LocalTransform);
+                //TODO: write/read world transform
             }
         }
 
