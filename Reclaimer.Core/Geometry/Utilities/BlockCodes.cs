@@ -1,6 +1,4 @@
-﻿using Reclaimer.Geometry.Vectors;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace Reclaimer.Geometry.Utilities
 {

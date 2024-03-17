@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace Reclaimer.Geometry
+﻿namespace Reclaimer.Geometry
 {
     /// <summary>
     /// A structure representing the orientation and scale of a 3d scene.

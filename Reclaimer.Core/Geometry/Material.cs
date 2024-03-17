@@ -1,9 +1,7 @@
 ﻿using Reclaimer.Drawing;
 using Reclaimer.Geometry.Compatibility;
 using Reclaimer.Utilities;
-using System.Diagnostics;
 using System.Drawing;
-using System.Numerics;
 
 namespace Reclaimer.Geometry
 {

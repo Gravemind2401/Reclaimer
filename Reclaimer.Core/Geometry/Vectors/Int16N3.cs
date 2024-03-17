@@ -1,5 +1,4 @@
 ﻿using Reclaimer.IO;
-using System.Numerics;
 using System.Runtime.InteropServices;
 
 // This file was automatically generated via the 'NormalisedVectors.tt' T4 template.

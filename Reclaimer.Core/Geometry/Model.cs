@@ -1,6 +1,4 @@
 ﻿using Reclaimer.Geometry.Compatibility;
-using System.Diagnostics;
-using System.Numerics;
 
 namespace Reclaimer.Geometry
 {

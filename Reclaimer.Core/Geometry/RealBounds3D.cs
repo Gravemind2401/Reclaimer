@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace Reclaimer.Geometry
+﻿namespace Reclaimer.Geometry
 {
     public record struct RealBounds3D(Vector3 Min, Vector3 Max)
     {

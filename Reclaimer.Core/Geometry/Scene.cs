@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using System.Numerics;
-
-namespace Reclaimer.Geometry
+﻿namespace Reclaimer.Geometry
 {
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class Scene

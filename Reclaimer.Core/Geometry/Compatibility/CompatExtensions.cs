@@ -1,6 +1,5 @@
 ﻿using Reclaimer.IO;
 using System.IO;
-using System.Numerics;
 
 namespace Reclaimer.Geometry.Compatibility
 {

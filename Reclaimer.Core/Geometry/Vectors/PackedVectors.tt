@@ -38,7 +38,6 @@
         fileManager.CreateNewFile(vector.TypeName + ".cs");
         var formattedLayout = string.Join(", ", vector.Precision.Take(vector.Dimensions)); #>
 using Reclaimer.IO;
-using System.Numerics;
 
 <# WriteGeneratedCodeNote(); #>
 

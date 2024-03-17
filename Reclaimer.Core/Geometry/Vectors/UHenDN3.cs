@@ -1,5 +1,4 @@
 ﻿using Reclaimer.IO;
-using System.Numerics;
 
 // This file was automatically generated via the 'PackedVectors.tt' T4 template.
 // Do not modify this file directly - any changes will be lost when the code is regenerated.

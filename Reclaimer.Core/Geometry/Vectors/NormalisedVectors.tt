@@ -44,7 +44,6 @@
 
         fileManager.CreateNewFile(vector.TypeName + ".cs"); #>
 using Reclaimer.IO;
-using System.Numerics;
 using System.Runtime.InteropServices;
 
 <# WriteGeneratedCodeNote(); #>
