@@ -251,11 +251,11 @@ namespace Reclaimer.Controls.DirectX
             var adjust = vDistance > hDistance ? 0.75 : 1;
             var camDistance = Math.Max(hDistance, vDistance) * adjust;
             var lookDirection = bounds.Size.X > bounds.Size.Y * 1.5
-                ? (-Math.Sign(center.Y) * coordinateSystem.RightVector).ToMediaVector3()
-                : (-Math.Sign(center.X) * coordinateSystem.ForwardVector).ToMediaVector3();
+                ? coordinateSystem.RightVector.ToMediaVector3() //view from left
+                : -coordinateSystem.ForwardVector.ToMediaVector3(); //view from front
 
             if (lookDirection.Length == 0)
-                lookDirection = (-coordinateSystem.ForwardVector).ToMediaVector3();
+                lookDirection = -coordinateSystem.ForwardVector.ToMediaVector3();
 
             //transform back to original coordsys
             center = SharpDX.Vector3.TransformCoordinate(center, CoordinateSystem.GetTransform(CoordinateSystem.Default, coordinateSystem, false).ToMatrix3());
