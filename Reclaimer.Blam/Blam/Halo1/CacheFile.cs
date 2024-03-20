@@ -222,7 +222,7 @@ namespace Reclaimer.Blam.Halo1
 
             if (ClassCode == "sbsp")
             {
-                var translator = new BSPAddressTranslator(cache, Id);
+                var translator = new BspAddressTranslator(cache, Id);
                 reader = cache.CreateReader(translator);
                 address = translator.TagAddress;
             }

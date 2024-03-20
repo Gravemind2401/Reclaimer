@@ -6,11 +6,11 @@ namespace Reclaimer.Blam.Halo1
     public class scenario
     {
         [Offset(1444)]
-        public BlockCollection<StructureBspBlock> StructureBSPs { get; set; }
+        public BlockCollection<StructureBspBlock> StructureBsps { get; set; }
     }
 
     [FixedSize(32)]
-    [DebuggerDisplay($"{{{nameof(BSPReference)},nq}}")]
+    [DebuggerDisplay($"{{{nameof(BspReference)},nq}}")]
     public class StructureBspBlock
     {
         [Offset(0)]
@@ -23,6 +23,6 @@ namespace Reclaimer.Blam.Halo1
         public int Magic { get; set; }
 
         [Offset(16)]
-        public TagReference BSPReference { get; set; }
+        public TagReference BspReference { get; set; }
     }
 }

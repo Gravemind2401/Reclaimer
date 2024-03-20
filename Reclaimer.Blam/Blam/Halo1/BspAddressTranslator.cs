@@ -2,7 +2,7 @@
 
 namespace Reclaimer.Blam.Halo1
 {
-    public class BSPAddressTranslator : IAddressTranslator
+    public class BspAddressTranslator : IAddressTranslator
     {
         private readonly StructureBspBlock data;
 
@@ -10,9 +10,10 @@ namespace Reclaimer.Blam.Halo1
 
         public int TagAddress => data.MetadataAddress;
 
-        public BSPAddressTranslator(CacheFile cache, int id)
+        public BspAddressTranslator(CacheFile cache, int id)
         {
-            var bspData = cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>().StructureBSPs.SingleOrDefault(i => i.BSPReference.TagId == id);
+            var scnr = cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
+            var bspData = scnr.StructureBsps.SingleOrDefault(i => i.BspReference.TagId == id);
             data = bspData ?? throw new InvalidOperationException();
         }
 
