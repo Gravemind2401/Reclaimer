@@ -96,6 +96,15 @@ namespace Reclaimer.Plugins.MetaViewer
                     var path = Path.Combine(Settings.PluginFolder, profile.Subfolder, xmlName);
                     if (File.Exists(path))
                         return path;
+
+                    if (xmlName.Contains(' '))
+                    {
+                        //try again with no spaces
+                        xmlName = xmlName.Replace(" ", "");
+                        path = Path.Combine(Settings.PluginFolder, profile.Subfolder, xmlName);
+                        if (File.Exists(path))
+                            return path;
+                    }
                 }
                 catch (Exception ex)
                 {

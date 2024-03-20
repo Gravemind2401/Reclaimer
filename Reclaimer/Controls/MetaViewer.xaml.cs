@@ -188,7 +188,7 @@ namespace Reclaimer.Controls
 
         private void OpenCommand_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
-            if (e.Parameter is Plugins.MetaViewer.Halo3.TagReferenceValue h3ref)
+            if (e.Parameter is Plugins.MetaViewer.Halo3.TagReferenceValue h3ref && h3ref.SelectedItem is not null)
             {
                 var item = h3ref.SelectedItem.Context;
                 var fileName = $"{item.TagName}.{item.ClassName}";
@@ -196,7 +196,7 @@ namespace Reclaimer.Controls
                 var args = new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), item);
                 Substrate.OpenWithDefault(args);
             }
-            else if (e.Parameter is Plugins.MetaViewer.Halo5.TagReferenceValue h5ref)
+            else if (e.Parameter is Plugins.MetaViewer.Halo5.TagReferenceValue h5ref && h5ref.SelectedItem is not null)
             {
                 var item = h5ref.SelectedItem.Context;
                 var fileName = $"{item.TagName}.{item.ClassName}";
