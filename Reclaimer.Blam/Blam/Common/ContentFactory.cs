@@ -125,6 +125,7 @@ namespace Reclaimer.Blam.Common
             {
                 content = gameType switch
                 {
+                    HaloGame.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE => item.ReadMetadata<Halo1.scenario>(),
                     HaloGame.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario>(),
                     HaloGame.Halo3ODST => item.ReadMetadata<Halo3.scenario>(),
                     HaloGame.HaloReach => item.ReadMetadata<HaloReach.scenario>(),

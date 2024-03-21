@@ -182,6 +182,7 @@ namespace Reclaimer.Blam.Halo1
     }
 
     [FixedSize(60)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class BspMarkerBlock
     {
         [Offset(0)]
