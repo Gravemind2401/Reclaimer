@@ -93,6 +93,12 @@
             Object = sceneObject;
         }
 
+        public void SetTransform(float scale) => SetTransform(new Vector3(scale == 0 ? 1 : scale));
+        public void SetTransform(Vector3 scale3d)
+        {
+            Transform = Matrix4x4.CreateScale(scale3d);
+        }
+
         public void SetTransform(float scale, Vector3 translation, Quaternion rotation) => SetTransform(new Vector3(scale == 0 ? 1 : scale), translation, rotation);
         public void SetTransform(Vector3 scale3d, Vector3 translation, Quaternion rotation)
         {
