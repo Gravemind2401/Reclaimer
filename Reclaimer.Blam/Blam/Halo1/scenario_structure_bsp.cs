@@ -15,6 +15,9 @@ namespace Reclaimer.Blam.Halo1
             : base(item)
         { }
 
+        [Offset(8)]
+        public int MccVertexDataAddress { get; set; }
+
         [Offset(224)]
         public RealBounds XBounds { get; set; }
 
@@ -70,7 +73,7 @@ namespace Reclaimer.Blam.Halo1
                 if (section.Materials.Count == 0)
                     continue;
 
-                var vertexCount = section.Materials.Sum(s => s.VertexCount);
+                var vertexCount = section.Materials.Sum(s => s.VertexBuffer1Count);
                 var vertexData = new byte[vertexSize * vertexCount];
 
                 var vertexBuffer = new VertexBuffer();
@@ -92,8 +95,12 @@ namespace Reclaimer.Blam.Halo1
                 var vertexTally = 0;
                 foreach (var submesh in section.Materials)
                 {
-                    reader.Seek(submesh.VertexPointer.Address, SeekOrigin.Begin);
-                    reader.ReadBytes(vertexSize * submesh.VertexCount).CopyTo(vertexData, vertexTally * vertexSize);
+                    var vertexBufferAddress = Cache.Metadata.IsMcc
+                        ? MccVertexDataAddress + submesh.VertexBuffer1Offset
+                        : submesh.VertexBuffer1Pointer.Address;
+
+                    reader.Seek(vertexBufferAddress, SeekOrigin.Begin);
+                    reader.ReadBytes(vertexSize * submesh.VertexBuffer1Count).CopyTo(vertexData, vertexTally * vertexSize);
 
                     mesh.Segments.Add(new MeshSegment
                     {
@@ -108,7 +115,7 @@ namespace Reclaimer.Blam.Halo1
                                .Select(i => i + vertexTally)
                     );
 
-                    vertexTally += submesh.VertexCount;
+                    vertexTally += submesh.VertexBuffer1Count;
                 }
 
                 region.Permutations.Add(permutation);
@@ -148,11 +155,32 @@ namespace Reclaimer.Blam.Halo1
         [Offset(24)]
         public int SurfaceCount { get; set; }
 
-        [Offset(180)]
-        public int VertexCount { get; set; }
+        [Offset(176)]
+        public short VertexBuffer1Type { get; set; }
 
-        [Offset(228)]
-        public Pointer VertexPointer { get; set; }
+        [Offset(180)]
+        public int VertexBuffer1Count { get; set; }
+
+        [Offset(184)]
+        public int VertexBuffer1Offset { get; set; }
+
+        [Offset(196)]
+        public short VertexBuffer2Type { get; set; }
+
+        [Offset(200)]
+        public int VertexBuffer2Count { get; set; }
+
+        [Offset(204)]
+        public int VertexBuffer2Offset { get; set; }
+
+        [Offset(212)]
+        public int VertexIndexPointer { get; set; }
+
+        [Offset(216)]
+        public DataPointer VertexBuffer1Pointer { get; set; }
+
+        [Offset(236)]
+        public DataPointer VertexBuffer2Pointer { get; set; }
     }
 
     [FixedSize(104)]
