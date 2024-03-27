@@ -2,7 +2,7 @@ bl_info = {
     "name": "AMF format",
     "description": "Import AMF files created by Reclaimer.",
     "author": "Gravemind2401",
-    "version": (2, 0, 7),
+    "version": (2, 0, 8),
     "blender": (2, 80, 0),
     "location": "File > Import > AMF",
     "category": "Import-Export",
@@ -20,7 +20,8 @@ import bpy_extras
 from pathlib import Path, PureWindowsPath
 from dataclasses import dataclass
 from mathutils import Matrix, Quaternion, Vector
-from bpy.props import BoolProperty, FloatProperty, StringProperty, EnumProperty
+from bpy.props import BoolProperty, FloatProperty, StringProperty, EnumProperty, CollectionProperty
+from bpy.types import OperatorFileListElement
 
 @dataclass
 class FileReader:
@@ -708,7 +709,8 @@ def main(context, import_filename, options):
                         p.use_smooth = True
 
                     mesh.normals_split_custom_set_from_vertices(mesh_norms)
-                    mesh.use_auto_smooth = True #required for custom normals to take effect
+                    if hasattr(mesh, 'use_auto_smooth'):
+                        mesh.use_auto_smooth = True #required for custom normals to take effect pre blender 4.1
 
                     if options.IMPORT_MATERIALS:
                         mat_lookup = dict()
@@ -853,6 +855,15 @@ class IMPORT_SCENE_OT_amf(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
         default = "tif"
     )
 
+    files: CollectionProperty(
+        name="AMF Files",
+        type=OperatorFileListElement
+    )
+    
+    directory: StringProperty(
+        subtype='DIR_PATH'
+    )
+
     def execute(self, context):
         options = ImportOptions()
         options.IMPORT_SCALE = self.import_scale
@@ -871,7 +882,9 @@ class IMPORT_SCENE_OT_amf(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
         options.MODE_MARKERS = self.marker_mode
         options.MODE_MESHES = self.mesh_mode
 
-        main(context, self.filepath, options)
+        for file in self.files:
+            path = Path(self.directory) / file.name
+            main(context, path, options)
 
         return {'FINISHED'}
 
