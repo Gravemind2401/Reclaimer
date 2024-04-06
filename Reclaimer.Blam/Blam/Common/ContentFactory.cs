@@ -130,6 +130,8 @@ namespace Reclaimer.Blam.Common
                     HaloGame.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario>(),
                     HaloGame.Halo3ODST => item.ReadMetadata<Halo3.scenario>(),
                     HaloGame.HaloReach => item.ReadMetadata<HaloReach.scenario>(),
+                    HaloGame.Halo4 => item.ReadMetadata<Halo4.scenario>(),
+                    HaloGame.Halo2X => item.ReadMetadata<Halo4.scenario>(),
                     _ => null
                 };
             }
