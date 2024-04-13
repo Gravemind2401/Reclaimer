@@ -133,7 +133,7 @@ namespace Reclaimer.Controls.DirectX
                         {
                             foreach (var perm in region.Permutations)
                             {
-                                if (perm.MeshRange.Count <= 0)
+                                if (!perm.MeshIndices.Any())
                                     continue;
 
                                 var tag = meshLoader.GetMesh(perm);
@@ -183,7 +183,7 @@ namespace Reclaimer.Controls.DirectX
 
                 foreach (var perm in region.Permutations)
                 {
-                    if (perm.MeshRange.Count <= 0)
+                    if (!perm.MeshIndices.Any())
                         continue;
 
                     var tag = meshLoader.GetMesh(perm);

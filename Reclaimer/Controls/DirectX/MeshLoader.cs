@@ -83,6 +83,9 @@ namespace Reclaimer.Controls.DirectX
 
             public MeshTag GetMesh(ModelPermutation permutation)
             {
+                if (!permutation.MeshIndices.Any())
+                    return null;
+
                 if (permutation.IsInstanced)
                 {
                     if (!instanceLookup.TryGetValue(permutation.MeshRange.Index, out var source))
@@ -100,9 +103,10 @@ namespace Reclaimer.Controls.DirectX
                     permutation.MeshIndices
                         .Where(meshLookup.ContainsKey)
                         .Select(i => meshLookup[i])
+                        .Where(m => m.Parent == null)
                 );
 
-                if (elementGroup == null || elementGroup.Children.Count == 0)
+                if (elementGroup.Children.Count == 0)
                     return null;
 
                 return new MeshTag(permutation, elementGroup);
