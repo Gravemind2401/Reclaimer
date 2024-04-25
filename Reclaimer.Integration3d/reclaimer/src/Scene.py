@@ -36,7 +36,6 @@ class Scene(INamed):
     root_node: 'SceneGroup'
     markers: List[Marker]
     model_pool: List[Model]
-    vector_descriptor_pool: List[VectorDescriptor]
     vertex_buffer_pool: List[VertexBuffer]
     index_buffer_pool: List[IndexBuffer]
     material_pool: List[Material]
