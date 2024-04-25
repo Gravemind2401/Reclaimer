@@ -70,6 +70,9 @@ namespace Reclaimer.Geometry.Utilities
 
         private int AddIfNew(TValue value)
         {
+            if (value == null)
+                return -1;
+
             if (!indexLookup.TryGetValue(value, out var index))
             {
                 indexLookup.Add(value, index = valueList.Count);
@@ -86,7 +89,7 @@ namespace Reclaimer.Geometry.Utilities
         }
 
         /// <remarks>
-        /// This has no effect if the specified value is already present in the list.
+        /// This has no effect if the specified value is <see langword="null"/> or is already present in the list.
         /// </remarks>
         /// <inheritdoc cref="ICollection{T}.Add(T)"/>
         public void Add(TValue item) => AddIfNew(item);
@@ -94,7 +97,7 @@ namespace Reclaimer.Geometry.Utilities
         public bool Contains(TValue item) => indexLookup.ContainsKey(item);
 
         /// <remarks>
-        /// The specified value will be added to the list if not already present.
+        /// The specified value will be added to the list if not <see langword="null"/> and not already present.
         /// </remarks>
         /// <inheritdoc cref="IList{T}.IndexOf(T)"/>
         public int IndexOf(TValue value) => AddIfNew(value);

@@ -16,30 +16,43 @@ __all__ = [
 
 T = TypeVar('T')
 
+__strings: List[str]
+
 
 # helper functions #
 
 def _read_property_blocks(reader: FileReader, block: DataBlock) -> Dict[str, DataBlock]:
+    ''' Reads the block headers (not body) of all remaining child blocks in the current parent block and indexes them by block code '''
     blocks = _read_remaining_blocks(reader, block)
     return { b.code:b for b in blocks }
 
 def _read_remaining_blocks(reader: FileReader, block: DataBlock) -> List[DataBlock]:
+    ''' Reads the block headers (not body) of all remaining child blocks in the current parent block '''
     blocks = []
     while reader.position < block.end_address:
         blocks.append(DataBlock(reader))
     return blocks
 
-def _read_block_list(reader: FileReader, count: int) -> List[DataBlock]:
+def _read_block_array(reader: FileReader, count: int) -> List[DataBlock]:
+    ''' Reads the block headers (not body) of the next `count` blocks from the current position '''
     return [DataBlock(reader) for _ in range(count)]
 
+def _read_stringref(reader: FileReader) -> str:
+    ''' Reads an Int32 and returns the corresponding global string '''
+    index = reader.read_int32()
+    return __strings[index] if index >= 0 else ''
+
 def _decode_block(reader: FileReader, block: DataBlock, read_func: Callable[[FileReader, DataBlock], T]) -> T:
+    ''' Seeks to the body of the block and returns the result of `read_func` from that position '''
     reader.position = block.start_address
     return read_func(reader, block)
 
 def _decode_list(reader: FileReader, block: DataBlock, read_func: Callable[[FileReader, DataBlock], T]) -> List[T]:
+    ''' Seeks to and reads the body of each child in a list block '''
     return [_decode_block(reader, b, read_func) for b in block.child_blocks]
 
 def _decode_data_block(reader: FileReader, block: DataBlock) -> Tuple[int, int]:
+    ''' Reads the address and length of a `DATA` block (byte array) '''
     reader.position = block.start_address
     size = reader.read_int32()
     address = reader.position
@@ -49,13 +62,18 @@ def _decode_data_block(reader: FileReader, block: DataBlock) -> Tuple[int, int]:
 # decode functions #
 
 def _read_scene(reader: FileReader, block: DataBlock) -> Scene:
+    global __strings
+
     scene = Scene()
     scene.version = Version(reader.read_byte(), reader.read_byte(), reader.read_byte(), reader.read_byte())
     scene.unit_scale = reader.read_float()
     scene.world_matrix = reader.read_matrix3x3()
-    scene.name = reader.read_string()
+    name_index = reader.read_int32()
 
     props = _read_property_blocks(reader, block)
+    __strings = _decode_block(reader, props['STRS'], _read_string_index)
+
+    scene.name = __strings[name_index]
     scene.root_node = _decode_block(reader, props['NODE'], _read_node)
     scene.model_pool = _decode_list(reader, props['MODL[]'], _read_model)
 
@@ -65,14 +83,20 @@ def _read_scene(reader: FileReader, block: DataBlock) -> Scene:
     scene.material_pool = _decode_list(reader, props['MATL[]'], _read_material)
     scene.texture_pool = _decode_list(reader, props['BITM[]'], _read_texture)
 
+    __strings = None # cleanup since theyre no longer needed
+
     return scene
+
+def _read_string_index(reader: FileReader, block: DataBlock) -> List[str]:
+    count = reader.read_int32()
+    return [reader.read_string() for _ in range(count)]
 
 def _read_node(reader: FileReader, block: DataBlock):
     node = SceneGroup()
-    node.name = reader.read_string()
+    node.name = _read_stringref(reader)
     node.child_groups = []
     node.child_objects = []
-    child_blocks = _read_block_list(reader, reader.read_int32())
+    child_blocks = _read_block_array(reader, reader.read_int32())
     for b in child_blocks:
         if b.code == 'NODE':
             node.child_groups.append(_decode_block(reader, b, _read_node))
@@ -87,7 +111,7 @@ def _read_object(reader: FileReader, block: DataBlock) -> Union[SceneObject, Mod
         return _decode_block(reader, block, _read_placement)
 
 def _read_base_props(reader: FileReader, obj: SceneObject):
-    obj.name = reader.read_string()
+    obj.name = _read_stringref(reader)
     obj.flags = reader.read_int32()
 
 def _read_placement(reader: FileReader, block: DataBlock) -> Placement:
@@ -113,14 +137,14 @@ def _read_model(reader: FileReader, block: DataBlock) -> Model:
 
 def _read_region(reader: FileReader, block: DataBlock) -> ModelRegion:
     region = ModelRegion()
-    region.name = reader.read_string()
+    region.name = _read_stringref(reader)
     props = _read_property_blocks(reader, block)
     region.permutations = _decode_list(reader, props['PERM[]'], _read_permutation)
     return region
 
 def _read_permutation(reader: FileReader, block: DataBlock) -> ModelPermutation:
     perm = ModelPermutation()
-    perm.name = reader.read_string()
+    perm.name = _read_stringref(reader)
     perm.instanced = reader.read_bool()
     perm.mesh_index = reader.read_int32()
     perm.mesh_count = reader.read_int32()
@@ -129,7 +153,7 @@ def _read_permutation(reader: FileReader, block: DataBlock) -> ModelPermutation:
 
 def _read_marker(reader: FileReader, block: DataBlock) -> Marker:
     marker = Marker()
-    marker.name = reader.read_string()
+    marker.name = _read_stringref(reader)
     props = _read_property_blocks(reader, block)
     marker.instances = _decode_list(reader, props['MKIN[]'], _read_marker_instance)
     return marker
@@ -145,7 +169,7 @@ def _read_marker_instance(reader: FileReader, block: DataBlock) -> MarkerInstanc
 
 def _read_bone(reader: FileReader, block: DataBlock) -> Bone:
     bone = Bone()
-    bone.name = reader.read_string()
+    bone.name = _read_stringref(reader)
     bone.parent_index = reader.read_int32()
     bone.transform = reader.read_matrix4x4()
     return bone
@@ -170,8 +194,8 @@ def _read_mesh_segment(reader: FileReader, block: DataBlock) -> MeshSegment:
 
 def _read_material(reader: FileReader, block: DataBlock) -> Material:
     material = Material()
-    material.name = reader.read_string()
-    material.alpha_mode = reader.read_string()
+    material.name = _read_stringref(reader)
+    material.alpha_mode = _read_stringref(reader)
     props = _read_property_blocks(reader, block)
     material.texture_mappings = _decode_list(reader, props['TMAP[]'], _read_texture_mapping)
     material.tints = _decode_list(reader, props['TINT[]'], _read_tint)
@@ -179,7 +203,7 @@ def _read_material(reader: FileReader, block: DataBlock) -> Material:
 
 def _read_texture_mapping(reader: FileReader, block: DataBlock) -> TextureMapping:
     mapping = TextureMapping()
-    mapping.texture_usage = reader.read_string()
+    mapping.texture_usage = _read_stringref(reader)
     mapping.blend_channel = reader.read_int32()
     mapping.texture_index = reader.read_int32()
     mapping.channel_mask = reader.read_int32()
@@ -188,14 +212,14 @@ def _read_texture_mapping(reader: FileReader, block: DataBlock) -> TextureMappin
 
 def _read_tint(reader: FileReader, block: DataBlock) -> Color:
     tint = TintColor()
-    tint.tint_usage = reader.read_string()
+    tint.tint_usage = _read_stringref(reader)
     tint.blend_channel = reader.read_int32()
     tint.tint_color = reader.read_color()
     return tint
 
 def _read_texture(reader: FileReader, block: DataBlock) -> Texture:
     texture = Texture()
-    texture.name = reader.read_string()
+    texture.name = _read_stringref(reader)
     texture.gamma = reader.read_float()
     props = _read_property_blocks(reader, block)
 

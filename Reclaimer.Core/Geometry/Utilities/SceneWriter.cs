@@ -12,6 +12,7 @@ namespace Reclaimer.Geometry.Utilities
 
         private readonly EndianWriter writer;
 
+        private readonly LazyList<string> stringPool = new();
         private readonly LazyList<int, Material> materialPool = new(m => m.Id);
         private readonly LazyList<int, Texture> texturePool = new(t => t.Id);
         private readonly LazyList<Model> modelPool = new();
@@ -41,10 +42,9 @@ namespace Reclaimer.Geometry.Utilities
             }
         }
 
-        private void WriteString(string value) => writer.Write(value ?? string.Empty);
-
         public void Write(Scene scene)
         {
+            stringPool.Clear();
             materialPool.Clear();
             texturePool.Clear();
             modelPool.Clear();
@@ -61,7 +61,7 @@ namespace Reclaimer.Geometry.Utilities
                 writer.Write((byte)Math.Max(0, version.Revision));
                 writer.Write(scene.CoordinateSystem.UnitScale);
                 writer.WriteMatrix3x3(scene.CoordinateSystem.WorldMatrix);
-                WriteString(scene.Name);
+                writer.Write(stringPool.IndexOf(scene.Name));
 
                 //everything from here on must be a block
 
@@ -78,6 +78,13 @@ namespace Reclaimer.Geometry.Utilities
                 WriteList(vectorDescriptorPool, Write, SceneCodes.VectorDescriptor);
                 WriteList(materialPool, Write, SceneCodes.Material);
                 WriteList(texturePool, Write, SceneCodes.Texture);
+
+                using (BlockMarker(SceneCodes.StringList))
+                {
+                    writer.Write(stringPool.Count);
+                    foreach (var str in stringPool)
+                        writer.Write(str ?? string.Empty);
+                }
             }
         }
 
@@ -88,7 +95,7 @@ namespace Reclaimer.Geometry.Utilities
                 var exportedGroups = sceneGroup.ChildGroups.Where(g => g.Export);
                 var exportedObjects = sceneGroup.ChildObjects.Where(o => o.Export);
 
-                WriteString(sceneGroup.Name);
+                writer.Write(stringPool.IndexOf(sceneGroup.Name));
                 writer.Write(exportedGroups.Count() + exportedObjects.Count());
 
                 foreach (var child in exportedGroups)
@@ -127,8 +134,8 @@ namespace Reclaimer.Geometry.Utilities
         {
             using (BlockMarker(SceneCodes.Material))
             {
-                WriteString(material.Name);
-                WriteString(material.AlphaMode);
+                writer.Write(stringPool.IndexOf(material.Name));
+                writer.Write(stringPool.IndexOf(material.AlphaMode));
                 WriteList(material.TextureMappings, Write, SceneCodes.TextureMapping);
                 WriteList(material.Tints, Write, SceneCodes.Tint);
             }
@@ -138,7 +145,7 @@ namespace Reclaimer.Geometry.Utilities
         {
             using (BlockMarker(SceneCodes.TextureMapping))
             {
-                WriteString(mapping.Usage);
+                writer.Write(stringPool.IndexOf(mapping.Usage));
                 writer.Write((int)mapping.BlendChannel);
                 writer.Write(texturePool.IndexOf(mapping.Texture));
                 writer.Write((int)mapping.ChannelMask);
@@ -150,7 +157,7 @@ namespace Reclaimer.Geometry.Utilities
         {
             using (BlockMarker(SceneCodes.Tint))
             {
-                WriteString(tint.Usage);
+                writer.Write(stringPool.IndexOf(tint.Usage));
                 writer.Write((int)tint.BlendChannel);
                 writer.Write(tint.Color.R);
                 writer.Write(tint.Color.G);
@@ -163,7 +170,7 @@ namespace Reclaimer.Geometry.Utilities
         {
             using (BlockMarker(SceneCodes.Texture))
             {
-                WriteString(texture.Name);
+                writer.Write(stringPool.IndexOf(texture.Name));
                 writer.Write(texture.Gamma);
 
                 //everything from here on must be a block
@@ -193,7 +200,7 @@ namespace Reclaimer.Geometry.Utilities
 
         private void WriteBaseProps(SceneObject obj)
         {
-            WriteString(obj.Name);
+            writer.Write(stringPool.IndexOf(obj.Name));
             writer.Write((int)obj.Flags);
         }
 
@@ -228,7 +235,7 @@ namespace Reclaimer.Geometry.Utilities
             var exportedPermutations = region.Permutations.Where(p => p.Export).ToList();
             using (BlockMarker(SceneCodes.Region))
             {
-                WriteString(region.Name);
+                writer.Write(stringPool.IndexOf(region.Name));
                 WriteList(exportedPermutations, Write, SceneCodes.Permutation);
             }
         }
@@ -251,7 +258,7 @@ namespace Reclaimer.Geometry.Utilities
 
             using (BlockMarker(SceneCodes.Permutation))
             {
-                WriteString(permutation.Name);
+                writer.Write(stringPool.IndexOf(permutation.Name));
                 writer.Write(permutation.IsInstanced);
                 writer.Write(meshRange.Index);
                 writer.Write(meshRange.Count);
@@ -263,7 +270,7 @@ namespace Reclaimer.Geometry.Utilities
         {
             using (BlockMarker(SceneCodes.Marker))
             {
-                WriteString(marker.Name);
+                writer.Write(stringPool.IndexOf(marker.Name));
                 WriteList(marker.Instances, Write, SceneCodes.MarkerInstance);
             }
         }
@@ -284,7 +291,7 @@ namespace Reclaimer.Geometry.Utilities
         {
             using (BlockMarker(SceneCodes.Bone))
             {
-                WriteString(bone.Name);
+                writer.Write(stringPool.IndexOf(bone.Name));
                 writer.Write(bone.ParentIndex);
                 writer.WriteMatrix4x4(bone.LocalTransform);
                 //TODO: write/read world transform
@@ -311,7 +318,7 @@ namespace Reclaimer.Geometry.Utilities
             {
                 writer.Write(segment.IndexStart);
                 writer.Write(segment.IndexLength);
-                writer.Write(segment.Material == null ? -1 : materialPool.IndexOf(segment.Material));
+                writer.Write(materialPool.IndexOf(segment.Material));
             }
         }
 
