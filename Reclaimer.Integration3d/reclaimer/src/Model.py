@@ -34,11 +34,11 @@ class Model(SceneObject):
         return [b for b in self.bones if b.parent_index == index]
 
 
-class ModelRegion(INamed):
+class ModelRegion(INamed, ICustomProperties):
     permutations: List['ModelPermutation']
 
 
-class ModelPermutation(INamed):
+class ModelPermutation(INamed, ICustomProperties):
     instanced: bool
     mesh_index: int
     mesh_count: int
@@ -49,13 +49,12 @@ class ModelPermutation(INamed):
             yield model.meshes[i]
 
 
-class Marker(INamed):
+class Marker(INamed, ICustomProperties):
     name: str
     instances: List['MarkerInstance']
 
 
-@dataclass
-class MarkerInstance:
+class MarkerInstance(ICustomProperties):
     region_index: int = -1
     permutation_index: int = -1
     bone_index: int = -1
@@ -63,7 +62,7 @@ class MarkerInstance:
     rotation: Float4 = None
 
 
-class Bone(INamed):
+class Bone(INamed, ICustomProperties):
     parent_index: int
     transform: Matrix4x4
 

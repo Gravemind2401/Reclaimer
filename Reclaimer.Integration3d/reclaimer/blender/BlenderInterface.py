@@ -63,6 +63,11 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
     materials: List[bpy.types.Material] = None
     unique_meshes: Dict[MeshKey, Object] = None
 
+    def _apply_custom_properties(self, target, source: ICustomProperties):
+        if self.options.IMPORT_CUSTOM_PROPS:
+            for k, v in source.custom_properties.items():
+                target[k] = v
+
     def init_scene(self, scene: Scene, options: ImportOptions) -> None:
         self.unit_scale = scene.unit_scale / BL_UNITS
         self.scene = scene
@@ -116,6 +121,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
 
     def init_model(self, model: Model, filter: ModelFilter, collection: Collection, display_name: str) -> BlenderModelState:
         state = BlenderModelState(model, filter, display_name, collection)
+        self._apply_custom_properties(state.root_object, model)
         return state
 
     def apply_transform(self, model_state: BlenderModelState, world_transform: Matrix) -> None:
@@ -168,6 +174,8 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
             if b.parent_index >= 0:
                 editbone.parent = editbones[b.parent_index]
 
+            self._apply_custom_properties(editbone, b)
+
         bpy.ops.object.mode_set(mode = 'OBJECT')
         set_collection_exclude(bpy.context.view_layer, model_state.parent_collection, True)
 
@@ -204,13 +212,18 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
                 marker_obj.hide_render = True
                 marker_obj.matrix_world = world_transform
 
+                # instance properties will replace group properties if they have the same name
+                self._apply_custom_properties(marker_obj, marker)
+                self._apply_custom_properties(marker_obj, instance)
+
     def create_region(self, model_state: BlenderModelState, region: ModelRegion, display_name: str) -> Object:
         region_obj = model_state.create_group_object(display_name)
         region_obj.parent = model_state.root_object
         model_state.region_objects[model_state.model.regions.index(region)] = region_obj
+        self._apply_custom_properties(region_obj, region)
         return region_obj
 
-    def build_mesh(self, model_state: BlenderModelState, region_group: Object, world_transform: Matrix, mesh: Mesh, mesh_key: MeshKey, display_name: str) -> None:
+    def build_mesh(self, model_state: BlenderModelState, permutation: ModelPermutation, region_group: Object, world_transform: Matrix, mesh: Mesh, mesh_key: MeshKey, display_name: str) -> None:
         scene = self.scene
 
         existing_mesh = self.unique_meshes.get(mesh_key, None)
@@ -220,6 +233,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
             model_state.link_object(copy, region_group)
             copy.matrix_world = world_transform
             copy.matrix_parent_inverse = Matrix.Identity(4)
+            self._apply_custom_properties(copy, permutation)
             return
 
         index_buffer = scene.index_buffer_pool[mesh.index_buffer_index]
@@ -242,6 +256,8 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         mesh_obj.matrix_world = world_transform
         model_state.link_object(mesh_obj, region_group)
         self.unique_meshes[mesh_key] = mesh_obj
+
+        self._apply_custom_properties(mesh_obj, permutation)
 
         mc: MeshContext = (scene, model_state, mesh, mesh_data, mesh_obj)
         self._build_normals(mc)

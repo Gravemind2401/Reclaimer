@@ -1,4 +1,4 @@
-from typing import TypeVar, Generic, Tuple, List
+from typing import TypeVar, Generic, Tuple, List, Dict
 
 from .ImportOptions import *
 from .SceneFilter import *
@@ -85,5 +85,5 @@ class ViewportInterface(Generic[TMaterial, TCollection, TMatrix, TModelState, TR
     def create_region(self, model_state: TModelState, region: ModelRegion, display_name: str) -> TRegionGroup:
         ...
 
-    def build_mesh(self, model_state: TModelState, region_group: TRegionGroup, world_transform: TMatrix, mesh: Mesh, mesh_key: MeshKey, display_name: str) -> None:
+    def build_mesh(self, model_state: TModelState, permutation: ModelPermutation, region_group: TRegionGroup, world_transform: TMatrix, mesh: Mesh, mesh_key: MeshKey, display_name: str) -> None:
         ...

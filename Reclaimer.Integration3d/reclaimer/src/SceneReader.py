@@ -61,6 +61,50 @@ def _decode_data_block(reader: FileReader, block: DataBlock) -> Tuple[int, int]:
     address = reader.position
     return (address, size)
 
+def _append_default_custom_properties(scene: Scene):
+    def set_value_if_new(owner: ICustomProperties, key: str, value):
+        if not key in owner.custom_properties:
+            owner.custom_properties[key] = value
+
+    def set_marker_props(markers: List[Marker], parent: Model):
+        for m in markers:
+            set_value_if_new(m, 'marker_name', m.name)
+
+            if not parent:
+                continue
+
+            for i in m.instances:
+                if i.region_index >= 0 and i.region_index < len(parent.regions):
+                    region = parent.regions[i.region_index]
+                    set_value_if_new(i, 'region_name', region.name)
+                    if i.permutation_index >= 0 and i.permutation_index < len(region.permutations):
+                        set_value_if_new(i, 'permutation_name', region.permutations[i.permutation_index].name)
+                if i.bone_index >= 0 and i.bone_index < len(parent.bones):
+                    set_value_if_new(i, 'bone_name', parent.bones[i.bone_index].name)
+
+    # set_marker_props(scene.markers, None)
+
+    for m in scene.model_pool:
+        set_value_if_new(m, 'model_name', m.name)
+
+        for b in m.bones:
+            set_value_if_new(b, 'bone_name', b.name)
+
+        set_marker_props(m.markers, m)
+
+        for r in m.regions:
+            set_value_if_new(r, 'region_name', r.name)
+
+            for p in r.permutations:
+                set_value_if_new(p, 'region_name', r.name)
+                set_value_if_new(p, 'permutation_name', p.name)
+
+    for m in scene.material_pool:
+        set_value_if_new(m, 'material_name', m.name)
+
+    for t in scene.texture_pool:
+        set_value_if_new(t, 'relative_path', t.name)
+
 
 # decode functions #
 
@@ -92,6 +136,7 @@ def _read_scene(reader: FileReader, block: DataBlock) -> Scene:
     __strings = None
     __vector_descriptors = None
 
+    _append_default_custom_properties(scene)
     return scene
 
 def _read_string_index(reader: FileReader, block: DataBlock) -> List[str]:

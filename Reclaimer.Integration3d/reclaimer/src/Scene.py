@@ -28,7 +28,7 @@ class Version:
         return f'{self.major}.{self.minor}.{self.build}.{self.revision}'
 
 
-class Scene(INamed):
+class Scene(INamed, ICustomProperties):
     _source_file: str
     version: Version
     unit_scale: float
@@ -57,7 +57,7 @@ class Scene(INamed):
         return lookup
 
 
-class SceneGroup(INamed):
+class SceneGroup(INamed, ICustomProperties):
     child_groups: List['SceneGroup']
     child_objects: List[SceneObject]
 

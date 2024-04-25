@@ -20,6 +20,8 @@ class ImportOptions:
     IMPORT_UVW: bool = True
     IMPORT_COLORS: bool = True
 
+    IMPORT_CUSTOM_PROPS: bool = True
+
     OBJECT_SCALE: float = 1.0
     BONE_SCALE: float = 1.0
     MARKER_SCALE: float = 1.0

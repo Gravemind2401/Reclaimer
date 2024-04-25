@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Union, Dict, List
 from collections.abc import Sequence
 
 __all__ = [
@@ -9,8 +9,10 @@ __all__ = [
     'Float4',
     'Matrix4x4',
     'Matrix4x4_IDENTITY',
+    'BasicPropertyValue',
     'IVector',
     'INamed',
+    'ICustomProperties',
     'SceneObject'
 ]
 
@@ -23,6 +25,8 @@ Float4 = Tuple[float, float, float, float]
 Matrix4x4 = Tuple[Float4, Float4, Float4, Float4]
 
 Matrix4x4_IDENTITY = ((1., 0., 0., 0.), (0., 1., 0., 0.), (0., 0., 1., 0.), (0., 0., 0., 1.))
+
+BasicPropertyValue = Union[int, float, str, bool]
 
 
 class IVector(Sequence):
@@ -63,5 +67,12 @@ class INamed:
         return f'<{str(self)}>'
 
 
-class SceneObject(INamed):
+class ICustomProperties:
+    custom_properties: Dict[str, Union[BasicPropertyValue, List[BasicPropertyValue], Dict[str, BasicPropertyValue]]] = None
+
+    def __init__(self) -> None:
+        self.custom_properties = dict()
+
+
+class SceneObject(INamed, ICustomProperties):
     flags: int = 0

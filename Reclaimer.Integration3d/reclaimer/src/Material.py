@@ -57,7 +57,7 @@ class ChannelFlags(IntFlag):
         return ChannelFlags.RGB
 
 
-class Material(INamed):
+class Material(INamed, ICustomProperties):
     alpha_mode: str = None
     texture_mappings: List['TextureMapping']
     tints: List[Color]
@@ -78,7 +78,7 @@ class TintColor:
     blend_channel: ChannelFlags = ChannelFlags.DEFAULT
     tint_color: Color = None
 
-class Texture(INamed):
+class Texture(INamed, ICustomProperties):
     gamma: float = 2.2
     address: int = 0
     size: int = 0

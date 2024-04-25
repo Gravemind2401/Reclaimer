@@ -5,6 +5,7 @@ from ..src.SceneReader import *
 from ..src.ImportOptions import *
 from ..src.Scene import *
 from ..src.Material import *
+from ..src.Types import *
 from .CustomShaderNodes import *
 
 __all__ = [
@@ -137,11 +138,18 @@ class MaterialBuilder:
         self._options = options
         self._image_lookup = dict()
 
+    def _apply_custom_properties(self, target, source: ICustomProperties):
+        if self._options.IMPORT_CUSTOM_PROPS:
+            for k, v in source.custom_properties.items():
+                target[k] = v
+
     def create_material(self, mat: Material):
         scene, OPTIONS = self._scene, self._options
 
         result = bpy.data.materials.new(OPTIONS.material_name(mat))
         result.use_nodes = True
+
+        self._apply_custom_properties(result, mat)
 
         bsdf = result.node_tree.nodes['Principled BSDF']
 
@@ -281,6 +289,7 @@ class MaterialBuilder:
                     print('>>> unable to load image')
                     img = bpy.data.images.new(name=src_path, width=1, height=1)
 
+            self._apply_custom_properties(img, src)
             self._image_lookup[index] = img
 
         return self._image_lookup[index]

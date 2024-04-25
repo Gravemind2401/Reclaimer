@@ -34,6 +34,12 @@ class RmfPreferences(AddonPreferences):
         default = True
     ) # type: ignore
 
+    import_custom_props: BoolProperty(
+        name = 'Import Custom Properties',
+        description = 'Determines if custom properties will be applied to the imported objects',
+        default = True
+    ) # type: ignore
+
     split_meshes: BoolProperty(
         name = 'Split By Material',
         description = 'Determines if meshes will be split by material',
@@ -126,6 +132,7 @@ class RmfPreferences(AddonPreferences):
         box.prop(self, 'import_markers')
         box.prop(self, 'import_meshes')
         box.prop(self, 'import_materials')
+        box.prop(self, 'import_custom_props')
 
         box = panel.box()
         box.label(icon='MESH_DATA', text='Mesh Options')

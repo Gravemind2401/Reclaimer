@@ -27,6 +27,8 @@ class RmfImportOperator(Operator, bpy_extras.io_utils.ImportHelper):
         ImportOptions.IMPORT_MESHES = preferences.import_meshes
         ImportOptions.IMPORT_MATERIALS = preferences.import_materials
 
+        ImportOptions.IMPORT_CUSTOM_PROPS = preferences.import_custom_props
+
         ImportOptions.SPLIT_MESHES = preferences.split_meshes
         ImportOptions.IMPORT_NORMALS = preferences.import_normals
         ImportOptions.IMPORT_SKIN = preferences.import_skin

@@ -25,9 +25,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="reclaimer\autodesk\SceneBuilder.py" />
+    <Compile Include="reclaimer\autodesk\AutodeskInterface.py" />
     <Compile Include="reclaimer\autodesk\Utils.py" />
     <Compile Include="reclaimer\autodesk\__init__.py" />
+    <Compile Include="reclaimer\blender\BlenderInterface.py" />
     <Compile Include="reclaimer\blender\CustomShaderNodes.py" />
     <Compile Include="reclaimer\blender\DependencyInstallerOperator.py" />
     <Compile Include="reclaimer\blender\DependencyUtils.py" />
@@ -38,14 +39,15 @@
     <Compile Include="reclaimer\blender\Preferences.py" />
     <Compile Include="reclaimer\blender\ProgressOperator.py" />
     <Compile Include="reclaimer\blender\QtWindowEventLoop.py" />
-    <Compile Include="reclaimer\blender\SceneBuilder.py" />
     <Compile Include="reclaimer\blender\Utils.py" />
     <Compile Include="reclaimer\blender\__init__.py" />
     <Compile Include="reclaimer\import_rmf.py" />
     <Compile Include="reclaimer\src\ImportOptions.py" />
     <Compile Include="reclaimer\src\Progress.py" />
+    <Compile Include="reclaimer\src\SceneBuilder.py" />
     <Compile Include="reclaimer\src\SceneFilter.py" />
     <Compile Include="reclaimer\src\Vectors.py" />
+    <Compile Include="reclaimer\src\ViewportInterface.py" />
     <Compile Include="reclaimer\tests\Test_PySide2.py" />
     <Compile Include="reclaimer\ui\ProgressDialog.py" />
     <Compile Include="reclaimer\ui\RmfDialog.py" />

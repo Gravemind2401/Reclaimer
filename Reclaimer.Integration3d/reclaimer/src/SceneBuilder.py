@@ -220,12 +220,12 @@ class SceneBuilder():
                     message = f'creating mesh {total_meshes:03d}: {model.name}/{r.name}/{p.name}/{mesh_index} [{i:02d}/{j:02d}/{mesh_index:02d}]'
                     mesh_name = options.permutation_name(r, p, mesh_index)
 
-                    def mesh_func(message, model_state, region_group, transform, mesh, mesh_key, mesh_name):
+                    def mesh_func(message, model_state, permutation, region_group, transform, mesh, mesh_key, mesh_name):
                         print(message)
-                        interface.build_mesh(model_state, region_group, transform, mesh, mesh_key, mesh_name)
+                        interface.build_mesh(model_state, permutation, region_group, transform, mesh, mesh_key, mesh_name)
                         progress.increment_meshes()
 
-                    q.put(partial(mesh_func, message, model_state, region_group, world_transform, mesh, mesh_key, mesh_name))
+                    q.put(partial(mesh_func, message, model_state, p, region_group, world_transform, mesh, mesh_key, mesh_name))
                     total_meshes += 1
 
         return q

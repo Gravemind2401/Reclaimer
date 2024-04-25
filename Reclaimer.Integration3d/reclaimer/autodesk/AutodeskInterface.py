@@ -168,7 +168,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
         model_state.region_layers[model_state.model.regions.index(region)] = region_layer
         return region_layer
 
-    def build_mesh(self, model_state: AutodeskModelState, region_group: Layer, world_transform: rt.Matrix3, mesh: Mesh, mesh_key: MeshKey, display_name: str) -> None:
+    def build_mesh(self, model_state: AutodeskModelState, permutation: ModelPermutation, region_group: Layer, world_transform: rt.Matrix3, mesh: Mesh, mesh_key: MeshKey, display_name: str) -> None:
         scene = self.scene
 
         DECOMPRESSION_TRANSFORM = toMatrix3(mesh.vertex_transform)
