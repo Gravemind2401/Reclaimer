@@ -15,6 +15,9 @@ namespace Reclaimer.Blam.Common
         public const string ScenarioCrateGroupName = "crates";
         
         public const string SourceTagPropertyName = "tag_name";
+        public const string GeometryInstancePropertyName = "geometry_instance";
+        public const string InstanceNamePropertyName = "instance_name";
+        public const string PermutationNamePropertyName = "permutation_name";
 
         //1 world unit = 10 feet
         public const float WorldUnitScale = 10 * StandardUnits.Feet;

@@ -135,15 +135,28 @@ namespace Reclaimer.Blam.HaloReach
              */
 
             var region = new ModelRegion { Name = BlamConstants.ModelInstancesGroupName };
-            region.Permutations.AddRange(GeometryInstances.Select(i =>
-                new ModelPermutation
+            region.Permutations.AddRange(GeometryInstances.Select((instance, index) =>
+            {
+                var permutation = new ModelPermutation
                 {
-                    Name = i.Name,
-                    Transform = i.Transform,
-                    UniformScale = i.TransformScale,
-                    MeshRange = (InstancedGeometrySectionIndex + GeometryInstances.IndexOf(i), 1),
+                    Name = instance.Name,
+                    Transform = instance.Transform,
+                    UniformScale = instance.TransformScale,
+                    MeshRange = (InstancedGeometrySectionIndex + index, 1),
                     IsInstanced = true
-                }));
+                };
+
+                var owners = Regions.SelectMany(r => r.Permutations, (r, p) => new { Region = r, Permutation = p })
+                    .Where(x => x.Permutation.HasInstance(index))
+                    .Select(x => $"{x.Region.Name}\\{x.Permutation.Name}")
+                    .ToList();
+
+                permutation.CustomProperties.Add(BlamConstants.GeometryInstancePropertyName, true);
+                permutation.CustomProperties.Add(BlamConstants.InstanceNamePropertyName, instance.Name);
+                permutation.CustomProperties.Add(BlamConstants.PermutationNamePropertyName, owners);
+
+                return permutation;
+            }).OrderBy(p => p.Name));
 
             model.Regions.Add(region);
 
@@ -216,6 +229,33 @@ namespace Reclaimer.Blam.HaloReach
 
         [Offset(6)]
         public short SectionCount { get; set; }
+
+        [Offset(8)]
+        public int InstanceMask1 { get; set; }
+
+        [Offset(12)]
+        public int InstanceMask2 { get; set; }
+
+        [Offset(16)]
+        public int InstanceMask3 { get; set; }
+
+        [Offset(20)]
+        public int InstanceMask4 { get; set; }
+
+        public bool HasInstance(int index)
+        {
+            var maskValue = 1 << (index % 32);
+            var flagValue = (index / 32) switch
+            {
+                0 => InstanceMask1,
+                1 => InstanceMask2,
+                2 => InstanceMask3,
+                3 => InstanceMask4,
+                _ => 0
+            };
+            
+            return (flagValue & maskValue) > 0;
+        }
     }
 
     [FixedSize(60)]
