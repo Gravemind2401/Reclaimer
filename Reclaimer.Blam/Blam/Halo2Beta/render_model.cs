@@ -63,6 +63,8 @@ namespace Reclaimer.Blam.Halo2Beta
             };
 
             var model = new Model { Name = Item.FileName };
+            model.CustomProperties.Add(BlamConstants.SourceTagPropertyName, Item.TagName);
+
             model.Meshes.AddRange(Halo2Common.GetMeshes(geoParams, out _));
 
             model.Bones.AddRange(Nodes.Select(n => new Bone

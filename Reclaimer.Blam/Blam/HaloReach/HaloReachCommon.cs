@@ -58,6 +58,8 @@ namespace Reclaimer.Blam.HaloReach
                     Name = tag.FileName
                 };
 
+                material.CustomProperties.Add(BlamConstants.SourceTagPropertyName, tag.TagName);
+
                 var shader = tag?.ReadMetadata<shader>();
                 if (shader == null)
                 {

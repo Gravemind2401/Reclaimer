@@ -35,7 +35,6 @@ namespace Reclaimer.Blam.HaloReach
         private Model GetModelContent()
         {
             var scenario = Cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>();
-            var model = new Model { Name = Item.FileName };
 
             var bspBlock = scenario.StructureBsps.First(s => s.BspReference.TagId == Item.Id);
             var bspIndex = scenario.StructureBsps.IndexOf(bspBlock);
@@ -60,6 +59,8 @@ namespace Reclaimer.Blam.HaloReach
                 })
             );
 
+            var model = new Model { Name = Item.FileName };
+            model.CustomProperties.Add(BlamConstants.SourceTagPropertyName, Item.TagName);
             model.Regions.Add(clusterRegion);
 
             if (Cache.CacheType >= CacheType.HaloReachRetail && !loadedInstances)

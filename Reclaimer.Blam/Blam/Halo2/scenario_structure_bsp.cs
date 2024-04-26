@@ -66,7 +66,7 @@ namespace Reclaimer.Blam.Halo2
             };
 
             var model = new Model { Name = Item.FileName };
-
+            model.CustomProperties.Add(BlamConstants.SourceTagPropertyName, Item.TagName);
             model.Meshes.AddRange(Halo2Common.GetMeshes(geoParams, out _));
 
             var clusterRegion = new ModelRegion { Name = BlamConstants.SbspClustersGroupName };

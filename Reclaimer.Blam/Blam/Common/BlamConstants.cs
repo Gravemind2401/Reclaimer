@@ -13,6 +13,8 @@ namespace Reclaimer.Blam.Common
         public const string ScenarioMachineGroupName = "device_machines";
         public const string ScenarioControlGroupName = "device_controls";
         public const string ScenarioCrateGroupName = "crates";
+        
+        public const string SourceTagPropertyName = "tag_name";
 
         //1 world unit = 10 feet
         public const float WorldUnitScale = 10 * StandardUnits.Feet;

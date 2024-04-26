@@ -75,6 +75,7 @@ namespace Reclaimer.Blam.Halo3
             };
 
             var model = new Model { Name = Name };
+            model.CustomProperties.Add(BlamConstants.SourceTagPropertyName, Item.TagName);
 
             model.Bones.AddRange(Nodes.Select(n => new Bone
             {

@@ -67,17 +67,21 @@ namespace Reclaimer.Blam.Common.Gen3
                 if (!bitmapCache.TryGetValue(tagId, out var bitmap))
                     bitmapCache.Add(tagId, bitmap = texParam.Tag.ReadMetadata<TBitmap>());
 
+                var texture = new Texture
+                {
+                    Id = tagId,
+                    ContentProvider = bitmap,
+                    Gamma = bitmap.GetSubmapGamma(0)
+                };
+
+                texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, texParam.Tag.TagName);
+
                 material.TextureMappings.Add(new TextureMapping
                 {
                     Usage = ShaderParameters.UsageLookup.GetValueOrDefault(texParam.Usage, TextureUsage.Other),
                     Tiling = new Vector2(texParam.TileData.X, texParam.TileData.Y),
                     BlendChannel = texParam.BlendChannel,
-                    Texture = new Texture
-                    {
-                        Id = tagId,
-                        ContentProvider = bitmap,
-                        Gamma = bitmap.GetSubmapGamma(0)
-                    }
+                    Texture = texture
                 });
             }
 

@@ -88,6 +88,8 @@ namespace Reclaimer.Blam.Halo2
                     Name = tag.FileName
                 };
 
+                material.CustomProperties.Add(BlamConstants.SourceTagPropertyName, tag.TagName);
+
                 var shader = tag?.ReadMetadata<shader>();
                 if (shader == null)
                 {
@@ -102,15 +104,19 @@ namespace Reclaimer.Blam.Halo2
                     continue;
                 }
 
+                var texture = new Texture
+                {
+                    Id = bitmTag.Id,
+                    ContentProvider = bitmTag.ReadMetadata<bitmap>()
+                };
+
+                texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, bitmTag.TagName);
+
                 material.TextureMappings.Add(new TextureMapping
                 {
                     Usage = TextureUsage.Diffuse,
                     Tiling = Vector2.One,
-                    Texture = new Texture
-                    {
-                        Id = bitmTag.Id,
-                        ContentProvider = bitmTag.ReadMetadata<bitmap>()
-                    }
+                    Texture = texture
                 });
 
                 yield return material;

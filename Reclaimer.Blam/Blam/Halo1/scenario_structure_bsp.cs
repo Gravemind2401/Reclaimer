@@ -50,6 +50,7 @@ namespace Reclaimer.Blam.Halo1
             using var reader = Cache.CreateReader(Cache.DefaultAddressTranslator);
 
             var model = new Model { Name = Item.FileName };
+            model.CustomProperties.Add(BlamConstants.SourceTagPropertyName, Item.TagName);
 
             var shaderRefs = Lightmaps.SelectMany(m => m.Materials)
                 .Where(m => m.ShaderReference.TagId >= 0)
