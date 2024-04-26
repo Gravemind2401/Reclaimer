@@ -73,6 +73,7 @@
     {
         public string Name { get; set; }
         public bool Export { get; set; } = true;
+        public CustomProperties CustomProperties { get; } = new();
         public List<SceneGroup> ChildGroups { get; } = new();
         public List<SceneObject> ChildObjects { get; } = new();
 
@@ -114,6 +115,7 @@
         public string Name { get; set; }
         public bool Export { get; set; } = true;
         public SceneFlags Flags { get; set; }
+        public CustomProperties CustomProperties { get; } = new();
     }
 
     [Flags]

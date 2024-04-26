@@ -67,6 +67,7 @@ namespace Reclaimer.Geometry
         public string Name { get; set; }
         public bool Export { get; set; } = true;
         public List<ModelPermutation> Permutations { get; } = new();
+        public CustomProperties CustomProperties { get; } = new();
     }
 
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
@@ -78,6 +79,7 @@ namespace Reclaimer.Geometry
         public (int Index, int Count) MeshRange { get; set; }
         public Vector3 Scale { get; set; } = Vector3.One;
         public Matrix4x4 Transform { get; set; } = Matrix4x4.Identity;
+        public CustomProperties CustomProperties { get; } = new();
 
         public float UniformScale
         {
@@ -99,6 +101,7 @@ namespace Reclaimer.Geometry
     {
         public string Name { get; set; }
         public List<MarkerInstance> Instances { get; } = new();
+        public CustomProperties CustomProperties { get; } = new();
     }
 
     public class MarkerInstance
@@ -114,6 +117,8 @@ namespace Reclaimer.Geometry
 
         //TODO: use reference instead of index
         public int BoneIndex { get; set; }
+
+        public CustomProperties CustomProperties { get; } = new();
     }
 
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
@@ -151,6 +156,8 @@ namespace Reclaimer.Geometry
                 return translation;
             }
         }
+
+        public CustomProperties CustomProperties { get; } = new();
     }
 
     public class Mesh

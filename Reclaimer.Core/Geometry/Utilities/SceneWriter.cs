@@ -129,6 +129,72 @@ namespace Reclaimer.Geometry.Utilities
             }
         }
 
+        private void Write(CustomProperties properties)
+        {
+            if (properties.Count == 0)
+                return;
+
+            using (BlockMarker(SceneCodes.CustomProperties))
+            {
+                writer.Write(properties.Count);
+                foreach (var (key, value) in properties)
+                {
+                    writer.Write(stringPool.IndexOf(key));
+
+                    if (value is bool b)
+                    {
+                        writer.Write((byte)0);
+                        writer.Write(b);
+                    }
+                    else if (value is bool[] ba)
+                    {
+                        writer.Write((byte)1);
+                        writer.Write(ba.Length);
+                        foreach (var x in ba)
+                            writer.Write(x);
+                    }
+                    else if (value is int i)
+                    {
+                        writer.Write((byte)2);
+                        writer.Write(i);
+                    }
+                    else if (value is int[] ia)
+                    {
+                        writer.Write((byte)3);
+                        writer.Write(ia.Length);
+                        foreach (var x in ia)
+                            writer.Write(x);
+                    }
+                    else if (value is float f)
+                    {
+                        writer.Write((byte)4);
+                        writer.Write(f);
+                    }
+                    else if (value is float[] fa)
+                    {
+                        writer.Write((byte)5);
+                        writer.Write(fa.Length);
+                        foreach (var x in fa)
+                            writer.Write(x);
+                    }
+                    else if (value is string s)
+                    {
+                        writer.Write((byte)6);
+                        writer.Write(stringPool.IndexOf(s));
+                    }
+                    else if (value is string[] sa)
+                    {
+                        writer.Write((byte)7);
+                        writer.Write(sa.Length);
+                        foreach (var x in sa)
+                            writer.Write(stringPool.IndexOf(x));
+                    }
+                    else
+                        throw new NotSupportedException();
+                }
+            }
+        }
+
         #region Materials
 
         private void Write(Material material)
@@ -143,6 +209,7 @@ namespace Reclaimer.Geometry.Utilities
 
                 WriteList(material.TextureMappings, Write, SceneCodes.TextureMapping);
                 WriteList(material.Tints, Write, SceneCodes.Tint);
+                Write(material.CustomProperties);
             }
         }
 
@@ -183,6 +250,8 @@ namespace Reclaimer.Geometry.Utilities
                     writer.Write(texture.Gamma);
                 }
 
+                Write(texture.CustomProperties);
+
                 if (EmbedTextures)
                 {
                     try
@@ -222,7 +291,10 @@ namespace Reclaimer.Geometry.Utilities
                     writer.WriteMatrix3x4(placement.Transform);
                 }
 
-                Write(placement.Object);
+                using (BlockMarker(SceneCodes.SceneObject))
+                    Write(placement.Object);
+
+                Write(placement.CustomProperties);
             }
         }
 
@@ -241,6 +313,7 @@ namespace Reclaimer.Geometry.Utilities
                 WriteList(model.Markers, Write, SceneCodes.Marker);
                 WriteList(model.Bones, Write, SceneCodes.Bone);
                 WriteList(meshPool, Write, SceneCodes.Mesh);
+                Write(model.CustomProperties);
             }
         }
 
@@ -253,6 +326,7 @@ namespace Reclaimer.Geometry.Utilities
                     writer.Write(stringPool.IndexOf(region.Name));
 
                 WriteList(exportedPermutations, Write, SceneCodes.Permutation);
+                Write(region.CustomProperties);
             }
         }
 
@@ -273,13 +347,17 @@ namespace Reclaimer.Geometry.Utilities
             }
 
             using (BlockMarker(SceneCodes.Permutation))
-            using (BlockMarker(SceneCodes.AttributeData))
             {
-                writer.Write(stringPool.IndexOf(permutation.Name));
-                writer.Write(permutation.IsInstanced);
-                writer.Write(meshRange.Index);
-                writer.Write(meshRange.Count);
-                writer.WriteMatrix3x4(permutation.GetFinalTransform());
+                using (BlockMarker(SceneCodes.AttributeData))
+                {
+                    writer.Write(stringPool.IndexOf(permutation.Name));
+                    writer.Write(permutation.IsInstanced);
+                    writer.Write(meshRange.Index);
+                    writer.Write(meshRange.Count);
+                    writer.WriteMatrix3x4(permutation.GetFinalTransform());
+                }
+
+                Write(permutation.CustomProperties);
             }
         }
 
@@ -291,31 +369,40 @@ namespace Reclaimer.Geometry.Utilities
                     writer.Write(stringPool.IndexOf(marker.Name));
 
                 WriteList(marker.Instances, Write, SceneCodes.MarkerInstance);
+                Write(marker.CustomProperties);
             }
         }
 
         private void Write(MarkerInstance instance)
         {
             using (BlockMarker(SceneCodes.MarkerInstance))
-            using (BlockMarker(SceneCodes.AttributeData))
             {
-                writer.Write(instance.RegionIndex);
-                writer.Write(instance.PermutationIndex);
-                writer.Write(instance.BoneIndex);
-                writer.Write(instance.Position);
-                writer.Write(instance.Rotation);
+                using (BlockMarker(SceneCodes.AttributeData))
+                {
+                    writer.Write(instance.RegionIndex);
+                    writer.Write(instance.PermutationIndex);
+                    writer.Write(instance.BoneIndex);
+                    writer.Write(instance.Position);
+                    writer.Write(instance.Rotation);
+                }
+                
+                Write(instance.CustomProperties);
             }
         }
 
         private void Write(Bone bone)
         {
             using (BlockMarker(SceneCodes.Bone))
-            using (BlockMarker(SceneCodes.AttributeData))
             {
-                writer.Write(stringPool.IndexOf(bone.Name));
-                writer.Write(bone.ParentIndex);
-                writer.WriteMatrix4x4(bone.LocalTransform);
-                //TODO: write/read world transform
+                using (BlockMarker(SceneCodes.AttributeData))
+                {
+                    writer.Write(stringPool.IndexOf(bone.Name));
+                    writer.Write(bone.ParentIndex);
+                    writer.WriteMatrix4x4(bone.LocalTransform);
+                    //TODO: write/read world transform
+                }
+
+                Write(bone.CustomProperties);
             }
         }
 

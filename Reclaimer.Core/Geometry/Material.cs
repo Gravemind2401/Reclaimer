@@ -16,6 +16,8 @@ namespace Reclaimer.Geometry
 
         [Obsolete("Backwards compatibility for AMF")]
         public MaterialFlagsCompat LegacyFlags { get; set; }
+
+        public CustomProperties CustomProperties { get; } = new();
     }
 
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
@@ -43,6 +45,7 @@ namespace Reclaimer.Geometry
         public int Id { get; set; }
         public float Gamma { get; set; } = 2.2f; //default to sRGB
         public IContentProvider<IBitmap> ContentProvider { get; set; }
+        public CustomProperties CustomProperties { get; } = new();
         public string Name => ContentProvider?.Name;
         public DdsImage GetDds() => ContentProvider?.GetContent().ToDds(0);
     }

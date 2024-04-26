@@ -41,7 +41,10 @@ def _read_stringref(reader: FileReader) -> str:
 
 def _decode_attributes(reader: FileReader, props: Dict[str, DataBlock], read_func: Callable[[], None]):
     ''' Seeks to the body of the attribute data block and calls `read_func` '''
-    block = props['ATTR']
+    block = props.get('ATTR', None)
+    if not block:
+        return
+
     reader.position = block.start_address
     return read_func()
 
@@ -60,6 +63,34 @@ def _decode_data_block(reader: FileReader, block: DataBlock) -> Tuple[int, int]:
     size = reader.read_int32()
     address = reader.position
     return (address, size)
+
+def _decode_custom_properties(reader: FileReader, props: Dict[str, DataBlock], target: ICustomProperties):
+    block = props.get('CUST', None)
+    if not block:
+        return
+
+    reader.position = block.start_address
+    property_count = reader.read_int32()
+
+    def read_value(type: int):
+        if type == 0:
+            return reader.read_bool()
+        elif type == 1:
+            return reader.read_int32()
+        elif type == 2:
+            return reader.read_float()
+        elif type == 3:
+            return _read_stringref(reader)
+
+    for _ in range(property_count):
+        key = _read_stringref(reader)
+        type = reader.read_byte()
+        is_array = type & 1 > 0
+        type = type >> 1
+        value_count = reader.read_int32() if is_array else 1
+        value = [read_value(type) for _ in range(value_count)] if is_array else read_value(type)
+        target.custom_properties[key] = value
+
 
 def _append_default_custom_properties(scene: Scene):
     def set_value_if_new(owner: ICustomProperties, key: str, value):
@@ -122,6 +153,7 @@ def _read_scene(reader: FileReader, block: DataBlock) -> Scene:
     props = _read_property_blocks(reader, block)
     __strings = _decode_block(reader, props['STRS'], _read_string_index)
     _decode_attributes(reader, props, read_attribute_data)
+    _decode_custom_properties(reader, props, scene)
 
     scene.root_node = _decode_block(reader, props['NODE'], _read_node)
     scene.model_pool = _decode_list(reader, props['MODL[]'], _read_model)
@@ -151,6 +183,7 @@ def _read_node(reader: FileReader, block: DataBlock):
 
     props = _read_property_blocks(reader, block)
     _decode_attributes(reader, props, read_attribute_data)
+    _decode_custom_properties(reader, props, node)
 
     node.child_groups = _decode_list(reader, props['NODE[]'], _read_node)
     node.child_objects = _decode_list(reader, props['OBJE[]'], _read_object)
@@ -174,16 +207,19 @@ def _read_placement(reader: FileReader, block: DataBlock) -> Placement:
         _read_object_base_props(reader, placement)
         placement.transform = reader.read_matrix3x4()
 
+    def _read_object_block(reader, wrapper_block):
+        object_block = DataBlock(reader)
+        return _read_object(reader, object_block)
+
     props = _read_property_blocks(reader, block)
     _decode_attributes(reader, props, read_attribute_data)
+    _decode_custom_properties(reader, props, placement)
 
-    # should only be one block other than the ATTR block, which will be the object block
-    for b in props.values():
-        if b.code != 'ATTR':
-            placement.object = _read_object(reader, b)
-            break
+    # the object may be one of multiple types, so it is always wrapped in an OBJE block allowing to be accessed by key without knowing the type
+    placement.object = _decode_block(reader, props['OBJE'], _read_object_block)
 
     return placement
+
 
 def _read_modelref(reader: FileReader, block: DataBlock) -> ModelRef:
     return ModelRef(reader.read_int32())
@@ -196,6 +232,7 @@ def _read_model(reader: FileReader, block: DataBlock) -> Model:
 
     props = _read_property_blocks(reader, block)
     _decode_attributes(reader, props, read_attribute_data)
+    _decode_custom_properties(reader, props, model)
 
     model.regions = _decode_list(reader, props['REGN[]'], _read_region)
     model.markers = _decode_list(reader, props['MARK[]'], _read_marker)
@@ -211,6 +248,7 @@ def _read_region(reader: FileReader, block: DataBlock) -> ModelRegion:
 
     props = _read_property_blocks(reader, block)
     _decode_attributes(reader, props, read_attribute_data)
+    _decode_custom_properties(reader, props, region)
 
     region.permutations = _decode_list(reader, props['PERM[]'], _read_permutation)
     return region
@@ -227,6 +265,7 @@ def _read_permutation(reader: FileReader, block: DataBlock) -> ModelPermutation:
 
     props = _read_property_blocks(reader, block)
     _decode_attributes(reader, props, read_attribute_data)
+    _decode_custom_properties(reader, props, perm)
 
     return perm
 
@@ -238,6 +277,7 @@ def _read_marker(reader: FileReader, block: DataBlock) -> Marker:
 
     props = _read_property_blocks(reader, block)
     _decode_attributes(reader, props, read_attribute_data)
+    _decode_custom_properties(reader, props, marker)
 
     marker.instances = _decode_list(reader, props['MKIN[]'], _read_marker_instance)
     return marker
@@ -254,6 +294,7 @@ def _read_marker_instance(reader: FileReader, block: DataBlock) -> MarkerInstanc
 
     props = _read_property_blocks(reader, block)
     _decode_attributes(reader, props, read_attribute_data)
+    _decode_custom_properties(reader, props, inst)
 
     return inst
 
@@ -267,6 +308,7 @@ def _read_bone(reader: FileReader, block: DataBlock) -> Bone:
 
     props = _read_property_blocks(reader, block)
     _decode_attributes(reader, props, read_attribute_data)
+    _decode_custom_properties(reader, props, bone)
 
     return bone
 
@@ -308,6 +350,7 @@ def _read_material(reader: FileReader, block: DataBlock) -> Material:
 
     props = _read_property_blocks(reader, block)
     _decode_attributes(reader, props, read_attribute_data)
+    _decode_custom_properties(reader, props, material)
 
     material.texture_mappings = _decode_list(reader, props['TMAP[]'], _read_texture_mapping)
     material.tints = _decode_list(reader, props['TINT[]'], _read_tint)
@@ -350,6 +393,7 @@ def _read_texture(reader: FileReader, block: DataBlock) -> Texture:
 
     props = _read_property_blocks(reader, block)
     _decode_attributes(reader, props, read_attribute_data)
+    _decode_custom_properties(reader, props, texture)
 
     if 'DATA' in props:
         texture.address, texture.size = _decode_data_block(reader, props['DATA'])
