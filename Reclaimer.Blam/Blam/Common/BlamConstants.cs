@@ -17,6 +17,7 @@ namespace Reclaimer.Blam.Common
         public const string SourceTagPropertyName = "tag_name";
         public const string GeometryInstancePropertyName = "geometry_instance";
         public const string InstanceNamePropertyName = "instance_name";
+        public const string InstanceGroupPropertyName = "instance_group";
         public const string PermutationNamePropertyName = "permutation_name";
 
         //1 world unit = 10 feet

@@ -153,6 +153,7 @@ namespace Reclaimer.Blam.HaloReach
 
                 permutation.CustomProperties.Add(BlamConstants.GeometryInstancePropertyName, true);
                 permutation.CustomProperties.Add(BlamConstants.InstanceNamePropertyName, instance.Name);
+                permutation.CustomProperties.Add(BlamConstants.InstanceGroupPropertyName, index);
                 permutation.CustomProperties.Add(BlamConstants.PermutationNamePropertyName, owners);
 
                 return permutation;

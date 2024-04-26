@@ -91,13 +91,23 @@ namespace Reclaimer.Blam.Halo2
                 var sectionRegion = new ModelRegion { Name = instanceGroup.Key };
                 sectionRegion.Permutations.AddRange(
                     instanceGroup.Where(i => Sections.ElementAtOrDefault(i.SectionIndex)?.VertexCount > 0)
-                    .Select(i => new ModelPermutation
+                    .Select(i =>
                     {
-                        Name = i.Name,
-                        Transform = i.Transform,
-                        UniformScale = i.TransformScale,
-                        MeshRange = (Clusters.Count + i.SectionIndex, 1),
-                        IsInstanced = true
+                        var permutation = new ModelPermutation
+                        {
+                            Name = i.Name,
+                            Transform = i.Transform,
+                            UniformScale = i.TransformScale,
+                            MeshRange = (Clusters.Count + i.SectionIndex, 1),
+                            IsInstanced = true
+                        };
+
+                        permutation.CustomProperties.Add(BlamConstants.GeometryInstancePropertyName, true);
+                        permutation.CustomProperties.Add(BlamConstants.InstanceNamePropertyName, i.Name);
+                        permutation.CustomProperties.Add(BlamConstants.InstanceGroupPropertyName, i.SectionIndex);
+                        permutation.CustomProperties.Add(BlamConstants.PermutationNamePropertyName, (string)null);
+
+                        return permutation;
                     })
                 );
                 model.Regions.Add(sectionRegion);

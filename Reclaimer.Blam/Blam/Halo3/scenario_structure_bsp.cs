@@ -74,13 +74,23 @@ namespace Reclaimer.Blam.Halo3
             {
                 var sectionRegion = new ModelRegion { Name = instanceGroup.Key };
                 sectionRegion.Permutations.AddRange(
-                    instanceGroup.Select(i => new ModelPermutation
+                    instanceGroup.Select(i =>
                     {
-                        Name = i.Name,
-                        Transform = i.Transform,
-                        UniformScale = i.TransformScale,
-                        MeshRange = (i.SectionIndex, 1),
-                        IsInstanced = true
+                        var permutation = new ModelPermutation
+                        {
+                            Name = i.Name,
+                            Transform = i.Transform,
+                            UniformScale = i.TransformScale,
+                            MeshRange = (i.SectionIndex, 1),
+                            IsInstanced = true
+                        };
+
+                        permutation.CustomProperties.Add(BlamConstants.GeometryInstancePropertyName, true);
+                        permutation.CustomProperties.Add(BlamConstants.InstanceNamePropertyName, i.Name);
+                        permutation.CustomProperties.Add(BlamConstants.InstanceGroupPropertyName, i.SectionIndex);
+                        permutation.CustomProperties.Add(BlamConstants.PermutationNamePropertyName, (string)null);
+
+                        return permutation;
                     })
                 );
 
