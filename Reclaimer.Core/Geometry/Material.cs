@@ -90,6 +90,7 @@ namespace Reclaimer.Geometry
         public const string SelfIllumination = "self_illum";
         public const string Specular = "specular";
         public const string Transparency = "transparency";
+        public const string ReflectionCube = "reflection_cube";
     }
 
     public static class TintUsage
