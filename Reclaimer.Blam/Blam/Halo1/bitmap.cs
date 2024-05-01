@@ -65,8 +65,19 @@ namespace Reclaimer.Blam.Halo1
                 data = reader.ReadBytes(submap.PixelsSize);
             }
 
+            var format = submap.BitmapFormat;
+            if (format == TextureFormat.P8_bump)
+            {
+                var indices = data;
+                data = new byte[indices.Length * 4];
+                format = TextureFormat.A8R8G8B8;
+
+                for (var i = 0; i < indices.Length; i++)
+                    Array.Copy(Properties.Resources.Halo1BumpPalette, indices[i] * 4, data, i * 4, 4);
+            }
+
             var type = submap.BitmapType == TextureType.CubeMap ? submap.BitmapType : TextureType.Texture2D;
-            var props = new BitmapProperties(submap.Width, submap.Height, submap.BitmapFormat, type)
+            var props = new BitmapProperties(submap.Width, submap.Height, format, type)
             {
                 ByteOrder = Cache.ByteOrder,
                 Depth = submap.BitmapType == TextureType.Texture3D ? submap.Depth : 1,

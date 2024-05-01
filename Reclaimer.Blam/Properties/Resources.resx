@@ -118,6 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Halo1BumpPalette" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Halo1BumpPalette.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="Halo1Classes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\halo1classes.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
@@ -171,5 +174,8 @@
   </data>
   <data name="MccHaloReachVertexBuffer" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\mcchaloreachvertexbuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="StubbsBumpPalette" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\StubbsBumpPalette.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>
