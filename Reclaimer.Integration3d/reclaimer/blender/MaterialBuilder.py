@@ -102,7 +102,7 @@ class TextureHelper:
         self.rgb_node = self.material.node_tree.nodes.new('ShaderNodeSeparateRGB')
         self.rgb_node.parent = self.frame_node
         self.rgb_node.location = (300, 200)
-        self.material.node_tree.links.new(self.rgb_node.inputs['Color'], self.get_output('Color'))
+        self.material.node_tree.links.new(self.rgb_node.inputs['Image'], self.get_output('Color'))
 
     def get_default_output(self, usage: str) -> bpy.types.NodeSocket:
         input = self.input_data.get(usage, None) or next(iter(self.input_data.items()))[1]
@@ -157,6 +157,7 @@ class MaterialBuilder:
             TEXTURE_USAGE.BLEND: [],
             TEXTURE_USAGE.DIFFUSE: [],
             TEXTURE_USAGE.NORMAL: [],
+            TEXTURE_USAGE.HEIGHT: [],
             TEXTURE_USAGE.SPECULAR: [],
             TEXTURE_USAGE.TRANSPARENCY: []
         }
@@ -173,6 +174,7 @@ class MaterialBuilder:
             ALPHA_MODE.CLIP: 'CLIP',
             ALPHA_MODE.ADD: 'BLEND',
             ALPHA_MODE.BLEND: 'BLEND',
+            ALPHA_MODE.MULTIPLY: 'BLEND',
             ALPHA_MODE.OPAQUE: 'OPAQUE'
         }
 
@@ -190,7 +192,8 @@ class MaterialBuilder:
                         usage_lookup[usage].append(helper)
 
         diffuse_images = usage_lookup[TEXTURE_USAGE.DIFFUSE]
-        bump_images = usage_lookup[TEXTURE_USAGE.NORMAL]
+        normal_images = usage_lookup[TEXTURE_USAGE.NORMAL]
+        height_images = usage_lookup[TEXTURE_USAGE.HEIGHT]
         specular_images = usage_lookup[TEXTURE_USAGE.SPECULAR]
         transparency_images = usage_lookup[TEXTURE_USAGE.TRANSPARENCY]
 
@@ -223,9 +226,9 @@ class MaterialBuilder:
                         channel = blend_input_lookup[input.blend_channel]
                         result.node_tree.links.new(comp_blend.inputs[f'{channel} Color'], helper.get_default_output(TEXTURE_USAGE.DIFFUSE))
 
-            if bump_images:
+            if normal_images:
                 result.node_tree.links.new(bsdf.inputs['Normal'], comp_blend.outputs['Normal'])
-                for helper in bump_images:
+                for helper in normal_images:
                     input = helper.default_input
                     helper.set_location(next_position())
                     if input.blend_channel in blend_input_lookup:
@@ -246,13 +249,22 @@ class MaterialBuilder:
                 helper = diffuse_images[0]
                 helper.set_location(-700, 300)
                 result.node_tree.links.new(bsdf.inputs['Base Color'], helper.get_default_output(TEXTURE_USAGE.DIFFUSE))
-            if bump_images:
-                helper = bump_images[0]
+            if normal_images:
+                helper = normal_images[0]
                 helper.set_location(-600, -100)
                 normal_node = create_group_node(result, 'DX Normal Map')
                 normal_node.location = (-250, -150)
                 result.node_tree.links.new(normal_node.inputs['Color'], helper.get_default_output(TEXTURE_USAGE.NORMAL))
                 result.node_tree.links.new(bsdf.inputs['Normal'], normal_node.outputs['Normal'])
+            if height_images:
+                helper = height_images[0]
+                helper.set_location(-600, -100)
+                height_node = result.node_tree.nodes.new('ShaderNodeBump')
+                height_node.inputs['Strength'].default_value = 1
+                height_node.inputs['Distance'].default_value = 0.04
+                height_node.location = (-250, -150)
+                result.node_tree.links.new(height_node.inputs['Height'], helper.get_default_output(TEXTURE_USAGE.HEIGHT))
+                result.node_tree.links.new(bsdf.inputs['Normal'], height_node.outputs['Normal'])
             if specular_images:
                 helper = specular_images[0]
                 helper.set_location(-1200, -50)

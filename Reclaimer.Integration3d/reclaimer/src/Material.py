@@ -34,7 +34,8 @@ class ALPHA_MODE:
 class TEXTURE_USAGE:
     BLEND: str = 'blend'
     DIFFUSE: str = 'diffuse'
-    NORMAL: str = 'bump'
+    NORMAL: str = 'normal'
+    HEIGHT: str = 'height'
     SPECULAR: str = 'specular'
     TRANSPARENCY: str = 'transparency'
 

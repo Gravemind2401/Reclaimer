@@ -84,8 +84,9 @@ namespace Reclaimer.Geometry
         public const string Diffuse = "diffuse";
         public const string DiffuseDetail = "diffuse_detail";
         public const string ColorChange = "color_change";
-        public const string Normal = "bump";
-        public const string NormalDetail = "bump_detail";
+        public const string Normal = "normal";
+        public const string NormalDetail = "normal_detail";
+        public const string Height = "height";
         public const string SelfIllumination = "self_illum";
         public const string Specular = "specular";
         public const string Transparency = "transparency";
