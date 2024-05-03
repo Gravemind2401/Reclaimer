@@ -1,12 +1,12 @@
 import bpy
-from typing import cast, Union, Iterable
+from typing import Union, Iterable
+
+from .Compatibility import *
 
 __all__ = [
     'init_custom_node_groups',
     'create_group_node'
 ]
-
-NodeSocketInterfaceCompat = bpy.types.NodeSocketInterface if bpy.app.version[0] < 4 else bpy.types.NodeTreeInterfaceSocket
 
 
 def init_custom_node_groups():
@@ -51,13 +51,13 @@ def _get_blender4_socket(node_tree: bpy.types.NodeTree, in_out: str, key: Union[
         return list(sockets)[key]
 
 def _get_input_socket(node: Union[bpy.types.Node, bpy.types.NodeTree], key: Union[int, str]) -> NodeSocketInterfaceCompat:
-    if bpy.app.version[0] < 4 or isinstance(node, bpy.types.Node):
+    if bpy.app.version[0] < 4 or isinstance(node, bpy.types.Node) or isinstance(node, ShaderNodeCompat):
         return node.inputs[key]
     else:
         return _get_blender4_socket(node, 'INPUT', key)
 
 def _get_output_socket(node: Union[bpy.types.Node, bpy.types.NodeTree], key: Union[int, str]) -> NodeSocketInterfaceCompat:
-    if bpy.app.version[0] < 4 or isinstance(node, bpy.types.Node):
+    if bpy.app.version[0] < 4 or isinstance(node, bpy.types.Node) or isinstance(node, ShaderNodeCompat):
         return node.outputs[key]
     else:
         return _get_blender4_socket(node, 'OUTPUT', key)
@@ -105,20 +105,20 @@ def _initgroup_dxnormal():
     _create_input_socket(group, 'NodeSocketColor', 'Color')
     _create_output_socket(group, 'NodeSocketVector', 'Normal')
 
-    split_node = group.nodes.new('ShaderNodeSeparateRGB')
+    split_node = ShaderNodeSeparateColorCompat(group)
     split_node.location = (-400, 50)
 
     invert_node = group.nodes.new('ShaderNodeInvert')
     invert_node.location = (-200, 50)
 
-    combine_node = group.nodes.new('ShaderNodeCombineRGB')
+    combine_node = ShaderNodeCombineColorCompat(group)
     combine_node.location = (0, 50)
 
     normal_node = group.nodes.new('ShaderNodeNormalMap')
     normal_node.space = 'TANGENT'
     normal_node.location = (200, 50)
 
-    group.links.new(_get_input_socket(split_node, 'Image'), _get_output_socket(group_input, 0))
+    group.links.new(_get_input_socket(split_node, 'Color'), _get_output_socket(group_input, 0))
 
     group.links.new(_get_input_socket(invert_node, 'Color'), _get_output_socket(split_node, 'G'))
 
@@ -126,7 +126,7 @@ def _initgroup_dxnormal():
     group.links.new(_get_input_socket(combine_node, 'G'), _get_output_socket(invert_node, 'Color'))
     group.links.new(_get_input_socket(combine_node, 'B'), _get_output_socket(split_node, 'B'))
 
-    group.links.new(_get_input_socket(normal_node, 'Color'), _get_output_socket(combine_node, 'Image'))
+    group.links.new(_get_input_socket(normal_node, 'Color'), _get_output_socket(combine_node, 'Color'))
 
     group.links.new(_get_input_socket(group_output, 0), _get_output_socket(normal_node, 'Normal'))
 
@@ -148,7 +148,7 @@ def _initgroup_blendmask():
     _create_output_socket(group, 'NodeSocketColor', 'Color')
 
     def create_mix_node(mode: str, input1: bpy.types.NodeSocket, input2: bpy.types.NodeSocket) -> bpy.types.Node:
-        mix_node = cast(bpy.types.ShaderNodeMixRGB, group.nodes.new('ShaderNodeMixRGB'))
+        mix_node = ShaderNodeMixColorCompat(group)
         _get_input_socket(mix_node, 0).default_value = 1
         mix_node.use_clamp = True
         mix_node.blend_type = mode
@@ -157,17 +157,17 @@ def _initgroup_blendmask():
 
         return mix_node
 
-    split_node = group.nodes.new('ShaderNodeSeparateRGB')
+    split_node = ShaderNodeSeparateColorCompat(group)
     split_node.location = (-200, 300)
-    group.links.new(_get_input_socket(split_node, 'Image'), _get_output_socket(group_input, 'Mask RGB'))
+    group.links.new(_get_input_socket(split_node, 'Color'), _get_output_socket(group_input, 'Mask RGB'))
 
     multiply_r = create_mix_node('MULTIPLY', _get_output_socket(split_node, 'R'), _get_output_socket(group_input, 'R'))
     multiply_r.label = 'Multiply R'
-    multiply_r.location = (0, 400)
+    multiply_r.location = (0, 500)
 
     multiply_g = create_mix_node('MULTIPLY', _get_output_socket(split_node, 'G'), _get_output_socket(group_input, 'G'))
     multiply_g.label = 'Multiply G'
-    multiply_g.location = (0, 200)
+    multiply_g.location = (0, 250)
 
     multiply_b = create_mix_node('MULTIPLY', _get_output_socket(split_node, 'B'), _get_output_socket(group_input, 'B'))
     multiply_b.label = 'Multiply B'
@@ -175,7 +175,7 @@ def _initgroup_blendmask():
 
     multiply_a = create_mix_node('MULTIPLY', _get_output_socket(group_input, 'Mask A'), _get_output_socket(group_input, 'A'))
     multiply_a.label = 'Multiply A'
-    multiply_a.location = (0, -200)
+    multiply_a.location = (0, -250)
 
     add_rg = create_mix_node('ADD', _get_output_socket(multiply_r, 'Color'), _get_output_socket(multiply_g, 'Color'))
     add_rg.label = 'Add R+G'

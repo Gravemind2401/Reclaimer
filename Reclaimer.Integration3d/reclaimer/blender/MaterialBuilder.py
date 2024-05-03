@@ -6,13 +6,12 @@ from ..src.ImportOptions import *
 from ..src.Scene import *
 from ..src.Material import *
 from ..src.Types import *
+from .Compatibility import *
 from .CustomShaderNodes import *
 
 __all__ = [
     'MaterialBuilder'
 ]
-
-SPECULAR_SOCKET_NAME = 'Specular' if bpy.app.version[0] < 4 else 'Specular IOR Level'
 
 __channel_socket_lookup: Dict[ChannelFlags, str] = {
     ChannelFlags.RGB: 'Color',
@@ -40,6 +39,7 @@ def _get_channel_socket(input: TextureMapping):
         mask = ChannelFlags.RGB
     return __channel_socket_lookup[mask]
 
+
 class TextureHelper:
     texture_data: Texture = None
     input_data: Dict[str, TextureMapping] = None
@@ -48,7 +48,7 @@ class TextureHelper:
     frame_node: bpy.types.NodeFrame = None
     texture_node: bpy.types.ShaderNodeTexImage = None
     gamma_node: bpy.types.ShaderNodeGamma = None
-    rgb_node: bpy.types.ShaderNodeSeparateRGB = None
+    rgb_node: ShaderNodeSeparateColorCompat = None
     scale_node: bpy.types.ShaderNode = None
 
     @property
@@ -99,10 +99,10 @@ class TextureHelper:
         self.material.node_tree.links.new(self.gamma_node.inputs['Color'], self.texture_node.outputs['Color'])
 
     def _append_rgb_node(self):
-        self.rgb_node = self.material.node_tree.nodes.new('ShaderNodeSeparateRGB')
+        self.rgb_node = ShaderNodeSeparateColorCompat(self.material.node_tree)
         self.rgb_node.parent = self.frame_node
         self.rgb_node.location = (300, 200)
-        self.material.node_tree.links.new(self.rgb_node.inputs['Image'], self.get_output('Color'))
+        self.material.node_tree.links.new(self.rgb_node.inputs['Color'], self.get_output('Color'))
 
     def get_default_output(self, usage: str) -> bpy.types.NodeSocket:
         input = self.input_data.get(usage, None) or next(iter(self.input_data.items()))[1]
@@ -236,7 +236,7 @@ class MaterialBuilder:
                         result.node_tree.links.new(comp_blend.inputs[f'{channel} Normal'], helper.get_default_output(TEXTURE_USAGE.NORMAL))
 
             if specular_images:
-                result.node_tree.links.new(bsdf.inputs[SPECULAR_SOCKET_NAME], comp_blend.outputs['Specular'])
+                result.node_tree.links.new(bsdf.inputs[SPECULAR_SOCKET_COMPAT], comp_blend.outputs['Specular'])
                 for helper in specular_images:
                     input = helper.default_input
                     helper.set_location(next_position())
@@ -268,7 +268,7 @@ class MaterialBuilder:
             if specular_images:
                 helper = specular_images[0]
                 helper.set_location(-1200, -50)
-                result.node_tree.links.new(bsdf.inputs[SPECULAR_SOCKET_NAME], helper.get_default_output(TEXTURE_USAGE.SPECULAR))
+                result.node_tree.links.new(bsdf.inputs[SPECULAR_SOCKET_COMPAT], helper.get_default_output(TEXTURE_USAGE.SPECULAR))
             if transparency_images:
                 result.blend_method = alpha_mode_lookup.get(mat.alpha_mode, 'OPAQUE')
                 helper = transparency_images[0]
