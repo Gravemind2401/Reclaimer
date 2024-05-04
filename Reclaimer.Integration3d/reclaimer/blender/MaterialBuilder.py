@@ -275,6 +275,19 @@ class MaterialBuilder:
                 helper.set_location(-1000, -500)
                 result.node_tree.links.new(bsdf.inputs['Alpha'], helper.get_default_output(TEXTURE_USAGE.TRANSPARENCY))
 
+        if mat.tints:
+            # add RGB nodes with tint color values (not connected to anything yet)
+            tint_frame = result.node_tree.nodes.new('NodeFrame')
+            tint_frame.label = 'Tints'
+            tint_frame.location = (-400, 600)
+
+            for i, tint in enumerate(mat.tints):
+                tint_node: bpy.types.ShaderNodeRGB = result.node_tree.nodes.new('ShaderNodeRGB')
+                tint_node.outputs[0].default_value = tuple(c / 255.0 for c in tint.tint_color)
+                tint_node.label = tint.tint_usage
+                tint_node.parent = tint_frame
+                tint_node.location = (200 * i, 0)
+
         return result
 
     def _get_image(self, index: int) -> bpy.types.Image:

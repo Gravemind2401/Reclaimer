@@ -8,6 +8,7 @@ __all__ = [
     'GAMMA_PRESET',
     'ALPHA_MODE',
     'TEXTURE_USAGE',
+    'TINT_USAGE',
     'ChannelFlags',
     'Material',
     'TextureMapping',
@@ -40,6 +41,12 @@ class TEXTURE_USAGE:
     TRANSPARENCY: str = 'transparency'
 
 
+class TINT_USAGE:
+    ALBEDO_COLOR = "albedo_color";
+    SELF_ILLUM_COLOR = "self_illum_color";
+    SPECULAR_TINT = "specular_tint";
+
+
 class ChannelFlags(IntFlag):
     DEFAULT = 0
 
@@ -61,7 +68,7 @@ class ChannelFlags(IntFlag):
 class Material(INamed, ICustomProperties):
     alpha_mode: str = None
     texture_mappings: List['TextureMapping']
-    tints: List[Color]
+    tints: List['TintColor']
 
 
 @dataclass
