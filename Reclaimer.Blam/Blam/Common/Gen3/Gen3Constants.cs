@@ -15,6 +15,8 @@ namespace Reclaimer.Blam.Common.Gen3
         public const string SpecularMap = "specular_map";
         public const string FoamTexture = "foam_texture";
         public const string AlphaTestMap = "alpha_test_map";
+        public const string AlphaMaskMap = "alpha_mask_map";
+        public const string EnvironmentMap = "environment_map";
 
         public const string AlbedoColor = "albedo_color";
         public const string SelfIllumColor = "self_illum_color";
@@ -32,7 +34,9 @@ namespace Reclaimer.Blam.Common.Gen3
             { SelfIllumMap, TextureUsage.SelfIllumination },
             { SpecularMap, TextureUsage.Specular },
             { FoamTexture, TextureUsage.Diffuse },
-            { AlphaTestMap, TextureUsage.Transparency }
+            { AlphaTestMap, TextureUsage.Transparency },
+            { AlphaMaskMap, TextureUsage.Diffuse },
+            { EnvironmentMap, TextureUsage.ReflectionCube }
         };
 
         public static readonly Dictionary<string, string> TintLookup = new()
