@@ -46,7 +46,11 @@ namespace Reclaimer.Blam.Halo1
 
                 if (shader.Flags.HasFlag(ShaderModelFlags.AlphaBlendedDecal))
                     material.AlphaMode = AlphaMode.Multiply;
-                
+                else if (shader.Flags.HasFlag(ShaderModelFlags.NotAlphaTested))
+                    material.AlphaMode = AlphaMode.Opaque;
+                else
+                    material.AlphaMode = AlphaMode.Clip;
+
                 var diffuse = AppendTextureMapping(shader.BaseMap.Tag, TextureUsage.Diffuse);
                 if (diffuse != null)
                     diffuse.Tiling = CreateScale(shader.BaseMapUScale, shader.BaseMapVScale);
@@ -82,8 +86,9 @@ namespace Reclaimer.Blam.Halo1
             {
                 var shader = shaderRefTagRef.Tag.ReadMetadata<shader_environment>();
 
-                if (shader.Flags.HasFlag(ShaderEnvironmentFlags.AlphaTested))
-                    material.AlphaMode = AlphaMode.Clip;
+                material.AlphaMode = shader.Flags.HasFlag(ShaderEnvironmentFlags.AlphaTested)
+                    ? AlphaMode.Clip
+                    : AlphaMode.Opaque;
 
                 AppendTextureMapping(shader.BaseMap.Tag, TextureUsage.Diffuse);
 
