@@ -101,8 +101,12 @@ class TextureHelper:
     def _append_rgb_node(self):
         self.rgb_node = ShaderNodeSeparateColorCompat(self.material.node_tree)
         self.rgb_node.parent = self.frame_node
-        self.rgb_node.location = (300, 200)
+        self.rgb_node.location = (300, -130)
         self.material.node_tree.links.new(self.rgb_node.inputs['Color'], self.get_output('Color'))
+
+    def get_default_channel_source(self, usage: str) -> ChannelFlags:
+        input = self.input_data.get(usage, None) or next(iter(self.input_data.items()))[1]
+        return input.channel_mask
 
     def get_default_output(self, usage: str) -> bpy.types.NodeSocket:
         input = self.input_data.get(usage, None) or next(iter(self.input_data.items()))[1]
@@ -159,7 +163,8 @@ class MaterialBuilder:
             TEXTURE_USAGE.NORMAL: [],
             TEXTURE_USAGE.HEIGHT: [],
             TEXTURE_USAGE.SPECULAR: [],
-            TEXTURE_USAGE.TRANSPARENCY: []
+            TEXTURE_USAGE.TRANSPARENCY: [],
+            TEXTURE_USAGE.COLOR_CHANGE: []
         }
 
         blend_input_lookup = {
@@ -196,6 +201,7 @@ class MaterialBuilder:
         height_images = usage_lookup[TEXTURE_USAGE.HEIGHT]
         specular_images = usage_lookup[TEXTURE_USAGE.SPECULAR]
         transparency_images = usage_lookup[TEXTURE_USAGE.TRANSPARENCY]
+        cc_images = usage_lookup[TEXTURE_USAGE.COLOR_CHANGE]
 
         if usage_lookup[TEXTURE_USAGE.BLEND]:
             x_position = -1700
@@ -274,6 +280,22 @@ class MaterialBuilder:
                 helper = transparency_images[0]
                 helper.set_location(-1000, -500)
                 result.node_tree.links.new(bsdf.inputs['Alpha'], helper.get_default_output(TEXTURE_USAGE.TRANSPARENCY))
+            if cc_images and diffuse_images:
+                helper = cc_images[0]
+                helper.set_location(-750, 700)
+                cc_node = create_group_node(result, 'Color Change')
+                cc_node.location = (-200, 600)
+
+                flags = helper.get_default_channel_source(TEXTURE_USAGE.COLOR_CHANGE)
+                if flags == ChannelFlags.DEFAULT or flags == ChannelFlags.RGB:
+                    result.node_tree.links.new(cc_node.inputs['Primary Mask'], helper.get_output('R'))
+                    result.node_tree.links.new(cc_node.inputs['Secondary Mask'], helper.get_output('G'))
+                    result.node_tree.links.new(cc_node.inputs['Tertiary Mask'], helper.get_output('B'))
+                else:
+                    result.node_tree.links.new(cc_node.inputs['Primary Mask'], helper.get_default_output(TEXTURE_USAGE.COLOR_CHANGE))
+
+                result.node_tree.links.new(cc_node.inputs['Base Color'], diffuse_images[0].get_default_output(TEXTURE_USAGE.DIFFUSE))
+                result.node_tree.links.new(bsdf.inputs['Base Color'], cc_node.outputs['Color'])
 
         if mat.tints:
             # add RGB nodes with tint color values (not connected to anything yet)

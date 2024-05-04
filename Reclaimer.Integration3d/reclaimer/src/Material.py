@@ -39,6 +39,7 @@ class TEXTURE_USAGE:
     HEIGHT: str = 'height'
     SPECULAR: str = 'specular'
     TRANSPARENCY: str = 'transparency'
+    COLOR_CHANGE: str = 'color_change'
 
 
 class TINT_USAGE:
