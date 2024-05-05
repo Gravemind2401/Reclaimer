@@ -54,7 +54,7 @@ namespace Reclaimer.Blam.Halo1
             //Xbox maps and player-made CE maps use internal bitmap resources
             if (Cache.CacheType == CacheType.Halo1Xbox
                 || (Cache.CacheType == CacheType.Halo1CE && Item.MetaPointer.Address > 0 && !submap.Flags.HasFlag(BitmapFlags.External))
-                || (Cache.CacheType == CacheType.MccHalo1 && submap.Flags == BitmapFlags.MccInternal))
+                || (Cache.CacheType == CacheType.MccHalo1 && (submap.Flags is BitmapFlags.MccInternal1 or BitmapFlags.MccInternal2)))
                 bitmapSource = Cache.FileName;
 
             byte[] data;
@@ -179,8 +179,9 @@ namespace Reclaimer.Blam.Halo1
         Swizzled = 8,
         External = 256,
 
-        //hack, but this combination doesnt seem to be used on any external bitmaps
-        MccInternal = 641
+        //hack, but these combinations dont seem to be used on any external bitmaps
+        MccInternal1 = 131,
+        MccInternal2 = 641
     }
 
     public enum TextureType : short
