@@ -1,7 +1,7 @@
 import struct
 import itertools
 from enum import IntEnum
-from typing import List, Iterable, Iterator, overload
+from typing import List, Tuple, Iterable, Iterator, overload
 
 from .Types import Triangle
 from .Model import Mesh, MeshSegment
@@ -29,17 +29,39 @@ class IndexBuffer:
     indices: List[int]
 
     def __init__(self, index_layout: IndexLayout, width: int, data: bytes):
+        self.index_layout = index_layout
+
+        if width is None and data is None:
+            return
+
         if width <= 0 or width > 4 or width == 3:
             raise Exception('Unsupported binary width')
 
-        self.index_layout = index_layout
         self.indices = list(t[0] for t in struct.iter_unpack(_index_widths[width], data))
 
     def __repr__(self) -> str:
         return f'<{self.__class__.name}|{IndexLayout(self.index_layout).name}|{self.indices.count}>'
 
+    def get_vertex_range(self, segment: MeshSegment) -> Tuple[int, int]:
+        indices = (self.indices[i] for i in range(segment.index_start, segment.index_start + segment.index_length))
+        lower, upper = -1, -1
+        for i, index in enumerate(indices):
+            lower, upper = (index, index) if i == 0 else (min(lower, index), max(upper, index))
+        return lower, upper + 1 - lower
+
+    def relative_slice(self, segment: MeshSegment) -> 'IndexBuffer':
+        result = IndexBuffer(self.index_layout, None, None)
+        result.indices = self.indices[segment.index_start:(segment.index_start + segment.index_length)]
+
+        # offset the indices so they are relative to zero (so they correspond with the vertices in a slice of the vertex buffer)
+        vertex_start = min(result.indices)
+        for i, value in enumerate(result.indices):
+            result.indices[i] = value - vertex_start
+
+        return result
+
     @overload
-    def count_triangles(self, offset: int = 0, count: int = -1) -> int:
+    def count_triangles(self, offset: int, count: int) -> int:
         ''' Gets the number of triangles in a given range of source indices '''
         ...
 
@@ -79,7 +101,7 @@ class IndexBuffer:
         return from_range(arg1, arg2)
 
     @overload
-    def get_triangles(self, offset: int = 0, count: int = -1) -> Iterator[Triangle]:
+    def get_triangles(self, offset: int, count: int) -> Iterator[Triangle]:
         ''' Iterates the triangles for a given range of source indices '''
         ...
 
@@ -95,7 +117,7 @@ class IndexBuffer:
 
     def get_triangles(self, arg1, arg2 = None) -> Iterator[Triangle]:
         def get_indices(offset: int, count: int) -> Iterator[int]:
-            end = self.indices.count if count < 0 else offset + count
+            end = len(self.indices) if count < 0 else offset + count
             subset = (self.indices[i] for i in range(offset, end))
             if self.index_layout == IndexLayout.TRIANGLE_LIST:
                 return subset

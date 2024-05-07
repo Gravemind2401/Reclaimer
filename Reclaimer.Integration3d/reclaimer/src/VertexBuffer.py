@@ -1,5 +1,5 @@
 import itertools
-from typing import List, Tuple, Iterator, Iterable, Callable
+from typing import List, Tuple, Iterator, Iterable
 from collections.abc import Sequence
 
 from .Vectors import VectorDescriptor
@@ -58,22 +58,39 @@ class VertexBuffer:
 
             yield (i, indices, weights)
 
+    def slice(self, offset: int, count: int) -> 'VertexBuffer':
+        result = VertexBuffer()
+        result.count = count
+        result.position_channels = list(c.slice(offset, count) for c in self.position_channels)
+        result.texcoord_channels = list(c.slice(offset, count) for c in self.texcoord_channels)
+        result.normal_channels = list(c.slice(offset, count) for c in self.normal_channels)
+        result.blendindex_channels = list(c.slice(offset, count) for c in self.blendindex_channels)
+        result.blendweight_channels = list(c.slice(offset, count) for c in self.blendweight_channels)
+        result.color_channels = list(c.slice(offset, count) for c in self.color_channels)
+        return result
+
 
 class VectorBuffer(Sequence):
     _binary: bytes
-    _count: int
-    _decode: Callable[[bytes, int], Iterable[float]]
     _descriptor: VectorDescriptor
+    _count: int
+    _offset: int
 
-    def __init__(self, descriptor: VectorDescriptor, count: int, data: bytes):
+    def __init__(self, data: bytes, descriptor: VectorDescriptor, count: int):
+        self._binary = data
         self._descriptor = descriptor
         self._count = count
-        self._binary = data
+        self._offset = 0
 
     def __getitem__(self, i: int) -> Iterable[float]:
         if i < 0 or i >= self._count:
             raise IndexError('Index out of range')
-        return self._descriptor.decode(self._binary, i)
+        return self._descriptor.decode(self._binary, self._offset + i)
 
     def __len__(self) -> int:
         return self._count
+
+    def slice(self, offset: int, count: int) -> 'VectorBuffer':
+        result = VectorBuffer(self._binary, self._descriptor, count)
+        result._offset = offset
+        return result;

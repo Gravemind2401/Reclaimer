@@ -437,7 +437,7 @@ def _read_vertex_buffer(reader: FileReader, block: DataBlock) -> VertexBuffer:
         descriptor_index = reader.read_int32()
         descriptor = __vector_descriptors[descriptor_index]
         data = reader.read_bytes(b.end_address - reader.position)
-        channel = VectorBuffer(descriptor, buf.count, data)
+        channel = VectorBuffer(data, descriptor, buf.count)
         channel_buffers[b.code].append(channel)
 
     buf.position_channels = channel_buffers['POSN']

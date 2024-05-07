@@ -206,26 +206,33 @@ class SceneBuilder():
         q = Queue()
 
         total_meshes = 0
-        for i, rf in enumerate(filter.selected_regions()):
+        for ri, rf in enumerate(filter.selected_regions()):
             r = rf._region
             region_name = f'{model_state.display_name}::{options.region_name(r)}'
             region_group = interface.create_region(model_state, r, region_name)
-            for j, pf in enumerate(rf.selected_permutations()):
+            for pi, pf in enumerate(rf.selected_permutations()):
                 p = pf._permutation
 
                 world_transform = interface.create_transform(p.transform)
                 for mesh_index in range(p.mesh_index, p.mesh_index + p.mesh_count):
                     mesh = model.meshes[mesh_index]
-                    mesh_key = (scene.model_pool.index(model), mesh_index, -1) # TODO: last element reserved for submesh index if mesh splitting enabled
-                    message = f'creating mesh {total_meshes:03d}: {model.name}/{r.name}/{p.name}/{mesh_index} [{i:02d}/{j:02d}/{mesh_index:02d}]'
-                    mesh_name = options.permutation_name(r, p, mesh_index)
+                    message = f'creating mesh {total_meshes:03d}: {model.name}/{r.name}/{p.name}/{mesh_index} [{ri:02d}/{pi:02d}/{mesh_index:02d}]'
 
-                    def mesh_func(message, model_state, permutation, region_group, transform, mesh, mesh_key, mesh_name):
+                    def mesh_func(message, model_state, permutation, region_group, transform, mesh_params):
                         print(message)
-                        interface.build_mesh(model_state, permutation, region_group, transform, mesh, mesh_key, mesh_name)
-                        progress.increment_meshes()
+                        interface.build_mesh(model_state, permutation, region_group, transform, mesh_params)
 
-                    q.put(partial(mesh_func, message, model_state, p, region_group, world_transform, mesh, mesh_key, mesh_name))
+                    segments = list(enumerate(mesh.segments)) if options.SPLIT_MESHES else [(-1, None)]
+                    for si, s in segments:
+                        mesh_key = (scene.model_pool.index(model), mesh_index, si)
+                        mesh_name = options.permutation_name(r, p, mesh_index, si)
+                        mesh_params = MeshParams(scene, mesh, s, mesh_key, mesh_name)
+                        message = f'creating mesh {total_meshes:03d}: {model.name}/{r.name}/{p.name}/{mesh_index} [{ri:02d}/{pi:02d}/{mesh_index:02d}]'
+                        if si >= 0:
+                            message = f'{message}[{si:02d}]'
+                        q.put(partial(mesh_func, message, model_state, p, region_group, world_transform, mesh_params))
+
+                    q.put(partial(progress.increment_meshes))
                     total_meshes += 1
 
         return q

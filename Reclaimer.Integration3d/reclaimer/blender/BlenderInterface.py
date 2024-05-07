@@ -27,7 +27,7 @@ __all__ = [
 
 BL_UNITS: float = 1000.0 # 1 blender unit = 1000mm
 
-MeshContext = Tuple[Scene, 'BlenderModelState', Mesh, bpy.types.Mesh, Object]
+MeshContext = Tuple[Scene, 'BlenderModelState', MeshParams, bpy.types.Mesh, Object]
 
 
 class BlenderModelState(ModelState):
@@ -223,8 +223,8 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         self._apply_custom_properties(region_obj, region)
         return region_obj
 
-    def build_mesh(self, model_state: BlenderModelState, permutation: ModelPermutation, region_group: Object, world_transform: Matrix, mesh: Mesh, mesh_key: MeshKey, display_name: str) -> None:
-        scene = self.scene
+    def build_mesh(self, model_state: BlenderModelState, permutation: ModelPermutation, region_group: Object, world_transform: Matrix, mesh_params: MeshParams) -> None:
+        vertex_buffer, mesh_key, display_name = mesh_params.vertex_buffer, mesh_params.mesh_key, mesh_params.display_name
 
         existing_mesh = self.unique_meshes.get(mesh_key, None)
         if existing_mesh:
@@ -236,17 +236,14 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
             self._apply_custom_properties(copy, permutation)
             return
 
-        index_buffer = scene.index_buffer_pool[mesh.index_buffer_index]
-        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
-
         # note blender doesnt like if we provide too many dimensions
         positions = list(Vector(v).to_3d() for v in vertex_buffer.position_channels[0])
-        faces = list(index_buffer.get_triangles(mesh))
+        faces = list(mesh_params.chain_triangles())
 
         mesh_data = bpy.data.meshes.new(display_name)
         mesh_data.from_pydata(positions, [], faces)
 
-        DECOMPRESSION_TRANSFORM = Matrix(mesh.vertex_transform).transposed()
+        DECOMPRESSION_TRANSFORM = Matrix(mesh_params.vertex_transform).transposed()
         mesh_data.transform(DECOMPRESSION_TRANSFORM)
 
         for p in mesh_data.polygons:
@@ -259,7 +256,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
 
         self._apply_custom_properties(mesh_obj, permutation)
 
-        mc: MeshContext = (scene, model_state, mesh, mesh_data, mesh_obj)
+        mc: MeshContext = (self.scene, model_state, mesh_params, mesh_data, mesh_obj)
         self._build_normals(mc)
         self._build_uvw(mc, faces)
         self._build_matindex(mc)
@@ -267,8 +264,8 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         self._build_colors(mc, faces)
 
     def _build_normals(self, mc: MeshContext):
-        scene, model, mesh, mesh_data, mesh_obj = mc
-        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+        scene, model_state, mesh_params, mesh_data, mesh_obj = mc
+        vertex_buffer = mesh_params.vertex_buffer
 
         if not (self.options.IMPORT_NORMALS and vertex_buffer.normal_channels):
             return
@@ -282,13 +279,13 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
             mesh_data.use_auto_smooth = True
 
     def _build_uvw(self, mc: MeshContext, faces: List[Triangle]):
-        scene, model_state, mesh, mesh_data, mesh_obj = mc
-        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+        scene, model_state, mesh_params, mesh_data, mesh_obj = mc
+        vertex_buffer = mesh_params.vertex_buffer
 
         if not (self.options.IMPORT_UVW and vertex_buffer.texcoord_channels):
             return
 
-        DECOMPRESSION_TRANSFORM = Matrix(mesh.texture_transform).transposed()
+        DECOMPRESSION_TRANSFORM = Matrix(mesh_params.texture_transform).transposed()
 
         for texcoord_buffer in vertex_buffer.texcoord_channels:
             # note blender wants 3 uvs per triangle rather than one per vertex
@@ -300,8 +297,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
                 uv_layer.data[i].uv = Vector((vec[0], 1 - vec[1]))
 
     def _build_matindex(self, mc: MeshContext):
-        scene, model_state, mesh, mesh_data, mesh_obj = mc
-        index_buffer = scene.index_buffer_pool[mesh.index_buffer_index]
+        scene, model_state, mesh_params, mesh_data, mesh_obj = mc
 
         if not self.options.IMPORT_MATERIALS:
             return
@@ -309,7 +305,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         # only append materials to the mesh that it actually uses, rather than appening all scene materials
         # this means we need to build a lookup of global mat index -> local mat index
         mat_lookup = dict()
-        for loc, glob in enumerate(set(s.material_index for s in mesh.segments if s.material_index >= 0)):
+        for loc, glob in enumerate(set(mi for mi, _ in mesh_params.triangle_sets if mi >= 0)):
             mat_lookup[glob] = loc
 
         if not mat_lookup:
@@ -320,23 +316,22 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
             mesh_data.materials.append(self.materials[i])
 
         face_start = 0
-        for s in mesh.segments:
-            # TODO: more efficient triangle count
-            face_end = face_start + sum(1 for _ in index_buffer.get_triangles(s))
-            if s.material_index >= 0:
+        for mi, triangles in mesh_params.triangle_sets:
+            face_end = face_start + len(triangles)
+            if mi >= 0:
                 for i in range(face_start, face_end):
-                    mesh_data.polygons[i].material_index = mat_lookup[s.material_index]
+                    mesh_data.polygons[i].material_index = mat_lookup[mi]
             face_start = face_end
 
     def _build_skin(self, mc: MeshContext):
-        scene, model_state, mesh, mesh_data, mesh_obj = mc
-        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+        scene, model_state, mesh_params, mesh_data, mesh_obj = mc
+        vertex_buffer, bone_index = mesh_params.vertex_buffer, mesh_params.bone_index
 
         if not (
             self.options.IMPORT_BONES
             and self.options.IMPORT_SKIN
             and model_state.model.bones
-            and (vertex_buffer.blendindex_channels or mesh.bone_index >= 0)
+            and (vertex_buffer.blendindex_channels or bone_index >= 0)
         ):
             return
 
@@ -345,9 +340,9 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         modifier = cast(bpy.types.ArmatureModifier, mesh_obj.modifiers.new(f'{mesh_data.name}::armature', 'ARMATURE'))
         modifier.object = model_state.armature_obj
 
-        if mesh.bone_index >= 0:
+        if bone_index >= 0:
             # only need one vertex group
-            bone = model_state.model.bones[mesh.bone_index]
+            bone = model_state.model.bones[bone_index]
             group = mesh_obj.vertex_groups.new(name=bone.name)
             group.add(range(vertex_count), 1.0, 'ADD') # set every vertex to 1.0 in one go
         else:
@@ -359,8 +354,8 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
                     mesh_obj.vertex_groups[bi].add([vi], bw, 'ADD')
 
     def _build_colors(self, mc: MeshContext, faces: List[Triangle]):
-        scene, model_state, mesh, mesh_data, mesh_obj = mc
-        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+        scene, model_state, mesh_params, mesh_data, mesh_obj = mc
+        vertex_buffer = mesh_params.vertex_buffer
 
         if not (self.options.IMPORT_COLORS and vertex_buffer.color_channels):
             return

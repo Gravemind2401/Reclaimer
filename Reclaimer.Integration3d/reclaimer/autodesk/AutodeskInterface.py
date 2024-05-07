@@ -23,7 +23,7 @@ __all__ = [
 
 MX_UNITS = 100.0 # 1 max unit = 100mm?
 
-MeshContext = Tuple[Scene, 'AutodeskModelState', Mesh, rt.Editable_Mesh]
+MeshContext = Tuple[Scene, 'AutodeskModelState', MeshParams, rt.Editable_Mesh]
 Layer = rt.MixinInterface
 
 
@@ -168,10 +168,10 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
         model_state.region_layers[model_state.model.regions.index(region)] = region_layer
         return region_layer
 
-    def build_mesh(self, model_state: AutodeskModelState, permutation: ModelPermutation, region_group: Layer, world_transform: rt.Matrix3, mesh: Mesh, mesh_key: MeshKey, display_name: str) -> None:
-        scene = self.scene
+    def build_mesh(self, model_state: AutodeskModelState, permutation: ModelPermutation, region_group: Layer, world_transform: rt.Matrix3, mesh_params: MeshParams) -> None:
+        vertex_buffer, mesh_key, display_name = mesh_params.vertex_buffer, mesh_params.mesh_key, mesh_params.display_name
 
-        DECOMPRESSION_TRANSFORM = toMatrix3(mesh.vertex_transform)
+        DECOMPRESSION_TRANSFORM = toMatrix3(mesh_params.vertex_transform)
 
         if mesh_key in self.unique_meshes.keys():
             source = self.unique_meshes.get(mesh_key)
@@ -183,13 +183,10 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
             region_group.addnode(copy)
             return
 
-        index_buffer = scene.index_buffer_pool[mesh.index_buffer_index]
-        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
-
         # note 3dsMax uses 1-based indices for triangles, vertices etc
 
         positions = list(toPoint3(v) for v in vertex_buffer.position_channels[0])
-        faces = list(toPoint3(t) + 1 for t in index_buffer.get_triangles(mesh))
+        faces = list(toPoint3(t) + 1 for t in mesh_params.chain_triangles())
 
         mesh_obj = cast(rt.Editable_Mesh, rt.Mesh(vertices=positions, faces=faces))
         mesh_obj.name = display_name
@@ -197,19 +194,20 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
         region_group.addnode(mesh_obj)
         self.unique_meshes[mesh_key] = mesh_obj
 
-        mc: MeshContext = (scene, model_state, mesh, mesh_obj)
+        mc: MeshContext = (self.scene, model_state, mesh_params, mesh_obj)
         self._build_normals(mc)
         self._build_uvw(mc)
         self._build_matindex(mc)
         self._build_skin(mc)
         self._build_colors(mc)
 
+        # TODO: this works on bsps but not render models?
         # need to decompress BEFORE applying normals, then apply the instance transform AFTER applying normals
         mesh_obj.transform = DECOMPRESSION_TRANSFORM * world_transform
 
     def _build_normals(self, mc: MeshContext):
-        scene, model_state, mesh, mesh_obj = mc
-        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+        scene, model_state, mesh_params, mesh_obj = mc
+        vertex_buffer = mesh_params.vertex_buffer
 
         if not (self.options.IMPORT_NORMALS and vertex_buffer.normal_channels):
             return
@@ -220,13 +218,13 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
             rt.setNormal(mesh_obj, i + 1, normal)
 
     def _build_uvw(self, mc: MeshContext):
-        scene, model_state, mesh, mesh_obj = mc
-        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+        scene, model_state, mesh_params, mesh_obj = mc
+        vertex_buffer = mesh_params.vertex_buffer
 
         if not (self.options.IMPORT_UVW and vertex_buffer.texcoord_channels):
             return
 
-        DECOMPRESSION_TRANSFORM = toMatrix3(mesh.texture_transform)
+        DECOMPRESSION_TRANSFORM = toMatrix3(mesh_params.texture_transform)
 
         # unlike other areas, uvw maps/channels use 0-based indexing
         # however channel 0 is always reserved for vertex color
@@ -239,29 +237,27 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
                 rt.Meshop.setMapVert(mesh_obj, i + 1, vi + 1, rt.Point3(vec[0], 1 - vec[1], 0))
 
     def _build_matindex(self, mc: MeshContext):
-        scene, model_state, mesh, mesh_obj = mc
-        index_buffer = scene.index_buffer_pool[mesh.index_buffer_index]
+        scene, model_state, mesh_params, mesh_obj = mc
 
         if not self.options.IMPORT_MATERIALS:
             return
 
         material_ids = []
-        for s in mesh.segments:
-            # TODO: more efficient triangle count
-            mi = max(1, s.material_index + 1) # default to 1 for meshes with no material
-            material_ids.extend(mi for _ in range(index_buffer.count_triangles(s)))
+        for mi, triangles in mesh_params.triangle_sets:
+            mi = max(1, mi + 1) # default to 1 for meshes with no material
+            material_ids.extend(mi for _ in triangles)
 
         rt.setMesh(mesh_obj, materialIds=material_ids)
 
     def _build_skin(self, mc: MeshContext):
-        scene, model_state, mesh, mesh_obj = mc
-        vertex_buffer = scene.vertex_buffer_pool[mesh.vertex_buffer_index]
+        scene, model_state, mesh_params, mesh_obj = mc
+        vertex_buffer, bone_index = mesh_params.vertex_buffer, mesh_params.bone_index
 
         if not (
             self.options.IMPORT_BONES
             and self.options.IMPORT_SKIN
             and model_state.model.bones
-            and (vertex_buffer.blendindex_channels or mesh.bone_index >= 0)
+            and (vertex_buffer.blendindex_channels or bone_index >= 0)
         ):
             return
 
@@ -271,9 +267,9 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
         rt.addModifier(mesh_obj, modifier)
 
         # note replaceVertexWeights() can take either bone indices or bone references
-        if mesh.bone_index >= 0:
+        if bone_index >= 0:
             modifier.rigid_vertices = True
-            bi, bw = [model_state.maxbones[mesh.bone_index]], [1.0]
+            bi, bw = [model_state.maxbones[bone_index]], [1.0]
             rt.SkinOps.addBone(modifier, bi[0], 0)
             rt.redrawViews()
             for vi in range(vertex_count): # set every vertex to 1.0

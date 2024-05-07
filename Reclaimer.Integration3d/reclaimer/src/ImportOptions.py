@@ -44,8 +44,13 @@ class ImportOptions:
     def region_name(self, region: ModelRegion):
         return f'{region.name}'
 
-    def permutation_name(self, region: ModelRegion, permutation: ModelPermutation, index: int):
-        return f'{region.name}:{permutation.name}'
+    def permutation_name(self, region: ModelRegion, permutation: ModelPermutation, mesh_index: int, segment_index: int):
+        result = f'{region.name}:{permutation.name}'
+        if permutation.mesh_count > 1:
+            result = result + f'[{mesh_index}]'
+        if self.SPLIT_MESHES:
+            result = result + f'-{segment_index:02d}'
+        return result
 
     def material_name(self, material: Material):
         return f'{material.name}'
