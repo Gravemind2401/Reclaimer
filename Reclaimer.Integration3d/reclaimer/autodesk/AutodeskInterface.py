@@ -171,39 +171,38 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
     def build_mesh(self, model_state: AutodeskModelState, permutation: ModelPermutation, region_group: Layer, world_transform: rt.Matrix3, mesh_params: MeshParams) -> None:
         vertex_buffer, mesh_key, display_name = mesh_params.vertex_buffer, mesh_params.mesh_key, mesh_params.display_name
 
-        DECOMPRESSION_TRANSFORM = toMatrix3(mesh_params.vertex_transform)
-
         if mesh_key in self.unique_meshes.keys():
             source = self.unique_meshes.get(mesh_key)
             # methods with byref params return a tuple of (return_value, byref1, byref2, ...)
             _, newNodes = rt.MaxOps.cloneNodes(source, cloneType = rt.Name('instance'), newNodes = pymxs.byref(None))
             copy = cast(rt.Mesh, newNodes[0])
             copy.name = display_name
-            copy.transform = DECOMPRESSION_TRANSFORM * world_transform
+            copy.transform = world_transform
             region_group.addnode(copy)
             return
 
         # note 3dsMax uses 1-based indices for triangles, vertices etc
 
-        positions = list(toPoint3(v) for v in vertex_buffer.position_channels[0])
+        DECOMPRESSION_TRANSFORM = toMatrix3(mesh_params.vertex_transform)
+        positions = list(toPoint3(v) * DECOMPRESSION_TRANSFORM for v in vertex_buffer.position_channels[0])
         faces = list(toPoint3(t) + 1 for t in mesh_params.chain_triangles())
 
         mesh_obj = cast(rt.Editable_Mesh, rt.Mesh(vertices=positions, faces=faces))
         mesh_obj.name = display_name
-        mesh_obj.transform = DECOMPRESSION_TRANSFORM
-        region_group.addnode(mesh_obj)
-        self.unique_meshes[mesh_key] = mesh_obj
 
         mc: MeshContext = (self.scene, model_state, mesh_params, mesh_obj)
         self._build_normals(mc)
+
+        # need to decompress BEFORE applying normals, then apply the instance transform AFTER applying normals
+        # also need to apply transform before applying skin otherwise the transform has no effect
+        mesh_obj.transform = world_transform
+        region_group.addnode(mesh_obj)
+        self.unique_meshes[mesh_key] = mesh_obj
+
         self._build_uvw(mc)
         self._build_matindex(mc)
         self._build_skin(mc)
         self._build_colors(mc)
-
-        # TODO: this works on bsps but not render models?
-        # need to decompress BEFORE applying normals, then apply the instance transform AFTER applying normals
-        mesh_obj.transform = DECOMPRESSION_TRANSFORM * world_transform
 
     def _build_normals(self, mc: MeshContext):
         scene, model_state, mesh_params, mesh_obj = mc
