@@ -184,6 +184,7 @@ class SceneBuilder():
 
             interface.apply_transform(model_state, final_transform)
 
+        q.put(partial(interface.finish_model, model_state))
         q.put(partial(transform_func))
         q.put(partial(progress.increment_objects))
 

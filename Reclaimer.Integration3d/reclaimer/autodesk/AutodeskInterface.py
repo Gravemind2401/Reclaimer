@@ -23,27 +23,55 @@ __all__ = [
 
 MX_UNITS = 100.0 # 1 max unit = 100mm?
 
+MaxLayer = rt.MixinInterface
+MaxGroup = rt.Dummy
+
 MeshContext = Tuple[Scene, 'AutodeskModelState', MeshParams, rt.Editable_Mesh]
-Layer = rt.MixinInterface
+
+
+class GroupHelper:
+    ''' Max groups cannot be empty - this is used to track the group contents prior to creating the group. '''
+    parent_layer: MaxLayer
+    group_node: MaxGroup
+    group_members: List[rt.Node]
+    group_name: str
+
+    def __init__(self, parent_layer: MaxLayer, group_name: str):
+        self.parent_layer = parent_layer
+        self.group_node = None
+        self.group_members = []
+        self.group_name = group_name
+
+    def append_child(self, obj: rt.Node):
+        self.group_members.append(obj)
+
+    def create_group(self):
+        self.group_node = rt.group(self.group_members, name=self.group_name)
+        self.parent_layer.addnode(self.group_node)
 
 
 class AutodeskModelState(ModelState):
-    root_layer: Layer
-    region_layers: Dict[int, Layer]
-    maxbones = List[rt.BoneGeometry]
+    parent_layer: MaxLayer
+    group_helper: GroupHelper
+    region_layers: Dict[int, MaxLayer]
+    maxbones: List[rt.BoneGeometry]
 
-    def __init__(self, model: Model, filter: ModelFilter, display_name: str, layer: Layer):
+    def __init__(self, model: Model, filter: ModelFilter, display_name: str, layer: MaxLayer):
         super().__init__(model, filter, display_name)
-        self.root_layer = self.create_layer(display_name)
-        self.root_layer.setParent(layer)
+        self.parent_layer = self.create_layer(display_name)
+        self.parent_layer.setParent(layer)
+        self.group_helper = GroupHelper(self.parent_layer, display_name)
         self.region_layers = dict()
 
-    def create_layer(self, name: str) -> Layer:
+    def create_layer(self, name: str) -> MaxLayer:
         layer = rt.LayerManager.newLayerFromName(name)
         return layer
 
+    def append_child(self, obj: rt.Node):
+        self.group_helper.append_child(obj)
 
-class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, AutodeskModelState, Layer]):
+
+class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, AutodeskModelState, MaxLayer]):
     unit_scale: float = 1.0
     scene: Scene = None
     options: ImportOptions = None
@@ -56,11 +84,17 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
         self.options = options
         self.unique_meshes = dict()
 
-    def init_materials(self) -> None:
+    def pre_import(self, root_collection: MaxLayer):
         pass
 
+    def post_import(self):
+        pass
+
+    def init_materials(self) -> None:
+        pass # TODO
+
     def create_material(self, material: Material) -> rt.Material:
-        return None
+        return None # TODO
 
     def set_materials(self, materials: List[rt.Material]) -> None:
         self.materials = materials
@@ -87,8 +121,15 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
         state = AutodeskModelState(model, filter, display_name, collection)
         return state
 
+    def finish_model(self, model_state: AutodeskModelState) -> None:
+        # max crashes if trying to add objects to the group one at a time afer like 50 or so objects
+        # so just add them all in one go at the end
+        model_state.group_helper.create_group()
+
     def apply_transform(self, model_state: AutodeskModelState, world_transform: rt.Matrix3) -> None:
-        pass
+        group_node = model_state.group_helper.group_node
+        if group_node:
+            group_node.transform = group_node.transform * world_transform
 
     def _get_bone_transforms(self, model: Model) -> List[rt.Matrix3]:
         result = []
@@ -105,7 +146,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
         TAIL_VECTOR = rt.Point3(BONE_SIZE, 0.0, 0.0)
 
         bone_layer = model_state.create_layer(f'{model_state.display_name}::__bones__')
-        bone_layer.setParent(model_state.root_layer)
+        bone_layer.setParent(model_state.parent_layer)
         model_state.region_layers[-1] = bone_layer
         bone_transforms = self._get_bone_transforms(model)
 
@@ -116,6 +157,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
             maxbone.name = self.options.bone_name(b)
             maxbone.height = maxbone.width = maxbone.length = BONE_SIZE
             maxbones.append(maxbone)
+            model_state.append_child(maxbone)
             bone_layer.addnode(maxbone)
 
             children = model.get_bone_children(b)
@@ -141,6 +183,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
             for i, instance in enumerate(marker.instances):
                 marker_obj = rt.Sphere(radius = MARKER_SIZE)
                 marker_obj.name = options.marker_name(marker, i)
+                model_state.append_child(marker_obj)
 
                 # put the marker in the appropriate layer based on region/permutation
                 if instance.region_index >= 0 and instance.region_index < 255:
@@ -148,7 +191,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
                 else:
                     if not marker_layer:
                         marker_layer = model_state.create_layer(f'{model_state.display_name}::__markers__')
-                        marker_layer.setParent(model_state.root_layer)
+                        marker_layer.setParent(model_state.parent_layer)
                         model_state.region_layers[-2] = marker_layer
                     marker_layer.addnode(marker_obj)
 
@@ -164,11 +207,11 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
 
     def create_region(self, model_state: AutodeskModelState, region: ModelRegion, display_name: str) -> rt.MixinInterface:
         region_layer = model_state.create_layer(display_name)
-        region_layer.setParent(model_state.root_layer)
+        region_layer.setParent(model_state.parent_layer)
         model_state.region_layers[model_state.model.regions.index(region)] = region_layer
         return region_layer
 
-    def build_mesh(self, model_state: AutodeskModelState, permutation: ModelPermutation, region_group: Layer, world_transform: rt.Matrix3, mesh_params: MeshParams) -> None:
+    def build_mesh(self, model_state: AutodeskModelState, permutation: ModelPermutation, region_group: MaxLayer, world_transform: rt.Matrix3, mesh_params: MeshParams) -> None:
         vertex_buffer, mesh_key, display_name = mesh_params.vertex_buffer, mesh_params.mesh_key, mesh_params.display_name
 
         if mesh_key in self.unique_meshes.keys():
@@ -178,6 +221,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
             copy = cast(rt.Mesh, newNodes[0])
             copy.name = display_name
             copy.transform = world_transform
+            model_state.append_child(copy)
             region_group.addnode(copy)
             return
 
@@ -196,6 +240,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, Layer, rt.Matrix3, Autode
         # need to decompress BEFORE applying normals, then apply the instance transform AFTER applying normals
         # also need to apply transform before applying skin otherwise the transform has no effect
         mesh_obj.transform = world_transform
+        model_state.append_child(mesh_obj)
         region_group.addnode(mesh_obj)
         self.unique_meshes[mesh_key] = mesh_obj
 

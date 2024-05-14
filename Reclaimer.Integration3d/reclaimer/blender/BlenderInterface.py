@@ -124,6 +124,9 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         self._apply_custom_properties(state.root_object, model)
         return state
 
+    def finish_model(self, model_state: BlenderModelState) -> None:
+        pass
+
     def apply_transform(self, model_state: BlenderModelState, world_transform: Matrix) -> None:
         model_state.root_object.matrix_world = world_transform
         for c in model_state.root_object.children:

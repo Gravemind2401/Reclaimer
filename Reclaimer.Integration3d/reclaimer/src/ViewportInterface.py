@@ -120,6 +120,9 @@ class ViewportInterface(Generic[TMaterial, TCollection, TMatrix, TModelState, TR
     def init_model(self, model: Model, filter: ModelFilter, collection: TCollection, display_name: str) -> TModelState:
         ...
 
+    def finish_model(self, model_state: TModelState) -> None:
+        ...
+
     def apply_transform(self, model_state: TModelState, coord_sys: TMatrix, world_transform: TMatrix) -> None:
         ...
 
