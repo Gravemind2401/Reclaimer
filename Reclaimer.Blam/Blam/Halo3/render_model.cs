@@ -378,6 +378,10 @@ namespace Reclaimer.Blam.Halo3
         [Offset(40, MinVersion = (int)CacheType.Halo3Delta)]
         public short IndexBufferIndex { get; set; }
 
+        [Offset(40, MaxVersion = (int)CacheType.Halo3Delta)]
+        [Offset(44, MinVersion = (int)CacheType.Halo3Delta)]
+        public MeshFlags Flags { get; set; }
+
         [Offset(41, MaxVersion = (int)CacheType.Halo3Delta)]
         [Offset(45, MinVersion = (int)CacheType.Halo3Delta)]
         public byte NodeIndex { get; set; }
@@ -385,6 +389,17 @@ namespace Reclaimer.Blam.Halo3
         [Offset(42, MaxVersion = (int)CacheType.Halo3Delta)]
         [Offset(46, MinVersion = (int)CacheType.Halo3Delta)]
         public byte VertexFormat { get; set; }
+    }
+
+    [Flags]
+    public enum MeshFlags : byte
+    {
+        None = 0,
+        MeshHasVertexColor = 1 << 0,
+        UseRegionIndexForSorting = 1 << 1,
+        UseVertexBuffersForIndices = 1 << 2,
+        MeshHasPerInstanceLighting = 1 << 3,
+        MeshIsUnindexed = 1 << 4
     }
 
     [FixedSize(16)]
@@ -405,8 +420,21 @@ namespace Reclaimer.Blam.Halo3
         [Offset(10)]
         public ushort SubsetCount { get; set; }
 
+        [Offset(13)]
+        public SubmeshFlags Flags { get; set; }
+
         [Offset(14)]
         public ushort VertexCount { get; set; }
+    }
+
+    [Flags]
+    public enum SubmeshFlags : byte
+    {
+        None = 0,
+        DislikesPhotons = 1 << 0,
+        IgnoredByLightmapper = 1 << 1,
+        HasTransparentSortingPlane = 1 << 2,
+        IsWaterSurface = 1 << 3
     }
 
     [FixedSize(8)]

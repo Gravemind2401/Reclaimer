@@ -40,6 +40,8 @@ TRegionGroup = TypeVar('TRegionGroup')
 
 
 class MeshParams:
+    source_mesh: Mesh
+    source_segment: MeshSegment
     bone_index: int
     vertex_transform: Matrix4x4
     texture_transform: Matrix4x4
@@ -50,6 +52,8 @@ class MeshParams:
     triangle_sets: List[Tuple[int, List[Triangle]]] # list of (material_index, triangles)
 
     def __init__(self, scene: Scene, mesh: Mesh, segment: MeshSegment, mesh_key: MeshKey, display_name: str) -> None:
+        self.source_mesh = mesh
+        self.source_segment = segment
         self.bone_index = mesh.bone_index
         self.vertex_transform = mesh.vertex_transform
         self.texture_transform = mesh.texture_transform

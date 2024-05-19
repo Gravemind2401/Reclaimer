@@ -169,12 +169,20 @@ namespace Reclaimer.Blam.HaloReach
                     IndexBuffer = ib[section.IndexBufferIndex]
                 };
 
+                mesh.CustomProperties.AddFromFlags(section.Flags);
+
                 mesh.Segments.AddRange(
-                    section.Submeshes.Select(s => new MeshSegment
+                    section.Submeshes.Select(s =>
                     {
-                        Material = matLookup.ElementAtOrDefault(s.ShaderIndex),
-                        IndexStart = s.IndexStart,
-                        IndexLength = s.IndexLength
+                        var segment = new MeshSegment
+                        {
+                            Material = matLookup.ElementAtOrDefault(s.ShaderIndex),
+                            IndexStart = s.IndexStart,
+                            IndexLength = s.IndexLength
+                        };
+
+                        segment.CustomProperties.AddFromFlags(s.Flags);
+                        return segment;
                     })
                 );
 

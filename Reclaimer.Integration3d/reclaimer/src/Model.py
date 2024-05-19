@@ -67,7 +67,7 @@ class Bone(INamed, ICustomProperties):
     transform: Matrix4x4
 
 
-class Mesh:
+class Mesh(ICustomProperties):
     vertex_buffer_index: int
     index_buffer_index: int
     bone_index: int # -1 if N/A
@@ -76,8 +76,7 @@ class Mesh:
     segments: List['MeshSegment']
 
 
-@dataclass
-class MeshSegment:
+class MeshSegment(ICustomProperties):
     index_start: int = 0
     index_length: int = 0
     material_index: int = -1

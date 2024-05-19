@@ -420,17 +420,22 @@ namespace Reclaimer.Geometry.Utilities
                 }
 
                 WriteList(mesh.Segments, Write, SceneCodes.MeshSegment);
+                Write(mesh.CustomProperties);
             }
         }
 
         private void Write(MeshSegment segment)
         {
             using (BlockMarker(SceneCodes.MeshSegment))
-            using (BlockMarker(SceneCodes.AttributeData))
             {
-                writer.Write(segment.IndexStart);
-                writer.Write(segment.IndexLength);
-                writer.Write(materialPool.IndexOf(segment.Material));
+                using (BlockMarker(SceneCodes.AttributeData))
+                {
+                    writer.Write(segment.IndexStart);
+                    writer.Write(segment.IndexLength);
+                    writer.Write(materialPool.IndexOf(segment.Material));
+                }
+
+                Write(segment.CustomProperties);
             }
         }
 

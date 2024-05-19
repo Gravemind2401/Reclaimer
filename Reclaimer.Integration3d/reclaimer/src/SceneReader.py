@@ -324,6 +324,7 @@ def _read_mesh(reader: FileReader, block: DataBlock) -> Mesh:
 
     props = _read_property_blocks(reader, block)
     _decode_attributes(reader, props, read_attribute_data)
+    _decode_custom_properties(reader, props, mesh)
 
     mesh.segments = _decode_list(reader, props['MSEG[]'], _read_mesh_segment)
     return mesh
@@ -338,6 +339,7 @@ def _read_mesh_segment(reader: FileReader, block: DataBlock) -> MeshSegment:
 
     props = _read_property_blocks(reader, block)
     _decode_attributes(reader, props, read_attribute_data)
+    _decode_custom_properties(reader, props, seg)
 
     return seg
 

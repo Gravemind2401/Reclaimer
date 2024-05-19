@@ -369,17 +369,30 @@ namespace Reclaimer.Blam.HaloReach
         [Offset(40)]
         public short IndexBufferIndex { get; set; }
 
-        [Offset(45)]
-        public byte TransparentNodesPerVertex { get; set; }
+        [Offset(44)]
+        public MeshFlags Flags { get; set; }
 
         [Offset(46)]
         public byte NodeIndex { get; set; }
 
         [Offset(47)]
         public byte VertexFormat { get; set; }
+    }
 
-        [Offset(48)]
-        public byte OpaqueNodesPerVertex { get; set; }
+    [Flags]
+    public enum MeshFlags : ushort
+    {
+        None = 0,
+        MeshHasVertexColor = 1 << 0,
+        UseRegionIndexForSorting = 1 << 1,
+        UseVertexBuffersForIndices = 1 << 2,
+        MeshHasPerInstanceLighting = 1 << 3,
+        MeshIsUnindexed = 1 << 4,
+        SubpartWereMerged = 1 << 5,
+        MeshHasFur = 1 << 6,
+        MeshHasDecal = 1 << 7,
+        MeshDoesntUseCompressedPosition = 1 << 8,
+        UseUncompressedVertexFormat = 1 << 9
     }
 
     [FixedSize(24)]
@@ -400,8 +413,31 @@ namespace Reclaimer.Blam.HaloReach
         [Offset(14)]
         public ushort SubsetCount { get; set; }
 
+        [Offset(18)]
+        public SubmeshFlags Flags { get; set; }
+
         [Offset(20)]
         public ushort VertexCount { get; set; }
+    }
+
+    [Flags]
+    public enum SubmeshFlags : ushort
+    {
+        None = 0,
+        IsWaterSurface = 1 << 0,
+        PerVertexLightmapPart = 1 << 1,
+        DebugFlagInstancePart = 1 << 2,
+        SubpartsHasUberlightsInfo = 1 << 3,
+        DrawCullDistanceMedium = 1 << 4,
+        DrawCullDistanceClose = 1 << 5,
+        DrawCullRenderingShields = 1 << 6,
+        CannotSinglePassRender = 1 << 7,
+        IsTransparent = 1 << 8,
+        CannotTwoPass = 1 << 9,
+        TransparentShouldOutputDepthForDof = 1 << 10,
+        DoNotIncludeInStaticLightmap = 1 << 11,
+        DoNotIncludeInPvsGeneration = 1 << 12,
+        DrawCullRenderingActiveCamo = 1 << 13
     }
 
     [FixedSize(16)]

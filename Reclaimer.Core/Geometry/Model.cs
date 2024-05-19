@@ -176,6 +176,8 @@ namespace Reclaimer.Geometry
         public RealBounds3D PositionBounds { get; set; }
         public RealBounds2D TextureBounds { get; set; }
 
+        public CustomProperties CustomProperties { get; } = new();
+
         public int VertexCount => VertexBuffer?.Count ?? 0;
         public int IndexCount => IndexBuffer?.Count ?? 0;
 
@@ -187,5 +189,7 @@ namespace Reclaimer.Geometry
         public int IndexStart { get; set; }
         public int IndexLength { get; set; }
         public Material Material { get; set; }
+
+        public CustomProperties CustomProperties { get; } = new();
     }
 }

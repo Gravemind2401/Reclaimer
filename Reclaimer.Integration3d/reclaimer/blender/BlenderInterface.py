@@ -64,7 +64,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
     unique_meshes: Dict[MeshKey, Object] = None
 
     def _apply_custom_properties(self, target, source: ICustomProperties):
-        if self.options.IMPORT_CUSTOM_PROPS:
+        if source and self.options.IMPORT_CUSTOM_PROPS:
             for k, v in source.custom_properties.items():
                 target[k] = v
 
@@ -258,6 +258,8 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         self.unique_meshes[mesh_key] = mesh_obj
 
         self._apply_custom_properties(mesh_obj, permutation)
+        self._apply_custom_properties(mesh_obj, mesh_params.source_mesh)
+        self._apply_custom_properties(mesh_obj, mesh_params.source_segment)
 
         mc: MeshContext = (self.scene, model_state, mesh_params, mesh_data, mesh_obj)
         self._build_normals(mc)
