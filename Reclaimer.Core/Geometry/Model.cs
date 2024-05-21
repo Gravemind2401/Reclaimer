@@ -87,7 +87,7 @@ namespace Reclaimer.Geometry
             set => Scale = new Vector3(value);
         }
 
-        public IEnumerable<int> MeshIndices => MeshRange.Index >= 0 ? Enumerable.Range(MeshRange.Index, MeshRange.Count) : Enumerable.Empty<int>();
+        public IEnumerable<int> MeshIndices => MeshRange.Index >= 0 && MeshRange.Count > 0 ? Enumerable.Range(MeshRange.Index, MeshRange.Count) : Enumerable.Empty<int>();
 
         public Matrix4x4 GetFinalTransform()
         {

@@ -362,7 +362,14 @@ namespace Reclaimer.Plugins
 
             foreach (var model in scene.EnumerateExportedModels())
             {
-                foreach (var (mesh, meshIndex) in model.Meshes.Select((m, i) => (m, i)))
+                var exportedMeshes = model.Regions
+                    .Where(r => r.Export)
+                    .SelectMany(r => r.Permutations.Where(p => p.Export))
+                    .SelectMany(p => p.MeshIndices)
+                    .Order()
+                    .Select(i => (model.Meshes[i], i));
+
+                foreach (var (mesh, meshIndex) in exportedMeshes)
                 {
                     var key = (model, meshIndex);
 
@@ -414,7 +421,7 @@ namespace Reclaimer.Plugins
                         var boneLookup = new Dictionary<int, Assimp.Bone>();
                         for (var vIndex = 0; vIndex < vertCount; vIndex++)
                         {
-                            if (mesh.VertexWeights == VertexWeightsCompat.None)
+                            if (!(mesh.BoneIndex.HasValue || mesh.VertexBuffer.HasBlendIndices || mesh.VertexBuffer.HasBlendWeights))
                                 continue;
 
                             #region Vertex Weights
