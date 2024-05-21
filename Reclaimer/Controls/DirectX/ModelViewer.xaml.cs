@@ -90,7 +90,7 @@ namespace Reclaimer.Controls.DirectX
 
             renderer.SetCoordinateSystem(scene.CoordinateSystem);
 
-            if (scene.ChildGroups.Count == 0 && scene.ChildObjects.Count == 1 && scene.ChildObjects[0] is Model m)
+            if (scene.ChildGroups.Count == 0 && scene.ChildObjects.Count == 1 && scene.ChildObjects[0].Object is Model m)
             {
                 //load in single-model mode - displays permutation tree instead of object tree
                 LoadGeometry(m);
@@ -112,11 +112,9 @@ namespace Reclaimer.Controls.DirectX
 
                     AppendSceneGroups(group.ChildGroups, groupNode.Items);
 
-                    foreach (var obj in group.ChildObjects.OrderBy(o => o.Name))
+                    foreach (var placement in group.ChildObjects.OrderBy(o => o.Name))
                     {
-                        var placement = obj as ObjectPlacement;
-
-                        if ((placement?.Object ?? obj) is not Model model)
+                        if (placement.Object is not Model model)
                             continue;
 
                         var objNode = new TreeItemModel { Header = model.Name, IsChecked = true };
@@ -162,7 +160,7 @@ namespace Reclaimer.Controls.DirectX
                             }
                         }
 
-                        var objTag = new MeshTag(obj, objGroup);
+                        var objTag = new MeshTag(placement, objGroup);
                         objNode.Tag = objTag;
                         groupNode.Items.Add(objNode);
                     }

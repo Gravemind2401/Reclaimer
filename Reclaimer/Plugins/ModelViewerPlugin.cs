@@ -481,15 +481,14 @@ namespace Reclaimer.Plugins
                     AppendSceneGroup(assimpNode, childNode);
                 }
 
-                foreach (var obj in groupNode.ChildObjects.Where(o => o.Export))
+                foreach (var placement in groupNode.ChildObjects.Where(o => o.Export))
                 {
-                    var assimpNode = new Assimp.Node($"{scenPrefix}{obj.Name}");
+                    var assimpNode = new Assimp.Node($"{scenPrefix}{placement.Name}");
                     assimpParentNode.Children.Add(assimpNode);
 
-                    //if (obj is ObjectPlacement placement)
-                    //    assimpNode.Transform = placement.Transform.ToAssimp4x4();
+                    //assimpNode.Transform = placement.Transform.ToAssimp4x4();
 
-                    var model = (obj as ObjectPlacement)?.Object as Model ?? obj as Model;
+                    var model = placement.Object as Model;
 
                     #region Bones
 

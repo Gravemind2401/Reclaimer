@@ -12,8 +12,7 @@ __all__ = [
     'Version',
     'Scene',
     'SceneGroup',
-    'Placement',
-    'ModelRef'
+    'Placement'
 ]
 
 
@@ -59,15 +58,9 @@ class Scene(INamed, ICustomProperties):
 
 class SceneGroup(INamed, ICustomProperties):
     child_groups: List['SceneGroup']
-    child_objects: List[SceneObject]
+    child_objects: List['Placement']
 
 
 class Placement(SceneObject):
     transform: Matrix4x4
-    object: Union[SceneObject, 'ModelRef']
-
-
-@dataclass
-class ModelRef:
-    model_index: int
-
+    object: SceneObject

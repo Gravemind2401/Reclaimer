@@ -103,5 +103,16 @@ namespace Reclaimer.Geometry
                 sceneWriter.Write(scene);
             }
         }
+
+        public static ObjectPlacement Add(this IList<ObjectPlacement> placements, SceneObject sceneObject)
+        {
+            ArgumentNullException.ThrowIfNull(sceneObject);
+
+            if (sceneObject is not ObjectPlacement placement)
+                placement = new ObjectPlacement(sceneObject) { Name = sceneObject.Name };
+
+            placements.Add(placement);
+            return placement;
+        }
     }
 }

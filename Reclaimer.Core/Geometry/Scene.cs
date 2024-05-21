@@ -10,7 +10,7 @@
         public SceneGroup RootNode { get; } = new() { Name = "Root" };
 
         public List<SceneGroup> ChildGroups => RootNode.ChildGroups;
-        public List<SceneObject> ChildObjects => RootNode.ChildObjects;
+        public List<ObjectPlacement> ChildObjects => RootNode.ChildObjects;
 
         public static Scene WrapSingleModel(Model model, float unitScale = 1) => WrapSingleModel(model, CoordinateSystem.Default, unitScale);
 
@@ -27,7 +27,7 @@
         {
             return EnumerateGroupHierarchy()
                 .SelectMany(g => g.ChildObjects)
-                .Select(o => (o as ObjectPlacement)?.Object ?? o)
+                .Select(o => o.Object)
                 .OfType<Model>()
                 .Distinct();
         }
@@ -37,7 +37,7 @@
             return EnumerateGroupHierarchy()
                 .Where(g => g.Export)
                 .SelectMany(g => g.ChildObjects.Where(o => o.Export))
-                .Select(o => (o as ObjectPlacement)?.Object ?? o)
+                .Select(o => o.Object)
                 .OfType<Model>()
                 .Distinct();
         }
@@ -75,7 +75,7 @@
         public bool Export { get; set; } = true;
         public CustomProperties CustomProperties { get; } = new();
         public List<SceneGroup> ChildGroups { get; } = new();
-        public List<SceneObject> ChildObjects { get; } = new();
+        public List<ObjectPlacement> ChildObjects { get; } = new();
 
         public bool HasItems => EnumerateHierarchy().Any(g => g.ChildObjects.Count > 0);
 
@@ -91,6 +91,9 @@
         public ObjectPlacement(SceneObject sceneObject)
         {
             ArgumentNullException.ThrowIfNull(sceneObject);
+            if (sceneObject is ObjectPlacement)
+                throw new ArgumentException($"Instances of {nameof(ObjectPlacement)} cannot be nested", nameof(sceneObject));
+
             Object = sceneObject;
         }
 

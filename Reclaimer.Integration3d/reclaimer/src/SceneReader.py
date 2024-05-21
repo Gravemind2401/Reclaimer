@@ -18,6 +18,7 @@ T = TypeVar('T')
 
 __strings: List[str]
 __vector_descriptors: List[VectorDescriptor]
+__models: List[Model]
 
 
 # helper functions #
@@ -50,6 +51,9 @@ def _decode_attributes(reader: FileReader, props: Dict[str, DataBlock], read_fun
 
 def _decode_block(reader: FileReader, block: DataBlock, read_func: Callable[[FileReader, DataBlock], T]) -> T:
     ''' Seeks to the body of the block and returns the result of `read_func` from that position '''
+    if not block:
+        return
+
     reader.position = block.start_address
     return read_func(reader, block)
 
@@ -140,7 +144,7 @@ def _append_default_custom_properties(scene: Scene):
 # decode functions #
 
 def _read_scene(reader: FileReader, block: DataBlock) -> Scene:
-    global __strings, __vector_descriptors
+    global __strings, __models, __vector_descriptors
 
     scene = Scene()
     scene.version = Version(reader.read_byte(), reader.read_byte(), reader.read_byte(), reader.read_byte())
@@ -151,24 +155,29 @@ def _read_scene(reader: FileReader, block: DataBlock) -> Scene:
         scene.name = _read_stringref(reader)
 
     props = _read_property_blocks(reader, block)
+
     __strings = _decode_block(reader, props['STRS'], _read_string_index)
+    __vector_descriptors = _decode_list(reader, props['VECD[]'], _read_vector_descriptor)
+    __models = _decode_list(reader, props['MODL[]'], _read_model)
+
     _decode_attributes(reader, props, read_attribute_data)
     _decode_custom_properties(reader, props, scene)
 
-    scene.root_node = _decode_block(reader, props['NODE'], _read_node)
-    scene.model_pool = _decode_list(reader, props['MODL[]'], _read_model)
-
-    __vector_descriptors = _decode_list(reader, props['VECD[]'], _read_vector_descriptor)
+    scene.model_pool = __models
     scene.vertex_buffer_pool = _decode_list(reader, props['VBUF[]'], _read_vertex_buffer)
     scene.index_buffer_pool = _decode_list(reader, props['IBUF[]'], _read_index_buffer)
     scene.material_pool = _decode_list(reader, props['MATL[]'], _read_material)
     scene.texture_pool = _decode_list(reader, props['BITM[]'], _read_texture)
 
+    scene.root_node = _decode_block(reader, props['NODE'], _read_node)
+
+    _append_default_custom_properties(scene)
+
     # cleanup since theyre no longer needed
     __strings = None
     __vector_descriptors = None
+    __models = None
 
-    _append_default_custom_properties(scene)
     return scene
 
 def _read_string_index(reader: FileReader, block: DataBlock) -> List[str]:
@@ -186,15 +195,12 @@ def _read_node(reader: FileReader, block: DataBlock):
     _decode_custom_properties(reader, props, node)
 
     node.child_groups = _decode_list(reader, props['NODE[]'], _read_node)
-    node.child_objects = _decode_list(reader, props['OBJE[]'], _read_object)
+    node.child_objects = _decode_list(reader, props['PLAC[]'], _read_placement)
 
     return node
 
-def _read_object(reader: FileReader, block: DataBlock) -> Union[SceneObject, ModelRef]:
-    if block.code == 'MOD*':
-        return _decode_block(reader, block, _read_modelref)
-    elif block.code == 'PLAC':
-        return _decode_block(reader, block, _read_placement)
+def _read_matrix3x4(reader: FileReader, block: DataBlock) -> Matrix4x4:
+    return reader.read_matrix3x4()
 
 def _read_object_base_props(reader: FileReader, obj: SceneObject):
     obj.name = _read_stringref(reader)
@@ -215,14 +221,21 @@ def _read_placement(reader: FileReader, block: DataBlock) -> Placement:
     _decode_attributes(reader, props, read_attribute_data)
     _decode_custom_properties(reader, props, placement)
 
+    # transform block is optional, defaults to identity matrix
+    placement.transform = _decode_block(reader, props.get('M3x4'), _read_matrix3x4) or Matrix4x4_IDENTITY
+
     # the object may be one of multiple types, so it is always wrapped in an OBJE block allowing to be accessed by key without knowing the type
     placement.object = _decode_block(reader, props['OBJE'], _read_object_block)
 
     return placement
 
+def _read_object(reader: FileReader, block: DataBlock) -> SceneObject:
+    # TODO: other object types in future
+    if block.code == 'MOD*':
+        return _decode_block(reader, block, _read_modelref)
 
-def _read_modelref(reader: FileReader, block: DataBlock) -> ModelRef:
-    return ModelRef(reader.read_int32())
+def _read_modelref(reader: FileReader, block: DataBlock) -> Model:
+    return __models[reader.read_int32()]
 
 def _read_model(reader: FileReader, block: DataBlock) -> Model:
     model = Model()

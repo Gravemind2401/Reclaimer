@@ -103,7 +103,7 @@ namespace Reclaimer.Geometry.Utilities
                     writer.Write(stringPool.IndexOf(sceneGroup.Name));
 
                 WriteList(exportedGroups, Write, SceneCodes.SceneGroup);
-                WriteList(exportedObjects, Write, SceneCodes.SceneObject);
+                WriteList(exportedObjects, Write, SceneCodes.Placement);
             }
         }
 
@@ -286,9 +286,12 @@ namespace Reclaimer.Geometry.Utilities
             using (BlockMarker(SceneCodes.Placement))
             {
                 using (BlockMarker(SceneCodes.AttributeData))
-                {
                     WriteBaseProps(placement);
-                    writer.WriteMatrix3x4(placement.Transform);
+
+                if (!placement.Transform.IsIdentity)
+                {
+                    using (BlockMarker(SceneCodes.Matrix3x4))
+                        writer.WriteMatrix3x4(placement.Transform);
                 }
 
                 using (BlockMarker(SceneCodes.SceneObject))

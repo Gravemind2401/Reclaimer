@@ -103,15 +103,10 @@ class FilterGroup(IFilterNode):
         self.models = list(self._get_models(scene, scene_group))
 
     def _get_models(self, scene: Scene, scene_group: SceneGroup) -> Iterator['ModelFilter']:
-        for o in scene_group.child_objects:
-            placement = None
-            if type(o) == Placement:
-                placement = o
-                o = o.object
-            if type(o) == ModelRef:
-                o = scene.model_pool[o.model_index]
-            if type(o) == Model:
-                yield ModelFilter(self, o, placement)
+        for placement in scene_group.child_objects:
+            # TODO: other object types in future
+            if type(placement.object) == Model:
+                yield ModelFilter(self, placement.object, placement)
 
     def enumerate_children(self) -> Iterator[IFilterNode]:
         yield from self.groups
