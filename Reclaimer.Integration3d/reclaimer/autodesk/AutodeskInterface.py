@@ -28,6 +28,18 @@ MaxGroup = rt.Dummy
 
 MeshContext = Tuple[Scene, 'AutodeskModelState', MeshParams, rt.Editable_Mesh]
 
+__groups__: List['GroupHelper'] = []
+
+def _unique_layer_name(name: str) -> str:
+    new_name = name
+    existing = rt.LayerManager.getLayerFromName(new_name)
+    suffix = 0
+    while existing:
+        suffix = suffix + 1
+        new_name = f'{name}.{suffix:03d}'
+        existing = rt.LayerManager.getLayerFromName(new_name)
+    return new_name
+
 
 class GroupHelper:
     ''' Max groups cannot be empty - this is used to track the group contents prior to creating the group. '''
@@ -35,19 +47,28 @@ class GroupHelper:
     group_node: MaxGroup
     group_members: List[rt.Node]
     group_name: str
+    group_transform: rt.Matrix3
 
     def __init__(self, parent_layer: MaxLayer, group_name: str):
+        __groups__.append(self)
+
         self.parent_layer = parent_layer
         self.group_node = None
         self.group_members = []
         self.group_name = group_name
+        self.group_transform = None
 
     def append_child(self, obj: rt.Node):
         self.group_members.append(obj)
 
     def create_group(self):
+        if self.group_node:
+            return
+
         self.group_node = rt.group(self.group_members, name=self.group_name)
         self.parent_layer.addnode(self.group_node)
+        if self.group_transform:
+            self.group_node.transform = self.group_node.transform * self.group_transform
 
 
 class AutodeskModelState(ModelState):
@@ -60,11 +81,11 @@ class AutodeskModelState(ModelState):
         super().__init__(model, filter, display_name)
         self.parent_layer = self.create_layer(display_name)
         self.parent_layer.setParent(layer)
-        self.group_helper = GroupHelper(self.parent_layer, display_name)
+        self.group_helper = GroupHelper(self.parent_layer, f'{display_name}.group')
         self.region_layers = dict()
 
     def create_layer(self, name: str) -> MaxLayer:
-        layer = rt.LayerManager.newLayerFromName(name)
+        layer = rt.LayerManager.newLayerFromName(_unique_layer_name(name))
         return layer
 
     def append_child(self, obj: rt.Node):
@@ -85,10 +106,16 @@ class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, Aut
         self.unique_meshes = dict()
 
     def pre_import(self, root_collection: MaxLayer):
-        pass
+        __groups__.clear()
 
     def post_import(self):
-        pass
+        # if we try to clone a node that is part of a group (using instance clone) then it clones the group as well
+        # this causes problems if we create the groups upfront because we might need to clone a mesh from it later
+        # to avoid this, we just create all the groups at the end once all the meshes are done
+        for g in __groups__:
+            g.create_group()
+
+        __groups__.clear()
 
     def init_materials(self) -> None:
         pass # TODO
@@ -98,6 +125,12 @@ class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, Aut
 
     def set_materials(self, materials: List[rt.Material]) -> None:
         self.materials = materials
+
+    def create_collection(self, display_name: str, parent: MaxLayer) -> MaxLayer:
+        layer = rt.LayerManager.newLayerFromName(_unique_layer_name(display_name))
+        if parent:
+            layer.setParent(parent)
+        return layer
 
     def identity_transform(self) -> rt.Matrix3:
         return rt.Matrix3(1)
@@ -118,18 +151,15 @@ class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, Aut
 
     def init_model(self, model: Model, filter: ModelFilter, collection: rt.MixinInterface, display_name: str) -> AutodeskModelState:
         rt.gc()
+        display_name = _unique_layer_name(display_name)
         state = AutodeskModelState(model, filter, display_name, collection)
         return state
 
     def finish_model(self, model_state: AutodeskModelState) -> None:
-        # max crashes if trying to add objects to the group one at a time afer like 50 or so objects
-        # so just add them all in one go at the end
-        model_state.group_helper.create_group()
+        pass
 
     def apply_transform(self, model_state: AutodeskModelState, world_transform: rt.Matrix3) -> None:
-        group_node = model_state.group_helper.group_node
-        if group_node:
-            group_node.transform = group_node.transform * world_transform
+        model_state.group_helper.group_transform = world_transform
 
     def _get_bone_transforms(self, model: Model) -> List[rt.Matrix3]:
         result = []
