@@ -79,7 +79,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, Aut
     unique_meshes: Dict[MeshKey, rt.Mesh] = None
 
     def init_scene(self, scene: Scene, options: ImportOptions) -> None:
-        self.unit_scale = scene.unit_scale / MX_UNITS
+        self.unit_scale = scene.unit_scale / MX_UNITS * options.OBJECT_SCALE
         self.scene = scene
         self.options = options
         self.unique_meshes = dict()

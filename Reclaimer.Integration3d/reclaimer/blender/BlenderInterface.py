@@ -69,7 +69,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
                 target[k] = v
 
     def init_scene(self, scene: Scene, options: ImportOptions) -> None:
-        self.unit_scale = scene.unit_scale / BL_UNITS
+        self.unit_scale = scene.unit_scale / BL_UNITS * options.OBJECT_SCALE
         self.scene = scene
         self.options = options
         self.unique_meshes = dict()
