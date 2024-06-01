@@ -6,7 +6,9 @@ from functools import reduce
 import pymxs
 from pymxs import runtime as rt
 
+from .MaterialBuilder import *
 from .Utils import *
+
 from ..src.ImportOptions import *
 from ..src.SceneFilter import *
 from ..src.Scene import *
@@ -96,6 +98,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, Aut
     unit_scale: float = 1.0
     scene: Scene = None
     options: ImportOptions = None
+    material_builder: MaterialBuilder = None
     materials: List[rt.Material] = None
     unique_meshes: Dict[MeshKey, rt.Mesh] = None
 
@@ -118,10 +121,10 @@ class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, Aut
         __groups__.clear()
 
     def init_materials(self) -> None:
-        pass # TODO
+        self.material_builder = MaterialBuilder(self.scene, self.options)
 
     def create_material(self, material: Material) -> rt.Material:
-        return None # TODO
+        return self.material_builder.create_material(material)
 
     def set_materials(self, materials: List[rt.Material]) -> None:
         self.materials = materials
@@ -322,6 +325,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, Aut
             material_ids.extend(mi for _ in triangles)
 
         rt.setMesh(mesh_obj, materialIds=material_ids)
+        mesh_obj.material = self.material_builder.create_multi_material(model_state.model)
 
     def _build_skin(self, mc: MeshContext):
         scene, model_state, mesh_params, mesh_obj = mc

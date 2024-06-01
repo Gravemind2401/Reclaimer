@@ -29,6 +29,7 @@ class TaskQueue():
         return self.error or (self.queue.empty() and self.stack.empty())
 
     def execute_batch(self, timeout: float = 0.0167):
+        ''' Timeout is in fractional seconds, defaults to approx 1/60th of a second '''
         t = time()
         while time() - t < timeout:
             self.execute_next()
