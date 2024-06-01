@@ -101,17 +101,23 @@ class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, Aut
     material_builder: MaterialBuilder = None
     materials: List[rt.Material] = None
     unique_meshes: Dict[MeshKey, rt.Mesh] = None
+    mat_assign: List[Tuple[rt.Editable_Mesh, rt.Material]] = None
 
     def init_scene(self, scene: Scene, options: ImportOptions) -> None:
         self.unit_scale = scene.unit_scale / MX_UNITS * options.OBJECT_SCALE
         self.scene = scene
         self.options = options
         self.unique_meshes = dict()
+        self.mat_assign = list()
 
     def pre_import(self, root_collection: MaxLayer):
         __groups__.clear()
 
     def post_import(self):
+        #assign all the materials at the end to avoid slowing down the redraws that happen in the middle
+        for mesh, mat in self.mat_assign:
+            mesh.material = mat
+
         # if we try to clone a node that is part of a group (using instance clone) then it clones the group as well
         # this causes problems if we create the groups upfront because we might need to clone a mesh from it later
         # to avoid this, we just create all the groups at the end once all the meshes are done
@@ -325,7 +331,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, Aut
             material_ids.extend(mi for _ in triangles)
 
         rt.setMesh(mesh_obj, materialIds=material_ids)
-        mesh_obj.material = self.material_builder.create_multi_material(model_state.model)
+        self.mat_assign.append((mesh_obj, self.material_builder.create_multi_material(model_state.model)))
 
     def _build_skin(self, mc: MeshContext):
         scene, model_state, mesh_params, mesh_obj = mc

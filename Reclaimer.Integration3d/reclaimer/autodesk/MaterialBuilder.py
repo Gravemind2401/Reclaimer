@@ -14,6 +14,16 @@ __all__ = [
 ]
 
 
+class BitmapLookupOutputs:
+    RGB = 1
+    RED = 2
+    GREEN = 3
+    BLUE = 4
+    ALPHA = 5
+    LUMINANCE = 6
+    AVERAGE = 7
+
+
 class MaterialBuilder:
     _scene: Scene
     _options: ImportOptions
@@ -37,10 +47,44 @@ class MaterialBuilder:
         result = rt.PhysicalMaterial()
         result.name = mat.name
 
+        def create_texmap(map: TextureMapping) -> rt.TextureMap:
+            #TODO: create a lookup of unique OSLBitmap2 instances instead of creating a new one each time
+            tex = self._scene.texture_pool[map.texture_index]
+            selector = rt.MultiOutputChannelTexmapToTexmap()
+
+            #Osl_OSLBitmap2 is called "BitmapLookup" in the UI
+            bitm = selector.sourceMap = rt.Osl_OSLBitmap2(fileName=self._options.texture_path(tex))
+            bitm.autoGamma = 0
+            bitm.manualGamma = tex.gamma
+
+            if map.channel_mask == ChannelFlags.RED:
+                selector.outputChannelIndex = BitmapLookupOutputs.RED
+            elif map.channel_mask == ChannelFlags.GREEN:
+                selector.outputChannelIndex = BitmapLookupOutputs.GREEN
+            elif map.channel_mask == ChannelFlags.BLUE:
+                selector.outputChannelIndex = BitmapLookupOutputs.BLUE
+            elif map.channel_mask == ChannelFlags.ALPHA:
+                selector.outputChannelIndex = BitmapLookupOutputs.ALPHA
+            else:
+                selector.outputChannelIndex = BitmapLookupOutputs.RGB
+
+            return selector
+
         for t in mat.texture_mappings:
             if t.texture_usage == TEXTURE_USAGE.DIFFUSE:
-                tex = self._scene.texture_pool[t.texture_index]
-                result.base_color_map = rt.BitmapTexture(fileName=self._options.texture_path(tex))
+                result.base_color_map = create_texmap(t)
+                break
+
+        for t in mat.texture_mappings:
+            if t.texture_usage == TEXTURE_USAGE.NORMAL:
+                norm = rt.Normal_Bump()
+                norm.normal_map = create_texmap(t)
+                result.bump_map = norm
+                break
+
+        for t in mat.texture_mappings:
+            if t.texture_usage == TEXTURE_USAGE.SPECULAR:
+                result.reflectivity_map = create_texmap(t)
                 break
 
         self._material_lookup[id] = result
@@ -71,3 +115,4 @@ class MaterialBuilder:
             multi.materialList[i] = self._material_lookup.get(id - 1, None)
 
         rt.MeditMaterials[next_multi] = self._multi_lookup[model_key] = multi
+        return multi
