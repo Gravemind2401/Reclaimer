@@ -381,6 +381,9 @@ def _read_texture_mapping(reader: FileReader, block: DataBlock) -> TextureMappin
         mapping.channel_mask = reader.read_int32()
         mapping.tiling = reader.read_float2()
 
+        if mapping.channel_mask == ChannelFlags.DEFAULT:
+            mapping.channel_mask = ChannelFlags.get_default(mapping.texture_usage)
+
     props = _read_property_blocks(reader, block)
     _decode_attributes(reader, props, read_attribute_data)
 

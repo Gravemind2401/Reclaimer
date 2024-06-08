@@ -33,8 +33,6 @@ def _create_uvscale_node(material: bpy.types.Material, input: TextureMapping, im
 
 def _get_channel_socket(input: TextureMapping):
     mask = input.channel_mask
-    if mask == ChannelFlags.DEFAULT:
-        mask = ChannelFlags.get_default(input.texture_usage)
     if mask not in __channel_socket_lookup:
         mask = ChannelFlags.RGB
     return __channel_socket_lookup[mask]
