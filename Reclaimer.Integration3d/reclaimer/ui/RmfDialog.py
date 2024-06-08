@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any, Tuple, cast, Iterator, Optional
 
 from .. import ui
@@ -107,7 +108,7 @@ class RmfDialog(QtWidgets.QDialog):
         layout.addWidget(widget)
 
         self.setWindowIcon(ui.create_icon('Settings_16x.png'))
-        self.setWindowTitle(filepath)
+        self.setWindowTitle(Path(filepath).name)
         self.setModal(True)
         self.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
@@ -206,6 +207,7 @@ class RmfDialog(QtWidgets.QDialog):
 
     def get_import_options(self) -> Tuple[Scene, SceneFilter, ImportOptions]:
         options = ImportOptions()
+        options.SCENE_DATA = self._scene
 
         options.IMPORT_BONES = self._widget.checkBox_importBones.isChecked()
         options.IMPORT_MARKERS = self._widget.checkBox_importMarkers.isChecked()

@@ -480,7 +480,7 @@ class SceneReader:
         scene = _decode_block(reader, rootBlock, _read_scene)
         reader.close()
 
-        scene._source_file = fileName
+        scene._set_source_file(fileName)
         return scene
 
     @staticmethod

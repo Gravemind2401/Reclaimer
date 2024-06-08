@@ -1,10 +1,10 @@
+from pathlib import Path
 from dataclasses import dataclass
-from typing import List, Union, Dict, Tuple
+from typing import List, Dict, Tuple
 
 from .Types import *
 from .Model import *
 from .Material import *
-from .Vectors import VectorDescriptor
 from .VertexBuffer import *
 from .IndexBuffer import *
 
@@ -29,6 +29,9 @@ class Version:
 
 class Scene(INamed, ICustomProperties):
     _source_file: str
+    _source_dir: str
+    _source_name: str
+
     version: Version
     unit_scale: float
     world_matrix: Matrix4x4
@@ -39,6 +42,11 @@ class Scene(INamed, ICustomProperties):
     index_buffer_pool: List[IndexBuffer]
     material_pool: List[Material]
     texture_pool: List[Texture]
+
+    def _set_source_file(self, path: str):
+        self._source_file = path
+        self._source_dir = str(Path(path).parent)
+        self._source_name = Path(path).with_suffix('').stem
 
     def create_texture_lookup(self, material: Material, blend_channel: ChannelFlags) -> Dict[int, Tuple[Texture, Dict[str, TextureMapping]]]:
         channel_inputs = [m for m in material.texture_mappings if m.blend_channel == blend_channel]

@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import cast, Optional
 
 from .. import ui
@@ -36,7 +37,7 @@ class ProgressDialog(QtWidgets.QDialog, ProgressCallback):
         layout.addWidget(widget)
 
         self.setWindowIcon(ui.create_icon('Settings_16x.png'))
-        self.setWindowTitle(scene._source_file)
+        self.setWindowTitle(Path(scene._source_file).name)
         self.setModal(True)
         self.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
