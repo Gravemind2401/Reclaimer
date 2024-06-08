@@ -142,6 +142,9 @@ class RmfDialog(QtWidgets.QDialog):
         self._widget.checkBox_importNormals.setChecked(options.IMPORT_NORMALS)
         self._widget.checkBox_importWeights.setChecked(options.IMPORT_SKIN)
 
+        self._widget.lineEdit_bitmapsFolder.setText(options.BITMAP_ROOT)
+        self._widget.lineEdit_bitmapsExtension.setText(options.BITMAP_EXT)
+
         self._widget.spinBox_objectScale.setValue(options.OBJECT_SCALE)
         self._widget.spinBox_boneScale.setValue(options.BONE_SCALE)
         self._widget.spinBox_markerScale.setValue(options.MARKER_SCALE)
