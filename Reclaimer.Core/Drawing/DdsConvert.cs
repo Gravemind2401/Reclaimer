@@ -156,7 +156,13 @@ namespace Reclaimer.Drawing
             var pixels = DecompressPixelData(args.Bgr24);
 
             if (args.UseChannelMask)
+            {
+                //MaskChannels() will alter the array that gets passed in, so make sure it doesnt modify the original dds pixels array
+                if (ReferenceEquals(pixels, data))
+                    pixels = (byte[])data.Clone();
+
                 MaskChannels(pixels, args.Options);
+            }
 
             var source = BitmapSource.Create(Width, virtualHeight, dpi, dpi, args.Format, null, pixels, Width * args.Bpp);
 
