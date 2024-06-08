@@ -1,0 +1,23 @@
+// Simple Composite Blend using OSL for Reclaimer RMF import
+
+shader OSLCompositeBlend
+[[ string help  = "Combine up to four color inputs based on corresponding masks",
+   string label = "Composite Blend",
+   string version = "1.0" ]]
+(
+    float Mask1 = 0.0,
+    float Mask2 = 0.0,
+    float Mask3 = 0.0,
+    float Mask4 = 0.0,
+    color Input1 = 0,
+    color Input2 = 0,
+    color Input3 = 0,
+    color Input4 = 0,
+    output color Out = 0
+)
+{
+    Out = (Input1 * Mask1)
+        + (Input2 * Mask2)
+        + (Input3 * Mask3)
+        + (Input4 * Mask4);
+}

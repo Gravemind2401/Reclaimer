@@ -26,8 +26,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="reclaimer\autodesk\AutodeskInterface.py" />
+    <Compile Include="reclaimer\autodesk\MaterialBuilder.py" />
     <Compile Include="reclaimer\autodesk\Utils.py" />
     <Compile Include="reclaimer\autodesk\__init__.py" />
+    <Content Include="reclaimer\autodesk\resources\OSLBlendMap.osl" />
     <Compile Include="reclaimer\blender\BlenderInterface.py" />
     <Compile Include="reclaimer\blender\Compatibility.py" />
     <Compile Include="reclaimer\blender\CustomShaderNodes.py" />
@@ -77,6 +79,7 @@
   <ItemGroup>
     <Folder Include="reclaimer\" />
     <Folder Include="reclaimer\autodesk\" />
+    <Folder Include="reclaimer\autodesk\resources\" />
     <Folder Include="reclaimer\blender\" />
     <Folder Include="reclaimer\tests\" />
     <Folder Include="reclaimer\src\" />

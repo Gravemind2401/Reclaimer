@@ -37,6 +37,7 @@ class TEXTURE_USAGE:
     DIFFUSE: str = 'diffuse'
     NORMAL: str = 'normal'
     HEIGHT: str = 'height'
+    EMISSION: str = 'self_illum'
     SPECULAR: str = 'specular'
     TRANSPARENCY: str = 'transparency'
     COLOR_CHANGE: str = 'color_change'

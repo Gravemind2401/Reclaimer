@@ -262,6 +262,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, Aut
             copy.transform = world_transform
             model_state.append_child(copy)
             region_group.addnode(copy)
+            self.mat_assign.append((copy, self.material_builder.create_multi_material(model_state.model)))
             return
 
         # note 3dsMax uses 1-based indices for triangles, vertices etc

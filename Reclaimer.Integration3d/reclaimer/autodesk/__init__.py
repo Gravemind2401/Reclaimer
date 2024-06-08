@@ -1,3 +1,4 @@
+import os, inspect
 import pymxs
 from pymxs import runtime as rt
 from PySide2 import QtWidgets
@@ -7,6 +8,11 @@ from .AutodeskInterface import AutodeskInterface
 from ..src.SceneBuilder import SceneBuilder
 from ..ui.RmfDialog import RmfDialog
 
+AUTODESK_ROOT = os.path.dirname(inspect.getabsfile(inspect.currentframe()))
+RESOURCE_ROOT = os.path.join(AUTODESK_ROOT, 'resources')
+
+def resource(name: str):
+    return os.path.join(RESOURCE_ROOT, name)
 
 def import_rmf():
     filepath = rt.getOpenFileName(types="RMF Files (*.rmf)|*.rmf")
