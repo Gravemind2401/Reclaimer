@@ -64,6 +64,10 @@ namespace Reclaimer.Blam.Halo1
             reader.Seek(SurfacePointer.Address, SeekOrigin.Begin);
             var indices = reader.ReadArray<ushort>(SurfaceCount * 3);
 
+            //bsp surfaces seem to be wound backwards in h1?
+            for (var i = 0; i < SurfaceCount; i++)
+                Array.Reverse(indices, i * 3, 3);
+
             var region = new ModelRegion { Name = BlamConstants.SbspClustersGroupName };
 
             const int vertexSize = 56;
