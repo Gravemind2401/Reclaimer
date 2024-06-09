@@ -206,8 +206,7 @@ class RmfDialog(QtWidgets.QDialog):
         tree.addTopLevelItems([build_treeitem(tree, o) for o in self._scene_filter.models])
 
     def get_import_options(self) -> Tuple[Scene, SceneFilter, ImportOptions]:
-        options = ImportOptions()
-        options.SCENE_DATA = self._scene
+        options = ImportOptions(self._scene)
 
         options.IMPORT_BONES = self._widget.checkBox_importBones.isChecked()
         options.IMPORT_MARKERS = self._widget.checkBox_importMarkers.isChecked()

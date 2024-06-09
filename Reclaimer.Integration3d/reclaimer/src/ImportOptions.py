@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from .Material import *
 from .Scene import *
@@ -10,7 +11,10 @@ __all__ = [
 
 
 class ImportOptions:
-    SCENE_DATA: Scene = None
+    _last_texture_directory: str = None
+    _last_texture_extension: str = None
+
+    _scene: Scene = None
 
     IMPORT_BONES: bool = True
     IMPORT_MARKERS: bool = True
@@ -33,7 +37,10 @@ class ImportOptions:
     MARKER_PREFIX: str = '#'
 
     BITMAP_ROOT: str = ''
-    BITMAP_EXT: str = 'tif'
+    BITMAP_EXT: str = ''
+
+    def __init__(self, scene: Optional[Scene]=None):
+        self._scene = scene
 
     def model_name(self, model: Model):
         return f'{model.name}'
@@ -74,17 +81,19 @@ class ImportOptions:
             print(f'attempting to locate bitmap file \'{name_only}\'...')
 
         def get_test_paths():
-            scene = self.SCENE_DATA
+            scene = self._scene
             if not scene:
                 return
 
             #attempt to make unique lists while still preserving order (set doesnt preserve order)
-            dir_list = dict.fromkeys((default_dir, scene._source_dir, str(Path(scene._source_dir).joinpath(scene._source_name)))).keys()
-            ext_list = dict.fromkeys((default_ext, 'tif', 'png')).keys()
+            dir_list = dict.fromkeys((default_dir, self._last_texture_directory, scene._source_dir, str(Path(scene._source_dir).joinpath(scene._source_name)))).keys()
+            ext_list = dict.fromkeys((default_ext, self._last_texture_extension, 'tif', 'png')).keys()
 
             for dir in dir_list:
                 for ext in ext_list:
                     if ext and dir:
+                        self._last_texture_directory = dir
+                        self._last_texture_extension = ext
                         yield Path(dir).joinpath(texture.name).with_suffix(f'.{ext}')
 
         for p in get_test_paths():
