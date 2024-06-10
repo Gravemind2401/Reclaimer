@@ -25,7 +25,10 @@ namespace Reclaimer.Controls.DirectX
                 {
                     try
                     {
-                        var diffuse = mat.TextureMappings.FirstOrDefault(m => m.Usage == TextureUsage.Diffuse);
+                        //certain materials are color-only without diffuse
+                        var diffuse = mat.TextureMappings.FirstOrDefault(m => m.Usage == TextureUsage.Diffuse)
+                            ?? mat.TextureMappings.FirstOrDefault(m => m.Usage == TextureUsage.ColorChange);
+
                         if (diffuse == null)
                             continue;
 

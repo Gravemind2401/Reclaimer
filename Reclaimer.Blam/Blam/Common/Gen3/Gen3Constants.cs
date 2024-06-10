@@ -66,6 +66,20 @@ namespace Reclaimer.Blam.Common.Gen3
 
     public static class ShaderOptions
     {
+        public static class Albedo
+        {
+            public const string DiffuseOnly = "diffuse_only";
+            public const string Palettized = "palettized";
+            public const string PalettizedPlusAlpha = "palettized_plus_alpha";
+            public const string DiffusePlusAlpha = "diffuse_plus_alpha";
+            public const string EmblemChangeColor = "emblem_change_color";
+            public const string ChangeColor = "change_color";
+            public const string DiffusePlusAlphaMask = "diffuse_plus_alpha_mask";
+            public const string PalettizedPlusAlphaMask = "palettized_plus_alpha_mask";
+            public const string VectorAlpha = "vector_alpha";
+            public const string VectorAlphaDropShadow = "vector_alpha_drop_shadow";
+        }
+
         public static class BumpMapping
         {
             public const string Off = "off";
@@ -116,8 +130,8 @@ namespace Reclaimer.Blam.Common.Gen3
         public static class MaterialN
         {
             public const string Off = "off";
-            public const string Diffuse_only = "diffuse_only";
-            public const string Diffuse_plus_specular = "diffuse_plus_specular";
+            public const string DiffuseOnly = "diffuse_only";
+            public const string DiffusePlusSpecular = "diffuse_plus_specular";
             //plus more
         }
     }

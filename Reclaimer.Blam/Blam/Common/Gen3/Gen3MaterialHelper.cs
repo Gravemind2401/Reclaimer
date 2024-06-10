@@ -115,7 +115,7 @@ namespace Reclaimer.Blam.Common.Gen3
             //check for specular-from-alpha on terrain diffuse materials
             for (var i = 0; i < 4; i++)
             {
-                if (shaderOptions.GetValueOrDefault($"material_{i}") != TerrainShaderOptions.MaterialN.Diffuse_plus_specular)
+                if (shaderOptions.GetValueOrDefault($"material_{i}") != TerrainShaderOptions.MaterialN.DiffusePlusSpecular)
                     continue;
 
                 var channel = (ChannelMask)(1 << i);
@@ -136,17 +136,24 @@ namespace Reclaimer.Blam.Common.Gen3
             //add transparency mapping for alpha blending
             if (material.AlphaMode != AlphaMode.Opaque)
             {
+                shaderOptions.TryGetValue(ShaderOptionCategories.Albedo, out var albedoOption);
+                var targetUsage = albedoOption switch
+                {
+                    ShaderOptions.Albedo.ChangeColor or ShaderOptions.Albedo.EmblemChangeColor => TextureUsage.ColorChange,
+                    _ => TextureUsage.Diffuse
+                };
+
                 //should only ever be one diffuse if alpha blending is being used (terrain shaders have no blend mode parameter)
-                var diffuse = material.TextureMappings.FirstOrDefault(t => t.Usage == TextureUsage.Diffuse);
-                if (diffuse != null)
+                var albedo = material.TextureMappings.FirstOrDefault(t => t.Usage == targetUsage);
+                if (albedo != null)
                 {
                     material.TextureMappings.Add(new TextureMapping
                     {
                         Usage = TextureUsage.Transparency,
-                        Tiling = diffuse.Tiling,
-                        BlendChannel = diffuse.BlendChannel,
+                        Tiling = albedo.Tiling,
+                        BlendChannel = albedo.BlendChannel,
                         ChannelMask = ChannelMask.Alpha,
-                        Texture = diffuse.Texture
+                        Texture = albedo.Texture
                     });
                 }
             }
