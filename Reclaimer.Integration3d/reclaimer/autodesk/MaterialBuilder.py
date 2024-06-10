@@ -106,7 +106,7 @@ class MaterialBuilder:
                 selector = rt.MultiOutputChannelTexmapToTexmap()
                 blend = selector.sourceMap = rt.OSLMap(name='Blend Map')
                 blend.oslPath = autodesk.resource('OSLBlendMap.osl')
-                blend.oslAutoUpdate = True
+                #blend.oslAutoUpdate = True
 
                 mask_bitm = create_bitmap(blend_texmap)
 
@@ -158,9 +158,38 @@ class MaterialBuilder:
                     result.reflectivity_map = create_texmap(t)
                     break
 
+            for t in mat.tints:
+                if t.tint_usage == TINT_USAGE.EMISSION:
+                    result.emit_color = rt.Color(t.tint_color[0], t.tint_color[1], t.tint_color[2])
+                    break
+
             for t in mat.texture_mappings:
                 if t.texture_usage == TEXTURE_USAGE.EMISSION:
-                    result.emit_color_map = create_texmap(t)
+                    result.emission_map = create_texmap(t)
+                    break
+
+            for t in mat.texture_mappings:
+                if t.texture_usage == TEXTURE_USAGE.COLOR_CHANGE:
+                    selector = rt.MultiOutputChannelTexmapToTexmap()
+                    ccmap = selector.sourceMap = rt.OSLMap(name='Color Change Map')
+                    ccmap.oslPath = autodesk.resource('OSLColorChangeMap.osl')
+                    #ccmap.oslAutoUpdate = True
+
+                    mask_bitm = create_bitmap(t)
+
+                    if t.channel_mask & ChannelFlags.RED:
+                        ccmap.Mask1_map = rt.MultiOutputChannelTexmapToTexmap(sourceMap=mask_bitm, outputChannelIndex=BitmapLookupOutputs.RED)
+                    if t.channel_mask & ChannelFlags.GREEN:
+                        ccmap.Mask2_map = rt.MultiOutputChannelTexmapToTexmap(sourceMap=mask_bitm, outputChannelIndex=BitmapLookupOutputs.GREEN)
+                    if t.channel_mask & ChannelFlags.BLUE:
+                        ccmap.Mask3_map = rt.MultiOutputChannelTexmapToTexmap(sourceMap=mask_bitm, outputChannelIndex=BitmapLookupOutputs.BLUE)
+                    if t.channel_mask & ChannelFlags.ALPHA:
+                        ccmap.Mask4_map = rt.MultiOutputChannelTexmapToTexmap(sourceMap=mask_bitm, outputChannelIndex=BitmapLookupOutputs.ALPHA)
+
+                    if result.base_color_map:
+                        ccmap.BaseColor_map = result.base_color_map
+
+                    result.base_color_map = selector
                     break
 
             if mat.alpha_mode != ALPHA_MODE.OPAQUE:

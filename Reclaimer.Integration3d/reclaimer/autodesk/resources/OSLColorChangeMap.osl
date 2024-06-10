@@ -1,0 +1,28 @@
+// Simple Color Change Map using OSL for Reclaimer RMF import
+
+shader OSLColorChange
+[[ string label = "Color Change",
+   string help  = "Re-color a texture with up to four different colors weighted by corresponding masks",
+   string version = "1.0" ]]
+(
+    color BaseColor = 1
+        [[ string label = "Base Color" ]],
+    float Mask1 = 0.0,
+    float Mask2 = 0.0,
+    float Mask3 = 0.0,
+    float Mask4 = 0.0,
+    color Color1 = 1,
+    color Color2 = 1,
+    color Color3 = 1,
+    color Color4 = 1,
+    output color Out = BaseColor
+)
+{
+    float factor = clamp(ceil(Mask1 + Mask2 + Mask3 + Mask4), 0.0, 1.0);
+
+    if (factor)
+        Out = ((Color1 * Mask1)
+            + (Color2 * Mask2)
+            + (Color3 * Mask3)
+            + (Color4 * Mask4)) * BaseColor;
+}

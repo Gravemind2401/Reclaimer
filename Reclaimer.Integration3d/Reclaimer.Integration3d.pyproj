@@ -30,6 +30,7 @@
     <Compile Include="reclaimer\autodesk\Utils.py" />
     <Compile Include="reclaimer\autodesk\__init__.py" />
     <Content Include="reclaimer\autodesk\resources\OSLBlendMap.osl" />
+    <Content Include="reclaimer\autodesk\resources\OSLColorChangeMap.osl" />
     <Compile Include="reclaimer\blender\BlenderInterface.py" />
     <Compile Include="reclaimer\blender\Compatibility.py" />
     <Compile Include="reclaimer\blender\CustomShaderNodes.py" />

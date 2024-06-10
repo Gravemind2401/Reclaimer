@@ -44,9 +44,9 @@ class TEXTURE_USAGE:
 
 
 class TINT_USAGE:
-    ALBEDO_COLOR = "albedo_color";
-    SELF_ILLUM_COLOR = "self_illum_color";
-    SPECULAR_TINT = "specular_tint";
+    ALBEDO = "albedo";
+    EMISSION = "self_illum";
+    SPECULAR = "specular";
 
 
 class ChannelFlags(IntFlag):
@@ -64,7 +64,10 @@ class ChannelFlags(IntFlag):
     def get_default(usage: str) -> 'ChannelFlags':
         if usage == TEXTURE_USAGE.TRANSPARENCY:
             return ChannelFlags.ALPHA
-        return ChannelFlags.RGB
+        elif usage == TEXTURE_USAGE.BLEND:
+            return ChannelFlags.RGBA
+        else:
+            return ChannelFlags.RGB
 
 
 class Material(INamed, ICustomProperties):
