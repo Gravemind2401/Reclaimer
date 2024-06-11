@@ -286,13 +286,6 @@ def _initgroup_colorchange():
     multiply_tertiary.label = 'Multiply Tertiary'
     multiply_tertiary.location = (0, 0)
 
-    combine_node = ShaderNodeCombineColorCompat(group)
-    combine_node.label = 'Combine Mask'
-    combine_node.location = (0, -250)
-    group.links.new(_get_input_socket(combine_node, 'R'), _get_output_socket(group_input, 'Primary Mask'))
-    group.links.new(_get_input_socket(combine_node, 'G'), _get_output_socket(group_input, 'Secondary Mask'))
-    group.links.new(_get_input_socket(combine_node, 'B'), _get_output_socket(group_input, 'Tertiary Mask'))
-
     add_ps = _create_mix_node(group, 'ADD', _get_output_socket(multiply_primary, 'Color'), _get_output_socket(multiply_secondary, 'Color'))
     add_ps.label = 'Add P+S Color'
     add_ps.location = (200, 300)
@@ -301,15 +294,24 @@ def _initgroup_colorchange():
     add_pst.label = 'Add PS+T Color'
     add_pst.location = (400, 200)
 
-    ceil_node = group.nodes.new('ShaderNodeMath')
-    ceil_node.operation = 'CEIL'
-    ceil_node.use_clamp = True
-    ceil_node.location = (300, -100)
+    addmask_ps = group.nodes.new('ShaderNodeMath')
+    addmask_ps.operation = 'ADD'
+    addmask_ps.label = 'Add P+S Mask'
+    addmask_ps.location = (200, -150)
+
+    addmask_pst = group.nodes.new('ShaderNodeMath')
+    addmask_pst.operation = 'ADD'
+    addmask_pst.label = 'Add PS+T Mask'
+    addmask_pst.location = (400, -100)
+
+    group.links.new(_get_input_socket(addmask_ps, 0), _get_output_socket(group_input, 'Primary Mask'))
+    group.links.new(_get_input_socket(addmask_ps, 1), _get_output_socket(group_input, 'Secondary Mask'))
+    group.links.new(_get_input_socket(addmask_pst, 0), _get_output_socket(addmask_ps, 'Value'))
+    group.links.new(_get_input_socket(addmask_pst, 1), _get_output_socket(group_input, 'Tertiary Mask'))
 
     multiply_base = _create_mix_node(group, 'MULTIPLY', _get_output_socket(group_input, 'Base Color'), _get_output_socket(add_pst, 'Color'))
     multiply_base.label = 'Multiply Base'
     multiply_base.location = (600, 100)
 
-    group.links.new(_get_input_socket(ceil_node, 'Value'), _get_output_socket(combine_node, 'Color'))
-    group.links.new(_get_input_socket(multiply_base, 0), _get_output_socket(ceil_node, 'Value'))
+    group.links.new(_get_input_socket(multiply_base, 0), _get_output_socket(addmask_pst, 'Value'))
     group.links.new(_get_input_socket(group_output, 'Color'), _get_output_socket(multiply_base, 'Color'))

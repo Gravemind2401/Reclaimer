@@ -18,11 +18,16 @@ shader OSLColorChange
     output color Out = BaseColor
 )
 {
-    float factor = clamp(ceil(Mask1 + Mask2 + Mask3 + Mask4), 0.0, 1.0);
+    float factor = clamp(Mask1 + Mask2 + Mask3 + Mask4, 0.0, 1.0);
 
-    if (factor)
-        Out = ((Color1 * Mask1)
-            + (Color2 * Mask2)
-            + (Color3 * Mask3)
-            + (Color4 * Mask4)) * BaseColor;
+    if (factor == 0)
+        return;
+
+    Out = ((Mask1 * Color1)
+         + (Mask2 * Color2)
+         + (Mask3 * Color3)
+         + (Mask4 * Color4)) * BaseColor;
+
+    if (factor < 1)
+        Out = mix(BaseColor, Out, factor);
 }
