@@ -2,6 +2,7 @@ from typing import Dict, List
 
 from pymxs import runtime as rt
 
+from .Utils import *
 from .. import autodesk
 from ..src.SceneReader import *
 from ..src.ImportOptions import *
@@ -188,6 +189,11 @@ class MaterialBuilder:
 
                     if result.base_color_map:
                         ccmap.BaseColor_map = result.base_color_map
+
+                    ccmap.Color1 = toColor(self._options.DEFAULTCC_1)
+                    ccmap.Color2 = toColor(self._options.DEFAULTCC_2)
+                    ccmap.Color3 = toColor(self._options.DEFAULTCC_3)
+                    ccmap.Color4 = toColor(self._options.DEFAULTCC_4)
 
                     result.base_color_map = selector
                     break

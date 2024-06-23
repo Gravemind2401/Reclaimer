@@ -1,6 +1,7 @@
 import bpy
 from typing import Union, Iterable
 
+from ..src.ImportOptions import *
 from .Compatibility import *
 
 __all__ = [
@@ -11,12 +12,12 @@ __all__ = [
 COLOR_WHITE = (1.0, 1.0, 1.0, 1.0)
 
 
-def init_custom_node_groups():
+def init_custom_node_groups(options: ImportOptions):
     _initgroup_uvscale()
     _initgroup_dxnormal()
     _initgroup_blendmask()
     _initgroup_compositeblendmask()
-    _initgroup_colorchange()
+    _initgroup_colorchange(options)
 
 def create_group_node(parent: Union[bpy.types.Material, bpy.types.NodeTree], group_name: str) -> bpy.types.Node:
     node_tree = parent
@@ -256,7 +257,7 @@ def _initgroup_compositeblendmask():
     group.links.new(_get_input_socket(group_output, 'Specular'), _get_output_socket(spec_blend_node, 'Color'))
     group.links.new(_get_input_socket(group_output, 'Normal'), _get_output_socket(normal_node, 'Normal'))
 
-def _initgroup_colorchange():
+def _initgroup_colorchange(options: ImportOptions):
     group = bpy.data.node_groups.new('Color Change', 'ShaderNodeTree')
 
     group_input = group.nodes.new('NodeGroupInput')
@@ -267,11 +268,11 @@ def _initgroup_colorchange():
 
     _create_input_socket(group, 'NodeSocketColor', 'Base Color').default_value = COLOR_WHITE
     _create_input_socket(group, 'NodeSocketColor', 'Primary Mask')
-    _create_input_socket(group, 'NodeSocketColor', 'Primary Color').default_value = COLOR_WHITE
+    _create_input_socket(group, 'NodeSocketColor', 'Primary Color').default_value = options.DEFAULTCC_1
     _create_input_socket(group, 'NodeSocketColor', 'Secondary Mask')
-    _create_input_socket(group, 'NodeSocketColor', 'Secondary Color').default_value = COLOR_WHITE
+    _create_input_socket(group, 'NodeSocketColor', 'Secondary Color').default_value = options.DEFAULTCC_2
     _create_input_socket(group, 'NodeSocketColor', 'Tertiary Mask')
-    _create_input_socket(group, 'NodeSocketColor', 'Tertiary Color').default_value = COLOR_WHITE
+    _create_input_socket(group, 'NodeSocketColor', 'Tertiary Color').default_value = options.DEFAULTCC_3
     _create_output_socket(group, 'NodeSocketColor', 'Color')
 
     multiply_primary = _create_mix_node(group, 'MULTIPLY', _get_output_socket(group_input, 'Primary Mask'), _get_output_socket(group_input, 'Primary Color'))

@@ -4,6 +4,7 @@ from collections.abc import Sequence
 __all__ = [
     'Triangle',
     'Color',
+    'ColorF',
     'Float2',
     'Float3',
     'Float4',
@@ -19,6 +20,7 @@ __all__ = [
 
 Triangle = Tuple[int, int, int]
 Color = Tuple[int, int, int, int]
+ColorF = Tuple[float, float, float, float]
 Float2 = Tuple[float, float]
 Float3 = Tuple[float, float, float]
 Float4 = Tuple[float, float, float, float]

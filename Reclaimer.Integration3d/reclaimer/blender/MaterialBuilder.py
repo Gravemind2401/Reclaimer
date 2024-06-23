@@ -273,27 +273,35 @@ class MaterialBuilder:
                 helper = specular_images[0]
                 helper.set_location(-1200, -50)
                 result.node_tree.links.new(bsdf.inputs[SPECULAR_SOCKET_COMPAT], helper.get_default_output(TEXTURE_USAGE.SPECULAR))
-            if transparency_images:
-                result.blend_method = alpha_mode_lookup.get(mat.alpha_mode, 'OPAQUE')
-                helper = transparency_images[0]
-                helper.set_location(-1000, -500)
-                result.node_tree.links.new(bsdf.inputs['Alpha'], helper.get_default_output(TEXTURE_USAGE.TRANSPARENCY))
-            if cc_images and diffuse_images:
+            if cc_images:
                 helper = cc_images[0]
-                helper.set_location(-750, 700)
                 cc_node = create_group_node(result, 'Color Change')
-                cc_node.location = (-200, 600)
+
+                if diffuse_images:
+                    helper.set_location(-750, 700)
+                    cc_node.location = (-200, 600)
+                else:
+                    helper.set_location(-750, 300)
+                    cc_node.location = (-200, 300)
+
 
                 flags = helper.get_default_channel_source(TEXTURE_USAGE.COLOR_CHANGE)
-                if flags == ChannelFlags.DEFAULT or flags == ChannelFlags.RGB:
+                if flags == ChannelFlags.RGB:
                     result.node_tree.links.new(cc_node.inputs['Primary Mask'], helper.get_output('R'))
                     result.node_tree.links.new(cc_node.inputs['Secondary Mask'], helper.get_output('G'))
                     result.node_tree.links.new(cc_node.inputs['Tertiary Mask'], helper.get_output('B'))
                 else:
                     result.node_tree.links.new(cc_node.inputs['Primary Mask'], helper.get_default_output(TEXTURE_USAGE.COLOR_CHANGE))
 
-                result.node_tree.links.new(cc_node.inputs['Base Color'], diffuse_images[0].get_default_output(TEXTURE_USAGE.DIFFUSE))
+                if diffuse_images:
+                    result.node_tree.links.new(cc_node.inputs['Base Color'], diffuse_images[0].get_default_output(TEXTURE_USAGE.DIFFUSE))
+
                 result.node_tree.links.new(bsdf.inputs['Base Color'], cc_node.outputs['Color'])
+            if transparency_images:
+                result.blend_method = alpha_mode_lookup.get(mat.alpha_mode, 'OPAQUE')
+                helper = transparency_images[0]
+                helper.set_location(-1000, -500)
+                result.node_tree.links.new(bsdf.inputs['Alpha'], helper.get_default_output(TEXTURE_USAGE.TRANSPARENCY))
 
         if mat.tints:
             # add RGB nodes with tint color values (not connected to anything yet)

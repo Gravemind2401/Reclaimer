@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Optional
 
+from .Types import *
 from .Material import *
 from .Scene import *
 from .Model import *
@@ -38,6 +39,11 @@ class ImportOptions:
 
     BITMAP_ROOT: str = ''
     BITMAP_EXT: str = ''
+
+    DEFAULTCC_1: ColorF = (1.0, 0.0, 0.0, 1.0)
+    DEFAULTCC_2: ColorF = (0.0, 1.0, 0.0, 1.0)
+    DEFAULTCC_3: ColorF = (0.0, 0.0, 1.0, 1.0)
+    DEFAULTCC_4: ColorF = (1.0, 0.5, 0.0, 1.0)
 
     def __init__(self, scene: Optional[Scene]=None):
         self._scene = scene

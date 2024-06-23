@@ -1,5 +1,5 @@
 from bpy.types import Context, AddonPreferences
-from bpy.props import BoolProperty, StringProperty, FloatProperty
+from bpy.props import BoolProperty, StringProperty, FloatProperty, FloatVectorProperty
 
 from ..src.ImportOptions import ImportOptions
 from .DependencyInstallerOperator import DependencyInstallerOperator
@@ -105,6 +105,36 @@ class RmfPreferences(AddonPreferences):
         default = ImportOptions.BITMAP_EXT
     ) # type: ignore
 
+    cc_1: FloatVectorProperty(
+        name = 'Default Primary Color',
+        description = 'Initial primary color for color-change shader nodes',
+        default = ImportOptions.DEFAULTCC_1,
+        subtype = 'COLOR',
+        size = 4,
+        min = 0,
+        max = 1
+    ) # type: ignore
+
+    cc_2: FloatVectorProperty(
+        name = 'Default Secondary Color',
+        description = 'Initial secondary color for color-change shader nodes',
+        default = ImportOptions.DEFAULTCC_2,
+        subtype = 'COLOR',
+        size = 4,
+        min = 0,
+        max = 1
+    ) # type: ignore
+
+    cc_3: FloatVectorProperty(
+        name = 'Default Tertiary Color',
+        description = 'Initial tertiary color for color-change shader nodes',
+        default = ImportOptions.DEFAULTCC_3,
+        subtype = 'COLOR',
+        size = 4,
+        min = 0,
+        max = 1
+    ) # type: ignore
+
     def draw(self, context: Context):
         global _first_draw, _was_missing_dependencies
 
@@ -156,3 +186,9 @@ class RmfPreferences(AddonPreferences):
         box.prop(self, 'object_scale')
         box.prop(self, 'bone_scale')
         box.prop(self, 'marker_scale')
+
+        box = panel.box()
+        box.label(icon='COLOR', text='Color Options')
+        box.prop(self, 'cc_1')
+        box.prop(self, 'cc_2')
+        box.prop(self, 'cc_3')

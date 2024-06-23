@@ -21,7 +21,7 @@ class RmfImportOperator(Operator, bpy_extras.io_utils.ImportHelper):
     def execute(self, context: Context) -> Set[str]:
         # this cast is just for autocomplete and intellisense
         preferences = cast(RmfPreferences, context.preferences.addons[RmfPreferences.bl_idname].preferences)
-        
+
         ImportOptions.IMPORT_BONES = preferences.import_bones
         ImportOptions.IMPORT_MARKERS = preferences.import_markers
         ImportOptions.IMPORT_MESHES = preferences.import_meshes
@@ -44,6 +44,11 @@ class RmfImportOperator(Operator, bpy_extras.io_utils.ImportHelper):
 
         ImportOptions.BITMAP_ROOT = preferences.bitmap_root
         ImportOptions.BITMAP_EXT = preferences.bitmap_ext
+
+        ImportOptions.DEFAULTCC_1 = preferences.cc_1
+        ImportOptions.DEFAULTCC_2 = preferences.cc_2
+        ImportOptions.DEFAULTCC_3 = preferences.cc_3
+        # ImportOptions.DEFAULTCC_4 = preferences.cc_4
 
         bpy.ops.rmf.dialog_operator('EXEC_DEFAULT', filepath=self.filepath)
 

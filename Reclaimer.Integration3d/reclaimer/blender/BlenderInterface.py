@@ -85,7 +85,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         set_collection_exclude(bpy.context.view_layer, self.root_collection, False)
 
     def init_materials(self) -> None:
-        init_custom_node_groups()
+        init_custom_node_groups(self.options)
         self.material_builder = MaterialBuilder(self.scene, self.options)
 
     def create_material(self, material: Material) -> bpy.types.Material:
