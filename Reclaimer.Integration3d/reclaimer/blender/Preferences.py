@@ -1,6 +1,7 @@
 from bpy.types import Context, AddonPreferences
 from bpy.props import BoolProperty, StringProperty, FloatProperty
 
+from ..src.ImportOptions import ImportOptions
 from .DependencyInstallerOperator import DependencyInstallerOperator
 
 _first_draw = True
@@ -13,95 +14,95 @@ class RmfPreferences(AddonPreferences):
     import_bones: BoolProperty(
         name = 'Import Bones',
         description = 'Determines if an armature and bones will be created where applicable',
-        default = True
+        default = ImportOptions.IMPORT_BONES
     ) # type: ignore
 
     import_markers: BoolProperty(
         name = 'Import Markers',
         description = 'Determines if markers will be created where applicable',
-        default = True
+        default = ImportOptions.IMPORT_MARKERS
     ) # type: ignore
 
     import_meshes: BoolProperty(
         name = 'Import Meshes',
         description = 'Determines if mesh geometry will be created',
-        default = True
+        default = ImportOptions.IMPORT_MESHES
     ) # type: ignore
 
     import_materials: BoolProperty(
         name = 'Import Materials',
         description = 'Determines if materials will be created and applied',
-        default = True
+        default = ImportOptions.IMPORT_MATERIALS
     ) # type: ignore
 
     import_custom_props: BoolProperty(
         name = 'Import Custom Properties',
         description = 'Determines if custom properties will be applied to the imported objects',
-        default = True
+        default = ImportOptions.IMPORT_CUSTOM_PROPS
     ) # type: ignore
 
     split_meshes: BoolProperty(
         name = 'Split By Material',
         description = 'Determines if meshes will be split by material',
-        default = True
+        default = ImportOptions.SPLIT_MESHES
     ) # type: ignore
 
     import_normals: BoolProperty(
         name = 'Import Vertex Normals',
         description = 'Determines if vertex normals will be imported',
-        default = True
+        default = ImportOptions.IMPORT_NORMALS
     ) # type: ignore
 
     import_skin: BoolProperty(
         name = 'Import Vertex Weights',
         description = 'Determines vertex weights will be imported',
-        default = True
+        default = ImportOptions.IMPORT_SKIN
     ) # type: ignore
 
     object_scale: FloatProperty(
         name = 'Object Scale',
         description = 'Sets the size of imported meshes',
-        default = 1.0,
+        default = ImportOptions.OBJECT_SCALE,
         min = 0.01
     ) # type: ignore
 
     bone_scale: FloatProperty(
         name = 'Bone Scale',
         description = 'Sets the size of imported bones',
-        default = 1.0,
+        default = ImportOptions.BONE_SCALE,
         min = 0.01
     ) # type: ignore
 
     marker_scale: FloatProperty(
         name = 'Marker Scale',
         description = 'Sets the size of imported markers',
-        default = 1.0,
+        default = ImportOptions.MARKER_SCALE,
         min = 0.01
     ) # type: ignore
 
     bone_prefix: StringProperty(
         name = 'Bone Name Prefix',
         description = 'The prefix to apply to all bone names',
-        default = ''
+        default = ImportOptions.BONE_PREFIX
     ) # type: ignore
 
     marker_prefix: StringProperty(
         name = 'Marker Name Prefix',
         description = 'The prefix to apply to all marker names',
-        default = '#'
+        default = ImportOptions.MARKER_PREFIX
     ) # type: ignore
 
     bitmap_root: StringProperty(
         name = 'Bitmap Folder',
         description = 'The root folder where bitmaps are saved',
-        default = '',
+        default = ImportOptions.BITMAP_ROOT,
         subtype = 'DIR_PATH'
     ) # type: ignore
 
     bitmap_ext: StringProperty(
         name = 'Bitmap Extension',
         description = 'The file extension of the source bitmap files',
-        default = 'tif'
+        default = ImportOptions.BITMAP_EXT
     ) # type: ignore
 
     def draw(self, context: Context):
