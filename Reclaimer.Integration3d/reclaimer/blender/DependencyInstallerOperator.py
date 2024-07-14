@@ -10,9 +10,9 @@ __all__ = [
 ]
 
 
-Dependency = namedtuple('Dependency', ['module', 'package', 'name'])
+Dependency = namedtuple('Dependency', ['module', 'package', 'name', 'args'])
 
-_dependencies = [Dependency(module='PySide2', package=None, name=None)]
+_dependencies = [Dependency(module='PySide2', package=None, name=None, args='--ignore-requires-python')]
 _dependencies_installed = False
 
 
@@ -20,7 +20,7 @@ def try_import_dependencies() -> bool:
     global _dependencies_installed
 
     try:
-        for module, package, name in _dependencies:
+        for module, package, name, args in _dependencies:
             import_module(module_name=module, global_name=name)
         _dependencies_installed = True
     except ModuleNotFoundError:
@@ -49,7 +49,8 @@ elevated permissions in order to install the package'''
             for dependency in _dependencies:
                 install_and_import_module(module_name=dependency.module,
                                           package_name=dependency.package,
-                                          global_name=dependency.name)
+                                          global_name=dependency.name,
+                                          install_args=dependency.args)
         except (subprocess.CalledProcessError, ImportError) as err:
             self.report({'ERROR'}, str(err))
             return {'CANCELLED'}
