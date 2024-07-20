@@ -1,0 +1,116 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>80c4c8b8-7846-4d75-9a2f-09a1a3955b86</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>Reclaimer\src\__init__.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>Reclaimer</Name>
+    <RootNamespace>Reclaimer</RootNamespace>
+    <TestFramework>unittest</TestFramework>
+    <UnitTestPattern>test*.py</UnitTestPattern>
+    <UnitTestRootDirectory>.</UnitTestRootDirectory>
+    <IsWindowsApplication>False</IsWindowsApplication>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Reclaimer\autodesk\AutodeskInterface.py" />
+    <Compile Include="Reclaimer\autodesk\MaterialBuilder.py" />
+    <Compile Include="Reclaimer\autodesk\Utils.py" />
+    <Compile Include="Reclaimer\autodesk\__init__.py" />
+    <Content Include="Reclaimer\autodesk\resources\OSLBlendMap.osl" />
+    <Content Include="Reclaimer\autodesk\resources\OSLColorChangeMap.osl" />
+    <Compile Include="Reclaimer\blender\BlenderInterface.py" />
+    <Compile Include="Reclaimer\blender\Compatibility.py" />
+    <Compile Include="Reclaimer\blender\CustomShaderNodes.py" />
+    <Compile Include="Reclaimer\blender\DependencyInstallerOperator.py" />
+    <Compile Include="Reclaimer\blender\DependencyUtils.py" />
+    <Compile Include="Reclaimer\blender\DialogOperator.py" />
+    <Compile Include="Reclaimer\blender\ImportOperator.py" />
+    <Compile Include="Reclaimer\blender\MaterialBuilder.py" />
+    <Compile Include="Reclaimer\blender\MenuOperator.py" />
+    <Compile Include="Reclaimer\blender\Preferences.py" />
+    <Compile Include="Reclaimer\blender\ProgressOperator.py" />
+    <Compile Include="Reclaimer\blender\QtWindowEventLoop.py" />
+    <Compile Include="Reclaimer\blender\Utils.py" />
+    <Compile Include="Reclaimer\blender\__init__.py" />
+    <Compile Include="Reclaimer\import_rmf.py" />
+    <Compile Include="Reclaimer\src\ImportOptions.py" />
+    <Compile Include="Reclaimer\src\Progress.py" />
+    <Compile Include="Reclaimer\src\SceneBuilder.py" />
+    <Compile Include="Reclaimer\src\SceneFilter.py" />
+    <Compile Include="Reclaimer\src\Vectors.py" />
+    <Compile Include="Reclaimer\src\ViewportInterface.py" />
+    <Compile Include="Reclaimer\tests\Test_PySide2.py" />
+    <Compile Include="Reclaimer\ui\ProgressDialog.py" />
+    <Compile Include="Reclaimer\ui\RmfDialog.py" />
+    <Compile Include="Reclaimer\ui\__init__.py" />
+    <Compile Include="Reclaimer\__init__.py" />
+    <Compile Include="Reclaimer\src\FileReader.py" />
+    <Compile Include="Reclaimer\src\VertexBuffer.py" />
+    <Compile Include="Reclaimer\src\IndexBuffer.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Reclaimer\src\Material.py" />
+    <Compile Include="Reclaimer\src\Model.py" />
+    <Compile Include="Reclaimer\src\Scene.py" />
+    <Compile Include="Reclaimer\src\DataBlock.py" />
+    <Compile Include="Reclaimer\src\SceneReader.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Reclaimer\src\Types.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Reclaimer\src\__init__.py" />
+    <Compile Include="Reclaimer\tests\Test_SceneReader.py" />
+    <Compile Include="Reclaimer\tests\Test_PackedVector.py" />
+    <Compile Include="Reclaimer\tests\__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Reclaimer\" />
+    <Folder Include="Reclaimer\autodesk\" />
+    <Folder Include="Reclaimer\autodesk\resources\" />
+    <Folder Include="Reclaimer\blender\" />
+    <Folder Include="Reclaimer\tests\" />
+    <Folder Include="Reclaimer\src\" />
+    <Folder Include="Reclaimer\ui\" />
+    <Folder Include="Reclaimer\ui\resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Reclaimer\ui\progress.ui" />
+    <Content Include="Reclaimer\ui\resources\bl_stylesheet.qss" />
+    <Content Include="Reclaimer\ui\resources\CheckboxList_16x.png" />
+    <Content Include="Reclaimer\ui\resources\Checklist_16x.png" />
+    <Content Include="Reclaimer\ui\resources\checkmark.svg" />
+    <Content Include="Reclaimer\ui\resources\checkmark_sm.svg" />
+    <Content Include="Reclaimer\ui\resources\CollapseGroup_16x.png" />
+    <Content Include="Reclaimer\ui\resources\ExpandAll_16x.png" />
+    <Content Include="Reclaimer\ui\resources\radiobut_on.svg" />
+    <Content Include="Reclaimer\ui\resources\radiobut_on_sm.svg" />
+    <Content Include="Reclaimer\ui\resources\resources.qrc" />
+    <Content Include="Reclaimer\ui\resources\Settings_16x.png" />
+    <Content Include="Reclaimer\ui\resources\tria_down.svg" />
+    <Content Include="Reclaimer\ui\resources\tria_right.svg" />
+    <Content Include="Reclaimer\ui\widget.ui" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>

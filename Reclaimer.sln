@@ -19,12 +19,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reclaimer.Blam.Tests", "Rec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reclaimer.Core.Tests", "Reclaimer.Core.Tests\Reclaimer.Core.Tests.csproj", "{341F1E52-F911-499E-BE8D-3B9BA569D190}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Reclaimer.RMFImporter", "Reclaimer.RMFImporter\Reclaimer.RMFImporter.pyproj", "{80C4C8B8-7846-4D75-9A2F-09A1A3955B86}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{80A46DE3-ECFF-4B97-8C23-16C725A397CE}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
-EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Reclaimer.Integration3d", "Reclaimer.Integration3d\Reclaimer.Integration3d.pyproj", "{80C4C8B8-7846-4D75-9A2F-09A1A3955B86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
