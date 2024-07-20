@@ -111,14 +111,7 @@ namespace Reclaimer.Plugins
 
             internal bool NoConversion => string.IsNullOrWhiteSpace(OutputExtension);
 
-            private static string DefaultFFmpegPath
-            {
-                get
-                {
-                    var relative = Substrate.PluginsDirectory.Replace(Reclaimer.Settings.AppBaseDirectory, string.Empty);
-                    return Path.Combine(".", relative, FFmpegFolderName, FFmpegExecutableName);
-                }
-            }
+            private static string DefaultFFmpegPath => Path.Combine(Substrate.PluginsDirectory, FFmpegFolderName, FFmpegExecutableName);
         }
     }
 }

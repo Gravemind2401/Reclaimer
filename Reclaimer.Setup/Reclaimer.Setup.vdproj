@@ -248,17 +248,6 @@
             "Property" = "8:TARGETDIR"
                 "Folders"
                 {
-                    "{9EF0B969-E518-4E46-987F-47570745A589}:_80546A96FE9447AA8DE57970BB501577"
-                    {
-                    "Name" = "8:Plugins"
-                    "AlwaysCreate" = "11:FALSE"
-                    "Condition" = "8:"
-                    "Transitive" = "11:FALSE"
-                    "Property" = "8:_6EA8B525D1E34D9C8813410B1AF4204A"
-                        "Folders"
-                        {
-                        }
-                    }
                 }
             }
         }

@@ -44,8 +44,6 @@ namespace Reclaimer.Plugins
         internal static event EventHandler<LogEventArgs> EmptyLog;
         internal static event EventHandler<StatusChangedArgs> StatusChanged;
 
-        internal static Dictionary<string, string> DefaultHandlers { get; set; }
-
         internal static IEnumerable<Plugin> AllPlugins => plugins.Values;
 
         internal static Plugin GetPlugin(string key) => plugins.GetValueOrDefault(key);
@@ -55,29 +53,28 @@ namespace Reclaimer.Plugins
             var temp = new List<Plugin> { defaultPlugin };
             temp.AddRange(FindPlugins(typeof(Substrate).Assembly));
 
-            if (Directory.Exists(PluginsDirectory))
+            Directory.CreateDirectory(PluginsDirectory);
+
+            foreach (var folder in Directory.EnumerateDirectories(PluginsDirectory))
             {
-                foreach (var folder in Directory.EnumerateDirectories(PluginsDirectory))
+                var fileName = Path.Combine(folder, $"{Path.GetFileName(folder)}.dll");
+                if (!File.Exists(fileName))
+                    continue;
+
+                LogOutput($"Scanning {fileName} for plugins");
+                try
                 {
-                    var fileName = Path.Combine(folder, $"{Path.GetFileName(folder)}.dll");
-                    if (!File.Exists(fileName))
-                        continue;
+                    var assembly = Assembly.LoadFile(fileName);
 
-                    LogOutput($"Scanning {fileName} for plugins");
-                    try
+                    foreach (var p in FindPlugins(assembly))
                     {
-                        var assembly = Assembly.LoadFile(fileName);
-
-                        foreach (var p in FindPlugins(assembly))
-                        {
-                            LogOutput($"Found plugin {p.Key} [{p.Name}]");
-                            temp.Add(p);
-                        }
+                        LogOutput($"Found plugin {p.Key} [{p.Name}]");
+                        temp.Add(p);
                     }
-                    catch (Exception ex)
-                    {
-                        LogError($"Could not scan file {fileName}", ex);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    LogError($"Could not scan file {fileName}", ex);
                 }
             }
 
@@ -260,7 +257,7 @@ namespace Reclaimer.Plugins
         /// <summary>
         /// Gets the directory path that plugin assemblies are loaded from.
         /// </summary>
-        public static string PluginsDirectory => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.PluginsFolderName);
+        public static string PluginsDirectory => Path.Combine(Settings.AppDataDirectory, Constants.PluginsFolderName);
 
         /// <summary>
         /// Opens a file object with the associated default handler.

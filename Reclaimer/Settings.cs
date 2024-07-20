@@ -32,18 +32,14 @@ namespace Reclaimer
 
         internal bool ShouldCheckUpdates => (DateTime.Now - LastUpdateCheck).TotalHours > 12;
 
-        public Dictionary<string, string> DefaultHandlers
-        {
-            get => Substrate.DefaultHandlers;
-            set => Substrate.DefaultHandlers = value;
-        }
+        public Dictionary<string, string> DefaultHandlers { get; init; }
 
         //will initially be read in as JObjects
-        public Dictionary<string, object> PluginSettings { get; set; }
+        public Dictionary<string, object> PluginSettings { get; init; }
 
-        public List<string> RecentFiles { get; set; }
+        public List<string> RecentFiles { get; init; }
 
-        public UserSettings UserSettings { get; set; }
+        public UserSettings UserSettings { get; init; }
 
         public Settings()
         {
