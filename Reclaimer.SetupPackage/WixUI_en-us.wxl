@@ -1,0 +1,276 @@
+﻿<!-- Copyright (c) .NET Foundation and contributors. All rights reserved. Licensed under the Microsoft Reciprocal License. See LICENSE.TXT file in the project root for full license information. -->
+
+
+<WixLocalization Culture="en-US" ExtensionDefaultCulture="yes" Codepage="1252" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+
+
+    <String Id="AdvancedWelcomeEulaDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="AdvancedWelcomeEulaDlgBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="AdvancedWelcomeEulaDlgTitle" Overridable="yes" Value="{\WixUI_Font_Title}Please read the [ProductName] License Agreement" />
+    <String Id="AdvancedWelcomeEulaDlgLicenseAcceptedCheckBox" Overridable="yes" Value="I &amp;accept the terms in the License Agreement" />
+    <String Id="AdvancedWelcomeEulaDlgDescriptionPerMachine" Overridable="yes" Value="Click Install to install the product with default options for all users. Click Advanced to change installation options." />
+    <String Id="AdvancedWelcomeEulaDlgDescriptionPerUser" Overridable="yes" Value="Click Install to install the product with default options just for you. Click Advanced to change installation options." />
+    <String Id="AdvancedWelcomeEulaDlgInstall" Overridable="yes" Value="&amp;Install" />
+    <String Id="AdvancedWelcomeEulaDlgAdvanced" Overridable="yes" Value="A&amp;dvanced" />
+    <String Id="Advanced_Font_Normal_Size" Overridable="yes" Value="8" />
+    <String Id="Advanced_Font_Bigger_Size" Overridable="yes" Value="12" />
+    <String Id="Advanced_Font_Title_Size" Overridable="yes" Value="9" />
+    <String Id="Advanced_Font_Emphasized_Size" Overridable="yes" Value="8" />
+    <String Id="Advanced_Font_FaceName" Overridable="yes" Value="Tahoma" />
+
+
+    <String Id="BrowseDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="BrowseDlgComboLabel" Overridable="yes" Value="&amp;Look in:" />
+    <String Id="BrowseDlgWixUI_Bmp_Up" Overridable="yes" Value="WixUI_Bmp_Up" />
+    <String Id="BrowseDlgWixUI_Bmp_UpTooltip" Overridable="yes" Value="Up one level" />
+    <String Id="BrowseDlgNewFolder" Overridable="yes" Value="WixUI_Bmp_New" />
+    <String Id="BrowseDlgNewFolderTooltip" Overridable="yes" Value="Create a new folder" />
+    <String Id="BrowseDlgPathLabel" Overridable="yes" Value="&amp;Folder name:" />
+    <String Id="BrowseDlgBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="BrowseDlgDescription" Overridable="yes" Value="Browse to the destination folder" />
+    <String Id="BrowseDlgTitle" Overridable="yes" Value="{\WixUI_Font_Title}Change destination folder" />
+
+
+    <String Id="CancelDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="CancelDlgText" Overridable="yes" Value="Are you sure you want to cancel [ProductName] installation?" />
+    <String Id="CancelDlgIcon" Overridable="yes" Value="WixUI_Ico_Info" />
+    <String Id="CancelDlgIconTooltip" Overridable="yes" Value="Information icon" />
+
+
+    <String Id="CustomizeDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="CustomizeDlgTree" Overridable="yes" Value="Tree of selections" />
+    <String Id="CustomizeDlgBrowse" Overridable="yes" Value="B&amp;rowse..." />
+    <String Id="CustomizeDlgReset" Overridable="yes" Value="Re&amp;set" />
+    <String Id="CustomizeDlgDiskCost" Overridable="yes" Value="Disk &amp;Usage" />
+    <String Id="CustomizeDlgBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="CustomizeDlgText" Overridable="yes" Value="Click the icons in the tree below to change the way features will be installed." />
+    <String Id="CustomizeDlgDescription" Overridable="yes" Value="Select the way you want features to be installed." />
+    <String Id="CustomizeDlgTitle" Overridable="yes" Value="{\WixUI_Font_Title}Custom Setup" />
+    <String Id="CustomizeDlgItemDescription" Overridable="yes" Value="CustomizeDlgItemDescription-CustomizeDlgItemDescription" />
+    <String Id="CustomizeDlgItemSize" Overridable="yes" Value="CustomizeDlgItemSize-CustomizeDlgItemSize" />
+    <String Id="CustomizeDlgLocation" Overridable="yes" Value="CustomizeDlgLocation-CustomizeDlgLocation" />
+    <String Id="CustomizeDlgLocationLabel" Overridable="yes" Value="Location:" />
+
+
+    <String Id="DiskCostDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="DiskCostDlgBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="DiskCostDlgText" Overridable="yes" Value="Highlighted volumes do not have enough disk space available for selected features. You can either remove some files from the highlighted volumes, install fewer features, or select different destination drives." />
+    <String Id="DiskCostDlgDescription" Overridable="yes" Value="The disk space required for the installation of the selected features." />
+    <String Id="DiskCostDlgTitle" Overridable="yes" Value="{\WixUI_Font_Title}Disk Space Requirements" />
+    <String Id="DiskCostDlgVolumeList" Overridable="yes" Value="{120}{70}{70}{70}{70}" />
+
+
+    <String Id="ErrorDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="ErrorDlgErrorText" Overridable="yes" Value="Information text" />
+    <String Id="ErrorDlgErrorIcon" Overridable="yes" Value="WixUI_Ico_Info" />
+    <String Id="ErrorDlgErrorIconTooltip" Overridable="yes" Value="Information icon" />
+
+
+    <String Id="ExitDialog_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="ExitDialogBitmap" Overridable="yes" Value="WixUI_Bmp_Dialog" />
+    <String Id="ExitDialogDescription" Overridable="yes" Value="Click the Finish button to exit the Setup Wizard." />
+    <String Id="ExitDialogTitle" Overridable="yes" Value="{\WixUI_Font_Bigger}Completed the [ProductName] [ProductVersion[ Setup Wizard" />
+
+
+    <String Id="FatalError_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="FatalErrorBitmap" Overridable="yes" Value="WixUI_Bmp_Dialog" />
+    <String Id="FatalErrorTitle" Overridable="yes" Value="{\WixUI_Font_Bigger}[ProductName] [ProductVersion[ Setup Wizard ended prematurely" />
+    <String Id="FatalErrorDescription1" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup Wizard ended prematurely because of an error. Your system has not been modified. To install this program at a later time, run Setup Wizard again." />
+    <String Id="FatalErrorDescription2" Overridable="yes" Value="Click the Finish button to exit the Setup Wizard." />
+
+
+    <String Id="FeaturesDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="FeaturesDlgTree" Overridable="yes" Value="Product features" />
+    <String Id="FeaturesDlgBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="FeaturesDlgDescription" Overridable="yes" Value="Select the way you want features to be installed." />
+    <String Id="FeaturesDlgTitle" Overridable="yes" Value="{\WixUI_Font_Title}Product Features" />
+    <String Id="FeaturesDlgItemDescription" Overridable="yes" Value="FeaturesDlgItemDescription" />
+    <String Id="FeaturesDlgItemSize" Overridable="yes" Value="FeaturesDlgItemSize" />
+    <String Id="FeaturesDlgInstall" Overridable="yes" Value="&amp;Install" />
+    <String Id="FeaturesDlgChange" Overridable="yes" Value="&amp;Change" />
+
+
+    <String Id="FilesInUse_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="FilesInUseExit" Overridable="yes" Value="E&amp;xit" />
+    <String Id="FilesInUseBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="FilesInUseText" Overridable="yes" Value="The following applications are using files that need to be updated by this setup. Close these applications and then click &amp;Retry to continue setup or Exit to exit it." />
+    <String Id="FilesInUseDescription" Overridable="yes" Value="Some files that need to be updated are currently in use." />
+    <String Id="FilesInUseTitle" Overridable="yes" Value="{\WixUI_Font_Title}Files in Use" />
+
+
+    <String Id="InstallDirDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="InstallDirDlgChange" Overridable="yes" Value="&amp;Change..." />
+    <String Id="InstallDirDlgTitle" Overridable="yes" Value="{\WixUI_Font_Title}Destination Folder" />
+    <String Id="InstallDirDlgDescription" Overridable="yes" Value="Click Next to install to the default folder or click Change to choose another." />
+    <String Id="InstallDirDlgBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="InstallDirDlgFolderLabel" Overridable="yes" Value="Install [ProductName] to:" />
+
+
+    <String Id="InstallScopeDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="InstallScopeDlgBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="InstallScopeDlgDescription" Overridable="yes" Value="Choose the installation scope and folder" />
+    <String Id="InstallScopeDlgTitle" Overridable="yes" Value="{\WixUI_Font_Title}Installation Scope" />
+    <String Id="InstallScopeDlgPerUser" Overridable="yes" Value="{\WixUI_Font_Emphasized}Install &amp;just for you ([LogonUser])" />
+    <String Id="InstallScopeDlgPerUserDescription" Overridable="yes" Value="[ProductName] will be installed in a per-user folder and be available just for your user account. You do not need local Administrator privileges." />
+    <String Id="InstallScopeDlgNoPerUserDescription" Overridable="yes" Value="[ProductName] does not support per-user installation." />
+    <String Id="InstallScopeDlgPerMachine" Overridable="yes" Value="{\WixUI_Font_Emphasized}Install for all users of this &amp;machine" />
+    <String Id="InstallScopeDlgPerMachineDescription" Overridable="yes" Value="[ProductName] will be installed in a per-machine folder by default and be available for all users. You can change the default installation folder. You must have local Administrator privileges." />
+    <String Id="InstallScopeDlgFolderLabel" Overridable="yes" Value="Installation &amp;folder:" />
+    <String Id="InstallScopeDlgChange" Overridable="yes" Value="&amp;Change..." />
+
+
+    <String Id="InvalidDirDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="InvalidDirDlgText" Overridable="yes" Value="Installation directory must be on a local hard drive." />
+    <String Id="InvalidDirDlgIcon" Overridable="yes" Value="WixUI_Ico_Info" />
+    <String Id="InvalidDirDlgIconTooltip" Overridable="yes" Value="Information icon" />
+
+
+    <String Id="LicenseAgreementDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="LicenseAgreementDlgLicenseAcceptedCheckBox" Overridable="yes" Value="I &amp;accept the terms in the License Agreement" />
+    <String Id="LicenseAgreementDlgBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="LicenseAgreementDlgDescription" Overridable="yes" Value="Please read the following license agreement carefully" />
+    <String Id="LicenseAgreementDlgTitle" Overridable="yes" Value="{\WixUI_Font_Title}End-User License Agreement" />
+
+
+    <String Id="MaintenanceTypeDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="MaintenanceTypeDlgChangeButton" Overridable="yes" Value="&amp;Change" />
+    <String Id="MaintenanceTypeDlgChangeButtonTooltip" Overridable="yes" Value="Change Installation" />
+    <String Id="MaintenanceTypeDlgRepairButton" Overridable="yes" Value="Re&amp;pair" />
+    <String Id="MaintenanceTypeDlgRepairButtonTooltip" Overridable="yes" Value="Repair Installation" />
+    <String Id="MaintenanceTypeDlgRemoveButton" Overridable="yes" Value="&amp;Remove" />
+    <String Id="MaintenanceTypeDlgRemoveButtonTooltip" Overridable="yes" Value="Remove Installation" />
+    <String Id="MaintenanceTypeDlgBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="MaintenanceTypeDlgDescription" Overridable="yes" Value="Select the operation you wish to perform." />
+    <String Id="MaintenanceTypeDlgTitle" Overridable="yes" Value="{\WixUI_Font_Title}Change, repair, or remove installation" />
+    <String Id="MaintenanceTypeDlgChangeText" Overridable="yes" Value="Lets you change the way features are installed." />
+    <String Id="MaintenanceTypeDlgChangeDisabledText" Overridable="yes" Value="[ProductName] has no independently selectable features." />
+    <String Id="MaintenanceTypeDlgRemoveText" Overridable="yes" Value="Removes [ProductName] from your computer." />
+    <String Id="MaintenanceTypeDlgRemoveDisabledText" Overridable="yes" Value="[ProductName] cannot be removed." />
+    <String Id="MaintenanceTypeDlgRepairText" Overridable="yes" Value="Repairs errors in the most recent installation by fixing missing and corrupt files, shortcuts, and registry entries." />
+    <String Id="MaintenanceTypeDlgRepairDisabledText" Overridable="yes" Value="[ProductName] cannot be repaired." />
+
+
+    <String Id="MaintenanceWelcomeDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="MaintenanceWelcomeDlgBitmap" Overridable="yes" Value="WixUI_Bmp_Dialog" />
+    <String Id="MaintenanceWelcomeDlgDescription" Overridable="yes" Value="The Setup Wizard allows you to change the way [ProductName] features are installed on your computer or to remove it from your computer. Click Next to continue or Cancel to exit the Setup Wizard." />
+    <String Id="MaintenanceWelcomeDlgTitle" Overridable="yes" Value="{\WixUI_Font_Bigger}Welcome to the [ProductName] [ProductVersion[ Setup Wizard" />
+
+
+    <String Id="MsiRMFilesInUse_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="MsiRMFilesInUseBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="MsiRMFilesInUseText" Overridable="yes" Value="The following applications are using files that need to be updated by this setup. You can let Setup Wizard close them and attempt to restart them or reboot the machine later." />
+    <String Id="MsiRMFilesInUseDescription" Overridable="yes" Value="Some files that need to be updated are currently in use." />
+    <String Id="MsiRMFilesInUseTitle" Overridable="yes" Value="{\WixUI_Font_Title}Files in Use" />
+    <String Id="MsiRMFilesInUseUseRM" Overridable="yes" Value="&amp;Close the applications and attempt to restart them." />
+    <String Id="MsiRMFilesInUseDontUseRM" Overridable="yes" Value="&amp;Do not close applications. A reboot will be required." />
+
+
+    <String Id="OutOfDiskDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="OutOfDiskDlgBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="OutOfDiskDlgText" Overridable="yes" Value="The highlighted volumes do not have enough disk space available for the currently selected features. You can remove some files from the highlighted volumes, install fewer features, or select a different destination drive." />
+    <String Id="OutOfDiskDlgDescription" Overridable="yes" Value="Disk space required for the installation exceeds available disk space." />
+    <String Id="OutOfDiskDlgTitle" Overridable="yes" Value="{\WixUI_Font_Title}Out of Disk Space" />
+    <String Id="OutOfDiskDlgVolumeList" Overridable="yes" Value="{120}{70}{70}{70}{70}" />
+
+
+    <String Id="OutOfRbDiskDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="OutOfRbDiskDlgBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="OutOfRbDiskDlgText" Overridable="yes" Value="The highlighted volumes do not have enough disk space available for the currently selected features. You can remove some files from the highlighted volumes, install fewer features, or select a different destination drive." />
+    <String Id="OutOfRbDiskDlgDescription" Overridable="yes" Value="Disk space required for the installation exceeds available disk space." />
+    <String Id="OutOfRbDiskDlgTitle" Overridable="yes" Value="{\WixUI_Font_Title}Out of Disk Space" />
+    <String Id="OutOfRbDiskDlgVolumeList" Overridable="yes" Value="{120}{70}{70}{70}{70}" />
+    <String Id="OutOfRbDiskDlgText2" Overridable="yes" Value="Alternatively, you may choose to disable the installer's rollback functionality. Disabling rollback prevents the installer from restoring your computer's original state should the installation be interrupted in any way. Click Yes if you wish to take the risk of disabling rollback." />
+
+
+    <String Id="PrepareDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="PrepareDlgBitmap" Overridable="yes" Value="WixUI_Bmp_Dialog" />
+    <String Id="PrepareDlgDescription" Overridable="yes" Value="Please wait while the Setup Wizard prepares to guide you through the installation." />
+    <String Id="PrepareDlgTitle" Overridable="yes" Value="{\WixUI_Font_Bigger}Welcome to the [ProductName] [ProductVersion[ Setup Wizard" />
+
+
+    <String Id="ProgressDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="ProgressDlgBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="ProgressDlgTextInstalling" Overridable="yes" Value="Please wait while the Setup Wizard installs [ProductName]." />
+    <String Id="ProgressDlgTitleInstalling" Overridable="yes" Value="{\WixUI_Font_Title}Installing [ProductName]" />
+    <String Id="ProgressDlgTextChanging" Overridable="yes" Value="Please wait while the Setup Wizard changes [ProductName]." />
+    <String Id="ProgressDlgTitleChanging" Overridable="yes" Value="{\WixUI_Font_Title}Changing [ProductName]" />
+    <String Id="ProgressDlgTextRepairing" Overridable="yes" Value="Please wait while the Setup Wizard repairs [ProductName]." />
+    <String Id="ProgressDlgTitleRepairing" Overridable="yes" Value="{\WixUI_Font_Title}Repairing [ProductName]" />
+    <String Id="ProgressDlgTextRemoving" Overridable="yes" Value="Please wait while the Setup Wizard removes [ProductName]." />
+    <String Id="ProgressDlgTitleRemoving" Overridable="yes" Value="{\WixUI_Font_Title}Removing [ProductName]" />
+    <String Id="ProgressDlgTextUpdating" Overridable="yes" Value="Please wait while the Setup Wizard updates [ProductName]." />
+    <String Id="ProgressDlgTitleUpdating" Overridable="yes" Value="{\WixUI_Font_Title}Updating [ProductName]" />
+    <String Id="ProgressDlgProgressBar" Overridable="yes" Value="Progress done" />
+    <String Id="ProgressDlgStatusLabel" Overridable="yes" Value="Status:" />
+
+
+    <String Id="ResumeDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="ResumeDlgInstall" Overridable="yes" Value="&amp;Install" />
+    <String Id="ResumeDlgBitmap" Overridable="yes" Value="WixUI_Bmp_Dialog" />
+    <String Id="ResumeDlgDescription" Overridable="yes" Value="The Setup Wizard will complete the installation of [ProductName] on your computer. Click Install to continue or Cancel to exit the Setup Wizard." />
+    <String Id="ResumeDlgTitle" Overridable="yes" Value="{\WixUI_Font_Bigger}Resuming the [ProductName] [ProductVersion[ Setup Wizard" />
+
+
+    <String Id="SetupTypeDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="SetupTypeDlgTypicalButton" Overridable="yes" Value="&amp;Typical" />
+    <String Id="SetupTypeDlgTypicalButtonTooltip" Overridable="yes" Value="Typical Installation" />
+    <String Id="SetupTypeDlgCustomButton" Overridable="yes" Value="C&amp;ustom" />
+    <String Id="SetupTypeDlgCustomButtonTooltip" Overridable="yes" Value="Custom Installation" />
+    <String Id="SetupTypeDlgCompleteButton" Overridable="yes" Value="C&amp;omplete" />
+    <String Id="SetupTypeDlgCompleteButtonTooltip" Overridable="yes" Value="Complete Installation" />
+    <String Id="SetupTypeDlgBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="SetupTypeDlgTitle" Overridable="yes" Value="{\WixUI_Font_Title}Choose Setup Type" />
+    <String Id="SetupTypeDlgDescription" Overridable="yes" Value="Choose the setup type that best suits your needs" />
+    <String Id="SetupTypeDlgTypicalText" Overridable="yes" Value="Installs the most common program features. Recommended for most users." />
+    <String Id="SetupTypeDlgCustomText" Overridable="yes" Value="Allows users to choose which program features will be installed and where they will be installed. Recommended for advanced users." />
+    <String Id="SetupTypeDlgCompleteText" Overridable="yes" Value="All program features will be installed. Requires the most disk space." />
+
+
+    <String Id="UserExit_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="UserExitBitmap" Overridable="yes" Value="WixUI_Bmp_Dialog" />
+    <String Id="UserExitTitle" Overridable="yes" Value="{\WixUI_Font_Bigger}[ProductName] [ProductVersion[ Setup Wizard was interrupted" />
+    <String Id="UserExitDescription1" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup was interrupted. Your system has not been modified. To install this program at a later time, please run the installation again." />
+    <String Id="UserExitDescription2" Overridable="yes" Value="Click the Finish button to exit the Setup Wizard." />
+
+
+    <String Id="VerifyReadyDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="VerifyReadyDlgBannerBitmap" Overridable="yes" Value="WixUI_Bmp_Banner" />
+    <String Id="VerifyReadyDlgInstall" Overridable="yes" Value="&amp;Install" />
+    <String Id="VerifyReadyDlgInstallText" Overridable="yes" Value="Click Install to begin the installation. Click Back to review or change any of your installation settings. Click Cancel to exit the wizard." />
+    <String Id="VerifyReadyDlgInstallTitle" Overridable="yes" Value="{\WixUI_Font_Title}Ready to install [ProductName]" />
+    <String Id="VerifyReadyDlgChange" Overridable="yes" Value="&amp;Change" />
+    <String Id="VerifyReadyDlgChangeText" Overridable="yes" Value="Click Change to begin the installation. Click Back to review or change any of your installation settings. Click Cancel to exit the wizard." />
+    <String Id="VerifyReadyDlgChangeTitle" Overridable="yes" Value="{\WixUI_Font_Title}Ready to change [ProductName]" />
+    <String Id="VerifyReadyDlgRepair" Overridable="yes" Value="Re&amp;pair" />
+    <String Id="VerifyReadyDlgRepairText" Overridable="yes" Value="Click Repair to repair the installation of [ProductName]. Click Back to review or change any of your installation settings. Click Cancel to exit the wizard." />
+    <String Id="VerifyReadyDlgRepairTitle" Overridable="yes" Value="{\WixUI_Font_Title}Ready to repair [ProductName]" />
+    <String Id="VerifyReadyDlgRemove" Overridable="yes" Value="&amp;Remove" />
+    <String Id="VerifyReadyDlgRemoveText" Overridable="yes" Value="Click Remove to remove [ProductName] from your computer. Click Back to review or change any of your installation settings. Click Cancel to exit the wizard." />
+    <String Id="VerifyReadyDlgRemoveTitle" Overridable="yes" Value="{\WixUI_Font_Title}Ready to remove [ProductName]" />
+    <String Id="VerifyReadyDlgUpdate" Overridable="yes" Value="&amp;Update" />
+    <String Id="VerifyReadyDlgUpdateText" Overridable="yes" Value="Click Update to update [ProductName] from your computer. Click Back to review or change any of your installation settings. Click Cancel to exit the wizard." />
+    <String Id="VerifyReadyDlgUpdateTitle" Overridable="yes" Value="{\WixUI_Font_Title}Ready to update [ProductName]" />
+
+
+    <String Id="WaitForCostingDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="WaitForCostingDlgReturn" Overridable="yes" Value="&amp;Return" />
+    <String Id="WaitForCostingDlgText" Overridable="yes" Value="Please wait while the installer finishes determining your disk space requirements." />
+    <String Id="WaitForCostingDlgIcon" Overridable="yes" Value="WixUI_Ico_Exclam" />
+    <String Id="WaitForCostingDlgIconTooltip" Overridable="yes" Value="Exclamation icon" />
+
+
+    <String Id="WelcomeDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="WelcomeDlgBitmap" Overridable="yes" Value="WixUI_Bmp_Dialog" />
+    <String Id="WelcomeDlgDescription" Overridable="yes" Value="The Setup Wizard will install [ProductName] on your computer. Click Next to continue or Cancel to exit the Setup Wizard." />
+    <String Id="WelcomeUpdateDlgDescriptionUpdate" Overridable="yes" Value="The Setup Wizard will update [ProductName] on your computer. Click Next to continue or Cancel to exit the Setup Wizard." />
+    <String Id="WelcomeDlgTitle" Overridable="yes" Value="{\WixUI_Font_Bigger}Welcome to the [ProductName] [ProductVersion[ Setup Wizard" />
+
+
+    <String Id="WelcomeEulaDlg_Title" Overridable="yes" Value="[ProductName] [ProductVersion[ Setup" />
+    <String Id="WelcomeEulaDlgBitmap" Overridable="yes" Value="WixUI_Bmp_Dialog" />
+    <String Id="WelcomeEulaDlgLicenseAcceptedCheckBox" Overridable="yes" Value="I &amp;accept the terms in the License Agreement" />
+    <String Id="WelcomeEulaDlgInstall" Overridable="yes" Value="&amp;Install" />
+    <String Id="WelcomeEulaDlgUpdate" Overridable="yes" Value="&amp;Update" />
+    <String Id="WelcomeEulaDlgTitle" Overridable="yes" Value="{\WixUI_Font_Title}Please read the [ProductName] License Agreement" />
+
+</WixLocalization>
