@@ -1,0 +1,59 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Fragment>
+
+        <!-- set up the install folder -->
+        <StandardDirectory Id="ProgramFiles6432Folder">
+            <Directory Name="!(bind.Property.Manufacturer)">
+                <Directory Id="INSTALLFOLDER" Name="!(bind.Property.ProductName)" />
+            </Directory>
+        </StandardDirectory>
+
+        <!-- set up the appdata folder and plugin folder -->
+        <StandardDirectory Id="AppDataFolder">
+            <Directory Id="AppDataAuthorFolder" Name="!(bind.Property.Manufacturer)">
+                <Directory Id="AppDataProductFolder" Name="!(bind.Property.ProductName)">
+                    <Directory Id="PluginsFolder" Name="Plugins" />
+                </Directory>
+                <Component Id="AppDataFoldersComponent">
+                    <CreateFolder Directory="AppDataAuthorFolder" />
+                    <CreateFolder Directory="AppDataProductFolder" />
+                    <CreateFolder Directory="PluginsFolder" />
+
+                    <RemoveFolder Directory="PluginsFolder" On="uninstall" />
+                    <RemoveFolder Directory="AppDataProductFolder" On="uninstall" />
+                    <RemoveFolder Directory="AppDataAuthorFolder" On="uninstall" />
+
+                    <!-- since the directory "installs to the user profile" it must use a registry value as its key path -->
+                    <RegistryValue KeyPath="yes" Root="HKCU" Key="[RegistryKey]" Name="AppDataFolders" Type="integer" Value="1" />
+                    <RemoveRegistryKey Root="HKCU" Key="[RegistryKey]" Action="removeOnUninstall" />
+                </Component>
+            </Directory>
+        </StandardDirectory>
+
+        <StandardDirectory Id="DesktopFolder">
+            <Component Id="DesktopShortcutComponent" Condition="ShouldInstallDesktopShortcut=1">
+                <Shortcut Name="!(bind.Property.ProductName)"
+                          WorkingDirectory="INSTALLFOLDER"
+                          Target="[INSTALLFOLDER]Reclaimer.exe" />
+                <!-- since the shortcut "installs to the user profile" it must use a registry value as its key path -->
+                <RegistryValue KeyPath="yes" Root="HKCU" Key="[RegistryKey]" Name="DesktopShortcut" Type="integer" Value="1" />
+                <RemoveRegistryKey Root="HKCU" Key="[RegistryKey]" Action="removeOnUninstall" />
+            </Component>
+        </StandardDirectory>
+
+        <StandardDirectory Id="ProgramMenuFolder">
+            <Directory Name="!(bind.Property.ProductName)">
+                <Component Id="StartMenuShortcutComponent" Condition="ShouldInstallStartMenuShortcut=1">
+                    <Shortcut Name="!(bind.Property.ProductName)"
+                              WorkingDirectory="INSTALLFOLDER"
+                              Target="[INSTALLFOLDER]Reclaimer.exe" />
+                    <!-- since the shortcut "installs to the user profile" it must use a registry value as its key path -->
+                    <RegistryValue KeyPath="yes" Root="HKCU" Key="[RegistryKey]" Name="StartMenuShortcut" Type="integer" Value="1" />
+                    <RemoveRegistryKey Root="HKCU" Key="[RegistryKey]" Action="removeOnUninstall" />
+                    <RemoveFolder On="uninstall" />
+                </Component>
+            </Directory>
+        </StandardDirectory>
+
+    </Fragment>
+</Wix>

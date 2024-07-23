@@ -1,0 +1,12 @@
+﻿<Project Sdk="WixToolset.Sdk/5.0.1">
+    <PropertyGroup>
+        <OutputType>Bundle</OutputType>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="WixToolset.Bal.wixext" Version="5.0.1" />
+        <PackageReference Include="WixToolset.NetFx.wixext" Version="5.0.1" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Reclaimer.SetupPackage\Reclaimer.SetupPackage.wixproj" />
+    </ItemGroup>
+</Project>

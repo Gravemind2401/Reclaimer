@@ -1,0 +1,34 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal"
+     xmlns:netfx="http://wixtoolset.org/schemas/v4/wxs/netfx">
+
+    <?define IconFile = "..\Reclaimer\Resources\Reclaimer.ico"?>
+
+    <Bundle Name="!(bind.PackageName.MainPackage)"
+            Manufacturer="!(bind.PackageManufacturer.MainPackage)"
+            Version="!(bind.PackageVersion.MainPackage)"
+            UpgradeCode="bd9af5f2-d371-4164-a618-df7d8942d494"
+            IconSourceFile="$(IconFile)"
+            AboutUrl="https://github.com/Gravemind2401/Reclaimer"
+            HelpUrl="https://github.com/Gravemind2401/Reclaimer/issues">
+            <!--UpgradeCode="bd9af5f2-d371-4164-a618-df7d8942d494"-->
+
+        <BootstrapperApplication>
+            <bal:WixStandardBootstrapperApplication
+                LicenseUrl=""
+                LogoFile="$(IconFile)"
+                ShowVersion="yes"
+                Theme="hyperlinkLicense" />
+        </BootstrapperApplication>
+
+        <Chain>
+            <!-- TODO: Define the list of chained packages. -->
+            <!-- <MsiPackage SourceFile="path\to\your.msi" /> -->
+            <MsiPackage Id="MainPackage" Name="Reclaimer"
+                        SourceFile="$(Reclaimer.SetupPackage.TargetPath)"
+                        Compressed="yes" />
+        </Chain>
+
+    </Bundle>
+
+</Wix>
