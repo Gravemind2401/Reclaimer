@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="780" height="780" viewbox="0 0 780 780">
+    <defs>
+        <radialGradient id="gradient" fy="33%">
+            <stop offset="10%" stop-color="#80c7ff" />
+            <stop offset="55%" stop-color="#0079d7" />
+            <stop offset="75%" stop-color="#0065b2" />
+            <stop offset="87%" stop-color="#0079d7" />
+            <stop offset="100%" stop-color="#33b8ff" />
+        </radialGradient>
+    </defs>
+    <g>
+        <path d="M 390 774 A 1 1 0 0 0 390 6 A 1 1 0 0 0 390 774 Z" fill="#ccf0ff" stroke="#383838" />
+        <path d="M 52.9 574.052 A 384 384 0 0 1 355 7.574 V 11 A 278 278 0 0 0 170 456 Z M 92.754 633.127 A 384 384 0 0 0 323 768.176 V 556 A 278 278 0 0 1 220 506 Z M 355 491 A 207 207 0 1 1 425 491 V 772.426 A 384 384 0 0 1 355 772.426 Z M 687.246 633.127 A 384 384 0 0 1 457 768.176 V 556 A 278 278 0 0 0 560 506 Z M 610 456 A 278 278 0 0 0 425 11 V 7.574 A 384 384 0 0 1 727.1 574.052 Z M 146 227 A 250 250 0 0 1 331 42 V 57 A 235 235 0 0 0 161 227 Z M 146 345 A 250 250 0 0 0 331 531 V 516 A 235 235 0 0 1 161 345 Z M 449 531 A 250 250 0 0 0 634 345 H 619 A 235 235 0 0 1 449 516 Z M 449 42 A 250 250 0 0 1 634 227 H 619 A 235 235 0 0 0 449 57 Z" fill="url('#gradient')" />
+    </g>
+</svg>

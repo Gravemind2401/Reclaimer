@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="493" height="312" viewBox="0 0 493 312">
+    <rect x="0" y="0" width="493" height="312" fill="#ffffff" />
+    <image href="Reclaimer.svg" width="400" height="400" transform="translate(-155 -43)" />
+    <rect x="164" y="0" width="329" height="312" fill="#ffffff" />
+    <g transform="translate(89 19)">
+        <rect x="0" y="0" width="56" height="56" fill="#0079d7" />
+        <rect x="2" y="2" width="52" height="52" fill="#ffffff" />
+        <image href="Reclaimer48.svg" width="48" height="48" transform="translate(4 4)" />
+    </g>
+    <text x="158" y="304" text-anchor="end" style="font-family: 'Lucida Console'; font-size:14px" fill="#ffffff">#VERSION#</text>
+</svg>

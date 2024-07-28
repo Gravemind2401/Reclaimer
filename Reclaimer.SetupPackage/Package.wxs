@@ -6,7 +6,7 @@
     <?define Reclaimer.OutputDir = "..\Reclaimer\bin\$(Configuration)"?>
     <?define MinimumNetVersion = "7.0.2"?>
 
-    <Package Name="Reclaimer2"
+    <Package Name="Reclaimer"
              Manufacturer="Gravemind2401"
              Version="!(bind.FileVersion.MainExecutable)"
              UpgradeCode="fbbe75a5-b290-459d-afee-4b97449ae820">
@@ -19,20 +19,29 @@
 
         <Property Id="RegistryKey" Value="SOFTWARE\!(bind.Property.Manufacturer)\!(bind.Property.ProductName)" />
 
-        <!-- TODO: make these option in the installer UI -->
+        <!-- TODO: surface these options in the installer UI -->
         <!-- TODO: https://wixtoolset.org/docs/tools/wixext/wixui/ -->
         <Property Id="ShouldInstallDesktopShortcut" Value="1" />
         <Property Id="ShouldInstallStartMenuShortcut" Value="1" />
+
+        <?ifdef UseCustomImages ?>
+        <WixVariable Id="WixUIBannerBmp" Value="Banner.png" />
+        <WixVariable Id="WixUIDialogBmp" Value="Background.png" />
+        <?endif?>
 
         <ui:WixUI Id="WixUI_InstallDir_Custom" InstallDirectory="INSTALLFOLDER" />
 
         <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
 
         <netfx:DotNetCompatibilityCheck
-            Property="NETCORESTATUS" RollForward="latestMajor"
+            Property="NETCORESTATUS32" RollForward="latestMajor"
+            RuntimeType="desktop" Version="$(MinimumNetVersion)" Platform="x86" />
+
+        <netfx:DotNetCompatibilityCheck
+            Property="NETCORESTATUS64" RollForward="latestMajor"
             RuntimeType="desktop" Version="$(MinimumNetVersion)" Platform="x64" />
 
-        <Launch Condition="Installed OR NETCORESTATUS=0"
+        <Launch Condition="Installed OR (NETCORESTATUS32=0 AND NOT VersionNT64) OR (NETCORESTATUS64=0 AND VersionNT64)"
                 Message="!(loc.NetVersionError)" />
 
         <util:CloseApplication Target="Reclaimer.exe" PromptToContinue="yes"
