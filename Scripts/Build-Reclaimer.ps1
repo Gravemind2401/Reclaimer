@@ -96,8 +96,8 @@ Pop-Location
 
 Write-Host "Reclaimer $assemblyVersion" -ForegroundColor Yellow
 
-Rasterize-InstallerResources
 Rasterize-ApplicationIcon
+Rasterize-InstallerResources
 Build-Installer
 Copy-Artifacts
 

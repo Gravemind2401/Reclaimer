@@ -10,13 +10,7 @@ namespace Reclaimer
     /// </summary>
     public partial class App : Application
     {
-        static App()
-        {
-            var assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
-            ReleaseVersion = new Version(assemblyVersion.Major, assemblyVersion.Minor, assemblyVersion.Revision);
-        }
-
-        internal static readonly Version ReleaseVersion;
+        internal static Version ReleaseVersion { get; } = Assembly.GetExecutingAssembly().GetName().Version;
         internal static App Instance { get; private set; }
         internal static Settings Settings { get; private set; }
         internal static UserSettings UserSettings => Settings.UserSettings;
@@ -24,9 +18,9 @@ namespace Reclaimer
         private static readonly Dictionary<string, ResourceDictionary> themes = new Dictionary<string, ResourceDictionary>();
 
 #if DEBUG
-        public static string AppVersion => "DEBUG";
+        public static string AppVersion { get; } = "DEBUG";
 #else
-        public static string AppVersion => ReleaseVersion.ToString(3);
+        public static string AppVersion { get; } = ReleaseVersion.ToString(3);
 #endif
 
         public App() : base()

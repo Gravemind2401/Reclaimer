@@ -6,7 +6,7 @@
     <?define Reclaimer.OutputDir = "..\Reclaimer\bin\$(Configuration)"?>
     <?define MinimumNetVersion = "7.0.2"?>
 
-    <Package Name="Reclaimer"
+    <Package Name="Reclaimer" Scope="perUser"
              Manufacturer="Gravemind2401"
              Version="!(bind.FileVersion.MainExecutable)"
              UpgradeCode="fbbe75a5-b290-459d-afee-4b97449ae820">

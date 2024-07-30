@@ -2,7 +2,7 @@
     <Fragment>
 
         <!-- set up the install folder -->
-        <StandardDirectory Id="ProgramFiles6432Folder">
+        <StandardDirectory Id="CommonAppDataFolder">
             <Directory Name="!(bind.Property.Manufacturer)">
                 <Directory Id="INSTALLFOLDER" Name="!(bind.Property.ProductName)" />
             </Directory>
