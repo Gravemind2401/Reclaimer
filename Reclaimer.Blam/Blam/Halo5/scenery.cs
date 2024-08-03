@@ -1,16 +1,12 @@
 ﻿using Reclaimer.IO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Reclaimer.Blam.Halo5
 {
-    internal class scenery
+    public class scenery
     {
         [Offset(160)]
-        public TagReference hlmt { get; set; }
-        public render_model GetModel() => hlmt.Tag?.ReadMetadata<model>().ReadRenderModel();
+        public TagReference Model { get; set; }
+
+        public render_model GetModel() => Model.Tag?.ReadMetadata<model>().ReadRenderModel();
     }
 }

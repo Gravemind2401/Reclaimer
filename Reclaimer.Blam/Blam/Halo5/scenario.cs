@@ -1,30 +1,22 @@
 ﻿using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
 using Reclaimer.Blam.Utilities;
-using Reclaimer.Geometry.Vectors;
 using Reclaimer.Geometry;
-using System.Globalization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
+using Reclaimer.Utilities;
+using System.Globalization;
 using System.Numerics;
-
 
 namespace Reclaimer.Blam.Halo5
 {
-    public partial class scenario : ContentTagDefinition<Scene>, IContentProvider<Scene>
+    public class scenario : ContentTagDefinition<Scene>, IContentProvider<Scene>
     {
-
         public scenario(ModuleItem item, MetadataHeader header)
             : base(item, header)
         { }
 
         [Offset(380)]
         public BlockCollection<StructureBspsBlock> StructureBsps { get; set; }
-
 
         [Offset(500)]
         public BlockCollection<SkyReferenceBlock> Skies { get; set; }
@@ -37,7 +29,7 @@ namespace Reclaimer.Blam.Halo5
 
         public override Scene GetContent()
         {
-            var scene = new Scene { Name = Item.FileName, CoordinateSystem = CoordinateSystem.Default.WithScale(BlamConstants.Gen3UnitScale) };
+            var scene = new Scene { Name = Item.FileName, CoordinateSystem = CoordinateSystem.Default.WithScale(BlamConstants.WorldUnitScale) };
             var bspGroup = new SceneGroup { Name = BlamConstants.ScenarioBspGroupName };
             var skyGroup = new SceneGroup { Name = BlamConstants.ScenarioSkyGroupName };
             var sceneryGroup = new SceneGroup { Name = BlamConstants.ScenarioSceneryGroupName };
@@ -61,31 +53,36 @@ namespace Reclaimer.Blam.Halo5
                         }
                     }
                     catch { stlmItem = null; stlmTag = null; }
+
                     // adjust where to get mesh resource data from
                     Halo5GeometryArgs geoParams;
                     if (stlmTag == null)
+                    {
                         geoParams = new Halo5GeometryArgs
                         {
                             Module = bspItem.Module,
-                            ResourcePolicy = ResourcePackingPolicy.SingleResource, 
+                            ResourcePolicy = ResourcePackingPolicy.SingleResource,
                             Materials = bspTag.Materials,
                             Sections = bspTag.Sections,
                             ResourceIndex = bspItem.ResourceIndex,
                             ResourceCount = bspItem.ResourceCount
                         };
+                    }
                     else
+                    {
                         geoParams = new Halo5GeometryArgs
                         {
                             Module = stlmItem.Module,
                             ResourcePolicy = ResourcePackingPolicy.SingleResource,
                             Materials = stlmTag.Materials,
                             Sections = stlmTag.Sections,
-                            ResourceIndex = stlmItem.ResourceIndex+1, // second resource is the geometry resource
-                            ResourceCount = stlmItem.ResourceCount-1
+                            ResourceIndex = stlmItem.ResourceIndex + 1, // second resource is the geometry resource
+                            ResourceCount = stlmItem.ResourceCount - 1
                         };
+                    }
+
                     // copied straight from the h5 scenario_structure_bsp.cs
                     var model = new Model { Name = Item.FileName };
-
 
                     var clusterRegion = new ModelRegion { Name = BlamConstants.SbspClustersGroupName };
                     clusterRegion.Permutations.AddRange(
@@ -105,22 +102,14 @@ namespace Reclaimer.Blam.Halo5
                             instanceGroup.Select(i => new ModelPermutation
                             {
                                 Name = i.Name,
-
-                                Transform = new Matrix4x4(
-                                    i.forward1, i.forward2, i.forward3, 0,
-                                    i.left1, i.left2, i.left3, 0,
-                                    i.up1, i.up2, i.up3, 0,
-                                    i.pos1, i.pos2, i.pos3, 1
-                                ),
-                                Scale = new Vector3(i.scale1, i.scale2, i.scale3),
-
+                                Transform = i.Transform,
+                                Scale = (Vector3)i.TransformScale,
                                 MeshRange = (i.MeshIndex, 1),
                                 IsInstanced = true
                             })
                         );
                         model.Regions.Add(sectionRegion);
                     }
-
 
                     model.Meshes.AddRange(Halo5Common.GetMeshes(geoParams, out var materials));
                     foreach (var instanceGroup in bspTag.GeometryInstances)
@@ -189,7 +178,6 @@ namespace Reclaimer.Blam.Halo5
                     sceneryGroup.ChildGroups.Add(placementGroup);
             }
 
-
             if (bspGroup.HasItems)
                 scene.ChildGroups.Add(bspGroup);
 
@@ -208,45 +196,48 @@ namespace Reclaimer.Blam.Halo5
     {
         [Offset(0)]
         public TagReference StructureBsp { get; set; }
+
         [Offset(140)]
         public BlockCollection<StructureLighting> LightingVariants { get; set; }
     }
+
     [FixedSize(140)]
-    public partial class StructureLighting
+    public class StructureLighting
     {
         [Offset(36)]
         public TagReference StructureLightmap { get; set; }
     }
 
-
-
     [FixedSize(44)]
     [DebuggerDisplay($"{{{nameof(SkyReference)},nq}}")]
-    public partial class SkyReferenceBlock
+    public class SkyReferenceBlock
     {
         [Offset(0)]
         public TagReference SkyReference { get; set; }
     }
 
-
     [FixedSize(720)]
-    public partial class SceneryPlacementBlock
+    public class SceneryPlacementBlock
     {
         [Offset(0)]
         public short PaletteIndex { get; set; }
+
         [Offset(2)]
         public short NameIndex { get; set; }
+
         [Offset(12)]
         public RealVector3 Position { get; set; }
+
         [Offset(24)]
         public RealVector3 Rotation { get; set; }
+
         [Offset(36)]
         public float Scale { get; set; }
     }
 
     [FixedSize(32)]
     [DebuggerDisplay($"{{{nameof(TagReference)},nq}}")]
-    public partial class SceneryPaletteBlock
+    public class SceneryPaletteBlock
     {
         [Offset(0)]
         public TagReference TagReference { get; set; }

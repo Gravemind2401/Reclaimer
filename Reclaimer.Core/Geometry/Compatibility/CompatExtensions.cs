@@ -188,26 +188,24 @@ namespace Reclaimer.Geometry.Compatibility
                         meshAddressList.Add(bw.BaseStream.Position);
                         bw.Write(0);
 
-                        // updated to export final transform, not position transform
-                        var test = perm.GetFinalTransform();
-                        //if (test.IsIdentity)
-                        //    bw.Write(float.NaN);
-                        //else
-                        //{
-                        bw.Write(1f);
-                        bw.Write(test.M11);
-                        bw.Write(test.M12);
-                        bw.Write(test.M13);
-                        bw.Write(test.M21);
-                        bw.Write(test.M22);
-                        bw.Write(test.M23);
-                        bw.Write(test.M31);
-                        bw.Write(test.M32);
-                        bw.Write(test.M33);
-                        bw.Write(test.M41);
-                        bw.Write(test.M42);
-                        bw.Write(test.M43);
-                        //}
+                        if (perm.Transform.IsIdentity)
+                            bw.Write(float.NaN);
+                        else
+                        {
+                            bw.Write(1f);
+                            bw.Write(perm.Transform.M11);
+                            bw.Write(perm.Transform.M12);
+                            bw.Write(perm.Transform.M13);
+                            bw.Write(perm.Transform.M21);
+                            bw.Write(perm.Transform.M22);
+                            bw.Write(perm.Transform.M23);
+                            bw.Write(perm.Transform.M31);
+                            bw.Write(perm.Transform.M32);
+                            bw.Write(perm.Transform.M33);
+                            bw.Write(perm.Transform.M41);
+                            bw.Write(perm.Transform.M42);
+                            bw.Write(perm.Transform.M43);
+                        }
                     }
                 }
                 #endregion
@@ -217,9 +215,7 @@ namespace Reclaimer.Geometry.Compatibility
                 {
                     foreach (var (permName, perm, part, meshIndex) in region.Permutations.SelectMany(ExpandPermutation))
                     {
-                        // this only checks to see if the position matrix is identity. NOT the final transform (scale specifically)
-                        //var scale1 = perm.Transform.IsIdentity ? scale : 1;
-                        var scale1 = 1;
+                        var scale1 = perm.Transform.IsIdentity ? scale : 1;
 
                         if (dupeDic.TryGetValue(meshIndex, out var address))
                         {

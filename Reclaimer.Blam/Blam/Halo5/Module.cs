@@ -76,6 +76,7 @@ namespace Reclaimer.Blam.Halo5
             }
 
             reader.RegisterInstance(this);
+            reader.RegisterType(reader.ReadMatrix3x4);
 
             return reader;
         }
