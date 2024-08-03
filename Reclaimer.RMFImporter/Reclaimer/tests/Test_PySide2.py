@@ -18,7 +18,6 @@ class Test_PySide(unittest.TestCase):
         app = QApplication(sys.argv)
         w = TestDialog(FILEPATH, stylesheet=ui.resource('bl_stylesheet.qss'))
         w.show()
-        app.exec_()
 
 if __name__ == '__main__':
     unittest.main()

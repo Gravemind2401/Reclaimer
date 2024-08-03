@@ -1,4 +1,5 @@
 from typing import List, Dict, Tuple, Union, Callable, TypeVar
+from dataclasses import astuple
 
 from .Types import *
 from .FileReader import FileReader
@@ -148,6 +149,9 @@ def _read_scene(reader: FileReader, block: DataBlock) -> Scene:
 
     scene = Scene()
     scene.version = Version(reader.read_byte(), reader.read_byte(), reader.read_byte(), reader.read_byte())
+
+    if astuple(scene.version) < (1, 0, 0):
+        raise Exception('Incompatible file version.')
 
     def read_attribute_data():
         scene.unit_scale = reader.read_float()

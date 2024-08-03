@@ -18,6 +18,9 @@ bl_info = {
     'support': 'COMMUNITY'
 }
 
+package_version = bl_info['version']
+package_version_string = '.'.join(str(i) for i in package_version)
+
 if importutil.find_spec('bpy'):
     # these imports are unused locally, but need to be
     # imported so blender can find them

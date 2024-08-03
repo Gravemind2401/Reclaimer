@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Any, Tuple, cast, Iterator, Optional
 
+from Reclaimer import package_version_string
+
 from .. import ui
 from ..src.SceneReader import SceneReader
 from ..src.Scene import *
@@ -75,6 +77,7 @@ class CustomTreeItem(QtWidgets.QTreeWidgetItem):
 
 
 class RmfDialog(QtWidgets.QDialog):
+    _error: Exception = None
     _scene: Scene
     _scene_filter: SceneFilter
     _widget: QtWidgets.QWidget
@@ -108,12 +111,17 @@ class RmfDialog(QtWidgets.QDialog):
         layout.addWidget(widget)
 
         self.setWindowIcon(ui.create_icon('Settings_16x.png'))
-        self.setWindowTitle(Path(filepath).name)
+        self.setWindowTitle(f'RMF Importer {package_version_string} - {Path(filepath).name}')
         self.setModal(True)
         self.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
 
-        self._scene = SceneReader.open_scene(filepath)
+        try:
+            self._scene = SceneReader.open_scene(filepath)
+        except Exception as e:
+            self._error = e
+            return
+
         self._scene_filter = SceneFilter(self._scene)
 
         for tree in [self._objectTreeWidget, self._permTreeWidget]:
@@ -225,6 +233,14 @@ class RmfDialog(QtWidgets.QDialog):
         options.MARKER_SCALE = self._widget.spinBox_markerScale.value()
 
         return (self._scene, self._scene_filter, options)
+
+    def show(self):
+        super().show()
+
+        if self._error:
+            QtWidgets.QMessageBox.critical(self, 'Error', f'Error reading file: {self._error}\n\nTry saving the file again.')
+            self.close()
+            self.onDialogResult(QtWidgets.QDialog.DialogCode.Rejected)
 
     def onDialogResult(self, result: QtWidgets.QDialog.DialogCode):
         ''' Override in a base class to be notified when the dialog result is received '''
