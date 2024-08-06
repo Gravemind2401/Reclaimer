@@ -43,7 +43,7 @@ namespace Reclaimer.Blam.Halo5
     {
         public static IEnumerable<Material> GetMaterials(IReadOnlyList<MaterialBlock> materials)
         {
-            for (var i = 0; i < materials.Count; i++)
+            for (var i = 0; i < materials?.Count; i++)
             {
                 var tag = materials[i].MaterialReference.Tag;
                 if (tag == null)
@@ -104,6 +104,7 @@ namespace Reclaimer.Blam.Halo5
 
         public static List<Mesh> GetMeshes(Halo5GeometryArgs args, out List<Material> materials)
         {
+            //TODO: implement an LOD selector one day
             const int lod = 0;
             var lodFlag = (LodFlags)(1 << lod);
 
@@ -116,7 +117,7 @@ namespace Reclaimer.Blam.Halo5
             var rawVertexBuffers = new List<byte[]>(totalVertexBufferCount);
             var rawIndexBuffers = new List<byte[]>(totalIndexBufferCount);
 
-            materials = new List<Material>(args.Materials.Count);
+            materials = new List<Material>(args.Materials?.Count ?? default);
             var meshList = new List<Mesh>(args.Sections.Count);
 
             var vb = new Dictionary<int, VertexBuffer>(totalVertexBufferCount);
@@ -146,7 +147,7 @@ namespace Reclaimer.Blam.Halo5
             var vertexBuilder = new XmlVertexBuilder(Resources.Halo5VertexBuffer);
             foreach (var section in args.Sections)
             {
-                if ((section.SectionLods[0].LodFlags & lodFlag) == 0)
+                if (section.SectionLods[0].LodFlags > 0 && (section.SectionLods[0].LodFlags & lodFlag) == 0)
                     continue;
 
                 var lodData = section.SectionLods[Math.Min(lod, section.SectionLods.Count - 1)];
@@ -154,7 +155,7 @@ namespace Reclaimer.Blam.Halo5
                 var vInfo = vertexBufferInfo.ElementAtOrDefault(lodData.VertexBufferIndex);
                 var iInfo = indexBufferInfo.ElementAtOrDefault(lodData.IndexBufferIndex);
 
-                if (vInfo.VertexCount == 0 || iInfo.IndexCount == 0)
+                if (vInfo.VertexCount == 0) // || iInfo.IndexCount == 0)
                     continue;
 
                 try
@@ -170,9 +171,18 @@ namespace Reclaimer.Blam.Halo5
 
                     if (!ib.ContainsKey(lodData.IndexBufferIndex))
                     {
-                        var data = rawIndexBuffers[lodData.IndexBufferIndex];
-                        var indexBuffer = new IndexBuffer(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort)) { Layout = section.IndexFormat };
-                        ib.Add(lodData.IndexBufferIndex, indexBuffer);
+                        // if this is a particle model, then we need to create our own index buffer
+                        if (iInfo.IndexCount == 0) // if particle vertices
+                        {
+                            var indexBuffer = BlamUtils.CreateDecoratorIndexBuffer(vInfo.VertexCount);
+                            ib.Add(lodData.IndexBufferIndex, indexBuffer);
+                        }
+                        else // otherwise regular index buffer
+                        {
+                            var data = rawIndexBuffers[lodData.IndexBufferIndex];
+                            var indexBuffer = new IndexBuffer(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort)) { Layout = section.IndexFormat };
+                            ib.Add(lodData.IndexBufferIndex, indexBuffer);
+                        }
                     }
                 }
                 catch
@@ -197,14 +207,30 @@ namespace Reclaimer.Blam.Halo5
                     IndexBuffer = ib[lodData.IndexBufferIndex]
                 };
 
-                mesh.Segments.AddRange(
-                    lodData.Submeshes.Select(s => new MeshSegment
-                    {
-                        Material = matLookup.ElementAtOrDefault(s.ShaderIndex),
-                        IndexStart = s.IndexStart,
-                        IndexLength = s.IndexLength
-                    })
-                );
+                // have alternate function for if there are no defined parts, where we just do the whole buffer
+                if (lodData.Submeshes.Count > 0)
+                {
+                    mesh.Segments.AddRange(
+                        lodData.Submeshes.Select(s => new MeshSegment
+                        {
+                            Material = matLookup.ElementAtOrDefault(s.ShaderIndex),
+                            IndexStart = s.IndexStart,
+                            IndexLength = s.IndexLength
+                        })
+                    );
+                }
+                else
+                {
+                    //create an implied submesh that covers all indices
+                    mesh.Segments.Add(
+                        new MeshSegment
+                        {
+                            Material = matLookup.ElementAtOrDefault(0),
+                            IndexStart = 0,
+                            IndexLength = mesh.IndexBuffer.Count
+                        }
+                    );
+                }
 
                 return mesh;
             }));
@@ -227,7 +253,7 @@ namespace Reclaimer.Blam.Halo5
                     {
                         //DataBlock 0: mostly padding, buffer counts
                         //DataBlock 1: vertex buffer infos
-                        //DataBlock 2: index buffer infos
+                        //DataBlock 2: index buffer infos // may not be present if there are no additional index data blocks
                         //DataBlock 3+: additional vertex data block for each buffer
                         //DataBlock n+: additional index data block for each buffer
 
@@ -239,19 +265,23 @@ namespace Reclaimer.Blam.Halo5
 
                         if (vertexBufferCount == 0 && indexBufferCount == 0)
                             return;
-                        else if (vertexBufferCount == 0 || indexBufferCount == 0)
+                        else if (vertexBufferCount == 0) // || indexBufferCount == 0)
                             System.Diagnostics.Debugger.Break(); //decorators have vertices but no indices
 
                         block = header.DataBlocks[1];
                         reader.Seek(block.Offset, SeekOrigin.Begin);
                         vertexBufferInfo.AddRange(reader.ReadArray<VertexBufferInfo>(vertexBufferCount));
 
-                        block = header.DataBlocks[2];
-                        reader.Seek(block.Offset, SeekOrigin.Begin);
-                        indexBufferInfo.AddRange(reader.ReadArray<IndexBufferInfo>(indexBufferCount));
+                        if (indexBufferCount > 0)
+                        {
+                            block = header.DataBlocks[2];
+                            reader.Seek(block.Offset, SeekOrigin.Begin);
+                            indexBufferInfo.AddRange(reader.ReadArray<IndexBufferInfo>(indexBufferCount));
+                        }
                     }
 
-                    var vertexBufferStart = 3;
+                    //if there was no index buffer then the vertex buffer blocks will start one index earlier
+                    var vertexBufferStart = indexBufferCount == 0 ? 2 : 3;
                     var indexBufferStart = vertexBufferStart + vertexBufferCount;
 
                     using (var reader = blockReader.CreateVirtualReader(header.GetSectionOffset(2)))

@@ -14,8 +14,10 @@ namespace Reclaimer.Blam.Common
         private const string bitmap = "bitm";
         private const string gbxmodel = "mod2";
         private const string render_model = "mode";
+        private const string particle_model = "pmdf";
         private const string scenario = "scnr";
         private const string scenario_structure_bsp = "sbsp";
+        private const string structure_lightmap = "stlm";
         private const string sound = "snd!";
 
         #region Standard Halo Maps
@@ -184,6 +186,10 @@ namespace Reclaimer.Blam.Common
                     }
                     break;
                 case render_model:
+                case particle_model:
+                case scenario:
+                case scenario_structure_bsp:
+                case structure_lightmap:
                     if (TryGetGeometryContent(item, out var geometryContent))
                     {
                         content = geometryContent;
@@ -212,10 +218,18 @@ namespace Reclaimer.Blam.Common
         {
             content = null;
 
-            if (item.ClassCode != render_model)
+            if (item == null)
                 return false;
 
-            content = item.ReadMetadata<Halo5.render_model>();
+            content = item.ClassCode switch
+            {
+                render_model => item.ReadMetadata<Halo5.render_model>(),
+                particle_model => item.ReadMetadata<Halo5.particle_model>(),
+                scenario => item.ReadMetadata<Halo5.scenario>(),
+                scenario_structure_bsp => item.ReadMetadata<Halo5.scenario_structure_bsp>(),
+                structure_lightmap => item.ReadMetadata<Halo5.structure_lightmap>(),
+                _ => null
+            };
 
             return content != null;
         }

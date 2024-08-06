@@ -22,7 +22,11 @@
         <value stream="0" offset="0x18" type="UxAAC0" usage="blendweight" usageIndex="0" />
         <!--<value stream="0" offset="0x1C" type="UInt8_N4" usage="unknown" usageIndex="0" />-->
     </vertex>
-    <!--<vertex type="0x03" name="particle_model" />-->
+    <vertex type="0x03" name="particle_model" size="0x10">
+        <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
+        <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
+        <!--value stream="0" offset="0xC" type="Float32" usage="unknown" usageIndex="0" /-->
+    </vertex>
     <!--<vertex type="0x04" name="screen" />-->
     <!--<vertex type="0x05" name="debug" />-->
     <!--<vertex type="0x06" name="transparent" />-->

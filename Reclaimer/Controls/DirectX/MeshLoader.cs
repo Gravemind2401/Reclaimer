@@ -57,7 +57,9 @@ namespace Reclaimer.Controls.DirectX
                             if (texcoords != null)
                                 geom.TextureCoordinates = new Vector2Collection(texcoords);
 
-                            if (normals != null)
+                            if (normals == null)
+                                geom.Normals = geom.CalculateNormals(); //display in a faceted style just so you can see the edges properly in the viewer
+                            else
                                 geom.Normals = new Vector3Collection(normals);
 
                             geom.UpdateOctree();
