@@ -23,6 +23,11 @@
         <Property Id="ShouldInstallDesktopShortcut" Value="1" />
         <Property Id="ShouldInstallStartMenuShortcut" Value="1" />
 
+        <?ifdef UseCustomImages ?>
+        <WixVariable Id="WixUIBannerBmp" Value="Banner.png" />
+        <WixVariable Id="WixUIDialogBmp" Value="Background.png" />
+        <?endif?>
+
         <ui:WixUI Id="WixUI_InstallDir_Custom" InstallDirectory="INSTALLFOLDER" />
 
         <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
