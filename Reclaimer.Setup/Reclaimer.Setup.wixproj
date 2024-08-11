@@ -1,0 +1,10 @@
+﻿<Project Sdk="WixToolset.Sdk/5.0.1">
+  <ItemGroup>
+    <ProjectReference Include="..\Reclaimer\Reclaimer.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="WixToolset.NetFx.wixext" Version="5.0.1" />
+    <PackageReference Include="WixToolset.Util.wixext" Version="5.0.1" />
+    <PackageReference Include="WixToolset.UI.wixext" Version="5.0.1" />
+  </ItemGroup>
+</Project>

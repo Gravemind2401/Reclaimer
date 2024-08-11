@@ -1,0 +1,66 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:netfx="http://wixtoolset.org/schemas/v4/wxs/netfx"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+    <?define Reclaimer.OutputDir = "..\Reclaimer\bin\$(Configuration)"?>
+    <?define MinimumNetVersion = "7.0.2"?>
+
+    <Package Name="Reclaimer"
+             Manufacturer="Gravemind2401"
+             Version="!(bind.FileVersion.MainExecutable)"
+             UpgradeCode="fbbe75a5-b290-459d-afee-4b97449ae820">
+
+        <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+        <!-- create a property so this version number can be used in localization strings -->
+        <Property Id="MinimumNetVersion" Value="$(MinimumNetVersion)" />
+
+        <Property Id="RegistryKey" Value="SOFTWARE\!(bind.Property.Manufacturer)\!(bind.Property.ProductName)" />
+
+        <!-- TODO: surface these options in the installer UI -->
+        <!-- TODO: https://wixtoolset.org/docs/tools/wixext/wixui/ -->
+        <Property Id="ShouldInstallDesktopShortcut" Value="1" />
+        <Property Id="ShouldInstallStartMenuShortcut" Value="1" />
+
+        <ui:WixUI Id="WixUI_InstallDir_Custom" InstallDirectory="INSTALLFOLDER" />
+
+        <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+
+        <netfx:DotNetCompatibilityCheck
+            Property="NETCORESTATUS32" RollForward="latestMajor"
+            RuntimeType="desktop" Version="$(MinimumNetVersion)" Platform="x86" />
+
+        <netfx:DotNetCompatibilityCheck
+            Property="NETCORESTATUS64" RollForward="latestMajor"
+            RuntimeType="desktop" Version="$(MinimumNetVersion)" Platform="x64" />
+
+        <Launch Condition="Installed OR (NETCORESTATUS32=0 AND NOT VersionNT64) OR (NETCORESTATUS64=0 AND VersionNT64)"
+                Message="!(loc.NetVersionError)" />
+
+        <util:CloseApplication Target="Reclaimer.exe" PromptToContinue="yes"
+                               CloseMessage="yes" RebootPrompt="no"
+                               Description="!(loc.CloseApplication)" />
+
+        <InstallExecuteSequence>
+            <!-- make sure shortcuts get removed on uninstall but not on upgrade -->
+            <RemoveShortcuts Condition="Installed AND REMOVE AND NOT (REINSTALL OR UPGRADINGPRODUCTCODE)" />
+        </InstallExecuteSequence>
+
+        <Feature Id="Main">
+            <!-- put this in its own element so it can be referenced by ID in bind variables -->
+            <File Id="MainExecutable" Source="$(Reclaimer.OutputDir)\Reclaimer.exe" />
+
+            <Files Include="$(Reclaimer.OutputDir)\**">
+                <Exclude Files="$(Reclaimer.OutputDir)\Reclaimer.exe" />
+                <Exclude Files="$(Reclaimer.OutputDir)\**\*.pdb" />
+            </Files>
+
+            <ComponentRef Id="AppDataFoldersComponent" />
+            <ComponentRef Id="DesktopShortcutComponent" />
+            <ComponentRef Id="StartMenuShortcutComponent" />
+        </Feature>
+
+    </Package>
+
+</Wix>
