@@ -51,7 +51,7 @@ namespace Reclaimer.Blam.Halo1
 
             using var reader = Cache.CreateReader(Cache.DefaultAddressTranslator);
 
-            var model = new Model { Name = Item.FileName };
+            var model = new Model { Name = Item.FileName, OriginalPath = Item.TagName };
             model.CustomProperties.Add(BlamConstants.SourceTagPropertyName, Item.TagName);
 
             model.Bones.AddRange(Nodes.Select(n => new Bone

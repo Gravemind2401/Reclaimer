@@ -42,7 +42,7 @@ namespace Reclaimer.Blam.Halo5
                 ResourceCount = Item.ResourceCount - 1
             };
 
-            var model = new Model { Name = Item.FileName };
+            var model = new Model { Name = Item.FileName, OriginalPath = Item.TagName };
 
             var region = new ModelRegion { Name = BlamConstants.ModelInstancesGroupName };
             region.Permutations.AddRange(GeometryInstances.Select((instance, index) =>

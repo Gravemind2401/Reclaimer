@@ -29,7 +29,13 @@ namespace Reclaimer.Blam.Halo5
 
         public override Scene GetContent()
         {
-            var scene = new Scene { Name = Item.FileName, CoordinateSystem = CoordinateSystem.Default.WithScale(BlamConstants.WorldUnitScale) };
+            var scene = new Scene
+            {
+                Name = Item.FileName,
+                OriginalPath = Item.TagName,
+                CoordinateSystem = CoordinateSystem.Default.WithScale(BlamConstants.WorldUnitScale)
+            };
+
             var bspGroup = new SceneGroup { Name = BlamConstants.ScenarioBspGroupName };
             var skyGroup = new SceneGroup { Name = BlamConstants.ScenarioSkyGroupName };
             var sceneryGroup = new SceneGroup { Name = BlamConstants.ScenarioSceneryGroupName };
@@ -82,7 +88,7 @@ namespace Reclaimer.Blam.Halo5
                     }
 
                     // copied straight from the h5 scenario_structure_bsp.cs
-                    var model = new Model { Name = Item.FileName };
+                    var model = new Model { Name = Item.FileName, OriginalPath = Item.TagName };
 
                     var clusterRegion = new ModelRegion { Name = BlamConstants.SbspClustersGroupName };
                     clusterRegion.Permutations.AddRange(

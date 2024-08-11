@@ -56,7 +56,7 @@ namespace Reclaimer.Blam.Halo5
                 ResourceCount = Item.ResourceCount
             };
 
-            var model = new Model { Name = Item.FileName };
+            var model = new Model { Name = Item.FileName, OriginalPath = Item.TagName };
 
             var clusterRegion = new ModelRegion { Name = BlamConstants.SbspClustersGroupName };
             clusterRegion.Permutations.AddRange(

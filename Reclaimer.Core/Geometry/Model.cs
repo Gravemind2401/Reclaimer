@@ -4,6 +4,7 @@ namespace Reclaimer.Geometry
 {
     public class Model : SceneObject
     {
+        public string OriginalPath { get; set; }
         public List<ModelRegion> Regions { get; } = new();
         public List<Marker> Markers { get; } = new();
         public List<Bone> Bones { get; } = new();

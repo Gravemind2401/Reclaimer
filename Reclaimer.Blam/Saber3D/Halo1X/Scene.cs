@@ -28,7 +28,7 @@ namespace Reclaimer.Saber3D.Halo1X
 
         protected override Model GetModelContent()
         {
-            var model = new Model { Name = Item.Name };
+            var model = new Model { Name = Item.Name, OriginalPath = Item.Name };
             var materials = GetMaterials();
 
             var defaultRegion = new ModelRegion { Name = Item.Name };

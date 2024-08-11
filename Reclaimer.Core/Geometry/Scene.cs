@@ -6,6 +6,7 @@
         public CoordinateSystem CoordinateSystem { get; set; } = CoordinateSystem.Default;
 
         public string Name { get; set; }
+        public string OriginalPath { get; set; }
         public List<Marker> Markers { get; } = new();
         public SceneGroup RootNode { get; } = new() { Name = "Root" };
 
@@ -16,7 +17,13 @@
 
         public static Scene WrapSingleModel(Model model, CoordinateSystem coordinateSystem, float unitScale = 1)
         {
-            var scene = new Scene { Name = model.Name, CoordinateSystem = coordinateSystem.WithScale(unitScale) };
+            var scene = new Scene
+            {
+                Name = model.Name,
+                OriginalPath = model.OriginalPath,
+                CoordinateSystem = coordinateSystem.WithScale(unitScale)
+            };
+
             scene.ChildObjects.Add(model);
             return scene;
         }
@@ -108,7 +115,7 @@
         {
             Transform = Matrix4x4.CreateScale(scale3d) * Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(translation);
         }
-        
+
         private string GetDebuggerDisplay() => string.IsNullOrWhiteSpace(Name) ? $"[[{Object.Name}]]" : Name;
     }
 

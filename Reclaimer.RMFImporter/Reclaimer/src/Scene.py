@@ -35,6 +35,7 @@ class Scene(INamed, ICustomProperties):
     version: Version
     unit_scale: float
     world_matrix: Matrix4x4
+    original_path: str
     root_node: 'SceneGroup'
     markers: List[Marker]
     model_pool: List[Model]

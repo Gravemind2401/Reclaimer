@@ -157,6 +157,7 @@ def _read_scene(reader: FileReader, block: DataBlock) -> Scene:
         scene.unit_scale = reader.read_float()
         scene.world_matrix = reader.read_matrix3x3()
         scene.name = _read_stringref(reader)
+        scene.original_path = _read_stringref(reader)
 
     props = _read_property_blocks(reader, block)
 
@@ -246,6 +247,7 @@ def _read_model(reader: FileReader, block: DataBlock) -> Model:
 
     def read_attribute_data():
         _read_object_base_props(reader, model)
+        model.original_path = _read_stringref(reader)
 
     props = _read_property_blocks(reader, block)
     _decode_attributes(reader, props, read_attribute_data)

@@ -62,7 +62,7 @@ namespace Reclaimer.Blam.Halo2Beta
                 }).ToList()
             };
 
-            var model = new Model { Name = Item.FileName };
+            var model = new Model { Name = Item.FileName, OriginalPath = Item.TagName };
             model.CustomProperties.Add(BlamConstants.SourceTagPropertyName, Item.TagName);
 
             model.Meshes.AddRange(Halo2Common.GetMeshes(geoParams, out _));

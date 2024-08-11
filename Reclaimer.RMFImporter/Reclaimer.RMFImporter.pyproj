@@ -29,6 +29,7 @@
     <Compile Include="Reclaimer\autodesk\MaterialBuilder.py" />
     <Compile Include="Reclaimer\autodesk\Utils.py" />
     <Compile Include="Reclaimer\autodesk\__init__.py" />
+    <Content Include="Reclaimer\autodesk\resources\Macro_ImportRMF.mcr" />
     <Content Include="Reclaimer\autodesk\resources\OSLBlendMap.osl" />
     <Content Include="Reclaimer\autodesk\resources\OSLColorChangeMap.osl" />
     <Compile Include="Reclaimer\blender\BlenderInterface.py" />

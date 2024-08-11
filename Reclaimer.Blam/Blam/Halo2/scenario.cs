@@ -27,7 +27,12 @@ namespace Reclaimer.Blam.Halo2
 
         public override Scene GetContent()
         {
-            var scene = new Scene { Name = Item.FileName, CoordinateSystem = CoordinateSystem.Default.WithScale(BlamConstants.WorldUnitScale) };
+            var scene = new Scene
+            {
+                Name = Item.FileName,
+                OriginalPath = Item.TagName,
+                CoordinateSystem = CoordinateSystem.Default.WithScale(BlamConstants.WorldUnitScale)
+            };
 
             //TODO: display error models in some way
 

@@ -72,7 +72,7 @@ namespace Reclaimer.Blam.HaloReach
                 ResourcePointer = ResourcePointer
             };
 
-            var model = new Model { Name = Name };
+            var model = new Model { Name = Name, OriginalPath = Item.TagName };
             model.CustomProperties.Add(BlamConstants.SourceTagPropertyName, Item.TagName);
 
             model.Bones.AddRange(Nodes.Select(n => new Bone

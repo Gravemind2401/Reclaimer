@@ -16,6 +16,7 @@ __all__ = [
 
 
 class Model(SceneObject):
+    original_path: str
     regions: List['ModelRegion']
     markers: List['Marker']
     bones: List['Bone']

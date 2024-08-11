@@ -36,7 +36,7 @@ namespace Reclaimer.Blam.Halo5
                 ResourceCount = Item.ResourceCount
             };
 
-            var model = new Model { Name = Item.FileName };
+            var model = new Model { Name = Item.FileName, OriginalPath = Item.TagName };
 
             var region = new ModelRegion { Name = "particle_model" };
             region.Permutations.Add(

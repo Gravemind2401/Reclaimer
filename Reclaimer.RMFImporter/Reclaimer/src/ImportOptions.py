@@ -1,3 +1,4 @@
+import os, re
 from pathlib import Path
 from typing import Optional
 
@@ -11,11 +12,16 @@ __all__ = [
 ]
 
 
+def _normalize_path(path: str) -> str:
+    return re.sub(r'[\\/]', re.escape(os.sep), path) if path else path
+
+
 class ImportOptions:
     _last_texture_directory: str = None
     _last_texture_extension: str = None
 
     _scene: Scene = None
+    _implied_bitmap_root: str = None
 
     IMPORT_BONES: bool = True
     IMPORT_MARKERS: bool = True
@@ -48,6 +54,15 @@ class ImportOptions:
     def __init__(self, scene: Optional[Scene]=None):
         self._scene = scene
 
+        if scene:
+            # Path().parent only works if the separators match the OS so we need to normalize the original_path value
+            # the _source_dir value was set based on the selected import file so it should already be using the OS path format
+            original_path = _normalize_path(scene.original_path)
+            original_dir = os.sep + str(Path(original_path).parent)
+
+            if (scene._source_dir.endswith(original_dir)):
+                self._implied_bitmap_root = scene._source_dir[:(-len(original_dir))]
+
     def model_name(self, model: Model):
         return f'{model.name}'
 
@@ -76,6 +91,7 @@ class ImportOptions:
         default_dir = (self.BITMAP_ROOT or '').strip()
         name_only = Path(texture.name).name
 
+        # if the folder and extension were specified, test the exact path first
         default_path = None
         if default_ext and default_dir:
             default_path = Path(default_dir).joinpath(texture.name).with_suffix(f'.{default_ext}')
@@ -92,7 +108,7 @@ class ImportOptions:
                 return
 
             #attempt to make unique lists while still preserving order (set doesnt preserve order)
-            dir_list = dict.fromkeys((default_dir, self._last_texture_directory, scene._source_dir, str(Path(scene._source_dir).joinpath(scene._source_name)))).keys()
+            dir_list = dict.fromkeys((default_dir, self._last_texture_directory, self._implied_bitmap_root, scene._source_dir, str(Path(scene._source_dir).joinpath(scene._source_name)))).keys()
             ext_list = dict.fromkeys((default_ext, self._last_texture_extension, 'tif', 'png')).keys()
 
             for dir in dir_list:

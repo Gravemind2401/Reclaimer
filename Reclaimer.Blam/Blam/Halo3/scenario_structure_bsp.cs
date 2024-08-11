@@ -66,7 +66,7 @@ namespace Reclaimer.Blam.Halo3
                 })
             );
 
-            var model = new Model { Name = Item.FileName };
+            var model = new Model { Name = Item.FileName, OriginalPath = Item.TagName };
             model.CustomProperties.Add(BlamConstants.SourceTagPropertyName, Item.TagName);
             model.Regions.Add(clusterRegion);
 

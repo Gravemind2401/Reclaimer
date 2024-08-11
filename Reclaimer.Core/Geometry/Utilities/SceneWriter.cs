@@ -59,14 +59,15 @@ namespace Reclaimer.Geometry.Utilities
                 writer.Write((byte)version.Minor);
                 writer.Write((byte)Math.Max(0, version.Build));
                 writer.Write((byte)Math.Max(0, version.Revision));
-                
+
                 //everything from here on must be a block
-                
+
                 using (BlockMarker(SceneCodes.AttributeData))
                 {
                     writer.Write(scene.CoordinateSystem.UnitScale);
                     writer.WriteMatrix3x3(scene.CoordinateSystem.WorldMatrix);
                     writer.Write(stringPool.IndexOf(scene.Name));
+                    writer.Write(stringPool.IndexOf(scene.OriginalPath));
                 }
 
                 Write(scene.RootNode);
@@ -310,7 +311,10 @@ namespace Reclaimer.Geometry.Utilities
             using (BlockMarker(SceneCodes.Model))
             {
                 using (BlockMarker(SceneCodes.AttributeData))
+                {
                     WriteBaseProps(model);
+                    writer.Write(stringPool.IndexOf(model.OriginalPath));
+                }
 
                 WriteList(exportedRegions, Write, SceneCodes.Region);
                 WriteList(model.Markers, Write, SceneCodes.Marker);
@@ -388,7 +392,7 @@ namespace Reclaimer.Geometry.Utilities
                     writer.Write(instance.Position);
                     writer.Write(instance.Rotation);
                 }
-                
+
                 Write(instance.CustomProperties);
             }
         }

@@ -30,7 +30,7 @@ namespace Reclaimer.Saber3D.Halo1X
 
         protected override Model GetModelContent()
         {
-            var model = new Model { Name = Item.Name };
+            var model = new Model { Name = Item.Name, OriginalPath = Item.Name };
 
             Matrix4x4 GetBoneTransform(int boneIndex)
             {
