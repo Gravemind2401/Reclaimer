@@ -301,6 +301,10 @@ namespace Reclaimer.Controls.DirectX
                     Description = ModelViewerPlugin.GetFormatDescription(f)
                 }).ToList();
 
+            //multi-model exports only supported with RMF
+            if (sceneProvider.Content.EnumerateModels().Skip(1).Any())
+                exportFormats.RemoveAll(f => f.FormatId != FormatId.RMF);
+
             var filter = string.Join("|", exportFormats.Select(f => $"{f.Description}|*.{f.Extension}"));
 
             var sfd = new SaveFileDialog
