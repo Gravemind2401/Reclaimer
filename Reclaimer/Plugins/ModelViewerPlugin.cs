@@ -366,6 +366,7 @@ namespace Reclaimer.Plugins
                     .Where(r => r.Export)
                     .SelectMany(r => r.Permutations.Where(p => p.Export))
                     .SelectMany(p => p.MeshIndices)
+                    .Distinct()
                     .Order()
                     .Select(i => (model.Meshes[i], i));
 

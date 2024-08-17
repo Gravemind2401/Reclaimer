@@ -1,6 +1,5 @@
 ﻿using HelixToolkit.Wpf.SharpDX;
 using Microsoft.Win32;
-using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Models;
 using Reclaimer.Plugins;
@@ -19,6 +18,7 @@ namespace Reclaimer.Controls.DirectX
     /// </summary>
     public partial class ModelViewer : IDisposable
     {
+        private delegate void WriteModelFile(IContentProvider<Scene> provider, string fileName, string formatId);
         private delegate void ExportBitmaps(IContentProvider<Scene> provider, bool filtered, bool async);
 
         private static readonly string[] AllLods = new[] { "Highest", "High", "Medium", "Low", "Lowest", "Potato" };
@@ -348,7 +348,16 @@ namespace Reclaimer.Controls.DirectX
                 return;
 
             RefreshExportFlags(filtered);
-            ModelViewerPlugin.WriteModelFile(sceneProvider, fileName, formatId);
+
+            try
+            {
+                var export = Substrate.GetSharedFunction<WriteModelFile>(Constants.SharedFuncWriteModelFile);
+                export.Invoke(sceneProvider, fileName, formatId);
+            }
+            catch (Exception ex)
+            {
+                LogOutput(ex.ToString());
+            }
         }
 
         private void btnExportBitmaps_Click(object sender, RoutedEventArgs e)
