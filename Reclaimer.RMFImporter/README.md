@@ -1,12 +1,13 @@
-# Blender Setup
+# Blender Setup (4.1 and earlier)
 
 ### Version Compatibility
 - Minimum supported version: 2.91
+- Maximum supported version: 4.1
 - Highest tested version: 4.1
 
 ### Installation Instructions
 1. In Blender go to `Edit > Preferences > Add-ons` and click `Install`
-2. Browse to and select the `RMFImporter.zip` file then click `Install Add-on`
+2. Browse to and select the `reclaimer_rmf_importer.zip` file then click `Install Add-on`
 3. In the Add-ons preferences, select the `Community` tab and scroll down to the add-on named `Import-Export: RMF format`
 4. Enable the add-on
 5. In the Preferences section below the add-on details, click `Install Dependencies`
@@ -16,6 +17,25 @@
 
 ### Configuration
 The RMF Importer has add-on preferences that can be managed by going to 'Edit > Preferences > Add-ons' then scrolling down to the the add-on named `Import-Export: RMF format` in the `Community` tab. If you expand the add-on details you can scroll down to view and edit the preferences for it.
+
+These preferences determine the starting settings that the import window will use each time you import a file. Changing the settings in the import window is only effective for the duration of that import. Changes made in the import window will not save back to the preferences for the next import.
+
+
+# Blender Setup (4.2+)
+
+### Version Compatibility
+- Minimum supported version: 4.2
+- Highest tested version: 4.2
+
+### Installation Instructions
+1. In Blender go to `Edit > Preferences > Add-ons` and select `Install from Disk...` from the dropdown menu in the top right
+2. Browse to and select the `reclaimer_rmf_importer.zip` file then click `Install from Disk`
+3. In the Add-ons preferences, scroll down to the add-on named `RMF format`
+4. Enable the add-on
+5. After enabling the add-on you should now have a new menu option under `File > Import > RMF (.rmf)`
+
+### Configuration
+The RMF Importer has add-on preferences that can be managed by going to 'Edit > Preferences > Add-ons' then scrolling down to the the add-on named `RMF format`. If you expand the add-on details you can scroll down to view and edit the preferences for it.
 
 These preferences determine the starting settings that the import window will use each time you import a file. Changing the settings in the import window is only effective for the duration of that import. Changes made in the import window will not save back to the preferences for the next import.
 

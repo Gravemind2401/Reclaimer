@@ -9,7 +9,7 @@ _was_missing_dependencies = False
 
 
 class RmfPreferences(AddonPreferences):
-    bl_idname = __package__.split('.')[0]
+    bl_idname = '.'.join(__package__.split('.')[:-1])
 
     import_bones: BoolProperty(
         name = 'Import Bones',

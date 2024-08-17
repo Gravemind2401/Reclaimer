@@ -3,6 +3,16 @@ param (
 )
 
 function Rasterize-ApplicationIcon {
+    if (-not (Test-Path (Get-Alias inkscape).Definition)) {
+        Write-Warning 'Could not rasterize application icon: inkscape not found!'
+        return
+    }
+
+    if (-not (Test-Path (Get-Alias icomake).Definition)) {
+        Write-Warning 'Could not rasterize application icon: icomake not found!'
+        return
+    }
+
     Write-Host 'Rasterizing application icon...' -ForegroundColor Yellow
 
     $outputSizes = 16, 24, 32, 48, 64, 96, 128, 256
@@ -21,6 +31,11 @@ function Rasterize-ApplicationIcon {
 }
 
 function Rasterize-InstallerResources {
+    if (-not (Test-Path (Get-Alias inkscape).Definition)) {
+        Write-Warning 'Could not rasterize installer resources: inkscape not found!'
+        return
+    }
+
     Write-Host 'Rasterizing installer resources...' -ForegroundColor Yellow
 
     foreach ($fileName in '.\obj\res\bannerbmp.svg', '.\obj\res\dlgbmp.svg') {
@@ -44,12 +59,21 @@ function Build-Installer {
 
 }
 
-function Copy-Artifacts {
-    Write-Host 'Collecting Artifacts...' -ForegroundColor Yellow
+function Build-ImportScript {
+    Set-Alias pip "C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python37_64\Scripts\pip.exe"
+    Set-Alias blender "C:\Program Files\Blender Foundation\Blender 4.2\blender.exe"
 
-    # copy installer MSI
-    Get-ChildItem "$buildRoot\Reclaimer\Reclaimer.Setup\bin\Release" -Filter 'Reclaimer.Setup.msi' -Recurse `
-        | Copy-Item -Destination ".\bin\Reclaimer.Setup-v$assemblyVersion.msi"
+    if (-not (Test-Path (Get-Alias pip).Definition)) {
+        Write-Warning 'Could not build RMF Importer: pip not found!'
+        return
+    }
+
+    if (-not (Test-Path (Get-Alias blender).Definition)) {
+        Write-Warning 'Could not build RMF Importer: blender not found!'
+        return
+    }
+
+    Write-Host 'Building RMF Importer...' -ForegroundColor Yellow
 
     # copy RMF importer files
     Copy-Item "$buildRoot\Reclaimer\Reclaimer.RMFImporter\Reclaimer" ".\obj\RMFImporter\Reclaimer" -Recurse
@@ -60,8 +84,31 @@ function Copy-Artifacts {
         | Where-Object { $_.Name -eq '__pycache__' -or $_.Name -eq 'tests' } `
         | Remove-Item -Recurse -Force
 
-    # create RMF Importer plugin zip
-    Compress-Archive ".\obj\RMFImporter\Reclaimer" '.\bin\RMFImporter.zip' -CompressionLevel Optimal
+    # remove the blender manifest so it doesnt get included in the cross platform zip
+    Remove-Item ".\obj\RMFImporter\Reclaimer\blender_manifest.toml"
+
+    # create RMF Importer plugin zip (cross platform)
+    # do this before wheels downloaded so it doesnt include them in the zip
+    Compress-Archive ".\obj\RMFImporter\Reclaimer" ".\bin\reclaimer_rmf_importer-$scriptVersion-xplatform.zip" -CompressionLevel Optimal
+
+    # restore the blender manifest now that we are building the 4.2+ zips
+    Copy-Item "$buildRoot\Reclaimer\Reclaimer.RMFImporter\Reclaimer\blender_manifest.toml" ".\obj\RMFImporter\Reclaimer\"
+
+    # prepare wheels for Blender 4.2
+    # need to disable version check because it gets treated as an error
+    pip download pyside2 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --abi cp38 --python-version 3.10 --platform win_amd64
+    pip download pyside2 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --abi cp38 --python-version 3.10 --platform manylinux1_x86_64
+    
+    # build extension zips for Blender 4.2
+    blender --command extension build --split-platforms --source-dir ".\obj\RMFImporter\Reclaimer" --output-dir ".\bin\"
+}
+
+function Copy-Artifacts {
+    Write-Host 'Collecting Artifacts...' -ForegroundColor Yellow
+
+    # copy installer MSI
+    Get-ChildItem "$buildRoot\Reclaimer\Reclaimer.Setup\bin\Release" -Filter 'Reclaimer.Setup.msi' -Recurse `
+        | Copy-Item -Destination ".\bin\Reclaimer.Setup-v$assemblyVersion.msi"
 }
 
 
@@ -101,12 +148,19 @@ $buildNumber = [int](git rev-list --count `@)
 $assemblyVersion = "2.0.$buildNumber"
 Pop-Location
 
-Write-Host "Reclaimer $assemblyVersion" -ForegroundColor Yellow
+$scriptVersion = (Select-String -Path $buildRoot\Reclaimer\Reclaimer.RMFImporter\Reclaimer\__init__.py -Pattern "'version': \((.+)\)").Matches[0].Groups[1].Value.Replace(' ', '').Replace(',', '.')
+
+Write-Host "Reclaimer $assemblyVersion" -ForegroundColor Yellow -BackgroundColor Black
+Write-Host "RMF Importer $scriptVersion" -ForegroundColor Yellow -BackgroundColor Black
 
 Rasterize-ApplicationIcon
 Rasterize-InstallerResources
 Build-Installer
+Build-ImportScript
 Copy-Artifacts
+
+
+Start-Process ".\bin\"
 
 
 Pop-Location

@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any, Tuple, cast, Iterator, Optional
 
-from Reclaimer import package_version_string
+root = __import__('.'.join(__package__.split('.')[:-1]))
 
 from .. import ui
 from ..src.SceneReader import SceneReader
@@ -16,6 +16,8 @@ from PySide2.QtUiTools import QUiLoader
 __all__ = [
     'RmfDialog'
 ]
+
+package_version_string = root.package_version_string
 
 CheckState = QtCore.Qt.CheckState
 CheckStates = [CheckState.Unchecked, CheckState.PartiallyChecked, CheckState.Checked]
