@@ -4,12 +4,13 @@ from bpy.props import BoolProperty, StringProperty, FloatProperty, FloatVectorPr
 from ..src.ImportOptions import ImportOptions
 from .DependencyInstallerOperator import DependencyInstallerOperator
 
+_parent_package = '.'.join(__package__.split('.')[:-1])
 _first_draw = True
 _was_missing_dependencies = False
 
 
 class RmfPreferences(AddonPreferences):
-    bl_idname = '.'.join(__package__.split('.')[:-1])
+    bl_idname = _parent_package
 
     import_bones: BoolProperty(
         name = 'Import Bones',
