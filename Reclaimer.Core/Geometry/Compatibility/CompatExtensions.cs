@@ -8,13 +8,13 @@ namespace Reclaimer.Geometry.Compatibility
     {
         public static void WriteAMF(this Scene scene, string fileName, float scale)
         {
-            var model = scene.EnumerateGroupHierarchy().SelectMany(g => g.ChildObjects.OfType<Model>()).First();
+            var model = scene.EnumerateModels().First();
             model.WriteAMF(fileName, scale);
         }
 
         public static void WriteJMS(this Scene scene, string fileName, float scale)
         {
-            var model = scene.EnumerateGroupHierarchy().SelectMany(g => g.ChildObjects.OfType<Model>()).First();
+            var model = scene.EnumerateModels().First();
             model.WriteJMS(fileName, scale);
         }
 
