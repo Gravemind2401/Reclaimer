@@ -1,4 +1,4 @@
-import subprocess
+import sys, sysconfig, subprocess
 from collections import namedtuple
 from typing import Set
 from bpy.types import Context, Operator
@@ -9,10 +9,13 @@ __all__ = [
     'DependencyInstallerOperator'
 ]
 
+# Blender 4.1+ use python 3.11 and later which is not explicitly supported by PySide2, however it still appears to work just fine if we bypass the version requirements
+# (as a side note, PySide6 was attempted but it just crashed Blender entirely as soon the importer window attempted to open)
+_pyside_pip_args = None if sys.version_info <= (3, 10) else ['--ignore-requires-python', '--python-version=310', '--only-binary=:all:', '--target', sysconfig.get_path("purelib")]
 
 Dependency = namedtuple('Dependency', ['module', 'package', 'name', 'args'])
 
-_dependencies = [Dependency(module='PySide2', package=None, name=None, args='--ignore-requires-python')]
+_dependencies = [Dependency(module='PySide2', package=None, name=None, args=_pyside_pip_args)]
 _dependencies_installed = False
 
 

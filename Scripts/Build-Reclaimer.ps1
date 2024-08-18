@@ -96,8 +96,8 @@ function Build-ImportScript {
 
     # prepare wheels for Blender 4.2
     # need to disable version check because it gets treated as an error
-    pip download pyside2 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --abi cp38 --python-version 3.10 --platform win_amd64
-    pip download pyside2 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --abi cp38 --python-version 3.10 --platform manylinux1_x86_64
+    pip download pyside2 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --platform win_amd64
+    pip download pyside2 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --platform manylinux1_x86_64
 
     # build extension zips for Blender 4.2
     blender --command extension build --split-platforms --source-dir ".\obj\RMFImporter\Reclaimer" --output-dir ".\bin\"

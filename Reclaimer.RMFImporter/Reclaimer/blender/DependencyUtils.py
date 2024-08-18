@@ -75,7 +75,13 @@ def install_and_import_module(module_name, package_name=None, global_name=None, 
     environ_copy = dict(os.environ)
     environ_copy["PYTHONNOUSERSITE"] = "1"
 
-    subprocess.run([sys.executable, "-m", "pip", "install", package_name, install_args], check=True, env=environ_copy)
+    exec_args = [sys.executable, "-m", "pip", "install", package_name]
+    if type(install_args) is str:
+        exec_args.append(install_args)
+    elif type(install_args) is list:
+        exec_args = exec_args + install_args
+
+    subprocess.run(exec_args, check=True, env=environ_copy)
 
     # The installation succeeded, attempt to import the module again
     import_module(module_name, global_name)
