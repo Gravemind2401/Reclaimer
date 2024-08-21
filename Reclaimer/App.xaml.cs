@@ -15,7 +15,7 @@ namespace Reclaimer
         internal static Settings Settings { get; private set; }
         internal static UserSettings UserSettings => Settings.UserSettings;
 
-        private static readonly Dictionary<string, ResourceDictionary> themes = new Dictionary<string, ResourceDictionary>();
+        private static readonly Dictionary<string, AppTheme> themes = new Dictionary<string, AppTheme>();
 
 #if DEBUG
         public static string AppVersion { get; } = "DEBUG";
@@ -78,16 +78,9 @@ namespace Reclaimer
 
             base.OnStartup(e);
 
-            var embeddedThemes = (ResourceDictionary[])Resources["Themes"];
-            foreach (var theme in embeddedThemes.Skip(1))
-            {
-                //embeddedThemes[0] is the base styles - merge it into every theme
-                theme.MergedDictionaries.Insert(0, embeddedThemes[0]);
-                AddTheme((string)theme["Name"], theme);
-            }
+            LoadThemes();
 
             Settings = Settings.FromFile();
-
             SetTheme(Settings.Theme);
 
             MainWindow = new Windows.MainWindow();
@@ -140,25 +133,44 @@ namespace Reclaimer
 
         #region Themes
 
-        internal static IEnumerable<string> ThemeNames => themes.Keys.AsEnumerable();
+        internal static IEnumerable<AppTheme> AppThemes => themes.Values;
 
-        internal static void AddTheme(string name, ResourceDictionary resources)
+        private static void LoadThemes()
         {
-            if (!themes.TryGetValue(name, out var theme))
-                themes.Add(name, theme = new ResourceDictionary());
+            var embeddedThemes = (ResourceDictionary[])Application.Current.Resources["Themes"];
+            foreach (var theme in embeddedThemes.Skip(1))
+            {
+                //embeddedThemes[0] is the base styles - merge it into every theme
+                theme.MergedDictionaries.Insert(0, embeddedThemes[0]);
 
-            theme.MergedDictionaries.Add(resources);
+                var id = (string)theme["Id"];
+                var path = (string)theme["Path"];
+                var name = (string)theme["Name"];
+
+                AddTheme(id, path, name, theme);
+            }
         }
 
-        internal static void SetTheme(string name)
+        internal static void AddTheme(string id, string path, string name, ResourceDictionary resources)
         {
-            if (!themes.TryGetValue(name, out var theme))
-                throw new KeyNotFoundException($"'{name}' theme does not exist");
+            if (!themes.TryGetValue(id, out var theme))
+                themes.Add(id, theme = new AppTheme(id, path, name));
+
+            theme.Resources.MergedDictionaries.Add(resources);
+        }
+
+        internal static void SetTheme(string id)
+        {
+            if (!themes.TryGetValue(id, out var theme))
+            {
+                Substrate.LogOutput($"Warning: Attempted to set theme to '{id}' but no matching theme was found");
+                theme = AppThemes.First();
+            }
 
             Instance.Resources.MergedDictionaries.Clear();
-            Instance.Resources.MergedDictionaries.Add(theme);
+            Instance.Resources.MergedDictionaries.Add(theme.Resources);
 
-            Settings.Theme = name;
+            Settings.Theme = id;
         }
 
         #endregion

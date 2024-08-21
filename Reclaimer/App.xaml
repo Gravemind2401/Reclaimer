@@ -3,11 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              ShutdownMode="OnMainWindowClose">
-    
+
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Studio;component/Themes/Blue.xaml" />
+                <ResourceDictionary Source="/Studio;component/Themes/2015/Blue.xaml" />
                 <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                 <ResourceDictionary Source="/Reclaimer;component/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -19,69 +19,205 @@
                         <ResourceDictionary Source="/Reclaimer;component/Styles/Styles.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
+
+                <!--#region 2015 Themes-->
                 <ResourceDictionary>
+                    <sys:String x:Key="Id">2015/Blue</sys:String>
+                    <sys:String x:Key="Path">2015</sys:String>
                     <sys:String x:Key="Name">Blue</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Blue.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Blue.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
+                    <sys:String x:Key="Id">2015/Dark</sys:String>
+                    <sys:String x:Key="Path">2015</sys:String>
                     <sys:String x:Key="Name">Dark</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Dark.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Dark.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Dark.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
+                    <sys:String x:Key="Id">2015/Light</sys:String>
+                    <sys:String x:Key="Path">2015</sys:String>
                     <sys:String x:Key="Name">Light</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Light.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Light.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
+                    <sys:String x:Key="Id">2015/Green</sys:String>
+                    <sys:String x:Key="Path">2015</sys:String>
                     <sys:String x:Key="Name">Green</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Green.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Green.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
+                    <sys:String x:Key="Id">2015/Purple</sys:String>
+                    <sys:String x:Key="Path">2015</sys:String>
                     <sys:String x:Key="Name">Purple</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Purple.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Purple.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
+                    <sys:String x:Key="Id">2015/Red</sys:String>
+                    <sys:String x:Key="Path">2015</sys:String>
                     <sys:String x:Key="Name">Red</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Red.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Red.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
+                    <sys:String x:Key="Id">2015/Tan</sys:String>
+                    <sys:String x:Key="Path">2015</sys:String>
                     <sys:String x:Key="Name">Tan</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Tan.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Tan.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
-                    <sys:String x:Key="Name">Solarized (Light)</sys:String>
+                    <sys:String x:Key="Id">2015/Solarized Light</sys:String>
+                    <sys:String x:Key="Path">2015</sys:String>
+                    <sys:String x:Key="Name">Solarized Light</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/SolarizedLight.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Solarized Light.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
-                    <sys:String x:Key="Name">Solarized (Dark)</sys:String>
+                    <sys:String x:Key="Id">2015/Solarized Dark</sys:String>
+                    <sys:String x:Key="Path">2015</sys:String>
+                    <sys:String x:Key="Name">Solarized Dark</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/SolarizedDark.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Solarized Dark.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Dark.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
+                <!--#endregion-->
+
+                <!--#region 2022 Themes-->
+                <ResourceDictionary>
+                    <sys:String x:Key="Id">2022/Abyss</sys:String>
+                    <sys:String x:Key="Name">Abyss</sys:String>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="/Studio;component/Themes/2022/Abyss.xaml" />
+                        <ResourceDictionary Source="/Reclaimer;component/Themes/Dark.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <sys:String x:Key="Id">2022/Blue</sys:String>
+                    <sys:String x:Key="Name">Blue</sys:String>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="/Studio;component/Themes/2022/Blue.xaml" />
+                        <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <sys:String x:Key="Id">2022/Dark</sys:String>
+                    <sys:String x:Key="Name">Dark</sys:String>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="/Studio;component/Themes/2022/Dark.xaml" />
+                        <ResourceDictionary Source="/Reclaimer;component/Themes/Dark.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <sys:String x:Key="Id">2022/Dark+</sys:String>
+                    <sys:String x:Key="Name">Dark+</sys:String>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="/Studio;component/Themes/2022/Dark+.xaml" />
+                        <ResourceDictionary Source="/Reclaimer;component/Themes/Dark.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <sys:String x:Key="Id">2022/Kimbie Dark</sys:String>
+                    <sys:String x:Key="Name">Kimbie Dark</sys:String>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="/Studio;component/Themes/2022/Kimbie Dark.xaml" />
+                        <ResourceDictionary Source="/Reclaimer;component/Themes/Dark.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <sys:String x:Key="Id">2022/Light</sys:String>
+                    <sys:String x:Key="Name">Light</sys:String>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="/Studio;component/Themes/2022/Light.xaml" />
+                        <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <sys:String x:Key="Id">2022/Light+</sys:String>
+                    <sys:String x:Key="Name">Light+</sys:String>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="/Studio;component/Themes/2022/Light+.xaml" />
+                        <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <sys:String x:Key="Id">2022/Monokai</sys:String>
+                    <sys:String x:Key="Name">Monokai</sys:String>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="/Studio;component/Themes/2022/Monokai.xaml" />
+                        <ResourceDictionary Source="/Reclaimer;component/Themes/Dark.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <sys:String x:Key="Id">2022/Monokai Dimmed</sys:String>
+                    <sys:String x:Key="Name">Monokai Dimmed</sys:String>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="/Studio;component/Themes/2022/Monokai Dimmed.xaml" />
+                        <ResourceDictionary Source="/Reclaimer;component/Themes/Dark.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <sys:String x:Key="Id">2022/Quiet Light</sys:String>
+                    <sys:String x:Key="Name">Quiet Light</sys:String>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="/Studio;component/Themes/2022/Quiet Light.xaml" />
+                        <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <sys:String x:Key="Id">2022/Red</sys:String>
+                    <sys:String x:Key="Name">Red</sys:String>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="/Studio;component/Themes/2022/Red.xaml" />
+                        <ResourceDictionary Source="/Reclaimer;component/Themes/Dark.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <sys:String x:Key="Id">2022/Solarized Light</sys:String>
+                    <sys:String x:Key="Name">Solarized Light</sys:String>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="/Studio;component/Themes/2022/Solarized Light.xaml" />
+                        <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <sys:String x:Key="Id">2022/Solarized Dark</sys:String>
+                    <sys:String x:Key="Name">Solarized Dark</sys:String>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="/Studio;component/Themes/2022/Solarized Dark.xaml" />
+                        <ResourceDictionary Source="/Reclaimer;component/Themes/Dark.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <sys:String x:Key="Id">2022/Tomorrow Night Blue</sys:String>
+                    <sys:String x:Key="Name">Tomorrow Night Blue</sys:String>
+                    <ResourceDictionary.MergedDictionaries>
+                        <ResourceDictionary Source="/Studio;component/Themes/2022/Tomorrow Night Blue.xaml" />
+                        <ResourceDictionary Source="/Reclaimer;component/Themes/Dark.xaml" />
+                    </ResourceDictionary.MergedDictionaries>
+                </ResourceDictionary>
+                <!--#endregion-->
             </x:Array>
         </ResourceDictionary>
     </Application.Resources>

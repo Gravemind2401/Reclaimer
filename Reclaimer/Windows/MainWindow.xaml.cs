@@ -124,11 +124,21 @@ namespace Reclaimer.Windows
             }
 
             var themeRoot = GetMenuItem(Terminology.Menu.Themes);
-            foreach (var themeName in App.ThemeNames)
+            foreach (var g in App.AppThemes.GroupBy(t => t.Path))
             {
-                var item = new MenuItem { Header = themeName, Tag = themeName };
-                themeRoot.Items.Add(item);
-                item.Click += ThemeMenuItem_Click;
+                var parentMenu = string.IsNullOrEmpty(g.Key)
+                    ? themeRoot
+                    : new MenuItem { Header = g.Key };
+
+                foreach (var theme in g.OrderBy(t => t.Name))
+                {
+                    var item = new MenuItem { Header = theme.Name, Tag = theme.Id };
+                    parentMenu.Items.Add(item);
+                    item.Click += ThemeMenuItem_Click;
+                }
+
+                if (parentMenu != themeRoot)
+                    themeRoot.Items.Add(parentMenu);
             }
 
             if (App.Settings.WindowState != WindowState.Minimized)

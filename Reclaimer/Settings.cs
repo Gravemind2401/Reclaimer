@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Reclaimer.Models;
-using Reclaimer.Plugins;
 using Reclaimer.Utilities;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -43,7 +42,7 @@ namespace Reclaimer
 
         public Settings()
         {
-            Theme = App.ThemeNames.First();
+            Theme = App.AppThemes.First().Id;
             DefaultHandlers = new Dictionary<string, string>();
             PluginSettings = new Dictionary<string, object>();
             RecentFiles = new List<string>();
