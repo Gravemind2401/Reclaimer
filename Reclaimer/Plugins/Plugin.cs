@@ -42,8 +42,12 @@ namespace Reclaimer.Plugins
     /// </summary>
     public class PluginContextItem
     {
-        private readonly string key;
         private readonly ContextItemClickHandler handler;
+
+        /// <summary>
+        /// The unique key associated with this menu item.
+        /// </summary>
+        public string Key { get; }
 
         /// <summary>
         /// Gets the menu path to the context menu item.
@@ -54,7 +58,7 @@ namespace Reclaimer.Plugins
         /// Executes the handler associated with the context menu item.
         /// </summary>
         /// <param name="context">The file object that the context menu is attached to.</param>
-        public void ExecuteHandler(OpenFileArgs context) => handler(key, context);
+        public void ExecuteHandler(OpenFileArgs context) => handler(Key, context);
 
         /// <summary>
         /// Creates a new instance of the <see cref="PluginContextItem"/> class.
@@ -64,9 +68,9 @@ namespace Reclaimer.Plugins
         /// <param name="handler">The method to execute when the context menu item is clicked.</param>
         public PluginContextItem(string key, string path, ContextItemClickHandler handler)
         {
-            this.key = key ?? throw new ArgumentNullException(nameof(key));
-            this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
+            Key = key ?? throw new ArgumentNullException(nameof(key));
             Path = path ?? throw new ArgumentNullException(nameof(path));
+            this.handler = handler ?? throw new ArgumentNullException(nameof(handler));
         }
     }
 

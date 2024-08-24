@@ -177,7 +177,7 @@ namespace Reclaimer.Plugins
             else
             {
                 var item = context.File.Select(f => GetExtractable(f, lastDataFolder)).FirstOrDefault(e => e != null);
-                if (item != null)
+                if (item != null && (item.SupportsBatchMode || key == ExtractSingleContextItem.Key))
                     extractionQueue.Enqueue(item);
             }
 
@@ -199,7 +199,7 @@ namespace Reclaimer.Plugins
             else
             {
                 var item = GetExtractable(node.Tag, outputFolder);
-                if (item != null)
+                if (item != null && item.SupportsBatchMode)
                     extractionQueue.Enqueue(item);
             }
         }
@@ -553,6 +553,7 @@ namespace Reclaimer.Plugins
             string ItemKey { get; }
             string DisplayName { get; }
             string Destination { get; }
+            bool SupportsBatchMode => true;
             int GetContentType();
             bool GetBitmapContent(out IContentProvider<IBitmap> provider);
             bool GetGeometryContent(out IContentProvider<Scene> provider);
@@ -569,6 +570,8 @@ namespace Reclaimer.Plugins
 
             public string Destination { get; }
 
+            public bool SupportsBatchMode => item.ClassCode != "scnr";
+
             public CacheExtractable(IIndexItem item, string destination)
             {
                 this.item = item;
@@ -580,13 +583,12 @@ namespace Reclaimer.Plugins
                 return item.ClassCode switch
                 {
                     "bitm" => 0,
-                    "mode" or "mod2" or "sbsp" => 1,
+                    "mode" or "mod2" or "sbsp" or "scnr" => 1,
                     "snd!" => 2,
                     _ => -1
                 };
             }
 
-            //TODO
             public bool GetBitmapContent(out IContentProvider<IBitmap> provider) => BlamContentFactory.TryGetBitmapContent(item, out provider);
             public bool GetGeometryContent(out IContentProvider<Scene> provider) => BlamContentFactory.TryGetGeometryContent(item, out provider);
             public bool GetSoundContent(out IContentProvider<GameSound> provider) => BlamContentFactory.TryGetSoundContent(item, out provider);
@@ -601,6 +603,8 @@ namespace Reclaimer.Plugins
             public string DisplayName => ItemKey;
 
             public string Destination { get; }
+
+            public bool SupportsBatchMode => item.ClassCode != "scnr";
 
             public ModuleExtractable(ModuleItem item, string destination)
             {
