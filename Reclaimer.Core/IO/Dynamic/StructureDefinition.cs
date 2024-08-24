@@ -166,6 +166,18 @@ namespace Reclaimer.IO.Dynamic
             }
         }
 
+        public static long OffsetFor(PropertyInfo property, double? version)
+        {
+            var def = FindVersionDefinition(version);
+            return def.Fields.First(f => f.TargetProperty == property).Offset;
+        }
+
+        public static long? SizeFor(double? version)
+        {
+            var def = FindVersionDefinition(version);
+            return def.Size;
+        }
+
         private static VersionDefinition FindVersionDefinition(double? version)
         {
             return instance.versions.First(d => Extensions.ValidateVersion(version, d.MinVersion, d.MaxVersion));

@@ -98,8 +98,21 @@ namespace Reclaimer.IO
         /// <param name="version">The version to check.</param>
         public static long ValueFor(Type type, double? version)
         {
-            return type.GetCustomAttributes<FixedSizeAttribute>().GetVersion(version).Size;
+            var size = type.GetCustomAttributes<FixedSizeAttribute>().GetVersion(version)?.Size;
+
+            if (size.HasValue)
+                return size.Value;
+
+            var method = typeof(FixedSizeAttribute)
+                .GetMethod(nameof(ValueFromStructureDefinition), BindingFlags.Static | BindingFlags.NonPublic)
+                .GetGenericMethodDefinition()
+                .MakeGenericMethod(type);
+
+            size = (long?)method.Invoke(null, new object[] { version });
+            return size.Value;
         }
+
+        private static long? ValueFromStructureDefinition<T>(double? version) => StructureDefinition<T>.SizeFor(version);
     }
 
     /// <summary>
@@ -255,9 +268,21 @@ namespace Reclaimer.IO
         /// <param name="version">The version to check.</param>
         public static long ValueFor(PropertyInfo prop, double? version)
         {
-            return prop.GetCustomAttributes<OffsetAttribute>()
-                .GetVersion(version).Offset;
+            var offset = prop.GetCustomAttributes<OffsetAttribute>()
+                .GetVersion(version)?.Offset;
+
+            if (offset.HasValue)
+                return offset.Value;
+
+            var method = typeof(OffsetAttribute)
+                .GetMethod(nameof(ValueFromStructureDefinition), BindingFlags.Static | BindingFlags.NonPublic)
+                .GetGenericMethodDefinition()
+                .MakeGenericMethod(prop.DeclaringType);
+
+            return (long)method.Invoke(null, new object[] { prop, version });
         }
+
+        private static long ValueFromStructureDefinition<T>(PropertyInfo prop, double? version) => StructureDefinition<T>.OffsetFor(prop, version);
     }
 
     /// <summary>
