@@ -2,29 +2,21 @@
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
-using Reclaimer.IO;
 using Reclaimer.Utilities;
 using System.Globalization;
 using System.Numerics;
 
 namespace Reclaimer.Blam.Halo5
 {
-    public class scenario : ContentTagDefinition<Scene>, IContentProvider<Scene>
+    public partial class scenario : ContentTagDefinition<Scene>, IContentProvider<Scene>
     {
         public scenario(ModuleItem item, MetadataHeader header)
             : base(item, header)
         { }
 
-        [Offset(380)]
-        public BlockCollection<StructureBspsBlock> StructureBsps { get; set; }
-
-        [Offset(500)]
+        public BlockCollection<StructureBspBlock> StructureBsps { get; set; }
         public BlockCollection<SkyReferenceBlock> Skies { get; set; }
-
-        [Offset(808)]
         public BlockCollection<SceneryPlacementBlock> Scenery { get; set; }
-
-        [Offset(836)]
         public BlockCollection<SceneryPaletteBlock> SceneryPalette { get; set; }
 
         public override Scene GetContent()
@@ -45,7 +37,7 @@ namespace Reclaimer.Blam.Halo5
             {
                 try
                 {
-                    var bspItem = v.StructureBsp.Tag;
+                    var bspItem = v.BspReference.Tag;
                     var bspTag = bspItem.ReadMetadata<scenario_structure_bsp>();
 
                     ModuleItem stlmItem = null;
@@ -54,7 +46,7 @@ namespace Reclaimer.Blam.Halo5
                     {
                         if (v.LightingVariants.Count > 0)
                         {
-                            stlmItem = v.LightingVariants[0].StructureLightmap.Tag;
+                            stlmItem = v.LightingVariants[0].StructureLightmapReference.Tag;
                             stlmTag = stlmItem.ReadMetadata<structure_lightmap>();
                         }
                     }
@@ -174,7 +166,7 @@ namespace Reclaimer.Blam.Halo5
                     try
                     {
                         var sceneItem = new ObjectPlacement(model);
-                        sceneItem.SetTransform(placement.Scale, placement.Position.ToVector3(), (Quaternion)(EulerAngles)placement.Rotation);
+                        sceneItem.SetTransform(placement.Scale, placement.Position.ToVector3(), (Quaternion)placement.Rotation);
                         placementGroup.ChildObjects.Add(sceneItem);
                     }
                     catch { }
@@ -197,55 +189,35 @@ namespace Reclaimer.Blam.Halo5
         }
     }
 
-    [FixedSize(196)]
-    public partial class StructureBspsBlock
+    public partial class StructureBspBlock
     {
-        [Offset(0)]
-        public TagReference StructureBsp { get; set; }
-
-        [Offset(140)]
-        public BlockCollection<StructureLighting> LightingVariants { get; set; }
+        public TagReference BspReference { get; set; }
+        public BlockCollection<StructureLightingBlock> LightingVariants { get; set; }
     }
 
-    [FixedSize(140)]
-    public class StructureLighting
+    public partial class StructureLightingBlock
     {
-        [Offset(36)]
-        public TagReference StructureLightmap { get; set; }
+        public TagReference StructureLightmapReference { get; set; }
     }
 
-    [FixedSize(44)]
     [DebuggerDisplay($"{{{nameof(SkyReference)},nq}}")]
-    public class SkyReferenceBlock
+    public partial class SkyReferenceBlock
     {
-        [Offset(0)]
         public TagReference SkyReference { get; set; }
     }
 
-    [FixedSize(720)]
-    public class SceneryPlacementBlock
+    public partial class SceneryPlacementBlock
     {
-        [Offset(0)]
         public short PaletteIndex { get; set; }
-
-        [Offset(2)]
         public short NameIndex { get; set; }
-
-        [Offset(12)]
         public RealVector3 Position { get; set; }
-
-        [Offset(24)]
-        public RealVector3 Rotation { get; set; }
-
-        [Offset(36)]
+        public EulerAngles Rotation { get; set; }
         public float Scale { get; set; }
     }
 
-    [FixedSize(32)]
     [DebuggerDisplay($"{{{nameof(TagReference)},nq}}")]
-    public class SceneryPaletteBlock
+    public partial class SceneryPaletteBlock
     {
-        [Offset(0)]
         public TagReference TagReference { get; set; }
     }
 }
