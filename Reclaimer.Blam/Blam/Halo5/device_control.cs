@@ -1,6 +1,6 @@
 ﻿namespace Reclaimer.Blam.Halo5
 {
-    public class scenery : ObjectTagBase
+    public class device_control : ObjectTagBase
     {
 
     }

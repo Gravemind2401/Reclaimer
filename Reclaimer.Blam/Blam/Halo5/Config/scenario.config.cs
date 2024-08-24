@@ -13,8 +13,15 @@ namespace Reclaimer.Blam.Halo5
                 var builder = AddDefaultVersion();
                 builder.Property(x => x.StructureBsps).HasOffset(380);
                 builder.Property(x => x.Skies).HasOffset(500);
+                builder.Property(x => x.ObjectNames).HasOffset(780);
                 builder.Property(x => x.Scenery).HasOffset(808);
                 builder.Property(x => x.SceneryPalette).HasOffset(836);
+                builder.Property(x => x.Machines).HasOffset(1116);
+                builder.Property(x => x.MachinePalette).HasOffset(1144);
+                builder.Property(x => x.Controls).HasOffset(1228);
+                builder.Property(x => x.ControlPalette).HasOffset(1256);
+                builder.Property(x => x.Crates).HasOffset(3416);
+                builder.Property(x => x.CratePalette).HasOffset(3444);
             }
         }
     }
@@ -59,10 +66,54 @@ namespace Reclaimer.Blam.Halo5
         }
     }
 
-    [StructureDefinition<SceneryPaletteBlock, DefinitionBuilder>]
-    public partial class SceneryPaletteBlock
+    [StructureDefinition<ObjectNameBlock, DefinitionBuilder>]
+    public partial class ObjectNameBlock
     {
-        private sealed class DefinitionBuilder : DefinitionBuilder<SceneryPaletteBlock>
+        private sealed class DefinitionBuilder : DefinitionBuilder<ObjectNameBlock>
+        {
+            public DefinitionBuilder()
+            {
+                var builder = AddDefaultVersion().HasFixedSize(8);
+                builder.Property(x => x.Name).HasOffset(0);
+                builder.Property(x => x.ObjectType).HasOffset(4);
+                builder.Property(x => x.PlacementIndex).HasOffset(6);
+            }
+        }
+    }
+
+    public partial class PlacementBlockBase
+    {
+        protected abstract class DefinitionBuilderBase<TBlock> : DefinitionBuilder<TBlock>
+            where TBlock : PlacementBlockBase
+        {
+            protected static void Common(VersionBuilder builder)
+            {
+                builder.Property(x => x.PaletteIndex).HasOffset(0);
+                builder.Property(x => x.NameIndex).HasOffset(2);
+                builder.Property(x => x.Position).HasOffset(12);
+                builder.Property(x => x.Rotation).HasOffset(24);
+                builder.Property(x => x.Scale).HasOffset(36);
+            }
+        }
+    }
+
+    public partial class ObjectPlacementBlockBase
+    {
+        new protected abstract class DefinitionBuilderBase<TBlock> : PlacementBlockBase.DefinitionBuilderBase<TBlock>
+            where TBlock : ObjectPlacementBlockBase
+        {
+            new protected static void Common(VersionBuilder builder)
+            {
+                PlacementBlockBase.DefinitionBuilderBase<TBlock>.Common(builder);
+                builder.Property(x => x.VariantName).HasOffset(300);
+            }
+        }
+    }
+
+    [StructureDefinition<ObjectPaletteBlock, DefinitionBuilder>]
+    public partial class ObjectPaletteBlock
+    {
+        private sealed class DefinitionBuilder : DefinitionBuilder<ObjectPaletteBlock>
         {
             public DefinitionBuilder()
             {
@@ -75,16 +126,51 @@ namespace Reclaimer.Blam.Halo5
     [StructureDefinition<SceneryPlacementBlock, DefinitionBuilder>]
     public partial class SceneryPlacementBlock
     {
-        private sealed class DefinitionBuilder : DefinitionBuilder<SceneryPlacementBlock>
+        private sealed class DefinitionBuilder : DefinitionBuilderBase<SceneryPlacementBlock>
         {
             public DefinitionBuilder()
             {
                 var builder = AddDefaultVersion().HasFixedSize(720);
-                builder.Property(x => x.PaletteIndex).HasOffset(0);
-                builder.Property(x => x.NameIndex).HasOffset(2);
-                builder.Property(x => x.Position).HasOffset(12);
-                builder.Property(x => x.Rotation).HasOffset(24);
-                builder.Property(x => x.Scale).HasOffset(36);
+                Common(builder);
+            }
+        }
+    }
+
+    [StructureDefinition<MachinePlacementBlock, DefinitionBuilder>]
+    public partial class MachinePlacementBlock
+    {
+        private sealed class DefinitionBuilder : DefinitionBuilderBase<MachinePlacementBlock>
+        {
+            public DefinitionBuilder()
+            {
+                var builder = AddDefaultVersion().HasFixedSize(732);
+                Common(builder);
+            }
+        }
+    }
+
+    [StructureDefinition<ControlPlacementBlock, DefinitionBuilder>]
+    public partial class ControlPlacementBlock
+    {
+        private sealed class DefinitionBuilder : DefinitionBuilderBase<ControlPlacementBlock>
+        {
+            public DefinitionBuilder()
+            {
+                var builder = AddDefaultVersion().HasFixedSize(736);
+                Common(builder);
+            }
+        }
+    }
+
+    [StructureDefinition<CratePlacementBlock, DefinitionBuilder>]
+    public partial class CratePlacementBlock
+    {
+        private sealed class DefinitionBuilder : DefinitionBuilderBase<CratePlacementBlock>
+        {
+            public DefinitionBuilder()
+            {
+                var builder = AddDefaultVersion().HasFixedSize(716);
+                Common(builder);
             }
         }
     }
