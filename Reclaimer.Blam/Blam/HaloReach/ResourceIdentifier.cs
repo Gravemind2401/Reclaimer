@@ -13,6 +13,7 @@ namespace Reclaimer.Blam.HaloReach
         Secondary
     }
 
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public readonly record struct ResourceIdentifier
     {
         private readonly ICacheFile cache;
@@ -123,28 +124,38 @@ namespace Reclaimer.Blam.HaloReach
                 throw new InvalidOperationException("Data not found");
 
             var segment = resourceLayoutTable.Segments[entry.SegmentIndex];
-            var size1 = resourceLayoutTable.SizeGroups[segment.PrimarySizeIndex];
-            var size2 = resourceLayoutTable.SizeGroups[segment.SecondarySizeIndex];
+            var sizeGroup1 = resourceLayoutTable.SizeGroups[segment.PrimarySizeIndex];
+            var sizeGroup2 = resourceLayoutTable.SizeGroups[segment.SecondarySizeIndex];
             var page1 = resourceLayoutTable.Pages[segment.PrimaryPageIndex];
             var page2 = resourceLayoutTable.Pages[segment.SecondaryPageIndex];
 
             if (page1.CompressedSize != page1.DecompressedSize || page2.CompressedSize != page2.DecompressedSize)
                 throw new NotSupportedException("Compressed sound data");
 
-            if (size2.Sizes.Count > 1)
-                throw new NotSupportedException("Segmented sound data");
+            var output = new byte[sizeGroup1.TotalSize + sizeGroup2.TotalSize];
 
-            var output = new byte[size1.TotalSize + size2.TotalSize];
-            if (page1.CompressedSize > 0 && size1.TotalSize > 0)
+            if (page1.CompressedSize > 0 && sizeGroup1.TotalSize > 0)
             {
-                var temp = ReadSoundData(directory, resourceLayoutTable, page1, size1.TotalSize);
-                Array.Copy(temp, segment.PrimaryPageOffset, output, 0, size1.TotalSize);
+                var pageData = ReadSoundData(directory, resourceLayoutTable, page1, sizeGroup1.TotalSize);
+                var pageOffset = segment.PrimaryPageOffset;
+
+                foreach (var size in sizeGroup1.Sizes)
+                {
+                    Array.Copy(pageData, pageOffset, output, size.Offset, size.DataSize);
+                    pageOffset += size.DataSize;
+                }
             }
 
-            if (page2.CompressedSize > 0 && size2.TotalSize > 0)
+            if (page2.CompressedSize > 0 && sizeGroup2.TotalSize > 0)
             {
-                var temp = ReadSoundData(directory, resourceLayoutTable, page2, size2.TotalSize);
-                Array.Copy(temp, segment.SecondaryPageOffset, output, size1.TotalSize, size2.TotalSize);
+                var pageData = ReadSoundData(directory, resourceLayoutTable, page2, sizeGroup2.TotalSize);
+                var pageOffset = segment.SecondaryPageOffset;
+
+                foreach (var size in sizeGroup2.Sizes)
+                {
+                    Array.Copy(pageData, pageOffset, output, size.Offset, size.DataSize);
+                    pageOffset += size.DataSize;
+                }
             }
 
             return output;
@@ -170,6 +181,6 @@ namespace Reclaimer.Blam.HaloReach
             }
         }
 
-        public override string ToString() => Value.ToString(CultureInfo.CurrentCulture);
+        private string GetDebuggerDisplay() => Value.ToString(CultureInfo.CurrentCulture);
     }
 }
