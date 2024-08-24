@@ -69,7 +69,23 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                referenceValue = new TagReference(context.Cache, reader);
+                if (bool.TryParse(node.Attributes["withGroup"]?.Value, out var withGroup) && !withGroup)
+                {
+                    var tagId = reader.ReadInt32();
+                    var tagIndex = (short)(tagId & ushort.MaxValue);
+                    if (tagIndex < 0)
+                        referenceValue = TagReference.NullReference;
+                    else
+                    {
+                        var classId = context.Cache.TagIndex[tagIndex].ClassId;
+                        referenceValue = new TagReference(context.Cache, classId, tagId);
+                    }
+                }
+                else
+                {
+                    referenceValue = new TagReference(context.Cache, reader);
+                }
+
                 SelectedClass = ClassOptions.FirstOrDefault(i => i.Label == referenceValue.Tag?.ClassName);
                 SelectedItem = TagOptions.FirstOrDefault(i => i.Context != null && i.Context == referenceValue.Tag);
 
