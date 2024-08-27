@@ -23,6 +23,9 @@ namespace Reclaimer
             Converters = new[] { new Newtonsoft.Json.Converters.StringEnumConverter() }
         };
 
+        //this is renamed for compatability with older versions
+        //because they will crash if the theme ID is not valid
+        [JsonProperty("Theme2")]
         public string Theme { get; set; }
         public WindowState WindowState { get; set; }
         public DateTime LastUpdateCheck { get; set; }
