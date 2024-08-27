@@ -6,7 +6,7 @@ namespace Reclaimer.Utilities
     public static class Localiser
     {
         //TODO: read custom values from somewhere
-        internal static readonly Dictionary<string, Dictionary<string, string>> valueLookup = new Dictionary<string, Dictionary<string, string>>();
+        internal static readonly Dictionary<string, Dictionary<string, string>> ValueLookup = new();
 
         public static void ConfigureResourceType(Type type)
         {
@@ -18,7 +18,7 @@ namespace Reclaimer.Utilities
                     Default = p.GetCustomAttribute<DefaultValueAttribute>()?.Value as string ?? p.Name
                 }).ToList();
 
-            var userValues = valueLookup.GetValueOrDefault(type.FullName);
+            var userValues = ValueLookup.GetValueOrDefault(type.FullName);
 
             foreach (var prop in props)
             {

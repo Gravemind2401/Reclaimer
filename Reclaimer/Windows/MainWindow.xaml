@@ -63,6 +63,7 @@
                 <MenuItem Header="{x:Static t:Menu.Output}" Click="menuOutput_Click" />
                 <MenuItem Header="{x:Static t:Menu.AppDirectory}" Click="menuAppDir_Click" />
                 <MenuItem Header="{x:Static t:Menu.AppDataDirectory}" Click="menuAppDataDir_Click" />
+                <MenuItem Header="{x:Static t:Menu.PluginsDirectory}" Click="menuPluginDir_Click" />
             </MenuItem>
             <MenuItem Header="{x:Static t:Menu.Tools}">
                 <MenuItem Header="{x:Static t:Menu.Settings}" Click="menuSettings_Click" />

@@ -78,6 +78,13 @@ namespace Reclaimer.Windows
         private void menuAppDir_Click(object sender, RoutedEventArgs e) => Utils.StartProcess(Settings.AppBaseDirectory);
         private void menuAppDataDir_Click(object sender, RoutedEventArgs e) => Utils.StartProcess(Settings.AppDataDirectory);
 
+        private void menuPluginDir_Click(object sender, RoutedEventArgs e)
+        {
+            //auto create plugins dir if it doesnt exist yet
+            Directory.CreateDirectory(Substrate.PluginsDirectory);
+            Utils.StartProcess(Substrate.PluginsDirectory);
+        }
+
         private void menuSettings_Click(object sender, RoutedEventArgs e)
         {
             const string tabId = "Reclaimer::Settings";
