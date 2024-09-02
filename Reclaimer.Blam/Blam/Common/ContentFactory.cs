@@ -202,18 +202,6 @@ namespace Reclaimer.Blam.Common
             return false;
         }
 
-        public static bool TryGetBitmapContent(Halo5.ModuleItem item, out IContentProvider<IBitmap> content)
-        {
-            content = null;
-
-            if (item.ClassCode != bitmap)
-                return false;
-
-            content = item.ReadMetadata<Halo5.bitmap>();
-
-            return content != null;
-        }
-
         public static bool TryGetGeometryContent(Halo5.ModuleItem item, out IContentProvider<Scene> content)
         {
             content = null;
@@ -232,6 +220,38 @@ namespace Reclaimer.Blam.Common
             };
 
             return content != null;
+        }
+
+        public static bool TryGetBitmapContent(Halo5.ModuleItem item, out IContentProvider<IBitmap> content)
+        {
+            content = null;
+
+            if (item.ClassCode != bitmap)
+                return false;
+
+            content = item.ReadMetadata<Halo5.bitmap>();
+
+            return content != null;
+        }
+
+        #endregion
+
+        #region Halo Infinite
+        public static bool TryGetPrimaryContent(HaloInfinite.ModuleItem item, out object content)
+        {
+            switch (item.ClassCode)
+            {
+                case bitmap:
+                case render_model:
+                case particle_model:
+                case scenario:
+                case scenario_structure_bsp:
+                case structure_lightmap:
+                    break;
+            }
+
+            content = null;
+            return false;
         }
 
         #endregion
