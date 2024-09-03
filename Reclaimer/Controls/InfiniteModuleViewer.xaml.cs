@@ -5,7 +5,6 @@ using Reclaimer.Plugins;
 using Reclaimer.Utilities;
 using Studio.Controls;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -162,8 +161,7 @@ namespace Reclaimer.Controls
 
             void AppendResourceNodes(TreeItemModel treeItem, ModuleItem tag)
             {
-                foreach (var resourceItem in Enumerable.Range(tag.ResourceIndex, tag.ResourceCount).Select(i => tag.Module.Items[tag.Module.Resources[i]]))
-                    treeItem.Items.Add(new TreeItemModel { Header = resourceItem.FileName, ItemType = ResourceNodeType, Tag = resourceItem });
+                return;
             }
 
 

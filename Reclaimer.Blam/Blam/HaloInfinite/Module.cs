@@ -180,7 +180,7 @@ namespace Reclaimer.Blam.HaloInfinite
         }
     }
 
-    [FixedSize(80)]
+    [FixedSize(72)]
     public class ModuleHeader
     {
         [Offset(0)]
