@@ -159,5 +159,32 @@ namespace Reclaimer.Blam.HaloInfinite
                 return Register(Module.CreateReader(file_buffer));
             }
         }
+        public T ReadMetadata<T>()
+        {
+            using (var reader = CreateReader())
+            {
+                var header = new MetadataHeader(reader); //MetadataHeader self registers to reader
+
+                using (var vreader = (DependencyReader)reader.CreateVirtualReader(header.Header.HeaderSize))
+                {
+                    var mainBlock = header.StructureDefinitions.First(s => s.Type == Blam.Halo5.StructureType.Main).TargetIndex;
+
+                    vreader.Seek(header.DataBlocks[mainBlock].Offset, SeekOrigin.Begin);
+                    var result = vreader.ReadObject<T>();
+
+                    var blockProps = typeof(T).GetProperties()
+                        .Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(BlockCollection<>));
+
+                    foreach (var prop in blockProps)
+                    {
+                        var collection = prop.GetValue(result) as IBlockCollection;
+                        var offset = OffsetAttribute.ValueFor(prop);
+                        collection.LoadBlocks(mainBlock, offset, vreader);
+                    }
+
+                    return result;
+                }
+            }
+        }
     }
 }

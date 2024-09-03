@@ -1,52 +1,50 @@
 ﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Halo5;
 using Reclaimer.IO;
 
-namespace Reclaimer.Blam.Halo5
+namespace Reclaimer.Blam.HaloInfinite
 {
     [FixedSize(80)]
     public class TagHeader
     {
         [Offset(0)]
         public int Header { get; set; }
+        public ModuleType Version { get; set; } = ModuleType.HaloInfinite;
 
-        [Offset(4)]
-        [VersionNumber]
-        public ModuleType Version { get; set; }
+        [Offset(8)]
+        public long AssetHash { get; set; }
 
         [Offset(16)]
         public long AssetChecksum { get; set; }
 
-        [Offset(28)]
+        [Offset(24)]
         public int DependencyCount { get; set; }
 
-        [Offset(32)]
+        [Offset(28)]
         public int DataBlockCount { get; set; }
 
-        [Offset(36)]
+        [Offset(32)]
         public int TagStructureCount { get; set; }
 
-        [Offset(40)]
+        [Offset(36)]
         public int DataReferenceCount { get; set; }
 
-        [Offset(44)]
+        [Offset(40)]
         public int TagReferenceCount { get; set; }
 
-        [Offset(48)]
-        public int StringIdCount { get; set; }
-
-        [Offset(52)]
+        [Offset(44)]
         public int StringTableSize { get; set; }
 
-        [Offset(56)]
+        [Offset(48)]
         public int ZonesetDataSize { get; set; }
 
-        [Offset(60)]
+        [Offset(56)]
         public int HeaderSize { get; set; }
 
-        [Offset(64)]
+        [Offset(60)]
         public int DataSize { get; set; }
 
-        [Offset(68)]
+        [Offset(64)]
         public int ResourceDataSize { get; set; }
     }
 
@@ -64,6 +62,9 @@ namespace Reclaimer.Blam.Halo5
 
         [Offset(16)]
         public int GlobalId { get; set; }
+
+        [Offset(20)]
+        public int ParentId { get; set; }
     }
 
     [FixedSize(16)]
@@ -86,7 +87,7 @@ namespace Reclaimer.Blam.Halo5
         public Guid Guid { get; set; }
 
         [Offset(16)]
-        public StructureType Type { get; set; }
+        public Halo5.StructureType Type { get; set; }
 
         [Offset(20)]
         public int TargetIndex { get; set; }

@@ -1,4 +1,6 @@
-﻿using Reclaimer.Blam.Utilities;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Halo5;
+using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System.Diagnostics;
 using System.IO;
@@ -15,7 +17,7 @@ namespace Reclaimer.Blam.HaloInfinite
         public string FileName { get; }
 
         public ModuleHeader Header { get; }
-
+        public ModuleType ModuleType => Header.Version;
         public List<ModuleItem> Items { get; }
         public Dictionary<int, string> Strings { get; }
         public List<int> Resources { get; }
@@ -42,7 +44,7 @@ namespace Reclaimer.Blam.HaloInfinite
             while (reader.BaseStream.Position < origin + Header.StringsSize)
                 Strings.Add((int)(reader.BaseStream.Position - origin), reader.ReadNullTerminatedString());
 
-            reader.Seek(8, SeekOrigin.Current); // 8 Byte padding, unknown reason.
+            reader.Seek(8, SeekOrigin.Current); // 8 Byte padding.
             Resources = new List<int>(Header.ResourceCount);
             for (var i = 0; i < Header.ResourceCount; i++)
                 Resources.Add(reader.ReadInt32());
@@ -186,7 +188,7 @@ namespace Reclaimer.Blam.HaloInfinite
 
         [Offset(4)]
         [VersionNumber]
-        public int Version { get; set; }
+        public ModuleType Version { get; set; }
 
         [Offset(8)]
         public long ModuleId { get; set; }
