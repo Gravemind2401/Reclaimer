@@ -45,14 +45,18 @@ namespace Reclaimer.Plugins.MetaViewer
     {
         private static readonly Dictionary<string, string> h3aliasLookup = new Dictionary<string, string>();
         private static readonly Dictionary<string, string> h5aliasLookup = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> hialiasLookup = new Dictionary<string, string>();
         private static readonly Dictionary<string, FieldDefinition> h3cache = new Dictionary<string, FieldDefinition>();
         private static readonly Dictionary<string, FieldDefinition> h5cache = new Dictionary<string, FieldDefinition>();
+        private static readonly Dictionary<string, FieldDefinition> hicache = new Dictionary<string, FieldDefinition>();
 
         private static readonly FieldDefinition UndefinedDefinition = new FieldDefinition("undefined", MetaValueType.Undefined, 4, 1, AxesDefinition.None, true);
 
         public static FieldDefinition GetHalo3Definition(XmlNode node) => GetDefinition(node, Properties.Resources.Halo3FieldDefinitions, h3aliasLookup, h3cache);
 
         public static FieldDefinition GetHalo5Definition(XmlNode node) => GetDefinition(node, Properties.Resources.Halo5FieldDefinitions, h5aliasLookup, h5cache);
+
+        public static FieldDefinition GetHaloInfiniteDefinition(XmlNode node) => GetDefinition(node, Properties.Resources.HaloInfiniteFieldDefinitions, hialiasLookup, hicache);
 
         private static FieldDefinition GetDefinition(XmlNode node, string definitionXml, Dictionary<string, string> aliasLookup, Dictionary<string, FieldDefinition> cache)
         {

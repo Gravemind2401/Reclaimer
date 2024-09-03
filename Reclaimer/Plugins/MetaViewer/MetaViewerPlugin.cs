@@ -1,5 +1,4 @@
 ﻿using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
 using Reclaimer.Controls.Editors;
 using System.ComponentModel;
 using System.IO;
@@ -37,14 +36,29 @@ namespace Reclaimer.Plugins.MetaViewer
                 catch { return false; }
             }
 
-            if (Enum.TryParse(match.Groups[1].Value, out ModuleType _))
+            // Kinda hacky, want to implement something proper in the future.
+            if (Enum.TryParse(match.Groups[1].Value, out ModuleType type))
             {
-                var item = args.File.OfType<ModuleItem>().FirstOrDefault();
-                if (item == null)
-                    return false;
+                string xml = null;
 
-                var xml = GetDefinitionPath(item);
-                return File.Exists(xml);
+                if (type == ModuleType.Halo5Forge || type == ModuleType.Halo5Server)
+                {
+                    var item = args.File.OfType<Blam.Halo5.ModuleItem>().FirstOrDefault();
+                    if (item != null)
+                    {
+                        xml = GetDefinitionPath(item);
+                    }
+                }
+                else if (type == ModuleType.HaloInfinite)
+                {
+                    var item = args.File.OfType<Blam.HaloInfinite.ModuleItem>().FirstOrDefault();
+                    if (item != null)
+                    {
+                        xml = GetDefinitionPath(item);
+                    }
+                }
+
+                return xml != null && File.Exists(xml);
             }
 
             return false;
@@ -58,9 +72,16 @@ namespace Reclaimer.Plugins.MetaViewer
                 var tabId = $"{Key}::{item.CacheFile.FileName}::{item.Id}";
                 InitViewer(tabId, args, v => v.LoadMetadata(item, GetDefinitionPath(item)));
             }
-            else if (args.File.Any(i => i is ModuleItem))
+            else if (args.File.Any(i => i is Blam.Halo5.ModuleItem))
             {
-                var item = args.File.OfType<ModuleItem>().FirstOrDefault();
+                var item = args.File.OfType<Blam.Halo5.ModuleItem>().FirstOrDefault();
+                var tabId = $"{Key}::{item.Module.FileName}::{item.GlobalTagId}";
+                InitViewer(tabId, args, v => v.LoadMetadata(item, GetDefinitionPath(item)));
+            }
+
+            else if (args.File.Any(i => i is Blam.HaloInfinite.ModuleItem))
+            {
+                var item = args.File.OfType<Blam.HaloInfinite.ModuleItem>().FirstOrDefault();
                 var tabId = $"{Key}::{item.Module.FileName}::{item.GlobalTagId}";
                 InitViewer(tabId, args, v => v.LoadMetadata(item, GetDefinitionPath(item)));
             }
@@ -81,7 +102,8 @@ namespace Reclaimer.Plugins.MetaViewer
         }
 
         private static string GetDefinitionPath(IIndexItem item) => GetDefinitionPath(p => p.ValidFor(item.CacheFile.CacheType), item.ClassCode, item.ClassName);
-        private static string GetDefinitionPath(ModuleItem item) => GetDefinitionPath(p => p.ValidFor(item.Module.ModuleType), item.ClassCode, item.ClassName);
+        private static string GetDefinitionPath(Blam.Halo5.ModuleItem item) => GetDefinitionPath(p => p.ValidFor(item.Module.ModuleType), item.ClassCode, item.ClassName);
+        private static string GetDefinitionPath(Blam.HaloInfinite.ModuleItem item) => GetDefinitionPath(p => p.ValidFor(item.Module.ModuleType), item.ClassCode, item.ClassName);
         private static string GetDefinitionPath(Predicate<PluginProfile> validate, string classCode, string className)
         {
             if (string.IsNullOrEmpty(Settings.PluginFolder) || !Directory.Exists(Settings.PluginFolder))
@@ -139,6 +161,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
                 PluginProfiles = new List<PluginProfile>
                 {
+                    new PluginProfile("HaloInfinite", ModuleType.HaloInfinite),
                     new PluginProfile("Halo5", ModuleType.Halo5Server, ModuleType.Halo5Forge),
                     new PluginProfile("Halo2AMCC", CacheTypesByPrefix(CacheType.MccHalo2X)),
                     new PluginProfile("Halo4MCC", CacheTypesByPrefix(CacheType.MccHalo4)),

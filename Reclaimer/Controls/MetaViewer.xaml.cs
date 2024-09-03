@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
+using Reclaimer.Blam;
 using Reclaimer.Models;
 using Reclaimer.Plugins;
 using Reclaimer.Plugins.MetaViewer;
@@ -59,8 +59,10 @@ namespace Reclaimer.Controls
 
             if (item is IIndexItem)
                 LoadDataHalo3(tempMetadata, ref tempContext);
-            else if (item is ModuleItem)
+            else if (item is Blam.Halo5.ModuleItem)
                 LoadDataHalo5(tempMetadata);
+            else if (item is Blam.HaloInfinite.ModuleItem)
+                LoadDataHaloInfinite(tempMetadata);
 
             var root = new JObject();
             foreach (var item in tempMetadata)
@@ -80,7 +82,18 @@ namespace Reclaimer.Controls
             LoadData();
         }
 
-        public void LoadMetadata(ModuleItem tag, string xmlFileName)
+        public void LoadMetadata(Blam.Halo5.ModuleItem tag, string xmlFileName)
+        {
+            TabModel.ToolTip = $"{tag.TagName}.{tag.ClassCode}";
+            TabModel.Header = $"{tag.FileName}.{tag.ClassCode}";
+
+            item = tag;
+            fileName = xmlFileName;
+
+            LoadData();
+        }
+
+        public void LoadMetadata(Blam.HaloInfinite.ModuleItem tag, string xmlFileName)
         {
             TabModel.ToolTip = $"{tag.TagName}.{tag.ClassCode}";
             TabModel.Header = $"{tag.FileName}.{tag.ClassCode}";
@@ -95,8 +108,10 @@ namespace Reclaimer.Controls
         {
             if (item is IIndexItem)
                 LoadDataHalo3(Metadata, ref context);
-            else if (item is ModuleItem)
+            else if (item is Blam.Halo5.ModuleItem)
                 LoadDataHalo5(Metadata);
+            else if (item is Blam.HaloInfinite.ModuleItem)
+                LoadDataHaloInfinite(Metadata);
         }
 
         private void LoadDataHalo3(IList<MetaValueBase> collection, ref Plugins.MetaViewer.Halo3.MetaContext context)
@@ -125,7 +140,7 @@ namespace Reclaimer.Controls
 
         private void LoadDataHalo5(IList<MetaValueBase> collection)
         {
-            var tag = item as ModuleItem;
+            var tag = item as Blam.Halo5.ModuleItem;
             collection.Clear();
 
             var doc = new XmlDocument();
@@ -134,7 +149,7 @@ namespace Reclaimer.Controls
             var offset = 0;
             using (var tagReader = tag.CreateReader())
             {
-                var header = new MetadataHeader(tagReader);
+                var header = new Blam.Halo5.MetadataHeader(tagReader);
                 using (var reader = tagReader.CreateVirtualReader(header.Header.HeaderSize))
                 {
                     var rootIndex = header.StructureDefinitions.First(s => s.Type == StructureType.Main).TargetIndex;
@@ -145,6 +160,38 @@ namespace Reclaimer.Controls
                         try
                         {
                             var def = FieldDefinition.GetHalo5Definition(n);
+                            var meta = MetaValueBase.GetMetaValue(n, tag, header, mainBlock, reader, mainBlock.Offset, offset);
+                            collection.Add(meta);
+                            offset += def.Size;
+                        }
+                        catch { break; }
+                    }
+                }
+            }
+        }
+
+        private void LoadDataHaloInfinite(IList<MetaValueBase> collection)
+        {
+            var tag = item as Blam.HaloInfinite.ModuleItem;
+            collection.Clear();
+
+            var doc = new XmlDocument();
+            doc.Load(fileName);
+
+            var offset = 0;
+            using (var tagReader = tag.CreateReader())
+            {
+                var header = new Blam.HaloInfinite.MetadataHeader(tagReader);
+                using (var reader = tagReader.CreateVirtualReader(header.Header.HeaderSize))
+                {
+                    var rootIndex = header.StructureDefinitions.First(s => s.Type == StructureType.Main).TargetIndex;
+                    var mainBlock = header.DataBlocks[rootIndex];
+
+                    foreach (var n in doc.DocumentElement.GetChildElements())
+                    {
+                        try
+                        {
+                            var def = FieldDefinition.GetHaloInfiniteDefinition(n);
                             var meta = MetaValueBase.GetMetaValue(n, tag, header, mainBlock, reader, mainBlock.Offset, offset);
                             collection.Add(meta);
                             offset += def.Size;
@@ -171,7 +218,9 @@ namespace Reclaimer.Controls
             var sfd = new SaveFileDialog
             {
                 OverwritePrompt = true,
-                FileName = (item as IIndexItem)?.FileName ?? (item as ModuleItem).FileName,
+                FileName = (item as IIndexItem)?.FileName ??
+                   (item as Blam.Halo5.ModuleItem)?.FileName ??
+                   (item as Blam.HaloInfinite.ModuleItem)?.FileName,
                 Filter = "JSON Files|*.json",
                 FilterIndex = 1,
                 AddExtension = true
@@ -204,6 +253,15 @@ namespace Reclaimer.Controls
                 var args = new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), item);
                 Substrate.OpenWithDefault(args);
             }
+            else if (e.Parameter is Plugins.MetaViewer.HaloInfinite.TagReferenceValue infref && infref.SelectedItem is not null)
+            {
+                var item = infref.SelectedItem.Context;
+                var fileName = $"{item.TagName}.{item.ClassName}";
+                var fileKey = $"Blam.{item.Module.ModuleType}.{item.ClassCode}";
+                var args = new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), item);
+                Substrate.OpenWithDefault(args);
+            }
+
         }
     }
 }
