@@ -3,7 +3,12 @@
     using static CacheMetadataFlags;
     using static CachePlatform;
     using static CacheResourceCodec;
-
+    public enum ModuleType : int
+    {
+        Halo5Server = 23,
+        Halo5Forge = 27,
+        HaloInfinite = 53,
+    }
     public enum CacheGeneration
     {
         Gen1,

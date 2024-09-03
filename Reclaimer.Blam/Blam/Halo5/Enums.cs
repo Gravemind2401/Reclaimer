@@ -1,11 +1,5 @@
 ﻿namespace Reclaimer.Blam.Halo5
 {
-    public enum ModuleType : int
-    {
-        Halo5Server = 23,
-        Halo5Forge = 27
-    }
-
     [Flags]
     public enum FileEntryFlags : byte
     {
