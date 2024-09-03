@@ -87,7 +87,7 @@ namespace Reclaimer.Blam.HaloInfinite
         public Guid Guid { get; set; }
 
         [Offset(16)]
-        public Halo5.StructureType Type { get; set; }
+        public StructureType Type { get; set; }
 
         [Offset(20)]
         public int TargetIndex { get; set; }

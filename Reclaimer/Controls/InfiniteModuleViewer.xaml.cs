@@ -209,7 +209,7 @@ namespace Reclaimer.Controls
             }
         }
 
-        private OpenFileArgs GetFolderArgs(TreeItemModel node) => new OpenFileArgs(node.Header, $"Blam.{module.Header.ModuleId}.*", node);
+        private OpenFileArgs GetFolderArgs(TreeItemModel node) => new OpenFileArgs(node.Header, $"Blam.{module.Header.Version}.*", node);
 
         private OpenFileArgs GetSelectedArgs()
         {
@@ -222,7 +222,7 @@ namespace Reclaimer.Controls
         private OpenFileArgs GetSelectedArgs(ModuleItem item)
         {
             var fileName = $"{item.TagName}.{item.ClassName}";
-            var fileKey = $"Blam.{module.Header.ModuleId}.{item.ClassCode}";
+            var fileKey = $"Blam.{module.Header.Version}.{item.ClassCode}";
             return new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), GetFileFormats(item).ToArray());
         }
 

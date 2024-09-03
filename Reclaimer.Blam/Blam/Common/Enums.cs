@@ -9,6 +9,15 @@
         Halo5Forge = 27,
         HaloInfinite = 53,
     }
+
+    public enum StructureType : short
+    {
+        Main = 0,
+        TagBlock = 1,
+        Resource = 2,
+        Custom = 3,
+        Literal = 4
+    }
     public enum CacheGeneration
     {
         Gen1,

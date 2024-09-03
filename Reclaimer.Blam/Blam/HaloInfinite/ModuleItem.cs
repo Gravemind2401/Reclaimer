@@ -1,4 +1,5 @@
 ﻿using OodleSharp;
+using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System.IO;
@@ -167,7 +168,7 @@ namespace Reclaimer.Blam.HaloInfinite
 
                 using (var vreader = (DependencyReader)reader.CreateVirtualReader(header.Header.HeaderSize))
                 {
-                    var mainBlock = header.StructureDefinitions.First(s => s.Type == Blam.Halo5.StructureType.Main).TargetIndex;
+                    var mainBlock = header.StructureDefinitions.First(s => s.Type == StructureType.Main).TargetIndex;
 
                     vreader.Seek(header.DataBlocks[mainBlock].Offset, SeekOrigin.Begin);
                     var result = vreader.ReadObject<T>();
