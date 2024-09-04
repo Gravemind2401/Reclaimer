@@ -19,74 +19,65 @@ namespace Reclaimer.Blam.HaloInfinite
         public Module Module { get; }
 
         [Offset(0)]
-        public byte Unk_0x00 { get; set; }
-
-        [Offset(1)]
-        public byte _Flags { get; set; }
-
-        [Offset(2)]
-        public ushort BlockCount { get; set; }
+        public int ResourceCount { get; set; }
 
         [Offset(4)]
-        public int BlockIndex { get; set; }
+        public int ParentIndex { get; set; }
 
         [Offset(8)]
-        public int ResourceIndex { get; set; }
+        public short Unknown { get; set; }
+
+        [Offset(10)]
+        public short BlockCount { get; set; }
 
         [Offset(12)]
+        public int BlockIndex { get; set; }
+
+        [Offset(16)]
+        public int ResourceIndex { get; set; }
+
+        [Offset(20)]
         [ByteOrder(ByteOrder.BigEndian)]
         public int ClassId { get; set; }
 
-        [Offset(16)]
+        [Offset(24)]
         public long DataOffsetTemp { get; set; }
 
-        [Offset(24)]
+        [Offset(32)]
         public int TotalCompressedSize { get; set; }
 
-        [Offset(28)]
+        [Offset(36)]
         public int TotalUncompressedSize { get; set; }
 
-        [Offset(32)]
+        [Offset(40)]
         public int GlobalTagId { get; set; }
 
-        [Offset(36)]
+        [Offset(44)]
         public uint UncompressedHeaderSize { get; set; }
 
-        [Offset(40)]
+        [Offset(48)]
         public uint UncompressedTagSize { get; set; }
 
-        [Offset(44)]
+        [Offset(52)]
         public uint UncompressedResourceDataSize { get; set; }
 
-        [Offset(48)]
+        [Offset(56)]
         public uint UncompressedActualResourceSize { get; set; }
 
-        [Offset(52)]
-        public byte HeaderAlignment { get; set; }
-
-        [Offset(53)]
-        public byte TagDataAlignment { get; set; }
-
-        [Offset(54)]
-        public byte ResourceDataAlignment { get; set; }
-
-        [Offset(55)]
-        public byte ActualResourceDataAligment { get; set; }
-
-        [Offset(56)]
-        public uint NameOffset { get; set; }
-
         [Offset(60)]
-        public int ParentIndex { get; set; }
+        public uint ResourceBlockCount { get; set; }
 
         [Offset(64)]
-        public long AssetChecksum { get; set; }
+        public uint NameOffset { get; set; }
+
+        [Offset(68)]
+        public int ParentResource { get; set; }
 
         [Offset(72)]
-        public long AssetId { get; set; }
+        public long AssetChecksum { get; set; }
 
         [Offset(80)]
-        public int ResourceCount { get; set; }
+        public long AssetId { get; set; }
 
         public string ClassCode => (ClassId == -1) ? null : Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId));
 
