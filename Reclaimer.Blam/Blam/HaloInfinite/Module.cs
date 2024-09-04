@@ -44,7 +44,6 @@ namespace Reclaimer.Blam.HaloInfinite
             while (reader.BaseStream.Position < origin + Header.StringsSize)
                 Strings.Add((int)(reader.BaseStream.Position - origin), reader.ReadNullTerminatedString());
 
-            reader.Seek(8, SeekOrigin.Current); // 8 Byte padding.
             Resources = new List<int>(Header.ResourceCount);
             for (var i = 0; i < Header.ResourceCount; i++)
                 Resources.Add(reader.ReadInt32());
