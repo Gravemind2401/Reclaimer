@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <fieldDefinitions>
   <_field_tag_reference_64 size="28" valueType="tagReference" />
-  <_field_block_64 size="28" valueType="structure" />
+  <_field_block_64 size="20" valueType="structure" />
   
-  <_field_data_64 size="28" valueType="" hidden="true" />
+  <_field_data_64 size="24" valueType="" hidden="true" />
   <_field_pageable_resource_64 size="16" valueType="" hidden="true" />
   <_field_tag size="4" valueType="string" hidden="true" />
 

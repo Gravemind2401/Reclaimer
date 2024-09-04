@@ -242,6 +242,12 @@ namespace Reclaimer.Blam.Common
             switch (item.ClassCode)
             {
                 case bitmap:
+                    if (TryGetBitmapContent(item, out var bitmapContent))
+                    {
+                        content = bitmapContent;
+                        return true;
+                    }
+                    break;
                 case render_model:
                 case particle_model:
                 case scenario:
@@ -252,6 +258,18 @@ namespace Reclaimer.Blam.Common
 
             content = null;
             return false;
+        }
+
+        public static bool TryGetBitmapContent(HaloInfinite.ModuleItem item, out IContentProvider<IBitmap> content)
+        {
+            content = null;
+
+            if (item.ClassCode != bitmap)
+                return false;
+
+            content = item.ReadMetadata<HaloInfinite.bitmap>();
+
+            return content != null;
         }
 
         #endregion

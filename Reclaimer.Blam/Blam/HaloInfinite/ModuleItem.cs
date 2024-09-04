@@ -22,7 +22,7 @@ namespace Reclaimer.Blam.HaloInfinite
         public byte Unk_0x00 { get; set; }
 
         [Offset(1)]
-        public byte _Flags { get; set; }
+        public FileEntryFlags Flags { get; set; }
 
         [Offset(2)]
         public ushort BlockCount { get; set; }
@@ -91,7 +91,7 @@ namespace Reclaimer.Blam.HaloInfinite
         public string ClassCode => (ClassId == -1) ? null : Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId));
 
         public long DataOffset => DataOffsetTemp & 0x0000FFFFFFFFFFFF;
-        public DataOffsetFlags Flags => (DataOffsetFlags)(DataOffsetTemp >> 48);
+        public DataOffsetFlags DataOffsetFlags => (DataOffsetFlags)(DataOffsetTemp >> 48);
         public string TagName => GlobalTagId.ToString();
 
         public string ClassName => ClassCode;

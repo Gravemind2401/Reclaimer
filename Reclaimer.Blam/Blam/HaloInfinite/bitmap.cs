@@ -1,10 +1,11 @@
-﻿using Reclaimer.Blam.Common;
+using OodleSharp;
+using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Drawing;
 using Reclaimer.IO;
 using System.IO;
 
-namespace Reclaimer.Blam.Halo5
+namespace Reclaimer.Blam.HaloInfinite
 {
     public class bitmap : ContentTagDefinition<IBitmap>, IBitmap
     {
@@ -12,7 +13,7 @@ namespace Reclaimer.Blam.Halo5
             : base(item, header)
         { }
 
-        [Offset(240)]
+        [Offset(212)]
         public BlockCollection<BitmapDataBlock> Bitmaps { get; set; }
 
         #region IContentProvider
@@ -30,14 +31,7 @@ namespace Reclaimer.Blam.Halo5
             if (index >= Item.ResourceCount)
                 System.Diagnostics.Debugger.Break();
 
-            var resourceIndex = Module.Resources[Item.ResourceIndex] + index;
-            var resource = Module.Items[resourceIndex]; //this will be the [bitmap resource handle*] tag
-            if (resource.ResourceCount > 0)
-            {
-                //get the last [bitmap resource handle*.chunk#] tag (mips from smallest to largest?)
-                resource = Module.Items.Last(i => i.ParentIndex == resourceIndex);
-                isChunk = true;
-            }
+            var resource = Item.Module.Items[Item.Module.Resources[Item.ResourceIndex + Item.ResourceCount - 1]];
 
             var submap = Bitmaps[index];
 
@@ -47,9 +41,7 @@ namespace Reclaimer.Blam.Halo5
                 if (!isChunk)
                 {
                     if (resource.Flags.HasFlag(FileEntryFlags.HasBlocks))
-                        reader.Seek(resource.UncompressedHeaderSize + resource.UncompressedTagDataSize, SeekOrigin.Begin);
-                    else
-                        reader.Seek(Header.Header.HeaderSize, SeekOrigin.Begin);
+                        reader.Seek(resource.UncompressedHeaderSize + resource.UncompressedTagSize, SeekOrigin.Begin);
                 }
 
                 data = reader.ReadBytes((int)resource.TotalUncompressedSize);

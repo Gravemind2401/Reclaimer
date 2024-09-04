@@ -11,7 +11,7 @@ namespace Reclaimer.Blam.HaloInfinite
         void LoadBlocks(int currentBlock, long collectionOffset, DependencyReader itemReader);
     }
 
-    [FixedSize(28)]
+    [FixedSize(20)]
     public class BlockCollection<T> : Collection<T>, IBlockCollection
     {
         private readonly uint blockCount;
