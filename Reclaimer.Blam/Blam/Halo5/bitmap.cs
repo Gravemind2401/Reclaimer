@@ -1,4 +1,5 @@
-﻿using Reclaimer.Blam.Utilities;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Utilities;
 using Reclaimer.Drawing;
 using Reclaimer.IO;
 using System.IO;

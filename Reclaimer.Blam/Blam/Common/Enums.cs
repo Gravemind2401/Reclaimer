@@ -3,6 +3,15 @@
     using static CacheMetadataFlags;
     using static CachePlatform;
     using static CacheResourceCodec;
+
+    [Flags]
+    public enum FileEntryFlags : byte
+    {
+        Compressed = 0b00000001,
+        HasBlocks = 0b00000010,
+        RawFile = 0b00000100
+    }
+
     public enum ModuleType : int
     {
         Halo5Server = 23,
