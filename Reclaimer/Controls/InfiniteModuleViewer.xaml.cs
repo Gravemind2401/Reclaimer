@@ -163,8 +163,18 @@ namespace Reclaimer.Controls
             // Kinda ruined the pretty lambda here. Might refactor. 
             void AppendResourceNodes(TreeItemModel treeItem, ModuleItem tag)
             {
-                foreach (var resourceItem in Enumerable.Range(tag.ResourceIndex, tag.ResourceCount).Select(i => tag.Module.Items[tag.Module.Resources[i]]))
-                    treeItem.Items.Add(new TreeItemModel { Header = resourceItem.FileName, ItemType = ResourceNodeType, Tag = resourceItem });
+                foreach (var i in Enumerable.Range(tag.ResourceIndex, tag.ResourceCount))
+                {
+                    var resourceItem = tag.Module.Items[tag.Module.Resources[i]];
+                    var treeItemModel = new TreeItemModel
+                    {
+                        Header = $"{tag.TagName}_{i - tag.ResourceIndex}",
+                        ItemType = ResourceNodeType,
+                        Tag = resourceItem
+                    };
+
+                    treeItem.Items.Add(treeItemModel);
+                }
             }
 
 
