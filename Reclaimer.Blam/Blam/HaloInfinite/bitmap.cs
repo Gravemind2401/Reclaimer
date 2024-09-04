@@ -31,9 +31,20 @@ namespace Reclaimer.Blam.HaloInfinite
             if (index >= Item.ResourceCount)
                 System.Diagnostics.Debugger.Break();
 
-            var resource = Item.Module.Items[Item.Module.Resources[Item.ResourceIndex + Item.ResourceCount - 1]];
-
+            var resourceIndex = Item.ResourceIndex + Item.ResourceCount - 1;
+            var resource = Item.Module.Items[Item.Module.Resources[resourceIndex]];
             var submap = Bitmaps[index];
+
+            // Skip to the mip after the empty one from HD1.
+            // Will implement HD1 soon.
+            if (resource.DataOffsetFlags.HasFlag(DataOffsetFlags.UseHD1))
+            {
+                resourceIndex -= 1;
+                resource = Item.Module.Items[Item.Module.Resources[resourceIndex]];
+                submap.Width = (short)(submap.Width / 2);
+                submap.Height = (short)(submap.Height / 2);
+            }
+            
 
             byte[] data;
             using (var reader = resource.CreateReader())
