@@ -1,4 +1,3 @@
-using OodleSharp;
 using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Drawing;
