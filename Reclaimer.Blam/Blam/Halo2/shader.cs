@@ -1,4 +1,5 @@
 ﻿using Reclaimer.Blam.Common;
+using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 
 namespace Reclaimer.Blam.Halo2
@@ -7,7 +8,7 @@ namespace Reclaimer.Blam.Halo2
     {
         [Offset(20, MaxVersion = (int)CacheType.Halo2Xbox)]
         [Offset(12, MinVersion = (int)CacheType.Halo2Xbox)]
-        public BlockCollection<ShaderMapBlock> ShaderMaps { get; set; }
+        public BlockCollection<RuntimePropertiesBlock> RuntimeProperties { get; set; }
 
         //[Offset(36, MaxVersion = (int)CacheType.Halo2Xbox)] //maybe come back to this
         [MinVersion((int)CacheType.Halo2Xbox)]
@@ -17,7 +18,7 @@ namespace Reclaimer.Blam.Halo2
 
     [FixedSize(108, MaxVersion = (int)CacheType.Halo2Xbox)]
     [FixedSize(80, MinVersion = (int)CacheType.Halo2Xbox)]
-    public class ShaderMapBlock
+    public class RuntimePropertiesBlock
     {
         [Offset(0)]
         public TagReference DiffuseBitmapReference { get; set; }
@@ -42,25 +43,20 @@ namespace Reclaimer.Blam.Halo2
     public class ShaderPropertiesBlock
     {
         [Offset(0)]
-        public TagReference TemplateReference { get; set; }
-
-        [Offset(20)]
-        public BlockCollection<TilingInfoBlock> Tilings { get; set; }
-    }
-
-    [FixedSize(16)]
-    public class TilingInfoBlock
-    {
-        [Offset(0)]
-        public float UTiling { get; set; }
+        public TagReferenceShort TemplateReference { get; set; }
 
         [Offset(4)]
-        public float VTiling { get; set; }
+        public BlockCollection<ShaderMapBlock> Bitmaps { get; set; }
 
-        [Offset(8)]
-        public float Unknown0 { get; set; }
+        [Offset(20)]
+        public BlockCollection<RealVector4> TilingData { get; set; }
+    }
 
-        [Offset(12)]
-        public float Unknown1 { get; set; }
+    [FixedSize(12)]
+    [DebuggerDisplay($"{{{nameof(BitmapReference)},nq}}")]
+    public class ShaderMapBlock
+    {
+        [Offset(0)]
+        public TagReferenceShort BitmapReference { get; set; }
     }
 }

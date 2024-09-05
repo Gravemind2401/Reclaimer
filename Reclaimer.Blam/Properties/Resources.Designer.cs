@@ -119,6 +119,40 @@ namespace Reclaimer.Blam.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {
+        ///    &quot;&quot;: {
+        ///        &quot;bitmaps&quot;: [
+        ///            &quot;&quot;,
+        ///            &quot;&quot;,
+        ///            &quot;&quot;
+        ///        ],
+        ///        &quot;constants&quot;: [
+        ///            &quot;&quot;,
+        ///            &quot;&quot;,
+        ///            &quot;&quot;
+        ///        ]
+        ///    },
+        ///    &quot;default_texture_four_change_color_zwrite&quot;: {
+        ///        &quot;bitmaps&quot;: [
+        ///            &quot;base_map&quot;,
+        ///            &quot;detail_map&quot;,
+        ///            &quot;change_color_map&quot;
+        ///        ],
+        ///        &quot;constants&quot;: [
+        ///            &quot;detail_map&quot;,
+        ///            &quot;base_map&quot;,
+        ///            &quot;??? [0,0,1,1]&quot;
+        ///        ]
+        ///    },
+        ///    &quot;default_texture_two_cha [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Halo2XboxShaderPass {
+            get {
+                return ResourceManager.GetString("Halo2XboxShaderPass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- https://github.com/XboxChaos/Assembly/tree/dev/src/Blamite/Formats --&gt;
         ///&lt;stringDefinitions&gt;
         ///  &lt;stringIDs id=&quot;alpha_1117&quot; indexBits=&quot;16&quot; namespaceBits=&quot;8&quot; lengthBits=&quot;8&quot;&gt;
