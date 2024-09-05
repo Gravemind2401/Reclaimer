@@ -71,22 +71,32 @@ namespace Reclaimer.Blam.Halo2
 
     internal static class Halo2Common
     {
-        public static IEnumerable<Material> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
+        public static IEnumerable<Material> GetMaterials(Halo2GeometryArgs args)
         {
-            for (var i = 0; i < shaders.Count; i++)
+            var bitmaps = new Dictionary<int, bitmap>();
+            var materials = new Dictionary<int, Material>();
+
+            for (var i = 0; i < args.Shaders.Count; i++)
             {
-                var tag = shaders[i].ShaderReference.Tag;
+                var tag = args.Shaders[i].ShaderReference.Tag;
                 if (tag == null)
                 {
                     yield return null;
                     continue;
                 }
 
-                var material = new Material
+                //this is cached because often the same material tag will be used in multiple material slots
+                if (materials.TryGetValue(tag.Id, out var material))
+                {
+                    yield return material;
+                    continue;
+                }
+
+                materials.Add(tag.Id, material = new Material
                 {
                     Id = tag.Id,
                     Name = tag.FileName
-                };
+                });
 
                 material.CustomProperties.Add(BlamConstants.SourceTagPropertyName, tag.TagName);
 
@@ -97,27 +107,34 @@ namespace Reclaimer.Blam.Halo2
                     continue;
                 }
 
-                var bitmTag = shader.ShaderMaps[0].DiffuseBitmapReference.Tag;
-                if (bitmTag == null)
+                if (args.Cache.CacheType == CacheType.Halo2Xbox)
                 {
-                    yield return material;
-                    continue;
+                    MaterialHelper.PopulateTextureMappings(bitmaps, material, shader);
                 }
-
-                var texture = new Texture
+                else
                 {
-                    Id = bitmTag.Id,
-                    ContentProvider = bitmTag.ReadMetadata<bitmap>()
-                };
+                    var bitmTag = shader.RuntimeProperties[0].DiffuseBitmapReference.Tag;
+                    if (bitmTag == null)
+                    {
+                        yield return material;
+                        continue;
+                    }
 
-                texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, bitmTag.TagName);
+                    var texture = new Texture
+                    {
+                        Id = bitmTag.Id,
+                        ContentProvider = bitmTag.ReadMetadata<bitmap>()
+                    };
 
-                material.TextureMappings.Add(new TextureMapping
-                {
-                    Usage = TextureUsage.Diffuse,
-                    Tiling = Vector2.One,
-                    Texture = texture
-                });
+                    texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, bitmTag.TagName);
+
+                    material.TextureMappings.Add(new TextureMapping
+                    {
+                        Usage = TextureUsage.Diffuse,
+                        Tiling = Vector2.One,
+                        Texture = texture
+                    });
+                }
 
                 yield return material;
             }
@@ -126,7 +143,7 @@ namespace Reclaimer.Blam.Halo2
         public static List<Mesh> GetMeshes(Halo2GeometryArgs args, out List<Material> materials)
         {
             var matLookup = materials = new List<Material>(args.Shaders.Count);
-            matLookup.AddRange(GetMaterials(args.Shaders));
+            matLookup.AddRange(GetMaterials(args));
 
             var meshList = new List<Mesh>(args.Sections.Count);
 

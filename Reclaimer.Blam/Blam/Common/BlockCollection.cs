@@ -30,6 +30,15 @@ namespace Reclaimer.Blam.Common
 
         private string GetDebuggerDisplay() => $"{nameof(items.Count)} = {items.Count}";
 
+        public IEnumerable<T> this[Range range]
+        {
+            get
+            {
+                var (offset, length) = range.GetOffsetAndLength(items.Count);
+                return items.Skip(offset).Take(length);
+            }
+        }
+
         #region IReadOnlyList
         public T this[int index] => items[index];
 

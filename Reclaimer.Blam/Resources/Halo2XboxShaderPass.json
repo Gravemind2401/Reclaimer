@@ -1,0 +1,485 @@
+{
+    "add_clouds_simple_transparent": {
+        "bitmaps": [
+            "cloud_mask",
+            "cloud_map"
+        ],
+        "constants": [
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "tint_color",
+            "glancing_tint_color",
+            "??? [0,0,0,0]",
+            "??? [0,0,0,0]"
+        ]
+    },
+    "default_environment_map_tangent_space": {
+        "bitmaps": [
+            "environment_map",
+            "bump_map",
+            "base_map"
+        ],
+        "constants": [
+            "env_tint_color",
+            "env_glancing_tint_color",
+            "env_brightness",
+            "env_glancing_brightness",
+            "bump_map",
+            "base_map"
+        ]
+    },
+    "default_light_combined_tangentspace": {
+        "bitmaps": [
+            "bump_map",
+            "base_map"
+        ],
+        "constants": [
+            "bump_map",
+            "specular_color",
+            "specular_glancing_color",
+            "base_map"
+        ]
+    },
+    "default_light_combined_tangentspace_specular_sphere": {
+        "bitmaps": [
+            "bump_map",
+            "base_map"
+        ],
+        "constants": [
+            "bump_map",
+            "specular_color"
+        ]
+    },
+    "default_light_combined_tex_first_person_detail": {
+        "bitmaps": [
+            "bump_map",
+            "base_map",
+            "detail_map"
+        ],
+        "constants": [
+            "bump_map",
+            "specular_color",
+            "specular_glancing_color",
+            "base_map"
+        ]
+    },
+    "default_self_illumination": {
+        "bitmaps": [
+            "self_illum_map",
+            "base_map"
+        ],
+        "constants": [
+            "self_illum_map",
+            "base_map"
+        ]
+    },
+    "default_self_illumination_detail": {
+        "bitmaps": [
+            "self_illum_map",
+            "base_map",
+            "self_illum_detail"
+        ],
+        "constants": [
+            "base_map",
+            "self_illum_map",
+            "self_illum_detail"
+        ]
+    },
+    "default_texture_four_change_color_zwrite": {
+        "bitmaps": [
+            "base_map",
+            "detail_map",
+            "change_color_map"
+        ],
+        "constants": [
+            "detail_map",
+            "base_map",
+            "??? [0,0,1,1]"
+        ]
+    },
+    "default_texture_two_change_color_zwrite": {
+        "bitmaps": [
+            "base_map",
+            "detail_map",
+            "change_color_map"
+        ],
+        "constants": [
+            "detail_map",
+            "base_map",
+            "??? [0,0,1,1]"
+        ]
+    },
+    "default_texture_zwrite": {
+        "bitmaps": [
+            "base_map",
+            "detail_map"
+        ],
+        "constants": [
+            "detail_map",
+            "base_map"
+        ]
+    },
+    "default_texture_zwrite_alphatest": {
+        "bitmaps": [
+            "base_map",
+            "detail_map",
+            "bump_map",
+            "alpha_test_map"
+        ],
+        "constants": [
+            "detail_map",
+            "alpha_test_map",
+            "base_map",
+            "??? [0,0,1,1]"
+        ]
+    },
+    "default_texture_zwrite_honor_guard": {
+        "options": {
+            "specular_mask":  "specular_mask_from_diffuse"
+        },
+        "bitmaps": [
+            "base_map",
+            "detail_map",
+            "self_illum_map",
+            "self_illum_detail"
+        ],
+        "constants": [
+            "detail_map",
+            "base_map",
+            "??? [1,1,0,0]",
+            "??? [0,0,11,11]"
+        ]
+    },
+    "default_transparent": {
+        "bitmaps": [
+            "environment_map",
+            "specular_map",
+            "self_illum_map",
+            "alpha_blend_map"
+        ],
+        "constants": [
+            "tint_color",
+            "glancing_tint_color",
+            "??? [0,0,0,0]",
+            "??? [0,0,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]"
+        ]
+    },
+    "default_transparent_add": {
+        "bitmaps": [
+            "environment_map",
+            "specular_map",
+            "self_illum_map",
+            "alpha_blend_map"
+        ],
+        "constants": [
+            "tint_color",
+            "glancing_tint_color",
+            "??? [0,0,0,0]",
+            "??? [0,0,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]"
+        ]
+    },
+    "default_transparent_add_active_camo": {
+        "bitmaps": [
+            "environment_map",
+            "specular_map",
+            "self_illum_map",
+            "alpha_blend_map"
+        ],
+        "constants": [
+            "tint_color",
+            "glancing_tint_color",
+            "??? [0,0,0,0]",
+            "??? [0,0,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]"
+        ]
+    },
+    "default_transparent_multichannel": {
+        "bitmaps": [
+            "environment_map",
+            "multichannel_map",
+            "detail_map",
+            "???"
+        ],
+        "constants": [
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "tint_color",
+            "glancing_tint_color",
+            "brightness",
+            "glancing_brightness"
+        ]
+    },
+    "default_transparent_one_sided": {
+        "bitmaps": [
+            "environment_map",
+            "specular_map",
+            "self_illum_map",
+            "alpha_blend_map"
+        ],
+        "constants": [
+            "tint_color",
+            "glancing_tint_color",
+            "??? [0,0,0,0]",
+            "??? [0,0,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]"
+        ]
+    },
+    "default_transparent_one_sided_active_camo": {
+        "bitmaps": [
+            "environment_map",
+            "specular_map",
+            "???",
+            "alpha_blend_map"
+        ],
+        "constants": [
+            "tint_color",
+            "glancing_tint_color",
+            "??? [0,0,0,0]",
+            "??? [0,0,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]"
+        ]
+    },
+    "detail_blend_detail_texture_zwrite": {
+        "bitmaps": [
+            "base_map",
+            "blend_detail_map_1",
+            "blend_detail_map_2",
+            "overlay_detail_map"
+        ],
+        "constants": [
+            "??? [blend_detail_map_1|blend_detail_map_2]",
+            "??? [blend_detail_map_1|blend_detail_map_2]",
+            "??? [0,0,1,1]",
+            "base_map"
+        ]
+    },
+    "detail_overlay_texture_zwrite": {
+        "options": {
+            "specular_mask":  "specular_mask_from_diffuse"
+        },
+        "bitmaps": [
+            "base_map",
+            "detail_map",
+            "secondary_detail_map"
+        ],
+        "constants": [
+            "detail_map",
+            "secondary_detail_map",
+            "base_map"
+        ]
+    },
+    "lightmap_env": {
+        "bitmaps": [
+            "bump_map",
+            "base_map",
+            "environment_map"
+        ],
+        "constants": [
+            "bump_map",
+            "base_map"
+        ]
+    },
+    "lightmap_tex": {
+        "bitmaps": [
+            "bump_map",
+            "base_map"
+        ],
+        "constants": [
+            "bump_map",
+            "base_map"
+        ]
+    },
+    "lightmap_tex_change_color_env": {
+        "bitmaps": [
+            "bump_map",
+            "base_map",
+            "environment_map",
+            "change_color_map"
+        ],
+        "constants": [
+            "bump_map",
+            "base_map"
+        ]
+    },
+    "lightmap_tex_detail": {
+        "bitmaps": [
+            "bump_map",
+            "base_map",
+            "detail_map"
+        ],
+        "constants": [
+            "bump_map",
+            "base_map",
+            "detail_map"
+        ]
+    },
+    "lightmap_tex_detail_alpha_test": {
+        "options": {
+            "blend_mode": "alpha_blend"
+        },
+        "bitmaps": [
+            "bump_map",
+            "base_map",
+            "detail_map"
+        ],
+        "constants": [
+            "bump_map",
+            "base_map",
+            "detail_map"
+        ]
+    },
+    "lightmap_tex_detail_alpha_test_no_bump": {
+        "options": {
+            "blend_mode": "alpha_blend"
+        },
+        "bitmaps": [
+            "base_map",
+            "detail_map"
+        ],
+        "constants": [
+            "base_map",
+            "detail_map"
+        ]
+    },
+    "lightmap_tex_detail_shiny": {
+        "bitmaps": [
+            "bump_map",
+            "base_map",
+            "detail_map"
+        ],
+        "constants": [
+            "bump_map",
+            "base_map",
+            "detail_map"
+        ]
+    },
+    "lightmap_tex_env": {
+        "bitmaps": [
+            "bump_map",
+            "base_map",
+            "environment_map"
+        ],
+        "constants": [
+            "bump_map",
+            "base_map"
+        ]
+    },
+    "meter_active_camo": {
+        "bitmaps": [
+            "meter_map",
+            "alpha_map"
+        ],
+        "constants": [
+            "???",
+            "???",
+            "???",
+            "???"
+        ]
+    },
+    "one_add_illum": {
+        "bitmaps": [
+            "self_illum_map"
+        ],
+        "constants": [
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "tint_color",
+            "glancing_tint_color",
+            "??? [0,0,0,0]",
+            "??? [0,0,0,0]"
+        ]
+    },
+    "overlay": {
+        "bitmaps": [
+            "base_map",
+            "detail_map",
+            "change_color_map"
+        ],
+        "constants": [
+            "base_map",
+            "detail_map",
+            "change_color_map"
+        ]
+    },
+    "plasma_alpha": {
+        "bitmaps": [
+            "noise_map_a",
+            "noise_map_b",
+            "alpha_map"
+        ],
+        "constants": [
+            "??? [4,0,0,0]",
+            "??? [0,4,0,0]",
+            "??? [8,0,0,2]",
+            "??? [0,8,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "??? [0,0,0,1]",
+            "??? [0,0,0,1]"
+        ]
+    },
+    "shadow_generate": {
+        "bitmaps": [
+            "bump_map",
+            "base_map"
+        ],
+        "constants": []
+    },
+    "sky_default_transparent_one_sided": {
+        "bitmaps": [
+            "environment_map",
+            "specular_map",
+            "???",
+            "alpha_blend_map"
+        ],
+        "constants": [
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]",
+            "??? [1,0,0,0]",
+            "??? [0,1,0,0]"
+        ]
+    },
+    "water_pool": {
+        "bitmaps": [
+            "bump_map",
+            "reflection_map",
+            "fresnel_map"
+        ],
+        "constants": [
+            "bump_map"
+        ]
+    }
+}
