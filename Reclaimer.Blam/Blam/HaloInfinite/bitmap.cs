@@ -53,7 +53,7 @@ namespace Reclaimer.Blam.HaloInfinite
                                     ? resource.CreateReader()
                                     : Item.CreateReader())
             {
-                if (resource.Flags.HasFlag(FileEntryFlags.HasBlocks))
+                if (resource.Flags.HasFlag(FileEntryFlags.HasBlocks) && Item.UncompressedActualResourceSize == 0)
                 {
                     reader.Seek(resource.UncompressedHeaderSize + resource.UncompressedTagSize, SeekOrigin.Begin);
                 }
