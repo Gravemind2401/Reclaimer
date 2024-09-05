@@ -92,9 +92,24 @@ namespace Reclaimer.Blam.HaloInfinite
 
         public long DataOffset => DataOffsetTemp & 0x0000FFFFFFFFFFFF;
         public DataOffsetFlags DataOffsetFlags => (DataOffsetFlags)(DataOffsetTemp >> 48);
-        public string TagName => TagMapper.TagMappings.TryGetValue(GlobalTagId, out var value) && 
-            !string.IsNullOrEmpty(value)
-            ? value : GlobalTagId.ToString();
+
+        private string _cachedTagName;
+
+        public string TagName
+        {
+            get
+            {
+                if (_cachedTagName != null)
+                    return _cachedTagName;
+
+                _cachedTagName = GlobalTagId == -1
+                    ? GlobalTagId.ToString()
+                    : TagMapper.TagMappings.TryGetValue(GlobalTagId, out var value)
+                        ? value : GlobalTagId.ToString();
+
+                return _cachedTagName;
+            }
+        }
         public string ClassName => ClassCode;
 
         public string FileName => Utils.GetFileName(TagName);
