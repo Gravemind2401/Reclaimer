@@ -3,7 +3,6 @@ using Reclaimer.Blam.HaloInfinite;
 using Reclaimer.Controls.Editors;
 using System.ComponentModel;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -16,8 +15,6 @@ namespace Reclaimer.Plugins
         private const string BrowseFileFilter = "Halo Module Files|*.module";
         private const string ModuleFileExtension = "module";
 
-        private const string HaloInfiniteTagKeyRegex = @"Blam\.HaloInfinite\w+\..{2,}";
-
         internal static InfiniteModuleViewerSettings Settings;
 
         public override string Name => "Module Viewer (Infinite)";
@@ -25,6 +22,7 @@ namespace Reclaimer.Plugins
         private PluginContextItem ExtractBinaryContextItem => new PluginContextItem("ExtractBinary", "Extract Tag Binary", OnContextItemClick);
 
         public override void Initialise() => Settings = LoadSettings<InfiniteModuleViewerSettings>();
+        
         public override void Suspend() => SaveSettings(Settings);
 
         public override IEnumerable<PluginMenuItem> GetMenuItems()
@@ -117,5 +115,9 @@ namespace Reclaimer.Plugins
 
         [DisplayName("Hierarchy View")]
         public bool HierarchyView { get; set; }
+
+        [Editor(typeof(BrowseFileEditor), typeof(BrowseFileEditor))]
+        [DisplayName("Tag Hash File")]
+        public string TagNameFile { get; set; }
     }
 }

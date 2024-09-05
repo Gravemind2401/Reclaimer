@@ -92,8 +92,9 @@ namespace Reclaimer.Blam.HaloInfinite
 
         public long DataOffset => DataOffsetTemp & 0x0000FFFFFFFFFFFF;
         public DataOffsetFlags DataOffsetFlags => (DataOffsetFlags)(DataOffsetTemp >> 48);
-        public string TagName => GlobalTagId.ToString();
-
+        public string TagName => TagMapper.TagMappings.TryGetValue(GlobalTagId, out var value) && 
+            !string.IsNullOrEmpty(value)
+            ? value : GlobalTagId.ToString();
         public string ClassName => ClassCode;
 
         public string FileName => Utils.GetFileName(TagName);
@@ -101,18 +102,6 @@ namespace Reclaimer.Blam.HaloInfinite
         public ModuleItem(Module module)
         {
             Module = module ?? throw new ArgumentNullException(nameof(module));
-        }
-
-        private Block GetImpliedBlock()
-        {
-            return new Block
-            {
-                CompressedOffset = 0,
-                CompressedSize = TotalCompressedSize,
-                UncompressedOffset = 0,
-                UncompressedSize = TotalUncompressedSize,
-                Compressed = TotalUncompressedSize > TotalCompressedSize ? 1 : 0
-            };
         }
 
         public DependencyReader CreateReader()

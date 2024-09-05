@@ -66,6 +66,9 @@ namespace Reclaimer.Controls
         {
             InitializeComponent();
 
+            if (File.Exists(InfiniteModuleViewerPlugin.Settings.TagNameFile))
+                TagMapper.LoadTagMap(InfiniteModuleViewerPlugin.Settings.TagNameFile);
+
             OpenContextItem = new MenuItem { Header = "Open" };
             OpenWithContextItem = new MenuItem { Header = "Open With..." };
             OpenFromContextItem = new MenuItem { Header = "Open From..." };
