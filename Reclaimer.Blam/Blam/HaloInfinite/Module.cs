@@ -1,8 +1,6 @@
 ﻿using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
-using System.Diagnostics;
 using System.IO;
 
 namespace Reclaimer.Blam.HaloInfinite

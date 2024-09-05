@@ -1,7 +1,6 @@
 ﻿using Reclaimer.Annotations;
 using Reclaimer.Audio;
 using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
 using Reclaimer.Controls.Editors;
 using Reclaimer.Drawing;
 using Reclaimer.Geometry;
@@ -114,8 +113,10 @@ namespace Reclaimer.Plugins
             IExtractable extractable;
             if (obj is IIndexItem)
                 extractable = new CacheExtractable(obj as IIndexItem, outputFolder);
-            else if (obj is ModuleItem)
-                extractable = new ModuleExtractable(obj as ModuleItem, outputFolder);
+            else if (obj is Blam.Halo5.ModuleItem)
+                extractable = new ModuleExtractable(obj as Blam.Halo5.ModuleItem, outputFolder);
+            else if (obj is Blam.HaloInfinite.ModuleItem)
+                extractable = new InfiniteModuleExtractable(obj as Blam.HaloInfinite.ModuleItem, outputFolder);
             else if (obj is IPakItem)
                 extractable = new PakExtractable(obj as IPakItem, outputFolder);
             else
@@ -596,7 +597,7 @@ namespace Reclaimer.Plugins
 
         private sealed class ModuleExtractable : IExtractable
         {
-            private readonly ModuleItem item;
+            private readonly Blam.Halo5.ModuleItem item;
 
             public string ItemKey => $"{item.TagName}.{item.ClassName}";
 
@@ -606,7 +607,7 @@ namespace Reclaimer.Plugins
 
             public bool SupportsBatchMode => item.ClassCode != "scnr";
 
-            public ModuleExtractable(ModuleItem item, string destination)
+            public ModuleExtractable(Blam.Halo5.ModuleItem item, string destination)
             {
                 this.item = item;
                 Destination = destination;
@@ -631,6 +632,45 @@ namespace Reclaimer.Plugins
                 return false;
             }
         }
+
+        private sealed class InfiniteModuleExtractable : IExtractable
+        {
+            private readonly Blam.HaloInfinite.ModuleItem item;
+
+            public string ItemKey => $"{item.TagName}.{item.ClassName}";
+
+            public string DisplayName => ItemKey;
+
+            public string Destination { get; }
+
+            public bool SupportsBatchMode => item.ClassCode != "scnr";
+
+            public InfiniteModuleExtractable(Blam.HaloInfinite.ModuleItem item, string destination)
+            {
+                this.item = item;
+                Destination = destination;
+            }
+
+            public int GetContentType()
+            {
+                return item.ClassCode switch
+                {
+                    "bitm" => 0,
+                    "mode" or "sbsp" or "stlm" or "scnr" or "pmdf" => 1,
+                    //"snd!" => return 2,
+                    _ => -1
+                };
+            }
+
+            public bool GetBitmapContent(out IContentProvider<IBitmap> provider) => BlamContentFactory.TryGetBitmapContent(item, out provider);
+            public bool GetGeometryContent(out IContentProvider<Scene> provider) => BlamContentFactory.TryGetGeometryContent(item, out provider);
+            public bool GetSoundContent(out IContentProvider<GameSound> provider)
+            {
+                provider = null;
+                return false;
+            }
+        }
+
 
         private sealed class PakExtractable : IExtractable
         {

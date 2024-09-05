@@ -272,6 +272,22 @@ namespace Reclaimer.Blam.Common
             return content != null;
         }
 
+        public static bool TryGetGeometryContent(HaloInfinite.ModuleItem item, out IContentProvider<Scene> content)
+        {
+            content = null;
+
+            if (item == null)
+                return false;
+
+            content = item.ClassCode switch
+            {
+                //render_model => item.ReadMetadata<Halo5.render_model>(),
+                _ => null
+            };
+
+            return content != null;
+        }
+
         #endregion
 
         //the reader must currently be at the start of the encoded block. the first [segmentOffset] bytes of the block will be discarded.
