@@ -28,16 +28,21 @@ namespace Reclaimer.Blam.HaloInfinite
         public DdsImage ToDds(int index)
         {
             var resourceIndex = Item.ResourceIndex + Item.ResourceCount - 1;
-            var resource = Item.Module.Items[Item.Module.Resources[resourceIndex]];
+            var resource = Item.Module.Items[Item.Module.Resources[resourceIndex] - index];
             var submap = Bitmaps[index];
 
             // Skip to the mip after the empty one from HD1.
             if (resource.DataOffsetFlags.HasFlag(DataOffsetFlags.UseHD1))
             {
-                resourceIndex -= 1;
+                resourceIndex--;
                 resource = Item.Module.Items[Item.Module.Resources[resourceIndex]];
                 submap.Width /= 2;
                 submap.Height /= 2;
+            }
+
+            if (!resource.Flags.HasFlag(FileEntryFlags.RawFile) && resource.UncompressedActualResourceSize == 0)
+            {
+                resource = Item.Module.Items[Item.Module.Resources[resource.ResourceIndex + resource.ResourceCount - 1]];
             }
 
             byte[] data = ReadResourceData(index, resource);
@@ -49,21 +54,27 @@ namespace Reclaimer.Blam.HaloInfinite
 
         private byte[] ReadResourceData(int index, ModuleItem resource)
         {
-            using (var reader = index < Item.ResourceCount
-                                    ? resource.CreateReader()
-                                    : Item.CreateReader())
+            using (var reader = (index < Item.ResourceCount)
+                                        ? resource.CreateReader()
+                                        : Item.CreateReader())
             {
-                if (resource.Flags.HasFlag(FileEntryFlags.HasBlocks) && Item.UncompressedActualResourceSize == 0)
+                if (resource.Flags.HasFlag(FileEntryFlags.HasBlocks) && Item.UncompressedActualResourceSize == 0 && resource.UncompressedActualResourceSize == 0)
                 {
                     reader.Seek(resource.UncompressedHeaderSize + resource.UncompressedTagSize, SeekOrigin.Begin);
                 }
-                else if (index >= Item.ResourceCount)
+                else if (index >= Item.ResourceCount && Item.UncompressedActualResourceSize > 0)
                 {
                     reader.Seek(Item.UncompressedHeaderSize + Item.UncompressedTagSize, SeekOrigin.Begin);
                     // Early return if bitmap data is contained inside tag.
                     return reader.ReadBytes((int)Item.UncompressedActualResourceSize);
                 }
-                
+                else if (resource.UncompressedActualResourceSize > 0 && resource.Flags.HasFlag(FileEntryFlags.HasBlocks))
+                {
+                    reader.Seek(resource.UncompressedHeaderSize + resource.UncompressedTagSize, SeekOrigin.Begin);
+                    // Early return if bitmap data is contained inside resource.
+                    return reader.ReadBytes((int)resource.UncompressedActualResourceSize);
+                }
+
                 return reader.ReadBytes((int)resource.TotalUncompressedSize);
             }
         }
