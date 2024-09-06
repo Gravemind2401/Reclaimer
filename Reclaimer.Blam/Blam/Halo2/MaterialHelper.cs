@@ -196,6 +196,9 @@ namespace Reclaimer.Blam.Halo2
             if (string.IsNullOrEmpty(material.AlphaMode))
                 material.AlphaMode = AlphaMode.Opaque;
 
+            var baseMap = textureParams.FirstOrDefault(t => t.Usage == ShaderParameters.BaseMap);
+            var baseScale = new Vector2(baseMap?.TileData.X ?? 1, baseMap?.TileData.Y ?? 1);
+
             foreach (var texParam in textureParams)
             {
                 if (texParam.Tag == null)
@@ -213,10 +216,14 @@ namespace Reclaimer.Blam.Halo2
 
                 texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, texParam.Tag.TagName);
 
+                var textureScale = new Vector2(texParam.TileData.X, texParam.TileData.Y);
+                if (texParam.Usage != ShaderParameters.BaseMap)
+                    textureScale *= baseScale;
+
                 material.TextureMappings.Add(new TextureMapping
                 {
                     Usage = ShaderParameters.UsageLookup.GetValueOrDefault(texParam.Usage, TextureUsage.Other),
-                    Tiling = new Vector2(texParam.TileData.X, texParam.TileData.Y),
+                    Tiling = textureScale,
                     BlendChannel = texParam.BlendChannel,
                     Texture = texture
                 });
