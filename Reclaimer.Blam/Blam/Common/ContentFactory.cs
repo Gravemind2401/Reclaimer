@@ -249,6 +249,12 @@ namespace Reclaimer.Blam.Common
                     }
                     break;
                 case render_model:
+                    if (TryGetGeometryContent(item, out var geometryContent))
+                    {
+                        content = geometryContent;
+                        return true;
+                    }
+                    break;
                 case particle_model:
                 case scenario:
                 case scenario_structure_bsp:
@@ -281,7 +287,7 @@ namespace Reclaimer.Blam.Common
 
             content = item.ClassCode switch
             {
-                //render_model => item.ReadMetadata<Halo5.render_model>(),
+                render_model => item.ReadMetadata<HaloInfinite.render_model>(),
                 _ => null
             };
 
