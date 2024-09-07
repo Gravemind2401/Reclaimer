@@ -120,31 +120,25 @@ namespace Reclaimer.Blam.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to {
-        ///    &quot;&quot;: {
+        ///    &quot;add_clouds_simple_transparent&quot;: {
         ///        &quot;bitmaps&quot;: [
-        ///            &quot;&quot;,
-        ///            &quot;&quot;,
-        ///            &quot;&quot;
+        ///            &quot;cloud_mask&quot;,
+        ///            &quot;cloud_map&quot;
         ///        ],
         ///        &quot;constants&quot;: [
-        ///            &quot;&quot;,
-        ///            &quot;&quot;,
-        ///            &quot;&quot;
+        ///            &quot;??? [1,0,0,0]&quot;,
+        ///            &quot;??? [0,1,0,0]&quot;,
+        ///            &quot;??? [1,0,0,0]&quot;,
+        ///            &quot;??? [0,1,0,0]&quot;,
+        ///            &quot;tint_color&quot;,
+        ///            &quot;glancing_tint_color&quot;,
+        ///            &quot;??? [0,0,0,0]&quot;,
+        ///            &quot;??? [0,0,0,0]&quot;
         ///        ]
         ///    },
-        ///    &quot;default_texture_four_change_color_zwrite&quot;: {
+        ///    &quot;default_environment_map_tangent_space&quot;: {
         ///        &quot;bitmaps&quot;: [
-        ///            &quot;base_map&quot;,
-        ///            &quot;detail_map&quot;,
-        ///            &quot;change_color_map&quot;
-        ///        ],
-        ///        &quot;constants&quot;: [
-        ///            &quot;detail_map&quot;,
-        ///            &quot;base_map&quot;,
-        ///            &quot;??? [0,0,1,1]&quot;
-        ///        ]
-        ///    },
-        ///    &quot;default_texture_two_cha [rest of string was truncated]&quot;;.
+        ///            &quot;environment_map [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Halo2XboxShaderPass {
             get {
