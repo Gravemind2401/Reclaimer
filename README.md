@@ -9,7 +9,7 @@ For original research on the Blam! engine and answering many a question along th
 - [Assembly](https://github.com/XboxChaos/Assembly "Assembly") Contributors
 - [troymac1ure](https://github.com/troymac1ure/Entity "troymac1ure")
 - [Ausar Docs](https://github.com/ElDewrito/AusarDocs "Ausar Docs")
-- And a whole bunch of other people we didn't have room to 7hank
+- And a whole bunch of other people we didn't have room to Thank
 
 ## About Reclaimer
 Reclaimer is a tool for viewing and exporting data in game files. While it's designed for Halo games, its also possible for developers to create plugins which could support other games, or add additional features related to Halo.
@@ -24,7 +24,7 @@ In general, Reclaimer works with these kinds of files:
 - `.yelo`  files from Halo Custom Edition (Open Sauce enhanced)
 - `.s3dpak` files (decompressed) from Halo CE Anniversary
 - `.map` files from Halo MCC PC
-- `.module` files from Halo 5
+- `.module` files from Halo 5/Halo Infinite
 
 Using AMF model files will require either the [3DS Max](https://github.com/Gravemind2401/Reclaimer/blob/master/Reclaimer.Blam/Resources/3dsMax%20AMF2.ms "3DS Max") import script or the [Blender](https://github.com/Gravemind2401/Reclaimer/blob/master/Reclaimer.Blam/Resources/Blender%20AMF2.py "Blender") import script.
 
