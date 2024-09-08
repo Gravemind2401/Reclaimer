@@ -13,9 +13,9 @@ using System.Windows.Input;
 namespace Reclaimer.Controls
 {
     /// <summary>
-    /// Interaction logic for InfiniteModuleViewer.xaml
+    /// Interaction logic for HaloInfiniteModuleViewer.xaml
     /// </summary>
-    public partial class InfiniteModuleViewer
+    public partial class HaloInfiniteModuleViewer
     {
         private const int FolderNodeType = 0;
         private const int TagNodeType = 1;
@@ -32,12 +32,12 @@ namespace Reclaimer.Controls
 
         #region Dependency Properties
         private static readonly DependencyPropertyKey HasGlobalHandlersPropertyKey =
-            DependencyProperty.RegisterReadOnly(nameof(HasGlobalHandlers), typeof(bool), typeof(InfiniteModuleViewer), new PropertyMetadata(false));
+            DependencyProperty.RegisterReadOnly(nameof(HasGlobalHandlers), typeof(bool), typeof(HaloInfiniteModuleViewer), new PropertyMetadata(false));
 
         public static readonly DependencyProperty HasGlobalHandlersProperty = HasGlobalHandlersPropertyKey.DependencyProperty;
 
         public static readonly DependencyProperty HierarchyViewProperty =
-            DependencyProperty.Register(nameof(HierarchyView), typeof(bool), typeof(InfiniteModuleViewer), new PropertyMetadata(false, HierarchyViewChanged));
+            DependencyProperty.Register(nameof(HierarchyView), typeof(bool), typeof(HaloInfiniteModuleViewer), new PropertyMetadata(false, HierarchyViewChanged));
 
         public bool HasGlobalHandlers
         {
@@ -57,17 +57,17 @@ namespace Reclaimer.Controls
 
         public static void HierarchyViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var mv = d as InfiniteModuleViewer;
-            InfiniteModuleViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
+            var mv = d as HaloInfiniteModuleViewer;
+            HaloInfiniteModuleViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
             mv.BuildTagTree(mv.txtSearch.Text);
         }
 
-        public InfiniteModuleViewer()
+        public HaloInfiniteModuleViewer()
         {
             InitializeComponent();
 
-            if (File.Exists(InfiniteModuleViewerPlugin.Settings.TagNameFile))
-                TagMapper.LoadTagMap(InfiniteModuleViewerPlugin.Settings.TagNameFile);
+            if (File.Exists(HaloInfiniteModuleViewerPlugin.Settings.TagNameFile))
+                TagMapper.LoadTagMap(HaloInfiniteModuleViewerPlugin.Settings.TagNameFile);
 
             OpenContextItem = new MenuItem { Header = "Open" };
             OpenWithContextItem = new MenuItem { Header = "Open With..." };
@@ -107,7 +107,7 @@ namespace Reclaimer.Controls
                     item.Click += GlobalContextItem_Click;
             }
 
-            HierarchyView = InfiniteModuleViewerPlugin.Settings.HierarchyView;
+            HierarchyView = HaloInfiniteModuleViewerPlugin.Settings.HierarchyView;
             BuildTagTree(null);
         }
 
@@ -272,8 +272,8 @@ namespace Reclaimer.Controls
                 CheckFileExists = true
             };
             
-            if (!string.IsNullOrEmpty(InfiniteModuleViewerPlugin.Settings.ModuleFolder))
-                ofd.InitialDirectory = InfiniteModuleViewerPlugin.Settings.ModuleFolder;
+            if (!string.IsNullOrEmpty(HaloInfiniteModuleViewerPlugin.Settings.ModuleFolder))
+                ofd.InitialDirectory = HaloInfiniteModuleViewerPlugin.Settings.ModuleFolder;
 
             if (ofd.ShowDialog() != true)
                 return;

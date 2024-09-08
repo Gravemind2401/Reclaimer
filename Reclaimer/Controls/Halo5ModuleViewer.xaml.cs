@@ -12,9 +12,9 @@ using System.Windows.Input;
 namespace Reclaimer.Controls
 {
     /// <summary>
-    /// Interaction logic for ModuleViewer.xaml
+    /// Interaction logic for Halo5ModuleViewer.xaml
     /// </summary>
-    public partial class ModuleViewer
+    public partial class Halo5ModuleViewer
     {
         private const int FolderNodeType = 0;
         private const int TagNodeType = 1;
@@ -31,12 +31,12 @@ namespace Reclaimer.Controls
 
         #region Dependency Properties
         private static readonly DependencyPropertyKey HasGlobalHandlersPropertyKey =
-            DependencyProperty.RegisterReadOnly(nameof(HasGlobalHandlers), typeof(bool), typeof(ModuleViewer), new PropertyMetadata(false));
+            DependencyProperty.RegisterReadOnly(nameof(HasGlobalHandlers), typeof(bool), typeof(Halo5ModuleViewer), new PropertyMetadata(false));
 
         public static readonly DependencyProperty HasGlobalHandlersProperty = HasGlobalHandlersPropertyKey.DependencyProperty;
 
         public static readonly DependencyProperty HierarchyViewProperty =
-            DependencyProperty.Register(nameof(HierarchyView), typeof(bool), typeof(ModuleViewer), new PropertyMetadata(false, HierarchyViewChanged));
+            DependencyProperty.Register(nameof(HierarchyView), typeof(bool), typeof(Halo5ModuleViewer), new PropertyMetadata(false, HierarchyViewChanged));
 
         public bool HasGlobalHandlers
         {
@@ -56,12 +56,12 @@ namespace Reclaimer.Controls
 
         public static void HierarchyViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var mv = d as ModuleViewer;
-            ModuleViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
+            var mv = d as Halo5ModuleViewer;
+            Halo5ModuleViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
             mv.BuildTagTree(mv.txtSearch.Text);
         }
 
-        public ModuleViewer()
+        public Halo5ModuleViewer()
         {
             InitializeComponent();
 
@@ -103,7 +103,7 @@ namespace Reclaimer.Controls
                     item.Click += GlobalContextItem_Click;
             }
 
-            HierarchyView = ModuleViewerPlugin.Settings.HierarchyView;
+            HierarchyView = Halo5ModuleViewerPlugin.Settings.HierarchyView;
             BuildTagTree(null);
         }
 
@@ -257,8 +257,8 @@ namespace Reclaimer.Controls
                 CheckFileExists = true
             };
 
-            if (!string.IsNullOrEmpty(ModuleViewerPlugin.Settings.ModuleFolder))
-                ofd.InitialDirectory = ModuleViewerPlugin.Settings.ModuleFolder;
+            if (!string.IsNullOrEmpty(Halo5ModuleViewerPlugin.Settings.ModuleFolder))
+                ofd.InitialDirectory = Halo5ModuleViewerPlugin.Settings.ModuleFolder;
 
             if (ofd.ShowDialog() != true)
                 return;

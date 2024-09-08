@@ -1,5 +1,5 @@
 ﻿using Microsoft.Win32;
-using Reclaimer.Blam.Halo5;
+using Reclaimer.Blam.HaloInfinite;
 using Reclaimer.Controls.Editors;
 using System.ComponentModel;
 using System.IO;
@@ -9,22 +9,22 @@ using System.Windows.Controls;
 
 namespace Reclaimer.Plugins
 {
-    public class ModuleViewerPlugin : Plugin
+    public class HaloInfiniteModuleViewerPlugin : Plugin
     {
-        private const string OpenKey = "ModuleViewer.OpenModule";
-        private const string OpenPath = "File\\Open Module";
+        private const string OpenKey = "InfiniteModuleViewer.OpenModule";
+        private const string OpenPath = "File\\Open Module (Halo Infinite)";
         private const string BrowseFileFilter = "Halo Module Files|*.module";
         private const string ModuleFileExtension = "module";
+        private const string HaloInfiniteTagKeyRegex = @"Blam\.HaloInfinite";
 
-        private const string Halo5TagKeyRegex = @"Blam\.Halo5\w+\..{2,}";
+        internal static InfiniteModuleViewerSettings Settings;
 
-        internal static ModuleViewerSettings Settings;
+        public override string Name => "Module Viewer (Infinite)";
 
-        public override string Name => "Module Viewer";
+        private PluginContextItem ExtractInfiniteBinaryContextItem => new PluginContextItem("ExtractBinary", "Extract Tag Binary", OnContextItemClick);
 
-        private PluginContextItem ExtractBinaryContextItem => new PluginContextItem("ExtractBinary", "Extract Tag Binary", OnContextItemClick);
-
-        public override void Initialise() => Settings = LoadSettings<ModuleViewerSettings>();
+        public override void Initialise() => Settings = LoadSettings<InfiniteModuleViewerSettings>();
+        
         public override void Suspend() => SaveSettings(Settings);
 
         public override IEnumerable<PluginMenuItem> GetMenuItems()
@@ -32,10 +32,11 @@ namespace Reclaimer.Plugins
             yield return new PluginMenuItem(OpenKey, OpenPath, OnMenuItemClick);
         }
 
+
         public override IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
         {
-            if (Regex.IsMatch(context.FileTypeKey, Halo5TagKeyRegex))
-                yield return ExtractBinaryContextItem;
+            if (Regex.IsMatch(context.FileTypeKey, HaloInfiniteTagKeyRegex))
+                yield return ExtractInfiniteBinaryContextItem;
         }
 
         private void OnMenuItemClick(string key)
@@ -93,7 +94,7 @@ namespace Reclaimer.Plugins
 
             try
             {
-                var mv = new Controls.ModuleViewer();
+                var mv = new Controls.HaloInfiniteModuleViewer();
                 mv.TabModel.ContentId = tabId;
                 mv.LoadModule(fileName);
                 Substrate.AddTool(mv.TabModel, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
@@ -110,7 +111,7 @@ namespace Reclaimer.Plugins
         }
     }
 
-    internal class ModuleViewerSettings
+    internal class InfiniteModuleViewerSettings
     {
         [Editor(typeof(BrowseFolderEditor), typeof(BrowseFolderEditor))]
         [DisplayName("Modules Folder")]
@@ -118,5 +119,9 @@ namespace Reclaimer.Plugins
 
         [DisplayName("Hierarchy View")]
         public bool HierarchyView { get; set; }
+
+        [Editor(typeof(BrowseFileEditor), typeof(BrowseFileEditor))]
+        [DisplayName("Tag Hash File")]
+        public string TagNameFile { get; set; }
     }
 }
