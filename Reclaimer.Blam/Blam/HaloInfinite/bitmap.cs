@@ -31,8 +31,8 @@ namespace Reclaimer.Blam.HaloInfinite
             var resource = Item.Module.Items[Item.Module.Resources[resourceIndex] - index];
             var submap = Bitmaps[index];
 
-            // Skip to the mip after the empty one from HD1.
-            if (resource.DataOffsetFlags.HasFlag(DataOffsetFlags.UseHD1))
+            // Skip to the mip after the empty one from HD1 if HD1 module isn't loaded.
+            if (resource.DataOffsetFlags.HasFlag(DataOffsetFlags.UseHD1) && Item.Module.hd1Stream == null)
             {
                 resourceIndex--;
                 resource = Item.Module.Items[Item.Module.Resources[resourceIndex]];

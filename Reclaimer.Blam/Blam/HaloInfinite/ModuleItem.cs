@@ -127,9 +127,13 @@ namespace Reclaimer.Blam.HaloInfinite
                 return r;
             }
 
-            using (var reader = Module.CreateReader())
+            using (var reader = Module.CreateReader(DataOffsetFlags.HasFlag(DataOffsetFlags.UseHD1)))
             {
-                var file_offset = Module.DataAddress + DataOffset;
+                // HD1 Delta is the offset of which the same data is found in the hd1 handle.
+                var file_offset = DataOffsetFlags.HasFlag(DataOffsetFlags.UseHD1)
+                    ? DataOffset - Module.Header.HD1Delta
+                    : DataOffset + Module.DataAddress;
+
                 var file_buffer = new MemoryStream(TotalUncompressedSize);
 
                 if (BlockCount != 0)
@@ -146,14 +150,16 @@ namespace Reclaimer.Blam.HaloInfinite
 
                             byte[] decompressed_data = Oodle.Decompress(block_buffer, block_buffer.Length, block.UncompressedSize);
                             file_buffer.Write(decompressed_data, 0, decompressed_data.Length);
-                        } else
+                        }
+                        else
                         {
                             var block_buffer = new byte[block.UncompressedSize];
                             reader.Read(block_buffer, 0, block.UncompressedSize);
                             file_buffer.Write(block_buffer);
                         }
                     }
-                } else
+                }
+                else
                 {
                     reader.Seek(file_offset, SeekOrigin.Begin);
                     var block_buffer = new byte[TotalCompressedSize];
@@ -162,7 +168,8 @@ namespace Reclaimer.Blam.HaloInfinite
                     if (TotalCompressedSize == TotalUncompressedSize)
                     {
                         file_buffer.Write(block_buffer);
-                    } else
+                    }
+                    else
                     {
                         byte[] decompressed_data = Oodle.Decompress(block_buffer, TotalCompressedSize, TotalUncompressedSize);
                         file_buffer.Write(decompressed_data);

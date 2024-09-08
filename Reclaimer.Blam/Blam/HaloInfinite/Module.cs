@@ -11,6 +11,7 @@ namespace Reclaimer.Blam.HaloInfinite
 
         private readonly TagIndex tagIndex;
         private readonly List<Module> linkedModules;
+        public readonly FileStream hd1Stream;
 
         public string FileName { get; }
 
@@ -29,10 +30,15 @@ namespace Reclaimer.Blam.HaloInfinite
         {
             FileName = fileName;
 
-            using var reader = CreateReader();
+            using var reader = CreateReader(false);
 
             Header = reader.ReadObject<ModuleHeader>();
             
+            if (Header.HD1Delta != 0 && File.Exists($"{fileName}_hd1"))
+            {
+                hd1Stream = new FileStream($"{fileName}_hd1", FileMode.Open, FileAccess.Read);
+            }
+
             Items = new List<ModuleItem>(Header.ItemCount);
             for (var i = 0; i < Header.ItemCount; i++)
                 Items.Add(reader.ReadObject<ModuleItem>());
@@ -58,8 +64,17 @@ namespace Reclaimer.Blam.HaloInfinite
             linkedModules = parentModule?.linkedModules ?? new List<Module>(Enumerable.Repeat(this, 1));
         }
 
-        public DependencyReader CreateReader()
+        public DependencyReader CreateReader(bool isHd1)
         {
+            if (isHd1)
+            {
+                if (hd1Stream != null)
+                {
+                    var reader = new DependencyReader(hd1Stream, ByteOrder.LittleEndian);
+                    reader.RegisterInstance(this);
+                    return reader;
+                }
+            }
             var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read);
             return CreateReader(fs);
         }
@@ -68,7 +83,7 @@ namespace Reclaimer.Blam.HaloInfinite
         {
             var reader = new DependencyReader(stream, ByteOrder.LittleEndian);
 
-            //verify header when reading a module file
+            // Verify header when reading a module file
             if (stream is FileStream)
             {
                 var header = reader.PeekInt32();
