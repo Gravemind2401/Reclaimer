@@ -182,6 +182,36 @@ namespace Reclaimer.Blam.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {
+        ///    &quot;shaders\\material_shaders\\decals\\base&quot;: {
+        ///        &quot;parameters&quot;: [
+        ///            {
+        ///                &quot;name&quot;: &quot;color_map&quot;,
+        ///                &quot;type&quot;: &quot;bitmap&quot;
+        ///            }
+        ///        ]
+        ///    },
+        ///    &quot;shaders\\material_shaders\\decals\\base_alpha&quot;: {
+        ///        &quot;parameters&quot;: [
+        ///            {
+        ///                &quot;name&quot;: &quot;color_map&quot;,
+        ///                &quot;type&quot;: &quot;bitmap&quot;
+        ///            },
+        ///            {
+        ///                &quot;name&quot;: &quot;alpha_map&quot;,
+        ///                &quot;type&quot;: &quot;bitmap&quot;
+        ///            }
+        ///        ]
+        ///    },
+        ///    &quot;sha [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Halo4MaterialShader {
+            get {
+                return ResourceManager.GetString("Halo4MaterialShader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- https://github.com/XboxChaos/Assembly/tree/dev/src/Blamite/Formats --&gt;
         ///&lt;stringDefinitions&gt;
         ///    &lt;stringIDs id=&quot;beta&quot; indexBits=&quot;18&quot; namespaceBits=&quot;8&quot; lengthBits=&quot;6&quot;&gt;

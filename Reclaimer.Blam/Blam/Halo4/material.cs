@@ -21,6 +21,12 @@ namespace Reclaimer.Blam.Halo4
 
         [Offset(12)]
         public BlockCollection<RealVector4> TilingData { get; set; }
+
+        [Offset(24)]
+        public BlockCollection<RealVector4> FloatConstants { get; set; }
+
+        [Offset(120)]
+        public BlendMode BlendMode { get; set; }
     }
 
     [FixedSize(20, MaxVersion = (int)CacheType.Halo4Retail)]
@@ -33,5 +39,34 @@ namespace Reclaimer.Blam.Halo4
 
         [Offset(19)]
         public byte TilingIndex { get; set; }
+    }
+
+    public enum BlendMode : byte
+    {
+        Opaque = 0,
+        Additive,
+        Multiply,
+        AlphaBlend,
+        DoubleMultiply,
+        PreMultipliedAlpha,
+        Maximum,
+        MultiplyAdd,
+        AddSrcTimesDstAlpha,
+        AddSrcTimesSrcAlpha,
+        InvAlphaBlend,
+        MotionBlurStatic,
+        MotionBlurInhibit,
+        ApplyShadowIntoShadowMask,
+        AlphaBlendConstant,
+        OverdrawApply,
+        WetScreenEffect,
+        Minimum,
+        Revsubtract,
+        ForgeLightmap,
+        ForgeLightmapInv,
+        ReplaceAllChannels,
+        AlphaBlendMax,
+        OpaqueAlphaBlend,
+        AlphaBlendAdditiveTransparent
     }
 }

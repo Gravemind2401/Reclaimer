@@ -73,8 +73,8 @@ namespace Reclaimer.Blam.Halo2
     {
         public static IEnumerable<Material> GetMaterials(Halo2GeometryArgs args)
         {
-            var bitmaps = new Dictionary<int, bitmap>();
-            var materials = new Dictionary<int, Material>();
+            var bitmapCache = new Dictionary<int, bitmap>();
+            var materialCache = new Dictionary<int, Material>();
 
             for (var i = 0; i < args.Shaders.Count; i++)
             {
@@ -86,13 +86,13 @@ namespace Reclaimer.Blam.Halo2
                 }
 
                 //this is cached because often the same material tag will be used in multiple material slots
-                if (materials.TryGetValue(tag.Id, out var material))
+                if (materialCache.TryGetValue(tag.Id, out var material))
                 {
                     yield return material;
                     continue;
                 }
 
-                materials.Add(tag.Id, material = new Material
+                materialCache.Add(tag.Id, material = new Material
                 {
                     Id = tag.Id,
                     Name = tag.FileName
@@ -109,7 +109,7 @@ namespace Reclaimer.Blam.Halo2
 
                 if (args.Cache.CacheType == CacheType.Halo2Xbox)
                 {
-                    MaterialHelper.PopulateTextureMappings(bitmaps, material, shader);
+                    MaterialHelper.PopulateTextureMappings(bitmapCache, material, shader);
                 }
                 else
                 {
