@@ -1,5 +1,5 @@
-﻿using OodleSharp;
-using Reclaimer.Blam.Common;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.HaloInfinite.Oodle;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System.IO;
@@ -127,6 +127,11 @@ namespace Reclaimer.Blam.HaloInfinite
                 return r;
             }
 
+            if (!File.Exists("oo2core_8_win64.dll"))
+            {
+                Exceptions.ThrowIfFileNotFound(FileName);
+            }
+
             using (var reader = Module.CreateReader(DataOffsetFlags.HasFlag(DataOffsetFlags.UseHD1)))
             {
                 // HD1 Delta is the offset of which the same data is found in the hd1 handle.
@@ -148,7 +153,7 @@ namespace Reclaimer.Blam.HaloInfinite
                             var block_buffer = new byte[block.CompressedSize];
                             reader.Read(block_buffer, 0, block.CompressedSize);
 
-                            byte[] decompressed_data = Oodle.Decompress(block_buffer, block_buffer.Length, block.UncompressedSize);
+                            byte[] decompressed_data = OodleDecompressor.Decompress(block_buffer, block_buffer.Length, block.UncompressedSize);
                             file_buffer.Write(decompressed_data, 0, decompressed_data.Length);
                         }
                         else
@@ -171,7 +176,7 @@ namespace Reclaimer.Blam.HaloInfinite
                     }
                     else
                     {
-                        byte[] decompressed_data = Oodle.Decompress(block_buffer, TotalCompressedSize, TotalUncompressedSize);
+                        byte[] decompressed_data = OodleDecompressor.Decompress(block_buffer, TotalCompressedSize, TotalUncompressedSize);
                         file_buffer.Write(decompressed_data);
                     }
                 }

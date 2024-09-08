@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
-namespace OodleSharp
+namespace Reclaimer.Blam.HaloInfinite.Oodle
 {
-    public static class Oodle
+    public static class OodleDecompressor
     {
         [DllImport("oo2core_8_win64.dll")]
         private static extern int OodleLZ_Decompress(byte[] buffer, long bufferSize, byte[] outputBuffer, long outputBufferSize,
@@ -12,13 +10,11 @@ namespace OodleSharp
 
         public static byte[] Decompress(byte[] buffer, int size, int uncompressedSize)
         {
-            byte[] decompressedBuffer = new byte[uncompressedSize];
-            int decompressedCount = OodleLZ_Decompress(buffer, size, decompressedBuffer, uncompressedSize, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3);
+            var decompressedBuffer = new byte[uncompressedSize];
+            var decompressedCount = OodleLZ_Decompress(buffer, size, decompressedBuffer, uncompressedSize, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3);
 
             if (decompressedCount == uncompressedSize)
-            {
                 return decompressedBuffer;
-            }
             else if (decompressedCount < uncompressedSize)
             {
                 return decompressedBuffer;

@@ -18,9 +18,19 @@ namespace Reclaimer.Plugins
         private const string ModuleFileExtension = "module";
 
         internal static ModuleViewerSettings Settings;
+        private bool oodleIsAvailable = true;
         public override string Name => "Module Viewer";
 
-        public override void Initialise() => Settings = LoadSettings<ModuleViewerSettings>();
+        public override void Initialise()
+        {
+            Settings = LoadSettings<ModuleViewerSettings>();
+            if (!File.Exists("oo2core_8_win64.dll"))
+            {
+                LogOutput("WARNING: Oodle DLL required for Halo Infinite decompression was not found.");
+                oodleIsAvailable = false;
+            }
+        }
+
         public override void Suspend() => SaveSettings(Settings);
         public override bool SupportsFileExtension(string extension) => extension.ToLowerInvariant() == ModuleFileExtension;
 
@@ -79,7 +89,7 @@ namespace Reclaimer.Plugins
 
             try
             {
-                if (moduleVersion == ModuleType.HaloInfinite)
+                if (moduleVersion == ModuleType.HaloInfinite && oodleIsAvailable)
                 {
                     var mv = new Controls.HaloInfiniteModuleViewer();
                     mv.TabModel.ContentId = tabId;
