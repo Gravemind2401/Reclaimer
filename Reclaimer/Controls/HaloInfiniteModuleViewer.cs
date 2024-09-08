@@ -58,7 +58,7 @@ namespace Reclaimer.Controls
         public static void HierarchyViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var mv = d as HaloInfiniteModuleViewer;
-            HaloInfiniteModuleViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
+            CommonModuleViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
             mv.BuildTagTree(mv.txtSearch.Text);
         }
 
@@ -66,8 +66,8 @@ namespace Reclaimer.Controls
         {
             InitializeComponent();
 
-            if (File.Exists(HaloInfiniteModuleViewerPlugin.Settings.TagNameFile))
-                TagMapper.LoadTagMap(HaloInfiniteModuleViewerPlugin.Settings.TagNameFile);
+            if (File.Exists(CommonModuleViewerPlugin.Settings.TagNameFile))
+                TagMapper.LoadTagMap(CommonModuleViewerPlugin.Settings.TagNameFile);
 
             OpenContextItem = new MenuItem { Header = "Open" };
             OpenWithContextItem = new MenuItem { Header = "Open With..." };
@@ -88,7 +88,7 @@ namespace Reclaimer.Controls
             tv.ItemsSource = rootNode.Items;
 
             TabModel.Header = Utils.GetFileName(module.FileName);
-            TabModel.ToolTip = $"Module Viewer (Infinite) - {TabModel.Header}";
+            TabModel.ToolTip = $"Module Viewer (Halo Infinite) - {TabModel.Header}";
 
             foreach (var item in globalMenuButton.MenuItems.OfType<MenuItem>())
                 item.Click -= GlobalContextItem_Click;
@@ -107,7 +107,7 @@ namespace Reclaimer.Controls
                     item.Click += GlobalContextItem_Click;
             }
 
-            HierarchyView = HaloInfiniteModuleViewerPlugin.Settings.HierarchyView;
+            HierarchyView = CommonModuleViewerPlugin.Settings.HierarchyView;
             BuildTagTree(null);
         }
 
@@ -272,8 +272,8 @@ namespace Reclaimer.Controls
                 CheckFileExists = true
             };
             
-            if (!string.IsNullOrEmpty(HaloInfiniteModuleViewerPlugin.Settings.ModuleFolder))
-                ofd.InitialDirectory = HaloInfiniteModuleViewerPlugin.Settings.ModuleFolder;
+            if (!string.IsNullOrEmpty(CommonModuleViewerPlugin.Settings.ModuleFolder))
+                ofd.InitialDirectory = CommonModuleViewerPlugin.Settings.ModuleFolder;
 
             if (ofd.ShowDialog() != true)
                 return;

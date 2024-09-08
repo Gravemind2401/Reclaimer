@@ -57,7 +57,7 @@ namespace Reclaimer.Controls
         public static void HierarchyViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var mv = d as Halo5ModuleViewer;
-            Halo5ModuleViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
+            CommonModuleViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
             mv.BuildTagTree(mv.txtSearch.Text);
         }
 
@@ -84,7 +84,7 @@ namespace Reclaimer.Controls
             tv.ItemsSource = rootNode.Items;
 
             TabModel.Header = Utils.GetFileName(module.FileName);
-            TabModel.ToolTip = $"Module Viewer - {TabModel.Header}";
+            TabModel.ToolTip = $"Module Viewer (Halo 5) - {TabModel.Header}";
 
             foreach (var item in globalMenuButton.MenuItems.OfType<MenuItem>())
                 item.Click -= GlobalContextItem_Click;
@@ -103,7 +103,7 @@ namespace Reclaimer.Controls
                     item.Click += GlobalContextItem_Click;
             }
 
-            HierarchyView = Halo5ModuleViewerPlugin.Settings.HierarchyView;
+            HierarchyView = CommonModuleViewerPlugin.Settings.HierarchyView;
             BuildTagTree(null);
         }
 
@@ -257,8 +257,8 @@ namespace Reclaimer.Controls
                 CheckFileExists = true
             };
 
-            if (!string.IsNullOrEmpty(Halo5ModuleViewerPlugin.Settings.ModuleFolder))
-                ofd.InitialDirectory = Halo5ModuleViewerPlugin.Settings.ModuleFolder;
+            if (!string.IsNullOrEmpty(CommonModuleViewerPlugin.Settings.ModuleFolder))
+                ofd.InitialDirectory = CommonModuleViewerPlugin.Settings.ModuleFolder;
 
             if (ofd.ShowDialog() != true)
                 return;
