@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Reclaimer.Blam.HaloInfinite
 {
-    [FixedSize(32)]
+    [FixedSize(28)]
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public readonly record struct TagReference
     {

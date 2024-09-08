@@ -258,7 +258,9 @@ namespace Reclaimer.Controls
                 var item = infref.SelectedItem.Context;
                 var fileName = $"{item.TagName}.{item.ClassName}";
                 var fileKey = $"Blam.{item.Module.ModuleType}.{item.ClassCode}";
-                var args = new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), item);
+
+                ContentFactory.TryGetPrimaryContent(item, out var content);
+                var args = new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), content ?? item);
                 Substrate.OpenWithDefault(args);
             }
 

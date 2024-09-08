@@ -23,7 +23,7 @@ namespace Reclaimer.Blam.HaloInfinite
 
         CubemapLayout IBitmap.CubeLayout => CubemapLayout.NonCubemap;
 
-        #endregion
+        
 
         public DdsImage ToDds(int index)
         {
@@ -78,6 +78,8 @@ namespace Reclaimer.Blam.HaloInfinite
                 return reader.ReadBytes((int)resource.TotalUncompressedSize);
             }
         }
+
+        #endregion
     }
 
     [FixedSize(40)]
