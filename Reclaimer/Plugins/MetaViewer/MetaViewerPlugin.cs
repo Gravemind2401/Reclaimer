@@ -106,7 +106,7 @@ namespace Reclaimer.Plugins.MetaViewer
         private static string GetDefinitionPath(Blam.HaloInfinite.ModuleItem item) => GetDefinitionPath(p => p.ValidFor(item.Module.ModuleType), item.ClassCode, item.ClassName);
         private static string GetDefinitionPath(Predicate<PluginProfile> validate, string classCode, string className)
         {
-            if (string.IsNullOrEmpty(Settings.PluginFolder) || !Directory.Exists(Settings.PluginFolder))
+            if (string.IsNullOrEmpty(Settings.PluginFolder) || !Directory.Exists(Settings.PluginFolder) || classCode == null)
                 return null;
 
             foreach (var profile in Settings.PluginProfiles.Where(p => validate(p)))
