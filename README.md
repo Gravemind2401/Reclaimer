@@ -9,7 +9,7 @@ For original research on the Blam! engine and answering many a question along th
 - [Assembly](https://github.com/XboxChaos/Assembly "Assembly") Contributors
 - [troymac1ure](https://github.com/troymac1ure/Entity "troymac1ure")
 - [Ausar Docs](https://github.com/ElDewrito/AusarDocs "Ausar Docs")
-- And a whole bunch of other people we didn't have room to Thank
+- And a whole bunch of other people we didn't have room to 7hank
 
 ## About Reclaimer
 Reclaimer is a tool for viewing and exporting data in game files. While it's designed for Halo games, its also possible for developers to create plugins which could support other games, or add additional features related to Halo.
