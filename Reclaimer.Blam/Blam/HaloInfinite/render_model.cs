@@ -4,6 +4,7 @@ using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
+using System.Collections;
 using System.Numerics;
 
 namespace Reclaimer.Blam.HaloInfinite
@@ -65,13 +66,13 @@ namespace Reclaimer.Blam.HaloInfinite
                 Materials = Materials,
                 Sections = Sections,
                 NodeMaps = NodeMaps,
+                MeshResourceGroups = MeshResourceGroups,
                 ResourceIndex = Item.ResourceIndex,
                 ResourceCount = Item.ResourceCount
             };
 
             var model = new Model { Name = Item.FileName, OriginalPath = Item.TagName };
             model.CustomProperties.Add(BlamConstants.SourceTagPropertyName, Item.TagName);
-
 
             model.Bones.AddRange(Nodes.Select(n => new Bone
             {
@@ -108,12 +109,13 @@ namespace Reclaimer.Blam.HaloInfinite
                 return region;
             }));
 
-            //model.Meshes.AddRange(HaloInfiniteCommon.GetMeshes(geoParams, out var materials));
+            model.Meshes.AddRange(HaloInfiniteCommon.GetMeshes(geoParams, out var materials));
 
             var bounds = BoundingBoxes[0];
             var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
             var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
             model.SetCompressionBounds(posBounds, texBounds);
+
             return model;
         }
 
@@ -259,13 +261,52 @@ namespace Reclaimer.Blam.HaloInfinite
         public BlockCollection<SubsetBlock> Subsets { get; set; }
 
         [Offset(100)]
-        public short VertexBufferIndex { get; set; }
+        public VertexBufferIndexArray VertexBufferIndicies { get; set; }
 
         [Offset(138)]
         public short IndexBufferIndex { get; set; }
 
         [Offset(140)]
         public LodFlags LodFlags { get; set; }
+    }
+
+    [FixedSize(38)]
+    public class VertexBufferIndexArray : IList<short>
+    {
+        //this class is here to avoid having 19 separate "vertex buffer index" properties
+        //(and because I never implemented array properties in the dynamic IO)
+
+        private readonly short[] indices;
+
+        public VertexBufferIndexArray(EndianReader reader)
+        {
+            indices = reader.ReadArray<short>(19);
+        }
+
+        public IEnumerable<short> ValidIndicies => indices.Where(i => i >= 0);
+
+        #region IList<short> Implementation
+        public short this[int index]
+        {
+            get => ((IList<short>)indices)[index];
+            set => ((IList<short>)indices)[index] = value;
+        }
+
+        public int Count => ((ICollection<short>)indices).Count;
+
+        public bool IsReadOnly => ((ICollection<short>)indices).IsReadOnly;
+
+        public void Add(short item) => ((ICollection<short>)indices).Add(item);
+        public void Clear() => ((ICollection<short>)indices).Clear();
+        public bool Contains(short item) => ((ICollection<short>)indices).Contains(item);
+        public void CopyTo(short[] array, int arrayIndex) => ((ICollection<short>)indices).CopyTo(array, arrayIndex);
+        public IEnumerator<short> GetEnumerator() => ((IEnumerable<short>)indices).GetEnumerator();
+        public int IndexOf(short item) => ((IList<short>)indices).IndexOf(item);
+        public void Insert(int index, short item) => ((IList<short>)indices).Insert(index, item);
+        public bool Remove(short item) => ((ICollection<short>)indices).Remove(item);
+        public void RemoveAt(int index) => ((IList<short>)indices).RemoveAt(index);
+        IEnumerator IEnumerable.GetEnumerator() => indices.GetEnumerator();
+        #endregion
     }
 
     [FixedSize(24)]
@@ -394,7 +435,6 @@ namespace Reclaimer.Blam.HaloInfinite
     }
 
     [FixedSize(0x48)]
-    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public class RasterizerIndexBuffer
     {
         [Offset(0)]
@@ -409,8 +449,6 @@ namespace Reclaimer.Blam.HaloInfinite
 
         [Offset(8)]
         public int Offset { get; set; }
-
-        private string GetDebuggerDisplay() => $"{DeclarationType}[{Count}]";
     }
 
     public enum VertexBufferUsage : int
