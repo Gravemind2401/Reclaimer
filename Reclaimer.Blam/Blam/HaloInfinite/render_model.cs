@@ -216,7 +216,7 @@ namespace Reclaimer.Blam.HaloInfinite
         public override string ToString() => Position.ToString();
     }
 
-    [FixedSize(24)]
+    [FixedSize(28)]
     [DebuggerDisplay($"{{{nameof(MaterialReference)},nq}}")]
     public class MaterialBlock
     {
@@ -230,13 +230,13 @@ namespace Reclaimer.Blam.HaloInfinite
         [Offset(0)]
         public BlockCollection<SectionLodBlock> SectionLods { get; set; }
 
-        [Offset(20)]
+        [Offset(22)]
         public byte NodeIndex { get; set; }
 
-        [Offset(26)]
+        [Offset(23)]
         public byte VertexFormat { get; set; }
 
-        [Offset(35)]
+        [Offset(25)]
         [StoreType(typeof(byte))]
         public IndexFormat IndexFormat { get; set; }
     }
@@ -256,7 +256,7 @@ namespace Reclaimer.Blam.HaloInfinite
         [Offset(138)]
         public short IndexBufferIndex { get; set; }
 
-        [Offset(140 )]
+        [Offset(140)]
         public LodFlags LodFlags { get; set; }
     }
 
