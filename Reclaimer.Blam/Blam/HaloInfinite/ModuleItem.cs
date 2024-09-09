@@ -198,15 +198,7 @@ namespace Reclaimer.Blam.HaloInfinite
                     vreader.Seek(header.DataBlocks[mainBlock].Offset, SeekOrigin.Begin);
                     var result = vreader.ReadObject<T>();
 
-                    var blockProps = typeof(T).GetProperties()
-                        .Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericTypeDefinition() == typeof(BlockCollection<>));
-
-                    foreach (var prop in blockProps)
-                    {
-                        var collection = prop.GetValue(result) as IBlockCollection;
-                        var offset = OffsetAttribute.ValueFor(prop);
-                        collection.LoadBlocks(mainBlock, offset, vreader);
-                    }
+                    BlockHelper.LoadBlockCollections(result, mainBlock, vreader);
 
                     return result;
                 }

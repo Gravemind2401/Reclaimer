@@ -3,7 +3,6 @@ using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
-using Reclaimer.Saber3D.Halo1X.Geometry;
 using Reclaimer.Utilities;
 using System.Numerics;
 
@@ -39,7 +38,14 @@ namespace Reclaimer.Blam.HaloInfinite
         [Offset(252)]
         public BlockCollection<NodeMapBlock> NodeMaps { get; set; }
 
+        [Offset(316)]
+        public int TotalIndexBufferCount { get; set; }
 
+        [Offset(318)]
+        public int TotalVertexBufferCount { get; set; }
+
+        [Offset(324)]
+        public BlockCollection<MeshResourceGroupBlock> MeshResourceGroups { get; set; }
 
         public override string ToString() => Item.FileName;
 
@@ -66,7 +72,7 @@ namespace Reclaimer.Blam.HaloInfinite
             var model = new Model { Name = Item.FileName, OriginalPath = Item.TagName };
             model.CustomProperties.Add(BlamConstants.SourceTagPropertyName, Item.TagName);
 
-            
+
             model.Bones.AddRange(Nodes.Select(n => new Bone
             {
                 Name = n.Name,
@@ -74,7 +80,6 @@ namespace Reclaimer.Blam.HaloInfinite
                 WorldTransform = Utils.CreateWorldMatrix(n.InverseTransform, n.InverseScale),
                 ParentIndex = n.ParentIndex
             }));
-
 
             model.Markers.AddRange(MarkerGroups.Select(g =>
             {
@@ -236,6 +241,9 @@ namespace Reclaimer.Blam.HaloInfinite
         [Offset(23)]
         public byte VertexFormat { get; set; }
 
+        [Offset(24)]
+        public byte UseDualQuat { get; set; }
+
         [Offset(25)]
         [StoreType(typeof(byte))]
         public IndexFormat IndexFormat { get; set; }
@@ -325,6 +333,13 @@ namespace Reclaimer.Blam.HaloInfinite
         public BlockCollection<byte> Indices { get; set; }
     }
 
+    [FixedSize(16)]
+    public class MeshResourceGroupBlock
+    {
+        [LoadFromStructureDefinition("8aeb8021-4164-f60a-9170-0c9745553623")]
+        public RenderGeometryApiResource RenderGeometryApiResource { get; set; }
+    }
+
     public enum LodFlags : ushort
     {
         None = 0,
@@ -344,5 +359,105 @@ namespace Reclaimer.Blam.HaloInfinite
         Lod13 = 1 << 13,
         Lod14 = 1 << 14,
         Lod15 = 1 << 15,
+    }
+
+    [FixedSize(0x138)]
+    public class RenderGeometryApiResource
+    {
+        [Offset(0)]
+        public BlockCollection<RasterizerVertexBuffer> PcVertexBuffers { get; set; }
+
+        [Offset(0x14)]
+        public BlockCollection<RasterizerIndexBuffer> PcIndexBuffers { get; set; }
+    }
+
+    [FixedSize(0x50)]
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+    public class RasterizerVertexBuffer
+    {
+        [Offset(0)]
+        public VertexBufferUsage Usage { get; set; }
+
+        [Offset(4)]
+        public RasterizerVertexFormat Format { get; set; }
+
+        [Offset(8)]
+        public byte Stride { get; set; }
+
+        [Offset(12)]
+        public int Count { get; set; }
+
+        [Offset(16)]
+        public int Offset { get; set; }
+
+        private string GetDebuggerDisplay() => $"{Usage} [{Format}]";
+    }
+
+    [FixedSize(0x48)]
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+    public class RasterizerIndexBuffer
+    {
+        [Offset(0)]
+        [StoreType(typeof(byte))]
+        public IndexFormat DeclarationType { get; set; } //not sure if this is actually index format but it matches so far
+
+        [Offset(1)]
+        public byte Stride { get; set; }
+
+        [Offset(4)]
+        public int Count { get; set; }
+
+        [Offset(8)]
+        public int Offset { get; set; }
+
+        private string GetDebuggerDisplay() => $"{DeclarationType}[{Count}]";
+    }
+
+    public enum VertexBufferUsage : int
+    {
+        Position,
+        UV0,
+        UV1,
+        UV2,
+        Color,
+        Normal,
+        Tangent,
+        BlendIndices0,
+        BlendWeights0,
+        BlendIndices1,
+        BlendWeights1,
+        PrevPosition,
+        InstanceData,
+        BlendshapePosition,
+        BlendshapeNormal,
+        BlendshapeIndex,
+        Edge,
+        EdgeIndex,
+        EdgeIndexInfo
+    }
+
+    public enum RasterizerVertexFormat : int
+    {
+        Real,
+        RealVector2D,
+        RealVector3D,
+        RealVector4D,
+        ByteVector4D,
+        ByteARGBColor,
+        ShortVector2D,
+        ShortVector2DNormalized,
+        ShortVector4DNormalized,
+        WordVector2DNormalized,
+        WordVector4DNormalized,
+        Real16Vector2D,
+        Real16Vector4D,
+        _10_10_10_Normalized,
+        _10_10_10_2,
+        _10_10_10_2_SignedNormalizedPackedAsUnorm,
+        Dword,
+        DwordVector2D,
+        _11_11_10_Float,
+        ByteUnitVector3D,
+        WordVector3DNormalizedWith4Word,
     }
 }
