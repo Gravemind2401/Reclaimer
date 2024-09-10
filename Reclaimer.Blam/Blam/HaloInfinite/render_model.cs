@@ -431,10 +431,13 @@ namespace Reclaimer.Blam.HaloInfinite
         [Offset(16)]
         public int Offset { get; set; }
 
+        public int DataLength => Stride * Count;
+
         private string GetDebuggerDisplay() => $"{Usage} [{Format}]";
     }
 
     [FixedSize(0x48)]
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public class RasterizerIndexBuffer
     {
         [Offset(0)]
@@ -449,6 +452,10 @@ namespace Reclaimer.Blam.HaloInfinite
 
         [Offset(8)]
         public int Offset { get; set; }
+
+        public int DataLength => Stride * Count;
+
+        private string GetDebuggerDisplay() => $"{DeclarationType}[{Count}]";
     }
 
     public enum VertexBufferUsage : int
