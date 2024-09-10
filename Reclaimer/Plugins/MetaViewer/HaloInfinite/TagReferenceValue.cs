@@ -56,6 +56,11 @@ namespace Reclaimer.Plugins.MetaViewer.HaloInfinite
 
         private void OnClassChanged()
         {
+            if (SelectedClass == null || SelectedClass.Context == null || SelectedClass.Context.ClassCode == null)
+            {
+                return; 
+            }
+
             TagOptions.Clear();
             TagOptions.Insert(0, externalTagOption);
 
@@ -68,6 +73,7 @@ namespace Reclaimer.Plugins.MetaViewer.HaloInfinite
 
             SelectedItem = TagOptions.Skip(1).FirstOrDefault();
         }
+
 
         public override void ReadValue(EndianReader reader)
         {
