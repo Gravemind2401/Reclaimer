@@ -93,11 +93,28 @@ namespace Reclaimer.Plugins.MetaViewer.HaloInfinite
 
         public override JToken GetJValue()
         {
-            var values = new[] { Value1, Value2, Value3, Value4 };
             var result = new JObject();
 
-            for (var i = 0; i < Labels.Length; i++)
-                result.Add(Labels[i], new JValue(values[i]));
+            for (var i = 0; i < FieldDefinition.Components; i++)
+            {
+                if (i < Labels.Length && !string.IsNullOrEmpty(Labels[i]))
+                {
+                    var value = i switch
+                    {
+                        0 => Value1,
+                        1 => Value2,
+                        2 => Value3,
+                        3 => Value4,
+                        _ => default
+                    };
+
+                    // Only add if the value is valid
+                    if (i < 2 || FieldDefinition.Components > i)
+                    {
+                        result.Add(Labels[i], new JValue(value));
+                    }
+                }
+            }
 
             return result;
         }

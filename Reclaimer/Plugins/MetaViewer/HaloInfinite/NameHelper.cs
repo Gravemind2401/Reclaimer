@@ -12,7 +12,7 @@
 
         public NameHelper(string value)
         {
-            if (value != "")
+            if (!string.IsNullOrEmpty(value))
             {
                 IsBlockName = value.StartsWith("^");
                 Name = value.Split(specialChars.ToArray(), StringSplitOptions.RemoveEmptyEntries)[0];

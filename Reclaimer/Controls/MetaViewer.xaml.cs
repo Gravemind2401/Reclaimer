@@ -66,7 +66,25 @@ namespace Reclaimer.Controls
 
             var root = new JObject();
             foreach (var item in tempMetadata)
-                root.Add(item.Name, item.GetJValue());
+            {
+                if (string.IsNullOrEmpty(item.Name))
+                {
+                    continue;
+                }
+
+                // Make sure two different keys don't exist at the same time!
+                if (root.ContainsKey(item.Name))
+                {
+                    var uniqueName = item.Name + item.Offset;
+                    root.Add(uniqueName, item.GetJValue());
+                }
+                else
+                {
+                    root.Add(item.Name, item.GetJValue());
+                }
+            }
+
+
 
             File.WriteAllText(fileName, root.ToString());
         }
