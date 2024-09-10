@@ -4,6 +4,7 @@ using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
+using System.Buffers;
 using System.Collections;
 using System.Numerics;
 
@@ -237,6 +238,9 @@ namespace Reclaimer.Blam.HaloInfinite
         [Offset(0)]
         public BlockCollection<SectionLodBlock> SectionLods { get; set; }
 
+        [Offset(20)]
+        public MeshFlags Flags { get; set; }
+
         [Offset(22)]
         public byte NodeIndex { get; set; }
 
@@ -381,6 +385,7 @@ namespace Reclaimer.Blam.HaloInfinite
         public RenderGeometryApiResource RenderGeometryApiResource { get; set; }
     }
 
+    [Flags]
     public enum LodFlags : ushort
     {
         None = 0,
@@ -400,6 +405,22 @@ namespace Reclaimer.Blam.HaloInfinite
         Lod13 = 1 << 13,
         Lod14 = 1 << 14,
         Lod15 = 1 << 15,
+    }
+
+    [Flags]
+    public enum MeshFlags : ushort
+    {
+        MeshHasVertexColor = 1 << 0,
+        UseRegionIndexForSorting = 1 << 1,
+        CanBeRenderedInDrawBundles = 1 << 2,
+        MeshIsCustomShadowCaster = 1 << 3,
+        MeshIsUnindexed = 1 << 4,
+        MeshShouldRenderInZPrePass = 1 << 5,
+        UseUncompressedVertexFormat = 1 << 6,
+        MeshIsPCA = 1 << 7,
+        MeshHasUsefulUV2 = 1 << 8,
+        MeshHasUsefulUV3 = 1 << 9,
+        UseUV3TangentRotation = 1 << 10
     }
 
     [FixedSize(0x138)]
