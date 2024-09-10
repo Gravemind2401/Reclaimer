@@ -9,7 +9,9 @@ namespace Reclaimer.Blam.HaloInfinite
 
         public uint Hash { get; }
 
-        public string Value => Hash.ToString();
+        public string Value => StringMapper.StringMappings.TryGetValue(Hash, out var value)
+                               ? value : Hash.ToString();
+
 
         public StringHash(EndianReader reader, MetadataHeader header)
         {

@@ -129,6 +129,10 @@ namespace Reclaimer.Plugins
             [Editor(typeof(BrowseFileEditor), typeof(BrowseFileEditor))]
             [DisplayName("Tag Hash File")]
             public string TagNameFile { get; set; }
+
+            [Editor(typeof(BrowseFileEditor), typeof(BrowseFileEditor))]
+            [DisplayName("String ID File")]
+            public string StringIdFile { get; set; }
         }
     }
 
