@@ -656,7 +656,7 @@ namespace Reclaimer.Plugins
                 return item.ClassCode switch
                 {
                     "bitm" => 0,
-                    "mode" or "sbsp" or "stlm" or "scnr" or "pmdf" => 1,
+                    "mode" or "sbsp" or "stlm" or "scnr" or "pmdf" or "rtgo" => 1,
                     //"snd!" => return 2,
                     _ => -1
                 };

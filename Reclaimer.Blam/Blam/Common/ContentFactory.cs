@@ -19,6 +19,7 @@ namespace Reclaimer.Blam.Common
         private const string scenario_structure_bsp = "sbsp";
         private const string structure_lightmap = "stlm";
         private const string sound = "snd!";
+        private const string runtime_geo = "rtgo";
 
         #region Standard Halo Maps
 
@@ -248,6 +249,7 @@ namespace Reclaimer.Blam.Common
                         return true;
                     }
                     break;
+                case runtime_geo:
                 case render_model:
                     if (TryGetGeometryContent(item, out var geometryContent))
                     {
@@ -288,6 +290,7 @@ namespace Reclaimer.Blam.Common
             content = item.ClassCode switch
             {
                 render_model => item.ReadMetadata<HaloInfinite.render_model>(),
+                runtime_geo => item.ReadMetadata<HaloInfinite.runtime_geo>(),
                 _ => null
             };
 

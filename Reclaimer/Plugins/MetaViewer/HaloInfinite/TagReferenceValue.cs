@@ -100,6 +100,6 @@ namespace Reclaimer.Plugins.MetaViewer.HaloInfinite
             throw new NotImplementedException();
         }
 
-        public override JToken GetJValue() => SelectedItem == null ? null : new JValue($"{SelectedItem.Context.TagName}.{SelectedItem.Context.ClassName}");
+        public override JToken GetJValue() => SelectedItem.Context == null ? null : new JValue($"{SelectedItem.Context.TagName}.{SelectedItem.Context.ClassName}");
     }
 }
