@@ -12,10 +12,13 @@
 
         public NameHelper(string value)
         {
-            IsBlockName = value.StartsWith("^");
-            Name = value.Split(specialChars.ToArray(), StringSplitOptions.RemoveEmptyEntries)[0];
-            Description = GetSection(':', value);
-            ToolTip = GetSection('#', value);
+            if (value != "")
+            {
+                IsBlockName = value.StartsWith("^");
+                Name = value.Split(specialChars.ToArray(), StringSplitOptions.RemoveEmptyEntries)[0];
+                Description = GetSection(':', value);
+                ToolTip = GetSection('#', value);
+            }
         }
 
         private static string GetSection(char separator, string value)
