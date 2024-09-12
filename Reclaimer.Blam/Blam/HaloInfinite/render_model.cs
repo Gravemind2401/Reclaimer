@@ -245,7 +245,7 @@ namespace Reclaimer.Blam.HaloInfinite
         public byte NodeIndex { get; set; }
 
         [Offset(23)]
-        public byte VertexFormat { get; set; }
+        public VertexType VertexFormat { get; set; }
 
         [Offset(24)]
         public byte UseDualQuat { get; set; }
@@ -477,6 +477,41 @@ namespace Reclaimer.Blam.HaloInfinite
         public int DataLength => Stride * Count;
 
         private string GetDebuggerDisplay() => $"{DeclarationType}[{Count}]";
+    }
+
+    public enum VertexType : byte
+    {
+        World,
+        Rigid,
+        Skinned,
+        ParticleModel,
+        Screen,
+        Debug,
+        Transparent,
+        Particle,
+        Removed08,
+        Removed09,
+        ChudSimple,
+        Decorator,
+        PositionOnly,
+        Removed13,
+        Ripple,
+        Removed15,
+        TessellatedTerrain,
+        Empty,
+        Decal,
+        Removed19,
+        Removed20,
+        PositionOnly2,
+        Tracer,
+        RigidBoned,
+        Removed24,
+        CheapParticle,
+        DqSkinned,
+        Skinned8Weights,
+        TessellatedVector,
+        Interaction,
+        NumberOfStandardVertexTypes
     }
 
     public enum VertexBufferUsage : int

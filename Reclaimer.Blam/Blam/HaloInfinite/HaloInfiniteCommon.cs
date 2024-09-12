@@ -208,6 +208,9 @@ namespace Reclaimer.Blam.HaloInfinite
                     vectorChannel.Add(vectorBuffer);
                 }
 
+                if (vertexBuffer.HasBlendWeights && section.VertexFormat != VertexType.Skinned8Weights)
+                    vertexBuffer.HasImpliedBlendWeights = true;
+
                 var mesh = new Mesh
                 {
                     BoneIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
@@ -259,6 +262,8 @@ namespace Reclaimer.Blam.HaloInfinite
                 RasterizerVertexFormat.WordVector2DNormalized => typeof(UInt16N2),
                 RasterizerVertexFormat.WordVector4DNormalized => typeof(UInt16N4),
                 RasterizerVertexFormat._10_10_10_2_SignedNormalizedPackedAsUnorm => typeof(NxAAA2),
+                RasterizerVertexFormat._10_10_10_Normalized => typeof(UxAAA0),
+                RasterizerVertexFormat.Real => typeof(RealVector1),
                 _ => null
             };
         }
