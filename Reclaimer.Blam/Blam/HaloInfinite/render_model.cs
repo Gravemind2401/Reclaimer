@@ -248,7 +248,8 @@ namespace Reclaimer.Blam.HaloInfinite
         public VertexType VertexFormat { get; set; }
 
         [Offset(24)]
-        public byte UseDualQuat { get; set; }
+        [StoreType(typeof(byte))]
+        public bool UseDualQuat { get; set; }
 
         [Offset(25)]
         [StoreType(typeof(byte))]
