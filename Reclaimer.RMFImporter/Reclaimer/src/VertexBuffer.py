@@ -2,6 +2,7 @@ import itertools
 from typing import List, Tuple, Iterator, Iterable
 from collections.abc import Sequence
 
+from .Model import MeshFlags
 from .Vectors import VectorDescriptor
 
 __all__ = [
@@ -19,7 +20,7 @@ class VertexBuffer:
     blendweight_channels: List['VectorBuffer']
     color_channels: List['VectorBuffer']
 
-    def enumerate_blendpairs(self) -> Iterator[Tuple[int, Iterable[float], Iterable[float]]]:
+    def enumerate_blendpairs(self, mesh_flags: MeshFlags) -> Iterator[Tuple[int, Iterable[float], Iterable[float]]]:
         '''
         Iterates over all corresponding tuples of (index, blendindices, blendweights).
         The returned weights will be normalised and all index/weight channels will be accounted for.
@@ -27,6 +28,7 @@ class VertexBuffer:
 
         dummy_weights = [1.0]
         rigid = len(self.blendweight_channels) == 0
+        implied = mesh_flags & MeshFlags.USE_IMPLIED_BLENDWEIGHTS > 0
 
         if len(self.blendindex_channels) > 1:
             # join the buffers together so we have a single list of indices and a single list of weights
@@ -43,6 +45,10 @@ class VertexBuffer:
             indices = blend_indicies[i]
             weights = dummy_weights if rigid else blend_weights[i]
 
+            # append a 1 to the end of the weights list
+            if implied:
+                weights = [*weights, 1.0]
+
             if rigid:
                 # only take the first index (dummy_weights already only has one weight)
                 indices = [indices[0]]
@@ -51,7 +57,7 @@ class VertexBuffer:
                 indices = list(indices[i] for i, w in enumerate(weights) if w > 0)
                 weights = list(weights[i] for i, w in enumerate(weights) if w > 0)
 
-            # normalise the weights before returning them
+            # normalise the weights before returning them so they all add up to 1
             weight_sum = sum(weights)
             if weight_sum > 0:
                 weights = list(w / weight_sum for w in weights)

@@ -48,7 +48,7 @@ def _decode_attributes(reader: FileReader, props: Dict[str, DataBlock], read_fun
         return
 
     reader.position = block.start_address
-    return read_func()
+    return read_func(block.end_address)
 
 def _decode_block(reader: FileReader, block: DataBlock, read_func: Callable[[FileReader, DataBlock], T]) -> T:
     ''' Seeks to the body of the block and returns the result of `read_func` from that position '''
@@ -153,7 +153,7 @@ def _read_scene(reader: FileReader, block: DataBlock) -> Scene:
     if astuple(scene.version) < (1, 0, 0):
         raise Exception('Incompatible file version.')
 
-    def read_attribute_data():
+    def read_attribute_data(end_address):
         scene.unit_scale = reader.read_float()
         scene.world_matrix = reader.read_matrix3x3()
         scene.name = _read_stringref(reader)
@@ -192,7 +192,7 @@ def _read_string_index(reader: FileReader, block: DataBlock) -> List[str]:
 def _read_node(reader: FileReader, block: DataBlock):
     node = SceneGroup()
 
-    def read_attribute_data():
+    def read_attribute_data(end_address):
         node.name = _read_stringref(reader)
 
     props = _read_property_blocks(reader, block)
@@ -214,7 +214,7 @@ def _read_object_base_props(reader: FileReader, obj: SceneObject):
 def _read_placement(reader: FileReader, block: DataBlock) -> Placement:
     placement = Placement()
 
-    def read_attribute_data():
+    def read_attribute_data(end_address):
         _read_object_base_props(reader, placement)
         placement.transform = reader.read_matrix3x4()
 
@@ -245,7 +245,7 @@ def _read_modelref(reader: FileReader, block: DataBlock) -> Model:
 def _read_model(reader: FileReader, block: DataBlock) -> Model:
     model = Model()
 
-    def read_attribute_data():
+    def read_attribute_data(end_address):
         _read_object_base_props(reader, model)
         model.original_path = _read_stringref(reader)
 
@@ -262,7 +262,7 @@ def _read_model(reader: FileReader, block: DataBlock) -> Model:
 def _read_region(reader: FileReader, block: DataBlock) -> ModelRegion:
     region = ModelRegion()
 
-    def read_attribute_data():
+    def read_attribute_data(end_address):
         region.name = _read_stringref(reader)
 
     props = _read_property_blocks(reader, block)
@@ -275,7 +275,7 @@ def _read_region(reader: FileReader, block: DataBlock) -> ModelRegion:
 def _read_permutation(reader: FileReader, block: DataBlock) -> ModelPermutation:
     perm = ModelPermutation()
 
-    def read_attribute_data():
+    def read_attribute_data(end_address):
         perm.name = _read_stringref(reader)
         perm.instanced = reader.read_bool()
         perm.mesh_index = reader.read_int32()
@@ -291,7 +291,7 @@ def _read_permutation(reader: FileReader, block: DataBlock) -> ModelPermutation:
 def _read_marker(reader: FileReader, block: DataBlock) -> Marker:
     marker = Marker()
 
-    def read_attribute_data():
+    def read_attribute_data(end_address):
         marker.name = _read_stringref(reader)
 
     props = _read_property_blocks(reader, block)
@@ -304,7 +304,7 @@ def _read_marker(reader: FileReader, block: DataBlock) -> Marker:
 def _read_marker_instance(reader: FileReader, block: DataBlock) -> MarkerInstance:
     inst = MarkerInstance()
 
-    def read_attribute_data():
+    def read_attribute_data(end_address):
         inst.region_index = reader.read_int32()
         inst.permutation_index = reader.read_int32()
         inst.bone_index = reader.read_int32()
@@ -320,7 +320,7 @@ def _read_marker_instance(reader: FileReader, block: DataBlock) -> MarkerInstanc
 def _read_bone(reader: FileReader, block: DataBlock) -> Bone:
     bone = Bone()
 
-    def read_attribute_data():
+    def read_attribute_data(end_address):
         bone.name = _read_stringref(reader)
         bone.parent_index = reader.read_int32()
         bone.transform = reader.read_matrix4x4()
@@ -334,12 +334,13 @@ def _read_bone(reader: FileReader, block: DataBlock) -> Bone:
 def _read_mesh(reader: FileReader, block: DataBlock) -> Mesh:
     mesh = Mesh()
 
-    def read_attribute_data():
+    def read_attribute_data(end_address):
         mesh.vertex_buffer_index = reader.read_int32()
         mesh.index_buffer_index = reader.read_int32()
         mesh.bone_index = reader.read_int32()
         mesh.vertex_transform = reader.read_matrix3x4()
         mesh.texture_transform = reader.read_matrix3x4()
+        mesh.flags = reader.read_int32() if reader.position < end_address else MeshFlags.NONE
 
     props = _read_property_blocks(reader, block)
     _decode_attributes(reader, props, read_attribute_data)
@@ -351,7 +352,7 @@ def _read_mesh(reader: FileReader, block: DataBlock) -> Mesh:
 def _read_mesh_segment(reader: FileReader, block: DataBlock) -> MeshSegment:
     seg = MeshSegment()
 
-    def read_attribute_data():
+    def read_attribute_data(end_address):
         seg.index_start = reader.read_int32()
         seg.index_length = reader.read_int32()
         seg.material_index = reader.read_int32()
@@ -365,7 +366,7 @@ def _read_mesh_segment(reader: FileReader, block: DataBlock) -> MeshSegment:
 def _read_material(reader: FileReader, block: DataBlock) -> Material:
     material = Material()
 
-    def read_attribute_data():
+    def read_attribute_data(end_address):
         material.name = _read_stringref(reader)
         material.alpha_mode = _read_stringref(reader)
 
@@ -380,7 +381,7 @@ def _read_material(reader: FileReader, block: DataBlock) -> Material:
 def _read_texture_mapping(reader: FileReader, block: DataBlock) -> TextureMapping:
     mapping = TextureMapping()
 
-    def read_attribute_data():
+    def read_attribute_data(end_address):
         mapping.texture_usage = _read_stringref(reader)
         mapping.blend_channel = reader.read_int32()
         mapping.texture_index = reader.read_int32()
@@ -398,7 +399,7 @@ def _read_texture_mapping(reader: FileReader, block: DataBlock) -> TextureMappin
 def _read_tint(reader: FileReader, block: DataBlock) -> Color:
     tint = TintColor()
 
-    def read_attribute_data():
+    def read_attribute_data(end_address):
         tint.tint_usage = _read_stringref(reader)
         tint.blend_channel = reader.read_int32()
         tint.tint_color = reader.read_color()
@@ -411,7 +412,7 @@ def _read_tint(reader: FileReader, block: DataBlock) -> Color:
 def _read_texture(reader: FileReader, block: DataBlock) -> Texture:
     texture = Texture()
 
-    def read_attribute_data():
+    def read_attribute_data(end_address):
         texture.name = _read_stringref(reader)
         texture.gamma = reader.read_float()
 

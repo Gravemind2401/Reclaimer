@@ -275,7 +275,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         if not (self.options.IMPORT_NORMALS and vertex_buffer.normal_channels):
             return
 
-        normals = list(Vector(v).to_3d() for v in vertex_buffer.normal_channels[0])
+        normals = list(Vector(v).to_3d().normalized() for v in vertex_buffer.normal_channels[0])
         mesh_data.normals_split_custom_set_from_vertices(normals)
 
         # prior to 4.1, this is required in order for custom normals to take effect
@@ -343,6 +343,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         vertex_count = len(vertex_buffer.position_channels[0])
 
         modifier = cast(bpy.types.ArmatureModifier, mesh_obj.modifiers.new(f'{mesh_data.name}::armature', 'ARMATURE'))
+        modifier.use_deform_preserve_volume = mesh_params.mesh_flags & MeshFlags.USE_DUAL_QUAT > 0
         modifier.object = model_state.armature_obj
 
         if bone_index >= 0:
@@ -354,7 +355,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
             # create a vertex group for each bone so the bone indices are 1:1 with the vertex groups
             for bone in model_state.model.bones:
                 mesh_obj.vertex_groups.new(name=bone.name)
-            for vi, blend_indicies, blend_weights in vertex_buffer.enumerate_blendpairs():
+            for vi, blend_indicies, blend_weights in vertex_buffer.enumerate_blendpairs(mesh_params.mesh_flags):
                 for bi, bw in zip(blend_indicies, blend_weights):
                     mesh_obj.vertex_groups[bi].add([vi], bw, 'ADD')
 
