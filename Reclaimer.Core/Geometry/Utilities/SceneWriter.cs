@@ -463,30 +463,24 @@ namespace Reclaimer.Geometry.Utilities
             {
                 if (code == VertexChannelCodes.BlendWeight && vertexBuffer.HasImpliedBlendWeights)
                 {
-                    var channel0 = vertexChannel[0];
-                    var channel1 = vertexChannel.ElementAtOrDefault(1);
-
-                    var buffer = new List<IVector>(vertexBuffer.Count);
-                    for (var i = 0; i < vertexBuffer.Count; i++)
+                    foreach (var vectorBuffer in vertexChannel)
                     {
-                        var vec = channel0[i];
-                        var replacement = new RealVector4(vec.X, vec.Y, vec.Z, channel1?[i].X ?? 1f);
-                        var len = vec.X + vec.Y + vec.Z + vec.W;
-                        if (len == 0)
-                            replacement.W = 1;
-                        else
+                        var buffer = new List<IVector>(vectorBuffer.Count);
+                        foreach (var vec in vectorBuffer)
                         {
+                            var replacement = new RealVector4(vec.X, vec.Y, vec.Z, 1);
+                            var len = vec.X + vec.Y + vec.Z + 1;
                             replacement.X /= len;
                             replacement.Y /= len;
                             replacement.Z /= len;
                             replacement.W /= len;
+
+                            buffer.Add(replacement);
                         }
 
-                        buffer.Add(replacement);
+                        using (BlockMarker(code))
+                            WriteBuffer(buffer);
                     }
-
-                    using (BlockMarker(code))
-                        WriteBuffer(buffer);
 
                     return;
                 }
