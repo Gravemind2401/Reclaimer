@@ -296,7 +296,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, Aut
         if not (self.options.IMPORT_NORMALS and vertex_buffer.normal_channels):
             return
 
-        normals = list(toPoint3(v) for v in vertex_buffer.normal_channels[0])
+        normals = list(rt.normalize(toPoint3(v)) for v in vertex_buffer.normal_channels[0])
         for i, normal in enumerate(normals):
             # note: prior to 2015, this was only temporary
             rt.setNormal(mesh_obj, i + 1, normal)

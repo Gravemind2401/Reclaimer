@@ -275,7 +275,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         if not (self.options.IMPORT_NORMALS and vertex_buffer.normal_channels):
             return
 
-        normals = list(Vector(v).to_3d() for v in vertex_buffer.normal_channels[0])
+        normals = list(Vector(v).to_3d().normalized() for v in vertex_buffer.normal_channels[0])
         mesh_data.normals_split_custom_set_from_vertices(normals)
 
         # prior to 4.1, this is required in order for custom normals to take effect
