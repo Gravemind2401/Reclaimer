@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 from typing import List, Iterator
+from enum import IntFlag
 
 from .Types import *
 
@@ -10,9 +10,16 @@ __all__ = [
     'Marker',
     'MarkerInstance',
     'Bone',
+    'MeshFlags',
     'Mesh',
     'MeshSegment'
 ]
+
+
+class MeshFlags(IntFlag):
+    NONE = 0
+    USE_IMPLIED_BLENDWEIGHTS = 1 << 0
+    USE_DUAL_QUAT = 1 << 1
 
 
 class Model(SceneObject):
@@ -71,6 +78,7 @@ class Bone(INamed, ICustomProperties):
 class Mesh(ICustomProperties):
     vertex_buffer_index: int
     index_buffer_index: int
+    flags: MeshFlags
     bone_index: int # -1 if N/A
     vertex_transform: Matrix4x4
     texture_transform: Matrix4x4

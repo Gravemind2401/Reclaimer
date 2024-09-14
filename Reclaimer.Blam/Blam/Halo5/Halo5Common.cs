@@ -207,6 +207,12 @@ namespace Reclaimer.Blam.Halo5
                     IndexBuffer = ib[lodData.IndexBufferIndex]
                 };
 
+                if (mesh.VertexBuffer.HasBlendWeights && mesh.VertexBuffer.HasImpliedBlendWeights)
+                    mesh.Flags |= MeshFlags.UseImpliedBlendWeights;
+
+                if (section.UseDualQuat)
+                    mesh.Flags |= MeshFlags.UseDualQuat;
+
                 // have alternate function for if there are no defined parts, where we just do the whole buffer
                 if (lodData.Submeshes.Count > 0)
                 {

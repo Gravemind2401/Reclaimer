@@ -349,7 +349,10 @@ class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, Aut
         vertex_count = len(vertex_buffer.position_channels[0])
 
         modifier = rt.Skin()
+        modifier.enableDQ = mesh_params.mesh_flags & MeshFlags.USE_DUAL_QUAT > 0
         rt.addModifier(mesh_obj, modifier)
+
+        # TODO: set the dq blend weights per vertex (in max, enableDQ doesnt actually do anything until you set the dq blend weights)
 
         # note replaceVertexWeights() can take either bone indices or bone references
         if bone_index >= 0:
@@ -367,7 +370,7 @@ class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, Aut
             # otherwise trying to set weights gives the error "Runtime error: Exceeded the vertex countSkin:Skin"
             rt.redrawViews()
             bi, bw = [], []
-            for vi, blend_indicies, blend_weights in vertex_buffer.enumerate_blendpairs():
+            for vi, blend_indicies, blend_weights in vertex_buffer.enumerate_blendpairs(mesh_params.mesh_flags):
                 bi.clear()
                 bw.clear()
                 for i, w in enumerate(blend_weights):

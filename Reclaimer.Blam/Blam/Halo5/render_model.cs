@@ -321,6 +321,10 @@ namespace Reclaimer.Blam.Halo5
         [Offset(31)]
         public byte VertexFormat { get; set; }
 
+        [Offset(32)]
+        [StoreType(typeof(byte))]
+        public bool UseDualQuat { get; set; }
+
         [Offset(33)]
         [StoreType(typeof(byte))]
         public IndexFormat IndexFormat { get; set; }

@@ -168,6 +168,8 @@ namespace Reclaimer.Geometry
         public VertexBuffer VertexBuffer { get; set; }
         public IIndexBuffer IndexBuffer { get; set; }
 
+        public MeshFlags Flags { get; set; }
+
         //TODO: use reference instead of index
         public byte? BoneIndex { get; set; }
 
@@ -183,6 +185,14 @@ namespace Reclaimer.Geometry
         public int IndexCount => IndexBuffer?.Count ?? 0;
 
         public bool IsCompressed => !PositionBounds.IsEmpty || !TextureBounds.IsEmpty;
+    }
+
+    [Flags]
+    public enum MeshFlags
+    {
+        None = 0,
+        UseImpliedBlendWeights = 1 << 0,
+        UseDualQuat = 1 << 1
     }
 
     public class MeshSegment
