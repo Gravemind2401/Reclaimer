@@ -6,6 +6,7 @@ using Reclaimer.Geometry.Vectors;
 using System.Numerics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace Reclaimer.Blam.Halo4
 {
@@ -18,21 +19,28 @@ namespace Reclaimer.Blam.Halo4
         public const string DiffuseMap = "diffuse_map";
         public const string DiffuseMap2 = "diffusemap";
         public const string ColorMap = "color_map";
+        public const string ColorMap2 = "comap";
+        public const string ColorMap3 = "color";
         public const string ColorDetailMap = "color_detail_map";
         public const string NormalMap = "normal_map";
+        public const string NormalMap2 = "nmmap";
+        public const string NormalMap3 = "normal";
         public const string NormalDetailMap = "normal_detail_map";
+        public const string NormalDetailMap2 = "detailnmmap";
         public const string OverlayMap = "overlay_map";
         public const string OverlayDetailMap = "overlay_detail_map";
         public const string SelfIllumMap = "selfillum_map";
         public const string SelfIllumMap2 = "selfillummap";
         public const string SelfIllumModMap = "selfillum_mod_map"; //???
         public const string SpecularMap = "specular_map";
+        public const string SpecularMap2 = "spmap";
         public const string FoamTexture = "foam_texture";
         public const string FoamTextureDetail = "foam_texture_detail";
         public const string AlphaMap = "alpha_map";
         public const string AlphaMap2 = "alphamap";
         public const string AlphaMaskMap = "alpha_mask_map";
         public const string ReflectionMap = "reflection_map";
+        public const string ReflectionMap2 = "reflmap";
         public const string PccAmountMap = "pcc_amount_map"; //???
         public const string NoiseAMap = "noise_a_map";
         public const string NoiseBMap = "noise_b_map";
@@ -51,10 +59,12 @@ namespace Reclaimer.Blam.Halo4
 
         public const string AlbedoTint = "albedo_tint";
         public const string ColorTint = "color_tint";
+        public const string ColorTint2 = "co_tint";
         public const string TintColor = "tint_color";
         public const string BaseColor = "base_color";
         public const string SelfIllumColor = "self_illum_color";
         public const string SpecularColor = "specular_color";
+        public const string SpecularTint = "sp_tint";
         public const string ReflectionColor = "reflection_color";
 
         public static readonly Dictionary<string, string> UsageLookup = new()
@@ -66,28 +76,37 @@ namespace Reclaimer.Blam.Halo4
             { DiffuseMap, TextureUsage.Diffuse },
             { DiffuseMap2, TextureUsage.Diffuse },
             { ColorMap, TextureUsage.Diffuse },
+            { ColorMap2, TextureUsage.Diffuse },
+            { ColorMap3, TextureUsage.Diffuse },
             { ColorDetailMap, TextureUsage.DiffuseDetail },
             { NormalMap, TextureUsage.Normal },
+            { NormalMap2, TextureUsage.Normal },
+            { NormalMap3, TextureUsage.Normal },
             { NormalDetailMap, TextureUsage.NormalDetail },
+            { NormalDetailMap2, TextureUsage.NormalDetail },
             { SelfIllumMap, TextureUsage.SelfIllumination },
             { SelfIllumMap2, TextureUsage.SelfIllumination },
             { SpecularMap, TextureUsage.Specular },
+            { SpecularMap2, TextureUsage.Specular },
             { FoamTexture, TextureUsage.Diffuse },
             { FoamTextureDetail, TextureUsage.DiffuseDetail },
             { AlphaMap, TextureUsage.Transparency },
             { AlphaMap2, TextureUsage.Transparency },
             { AlphaMaskMap, TextureUsage.Diffuse },
-            { ReflectionMap, TextureUsage.ReflectionCube }
+            { ReflectionMap, TextureUsage.ReflectionCube },
+            { ReflectionMap2, TextureUsage.ReflectionCube }
         };
 
         public static readonly Dictionary<string, string> TintLookup = new()
         {
             { AlbedoTint, TintUsage.Albedo },
             { ColorTint, TintUsage.Albedo },
+            { ColorTint2, TintUsage.Albedo },
             { TintColor, TintUsage.Albedo },
             { BaseColor, TintUsage.Albedo },
             { SelfIllumColor, TintUsage.SelfIllumination },
-            { SpecularColor, TintUsage.Specular }
+            { SpecularColor, TintUsage.Specular },
+            { SpecularTint, TintUsage.Specular }
         };
     }
 
@@ -109,10 +128,46 @@ namespace Reclaimer.Blam.Halo4
         }
     }
 
-    internal static class MaterialHelper
+    internal static partial class MaterialHelper
     {
+        [GeneratedRegex("^(?:layer_?0?(\\d)_)(\\w+)$")]
+        private static partial Regex LayerUsageRegex();
+
+        [GeneratedRegex("^(?:([rgba])_)(\\w+)$")]
+        private static partial Regex ChannelUsageRegex();
+
+        [GeneratedRegex("(_0(\\d))(?:_map)?$")]
+        private static partial Regex IndexUsageRegex();
+
         private static readonly Lazy<Dictionary<string, MaterialShaderDefinition>> Halo4MaterialShaderLookup = new(() => JsonSerializer.Deserialize<Dictionary<string, MaterialShaderDefinition>>(Resources.Halo4MaterialShader));
         private static readonly Lazy<Dictionary<string, MaterialShaderDefinition>> Halo2XMaterialShaderLookup = new(() => JsonSerializer.Deserialize<Dictionary<string, MaterialShaderDefinition>>(Resources.MccHalo2XMaterialShader));
+
+        private static (string Usage, ChannelMask BlendChannel) GetBlendUsage(string usage)
+        {
+            var match = LayerUsageRegex().Match(usage);
+            if (match.Success)
+            {
+                var blendChannel = (ChannelMask)(1 << int.Parse(match.Groups[1].Value));
+                return (match.Groups[2].Value, blendChannel);
+            }
+
+            match = ChannelUsageRegex().Match(usage);
+            if (match.Success)
+            {
+                var blendChannel = (ChannelMask)(1 << "rgba".IndexOf(match.Groups[1].Value));
+                return (match.Groups[2].Value, blendChannel);
+            }
+
+            match = IndexUsageRegex().Match(usage);
+            if (match.Success)
+            {
+                var blendChannel = (ChannelMask)(1 << int.Parse(match.Groups[2].Value) - 1);
+                return (usage.Replace(match.Groups[1].Value, ""), blendChannel);
+            }
+
+            //not a blend usage
+            return (usage, ChannelMask.Default);
+        }
 
         private static IEnumerable<(string Usage, RealVector4 Value)> EnumerateFloatConstants(MaterialShaderDefinition shaderDefinition, IReadOnlyList<RealVector4> floatConstants)
         {
@@ -217,20 +272,26 @@ namespace Reclaimer.Blam.Halo4
 
             var textureParams = shaderDefinition.Parameters
                 .Where(p => p.Type == "bitmap")
-                .Select((p, i) => new
+                .Select((p, i) =>
                 {
-                    Usage = p.Name,
-                    BlendChannel = default(ChannelMask),
-                    shaderProps.ShaderMaps[i].BitmapReference.Tag,
-                    TileData = shaderProps.TilingData[i]
+                    var (usage, channelMask) = GetBlendUsage(p.Name);
+
+                    return new
+                    {
+                        Usage = usage,
+                        BlendChannel = channelMask,
+                        shaderProps.ShaderMaps[i].BitmapReference.Tag,
+                        TileData = shaderProps.TilingData[i]
+                    };
                 });
 
             var floatParams = from p in EnumerateFloatConstants(shaderDefinition, shaderProps.FloatConstants)
                               where ShaderParameters.TintLookup.ContainsKey(p.Usage)
+                              let usage = GetBlendUsage(p.Usage)
                               select new
                               {
-                                  p.Usage,
-                                  BlendChannel = default(ChannelMask),
+                                  usage.Usage,
+                                  usage.BlendChannel,
                                   p.Value
                               };
 
