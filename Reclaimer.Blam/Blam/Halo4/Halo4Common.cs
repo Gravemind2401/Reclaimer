@@ -39,22 +39,31 @@ namespace Reclaimer.Blam.Halo4
 
     internal static class Halo4Common
     {
-        public static IEnumerable<Material> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
+        public static IEnumerable<Material> GetMaterials(Halo4GeometryArgs args)
         {
-            for (var i = 0; i < shaders.Count; i++)
+            var bitmapCache = new Dictionary<int, bitmap>();
+            var materialCache = new Dictionary<int, Material>();
+
+            for (var i = 0; i < args.Shaders.Count; i++)
             {
-                var tag = shaders[i].MaterialReference.Tag;
+                var tag = args.Shaders[i].MaterialReference.Tag;
                 if (tag == null)
                 {
                     yield return null;
                     continue;
                 }
 
-                var material = new Material
+                if (materialCache.TryGetValue(tag.Id, out var material))
+                {
+                    yield return material;
+                    continue;
+                }
+
+                materialCache.Add(tag.Id, material = new Material
                 {
                     Id = tag.Id,
                     Name = tag.FileName
-                };
+                });
 
                 material.CustomProperties.Add(BlamConstants.SourceTagPropertyName, tag.TagName);
 
@@ -65,49 +74,52 @@ namespace Reclaimer.Blam.Halo4
                     continue;
                 }
 
-                var props = shader.ShaderProperties[0];
-                foreach (var map in props.ShaderMaps)
+                if (!MaterialHelper.PopulateTextureMappings(args, bitmapCache, material, shader))
                 {
-                    var bitmTag = map.BitmapReference.Tag;
-                    if (bitmTag == null)
-                        continue;
-
-                    string usage;
-                    var name = bitmTag.FileName;
-                    if (name.EndsWith("_detail_normal") || name.EndsWith("_detail_bump"))
-                        usage = TextureUsage.NormalDetail;
-                    else if (name.EndsWith("_detail"))
-                        usage = TextureUsage.DiffuseDetail;
-                    else if (name.EndsWith("_normal") || name.EndsWith("_bump"))
-                        usage = TextureUsage.Normal;
-                    else if (name.EndsWith("_diff") || name.EndsWith("_color") || name.StartsWith("watersurface_"))
-                        usage = TextureUsage.Diffuse;
-                    else if (props.ShaderMaps.Count == 1)
-                        usage = TextureUsage.Diffuse;
-                    else
-                        continue;
-
-                    //maybe map.TilingIndex has the wrong offset? can sometimes be out of bounds (other than 0xFF)
-                    var tile = props.TilingData.Cast<RealVector4?>().ElementAtOrDefault(map.TilingIndex);
-
-                    try
+                    //legacy method: guess texture purpose based on file name
+                    var props = shader.ShaderProperties[0];
+                    foreach (var map in props.ShaderMaps)
                     {
-                        var texture = new Texture
-                        {
-                            Id = bitmTag.Id,
-                            ContentProvider = bitmTag.ReadMetadata<bitmap>()
-                        };
+                        var bitmTag = map.BitmapReference.Tag;
+                        if (bitmTag == null)
+                            continue;
 
-                        texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, bitmTag.TagName);
+                        string usage;
+                        var name = bitmTag.FileName;
+                        if (name.EndsWith("_detail_normal") || name.EndsWith("_detail_bump"))
+                            usage = TextureUsage.NormalDetail;
+                        else if (name.EndsWith("_detail"))
+                            usage = TextureUsage.DiffuseDetail;
+                        else if (name.EndsWith("_normal") || name.EndsWith("_bump"))
+                            usage = TextureUsage.Normal;
+                        else if (name.EndsWith("_diff") || name.EndsWith("_color") || name.StartsWith("watersurface_"))
+                            usage = TextureUsage.Diffuse;
+                        else if (props.ShaderMaps.Count == 1)
+                            usage = TextureUsage.Diffuse;
+                        else
+                            continue;
 
-                        material.TextureMappings.Add(new TextureMapping
+                        var tile = props.TilingData[props.ShaderMaps.IndexOf(map)];
+
+                        try
                         {
-                            Usage = usage,
-                            Tiling = new Vector2(tile?.X ?? 1, tile?.Y ?? 1),
-                            Texture = texture
-                        });
+                            var texture = new Texture
+                            {
+                                Id = bitmTag.Id,
+                                ContentProvider = bitmTag.ReadMetadata<bitmap>()
+                            };
+
+                            texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, bitmTag.TagName);
+
+                            material.TextureMappings.Add(new TextureMapping
+                            {
+                                Usage = usage,
+                                Tiling = new Vector2(tile.X, tile.Y),
+                                Texture = texture
+                            });
+                        }
+                        catch { }
                     }
-                    catch { }
                 }
 
                 yield return material;
@@ -182,7 +194,7 @@ namespace Reclaimer.Blam.Halo4
             }
 
             var matLookup = materials = new List<Material>(args.Shaders.Count);
-            materials.AddRange(GetMaterials(args.Shaders));
+            materials.AddRange(GetMaterials(args));
 
             var meshList = new List<Mesh>(args.Sections.Count);
             meshList.AddRange(args.Sections.Select((section, sectionIndex) =>

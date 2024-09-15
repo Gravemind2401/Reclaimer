@@ -122,61 +122,67 @@
     <value>..\Resources\Halo1BumpPalette.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Halo1Classes" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\halo1classes.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\Halo1Classes.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Halo2BumpPalette" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\halo2bumppalette.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>..\Resources\Halo2BumpPalette.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Halo2Classes" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\halo2classes.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\Halo2Classes.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Halo2XboxShaderPass" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Halo2XboxShaderPass.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Halo3Strings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\halo3strings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\Resources\Halo3Strings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Halo3VertexBuffer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\halo3vertexbuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\Halo3VertexBuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Halo4MaterialShader" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Halo4MaterialShader.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Halo4Strings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\halo4strings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\Resources\Halo4Strings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Halo4VertexBuffer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\halo4vertexbuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\Halo4VertexBuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Halo5Classes" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\halo5classes.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\Resources\Halo5Classes.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Halo5VertexBuffer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\halo5vertexbuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\Halo5VertexBuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="HaloReachStrings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\haloreachstrings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\Resources\HaloReachStrings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="HaloReachVertexBuffer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\haloreachvertexbuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\HaloReachVertexBuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="MccHalo2XMaterialShader" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MccHalo2XMaterialShader.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="MccHalo2XStrings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\mcchalo2xstrings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\Resources\MccHalo2XStrings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="MccHalo3Strings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\mcchalo3strings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\Resources\MccHalo3Strings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="MccHalo3VertexBuffer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\mcchalo3vertexbuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\MccHalo3VertexBuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="MccHalo4Strings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\mcchalo4strings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\Resources\MccHalo4Strings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="MccHalo4VertexBuffer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\mcchalo4vertexbuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\MccHalo4VertexBuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="MccHaloReachStrings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\mcchaloreachstrings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\Resources\MccHaloReachStrings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="MccHaloReachVertexBuffer" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\mcchaloreachvertexbuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\MccHaloReachVertexBuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="StubbsBumpPalette" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\StubbsBumpPalette.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

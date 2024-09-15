@@ -1,4 +1,4 @@
-﻿<classes>
+<classes>
     <class code="GobS" name="gobo_setting" />
     <class code="LMMg" name="lightmap_model_globals" />
     <class code="LigS" name="lighting_settings" />

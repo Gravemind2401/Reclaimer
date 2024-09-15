@@ -34,7 +34,7 @@ namespace Reclaimer
             //instead of needing to be in the same directory as the app executable
             var libDir = Path.Combine(Settings.AppDataDirectory, "lib");
             var pathVar = Environment.GetEnvironmentVariable("PATH");
-            Environment.SetEnvironmentVariable("PATH", $"{pathVar};libDir");
+            Environment.SetEnvironmentVariable("PATH", $"{pathVar};{libDir}");
         }
 
         private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e) => LogUnhandledException(e.Exception);
