@@ -74,12 +74,7 @@ namespace Reclaimer.Blam.Halo4
                     continue;
                 }
 
-                //not confirmed if the material shaders happen to be configured the same in the betas or in H2AMP
-                if (args.Cache.Metadata.Game == HaloGame.Halo4 && !args.Cache.Metadata.IsPreRelease)
-                {
-                    MaterialHelper.PopulateTextureMappings(bitmapCache, material, shader);
-                }
-                else
+                if (!MaterialHelper.PopulateTextureMappings(args, bitmapCache, material, shader))
                 {
                     //legacy method: guess texture purpose based on file name
                     var props = shader.ShaderProperties[0];

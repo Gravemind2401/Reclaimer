@@ -96,6 +96,7 @@ namespace Reclaimer.Blam.Halo4
         [JsonPropertyName("parameters")]
         public MaterialShaderParameter[] Parameters { get; init; }
 
+        [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
         public class MaterialShaderParameter
         {
             [JsonPropertyName("name")]
@@ -103,12 +104,15 @@ namespace Reclaimer.Blam.Halo4
 
             [JsonPropertyName("type")]
             public string Type { get; set; }
+
+            private string GetDebuggerDisplay() => $"[{Type}] {Name}";
         }
     }
 
     internal static class MaterialHelper
     {
-        private static readonly Lazy<Dictionary<string, MaterialShaderDefinition>> MaterialShaderLookup = new(() => JsonSerializer.Deserialize<Dictionary<string, MaterialShaderDefinition>>(Resources.Halo4MaterialShader));
+        private static readonly Lazy<Dictionary<string, MaterialShaderDefinition>> Halo4MaterialShaderLookup = new(() => JsonSerializer.Deserialize<Dictionary<string, MaterialShaderDefinition>>(Resources.Halo4MaterialShader));
+        private static readonly Lazy<Dictionary<string, MaterialShaderDefinition>> Halo2XMaterialShaderLookup = new(() => JsonSerializer.Deserialize<Dictionary<string, MaterialShaderDefinition>>(Resources.MccHalo2XMaterialShader));
 
         private static IEnumerable<(string Usage, RealVector4 Value)> EnumerateFloatConstants(MaterialShaderDefinition shaderDefinition, IReadOnlyList<RealVector4> floatConstants)
         {
@@ -118,6 +122,10 @@ namespace Reclaimer.Blam.Halo4
             {
                 var blockIndex = nextValueIndex / 4;
                 var offsetInBlock = nextValueIndex % 4;
+
+                //if we reach the end of the Float Constants block, the rest are likely in the Float Vertex Constants block
+                if (blockIndex >= floatConstants.Count)
+                    break;
 
                 if (parameter.Type == "real")
                 {
@@ -142,6 +150,10 @@ namespace Reclaimer.Blam.Halo4
                         blockIndex++;
                         offsetInBlock = 0;
                     }
+
+                    //if we reach the end of the Float Constants block, the rest are likely in the Float Vertex Constants block
+                    if (blockIndex >= floatConstants.Count)
+                        break;
 
                     var block = floatConstants[blockIndex];
                     var value = offsetInBlock == 0
@@ -188,10 +200,18 @@ namespace Reclaimer.Blam.Halo4
             }
         }
 
-        public static void PopulateTextureMappings(Dictionary<int, bitmap> bitmapCache, Material material, material shader)
+        public static bool PopulateTextureMappings(Halo4GeometryArgs args, Dictionary<int, bitmap> bitmapCache, Material material, material shader)
         {
-            if (!MaterialShaderLookup.Value.TryGetValue(shader.BaseShaderReference.Tag.TagName, out var shaderDefinition))
-                return;
+            //not confirmed if the material shaders happen to be configured the same in the betas
+            if (args.Cache.Metadata.Game == HaloGame.Halo4 && args.Cache.Metadata.IsPreRelease)
+                return false;
+
+            var shaderLookup = args.Cache.Metadata.Game == HaloGame.Halo2X
+                ? Halo2XMaterialShaderLookup.Value
+                : Halo4MaterialShaderLookup.Value;
+
+            if (!shaderLookup.TryGetValue(shader.BaseShaderReference.Tag.TagName, out var shaderDefinition))
+                return false;
 
             var shaderProps = shader.ShaderProperties[0];
 
@@ -283,6 +303,8 @@ namespace Reclaimer.Blam.Halo4
                     });
                 }
             }
+
+            return true;
         }
     }
 }

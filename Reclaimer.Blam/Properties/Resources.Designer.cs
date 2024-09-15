@@ -314,6 +314,35 @@ namespace Reclaimer.Blam.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {
+        ///    &quot;shaders\\material_shaders\\decals\\base&quot;: {
+        ///        &quot;parameters&quot;: [
+        ///            {
+        ///                &quot;name&quot;: &quot;color_map&quot;,
+        ///                &quot;type&quot;: &quot;bitmap&quot;
+        ///            }
+        ///        ]
+        ///    },
+        ///    &quot;shaders\\material_shaders\\decals\\base_modulated_tint&quot;: {
+        ///        &quot;parameters&quot;: [
+        ///            {
+        ///                &quot;name&quot;: &quot;color_map&quot;,
+        ///                &quot;type&quot;: &quot;bitmap&quot;
+        ///            }
+        ///        ]
+        ///    },
+        ///    &quot;shaders\\material_shaders\\decals\\base_tint&quot;: {
+        ///        &quot;parameters&quot;: [
+        ///            {
+        ///        [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MccHalo2XMaterialShader {
+            get {
+                return ResourceManager.GetString("MccHalo2XMaterialShader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- https://github.com/XboxChaos/Assembly/tree/dev/src/Blamite/Formats --&gt;
         ///&lt;stringDefinitions&gt;
         ///    &lt;stringIDs id=&quot;U0&quot; indexBits=&quot;19&quot; namespaceBits=&quot;8&quot; lengthBits=&quot;5&quot;&gt;
