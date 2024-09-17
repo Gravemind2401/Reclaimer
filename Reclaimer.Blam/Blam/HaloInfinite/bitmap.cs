@@ -1,7 +1,9 @@
 using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Properties;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Drawing;
 using Reclaimer.IO;
+using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 
 namespace Reclaimer.Blam.HaloInfinite
@@ -19,65 +21,92 @@ namespace Reclaimer.Blam.HaloInfinite
 
         public override IBitmap GetContent() => this;
 
-        int IBitmap.SubmapCount => Bitmaps.Count;
+        int IBitmap.SubmapCount => Bitmaps[0].Type.Equals(BitmapType.Array) ? Bitmaps[0].Depth : Bitmaps.Count;
 
         CubemapLayout IBitmap.CubeLayout => CubemapLayout.NonCubemap;
 
-        
+
 
         public DdsImage ToDds(int index)
         {
-            var resourceIndex = Item.ResourceIndex + Item.ResourceCount - 1;
-            var resource = Item.Module.Items[Item.Module.Resources[resourceIndex] - index];
-            var submap = Bitmaps[index];
+            var resource = GetResource(index, out var isChunk);
+            var submap = Bitmaps[0].Type.Equals(BitmapType.Array) ? Bitmaps[0] : Bitmaps[index];
 
-            // Skip to the mip after the empty one from HD1 if HD1 module isn't loaded.
             if (resource.DataOffsetFlags.HasFlag(DataOffsetFlags.UseHD1) && Item.Module.hd1Stream == null)
             {
-                resourceIndex--;
-                resource = Item.Module.Items[Item.Module.Resources[resourceIndex]];
+                resource = Item.Module.Items[Item.Module.Resources[Item.ResourceIndex + Item.ResourceCount - 2]];
                 submap.Width /= 2;
                 submap.Height /= 2;
             }
 
-            if (!resource.Flags.HasFlag(FileEntryFlags.RawFile) && resource.UncompressedActualResourceSize == 0)
-            {
-                resource = Item.Module.Items[Item.Module.Resources[resource.ResourceIndex + resource.ResourceCount - 1]];
-            }
-
-            byte[] data = ReadResourceData(index, resource);
-
             var format = TextureUtils.DXNSwap(submap.BitmapFormat, true);
             var props = new BitmapProperties(submap.Width, submap.Height, format, "Texture2D");
+            var size = TextureUtils.GetBitmapDataLength(props, false);
+
+            byte[] data = ReadResourceData(resource, index, isChunk, Bitmaps[0].Type.Equals(BitmapType.Array), size);
             return TextureUtils.GetDds(props, data, false);
         }
 
-        private byte[] ReadResourceData(int index, ModuleItem resource)
+        private ModuleItem GetResource(int index, out bool isChunk)
         {
-            using (var reader = (index < Item.ResourceCount)
-                                        ? resource.CreateReader()
-                                        : Item.CreateReader())
+            isChunk = false;
+            ModuleItem resource;
+
+            if (Bitmaps.Count == 1 && Item.UncompressedActualResourceSize == 0)
             {
-                if (resource.Flags.HasFlag(FileEntryFlags.HasBlocks) && Item.UncompressedActualResourceSize == 0 && resource.UncompressedActualResourceSize == 0)
+                var resourceIndex = Item.ResourceIndex + Item.ResourceCount - 1;
+                resource = Item.Module.Items[Item.Module.Resources[resourceIndex] - index];
+                isChunk = true;
+            }
+            else
+            {
+                resource = Item.UncompressedActualResourceSize > 0
+                    ? Item
+                    : Item.Module.Items[Item.Module.Resources[Item.ResourceIndex] + index];
+            }
+
+            if (resource.ResourceCount > 0)
+            {
+                resource = Item.Module.Items[Item.Module.Resources[resource.ResourceIndex + resource.ResourceCount - 1]];
+                isChunk = true;
+            }
+
+            if (resource.UncompressedActualResourceSize > 0)
+            {
+                isChunk = false;
+            }
+
+            return resource;
+        }
+
+        private static byte[] ReadResourceData(ModuleItem resource, int index, bool isChunk, bool isArray, int size)
+        {
+            using (var reader = resource.CreateReader())
+            {
+                if (isChunk)
+                {
+                    return reader.ReadBytes(size);
+                }
+
+                if (isArray)
+                {
+                    reader.Seek(resource.UncompressedHeaderSize + resource.UncompressedTagSize + (size * index), SeekOrigin.Begin);
+                    return reader.ReadBytes(size);
+                }
+
+                if (resource.Flags.HasFlag(FileEntryFlags.HasBlocks))
                 {
                     reader.Seek(resource.UncompressedHeaderSize + resource.UncompressedTagSize, SeekOrigin.Begin);
-                }
-                else if (index >= Item.ResourceCount && Item.UncompressedActualResourceSize > 0)
-                {
-                    reader.Seek(Item.UncompressedHeaderSize + Item.UncompressedTagSize, SeekOrigin.Begin);
-                    // Early return if bitmap data is contained inside tag.
-                    return reader.ReadBytes((int)Item.UncompressedActualResourceSize);
-                }
-                else if (resource.UncompressedActualResourceSize > 0 && resource.Flags.HasFlag(FileEntryFlags.HasBlocks))
-                {
-                    reader.Seek(resource.UncompressedHeaderSize + resource.UncompressedTagSize, SeekOrigin.Begin);
-                    // Early return if bitmap data is contained inside resource.
                     return reader.ReadBytes((int)resource.UncompressedActualResourceSize);
                 }
 
-                return reader.ReadBytes((int)resource.TotalUncompressedSize);
+                return resource.Flags.HasFlag(FileEntryFlags.RawFile)
+                    ? reader.ReadBytes(resource.TotalUncompressedSize)
+                    : Array.Empty<byte>();
             }
         }
+
+
 
         #endregion
     }
@@ -87,11 +116,21 @@ namespace Reclaimer.Blam.HaloInfinite
     {
         [Offset(0)]
         public short Width { get; set; }
-
         [Offset(2)]
         public short Height { get; set; }
+        [Offset(4)]
+        public short Depth { get; set; }
+        [Offset(6)]
+        public BitmapType Type { get; set; }
 
         [Offset(8)]
         public TextureFormat BitmapFormat { get; set; }
+    }
+    public enum BitmapType : byte
+    {
+        Texture2D,
+        Texture3D,
+        CubeMap,
+        Array,
     }
 }
