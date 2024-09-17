@@ -85,7 +85,7 @@
                 </Button>
             </ToolBar>
         </ToolBarTray>
-        
+
         <ToolBarTray DockPanel.Dock="Bottom" IsLocked="True">
             <ToolBar>
                 <ToolBar.Resources>
@@ -96,7 +96,8 @@
                     </Style>
                 </ToolBar.Resources>
                 <ComboBox ItemsSource="{Binding AvailableLods}"
-                          SelectedIndex="{Binding SelectedLod}" />
+                          SelectedIndex="{Binding SelectedLod}"
+                          Visibility="Collapsed" />
                 <Separator />
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -169,7 +170,7 @@
                 <Separator />
             </ToolBar>
         </ToolBarTray>
-        
+
         <s:SplitPanel x:Name="splitPanel" x:FieldModifier="private" SplitterThickness="3">
             <s:SplitPanel.Resources>
                 <Style TargetType="s:SplitPanelSplitter">
@@ -180,36 +181,80 @@
                 <s:SearchControl x:Name="txtSearch" x:FieldModifier="private" DockPanel.Dock="Top"
                         WatermarkText="Search" LiveSearchEnabled="True" LiveSearchDelay="500"
                         SearchAccepted="txtSearch_SearchChanged" SearchCanceled="txtSearch_SearchChanged" />
-                <TreeView x:Name="tv" s:SplitPanel.DesiredSize="250"
-                        ItemsSource="{Binding TreeViewItems}"
-                        VerticalContentAlignment="Center"
-                        VirtualizingStackPanel.IsVirtualizing="True"
-                        VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
-                        VirtualizingStackPanel.VirtualizationMode="Recycling">
-                    <TreeView.ItemContainerStyle>
-                        <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
-                            <Setter Property="Visibility" Value="{Binding Visibility}" />
-                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                            <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick" />
+                <!--need to set SelectedIndex="0" to force selection of the first tab, otherwise nothing gets selected if the tab panel is hidden-->
+                <TabControl x:Name="treeTabs" s:SplitPanel.DesiredSize="250"
+                            TabStripPlacement="Bottom" SelectedIndex="0"
+                            SelectionChanged="treeTabs_SelectionChanged">
+                    <TabControl.Resources>
+                        <Style TargetType="TabPanel">
+                            <Setter Property="Visibility" Value="{Binding TreeTabsVisibility}" />
                         </Style>
-                    </TreeView.ItemContainerStyle>
-                    <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate DataType="m:TreeItemModel" ItemsSource="{Binding Items}">
-                            <StackPanel Orientation="Horizontal">
-                                <CheckBox IsChecked="{Binding IsChecked}"
-                                          VerticalAlignment="Center"
-                                          Focusable="False"
-                                          Checked="TreeViewItem_Checked"
-                                          Unchecked="TreeViewItem_Checked" />
-                                <TextBlock Text="{Binding Header}" Margin="5,0,0,0"
-                                           VerticalAlignment="Center" />
-                            </StackPanel>
-                        </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
-                    <b:Interaction.Behaviors>
-                        <c:ToggleOnSpaceBehavior ToggleCommand="{Binding SelectedItem.ToggleCommand, ElementName=tv}" />
-                    </b:Interaction.Behaviors>
-                </TreeView>
+                    </TabControl.Resources>
+                    <TabItem Header="Regions">
+                        <TreeView x:Name="tv1"
+                                  ItemsSource="{Binding TreeViewItems}"
+                                  VerticalContentAlignment="Center"
+                                  VirtualizingStackPanel.IsVirtualizing="True"
+                                  VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
+                                  VirtualizingStackPanel.VirtualizationMode="Recycling">
+                            <TreeView.ItemContainerStyle>
+                                <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                                    <Setter Property="Visibility" Value="{Binding Visibility}" />
+                                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                                    <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick" />
+                                </Style>
+                            </TreeView.ItemContainerStyle>
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate DataType="m:TreeItemModel" ItemsSource="{Binding Items}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox IsChecked="{Binding IsChecked}"
+                                                  VerticalAlignment="Center"
+                                                  Focusable="False"
+                                                  Checked="TreeViewItem_Checked"
+                                                  Unchecked="TreeViewItem_Checked" />
+                                        <TextBlock Text="{Binding Header}" Margin="5,0,0,0"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
+                            <b:Interaction.Behaviors>
+                                <c:ToggleOnSpaceBehavior ToggleCommand="{Binding SelectedItem.ToggleCommand, ElementName=tv1}" />
+                            </b:Interaction.Behaviors>
+                        </TreeView>
+                    </TabItem>
+                    <TabItem Header="Permutations">
+                        <TreeView x:Name="tv2" s:SplitPanel.DesiredSize="250"
+                                  ItemsSource="{Binding PermutationViewItems}"
+                                  VerticalContentAlignment="Center"
+                                  VirtualizingStackPanel.IsVirtualizing="True"
+                                  VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
+                                  VirtualizingStackPanel.VirtualizationMode="Recycling">
+                            <TreeView.ItemContainerStyle>
+                                <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                                    <Setter Property="Visibility" Value="{Binding Visibility}" />
+                                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                                    <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick" />
+                                </Style>
+                            </TreeView.ItemContainerStyle>
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate DataType="m:TreeItemModel" ItemsSource="{Binding Items}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox IsChecked="{Binding IsChecked}"
+                                                  VerticalAlignment="Center"
+                                                  Focusable="False"
+                                                  Checked="TreeViewItem_Checked"
+                                                  Unchecked="TreeViewItem_Checked" />
+                                        <TextBlock Text="{Binding Header}" Margin="5,0,0,0"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
+                            <b:Interaction.Behaviors>
+                                <c:ToggleOnSpaceBehavior ToggleCommand="{Binding SelectedItem.ToggleCommand, ElementName=tv2}" />
+                            </b:Interaction.Behaviors>
+                        </TreeView>
+                    </TabItem>
+                </TabControl>
             </DockPanel>
             <Grid>
                 <local:Renderer x:Name="renderer"
