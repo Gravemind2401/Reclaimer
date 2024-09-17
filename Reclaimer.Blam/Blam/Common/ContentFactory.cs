@@ -250,6 +250,7 @@ namespace Reclaimer.Blam.Common
                     }
                     break;
                 case runtime_geo:
+                case scenario_structure_bsp:
                 case render_model:
                     if (TryGetGeometryContent(item, out var geometryContent))
                     {
@@ -259,7 +260,6 @@ namespace Reclaimer.Blam.Common
                     break;
                 case particle_model:
                 case scenario:
-                case scenario_structure_bsp:
                 case structure_lightmap:
                     break;
             }
@@ -291,6 +291,7 @@ namespace Reclaimer.Blam.Common
             {
                 render_model => item.ReadMetadata<HaloInfinite.render_model>(),
                 runtime_geo => item.ReadMetadata<HaloInfinite.runtime_geo>(),
+                scenario_structure_bsp => item.ReadMetadata<HaloInfinite.scenario_structure_bsp>(),
                 _ => null
             };
 

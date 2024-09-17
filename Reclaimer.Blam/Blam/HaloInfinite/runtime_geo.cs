@@ -47,7 +47,7 @@ namespace Reclaimer.Blam.HaloInfinite
 
         public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent(), BlamConstants.WorldUnitScale);
 
-        private Model GetModelContent()
+        public Model GetModelContent()
         {
             var geoParams = new HaloInfiniteGeometryArgs
             {
