@@ -32,6 +32,9 @@ namespace Reclaimer.Controls.DirectX
         public static readonly DependencyProperty SelectedLodProperty =
             DependencyProperty.Register(nameof(SelectedLod), typeof(int), typeof(ModelViewer), new PropertyMetadata(0, SelectedLodChanged));
 
+        public static readonly DependencyProperty TreeTabsVisibilityProperty =
+            DependencyProperty.Register(nameof(TreeTabsVisibility), typeof(Visibility), typeof(ModelViewer), new PropertyMetadata(Visibility.Collapsed));
+
         public IEnumerable<string> AvailableLods
         {
             get => (IEnumerable<string>)GetValue(AvailableLodsProperty);
@@ -44,6 +47,12 @@ namespace Reclaimer.Controls.DirectX
             set => SetValue(SelectedLodProperty, value);
         }
 
+        public Visibility TreeTabsVisibility
+        {
+            get => (Visibility)GetValue(TreeTabsVisibilityProperty);
+            set => SetValue(TreeTabsVisibilityProperty, value);
+        }
+
         //TODO: LODs
         public static void SelectedLodChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -53,12 +62,17 @@ namespace Reclaimer.Controls.DirectX
         #endregion
 
         private readonly GroupModel3D modelGroup = new GroupModel3D { IsHitTestVisible = false };
+        private readonly Dictionary<TreeItemModel, TreeItemModel> treeItemsMap = new();
+
+        private TreeView currentTreeView => treeTabs.SelectedContent as TreeView;
+        private ObservableCollection<TreeItemModel> currentTreeViewItems => currentTreeView.ItemsSource as ObservableCollection<TreeItemModel>;
 
         private ICachedContentProvider<Scene> sceneProvider;
         private TextureLoader textureLoader;
 
         public TabModel TabModel { get; }
-        public ObservableCollection<TreeItemModel> TreeViewItems { get; }
+        public ObservableCollection<TreeItemModel> TreeViewItems { get; } = new();
+        public ObservableCollection<TreeItemModel> PermutationViewItems { get; } = new();
 
         public Action<string> LogOutput { get; set; }
         public Action<string, Exception> LogError { get; set; }
@@ -68,7 +82,6 @@ namespace Reclaimer.Controls.DirectX
         public ModelViewer()
         {
             TabModel = new TabModel(this, TabItemType.Document);
-            TreeViewItems = new ObservableCollection<TreeItemModel>();
             InitializeComponent();
 
             renderer.AddChild(modelGroup);
@@ -83,6 +96,8 @@ namespace Reclaimer.Controls.DirectX
             AvailableLods = AllLods.Take(1); // model.LodCount);
 
             TreeViewItems.Clear();
+            PermutationViewItems.Clear();
+            treeItemsMap.Clear();
             ClearChildren();
 
             var scene = sceneProvider.Content;
@@ -198,14 +213,45 @@ namespace Reclaimer.Controls.DirectX
                 if (regNode.HasItems)
                     TreeViewItems.Add(regNode);
             }
+
+            var permutationGroups = TreeViewItems
+                .SelectMany(r => r.Items, (r, p) => (RegionItem: r, PermutationItem: p))
+                .GroupBy(x => x.PermutationItem.Header);
+
+            //only populate permutation view if there are permutations that appear in multiple regions
+            //and there are 50 or less top-level regions (to try to exclude bsps)
+            var usePermutations = TreeViewItems.Count <= 50 && permutationGroups.Where(g => g.Skip(1).Any()).Any();
+            TreeTabsVisibility = usePermutations ? Visibility.Visible : Visibility.Collapsed;
+
+            if (usePermutations)
+            {
+                foreach (var g in permutationGroups)
+                {
+                    var permNode = new TreeItemModel { Header = g.Key, IsChecked = true };
+
+                    foreach (var (srcRegionNode, srcPermNode) in g)
+                    {
+                        var regNode = new TreeItemModel { Header = srcRegionNode.Header, IsChecked = true };
+                        permNode.Items.Add(regNode);
+
+                        treeItemsMap.Add(regNode, srcPermNode);
+                        treeItemsMap.Add(srcPermNode, regNode);
+                    }
+
+                    PermutationViewItems.Add(permNode);
+                }
+            }
         }
 
         #region Treeview Events
         private void TreeViewItem_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
             var item = (sender as FrameworkElement).DataContext as TreeItemModel;
-            if (item != tv.SelectedItem)
+            if (item != currentTreeView.SelectedItem)
                 return; //because this event bubbles to the parent node
+
+            if (item.Tag == null && treeItemsMap.TryGetValue(item, out var otherItem))
+                item = otherItem;
 
             if (item.Tag is not MeshTag t)
                 return;
@@ -230,17 +276,26 @@ namespace Reclaimer.Controls.DirectX
                 return;
 
             isWorking = true;
-            OnStateChanged((e.OriginalSource as FrameworkElement).DataContext as TreeItemModel, true, true);
+
+            var item = (e.OriginalSource as FrameworkElement).DataContext as TreeItemModel;
+            OnStateChanged(item, true, true);
+
             isWorking = false;
         }
 
-        private static void OnStateChanged(TreeItemModel item, bool updateRender, bool refreshParent)
+        private void OnStateChanged(TreeItemModel item, bool updateRender, bool refreshParent)
         {
             foreach (var child in item.EnumerateHierarchy(i => i.IsVisible))
             {
                 child.IsChecked = item.IsChecked;
                 if (updateRender && child.Tag is MeshTag tag)
                     tag.SetVisible(child.IsChecked.GetValueOrDefault());
+
+                if (treeItemsMap.TryGetValue(child, out var otherItem) && otherItem.IsChecked != child.IsChecked)
+                {
+                    otherItem.IsChecked = child.IsChecked;
+                    OnStateChanged(otherItem, updateRender, refreshParent);
+                }
             }
 
             if (refreshParent)
@@ -272,17 +327,17 @@ namespace Reclaimer.Controls.DirectX
 
         private void ExpandAll(bool expanded)
         {
-            foreach (var item in TreeViewItems)
+            foreach (var item in currentTreeViewItems)
                 item.ExpandAll(expanded);
         }
 
         private void CheckAll(bool checkState)
         {
             isWorking = true;
-            foreach (var item in TreeViewItems.Where(i => i.IsVisible))
+            foreach (var item in currentTreeViewItems.Where(i => i.IsVisible))
             {
                 item.IsChecked = checkState;
-                OnStateChanged(item, true, false);
+                OnStateChanged(item, true, PermutationViewItems.Any());
             }
             isWorking = false;
         }
@@ -382,11 +437,29 @@ namespace Reclaimer.Controls.DirectX
         #region Control Events
         private void txtSearch_SearchChanged(object sender, RoutedEventArgs e)
         {
-            foreach (var parent in TreeViewItems)
+            ApplySearch(txtSearch.Text, currentTreeViewItems);
+        }
+
+        private void treeTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtSearch.Text))
+                return;
+
+            var previousTreeView = e.RemovedItems.OfType<TabItem>().FirstOrDefault()?.Content as TreeView;
+            if (previousTreeView?.ItemsSource is not IEnumerable<TreeItemModel> previousItems)
+                return;
+
+            ApplySearch(null, previousItems);
+            ApplySearch(txtSearch.Text, currentTreeViewItems);
+        }
+
+        private void ApplySearch(string searchTerm, IEnumerable<TreeItemModel> treeItems)
+        {
+            foreach (var parent in treeItems)
             {
                 foreach (var child in parent.Items)
                 {
-                    child.Visibility = string.IsNullOrEmpty(txtSearch.Text) || child.Header.ToUpperInvariant().Contains(txtSearch.Text.ToUpperInvariant())
+                    child.Visibility = string.IsNullOrEmpty(searchTerm) || child.Header.ToUpperInvariant().Contains(searchTerm.ToUpperInvariant())
                         ? Visibility.Visible
                         : Visibility.Collapsed;
                 }
@@ -398,7 +471,7 @@ namespace Reclaimer.Controls.DirectX
 
             //refresh parent item check states to reflect visible children only
             isWorking = true;
-            foreach (var item in TreeViewItems)
+            foreach (var item in treeItems)
                 OnStateChanged(item.Items.First(), false, true);
             isWorking = false;
         }
