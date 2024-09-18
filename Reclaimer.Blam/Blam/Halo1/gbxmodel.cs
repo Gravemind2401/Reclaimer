@@ -238,7 +238,7 @@ namespace Reclaimer.Blam.Halo1
                 foreach (var submesh in section.Submeshes)
                 {
                     reader.Seek(tagIndex.VertexDataOffset + tagIndex.IndexDataOffset + submesh.IndexOffset, SeekOrigin.Begin);
-                    var subIndices = reader.ReadEnumerable<ushort>(submesh.IndexCount + 2).Select(i => i + vertexTally).Unstrip().Reverse().ToList();
+                    var subIndices = reader.ReadArray<ushort>(submesh.IndexCount + 2).Select(i => i + vertexTally).Unstrip().Reverse().ToList();
 
                     var segment = new MeshSegment
                     {
