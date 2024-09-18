@@ -39,21 +39,22 @@ namespace Reclaimer.Blam.HaloInfinite
         public BlockCollection<MeshResourceGroupBlock> MeshResourceGroups { get; set; }
 
         [Offset(376)]
-        public BlockCollection<MarkerGroupBlock> MarkerGroups { get; set; }
+        public BlockCollection<StaticMarkerBlock> MarkerGroups { get; set; }
 
         #region IContentProvider
 
-        Model IContentProvider<Model>.GetContent() => GetModelContent();
+        Model IContentProvider<Model>.GetContent() => GetModelContent(null);
 
-        public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent(), BlamConstants.WorldUnitScale);
+        public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent(null), BlamConstants.WorldUnitScale);
 
-        public Model GetModelContent()
+        public Model GetModelContent(BlockCollection<MaterialBlock> material_list)
         {
             var geoParams = new HaloInfiniteGeometryArgs
             {
                 Module = Module,
                 ResourcePolicy = MeshResourcePackingPolicy,
                 Sections = Sections,
+                Materials = material_list,
                 NodeMaps = NodeMaps,
                 MeshResourceGroups = MeshResourceGroups,
                 ResourceIndex = Item.ResourceIndex,
@@ -68,11 +69,11 @@ namespace Reclaimer.Blam.HaloInfinite
                 var marker = new Marker { Name = g.Name };
                 marker.Instances.AddRange(g.Markers.Select(m => new MarkerInstance
                 {
-                    Position = (Vector3)m.Position,
-                    Rotation = new Quaternion(m.Rotation.X, m.Rotation.Y, m.Rotation.Z, m.Rotation.W),
-                    RegionIndex = m.RegionIndex,
-                    PermutationIndex = m.PermutationIndex,
-                    BoneIndex = m.NodeIndex
+                    Position = m.Translation,
+                    Rotation = m.Rotation,
+                    RegionIndex = 0,
+                    PermutationIndex = 0,
+                    BoneIndex = 0
                 }));
 
                 return marker;
@@ -129,5 +130,26 @@ namespace Reclaimer.Blam.HaloInfinite
 
         [Offset(108)]
         public BlockCollection<float> LodLevels { get; set; }
+    }
+
+    [FixedSize(24)]
+    [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
+    public class StaticMarkerBlock
+    {
+        [Offset(0)]
+        public StringHash Name { get; set; }
+
+        [Offset(4)]
+        public BlockCollection<StaticGeoMarkerBlock> Markers { get; set; }
+    }
+
+    [FixedSize(24)]
+    public class StaticGeoMarkerBlock
+    {
+        [Offset(0)]
+        public Vector3 Translation { get; set; }
+
+        [Offset(12)]
+        public Quaternion Rotation { get; set; }
     }
 }

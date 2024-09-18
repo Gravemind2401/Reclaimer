@@ -62,8 +62,17 @@ namespace Reclaimer.Plugins.MetaViewer.HaloInfinite
         {
             var result = new JObject();
             foreach (var item in Children.Where(c => c.FieldDefinition.ValueType != MetaValueType.Comment))
-                result.Add(item.Name, item.GetJValue());
-
+            {
+                if (result.ContainsKey(item.Name))
+                {
+                    result.Add(item.Name + item.Offset, item.GetJValue());
+                } 
+                else
+                {
+                    result.Add(item.Name, item.GetJValue());
+                }
+                
+            }  
             return result;
         }
     }

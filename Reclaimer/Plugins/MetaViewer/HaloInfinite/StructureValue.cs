@@ -85,7 +85,13 @@ namespace Reclaimer.Plugins.MetaViewer.HaloInfinite
                 }
 
                 var adjustedOffset = (BaseAddress - host.Offset) + Offset;
-                var structdef = header.StructureDefinitions.First(s => s.FieldBlock == header.DataBlocks.IndexOf(host) && s.FieldOffset == adjustedOffset);
+                var structdef = header.StructureDefinitions.First(s => s.FieldBlock == header.DataBlocks.IndexOf(host) && s.FieldOffset == adjustedOffset && s.TargetIndex != -1);
+
+                if (structdef.TargetIndex == -1)
+                {
+                    IsEnabled = false;
+                    return;
+                }
 
                 var block = header.DataBlocks[structdef.TargetIndex];
                 BlockAddress = header.GetSectionOffset(block.Section) + block.Offset - header.Header.HeaderSize;

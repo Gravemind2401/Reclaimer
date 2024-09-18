@@ -42,7 +42,7 @@ namespace Reclaimer.Blam.HaloInfinite
                 try
                 {
                     var tag = instance.RuntimeGeoMeshReference.Tag.ReadMetadata<runtime_geo>();
-                    var model = tag.GetModelContent();
+                    var model = tag.GetModelContent(instance.Material);
 
                     var sceneItem = new ObjectPlacement(model);
 
@@ -89,6 +89,9 @@ namespace Reclaimer.Blam.HaloInfinite
 
         [Offset(118)]
         public short BoundsIndex { get; set; }
+
+        [Offset(240)]
+        public BlockCollection<MaterialBlock> Material { get; set; }
 
         [Offset(272)]
         public MeshFlags FlagsOverride { get; set; }
