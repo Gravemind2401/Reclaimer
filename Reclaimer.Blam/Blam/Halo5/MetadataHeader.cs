@@ -29,12 +29,12 @@ namespace Reclaimer.Blam.Halo5
             reader.RegisterInstance(this);
 
             Header = reader.ReadObject<TagHeader>();
-            Dependencies = reader.ReadEnumerable<TagDependency>(Header.DependencyCount).ToList();
-            DataBlocks = reader.ReadEnumerable<DataBlock>(Header.DataBlockCount).ToList();
-            StructureDefinitions = reader.ReadEnumerable<TagStructureDefinition>(Header.TagStructureCount).ToList();
-            DataReferences = reader.ReadEnumerable<DataBlockReference>(Header.DataReferenceCount).ToList();
-            TagReferences = reader.ReadEnumerable<TagBlockReference>(Header.TagReferenceCount).ToList();
-            StringIds = reader.ReadEnumerable<StringId>(Header.StringIdCount).ToList();
+            Dependencies = reader.ReadArray<TagDependency>(Header.DependencyCount).ToList();
+            DataBlocks = reader.ReadArray<DataBlock>(Header.DataBlockCount).ToList();
+            StructureDefinitions = reader.ReadArray<TagStructureDefinition>(Header.TagStructureCount).ToList();
+            DataReferences = reader.ReadArray<DataBlockReference>(Header.DataReferenceCount).ToList();
+            TagReferences = reader.ReadArray<TagBlockReference>(Header.TagReferenceCount).ToList();
+            StringIds = reader.ReadArray<StringId>(Header.StringIdCount).ToList();
 
             stringTable = new List<string>(StringIds.Count);
             stringsByOffset = new Dictionary<int, int>(StringIds.Count);
