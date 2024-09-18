@@ -273,6 +273,9 @@ namespace Reclaimer.Blam.HaloInfinite
 
         [Offset(140)]
         public LodFlags LodFlags { get; set; }
+
+        [Offset(142)]
+        public ushort LODHasShadowProxies { get; set; }
     }
 
     [FixedSize(38)]
@@ -389,7 +392,6 @@ namespace Reclaimer.Blam.HaloInfinite
     [Flags]
     public enum LodFlags : ushort
     {
-        None = 0,
         Lod0 = 1 << 0,
         Lod1 = 1 << 1,
         Lod2 = 1 << 2,

@@ -167,7 +167,7 @@ namespace Reclaimer.Blam.HaloInfinite
 
             foreach (var (section, sectionIndex) in args.Sections.Select((s, i) => (s, i)))
             {
-                if (section.SectionLods[0].LodFlags > 0 && (section.SectionLods[0].LodFlags & lodFlag) == 0 || section.Flags.HasFlag(MeshFlags.MeshIsCustomShadowCaster))
+                if (section.SectionLods[0].LodFlags > 0 && (section.SectionLods[0].LodFlags & lodFlag) == 0 || section.Flags.HasFlag(MeshFlags.MeshIsCustomShadowCaster) || section.SectionLods[0].LODHasShadowProxies != 0)
                     continue;
 
                 var lodIndex = Math.Min(lod, section.SectionLods.Count - 1);
