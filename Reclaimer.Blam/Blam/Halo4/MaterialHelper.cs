@@ -286,12 +286,12 @@ namespace Reclaimer.Blam.Halo4
                 });
 
             var floatParams = from p in EnumerateFloatConstants(shaderDefinition, shaderProps.FloatConstants)
-                              where ShaderParameters.TintLookup.ContainsKey(p.Usage)
-                              let usage = GetBlendUsage(p.Usage)
+                              let u = GetBlendUsage(p.Usage)
+                              where ShaderParameters.TintLookup.ContainsKey(u.Usage)
                               select new
                               {
-                                  usage.Usage,
-                                  usage.BlendChannel,
+                                  u.Usage,
+                                  u.BlendChannel,
                                   p.Value
                               };
 

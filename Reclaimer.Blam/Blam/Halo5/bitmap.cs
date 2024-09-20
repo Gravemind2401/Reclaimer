@@ -22,6 +22,19 @@ namespace Reclaimer.Blam.Halo5
 
         CubemapLayout IBitmap.CubeLayout => CubemapLayout.NonCubemap;
 
+        float IBitmap.GetSubmapGamma(int index)
+        {
+            Exceptions.ThrowIfIndexOutOfRange(index, Bitmaps.Count);
+
+            return Bitmaps[index].Curve switch
+            {
+                ColorSpace.Linear => 1f,
+                ColorSpace.Gamma2 => 2f,
+                ColorSpace.sRGB or ColorSpace.Rec709 => 2.2f,
+                _ => 1.95f //xRGB, Unknown
+            };
+        }
+
         public DdsImage ToDds(int index)
         {
             var isChunk = false;
@@ -74,6 +87,9 @@ namespace Reclaimer.Blam.Halo5
 
         [Offset(8)]
         public TextureFormat BitmapFormat { get; set; }
+
+        [Offset(17)]
+        public ColorSpace Curve { get; set; }
     }
 
     public enum TextureFormat : short
@@ -130,5 +146,16 @@ namespace Reclaimer.Blam.Halo5
         BC7_unorm, //bc7_unorm {dxt5_blue}
         Depth_24, //d24_unorm_s8_uint (depth 24){depth 24}
         R11G11B10_float, //r11g11b10_float
+    }
+
+    public enum ColorSpace : byte
+    {
+        Unknown = 0, //same as xRGB
+        xRGB = 1, //1.95
+        Gamma2 = 2, //2.0
+        Linear = 3, //1.0
+        OffsetLog = 4, //???
+        sRGB = 5, //2.2
+        Rec709 = 6 //2.2
     }
 }
