@@ -168,7 +168,7 @@ namespace Reclaimer.Blam.Halo5
                 var vInfo = vertexBufferInfo.ElementAtOrDefault(lodData.VertexBufferIndex);
                 var iInfo = indexBufferInfo.ElementAtOrDefault(lodData.IndexBufferIndex);
 
-                if (vInfo.VertexCount == 0) // || iInfo.IndexCount == 0)
+                if (vInfo.VertexCount == 0)
                     continue;
 
                 try
@@ -177,20 +177,21 @@ namespace Reclaimer.Blam.Halo5
                     {
                         var data = rawVertexBuffers[lodData.VertexBufferIndex];
                         var vertexBuffer = vertexBuilder.CreateVertexBuffer(section.VertexFormat, vInfo.VertexCount, data);
-                        if (section.VertexFormat != 38) //skinned 8 weights
+                        if (section.VertexFormat != 38 && vertexBuffer.HasBlendWeights) //skinned 8 weights
                             vertexBuffer.HasImpliedBlendWeights = true;
                         vb.Add(lodData.VertexBufferIndex, vertexBuffer);
                     }
 
                     if (!ib.ContainsKey(lodData.IndexBufferIndex))
                     {
-                        // if this is a particle model, then we need to create our own index buffer
-                        if (iInfo.IndexCount == 0) // if particle vertices
+                        // particle models and decorator models have no indices
+                        // so we need to create our own index buffer
+                        if (iInfo.IndexCount == 0)
                         {
                             var indexBuffer = BlamUtils.CreateDecoratorIndexBuffer(vInfo.VertexCount);
                             ib.Add(lodData.IndexBufferIndex, indexBuffer);
                         }
-                        else // otherwise regular index buffer
+                        else
                         {
                             var data = rawIndexBuffers[lodData.IndexBufferIndex];
                             var indexBuffer = new IndexBuffer(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort)) { Layout = section.IndexFormat };
