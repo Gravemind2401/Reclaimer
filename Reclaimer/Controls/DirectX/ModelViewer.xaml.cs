@@ -218,11 +218,15 @@ namespace Reclaimer.Controls.DirectX
 
             var permutationGroups = TreeViewItems
                 .SelectMany(r => r.Items, (r, p) => (RegionItem: r, PermutationItem: p))
-                .GroupBy(x => x.PermutationItem.Header);
+                .GroupBy(x => x.PermutationItem.Header)
+                .ToList();
 
             //only populate permutation view if there are permutations that appear in multiple regions
-            //and there are 50 or less top-level regions (to try to exclude bsps)
-            var usePermutations = TreeViewItems.Count <= 50 && permutationGroups.Where(g => g.Skip(1).Any()).Any();
+            //and there are no more than 50 top-level regions or 50 unique permutations (to try to exclude bsps)
+            var usePermutations = TreeViewItems.Count <= 50
+                && permutationGroups.Count <= 50
+                && permutationGroups.Where(g => g.Skip(1).Any()).Any();
+
             TreeTabsVisibility = usePermutations ? Visibility.Visible : Visibility.Collapsed;
 
             if (usePermutations)
