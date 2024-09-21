@@ -7,10 +7,34 @@ namespace Reclaimer.Controls.DirectX
 {
     public partial class ModelViewer
     {
+        private sealed class MeshLoaderFactory
+        {
+            private readonly TextureLoader textureLoader;
+            private readonly Dictionary<Model, MeshLoader> lookup = new();
+
+            public MeshLoaderFactory(TextureLoader textureLoader)
+            {
+                this.textureLoader = textureLoader;
+            }
+
+            public MeshLoader CreateMeshLoader(Model model)
+            {
+                if (lookup.TryGetValue(model, out var meshLoader))
+                    return meshLoader.Duplicate();
+
+                meshLoader = new MeshLoader(model, textureLoader);
+                lookup.Add(model, meshLoader);
+
+                return meshLoader;
+            }
+        }
+
         private sealed class MeshLoader
         {
             private readonly Dictionary<int, GroupModel3D> meshLookup = new();
             private readonly Dictionary<int, GroupModel3D> instanceLookup = new();
+
+            private MeshLoader() { }
 
             public MeshLoader(Model model, TextureLoader textureLoader)
             {
@@ -81,6 +105,45 @@ namespace Reclaimer.Controls.DirectX
                     else
                         meshLookup.Add(i, mGroup);
                 }
+            }
+
+            public MeshLoader Duplicate()
+            {
+                var copy = new MeshLoader();
+
+                //copy the existing geometry buffer instances instead of creating new ones
+
+                foreach (var (key, srcGroup) in meshLookup)
+                {
+                    var copyGroup = new GroupModel3D();
+                    copyGroup.Children.AddRange(
+                        from src in srcGroup.Children.OfType<MeshGeometryModel3D>()
+                        select new MeshGeometryModel3D
+                        {
+                            Geometry = src.Geometry,
+                            Material = src.Material
+                        }
+                    );
+
+                    copy.meshLookup.Add(key, copyGroup);
+                }
+
+                foreach (var (key, srcGroup) in instanceLookup)
+                {
+                    var copyGroup = new GroupModel3D();
+                    copyGroup.Children.AddRange(
+                        from src in srcGroup.Children.OfType<InstancingMeshGeometryModel3D>()
+                        select new InstancingMeshGeometryModel3D
+                        {
+                            Geometry = src.Geometry,
+                            Material = src.Material
+                        }
+                    );
+
+                    copy.instanceLookup.Add(key, copyGroup);
+                }
+
+                return copy;
             }
 
             public MeshTag GetMesh(ModelPermutation permutation)

@@ -69,6 +69,7 @@ namespace Reclaimer.Controls.DirectX
 
         private ICachedContentProvider<Scene> sceneProvider;
         private TextureLoader textureLoader;
+        private MeshLoaderFactory meshLoaderFactory;
 
         public TabModel TabModel { get; }
         public ObservableCollection<TreeItemModel> TreeViewItems { get; } = new();
@@ -102,6 +103,7 @@ namespace Reclaimer.Controls.DirectX
 
             var scene = sceneProvider.Content;
             textureLoader = new TextureLoader(scene);
+            meshLoaderFactory = new MeshLoaderFactory(textureLoader);
 
             renderer.SetCoordinateSystem(scene.CoordinateSystem);
 
@@ -133,7 +135,7 @@ namespace Reclaimer.Controls.DirectX
                             continue;
 
                         var objNode = new TreeItemModel { Header = model.Name, IsChecked = true };
-                        var meshLoader = new MeshLoader(model, textureLoader);
+                        var meshLoader = meshLoaderFactory.CreateMeshLoader(model);
                         var objGroup = new GroupModel3D();
 
                         if (placement != null && !placement.Transform.IsIdentity)
@@ -188,7 +190,7 @@ namespace Reclaimer.Controls.DirectX
 
         public void LoadGeometry(Model model)
         {
-            var meshLoader = new MeshLoader(model, textureLoader);
+            var meshLoader = meshLoaderFactory.CreateMeshLoader(model);
 
             foreach (var region in model.Regions)
             {
