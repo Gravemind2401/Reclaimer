@@ -77,9 +77,9 @@ class IndexBuffer:
 
     def count_triangles(self, arg1, arg2 = None) -> int:
         def get_count(offset: int, count: int) -> int:
-            if self.index_layout in [IndexLayout.DEFAULT, IndexLayout.TRIANGLE_LIST]:
+            if self.index_layout == IndexLayout.TRIANGLE_LIST:
                 return int(count / 3)
-            elif self.index_layout == IndexLayout.TRIANGLE_STRIP:
+            elif self.index_layout in [IndexLayout.DEFAULT, IndexLayout.TRIANGLE_STRIP]:
                 # count the number of unpacked triangles returned
                 return sum(1 for _ in self.get_triangles(offset, count))
             else:
@@ -119,9 +119,9 @@ class IndexBuffer:
         def get_indices(offset: int, count: int) -> Iterator[int]:
             end = len(self.indices) if count < 0 else offset + count
             subset = (self.indices[i] for i in range(offset, end))
-            if self.index_layout in [IndexLayout.DEFAULT, IndexLayout.TRIANGLE_LIST]:
+            if self.index_layout == IndexLayout.TRIANGLE_LIST:
                 return subset
-            elif self.index_layout == IndexLayout.TRIANGLE_STRIP:
+            elif self.index_layout in [IndexLayout.DEFAULT, IndexLayout.TRIANGLE_STRIP]:
                 return self._unpack_triangle_list(subset)
             else:
                 raise Exception('Unsupported index layout')
