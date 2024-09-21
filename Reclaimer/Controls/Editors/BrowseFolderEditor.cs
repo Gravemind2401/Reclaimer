@@ -11,7 +11,7 @@ namespace Reclaimer.Controls.Editors
                 InitialDirectory = PropertyItem.Value?.ToString()
             };
 
-            if (fsd.ShowDialog() == DialogResult.OK)
+            if (fsd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 PropertyItem.Value = fsd.SelectedPath.Replace(Settings.AppBaseDirectory, ".\\");
         }
     }
