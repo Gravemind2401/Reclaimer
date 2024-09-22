@@ -306,10 +306,10 @@ namespace Reclaimer.Blam.Utilities
 
         public static object DXNSwap(object format, bool shouldSwap)
         {
-            var bitmapFormat = format.ParseToEnum<KnownTextureFormat>();
-            return shouldSwap && bitmapFormat == KnownTextureFormat.DXN
+            var knownFormat = format.ParseToEnum<KnownTextureFormat>();
+            return shouldSwap && knownFormat == KnownTextureFormat.DXN
                 ? KnownTextureFormat.DXN_SNorm
-                : bitmapFormat;
+                : format;
         }
 
         public static int GetBitmapDataLength(BitmapProperties props, bool includeMips)
@@ -399,7 +399,7 @@ namespace Reclaimer.Blam.Utilities
             else if (xboxLookup.TryGetValue(bitmapFormat, out var xboxFormat))
                 dds = new DdsImage(props.Height, props.Width, xboxFormat, data);
             else
-                throw Exceptions.BitmapFormatNotSupported(bitmapFormat.ToString());
+                throw Exceptions.BitmapFormatNotSupported(props.BitmapFormat.ToString());
 
             if (textureType == KnownTextureType.CubeMap)
                 dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
