@@ -101,9 +101,12 @@ namespace Reclaimer.IO
                 var bytesRead = chunkTracker.ChunkStream.Read(buffer, offset, bytesRemaining);
                 bytesRemaining -= bytesRead;
                 position += bytesRead;
+                offset += bytesRead;
 
                 if (chunkTracker.IsEndOfChunk)
                     chunkTracker.PrepareChunk();
+                else if (bytesRead == 0)
+                    break;
             }
             while (position < Length && bytesRemaining > 0);
 
