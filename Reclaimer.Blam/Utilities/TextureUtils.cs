@@ -17,7 +17,10 @@ namespace Reclaimer.Blam.Utilities
             { KnownTextureFormat.X8R8G8B8, DxgiFormat.B8G8R8X8_UNorm },
             { KnownTextureFormat.R5G6B5, DxgiFormat.B5G6R5_UNorm },
             { KnownTextureFormat.A1R5G5B5, DxgiFormat.B5G5R5A1_UNorm },
-            { KnownTextureFormat.A4R4G4B4, DxgiFormat.B4G4R4A4_UNorm }
+            { KnownTextureFormat.A4R4G4B4, DxgiFormat.B4G4R4A4_UNorm },
+            { KnownTextureFormat.RGBFP32, DxgiFormat.R32G32B32_Float },
+            { KnownTextureFormat.RGBAFP32, DxgiFormat.R32G32B32A32_Float },
+            { KnownTextureFormat.L16, DxgiFormat.R16_UNorm }
         };
 
         private static readonly Dictionary<KnownTextureFormat, XboxFormat> xboxLookup = new Dictionary<KnownTextureFormat, XboxFormat>
@@ -62,7 +65,8 @@ namespace Reclaimer.Blam.Utilities
             DXT5,
             P8_bump,
             P8,
-            ARGBFP32,
+            ARGBFP32, //TODO: should this actually be RGBA instead of ARGB? the games this is defined in have no examples
+            RGBAFP32,
             RGBFP32,
             RGBFP16,
             U8V8,
@@ -76,7 +80,10 @@ namespace Reclaimer.Blam.Utilities
             DXT5a_mono,
             DXN_mono_alpha,
             BC4_unorm, //same as DXT5a
-            BC7_unorm
+            BC6H_UF16,
+            BC6H_SF16,
+            BC7_unorm,
+            L16
         }
 
         private enum KnownTextureType : short
@@ -103,11 +110,19 @@ namespace Reclaimer.Blam.Utilities
         {
             switch (format)
             {
+                case KnownTextureFormat.ARGBFP32:
+                case KnownTextureFormat.RGBAFP32:
+                    return 128;
+
+                case KnownTextureFormat.RGBFP32:
+                    return 96;
+
                 case KnownTextureFormat.A8R8G8B8:
                 case KnownTextureFormat.X8R8G8B8:
-                case KnownTextureFormat.ARGBFP32:
-                case KnownTextureFormat.RGBFP32:
                     return 32;
+
+                case KnownTextureFormat.L16:
+                    return 16;
 
                 case KnownTextureFormat.A8:
                 case KnownTextureFormat.Y8:
@@ -129,6 +144,8 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.DXT5:
                 case KnownTextureFormat.DXN:
                 case KnownTextureFormat.DXN_mono_alpha:
+                case KnownTextureFormat.BC6H_UF16:
+                case KnownTextureFormat.BC6H_SF16:
                 case KnownTextureFormat.BC7_unorm:
                     return 8;
 
@@ -143,6 +160,9 @@ namespace Reclaimer.Blam.Utilities
         {
             switch (format)
             {
+                case KnownTextureFormat.ARGBFP32:
+                case KnownTextureFormat.RGBAFP32:
+                case KnownTextureFormat.RGBFP32:
                 case KnownTextureFormat.A8R8G8B8:
                 case KnownTextureFormat.X8R8G8B8:
                     return 4;
@@ -174,6 +194,10 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.DXT5:
                 case KnownTextureFormat.DXN:
                 case KnownTextureFormat.DXN_mono_alpha:
+                case KnownTextureFormat.BC4_unorm:
+                case KnownTextureFormat.BC6H_UF16:
+                case KnownTextureFormat.BC6H_SF16:
+                case KnownTextureFormat.BC7_unorm:
                     return 4;
 
                 default:
@@ -193,12 +217,16 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.DXT5a:
                 case KnownTextureFormat.DXT3a_alpha:
                 case KnownTextureFormat.DXT3a_mono:
+                case KnownTextureFormat.BC4_unorm:
                     return 8;
 
                 case KnownTextureFormat.DXT3:
                 case KnownTextureFormat.DXT5:
                 case KnownTextureFormat.DXN:
                 case KnownTextureFormat.DXN_mono_alpha:
+                case KnownTextureFormat.BC6H_UF16:
+                case KnownTextureFormat.BC6H_SF16:
+                case KnownTextureFormat.BC7_unorm:
                     return 16;
 
                 case KnownTextureFormat.A8:
@@ -306,10 +334,10 @@ namespace Reclaimer.Blam.Utilities
 
         public static object DXNSwap(object format, bool shouldSwap)
         {
-            var bitmapFormat = format.ParseToEnum<KnownTextureFormat>();
-            return shouldSwap && bitmapFormat == KnownTextureFormat.DXN
+            var knownFormat = format.ParseToEnum<KnownTextureFormat>();
+            return shouldSwap && knownFormat == KnownTextureFormat.DXN
                 ? KnownTextureFormat.DXN_SNorm
-                : bitmapFormat;
+                : format;
         }
 
         public static int GetBitmapDataLength(BitmapProperties props, bool includeMips)
@@ -399,7 +427,7 @@ namespace Reclaimer.Blam.Utilities
             else if (xboxLookup.TryGetValue(bitmapFormat, out var xboxFormat))
                 dds = new DdsImage(props.Height, props.Width, xboxFormat, data);
             else
-                throw Exceptions.BitmapFormatNotSupported(bitmapFormat.ToString());
+                throw Exceptions.BitmapFormatNotSupported(props.BitmapFormat.ToString());
 
             if (textureType == KnownTextureType.CubeMap)
                 dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;

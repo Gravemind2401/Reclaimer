@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -937,6 +938,68 @@ namespace Reclaimer.Drawing
                     if (reader.Position != (srcIndex + 16) * 8)
                         System.Diagnostics.Debugger.Break();
                 }
+            }
+
+            return output;
+        }
+
+        [DxgiDecompressor(R16_UNorm)]
+        internal static byte[] DecompressR16(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+
+            var input = MemoryMarshal.Cast<byte, ushort>(data);
+            var pixelCount = Math.Min(input.Length, width * height);
+
+            for (var i = 0; i < pixelCount; i++)
+            {
+                //note: technically the output should only be the red channel, but we are duplicating the red channel to make it monochrome
+                output[i * bpp + 0] = output[i * bpp + 1] = output[i * bpp + 2] = (byte)(input[i] / (float)ushort.MaxValue * byte.MaxValue);
+                if (!bgr24)
+                    output[i * bpp + 3] = byte.MaxValue;
+            }
+
+            return output;
+        }
+
+        [DxgiDecompressor(R32G32B32_Float)]
+        internal static byte[] DecompressRGBFP32(byte[] data, int height, int width, bool bgr24)
+        {
+            const int bpp = 3;
+            var output = new byte[width * height * bpp];
+
+            var input = MemoryMarshal.Cast<byte, float>(data);
+            var pixelCount = Math.Min(input.Length / 3, width * height);
+
+            for (var i = 0; i < pixelCount; i++)
+            {
+                //note: input as rgb, output as bgr
+                output[i * bpp + 0] = (byte)(Math.Clamp(input[i * 4 + 2], 0f, 1f) * byte.MaxValue);
+                output[i * bpp + 1] = (byte)(Math.Clamp(input[i * 4 + 1], 0f, 1f) * byte.MaxValue);
+                output[i * bpp + 2] = (byte)(Math.Clamp(input[i * 4 + 0], 0f, 1f) * byte.MaxValue);
+            }
+
+            return output;
+        }
+
+        [DxgiDecompressor(R32G32B32A32_Float)]
+        internal static byte[] DecompressRGBAFP32(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+
+            var input = MemoryMarshal.Cast<byte, float>(data);
+            var pixelCount = Math.Min(input.Length / 4, width * height);
+
+            for (var i = 0; i < pixelCount; i++)
+            {
+                //note: input as rgba, output as bgra
+                output[i * bpp + 0] = (byte)(Math.Clamp(input[i * 4 + 2] , 0f, 1f) * byte.MaxValue);
+                output[i * bpp + 1] = (byte)(Math.Clamp(input[i * 4 + 1] , 0f, 1f) * byte.MaxValue);
+                output[i * bpp + 2] = (byte)(Math.Clamp(input[i * 4 + 0] , 0f, 1f) * byte.MaxValue);
+                if (!bgr24)
+                    output[i * bpp + 3] = (byte)(Math.Clamp(input[i * 4 + 3] , 0f, 1f) * byte.MaxValue);
             }
 
             return output;
