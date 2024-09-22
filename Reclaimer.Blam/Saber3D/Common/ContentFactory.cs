@@ -37,7 +37,7 @@ namespace Reclaimer.Saber3D.Common
             if (item.ItemType != PakItemType.Textures)
                 return false;
 
-            content = new Halo1X.Texture((Halo1X.PakItem)item);
+            content = new Halo1X.Texture(item);
 
             return content != null;
         }

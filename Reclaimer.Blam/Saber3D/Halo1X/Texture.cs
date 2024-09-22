@@ -14,9 +14,19 @@ namespace Reclaimer.Saber3D.Halo1X
 
         private readonly bool isBigEndian;
 
-        public Texture(PakItem item)
+        public Texture(IPakItem item)
             : base(item)
         {
+            if (item is InplacePakItem inplace)
+            {
+                Width = inplace.Width;
+                Height = inplace.Height;
+                MapCount = inplace.FaceCount;
+                Format = inplace.Format;
+                DataOffset = 58;
+                return;
+            }
+
             using (var x = item.Container.CreateReader())
             using (var reader = x.CreateVirtualReader(item.Address))
             {

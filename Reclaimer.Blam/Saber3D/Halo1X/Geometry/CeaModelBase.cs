@@ -102,7 +102,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             return mesh;
         }
 
-        PakItem INodeGraph.Item => Item;
+        PakItem INodeGraph.Item => (PakItem)Item;
 
         #region IContentProvider
 

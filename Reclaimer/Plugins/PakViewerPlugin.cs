@@ -10,8 +10,9 @@ namespace Reclaimer.Plugins
     {
         private const string OpenKey = "PakViewer.OpenPak";
         private const string OpenPath = "File\\Open Pak";
-        private const string BrowseFileFilter = "Saber Pak Files|*.s3dpak";
+        private const string BrowseFileFilter = "Saber Pak Files|*.s3dpak;*.ipak";
         private const string PakFileExtension = "s3dpak";
+        private const string InplacePakFileExtension = "ipak";
 
         internal static PakViewerSettings Settings;
 
@@ -47,7 +48,7 @@ namespace Reclaimer.Plugins
                 OpenPhysicalFile(fileName);
         }
 
-        public override bool SupportsFileExtension(string extension) => extension.ToLower() == PakFileExtension;
+        public override bool SupportsFileExtension(string extension) => extension.ToLower() is PakFileExtension or InplacePakFileExtension;
 
         public override void OpenPhysicalFile(string fileName)
         {

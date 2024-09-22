@@ -7,19 +7,20 @@ namespace Reclaimer.Saber3D.Halo1X
 {
     public class PakFile : IPakFile
     {
-        private string PakStreamFileName => isCompressed ? "pak_stream.s3dpak" : "pak_stream_decompressed.s3dpak";
+        private string PakStreamFileName => isCompressed ? "*.ipak" : "pak_stream_decompressed.s3dpak";
 
         private readonly bool isCompressed;
         private readonly ILookup<PakItemType, PakItem> itemsByType;
-        private PakFile pakStream;
+        private List<IPakFile> sharedPaks;
 
         public string FileName { get; }
         public IReadOnlyList<PakItem> Items { get; }
 
+        IReadOnlyList<IPakItem> IPakFile.Items => Items;
+
         public PakFile(string fileName)
         {
-            if (!File.Exists(fileName))
-                throw new FileNotFoundException();
+            Exceptions.ThrowIfFileNotFound(fileName);
 
             FileName = fileName;
 
@@ -65,26 +66,29 @@ namespace Reclaimer.Saber3D.Halo1X
             return new DependencyReader(dataStream, ByteOrder.LittleEndian);
         }
 
-        public PakItem FindItem(PakItemType itemType, string name, bool external)
+        public IPakItem FindItem(PakItemType itemType, string name, bool external)
         {
             var item = itemsByType[itemType].FirstOrDefault(i => i.Name == name);
             if (item != null || !external)
                 return item;
 
-            if (pakStream == null)
+            if (sharedPaks == null)
             {
-                var targetFile = Path.Combine(Path.GetDirectoryName(FileName), PakStreamFileName);
-                if (targetFile == FileName || !File.Exists(targetFile))
-                    return null;
+                sharedPaks = new List<IPakFile>();
 
-                pakStream = new PakFile(targetFile);
+                var targetFiles = Directory.GetFiles(Path.GetDirectoryName(FileName), PakStreamFileName);
+                foreach (var targetFile in targetFiles)
+                {
+                    if (targetFile == FileName)
+                        continue;
+
+                    sharedPaks.Add(isCompressed ? new InplacePakFile(targetFile) : new PakFile(targetFile));
+                }
             }
 
-            return pakStream.FindItem(itemType, name, false);
+            return sharedPaks.Select(p => p.FindItem(itemType, name, false))
+                .FirstOrDefault(i => i != null);
         }
-
-        IReadOnlyList<IPakItem> IPakFile.Items => Items;
-        IPakItem IPakFile.FindItem(PakItemType itemType, string name, bool external) => FindItem(itemType, name, external);
     }
 
     public class PakItem : IPakItem
