@@ -62,7 +62,7 @@
         public static readonly byte[,,] PartitionTable = new byte[MaxSubsets, MaxPartitions, MaxSubsetSize]
         {
             #region Single Subset
-		    {   // 1 Region case has no subsets (all 0)
+            {   // 1 Region case has no subsets (all 0)
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -277,7 +277,7 @@
         public static readonly byte[,,] FixUpTable = new byte[MaxSubsets, MaxPartitions, 3]
         {
             #region Single Subset Fixups
-		    {   // No fix-ups for 1st subset for BC6H or BC7
+            {   // No fix-ups for 1st subset for BC6H or BC7
                 { 0, 0, 0 },{ 0, 0, 0 },{ 0, 0, 0 },{ 0, 0, 0 },
                 { 0, 0, 0 },{ 0, 0, 0 },{ 0, 0, 0 },{ 0, 0, 0 },
                 { 0, 0, 0 },{ 0, 0, 0 },{ 0, 0, 0 },{ 0, 0, 0 },
@@ -295,7 +295,7 @@
                 { 0, 0, 0 },{ 0, 0, 0 },{ 0, 0, 0 },{ 0, 0, 0 },
                 { 0, 0, 0 },{ 0, 0, 0 },{ 0, 0, 0 },{ 0, 0, 0 }
             }, 
-	        #endregion
+            #endregion
 
             #region Two Subset Fixups
             {   // BC6H/BC7 Partition Set Fixups for 2 Subsets
@@ -318,7 +318,7 @@
                 { 0,15, 0 },{ 0,15, 0 },{ 0,15, 0 },{ 0,15, 0 },
                 { 0,15, 0 },{ 0, 2, 0 },{ 0, 2, 0 },{ 0,15, 0 }
             },
-	        #endregion
+            #endregion
 
             #region Three Subset Fixups
             {   // BC7 Partition Set Fixups for 3 Subsets
@@ -339,7 +339,7 @@
                 { 0, 5,15 },{ 0,10,15 },{ 0, 8,15 },{ 0,13,15 },
                 { 0,15, 3 },{ 0,12,15 },{ 0, 3,15 },{ 0, 3, 8 }
             }
-	        #endregion
+            #endregion
         };
 
         public static readonly BlockAttributes[] BlocksTypes = new BlockAttributes[]
