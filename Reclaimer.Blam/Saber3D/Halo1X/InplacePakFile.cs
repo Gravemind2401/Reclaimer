@@ -10,6 +10,7 @@ namespace Reclaimer.Saber3D.Halo1X
         public IReadOnlyList<InplacePakItem> Items { get; }
 
         IReadOnlyList<IPakItem> IPakFile.Items => Items;
+        bool IPakFile.IsMcc => true;
 
         public InplacePakFile(string fileName)
         {

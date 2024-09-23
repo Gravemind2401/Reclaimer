@@ -386,7 +386,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
             bufferBytes = reader.ReadBytes(Count * DataSize);
             TexCoordsBuffer = new VectorBuffer<Int16N2>(bufferBytes, Count, 0, DataSize, offset);
-            TexCoordsBuffer.ReverseEndianness();
+            if (!Owner.Item.Container.IsMcc) //x360 has big endian texcoords
+                TexCoordsBuffer.ReverseEndianness();
         }
 
         protected override object GetDebugProperties() => new { VertexCount = Count, VertexSize = DataSize };

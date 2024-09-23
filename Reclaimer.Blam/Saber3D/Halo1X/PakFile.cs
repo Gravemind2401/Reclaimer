@@ -15,6 +15,7 @@ namespace Reclaimer.Saber3D.Halo1X
 
         public string FileName { get; }
         public IReadOnlyList<PakItem> Items { get; }
+        public bool IsMcc => isCompressed; //this will be wrong if someone happened to decompress an MCC file
 
         IReadOnlyList<IPakItem> IPakFile.Items => Items;
 
