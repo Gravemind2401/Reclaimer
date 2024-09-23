@@ -14,9 +14,19 @@ namespace Reclaimer.Saber3D.Halo1X
 
         private readonly bool isBigEndian;
 
-        public Texture(PakItem item)
+        public Texture(IPakItem item)
             : base(item)
         {
+            if (item is InplacePakItem inplace)
+            {
+                Width = inplace.Width;
+                Height = inplace.Height;
+                MapCount = inplace.FaceCount;
+                Format = inplace.Format;
+                DataOffset = 58;
+                return;
+            }
+
             using (var x = item.Container.CreateReader())
             using (var reader = x.CreateVirtualReader(item.Address))
             {
@@ -88,7 +98,7 @@ namespace Reclaimer.Saber3D.Halo1X
         #endregion
     }
 
-    public enum TextureFormat
+    public enum TextureFormat : int
     {
         A8R8G8B8 = 0,
         A8Y8 = 10,
@@ -98,6 +108,15 @@ namespace Reclaimer.Saber3D.Halo1X
         DXT5 = 17,
         X8R8G8B8 = 22,
         DXN = 36,
-        DXT5a = 37
+        DXT5a = 37,
+
+        //MCC formats
+        AlsoA8Y8 = 48,
+        BC1_unorm = 70,
+        BC2_unorm = 73,
+        BC3_unorm = 76,
+        BC4_unorm = 79,
+        AlsoDXN = 82,
+        AlsoA8R8G8B8 = 90
     }
 }

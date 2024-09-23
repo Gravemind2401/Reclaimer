@@ -12,6 +12,9 @@ namespace Reclaimer.Blam.Utilities
             { KnownTextureFormat.DXT1, DxgiFormat.BC1_UNorm },
             { KnownTextureFormat.DXT3, DxgiFormat.BC2_UNorm },
             { KnownTextureFormat.DXT5, DxgiFormat.BC3_UNorm },
+            { KnownTextureFormat.BC1_unorm, DxgiFormat.BC1_UNorm },
+            { KnownTextureFormat.BC2_unorm, DxgiFormat.BC2_UNorm },
+            { KnownTextureFormat.BC3_unorm, DxgiFormat.BC3_UNorm },
             { KnownTextureFormat.BC7_unorm, DxgiFormat.BC7_UNorm },
             { KnownTextureFormat.A8R8G8B8, DxgiFormat.B8G8R8A8_UNorm },
             { KnownTextureFormat.X8R8G8B8, DxgiFormat.B8G8R8X8_UNorm },
@@ -79,6 +82,9 @@ namespace Reclaimer.Blam.Utilities
             DXT5a_alpha,
             DXT5a_mono,
             DXN_mono_alpha,
+            BC1_unorm,
+            BC2_unorm,
+            BC3_unorm,
             BC4_unorm, //same as DXT5a
             BC6H_UF16,
             BC6H_SF16,
@@ -143,6 +149,7 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.DXT3:
                 case KnownTextureFormat.DXT5:
                 case KnownTextureFormat.DXN:
+                case KnownTextureFormat.DXN_SNorm:
                 case KnownTextureFormat.DXN_mono_alpha:
                 case KnownTextureFormat.BC6H_UF16:
                 case KnownTextureFormat.BC6H_SF16:
@@ -193,6 +200,7 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.DXT3:
                 case KnownTextureFormat.DXT5:
                 case KnownTextureFormat.DXN:
+                case KnownTextureFormat.DXN_SNorm:
                 case KnownTextureFormat.DXN_mono_alpha:
                 case KnownTextureFormat.BC4_unorm:
                 case KnownTextureFormat.BC6H_UF16:
@@ -223,6 +231,7 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.DXT3:
                 case KnownTextureFormat.DXT5:
                 case KnownTextureFormat.DXN:
+                case KnownTextureFormat.DXN_SNorm:
                 case KnownTextureFormat.DXN_mono_alpha:
                 case KnownTextureFormat.BC6H_UF16:
                 case KnownTextureFormat.BC6H_SF16:

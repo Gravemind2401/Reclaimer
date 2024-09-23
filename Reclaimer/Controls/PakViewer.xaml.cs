@@ -4,6 +4,7 @@ using Reclaimer.Saber3D.Common;
 using Reclaimer.Utilities;
 using Studio.Controls;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -54,7 +55,10 @@ namespace Reclaimer.Controls
 
         public void LoadPak(string fileName)
         {
-            pak = new Reclaimer.Saber3D.Halo1X.PakFile(fileName);
+            pak = Path.GetExtension(fileName).ToLower() == ".ipak"
+                ? new Reclaimer.Saber3D.Halo1X.InplacePakFile(fileName)
+                : new Reclaimer.Saber3D.Halo1X.PakFile(fileName);
+
             rootNode = new TreeItemModel(pak.FileName);
             tv.ItemsSource = rootNode.Items;
 

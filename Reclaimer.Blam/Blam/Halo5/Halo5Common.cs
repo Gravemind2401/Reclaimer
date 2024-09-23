@@ -41,22 +41,31 @@ namespace Reclaimer.Blam.Halo5
 
     internal static class Halo5Common
     {
-        public static IEnumerable<Material> GetMaterials(IReadOnlyList<MaterialBlock> materials)
+        public static IEnumerable<Material> GetMaterials(Halo5GeometryArgs args)
         {
-            for (var i = 0; i < materials?.Count; i++)
+            var bitmapCache = new Dictionary<int, bitmap>();
+            var materialCache = new Dictionary<int, Material>();
+
+            for (var i = 0; i < args.Materials?.Count; i++)
             {
-                var tag = materials[i].MaterialReference.Tag;
+                var tag = args.Materials[i].MaterialReference.Tag;
                 if (tag == null)
                 {
                     yield return null;
                     continue;
                 }
 
-                var material = new Material
+                if (materialCache.TryGetValue(tag.GlobalTagId, out var material))
+                {
+                    yield return material;
+                    continue;
+                }
+
+                materialCache.Add(tag.GlobalTagId, material = new Material
                 {
                     Id = tag.GlobalTagId,
                     Name = tag.FileName
-                };
+                });
 
                 material.CustomProperties.Add(BlamConstants.SourceTagPropertyName, tag.TagName);
 
@@ -67,36 +76,40 @@ namespace Reclaimer.Blam.Halo5
                     continue;
                 }
 
-                var map = mat.PostprocessDefinitions.FirstOrDefault()?.Textures.FirstOrDefault();
-                var bitmTag = map?.BitmapReference.Tag;
-                if (bitmTag == null)
+                if (!MaterialHelper.PopulateTextureMappings(bitmapCache, material, mat))
                 {
-                    yield return material;
-                    continue;
-                }
-
-                //var tile = map.TilingIndex == byte.MaxValue
-                //    ? (Vector4?)null
-                //    : shader.ShaderProperties[0].TilingData[map.TilingIndex];
-
-                try
-                {
-                    var texture = new Texture
+                    //legacy method: just output the first texture as diffuse
+                    var map = mat.PostprocessDefinitions.FirstOrDefault()?.Textures.FirstOrDefault();
+                    var bitmTag = map?.BitmapReference.Tag;
+                    if (bitmTag == null)
                     {
-                        Id = bitmTag.GlobalTagId,
-                        ContentProvider = bitmTag.ReadMetadata<bitmap>()
-                    };
+                        yield return material;
+                        continue;
+                    }
 
-                    texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, bitmTag.TagName);
+                    //var tile = map.TilingIndex == byte.MaxValue
+                    //    ? (Vector4?)null
+                    //    : shader.ShaderProperties[0].TilingData[map.TilingIndex];
 
-                    material.TextureMappings.Add(new TextureMapping
+                    try
                     {
-                        Usage = TextureUsage.Diffuse,
-                        Tiling = Vector2.One,
-                        Texture = texture
-                    });
+                        var texture = new Texture
+                        {
+                            Id = bitmTag.GlobalTagId,
+                            ContentProvider = bitmTag.ReadMetadata<bitmap>()
+                        };
+
+                        texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, bitmTag.TagName);
+
+                        material.TextureMappings.Add(new TextureMapping
+                        {
+                            Usage = TextureUsage.Diffuse,
+                            Tiling = Vector2.One,
+                            Texture = texture
+                        });
+                    }
+                    catch { }
                 }
-                catch { }
 
                 yield return material;
             }
@@ -155,7 +168,7 @@ namespace Reclaimer.Blam.Halo5
                 var vInfo = vertexBufferInfo.ElementAtOrDefault(lodData.VertexBufferIndex);
                 var iInfo = indexBufferInfo.ElementAtOrDefault(lodData.IndexBufferIndex);
 
-                if (vInfo.VertexCount == 0) // || iInfo.IndexCount == 0)
+                if (vInfo.VertexCount == 0)
                     continue;
 
                 try
@@ -164,20 +177,21 @@ namespace Reclaimer.Blam.Halo5
                     {
                         var data = rawVertexBuffers[lodData.VertexBufferIndex];
                         var vertexBuffer = vertexBuilder.CreateVertexBuffer(section.VertexFormat, vInfo.VertexCount, data);
-                        if (section.VertexFormat != 38) //skinned 8 weights
+                        if (section.VertexFormat != 38 && vertexBuffer.HasBlendWeights) //skinned 8 weights
                             vertexBuffer.HasImpliedBlendWeights = true;
                         vb.Add(lodData.VertexBufferIndex, vertexBuffer);
                     }
 
                     if (!ib.ContainsKey(lodData.IndexBufferIndex))
                     {
-                        // if this is a particle model, then we need to create our own index buffer
-                        if (iInfo.IndexCount == 0) // if particle vertices
+                        // particle models and decorator models have no indices
+                        // so we need to create our own index buffer
+                        if (iInfo.IndexCount == 0)
                         {
                             var indexBuffer = BlamUtils.CreateDecoratorIndexBuffer(vInfo.VertexCount);
                             ib.Add(lodData.IndexBufferIndex, indexBuffer);
                         }
-                        else // otherwise regular index buffer
+                        else
                         {
                             var data = rawIndexBuffers[lodData.IndexBufferIndex];
                             var indexBuffer = new IndexBuffer(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort)) { Layout = section.IndexFormat };
@@ -192,7 +206,7 @@ namespace Reclaimer.Blam.Halo5
             }
 
             var matLookup = materials;
-            materials.AddRange(GetMaterials(args.Materials));
+            materials.AddRange(GetMaterials(args));
 
             meshList.AddRange(args.Sections.Select((section, sectionIndex) =>
             {

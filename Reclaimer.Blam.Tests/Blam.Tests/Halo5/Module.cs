@@ -1,13 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Reclaimer.Blam.Halo5;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Reclaimer.Blam.Tests.Halo5
+﻿namespace Reclaimer.Blam.Tests.Halo5
 {
     [TestClass]
     public class Module

@@ -42,7 +42,12 @@
     <!--<vertex type="0x09" name="light_volume" />-->
     <!--<vertex type="0x0A" name="chud_simple" />-->
     <!--<vertex type="0x0B" name="chud_fancy" />-->
-    <!--<vertex type="0x0C" name="decorator" />-->
+    <vertex type="0x0C" name="decorator" size="0x14">
+        <value stream="0" offset="0x0" type="UInt16_N4" usage="position" usageIndex="0" />
+        <value stream="0" offset="0x8" type="UInt16_N2" usage="texcoords" usageIndex="0" />
+        <value stream="0" offset="0xC" type="NxAAA2" usage="normal" usageIndex="0" />
+        <value stream="0" offset="0x10" type="NxAAA2" usage="tangent" usageIndex="0" />
+    </vertex>
     <!--<vertex type="0x0D" name="position only" />-->
     <!--<vertex type="0x0E" name="patchy_fog" />-->
     <!--<vertex type="0x0F" name="water" />-->

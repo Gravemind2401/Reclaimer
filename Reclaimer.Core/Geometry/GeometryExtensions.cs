@@ -50,7 +50,7 @@ namespace Reclaimer.Geometry
         {
             var indices = mesh.IndexBuffer.GetSubset(submesh.IndexStart, submesh.IndexLength);
 
-            if (mesh.IndexBuffer.Layout == IndexFormat.TriangleStrip)
+            if (mesh.IndexBuffer.Layout is IndexFormat.Default or IndexFormat.TriangleStrip)
                 indices = Unstrip(indices);
 
             return indices;

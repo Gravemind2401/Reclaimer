@@ -138,7 +138,7 @@ namespace Reclaimer.Plugins
                 if (!string.IsNullOrEmpty(dataFolder))
                     fsd.InitialDirectory = dataFolder;
 
-                if (fsd.ShowDialog() != DialogResult.OK)
+                if (fsd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                     return false;
 
                 dataFolder = fsd.SelectedPath;

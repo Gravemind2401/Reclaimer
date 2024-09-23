@@ -34,7 +34,8 @@ namespace Reclaimer.Controls.DirectX
 
                         var material = new DiffuseMaterial
                         {
-                            DiffuseMap = GetTextureForBitmap(diffuse.Texture)
+                            DiffuseMap = GetTextureForBitmap(diffuse.Texture),
+                            UVTransform = new UVTransform(0, diffuse.Tiling.X, diffuse.Tiling.Y)
                         };
 
                         material.Freeze();

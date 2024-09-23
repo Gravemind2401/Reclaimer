@@ -88,9 +88,7 @@ namespace Reclaimer.Drawing
         public void WriteToStream(Stream stream, ImageFormat format, DdsOutputArgs args)
         {
             ArgumentNullException.ThrowIfNull(stream);
-
             ArgumentNullException.ThrowIfNull(format);
-
             ArgumentNullException.ThrowIfNull(args);
 
             BitmapEncoder encoder;
@@ -120,9 +118,7 @@ namespace Reclaimer.Drawing
         public void WriteToStream(Stream stream, BitmapEncoder encoder, DdsOutputArgs args)
         {
             ArgumentNullException.ThrowIfNull(stream);
-
             ArgumentNullException.ThrowIfNull(encoder);
-
             ArgumentNullException.ThrowIfNull(args);
 
             var source = ToBitmapSource(args);

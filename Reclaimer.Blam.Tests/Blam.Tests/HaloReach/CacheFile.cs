@@ -1,10 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Reclaimer.Blam.HaloReach;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Reclaimer.Blam.HaloReach;
 
 namespace Reclaimer.Blam.Tests.HaloReach
 {
