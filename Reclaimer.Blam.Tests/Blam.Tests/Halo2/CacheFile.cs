@@ -1,9 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Reclaimer.Blam.Halo2;
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Reclaimer.Blam.Halo2;
 
 namespace Reclaimer.Blam.Tests.Halo2
 {
