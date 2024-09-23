@@ -23,7 +23,14 @@ namespace Reclaimer.Blam.Utilities
             { KnownTextureFormat.A4R4G4B4, DxgiFormat.B4G4R4A4_UNorm },
             { KnownTextureFormat.RGBFP32, DxgiFormat.R32G32B32_Float },
             { KnownTextureFormat.RGBAFP32, DxgiFormat.R32G32B32A32_Float },
-            { KnownTextureFormat.L16, DxgiFormat.R16_UNorm }
+            { KnownTextureFormat.L16, DxgiFormat.R16_UNorm },
+            { KnownTextureFormat.A2R10G10B10, DxgiFormat.R10G10B10A2_UNorm },
+            { KnownTextureFormat.Q8W8V8U8, DxgiFormat.R8G8B8A8_SNorm },
+            { KnownTextureFormat.V8U8, DxgiFormat.R8G8_SNorm },
+            { KnownTextureFormat.R8G8, DxgiFormat.R8G8_UNorm },
+            { KnownTextureFormat.SignedR16G16B16A16, DxgiFormat.R16G16B16A16_SNorm },
+            { KnownTextureFormat.RGBAFP16, DxgiFormat.R16G16B16A16_Float },
+            { KnownTextureFormat.A16B16G16R16, DxgiFormat.R16G16B16A16_UNorm },
         };
 
         private static readonly Dictionary<KnownTextureFormat, XboxFormat> xboxLookup = new Dictionary<KnownTextureFormat, XboxFormat>
@@ -72,6 +79,9 @@ namespace Reclaimer.Blam.Utilities
             RGBAFP32,
             RGBFP32,
             RGBFP16,
+            RGBAFP16,
+            A16B16G16R16,
+            SignedR16G16B16A16,
             U8V8,
             DXT5a,
             DXN,
@@ -89,7 +99,11 @@ namespace Reclaimer.Blam.Utilities
             BC6H_UF16,
             BC6H_SF16,
             BC7_unorm,
-            L16
+            L16,
+            A2R10G10B10,
+            Q8W8V8U8,
+            V8U8,
+            R8G8
         }
 
         private enum KnownTextureType : short
@@ -124,9 +138,13 @@ namespace Reclaimer.Blam.Utilities
                     return 96;
 
                 case KnownTextureFormat.A8R8G8B8:
+                case KnownTextureFormat.A2R10G10B10:
+                case KnownTextureFormat.Q8W8V8U8:
                 case KnownTextureFormat.X8R8G8B8:
                     return 32;
 
+                case KnownTextureFormat.R8G8:
+                case KnownTextureFormat.V8U8:
                 case KnownTextureFormat.L16:
                     return 16;
 
