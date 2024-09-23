@@ -1077,18 +1077,25 @@ namespace Reclaimer.Drawing
             var output = new byte[width * height * bpp];
 
             var input = MemoryMarshal.Cast<byte, short>(data);
-            var pixelCount = Math.Min(input.Length / 8, width * height);
+            var pixelCount = Math.Min(input.Length / 4, width * height);
 
             for (var i = 0; i < pixelCount; i++)
             {
-                output[i * bpp + 0] = (byte)(Math.Clamp(input[i * 4 + 2] / 32767f, 0f, 1f) * byte.MaxValue);
-                output[i * bpp + 1] = (byte)(Math.Clamp(input[i * 4 + 1] / 32767f, 0f, 1f) * byte.MaxValue);
-                output[i * bpp + 2] = (byte)(Math.Clamp(input[i * 4 + 0] / 32767f, 0f, 1f) * byte.MaxValue);
-                output[i * bpp + 3] = (byte)(Math.Clamp(input[i * 4 + 3] / 32767f, 0f, 1f) * byte.MaxValue);
+                int rIndex = bgr24 ? i * 4 + 2 : i * 4 + 0;
+                int gIndex = i * 4 + 1;
+                int bIndex = bgr24 ? i * 4 + 0 : i * 4 + 2;
+                int aIndex = i * 4 + 3;
+
+                output[i * bpp + 0] = (byte)(Math.Clamp((input[rIndex] / 32767f + 1) / 2f, 0f, 1f) * byte.MaxValue);
+                output[i * bpp + 1] = (byte)(Math.Clamp((input[gIndex] / 32767f + 1) / 2f, 0f, 1f) * byte.MaxValue);
+                output[i * bpp + 2] = (byte)(Math.Clamp((input[bIndex] / 32767f + 1) / 2f, 0f, 1f) * byte.MaxValue);
+                output[i * bpp + 3] = (byte)(Math.Clamp((input[aIndex] / 32767f + 1) / 2f, 0f, 1f) * byte.MaxValue);
             }
 
             return output;
         }
+
+
 
         [DxgiDecompressor(R16G16B16A16_UNorm)]
         internal static byte[] DecompressRGBA16UNORM(byte[] data, int height, int width, bool bgr24)
@@ -1097,7 +1104,7 @@ namespace Reclaimer.Drawing
             var output = new byte[width * height * bpp];
 
             var input = MemoryMarshal.Cast<byte, short>(data);
-            var pixelCount = Math.Min(input.Length / 8, width * height);
+            var pixelCount = Math.Min(input.Length / 4, width * height);
 
             for (var i = 0; i < pixelCount; i++)
             {
