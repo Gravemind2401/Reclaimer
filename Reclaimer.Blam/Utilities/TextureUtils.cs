@@ -134,6 +134,7 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.DXT3:
                 case KnownTextureFormat.DXT5:
                 case KnownTextureFormat.DXN:
+                case KnownTextureFormat.DXN_SNorm:
                 case KnownTextureFormat.DXN_mono_alpha:
                 case KnownTextureFormat.BC7_unorm:
                     return 8;
@@ -179,6 +180,7 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.DXT3:
                 case KnownTextureFormat.DXT5:
                 case KnownTextureFormat.DXN:
+                case KnownTextureFormat.DXN_SNorm:
                 case KnownTextureFormat.DXN_mono_alpha:
                     return 4;
 
@@ -204,6 +206,7 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.DXT3:
                 case KnownTextureFormat.DXT5:
                 case KnownTextureFormat.DXN:
+                case KnownTextureFormat.DXN_SNorm:
                 case KnownTextureFormat.DXN_mono_alpha:
                     return 16;
 
