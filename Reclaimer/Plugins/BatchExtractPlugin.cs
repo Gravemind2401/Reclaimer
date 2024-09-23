@@ -192,7 +192,7 @@ namespace Reclaimer.Plugins
 
         private void BatchQueue(TreeItemModel node, string outputFolder)
         {
-            if (node.HasItems)
+            if (node.HasItems && node.ItemType == 0)
             {
                 foreach (var child in node.Items)
                     BatchQueue(child, outputFolder);

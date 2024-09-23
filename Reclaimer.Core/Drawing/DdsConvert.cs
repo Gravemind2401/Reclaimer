@@ -374,6 +374,9 @@ namespace Reclaimer.Drawing
             var xBlocks = (int)Math.Ceiling(width / (float)bcBlockWidth);
             var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
+            if (data.Length == 0)
+                return Array.Empty<byte>();
+
             for (var yBlock = 0; yBlock < yBlocks; yBlock++)
             {
                 for (var xBlock = 0; xBlock < xBlocks; xBlock++)
