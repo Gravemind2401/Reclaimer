@@ -42,22 +42,30 @@ namespace Reclaimer.Blam.HaloInfinite
 
     internal static class HaloInfiniteCommon
     {
-        public static IEnumerable<Material> GetMaterials(IReadOnlyList<MaterialBlock> materials)
+        public static IEnumerable<Material> GetMaterials(HaloInfiniteGeometryArgs args)
         {
-            for (var i = 0; i < materials?.Count; i++)
+            var bitmapCache = new Dictionary<int, bitmap>();
+            var materialCache = new Dictionary<int, Material>();
+            for (var i = 0; i < args.Materials?.Count; i++)
             {
-                var tag = materials[i].MaterialReference.Tag;
+                var tag = args.Materials[i].MaterialReference.Tag;
                 if (tag == null)
                 {
                     yield return null;
                     continue;
                 }
 
-                var material = new Material
+                if (materialCache.TryGetValue(tag.GlobalTagId, out var material))
+                {
+                    yield return material;
+                    continue;
+                }
+
+                materialCache.Add(tag.GlobalTagId, material = new Material
                 {
                     Id = tag.GlobalTagId,
                     Name = tag.FileName
-                };
+                });
 
                 material.CustomProperties.Add(BlamConstants.SourceTagPropertyName, tag.TagName);
 
@@ -68,32 +76,36 @@ namespace Reclaimer.Blam.HaloInfinite
                     continue;
                 }
 
-                var map = mat.PostprocessDefinitions.FirstOrDefault()?.Textures.FirstOrDefault();
-                var bitmTag = map?.BitmapReference.Tag;
-                if (bitmTag == null)
+                if(!MaterialHelper.PopulateTextureMappings(bitmapCache, material, mat))
                 {
-                    yield return material;
-                    continue;
+                    var map = mat.PostprocessDefinitions.FirstOrDefault()?.Textures.FirstOrDefault();
+                    var bitmTag = map?.BitmapReference.Tag;
+                    if (bitmTag == null)
+                    {
+                        yield return material;
+                        continue;
+                    }
+
+                    try
+                    {
+                        var texture = new Texture
+                        {
+                            Id = bitmTag.GlobalTagId,
+                            ContentProvider = bitmTag.ReadMetadata<bitmap>()
+                        };
+
+                        texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, bitmTag.TagName);
+
+                        material.TextureMappings.Add(new TextureMapping
+                        {
+                            Usage = TextureUsage.Diffuse,
+                            Tiling = Vector2.One,
+                            Texture = texture
+                        });
+                    }
+                    catch { }
                 }
 
-                try
-                {
-                    var texture = new Texture
-                    {
-                        Id = bitmTag.GlobalTagId,
-                        ContentProvider = bitmTag.ReadMetadata<bitmap>()
-                    };
-
-                    texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, bitmTag.TagName);
-
-                    material.TextureMappings.Add(new TextureMapping
-                    {
-                        Usage = TextureUsage.Diffuse,
-                        Tiling = Vector2.One,
-                        Texture = texture
-                    });
-                }
-                catch { }
 
                 yield return material;
             }
@@ -163,7 +175,7 @@ namespace Reclaimer.Blam.HaloInfinite
             meshList.AddRange(Enumerable.Repeat(default(Mesh), args.Sections.Count));
 
             var matLookup = materials;
-            materials.AddRange(GetMaterials(args.Materials));
+            materials.AddRange(GetMaterials(args));
 
             foreach (var (section, sectionIndex) in args.Sections.Select((s, i) => (s, i)))
             {

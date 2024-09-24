@@ -448,13 +448,11 @@ namespace Reclaimer.Blam.Utilities
             if (virtualWidth > props.Width || virtualHeight > props.Height)
                 data = ApplyCrop(data, props.BitmapFormat, props.FrameCount, virtualWidth, virtualHeight, props.Width, props.Height);
 
-            DdsImage dds;
-            if (dxgiLookup.TryGetValue(bitmapFormat, out var dxgiFormat))
-                dds = new DdsImage(props.Height, props.Width, dxgiFormat, data);
-            else if (xboxLookup.TryGetValue(bitmapFormat, out var xboxFormat))
-                dds = new DdsImage(props.Height, props.Width, xboxFormat, data);
-            else
-                throw Exceptions.BitmapFormatNotSupported(props.BitmapFormat.ToString());
+            var dds = dxgiLookup.TryGetValue(bitmapFormat, out var dxgiFormat)
+                ? new DdsImage(props.Height, props.Width, dxgiFormat, data)
+                : xboxLookup.TryGetValue(bitmapFormat, out var xboxFormat)
+                ? new DdsImage(props.Height, props.Width, xboxFormat, data)
+                : throw Exceptions.BitmapFormatNotSupported(props.BitmapFormat.ToString());
 
             if (textureType == KnownTextureType.CubeMap)
                 dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;

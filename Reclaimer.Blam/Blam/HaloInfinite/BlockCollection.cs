@@ -33,8 +33,8 @@ namespace Reclaimer.Blam.HaloInfinite
             if (blockCount == 0)
                 return;
 
-            var containingStructDef = metadata.StructureDefinitions.First(s => s.FieldBlock == currentBlock && s.FieldOffset == collectionOffset && s.TargetIndex != -1);
-            if (containingStructDef.TargetIndex == -1)
+            var containingStructDef = metadata.StructureDefinitions.FirstOrDefault(s => s.FieldBlock == currentBlock && s.FieldOffset == collectionOffset && s.TargetIndex != -1);
+            if (containingStructDef == null || containingStructDef.TargetIndex == -1)
                 return;
 
             var block = metadata.DataBlocks[containingStructDef.TargetIndex];
