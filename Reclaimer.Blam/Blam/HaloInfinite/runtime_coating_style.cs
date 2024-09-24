@@ -1,4 +1,5 @@
-﻿using Reclaimer.IO;
+﻿using Reclaimer.Geometry.Vectors;
+using Reclaimer.IO;
 using System.Numerics;
 
 namespace Reclaimer.Blam.HaloInfinite
@@ -57,17 +58,17 @@ namespace Reclaimer.Blam.HaloInfinite
         [Offset(40)]
         public bool UseSwatchColors { get; set; }
         [Offset(44)]
-        public Vector3 GradientTopColor { get; set; }
+        public RealVector3 GradientTopColor { get; set; }
         [Offset(56)]
-        public Vector3 GradientMiddleColor { get; set; }
+        public RealVector3 GradientMiddleColor { get; set; }
         [Offset(68)]
-        public Vector3 GradientBottomColor { get; set; }
+        public RealVector3 GradientBottomColor { get; set; }
         [Offset(80)]
         public float RoughnessOverride { get; set; }
         [Offset(84)]
         public bool UseScratchSwatchColors { get; set; }
         [Offset(88)]
-        public Vector3 ScratchColor { get; set; }
+        public RealVector3 ScratchColor { get; set; }
         [Offset(100)]
         public float ScratchRoughnessOffset { get; set; }
         [Offset(104)]

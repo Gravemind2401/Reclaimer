@@ -2,7 +2,7 @@
 
 namespace Reclaimer.Blam.HaloInfinite
 {
-    public class materialstyles
+    public class material_styles
     {
         [Offset(16)]
         public BlockCollection<StyleRegion> Regions { get; set; }

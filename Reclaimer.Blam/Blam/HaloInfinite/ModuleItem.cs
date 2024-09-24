@@ -105,7 +105,7 @@ namespace Reclaimer.Blam.HaloInfinite
                 _cachedTagName = GlobalTagId == -1
                     ? GlobalTagId.ToString()
                     : StringMapper.TagMappings.TryGetValue(GlobalTagId, out var value)
-                        ? value : GlobalTagId.ToString();
+                        ? value : Path.GetFileNameWithoutExtension(GlobalTagId.ToString());
 
                 return _cachedTagName;
             }

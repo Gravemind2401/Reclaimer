@@ -2,6 +2,7 @@
 using Reclaimer.Drawing;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Numerics;
 
@@ -19,6 +20,9 @@ namespace Reclaimer.Blam.HaloInfinite
         public const string DecalNormal = "2640107286";
         public const string DecalControl = "3114951667";
         public const string AnimatedUITexture = "2570116997";
+        public const string ScreenControl = "3599509544";
+        public const string WeaponDecalNormal = "723636081";
+        public const string WeaponDecalControl = "3595722596";
 
 
         public static readonly Dictionary<string, string> UsageLookup = new()
@@ -32,8 +36,10 @@ namespace Reclaimer.Blam.HaloInfinite
             { Conemap, TextureUsage.Other },
             { DecalNormal, TextureUsage.Normal },
             { DecalControl, TextureUsage.Other },
-            { AnimatedUITexture, TextureUsage.Diffuse }
-
+            { AnimatedUITexture, TextureUsage.Diffuse },
+            { ScreenControl, TextureUsage.Diffuse },
+            { WeaponDecalNormal, TextureUsage.Normal },
+            { WeaponDecalControl, TextureUsage.Diffuse }
         };
     }
 
