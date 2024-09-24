@@ -153,7 +153,7 @@ namespace Reclaimer.Geometry.Compatibility
                 foreach (var region in validRegions)
                 {
                     bw.WriteStringNullTerminated(region.Name);
-                    bw.Write(region.Permutations.Sum(p => p.MeshRange.Count));
+                    bw.Write(region.Permutations.SelectMany(ExpandPermutation).Count());
                     permAddressList.Add(bw.BaseStream.Position);
                     bw.Write(0);
                 }
@@ -245,7 +245,7 @@ namespace Reclaimer.Geometry.Compatibility
                             bw.Write(vector.Y);
                             bw.Write(vector.Z);
 
-                            vector = normals?[i] ?? default;
+                            vector = Vector3.Normalize(normals?[i] ?? default);
                             bw.Write(vector.X);
                             bw.Write(vector.Y);
                             bw.Write(vector.Z);
