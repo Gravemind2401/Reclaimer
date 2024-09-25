@@ -88,7 +88,7 @@ namespace Reclaimer.Blam.Halo5
                     }
 
                     // copied straight from the h5 scenario_structure_bsp.cs
-                    var model = new Model { Name = Item.FileName, OriginalPath = Item.TagName };
+                    var model = new Model { Name = bspItem.FileName, OriginalPath = bspItem.TagName };
 
                     var clusterRegion = new ModelRegion { Name = BlamConstants.SbspClustersGroupName };
                     clusterRegion.Permutations.AddRange(
