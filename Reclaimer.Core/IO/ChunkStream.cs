@@ -152,7 +152,7 @@ namespace Reclaimer.IO
 
                     sourceStream.BaseStream.Seek(nextChunk.SourceAddress, SeekOrigin.Begin);
 
-                    CompressedData = new byte[nextChunk.UncompressedSize];
+                    CompressedData = new byte[nextChunk.CompressedSize];
                     sourceStream.BaseStream.ReadAll(CompressedData, 0, CompressedData.Length);
 
                     CurrentChunk = nextChunk;
@@ -176,7 +176,7 @@ namespace Reclaimer.IO
                 {
                     var bufferSize = Math.Min((int)remaining, 0x10000);
                     var buffer = MemoryPool<byte>.Shared.Rent(bufferSize);
-                    var span = buffer.Memory.Span[..bufferSize]; //in case we got more than we wanted
+                    var span = buffer.Memory.Span[..bufferSize]; //in case Rent() gave more than we wanted
 
                     remaining -= bytesRead = ChunkStream.ReadAll(span);
                 }
