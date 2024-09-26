@@ -52,7 +52,11 @@ namespace Reclaimer.Geometry.Compatibility
                     .Select(r => new
                     {
                         r.Name,
-                        Permutations = r.Permutations.Where(p => p.Export && p.MeshRange.Count > 0 && model.Meshes.ElementAtOrDefault(p.MeshRange.Index)?.Segments.Count > 0).ToList()
+                        Permutations = (from p in r.Permutations
+                                        let meshes = p.MeshIndices.Select(i => model.Meshes.ElementAtOrDefault(i))
+                                        where p.Export && p.MeshRange.Count > 0
+                                        && meshes.Any(m => m?.Segments.Count > 0)
+                                        select p).ToList()
                     })
                     .Where(r => r.Permutations.Count > 0)
                     .ToList();
