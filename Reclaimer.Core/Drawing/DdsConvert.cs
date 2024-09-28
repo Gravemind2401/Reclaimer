@@ -1,5 +1,4 @@
-﻿using Reclaimer.Drawing.Annotations;
-using Reclaimer.Drawing.Bc7;
+﻿using Reclaimer.Drawing.Bc7;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
