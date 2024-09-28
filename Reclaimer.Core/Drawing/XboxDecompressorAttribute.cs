@@ -1,4 +1,4 @@
-﻿namespace Reclaimer.Drawing.Annotations
+﻿namespace Reclaimer.Drawing
 {
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
     internal sealed class XboxDecompressorAttribute : Attribute, IFormatAttribute<XboxFormat>
