@@ -347,7 +347,7 @@ namespace Reclaimer.Drawing
         /// <summary>
         /// Returns a copy of the underlying raw pixel data for this image without perfoming any conversions.
         /// </summary>
-        public byte[] GetPixelData()
+        public byte[] CopyPixelData()
         {
             var result = new byte[data.Length];
             Array.Copy(data, result, data.Length);
