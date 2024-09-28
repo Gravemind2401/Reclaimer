@@ -251,7 +251,7 @@ namespace Reclaimer.Drawing
                             return bgr24 ? ToArray(SkipNth(data, 4), true, virtualHeight, Width) : data;
 
                         default:
-                            throw new NotSupportedException($"The {nameof(DxgiFormat)} is not supported.");
+                            throw new NotSupportedException($"The {nameof(DxgiFormat)} '{dx10Header.DxgiFormat}' is not supported.");
                     }
                 }
             }
@@ -259,14 +259,14 @@ namespace Reclaimer.Drawing
             {
                 return decompressMethodsXbox.TryGetValue(xboxHeader.XboxFormat, out var xboxDecode)
                     ? xboxDecode(data, virtualHeight, Width, bgr24)
-                    : throw new NotSupportedException($"The {nameof(XboxFormat)} is not supported.");
+                    : throw new NotSupportedException($"The {nameof(XboxFormat)} '{xboxHeader.XboxFormat}' is not supported.");
             }
             else
             {
                 var fourcc = (FourCC)header.PixelFormat.FourCC;
                 return decompressMethodsFourCC.TryGetValue(fourcc, out var fourccDecode)
                     ? fourccDecode(data, virtualHeight, Width, bgr24)
-                    : throw new NotSupportedException($"The {nameof(FourCC)} is not supported.");
+                    : throw new NotSupportedException($"The {nameof(FourCC)} '{fourcc}' is not supported.");
             }
         }
 
