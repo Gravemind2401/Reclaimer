@@ -12,7 +12,7 @@ namespace Reclaimer.Controls
     /// <summary>
     /// Interaction logic for BitmapViewer.xaml
     /// </summary>
-    public partial class BitmapViewer
+    public partial class BitmapViewer : IDisposable
     {
         //private const double dpi = 96;
 
@@ -229,5 +229,14 @@ namespace Reclaimer.Controls
         private void btnExportSelected_Click(object sender, RoutedEventArgs e) => ExportImage(false);
         private void btnExportAll_Click(object sender, RoutedEventArgs e) => ExportImage(true);
         #endregion
+
+        public void Dispose()
+        {
+            DataContext = null;
+            dds = null;
+            bitmap = null;
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
     }
 }
