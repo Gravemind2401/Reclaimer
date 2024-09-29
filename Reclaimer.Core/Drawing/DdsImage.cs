@@ -65,9 +65,7 @@ namespace Reclaimer.Drawing
         /// <param name="pixelData">The binary data containing the pixels of the image.</param>
         public DdsImage(int height, int width, FourCC fourCC, byte[] pixelData)
             : this(height, width, (int)fourCC, pixelData)
-        {
-
-        }
+        { }
 
         /// <summary>
         /// Creates a new instance of <see cref="DdsImage"/> with the specified dimensions and pixel data, where the pixel data is uncompressed.
@@ -135,6 +133,8 @@ namespace Reclaimer.Drawing
             xboxHeader.MiscFlags = D3D10ResourceMiscFlags.None;
             xboxHeader.ArraySize = 1;
             xboxHeader.MiscFlags2 = D3D10ResourceMiscFlag2.DdsAlphaModeStraight;
+            xboxHeader.BaseAlignment = 0x8000;
+            xboxHeader.DataSize = pixelData.Length;
         }
 
         #endregion
@@ -179,8 +179,11 @@ namespace Reclaimer.Drawing
         }
 
         /// <summary>
-        /// Optional. Gets or sets the pitch of the image. This property is mutually exclusive with <see cref="LinearSize"/>.
+        /// Optional. Gets or sets the pitch of the image.
         /// </summary>
+        /// <remarks>
+        /// This property is mutually exclusive with <see cref="LinearSize"/>.
+        /// </remarks>
         public int? Pitch
         {
             get => !header.Flags.HasFlag(HeaderFlags.Pitch) ? null : header.PitchOrLinearSize;
@@ -198,8 +201,11 @@ namespace Reclaimer.Drawing
         }
 
         /// <summary>
-        /// Optional. Gets or sets the linear size of the image. This property is mutually exclusive with <see cref="Pitch"/>.
+        /// Optional. Gets or sets the linear size of the image.
         /// </summary>
+        /// <remarks>
+        /// This property is mutually exclusive with <see cref="Pitch"/>.
+        /// </remarks>
         public int? LinearSize
         {
             get => header.Flags.HasFlag(HeaderFlags.LinearSize) ? header.PitchOrLinearSize : null;
@@ -304,8 +310,10 @@ namespace Reclaimer.Drawing
 
         /// <summary>
         /// Gets or sets miscellaneous flags for the image.
-        /// <para>These flags are only used if the FourCC code is set to <see cref="FourCC.DX10"/></para>
         /// </summary>
+        /// <remarks>
+        /// These flags are only used if the FourCC code is set to <see cref="FourCC.DX10"/>
+        /// </remarks>
         public D3D10ResourceMiscFlags DX10ResourceFlags
         {
             get => dx10Header.MiscFlags;
@@ -314,8 +322,10 @@ namespace Reclaimer.Drawing
 
         /// <summary>
         /// Gets or sets flags indicating the type of alpha used in the image.
-        /// <para>These flags are only used if the FourCC code is set to <see cref="FourCC.DX10"/></para>
         /// </summary>
+        /// <remarks>
+        /// These flags are only used if the FourCC code is set to <see cref="FourCC.DX10"/>
+        /// </remarks>
         public D3D10ResourceMiscFlag2 DX10AlphaFlags
         {
             get => dx10Header.MiscFlags2;
@@ -324,8 +334,10 @@ namespace Reclaimer.Drawing
 
         /// <summary>
         /// Gets or sets miscellaneous flags for the image.
-        /// <para>These flags are only used if the FourCC code is set to <see cref="FourCC.XBOX"/></para>
         /// </summary>
+        /// <remarks>
+        /// These flags are only used if the FourCC code is set to <see cref="FourCC.XBOX"/>
+        /// </remarks>
         public D3D10ResourceMiscFlags XboxResourceFlags
         {
             get => xboxHeader.MiscFlags;
@@ -334,8 +346,10 @@ namespace Reclaimer.Drawing
 
         /// <summary>
         /// Gets or sets flags indicating the type of alpha used in the image.
-        /// <para>These flags are only used if the FourCC code is set to <see cref="FourCC.XBOX"/></para>
         /// </summary>
+        /// <remarks>
+        /// These flags are only used if the FourCC code is set to <see cref="FourCC.XBOX"/>
+        /// </remarks>
         public D3D10ResourceMiscFlag2 XboxAlphaFlags
         {
             get => xboxHeader.MiscFlags2;
@@ -425,6 +439,10 @@ namespace Reclaimer.Drawing
                     writer.Write((uint)xboxHeader.MiscFlags);
                     writer.Write(xboxHeader.ArraySize);
                     writer.Write((uint)xboxHeader.MiscFlags2);
+                    writer.Write((uint)xboxHeader.TileMode);
+                    writer.Write((uint)xboxHeader.BaseAlignment);
+                    writer.Write((uint)xboxHeader.DataSize);
+                    writer.Write((uint)xboxHeader.XdkVersion);
                 }
 
                 writer.Write(data);
@@ -505,6 +523,10 @@ namespace Reclaimer.Drawing
                 xboxHeader.MiscFlags = (D3D10ResourceMiscFlags)reader.ReadInt32();
                 xboxHeader.ArraySize = reader.ReadInt32();
                 xboxHeader.MiscFlags2 = (D3D10ResourceMiscFlag2)reader.ReadInt32();
+                xboxHeader.TileMode = (XgTileMode)reader.ReadInt32();
+                xboxHeader.BaseAlignment = reader.ReadInt32();
+                xboxHeader.DataSize = reader.ReadInt32();
+                xboxHeader.XdkVersion = reader.ReadInt32();
             }
 
             var data = reader.ReadBytes((int)(stream.Length - stream.Position));
