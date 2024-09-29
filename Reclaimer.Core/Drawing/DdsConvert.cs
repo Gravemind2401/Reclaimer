@@ -1,4 +1,5 @@
 ﻿using Reclaimer.Drawing.Bc7;
+using System.Buffers;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -335,7 +336,7 @@ namespace Reclaimer.Drawing
 
                 var buffer = new byte[Width * Height * bpp];
                 source.CopyPixels(sourceRect, buffer, stride, 0);
-                buffer = Rotate(buffer, Width, Height, bpp, rotateArray[i]);
+                Rotate(buffer, Width, Height, bpp, rotateArray[i]);
                 dest.WritePixels(destRect, buffer, stride, 0);
             }
 
@@ -1200,15 +1201,15 @@ namespace Reclaimer.Drawing
             return (byte)MathF.Round((z + 1) / 2 * 255f);
         }
 
-        private static byte[] Rotate(byte[] buffer, int width, int height, int bpp, RotateFlipType rotation)
+        private static void Rotate(byte[] buffer, int width, int height, int bpp, RotateFlipType rotation)
         {
             var rot = (int)rotation;
 
             if (rot == 0)
-                return buffer;
+                return;
 
             var turns = 4 - rot % 4; //starting at 4 because we need to undo the rotations, not apply them
-            var output = new byte[buffer.Length];
+            var output = ArrayPool<byte>.Shared.Rent(buffer.Length);
 
             for (var x = 0; x < width; x++)
             {
@@ -1250,7 +1251,8 @@ namespace Reclaimer.Drawing
                 }
             }
 
-            return output;
+            output.AsSpan(..buffer.Length).CopyTo(buffer);
+            ArrayPool<byte>.Shared.Return(output);
         }
 
         private static BgraColour Lerp(in BgraColour c0, in BgraColour c1, in float fraction)

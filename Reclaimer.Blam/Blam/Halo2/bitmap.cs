@@ -51,11 +51,13 @@ namespace Reclaimer.Blam.Halo2
             var data = submap.Lod0Pointer.ReadData(submap.Lod0Size);
             var frameCount = submap.BitmapType == TextureType.CubeMap ? 6 : submap.Depth;
 
+            var formatDescriptor = new BitmapProperties(submap.Width, submap.Height, submap.BitmapFormat, submap.BitmapType).CreateFormatDescriptor();
+
             //Halo2 has all the lod mips in the same resource data as the main lod.
             //this means that for cubemaps each face will be separated by mips, so we
             //need to make sure the main lods are contiguous and discard additional data.
             //Once the dds library can decode individual mips/frames this can be changed.
-            var mip0Size = submap.Width * submap.Height * submap.BitmapFormat.Bpp() / 8;
+            var mip0Size = submap.Width * submap.Height * formatDescriptor.BitsPerPixel / 8;
             if (frameCount > 1)
             {
                 var mipsSize = submap.Lod0Size / frameCount;
@@ -71,10 +73,7 @@ namespace Reclaimer.Blam.Halo2
             virtualHeight = submap.Height * frameCount;
 
             if (submap.Flags.HasFlag(BitmapFlags.Swizzled))
-            {
-                var unitSize = submap.BitmapFormat.LinearUnitSize();
-                data = TextureUtils.Swizzle(data, virtualWidth, virtualHeight, 1, unitSize);
-            }
+                data = TextureUtils.Unswizzle(data, virtualWidth, virtualHeight, 1, formatDescriptor.ReadUnitSize);
 
             var format = submap.BitmapFormat;
             if (format == TextureFormat.P8_bump)
