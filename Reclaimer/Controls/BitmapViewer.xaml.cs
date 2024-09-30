@@ -31,6 +31,16 @@ namespace Reclaimer.Controls
 
         public static readonly DependencyProperty ImageSourceProperty = ImageSourcePropertyKey.DependencyProperty;
 
+        public static readonly DependencyPropertyKey ImageDescriptorPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(ImageDescriptor), typeof(DdsImageDescriptor), typeof(BitmapViewer), new PropertyMetadata());
+
+        public static readonly DependencyProperty ImageDescriptorProperty = ImageDescriptorPropertyKey.DependencyProperty;
+
+        private static readonly DependencyPropertyKey ImageFormatDisplayPropertyKey =
+            DependencyProperty.RegisterReadOnly(nameof(ImageFormatDisplay), typeof(string), typeof(BitmapViewer), new PropertyMetadata());
+
+        public static readonly DependencyProperty ImageFormatDisplayProperty = ImageFormatDisplayPropertyKey.DependencyProperty;
+
         public static readonly DependencyProperty SelectedIndexProperty =
             DependencyProperty.Register(nameof(SelectedIndex), typeof(int), typeof(BitmapViewer), new PropertyMetadata(0, SelectedIndexPropertyChanged));
 
@@ -61,6 +71,18 @@ namespace Reclaimer.Controls
         {
             get => (BitmapSource)GetValue(ImageSourceProperty);
             private set => SetValue(ImageSourcePropertyKey, value);
+        }
+
+        public DdsImageDescriptor ImageDescriptor
+        {
+            get => (DdsImageDescriptor)GetValue(ImageDescriptorProperty);
+            private set => SetValue(ImageDescriptorPropertyKey, value);
+        }
+
+        public string ImageFormatDisplay
+        {
+            get => (string)GetValue(ImageFormatDisplayProperty);
+            private set => SetValue(ImageFormatDisplayPropertyKey, value);
         }
 
         public int SelectedIndex
@@ -135,6 +157,19 @@ namespace Reclaimer.Controls
 
             Indexes = Enumerable.Range(0, bitmap.SubmapCount);
             dds = bitmap.ToDds(0);
+
+            ImageDescriptor = dds.CreateDescriptor();
+            ImageFormatDisplay = ImageDescriptor.XboxFormat == XboxFormat.Unknown
+                ? ImageDescriptor.DxgiFormat.ToString()
+                : ImageDescriptor.XboxFormat.ToString();
+
+            if (ImageDescriptor.DxgiFormat == DxgiFormat.BC1_UNorm)
+                ImageFormatDisplay += $" ({FourCC.DXT1})";
+            else if (ImageDescriptor.DxgiFormat == DxgiFormat.BC2_UNorm)
+                ImageFormatDisplay += $" ({FourCC.DXT3})";
+            else if (ImageDescriptor.DxgiFormat == DxgiFormat.BC3_UNorm)
+                ImageFormatDisplay += $" ({FourCC.DXT5})";
+
             Render();
             CoerceValue(HasMultipleProperty);
         }
