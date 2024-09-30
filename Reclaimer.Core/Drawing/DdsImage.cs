@@ -359,6 +359,20 @@ namespace Reclaimer.Drawing
         #endregion
 
         /// <summary>
+        /// Creates a <see cref="DdsImageDescriptor"/> based on the properties of this image.
+        /// </summary>
+        public DdsImageDescriptor CreateDescriptor()
+        {
+            var fourCC = (FourCC)header.PixelFormat.FourCC;
+            return fourCC switch
+            {
+                FourCC.DX10 => new DdsImageDescriptor(dx10Header.DxgiFormat, Width, Height, ArraySize, MipmapCount.GetValueOrDefault()),
+                FourCC.XBOX => new DdsImageDescriptor(xboxHeader.XboxFormat, Width, Height, ArraySize, MipmapCount.GetValueOrDefault()),
+                _ => new DdsImageDescriptor(fourCC, Width, Height, ArraySize, MipmapCount.GetValueOrDefault())
+            };
+        }
+
+        /// <summary>
         /// Returns a copy of the underlying raw pixel data for this image without perfoming any conversions.
         /// </summary>
         public byte[] CopyPixelData()
