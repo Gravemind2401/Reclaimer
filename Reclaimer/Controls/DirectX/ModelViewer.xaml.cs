@@ -222,9 +222,10 @@ namespace Reclaimer.Controls.DirectX
                 .ToList();
 
             //only populate permutation view if there are permutations that appear in multiple regions
-            //and there are no more than 50 top-level regions or 50 unique permutations (to try to exclude bsps)
-            var usePermutations = TreeViewItems.Count <= 50
-                && permutationGroups.Count <= 50
+            //and there are no more than {maxNodes} top-level regions or {maxNodes} unique permutations (to try to exclude bsps)
+            const int maxNodes = 55;
+            var usePermutations = TreeViewItems.Count <= maxNodes
+                && permutationGroups.Count <= maxNodes
                 && permutationGroups.Where(g => g.Skip(1).Any()).Any();
 
             TreeTabsVisibility = usePermutations ? Visibility.Visible : Visibility.Collapsed;
@@ -528,9 +529,12 @@ namespace Reclaimer.Controls.DirectX
         public void Dispose()
         {
             TreeViewItems.Clear();
+            PermutationViewItems.Clear();
+            treeItemsMap.Clear();
             ClearChildren();
             modelGroup.Dispose();
             renderer.Dispose();
+            DataContext = null;
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }

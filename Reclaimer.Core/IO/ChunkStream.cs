@@ -175,10 +175,11 @@ namespace Reclaimer.IO
                 do
                 {
                     var bufferSize = Math.Min((int)remaining, 0x10000);
-                    var buffer = MemoryPool<byte>.Shared.Rent(bufferSize);
-                    var span = buffer.Memory.Span[..bufferSize]; //in case Rent() gave more than we wanted
+                    var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
+                    var span = buffer.AsSpan(..bufferSize); //in case Rent() gave more than we wanted
 
                     remaining -= bytesRead = ChunkStream.ReadAll(span);
+                    ArrayPool<byte>.Shared.Return(buffer);
                 }
                 while (remaining > 0 && bytesRead > 0);
             }
