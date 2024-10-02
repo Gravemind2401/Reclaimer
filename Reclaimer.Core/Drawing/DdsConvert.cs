@@ -1310,9 +1310,9 @@ namespace Reclaimer.Drawing
 
                 return new BgraColour
                 {
-                    B = (byte)((0xFF / maskB) * (value & maskB)),
-                    G = (byte)((0xFF / maskG) * ((value >> 5) & maskG)),
-                    R = (byte)((0xFF / maskR) * ((value >> 11) & maskR)),
+                    B = (byte)(255f / maskB * (value & maskB)),
+                    G = (byte)(255f / maskG * ((value >> 5) & maskG)),
+                    R = (byte)(255f / maskR * ((value >> 11) & maskR)),
                     A = byte.MaxValue
                 };
             }
@@ -1326,10 +1326,10 @@ namespace Reclaimer.Drawing
 
                 return new BgraColour
                 {
-                    B = (byte)((0xFF / maskB) * (value & maskB)),
-                    G = (byte)((0xFF / maskG) * ((value >> 5) & maskG)),
-                    R = (byte)((0xFF / maskR) * ((value >> 10) & maskR)),
-                    A = (byte)((0xFF / maskA) * ((value >> 15) & maskA))
+                    B = (byte)(255f / maskB * (value & maskB)),
+                    G = (byte)(255f / maskG * ((value >> 5) & maskG)),
+                    R = (byte)(255f / maskR * ((value >> 10) & maskR)),
+                    A = (byte)(255f / maskA * ((value >> 15) & maskA))
                 };
             }
 
@@ -1342,10 +1342,10 @@ namespace Reclaimer.Drawing
 
                 return new BgraColour
                 {
-                    B = (byte)((0xFF / maskB) * (value & maskB)),
-                    G = (byte)((0xFF / maskG) * ((value >> 4) & maskG)),
-                    R = (byte)((0xFF / maskR) * ((value >> 8) & maskR)),
-                    A = (byte)((0xFF / maskA) * ((value >> 12) & maskA)),
+                    B = (byte)(255f / maskB * (value & maskB)),
+                    G = (byte)(255f / maskG * ((value >> 4) & maskG)),
+                    R = (byte)(255f / maskR * ((value >> 8) & maskR)),
+                    A = (byte)(255f / maskA * ((value >> 12) & maskA)),
                 };
             }
 
