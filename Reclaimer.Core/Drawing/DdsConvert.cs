@@ -456,7 +456,7 @@ namespace Reclaimer.Drawing
                             var pIndex = (byte)((indexBits >> j * 2) & 0x3);
 
                             var result = palette[pIndex];
-                            result.a = (byte)(((alphaBits >> j * 4) & 0xF) * (0xFF / 0xF));
+                            result.A = (byte)(((alphaBits >> j * 4) & 0xF) * (0xFF / 0xF));
                             result.Copy(output, destIndex, bgr24);
                         }
                     }
@@ -522,7 +522,7 @@ namespace Reclaimer.Drawing
                             var pIndex = (byte)((rgbIndexBits >> j * 2) & 0x3);
 
                             var result = rgbPalette[pIndex];
-                            result.a = alphaPalette[(alphaIndexBits >> (pixelIndex % 8) * 3) & 0x7];
+                            result.A = alphaPalette[(alphaIndexBits >> (pixelIndex % 8) * 3) & 0x7];
                             result.Copy(output, destIndex, bgr24);
                         }
                     }
@@ -800,7 +800,7 @@ namespace Reclaimer.Drawing
                     if (info.AlphaBits > 0)
                     {
                         for (var i = 0; i < endpoints.Length; i++)
-                            endpoints[i].a = reader.ReadBits(info.AlphaBits);
+                            endpoints[i].A = reader.ReadBits(info.AlphaBits);
                     }
 
                     //P-bit is a shared LSB across each channel. each endpoint may have its
@@ -899,10 +899,10 @@ namespace Reclaimer.Drawing
                                 var alphaPalette = indexMode == 0 ? palette1 : palette0;
                                 var alphaIndex = indexMode == 0 ? indices1[pixelIndex] : indices0[pixelIndex];
 
-                                result.a = alphaPalette[subsetIndex, alphaIndex].a;
+                                result.A = alphaPalette[subsetIndex, alphaIndex].A;
                             }
                             else if (info.AlphaBits == 0)
-                                result.a = byte.MaxValue;
+                                result.A = byte.MaxValue;
 
                             byte temp;
                             switch (rotation)
@@ -910,19 +910,19 @@ namespace Reclaimer.Drawing
                                 case 0: // no rotation
                                     break;
                                 case 1: // swap A+R
-                                    temp = result.a;
-                                    result.a = result.r;
-                                    result.r = temp;
+                                    temp = result.A;
+                                    result.A = result.R;
+                                    result.R = temp;
                                     break;
                                 case 2: //swap A+G
-                                    temp = result.a;
-                                    result.a = result.g;
-                                    result.g = temp;
+                                    temp = result.A;
+                                    result.A = result.G;
+                                    result.G = temp;
                                     break;
                                 case 3: //swap A+B
-                                    temp = result.a;
-                                    result.a = result.b;
-                                    result.b = temp;
+                                    temp = result.A;
+                                    result.A = result.B;
+                                    result.B = temp;
                                     break;
                             }
 
@@ -967,8 +967,8 @@ namespace Reclaimer.Drawing
                     var srcIndex = (y * width + x) * bytesPerBlock;
                     var destIndex = (y * width + x) * bpp;
 
-                    var colour = new BgraColour { r = (byte)(unchecked((sbyte)data[srcIndex + 0]) - sbyte.MinValue), g = (byte)(unchecked((sbyte)data[srcIndex + 1]) - sbyte.MinValue), a = byte.MaxValue };
-                    colour.b = CalculateZVector(colour.r, colour.g);
+                    var colour = new BgraColour { R = (byte)(unchecked((sbyte)data[srcIndex + 0]) - sbyte.MinValue), G = (byte)(unchecked((sbyte)data[srcIndex + 1]) - sbyte.MinValue), A = byte.MaxValue };
+                    colour.B = CalculateZVector(colour.R, colour.G);
                     colour.Copy(output, destIndex, bgr24);
                 }
             }
@@ -1003,8 +1003,8 @@ namespace Reclaimer.Drawing
                 for (var xBlock = 0; xBlock < xBlocks; xBlock++)
                 {
                     var srcIndex = (yBlock * xBlocks + xBlock) * bytesPerBlock;
-                    palette[0] = new BgraColour { g = data[srcIndex + 0], r = data[srcIndex + 1], a = byte.MaxValue };
-                    palette[1] = new BgraColour { g = data[srcIndex + 2], r = data[srcIndex + 3], a = byte.MaxValue };
+                    palette[0] = new BgraColour { G = data[srcIndex + 0], R = data[srcIndex + 1], A = byte.MaxValue };
+                    palette[1] = new BgraColour { G = data[srcIndex + 2], R = data[srcIndex + 3], A = byte.MaxValue };
 
                     palette[2] = Lerp(palette[0], palette[1], 1 / 3f);
                     palette[3] = Lerp(palette[0], palette[1], 2 / 3f);
@@ -1020,7 +1020,7 @@ namespace Reclaimer.Drawing
                             var destIndex = (destY * width + destX) * bpp;
                             var pIndex = (byte)((indexBits >> j * 2) & 0x3);
                             var colour = palette[pIndex];
-                            colour.b = CalculateZVector(colour.r, colour.g);
+                            colour.B = CalculateZVector(colour.R, colour.G);
                             colour.Copy(output, destIndex, bgr24);
                         }
                     }
@@ -1210,10 +1210,10 @@ namespace Reclaimer.Drawing
         {
             return new BgraColour
             {
-                b = Lerp(c0.b, c1.b, fraction),
-                g = Lerp(c0.g, c1.g, fraction),
-                r = Lerp(c0.r, c1.r, fraction),
-                a = Lerp(c0.a, c1.a, fraction)
+                B = Lerp(c0.B, c1.B, fraction),
+                G = Lerp(c0.G, c1.G, fraction),
+                R = Lerp(c0.R, c1.R, fraction),
+                A = Lerp(c0.A, c1.A, fraction)
             };
         }
 
@@ -1256,7 +1256,7 @@ namespace Reclaimer.Drawing
 
         private struct BgraColour
         {
-            public byte b, g, r, a;
+            public byte B, G, R, A;
 
             public byte this[int index]
             {
@@ -1264,10 +1264,10 @@ namespace Reclaimer.Drawing
                 {
                     return index switch
                     {
-                        0 => b,
-                        1 => g,
-                        2 => r,
-                        3 => a,
+                        0 => B,
+                        1 => G,
+                        2 => R,
+                        3 => A,
                         _ => throw new ArgumentOutOfRangeException(nameof(index))
                     };
                 }
@@ -1275,10 +1275,10 @@ namespace Reclaimer.Drawing
                 {
                     switch (index)
                     {
-                        case 0: b = value; break;
-                        case 1: g = value; break;
-                        case 2: r = value; break;
-                        case 3: a = value; break;
+                        case 0: B = value; break;
+                        case 1: G = value; break;
+                        case 2: R = value; break;
+                        case 3: A = value; break;
                         default: throw new ArgumentOutOfRangeException(nameof(index));
                     }
                 }
@@ -1286,72 +1286,72 @@ namespace Reclaimer.Drawing
 
             public readonly IEnumerable<byte> AsEnumerable(bool bgr24)
             {
-                yield return b;
-                yield return g;
-                yield return r;
+                yield return B;
+                yield return G;
+                yield return R;
                 if (!bgr24)
-                    yield return a;
+                    yield return A;
             }
 
             public readonly void Copy(byte[] destination, int destinationIndex, bool bgr24)
             {
-                destination[destinationIndex] = b;
-                destination[destinationIndex + 1] = g;
-                destination[destinationIndex + 2] = r;
+                destination[destinationIndex] = B;
+                destination[destinationIndex + 1] = G;
+                destination[destinationIndex + 2] = R;
                 if (!bgr24)
-                    destination[destinationIndex + 3] = a;
+                    destination[destinationIndex + 3] = A;
             }
 
             public static BgraColour From565(ushort value)
             {
-                const byte BMask = 0x1F;
-                const byte GMask = 0x3F;
-                const byte RMask = 0x1F;
+                const byte maskB = 0x1F;
+                const byte maskG = 0x3F;
+                const byte maskR = 0x1F;
 
                 return new BgraColour
                 {
-                    b = (byte)((0xFF / BMask) * (value & BMask)),
-                    g = (byte)((0xFF / GMask) * ((value >> 5) & GMask)),
-                    r = (byte)((0xFF / RMask) * ((value >> 11) & RMask)),
-                    a = byte.MaxValue
+                    B = (byte)((0xFF / maskB) * (value & maskB)),
+                    G = (byte)((0xFF / maskG) * ((value >> 5) & maskG)),
+                    R = (byte)((0xFF / maskR) * ((value >> 11) & maskR)),
+                    A = byte.MaxValue
                 };
             }
 
             public static BgraColour From5551(ushort value)
             {
-                const byte BMask = 0x1F;
-                const byte GMask = 0x1F;
-                const byte RMask = 0x1F;
-                const byte AMask = 0x01;
+                const byte maskB = 0x1F;
+                const byte maskG = 0x1F;
+                const byte maskR = 0x1F;
+                const byte maskA = 0x01;
 
                 return new BgraColour
                 {
-                    b = (byte)((0xFF / BMask) * (value & BMask)),
-                    g = (byte)((0xFF / GMask) * ((value >> 5) & GMask)),
-                    r = (byte)((0xFF / RMask) * ((value >> 10) & RMask)),
-                    a = (byte)((0xFF / AMask) * ((value >> 15) & AMask))
+                    B = (byte)((0xFF / maskB) * (value & maskB)),
+                    G = (byte)((0xFF / maskG) * ((value >> 5) & maskG)),
+                    R = (byte)((0xFF / maskR) * ((value >> 10) & maskR)),
+                    A = (byte)((0xFF / maskA) * ((value >> 15) & maskA))
                 };
             }
 
             public static BgraColour From4444(ushort value)
             {
-                const byte BMask = 0x0F;
-                const byte GMask = 0x0F;
-                const byte RMask = 0x0F;
-                const byte AMask = 0x0F;
+                const byte maskB = 0x0F;
+                const byte maskG = 0x0F;
+                const byte maskR = 0x0F;
+                const byte maskA = 0x0F;
 
                 return new BgraColour
                 {
-                    b = (byte)((0xFF / BMask) * (value & BMask)),
-                    g = (byte)((0xFF / GMask) * ((value >> 4) & GMask)),
-                    r = (byte)((0xFF / RMask) * ((value >> 8) & RMask)),
-                    a = (byte)((0xFF / AMask) * ((value >> 12) & AMask)),
+                    B = (byte)((0xFF / maskB) * (value & maskB)),
+                    G = (byte)((0xFF / maskG) * ((value >> 4) & maskG)),
+                    R = (byte)((0xFF / maskR) * ((value >> 8) & maskR)),
+                    A = (byte)((0xFF / maskA) * ((value >> 12) & maskA)),
                 };
             }
 
             public override readonly string ToString()
             {
-                return string.Format("{{ {0,3}, {1,3}, {2,3}, {3,3} }} #{0:X2}{1:X2}{2:X2}{3:X2}", b, g, r, a);
+                return string.Format("{{ {0,3}, {1,3}, {2,3}, {3,3} }} #{0:X2}{1:X2}{2:X2}{3:X2}", B, G, R, A);
             }
         }
     }
