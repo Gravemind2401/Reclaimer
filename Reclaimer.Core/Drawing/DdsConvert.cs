@@ -1389,8 +1389,8 @@ namespace Reclaimer.Drawing
         internal static byte[] DecompressDXT5a_alpha(byte[] data, int height, int width, bool bgr24) => DecompressBC3AlphaOnly(data, height, width, false, true, bgr24);
         #endregion
 
-        private static sbyte Lerp(in sbyte p1, in sbyte p2, in float fraction) => (sbyte)((p1 * (1 - fraction)) + (p2 * fraction));
-        private static byte Lerp(in byte p1, in byte p2, in float fraction) => (byte)((p1 * (1 - fraction)) + (p2 * fraction));
+        private static sbyte Lerp(in sbyte p1, in sbyte p2, in float fraction) => (sbyte)MathF.Round((p1 * (1 - fraction)) + (p2 * fraction));
+        private static byte Lerp(in byte p1, in byte p2, in float fraction) => (byte)MathF.Round((p1 * (1 - fraction)) + (p2 * fraction));
         private static float Lerp(in float p1, in float p2, in float fraction) => (p1 * (1 - fraction)) + (p2 * fraction);
 
         private static byte CalculateZVector(in byte r, in byte g)
@@ -1399,7 +1399,7 @@ namespace Reclaimer.Drawing
             var y = Lerp(-1f, 1f, g / 255f);
             var z = (float)Math.Sqrt(1 - x * x - y * y);
 
-            return (byte)((z + 1) / 2 * 255f);
+            return (byte)MathF.Round((z + 1) / 2 * 255f);
         }
 
         private static byte[] Rotate(byte[] buffer, int width, int height, int bpp, RotateFlipType rotation)
@@ -1562,9 +1562,9 @@ namespace Reclaimer.Drawing
 
                 return new BgraColour
                 {
-                    B = (byte)(255f / maskB * (value & maskB)),
-                    G = (byte)(255f / maskG * ((value >> 5) & maskG)),
-                    R = (byte)(255f / maskR * ((value >> 11) & maskR)),
+                    B = (byte)MathF.Round(255f / maskB * (value & maskB)),
+                    G = (byte)MathF.Round(255f / maskG * ((value >> 5) & maskG)),
+                    R = (byte)MathF.Round(255f / maskR * ((value >> 11) & maskR)),
                     A = byte.MaxValue
                 };
             }
@@ -1578,10 +1578,10 @@ namespace Reclaimer.Drawing
 
                 return new BgraColour
                 {
-                    B = (byte)(255f / maskB * (value & maskB)),
-                    G = (byte)(255f / maskG * ((value >> 5) & maskG)),
-                    R = (byte)(255f / maskR * ((value >> 10) & maskR)),
-                    A = (byte)(255f / maskA * ((value >> 15) & maskA))
+                    B = (byte)MathF.Round(255f / maskB * (value & maskB)),
+                    G = (byte)MathF.Round(255f / maskG * ((value >> 5) & maskG)),
+                    R = (byte)MathF.Round(255f / maskR * ((value >> 10) & maskR)),
+                    A = (byte)MathF.Round(255f / maskA * ((value >> 15) & maskA))
                 };
             }
 
@@ -1594,10 +1594,10 @@ namespace Reclaimer.Drawing
 
                 return new BgraColour
                 {
-                    B = (byte)(255f / maskB * (value & maskB)),
-                    G = (byte)(255f / maskG * ((value >> 4) & maskG)),
-                    R = (byte)(255f / maskR * ((value >> 8) & maskR)),
-                    A = (byte)(255f / maskA * ((value >> 12) & maskA)),
+                    B = (byte)MathF.Round(255f / maskB * (value & maskB)),
+                    G = (byte)MathF.Round(255f / maskG * ((value >> 4) & maskG)),
+                    R = (byte)MathF.Round(255f / maskR * ((value >> 8) & maskR)),
+                    A = (byte)MathF.Round(255f / maskA * ((value >> 12) & maskA)),
                 };
             }
 
