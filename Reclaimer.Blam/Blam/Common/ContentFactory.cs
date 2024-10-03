@@ -20,6 +20,7 @@ namespace Reclaimer.Blam.Common
         private const string structure_lightmap = "stlm";
         private const string sound = "snd!";
         private const string runtime_geo = "rtgo";
+        private const string object_customization = "ocgd";
 
         #region Standard Halo Maps
 
@@ -251,6 +252,7 @@ namespace Reclaimer.Blam.Common
                     break;
                 case runtime_geo:
                 case scenario_structure_bsp:
+                case object_customization:
                 case render_model:
                     if (TryGetGeometryContent(item, out var geometryContent))
                     {
@@ -292,6 +294,7 @@ namespace Reclaimer.Blam.Common
                 render_model => item.ReadMetadata<HaloInfinite.render_model>(),
                 runtime_geo => item.ReadMetadata<HaloInfinite.runtime_geo>(),
                 scenario_structure_bsp => item.ReadMetadata<HaloInfinite.scenario_structure_bsp>(),
+                object_customization => item.ReadMetadata<HaloInfinite.customization_globals_definition>(),
                 _ => null
             };
 

@@ -57,7 +57,7 @@ namespace Reclaimer.Blam.HaloInfinite
 
         public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent(), BlamConstants.WorldUnitScale);
 
-        private Model GetModelContent()
+        public Model GetModelContent()
         {
             var geoParams = new HaloInfiniteGeometryArgs
             {
@@ -112,10 +112,14 @@ namespace Reclaimer.Blam.HaloInfinite
 
             model.Meshes.AddRange(HaloInfiniteCommon.GetMeshes(geoParams, out var materials));
 
-            var bounds = BoundingBoxes[0];
-            var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
-            var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
-            model.SetCompressionBounds(posBounds, texBounds);
+            // Bounding might not exist in some cases (attachments?)
+            if (BoundingBoxes.Count != 0)
+            {
+                var bounds = BoundingBoxes[0];
+                var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
+                var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
+                model.SetCompressionBounds(posBounds, texBounds);
+            }
 
             return model;
         }

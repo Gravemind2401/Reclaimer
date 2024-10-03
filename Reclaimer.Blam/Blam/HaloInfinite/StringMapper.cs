@@ -16,7 +16,7 @@ namespace Reclaimer.Blam.HaloInfinite
                 {
                     var intValue = BinaryPrimitives.ReverseEndianness(Convert.ToInt32(parts[0].Trim(), 16));
                     var name = parts[1].Trim();
-                    TagMappings[intValue] = name;
+                    TagMappings[intValue] = Path.ChangeExtension(name, null);
                 }
             }
         }

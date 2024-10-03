@@ -1,15 +1,14 @@
 ﻿using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
-using System.Numerics;
 
 namespace Reclaimer.Blam.HaloInfinite
 {
     public class material_swatch
     {
         [Offset(16)]
-        public Vector2 ColorAndRoughnessTransform {  get; set; }
+        public RealVector2 ColorAndRoughnessTransform {  get; set; }
         [Offset(24)]
-        public Vector2 NormalTextureTransform { get; set; }
+        public RealVector2 NormalTextureTransform { get; set; }
         [Offset(32)]
         public TagReference ColorGradientMap { get; set; }
         [Offset(60)]
