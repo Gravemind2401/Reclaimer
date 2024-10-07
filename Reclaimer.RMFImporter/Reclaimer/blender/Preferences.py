@@ -60,6 +60,12 @@ class RmfPreferences(AddonPreferences):
         default = ImportOptions.IMPORT_SKIN
     ) # type: ignore
 
+    nogui: BoolProperty(
+        name = 'Skip Import Dialog',
+        description = 'Skips the import dialog. Import settings will be determined by the addon preferences. All meshes will be imported.',
+        default = False
+    ) # type: ignore
+
     object_scale: FloatProperty(
         name = 'Object Scale',
         description = 'Sets the size of imported meshes',
@@ -165,6 +171,7 @@ class RmfPreferences(AddonPreferences):
         box.prop(self, 'import_meshes')
         box.prop(self, 'import_materials')
         box.prop(self, 'import_custom_props')
+        box.prop(self, 'nogui')
 
         box = panel.box()
         box.label(icon='MESH_DATA', text='Mesh Options')
