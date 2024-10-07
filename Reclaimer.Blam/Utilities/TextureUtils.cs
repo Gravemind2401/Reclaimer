@@ -20,7 +20,17 @@ namespace Reclaimer.Blam.Utilities
             { KnownTextureFormat.X8R8G8B8, DxgiFormat.B8G8R8X8_UNorm },
             { KnownTextureFormat.R5G6B5, DxgiFormat.B5G6R5_UNorm },
             { KnownTextureFormat.A1R5G5B5, DxgiFormat.B5G5R5A1_UNorm },
-            { KnownTextureFormat.A4R4G4B4, DxgiFormat.B4G4R4A4_UNorm }
+            { KnownTextureFormat.A4R4G4B4, DxgiFormat.B4G4R4A4_UNorm },
+            { KnownTextureFormat.RGBFP32, DxgiFormat.R32G32B32_Float },
+            { KnownTextureFormat.RGBAFP32, DxgiFormat.R32G32B32A32_Float },
+            { KnownTextureFormat.L16, DxgiFormat.R16_UNorm },
+            { KnownTextureFormat.A2R10G10B10, DxgiFormat.R10G10B10A2_UNorm },
+            { KnownTextureFormat.Q8W8V8U8, DxgiFormat.R8G8B8A8_SNorm },
+            { KnownTextureFormat.V8U8, DxgiFormat.R8G8_SNorm },
+            { KnownTextureFormat.R8G8, DxgiFormat.R8G8_UNorm },
+            { KnownTextureFormat.SignedR16G16B16A16, DxgiFormat.R16G16B16A16_SNorm },
+            { KnownTextureFormat.RGBAFP16, DxgiFormat.R16G16B16A16_Float },
+            { KnownTextureFormat.A16B16G16R16, DxgiFormat.R16G16B16A16_UNorm },
         };
 
         private static readonly Dictionary<KnownTextureFormat, XboxFormat> xboxLookup = new Dictionary<KnownTextureFormat, XboxFormat>
@@ -65,9 +75,13 @@ namespace Reclaimer.Blam.Utilities
             DXT5,
             P8_bump,
             P8,
-            ARGBFP32,
+            ARGBFP32, //TODO: should this actually be RGBA instead of ARGB? the games this is defined in have no examples
+            RGBAFP32,
             RGBFP32,
             RGBFP16,
+            RGBAFP16,
+            A16B16G16R16,
+            SignedR16G16B16A16,
             U8V8,
             DXT5a,
             DXN,
@@ -82,7 +96,14 @@ namespace Reclaimer.Blam.Utilities
             BC2_unorm,
             BC3_unorm,
             BC4_unorm, //same as DXT5a
-            BC7_unorm
+            BC6H_UF16,
+            BC6H_SF16,
+            BC7_unorm,
+            L16,
+            A2R10G10B10,
+            Q8W8V8U8,
+            V8U8,
+            R8G8
         }
 
         private enum KnownTextureType : short
@@ -109,11 +130,23 @@ namespace Reclaimer.Blam.Utilities
         {
             switch (format)
             {
-                case KnownTextureFormat.A8R8G8B8:
-                case KnownTextureFormat.X8R8G8B8:
                 case KnownTextureFormat.ARGBFP32:
+                case KnownTextureFormat.RGBAFP32:
+                    return 128;
+
                 case KnownTextureFormat.RGBFP32:
+                    return 96;
+
+                case KnownTextureFormat.A8R8G8B8:
+                case KnownTextureFormat.A2R10G10B10:
+                case KnownTextureFormat.Q8W8V8U8:
+                case KnownTextureFormat.X8R8G8B8:
                     return 32;
+
+                case KnownTextureFormat.R8G8:
+                case KnownTextureFormat.V8U8:
+                case KnownTextureFormat.L16:
+                    return 16;
 
                 case KnownTextureFormat.A8:
                 case KnownTextureFormat.Y8:
@@ -136,6 +169,8 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.DXN:
                 case KnownTextureFormat.DXN_SNorm:
                 case KnownTextureFormat.DXN_mono_alpha:
+                case KnownTextureFormat.BC6H_UF16:
+                case KnownTextureFormat.BC6H_SF16:
                 case KnownTextureFormat.BC7_unorm:
                     return 8;
 
@@ -150,6 +185,9 @@ namespace Reclaimer.Blam.Utilities
         {
             switch (format)
             {
+                case KnownTextureFormat.ARGBFP32:
+                case KnownTextureFormat.RGBAFP32:
+                case KnownTextureFormat.RGBFP32:
                 case KnownTextureFormat.A8R8G8B8:
                 case KnownTextureFormat.X8R8G8B8:
                     return 4;
@@ -182,6 +220,10 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.DXN:
                 case KnownTextureFormat.DXN_SNorm:
                 case KnownTextureFormat.DXN_mono_alpha:
+                case KnownTextureFormat.BC4_unorm:
+                case KnownTextureFormat.BC6H_UF16:
+                case KnownTextureFormat.BC6H_SF16:
+                case KnownTextureFormat.BC7_unorm:
                     return 4;
 
                 default:
@@ -201,6 +243,7 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.DXT5a:
                 case KnownTextureFormat.DXT3a_alpha:
                 case KnownTextureFormat.DXT3a_mono:
+                case KnownTextureFormat.BC4_unorm:
                     return 8;
 
                 case KnownTextureFormat.DXT3:
@@ -208,6 +251,9 @@ namespace Reclaimer.Blam.Utilities
                 case KnownTextureFormat.DXN:
                 case KnownTextureFormat.DXN_SNorm:
                 case KnownTextureFormat.DXN_mono_alpha:
+                case KnownTextureFormat.BC6H_UF16:
+                case KnownTextureFormat.BC6H_SF16:
+                case KnownTextureFormat.BC7_unorm:
                     return 16;
 
                 case KnownTextureFormat.A8:
@@ -402,13 +448,11 @@ namespace Reclaimer.Blam.Utilities
             if (virtualWidth > props.Width || virtualHeight > props.Height)
                 data = ApplyCrop(data, props.BitmapFormat, props.FrameCount, virtualWidth, virtualHeight, props.Width, props.Height);
 
-            DdsImage dds;
-            if (dxgiLookup.TryGetValue(bitmapFormat, out var dxgiFormat))
-                dds = new DdsImage(props.Height, props.Width, dxgiFormat, data);
-            else if (xboxLookup.TryGetValue(bitmapFormat, out var xboxFormat))
-                dds = new DdsImage(props.Height, props.Width, xboxFormat, data);
-            else
-                throw Exceptions.BitmapFormatNotSupported(props.BitmapFormat.ToString());
+            var dds = dxgiLookup.TryGetValue(bitmapFormat, out var dxgiFormat)
+                ? new DdsImage(props.Height, props.Width, dxgiFormat, data)
+                : xboxLookup.TryGetValue(bitmapFormat, out var xboxFormat)
+                ? new DdsImage(props.Height, props.Width, xboxFormat, data)
+                : throw Exceptions.BitmapFormatNotSupported(props.BitmapFormat.ToString());
 
             if (textureType == KnownTextureType.CubeMap)
                 dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
