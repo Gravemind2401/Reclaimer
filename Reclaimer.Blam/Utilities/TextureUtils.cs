@@ -21,7 +21,9 @@ namespace Reclaimer.Blam.Utilities
             { KnownTextureFormat.X8R8G8B8, DxgiFormat.B8G8R8X8_UNorm },
             { KnownTextureFormat.R5G6B5, DxgiFormat.B5G6R5_UNorm },
             { KnownTextureFormat.A1R5G5B5, DxgiFormat.B5G5R5A1_UNorm },
-            { KnownTextureFormat.A4R4G4B4, DxgiFormat.B4G4R4A4_UNorm }
+            { KnownTextureFormat.A4R4G4B4, DxgiFormat.B4G4R4A4_UNorm },
+            { KnownTextureFormat.RGBFP32, DxgiFormat.R32G32B32_Float },
+            { KnownTextureFormat.RGBAFP32, DxgiFormat.R32G32B32A32_Float },
         };
 
         private static readonly Dictionary<KnownTextureFormat, XboxFormat> xboxLookup = new Dictionary<KnownTextureFormat, XboxFormat>
@@ -66,7 +68,8 @@ namespace Reclaimer.Blam.Utilities
             DXT5,
             P8_bump,
             P8,
-            ARGBFP32,
+            ARGBFP32, //TODO: should this actually be RGBA instead of ARGB? the games this is defined in have no examples
+            RGBAFP32,
             RGBFP32,
             RGBFP16,
             U8V8,
@@ -83,6 +86,8 @@ namespace Reclaimer.Blam.Utilities
             BC2_unorm,
             BC3_unorm,
             BC4_unorm, //same as DXT5a
+            BC6H_UF16,
+            BC6H_SF16,
             BC7_unorm
         }
 
@@ -203,7 +208,7 @@ namespace Reclaimer.Blam.Utilities
                 dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
             else if (textureType is KnownTextureType.Array or KnownTextureType.Texture3D)
                 dds.ArraySize = props.FrameCount;
-            
+
             if (props.MipmapCount > 0)
                 dds.MipmapCount = props.MipmapCount + 1;
 
