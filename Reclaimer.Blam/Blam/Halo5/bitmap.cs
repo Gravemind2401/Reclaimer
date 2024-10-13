@@ -97,7 +97,7 @@ namespace Reclaimer.Blam.Halo5
         A8, //a8_unorm (000A){a8}
         Y8, //r8_unorm_rrr1 (RRR1){y8}
         AY8, //r8_unorm_rrrr (RRRR){ay8}
-        R8G8, //r8g8_unorm_rrrg (RRRG){r8g8_unorm_gggr (GGGR)}
+        A8Y8, //r8g8_unorm_rrrg (RRRG){r8g8_unorm_gggr (GGGR)}
         Unused1,
         Unused2,
         R5G6B5, //b5g6r5_unorm{r5g6b5}
