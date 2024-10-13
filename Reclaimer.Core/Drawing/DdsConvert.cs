@@ -983,10 +983,10 @@ namespace Reclaimer.Drawing
         #region FP Formats
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static byte RealToByte(in float value) => (byte)MathF.Round(Math.Clamp(value, 0f, 1f) * byte.MaxValue);
+        private static byte RealToByte(float value) => (byte)MathF.Round(Math.Clamp(value, 0f, 1f) * byte.MaxValue);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static byte RealToByte(in Half value) => (byte)MathF.Round(Math.Clamp((float)value, 0f, 1f) * byte.MaxValue);
+        private static byte RealToByte(Half value) => (byte)MathF.Round(Math.Clamp((float)value, 0f, 1f) * byte.MaxValue);
 
         [DxgiDecompressor(R32G32B32_Float)]
         internal static byte[] DecompressRGBFP32(byte[] data, int height, int width, bool bgr24)
@@ -1269,11 +1269,11 @@ namespace Reclaimer.Drawing
         internal static byte[] DecompressDXT5a_alpha(byte[] data, int height, int width, bool bgr24) => DecompressBC3AlphaOnly(data, height, width, false, true, bgr24);
         #endregion
 
-        private static sbyte Lerp(in sbyte p1, in sbyte p2, in float fraction) => (sbyte)MathF.Round((p1 * (1 - fraction)) + (p2 * fraction));
-        private static byte Lerp(in byte p1, in byte p2, in float fraction) => (byte)MathF.Round((p1 * (1 - fraction)) + (p2 * fraction));
-        private static float Lerp(in float p1, in float p2, in float fraction) => (p1 * (1 - fraction)) + (p2 * fraction);
+        private static sbyte Lerp(sbyte p1, sbyte p2, float fraction) => (sbyte)MathF.Round((p1 * (1 - fraction)) + (p2 * fraction));
+        private static byte Lerp(byte p1, byte p2, float fraction) => (byte)MathF.Round((p1 * (1 - fraction)) + (p2 * fraction));
+        private static float Lerp(float p1, float p2, float fraction) => (p1 * (1 - fraction)) + (p2 * fraction);
 
-        private static byte CalculateZVector(in byte r, in byte g)
+        private static byte CalculateZVector(byte r, byte g)
         {
             var x = Lerp(-1f, 1f, r / 255f);
             var y = Lerp(-1f, 1f, g / 255f);
@@ -1387,7 +1387,7 @@ namespace Reclaimer.Drawing
 
         private struct BgraColour
         {
-            public delegate BgraColour ColorUnpackMethod(in ushort value);
+            public delegate BgraColour ColorUnpackMethod(ushort value);
 
             public byte B, G, R, A;
 
@@ -1426,7 +1426,7 @@ namespace Reclaimer.Drawing
                     yield return A;
             }
 
-            public readonly void CopyTo(byte[] destination, in int destinationIndex, in bool bgr24)
+            public readonly void CopyTo(byte[] destination, int destinationIndex, bool bgr24)
             {
                 destination[destinationIndex] = B;
                 destination[destinationIndex + 1] = G;
@@ -1435,7 +1435,7 @@ namespace Reclaimer.Drawing
                     destination[destinationIndex + 3] = A;
             }
 
-            public static BgraColour From565(in ushort value)
+            public static BgraColour From565(ushort value)
             {
                 const byte maskB = 0x1F;
                 const byte maskG = 0x3F;
@@ -1450,7 +1450,7 @@ namespace Reclaimer.Drawing
                 };
             }
 
-            public static BgraColour From5551(in ushort value)
+            public static BgraColour From5551(ushort value)
             {
                 const byte maskB = 0x1F;
                 const byte maskG = 0x1F;
@@ -1466,7 +1466,7 @@ namespace Reclaimer.Drawing
                 };
             }
 
-            public static BgraColour From4444(in ushort value)
+            public static BgraColour From4444(ushort value)
             {
                 const byte maskB = 0x0F;
                 const byte maskG = 0x0F;
