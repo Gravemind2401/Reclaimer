@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using Prism.Mvvm;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
 using System.Collections.ObjectModel;

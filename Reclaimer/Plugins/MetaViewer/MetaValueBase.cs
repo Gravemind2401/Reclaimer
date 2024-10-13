@@ -1,5 +1,4 @@
-﻿using Prism.Mvvm;
-using Reclaimer.Blam.Halo5;
+﻿using Reclaimer.Blam.Halo5;
 using Reclaimer.IO;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -12,14 +11,15 @@ namespace Reclaimer.Plugins.MetaViewer
         protected readonly XmlNode node;
 
         public virtual string Name { get; }
-        public virtual int Offset { get; }
+        public virtual int Offset { get; protected init; }
         public virtual string ToolTip { get; }
         public virtual string Description { get; }
-        public virtual bool IsVisible { get; }
+        public virtual bool IsVisible { get; protected init; }
 
         public long BaseAddress { get; internal set; }
 
-        public abstract FieldDefinition FieldDefinition { get; }
+        public FieldDefinition FieldDefinition { get; protected init; }
+
         public long ValueAddress => BaseAddress + Offset;
 
         private bool isEnabled;
@@ -73,8 +73,16 @@ namespace Reclaimer.Plugins.MetaViewer
 
                 var def = FieldDefinition.GetHalo3Definition(node);
 
-                if (def.Components > 1 && (def.ValueType == MetaValueType.Float32 || def.ValueType == MetaValueType.Angle))
-                    return new Halo3.MultiValue(node, context, reader, baseAddress);
+                if (def.Components > 1)
+                {
+                    switch (def.ValueType)
+                    {
+                        case MetaValueType.Float32:
+                            return new Halo3.MultiValue<float>(node, context, reader, baseAddress);
+                        case MetaValueType.Byte:
+                            return new Halo3.MultiValue<byte>(node, context, reader, baseAddress);
+                    }
+                }
 
                 switch (def.ValueType)
                 {
@@ -130,6 +138,8 @@ namespace Reclaimer.Plugins.MetaViewer
                 {
                     case MetaValueType.Float32:
                         return new Halo5.MultiValue<float>(node, item, header, host, reader, baseAddress, offset);
+                    case MetaValueType.Byte:
+                        return new Halo5.MultiValue<byte>(node, item, header, host, reader, baseAddress, offset);
                     case MetaValueType.Int16:
                         return new Halo5.MultiValue<short>(node, item, header, host, reader, baseAddress, offset);
                 }

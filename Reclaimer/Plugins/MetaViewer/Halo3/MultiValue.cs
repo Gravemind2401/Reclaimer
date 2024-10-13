@@ -5,31 +5,31 @@ using System.Xml;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
-    public class MultiValue : MetaValue
+    public class MultiValue<T> : MetaValue
     {
-        private float value1;
-        public float Value1
+        private T value1;
+        public T Value1
         {
             get => value1;
             set => SetMetaProperty(ref value1, value);
         }
 
-        private float value2;
-        public float Value2
+        private T value2;
+        public T Value2
         {
             get => value2;
             set => SetMetaProperty(ref value2, value);
         }
 
-        private float value3;
-        public float Value3
+        private T value3;
+        public T Value3
         {
             get => value3;
             set => SetMetaProperty(ref value3, value);
         }
 
-        private float value4;
-        public float Value4
+        private T value4;
+        public T Value4
         {
             get => value4;
             set => SetMetaProperty(ref value4, value);
@@ -40,14 +40,19 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         public MultiValue(XmlNode node, MetaContext context, EndianReader reader, long baseAddress)
             : base(node, context, reader, baseAddress)
         {
-            if (FieldDefinition.Axes == AxesDefinition.Point)
-                Labels = new[] { "x", "y", "z", "w" };
-            else if (FieldDefinition.Axes == AxesDefinition.Vector)
-                Labels = new[] { "i", "j", "k", "w" };
-            else if (FieldDefinition.Axes == AxesDefinition.Angle)
-                Labels = new[] { "y", "p", "r", string.Empty };
-            else if (FieldDefinition.Axes == AxesDefinition.Bounds)
-                Labels = new[] { "min", "max", string.Empty, string.Empty };
+            Labels = FieldDefinition.Axes switch
+            {
+                AxesDefinition.Point => new[] { "x", "y", "z", "w" },
+                AxesDefinition.Vector => new[] { "i", "j", "k", "w" },
+                AxesDefinition.Angle => new[] { "y", "p", "r", string.Empty },
+                AxesDefinition.Bounds => new[] { "min", "max", string.Empty, string.Empty },
+                AxesDefinition.Color when FieldDefinition.Components == 3 => new[] { "r", "g", "b", string.Empty },
+                AxesDefinition.Color when FieldDefinition.Components == 4 => new[] { "a", "r", "g", "b" },
+                _ => new[] { "a", "b", "c", "d" }
+            };
+
+            if (FieldDefinition.Axes == AxesDefinition.Color && FieldDefinition.Components == 3 && typeof(T) == typeof(byte))
+                Offset++; //lazy way to skip the unused alpha byte in color32
 
             ReadValue(reader);
         }
@@ -61,14 +66,14 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                Value1 = reader.ReadSingle();
-                Value2 = reader.ReadSingle();
+                Value1 = reader.ReadObject<T>();
+                Value2 = reader.ReadObject<T>();
 
                 if (FieldDefinition.Components > 2)
-                    Value3 = reader.ReadSingle();
+                    Value3 = reader.ReadObject<T>();
 
                 if (FieldDefinition.Components > 3)
-                    Value4 = reader.ReadSingle();
+                    Value3 = reader.ReadObject<T>();
 
                 IsDirty = false;
             }
@@ -81,14 +86,14 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         {
             writer.Seek(ValueAddress, SeekOrigin.Begin);
 
-            writer.Write(Value1);
-            writer.Write(Value2);
+            writer.WriteObject(Value1);
+            writer.WriteObject(Value2);
 
             if (FieldDefinition.Components > 2)
-                writer.Write(Value3);
+                writer.WriteObject(Value3);
 
             if (FieldDefinition.Components > 3)
-                writer.Write(Value4);
+                writer.WriteObject(Value4);
 
             IsDirty = false;
         }

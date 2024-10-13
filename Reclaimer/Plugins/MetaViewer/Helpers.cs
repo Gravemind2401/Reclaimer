@@ -79,13 +79,12 @@ namespace Reclaimer.Plugins.MetaViewer
             }
 
             var key = node.Name.ToLowerInvariant();
-            if (aliasLookup.ContainsKey(key))
-                key = aliasLookup[key];
+            if (aliasLookup.TryGetValue(key, out var value))
+                key = value;
 
-            if (!cache.ContainsKey(key))
+            if (!cache.TryGetValue(key, out var result))
                 return UndefinedDefinition;
 
-            var result = cache[key];
             if (result.Size >= 0)
                 return result;
             else if (result.Size == -1) //length
