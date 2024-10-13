@@ -375,6 +375,45 @@ namespace Reclaimer.Drawing
 
         #endregion
 
+        #region Integer Formats
+
+        [DxgiDecompressor(R8G8_UNorm), DxgiDecompressor(R8G8_UInt)]
+        internal static byte[] DecompressR8G8(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+
+            for (int inputIndex = 0, outputIndex = 0; inputIndex < data.Length && outputIndex < output.Length; inputIndex += 2, outputIndex += bpp)
+            {
+                output[outputIndex + 1] = data[inputIndex + 1];
+                output[outputIndex + 2] = data[inputIndex + 0];
+                if (!bgr24)
+                    output[outputIndex + 3] = byte.MaxValue;
+            }
+
+            return output;
+        }
+
+        [DxgiDecompressor(R8G8_SNorm), DxgiDecompressor(R8G8_SInt)]
+        internal static byte[] DecompressR8G8Signed(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+            var input = MemoryMarshal.Cast<byte, sbyte>(data);
+
+            for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex += 2, outputIndex += bpp)
+            {
+                output[outputIndex + 1] = (byte)(unchecked(input[inputIndex + 1]) - sbyte.MinValue);
+                output[outputIndex + 2] = (byte)(unchecked(input[inputIndex + 0]) - sbyte.MinValue);
+                if (!bgr24)
+                    output[outputIndex + 3] = byte.MaxValue;
+            }
+
+            return output;
+        }
+
+        #endregion
+
         #region BC Formats
 
         [FourCCDecompressor(FourCC.DXT1)]
@@ -1053,6 +1092,7 @@ namespace Reclaimer.Drawing
         #endregion
 
         #region Xbox Decompression Methods
+
         [XboxDecompressor(A8)]
         internal static byte[] DecompressA8(byte[] data, int height, int width, bool bgr24)
         {
@@ -1068,31 +1108,9 @@ namespace Reclaimer.Drawing
         [XboxDecompressor(V8U8)]
         internal static byte[] DecompressV8U8(byte[] data, int height, int width, bool bgr24)
         {
-            var bpp = bgr24 ? 3 : 4;
-            var output = new byte[width * height * bpp];
-
-            const int bytesPerBlock = 2;
-
-            for (var y = 0; y < height; y++)
-            {
-                for (var x = 0; x < width; x++)
-                {
-                    var srcIndex = (y * width + x) * bytesPerBlock;
-                    var destIndex = (y * width + x) * bpp;
-
-                    var colour = new BgraColour
-                    {
-                        R = (byte)(unchecked((sbyte)data[srcIndex + 0]) - sbyte.MinValue),
-                        G = (byte)(unchecked((sbyte)data[srcIndex + 1]) - sbyte.MinValue),
-                        A = byte.MaxValue
-                    };
-
-                    colour.B = CalculateZVector(colour.R, colour.G);
-                    colour.CopyTo(output, destIndex, bgr24);
-                }
-            }
-
-            return output;
+            data = DecompressR8G8Signed(data, height, width, bgr24);
+            CalculateZVector(data, bgr24);
+            return data;
         }
 
         [XboxDecompressor(Y8)]
@@ -1216,22 +1234,16 @@ namespace Reclaimer.Drawing
         [XboxDecompressor(DXN)]
         internal static byte[] DecompressDXN(byte[] data, int height, int width, bool bgr24)
         {
-            var bpp = bgr24 ? 3 : 4;
             data = DecompressBC5(data, height, width, bgr24);
-            for (var i = 0; i < data.Length; i += bpp)
-                data[i] = CalculateZVector(data[i + 2], data[i + 1]);
-
+            CalculateZVector(data, bgr24);
             return data;
         }
 
         [XboxDecompressor(DXN_SNorm)]
         internal static byte[] DecompressDXNSigned(byte[] data, int height, int width, bool bgr24)
         {
-            var bpp = bgr24 ? 3 : 4;
             data = DecompressBC5Signed(data, height, width, bgr24);
-            for (var i = 0; i < data.Length; i += bpp)
-                data[i] = CalculateZVector(data[i + 2], data[i + 1]);
-
+            CalculateZVector(data, bgr24);
             return data;
         }
 
@@ -1267,11 +1279,19 @@ namespace Reclaimer.Drawing
 
         [XboxDecompressor(DXT5a_alpha)]
         internal static byte[] DecompressDXT5a_alpha(byte[] data, int height, int width, bool bgr24) => DecompressBC3AlphaOnly(data, height, width, false, true, bgr24);
+
         #endregion
 
         private static sbyte Lerp(sbyte p1, sbyte p2, float fraction) => (sbyte)MathF.Round((p1 * (1 - fraction)) + (p2 * fraction));
         private static byte Lerp(byte p1, byte p2, float fraction) => (byte)MathF.Round((p1 * (1 - fraction)) + (p2 * fraction));
         private static float Lerp(float p1, float p2, float fraction) => (p1 * (1 - fraction)) + (p2 * fraction);
+
+        private static void CalculateZVector(byte[] data, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            for (var i = 0; i < data.Length; i += bpp)
+                data[i] = CalculateZVector(data[i + 2], data[i + 1]);
+        }
 
         private static byte CalculateZVector(byte r, byte g)
         {
