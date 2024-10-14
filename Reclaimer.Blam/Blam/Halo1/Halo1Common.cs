@@ -54,7 +54,7 @@ namespace Reclaimer.Blam.Halo1
                 var diffuse = AppendTextureMapping(shader.BaseMap.Tag, TextureUsage.Diffuse);
                 if (diffuse != null)
                     diffuse.Tiling = CreateScale(shader.BaseMapUScale, shader.BaseMapVScale);
-                
+
                 var detail = AppendTextureMapping(shader.DetailMap.Tag, TextureUsage.DiffuseDetail);
                 if (detail != null)
                     detail.Tiling = CreateScale(shader.DetailMapScale, shader.DetailMapScale) * CreateScale(1, shader.DetailMapVScale);

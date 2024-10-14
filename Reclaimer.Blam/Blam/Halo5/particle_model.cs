@@ -2,7 +2,6 @@
 using Reclaimer.Geometry;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
-using System.Numerics;
 
 namespace Reclaimer.Blam.Halo5
 {

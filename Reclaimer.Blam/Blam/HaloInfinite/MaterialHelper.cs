@@ -2,8 +2,6 @@
 using Reclaimer.Drawing;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Numerics;
 
 namespace Reclaimer.Blam.HaloInfinite

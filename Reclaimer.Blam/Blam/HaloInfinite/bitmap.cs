@@ -1,9 +1,7 @@
 using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Properties;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Drawing;
 using Reclaimer.IO;
-using System.DirectoryServices.ActiveDirectory;
 using System.IO;
 
 namespace Reclaimer.Blam.HaloInfinite

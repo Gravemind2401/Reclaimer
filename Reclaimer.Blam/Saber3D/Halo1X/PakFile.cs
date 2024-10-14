@@ -38,7 +38,7 @@ namespace Reclaimer.Saber3D.Halo1X
 
                 //in compressed files this will be an address, which would also look about right as a size so its still ambiguous
                 var size = reader.ReadInt32();
-                
+
                 //in compressed files this would the third chunk address - way too big for a string length
                 //can also be zero in compressed files that only have one chunk
                 var nameLength = reader.ReadInt32();
@@ -52,7 +52,7 @@ namespace Reclaimer.Saber3D.Halo1X
                 var items = new List<PakItem>(count);
                 for (var i = 0; i < count; i++)
                     items.Add(new PakItem(this, reader));
-                
+
                 Items = items;
                 itemsByType = items.ToLookup(i => i.ItemType);
             }

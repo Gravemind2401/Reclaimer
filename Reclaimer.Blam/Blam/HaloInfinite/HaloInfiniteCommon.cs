@@ -76,7 +76,7 @@ namespace Reclaimer.Blam.HaloInfinite
                     continue;
                 }
 
-                if(!MaterialHelper.PopulateTextureMappings(bitmapCache, material, mat))
+                if (!MaterialHelper.PopulateTextureMappings(bitmapCache, material, mat))
                 {
                     var map = mat.PostprocessDefinitions.FirstOrDefault()?.Textures.FirstOrDefault();
                     var bitmTag = map?.BitmapReference.Tag;

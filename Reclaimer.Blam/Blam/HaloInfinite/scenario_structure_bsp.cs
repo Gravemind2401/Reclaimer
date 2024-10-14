@@ -59,7 +59,7 @@ namespace Reclaimer.Blam.HaloInfinite
                 }
                 catch
                 {
-                    
+
                 }
             }
 

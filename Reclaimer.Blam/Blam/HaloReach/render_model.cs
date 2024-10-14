@@ -165,7 +165,7 @@ namespace Reclaimer.Blam.HaloReach
             model.Meshes.Remove(sourceMesh);
 
             var bounds = BoundingBoxes[0];
-            
+
             var section = Sections[InstancedGeometrySectionIndex];
             for (var i = 0; i < GeometryInstances.Count; i++)
             {
@@ -254,7 +254,7 @@ namespace Reclaimer.Blam.HaloReach
                 3 => InstanceMask4,
                 _ => 0
             };
-            
+
             return (flagValue & maskValue) > 0;
         }
     }

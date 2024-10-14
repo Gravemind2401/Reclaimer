@@ -1,9 +1,4 @@
-﻿using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Utilities;
-using Reclaimer.Geometry;
-using Reclaimer.IO;
-using Reclaimer.Utilities;
-using System.Numerics;
+﻿using Reclaimer.IO;
 
 namespace Reclaimer.Blam.HaloInfinite
 {
@@ -12,7 +7,7 @@ namespace Reclaimer.Blam.HaloInfinite
         [Offset(16)]
         public BlockCollection<ObjectRegion> Regions { get; set; }
         [Offset(36)]
-        public BlockCollection<TagReference> Attachments {  get; set; }
+        public BlockCollection<TagReference> Attachments { get; set; }
         [Offset(56)]
         public BlockCollection<ObjectRegion> Prosthetics { get; set; }
         [Offset(76)]

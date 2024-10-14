@@ -1,7 +1,7 @@
 ﻿namespace Reclaimer.Blam.HaloInfinite
 {
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-    public sealed class LoadFromStructureDefinitionAttribute: Attribute
+    public sealed class LoadFromStructureDefinitionAttribute : Attribute
     {
         public Guid StructureGuid { get; }
 

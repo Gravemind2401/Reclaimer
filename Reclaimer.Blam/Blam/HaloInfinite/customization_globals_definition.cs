@@ -2,8 +2,6 @@ using Reclaimer.Blam.Common;
 using Reclaimer.Geometry;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
-using System.Linq;
-using System.Numerics;
 
 namespace Reclaimer.Blam.HaloInfinite
 {
@@ -46,7 +44,7 @@ namespace Reclaimer.Blam.HaloInfinite
                 themeRegion.Permutations.Add(newPermutation);
             }
         }
-        
+
         private static void AddPermutations(IEnumerable<ObjectRegion> items, Dictionary<string, ModelRegion> armorRegions, ModelRegion themeRegion, Model model)
         {
             foreach (var item in items)
@@ -116,7 +114,7 @@ namespace Reclaimer.Blam.HaloInfinite
     public class ObjectTheme
     {
         [Offset(0)]
-        public StringHash AssetName {  get; set; }
+        public StringHash AssetName { get; set; }
         [Offset(4)]
         public TagReference Model { get; set; }
         [Offset(32)]

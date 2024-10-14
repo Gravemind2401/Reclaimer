@@ -3,7 +3,6 @@ using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
-using System.Drawing;
 using System.Numerics;
 
 namespace Reclaimer.Blam.HaloInfinite
@@ -80,10 +79,10 @@ namespace Reclaimer.Blam.HaloInfinite
             }));
 
             model.Meshes.AddRange(HaloInfiniteCommon.GetMeshes(geoParams, out var materials));
-            
+
             // Hack: RTGO does not contain any regions, so i map all meshes to a single "default" region
             // with each mesh having its own permutation.
-            
+
             var region = new ModelRegion { Name = "default" };
             for (int i = 0; i < PerMeshData.Count; i++)
             {

@@ -22,7 +22,7 @@ namespace Reclaimer.Blam.HaloInfinite
 
             if (!initialItems.Any())
                 throw new ArgumentException("Collection cannot be empty", nameof(initialItems));
-            
+
             if (initialItems.DistinctBy(i => i.GlobalTagId).Skip(1).Any())
                 throw new ArgumentException($"All items must have the same {nameof(ModuleItem.GlobalTagId)}", nameof(initialItems));
 

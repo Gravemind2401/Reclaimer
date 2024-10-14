@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Reclaimer.Blam.HaloInfinite
 {
-    public enum DataOffsetFlags  : byte
+    public enum DataOffsetFlags : byte
     {
         UseHD1 = 0b00000001,
         UseHD2 = 0b00000010,
