@@ -55,6 +55,9 @@
                 //alpha-only version of BC3 (which happens to be the same layout as BC4)
                 XboxFormat.DXT5a_scalar or XboxFormat.DXT5a_mono or XboxFormat.DXT5a_alpha => DxgiFormat.BC4_UNorm,
 
+                //same layout as R16 but mono (R is also copied to B and G)
+                XboxFormat.L16 => DxgiFormat.R16_UNorm,
+
                 //same layout as R8G8 but with auto-calculated blue channel
                 XboxFormat.V8U8 => DxgiFormat.R8G8_SNorm,
 

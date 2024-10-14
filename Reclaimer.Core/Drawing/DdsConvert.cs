@@ -412,6 +412,43 @@ namespace Reclaimer.Drawing
             return output;
         }
 
+        [DxgiDecompressor(R8G8B8A8_SNorm), DxgiDecompressor(R8G8B8A8_SInt)]
+        internal static byte[] DecompressR8G8B8A8Signed(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+            var input = MemoryMarshal.Cast<byte, sbyte>(data);
+
+            for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex += 4, outputIndex += bpp)
+            {
+                //note: input is rgba, output is bgra
+                output[outputIndex + 0] = (byte)(unchecked(input[inputIndex + 2]) - sbyte.MinValue);
+                output[outputIndex + 1] = (byte)(unchecked(input[inputIndex + 1]) - sbyte.MinValue);
+                output[outputIndex + 2] = (byte)(unchecked(input[inputIndex + 0]) - sbyte.MinValue);
+                if (!bgr24)
+                    output[outputIndex + 3] = (byte)(unchecked(input[inputIndex + 3]) - sbyte.MinValue);
+            }
+
+            return output;
+        }
+
+        [DxgiDecompressor(R16_UNorm), DxgiDecompressor(R16_UInt)]
+        internal static byte[] DecompressR16(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+            var input = MemoryMarshal.Cast<byte, ushort>(data);
+
+            for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex++, outputIndex += bpp)
+            {
+                output[outputIndex + 2] = (byte)MathF.Round(input[inputIndex] / (float)ushort.MaxValue * byte.MaxValue);
+                if (!bgr24)
+                    output[outputIndex + 3] = byte.MaxValue;
+            }
+
+            return output;
+        }
+
         #endregion
 
         #region BC Formats
@@ -1103,6 +1140,19 @@ namespace Reclaimer.Drawing
         internal static byte[] DecompressAY8(byte[] data, int height, int width, bool bgr24)
         {
             return ToArray(data.SelectMany(b => Enumerable.Range(0, bgr24 ? 3 : 4).Select(i => b)), bgr24, height, width);
+        }
+
+        [XboxDecompressor(L16)]
+        internal static byte[] DecompressL16(byte[] data, int height, int width, bool bgr24)
+        {
+            data = DecompressR16(data, height, width, bgr24);
+
+            //copy R across G and B
+            var bpp = bgr24 ? 3 : 4;
+            for (var i = 0; i < data.Length; i += bpp)
+                data[i + 0] = data[i + 1] = data[i + 2];
+
+            return data;
         }
 
         [XboxDecompressor(V8U8)]

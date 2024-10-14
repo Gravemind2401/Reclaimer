@@ -22,8 +22,10 @@ namespace Reclaimer.Blam.Utilities
             { KnownTextureFormat.R5G6B5, DxgiFormat.B5G6R5_UNorm },
             { KnownTextureFormat.A1R5G5B5, DxgiFormat.B5G5R5A1_UNorm },
             { KnownTextureFormat.A4R4G4B4, DxgiFormat.B4G4R4A4_UNorm },
+            { KnownTextureFormat.RGBAFP16, DxgiFormat.R16G16B16A16_Float },
             { KnownTextureFormat.RGBFP32, DxgiFormat.R32G32B32_Float },
             { KnownTextureFormat.RGBAFP32, DxgiFormat.R32G32B32A32_Float },
+            { KnownTextureFormat.Q8W8V8U8, DxgiFormat.R8G8B8A8_SNorm }
         };
 
         private static readonly Dictionary<KnownTextureFormat, XboxFormat> xboxLookup = new Dictionary<KnownTextureFormat, XboxFormat>
@@ -41,9 +43,11 @@ namespace Reclaimer.Blam.Utilities
             { KnownTextureFormat.DXN, XboxFormat.DXN },
             { KnownTextureFormat.DXN_SNorm, XboxFormat.DXN_SNorm },
             { KnownTextureFormat.DXN_mono_alpha, XboxFormat.DXN_mono_alpha },
+            { KnownTextureFormat.L16, XboxFormat.L16 },
             { KnownTextureFormat.P8, XboxFormat.Y8 },
             { KnownTextureFormat.P8_bump, XboxFormat.Y8 },
             { KnownTextureFormat.U8V8, XboxFormat.V8U8 },
+            { KnownTextureFormat.V8U8, XboxFormat.V8U8 },
             { KnownTextureFormat.Y8, XboxFormat.Y8 }
         };
 
@@ -69,10 +73,13 @@ namespace Reclaimer.Blam.Utilities
             P8_bump,
             P8,
             ARGBFP32, //TODO: should this actually be RGBA instead of ARGB? the games this is defined in have no examples
+            RGBAFP16,
             RGBAFP32,
             RGBFP32,
-            RGBFP16,
+            L16,
             U8V8,
+            V8U8,
+            Q8W8V8U8,
             DXT5a,
             DXN,
             DXN_SNorm,
