@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using Prism.Mvvm;
 using Reclaimer.Blam.HaloInfinite;
 using Reclaimer.IO;
 using Reclaimer.Utilities;

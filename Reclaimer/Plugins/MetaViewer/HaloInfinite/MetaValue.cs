@@ -20,11 +20,6 @@ namespace Reclaimer.Plugins.MetaViewer.HaloInfinite
         public override string Description => nameHelper.Description;
         public bool IsBlockName => nameHelper.IsBlockName;
 
-        public override int Offset { get; }
-        public override bool IsVisible { get; }
-
-        public override FieldDefinition FieldDefinition { get; }
-
         protected MetaValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, baseAddress)
         {
