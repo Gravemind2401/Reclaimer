@@ -37,8 +37,9 @@
         DXT5a_scalar,
         DXT5a_mono,
         DXT5a_alpha,
+        L16,
         V8U8,
         Y8,
-        Y8A8,
+        Y8A8
     }
 }
