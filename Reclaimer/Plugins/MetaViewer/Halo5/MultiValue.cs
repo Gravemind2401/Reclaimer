@@ -46,10 +46,12 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                 AxesDefinition.Point => new[] { "x", "y", "z", "w" },
                 AxesDefinition.Vector or AxesDefinition.Angle => new[] { "i", "j", "k", "w" },
                 AxesDefinition.Bounds => new[] { "min", "max", string.Empty, string.Empty },
-                AxesDefinition.Color => new[] { "r", "g", "b", "a" },
+                AxesDefinition.Color when FieldDefinition.Components == 3 => new[] { "r", "g", "b", string.Empty },
+                AxesDefinition.Color when FieldDefinition.Components == 4 => new[] { "a", "r", "g", "b" },
                 AxesDefinition.Plane => new[] { "i", "j", "k", "d" },
                 _ => new[] { "a", "b", "c", "d" }
             };
+
             ReadValue(reader);
         }
 

@@ -1,10 +1,14 @@
 import bpy
 import bpy_extras
-from . import RmfPreferences
-from ..src.ImportOptions import ImportOptions
+
 from typing import cast, Set
 from bpy.types import Context, Operator
-from bpy.props import StringProperty
+from bpy.props import StringProperty, BoolProperty
+
+from . import RmfPreferences
+from ..src.ImportOptions import ImportOptions
+from ..src.SceneReader import SceneReader
+from ..src.SceneFilter import *
 
 
 class RmfImportOperator(Operator, bpy_extras.io_utils.ImportHelper):
@@ -16,6 +20,10 @@ class RmfImportOperator(Operator, bpy_extras.io_utils.ImportHelper):
     filter_glob: StringProperty(
         default = '*.rmf',
         options = {'HIDDEN'},
+    ) # type: ignore
+
+    nogui: BoolProperty(
+        default = False
     ) # type: ignore
 
     def execute(self, context: Context) -> Set[str]:
@@ -50,6 +58,28 @@ class RmfImportOperator(Operator, bpy_extras.io_utils.ImportHelper):
         ImportOptions.DEFAULTCC_3 = preferences.cc_3
         # ImportOptions.DEFAULTCC_4 = preferences.cc_4
 
-        bpy.ops.rmf.dialog_operator('EXEC_DEFAULT', filepath=self.filepath)
+        if preferences.nogui or self.nogui:
+            self._import_nogui()
+        else:
+            bpy.ops.rmf.dialog_operator('EXEC_DEFAULT', filepath=self.filepath)
 
         return {'FINISHED'}
+
+    def _import_nogui(self):
+        try:
+            scene = SceneReader.open_scene(self.filepath)
+        except Exception as e:
+            self.report({'ERROR'}, 'An error occured during the import. See the console window for details.')
+            print('\n===============\nERROR DETAILS\n===============\n')
+            raise e
+
+        filter = SceneFilter(scene)
+        options = ImportOptions(scene)
+
+        bpy.types.Scene.rmf_data = {
+            'scene': scene,
+            'filter': filter,
+            'options': options
+        }
+
+        bpy.ops.rmf.progress_operator('EXEC_DEFAULT')

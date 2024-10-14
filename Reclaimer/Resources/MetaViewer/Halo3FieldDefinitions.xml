@@ -1,154 +1,157 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <fieldDefinitions>
-  <revisions size="0" valueType="revisions" />
+    <revisions size="0" valueType="revisions" />
 
-  <structure size="12" valueType="structure">
-    <alias name="struct" />
-    <alias name="reflexive" />
-    <alias name="tagBlock" />
-  </structure>
+    <structure size="12" valueType="structure">
+        <alias name="struct" />
+        <alias name="reflexive" />
+        <alias name="tagBlock" />
+    </structure>
 
-  <tagReference size="16" valueType="tagReference">
-    <alias name="tagRef" />
-  </tagReference>
+    <tagReference size="16" valueType="tagReference">
+        <alias name="tagRef" />
+    </tagReference>
 
-  <stringId size="4" valueType="stringId" />
+    <stringId size="4" valueType="stringId" />
 
-  <string size="length" valueType="string">
-    <alias name="ascii" />
-  </string>
+    <string size="length" valueType="string">
+        <alias name="ascii" />
+    </string>
 
-  <comment size="0" valueType="comment" />
+    <comment size="0" valueType="comment" />
 
-  <bitmask8 size="1" valueType="bitmask8">
-    <alias name="bitfield8" />
-    <alias name="flags8" />
-  </bitmask8>
+    <bitmask8 size="1" valueType="bitmask8">
+        <alias name="bitfield8" />
+        <alias name="flags8" />
+    </bitmask8>
 
-  <bitmask16 size="2" valueType="bitmask16">
-    <alias name="bitfield16" />
-    <alias name="flags16" />
-  </bitmask16>
+    <bitmask16 size="2" valueType="bitmask16">
+        <alias name="bitfield16" />
+        <alias name="flags16" />
+    </bitmask16>
 
-  <bitmask32 size="4" valueType="bitmask32">
-    <alias name="bitfield32" />
-    <alias name="flags32" />
-  </bitmask32>
+    <bitmask32 size="4" valueType="bitmask32">
+        <alias name="bitfield32" />
+        <alias name="flags32" />
+    </bitmask32>
 
-  <enum8 size="1" valueType="enum8" />
+    <enum8 size="1" valueType="enum8" />
 
-  <enum16 size="2" valueType="enum16" />
+    <enum16 size="2" valueType="enum16" />
 
-  <enum32 size="4" valueType="enum32" />
+    <enum32 size="4" valueType="enum32" />
 
-  <sbyte size="1" valueType="sbyte">
-    <alias name="int8" />
-  </sbyte>
+    <sbyte size="1" valueType="sbyte">
+        <alias name="int8" />
+    </sbyte>
 
-  <int16 size="2" valueType="int16">
-    <alias name="short" />
-  </int16>
+    <int16 size="2" valueType="int16">
+        <alias name="short" />
+    </int16>
 
-  <int32 size="4" valueType="int32">
-    <alias name="int" />
-  </int32>
+    <int32 size="4" valueType="int32">
+        <alias name="int" />
+    </int32>
 
-  <int64 size="8" valueType="int64">
-    <alias name="long" />
-  </int64>
+    <int64 size="8" valueType="int64">
+        <alias name="long" />
+    </int64>
 
-  <byte size="1" valueType="byte">
-    <alias name="uint8" />
-  </byte>
+    <byte size="1" valueType="byte">
+        <alias name="uint8" />
+    </byte>
 
-  <uint16 size="2" valueType="uint16">
-    <alias name="ushort" />
-  </uint16>
+    <uint16 size="2" valueType="uint16">
+        <alias name="ushort" />
+    </uint16>
 
-  <uint32 size="4" valueType="uint32">
-    <alias name="uint" />
-  </uint32>
+    <uint32 size="4" valueType="uint32">
+        <alias name="uint" />
+    </uint32>
 
-  <uint64 size="8" valueType="uint64">
-    <alias name="ulong" />
-  </uint64>
+    <uint64 size="8" valueType="uint64">
+        <alias name="ulong" />
+    </uint64>
 
-  <float32 size="4" valueType="float32">
-    <alias name="float" />
-  </float32>
+    <float32 size="4" valueType="float32">
+        <alias name="float" />
+    </float32>
 
-  <angle size="4" valueType="angle">
-    <alias name="degree" />
-  </angle>
+    <angle size="4" valueType="angle">
+        <alias name="degree" />
+    </angle>
 
-  <shortBounds size="4" valueType="int16" components="2" axes="bounds">
-    <alias name="range16" />
-  </shortBounds>
+    <shortBounds size="4" valueType="int16" components="2" axes="bounds">
+        <alias name="range16" />
+    </shortBounds>
 
-  <realBounds size="8" valueType="float32" components="2" axes="bounds">
-    <alias name="bounds" />
-    <alias name="rangef" />
-  </realBounds>
+    <realBounds size="8" valueType="float32" components="2" axes="bounds">
+        <alias name="bounds" />
+        <alias name="rangef" />
+    </realBounds>
 
-  <realPoint2 size="8" valueType="float32" components="2" axes="point">
-    <alias name="point2" />
-    <alias name="point2d" />
-    <alias name="realPoint2d" />
-  </realPoint2>
+    <realPoint2 size="8" valueType="float32" components="2" axes="point">
+        <alias name="point2" />
+        <alias name="point2d" />
+        <alias name="realPoint2d" />
+    </realPoint2>
 
-  <realPoint3 size="12" valueType="float32" components="3" axes="point">
-    <alias name="point3" />
-    <alias name="point3d" />
-    <alias name="realPoint3d" />
-  </realPoint3>
+    <realPoint3 size="12" valueType="float32" components="3" axes="point">
+        <alias name="point3" />
+        <alias name="point3d" />
+        <alias name="realPoint3d" />
+    </realPoint3>
 
-  <realPoint4 size="16" valueType="float32" components="4" axes="point">
-    <alias name="point4" />
-    <alias name="point4d" />
-    <alias name="realPoint4d" />
-  </realPoint4>
+    <realPoint4 size="16" valueType="float32" components="4" axes="point">
+        <alias name="point4" />
+        <alias name="point4d" />
+        <alias name="realPoint4d" />
+    </realPoint4>
 
-  <realVector2 size="8" valueType="float32" components="2" axes="vector">
-    <alias name="vector2" />
-    <alias name="vector2d" />
-    <alias name="realVector2d" />
-  </realVector2>
+    <realVector2 size="8" valueType="float32" components="2" axes="vector">
+        <alias name="vector2" />
+        <alias name="vector2d" />
+        <alias name="realVector2d" />
+    </realVector2>
 
-  <realVector3 size="12" valueType="float32" components="3" axes="vector">
-    <alias name="vector3" />
-    <alias name="vector3d" />
-    <alias name="realVector3d" />
-  </realVector3>
+    <realVector3 size="12" valueType="float32" components="3" axes="vector">
+        <alias name="vector3" />
+        <alias name="vector3d" />
+        <alias name="realVector3d" />
+    </realVector3>
 
-  <realVector4 size="16" valueType="float32" components="4" axes="vector">
-    <alias name="vector4" />
-    <alias name="vector4d" />
-    <alias name="realVector4d" />
-  </realVector4>
+    <realVector4 size="16" valueType="float32" components="4" axes="vector">
+        <alias name="vector4" />
+        <alias name="vector4d" />
+        <alias name="realVector4d" />
+    </realVector4>
 
-  <realEuler2 size="8" valueType="angle" components="2" axes="angle">
-    <alias name="euler2" />
-    <alias name="euler2d" />
-    <alias name="reaEuler2d" />
-  </realEuler2>
+    <realEuler2 size="8" valueType="angle" components="2" axes="angle">
+        <alias name="euler2" />
+        <alias name="euler2d" />
+        <alias name="reaEuler2d" />
+    </realEuler2>
 
-  <realEuler3 size="12" valueType="angle" components="3" axes="angle">
-    <alias name="euler3" />
-    <alias name="euler3d" />
-    <alias name="realEuler3d" />
-  </realEuler3>
+    <realEuler3 size="12" valueType="angle" components="3" axes="angle">
+        <alias name="euler3" />
+        <alias name="euler3d" />
+        <alias name="realEuler3d" />
+    </realEuler3>
 
-  <rgbColor size="4" valueType="byte" compontents="3" axes="color">
-    <alias name="color32rgb" />
-  </rgbColor>
+    <rgbColor size="4" valueType="byte" components="3" axes="color">
+        <alias name="color32" />
+        <alias name="color32rgb" />
+    </rgbColor>
 
-  <argbColor size="4" valueType="byte" compontents="4" axes="color">
-    <alias name="color32argb" />
-  </argbColor>
+    <argbColor size="4" valueType="byte" components="4" axes="color">
+        <alias name="color32argb" />
+    </argbColor>
 
-  <blockIndex8 size="1" valueType="blockIndex8" />
+    <colorf size="16" valueType="float32" components="4" axes="color" />
 
-  <blockIndex16 size="2" valueType="blockIndex16" />
+    <blockIndex8 size="1" valueType="blockIndex8" />
 
-  <blockIndex32 size="4" valueType="blockIndex32" />
+    <blockIndex16 size="2" valueType="blockIndex16" />
+
+    <blockIndex32 size="4" valueType="blockIndex32" />
 </fieldDefinitions>

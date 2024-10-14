@@ -7,8 +7,6 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
     {
         protected readonly MetaContext context;
 
-        public override FieldDefinition FieldDefinition { get; }
-
         protected MetaValue(XmlNode node, MetaContext context, EndianReader reader, long baseAddress)
             : base(node, baseAddress)
         {
