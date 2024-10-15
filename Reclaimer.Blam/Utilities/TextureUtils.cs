@@ -17,6 +17,7 @@ namespace Reclaimer.Blam.Utilities
             { KnownTextureFormat.BC2_unorm, DxgiFormat.BC2_UNorm },
             { KnownTextureFormat.BC3_unorm, DxgiFormat.BC3_UNorm },
             { KnownTextureFormat.BC7_unorm, DxgiFormat.BC7_UNorm },
+            { KnownTextureFormat.A8, DxgiFormat.A8_UNorm },
             { KnownTextureFormat.A8R8G8B8, DxgiFormat.B8G8R8A8_UNorm },
             { KnownTextureFormat.X8R8G8B8, DxgiFormat.B8G8R8X8_UNorm },
             { KnownTextureFormat.R5G6B5, DxgiFormat.B5G6R5_UNorm },
@@ -30,7 +31,6 @@ namespace Reclaimer.Blam.Utilities
 
         private static readonly Dictionary<KnownTextureFormat, XboxFormat> xboxLookup = new Dictionary<KnownTextureFormat, XboxFormat>
         {
-            { KnownTextureFormat.A8, XboxFormat.A8 },
             { KnownTextureFormat.A8Y8, XboxFormat.Y8A8 },
             { KnownTextureFormat.AY8, XboxFormat.AY8 },
             { KnownTextureFormat.CTX1, XboxFormat.CTX1 },
@@ -168,9 +168,9 @@ namespace Reclaimer.Blam.Utilities
             var bitmapFormat = props.BitmapFormat.ParseToEnum<KnownTextureFormat>();
 
             DdsImageDescriptor desc;
-            if (dxgiLookup.TryGetValue(bitmapFormat, out var dxgiFormat))
+            if (dxgiLookup.TryGetValue(bitmapFormat, out var dxgiFormat) || Enum.TryParse(props.BitmapFormat?.ToString(), true, out dxgiFormat))
                 desc = new DdsImageDescriptor(dxgiFormat, props.Width, props.Height, props.FrameCount, includeMips ? props.MipmapCount : 0);
-            else if (xboxLookup.TryGetValue(bitmapFormat, out var xboxFormat))
+            else if (xboxLookup.TryGetValue(bitmapFormat, out var xboxFormat) || Enum.TryParse(props.BitmapFormat?.ToString(), true, out xboxFormat))
                 desc = new DdsImageDescriptor(xboxFormat, props.Width, props.Height, props.FrameCount, includeMips ? props.MipmapCount : 0);
             else
                 throw Exceptions.BitmapFormatNotSupported(props.BitmapFormat.ToString());
