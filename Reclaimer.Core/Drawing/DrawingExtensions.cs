@@ -34,8 +34,6 @@
         {
             return xboxFormat switch
             {
-                XboxFormat.A8 => DxgiFormat.A8_UNorm,
-
                 //same layout as A8 but A is also copied across RGB channels
                 XboxFormat.AY8 => DxgiFormat.A8_UNorm,
 

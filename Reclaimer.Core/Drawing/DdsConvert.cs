@@ -377,6 +377,21 @@ namespace Reclaimer.Drawing
 
         #region Integer Formats
 
+        [DxgiDecompressor(A8_UNorm)]
+        internal static byte[] DecompressA8(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+
+            if (!bgr24)
+            {
+                for (int inputIndex = 0, outputIndex = 0; inputIndex < data.Length && outputIndex < output.Length; inputIndex++, outputIndex += bpp)
+                    output[outputIndex + 3] = data[inputIndex];
+            }
+
+            return output;
+        }
+
         [DxgiDecompressor(R8G8_UNorm), DxgiDecompressor(R8G8_UInt)]
         internal static byte[] DecompressR8G8(byte[] data, int height, int width, bool bgr24)
         {
@@ -1129,12 +1144,6 @@ namespace Reclaimer.Drawing
         #endregion
 
         #region Xbox Decompression Methods
-
-        [XboxDecompressor(A8)]
-        internal static byte[] DecompressA8(byte[] data, int height, int width, bool bgr24)
-        {
-            return ToArray(data.SelectMany(b => Enumerable.Range(0, bgr24 ? 3 : 4).Select(i => i < 3 ? byte.MinValue : b)), bgr24, height, width);
-        }
 
         [XboxDecompressor(AY8)]
         internal static byte[] DecompressAY8(byte[] data, int height, int width, bool bgr24)
