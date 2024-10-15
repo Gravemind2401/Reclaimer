@@ -30,7 +30,7 @@ namespace Reclaimer.Blam.HaloInfinite
             var resource = GetResource(index, out var isChunk);
             var submap = Bitmaps[0].Type.Equals(BitmapType.Array) ? Bitmaps[0] : Bitmaps[index];
 
-            if (resource.DataOffsetFlags.HasFlag(DataOffsetFlags.UseHD1) && Item.Module.hd1Stream == null)
+            if (resource.DataOffsetFlags.HasFlag(DataOffsetFlags.UseHD1) && Item.Module.Hd1Stream == null)
             {
                 resource = Item.Module.Items[Item.Module.Resources[Item.ResourceIndex + Item.ResourceCount - 2]];
                 submap.Width /= 2;

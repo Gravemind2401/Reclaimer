@@ -11,7 +11,7 @@ namespace Reclaimer.Blam.HaloInfinite
 
         private readonly TagIndex tagIndex;
         private readonly List<Module> linkedModules;
-        public FileStream hd1Stream;
+        public FileStream Hd1Stream;
 
         public string FileName { get; }
 
@@ -65,8 +65,8 @@ namespace Reclaimer.Blam.HaloInfinite
             {
                 if (Header.HD1Delta != 0 && File.Exists($"{FileName}_hd1"))
                 {
-                    hd1Stream = new FileStream($"{FileName}_hd1", FileMode.Open, FileAccess.Read);
-                    var reader = new DependencyReader(hd1Stream, ByteOrder.LittleEndian);
+                    Hd1Stream = new FileStream($"{FileName}_hd1", FileMode.Open, FileAccess.Read);
+                    var reader = new DependencyReader(Hd1Stream, ByteOrder.LittleEndian);
                     reader.RegisterInstance(this);
                     reader.RegisterType(reader.ReadMatrix3x4);
                     return reader;

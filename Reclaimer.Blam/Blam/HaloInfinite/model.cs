@@ -6,5 +6,7 @@ namespace Reclaimer.Blam.HaloInfinite
     {
         [Offset(16)]
         public TagReference RenderModel { get; set; }
+
+        public render_model ReadRenderModel() => RenderModel.Tag?.ReadMetadata<render_model>();
     }
 }
