@@ -9,18 +9,18 @@ namespace Reclaimer.Blam.HaloInfinite
     public static class ShaderParameters
     {
         public const string NormalMap = "2142563353";
-        public const string Mask0Texture = "2425254386";
-        public const string Mask1Texture = "2617698167";
-        public const string ASGControl = "3847630132";
-        public const string UITexture = "3955474344";
-        public const string DecalMask = "2396384203";
+        public const string Mask0Texture = "-1869712910";
+        public const string Mask1Texture = "-1677269129";
+        public const string ASGControl = "-447337164";
+        public const string UITexture = "-339492952";
+        public const string DecalMask = "-1898583093";
         public const string Conemap = "863316755";
-        public const string DecalNormal = "2640107286";
-        public const string DecalControl = "3114951667";
-        public const string AnimatedUITexture = "2570116997";
-        public const string ScreenControl = "3599509544";
+        public const string DecalNormal = "-1654860010";
+        public const string DecalControl = "-1180015629";
+        public const string AnimatedUITexture = "-1724850299";
+        public const string ScreenControl = "-695457752";
         public const string WeaponDecalNormal = "723636081";
-        public const string WeaponDecalControl = "3595722596";
+        public const string WeaponDecalControl = "-699244700";
 
 
         public static readonly Dictionary<string, string> UsageLookup = new()

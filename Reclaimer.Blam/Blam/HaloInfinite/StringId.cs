@@ -7,16 +7,16 @@ namespace Reclaimer.Blam.HaloInfinite
     {
         private readonly MetadataHeader header;
 
-        public uint Hash { get; }
+        public int Hash { get; }
 
-        public string Value => StringMapper.StringMappings.TryGetValue(Hash, out var value)
+        public string Value => StringMapper.Instance.StringMappings.TryGetValue(Hash, out var value)
                                ? value : Hash.ToString();
 
 
         public StringHash(EndianReader reader, MetadataHeader header)
         {
             this.header = header;
-            Hash = reader.ReadUInt32();
+            Hash = reader.ReadInt32();
         }
 
         public static implicit operator string(StringHash value) => value.Value;

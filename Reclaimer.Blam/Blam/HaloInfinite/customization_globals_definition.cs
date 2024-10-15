@@ -83,7 +83,7 @@ namespace Reclaimer.Blam.HaloInfinite
             model.Meshes.AddRange(armor.Meshes);
             model.Markers.AddRange(armor.Markers);
             model.Bones.AddRange(armor.Bones);
-            var themes = new HashSet<uint>();
+            var themes = new HashSet<int>();
 
             foreach (var theme in Themes[0].ThemeConfigurations)
             {

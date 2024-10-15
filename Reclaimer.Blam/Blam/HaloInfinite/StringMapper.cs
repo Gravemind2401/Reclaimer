@@ -1,39 +1,42 @@
-﻿using System.Buffers.Binary;
-using System.IO;
+﻿using System.IO;
 
 namespace Reclaimer.Blam.HaloInfinite
 {
     public class StringMapper
     {
-        public static Dictionary<int, string> TagMappings = new();
-        public static Dictionary<uint, string> StringMappings = new();
-        public static void LoadTagMap(string filename)
+        private static StringMapper _instance;
+        public static StringMapper Instance
         {
-            foreach (var line in File.ReadLines(filename))
+            get
             {
-                var parts = line.Split(" : ");
-                if (parts.Length == 2)
+                if (_instance == null)
                 {
-                    var intValue = BinaryPrimitives.ReverseEndianness(Convert.ToInt32(parts[0].Trim(), 16));
-                    var name = parts[1].Trim();
-                    TagMappings[intValue] = Path.ChangeExtension(name, null);
+                    _instance = new StringMapper();
                 }
+                return _instance;
             }
         }
 
-        public static void LoadStringMap(string filename)
+        public Dictionary<int, string> StringMappings;
+
+        private StringMapper()
+        {
+            StringMappings = new Dictionary<int, string>();
+        }
+
+        /// <summary>
+        /// Loads string mappings from a file that contains hashes and
+        /// their corresponding strings on each line, separated by a semicolon. 
+        /// </summary>
+        /// <param name="filename"></param>
+        public void LoadStringMap(string filename)
         {
             foreach (var line in File.ReadLines(filename))
             {
                 var parts = line.Split(":");
                 if (parts.Length == 2)
-                {
-                    var intValue = BinaryPrimitives.ReverseEndianness(Convert.ToUInt32(parts[0].Trim(), 16));
-                    var name = parts[1].Trim();
-                    StringMappings[intValue] = name;
-                }
+                    StringMappings[Convert.ToInt32(parts[0])] = parts[1];
             }
         }
-
     }
 }

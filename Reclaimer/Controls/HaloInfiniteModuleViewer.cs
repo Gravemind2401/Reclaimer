@@ -66,10 +66,8 @@ namespace Reclaimer.Controls
         {
             InitializeComponent();
 
-            if (File.Exists(CommonModuleViewerPlugin.Settings.TagNameFile))
-                StringMapper.LoadTagMap(CommonModuleViewerPlugin.Settings.TagNameFile);
             if (File.Exists(CommonModuleViewerPlugin.Settings.StringIdFile))
-                StringMapper.LoadStringMap(CommonModuleViewerPlugin.Settings.StringIdFile);
+                StringMapper.Instance.LoadStringMap(CommonModuleViewerPlugin.Settings.StringIdFile);
 
             OpenContextItem = new MenuItem { Header = "Open" };
             OpenWithContextItem = new MenuItem { Header = "Open With..." };
