@@ -903,6 +903,11 @@ namespace Reclaimer.Drawing
             var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
             var reader = new BitReader(data);
+
+            //these get reused for every compressed block
+            var indices0 = new byte[16];
+            var indices1 = new byte[16];
+
             for (var yBlock = 0; yBlock < yBlocks; yBlock++)
             {
                 for (var xBlock = 0; xBlock < xBlocks; xBlock++)
@@ -927,12 +932,13 @@ namespace Reclaimer.Drawing
                     var indexMode = reader.ReadBits(info.IndexModeBits);
 
                     var endpoints = new BgraColour[info.SubsetCount * 2];
+                    var endpointBytes = MemoryMarshal.Cast<BgraColour, byte>(endpoints);
                     var channels = info.AlphaBits > 0 ? 4 : 3;
 
                     for (var i = 2; i >= 0; i--) // R, G, B
                     {
                         for (var j = 0; j < endpoints.Length; j++)
-                            endpoints[j][i] = reader.ReadBits(info.ColourBits);
+                            endpointBytes[j * 4 + i] = reader.ReadBits(info.ColourBits);
                     }
 
                     if (info.AlphaBits > 0)
@@ -949,53 +955,55 @@ namespace Reclaimer.Drawing
                         {
                             var p1 = reader.ReadBit();
                             var p2 = info.PBitMode == PBitMode.Shared ? p1 : reader.ReadBit();
+                            var endpointBytesOffset = i * 8;
 
                             for (var c = 0; c < channels; c++)
                             {
-                                endpoints[i * 2][c] = (byte)((endpoints[i * 2][c] << 1) | p1);
-                                endpoints[i * 2 + 1][c] = (byte)((endpoints[i * 2 + 1][c] << 1) | p2);
+                                endpointBytes[endpointBytesOffset + c] = (byte)((endpointBytes[endpointBytesOffset + c] << 1) | p1);
+                                endpointBytes[endpointBytesOffset + 4 + c] = (byte)((endpointBytes[endpointBytesOffset + 4 + c] << 1) | p2);
                             }
                         }
                     }
 
-                    var palette0 = new BgraColour[info.SubsetCount, 1 << info.Index0Bits];
-                    var palette1 = new BgraColour[info.SubsetCount, 1 << info.Index1Bits];
+                    var palette0Size = 1 << info.Index0Bits;
+                    var palette1Size = 1 << info.Index1Bits;
+
+                    var palette0 = new BgraColour[info.SubsetCount * palette0Size];
+                    var palette1 = new BgraColour[info.SubsetCount * palette1Size];
+
+                    var palette0Bytes = MemoryMarshal.Cast<BgraColour, byte>(palette0);
+                    var palette1Bytes = MemoryMarshal.Cast<BgraColour, byte>(palette1);
 
                     for (var i = 0; i < info.SubsetCount; i++)
                     {
+                        var endpointBytesOffset = i * 8;
+
                         for (var c = 0; c < channels; c++)
                         {
                             var channelBits = c < 3 ? info.ColourBits : info.AlphaBits;
                             if (info.PBitMode != PBitMode.None)
                                 channelBits++;
 
-                            int e0 = endpoints[i * 2][c];
-                            int e1 = endpoints[i * 2 + 1][c];
+                            int e0 = endpointBytes[endpointBytesOffset + c];
+                            int e1 = endpointBytes[endpointBytesOffset + 4 + c];
 
                             //shift left until the MSB of the endpoint value is in the leftmost bit of the byte
                             //then copy the X highest bits into the X lowest bits where X is (8 - # of colour bits)
                             e0 = (e0 << (8 - channelBits)) | (e0 >> (2 * channelBits - 8));
                             e1 = (e1 << (8 - channelBits)) | (e1 >> (2 * channelBits - 8));
 
-                            for (var j = 0; j < palette0.GetLength(1); j++)
-                                palette0[i, j][c] = Bc7Helper.Interpolate(e0, e1, j, info.Index0Bits);
-
-                            if (info.Index1Bits > 0)
-                            {
-                                for (var j = 0; j < palette1.GetLength(1); j++)
-                                    palette1[i, j][c] = Bc7Helper.Interpolate(e0, e1, j, info.Index1Bits);
-                            }
+                            Bc7Helper.InterpolatePaletteValues(e0, e1, i, c, ref info, palette0Bytes, palette1Bytes);
                         }
                     }
 
                     var fixups = new byte[] { 0, Bc7Helper.FixUpTable[info.SubsetCount - 1, partitionIndex, 1], Bc7Helper.FixUpTable[info.SubsetCount - 1, partitionIndex, 2] };
-                    var indices0 = new byte[16];
-                    var indices1 = new byte[16];
+                    var subsets = Bc7Helper.PartitionTable[info.SubsetCount - 1, partitionIndex];
 
                     //get the index bits
+                    //since every index of indices0 gets assigned, there is no need to clear it first
                     for (var i = 0; i < 16; i++)
                     {
-                        var subset = Bc7Helper.PartitionTable[info.SubsetCount - 1, partitionIndex, i];
+                        var subset = subsets[i];
                         indices0[i] = reader.ReadBits((byte)(i == fixups[subset] ? info.Index0Bits - 1 : info.Index0Bits));
                     }
 
@@ -1008,10 +1016,12 @@ namespace Reclaimer.Drawing
                     {
                         for (var i = 0; i < 16; i++)
                         {
-                            var subset = Bc7Helper.PartitionTable[info.SubsetCount - 1, partitionIndex, i];
+                            var subset = subsets[i];
                             indices1[i] = reader.ReadBits((byte)(i == fixups[subset] ? info.Index1Bits - 1 : info.Index1Bits));
                         }
                     }
+                    else
+                        Array.Fill(indices1, (byte)0); //reset to zeros
 
                     for (var i = 0; i < 4; i++)
                     {
@@ -1026,18 +1036,21 @@ namespace Reclaimer.Drawing
                             var pixelIndex = i * 4 + j;
                             var destIndex = (destY * width + destX) * bpp;
 
-                            var subsetIndex = Bc7Helper.PartitionTable[info.SubsetCount - 1, partitionIndex, pixelIndex];
+                            var subsetIndex = subsets[pixelIndex];
 
-                            var colourPalette = indexMode == 0 ? palette0 : palette1;
-                            var colourIndex = indexMode == 0 ? indices0[pixelIndex] : indices1[pixelIndex];
-                            var result = colourPalette[subsetIndex, colourIndex];
+                            var (colourPalette, paletteDepth, colourIndex) = indexMode == 0
+                                ? (palette0, palette0Size, indices0[pixelIndex])
+                                : (palette1, palette1Size, indices1[pixelIndex]);
+
+                            var result = colourPalette[subsetIndex * paletteDepth + colourIndex];
 
                             if (info.Index1Bits > 0)
                             {
-                                var alphaPalette = indexMode == 0 ? palette1 : palette0;
-                                var alphaIndex = indexMode == 0 ? indices1[pixelIndex] : indices0[pixelIndex];
+                                var (alphaPalette, alphaIndex) = indexMode == 0
+                                    ? (palette1, indices1[pixelIndex])
+                                    : (palette0, indices0[pixelIndex]);
 
-                                result.A = alphaPalette[subsetIndex, alphaIndex].A;
+                                result.A = alphaPalette[subsetIndex * paletteDepth + alphaIndex].A;
                             }
                             else if (info.AlphaBits == 0)
                                 result.A = byte.MaxValue;
@@ -1464,6 +1477,7 @@ namespace Reclaimer.Drawing
             return output;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         private struct BgraColour
         {
             public delegate BgraColour ColorUnpackMethod(ushort value);
