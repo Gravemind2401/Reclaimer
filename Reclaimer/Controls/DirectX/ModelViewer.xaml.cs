@@ -534,6 +534,8 @@ namespace Reclaimer.Controls.DirectX
             ClearChildren();
             modelGroup.Dispose();
             renderer.Dispose();
+            meshLoaderFactory.Dispose();
+            textureLoader.Dispose();
             DataContext = null;
             GC.Collect();
             GC.WaitForPendingFinalizers();

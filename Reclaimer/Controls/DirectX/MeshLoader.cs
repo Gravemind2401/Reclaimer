@@ -27,6 +27,14 @@ namespace Reclaimer.Controls.DirectX
 
                 return meshLoader;
             }
+
+            public void Dispose()
+            {
+                foreach (var loader in lookup.Values)
+                    loader.Dispose();
+
+                lookup.Clear();
+            }
         }
 
         private sealed class MeshLoader
@@ -175,6 +183,18 @@ namespace Reclaimer.Controls.DirectX
                     return null;
 
                 return new MeshTag(permutation, elementGroup);
+            }
+
+            public void Dispose()
+            {
+                foreach (var group in meshLookup.Values)
+                    group.Dispose();
+
+                foreach (var group in instanceLookup.Values)
+                    group.Dispose();
+
+                meshLookup.Clear();
+                instanceLookup.Clear();
             }
 
             public sealed class InstancedPermutation
