@@ -15,6 +15,7 @@ namespace Reclaimer.Controls.DirectX
             private static readonly Material ErrorMaterial = DiffuseMaterials.Gold;
 
             private readonly Dictionary<int, Material> materials = new();
+            private readonly List<Stream> textureStreams = new();
             private readonly Dictionary<int, TextureModel> textureLookup = new();
 
             public Material this[int? id] => id.HasValue ? materials.GetValueOrDefault(id.Value, ErrorMaterial) : ErrorMaterial;
@@ -55,10 +56,22 @@ namespace Reclaimer.Controls.DirectX
                     var args = new DdsOutputArgs(DecompressOptions.Bgr24);
                     var stream = new MemoryStream();
                     bitmap.GetDds().WriteToStream(stream, System.Drawing.Imaging.ImageFormat.Png, args);
+
+                    textureStreams.Add(stream);
                     textureLookup.Add(bitmap.Id, textureModel = new TextureModel(stream));
                 }
 
                 return textureModel;
+            }
+
+            public void Dispose()
+            {
+                foreach (var stream in textureStreams)
+                    stream.Dispose();
+
+                textureStreams.Clear();
+                textureLookup.Clear();
+                materials.Clear();
             }
         }
     }
