@@ -108,9 +108,12 @@ namespace Reclaimer.Blam.Utilities
 
         private static T ParseToEnum<T>(this object input, T defaultValue = default) where T : struct
         {
+            if (input is T enumValue)
+                return enumValue;
+
             if (input != null)
             {
-                if (Enum.TryParse(input.ToString(), out T enumValue))
+                if (Enum.TryParse(input.ToString(), out enumValue))
                     return enumValue;
             }
 

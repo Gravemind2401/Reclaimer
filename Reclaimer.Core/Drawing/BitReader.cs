@@ -1,14 +1,17 @@
 ﻿namespace Reclaimer.Drawing.Bc7
 {
-    internal class BitReader
+    internal ref struct BitReader
     {
         private const int byteSize = 8;
         private const int cacheSize = 64;
+        private const int bytesInCache = cacheSize / byteSize;
 
         private readonly byte[] stream;
 
         private long cacheBits;
         private int cachePosition;
+
+        private int cacheProgress;
 
         private int StreamIndex => Position / byteSize;
         private int CacheProgress => Position - cachePosition;
@@ -25,6 +28,8 @@
                     throw new ArgumentOutOfRangeException(nameof(value));
 
                 position = value;
+                cacheProgress = value - cachePosition;
+
                 if (position < cachePosition || position >= cachePosition + cacheSize)
                     SetCache(StreamIndex);
             }
@@ -46,30 +51,24 @@
             if (bits == 0)
                 return 0;
 
-            var result = (byte)ReadBitsInternal(bits);
-            return result;
-        }
-
-        private int ReadBitsInternal(int bits)
-        {
-            if (CacheProgress + bits >= cacheSize)
+            if (cacheProgress + bits >= cacheSize)
                 SetCache(StreamIndex);
 
             var mask = (1 << bits) - 1;
-
-            var value = (int)(cacheBits >> CacheProgress) & mask; //RTL
-            //var value = (int)(cacheBits >> cacheSize - (CacheProgress + bits)) & mask; //LTR
+            var value = (int)(cacheBits >> cacheProgress) & mask; //RTL
+            //var value = (int)(cacheBits >> cacheSize - (cacheProgress + bits)) & mask; //LTR
 
             Position += bits;
-            return value;
+            return (byte)value;
         }
 
         private void SetCache(int offset)
         {
             cacheBits = 0;
             cachePosition = offset * byteSize;
+            cacheProgress = Position - cachePosition;
 
-            for (var i = 0; i < cacheSize / byteSize; i++)
+            for (var i = 0; i < bytesInCache; i++)
             {
                 if (offset + i >= stream.Length)
                     break;
