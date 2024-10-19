@@ -37,11 +37,11 @@
     <class code="cmps" name="composition_scene" />
     <class code="cmpt" name="composer_transition" />
     <class code="cmpu" name="campaignupgrades" />
-    <class code="cmsw" name="" />
+    <class code="cmsw" name="coating_swatch" />
     <class code="cnmp" name="controller_mapping" />
     <class code="cnvo" name="conversation" />
     <class code="cnvt" name="conversationtypes" />
-    <class code="cogl" name="" />
+    <class code="cogl" name="coating_globals" />
     <class code="cole" name="collectiblesdefinition" />
     <class code="coll" name="collision_model" />
     <class code="comp" name="composition" />
@@ -73,18 +73,18 @@
     <class code="embl" name="emblem" />
     <class code="emth" name="emblem_theme_globals" />
     <class code="eqip" name="equipment" />
-    <class code="exsh" name="" />
+    <class code="exsh" name="explicitshader" />
     <class code="fafl" name="forwardfastlighting" />
     <class code="fanf" name="fanfaredefinition" />
-    <class code="fcdl" name="" />
-    <class code="fdwp" name="" />
+    <class code="fcdl" name="forge_characters" />
+    <class code="fdwp" name="forge_dimensional_widgets" />
     <class code="fela" name="frame_event_list_audio" />
     <class code="fele" name="frame_event_list_effect" />
     <class code="flck" name="flock" />
     <class code="flni" name="flinch_impulse" />
     <class code="flns" name="flinch_system" />
     <class code="flsc" name="forge_looping_sound_categories" />
-    <class code="fmuc" name="" />
+    <class code="fmuc" name="forge_music_categories" />
     <class code="fntf" name="typeface" />
     <class code="fntl" name="forgenamedtaglists" />
     <class code="fnts" name="wpf_font_set" />
@@ -102,7 +102,7 @@
     <class code="frms" name="frame_event_list" />
     <class code="fsrs" name="forge_sound_response_sounds" />
     <class code="ftat" name="forgetelescopingasset" />
-    <class code="fvsc" name="" />
+    <class code="fvsc" name="forge_vo_sound_categories" />
     <class code="gegl" name="game_engine_globals" />
     <class code="gfpd" name="graphicspresetdefinitions" />
     <class code="gggl" name="game_globals_grenade_list" />
@@ -145,7 +145,7 @@
     <class code="intr" name="interaction" />
     <class code="jmad" name="model_animation_graph" />
     <class code="jpt!" name="damage_effect" />
-    <class code="jssc" name="" />
+    <class code="jssc" name="jsonsourcefiletagdefinition" />
     <class code="kit!" name="kit" />
     <class code="lens" name="lens_flare" />
     <class code="levl" name="level" />
@@ -220,13 +220,13 @@
     <class code="pugm" name="powerupdefinition" />
     <class code="Rani" name="runtimeanimset" />
     <class code="rasg" name="rasterizer_globals" />
-    <class code="rebi" name="" />
+    <class code="rebi" name="rebindingglobalstag" />
     <class code="rmbl" name="rumble" />
     <class code="rtgo" name="runtime_geo" />
     <class code="rtmp" name="rtmp" />
     <class code="rtrn" name="runtime_terrain" />
-    <class code="rucs" name="" />
-    <class code="rucy" name="" />
+    <class code="rucs" name="runtimecoatingstylestag" />
+    <class code="rucy" name="runtimecoatingstyletag" />
     <class code="rwrd" name="render_water_ripple" />
     <class code="sadt" name="spring_acceleration" />
     <class code="saev" name="evadedefinitiontag" />
@@ -272,7 +272,7 @@
     <class code="styl" name="style" />
     <class code="subt" name="composer_subtracks" />
     <class code="sumd" name="shieldupgrademetadata" />
-    <class code="tccg" name="" />
+    <class code="tccg" name="terraincollisioncellgeotag" />
     <class code="texg" name="texturegroup" />
     <class code="tlgt" name="xtransitionlogicgraph" />
     <class code="toks" name="tokensystemglobalsdefinition" />
