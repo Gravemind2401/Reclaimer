@@ -22,7 +22,6 @@ namespace Reclaimer.Blam.HaloInfinite
         public const string WeaponDecalNormal = "723636081";
         public const string WeaponDecalControl = "-699244700";
 
-
         public static readonly Dictionary<string, string> UsageLookup = new()
         {
             { NormalMap, TextureUsage.Normal },
@@ -40,7 +39,6 @@ namespace Reclaimer.Blam.HaloInfinite
             { WeaponDecalControl, TextureUsage.Diffuse }
         };
     }
-
 
     internal static class MaterialHelper
     {
@@ -101,7 +99,6 @@ namespace Reclaimer.Blam.HaloInfinite
 
                 material.TextureMappings.Add(texMap);
             }
-
 
             //TODO: check for specular-from-alpha?
 

@@ -78,7 +78,6 @@ namespace Reclaimer.Plugins.MetaViewer
                 var tabId = $"{Key}::{item.Module.FileName}::{item.GlobalTagId}";
                 InitViewer(tabId, args, v => v.LoadMetadata(item, GetDefinitionPath(item)));
             }
-
             else if (args.File.Any(i => i is Blam.HaloInfinite.ModuleItem))
             {
                 var item = args.File.OfType<Blam.HaloInfinite.ModuleItem>().FirstOrDefault();

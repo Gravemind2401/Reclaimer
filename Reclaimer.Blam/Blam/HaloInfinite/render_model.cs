@@ -361,7 +361,6 @@ namespace Reclaimer.Blam.HaloInfinite
     [FixedSize(84)]
     public class BoundingBoxBlock
     {
-
         [Offset(4)]
         public RealBounds XBounds { get; set; }
 
@@ -410,7 +409,7 @@ namespace Reclaimer.Blam.HaloInfinite
         Lod12 = 1 << 12,
         Lod13 = 1 << 13,
         Lod14 = 1 << 14,
-        Lod15 = 1 << 15,
+        Lod15 = 1 << 15
     }
 
     [Flags]

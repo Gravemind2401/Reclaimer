@@ -1,13 +1,13 @@
 ﻿using Microsoft.Win32;
 using Reclaimer.Blam.Common;
-using Reclaimer.IO;
-using System.IO;
-using System.Windows;
-using System.Windows.Controls;
 using Reclaimer.Blam.HaloInfinite.Oodle;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Controls.Editors;
+using Reclaimer.IO;
 using System.ComponentModel;
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Reclaimer.Plugins
 {
@@ -19,7 +19,9 @@ namespace Reclaimer.Plugins
         private const string ModuleFileExtension = "module";
 
         internal static ModuleViewerSettings Settings;
+
         private bool oodleIsAvailable = true;
+
         public override string Name => "Module Viewer";
 
         public override void Initialise()
@@ -33,8 +35,6 @@ namespace Reclaimer.Plugins
         }
 
         public override void Suspend() => SaveSettings(Settings);
-        public override bool SupportsFileExtension(string extension) => extension.ToLowerInvariant() == ModuleFileExtension;
-
 
         public override IEnumerable<PluginMenuItem> GetMenuItems()
         {
@@ -78,6 +78,8 @@ namespace Reclaimer.Plugins
             }
         }
 
+        public override bool SupportsFileExtension(string extension) => extension.ToLowerInvariant() == ModuleFileExtension;
+
         public override void OpenPhysicalFile(string fileName)
         {
             var tabId = $"{Key}::{fileName}";
@@ -95,8 +97,10 @@ namespace Reclaimer.Plugins
                     var mv = new Controls.HaloInfiniteModuleViewer();
                     mv.TabModel.ContentId = tabId;
                     mv.LoadModule(fileName);
+
                     Substrate.AddTool(mv.TabModel, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
                     Substrate.AddRecentFile(fileName);
+
                     LogOutput($"Loaded module file: {fileName}");
                 }
                 else if (moduleVersion == ModuleType.Halo5Forge | moduleVersion == ModuleType.Halo5Server)
@@ -104,11 +108,12 @@ namespace Reclaimer.Plugins
                     var mv = new Controls.Halo5ModuleViewer();
                     mv.TabModel.ContentId = tabId;
                     mv.LoadModule(fileName);
+
                     Substrate.AddTool(mv.TabModel, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
                     Substrate.AddRecentFile(fileName);
+
                     LogOutput($"Loaded module file: {fileName}");
                 }
-
             }
             catch (Exception ex)
             {

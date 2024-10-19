@@ -8,6 +8,7 @@ namespace Reclaimer.Blam.HaloInfinite
     {
         [Offset(0)]
         public int Header { get; set; }
+
         public ModuleType Version { get; set; } = ModuleType.HaloInfinite;
 
         [Offset(8)]

@@ -65,26 +65,11 @@ namespace Reclaimer.Controls
                 LoadDataHaloInfinite(tempMetadata);
 
             var root = new JObject();
-            foreach (var item in tempMetadata)
+            foreach (var item in tempMetadata.Where(i => !string.IsNullOrWhiteSpace(i.Name)))
             {
-                if (string.IsNullOrEmpty(item.Name))
-                {
-                    continue;
-                }
-
-                // Make sure two different keys don't exist at the same time!
-                if (root.ContainsKey(item.Name))
-                {
-                    var uniqueName = item.Name + item.Offset;
-                    root.Add(uniqueName, item.GetJValue());
-                }
-                else
-                {
-                    root.Add(item.Name, item.GetJValue());
-                }
+                var propName = root.ContainsKey(item.Name) ? $"{item.Name}_{item.Offset}" : item.Name;
+                root.Add(propName, item.GetJValue());
             }
-
-
 
             File.WriteAllText(fileName, root.ToString());
         }
@@ -281,7 +266,6 @@ namespace Reclaimer.Controls
                 var args = new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), content ?? item);
                 Substrate.OpenWithDefault(args);
             }
-
         }
     }
 }

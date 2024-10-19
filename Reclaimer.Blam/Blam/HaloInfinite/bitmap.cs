@@ -19,16 +19,14 @@ namespace Reclaimer.Blam.HaloInfinite
 
         public override IBitmap GetContent() => this;
 
-        int IBitmap.SubmapCount => Bitmaps[0].Type.Equals(BitmapType.Array) ? Bitmaps[0].Depth : Bitmaps.Count;
+        int IBitmap.SubmapCount => Bitmaps[0].BitmapType.Equals(TextureType.Array) ? Bitmaps[0].Depth : Bitmaps.Count;
 
         CubemapLayout IBitmap.CubeLayout => CubemapLayout.NonCubemap;
-
-
 
         public DdsImage ToDds(int index)
         {
             var resource = GetResource(index, out var isChunk);
-            var submap = Bitmaps[0].Type.Equals(BitmapType.Array) ? Bitmaps[0] : Bitmaps[index];
+            var submap = Bitmaps[0].BitmapType.Equals(TextureType.Array) ? Bitmaps[0] : Bitmaps[index];
 
             if (resource.DataOffsetFlags.HasFlag(DataOffsetFlags.UseHD1) && Item.Module.Hd1Stream == null)
             {
@@ -41,7 +39,7 @@ namespace Reclaimer.Blam.HaloInfinite
             var props = new BitmapProperties(submap.Width, submap.Height, format, "Texture2D");
             var size = TextureUtils.GetBitmapDataLength(props, false);
 
-            byte[] data = ReadResourceData(resource, index, isChunk, Bitmaps[0].Type.Equals(BitmapType.Array), size);
+            var data = ReadResourceData(resource, index, isChunk, Bitmaps[0].BitmapType.Equals(TextureType.Array), size);
             return TextureUtils.GetDds(props, data, false);
         }
 
@@ -70,9 +68,7 @@ namespace Reclaimer.Blam.HaloInfinite
             }
 
             if (resource.UncompressedActualResourceSize > 0)
-            {
                 isChunk = false;
-            }
 
             return resource;
         }
@@ -82,9 +78,7 @@ namespace Reclaimer.Blam.HaloInfinite
             using (var reader = resource.CreateReader())
             {
                 if (isChunk)
-                {
                     return reader.ReadBytes(size);
-                }
 
                 if (isArray)
                 {
@@ -104,8 +98,6 @@ namespace Reclaimer.Blam.HaloInfinite
             }
         }
 
-
-
         #endregion
     }
 
@@ -114,17 +106,21 @@ namespace Reclaimer.Blam.HaloInfinite
     {
         [Offset(0)]
         public short Width { get; set; }
+
         [Offset(2)]
         public short Height { get; set; }
+
         [Offset(4)]
         public short Depth { get; set; }
+
         [Offset(6)]
-        public BitmapType Type { get; set; }
+        public TextureType BitmapType { get; set; }
 
         [Offset(8)]
         public TextureFormat BitmapFormat { get; set; }
     }
-    public enum BitmapType : byte
+
+    public enum TextureType : byte
     {
         Texture2D,
         Texture3D,

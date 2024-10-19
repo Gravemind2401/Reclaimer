@@ -14,6 +14,7 @@ namespace Reclaimer.Blam.HaloInfinite
     {
         [Offset(0)]
         public TagReference AttachmentModel { get; set; }
+
         [Offset(32)]
         public BlockCollection<AttachmentMarker> Markers { get; set; }
     }
@@ -23,10 +24,13 @@ namespace Reclaimer.Blam.HaloInfinite
     {
         [Offset(0)]
         public StringHash MarkerName { get; set; }
+
         [Offset(4)]
         public Vector3 Translation { get; set; }
+
         [Offset(16)]
         public Vector3 Rotation { get; set; }
+
         [Offset(28)]
         public Vector3 Scale { get; set; }
     }

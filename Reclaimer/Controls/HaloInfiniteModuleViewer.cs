@@ -163,7 +163,7 @@ namespace Reclaimer.Controls
                 rootNode.Items.Reset(result);
             }
 
-            // Kinda ruined the pretty lambda here. Might refactor. 
+            // Kinda ruined the pretty lambda here. Might refactor.
             void AppendResourceNodes(TreeItemModel treeItem, ModuleItem tag)
             {
                 foreach (var i in Enumerable.Range(tag.ResourceIndex, tag.ResourceCount))
@@ -179,8 +179,6 @@ namespace Reclaimer.Controls
                     treeItem.Items.Add(treeItemModel);
                 }
             }
-
-
 
             static bool FilterTag(string filter, ModuleItem tag)
             {

@@ -26,16 +26,9 @@ namespace Reclaimer.Blam.HaloInfinite.Oodle
             var decompressedBuffer = new byte[uncompressedSize];
             var decompressedCount = OodleLZ_Decompress(buffer, size, decompressedBuffer, uncompressedSize, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3);
 
-            if (decompressedCount == uncompressedSize)
-                return decompressedBuffer;
-            else if (decompressedCount < uncompressedSize)
-            {
-                return decompressedBuffer;
-            }
-            else
-            {
-                throw new Exception("There was an error while decompressing");
-            }
+            return decompressedCount <= uncompressedSize
+                ? decompressedBuffer
+                : throw new Exception("There was an error while decompressing");
         }
     }
 }

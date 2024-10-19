@@ -15,6 +15,7 @@ namespace Reclaimer.Blam.HaloInfinite
         public List<DataBlockReference> DataReferences { get; }
 
         public List<TagBlockReference> TagReferences { get; }
+
         public int SectionCount => DataBlocks.Max(b => b.Section) + 1;
 
         public MetadataHeader(DependencyReader reader)

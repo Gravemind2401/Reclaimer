@@ -64,15 +64,10 @@ namespace Reclaimer.Plugins.MetaViewer.HaloInfinite
             foreach (var item in Children.Where(c => c.FieldDefinition.ValueType != MetaValueType.Comment))
             {
                 if (result.ContainsKey(item.Name))
-                {
                     result.Add(item.Name + item.Offset, item.GetJValue());
-                } 
                 else
-                {
                     result.Add(item.Name, item.GetJValue());
-                }
-                
-            }  
+            }
             return result;
         }
     }

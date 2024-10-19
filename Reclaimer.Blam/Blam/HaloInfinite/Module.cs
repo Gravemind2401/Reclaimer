@@ -11,18 +11,20 @@ namespace Reclaimer.Blam.HaloInfinite
 
         private readonly TagIndex tagIndex;
         private readonly List<Module> linkedModules;
-        public FileStream Hd1Stream;
 
         public string FileName { get; }
 
         public ModuleHeader Header { get; }
         public ModuleType ModuleType => Header.Version;
+
         public List<ModuleItem> Items { get; }
         public Dictionary<int, string> Strings { get; }
         public List<int> Resources { get; }
         public List<Block> Blocks { get; }
 
         public long DataAddress { get; }
+
+        public FileStream Hd1Stream { get; private set; }
 
         public Module(string fileName) : this(fileName, null) { }
 
@@ -61,17 +63,15 @@ namespace Reclaimer.Blam.HaloInfinite
 
         public DependencyReader CreateReader(bool isHd1)
         {
-            if (isHd1)
+            if (isHd1 && Header.HD1Delta != 0 && File.Exists($"{FileName}_hd1"))
             {
-                if (Header.HD1Delta != 0 && File.Exists($"{FileName}_hd1"))
-                {
-                    Hd1Stream = new FileStream($"{FileName}_hd1", FileMode.Open, FileAccess.Read);
-                    var reader = new DependencyReader(Hd1Stream, ByteOrder.LittleEndian);
-                    reader.RegisterInstance(this);
-                    reader.RegisterType(reader.ReadMatrix3x4);
-                    return reader;
-                }
+                Hd1Stream = new FileStream($"{FileName}_hd1", FileMode.Open, FileAccess.Read);
+                var reader = new DependencyReader(Hd1Stream, ByteOrder.LittleEndian);
+                reader.RegisterInstance(this);
+                reader.RegisterType(reader.ReadMatrix3x4);
+                return reader;
             }
+
             var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read);
             return CreateReader(fs);
         }
@@ -234,7 +234,6 @@ namespace Reclaimer.Blam.HaloInfinite
 
         [Offset(64)]
         public long DataSize { get; set; }
-
     }
 
     [FixedSize(20)]

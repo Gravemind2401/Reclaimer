@@ -14,7 +14,7 @@ namespace Reclaimer.Blam.HaloInfinite
         { }
 
         [Offset(16)]
-        public BlockCollection<RuntimeGeoPerMeshData> PerMeshData { get; set; }
+        public BlockCollection<RuntimeGeoPerMeshDataBlock> PerMeshData { get; set; }
 
         [Offset(64)]
         public BlockCollection<SectionBlock> Sections { get; set; }
@@ -84,7 +84,7 @@ namespace Reclaimer.Blam.HaloInfinite
             // with each mesh having its own permutation.
 
             var region = new ModelRegion { Name = "default" };
-            for (int i = 0; i < PerMeshData.Count; i++)
+            for (var i = 0; i < PerMeshData.Count; i++)
             {
                 var mesh = model.Meshes[i];
                 if (mesh == null)
@@ -98,6 +98,7 @@ namespace Reclaimer.Blam.HaloInfinite
 
                 region.Permutations.Add(permutation);
             }
+
             model.Regions.Add(region);
 
             var bounds = BoundingBoxes[0];
@@ -113,7 +114,7 @@ namespace Reclaimer.Blam.HaloInfinite
 
     [FixedSize(144)]
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class RuntimeGeoPerMeshData
+    public class RuntimeGeoPerMeshDataBlock
     {
         [Offset(0)]
         public StringHash Name { get; set; }

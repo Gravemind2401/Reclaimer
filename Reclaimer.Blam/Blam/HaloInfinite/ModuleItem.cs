@@ -93,25 +93,24 @@ namespace Reclaimer.Blam.HaloInfinite
         public long DataOffset => DataOffsetTemp & 0x0000FFFFFFFFFFFF;
         public DataOffsetFlags DataOffsetFlags => (DataOffsetFlags)(DataOffsetTemp >> 48);
 
-        private string _cachedTagName;
-
+        private string tagName;
         public string TagName
         {
             get
             {
-                if (_cachedTagName != null)
-                    return _cachedTagName;
+                if (tagName != null)
+                    return tagName;
 
-                _cachedTagName = GlobalTagId == -1
+                tagName = GlobalTagId == -1
                     ? GlobalTagId.ToString()
                     : StringMapper.Instance.StringMappings.TryGetValue(GlobalTagId, out var value)
                         ? value : GlobalTagId.ToString();
 
-                return _cachedTagName;
+                return tagName;
             }
         }
 
-        public string ClassName => CacheFactory.HaloInfiniteClasses.TryGetValue(ClassCode, out var className) && !string.IsNullOrEmpty(className) ? className : ClassCode;
+        public string ClassName => CacheFactory.HaloInfiniteClasses.TryGetValue(ClassCode, out var className) ? className : ClassCode;
 
         public string FileName => Utils.GetFileName(TagName);
 
@@ -131,56 +130,56 @@ namespace Reclaimer.Blam.HaloInfinite
             using (var reader = Module.CreateReader(DataOffsetFlags.HasFlag(DataOffsetFlags.UseHD1)))
             {
                 // HD1 Delta is the offset of which the same data is found in the hd1 handle.
-                var file_offset = DataOffsetFlags.HasFlag(DataOffsetFlags.UseHD1)
+                var fileOffset = DataOffsetFlags.HasFlag(DataOffsetFlags.UseHD1)
                     ? DataOffset - Module.Header.HD1Delta
                     : DataOffset + Module.DataAddress;
 
-                var file_buffer = new MemoryStream(TotalUncompressedSize);
+                var fileBuffer = new MemoryStream(TotalUncompressedSize);
 
                 if (BlockCount != 0)
                 {
-                    reader.Seek(file_offset, SeekOrigin.Begin);
+                    reader.Seek(fileOffset, SeekOrigin.Begin);
 
-                    for (int i = BlockIndex; i < BlockIndex + BlockCount; i++)
+                    for (var i = BlockIndex; i < BlockIndex + BlockCount; i++)
                     {
                         var block = Module.Blocks[i];
                         if (block.Compressed == 1)
                         {
-                            var block_buffer = new byte[block.CompressedSize];
-                            reader.Read(block_buffer, 0, block.CompressedSize);
+                            var blockBuffer = new byte[block.CompressedSize];
+                            reader.Read(blockBuffer, 0, block.CompressedSize);
 
-                            byte[] decompressed_data = OodleDecompressor.Decompress(block_buffer, block_buffer.Length, block.UncompressedSize);
-                            file_buffer.Write(decompressed_data, 0, decompressed_data.Length);
+                            var decompressedData = OodleDecompressor.Decompress(blockBuffer, blockBuffer.Length, block.UncompressedSize);
+                            fileBuffer.Write(decompressedData, 0, decompressedData.Length);
                         }
                         else
                         {
-                            var block_buffer = new byte[block.UncompressedSize];
-                            reader.Read(block_buffer, 0, block.UncompressedSize);
-                            file_buffer.Write(block_buffer);
+                            var blockBuffer = new byte[block.UncompressedSize];
+                            reader.Read(blockBuffer, 0, block.UncompressedSize);
+                            fileBuffer.Write(blockBuffer);
                         }
                     }
                 }
                 else
                 {
-                    reader.Seek(file_offset, SeekOrigin.Begin);
-                    var block_buffer = new byte[TotalCompressedSize];
-                    reader.Read(block_buffer, 0, TotalCompressedSize);
+                    var blockBuffer = new byte[TotalCompressedSize];
+
+                    reader.Seek(fileOffset, SeekOrigin.Begin);
+                    reader.Read(blockBuffer, 0, TotalCompressedSize);
 
                     if (TotalCompressedSize == TotalUncompressedSize)
-                    {
-                        file_buffer.Write(block_buffer);
-                    }
+                        fileBuffer.Write(blockBuffer);
                     else
                     {
-                        byte[] decompressed_data = OodleDecompressor.Decompress(block_buffer, TotalCompressedSize, TotalUncompressedSize);
-                        file_buffer.Write(decompressed_data);
+                        var decompressedData = OodleDecompressor.Decompress(blockBuffer, TotalCompressedSize, TotalUncompressedSize);
+                        fileBuffer.Write(decompressedData);
                     }
                 }
 
-                file_buffer.Position = 0;
-                return Register(Module.CreateReader(file_buffer));
+                fileBuffer.Position = 0;
+                return Register(Module.CreateReader(fileBuffer));
             }
         }
+
         public T ReadMetadata<T>()
         {
             using (var reader = CreateReader())

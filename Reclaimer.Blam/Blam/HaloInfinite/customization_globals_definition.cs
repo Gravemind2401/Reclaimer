@@ -80,11 +80,12 @@ namespace Reclaimer.Blam.HaloInfinite
             var model = new Model { Name = Item.FileName, OriginalPath = Item.TagName };
             var armor = Themes[0].Model.Tag.ReadMetadata<render_model>().GetModelContent();
             var armorRegions = armor.Regions.ToDictionary(r => r.Name);
+
             model.Meshes.AddRange(armor.Meshes);
             model.Markers.AddRange(armor.Markers);
             model.Bones.AddRange(armor.Bones);
-            var themes = new HashSet<int>();
 
+            var themes = new HashSet<int>();
             foreach (var theme in Themes[0].ThemeConfigurations)
             {
                 if (!themes.Contains(theme.ThemeName.Hash))
@@ -115,10 +116,13 @@ namespace Reclaimer.Blam.HaloInfinite
     {
         [Offset(0)]
         public StringHash AssetName { get; set; }
+
         [Offset(4)]
         public TagReference Model { get; set; }
+
         [Offset(32)]
         public TagReference ObjectReference { get; set; }
+
         [Offset(60)]
         public BlockCollection<ThemeConfiguration> ThemeConfigurations { get; set; }
 
@@ -129,8 +133,10 @@ namespace Reclaimer.Blam.HaloInfinite
     {
         [Offset(0)]
         public StringHash ThemeName { get; set; }
+
         [Offset(4)]
         public StringHash ThemeVariantName { get; set; }
+
         [Offset(8)]
         public TagReference ThemeConfigs { get; set; }
     }

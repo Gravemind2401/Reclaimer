@@ -17,8 +17,7 @@ namespace Reclaimer.Blam.HaloInfinite
         public BlockCollection<ClusterBlock> Clusters { get; set; }
 
         [Offset(420)]
-        public BlockCollection<InstancedGeometry> InstancedGeometryInstances { get; set; }
-
+        public BlockCollection<BspGeometryInstanceBlock> GeometryInstances { get; set; }
 
         #region IContentProvider
 
@@ -33,12 +32,14 @@ namespace Reclaimer.Blam.HaloInfinite
 
             var bspGroup = new SceneGroup { Name = BlamConstants.ScenarioBspGroupName };
 
-            foreach (var instance in InstancedGeometryInstances)
+            foreach (var instance in GeometryInstances)
             {
                 if (instance.RuntimeGeoMeshReference.Tag == null)
                     continue;
+
                 if (instance.FlagsOverride.HasFlag(MeshFlags.MeshIsCustomShadowCaster))
                     continue;
+
                 try
                 {
                     var tag = instance.RuntimeGeoMeshReference.Tag.ReadMetadata<runtime_geo>();
@@ -54,7 +55,7 @@ namespace Reclaimer.Blam.HaloInfinite
                     );
 
                     var rotation = Quaternion.CreateFromRotationMatrix(rotMat);
-                    sceneItem.SetTransform((Vector3)instance.Scale, instance.Transform.Translation, rotation);
+                    sceneItem.SetTransform((Vector3)instance.TransformScale, instance.Transform.Translation, rotation);
                     bspGroup.ChildObjects.Add(sceneItem);
                 }
                 catch
@@ -68,15 +69,15 @@ namespace Reclaimer.Blam.HaloInfinite
 
             return scene;
         }
+
         #endregion
     }
 
-
     [FixedSize(320)]
-    public class InstancedGeometry
+    public class BspGeometryInstanceBlock
     {
         [Offset(0)]
-        public RealVector3 Scale { get; set; }
+        public RealVector3 TransformScale { get; set; }
 
         [Offset(12)]
         public Matrix4x4 Transform { get; set; }

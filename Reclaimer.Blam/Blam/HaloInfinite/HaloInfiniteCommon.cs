@@ -46,6 +46,7 @@ namespace Reclaimer.Blam.HaloInfinite
         {
             var bitmapCache = new Dictionary<int, bitmap>();
             var materialCache = new Dictionary<int, Material>();
+
             for (var i = 0; i < args.Materials?.Count; i++)
             {
                 var tag = args.Materials[i].MaterialReference.Tag;
@@ -105,7 +106,6 @@ namespace Reclaimer.Blam.HaloInfinite
                     }
                     catch { }
                 }
-
 
                 yield return material;
             }
