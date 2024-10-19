@@ -30,6 +30,16 @@ namespace Reclaimer.Blam.Common
             }
         }
 
+        private static Dictionary<string, string> haloInfiniteClasses;
+        internal static IReadOnlyDictionary<string, string> HaloInfiniteClasses
+        {
+            get
+            {
+                haloInfiniteClasses ??= ReadClassXml(Properties.Resources.HaloInfiniteClasses);
+                return haloInfiniteClasses;
+            }
+        }
+
         internal const string ScenarioClass = "scnr";
         internal static readonly string[] SystemClasses = new[] { "scnr", "matg", "ugh!", "play", "zone" };
 
@@ -104,7 +114,7 @@ namespace Reclaimer.Blam.Common
 
                 HaloGame.Halo2X when cacheType < CacheType.MccHalo2XU8 => new MccHalo2X.CacheFile(args),
                 HaloGame.Halo2X => new MccHalo2X.CacheFileU8(args),
-                
+
                 _ => throw Exceptions.UnknownMapFile(fileName)
             };
         }

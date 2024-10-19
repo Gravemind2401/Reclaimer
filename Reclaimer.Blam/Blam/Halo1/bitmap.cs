@@ -35,7 +35,7 @@ namespace Reclaimer.Blam.Halo1
             Orientation3 = RotateFlipType.Rotate90FlipNone,
             Orientation6 = RotateFlipType.Rotate180FlipNone
         };
-        
+
         public override IBitmap GetContent() => this;
 
         int IBitmap.SubmapCount => Bitmaps.Count;

@@ -36,7 +36,7 @@ namespace Reclaimer.Blam.Halo3
                 builder.Property(x => x.Crates).HasOffset(1460);
                 builder.Property(x => x.CratePalette).HasOffset(1472);
                 builder.Property(x => x.ScenarioLightmapReference).HasOffset(1736);
-                
+
                 builder = AddVersion(CacheType.Halo3Beta);
                 builder.Property(x => x.StructureBsps).HasOffset(12);
                 builder.Property(x => x.Skies).HasOffset(40);

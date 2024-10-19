@@ -11,7 +11,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     }
 
     #region Unknown List
-    
+
     [DataBlock(0xF300, ExpectedChildCount = 10)]
     public class UnknownListBlock0xF300 : CollectionDataBlock
     {
@@ -142,7 +142,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
     {
         [Offset(0)]
         public int MaterialIndex { get; set; }
-        
+
         [Offset(4)]
         public int Unknown0 { get; set; } //-1
 

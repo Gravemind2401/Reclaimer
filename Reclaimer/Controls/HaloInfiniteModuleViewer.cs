@@ -1,10 +1,11 @@
 ﻿using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
+using Reclaimer.Blam.HaloInfinite;
 using Reclaimer.Models;
 using Reclaimer.Plugins;
 using Reclaimer.Utilities;
 using Studio.Controls;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -12,9 +13,9 @@ using System.Windows.Input;
 namespace Reclaimer.Controls
 {
     /// <summary>
-    /// Interaction logic for ModuleViewer.xaml
+    /// Interaction logic for HaloInfiniteModuleViewer.xaml
     /// </summary>
-    public partial class ModuleViewer
+    public partial class HaloInfiniteModuleViewer
     {
         private const int FolderNodeType = 0;
         private const int TagNodeType = 1;
@@ -31,12 +32,12 @@ namespace Reclaimer.Controls
 
         #region Dependency Properties
         private static readonly DependencyPropertyKey HasGlobalHandlersPropertyKey =
-            DependencyProperty.RegisterReadOnly(nameof(HasGlobalHandlers), typeof(bool), typeof(ModuleViewer), new PropertyMetadata(false));
+            DependencyProperty.RegisterReadOnly(nameof(HasGlobalHandlers), typeof(bool), typeof(HaloInfiniteModuleViewer), new PropertyMetadata(false));
 
         public static readonly DependencyProperty HasGlobalHandlersProperty = HasGlobalHandlersPropertyKey.DependencyProperty;
 
         public static readonly DependencyProperty HierarchyViewProperty =
-            DependencyProperty.Register(nameof(HierarchyView), typeof(bool), typeof(ModuleViewer), new PropertyMetadata(false, HierarchyViewChanged));
+            DependencyProperty.Register(nameof(HierarchyView), typeof(bool), typeof(HaloInfiniteModuleViewer), new PropertyMetadata(false, HierarchyViewChanged));
 
         public bool HasGlobalHandlers
         {
@@ -56,14 +57,17 @@ namespace Reclaimer.Controls
 
         public static void HierarchyViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var mv = d as ModuleViewer;
-            ModuleViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
+            var mv = d as HaloInfiniteModuleViewer;
+            CommonModuleViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
             mv.BuildTagTree(mv.txtSearch.Text);
         }
 
-        public ModuleViewer()
+        public HaloInfiniteModuleViewer()
         {
             InitializeComponent();
+
+            if (File.Exists(CommonModuleViewerPlugin.Settings.StringIdFile))
+                StringMapper.Instance.LoadStringMap(CommonModuleViewerPlugin.Settings.StringIdFile);
 
             OpenContextItem = new MenuItem { Header = "Open" };
             OpenWithContextItem = new MenuItem { Header = "Open With..." };
@@ -84,7 +88,7 @@ namespace Reclaimer.Controls
             tv.ItemsSource = rootNode.Items;
 
             TabModel.Header = Utils.GetFileName(module.FileName);
-            TabModel.ToolTip = $"Module Viewer - {TabModel.Header}";
+            TabModel.ToolTip = $"Module Viewer (Halo Infinite) - {TabModel.Header}";
 
             foreach (var item in globalMenuButton.MenuItems.OfType<MenuItem>())
                 item.Click -= GlobalContextItem_Click;
@@ -103,7 +107,7 @@ namespace Reclaimer.Controls
                     item.Click += GlobalContextItem_Click;
             }
 
-            HierarchyView = ModuleViewerPlugin.Settings.HierarchyView;
+            HierarchyView = CommonModuleViewerPlugin.Settings.HierarchyView;
             BuildTagTree(null);
         }
 
@@ -159,14 +163,24 @@ namespace Reclaimer.Controls
                 rootNode.Items.Reset(result);
             }
 
+            // Kinda ruined the pretty lambda here. Might refactor. 
             void AppendResourceNodes(TreeItemModel treeItem, ModuleItem tag)
             {
-                //TODO: make a setting to enable/disable this, also one day view the resources in the meta viewer?
-                return;
+                foreach (var i in Enumerable.Range(tag.ResourceIndex, tag.ResourceCount))
+                {
+                    var resourceItem = tag.Module.Items[tag.Module.Resources[i]];
+                    var treeItemModel = new TreeItemModel
+                    {
+                        Header = $"{tag.TagName}_{i - tag.ResourceIndex}",
+                        ItemType = ResourceNodeType,
+                        Tag = resourceItem
+                    };
 
-                foreach (var resourceItem in Enumerable.Range(tag.ResourceIndex, tag.ResourceCount).Select(i => tag.Module.Items[tag.Module.Resources[i]]))
-                    treeItem.Items.Add(new TreeItemModel { Header = resourceItem.FileName, ItemType = ResourceNodeType, Tag = resourceItem });
+                    treeItem.Items.Add(treeItemModel);
+                }
             }
+
+
 
             static bool FilterTag(string filter, ModuleItem tag)
             {
@@ -212,7 +226,7 @@ namespace Reclaimer.Controls
             }
         }
 
-        private OpenFileArgs GetFolderArgs(TreeItemModel node) => new OpenFileArgs(node.Header, $"Blam.{module.ModuleType}.*", node);
+        private OpenFileArgs GetFolderArgs(TreeItemModel node) => new OpenFileArgs(node.Header, $"Blam.{module.Header.Version}.*", node);
 
         private OpenFileArgs GetSelectedArgs()
         {
@@ -225,7 +239,7 @@ namespace Reclaimer.Controls
         private OpenFileArgs GetSelectedArgs(ModuleItem item)
         {
             var fileName = $"{item.TagName}.{item.ClassName}";
-            var fileKey = $"Blam.{module.ModuleType}.{item.ClassCode}";
+            var fileKey = $"Blam.{module.Header.Version}.{item.ClassCode}";
             return new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), GetFileFormats(item).ToArray());
         }
 
@@ -234,7 +248,8 @@ namespace Reclaimer.Controls
             yield return item;
 
             object content;
-            try { ContentFactory.TryGetPrimaryContent(item, out content); }
+            try
+            { ContentFactory.TryGetPrimaryContent(item, out content); }
             catch { content = null; }
 
             if (content != null)
@@ -256,9 +271,9 @@ namespace Reclaimer.Controls
                 Multiselect = true,
                 CheckFileExists = true
             };
-
-            if (!string.IsNullOrEmpty(ModuleViewerPlugin.Settings.ModuleFolder))
-                ofd.InitialDirectory = ModuleViewerPlugin.Settings.ModuleFolder;
+            
+            if (!string.IsNullOrEmpty(CommonModuleViewerPlugin.Settings.ModuleFolder))
+                ofd.InitialDirectory = CommonModuleViewerPlugin.Settings.ModuleFolder;
 
             if (ofd.ShowDialog() != true)
                 return;

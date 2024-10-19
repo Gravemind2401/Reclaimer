@@ -280,6 +280,25 @@ namespace Reclaimer.Blam.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;classes&gt;
+        ///    &lt;class code=&quot;aaap&quot; name=&quot;AmbientActionPointDefinitionTag&quot; /&gt;
+        ///    &lt;class code=&quot;adlg&quot; name=&quot;ai_dialogue_globals&quot; /&gt;
+        ///    &lt;class code=&quot;adrp&quot; name=&quot;airdropsystemglobalsdefinition&quot; /&gt;
+        ///    &lt;class code=&quot;aigl&quot; name=&quot;ai_globals&quot; /&gt;
+        ///    &lt;class code=&quot;alds&quot; name=&quot;alertdescriptions&quot; /&gt;
+        ///    &lt;class code=&quot;angb&quot; name=&quot;animglobals&quot; /&gt;
+        ///    &lt;class code=&quot;angt&quot; name=&quot;xanimnodegraph&quot; /&gt;
+        ///    &lt;class code=&quot;ansm&quot; name=&quot;xanimstategraph&quot; /&gt;
+        ///    &lt;class code=&quot;ant!&quot; name=&quot;antenna&quot; /&gt;
+        ///    &lt;class code=&quot;apdd&quot; name=&quot;act [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string HaloInfiniteClasses {
+            get {
+                return ResourceManager.GetString("HaloInfiniteClasses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- https://github.com/XboxChaos/Assembly/tree/dev/src/Blamite/Formats --&gt;
         ///&lt;stringDefinitions&gt;
         ///    &lt;stringIDs id=&quot;beta&quot; indexBits=&quot;16&quot; namespaceBits=&quot;8&quot; lengthBits=&quot;8&quot;&gt;

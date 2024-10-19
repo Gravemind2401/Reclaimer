@@ -1,6 +1,5 @@
 ﻿using Reclaimer.Blam.Common;
 using Reclaimer.IO;
-using System.Numerics;
 
 namespace Reclaimer.Blam.Halo1
 {
@@ -11,7 +10,7 @@ namespace Reclaimer.Blam.Halo1
 
         [Offset(156)]
         public float BaseMapUScale { get; set; }
-        
+
         [Offset(160)]
         public float BaseMapVScale { get; set; }
 

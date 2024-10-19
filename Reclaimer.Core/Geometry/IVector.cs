@@ -14,6 +14,29 @@ namespace Reclaimer.Geometry
         internal void ThrowInvalidDimension(int dimensions, [CallerMemberName] string caller = null) => throw new NotSupportedException($"The {caller} property cannot be set on a {dimensions}-dimensional vector.");
     }
 
+    public interface IVector1 : IVector
+    {
+        static int IVector.Dimensions => 1;
+
+        float IVector.Y
+        {
+            get => default;
+            set => ThrowInvalidDimension(1);
+        }
+
+        float IVector.Z
+        {
+            get => default;
+            set => ThrowInvalidDimension(1);
+        }
+
+        float IVector.W
+        {
+            get => default;
+            set => ThrowInvalidDimension(1);
+        }
+    }
+
     public interface IVector2 : IVector
     {
         static int IVector.Dimensions => 2;

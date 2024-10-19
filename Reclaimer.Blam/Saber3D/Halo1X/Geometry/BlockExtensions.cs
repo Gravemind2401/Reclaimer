@@ -1,7 +1,6 @@
 ﻿using Reclaimer.IO;
 using System.Diagnostics;
 using System.IO;
-using System.Numerics;
 using System.Reflection;
 
 namespace Reclaimer.Saber3D.Halo1X.Geometry

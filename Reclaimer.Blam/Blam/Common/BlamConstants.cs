@@ -13,7 +13,7 @@ namespace Reclaimer.Blam.Common
         public const string ScenarioMachineGroupName = "device_machines";
         public const string ScenarioControlGroupName = "device_controls";
         public const string ScenarioCrateGroupName = "crates";
-        
+
         public const string SourceTagPropertyName = "tag_name";
         public const string GeometryInstancePropertyName = "geometry_instance";
         public const string InstanceNamePropertyName = "instance_name";

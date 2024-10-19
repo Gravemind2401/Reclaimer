@@ -43,7 +43,7 @@ namespace Reclaimer.Geometry
             : this(buffer, buffer.Length / size, 0, size, 0, size)
         { }
 
-        private IndexBuffer(byte[] buffer, int count, int start, int stride, int offset, int size)
+        public IndexBuffer(byte[] buffer, int count, int start, int stride, int offset, int size)
             : base(buffer, count, start, stride, offset)
         {
             SizeOf = size;

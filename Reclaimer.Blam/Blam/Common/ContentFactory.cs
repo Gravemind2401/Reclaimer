@@ -19,6 +19,9 @@ namespace Reclaimer.Blam.Common
         private const string scenario_structure_bsp = "sbsp";
         private const string structure_lightmap = "stlm";
         private const string sound = "snd!";
+        private const string runtime_geo = "rtgo";
+        private const string object_customization = "ocgd";
+        private const string model = "hlmt";
 
         #region Standard Halo Maps
 
@@ -202,18 +205,6 @@ namespace Reclaimer.Blam.Common
             return false;
         }
 
-        public static bool TryGetBitmapContent(Halo5.ModuleItem item, out IContentProvider<IBitmap> content)
-        {
-            content = null;
-
-            if (item.ClassCode != bitmap)
-                return false;
-
-            content = item.ReadMetadata<Halo5.bitmap>();
-
-            return content != null;
-        }
-
         public static bool TryGetGeometryContent(Halo5.ModuleItem item, out IContentProvider<Scene> content)
         {
             content = null;
@@ -228,6 +219,85 @@ namespace Reclaimer.Blam.Common
                 scenario => item.ReadMetadata<Halo5.scenario>(),
                 scenario_structure_bsp => item.ReadMetadata<Halo5.scenario_structure_bsp>(),
                 structure_lightmap => item.ReadMetadata<Halo5.structure_lightmap>(),
+                _ => null
+            };
+
+            return content != null;
+        }
+
+        public static bool TryGetBitmapContent(Halo5.ModuleItem item, out IContentProvider<IBitmap> content)
+        {
+            content = null;
+
+            if (item.ClassCode != bitmap)
+                return false;
+
+            content = item.ReadMetadata<Halo5.bitmap>();
+
+            return content != null;
+        }
+
+        #endregion
+
+        #region Halo Infinite
+        public static bool TryGetPrimaryContent(HaloInfinite.ModuleItem item, out object content)
+        {
+            switch (item.ClassCode)
+            {
+                case bitmap:
+                    if (TryGetBitmapContent(item, out var bitmapContent))
+                    {
+                        content = bitmapContent;
+                        return true;
+                    }
+                    break;
+                case runtime_geo:
+                case scenario_structure_bsp:
+                case object_customization:
+                case model:
+                case render_model:
+                    if (TryGetGeometryContent(item, out var geometryContent))
+                    {
+                        content = geometryContent;
+                        return true;
+                    }
+                    break;
+                case particle_model:
+                case scenario:
+                case structure_lightmap:
+                    break;
+            }
+
+            content = null;
+            return false;
+        }
+
+        public static bool TryGetBitmapContent(HaloInfinite.ModuleItem item, out IContentProvider<IBitmap> content)
+        {
+            content = null;
+
+            if (item.ClassCode != bitmap)
+                return false;
+
+            content = item.ReadMetadata<HaloInfinite.bitmap>();
+
+            return content != null;
+        }
+
+        public static bool TryGetGeometryContent(HaloInfinite.ModuleItem item, out IContentProvider<Scene> content)
+        {
+            content = null;
+
+            if (item == null)
+                return false;
+
+            content = item.ClassCode switch
+            {
+                render_model => item.ReadMetadata<HaloInfinite.render_model>(),
+                runtime_geo => item.ReadMetadata<HaloInfinite.runtime_geo>(),
+                scenario_structure_bsp => item.ReadMetadata<HaloInfinite.scenario_structure_bsp>(),
+                object_customization => item.ReadMetadata<HaloInfinite.customization_globals_definition>(),
+                model => item.ReadMetadata<HaloInfinite.model>().ReadRenderModel(),
                 _ => null
             };
 

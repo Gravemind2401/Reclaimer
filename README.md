@@ -24,7 +24,7 @@ In general, Reclaimer works with these kinds of files:
 - `.yelo`  files from Halo Custom Edition (Open Sauce enhanced)
 - `.s3dpak` files (decompressed) from Halo CE Anniversary
 - `.map` files from Halo MCC PC
-- `.module` files from Halo 5
+- `.module` files from Halo 5 and Halo Infinite
 
 Using AMF model files will require either the [3DS Max](https://github.com/Gravemind2401/Reclaimer/blob/master/Reclaimer.Blam/Resources/3dsMax%20AMF2.ms "3DS Max") import script or the [Blender](https://github.com/Gravemind2401/Reclaimer/blob/master/Reclaimer.Blam/Resources/Blender%20AMF2.py "Blender") import script.
 

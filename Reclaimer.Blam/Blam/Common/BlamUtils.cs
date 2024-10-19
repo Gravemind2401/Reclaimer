@@ -22,7 +22,7 @@ namespace Reclaimer.Blam.Common
                    group i by GetGroupName(name) into g
                    orderby g.Key
                    select g;
-            
+
             static string GetSortValue(string value)
             {
                 var m = RxInstanceNameSort.Match(value);
