@@ -4,6 +4,7 @@ using Reclaimer.IO;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using Reclaimer.Blam.HaloInfinite.Oodle;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Controls.Editors;
 using System.ComponentModel;
@@ -24,7 +25,7 @@ namespace Reclaimer.Plugins
         public override void Initialise()
         {
             Settings = LoadSettings<ModuleViewerSettings>();
-            if (!File.Exists("oo2core_8_win64.dll"))
+            if (!OodleDecompressor.DependencyExists())
             {
                 LogOutput("WARNING: Oodle DLL required for Halo Infinite decompression was not found.");
                 oodleIsAvailable = false;

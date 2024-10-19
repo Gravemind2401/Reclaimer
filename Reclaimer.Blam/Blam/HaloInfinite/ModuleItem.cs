@@ -127,11 +127,6 @@ namespace Reclaimer.Blam.HaloInfinite
                 return r;
             }
 
-            if (!File.Exists("oo2core_8_win64.dll"))
-            {
-                Exceptions.ThrowIfFileNotFound(FileName);
-            }
-
             using (var reader = Module.CreateReader(DataOffsetFlags.HasFlag(DataOffsetFlags.UseHD1)))
             {
                 // HD1 Delta is the offset of which the same data is found in the hd1 handle.
