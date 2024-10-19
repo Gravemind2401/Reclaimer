@@ -1,4 +1,4 @@
-﻿using Reclaimer.Blam.Common;
+﻿using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Blam.HaloInfinite.Oodle;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;

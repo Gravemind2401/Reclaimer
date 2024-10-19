@@ -1,4 +1,5 @@
-﻿using Reclaimer.Blam.Halo5;
+﻿using Reclaimer.Blam.Common.Gen5;
+using Reclaimer.Blam.Halo5;
 using Reclaimer.IO;
 using System.Xml;
 

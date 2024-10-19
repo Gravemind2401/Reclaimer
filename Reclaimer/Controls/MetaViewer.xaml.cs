@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 using Reclaimer.Blam.Common;
-using Reclaimer.Blam;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Models;
 using Reclaimer.Plugins;
 using Reclaimer.Plugins.MetaViewer;

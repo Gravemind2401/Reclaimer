@@ -1,6 +1,7 @@
 ﻿using Reclaimer.Annotations;
 using Reclaimer.Audio;
 using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Controls.Editors;
 using Reclaimer.Drawing;
 using Reclaimer.Geometry;

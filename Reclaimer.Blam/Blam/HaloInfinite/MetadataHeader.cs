@@ -1,4 +1,5 @@
-﻿using Reclaimer.Blam.Utilities;
+﻿using Reclaimer.Blam.Common.Gen5;
+using Reclaimer.Blam.Utilities;
 
 namespace Reclaimer.Blam.HaloInfinite
 {
