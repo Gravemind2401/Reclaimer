@@ -110,7 +110,8 @@ namespace Reclaimer.Blam.HaloInfinite
                 return _cachedTagName;
             }
         }
-        public string ClassName => ClassCode;
+
+        public string ClassName => CacheFactory.HaloInfiniteClasses.TryGetValue(ClassCode, out var className) && !string.IsNullOrEmpty(className) ? className : ClassCode;
 
         public string FileName => Utils.GetFileName(TagName);
 

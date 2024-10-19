@@ -154,6 +154,9 @@
   <data name="Halo5VertexBuffer" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Halo5VertexBuffer.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="HaloInfiniteClasses" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\HaloInfiniteClasses.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="HaloReachStrings" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\HaloReachStrings.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
