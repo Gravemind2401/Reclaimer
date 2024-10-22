@@ -9,7 +9,7 @@ using System.Windows.Controls;
 
 namespace Reclaimer.Plugins
 {
-    public class Halo5ModuleViewerPlugin : Plugin
+    public class ModuleViewerPlugin : Plugin
     {
         private const string OpenKey = "ModuleViewer.OpenModule";
         private const string OpenPath = "File\\Open Module";
