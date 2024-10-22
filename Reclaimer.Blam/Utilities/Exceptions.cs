@@ -11,6 +11,8 @@ namespace Reclaimer.Blam.Utilities
         public static InvalidOperationException CoordSysNotConvertable() => new InvalidOperationException(Utils.CurrentCulture($"No conversion exists between the given coordinate systems."));
         public static ArgumentException NotAValidMapFile(string fileName) => new ArgumentException(Utils.CurrentCulture($"The file '{Utils.GetFileName(fileName)}' cannot be opened. It is not a valid map file or it may be compressed."));
         public static ArgumentException UnknownMapFile(string fileName) => new ArgumentException(Utils.CurrentCulture($"The file '{Utils.GetFileName(fileName)}' cannot be opened. It looks like a valid map file, but may not be a supported version."));
+        public static ArgumentException NotAValidModuleFile(string fileName) => new ArgumentException(Utils.CurrentCulture($"The file '{Utils.GetFileName(fileName)}' cannot be opened. It is not a valid module file."));
+        public static ArgumentException UnknownModuleFile(string fileName) => new ArgumentException(Utils.CurrentCulture($"The file '{Utils.GetFileName(fileName)}' cannot be opened. It looks like a valid module file, but may not be a supported version."));
         public static NotSupportedException BitmapFormatNotSupported(string formatName) => new NotSupportedException($"The BitmapFormat '{formatName}' is not supported.");
         public static ArgumentException NotASaberTextureItem(IPakItem item) => new ArgumentException($"'{item.Name}' is not a texture file.");
         public static NotSupportedException AmbiguousScenarioReference() => new NotSupportedException("Could not determine primary scenario tag.");

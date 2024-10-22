@@ -14,6 +14,8 @@ namespace Reclaimer.Blam.Common.Gen5
         string ClassCode { get; }
         string ClassName { get; }
 
+        IEnumerable<IModuleItem> EnumerateResourceItems();
+
         DependencyReader CreateReader();
         T ReadMetadata<T>();
 

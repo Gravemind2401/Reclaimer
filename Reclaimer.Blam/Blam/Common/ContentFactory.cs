@@ -1,4 +1,5 @@
 ﻿using Reclaimer.Audio;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Drawing;
 using Reclaimer.Geometry;
@@ -23,7 +24,7 @@ namespace Reclaimer.Blam.Common
         private const string object_customization = "ocgd";
         private const string model = "hlmt";
 
-        #region Standard Halo Maps
+        #region Cache Files
 
         public static bool TryGetPrimaryContent(IIndexItem item, out object content)
         {
@@ -175,9 +176,9 @@ namespace Reclaimer.Blam.Common
 
         #endregion
 
-        #region Halo 5
+        #region Module Files
 
-        public static bool TryGetPrimaryContent(Halo5.ModuleItem item, out object content)
+        public static bool TryGetPrimaryContent(IModuleItem item, out object content)
         {
             switch (item.ClassCode)
             {
@@ -205,34 +206,54 @@ namespace Reclaimer.Blam.Common
             return false;
         }
 
-        public static bool TryGetBitmapContent(Halo5.ModuleItem item, out IContentProvider<IBitmap> content)
+        public static bool TryGetBitmapContent(IModuleItem item, out IContentProvider<IBitmap> content)
         {
             content = null;
 
             if (item.ClassCode != bitmap)
                 return false;
 
-            content = item.ReadMetadata<Halo5.bitmap>();
+            content = item.Module.ModuleType switch
+            {
+                ModuleType.Halo5Server or ModuleType.Halo5Forge => item.ReadMetadata<Halo5.bitmap>(),
+                ModuleType.HaloInfinite => item.ReadMetadata<HaloInfinite.bitmap>(),
+                _ => null
+            };
 
             return content != null;
         }
 
-        public static bool TryGetGeometryContent(Halo5.ModuleItem item, out IContentProvider<Scene> content)
+        public static bool TryGetGeometryContent(IModuleItem item, out IContentProvider<Scene> content)
         {
             content = null;
 
             if (item == null)
                 return false;
 
-            content = item.ClassCode switch
+            if (item.Module.ModuleType is ModuleType.Halo5Server or ModuleType.Halo5Forge)
             {
-                render_model => item.ReadMetadata<Halo5.render_model>(),
-                particle_model => item.ReadMetadata<Halo5.particle_model>(),
-                scenario => item.ReadMetadata<Halo5.scenario>(),
-                scenario_structure_bsp => item.ReadMetadata<Halo5.scenario_structure_bsp>(),
-                structure_lightmap => item.ReadMetadata<Halo5.structure_lightmap>(),
-                _ => null
-            };
+                content = item.ClassCode switch
+                {
+                    render_model => item.ReadMetadata<Halo5.render_model>(),
+                    particle_model => item.ReadMetadata<Halo5.particle_model>(),
+                    scenario => item.ReadMetadata<Halo5.scenario>(),
+                    scenario_structure_bsp => item.ReadMetadata<Halo5.scenario_structure_bsp>(),
+                    structure_lightmap => item.ReadMetadata<Halo5.structure_lightmap>(),
+                    _ => null
+                };
+            }
+            else if (item.Module.ModuleType == ModuleType.HaloInfinite)
+            {
+                content = item.ClassCode switch
+                {
+                    render_model => item.ReadMetadata<HaloInfinite.render_model>(),
+                    scenario_structure_bsp => item.ReadMetadata<HaloInfinite.scenario_structure_bsp>(),
+                    runtime_geo => item.ReadMetadata<HaloInfinite.runtime_geo>(),
+                    object_customization => item.ReadMetadata<HaloInfinite.customization_globals_definition>(),
+                    model => item.ReadMetadata<HaloInfinite.model>().ReadRenderModel(),
+                    _ => null
+                };
+            }
 
             return content != null;
         }

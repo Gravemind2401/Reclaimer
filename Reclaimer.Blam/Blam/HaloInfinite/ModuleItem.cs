@@ -123,6 +123,7 @@ namespace Reclaimer.Blam.HaloInfinite
         #region IModuleItem
 
         IModule IModuleItem.Module => Module;
+        IEnumerable<IModuleItem> IModuleItem.EnumerateResourceItems() => Enumerable.Range(ResourceIndex, ResourceCount).Select(i => Module.Items[Module.Resources[i]]);
 
         #endregion
 

@@ -26,6 +26,7 @@ namespace Reclaimer.Plugins
 
         public override void Initialise()
         {
+            throw new NotSupportedException(); //disable load for now
             Settings = LoadSettings<ModuleViewerSettings>();
             if (!OodleDecompressor.DependencyExists())
             {
@@ -92,7 +93,7 @@ namespace Reclaimer.Plugins
 
             try
             {
-                if (moduleVersion == ModuleType.HaloInfinite && oodleIsAvailable)
+                /* if (moduleVersion == ModuleType.HaloInfinite && oodleIsAvailable)
                 {
                     var mv = new Controls.HaloInfiniteModuleViewer();
                     mv.TabModel.ContentId = tabId;
@@ -103,9 +104,9 @@ namespace Reclaimer.Plugins
 
                     LogOutput($"Loaded module file: {fileName}");
                 }
-                else if (moduleVersion == ModuleType.Halo5Forge | moduleVersion == ModuleType.Halo5Server)
+                else */ if (moduleVersion == ModuleType.Halo5Forge | moduleVersion == ModuleType.Halo5Server)
                 {
-                    var mv = new Controls.Halo5ModuleViewer();
+                    var mv = new Controls.ModuleViewer();
                     mv.TabModel.ContentId = tabId;
                     mv.LoadModule(fileName);
 
