@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Reclaimer.Blam.HaloInfinite
 {
-    public class Module
+    public class Module : IModule
     {
         internal const int ModuleHeader = 0x64686f6d;
 
@@ -60,6 +60,16 @@ namespace Reclaimer.Blam.HaloInfinite
             tagIndex = parentModule?.tagIndex ?? new TagIndex(Items);
             linkedModules = parentModule?.linkedModules ?? new List<Module>(Enumerable.Repeat(this, 1));
         }
+
+        #region IModule
+
+        IEnumerable<IModuleItem> IModule.FindAlternateTagInstances(int globalTagId) => FindAlternateTagInstances(globalTagId);
+        IModuleItem IModule.GetItemById(int globalTagId) => GetItemById(globalTagId);
+        IEnumerable<IModuleItem> IModule.GetItemsByClass(string classCode) => GetItemsByClass(classCode);
+        IEnumerable<IModuleItem> IModule.GetLinkedItems() => GetLinkedItems();
+        DependencyReader IModule.CreateReader() => CreateReader(false);
+
+        #endregion
 
         public DependencyReader CreateReader(bool isHd1)
         {
@@ -253,17 +263,5 @@ namespace Reclaimer.Blam.HaloInfinite
 
         [Offset(16)]
         public int Compressed { get; set; }
-    }
-
-    public class TagClass
-    {
-        public string ClassCode { get; }
-        public string ClassName { get; }
-
-        public TagClass(string code, string name)
-        {
-            ClassCode = code;
-            ClassName = name;
-        }
     }
 }

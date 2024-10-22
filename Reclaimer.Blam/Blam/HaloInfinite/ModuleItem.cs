@@ -1,4 +1,5 @@
-﻿using Reclaimer.Blam.Common.Gen5;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Blam.HaloInfinite.Oodle;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
@@ -14,7 +15,7 @@ namespace Reclaimer.Blam.HaloInfinite
     }
 
     [FixedSize(88)]
-    public class ModuleItem
+    public class ModuleItem : IModuleItem
     {
         public Module Module { get; }
 
@@ -118,6 +119,12 @@ namespace Reclaimer.Blam.HaloInfinite
         {
             Module = module ?? throw new ArgumentNullException(nameof(module));
         }
+
+        #region IModuleItem
+
+        IModule IModuleItem.Module => Module;
+
+        #endregion
 
         public DependencyReader CreateReader()
         {

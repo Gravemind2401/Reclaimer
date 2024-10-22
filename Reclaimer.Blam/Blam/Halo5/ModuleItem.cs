@@ -8,7 +8,7 @@ using System.Text;
 namespace Reclaimer.Blam.Halo5
 {
     [FixedSize(88)]
-    public class ModuleItem
+    public class ModuleItem : IModuleItem
     {
         public Module Module { get; }
 
@@ -107,6 +107,12 @@ namespace Reclaimer.Blam.Halo5
         {
             Module = module ?? throw new ArgumentNullException(nameof(module));
         }
+
+        #region IModuleItem
+
+        IModule IModuleItem.Module => Module;
+
+        #endregion
 
         private Block GetImpliedBlock()
         {
