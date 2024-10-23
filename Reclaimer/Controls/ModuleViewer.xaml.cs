@@ -5,6 +5,7 @@ using Reclaimer.Plugins;
 using Reclaimer.Utilities;
 using Studio.Controls;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -57,7 +58,7 @@ namespace Reclaimer.Controls
         public static void HierarchyViewChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var mv = d as ModuleViewer;
-            Halo5ModuleViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
+            ModuleViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
             mv.BuildTagTree(mv.txtSearch.Text);
         }
 
@@ -80,6 +81,14 @@ namespace Reclaimer.Controls
         public void LoadModule(string fileName)
         {
             module = ModuleFactory.ReadModuleFile(fileName);
+
+            if (module.ModuleType == ModuleType.HaloInfinite
+                && Blam.HaloInfinite.StringMapper.Instance.StringMappings.Count == 0
+                && File.Exists(ModuleViewerPlugin.Settings.StringIdFile))
+            {
+                Blam.HaloInfinite.StringMapper.Instance.LoadStringMap(ModuleViewerPlugin.Settings.StringIdFile);
+            }
+
             rootNode = new TreeItemModel(module.FileName);
             tv.ItemsSource = rootNode.Items;
 
@@ -103,7 +112,7 @@ namespace Reclaimer.Controls
                     item.Click += GlobalContextItem_Click;
             }
 
-            HierarchyView = Halo5ModuleViewerPlugin.Settings.HierarchyView;
+            HierarchyView = ModuleViewerPlugin.Settings.HierarchyView;
             BuildTagTree(null);
         }
 
@@ -161,7 +170,7 @@ namespace Reclaimer.Controls
 
             void AppendResourceNodes(TreeItemModel treeItem, IModuleItem tag)
             {
-                if (Halo5ModuleViewerPlugin.Settings.ShowTagResources)
+                if (ModuleViewerPlugin.Settings.ShowTagResources)
                 {
                     foreach (var resourceItem in tag.EnumerateResourceItems())
                     {
@@ -264,8 +273,8 @@ namespace Reclaimer.Controls
                 CheckFileExists = true
             };
 
-            if (!string.IsNullOrEmpty(Halo5ModuleViewerPlugin.Settings.ModuleFolder))
-                ofd.InitialDirectory = Halo5ModuleViewerPlugin.Settings.ModuleFolder;
+            if (!string.IsNullOrEmpty(ModuleViewerPlugin.Settings.ModuleFolder))
+                ofd.InitialDirectory = ModuleViewerPlugin.Settings.ModuleFolder;
 
             if (ofd.ShowDialog() != true)
                 return;

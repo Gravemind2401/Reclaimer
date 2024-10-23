@@ -121,5 +121,9 @@ namespace Reclaimer.Plugins
 
         [DisplayName("Show Tag Resources")]
         public bool ShowTagResources { get; set; }
+
+        [Editor(typeof(BrowseFileEditor), typeof(BrowseFileEditor))]
+        [DisplayName("String IDs File")]
+        public string StringIdFile { get; set; }
     }
 }

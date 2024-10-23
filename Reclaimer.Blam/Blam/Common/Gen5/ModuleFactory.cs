@@ -1,4 +1,5 @@
 ﻿using Reclaimer.Blam.Utilities;
+using Reclaimer.Utilities;
 
 namespace Reclaimer.Blam.Common.Gen5
 {
@@ -10,6 +11,9 @@ namespace Reclaimer.Blam.Common.Gen5
             Exceptions.ThrowIfFileNotFound(fileName);
 
             var args = ModuleArgs.FromFile(fileName);
+
+            if (args.UsesOodle && !Oodle.DependencyExists())
+                throw new DllNotFoundException($"Could not find \"{Oodle.OodleDllFileName}\" which is required to open this file");
 
             return args.Version switch
             {

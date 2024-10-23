@@ -11,6 +11,9 @@ namespace Reclaimer.Blam.Common.Gen5
         public string FileName { get; }
         public ModuleType Version { get; }
 
+        public bool UsesOodle => Version == ModuleType.HaloInfinite;
+        public bool UsesStringMap => Version == ModuleType.HaloInfinite;
+
         private ModuleArgs(string fileName, ModuleType version)
         {
             FileName = fileName;

@@ -1,8 +1,8 @@
 ﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Common.Gen5;
-using Reclaimer.Blam.HaloInfinite.Oodle;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
+using Reclaimer.Utilities;
 using System.IO;
 using System.Text;
 
@@ -156,7 +156,7 @@ namespace Reclaimer.Blam.HaloInfinite
                             var blockBuffer = new byte[block.CompressedSize];
                             reader.Read(blockBuffer, 0, block.CompressedSize);
 
-                            var decompressedData = OodleDecompressor.Decompress(blockBuffer, blockBuffer.Length, block.UncompressedSize);
+                            var decompressedData = Oodle.Decompress(blockBuffer, blockBuffer.Length, block.UncompressedSize);
                             fileBuffer.Write(decompressedData, 0, decompressedData.Length);
                         }
                         else
@@ -178,7 +178,7 @@ namespace Reclaimer.Blam.HaloInfinite
                         fileBuffer.Write(blockBuffer);
                     else
                     {
-                        var decompressedData = OodleDecompressor.Decompress(blockBuffer, TotalCompressedSize, TotalUncompressedSize);
+                        var decompressedData = Oodle.Decompress(blockBuffer, TotalCompressedSize, TotalUncompressedSize);
                         fileBuffer.Write(decompressedData);
                     }
                 }

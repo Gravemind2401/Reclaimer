@@ -8,12 +8,15 @@ namespace Reclaimer.Blam.HaloInfinite
 
         public Dictionary<int, string> StringMappings { get; } = new();
 
+        private StringMapper() { }
+
         /// <summary>
         /// Loads string mappings from a file that contains hashes and
         /// their corresponding strings on each line, separated by a semicolon.
         /// </summary>
         public void LoadStringMap(string filename)
         {
+            StringMappings.Clear();
             foreach (var line in File.ReadLines(filename))
             {
                 var parts = line.Split(":");
