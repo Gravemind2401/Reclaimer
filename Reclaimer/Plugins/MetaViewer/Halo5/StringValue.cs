@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using Reclaimer.Blam.Common.Gen5;
-using Reclaimer.Blam.Halo5;
 using Reclaimer.IO;
 using System.IO;
 using System.Xml;
@@ -37,7 +36,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
                 if (FieldDefinition.ValueType == MetaValueType.StringId)
                 {
-                    var hash = new StringHash(reader, (MetadataHeader)header);
+                    var hash = new StringHashGen5(reader, header);
                     Value = hash.Value;
                 }
                 else

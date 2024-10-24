@@ -9,7 +9,7 @@ namespace Reclaimer.Blam.Halo5
         public short ObjectType { get; set; }
 
         [Offset(156)]
-        public StringId DefaultVariant { get; set; }
+        public StringIdGen5 DefaultVariant { get; set; }
 
         [Offset(160)]
         public TagReferenceGen5 Model { get; set; }

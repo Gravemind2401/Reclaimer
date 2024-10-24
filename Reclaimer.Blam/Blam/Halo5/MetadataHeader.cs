@@ -21,11 +21,18 @@ namespace Reclaimer.Blam.Halo5
 
         public List<TagBlockReference> TagReferences { get; }
 
-        public List<StringId> StringIds { get; }
+        public List<StringIdGen5> StringIds { get; }
 
         public int SectionCount => DataBlocks.Max(b => b.Section) + 1;
 
+        #region IMetadataHeader
+
         int IMetadataHeader.HeaderSize => Header.HeaderSize;
+
+        string IMetadataHeader.GetStringByOffset(int offset) => GetStringByOffset(offset);
+        string IMetadataHeader.GetStringByHash(uint hash) => GetStringByHash(hash);
+
+        #endregion
 
         public MetadataHeader(DependencyReader reader)
         {
@@ -38,7 +45,7 @@ namespace Reclaimer.Blam.Halo5
             StructureDefinitions = reader.ReadArray<TagStructureDefinition>(Header.TagStructureCount).ToList();
             DataReferences = reader.ReadArray<DataBlockReference>(Header.DataReferenceCount).ToList();
             TagReferences = reader.ReadArray<TagBlockReference>(Header.TagReferenceCount).ToList();
-            StringIds = reader.ReadArray<StringId>(Header.StringIdCount).ToList();
+            StringIds = reader.ReadArray<StringIdGen5>(Header.StringIdCount).ToList();
 
             stringTable = new List<string>(StringIds.Count);
             stringsByOffset = new Dictionary<int, int>(StringIds.Count);

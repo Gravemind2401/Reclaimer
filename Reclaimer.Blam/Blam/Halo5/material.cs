@@ -18,7 +18,7 @@ namespace Reclaimer.Blam.Halo5
     public class MaterialParametersBlock
     {
         [Offset(0)]
-        public StringHash ParameterName { get; set; }
+        public StringHashGen5 ParameterName { get; set; }
 
         [Offset(4)]
         public ParameterType ParameterType { get; set; }

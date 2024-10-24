@@ -11,6 +11,9 @@
 
         int GetSectionOffset(int section);
 
+        internal string GetStringByOffset(int offset);
+        internal string GetStringByHash(uint hash);
+
         sealed int SectionCount => DataBlocks.Max(b => b.Section + 1);
     }
 }

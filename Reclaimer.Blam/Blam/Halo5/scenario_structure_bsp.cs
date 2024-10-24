@@ -1,4 +1,5 @@
 ﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
@@ -144,6 +145,6 @@ namespace Reclaimer.Blam.Halo5
         public short BoundsIndex { get; set; }
 
         [Offset(268)]
-        public StringHash Name { get; set; }
+        public StringHashGen5 Name { get; set; }
     }
 }

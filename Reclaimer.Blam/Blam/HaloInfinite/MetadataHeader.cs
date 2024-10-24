@@ -19,7 +19,14 @@ namespace Reclaimer.Blam.HaloInfinite
 
         public int SectionCount => DataBlocks.Max(b => b.Section) + 1;
 
+        #region IMetadataHeader
+
         int IMetadataHeader.HeaderSize => Header.HeaderSize;
+
+        string IMetadataHeader.GetStringByOffset(int offset) => throw new NotImplementedException();
+        string IMetadataHeader.GetStringByHash(uint hash) => StringMapper.Instance.StringMappings.TryGetValue(unchecked((int)hash), out var value) ? value : hash.ToString();
+
+        #endregion
 
         public MetadataHeader(DependencyReader reader)
         {

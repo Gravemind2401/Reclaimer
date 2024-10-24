@@ -195,7 +195,7 @@ namespace Reclaimer.Blam.Halo5
     public class RegionBlock
     {
         [Offset(0)]
-        public StringHash Name { get; set; }
+        public StringHashGen5 Name { get; set; }
 
         [Offset(4)]
         public BlockCollection<PermutationBlock> Permutations { get; set; }
@@ -206,7 +206,7 @@ namespace Reclaimer.Blam.Halo5
     public class PermutationBlock
     {
         [Offset(0)]
-        public StringHash Name { get; set; }
+        public StringHashGen5 Name { get; set; }
 
         [Offset(4)]
         public short SectionIndex { get; set; }
@@ -220,7 +220,7 @@ namespace Reclaimer.Blam.Halo5
     public class GeometryInstanceBlock
     {
         [Offset(0)]
-        public StringHash Name { get; set; }
+        public StringHashGen5 Name { get; set; }
 
         [Offset(4)]
         public int NodeIndex { get; set; }
@@ -237,7 +237,7 @@ namespace Reclaimer.Blam.Halo5
     public class NodeBlock
     {
         [Offset(0)]
-        public StringHash Name { get; set; }
+        public StringHashGen5 Name { get; set; }
 
         [Offset(4)]
         public short ParentIndex { get; set; }
@@ -269,7 +269,7 @@ namespace Reclaimer.Blam.Halo5
     public class MarkerGroupBlock
     {
         [Offset(0)]
-        public StringHash Name { get; set; }
+        public StringHashGen5 Name { get; set; }
 
         [Offset(4)]
         public BlockCollection<MarkerBlock> Markers { get; set; }
