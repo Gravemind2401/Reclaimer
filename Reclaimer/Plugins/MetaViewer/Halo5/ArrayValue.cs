@@ -40,8 +40,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                 var offset = Offset;
                 foreach (var n in node.GetChildElements())
                 {
-                    var def = FieldDefinition.GetHalo5Definition(n);
-                    Children.Add(GetMetaValue(n, item, header, host, reader, BaseAddress, offset));
+                    var def = FieldDefinition.GetHalo5Definition(Item, n);
+                    Children.Add(GetMetaValue(n, Item, Header, Host, reader, BaseAddress, offset));
                     offset += def.Size;
                 }
 
@@ -61,6 +61,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         public override JToken GetJValue()
         {
             var result = new JObject();
+
             foreach (var item in Children.Where(c => c.FieldDefinition.ValueType != MetaValueType.Comment))
             {
                 var propName = result.ContainsKey(item.Name) ? $"{item.Name}_{item.Offset}" : item.Name;

@@ -61,7 +61,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         public StructureValue(XmlNode node, IModuleItem item, IMetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, host, reader, baseAddress, offset)
         {
-            BlockSize = node.GetChildElements().Sum(n => FieldDefinition.GetHalo5Definition(n).Size);
+            BlockSize = node.GetChildElements().Sum(n => FieldDefinition.GetHalo5Definition(item, n).Size);
             Children = new ObservableCollection<MetaValue>();
             IsExpanded = true;
             ReadValue(reader);
@@ -84,18 +84,18 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                     return;
                 }
 
-                var adjustedOffset = (BaseAddress - host.Offset) + Offset;
-                var structdef = header.StructureDefinitions.First(s => s.FieldBlock == header.DataBlocks.IndexOf(host) && s.FieldOffset == adjustedOffset);
+                var adjustedOffset = (BaseAddress - Host.Offset) + Offset;
+                var structdef = Header.StructureDefinitions.First(s => s.FieldBlock == Header.DataBlocks.IndexOf(Host) && s.FieldOffset == adjustedOffset);
 
-                var block = header.DataBlocks[structdef.TargetIndex];
-                BlockAddress = header.GetSectionOffset(block.Section) + block.Offset - header.HeaderSize;
+                var block = Header.DataBlocks[structdef.TargetIndex];
+                BlockAddress = Header.GetSectionOffset(block.Section) + block.Offset - Header.HeaderSize;
 
                 blockIndex = 0;
                 var offset = 0;
                 foreach (var n in node.GetChildElements())
                 {
-                    var def = FieldDefinition.GetHalo5Definition(n);
-                    Children.Add(GetMetaValue(n, item, header, block, reader, BlockAddress, offset));
+                    var def = FieldDefinition.GetHalo5Definition(Item, n);
+                    Children.Add(GetMetaValue(n, Item, Header, block, reader, BlockAddress, offset));
                     offset += def.Size;
                 }
 
@@ -155,8 +155,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             if (BlockCount <= 0)
                 return;
 
-            using (var itemReader = item.CreateReader())
-            using (var reader = itemReader.CreateVirtualReader(header.HeaderSize))
+            using (var itemReader = Item.CreateReader())
+            using (var reader = itemReader.CreateVirtualReader(Header.HeaderSize))
             {
                 foreach (var c in Children)
                 {

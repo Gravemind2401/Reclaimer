@@ -54,9 +54,13 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public static FieldDefinition GetHalo3Definition(XmlNode node) => GetDefinition(node, Properties.Resources.Halo3FieldDefinitions, h3aliasLookup, h3cache);
 
-        public static FieldDefinition GetHalo5Definition(XmlNode node) => GetDefinition(node, Properties.Resources.Halo5FieldDefinitions, h5aliasLookup, h5cache);
-
-        public static FieldDefinition GetHaloInfiniteDefinition(XmlNode node) => GetDefinition(node, Properties.Resources.HaloInfiniteFieldDefinitions, hialiasLookup, hicache);
+        public static FieldDefinition GetHalo5Definition(Blam.Common.Gen5.IModuleItem moduleItem, XmlNode node)
+        {
+            if (moduleItem.Module.ModuleType < Blam.Common.Gen5.ModuleType.HaloInfinite)
+                return GetDefinition(node, Properties.Resources.Halo5FieldDefinitions, h5aliasLookup, h5cache);
+            else
+                return GetDefinition(node, Properties.Resources.HaloInfiniteFieldDefinitions, hialiasLookup, hicache);
+        }
 
         private static FieldDefinition GetDefinition(XmlNode node, string definitionXml, Dictionary<string, string> aliasLookup, Dictionary<string, FieldDefinition> cache)
         {

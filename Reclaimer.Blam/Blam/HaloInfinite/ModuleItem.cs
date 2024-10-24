@@ -124,6 +124,7 @@ namespace Reclaimer.Blam.HaloInfinite
 
         IModule IModuleItem.Module => Module;
         IEnumerable<IModuleItem> IModuleItem.EnumerateResourceItems() => Enumerable.Range(ResourceIndex, ResourceCount).Select(i => Module.Items[Module.Resources[i]]);
+        IMetadataHeader IModuleItem.ReadMetadataHeader(DependencyReader reader) => new MetadataHeader(reader);
 
         #endregion
 

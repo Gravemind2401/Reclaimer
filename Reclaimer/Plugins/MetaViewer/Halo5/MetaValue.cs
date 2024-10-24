@@ -7,14 +7,11 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 {
     public abstract class MetaValue : MetaValueBase
     {
-        //^*~!&#
-        private const string specialChars = "^:#";
-
         private readonly NameHelper nameHelper;
 
-        protected readonly IModuleItem item;
-        protected readonly IMetadataHeader header;
-        protected readonly DataBlock host;
+        protected IModuleItem Item { get; }
+        protected IMetadataHeader Header { get; }
+        protected DataBlock Host { get; }
 
         public override string Name => nameHelper.Name;
         public override string ToolTip => nameHelper.ToolTip;
@@ -24,11 +21,11 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         protected MetaValue(XmlNode node, IModuleItem item, IMetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, baseAddress)
         {
-            this.item = item;
-            this.header = header;
-            this.host = host;
+            Item = item;
+            Header = header;
+            Host = host;
 
-            FieldDefinition = FieldDefinition.GetHalo5Definition(node);
+            FieldDefinition = FieldDefinition.GetHalo5Definition(item, node);
 
             nameHelper = new NameHelper(node.GetStringAttribute("name"));
 

@@ -1,6 +1,4 @@
-﻿using Prism.Mvvm;
-﻿using Reclaimer.Blam.Halo5;
-using Reclaimer.IO;
+﻿using Reclaimer.IO;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Xml;
@@ -66,7 +64,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public abstract void WriteValue(EndianWriter writer);
 
-        public static Plugins.MetaViewer.Halo3.MetaValue GetMetaValue(XmlNode node, Halo3.MetaContext context, long baseAddress)
+        public static Halo3.MetaValue GetMetaValue(XmlNode node, Halo3.MetaContext context, long baseAddress)
         {
             using (var reader = context.CreateReader())
             {
@@ -124,11 +122,11 @@ namespace Reclaimer.Plugins.MetaViewer
             }
         }
 
-        public static Plugins.MetaViewer.Halo5.MetaValue GetMetaValue(XmlNode node, Blam.Common.Gen5.IModuleItem item, Blam.Common.Gen5.IMetadataHeader header, Blam.Common.Gen5.DataBlock host, EndianReader reader, long baseAddress, int offset)
+        public static Halo5.MetaValue GetMetaValue(XmlNode node, Blam.Common.Gen5.IModuleItem item, Blam.Common.Gen5.IMetadataHeader header, Blam.Common.Gen5.DataBlock host, EndianReader reader, long baseAddress, int offset)
         {
             reader.Seek(baseAddress, SeekOrigin.Begin);
 
-            var def = FieldDefinition.GetHalo5Definition(node);
+            var def = FieldDefinition.GetHalo5Definition(item, node);
 
             if (def.Size < 0)
                 System.Diagnostics.Debugger.Break();
@@ -176,59 +174,6 @@ namespace Reclaimer.Plugins.MetaViewer
 
                 default:
                     return new Halo5.SimpleValue(node, item, header, host, reader, baseAddress, offset);
-            }
-        }
-
-        public static Plugins.MetaViewer.HaloInfinite.MetaValue GetMetaValue(XmlNode node, Blam.HaloInfinite.ModuleItem item, Blam.HaloInfinite.MetadataHeader header, Blam.Common.Gen5.DataBlock host, EndianReader reader, long baseAddress, int offset)
-        {
-            reader.Seek(baseAddress, SeekOrigin.Begin);
-
-            var def = FieldDefinition.GetHaloInfiniteDefinition(node);
-
-            if (def.Size < 0)
-                System.Diagnostics.Debugger.Break();
-
-            if (def.Components > 1)
-            {
-                switch (def.ValueType)
-                {
-                    case MetaValueType.Float32:
-                        return new HaloInfinite.MultiValue<float>(node, item, header, host, reader, baseAddress, offset);
-                    case MetaValueType.Int16:
-                        return new HaloInfinite.MultiValue<short>(node, item, header, host, reader, baseAddress, offset);
-                }
-            }
-
-            switch (def.ValueType)
-            {
-                case MetaValueType.Structure:
-                    return new HaloInfinite.StructureValue(node, item, header, host, reader, baseAddress, offset);
-
-                case MetaValueType.Array:
-                    return new HaloInfinite.ArrayValue(node, item, header, host, reader, baseAddress, offset);
-
-                case MetaValueType.StringId:
-                case MetaValueType.String:
-                    return new HaloInfinite.StringValue(node, item, header, host, reader, baseAddress, offset);
-
-                case MetaValueType.TagReference:
-                    return new HaloInfinite.TagReferenceValue(node, item, header, host, reader, baseAddress, offset);
-
-                case MetaValueType.Comment:
-                    return new HaloInfinite.CommentValue(node, item, header, host, reader, baseAddress, offset);
-
-                case MetaValueType.Bitmask32:
-                case MetaValueType.Bitmask16:
-                case MetaValueType.Bitmask8:
-                    return new HaloInfinite.BitmaskValue(node, item, header, host, reader, baseAddress, offset);
-
-                case MetaValueType.Enum32:
-                case MetaValueType.Enum16:
-                case MetaValueType.Enum8:
-                    return new HaloInfinite.EnumValue(node, item, header, host, reader, baseAddress, offset);
-
-                default:
-                    return new HaloInfinite.SimpleValue(node, item, header, host, reader, baseAddress, offset);
             }
         }
 

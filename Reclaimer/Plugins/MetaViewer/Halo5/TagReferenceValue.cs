@@ -59,7 +59,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             TagOptions.Clear();
             TagOptions.Insert(0, externalTagOption);
 
-            var classTags = from t in item.Module.GetItemsByClass(SelectedClass.Context.ClassCode)
+            var classTags = from t in Item.Module.GetItemsByClass(SelectedClass.Context.ClassCode)
                             orderby t.TagName
                             select t;
 
@@ -77,7 +77,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                referenceValue = new TagReferenceGen5(item.Module, reader);
+                referenceValue = new TagReferenceGen5(Item.Module, reader);
 
                 if (referenceValue.TagId != -1 && referenceValue.Tag == null)
                 {

@@ -12,6 +12,9 @@
 
         public NameHelper(string value)
         {
+            if (string.IsNullOrWhiteSpace(value))
+                return;
+
             IsBlockName = value.StartsWith("^");
             Name = value.Split(specialChars.ToArray(), StringSplitOptions.RemoveEmptyEntries)[0];
             Description = GetSection(':', value);

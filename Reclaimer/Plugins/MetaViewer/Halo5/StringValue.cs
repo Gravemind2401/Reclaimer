@@ -36,7 +36,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
                 if (FieldDefinition.ValueType == MetaValueType.StringId)
                 {
-                    var hash = new StringHashGen5(reader, header);
+                    var hash = new StringHashGen5(reader, Header);
                     Value = hash.Value;
                 }
                 else

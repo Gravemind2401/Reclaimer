@@ -17,6 +17,7 @@ namespace Reclaimer.Blam.Common.Gen5
         IEnumerable<IModuleItem> EnumerateResourceItems();
 
         DependencyReader CreateReader();
+        IMetadataHeader ReadMetadataHeader(DependencyReader reader);
         T ReadMetadata<T>();
 
         sealed string FileName => TagName.GetFileName();
