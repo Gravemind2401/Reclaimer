@@ -2,7 +2,7 @@
 <fieldDefinitions>
   <_field_tag_reference_64 size="28" valueType="tagReference" />
   <_field_block_64 size="20" valueType="structure" />
-  
+
   <_field_data_64 size="24" valueType="" hidden="true" />
   <_field_pageable_resource_64 size="16" valueType="" hidden="true" />
   <_field_tag size="4" valueType="string" hidden="true" />
@@ -16,7 +16,7 @@
 
   <_field_explanation size="0" valueType="comment" />
   <_field_custom size="0" valueType="comment" />
-  
+
   <_field_pad size="length" valueType="padding" hidden="true" />
   <_field_skip size="length" valueType="padding" hidden="true" />
 
@@ -51,25 +51,25 @@
   <_field_real_bounds size="8" valueType="float32" components="2" axes="bounds" />
   <_field_fraction_bounds size="8" valueType="float32" components="2" axes="bounds" />
   <_field_angle_bounds size="8" valueType="float32" components="2" axes="bounds" />
-  
+
   <_field_point_2d size="4" valueType="int16" components="2" axes="point" />
 
   <_field_real_point_2d size="8" valueType="float32" components="2" axes="point" />
   <_field_real_point_3d size="12" valueType="float32" components="3" axes="point" />
-  
+
   <_field_real_vector_2d size="8" valueType="float32" components="2" axes="vector" />
   <_field_real_vector_3d size="12" valueType="float32" components="3" axes="vector" />
-  
+
   <_field_real_quaternion size="16" valueType="float32" components="4" axes="vector" />
-  
+
   <_field_real_plane_2d />
   <_field_real_plane_3d size="16" valueType="float32" components="4" axes="plane" />
-  
+
   <_field_rectangle_2d />
-  
+
   <_field_real_euler_angles_2d size="8" valueType="float32" components="3" axes="angle" />
   <_field_real_euler_angles_3d size="12" valueType="float32" components="4" axes="angle" />
-  
+
   <_field_rgb_color size="4" valueType="byte" components="4" axes="color" />
   <_field_real_rgb_color size="12" valueType="float32" components="3" axes="color" />
   <_field_real_argb_color size="16" valueType="float32" components="4" axes="color" />

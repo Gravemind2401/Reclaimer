@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using Reclaimer.Blam.Common.Gen5;
-using Reclaimer.Blam.Halo5;
 using Reclaimer.IO;
 using System.IO;
 using System.Xml;
@@ -39,7 +38,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
         public string[] Labels { get; }
 
-        public MultiValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
+        public MultiValue(XmlNode node, IModuleItem item, IMetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, host, reader, baseAddress, offset)
         {
             Labels = FieldDefinition.Axes switch

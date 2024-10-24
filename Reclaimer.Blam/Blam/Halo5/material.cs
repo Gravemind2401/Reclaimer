@@ -1,4 +1,5 @@
-﻿using Reclaimer.Geometry.Vectors;
+﻿using Reclaimer.Blam.Common.Gen5;
+using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 
 namespace Reclaimer.Blam.Halo5
@@ -23,7 +24,7 @@ namespace Reclaimer.Blam.Halo5
         public ParameterType ParameterType { get; set; }
 
         [Offset(12)]
-        public TagReference BitmapReference { get; set; }
+        public TagReferenceGen5 BitmapReference { get; set; }
 
         [Offset(48)]
         public RealVector4 ColorValue { get; set; }
@@ -52,7 +53,7 @@ namespace Reclaimer.Blam.Halo5
     public class TexturesBlock
     {
         [Offset(0)]
-        public TagReference BitmapReference { get; set; }
+        public TagReferenceGen5 BitmapReference { get; set; }
     }
 
     public enum ParameterType : int

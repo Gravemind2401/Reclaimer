@@ -3,7 +3,7 @@ using Reclaimer.Blam.Utilities;
 
 namespace Reclaimer.Blam.Halo5
 {
-    public class MetadataHeader
+    public class MetadataHeader : IMetadataHeader
     {
         private readonly List<string> stringTable;
         private readonly Dictionary<int, int> stringsByOffset;
@@ -24,6 +24,8 @@ namespace Reclaimer.Blam.Halo5
         public List<StringId> StringIds { get; }
 
         public int SectionCount => DataBlocks.Max(b => b.Section) + 1;
+
+        int IMetadataHeader.HeaderSize => Header.HeaderSize;
 
         public MetadataHeader(DependencyReader reader)
         {

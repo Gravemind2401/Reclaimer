@@ -43,12 +43,12 @@ namespace Reclaimer.Plugins.MetaViewer
 
     public readonly struct FieldDefinition
     {
-        private static readonly Dictionary<string, string> h3aliasLookup = new Dictionary<string, string>();
-        private static readonly Dictionary<string, string> h5aliasLookup = new Dictionary<string, string>();
-        private static readonly Dictionary<string, string> hialiasLookup = new Dictionary<string, string>();
-        private static readonly Dictionary<string, FieldDefinition> h3cache = new Dictionary<string, FieldDefinition>();
-        private static readonly Dictionary<string, FieldDefinition> h5cache = new Dictionary<string, FieldDefinition>();
-        private static readonly Dictionary<string, FieldDefinition> hicache = new Dictionary<string, FieldDefinition>();
+        private static readonly Dictionary<string, string> h3aliasLookup = new();
+        private static readonly Dictionary<string, string> h5aliasLookup = new();
+        private static readonly Dictionary<string, string> hialiasLookup = new();
+        private static readonly Dictionary<string, FieldDefinition> h3cache = new();
+        private static readonly Dictionary<string, FieldDefinition> h5cache = new();
+        private static readonly Dictionary<string, FieldDefinition> hicache = new();
 
         private static readonly FieldDefinition UndefinedDefinition = new FieldDefinition("undefined", MetaValueType.Undefined, 4, 1, AxesDefinition.None, true);
 

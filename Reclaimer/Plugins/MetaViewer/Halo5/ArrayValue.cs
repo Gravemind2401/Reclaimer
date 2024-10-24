@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using Reclaimer.Blam.Common.Gen5;
-using Reclaimer.Blam.Halo5;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
 using System.Collections.ObjectModel;
@@ -22,7 +21,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
         IEnumerable<MetaValueBase> IExpandable.Children => Children;
 
-        public ArrayValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
+        public ArrayValue(XmlNode node, IModuleItem item, IMetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, host, reader, baseAddress, offset)
         {
             Children = new ObservableCollection<MetaValueBase>();
@@ -63,7 +62,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         {
             var result = new JObject();
             foreach (var item in Children.Where(c => c.FieldDefinition.ValueType != MetaValueType.Comment))
-                result.Add(item.Name, item.GetJValue());
+            {
+                var propName = result.ContainsKey(item.Name) ? $"{item.Name}_{item.Offset}" : item.Name;
+                result.Add(propName, item.GetJValue());
+            }
 
             return result;
         }

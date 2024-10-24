@@ -124,7 +124,7 @@ namespace Reclaimer.Plugins.MetaViewer
             }
         }
 
-        public static Plugins.MetaViewer.Halo5.MetaValue GetMetaValue(XmlNode node, Blam.Halo5.ModuleItem item, Blam.Halo5.MetadataHeader header, Blam.Common.Gen5.DataBlock host, EndianReader reader, long baseAddress, int offset)
+        public static Plugins.MetaViewer.Halo5.MetaValue GetMetaValue(XmlNode node, Blam.Common.Gen5.IModuleItem item, Blam.Common.Gen5.IMetadataHeader header, Blam.Common.Gen5.DataBlock host, EndianReader reader, long baseAddress, int offset)
         {
             reader.Seek(baseAddress, SeekOrigin.Begin);
 

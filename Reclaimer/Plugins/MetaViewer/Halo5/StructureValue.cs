@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using Reclaimer.Blam.Common.Gen5;
-using Reclaimer.Blam.Halo5;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
 using System.Collections.ObjectModel;
@@ -59,7 +58,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
         IEnumerable<MetaValueBase> IExpandable.Children => Children;
 
-        public StructureValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
+        public StructureValue(XmlNode node, IModuleItem item, IMetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, host, reader, baseAddress, offset)
         {
             BlockSize = node.GetChildElements().Sum(n => FieldDefinition.GetHalo5Definition(n).Size);
@@ -89,7 +88,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                 var structdef = header.StructureDefinitions.First(s => s.FieldBlock == header.DataBlocks.IndexOf(host) && s.FieldOffset == adjustedOffset);
 
                 var block = header.DataBlocks[structdef.TargetIndex];
-                BlockAddress = header.GetSectionOffset(block.Section) + block.Offset - header.Header.HeaderSize;
+                BlockAddress = header.GetSectionOffset(block.Section) + block.Offset - header.HeaderSize;
 
                 blockIndex = 0;
                 var offset = 0;
@@ -157,7 +156,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                 return;
 
             using (var itemReader = item.CreateReader())
-            using (var reader = itemReader.CreateVirtualReader(header.Header.HeaderSize))
+            using (var reader = itemReader.CreateVirtualReader(header.HeaderSize))
             {
                 foreach (var c in Children)
                 {

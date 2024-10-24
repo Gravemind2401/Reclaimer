@@ -12,8 +12,8 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
         private readonly NameHelper nameHelper;
 
-        protected readonly ModuleItem item;
-        protected readonly MetadataHeader header;
+        protected readonly IModuleItem item;
+        protected readonly IMetadataHeader header;
         protected readonly DataBlock host;
 
         public override string Name => nameHelper.Name;
@@ -21,7 +21,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         public override string Description => nameHelper.Description;
         public bool IsBlockName => nameHelper.IsBlockName;
 
-        protected MetaValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
+        protected MetaValue(XmlNode node, IModuleItem item, IMetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, baseAddress)
         {
             this.item = item;

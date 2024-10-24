@@ -57,7 +57,7 @@
     <_field_real_point_2d size="8" valueType="float32" components="2" axes="point" />
     <_field_real_point_3d size="12" valueType="float32" components="3" axes="point" />
 
-    <_field_real_vector_2d />
+    <_field_real_vector_2d size="8" valueType="float32" components="2" axes="vector" />
     <_field_real_vector_3d size="12" valueType="float32" components="3" axes="vector" />
 
     <_field_real_quaternion size="16" valueType="float32" components="4" axes="vector" />

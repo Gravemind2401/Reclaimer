@@ -1,4 +1,5 @@
 ﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
@@ -306,7 +307,7 @@ namespace Reclaimer.Blam.Halo5
     public class MaterialBlock
     {
         [Offset(0)]
-        public TagReference MaterialReference { get; set; }
+        public TagReferenceGen5 MaterialReference { get; set; }
     }
 
     [FixedSize(128)]

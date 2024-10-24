@@ -3,7 +3,7 @@ using Reclaimer.Blam.Utilities;
 
 namespace Reclaimer.Blam.HaloInfinite
 {
-    public class MetadataHeader
+    public class MetadataHeader : IMetadataHeader
     {
         public TagHeader Header { get; }
 
@@ -18,6 +18,8 @@ namespace Reclaimer.Blam.HaloInfinite
         public List<TagBlockReference> TagReferences { get; }
 
         public int SectionCount => DataBlocks.Max(b => b.Section) + 1;
+
+        int IMetadataHeader.HeaderSize => Header.HeaderSize;
 
         public MetadataHeader(DependencyReader reader)
         {
