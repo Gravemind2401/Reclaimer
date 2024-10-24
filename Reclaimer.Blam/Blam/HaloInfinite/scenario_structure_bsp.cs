@@ -1,4 +1,5 @@
 using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
@@ -83,7 +84,7 @@ namespace Reclaimer.Blam.HaloInfinite
         public Matrix4x4 Transform { get; set; }
 
         [Offset(60)]
-        public TagReference RuntimeGeoMeshReference { get; set; }
+        public TagReferenceGen5 RuntimeGeoMeshReference { get; set; }
 
         [Offset(116)]
         public short MeshIndex { get; set; }

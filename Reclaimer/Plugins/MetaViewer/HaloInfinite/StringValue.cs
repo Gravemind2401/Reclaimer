@@ -37,7 +37,7 @@ namespace Reclaimer.Plugins.MetaViewer.HaloInfinite
 
                 if (FieldDefinition.ValueType == MetaValueType.StringId)
                 {
-                    var hash = new StringHash(reader, header);
+                    var hash = new StringHashGen5(reader, header);
                     Value = hash.Value;
                 }
                 else

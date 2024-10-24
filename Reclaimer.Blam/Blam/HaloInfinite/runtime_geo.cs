@@ -1,4 +1,5 @@
 ﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
@@ -117,7 +118,7 @@ namespace Reclaimer.Blam.HaloInfinite
     public class RuntimeGeoPerMeshDataBlock
     {
         [Offset(0)]
-        public StringHash Name { get; set; }
+        public StringHashGen5 Name { get; set; }
 
         [Offset(4)]
         public int MeshIndex { get; set; }
@@ -137,7 +138,7 @@ namespace Reclaimer.Blam.HaloInfinite
     public class StaticMarkerBlock
     {
         [Offset(0)]
-        public StringHash Name { get; set; }
+        public StringHashGen5 Name { get; set; }
 
         [Offset(4)]
         public BlockCollection<StaticGeoMarkerBlock> Markers { get; set; }

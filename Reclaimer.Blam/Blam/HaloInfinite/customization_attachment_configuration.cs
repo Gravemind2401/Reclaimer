@@ -1,4 +1,5 @@
-﻿using Reclaimer.IO;
+﻿using Reclaimer.Blam.Common.Gen5;
+using Reclaimer.IO;
 using System.Numerics;
 
 namespace Reclaimer.Blam.HaloInfinite
@@ -13,7 +14,7 @@ namespace Reclaimer.Blam.HaloInfinite
     public class ModelAttachment
     {
         [Offset(0)]
-        public TagReference AttachmentModel { get; set; }
+        public TagReferenceGen5 AttachmentModel { get; set; }
 
         [Offset(32)]
         public BlockCollection<AttachmentMarker> Markers { get; set; }
@@ -23,7 +24,7 @@ namespace Reclaimer.Blam.HaloInfinite
     public class AttachmentMarker
     {
         [Offset(0)]
-        public StringHash MarkerName { get; set; }
+        public StringHashGen5 MarkerName { get; set; }
 
         [Offset(4)]
         public Vector3 Translation { get; set; }

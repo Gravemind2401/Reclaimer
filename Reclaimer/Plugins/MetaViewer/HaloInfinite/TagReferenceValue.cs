@@ -14,7 +14,7 @@ namespace Reclaimer.Plugins.MetaViewer.HaloInfinite
         private static readonly ComboBoxItem<TagClass> externalClassOption = new ComboBoxItem<TagClass>("external", new TagClass(null, null), false);
         private static readonly ComboBoxItem<ModuleItem> externalTagOption = new ComboBoxItem<ModuleItem>("[[external reference]]", null, false);
 
-        private Reclaimer.Blam.HaloInfinite.TagReference referenceValue;
+        private TagReferenceGen5 referenceValue;
 
         private ComboBoxItem<ModuleItem> selectedItem;
         public ComboBoxItem<ModuleItem> SelectedItem
@@ -84,7 +84,7 @@ namespace Reclaimer.Plugins.MetaViewer.HaloInfinite
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                referenceValue = new TagReference(item.Module, reader);
+                referenceValue = new TagReferenceGen5(item.Module, reader);
 
                 if (referenceValue.TagId != -1 && referenceValue.Tag == null)
                 {

@@ -1,4 +1,5 @@
 using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Geometry;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
@@ -20,7 +21,7 @@ namespace Reclaimer.Blam.HaloInfinite
 
         public override Scene GetContent() => Scene.WrapSingleModel(GetModelContent(), BlamConstants.WorldUnitScale);
 
-        private static void AddAttachment(TagReference attachmentReference, ModelRegion themeRegion, Model model)
+        private static void AddAttachment(TagReferenceGen5 attachmentReference, ModelRegion themeRegion, Model model)
         {
             var attachment = attachmentReference.Tag;
             if (attachment != null)
@@ -85,7 +86,7 @@ namespace Reclaimer.Blam.HaloInfinite
             model.Markers.AddRange(armor.Markers);
             model.Bones.AddRange(armor.Bones);
 
-            var themes = new HashSet<int>();
+            var themes = new HashSet<uint>();
             foreach (var theme in Themes[0].ThemeConfigurations)
             {
                 if (!themes.Contains(theme.ThemeName.Hash))
@@ -115,13 +116,13 @@ namespace Reclaimer.Blam.HaloInfinite
     public class ObjectTheme
     {
         [Offset(0)]
-        public StringHash AssetName { get; set; }
+        public StringHashGen5 AssetName { get; set; }
 
         [Offset(4)]
-        public TagReference Model { get; set; }
+        public TagReferenceGen5 Model { get; set; }
 
         [Offset(32)]
-        public TagReference ObjectReference { get; set; }
+        public TagReferenceGen5 ObjectReference { get; set; }
 
         [Offset(60)]
         public BlockCollection<ThemeConfiguration> ThemeConfigurations { get; set; }
@@ -132,12 +133,12 @@ namespace Reclaimer.Blam.HaloInfinite
     public class ThemeConfiguration
     {
         [Offset(0)]
-        public StringHash ThemeName { get; set; }
+        public StringHashGen5 ThemeName { get; set; }
 
         [Offset(4)]
-        public StringHash ThemeVariantName { get; set; }
+        public StringHashGen5 ThemeVariantName { get; set; }
 
         [Offset(8)]
-        public TagReference ThemeConfigs { get; set; }
+        public TagReferenceGen5 ThemeConfigs { get; set; }
     }
 }

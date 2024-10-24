@@ -1,4 +1,5 @@
-﻿using Reclaimer.IO;
+﻿using Reclaimer.Blam.Common.Gen5;
+using Reclaimer.IO;
 
 namespace Reclaimer.Blam.HaloInfinite
 {
@@ -8,7 +9,7 @@ namespace Reclaimer.Blam.HaloInfinite
         public BlockCollection<ObjectRegion> Regions { get; set; }
 
         [Offset(36)]
-        public BlockCollection<TagReference> Attachments { get; set; }
+        public BlockCollection<TagReferenceGen5> Attachments { get; set; }
 
         [Offset(56)]
         public BlockCollection<ObjectRegion> Prosthetics { get; set; }
@@ -21,10 +22,10 @@ namespace Reclaimer.Blam.HaloInfinite
     public class ObjectRegion
     {
         [Offset(0)]
-        public StringHash RegionName { get; set; }
+        public StringHashGen5 RegionName { get; set; }
 
         [Offset(4)]
-        public BlockCollection<StringHash> PermutationRegions { get; set; }
+        public BlockCollection<StringHashGen5> PermutationRegions { get; set; }
 
         [Offset(24)]
         public BlockCollection<PermutationSetting> PermutationSettings { get; set; }
@@ -34,12 +35,12 @@ namespace Reclaimer.Blam.HaloInfinite
     public class PermutationSetting
     {
         [Offset(0)]
-        public StringHash Name { get; set; }
+        public StringHashGen5 Name { get; set; }
 
         [Offset(4)]
-        public TagReference Style { get; set; }
+        public TagReferenceGen5 Style { get; set; }
 
         [Offset(32)]
-        public TagReference Attachment { get; set; }
+        public TagReferenceGen5 Attachment { get; set; }
     }
 }
