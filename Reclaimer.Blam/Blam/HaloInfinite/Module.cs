@@ -78,6 +78,7 @@ namespace Reclaimer.Blam.HaloInfinite
                 Hd1Stream = new FileStream($"{FileName}_hd1", FileMode.Open, FileAccess.Read);
                 var reader = new DependencyReader(Hd1Stream, ByteOrder.LittleEndian);
                 reader.RegisterInstance(this);
+                reader.RegisterInstance<IModule>(this);
                 reader.RegisterType(reader.ReadMatrix3x4);
                 return reader;
             }
@@ -100,6 +101,7 @@ namespace Reclaimer.Blam.HaloInfinite
             }
 
             reader.RegisterInstance(this);
+            reader.RegisterInstance<IModule>(this);
             reader.RegisterType(reader.ReadMatrix3x4);
 
             return reader;

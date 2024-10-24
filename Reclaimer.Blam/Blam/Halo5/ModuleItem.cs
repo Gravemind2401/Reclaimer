@@ -132,6 +132,7 @@ namespace Reclaimer.Blam.Halo5
             DependencyReader Register(DependencyReader r)
             {
                 r.RegisterInstance(this);
+                r.RegisterInstance<IModuleItem>(this);
                 return r;
             }
 

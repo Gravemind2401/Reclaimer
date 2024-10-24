@@ -24,6 +24,7 @@ namespace Reclaimer.Blam.HaloInfinite
         public MetadataHeader(DependencyReader reader)
         {
             reader.RegisterInstance(this);
+            reader.RegisterInstance<IMetadataHeader>(this);
 
             Header = reader.ReadObject<TagHeader>();
             Dependencies = reader.ReadArray<TagDependency>(Header.DependencyCount).ToList();
