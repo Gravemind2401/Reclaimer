@@ -39,6 +39,9 @@ namespace Reclaimer.Controls
         public static readonly DependencyProperty HierarchyViewProperty =
             DependencyProperty.Register(nameof(HierarchyView), typeof(bool), typeof(ModuleViewer), new PropertyMetadata(false, HierarchyViewChanged));
 
+        public static readonly DependencyProperty ShowTagResourcesProperty =
+            DependencyProperty.Register(nameof(ShowTagResources), typeof(bool), typeof(ModuleViewer), new PropertyMetadata(false, ShowTagResourcesChanged));
+
         public bool HasGlobalHandlers
         {
             get => (bool)GetValue(HasGlobalHandlersProperty);
@@ -50,6 +53,12 @@ namespace Reclaimer.Controls
             get => (bool)GetValue(HierarchyViewProperty);
             set => SetValue(HierarchyViewProperty, value);
         }
+
+        public bool ShowTagResources
+        {
+            get => (bool)GetValue(ShowTagResourcesProperty);
+            set => SetValue(ShowTagResourcesProperty, value);
+        }
         #endregion
 
         public TabModel TabModel { get; }
@@ -59,6 +68,13 @@ namespace Reclaimer.Controls
         {
             var mv = d as ModuleViewer;
             ModuleViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
+            mv.BuildTagTree(mv.txtSearch.Text);
+        }
+
+        public static void ShowTagResourcesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var mv = d as ModuleViewer;
+            ModuleViewerPlugin.Settings.ShowTagResources = mv.ShowTagResources;
             mv.BuildTagTree(mv.txtSearch.Text);
         }
 
@@ -113,6 +129,8 @@ namespace Reclaimer.Controls
             }
 
             HierarchyView = ModuleViewerPlugin.Settings.HierarchyView;
+            ShowTagResources = ModuleViewerPlugin.Settings.ShowTagResources;
+
             BuildTagTree(null);
         }
 
@@ -170,17 +188,17 @@ namespace Reclaimer.Controls
 
             void AppendResourceNodes(TreeItemModel treeItem, IModuleItem tag)
             {
-                if (ModuleViewerPlugin.Settings.ShowTagResources)
+                if (!ModuleViewerPlugin.Settings.ShowTagResources)
+                    return;
+
+                foreach (var resourceItem in tag.EnumerateResourceItems())
                 {
-                    foreach (var resourceItem in tag.EnumerateResourceItems())
+                    treeItem.Items.Add(new TreeItemModel
                     {
-                        treeItem.Items.Add(new TreeItemModel
-                        {
-                            Header = resourceItem.FileName,
-                            ItemType = ResourceNodeType,
-                            Tag = resourceItem
-                        });
-                    }
+                        Header = resourceItem.FileName,
+                        ItemType = ResourceNodeType,
+                        Tag = resourceItem
+                    });
                 }
             }
 
