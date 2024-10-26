@@ -190,6 +190,9 @@ namespace Reclaimer.Blam.Common
                     }
                     break;
                 case render_model:
+                case object_customization:
+                case runtime_geo:
+                case model:
                 case particle_model:
                 case scenario:
                 case scenario_structure_bsp:

@@ -38,7 +38,7 @@ namespace Reclaimer.Blam.Halo5
 
             var block = metadata.DataBlocks[structdef.TargetIndex];
 
-            var blockSize = typeof(T).IsPrimitive ? Marshal.SizeOf<T>() : (int)FixedSizeAttribute.ValueFor(typeof(T));
+            var blockSize = typeof(T).IsPrimitive ? Marshal.SizeOf<T>() : (int)FixedSizeAttribute.ValueFor(typeof(T), (double)metadata.Header.Version);
 
             reader.Seek(block.Offset, SeekOrigin.Begin);
             for (var i = 0; i < blockCount; i++)
