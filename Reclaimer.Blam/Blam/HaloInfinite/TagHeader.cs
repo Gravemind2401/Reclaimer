@@ -10,7 +10,6 @@ namespace Reclaimer.Blam.HaloInfinite
         public int Header { get; set; }
 
         //note that infinite still says 27 (H5F) for this, overriding as HaloInfinite for now
-        [Offset(4)]
         public ModuleType Version { get; set; } = ModuleType.HaloInfinite;
 
         [Offset(8)]
