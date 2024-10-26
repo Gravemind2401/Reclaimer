@@ -59,7 +59,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             TagOptions.Clear();
             TagOptions.Insert(0, externalTagOption);
 
-            var classTags = from t in Item.Module.GetItemsByClass(SelectedClass.Context.ClassCode)
+            var classTags = from t in Item.Module.GetItemsByClass(SelectedClass?.Context.ClassCode)
                             orderby t.TagName
                             select t;
 
