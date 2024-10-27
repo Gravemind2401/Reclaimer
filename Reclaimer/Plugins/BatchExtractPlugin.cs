@@ -653,6 +653,7 @@ namespace Reclaimer.Plugins
                 return item.ItemType switch
                 {
                     PakItemType.Textures => 0,
+                    PakItemType.Templates or PakItemType.Scene => 1,
                     _ => -1
                 };
             }
