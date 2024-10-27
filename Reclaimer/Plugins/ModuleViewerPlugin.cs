@@ -1,5 +1,5 @@
 ﻿using Microsoft.Win32;
-using Reclaimer.Blam.Halo5;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Controls.Editors;
 using System.ComponentModel;
 using System.IO;
@@ -16,7 +16,7 @@ namespace Reclaimer.Plugins
         private const string BrowseFileFilter = "Halo Module Files|*.module";
         private const string ModuleFileExtension = "module";
 
-        private const string Halo5TagKeyRegex = @"Blam\.Halo5\w+\..{2,}";
+        private const string ModuleTagKeyRegex = @"Blam\.Halo(?:5\w+|Infinite)\..{2,}";
 
         internal static ModuleViewerSettings Settings;
 
@@ -34,7 +34,7 @@ namespace Reclaimer.Plugins
 
         public override IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
         {
-            if (Regex.IsMatch(context.FileTypeKey, Halo5TagKeyRegex))
+            if (Regex.IsMatch(context.FileTypeKey, ModuleTagKeyRegex))
                 yield return ExtractBinaryContextItem;
         }
 
@@ -62,7 +62,7 @@ namespace Reclaimer.Plugins
 
         private void OnContextItemClick(string key, OpenFileArgs context)
         {
-            var item = context.File.OfType<ModuleItem>().First();
+            var item = context.File.OfType<IModuleItem>().First();
 
             var sfd = new SaveFileDialog
             {
