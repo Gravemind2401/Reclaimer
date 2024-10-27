@@ -718,7 +718,6 @@ namespace Reclaimer.IO
         /// <typeparam name="T">The type of object to read.</typeparam>
         /// <param name="count">The maximum number of objects to read.</param>
         /// <param name="version">The version of the type to read.</param>
-        /// <returns></returns>
         /// <inheritdoc cref="ReadObject{T}(double)"/>
         public IEnumerable<T> ReadEnumerable<T>(int count, double version)
         {
@@ -734,30 +733,46 @@ namespace Reclaimer.IO
         /// Populates a fixed length array using the result of <seealso cref="ReadObject{T}"/> for index of the array.
         /// </summary>
         /// <inheritdoc cref="ReadEnumerable{T}(int)"/>
-        public T[] ReadArray<T>(int count)
-        {
-            if (count < 0)
-                throw Exceptions.ParamMustBeNonNegative(count);
-
-            var result = new T[count];
-            for (var i = 0; i < count; i++)
-                result[i] = ReadObject<T>();
-
-            return result;
-        }
+        public T[] ReadArray<T>(int count) => ReadArrayInternal<T>(count, null);
 
         /// <summary>
         /// Populates a fixed length array using the result of <seealso cref="ReadObject{T}(double)"/> for index of the array.
         /// </summary>
         /// <inheritdoc cref="ReadEnumerable{T}(int, double)"/>
-        public T[] ReadArray<T>(int count, double version)
+        public T[] ReadArray<T>(int count, double version) => ReadArrayInternal<T>(count, version);
+
+        private T[] ReadArrayInternal<T>(int count, double? version)
         {
             if (count < 0)
                 throw Exceptions.ParamMustBeNonNegative(count);
 
             var result = new T[count];
             for (var i = 0; i < count; i++)
-                result[i] = ReadObject<T>(version);
+                result[i] = version.HasValue ? ReadObject<T>(version.Value) : ReadObject<T>();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Populates a list of <paramref name="count"/> capacity using the result of <seealso cref="ReadObject{T}"/> for each element.
+        /// </summary>
+        /// <inheritdoc cref="ReadEnumerable{T}(int)"/>
+        public List<T> ReadList<T>(int count) => ReadListInternal<T>(count, null);
+
+        /// <summary>
+        /// Populates a list of <paramref name="count"/> capacity using the result of <seealso cref="ReadObject{T}(double)"/> for each element.
+        /// </summary>
+        /// <inheritdoc cref="ReadEnumerable{T}(int, double)"/>
+        public List<T> ReadList<T>(int count, double version) => ReadListInternal<T>(count, version);
+
+        private List<T> ReadListInternal<T>(int count, double? version)
+        {
+            if (count < 0)
+                throw Exceptions.ParamMustBeNonNegative(count);
+
+            var result = new List<T>(count);
+            for (var i = 0; i < count; i++)
+                result.Add(version.HasValue ? ReadObject<T>(version.Value) : ReadObject<T>());
 
             return result;
         }

@@ -34,11 +34,11 @@ namespace Reclaimer.Blam.HaloInfinite
             reader.RegisterInstance<IMetadataHeader>(this);
 
             Header = reader.ReadObject<TagHeader>();
-            Dependencies = reader.ReadArray<TagDependency>(Header.DependencyCount).ToList();
-            DataBlocks = reader.ReadArray<DataBlock>(Header.DataBlockCount).ToList();
-            StructureDefinitions = reader.ReadArray<TagStructureDefinition>(Header.TagStructureCount).ToList();
-            DataReferences = reader.ReadArray<DataBlockReference>(Header.DataReferenceCount).ToList();
-            TagReferences = reader.ReadArray<TagBlockReference>(Header.TagReferenceCount).ToList();
+            Dependencies = reader.ReadList<TagDependency>(Header.DependencyCount);
+            DataBlocks = reader.ReadList<DataBlock>(Header.DataBlockCount);
+            StructureDefinitions = reader.ReadList<TagStructureDefinition>(Header.TagStructureCount);
+            DataReferences = reader.ReadList<DataBlockReference>(Header.DataReferenceCount);
+            TagReferences = reader.ReadList<TagBlockReference>(Header.TagReferenceCount);
             reader.Seek(Header.HeaderSize, System.IO.SeekOrigin.Begin);
         }
 
