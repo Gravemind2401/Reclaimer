@@ -24,6 +24,14 @@ namespace Reclaimer.Plugins
 {
     public class BatchExtractPlugin : Plugin
     {
+        private enum ContentType
+        {
+            Invalid = -1,
+            Image = 0,
+            Geometry = 1,
+            Audio = 2
+        }
+
         private const string BlamFileRegex = @"Blam\.(\w+)\.(.*)";
         private const string SaberFileRegex = @"Saber3D\.(\w+)\.(.*)";
         private const string FileKeyWildcard = "*";
@@ -111,20 +119,15 @@ namespace Reclaimer.Plugins
 
         private static IExtractable GetExtractable(object obj, string outputFolder)
         {
-            IExtractable extractable;
-            if (obj is IIndexItem)
-                extractable = new CacheExtractable(obj as IIndexItem, outputFolder);
-            else if (obj is IModuleItem)
-                extractable = new ModuleExtractable(obj as IModuleItem, outputFolder);
-            else if (obj is IPakItem)
-                extractable = new PakExtractable(obj as IPakItem, outputFolder);
-            else
-                extractable = null;
+            IExtractable extractable = obj switch
+            {
+                IIndexItem cacheItem => new CacheExtractable(cacheItem, outputFolder),
+                IModuleItem moduleItem => new ModuleExtractable(moduleItem, outputFolder),
+                IPakItem pakItem => new PakExtractable(pakItem, outputFolder),
+                _ => null
+            };
 
-            if (extractable?.GetContentType() >= 0)
-                return extractable;
-
-            return null;
+            return extractable?.GetContentType() >= 0 ? extractable : null;
         }
 
         [SharedFunction]
@@ -266,17 +269,17 @@ namespace Reclaimer.Plugins
             {
                 switch (item.GetContentType())
                 {
-                    case 0:
+                    case ContentType.Image:
                         if (SaveImage(item))
                             counter.Extracted++;
                         break;
 
-                    case 1:
+                    case ContentType.Geometry:
                         if (writeModelFileFunc != null && SaveModel(item))
                             counter.Extracted++;
                         break;
 
-                    case 2:
+                    case ContentType.Audio:
                         if (writeSoundFileFunc != null && SaveSound(item))
                             counter.Extracted++;
                         break;
@@ -554,7 +557,7 @@ namespace Reclaimer.Plugins
             string DisplayName { get; }
             string Destination { get; }
             bool SupportsBatchMode => true;
-            int GetContentType();
+            ContentType GetContentType();
             bool GetBitmapContent(out IContentProvider<IBitmap> provider);
             bool GetGeometryContent(out IContentProvider<Scene> provider);
             bool GetSoundContent(out IContentProvider<GameSound> provider);
@@ -578,14 +581,14 @@ namespace Reclaimer.Plugins
                 Destination = destination;
             }
 
-            public int GetContentType()
+            public ContentType GetContentType()
             {
                 return item.ClassCode switch
                 {
-                    "bitm" => 0,
-                    "mode" or "mod2" or "sbsp" or "scnr" => 1,
-                    "snd!" => 2,
-                    _ => -1
+                    "bitm" => ContentType.Image,
+                    "mode" or "mod2" or "sbsp" or "scnr" => ContentType.Geometry,
+                    "snd!" => ContentType.Audio,
+                    _ => ContentType.Invalid
                 };
             }
 
@@ -612,14 +615,14 @@ namespace Reclaimer.Plugins
                 Destination = destination;
             }
 
-            public int GetContentType()
+            public ContentType GetContentType()
             {
                 return item.ClassCode switch
                 {
-                    "bitm" => 0,
-                    "mode" or "sbsp" or "stlm" or "scnr" or "pmdf" or "rtgo" or "ocgd" => 1,
-                    //"snd!" => return 2,
-                    _ => -1
+                    "bitm" => ContentType.Image,
+                    "mode" or "sbsp" or "stlm" or "scnr" or "pmdf" or "rtgo" or "ocgd" => ContentType.Geometry,
+                    //"snd!" => return ContentType.Audio,
+                    _ => ContentType.Invalid
                 };
             }
 
@@ -648,13 +651,13 @@ namespace Reclaimer.Plugins
                 Destination = destination;
             }
 
-            public int GetContentType()
+            public ContentType GetContentType()
             {
                 return item.ItemType switch
                 {
-                    PakItemType.Textures => 0,
-                    PakItemType.Templates or PakItemType.Scene => 1,
-                    _ => -1
+                    PakItemType.Textures => ContentType.Image,
+                    PakItemType.Templates or PakItemType.Scene => ContentType.Geometry,
+                    _ => ContentType.Invalid
                 };
             }
 
