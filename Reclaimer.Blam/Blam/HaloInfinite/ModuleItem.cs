@@ -1,5 +1,4 @@
-﻿using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Common.Gen5;
+﻿using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
@@ -111,7 +110,7 @@ namespace Reclaimer.Blam.HaloInfinite
             }
         }
 
-        public string ClassName => CacheFactory.HaloInfiniteClasses.TryGetValue(ClassCode, out var className) ? className : ClassCode;
+        public string ClassName => ModuleFactory.HaloInfiniteClasses.TryGetValue(ClassCode, out var className) ? className : ClassCode;
 
         public string FileName => Utils.GetFileName(TagName);
 
