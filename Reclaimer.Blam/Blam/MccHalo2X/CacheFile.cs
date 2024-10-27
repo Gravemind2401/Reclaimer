@@ -21,7 +21,7 @@ namespace Reclaimer.Blam.MccHalo2X
         public TagIndex TagIndex { get; init; }
         public StringIndex StringIndex { get; init; }
         public LocaleIndex LocaleIndex { get; init; }
-        
+
         public SectionAddressTranslator HeaderTranslator { get; init; }
         public TagAddressTranslator MetadataTranslator { get; init; }
 
@@ -314,7 +314,7 @@ namespace Reclaimer.Blam.MccHalo2X
         }
 
         protected override int GetStringIndex(int id) => Translator.GetStringIndex(id);
-        
+
         public override int GetStringId(string value) => Translator.GetStringId(Array.IndexOf(Items, value));
     }
 

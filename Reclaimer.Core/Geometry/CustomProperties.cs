@@ -48,10 +48,10 @@ namespace Reclaimer.Geometry
             if (value != null)
                 properties[key] = value;
         }
-        
+
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => ((IEnumerable<KeyValuePair<string, object>>)properties).GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)properties).GetEnumerator();
-        
+
         [GeneratedRegex("(?<=[^A-Z])(?=[A-Z])")]
         private static partial Regex CaseChangeRegex();
     }

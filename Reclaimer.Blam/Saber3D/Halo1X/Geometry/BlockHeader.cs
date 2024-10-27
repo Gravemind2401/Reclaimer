@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace Reclaimer.Saber3D.Halo1X.Geometry
+﻿namespace Reclaimer.Saber3D.Halo1X.Geometry
 {
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public class BlockHeader

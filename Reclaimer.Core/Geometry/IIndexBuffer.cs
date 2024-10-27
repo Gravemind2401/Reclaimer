@@ -6,7 +6,7 @@ namespace Reclaimer.Geometry
     public interface IIndexBuffer : IReadOnlyList<int>
     {
         internal static readonly IEqualityComparer<IIndexBuffer> EqualityComparer = new CustomEqualityComparer();
-        
+
         IndexFormat Layout { get; }
 
         IIndexBuffer Slice(int index, int count);

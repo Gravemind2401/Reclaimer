@@ -64,7 +64,7 @@ namespace Reclaimer.Geometry.Vectors
 
         public static explicit operator RealVector3(EulerAngles value) => new RealVector3(value.Yaw, value.Pitch, value.Roll);
         public static explicit operator EulerAngles(RealVector3 value) => new EulerAngles(value.X, value.Y, value.Z);
-        
+
         public static explicit operator Quaternion(EulerAngles value)
         {
             //TODO: ToQuaternion() function with CoordSys parameter

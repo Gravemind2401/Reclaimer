@@ -1416,7 +1416,7 @@ namespace TGASharpLib
 
         public bool Equals(TgaDateTime item)
         {
-            return 
+            return
                 Month == item.Month &&
                 Day == item.Day &&
                 Year == item.Year &&
@@ -1939,7 +1939,7 @@ namespace TGASharpLib
 
         public bool Equals(TgaImageSpec item)
         {
-            return 
+            return
                 X_Origin == item.X_Origin &&
                 Y_Origin == item.Y_Origin &&
                 ImageWidth == item.ImageWidth &&
@@ -2330,7 +2330,7 @@ namespace TGASharpLib
 
         public bool Equals(TgaString item)
         {
-            return 
+            return
                 OriginalString == item.OriginalString &&
                 Length == item.Length &&
                 BlankSpaceChar == item.BlankSpaceChar &&

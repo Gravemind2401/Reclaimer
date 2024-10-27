@@ -46,7 +46,7 @@ namespace Reclaimer.Geometry.Utilities
         public static readonly BlockCode TextureMapping = new BlockCode("TMAP");
         public static readonly BlockCode Texture = new BlockCode("BITM");
         public static readonly BlockCode Tint = new BlockCode("TINT");
-        
+
         public static readonly BlockCode Region = new BlockCode("REGN");
         public static readonly BlockCode Permutation = new BlockCode("PERM");
         public static readonly BlockCode Marker = new BlockCode("MARK");
@@ -54,7 +54,7 @@ namespace Reclaimer.Geometry.Utilities
         public static readonly BlockCode Bone = new BlockCode("BONE");
         public static readonly BlockCode Mesh = new BlockCode("MESH");
         public static readonly BlockCode MeshSegment = new BlockCode("MSEG");
-        
+
         public static readonly BlockCode VectorDescriptor = new BlockCode("VECD");
         public static readonly BlockCode VertexBuffer = new BlockCode("VBUF");
         public static readonly BlockCode IndexBuffer = new BlockCode("IBUF");

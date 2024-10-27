@@ -28,10 +28,10 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
 
         [Offset(12)]
         public RealVector3 MinBounds { get; set; }
-        
+
         [Offset(24)]
         public RealVector3 MaxBounds { get; set; }
-        
+
         [Offset(36)]
         public RealVector4 UnknownVector { get; set; }
 

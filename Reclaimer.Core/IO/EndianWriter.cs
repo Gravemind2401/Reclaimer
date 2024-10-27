@@ -519,7 +519,7 @@ namespace Reclaimer.IO
         public void Insert(byte[] buffer)
         {
             ArgumentNullException.ThrowIfNull(buffer);
-            
+
             if (buffer.Length == 0)
                 return;
 

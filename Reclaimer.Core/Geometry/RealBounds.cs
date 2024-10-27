@@ -25,7 +25,7 @@ namespace Reclaimer.Geometry
 
         static RealBounds IBufferable<RealBounds>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new RealBounds(MemoryMarshal.Cast<byte, float>(buffer));
         readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<float, byte>(new[] { Min, Max }).CopyTo(buffer);
-        
+
         #endregion
     }
 }

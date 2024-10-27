@@ -1,5 +1,4 @@
-﻿using Prism.Commands;
-using Studio.Controls;
+﻿using Studio.Controls;
 using System.Collections.ObjectModel;
 
 namespace Reclaimer.Models

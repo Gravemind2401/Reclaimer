@@ -129,7 +129,7 @@ namespace Reclaimer.IO
                 return 0;
 
             var readCount = source.ReadAll(buffer, offset, count); // read in the original data
-            
+
             //apparently the buffer we receive may already have values in it,
             //so clear out anything that wasnt already overwritten by ReadAll()
             if (readCount < count)

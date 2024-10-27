@@ -1,6 +1,4 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using Reclaimer.Utilities;
+﻿using Reclaimer.Utilities;
 using System.Diagnostics;
 using System.Windows;
 

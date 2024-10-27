@@ -1,5 +1,4 @@
-﻿using Prism.Mvvm;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace Reclaimer.Models

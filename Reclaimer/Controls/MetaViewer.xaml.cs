@@ -165,7 +165,7 @@ namespace Reclaimer.Controls
         }
 
         private void btnReload_Click(object sender, RoutedEventArgs e) => LoadData();
-        
+
         private void btnExport_Click(object sender, RoutedEventArgs e)
         {
             var sfd = new SaveFileDialog

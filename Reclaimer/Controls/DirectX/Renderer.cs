@@ -196,7 +196,7 @@ namespace Reclaimer.Controls.DirectX
         {
             this.coordinateSystem = coordinateSystem;
             isLeftHand = coordinateSystem.RightVector.Length() < 0;
-            
+
             if (Viewport == null)
                 return;
 

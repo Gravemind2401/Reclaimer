@@ -104,7 +104,7 @@ namespace Reclaimer.Blam.Common
 
                 HaloGame.Halo2X when cacheType < CacheType.MccHalo2XU8 => new MccHalo2X.CacheFile(args),
                 HaloGame.Halo2X => new MccHalo2X.CacheFileU8(args),
-                
+
                 _ => throw Exceptions.UnknownMapFile(fileName)
             };
         }

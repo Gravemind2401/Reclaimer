@@ -84,7 +84,7 @@ namespace Reclaimer.IO
 
         /// <inheritdoc cref="this[Range]"/>
         public IEnumerable<T> Subset(Range range) => Extensions.GetRange(this, range);
-        
+
         /// <param name="index">The index to begin returning elements from.</param>
         /// <param name="length">The the number of elements to return.</param>
         /// <inheritdoc cref="this[Range]"/>

@@ -1,5 +1,4 @@
-﻿using Prism.Mvvm;
-using Studio.Controls;
+﻿using Studio.Controls;
 using System.Windows;
 
 namespace Reclaimer.Models
