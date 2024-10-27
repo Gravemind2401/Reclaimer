@@ -374,23 +374,21 @@ namespace Reclaimer.Drawing
         }
 
         [DxgiDecompressor(R10G10B10A2_UNorm)]
-        internal static byte[] DecompressA2R10G10B10(byte[] data, int height, int width, bool bgr24)
+        internal static byte[] DecompressR10G10B10A2(byte[] data, int height, int width, bool bgr24)
         {
             var bpp = bgr24 ? 3 : 4;
             var output = new byte[width * height * bpp];
 
-            var input = MemoryMarshal.Cast<byte, uint>(data);
-            var pixelCount = Math.Min(input.Length, width * height);
+            //since this is the same bit layout as UDecN4, we can just piggyback off of that to do the component extraction
+            var input = MemoryMarshal.Cast<byte, Geometry.Vectors.UDecN4>(data);
 
-            for (var i = 0; i < pixelCount; i++)
+            for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex++, outputIndex += bpp)
             {
-                var pixel = input[i];
-
-                output[i * bpp + 0] = (byte)(Math.Clamp(((byte)(pixel >> 30) & 0x03) / 1023f, 0f, 1f) * byte.MaxValue);
-                output[i * bpp + 1] = (byte)(Math.Clamp(((byte)(pixel >> 20) & 0x3FF) / 1023f, 0f, 1f) * byte.MaxValue);
-                output[i * bpp + 2] = (byte)(Math.Clamp(((byte)(pixel >> 10) & 0x3FF) / 1023f, 0f, 1f) * byte.MaxValue);
+                output[outputIndex + 0] = (byte)MathF.Round(input[inputIndex].X * byte.MaxValue);
+                output[outputIndex + 1] = (byte)MathF.Round(input[inputIndex].Y * byte.MaxValue);
+                output[outputIndex + 2] = (byte)MathF.Round(input[inputIndex].Z * byte.MaxValue);
                 if (!bgr24)
-                    output[i * bpp + 3] = (byte)(Math.Clamp((byte)(pixel & 0x3FF) / 1023f, 0f, 1f) * byte.MaxValue);
+                    output[outputIndex + 3] = (byte)MathF.Round(input[inputIndex].W * byte.MaxValue);
             }
 
             return output;
