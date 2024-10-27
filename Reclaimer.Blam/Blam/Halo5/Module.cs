@@ -1,10 +1,11 @@
-﻿using Reclaimer.Blam.Utilities;
+﻿using Reclaimer.Blam.Common.Gen5;
+using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System.IO;
 
 namespace Reclaimer.Blam.Halo5
 {
-    public class Module
+    public class Module : IModule
     {
         internal const int ModuleHeader = 0x64686f6d;
 
@@ -13,8 +14,8 @@ namespace Reclaimer.Blam.Halo5
 
         public string FileName { get; }
 
-        public ModuleType ModuleType => Header.Version;
         public ModuleHeader Header { get; }
+        public ModuleType ModuleType => Header.Version;
 
         public List<ModuleItem> Items { get; }
         public Dictionary<int, string> Strings { get; }
@@ -56,6 +57,15 @@ namespace Reclaimer.Blam.Halo5
             linkedModules = parentModule?.linkedModules ?? new List<Module>(Enumerable.Repeat(this, 1));
         }
 
+        #region IModule
+
+        IEnumerable<IModuleItem> IModule.FindAlternateTagInstances(int globalTagId) => FindAlternateTagInstances(globalTagId);
+        IModuleItem IModule.GetItemById(int globalTagId) => GetItemById(globalTagId);
+        IEnumerable<IModuleItem> IModule.GetItemsByClass(string classCode) => GetItemsByClass(classCode);
+        IEnumerable<IModuleItem> IModule.GetLinkedItems() => GetLinkedItems();
+
+        #endregion
+
         public DependencyReader CreateReader()
         {
             var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read);
@@ -76,6 +86,7 @@ namespace Reclaimer.Blam.Halo5
             }
 
             reader.RegisterInstance(this);
+            reader.RegisterInstance<IModule>(this);
             reader.RegisterType(reader.ReadMatrix3x4);
 
             return reader;
@@ -231,17 +242,5 @@ namespace Reclaimer.Blam.Halo5
         [Offset(16, MaxVersion = (int)ModuleType.Halo5Forge)]
         [Offset(24, MinVersion = (int)ModuleType.Halo5Forge)]
         public int Compressed { get; set; }
-    }
-
-    public class TagClass
-    {
-        public string ClassCode { get; }
-        public string ClassName { get; }
-
-        public TagClass(string code, string name)
-        {
-            ClassCode = code;
-            ClassName = name;
-        }
     }
 }

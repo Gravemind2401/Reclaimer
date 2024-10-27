@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Models;
 using Reclaimer.Plugins;
 using Reclaimer.Plugins.MetaViewer;
@@ -59,12 +59,15 @@ namespace Reclaimer.Controls
 
             if (item is IIndexItem)
                 LoadDataHalo3(tempMetadata, ref tempContext);
-            else if (item is ModuleItem)
+            else if (item is IModuleItem)
                 LoadDataHalo5(tempMetadata);
 
             var root = new JObject();
-            foreach (var item in tempMetadata)
-                root.Add(item.Name, item.GetJValue());
+            foreach (var item in tempMetadata.Where(i => !string.IsNullOrWhiteSpace(i.Name)))
+            {
+                var propName = root.ContainsKey(item.Name) ? $"{item.Name}_{item.Offset}" : item.Name;
+                root.Add(propName, item.GetJValue());
+            }
 
             File.WriteAllText(fileName, root.ToString());
         }
@@ -80,7 +83,7 @@ namespace Reclaimer.Controls
             LoadData();
         }
 
-        public void LoadMetadata(ModuleItem tag, string xmlFileName)
+        public void LoadMetadata(IModuleItem tag, string xmlFileName)
         {
             TabModel.ToolTip = $"{tag.TagName}.{tag.ClassCode}";
             TabModel.Header = $"{tag.FileName}.{tag.ClassCode}";
@@ -95,7 +98,7 @@ namespace Reclaimer.Controls
         {
             if (item is IIndexItem)
                 LoadDataHalo3(Metadata, ref context);
-            else if (item is ModuleItem)
+            else if (item is IModuleItem)
                 LoadDataHalo5(Metadata);
         }
 
@@ -125,7 +128,7 @@ namespace Reclaimer.Controls
 
         private void LoadDataHalo5(IList<MetaValueBase> collection)
         {
-            var tag = item as ModuleItem;
+            var tag = item as IModuleItem;
             collection.Clear();
 
             var doc = new XmlDocument();
@@ -134,8 +137,8 @@ namespace Reclaimer.Controls
             var offset = 0;
             using (var tagReader = tag.CreateReader())
             {
-                var header = new MetadataHeader(tagReader);
-                using (var reader = tagReader.CreateVirtualReader(header.Header.HeaderSize))
+                var header = tag.ReadMetadataHeader(tagReader);
+                using (var reader = tagReader.CreateVirtualReader(header.HeaderSize))
                 {
                     var rootIndex = header.StructureDefinitions.First(s => s.Type == StructureType.Main).TargetIndex;
                     var mainBlock = header.DataBlocks[rootIndex];
@@ -144,7 +147,7 @@ namespace Reclaimer.Controls
                     {
                         try
                         {
-                            var def = FieldDefinition.GetHalo5Definition(n);
+                            var def = FieldDefinition.GetHalo5Definition(tag, n);
                             var meta = MetaValueBase.GetMetaValue(n, tag, header, mainBlock, reader, mainBlock.Offset, offset);
                             collection.Add(meta);
                             offset += def.Size;
@@ -171,7 +174,7 @@ namespace Reclaimer.Controls
             var sfd = new SaveFileDialog
             {
                 OverwritePrompt = true,
-                FileName = (item as IIndexItem)?.FileName ?? (item as ModuleItem).FileName,
+                FileName = (item as IIndexItem)?.FileName ?? (item as IModuleItem)?.FileName,
                 Filter = "JSON Files|*.json",
                 FilterIndex = 1,
                 AddExtension = true
@@ -188,22 +191,26 @@ namespace Reclaimer.Controls
 
         private void OpenCommand_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
-            if (e.Parameter is Plugins.MetaViewer.Halo3.TagReferenceValue h3ref && h3ref.SelectedItem is not null)
+            try
             {
-                var item = h3ref.SelectedItem.Context;
-                var fileName = $"{item.TagName}.{item.ClassName}";
-                var fileKey = $"Blam.{item.CacheFile.CacheType}.{item.ClassCode}";
-                var args = new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), item);
-                Substrate.OpenWithDefault(args);
+                if (e.Parameter is Plugins.MetaViewer.Halo3.TagReferenceValue h3ref && h3ref.SelectedItem is not null)
+                {
+                    var item = h3ref.SelectedItem.Context;
+                    var fileName = $"{item.TagName}.{item.ClassName}";
+                    var fileKey = $"Blam.{item.CacheFile.CacheType}.{item.ClassCode}";
+                    var args = new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), item);
+                    Substrate.OpenWithDefault(args);
+                }
+                else if (e.Parameter is Plugins.MetaViewer.Halo5.TagReferenceValue h5ref && h5ref.SelectedItem is not null)
+                {
+                    var item = h5ref.SelectedItem.Context;
+                    var fileName = $"{item.TagName}.{item.ClassName}";
+                    var fileKey = $"Blam.{item.Module.ModuleType}.{item.ClassCode}";
+                    var args = new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), item);
+                    Substrate.OpenWithDefault(args);
+                }
             }
-            else if (e.Parameter is Plugins.MetaViewer.Halo5.TagReferenceValue h5ref && h5ref.SelectedItem is not null)
-            {
-                var item = h5ref.SelectedItem.Context;
-                var fileName = $"{item.TagName}.{item.ClassName}";
-                var fileKey = $"Blam.{item.Module.ModuleType}.{item.ClassCode}";
-                var args = new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), item);
-                Substrate.OpenWithDefault(args);
-            }
+            catch { }
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Reclaimer.Blam.Halo5;
-using Reclaimer.IO;
+﻿using Reclaimer.IO;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Xml;
@@ -123,11 +122,11 @@ namespace Reclaimer.Plugins.MetaViewer
             }
         }
 
-        public static Halo5.MetaValue GetMetaValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
+        public static Halo5.MetaValue GetMetaValue(XmlNode node, Blam.Common.Gen5.IModuleItem item, Blam.Common.Gen5.IMetadataHeader header, Blam.Common.Gen5.DataBlock host, EndianReader reader, long baseAddress, int offset)
         {
             reader.Seek(baseAddress, SeekOrigin.Begin);
 
-            var def = FieldDefinition.GetHalo5Definition(node);
+            var def = FieldDefinition.GetHalo5Definition(item, node);
 
             if (def.Size < 0)
                 System.Diagnostics.Debugger.Break();

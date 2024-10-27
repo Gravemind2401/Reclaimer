@@ -1,4 +1,5 @@
 ﻿using Reclaimer.Blam.Common;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.Geometry;
 using Reclaimer.Geometry.Vectors;
@@ -45,7 +46,7 @@ namespace Reclaimer.Blam.Halo5
             {
                 try
                 {
-                    var bspItem = bspBlock.BspReference.Tag;
+                    var bspItem = (ModuleItem)bspBlock.BspReference.Tag;
                     var bspTag = bspItem.ReadMetadata<scenario_structure_bsp>();
 
                     ModuleItem stlmItem = null;
@@ -54,7 +55,7 @@ namespace Reclaimer.Blam.Halo5
                     {
                         if (bspBlock.LightingVariants.Count > 0)
                         {
-                            stlmItem = bspBlock.LightingVariants[0].StructureLightmapReference.Tag;
+                            stlmItem = (ModuleItem)bspBlock.LightingVariants[0].StructureLightmapReference.Tag;
                             stlmTag = stlmItem.ReadMetadata<structure_lightmap>();
                         }
                     }
@@ -169,7 +170,7 @@ namespace Reclaimer.Blam.Halo5
             return scene;
         }
 
-        private static IEnumerable<T> ReadTags<T>(IEnumerable<TagReference> collection)
+        private static IEnumerable<T> ReadTags<T>(IEnumerable<TagReferenceGen5> collection)
         {
             return collection.Where(t => t.Tag != null)
                 .DistinctBy(t => t.TagId)
@@ -226,19 +227,19 @@ namespace Reclaimer.Blam.Halo5
 
     public partial class StructureBspBlock
     {
-        public TagReference BspReference { get; set; }
+        public TagReferenceGen5 BspReference { get; set; }
         public BlockCollection<StructureLightingBlock> LightingVariants { get; set; }
     }
 
     public partial class StructureLightingBlock
     {
-        public TagReference StructureLightmapReference { get; set; }
+        public TagReferenceGen5 StructureLightmapReference { get; set; }
     }
 
     [DebuggerDisplay($"{{{nameof(SkyReference)},nq}}")]
     public partial class SkyReferenceBlock
     {
-        public TagReference SkyReference { get; set; }
+        public TagReferenceGen5 SkyReference { get; set; }
     }
 
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
@@ -268,7 +269,7 @@ namespace Reclaimer.Blam.Halo5
     [DebuggerDisplay($"{{{nameof(TagReference)},nq}}")]
     public partial class ObjectPaletteBlock
     {
-        public TagReference TagReference { get; set; }
+        public TagReferenceGen5 TagReference { get; set; }
     }
 
     public partial class SceneryPlacementBlock : ObjectPlacementBlockBase

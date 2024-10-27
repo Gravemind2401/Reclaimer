@@ -30,6 +30,16 @@ namespace Reclaimer.Blam.Common
             }
         }
 
+        private static Dictionary<string, string> haloInfiniteClasses;
+        internal static IReadOnlyDictionary<string, string> HaloInfiniteClasses
+        {
+            get
+            {
+                haloInfiniteClasses ??= ReadClassXml(Properties.Resources.HaloInfiniteClasses);
+                return haloInfiniteClasses;
+            }
+        }
+
         internal const string ScenarioClass = "scnr";
         internal static readonly string[] SystemClasses = new[] { "scnr", "matg", "ugh!", "play", "zone" };
 

@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using Reclaimer.Blam.Halo5;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.IO;
 using System.IO;
 using System.Xml;
@@ -19,7 +19,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             set => SetMetaProperty(ref _value, value);
         }
 
-        public StringValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
+        public StringValue(XmlNode node, IModuleItem item, IMetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, host, reader, baseAddress, offset)
         {
             Length = FieldDefinition.ValueType == MetaValueType.StringId ? -1 : FieldDefinition.Size;
@@ -36,7 +36,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
                 if (FieldDefinition.ValueType == MetaValueType.StringId)
                 {
-                    var hash = new StringHash(reader, header);
+                    var hash = new StringHashGen5(reader, Header);
                     Value = hash.Value;
                 }
                 else

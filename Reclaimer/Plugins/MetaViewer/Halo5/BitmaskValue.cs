@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using Reclaimer.Blam.Halo5;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
 using System.Collections.ObjectModel;
@@ -19,7 +19,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
         public ObservableCollection<BitValue> Options { get; }
 
-        public BitmaskValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
+        public BitmaskValue(XmlNode node, IModuleItem item, IMetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, host, reader, baseAddress, offset)
         {
             Options = new ObservableCollection<BitValue>();

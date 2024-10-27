@@ -43,16 +43,24 @@ namespace Reclaimer.Plugins.MetaViewer
 
     public readonly struct FieldDefinition
     {
-        private static readonly Dictionary<string, string> h3aliasLookup = new Dictionary<string, string>();
-        private static readonly Dictionary<string, string> h5aliasLookup = new Dictionary<string, string>();
-        private static readonly Dictionary<string, FieldDefinition> h3cache = new Dictionary<string, FieldDefinition>();
-        private static readonly Dictionary<string, FieldDefinition> h5cache = new Dictionary<string, FieldDefinition>();
+        private static readonly Dictionary<string, string> h3aliasLookup = new();
+        private static readonly Dictionary<string, string> h5aliasLookup = new();
+        private static readonly Dictionary<string, string> hialiasLookup = new();
+        private static readonly Dictionary<string, FieldDefinition> h3cache = new();
+        private static readonly Dictionary<string, FieldDefinition> h5cache = new();
+        private static readonly Dictionary<string, FieldDefinition> hicache = new();
 
         private static readonly FieldDefinition UndefinedDefinition = new FieldDefinition("undefined", MetaValueType.Undefined, 4, 1, AxesDefinition.None, true);
 
         public static FieldDefinition GetHalo3Definition(XmlNode node) => GetDefinition(node, Properties.Resources.Halo3FieldDefinitions, h3aliasLookup, h3cache);
 
-        public static FieldDefinition GetHalo5Definition(XmlNode node) => GetDefinition(node, Properties.Resources.Halo5FieldDefinitions, h5aliasLookup, h5cache);
+        public static FieldDefinition GetHalo5Definition(Blam.Common.Gen5.IModuleItem moduleItem, XmlNode node)
+        {
+            if (moduleItem.Module.ModuleType < Blam.Common.Gen5.ModuleType.HaloInfinite)
+                return GetDefinition(node, Properties.Resources.Halo5FieldDefinitions, h5aliasLookup, h5cache);
+            else
+                return GetDefinition(node, Properties.Resources.HaloInfiniteFieldDefinitions, hialiasLookup, hicache);
+        }
 
         private static FieldDefinition GetDefinition(XmlNode node, string definitionXml, Dictionary<string, string> aliasLookup, Dictionary<string, FieldDefinition> cache)
         {

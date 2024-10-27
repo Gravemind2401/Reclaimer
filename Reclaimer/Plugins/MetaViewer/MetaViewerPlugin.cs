@@ -1,5 +1,5 @@
 ﻿using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Controls.Editors;
 using System.ComponentModel;
 using System.IO;
@@ -39,7 +39,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
             if (Enum.TryParse(match.Groups[1].Value, out ModuleType _))
             {
-                var item = args.File.OfType<ModuleItem>().FirstOrDefault();
+                var item = args.File.OfType<IModuleItem>().FirstOrDefault();
                 if (item == null)
                     return false;
 
@@ -58,9 +58,9 @@ namespace Reclaimer.Plugins.MetaViewer
                 var tabId = $"{Key}::{item.CacheFile.FileName}::{item.Id}";
                 InitViewer(tabId, args, v => v.LoadMetadata(item, GetDefinitionPath(item)));
             }
-            else if (args.File.Any(i => i is ModuleItem))
+            else if (args.File.Any(i => i is IModuleItem))
             {
-                var item = args.File.OfType<ModuleItem>().FirstOrDefault();
+                var item = args.File.OfType<IModuleItem>().FirstOrDefault();
                 var tabId = $"{Key}::{item.Module.FileName}::{item.GlobalTagId}";
                 InitViewer(tabId, args, v => v.LoadMetadata(item, GetDefinitionPath(item)));
             }
@@ -81,10 +81,10 @@ namespace Reclaimer.Plugins.MetaViewer
         }
 
         private static string GetDefinitionPath(IIndexItem item) => GetDefinitionPath(p => p.ValidFor(item.CacheFile.CacheType), item.ClassCode, item.ClassName);
-        private static string GetDefinitionPath(ModuleItem item) => GetDefinitionPath(p => p.ValidFor(item.Module.ModuleType), item.ClassCode, item.ClassName);
+        private static string GetDefinitionPath(IModuleItem item) => GetDefinitionPath(p => p.ValidFor(item.Module.ModuleType), item.ClassCode, item.ClassName);
         private static string GetDefinitionPath(Predicate<PluginProfile> validate, string classCode, string className)
         {
-            if (string.IsNullOrEmpty(Settings.PluginFolder) || !Directory.Exists(Settings.PluginFolder))
+            if (string.IsNullOrEmpty(Settings.PluginFolder) || !Directory.Exists(Settings.PluginFolder) || classCode == null)
                 return null;
 
             foreach (var profile in Settings.PluginProfiles.Where(p => validate(p)))
@@ -139,6 +139,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
                 PluginProfiles = new List<PluginProfile>
                 {
+                    new PluginProfile("HaloInfinite", ModuleType.HaloInfinite),
                     new PluginProfile("Halo5", ModuleType.Halo5Server, ModuleType.Halo5Forge),
                     new PluginProfile("Halo2AMCC", CacheTypesByPrefix(CacheType.MccHalo2X)),
                     new PluginProfile("Halo4MCC", CacheTypesByPrefix(CacheType.MccHalo4)),

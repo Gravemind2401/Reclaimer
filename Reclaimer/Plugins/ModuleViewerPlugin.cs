@@ -118,5 +118,12 @@ namespace Reclaimer.Plugins
 
         [DisplayName("Hierarchy View")]
         public bool HierarchyView { get; set; }
+
+        [DisplayName("Show Tag Resources")]
+        public bool ShowTagResources { get; set; }
+
+        [Editor(typeof(BrowseFileEditor), typeof(BrowseFileEditor))]
+        [DisplayName("String IDs File")]
+        public string StringIdFile { get; set; }
     }
 }

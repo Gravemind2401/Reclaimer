@@ -1,4 +1,5 @@
-﻿using Reclaimer.IO;
+﻿using Reclaimer.Blam.Common.Gen5;
+using Reclaimer.IO;
 
 namespace Reclaimer.Blam.Halo5
 {
@@ -8,13 +9,13 @@ namespace Reclaimer.Blam.Halo5
         public short ObjectType { get; set; }
 
         [Offset(156)]
-        public StringId DefaultVariant { get; set; }
+        public StringIdGen5 DefaultVariant { get; set; }
 
         [Offset(160)]
-        public TagReference Model { get; set; }
+        public TagReferenceGen5 Model { get; set; }
 
         [Offset(192)]
-        public TagReference CrateObject { get; set; }
+        public TagReferenceGen5 CrateObject { get; set; }
 
         public render_model ReadRenderModel() => Model.Tag?.ReadMetadata<model>().RenderModel.Tag?.ReadMetadata<render_model>();
     }

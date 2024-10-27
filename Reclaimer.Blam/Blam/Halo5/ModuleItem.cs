@@ -1,4 +1,5 @@
-﻿using Reclaimer.Blam.Utilities;
+﻿using Reclaimer.Blam.Common.Gen5;
+using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System.IO;
 using System.IO.Compression;
@@ -7,7 +8,7 @@ using System.Text;
 namespace Reclaimer.Blam.Halo5
 {
     [FixedSize(88)]
-    public class ModuleItem
+    public class ModuleItem : IModuleItem
     {
         public Module Module { get; }
 
@@ -107,6 +108,14 @@ namespace Reclaimer.Blam.Halo5
             Module = module ?? throw new ArgumentNullException(nameof(module));
         }
 
+        #region IModuleItem
+
+        IModule IModuleItem.Module => Module;
+        IEnumerable<IModuleItem> IModuleItem.EnumerateResourceItems() => Enumerable.Range(ResourceIndex, ResourceCount).Select(i => Module.Items[Module.Resources[i]]);
+        IMetadataHeader IModuleItem.ReadMetadataHeader(DependencyReader reader) => new MetadataHeader(reader);
+
+        #endregion
+
         private Block GetImpliedBlock()
         {
             return new Block
@@ -124,6 +133,7 @@ namespace Reclaimer.Blam.Halo5
             DependencyReader Register(DependencyReader r)
             {
                 r.RegisterInstance(this);
+                r.RegisterInstance<IModuleItem>(this);
                 return r;
             }
 

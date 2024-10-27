@@ -1,10 +1,11 @@
 ﻿using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Models;
 using Reclaimer.Plugins;
 using Reclaimer.Utilities;
 using Studio.Controls;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -26,7 +27,7 @@ namespace Reclaimer.Controls
         private readonly MenuItem CopyPathContextItem;
         private readonly Separator ContextSeparator;
 
-        private Module module;
+        private Blam.Common.Gen5.IModule module;
         private TreeItemModel rootNode;
 
         #region Dependency Properties
@@ -37,6 +38,9 @@ namespace Reclaimer.Controls
 
         public static readonly DependencyProperty HierarchyViewProperty =
             DependencyProperty.Register(nameof(HierarchyView), typeof(bool), typeof(ModuleViewer), new PropertyMetadata(false, HierarchyViewChanged));
+
+        public static readonly DependencyProperty ShowTagResourcesProperty =
+            DependencyProperty.Register(nameof(ShowTagResources), typeof(bool), typeof(ModuleViewer), new PropertyMetadata(false, ShowTagResourcesChanged));
 
         public bool HasGlobalHandlers
         {
@@ -49,6 +53,12 @@ namespace Reclaimer.Controls
             get => (bool)GetValue(HierarchyViewProperty);
             set => SetValue(HierarchyViewProperty, value);
         }
+
+        public bool ShowTagResources
+        {
+            get => (bool)GetValue(ShowTagResourcesProperty);
+            set => SetValue(ShowTagResourcesProperty, value);
+        }
         #endregion
 
         public TabModel TabModel { get; }
@@ -58,6 +68,13 @@ namespace Reclaimer.Controls
         {
             var mv = d as ModuleViewer;
             ModuleViewerPlugin.Settings.HierarchyView = mv.HierarchyView;
+            mv.BuildTagTree(mv.txtSearch.Text);
+        }
+
+        public static void ShowTagResourcesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var mv = d as ModuleViewer;
+            ModuleViewerPlugin.Settings.ShowTagResources = mv.ShowTagResources;
             mv.BuildTagTree(mv.txtSearch.Text);
         }
 
@@ -79,7 +96,15 @@ namespace Reclaimer.Controls
 
         public void LoadModule(string fileName)
         {
-            module = new Module(fileName);
+            module = ModuleFactory.ReadModuleFile(fileName);
+
+            if (module.ModuleType == ModuleType.HaloInfinite
+                && Blam.HaloInfinite.StringMapper.Instance.StringMappings.Count == 0
+                && File.Exists(ModuleViewerPlugin.Settings.StringIdFile))
+            {
+                Blam.HaloInfinite.StringMapper.Instance.LoadStringMap(ModuleViewerPlugin.Settings.StringIdFile);
+            }
+
             rootNode = new TreeItemModel(module.FileName);
             tv.ItemsSource = rootNode.Items;
 
@@ -104,6 +129,8 @@ namespace Reclaimer.Controls
             }
 
             HierarchyView = ModuleViewerPlugin.Settings.HierarchyView;
+            ShowTagResources = ModuleViewerPlugin.Settings.ShowTagResources;
+
             BuildTagTree(null);
         }
 
@@ -159,16 +186,23 @@ namespace Reclaimer.Controls
                 rootNode.Items.Reset(result);
             }
 
-            void AppendResourceNodes(TreeItemModel treeItem, ModuleItem tag)
+            void AppendResourceNodes(TreeItemModel treeItem, IModuleItem tag)
             {
-                //TODO: make a setting to enable/disable this, also one day view the resources in the meta viewer?
-                return;
+                if (!ModuleViewerPlugin.Settings.ShowTagResources)
+                    return;
 
-                foreach (var resourceItem in Enumerable.Range(tag.ResourceIndex, tag.ResourceCount).Select(i => tag.Module.Items[tag.Module.Resources[i]]))
-                    treeItem.Items.Add(new TreeItemModel { Header = resourceItem.FileName, ItemType = ResourceNodeType, Tag = resourceItem });
+                foreach (var resourceItem in tag.EnumerateResourceItems())
+                {
+                    treeItem.Items.Add(new TreeItemModel
+                    {
+                        Header = resourceItem.FileName,
+                        ItemType = ResourceNodeType,
+                        Tag = resourceItem
+                    });
+                }
             }
 
-            static bool FilterTag(string filter, ModuleItem tag)
+            static bool FilterTag(string filter, IModuleItem tag)
             {
                 if (tag.GlobalTagId == -1)
                     return false;
@@ -217,19 +251,19 @@ namespace Reclaimer.Controls
         private OpenFileArgs GetSelectedArgs()
         {
             var node = tv.SelectedItem as TreeItemModel;
-            return node.Tag is ModuleItem moduleItem
+            return node.Tag is IModuleItem moduleItem
                 ? GetSelectedArgs(moduleItem)
                 : GetFolderArgs(node); //folder
         }
 
-        private OpenFileArgs GetSelectedArgs(ModuleItem item)
+        private OpenFileArgs GetSelectedArgs(IModuleItem item)
         {
             var fileName = $"{item.TagName}.{item.ClassName}";
             var fileKey = $"Blam.{module.ModuleType}.{item.ClassCode}";
             return new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), GetFileFormats(item).ToArray());
         }
 
-        private static IEnumerable<object> GetFileFormats(ModuleItem item)
+        private static IEnumerable<object> GetFileFormats(IModuleItem item)
         {
             yield return item;
 
@@ -287,7 +321,7 @@ namespace Reclaimer.Controls
             if ((sender as TreeViewItem)?.DataContext != tv.SelectedItem)
                 return; //because this event bubbles to the parent node
 
-            if ((tv.SelectedItem as TreeItemModel)?.Tag is not ModuleItem)
+            if ((tv.SelectedItem as TreeItemModel)?.Tag is not IModuleItem)
                 return;
 
             Substrate.OpenWithDefault(GetSelectedArgs());
@@ -307,7 +341,7 @@ namespace Reclaimer.Controls
             ContextItems.Clear();
             OpenFromContextItem.Items.Clear();
 
-            if (node.Tag is ModuleItem moduleItem)
+            if (node.Tag is IModuleItem moduleItem)
             {
                 ContextItems.Add(OpenContextItem);
                 ContextItems.Add(OpenWithContextItem);
@@ -356,10 +390,10 @@ namespace Reclaimer.Controls
             else if (sender == OpenWithContextItem)
                 Substrate.OpenWithPrompt(args);
             else if (OpenFromContextItem.Items.Contains(item))
-                Substrate.OpenWithPrompt(GetSelectedArgs(item.Tag as ModuleItem));
+                Substrate.OpenWithPrompt(GetSelectedArgs(item.Tag as IModuleItem));
             else if (sender == CopyPathContextItem)
             {
-                var tag = args.File.OfType<ModuleItem>().First();
+                var tag = args.File.OfType<IModuleItem>().First();
                 Clipboard.SetText($"{tag.TagName}.{tag.ClassName}");
             }
             else

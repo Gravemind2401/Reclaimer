@@ -1,7 +1,7 @@
 ﻿using Reclaimer.Annotations;
 using Reclaimer.Audio;
 using Reclaimer.Blam.Common;
-using Reclaimer.Blam.Halo5;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Controls.Editors;
 using Reclaimer.Drawing;
 using Reclaimer.Geometry;
@@ -114,8 +114,8 @@ namespace Reclaimer.Plugins
             IExtractable extractable;
             if (obj is IIndexItem)
                 extractable = new CacheExtractable(obj as IIndexItem, outputFolder);
-            else if (obj is ModuleItem)
-                extractable = new ModuleExtractable(obj as ModuleItem, outputFolder);
+            else if (obj is IModuleItem)
+                extractable = new ModuleExtractable(obj as IModuleItem, outputFolder);
             else if (obj is IPakItem)
                 extractable = new PakExtractable(obj as IPakItem, outputFolder);
             else
@@ -191,7 +191,7 @@ namespace Reclaimer.Plugins
 
         private void BatchQueue(TreeItemModel node, string outputFolder)
         {
-            if (node.HasItems)
+            if (node.HasItems && node.ItemType == 0)
             {
                 foreach (var child in node.Items)
                     BatchQueue(child, outputFolder);
@@ -596,7 +596,7 @@ namespace Reclaimer.Plugins
 
         private sealed class ModuleExtractable : IExtractable
         {
-            private readonly ModuleItem item;
+            private readonly IModuleItem item;
 
             public string ItemKey => $"{item.TagName}.{item.ClassName}";
 
@@ -606,7 +606,7 @@ namespace Reclaimer.Plugins
 
             public bool SupportsBatchMode => item.ClassCode != "scnr";
 
-            public ModuleExtractable(ModuleItem item, string destination)
+            public ModuleExtractable(IModuleItem item, string destination)
             {
                 this.item = item;
                 Destination = destination;
@@ -617,7 +617,7 @@ namespace Reclaimer.Plugins
                 return item.ClassCode switch
                 {
                     "bitm" => 0,
-                    "mode" or "sbsp" or "stlm" or "scnr" or "pmdf" => 1,
+                    "mode" or "sbsp" or "stlm" or "scnr" or "pmdf" or "rtgo" or "ocgd" => 1,
                     //"snd!" => return 2,
                     _ => -1
                 };

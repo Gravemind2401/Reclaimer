@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using Reclaimer.Blam.Halo5;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
 using System.Collections.ObjectModel;
@@ -11,12 +11,12 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
     public class TagReferenceValue : MetaValue
     {
         private static readonly ComboBoxItem<TagClass> externalClassOption = new ComboBoxItem<TagClass>("external", new TagClass(null, null), false);
-        private static readonly ComboBoxItem<ModuleItem> externalTagOption = new ComboBoxItem<ModuleItem>("[[external reference]]", null, false);
+        private static readonly ComboBoxItem<IModuleItem> externalTagOption = new ComboBoxItem<IModuleItem>("[[external reference]]", null, false);
 
-        private TagReference referenceValue;
+        private TagReferenceGen5 referenceValue;
 
-        private ComboBoxItem<ModuleItem> selectedItem;
-        public ComboBoxItem<ModuleItem> SelectedItem
+        private ComboBoxItem<IModuleItem> selectedItem;
+        public ComboBoxItem<IModuleItem> SelectedItem
         {
             get => selectedItem;
             set => SetMetaProperty(ref selectedItem, value);
@@ -36,9 +36,9 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
         public override string EntryString => Utils.GetFileName(SelectedItem?.Label);
 
         public ObservableCollection<ComboBoxItem<TagClass>> ClassOptions { get; }
-        public ObservableCollection<ComboBoxItem<ModuleItem>> TagOptions { get; }
+        public ObservableCollection<ComboBoxItem<IModuleItem>> TagOptions { get; }
 
-        public TagReferenceValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
+        public TagReferenceValue(XmlNode node, IModuleItem item, IMetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, host, reader, baseAddress, offset)
         {
             var allClasses = item.Module.GetTagClasses()
@@ -46,7 +46,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                 .OrderBy(s => s.Label);
 
             ClassOptions = new ObservableCollection<ComboBoxItem<TagClass>>(allClasses);
-            TagOptions = new ObservableCollection<ComboBoxItem<ModuleItem>>();
+            TagOptions = new ObservableCollection<ComboBoxItem<IModuleItem>>();
 
             ClassOptions.Insert(0, externalClassOption);
             TagOptions.Insert(0, externalTagOption);
@@ -59,12 +59,12 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             TagOptions.Clear();
             TagOptions.Insert(0, externalTagOption);
 
-            var classTags = from t in item.Module.GetItemsByClass(SelectedClass.Context.ClassCode)
+            var classTags = from t in Item.Module.GetItemsByClass(SelectedClass?.Context.ClassCode)
                             orderby t.TagName
                             select t;
 
             foreach (var t in classTags)
-                TagOptions.Add(new ComboBoxItem<ModuleItem>(t.TagName, t));
+                TagOptions.Add(new ComboBoxItem<IModuleItem>(t.TagName, t));
 
             SelectedItem = TagOptions.Skip(1).FirstOrDefault();
         }
@@ -77,7 +77,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                referenceValue = new TagReference(item.Module, reader);
+                referenceValue = new TagReferenceGen5(Item.Module, reader);
 
                 if (referenceValue.TagId != -1 && referenceValue.Tag == null)
                 {

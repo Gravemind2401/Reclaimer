@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using Reclaimer.Blam.Halo5;
+using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.IO;
 using System.IO;
 using System.Xml;
@@ -17,7 +17,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             set => SetMetaProperty(ref _value, value);
         }
 
-        public SimpleValue(XmlNode node, ModuleItem item, MetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
+        public SimpleValue(XmlNode node, IModuleItem item, IMetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)
             : base(node, item, header, host, reader, baseAddress, offset)
         {
             ReadValue(reader);

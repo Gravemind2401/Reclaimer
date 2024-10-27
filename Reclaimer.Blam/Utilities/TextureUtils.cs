@@ -18,15 +18,19 @@ namespace Reclaimer.Blam.Utilities
             { KnownTextureFormat.BC3_unorm, DxgiFormat.BC3_UNorm },
             { KnownTextureFormat.BC7_unorm, DxgiFormat.BC7_UNorm },
             { KnownTextureFormat.A8, DxgiFormat.A8_UNorm },
+            { KnownTextureFormat.R8G8, DxgiFormat.R8G8_UNorm },
             { KnownTextureFormat.A8R8G8B8, DxgiFormat.B8G8R8A8_UNorm },
             { KnownTextureFormat.X8R8G8B8, DxgiFormat.B8G8R8X8_UNorm },
+            { KnownTextureFormat.Q8W8V8U8, DxgiFormat.R8G8B8A8_SNorm },
+            { KnownTextureFormat.R16G16B16A16, DxgiFormat.R16G16B16A16_UNorm },
+            { KnownTextureFormat.R16G16B16A16_snorm, DxgiFormat.R16G16B16A16_SNorm },
             { KnownTextureFormat.R5G6B5, DxgiFormat.B5G6R5_UNorm },
             { KnownTextureFormat.A1R5G5B5, DxgiFormat.B5G5R5A1_UNorm },
             { KnownTextureFormat.A4R4G4B4, DxgiFormat.B4G4R4A4_UNorm },
+            { KnownTextureFormat.R10G10B10A2, DxgiFormat.R10G10B10A2_UNorm },
             { KnownTextureFormat.RGBAFP16, DxgiFormat.R16G16B16A16_Float },
             { KnownTextureFormat.RGBFP32, DxgiFormat.R32G32B32_Float },
-            { KnownTextureFormat.RGBAFP32, DxgiFormat.R32G32B32A32_Float },
-            { KnownTextureFormat.Q8W8V8U8, DxgiFormat.R8G8B8A8_SNorm }
+            { KnownTextureFormat.RGBAFP32, DxgiFormat.R32G32B32A32_Float }
         };
 
         private static readonly Dictionary<KnownTextureFormat, XboxFormat> xboxLookup = new Dictionary<KnownTextureFormat, XboxFormat>
@@ -62,11 +66,15 @@ namespace Reclaimer.Blam.Utilities
             Y8,
             AY8,
             A8Y8,
+            R8G8,
             R5G6B5,
+            R10G10B10A2,
             A1R5G5B5,
             A4R4G4B4,
             X8R8G8B8,
             A8R8G8B8,
+            R16G16B16A16,
+            R16G16B16A16_snorm,
             DXT1,
             DXT3,
             DXT5,
