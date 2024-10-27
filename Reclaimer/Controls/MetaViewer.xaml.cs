@@ -199,7 +199,7 @@ namespace Reclaimer.Controls
                     var fileName = $"{item.TagName}.{item.ClassName}";
                     var fileKey = $"Blam.{item.CacheFile.CacheType}.{item.ClassCode}";
                     var args = new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), item);
-                    Substrate.OpenWithDefault(args);
+                    Substrate.OpenWithPlugin(args, typeof(MetaViewerPlugin));
                 }
                 else if (e.Parameter is Plugins.MetaViewer.Halo5.TagReferenceValue h5ref && h5ref.SelectedItem is not null)
                 {
@@ -207,7 +207,7 @@ namespace Reclaimer.Controls
                     var fileName = $"{item.TagName}.{item.ClassName}";
                     var fileKey = $"Blam.{item.Module.ModuleType}.{item.ClassCode}";
                     var args = new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), item);
-                    Substrate.OpenWithDefault(args);
+                    Substrate.OpenWithPlugin(args, typeof(MetaViewerPlugin));
                 }
             }
             catch { }

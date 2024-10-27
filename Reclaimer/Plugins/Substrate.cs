@@ -291,6 +291,21 @@ namespace Reclaimer.Plugins
         }
 
         /// <summary>
+        /// Opens a file object with the specified plugin.
+        /// </summary>
+        /// <param name="args">The file arguments.</param>
+        /// <param name="type">The type of the plugin to open with.</param>
+        public static bool OpenWithPlugin(OpenFileArgs args, Type pluginType)
+        {
+            var handler = plugins.Values.FirstOrDefault(p => p.GetType() == pluginType);
+            if (handler == null || !handler.CanOpenFile(args))
+                return false;
+
+            handler.OpenFile(args);
+            return true;
+        }
+
+        /// <summary>
         /// Fetches context items from across all plugins for a particular file object.
         /// </summary>
         /// <param name="context">The file arguments.</param>
