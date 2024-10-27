@@ -439,12 +439,15 @@ namespace Reclaimer.Drawing
             var output = new byte[width * height * bpp];
             var input = MemoryMarshal.Cast<byte, sbyte>(data);
 
-            for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex += 2, outputIndex += bpp)
+            unchecked
             {
-                output[outputIndex + 1] = (byte)(unchecked(input[inputIndex + 1]) - sbyte.MinValue);
-                output[outputIndex + 2] = (byte)(unchecked(input[inputIndex + 0]) - sbyte.MinValue);
-                if (!bgr24)
-                    output[outputIndex + 3] = byte.MaxValue;
+                for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex += 2, outputIndex += bpp)
+                {
+                    output[outputIndex + 1] = (byte)(input[inputIndex + 1] - sbyte.MinValue);
+                    output[outputIndex + 2] = (byte)(input[inputIndex + 0] - sbyte.MinValue);
+                    if (!bgr24)
+                        output[outputIndex + 3] = byte.MaxValue;
+                }
             }
 
             return output;
@@ -457,14 +460,17 @@ namespace Reclaimer.Drawing
             var output = new byte[width * height * bpp];
             var input = MemoryMarshal.Cast<byte, sbyte>(data);
 
-            for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex += 4, outputIndex += bpp)
+            unchecked
             {
-                //note: input is rgba, output is bgra
-                output[outputIndex + 0] = (byte)(unchecked(input[inputIndex + 2]) - sbyte.MinValue);
-                output[outputIndex + 1] = (byte)(unchecked(input[inputIndex + 1]) - sbyte.MinValue);
-                output[outputIndex + 2] = (byte)(unchecked(input[inputIndex + 0]) - sbyte.MinValue);
-                if (!bgr24)
-                    output[outputIndex + 3] = (byte)(unchecked(input[inputIndex + 3]) - sbyte.MinValue);
+                for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex += 4, outputIndex += bpp)
+                {
+                    //note: input is rgba, output is bgra
+                    output[outputIndex + 0] = (byte)(input[inputIndex + 2] - sbyte.MinValue);
+                    output[outputIndex + 1] = (byte)(input[inputIndex + 1] - sbyte.MinValue);
+                    output[outputIndex + 2] = (byte)(input[inputIndex + 0] - sbyte.MinValue);
+                    if (!bgr24)
+                        output[outputIndex + 3] = (byte)(input[inputIndex + 3] - sbyte.MinValue);
+                }
             }
 
             return output;
@@ -513,13 +519,16 @@ namespace Reclaimer.Drawing
             var output = new byte[width * height * bpp];
             var input = MemoryMarshal.Cast<byte, short>(data);
 
-            for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex += 4, outputIndex += bpp)
+            unchecked
             {
-                output[outputIndex + 0] = (byte)MathF.Round((unchecked(input[inputIndex + 2]) - short.MinValue) / (float)ushort.MaxValue * byte.MaxValue);
-                output[outputIndex + 1] = (byte)MathF.Round((unchecked(input[inputIndex + 1]) - short.MinValue) / (float)ushort.MaxValue * byte.MaxValue);
-                output[outputIndex + 2] = (byte)MathF.Round((unchecked(input[inputIndex + 0]) - short.MinValue) / (float)ushort.MaxValue * byte.MaxValue);
-                if (!bgr24)
-                    output[outputIndex + 3] = (byte)MathF.Round((unchecked(input[inputIndex + 3]) - short.MinValue) / (float)ushort.MaxValue * byte.MaxValue);
+                for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex += 4, outputIndex += bpp)
+                {
+                    output[outputIndex + 0] = (byte)MathF.Round((input[inputIndex + 2] - short.MinValue) / (float)ushort.MaxValue * byte.MaxValue);
+                    output[outputIndex + 1] = (byte)MathF.Round((input[inputIndex + 1] - short.MinValue) / (float)ushort.MaxValue * byte.MaxValue);
+                    output[outputIndex + 2] = (byte)MathF.Round((input[inputIndex + 0] - short.MinValue) / (float)ushort.MaxValue * byte.MaxValue);
+                    if (!bgr24)
+                        output[outputIndex + 3] = (byte)MathF.Round((input[inputIndex + 3] - short.MinValue) / (float)ushort.MaxValue * byte.MaxValue);
+                }
             }
 
             return output;
