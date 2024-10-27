@@ -97,7 +97,7 @@ namespace Reclaimer.Blam.Halo5
         A8, //a8_unorm (000A){a8}
         Y8, //r8_unorm_rrr1 (RRR1){y8}
         AY8, //r8_unorm_rrrr (RRRR){ay8}
-        R8G8, //r8g8_unorm_rrrg (RRRG){r8g8_unorm_gggr (GGGR)}
+        A8Y8, //r8g8_unorm_rrrg (RRRG){r8g8_unorm_gggr (GGGR)}
         Unused1,
         Unused2,
         R5G6B5, //b5g6r5_unorm{r5g6b5}
@@ -118,8 +118,8 @@ namespace Reclaimer.Blam.Halo5
         Unused9,
         V8U8, //r8g8_snorm (v8u8){v8u8}
         G8B8, //DEPRECATED_g8b8{g8b8}
-        ABGRFP32, //r32g32b32a32_float (abgrfp32){abgrfp32}
-        ABGRFP16, //r16g16b16a16_float (abgrfp16){abgrfp16}
+        RGBAFP32, //r32g32b32a32_float (abgrfp32){abgrfp32}
+        RGBAFP16, //r16g16b16a16_float (abgrfp16){abgrfp16}
         Mono_16F, //r16_float_rrr1 (16f_mono){16f_mono}
         Red_16F, //r16_float_r000 (16f_red){16f_red}
         Q8W8V8U8, //r8g8b8a8_snorm (q8w8v8u8){q8w8v8u8}
@@ -128,7 +128,7 @@ namespace Reclaimer.Blam.Halo5
         V16U16, //r16g16_snorm (v16u16){v16u16}
         L16, //r16_unorm_rrr0 (L16){l16}
         R16G16, //r16g16_unorm (r16g16){r16g16}
-        Signedr16G16B16A16, //r16g16b16a16_snorm (signedr16g16b16a16){signedr16g16b16a16}
+        SignedR16G16B16A16, //r16g16b16a16_snorm (signedr16g16b16a16){signedr16g16b16a16}
         DXT3a, //DEPRECATED_dxt3a{dxt3a}
         BC4_unorm, //bc4_unorm_rrrr (dxt5a){bc4_unorm (dxt5a)}
         BC4_snorm, //bc4_snorm_rrrr

@@ -4,12 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:c="clr-namespace:Reclaimer.Controls"
-             xmlns:u="clr-namespace:Studio.Utilities;assembly=Studio"
+             xmlns:su="clr-namespace:Studio.Utilities;assembly=Studio"
+             xmlns:ru="clr-namespace:Reclaimer.Utilities"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="400">
+             d:DesignHeight="400" d:DesignWidth="400"
+             d:DataContext="{Binding Source={RelativeSource Self}}">
 
     <UserControl.Resources>
-        <u:VisibilityConverter x:Key="boolToVisConverter" />
+        <su:VisibilityConverter x:Key="boolToVisConverter" />
+        <ru:ToStringConverter x:Key="stringConverter" />
     </UserControl.Resources>
 
     <DockPanel>
@@ -55,11 +58,31 @@
                 </Button>
             </ToolBar>
         </ToolBarTray>
-        <ToolBarTray x:Name="bottomToolbar" DockPanel.Dock="Bottom" IsLocked="True" Margin="0"  
-                     Visibility="{Binding HasMultiple, Converter={StaticResource boolToVisConverter}}">
+        <ToolBarTray DockPanel.Dock="Bottom" IsLocked="True" Margin="0">
             <ToolBar Margin="3,2">
-                <ComboBox ItemsSource="{Binding Indexes}"
-                          SelectedIndex="{Binding SelectedIndex}" />
+                <ToolBar.Resources>
+                    <Style TargetType="Label">
+                        <Setter Property="Padding" Value="4,0,6,2" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Foreground" Value="{DynamicResource CommonControls.TextBox.Text}" />
+                    </Style>
+                </ToolBar.Resources>
+                <Grid Visibility="{Binding HasMultiple, Converter={StaticResource boolToVisConverter}}">
+                    <ComboBox ItemsSource="{Binding Indexes}"
+                              SelectedIndex="{Binding SelectedIndex}" />
+                    <Separator />
+                </Grid>
+                <Label>
+                    <TextBlock Text="{Binding ImageFormatDisplay}" />
+                </Label>
+                <Separator />
+                <Label>
+                    <TextBlock>
+                        <Run Text="{Binding ImageDescriptor.Width, Mode=OneWay}" />
+                        <Run Text=" x " />
+                        <Run Text="{Binding ImageDescriptor.Height, Mode=OneWay}" />
+                    </TextBlock>
+                </Label>
             </ToolBar>
         </ToolBarTray>
         <c:ZoomPanel x:Name="zoomPanel" MaxZoom="8" MinZoom="0.1">

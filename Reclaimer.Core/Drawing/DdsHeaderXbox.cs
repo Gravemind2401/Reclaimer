@@ -1,9 +1,5 @@
 ﻿namespace Reclaimer.Drawing
 {
-    // This class does not represent an actual Xbox DDS header.
-    // It is based on DdsHeaderDxt10 and serves as a way to specify alternate
-    // texture formats used by Xbox that are not part of the Dxgi spec.
-
     internal class DdsHeaderXbox
     {
         public XboxFormat XboxFormat { get; set; }
@@ -11,12 +7,24 @@
         public D3D10ResourceMiscFlags MiscFlags { get; set; }
         public int ArraySize { get; set; }
         public D3D10ResourceMiscFlag2 MiscFlags2 { get; set; }
+        public XgTileMode TileMode { get; set; }
+        public int BaseAlignment { get; set; }
+        public int DataSize { get; set; }
+        public int XdkVersion { get; set; }
     }
 
+    public enum XgTileMode
+    {
+        Invalid = 0,
+        Linear = 1
+    }
+
+    // This enum does not represent actual Xbox DDS format values.
+    // It just serves as a way to specify alternate
+    // texture formats used by Xbox that are not part of the Dxgi spec.
     public enum XboxFormat
     {
         Unknown,
-        A8,
         AY8,
         CTX1,
         DXN,
@@ -28,8 +36,9 @@
         DXT5a_scalar,
         DXT5a_mono,
         DXT5a_alpha,
+        L16,
         V8U8,
         Y8,
-        Y8A8,
+        Y8A8
     }
 }

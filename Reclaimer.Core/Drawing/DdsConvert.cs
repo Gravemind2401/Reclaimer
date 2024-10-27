@@ -1,9 +1,10 @@
-﻿using Reclaimer.Drawing.Annotations;
-using Reclaimer.Drawing.Bc7;
+﻿using Reclaimer.Drawing.Bc7;
+using System.Buffers;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -252,7 +253,7 @@ namespace Reclaimer.Drawing
                             return bgr24 ? ToArray(SkipNth(data, 4), true, virtualHeight, Width) : data;
 
                         default:
-                            throw new NotSupportedException($"The {nameof(DxgiFormat)} is not supported.");
+                            throw new NotSupportedException($"The {nameof(DxgiFormat)} '{dx10Header.DxgiFormat}' is not supported.");
                     }
                 }
             }
@@ -260,14 +261,14 @@ namespace Reclaimer.Drawing
             {
                 return decompressMethodsXbox.TryGetValue(xboxHeader.XboxFormat, out var xboxDecode)
                     ? xboxDecode(data, virtualHeight, Width, bgr24)
-                    : throw new NotSupportedException($"The {nameof(XboxFormat)} is not supported.");
+                    : throw new NotSupportedException($"The {nameof(XboxFormat)} '{xboxHeader.XboxFormat}' is not supported.");
             }
             else
             {
                 var fourcc = (FourCC)header.PixelFormat.FourCC;
                 return decompressMethodsFourCC.TryGetValue(fourcc, out var fourccDecode)
                     ? fourccDecode(data, virtualHeight, Width, bgr24)
-                    : throw new NotSupportedException($"The {nameof(FourCC)} is not supported.");
+                    : throw new NotSupportedException($"The {nameof(FourCC)} '{fourcc}' is not supported.");
             }
         }
 
@@ -336,7 +337,7 @@ namespace Reclaimer.Drawing
 
                 var buffer = new byte[Width * Height * bpp];
                 source.CopyPixels(sourceRect, buffer, stride, 0);
-                buffer = Rotate(buffer, Width, Height, bpp, rotateArray[i]);
+                Rotate(buffer, Width, Height, bpp, rotateArray[i]);
                 dest.WritePixels(destRect, buffer, stride, 0);
             }
 
@@ -344,6 +345,9 @@ namespace Reclaimer.Drawing
         }
 
         #region Standard Decompression Methods
+
+        #region Packed Formats
+
         [DxgiDecompressor(B5G6R5_UNorm)]
         internal static byte[] DecompressB5G6R5(byte[] data, int height, int width, bool bgr24) => DecompressPacked(data, height, width, bgr24, BgraColour.From565);
 
@@ -368,6 +372,101 @@ namespace Reclaimer.Drawing
 
             return output;
         }
+
+        #endregion
+
+        #region Integer Formats
+
+        [DxgiDecompressor(A8_UNorm)]
+        internal static byte[] DecompressA8(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+
+            if (!bgr24)
+            {
+                for (int inputIndex = 0, outputIndex = 0; inputIndex < data.Length && outputIndex < output.Length; inputIndex++, outputIndex += bpp)
+                    output[outputIndex + 3] = data[inputIndex];
+            }
+
+            return output;
+        }
+
+        [DxgiDecompressor(R8G8_UNorm), DxgiDecompressor(R8G8_UInt)]
+        internal static byte[] DecompressR8G8(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+
+            for (int inputIndex = 0, outputIndex = 0; inputIndex < data.Length && outputIndex < output.Length; inputIndex += 2, outputIndex += bpp)
+            {
+                output[outputIndex + 1] = data[inputIndex + 1];
+                output[outputIndex + 2] = data[inputIndex + 0];
+                if (!bgr24)
+                    output[outputIndex + 3] = byte.MaxValue;
+            }
+
+            return output;
+        }
+
+        [DxgiDecompressor(R8G8_SNorm), DxgiDecompressor(R8G8_SInt)]
+        internal static byte[] DecompressR8G8Signed(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+            var input = MemoryMarshal.Cast<byte, sbyte>(data);
+
+            for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex += 2, outputIndex += bpp)
+            {
+                output[outputIndex + 1] = (byte)(unchecked(input[inputIndex + 1]) - sbyte.MinValue);
+                output[outputIndex + 2] = (byte)(unchecked(input[inputIndex + 0]) - sbyte.MinValue);
+                if (!bgr24)
+                    output[outputIndex + 3] = byte.MaxValue;
+            }
+
+            return output;
+        }
+
+        [DxgiDecompressor(R8G8B8A8_SNorm), DxgiDecompressor(R8G8B8A8_SInt)]
+        internal static byte[] DecompressR8G8B8A8Signed(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+            var input = MemoryMarshal.Cast<byte, sbyte>(data);
+
+            for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex += 4, outputIndex += bpp)
+            {
+                //note: input is rgba, output is bgra
+                output[outputIndex + 0] = (byte)(unchecked(input[inputIndex + 2]) - sbyte.MinValue);
+                output[outputIndex + 1] = (byte)(unchecked(input[inputIndex + 1]) - sbyte.MinValue);
+                output[outputIndex + 2] = (byte)(unchecked(input[inputIndex + 0]) - sbyte.MinValue);
+                if (!bgr24)
+                    output[outputIndex + 3] = (byte)(unchecked(input[inputIndex + 3]) - sbyte.MinValue);
+            }
+
+            return output;
+        }
+
+        [DxgiDecompressor(R16_UNorm), DxgiDecompressor(R16_UInt)]
+        internal static byte[] DecompressR16(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+            var input = MemoryMarshal.Cast<byte, ushort>(data);
+
+            for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex++, outputIndex += bpp)
+            {
+                output[outputIndex + 2] = (byte)MathF.Round(input[inputIndex] / (float)ushort.MaxValue * byte.MaxValue);
+                if (!bgr24)
+                    output[outputIndex + 3] = byte.MaxValue;
+            }
+
+            return output;
+        }
+
+        #endregion
+
+        #region BC Formats
 
         [FourCCDecompressor(FourCC.DXT1)]
         [DxgiDecompressor(BC1_Typeless), DxgiDecompressor(BC1_UNorm)]
@@ -804,6 +903,11 @@ namespace Reclaimer.Drawing
             var yBlocks = (int)Math.Ceiling(height / (float)bcBlockHeight);
 
             var reader = new BitReader(data);
+
+            //these get reused for every compressed block
+            var indices0 = new byte[16];
+            var indices1 = new byte[16];
+
             for (var yBlock = 0; yBlock < yBlocks; yBlock++)
             {
                 for (var xBlock = 0; xBlock < xBlocks; xBlock++)
@@ -828,12 +932,13 @@ namespace Reclaimer.Drawing
                     var indexMode = reader.ReadBits(info.IndexModeBits);
 
                     var endpoints = new BgraColour[info.SubsetCount * 2];
+                    var endpointBytes = MemoryMarshal.Cast<BgraColour, byte>(endpoints);
                     var channels = info.AlphaBits > 0 ? 4 : 3;
 
                     for (var i = 2; i >= 0; i--) // R, G, B
                     {
                         for (var j = 0; j < endpoints.Length; j++)
-                            endpoints[j][i] = reader.ReadBits(info.ColourBits);
+                            endpointBytes[j * 4 + i] = reader.ReadBits(info.ColourBits);
                     }
 
                     if (info.AlphaBits > 0)
@@ -850,53 +955,55 @@ namespace Reclaimer.Drawing
                         {
                             var p1 = reader.ReadBit();
                             var p2 = info.PBitMode == PBitMode.Shared ? p1 : reader.ReadBit();
+                            var endpointBytesOffset = i * 8;
 
                             for (var c = 0; c < channels; c++)
                             {
-                                endpoints[i * 2][c] = (byte)((endpoints[i * 2][c] << 1) | p1);
-                                endpoints[i * 2 + 1][c] = (byte)((endpoints[i * 2 + 1][c] << 1) | p2);
+                                endpointBytes[endpointBytesOffset + c] = (byte)((endpointBytes[endpointBytesOffset + c] << 1) | p1);
+                                endpointBytes[endpointBytesOffset + 4 + c] = (byte)((endpointBytes[endpointBytesOffset + 4 + c] << 1) | p2);
                             }
                         }
                     }
 
-                    var palette0 = new BgraColour[info.SubsetCount, 1 << info.Index0Bits];
-                    var palette1 = new BgraColour[info.SubsetCount, 1 << info.Index1Bits];
+                    var palette0Size = 1 << info.Index0Bits;
+                    var palette1Size = 1 << info.Index1Bits;
+
+                    var palette0 = new BgraColour[info.SubsetCount * palette0Size];
+                    var palette1 = new BgraColour[info.SubsetCount * palette1Size];
+
+                    var palette0Bytes = MemoryMarshal.Cast<BgraColour, byte>(palette0);
+                    var palette1Bytes = MemoryMarshal.Cast<BgraColour, byte>(palette1);
 
                     for (var i = 0; i < info.SubsetCount; i++)
                     {
+                        var endpointBytesOffset = i * 8;
+
                         for (var c = 0; c < channels; c++)
                         {
                             var channelBits = c < 3 ? info.ColourBits : info.AlphaBits;
                             if (info.PBitMode != PBitMode.None)
                                 channelBits++;
 
-                            int e0 = endpoints[i * 2][c];
-                            int e1 = endpoints[i * 2 + 1][c];
+                            int e0 = endpointBytes[endpointBytesOffset + c];
+                            int e1 = endpointBytes[endpointBytesOffset + 4 + c];
 
                             //shift left until the MSB of the endpoint value is in the leftmost bit of the byte
                             //then copy the X highest bits into the X lowest bits where X is (8 - # of colour bits)
                             e0 = (e0 << (8 - channelBits)) | (e0 >> (2 * channelBits - 8));
                             e1 = (e1 << (8 - channelBits)) | (e1 >> (2 * channelBits - 8));
 
-                            for (var j = 0; j < palette0.GetLength(1); j++)
-                                palette0[i, j][c] = Bc7Helper.Interpolate(e0, e1, j, info.Index0Bits);
-
-                            if (info.Index1Bits > 0)
-                            {
-                                for (var j = 0; j < palette1.GetLength(1); j++)
-                                    palette1[i, j][c] = Bc7Helper.Interpolate(e0, e1, j, info.Index1Bits);
-                            }
+                            Bc7Helper.InterpolatePaletteValues(e0, e1, i, c, ref info, palette0Bytes, palette1Bytes);
                         }
                     }
 
                     var fixups = new byte[] { 0, Bc7Helper.FixUpTable[info.SubsetCount - 1, partitionIndex, 1], Bc7Helper.FixUpTable[info.SubsetCount - 1, partitionIndex, 2] };
-                    var indices0 = new byte[16];
-                    var indices1 = new byte[16];
+                    var subsets = Bc7Helper.PartitionTable[info.SubsetCount - 1, partitionIndex];
 
                     //get the index bits
+                    //since every index of indices0 gets assigned, there is no need to clear it first
                     for (var i = 0; i < 16; i++)
                     {
-                        var subset = Bc7Helper.PartitionTable[info.SubsetCount - 1, partitionIndex, i];
+                        var subset = subsets[i];
                         indices0[i] = reader.ReadBits((byte)(i == fixups[subset] ? info.Index0Bits - 1 : info.Index0Bits));
                     }
 
@@ -909,10 +1016,12 @@ namespace Reclaimer.Drawing
                     {
                         for (var i = 0; i < 16; i++)
                         {
-                            var subset = Bc7Helper.PartitionTable[info.SubsetCount - 1, partitionIndex, i];
+                            var subset = subsets[i];
                             indices1[i] = reader.ReadBits((byte)(i == fixups[subset] ? info.Index1Bits - 1 : info.Index1Bits));
                         }
                     }
+                    else
+                        Array.Fill(indices1, (byte)0); //reset to zeros
 
                     for (var i = 0; i < 4; i++)
                     {
@@ -927,18 +1036,21 @@ namespace Reclaimer.Drawing
                             var pixelIndex = i * 4 + j;
                             var destIndex = (destY * width + destX) * bpp;
 
-                            var subsetIndex = Bc7Helper.PartitionTable[info.SubsetCount - 1, partitionIndex, pixelIndex];
+                            var subsetIndex = subsets[pixelIndex];
 
-                            var colourPalette = indexMode == 0 ? palette0 : palette1;
-                            var colourIndex = indexMode == 0 ? indices0[pixelIndex] : indices1[pixelIndex];
-                            var result = colourPalette[subsetIndex, colourIndex];
+                            var (colourPalette, paletteDepth, colourIndex) = indexMode == 0
+                                ? (palette0, palette0Size, indices0[pixelIndex])
+                                : (palette1, palette1Size, indices1[pixelIndex]);
+
+                            var result = colourPalette[subsetIndex * paletteDepth + colourIndex];
 
                             if (info.Index1Bits > 0)
                             {
-                                var alphaPalette = indexMode == 0 ? palette1 : palette0;
-                                var alphaIndex = indexMode == 0 ? indices1[pixelIndex] : indices0[pixelIndex];
+                                var (alphaPalette, alphaIndex) = indexMode == 0
+                                    ? (palette1, indices1[pixelIndex])
+                                    : (palette0, indices0[pixelIndex]);
 
-                                result.A = alphaPalette[subsetIndex, alphaIndex].A;
+                                result.A = alphaPalette[subsetIndex * paletteDepth + alphaIndex].A;
                             }
                             else if (info.AlphaBits == 0)
                                 result.A = byte.MaxValue;
@@ -969,14 +1081,82 @@ namespace Reclaimer.Drawing
 
             return output;
         }
+
+        #endregion
+
+        #region FP Formats
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static byte RealToByte(float value) => (byte)MathF.Round(Math.Clamp(value, 0f, 1f) * byte.MaxValue);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static byte RealToByte(Half value) => (byte)MathF.Round(Math.Clamp((float)value, 0f, 1f) * byte.MaxValue);
+
+        [DxgiDecompressor(R32G32B32_Float)]
+        internal static byte[] DecompressRGBFP32(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+            var input = MemoryMarshal.Cast<byte, float>(data);
+
+            for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex += 3, outputIndex += bpp)
+            {
+                //note: input is rgb, output is bgr
+                output[outputIndex + 0] = RealToByte(input[inputIndex + 2]);
+                output[outputIndex + 1] = RealToByte(input[inputIndex + 1]);
+                output[outputIndex + 2] = RealToByte(input[inputIndex + 0]);
+                if (!bgr24)
+                    output[outputIndex + 3] = byte.MaxValue;
+            }
+
+            return output;
+        }
+
+        [DxgiDecompressor(R32G32B32A32_Float)]
+        internal static byte[] DecompressRGBAFP32(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+            var input = MemoryMarshal.Cast<byte, float>(data);
+
+            for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex += 4, outputIndex += bpp)
+            {
+                //note: input is rgba, output is bgra
+                output[outputIndex + 0] = RealToByte(input[inputIndex + 2]);
+                output[outputIndex + 1] = RealToByte(input[inputIndex + 1]);
+                output[outputIndex + 2] = RealToByte(input[inputIndex + 0]);
+                if (!bgr24)
+                    output[outputIndex + 3] = RealToByte(input[inputIndex + 3]);
+            }
+
+            return output;
+        }
+
+        [DxgiDecompressor(R16G16B16A16_Float)]
+        internal static byte[] DecompressRGBAFP16(byte[] data, int height, int width, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            var output = new byte[width * height * bpp];
+            var input = MemoryMarshal.Cast<byte, Half>(data);
+
+            for (int inputIndex = 0, outputIndex = 0; inputIndex < input.Length && outputIndex < output.Length; inputIndex += 4, outputIndex += bpp)
+            {
+                //note: input is rgba, output is bgra
+                output[outputIndex + 0] = RealToByte(input[inputIndex + 2]);
+                output[outputIndex + 1] = RealToByte(input[inputIndex + 1]);
+                output[outputIndex + 2] = RealToByte(input[inputIndex + 0]);
+                if (!bgr24)
+                    output[outputIndex + 3] = RealToByte(input[inputIndex + 3]);
+            }
+
+            return output;
+        }
+
+        #endregion
+
         #endregion
 
         #region Xbox Decompression Methods
-        [XboxDecompressor(A8)]
-        internal static byte[] DecompressA8(byte[] data, int height, int width, bool bgr24)
-        {
-            return ToArray(data.SelectMany(b => Enumerable.Range(0, bgr24 ? 3 : 4).Select(i => i < 3 ? byte.MinValue : b)), bgr24, height, width);
-        }
 
         [XboxDecompressor(AY8)]
         internal static byte[] DecompressAY8(byte[] data, int height, int width, bool bgr24)
@@ -984,34 +1164,25 @@ namespace Reclaimer.Drawing
             return ToArray(data.SelectMany(b => Enumerable.Range(0, bgr24 ? 3 : 4).Select(i => b)), bgr24, height, width);
         }
 
+        [XboxDecompressor(L16)]
+        internal static byte[] DecompressL16(byte[] data, int height, int width, bool bgr24)
+        {
+            data = DecompressR16(data, height, width, bgr24);
+
+            //copy R across G and B
+            var bpp = bgr24 ? 3 : 4;
+            for (var i = 0; i < data.Length; i += bpp)
+                data[i + 0] = data[i + 1] = data[i + 2];
+
+            return data;
+        }
+
         [XboxDecompressor(V8U8)]
         internal static byte[] DecompressV8U8(byte[] data, int height, int width, bool bgr24)
         {
-            var bpp = bgr24 ? 3 : 4;
-            var output = new byte[width * height * bpp];
-
-            const int bytesPerBlock = 2;
-
-            for (var y = 0; y < height; y++)
-            {
-                for (var x = 0; x < width; x++)
-                {
-                    var srcIndex = (y * width + x) * bytesPerBlock;
-                    var destIndex = (y * width + x) * bpp;
-
-                    var colour = new BgraColour
-                    {
-                        R = (byte)(unchecked((sbyte)data[srcIndex + 0]) - sbyte.MinValue),
-                        G = (byte)(unchecked((sbyte)data[srcIndex + 1]) - sbyte.MinValue),
-                        A = byte.MaxValue
-                    };
-
-                    colour.B = CalculateZVector(colour.R, colour.G);
-                    colour.CopyTo(output, destIndex, bgr24);
-                }
-            }
-
-            return output;
+            data = DecompressR8G8Signed(data, height, width, bgr24);
+            CalculateZVector(data, bgr24);
+            return data;
         }
 
         [XboxDecompressor(Y8)]
@@ -1135,22 +1306,16 @@ namespace Reclaimer.Drawing
         [XboxDecompressor(DXN)]
         internal static byte[] DecompressDXN(byte[] data, int height, int width, bool bgr24)
         {
-            var bpp = bgr24 ? 3 : 4;
             data = DecompressBC5(data, height, width, bgr24);
-            for (var i = 0; i < data.Length; i += bpp)
-                data[i] = CalculateZVector(data[i + 2], data[i + 1]);
-
+            CalculateZVector(data, bgr24);
             return data;
         }
 
         [XboxDecompressor(DXN_SNorm)]
         internal static byte[] DecompressDXNSigned(byte[] data, int height, int width, bool bgr24)
         {
-            var bpp = bgr24 ? 3 : 4;
             data = DecompressBC5Signed(data, height, width, bgr24);
-            for (var i = 0; i < data.Length; i += bpp)
-                data[i] = CalculateZVector(data[i + 2], data[i + 1]);
-
+            CalculateZVector(data, bgr24);
             return data;
         }
 
@@ -1186,13 +1351,21 @@ namespace Reclaimer.Drawing
 
         [XboxDecompressor(DXT5a_alpha)]
         internal static byte[] DecompressDXT5a_alpha(byte[] data, int height, int width, bool bgr24) => DecompressBC3AlphaOnly(data, height, width, false, true, bgr24);
+
         #endregion
 
-        private static sbyte Lerp(in sbyte p1, in sbyte p2, in float fraction) => (sbyte)MathF.Round((p1 * (1 - fraction)) + (p2 * fraction));
-        private static byte Lerp(in byte p1, in byte p2, in float fraction) => (byte)MathF.Round((p1 * (1 - fraction)) + (p2 * fraction));
-        private static float Lerp(in float p1, in float p2, in float fraction) => (p1 * (1 - fraction)) + (p2 * fraction);
+        private static sbyte Lerp(sbyte p1, sbyte p2, float fraction) => (sbyte)MathF.Round((p1 * (1 - fraction)) + (p2 * fraction));
+        private static byte Lerp(byte p1, byte p2, float fraction) => (byte)MathF.Round((p1 * (1 - fraction)) + (p2 * fraction));
+        private static float Lerp(float p1, float p2, float fraction) => (p1 * (1 - fraction)) + (p2 * fraction);
 
-        private static byte CalculateZVector(in byte r, in byte g)
+        private static void CalculateZVector(byte[] data, bool bgr24)
+        {
+            var bpp = bgr24 ? 3 : 4;
+            for (var i = 0; i < data.Length; i += bpp)
+                data[i] = CalculateZVector(data[i + 2], data[i + 1]);
+        }
+
+        private static byte CalculateZVector(byte r, byte g)
         {
             var x = Lerp(-1f, 1f, r / 255f);
             var y = Lerp(-1f, 1f, g / 255f);
@@ -1201,15 +1374,15 @@ namespace Reclaimer.Drawing
             return (byte)MathF.Round((z + 1) / 2 * 255f);
         }
 
-        private static byte[] Rotate(byte[] buffer, int width, int height, int bpp, RotateFlipType rotation)
+        private static void Rotate(byte[] buffer, int width, int height, int bpp, RotateFlipType rotation)
         {
             var rot = (int)rotation;
 
             if (rot == 0)
-                return buffer;
+                return;
 
             var turns = 4 - rot % 4; //starting at 4 because we need to undo the rotations, not apply them
-            var output = new byte[buffer.Length];
+            var output = ArrayPool<byte>.Shared.Rent(buffer.Length);
 
             for (var x = 0; x < width; x++)
             {
@@ -1251,7 +1424,8 @@ namespace Reclaimer.Drawing
                 }
             }
 
-            return output;
+            output.AsSpan(..buffer.Length).CopyTo(buffer);
+            ArrayPool<byte>.Shared.Return(output);
         }
 
         private static BgraColour Lerp(in BgraColour c0, in BgraColour c1, in float fraction)
@@ -1303,9 +1477,10 @@ namespace Reclaimer.Drawing
             return output;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
         private struct BgraColour
         {
-            public delegate BgraColour ColorUnpackMethod(in ushort value);
+            public delegate BgraColour ColorUnpackMethod(ushort value);
 
             public byte B, G, R, A;
 
@@ -1344,7 +1519,7 @@ namespace Reclaimer.Drawing
                     yield return A;
             }
 
-            public readonly void CopyTo(byte[] destination, in int destinationIndex, in bool bgr24)
+            public readonly void CopyTo(byte[] destination, int destinationIndex, bool bgr24)
             {
                 destination[destinationIndex] = B;
                 destination[destinationIndex + 1] = G;
@@ -1353,7 +1528,7 @@ namespace Reclaimer.Drawing
                     destination[destinationIndex + 3] = A;
             }
 
-            public static BgraColour From565(in ushort value)
+            public static BgraColour From565(ushort value)
             {
                 const byte maskB = 0x1F;
                 const byte maskG = 0x3F;
@@ -1368,7 +1543,7 @@ namespace Reclaimer.Drawing
                 };
             }
 
-            public static BgraColour From5551(in ushort value)
+            public static BgraColour From5551(ushort value)
             {
                 const byte maskB = 0x1F;
                 const byte maskG = 0x1F;
@@ -1384,7 +1559,7 @@ namespace Reclaimer.Drawing
                 };
             }
 
-            public static BgraColour From4444(in ushort value)
+            public static BgraColour From4444(ushort value)
             {
                 const byte maskB = 0x0F;
                 const byte maskG = 0x0F;

@@ -1,4 +1,4 @@
-﻿namespace Reclaimer.Drawing.Annotations
+﻿namespace Reclaimer.Drawing
 {
     internal interface IFormatAttribute<T>
     {

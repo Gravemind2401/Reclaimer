@@ -1,5 +1,6 @@
 ﻿using Reclaimer.Drawing;
 using Reclaimer.IO;
+using System.Buffers;
 
 namespace Reclaimer.Blam.Utilities
 {
@@ -16,16 +17,20 @@ namespace Reclaimer.Blam.Utilities
             { KnownTextureFormat.BC2_unorm, DxgiFormat.BC2_UNorm },
             { KnownTextureFormat.BC3_unorm, DxgiFormat.BC3_UNorm },
             { KnownTextureFormat.BC7_unorm, DxgiFormat.BC7_UNorm },
+            { KnownTextureFormat.A8, DxgiFormat.A8_UNorm },
             { KnownTextureFormat.A8R8G8B8, DxgiFormat.B8G8R8A8_UNorm },
             { KnownTextureFormat.X8R8G8B8, DxgiFormat.B8G8R8X8_UNorm },
             { KnownTextureFormat.R5G6B5, DxgiFormat.B5G6R5_UNorm },
             { KnownTextureFormat.A1R5G5B5, DxgiFormat.B5G5R5A1_UNorm },
-            { KnownTextureFormat.A4R4G4B4, DxgiFormat.B4G4R4A4_UNorm }
+            { KnownTextureFormat.A4R4G4B4, DxgiFormat.B4G4R4A4_UNorm },
+            { KnownTextureFormat.RGBAFP16, DxgiFormat.R16G16B16A16_Float },
+            { KnownTextureFormat.RGBFP32, DxgiFormat.R32G32B32_Float },
+            { KnownTextureFormat.RGBAFP32, DxgiFormat.R32G32B32A32_Float },
+            { KnownTextureFormat.Q8W8V8U8, DxgiFormat.R8G8B8A8_SNorm }
         };
 
         private static readonly Dictionary<KnownTextureFormat, XboxFormat> xboxLookup = new Dictionary<KnownTextureFormat, XboxFormat>
         {
-            { KnownTextureFormat.A8, XboxFormat.A8 },
             { KnownTextureFormat.A8Y8, XboxFormat.Y8A8 },
             { KnownTextureFormat.AY8, XboxFormat.AY8 },
             { KnownTextureFormat.CTX1, XboxFormat.CTX1 },
@@ -38,9 +43,11 @@ namespace Reclaimer.Blam.Utilities
             { KnownTextureFormat.DXN, XboxFormat.DXN },
             { KnownTextureFormat.DXN_SNorm, XboxFormat.DXN_SNorm },
             { KnownTextureFormat.DXN_mono_alpha, XboxFormat.DXN_mono_alpha },
+            { KnownTextureFormat.L16, XboxFormat.L16 },
             { KnownTextureFormat.P8, XboxFormat.Y8 },
             { KnownTextureFormat.P8_bump, XboxFormat.Y8 },
             { KnownTextureFormat.U8V8, XboxFormat.V8U8 },
+            { KnownTextureFormat.V8U8, XboxFormat.V8U8 },
             { KnownTextureFormat.Y8, XboxFormat.Y8 }
         };
 
@@ -65,10 +72,14 @@ namespace Reclaimer.Blam.Utilities
             DXT5,
             P8_bump,
             P8,
-            ARGBFP32,
+            ARGBFP32, //TODO: should this actually be RGBA instead of ARGB? the games this is defined in have no examples
+            RGBAFP16,
+            RGBAFP32,
             RGBFP32,
-            RGBFP16,
+            L16,
             U8V8,
+            V8U8,
+            Q8W8V8U8,
             DXT5a,
             DXN,
             DXN_SNorm,
@@ -82,6 +93,8 @@ namespace Reclaimer.Blam.Utilities
             BC2_unorm,
             BC3_unorm,
             BC4_unorm, //same as DXT5a
+            BC6H_UF16,
+            BC6H_SF16,
             BC7_unorm
         }
 
@@ -95,205 +108,31 @@ namespace Reclaimer.Blam.Utilities
 
         private static T ParseToEnum<T>(this object input, T defaultValue = default) where T : struct
         {
+            if (input is T enumValue)
+                return enumValue;
+
             if (input != null)
             {
-                if (Enum.TryParse(input.ToString(), out T enumValue))
+                if (Enum.TryParse(input.ToString(), out enumValue))
                     return enumValue;
             }
 
             return defaultValue;
         }
 
-        //number of bits used to store each pixel
-        private static int GetBpp(KnownTextureFormat format)
-        {
-            switch (format)
-            {
-                case KnownTextureFormat.A8R8G8B8:
-                case KnownTextureFormat.X8R8G8B8:
-                case KnownTextureFormat.ARGBFP32:
-                case KnownTextureFormat.RGBFP32:
-                    return 32;
-
-                case KnownTextureFormat.A8:
-                case KnownTextureFormat.Y8:
-                case KnownTextureFormat.AY8:
-                case KnownTextureFormat.P8_bump:
-                    return 8;
-
-                case KnownTextureFormat.CTX1:
-                case KnownTextureFormat.DXT1:
-                case KnownTextureFormat.DXT3a_alpha:
-                case KnownTextureFormat.DXT3a_mono:
-                case KnownTextureFormat.DXT5a:
-                case KnownTextureFormat.DXT5a_alpha:
-                case KnownTextureFormat.DXT5a_mono:
-                case KnownTextureFormat.BC4_unorm:
-                    return 4;
-
-                case KnownTextureFormat.DXT3:
-                case KnownTextureFormat.DXT5:
-                case KnownTextureFormat.DXN:
-                case KnownTextureFormat.DXN_SNorm:
-                case KnownTextureFormat.DXN_mono_alpha:
-                case KnownTextureFormat.BC7_unorm:
-                    return 8;
-
-                default:
-                    return 16;
-            }
-        }
-
-        //the size in bytes of each read/write unit
-        //ie 32bit uses ints, DXT uses shorts etc. Used for endian swaps.
-        private static int GetLinearUnitSize(KnownTextureFormat format)
-        {
-            switch (format)
-            {
-                case KnownTextureFormat.A8R8G8B8:
-                case KnownTextureFormat.X8R8G8B8:
-                    return 4;
-
-                case KnownTextureFormat.A8:
-                case KnownTextureFormat.Y8:
-                case KnownTextureFormat.AY8:
-                case KnownTextureFormat.P8_bump:
-                    return 1;
-
-                default:
-                    return 2;
-            }
-        }
-
-        //the width and height in pixels of each compressed block
-        private static int GetLinearBlockSize(KnownTextureFormat format)
-        {
-            switch (format)
-            {
-                case KnownTextureFormat.DXT5a_mono:
-                case KnownTextureFormat.DXT5a_alpha:
-                case KnownTextureFormat.DXT1:
-                case KnownTextureFormat.CTX1:
-                case KnownTextureFormat.DXT5a:
-                case KnownTextureFormat.DXT3a_alpha:
-                case KnownTextureFormat.DXT3a_mono:
-                case KnownTextureFormat.DXT3:
-                case KnownTextureFormat.DXT5:
-                case KnownTextureFormat.DXN:
-                case KnownTextureFormat.DXN_SNorm:
-                case KnownTextureFormat.DXN_mono_alpha:
-                    return 4;
-
-                default:
-                    return 1;
-            }
-        }
-
-        //the size in bytes of each compressed block
-        private static int GetLinearTexelPitch(KnownTextureFormat format)
-        {
-            switch (format)
-            {
-                case KnownTextureFormat.DXT5a_mono:
-                case KnownTextureFormat.DXT5a_alpha:
-                case KnownTextureFormat.DXT1:
-                case KnownTextureFormat.CTX1:
-                case KnownTextureFormat.DXT5a:
-                case KnownTextureFormat.DXT3a_alpha:
-                case KnownTextureFormat.DXT3a_mono:
-                    return 8;
-
-                case KnownTextureFormat.DXT3:
-                case KnownTextureFormat.DXT5:
-                case KnownTextureFormat.DXN:
-                case KnownTextureFormat.DXN_SNorm:
-                case KnownTextureFormat.DXN_mono_alpha:
-                    return 16;
-
-                case KnownTextureFormat.A8:
-                case KnownTextureFormat.AY8:
-                case KnownTextureFormat.P8:
-                case KnownTextureFormat.P8_bump:
-                case KnownTextureFormat.Y8:
-                    return 1;
-
-                case KnownTextureFormat.A8R8G8B8:
-                case KnownTextureFormat.X8R8G8B8:
-                    return 4;
-
-                default:
-                    return 2;
-            }
-        }
-
-        //on xbox 360 these texture formats must have dimensions that are multiples of these values.
-        //if the bitmap dimensions are not multiples they are rounded up and cropped when displayed.
-        private static int GetTileSize(KnownTextureFormat format)
-        {
-            switch (format)
-            {
-                case KnownTextureFormat.A8:
-                case KnownTextureFormat.AY8:
-                case KnownTextureFormat.A8R8G8B8:
-                case KnownTextureFormat.X8R8G8B8:
-                case KnownTextureFormat.A4R4G4B4:
-                case KnownTextureFormat.R5G6B5:
-                case KnownTextureFormat.U8V8:
-                    return 32;
-
-                case KnownTextureFormat.A8Y8:
-                case KnownTextureFormat.Y8:
-                case KnownTextureFormat.DXT5a_mono:
-                case KnownTextureFormat.DXT5a_alpha:
-                case KnownTextureFormat.DXT1:
-                case KnownTextureFormat.CTX1:
-                case KnownTextureFormat.DXT5a:
-                case KnownTextureFormat.DXT3a_alpha:
-                case KnownTextureFormat.DXT3a_mono:
-                case KnownTextureFormat.DXT3:
-                case KnownTextureFormat.DXT5:
-                case KnownTextureFormat.DXN:
-                case KnownTextureFormat.DXN_mono_alpha:
-                    return 128;
-
-                default:
-                    return 1;
-            }
-        }
-
-        public static int Bpp(this Blam.Halo2.TextureFormat format) => GetBpp(format.ParseToEnum<KnownTextureFormat>());
-        public static int LinearUnitSize(this Blam.Halo2.TextureFormat format) => GetLinearUnitSize(format.ParseToEnum<KnownTextureFormat>());
-
-        //round up to the nearst valid size, accounting for block sizes and tile sizes
-        public static void GetVirtualSize(object format, int width, int height, out int virtualWidth, out int virtualHeight)
-        {
-            var knownFormat = format.ParseToEnum<KnownTextureFormat>();
-            if (knownFormat == KnownTextureFormat.Unknown)
-                throw new ArgumentException("Could not translate to a known texture format.", nameof(format));
-
-            double blockSize = GetLinearBlockSize(knownFormat);
-            double tileSize = GetTileSize(knownFormat);
-
-            virtualWidth = (int)(Math.Ceiling(width / tileSize) * tileSize);
-            virtualHeight = (int)(Math.Ceiling(height / tileSize) * tileSize);
-
-            virtualWidth = (int)(Math.Ceiling(virtualWidth / blockSize) * blockSize);
-            virtualHeight = (int)(Math.Ceiling(virtualHeight / blockSize) * blockSize);
-        }
-
-        public static byte[] ApplyCrop(byte[] data, object format, int faces, int inWidth, int inHeight, int outWidth, int outHeight)
+        public static byte[] ApplyCrop(byte[] data, DdsImageDescriptor descriptor)
         {
             ArgumentNullException.ThrowIfNull(data);
+
+            var (inWidth, inHeight) = (descriptor.PaddedWidth, descriptor.PaddedHeight);
+            var (outWidth, outHeight) = (descriptor.Width, descriptor.Height);
 
             if (outWidth >= inWidth && outHeight >= inHeight)
                 return data;
 
-            var knownFormat = format.ParseToEnum<KnownTextureFormat>();
-            if (knownFormat == KnownTextureFormat.Unknown)
-                throw new ArgumentException("Could not translate to a known texture format.", nameof(format));
-
-            double blockLen = GetLinearBlockSize(knownFormat);
-            var blockSize = GetLinearTexelPitch(knownFormat);
+            var blockLen = (double)descriptor.BlockWidth;
+            var blockSize = descriptor.BytesPerBlock;
+            var faces = descriptor.FrameCount;
 
             var inRows = (int)Math.Ceiling(inHeight / blockLen) / faces;
             var outRows = (int)Math.Ceiling(outHeight / blockLen) / faces;
@@ -323,98 +162,64 @@ namespace Reclaimer.Blam.Utilities
 
         public static int GetBitmapDataLength(BitmapProperties props, bool includeMips)
         {
-            if (props.MipmapCount == 0)
-                includeMips = false;
+            return CreateFormatDescriptor(props, includeMips).PaddedDataLength;
+        }
 
-            int virtualWidth, virtualHeight;
-            if (!props.UsesPadding)
-            {
-                virtualWidth = props.Width;
-                virtualHeight = props.Height;
-            }
-            else
-                GetVirtualSize(props.BitmapFormat, props.Width, props.Height, out virtualWidth, out virtualHeight);
-
+        public static DdsImageDescriptor CreateFormatDescriptor(this BitmapProperties props) => CreateFormatDescriptor(props, false);
+        public static DdsImageDescriptor CreateFormatDescriptor(this BitmapProperties props, bool includeMips)
+        {
             var bitmapFormat = props.BitmapFormat.ParseToEnum<KnownTextureFormat>();
-            var frameSize = virtualWidth * virtualHeight * GetBpp(bitmapFormat) / 8;
 
-            if (includeMips)
-            {
-                var mipsSize = 0;
-                var minUnit = (int)Math.Pow(GetLinearBlockSize(bitmapFormat), 2) * GetBpp(bitmapFormat) / 8;
-                for (var i = 1; i <= props.MipmapCount; i++)
-                    mipsSize += Math.Max(minUnit, (int)(frameSize * Math.Pow(0.25, i)));
-                frameSize += mipsSize;
-            }
+            DdsImageDescriptor desc;
+            if (dxgiLookup.TryGetValue(bitmapFormat, out var dxgiFormat) || Enum.TryParse(props.BitmapFormat?.ToString(), true, out dxgiFormat))
+                desc = new DdsImageDescriptor(dxgiFormat, props.Width, props.Height, props.FrameCount, includeMips ? props.MipmapCount : 0);
+            else if (xboxLookup.TryGetValue(bitmapFormat, out var xboxFormat) || Enum.TryParse(props.BitmapFormat?.ToString(), true, out xboxFormat))
+                desc = new DdsImageDescriptor(xboxFormat, props.Width, props.Height, props.FrameCount, includeMips ? props.MipmapCount : 0);
+            else
+                throw Exceptions.BitmapFormatNotSupported(props.BitmapFormat.ToString());
 
-            return frameSize * Math.Max(1, props.FrameCount);
+            if (!props.UsesPadding)
+                (desc.PaddedWidth, desc.PaddedHeight) = (desc.Width, desc.Height);
+
+            //use explicit dimensions if provided
+            if (props.VirtualWidth > 0)
+                desc.PaddedWidth = props.VirtualWidth;
+            if (props.VirtualHeight > 0)
+                desc.PaddedHeight = props.VirtualHeight;
+
+            return desc;
         }
 
         public static DdsImage GetDds(BitmapProperties props, byte[] data, bool includeMips)
         {
-            if (props.MipmapCount == 0)
-                includeMips = false;
+            var formatDesc = CreateFormatDescriptor(props, includeMips);
 
-            int virtualWidth, virtualHeight;
-            if (!props.UsesPadding)
+            if (props.ByteOrder == ByteOrder.BigEndian && formatDesc.ReadUnitSize > 1)
             {
-                virtualWidth = props.Width;
-                virtualHeight = props.Height;
-            }
-            else
-                GetVirtualSize(props.BitmapFormat, props.Width, props.Height, out virtualWidth, out virtualHeight);
-
-            if (props.VirtualWidth > 0)
-                virtualWidth = props.VirtualWidth;
-            if (props.VirtualHeight > 0)
-                virtualHeight = props.VirtualHeight;
-
-            var bitmapFormat = props.BitmapFormat.ParseToEnum<KnownTextureFormat>();
-            var textureType = props.BitmapType.ParseToEnum<KnownTextureType>();
-
-            if (props.ByteOrder == ByteOrder.BigEndian)
-            {
-                var unitSize = GetLinearUnitSize(bitmapFormat);
-                if (unitSize > 1)
-                {
-                    for (var i = 0; i < data.Length - 1; i += unitSize)
-                        Array.Reverse(data, i, unitSize);
-                }
+                for (var i = 0; i < data.Length - 1; i += formatDesc.ReadUnitSize)
+                    Array.Reverse(data, i, formatDesc.ReadUnitSize);
             }
 
-            var arrayHeight = virtualHeight * Math.Max(1, props.FrameCount);
-
-            if (includeMips)
-            {
-                var mipsHeight = 0d;
-                for (var i = 1; i <= props.MipmapCount; i++)
-                    mipsHeight += arrayHeight * Math.Pow(0.25, i);
-
-                var minUnit = GetLinearBlockSize(bitmapFormat);
-                mipsHeight += (minUnit - (mipsHeight % minUnit)) % minUnit;
-
-                arrayHeight += (int)mipsHeight * Math.Max(1, props.FrameCount);
-            }
+            if (formatDesc.PaddedDataLength > data.Length)
+                Array.Resize(ref data, formatDesc.PaddedDataLength);
 
             if (props.Swizzled)
-                data = XTextureScramble(data, virtualWidth, arrayHeight, props.BitmapFormat, false);
+                XTextureUnscramble(data, formatDesc);
 
-            if (virtualWidth > props.Width || virtualHeight > props.Height)
-                data = ApplyCrop(data, props.BitmapFormat, props.FrameCount, virtualWidth, virtualHeight, props.Width, props.Height);
+            if (formatDesc.PaddedWidth > props.Width || formatDesc.PaddedHeight > props.Height)
+                data = ApplyCrop(data, formatDesc);
 
-            DdsImage dds;
-            if (dxgiLookup.TryGetValue(bitmapFormat, out var dxgiFormat))
-                dds = new DdsImage(props.Height, props.Width, dxgiFormat, data);
-            else if (xboxLookup.TryGetValue(bitmapFormat, out var xboxFormat))
-                dds = new DdsImage(props.Height, props.Width, xboxFormat, data);
-            else
-                throw Exceptions.BitmapFormatNotSupported(props.BitmapFormat.ToString());
+            var dds = formatDesc.XboxFormat == default
+                ? new DdsImage(props.Height, props.Width, formatDesc.DxgiFormat, data)
+                : new DdsImage(props.Height, props.Width, formatDesc.XboxFormat, data);
 
+            var textureType = props.BitmapType.ParseToEnum<KnownTextureType>();
             if (textureType == KnownTextureType.CubeMap)
                 dds.CubemapFlags = CubemapFlags.DdsCubemapAllFaces;
-            if (textureType == KnownTextureType.Array || textureType == KnownTextureType.Texture3D)
+            else if (textureType is KnownTextureType.Array or KnownTextureType.Texture3D)
                 dds.ArraySize = props.FrameCount;
-            if (includeMips)
+
+            if (props.MipmapCount > 0)
                 dds.MipmapCount = props.MipmapCount + 1;
 
             return dds;
@@ -462,7 +267,7 @@ namespace Reclaimer.Blam.Utilities
             }
         }
 
-        public static byte[] Swizzle(byte[] data, int width, int height, int depth, int bpp) => Swizzle(data, width, height, depth, bpp, true);
+        public static byte[] Unswizzle(byte[] data, int width, int height, int depth, int bpp) => Swizzle(data, width, height, depth, bpp, true);
 
         public static byte[] Swizzle(byte[] data, int width, int height, int depth, int bpp, bool deswizzle)
         {
@@ -527,31 +332,14 @@ namespace Reclaimer.Blam.Utilities
         #region Xbox 360
 
         /* https://github.com/gdkchan/MESTool/blob/master/MESTool/Program.cs */
-        public static byte[] XTextureScramble(byte[] data, int width, int height, object format) => XTextureScramble(data, width, height, format, false);
+        public static void XTextureUnscramble(byte[] data, DdsImageDescriptor descriptor) => XTextureScramble(data, descriptor, false);
 
-        public static byte[] XTextureScramble(byte[] data, int width, int height, object format, bool toLinear)
+        public static void XTextureScramble(byte[] data, DdsImageDescriptor descriptor, bool toLinear)
         {
             ArgumentNullException.ThrowIfNull(data);
 
-            var knownFormat = format.ParseToEnum<KnownTextureFormat>();
-            if (knownFormat == KnownTextureFormat.Unknown)
-                throw new ArgumentException("Could not translate to a known texture format.", nameof(format));
-
-            var blockSize = GetLinearBlockSize(knownFormat);
-            var texelPitch = GetLinearTexelPitch(knownFormat);
-            var bpp = GetBpp(knownFormat);
-            var tileSize = GetTileSize(knownFormat);
-
-            width = (int)Math.Ceiling((float)width / tileSize) * tileSize;
-            height = (int)Math.Ceiling((float)height / tileSize) * tileSize;
-
-            var expectedSize = width * height * bpp / 8;
-            if (expectedSize > data.Length)
-                Array.Resize(ref data, expectedSize);
-
-            var output = new byte[data.Length];
-
-            var (xBlocks, yBlocks) = (width / blockSize, height / blockSize);
+            var (xBlocks, yBlocks) = (descriptor.BlockCountX, descriptor.BlockCountY);
+            var output = ArrayPool<byte>.Shared.Rent(data.Length);
 
             for (var i = 0; i < yBlocks; i++)
             {
@@ -559,54 +347,57 @@ namespace Reclaimer.Blam.Utilities
                 {
                     var blockOffset = i * xBlocks + j;
 
-                    var x = XGAddress2DTiledX(blockOffset, xBlocks, texelPitch);
-                    var y = XGAddress2DTiledY(blockOffset, xBlocks, texelPitch);
+                    var x = XGAddress2DTiledX(blockOffset, xBlocks, descriptor.BytesPerBlock);
+                    var y = XGAddress2DTiledY(blockOffset, xBlocks, descriptor.BytesPerBlock);
 
-                    var sourceIndex = i * xBlocks * texelPitch + j * texelPitch;
-                    var destIndex = y * xBlocks * texelPitch + x * texelPitch;
+                    var sourceIndex = i * xBlocks * descriptor.BytesPerBlock + j * descriptor.BytesPerBlock;
+                    var destIndex = y * xBlocks * descriptor.BytesPerBlock + x * descriptor.BytesPerBlock;
 
                     if (toLinear)
-                        Array.Copy(data, destIndex, output, sourceIndex, texelPitch);
+                        Array.Copy(data, destIndex, output, sourceIndex, descriptor.BytesPerBlock);
                     else
-                        Array.Copy(data, sourceIndex, output, destIndex, texelPitch);
+                        Array.Copy(data, sourceIndex, output, destIndex, descriptor.BytesPerBlock);
                 }
             }
 
-            return output;
-        }
+            output.AsSpan(..data.Length).CopyTo(data);
+            ArrayPool<byte>.Shared.Return(output);
 
-        private static int XGAddress2DTiledX(int offset, int width, int texelPitch)
-        {
-            var alignedWidth = (width + 31) & ~31;
+            return;
 
-            var logBPP = (texelPitch >> 2) + (texelPitch >> 1 >> (texelPitch >> 2));
-            var offsetB = offset << logBPP;
-            var offsetT = ((offsetB & ~4095) >> 3) + ((offsetB & 1792) >> 2) + (offsetB & 63);
-            var offsetM = offsetT >> (7 + logBPP);
+            static int XGAddress2DTiledX(int offset, int width, int texelPitch)
+            {
+                var alignedWidth = (width + 31) & ~31;
 
-            var macroX = (offsetM % (alignedWidth >> 5)) << 2;
-            var tile = (((offsetT >> (5 + logBPP)) & 2) + (offsetB >> 6)) & 3;
-            var macro = (macroX + tile) << 3;
-            var micro = ((((offsetT >> 1) & ~15) + (offsetT & 15)) & ((texelPitch << 3) - 1)) >> logBPP;
+                var logBPP = (texelPitch >> 2) + (texelPitch >> 1 >> (texelPitch >> 2));
+                var offsetB = offset << logBPP;
+                var offsetT = ((offsetB & ~4095) >> 3) + ((offsetB & 1792) >> 2) + (offsetB & 63);
+                var offsetM = offsetT >> (7 + logBPP);
 
-            return macro + micro;
-        }
+                var macroX = (offsetM % (alignedWidth >> 5)) << 2;
+                var tile = (((offsetT >> (5 + logBPP)) & 2) + (offsetB >> 6)) & 3;
+                var macro = (macroX + tile) << 3;
+                var micro = ((((offsetT >> 1) & ~15) + (offsetT & 15)) & ((texelPitch << 3) - 1)) >> logBPP;
 
-        private static int XGAddress2DTiledY(int offset, int width, int texelPitch)
-        {
-            var alignedWidth = (width + 31) & ~31;
+                return macro + micro;
+            }
 
-            var logBPP = (texelPitch >> 2) + (texelPitch >> 1 >> (texelPitch >> 2));
-            var offsetB = offset << logBPP;
-            var offsetT = ((offsetB & ~4095) >> 3) + ((offsetB & 1792) >> 2) + (offsetB & 63);
-            var offsetM = offsetT >> (7 + logBPP);
+            static int XGAddress2DTiledY(int offset, int width, int texelPitch)
+            {
+                var alignedWidth = (width + 31) & ~31;
 
-            var macroY = (offsetM / (alignedWidth >> 5)) << 2;
-            var tile = ((offsetT >> (6 + logBPP)) & 1) + ((offsetB & 2048) >> 10);
-            var macro = (macroY + tile) << 3;
-            var micro = (((offsetT & ((texelPitch << 6) - 1) & ~31) + ((offsetT & 15) << 1)) >> (3 + logBPP)) & ~1;
+                var logBPP = (texelPitch >> 2) + (texelPitch >> 1 >> (texelPitch >> 2));
+                var offsetB = offset << logBPP;
+                var offsetT = ((offsetB & ~4095) >> 3) + ((offsetB & 1792) >> 2) + (offsetB & 63);
+                var offsetM = offsetT >> (7 + logBPP);
 
-            return macro + micro + ((offsetT & 16) >> 4);
+                var macroY = (offsetM / (alignedWidth >> 5)) << 2;
+                var tile = ((offsetT >> (6 + logBPP)) & 1) + ((offsetB & 2048) >> 10);
+                var macro = (macroY + tile) << 3;
+                var micro = (((offsetT & ((texelPitch << 6) - 1) & ~31) + ((offsetT & 15) << 1)) >> (3 + logBPP)) & ~1;
+
+                return macro + micro + ((offsetT & 16) >> 4);
+            }
         }
 
         #endregion
