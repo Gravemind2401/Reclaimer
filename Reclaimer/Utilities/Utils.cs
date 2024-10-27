@@ -48,7 +48,7 @@ namespace Reclaimer.Utilities
         /// Replaces any characters in <paramref name="fileName"/> that are not valid file name characters.
         /// </summary>
         /// <param name="fileName">The file name to convert.</param>
-        public static string GetSafeFileName(string fileName) => string.Join("_", fileName.Split(Path.GetInvalidPathChars()));
+        public static string GetSafeFileName(string fileName) => string.Join("_", fileName.Split(Path.GetInvalidFileNameChars()));
 
         /// <summary>
         /// Wrapper for <see cref="Process.Start(string)"/> to work around permissions exception.

@@ -88,7 +88,7 @@ namespace Reclaimer.Blam.HaloInfinite
         [Offset(80)]
         public int ResourceCount { get; set; }
 
-        public string ClassCode => (ClassId == -1) ? null : Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId));
+        public string ClassCode => (ClassId == -1) ? "resource" : Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId));
 
         public long DataOffset => DataOffsetTemp & 0x0000FFFFFFFFFFFF;
         public DataOffsetFlags DataOffsetFlags => (DataOffsetFlags)(DataOffsetTemp >> 48);
@@ -101,16 +101,24 @@ namespace Reclaimer.Blam.HaloInfinite
                 if (tagName != null)
                     return tagName;
 
-                tagName = GlobalTagId == -1
-                    ? GlobalTagId.ToString()
-                    : StringMapper.Instance.StringMappings.TryGetValue(GlobalTagId, out var value)
-                        ? value : GlobalTagId.ToString();
+                if (GlobalTagId != -1)
+                    tagName = StringMapper.Instance.StringMappings.TryGetValue(GlobalTagId, out var value) ? value : GlobalTagId.ToString();
+                else
+                {
+                    var parent = Module.Items[ParentIndex];
+                    var childIndex = Module.Resources.Skip(parent.ResourceIndex).Take(parent.ResourceCount)
+                        .Select(i => Module.Items[i])
+                        .TakeWhile(i => i != this)
+                        .Count();
+
+                    tagName = $"{parent.TagName}.{parent.ClassName}[{childIndex}:resource]";
+                }
 
                 return tagName;
             }
         }
 
-        public string ClassName => ModuleFactory.HaloInfiniteClasses.TryGetValue(ClassCode, out var className) ? className : ClassCode;
+        public string ClassName => ClassCode != null && ModuleFactory.HaloInfiniteClasses.TryGetValue(ClassCode, out var className) ? className : ClassCode;
 
         public string FileName => Utils.GetFileName(TagName);
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Controls.Editors;
+using Reclaimer.Utilities;
 using System.ComponentModel;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -67,7 +68,7 @@ namespace Reclaimer.Plugins
             var sfd = new SaveFileDialog
             {
                 OverwritePrompt = true,
-                FileName = item.FileName,
+                FileName = Utils.GetSafeFileName(item.FileName),
                 Filter = "Binary Files|*.bin",
                 FilterIndex = 1,
                 AddExtension = true

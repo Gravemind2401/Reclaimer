@@ -73,7 +73,7 @@ namespace Reclaimer.Blam.Halo5
         [Offset(84)]
         public short ResourceBlockCount { get; set; }
 
-        public string ClassCode => (ClassId == -1) ? null : Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId));
+        public string ClassCode => (ClassId == -1) ? "resource" : Encoding.UTF8.GetString(BitConverter.GetBytes(ClassId));
 
         private string tagName => Module.Strings[NameOffset];
 
