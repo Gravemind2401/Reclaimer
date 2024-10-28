@@ -67,11 +67,10 @@
                         <Setter Property="Foreground" Value="{DynamicResource CommonControls.TextBox.Text}" />
                     </Style>
                 </ToolBar.Resources>
-                <Grid Visibility="{Binding HasMultiple, Converter={StaticResource boolToVisConverter}}">
-                    <ComboBox ItemsSource="{Binding Indexes}"
-                              SelectedIndex="{Binding SelectedIndex}" />
-                    <Separator />
-                </Grid>
+                <ComboBox ItemsSource="{Binding Indexes}"
+                          SelectedIndex="{Binding SelectedIndex}"
+                          Visibility="{Binding HasMultiple, Converter={StaticResource boolToVisConverter}}" />
+                <Separator Visibility="{Binding HasMultiple, Converter={StaticResource boolToVisConverter}}" />
                 <Label>
                     <TextBlock Text="{Binding ImageFormatDisplay}" />
                 </Label>
