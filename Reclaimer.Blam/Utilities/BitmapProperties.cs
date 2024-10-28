@@ -20,6 +20,7 @@ namespace Reclaimer.Blam.Utilities
 
         public bool UsesPadding { get; set; }
         public bool Swizzled { get; set; }
+        public int X1TileMode { get; set; }
 
         //non-zero to override
         public int VirtualWidth { get; set; }

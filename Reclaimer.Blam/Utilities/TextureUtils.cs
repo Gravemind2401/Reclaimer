@@ -1,5 +1,6 @@
 ﻿using Reclaimer.Drawing;
 using Reclaimer.IO;
+using Reclaimer.Utilities;
 using System.Buffers;
 
 namespace Reclaimer.Blam.Utilities
@@ -211,7 +212,9 @@ namespace Reclaimer.Blam.Utilities
             if (formatDesc.PaddedDataLength > data.Length)
                 Array.Resize(ref data, formatDesc.PaddedDataLength);
 
-            if (props.Swizzled)
+            if (props.X1TileMode > 0)
+                XG.Detile2D(props, data);
+            else if (props.Swizzled)
                 XTextureUnscramble(data, formatDesc);
 
             if (formatDesc.PaddedWidth > props.Width || formatDesc.PaddedHeight > props.Height)

@@ -45,6 +45,15 @@ namespace Reclaimer.Blam.Halo5
 
             var resourceIndex = Module.Resources[Item.ResourceIndex] + index;
             var resource = Module.Items[resourceIndex]; //this will be the [bitmap resource handle*] tag
+
+            byte tilemode = 0;
+            using (var reader = resource.CreateReader())
+            {
+                reader.Seek(resource.UncompressedHeaderSize, SeekOrigin.Begin);
+                var definitionData = reader.ReadObject<bitmap_data_resource_definition>();
+                tilemode = definitionData.TileMode;
+            }
+
             if (resource.ResourceCount > 0)
             {
                 //get the last [bitmap resource handle*.chunk#] tag (mips from smallest to largest?)
@@ -68,9 +77,14 @@ namespace Reclaimer.Blam.Halo5
                 data = reader.ReadBytes((int)resource.TotalUncompressedSize);
             }
 
-            //todo: cubemap check
+            //TODO: cubemap check
             var format = TextureUtils.DXNSwap(submap.BitmapFormat, true);
-            var props = new BitmapProperties(submap.Width, submap.Height, format, "Texture2D");
+            var props = new BitmapProperties(submap.Width, submap.Height, format, "Texture2D")
+            {
+                Swizzled = tilemode > 0,
+                X1TileMode = tilemode
+            };
+
             return TextureUtils.GetDds(props, data, false);
         }
 
