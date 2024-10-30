@@ -135,7 +135,7 @@ namespace Reclaimer.Blam.Halo5
         /// <param name="classCode">The <see cref="TagClass.ClassCode"/> value to match on.</param>
         public IEnumerable<ModuleItem> GetItemsByClass(string classCode)
         {
-            return tagIndex.ItemsByClass.TryGetValue(classCode, out var classItems)
+            return classCode != null && tagIndex.ItemsByClass.TryGetValue(classCode, out var classItems)
                 ? classItems.Select(g => g[0])
                 : Enumerable.Empty<ModuleItem>();
         }
