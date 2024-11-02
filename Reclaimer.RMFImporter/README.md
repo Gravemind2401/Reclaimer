@@ -1,3 +1,14 @@
+# Downloading the import plugin
+The importer zip files can be downloaded from the latest release files on the [Releases](https://github.com/Gravemind2401/Reclaimer/releases) page.
+
+Which zip file you need to download depends on which application you are using:
+- **Blender**
+  - Versions **earlier than 4.2**: Download the zip with `xplatform` in the name
+  - Version **4.2 or later**: Download the zip with `windows` or `linux` in the name, depending on your operating system
+- **3DS Max**
+  - Download the zip with `xplatform` in the name
+
+
 # Blender Setup (4.1 and earlier)
 
 ### Version Compatibility
@@ -50,14 +61,14 @@ These preferences determine the starting settings that the import window will us
 In 3ds Max the RMF Importer can either be run via the `Scripting > Run Script...` menu by browsing for the script each time, or you can set it up as an extra menu option under the `Import` menu.
 
 #### Simple setup:
-1. Extract the `Reclaimer` folder from `RMFImporter.zip` file
+1. Extract the `Reclaimer` folder from `reclaimer_rmf_importer.zip` file
 2. In 3ds Max go to `Scripting > Run Script...`
 3. Browse to the extracted `Reclaimer` folder and choose the file named `import_rmf.py`
      - Note that this script is **not** standalone - the `Reclaimer` folder must **not** be renamed and all files under that folder are **required**
 
 #### Setup as a menu option:
-1. Extract the `Reclaimer` folder from `RMFImporter.zip` file
-2. Place the `Reclaimer` folder in the `scripts` folder of your 3ds Max install directory
+1. Extract the `Reclaimer` folder from `reclaimer_rmf_importer.zip` file
+2. Place that `Reclaimer` folder in the `scripts` folder of your 3ds Max install directory
     - For example, the path to the scripts folder may be `C:\Program Files\Autodesk\3ds Max 2021\scripts`
 3. In the `Reclaimer` folder, find the file under `\autodesk\resources\Macro_ImportRMF.mcr` and copy it into the `MacroScripts` folder of your 3ds Max install directory
     - For example, the path to the MacroScripts folder may be `C:\Program Files\Autodesk\3ds Max 2021\MacroScripts`
@@ -79,7 +90,7 @@ In 3ds Max the RMF Importer uses OSL shaders for terrain blending and color chan
 # Bitmap Path Settings
 
 ### Bitmaps Folder
-The `Bitmaps Folder` setting can be left blank if the rmf file and all of its bitmaps are in certain directory layout configurations.
+The `Bitmaps Folder` setting can be left blank if the RMF file and all of its bitmaps are in a supported directory layout configuration.
 
 For example, if you have a file called `masterchief.rmf` and it uses a bitmap called `objects\characters\masterchief\bitmaps\masterchief.tif` then the bitmap folder can be detected automatically in the following scenarios:
 1.  The files have the same layout as a batch extract:
