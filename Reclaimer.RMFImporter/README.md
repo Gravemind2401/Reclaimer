@@ -1,5 +1,5 @@
 # Downloading the import plugin
-The importer zip files can be downloaded from the latest release files on the [Releases](https://github.com/Gravemind2401/Reclaimer/releases) page.
+The importer zip files can be downloaded from the latest release files on the [Releases](https://github.com/Gravemind2401/Reclaimer/releases/latest) page.
 
 Which zip file you need to download depends on which application you are using:
 - **Blender**
