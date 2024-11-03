@@ -52,21 +52,12 @@ namespace Reclaimer.Blam.HaloInfinite
             {
                 foreach (var permutationRegion in item.PermutationRegions)
                 {
-                    if (!armorRegions.TryGetValue(permutationRegion, out ModelRegion modelRegion))
+                    if (!armorRegions.TryGetValue(permutationRegion, out var modelRegion))
                         continue;
 
                     foreach (var setting in item.PermutationSettings)
                     {
-                        ModelPermutation permutation = null;
-                        for (var i = 0; i < modelRegion.Permutations.Count; i++)
-                        {
-                            if (modelRegion.Permutations[i].Name == setting.Name)
-                            {
-                                permutation = modelRegion.Permutations[i];
-                                break;
-                            }
-                        }
-
+                        var permutation = modelRegion.Permutations.FirstOrDefault(p => p.Name == setting.Name);
                         if (permutation != null)
                             themeRegion.Permutations.Add(permutation);
 
@@ -126,7 +117,6 @@ namespace Reclaimer.Blam.HaloInfinite
 
         [Offset(60)]
         public BlockCollection<ThemeConfiguration> ThemeConfigurations { get; set; }
-
     }
 
     [FixedSize(56)]
