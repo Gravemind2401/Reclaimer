@@ -45,9 +45,18 @@ namespace Reclaimer.Utilities
         }
 
         /// <summary>
+        /// Replaces any characters in <paramref name="filePath"/> that are not valid file path characters.
+        /// </summary>
+        /// <param name="filePath">The file name to convert.</param>
+        public static string GetSafeFilePath(string filePath) => string.Join("_", filePath.Split(Path.GetInvalidPathChars()));
+
+        /// <summary>
         /// Replaces any characters in <paramref name="fileName"/> that are not valid file name characters.
         /// </summary>
         /// <param name="fileName">The file name to convert.</param>
+        /// <remarks>
+        /// This expects <paramref name="fileName"/> to be <i>just</i> the file name, not the full path.
+        /// </remarks>
         public static string GetSafeFileName(string fileName) => string.Join("_", fileName.Split(Path.GetInvalidFileNameChars()));
 
         /// <summary>

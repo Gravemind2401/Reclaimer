@@ -461,7 +461,7 @@ namespace Reclaimer.Plugins
                     break;
             }
 
-            baseDirectory = Utils.GetSafeFileName(baseDirectory);
+            baseDirectory = Utils.GetSafeFilePath(baseDirectory);
             var parent = Directory.GetParent(baseDirectory);
             if (!parent.Exists)
                 parent.Create();
