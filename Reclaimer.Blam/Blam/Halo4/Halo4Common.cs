@@ -211,6 +211,9 @@ namespace Reclaimer.Blam.Halo4
                     IndexBuffer = ib[section.IndexBufferIndex]
                 };
 
+                if (!mesh.VertexBuffer.HasColors && mesh.VertexBuffer.PositionChannels.ElementAtOrDefault(0) is IVectorBuffer b && b.Dimensions > 3)
+                    mesh.Flags |= Geometry.MeshFlags.VertexColorFromPosition;
+
                 mesh.CustomProperties.AddFromFlags(section.Flags);
 
                 mesh.Segments.AddRange(

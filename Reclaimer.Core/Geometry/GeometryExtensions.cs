@@ -86,6 +86,12 @@ namespace Reclaimer.Geometry
             return mesh.VertexBuffer.HasBlendWeights ? mesh.VertexBuffer.BlendWeightChannels[0].GetSubset(index, count).Select(v => new Vector4(v.X, v.Y, v.Z, v.W)) : null;
         }
 
+        public static IEnumerable<Vector4> GetColors(this Mesh mesh) => GetColors(mesh, 0, mesh.VertexCount);
+        public static IEnumerable<Vector4> GetColors(this Mesh mesh, int index, int count)
+        {
+            return mesh.VertexBuffer.HasColors ? mesh.VertexBuffer.ColorChannels[0].GetSubset(index, count).Select(v => new Vector4(v.X, v.Y, v.Z, v.W)) : null;
+        }
+
         public static void WriteRMF(this Scene scene, string fileName)
         {
             ArgumentNullException.ThrowIfNull(scene);

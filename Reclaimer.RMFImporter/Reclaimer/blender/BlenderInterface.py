@@ -363,13 +363,22 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         scene, model_state, mesh_params, mesh_data, mesh_obj = mc
         vertex_buffer = mesh_params.vertex_buffer
 
-        if not (self.options.IMPORT_COLORS and vertex_buffer.color_channels):
+        if not self.options.IMPORT_COLORS:
             return
 
-        for color_buffer in vertex_buffer.color_channels:
-            # note vertex_colors uses the same triangle loop as uv coords
-            # so we iterate the triangle indices rather than directly iterating the buffer
+        if vertex_buffer.color_channels:
+            for color_buffer in vertex_buffer.color_channels:
+                # note vertex_colors uses the same triangle loop as uv coords
+                # so we iterate the triangle indices rather than directly iterating the buffer
+                color_layer = mesh_data.vertex_colors.new()
+                for i, ti in enumerate(itertools.chain(*faces)):
+                    c = color_buffer[ti]
+                    color_layer.data[i].color = c
+
+        if mesh_params.mesh_flags & MeshFlags.VERTEX_COLOR_FROM_POSITION > 0:
+            color_buffer = vertex_buffer.position_channels[0]
             color_layer = mesh_data.vertex_colors.new()
+            padding = (0, 0, 0, 0)
             for i, ti in enumerate(itertools.chain(*faces)):
-                c = color_buffer[ti]
+                c = tuple(itertools.chain(color_buffer[ti], padding))[3:7]
                 color_layer.data[i].color = c

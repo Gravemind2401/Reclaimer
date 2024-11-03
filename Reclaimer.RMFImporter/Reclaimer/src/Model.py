@@ -20,6 +20,7 @@ class MeshFlags(IntFlag):
     NONE = 0
     USE_IMPLIED_BLENDWEIGHTS = 1 << 0
     USE_DUAL_QUAT = 1 << 1
+    VERTEX_COLOR_FROM_POSITION = 1 << 2
 
 
 class Model(SceneObject):

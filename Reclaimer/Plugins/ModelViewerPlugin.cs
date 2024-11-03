@@ -401,23 +401,25 @@ namespace Reclaimer.Plugins
                         var normals = mesh.GetNormals(minIndex, vertCount)?.ToList();
                         var blendIndices = mesh.GetBlendIndices(minIndex, vertCount)?.ToList();
                         var blendWeights = mesh.GetBlendWeights(minIndex, vertCount)?.ToList();
+                        var colors = mesh.GetColors(minIndex, vertCount)?.ToList();
 
                         if (positions != null)
-                        {
                             assimpMesh.Vertices.AddRange(positions.Select(v => (v * scale).ToAssimp3D()));
-
-                            //TODO:reimplement this using buffers
-                            ////some Halo shaders use position W as the colour alpha - add it to a colour channel to preserve it
-                            ////also assimp appears to have issues exporting obj when a colour channel exists so only do this for collada
-                            //if (formatId == "collada" && v.Color.Count == 0 && !float.IsNaN(v.Position[0].W))
-                            //    m.VertexColorChannels[0].Add(new Assimp.Color4D { R = v.Position[0].W });
-                        }
 
                         if (normals != null)
                             assimpMesh.Normals.AddRange(normals.Select(v => v.ToAssimp3D()));
 
                         if (texcoords != null)
                             assimpMesh.TextureCoordinateChannels[0].AddRange(texcoords.Select(v => v.ToAssimpUV()));
+
+                        //assimp appears to have issues exporting obj when a colour channel exists so only do this for collada
+                        if (formatId == FormatId.Collada)
+                        {
+                            if (colors != null)
+                                assimpMesh.VertexColorChannels[0].AddRange(colors.Select(v => new Assimp.Color4D(v.X, v.Y, v.Z, v.W)));
+                            else if (positions != null && mesh.Flags.HasFlag(MeshFlags.VertexColorFromPosition))
+                                assimpMesh.VertexColorChannels[0].AddRange(mesh.VertexBuffer.PositionChannels[0].GetSubset(minIndex, vertCount).Select(v => new Assimp.Color4D { R = v.W }));
+                        }
 
                         var boneLookup = new Dictionary<int, Assimp.Bone>();
                         for (var vIndex = 0; vIndex < vertCount; vIndex++)

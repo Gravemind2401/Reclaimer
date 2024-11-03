@@ -192,7 +192,8 @@ namespace Reclaimer.Geometry
     {
         None = 0,
         UseImpliedBlendWeights = 1 << 0,
-        UseDualQuat = 1 << 1
+        UseDualQuat = 1 << 1,
+        VertexColorFromPosition = 1 << 2
     }
 
     public class MeshSegment

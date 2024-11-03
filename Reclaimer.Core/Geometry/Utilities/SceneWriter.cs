@@ -6,7 +6,7 @@ namespace Reclaimer.Geometry.Utilities
 {
     internal class SceneWriter
     {
-        private static readonly Version version = new Version(1, 0);
+        private static readonly Version version = new Version(1, 0, 1);
 
         //TODO: treat ID 0 as always unique? ie dont force creator to provide unique ids
 
