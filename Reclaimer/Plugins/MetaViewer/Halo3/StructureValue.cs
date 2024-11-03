@@ -143,8 +143,13 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             {
                 BlockIndex = i;
                 var obj = new JObject();
+
                 foreach (var item in Children.Where(c => c.FieldDefinition.ValueType != MetaValueType.Comment))
-                    obj.Add(item.Name, item.GetJValue());
+                {
+                    var propName = obj.ContainsKey(item.Name) ? $"{item.Name}_{item.Offset}" : item.Name;
+                    obj.Add(propName, item.GetJValue());
+                }
+
                 result.Add(obj);
             }
 

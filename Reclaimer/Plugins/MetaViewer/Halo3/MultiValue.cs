@@ -104,7 +104,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             var result = new JObject();
 
             for (var i = 0; i < Labels.Length; i++)
-                result.Add(Labels[i], new JValue(values[i]));
+            {
+                if (!string.IsNullOrEmpty(Labels[i]))
+                    result.Add(Labels[i], new JValue(values[i]));
+            }
 
             return result;
         }
