@@ -1,6 +1,4 @@
-﻿using Microsoft.Win32;
-using Newtonsoft.Json.Linq;
-using Reclaimer.Blam.Common;
+﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Models;
 using Reclaimer.Plugins;
@@ -8,7 +6,6 @@ using Reclaimer.Plugins.MetaViewer;
 using Reclaimer.Utilities;
 using Studio.Controls;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Windows;
 using System.Xml;
 
@@ -36,7 +33,7 @@ namespace Reclaimer.Controls
         #endregion
 
         private object item;
-        private string fileName;
+        private string xmlFileName;
 
         private Plugins.MetaViewer.Halo3.MetaContext context;
 
@@ -52,33 +49,13 @@ namespace Reclaimer.Controls
             ShowInvisibles = MetaViewerPlugin.Settings.ShowInvisibles;
         }
 
-        public void ExportJson(string fileName)
-        {
-            var tempMetadata = new ObservableCollection<MetaValueBase>();
-            var tempContext = default(Plugins.MetaViewer.Halo3.MetaContext);
-
-            if (item is IIndexItem)
-                LoadDataHalo3(tempMetadata, ref tempContext);
-            else if (item is IModuleItem)
-                LoadDataHalo5(tempMetadata);
-
-            var root = new JObject();
-            foreach (var item in tempMetadata.Where(i => !string.IsNullOrWhiteSpace(i.Name)))
-            {
-                var propName = root.ContainsKey(item.Name) ? $"{item.Name}_{item.Offset}" : item.Name;
-                root.Add(propName, item.GetJValue());
-            }
-
-            File.WriteAllText(fileName, root.ToString());
-        }
-
         public void LoadMetadata(IIndexItem tag, string xmlFileName)
         {
             TabModel.ToolTip = $"{tag.TagName}.{tag.ClassCode}";
             TabModel.Header = $"{Utils.GetFileName(tag.TagName)}.{tag.ClassCode}";
 
             item = tag;
-            fileName = xmlFileName;
+            this.xmlFileName = xmlFileName;
 
             LoadData();
         }
@@ -89,26 +66,25 @@ namespace Reclaimer.Controls
             TabModel.Header = $"{tag.FileName}.{tag.ClassCode}";
 
             item = tag;
-            fileName = xmlFileName;
+            this.xmlFileName = xmlFileName;
 
             LoadData();
         }
 
         private void LoadData()
         {
-            if (item is IIndexItem)
-                LoadDataHalo3(Metadata, ref context);
-            else if (item is IModuleItem)
-                LoadDataHalo5(Metadata);
+            if (item is IIndexItem cacheItem)
+                LoadDataHalo3(xmlFileName, cacheItem, Metadata, ref context);
+            else if (item is IModuleItem moduleItem)
+                LoadDataHalo5(xmlFileName, moduleItem, Metadata);
         }
 
-        private void LoadDataHalo3(IList<MetaValueBase> collection, ref Plugins.MetaViewer.Halo3.MetaContext context)
+        internal static void LoadDataHalo3(string xmlFileName, IIndexItem tag, IList<MetaValueBase> collection, ref Plugins.MetaViewer.Halo3.MetaContext context)
         {
-            var tag = item as IIndexItem;
             collection.Clear();
 
             var doc = new XmlDocument();
-            doc.Load(fileName);
+            doc.Load(xmlFileName);
 
             context?.DataSource?.Dispose();
             context = new Plugins.MetaViewer.Halo3.MetaContext(doc, tag.CacheFile, tag);
@@ -126,13 +102,12 @@ namespace Reclaimer.Controls
             context.UpdateBlockIndices();
         }
 
-        private void LoadDataHalo5(IList<MetaValueBase> collection)
+        internal static void LoadDataHalo5(string xmlFileName, IModuleItem tag, IList<MetaValueBase> collection)
         {
-            var tag = item as IModuleItem;
             collection.Clear();
 
             var doc = new XmlDocument();
-            doc.Load(fileName);
+            doc.Load(xmlFileName);
 
             var offset = 0;
             using (var tagReader = tag.CreateReader())
@@ -171,17 +146,7 @@ namespace Reclaimer.Controls
 
         private void btnExport_Click(object sender, RoutedEventArgs e)
         {
-            var sfd = new SaveFileDialog
-            {
-                OverwritePrompt = true,
-                FileName = (item as IIndexItem)?.FileName ?? (item as IModuleItem)?.FileName,
-                Filter = "JSON Files|*.json",
-                FilterIndex = 1,
-                AddExtension = true
-            };
-
-            if (sfd.ShowDialog() == true)
-                ExportJson(sfd.FileName);
+            MetaViewerPlugin.ExportJson(xmlFileName, item);
         }
 
         private void btnCollapseAll_Click(object sender, RoutedEventArgs e) => RecursiveToggle(Metadata, false);

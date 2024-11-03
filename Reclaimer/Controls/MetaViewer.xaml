@@ -12,7 +12,7 @@
     <UserControl.CommandBindings>
         <CommandBinding Command="Open" Executed="OpenCommand_Executed" />
     </UserControl.CommandBindings>
-    
+
     <UserControl.Resources>
         <mv:ShowInvisiblesConverter x:Key="invisConverter" />
         <mv:FieldVisibilityConverter x:Key="fieldVisConverter" />
@@ -35,7 +35,7 @@
 
         <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
             <Setter Property="Foreground" Value="{DynamicResource CommonControls.TextBox.Text}" />
-            
+
             <Style.Triggers>
                 <Trigger Property="IsEnabled" Value="False">
                     <Setter Property="Foreground" Value="{DynamicResource CommonControls.TextBox.TextDisabled}" />

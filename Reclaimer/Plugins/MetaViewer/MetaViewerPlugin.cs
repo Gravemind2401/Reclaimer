@@ -1,4 +1,6 @@
-﻿using Reclaimer.Blam.Common;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
+using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Common.Gen5;
 using Reclaimer.Controls.Editors;
 using System.ComponentModel;
@@ -9,14 +11,45 @@ namespace Reclaimer.Plugins.MetaViewer
 {
     public class MetaViewerPlugin : Plugin
     {
+        private static MetaViewerPlugin Instance { get; set; }
+
         internal static MetaViewerSettings Settings { get; private set; }
 
         internal override int? FilePriority => 0;
 
         public override string Name => "Meta Viewer";
 
-        public override void Initialise() => Settings = LoadSettings<MetaViewerSettings>();
+        private PluginContextItem ExportJsonContextItem => new PluginContextItem("ExportJSON", "Export Metadata", OnContextItemClick);
+
+        public override void Initialise()
+        {
+            Instance = this;
+            Settings = LoadSettings<MetaViewerSettings>();
+        }
+
         public override void Suspend() => SaveSettings(Settings);
+
+        public override IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
+        {
+            if (CanOpenFile(context))
+                yield return ExportJsonContextItem;
+        }
+
+        private void OnContextItemClick(string key, OpenFileArgs args)
+        {
+            if (args.File.Any(i => i is IIndexItem))
+            {
+                var item = args.File.OfType<IIndexItem>().FirstOrDefault();
+                var xmlFileName = GetDefinitionPath(item);
+                ExportJson(xmlFileName, item);
+            }
+            else if (args.File.Any(i => i is IModuleItem))
+            {
+                var item = args.File.OfType<IModuleItem>().FirstOrDefault();
+                var xmlFileName = GetDefinitionPath(item);
+                ExportJson(xmlFileName, item);
+            }
+        }
 
         public override bool CanOpenFile(OpenFileArgs args)
         {
@@ -113,6 +146,50 @@ namespace Reclaimer.Plugins.MetaViewer
             }
 
             return null;
+        }
+
+        internal static void ExportJson(string xmlFileName, object tag)
+        {
+            var sfd = new SaveFileDialog
+            {
+                OverwritePrompt = true,
+                FileName = (tag as IIndexItem)?.FileName ?? (tag as IModuleItem)?.FileName,
+                Filter = "JSON Files|*.json",
+                FilterIndex = 1,
+                AddExtension = true
+            };
+
+            if (sfd.ShowDialog() != true)
+                return;
+
+            ExportJson(xmlFileName, tag, sfd.FileName);
+        }
+
+        internal static void ExportJson(string xmlFileName, object tag, string fileName)
+        {
+            try
+            {
+                var tempMetadata = new List<MetaValueBase>();
+                var tempContext = default(Halo3.MetaContext);
+
+                if (tag is IIndexItem cacheItem)
+                    Controls.MetaViewer.LoadDataHalo3(xmlFileName, cacheItem, tempMetadata, ref tempContext);
+                else if (tag is IModuleItem moduleItem)
+                    Controls.MetaViewer.LoadDataHalo5(fileName, moduleItem, tempMetadata);
+
+                var root = new JObject();
+                foreach (var item in tempMetadata.Where(i => !string.IsNullOrWhiteSpace(i.Name)))
+                {
+                    var propName = root.ContainsKey(item.Name) ? $"{item.Name}_{item.Offset}" : item.Name;
+                    root.Add(propName, item.GetJValue());
+                }
+
+                File.WriteAllText(fileName, root.ToString());
+            }
+            catch (Exception ex)
+            {
+                Instance.LogError("Error exporting json", ex);
+            }
         }
 
         internal sealed class MetaViewerSettings : IPluginSettings
