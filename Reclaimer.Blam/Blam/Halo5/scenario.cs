@@ -102,7 +102,9 @@ namespace Reclaimer.Blam.Halo5
 
                     model.Regions.Add(clusterRegion);
 
-                    foreach (var instanceGroup in BlamUtils.GroupGeometryInstances(bspTag.GeometryInstances, i => i.Name.Value))
+                    var visibleInstances = bspTag.GeometryInstances.Where(i => !i.FlagsOverride.HasFlag(MeshFlags.MeshIsCustomShadowCaster));
+
+                    foreach (var instanceGroup in BlamUtils.GroupGeometryInstances(visibleInstances, i => i.Name.Value))
                     {
                         var sectionRegion = new ModelRegion { Name = instanceGroup.Key };
                         sectionRegion.Permutations.AddRange(
@@ -118,17 +120,19 @@ namespace Reclaimer.Blam.Halo5
                         model.Regions.Add(sectionRegion);
                     }
 
-                    model.Meshes.AddRange(Halo5Common.GetMeshes(geoParams, out var materials));
-                    foreach (var instanceGroup in bspTag.GeometryInstances)
+                    model.Meshes.AddRange(Halo5Common.GetMeshes(geoParams, out _));
+
+                    foreach (var instanceGroup in visibleInstances)
                     {
-                        if (model.Meshes[instanceGroup.MeshIndex] == null)
+                        var mesh = model.Meshes[instanceGroup.MeshIndex];
+                        if (mesh == null)
                             continue;
 
                         var bounds = bspTag.BoundingBoxes[instanceGroup.BoundsIndex];
                         var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
                         var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
 
-                        (model.Meshes[instanceGroup.MeshIndex].PositionBounds, model.Meshes[instanceGroup.MeshIndex].TextureBounds) = (posBounds, texBounds);
+                        (mesh.PositionBounds, mesh.TextureBounds) = (posBounds, texBounds);
                     }
 
                     // add model to scene

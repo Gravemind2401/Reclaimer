@@ -416,6 +416,7 @@ namespace Reclaimer.Blam.HaloInfinite
     [Flags]
     public enum MeshFlags : ushort
     {
+        None = 0,
         MeshHasVertexColor = 1 << 0,
         UseRegionIndexForSorting = 1 << 1,
         CanBeRenderedInDrawBundles = 1 << 2,
@@ -429,17 +430,17 @@ namespace Reclaimer.Blam.HaloInfinite
         UseUV3TangentRotation = 1 << 10
     }
 
-    [FixedSize(0x138)]
+    [FixedSize(312)]
     public class RenderGeometryApiResource
     {
         [Offset(0)]
         public BlockCollection<RasterizerVertexBuffer> PcVertexBuffers { get; set; }
 
-        [Offset(0x14)]
+        [Offset(20)]
         public BlockCollection<RasterizerIndexBuffer> PcIndexBuffers { get; set; }
     }
 
-    [FixedSize(0x50)]
+    [FixedSize(80)]
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public class RasterizerVertexBuffer
     {
@@ -463,7 +464,7 @@ namespace Reclaimer.Blam.HaloInfinite
         private string GetDebuggerDisplay() => $"{Usage} [{Format}]";
     }
 
-    [FixedSize(0x48)]
+    [FixedSize(72)]
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public class RasterizerIndexBuffer
     {

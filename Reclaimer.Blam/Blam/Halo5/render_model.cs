@@ -45,6 +45,12 @@ namespace Reclaimer.Blam.Halo5
         [Offset(356)]
         public BlockCollection<NodeMapBlock> NodeMaps { get; set; }
 
+        [Offset(592)]
+        public short TotalIndexBufferCount { get; set; }
+
+        [Offset(594)]
+        public short TotalVertexBufferCount { get; set; }
+
         public override string ToString() => Item.FileName;
 
         #region IContentProvider
@@ -316,6 +322,9 @@ namespace Reclaimer.Blam.Halo5
         [Offset(0)]
         public BlockCollection<SectionLodBlock> SectionLods { get; set; }
 
+        [Offset(28)]
+        public MeshFlags Flags { get; set; }
+
         [Offset(30)]
         public byte NodeIndex { get; set; }
 
@@ -435,5 +444,27 @@ namespace Reclaimer.Blam.Halo5
         Lod13 = 1 << 13,
         Lod14 = 1 << 14,
         Lod15 = 1 << 15,
+    }
+
+    [Flags]
+    public enum MeshFlags : ushort
+    {
+        None = 0,
+        MeshHasVertexColor = 1 << 0,
+        UseRegionIndexForSorting = 1 << 1,
+        CanBeRenderedInDrawBundles = 1 << 2,
+        MeshIsCustomShadowCaster = 1 << 3,
+        MeshIsUnindexed = 1 << 4,
+        MeshShouldRenderInZPrePass = 1 << 5,
+        MeshHasWater = 1 << 6,
+        MeshHasDecal = 1 << 7,
+        MeshHasTransparents = 1 << 8,
+        UseUncompressedVertexFormat = 1 << 9,
+        MeshIsPCA = 1 << 10,
+        MeshCompressionDetermined = 1 << 11,
+        MeshHasAuthoredLightmapTexCoords = 1 << 12,
+        MeshHasUsefulUV2 = 1 << 13,
+        MeshHasNoLightmap = 1 << 14,
+        PerVertexLighting = 1 << 15
     }
 }

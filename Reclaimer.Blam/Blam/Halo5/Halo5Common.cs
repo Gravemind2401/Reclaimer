@@ -138,9 +138,6 @@ namespace Reclaimer.Blam.Halo5
 
             if (args.ResourcePolicy == ResourcePackingPolicy.SingleResource)
             {
-                if (args.ResourceCount > 1)
-                    System.Diagnostics.Debugger.Break();
-
                 AppendBufferData(args.ResourceIndex);
             }
             else
@@ -222,10 +219,10 @@ namespace Reclaimer.Blam.Halo5
                 };
 
                 if (mesh.VertexBuffer.HasBlendWeights && mesh.VertexBuffer.HasImpliedBlendWeights)
-                    mesh.Flags |= MeshFlags.UseImpliedBlendWeights;
+                    mesh.Flags |= Geometry.MeshFlags.UseImpliedBlendWeights;
 
                 if (section.UseDualQuat)
-                    mesh.Flags |= MeshFlags.UseDualQuat;
+                    mesh.Flags |= Geometry.MeshFlags.UseDualQuat;
 
                 // have alternate function for if there are no defined parts, where we just do the whole buffer
                 if (lodData.Submeshes.Count > 0)

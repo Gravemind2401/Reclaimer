@@ -70,7 +70,9 @@ namespace Reclaimer.Blam.Halo5
 
             model.Regions.Add(clusterRegion);
 
-            foreach (var instanceGroup in BlamUtils.GroupGeometryInstances(GeometryInstances, i => i.Name.Value))
+            var visibleInstances = GeometryInstances.Where(i => !i.FlagsOverride.HasFlag(MeshFlags.MeshIsCustomShadowCaster));
+
+            foreach (var instanceGroup in BlamUtils.GroupGeometryInstances(visibleInstances, i => i.Name.Value))
             {
                 var sectionRegion = new ModelRegion { Name = instanceGroup.Key };
                 sectionRegion.Permutations.AddRange(
@@ -86,21 +88,20 @@ namespace Reclaimer.Blam.Halo5
                 model.Regions.Add(sectionRegion);
             }
 
-            // 1 we need to use the correct mesh indices
-
-            model.Meshes.AddRange(Halo5Common.GetMeshes(geoParams, out var materials));
+            model.Meshes.AddRange(Halo5Common.GetMeshes(geoParams, out _));
 
             // i changed the old system of getting bounding boxes by using the corresponding mesh index to explicitly use the index provided by the geometry instance
-            foreach (var instanceGroup in GeometryInstances)
+            foreach (var instanceGroup in visibleInstances)
             {
-                if (model.Meshes[instanceGroup.MeshIndex] == null)
+                var mesh = model.Meshes[instanceGroup.MeshIndex];
+                if (mesh == null)
                     continue;
 
                 var bounds = BoundingBoxes[instanceGroup.BoundsIndex];
                 var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
                 var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
 
-                (model.Meshes[instanceGroup.MeshIndex].PositionBounds, model.Meshes[instanceGroup.MeshIndex].TextureBounds) = (posBounds, texBounds);
+                (mesh.PositionBounds, mesh.TextureBounds) = (posBounds, texBounds);
             }
 
             return model;
@@ -143,6 +144,9 @@ namespace Reclaimer.Blam.Halo5
 
         [Offset(66)]
         public short BoundsIndex { get; set; }
+
+        [Offset(236)]
+        public MeshFlags FlagsOverride { get; set; }
 
         [Offset(268)]
         public StringHashGen5 Name { get; set; }
