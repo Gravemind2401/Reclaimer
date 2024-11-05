@@ -24,6 +24,7 @@
         <sys:Double x:Key="pageWidth">600</sys:Double>
         <sys:Double x:Key="nameColWidthS">180</sys:Double>
         <sys:Double x:Key="nameColWidth">200</sys:Double>
+        <GridLength x:Key="nameColGridWidth">200</GridLength>
         <sys:Double x:Key="valueColWidthS">100</sys:Double>
         <sys:Double x:Key="valueColWidthM">180</sys:Double>
         <sys:Double x:Key="valueColWidthL">400</sys:Double>
@@ -279,12 +280,12 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition MinWidth="10" MaxWidth="10" />
-                        <ColumnDefinition MinWidth="{StaticResource nameColWidth}" MaxWidth="{StaticResource nameColWidth}" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="{StaticResource nameColGridWidth}" MaxWidth="{StaticResource nameColWidth}" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Border Grid.Row="0" Grid.ColumnSpan="3" Background="{DynamicResource Environment.CommandBar.Gradient}" />
-                    <Border Grid.Column="0" Grid.Row="1" Background="{DynamicResource Environment.CommandBar.Gradient}" />
+                    <Border Grid.Row="1" Grid.Column="0" Background="{DynamicResource Environment.CommandBar.Gradient}" />
                     <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Horizontal">
                         <ToggleButton Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}"
                                       VerticalAlignment="Center" Margin="3"
@@ -292,7 +293,7 @@
                             <ContentControl Template="{StaticResource ic_Expander_16x}" />
                         </ToggleButton>
                         <Label FontSize="14" FontWeight="Bold">
-                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}" />
                         </Label>
                     </StackPanel>
                     <ComboBox Grid.Row="0" Grid.Column="2" Margin="5,0,0,0"
@@ -300,7 +301,7 @@
                               VerticalAlignment="Center" HorizontalAlignment="Left"
                               Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}"
                               ItemsSource="{Binding BlockLabels}" SelectedIndex="{Binding BlockIndex}" />
-                    <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
+                    <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
                           Visibility="{Binding IsExpanded, Converter={StaticResource boolToVisConverter}}">
                         <ItemsControl Margin="5,5,0,0" ItemsSource="{Binding Children}"
                                       Visibility="{Binding HasChildren, Converter={StaticResource boolToVisConverter}}"
@@ -326,8 +327,8 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition MinWidth="10" MaxWidth="10" />
-                        <ColumnDefinition MinWidth="{StaticResource nameColWidth}" MaxWidth="{StaticResource nameColWidth}" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="{StaticResource nameColGridWidth}" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Border Grid.Row="0" Grid.ColumnSpan="3" Background="{DynamicResource Environment.CommandBar.Gradient}" />
@@ -339,7 +340,7 @@
                             <ContentControl Template="{StaticResource ic_Expander_16x}" />
                         </ToggleButton>
                         <Label FontSize="14" FontWeight="Bold">
-                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}" />
                         </Label>
                     </StackPanel>
                     <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
