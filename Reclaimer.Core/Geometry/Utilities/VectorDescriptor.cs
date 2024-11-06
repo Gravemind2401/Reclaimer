@@ -64,7 +64,7 @@ namespace Reclaimer.Geometry.Utilities
             return descriptorCache[vectorType] = vectorType switch
             {
                 //float32
-                _ when vectorType == typeof(RealVector2) => new VectorDescriptor(VectorDataType.Real, 4, 1),
+                _ when vectorType == typeof(RealVector1) => new VectorDescriptor(VectorDataType.Real, 4, 1),
                 _ when vectorType == typeof(RealVector2) => new VectorDescriptor(VectorDataType.Real, 4, 2),
                 _ when vectorType == typeof(RealVector3) => new VectorDescriptor(VectorDataType.Real, 4, 3),
                 _ when vectorType == typeof(RealVector4) => new VectorDescriptor(VectorDataType.Real, 4, 4),
