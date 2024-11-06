@@ -17,7 +17,7 @@ class IndexLayout(IntEnum):
     LINE_LIST = 1
     LINE_STRIP = 2
     TRIANGLE_LIST = 3
-    TRIANGLE_PATCH = 4
+    TRIANGLE_FAN = 4
     TRIANGLE_STRIP = 5
     QUAD_LIST = 6
     RECT_LIST = 7
@@ -129,10 +129,10 @@ class IndexBuffer:
         def from_range(offset: int, count: int) -> Iterator[Triangle]:
             indices = get_indices(offset, count)
             return iter(lambda: tuple(itertools.islice(indices, 3)), ())
-        
+
         def from_segment(segment: MeshSegment) -> Iterator[Triangle]:
             return from_range(segment.index_start, segment.index_length)
-        
+
         def from_mesh(mesh: Mesh) -> Iterator[Triangle]:
             for segment in mesh.segments:
                 for t in from_segment(segment):

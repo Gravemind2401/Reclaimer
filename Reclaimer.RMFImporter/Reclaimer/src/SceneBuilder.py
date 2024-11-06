@@ -218,6 +218,9 @@ class SceneBuilder():
                 world_transform = interface.create_transform(p.transform)
                 for mesh_index in range(p.mesh_index, p.mesh_index + p.mesh_count):
                     mesh = model.meshes[mesh_index]
+                    if not scene.validate_mesh(mesh):
+                        continue
+
                     message = f'creating mesh {total_meshes:03d}: {model.name}/{r.name}/{p.name}/{mesh_index} [{ri:02d}/{pi:02d}/{mesh_index:02d}]'
 
                     def mesh_func(message, model_state, permutation, region_group, transform, mesh_params):

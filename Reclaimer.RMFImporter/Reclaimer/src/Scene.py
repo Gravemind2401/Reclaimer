@@ -64,6 +64,17 @@ class Scene(INamed, ICustomProperties):
 
         return lookup
 
+    def validate_mesh(self, mesh: Mesh) -> bool:
+        try:
+            index_buffer = self.index_buffer_pool[mesh.index_buffer_index]
+            vertex_buffer = self.vertex_buffer_pool[mesh.vertex_buffer_index]
+
+            return len(index_buffer.indices) > 0 \
+                and vertex_buffer.count > 0 \
+                and index_buffer.index_layout in [IndexLayout.DEFAULT, IndexLayout.TRIANGLE_LIST, IndexLayout.TRIANGLE_STRIP];
+        except:
+            return False
+
 
 class SceneGroup(INamed, ICustomProperties):
     child_groups: List['SceneGroup']
