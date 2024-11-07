@@ -154,7 +154,8 @@ class SceneFilter(FilterGroup):
                             material_ids.add(segment.material_index)
 
         for id in material_ids:
-            yield (id, self._scene.material_pool[id])
+            if id >= 0:
+                yield (id, self._scene.material_pool[id])
 
     def selected_textures(self) -> Iterator[Tuple[int, Texture]]:
         ''' Iterates over tuples of (texture_index, texture) only for textures in use by selected meshes '''
