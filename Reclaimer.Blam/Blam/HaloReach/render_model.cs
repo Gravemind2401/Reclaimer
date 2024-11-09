@@ -60,9 +60,6 @@ namespace Reclaimer.Blam.HaloReach
 
         private Model GetModelContent()
         {
-            if (Sections.All(s => s.IndexBufferIndex < 0))
-                throw Exceptions.GeometryHasNoEdges();
-
             var geoParams = new HaloReachGeometryArgs
             {
                 Cache = Cache,
@@ -377,6 +374,12 @@ namespace Reclaimer.Blam.HaloReach
 
         [Offset(47)]
         public byte VertexFormat { get; set; }
+
+        [Offset(50)]
+        [StoreType(typeof(byte))]
+        public IndexFormat IndexFormat { get; set; }
+
+        internal bool IsUnindexed => IndexBufferIndex == -1 || Flags.HasFlag(MeshFlags.MeshIsUnindexed);
     }
 
     [Flags]

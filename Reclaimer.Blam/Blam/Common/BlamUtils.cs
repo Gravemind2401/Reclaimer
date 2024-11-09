@@ -38,7 +38,7 @@ namespace Reclaimer.Blam.Common
             }
         }
 
-        public static IndexBuffer CreateDecoratorIndexBuffer(int vertexCount)
+        public static IndexBuffer CreateImpliedIndexBuffer(int vertexCount, IndexFormat indexFormat)
         {
             //decorator models have no explicit index buffer.
             //instead, the index buffer is implied to be a triangle strip ranging from zero to N-1 where N is the vertex count.
@@ -63,7 +63,7 @@ namespace Reclaimer.Blam.Common
                     indices[i] = (ushort)i;
             }
 
-            return new IndexBuffer(buffer, indexType) { Layout = IndexFormat.TriangleStrip };
+            return new IndexBuffer(buffer, indexType) { Layout = indexFormat };
         }
     }
 }

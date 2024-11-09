@@ -159,7 +159,7 @@ namespace Reclaimer.Blam.Halo3
                 permutation.CustomProperties.Add(BlamConstants.PermutationNamePropertyName, owners);
 
                 return permutation;
-            }));
+            }).OrderBy(p => p.Name));
 
             model.Regions.Add(region);
 
@@ -389,6 +389,13 @@ namespace Reclaimer.Blam.Halo3
         [Offset(42, MaxVersion = (int)CacheType.Halo3Delta)]
         [Offset(46, MinVersion = (int)CacheType.Halo3Delta)]
         public byte VertexFormat { get; set; }
+
+        [Offset(48)]
+        [MinVersion((int)CacheType.Halo3Delta)]
+        [StoreType(typeof(byte))]
+        public IndexFormat IndexFormat { get; set; }
+
+        internal bool IsUnindexed => IndexBufferIndex == -1 || Flags.HasFlag(MeshFlags.MeshIsUnindexed);
     }
 
     [Flags]

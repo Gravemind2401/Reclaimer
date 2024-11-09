@@ -134,9 +134,9 @@ namespace Reclaimer.Blam.Halo3
                         vb.Add(section.VertexBufferIndex, vertexBuffer);
                     }
 
-                    if (section.IndexBufferIndex == -1)
+                    if (section.IsUnindexed)
                     {
-                        var indexBuffer = BlamUtils.CreateDecoratorIndexBuffer(vInfo.VertexCount);
+                        var indexBuffer = BlamUtils.CreateImpliedIndexBuffer(vInfo.VertexCount, section.IndexFormat);
                         ib.Add(-sectionIndex - 1, indexBuffer); //use negative sectionIndex to ensure it doesnt conflict with actual buffer indexes and is unique per mesh
                     }
                     else
@@ -167,15 +167,15 @@ namespace Reclaimer.Blam.Halo3
             var meshList = new List<Mesh>(args.Sections.Count);
             meshList.AddRange(args.Sections.Select((section, sectionIndex) =>
             {
-                var indexBufferKey = section.IndexBufferIndex == -1 ? -sectionIndex - 1 : section.IndexBufferIndex;
-                if (!vb.ContainsKey(section.VertexBufferIndex) || !ib.ContainsKey(indexBufferKey))
+                var indexBufferKey = section.IsUnindexed ? -sectionIndex - 1 : section.IndexBufferIndex;
+                if (!vb.TryGetValue(section.VertexBufferIndex, out var vertexBuffer) || !ib.TryGetValue(indexBufferKey, out var indexBuffer))
                     return null;
 
                 var mesh = new Mesh
                 {
                     BoneIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
-                    VertexBuffer = vb[section.VertexBufferIndex],
-                    IndexBuffer = ib[indexBufferKey]
+                    VertexBuffer = vertexBuffer,
+                    IndexBuffer = indexBuffer
                 };
 
                 mesh.CustomProperties.AddFromFlags(section.Flags);

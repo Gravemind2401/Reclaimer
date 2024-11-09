@@ -117,12 +117,12 @@ namespace Reclaimer.Blam.HaloReach
             using (var ms = new MemoryStream(args.ResourcePointer.ReadData(PageType.Auto)))
             using (var reader = new EndianReader(ms, args.Cache.ByteOrder))
             {
-                foreach (var section in args.Sections)
+                foreach (var (section, sectionIndex) in args.Sections.Select((s, i) => (s, i)))
                 {
                     var vInfo = vertexBufferInfo.ElementAtOrDefault(section.VertexBufferIndex);
                     var iInfo = indexBufferInfo.ElementAtOrDefault(section.IndexBufferIndex);
 
-                    if (vInfo.VertexCount == 0 || iInfo.DataLength == 0)
+                    if (vInfo.VertexCount == 0)
                         continue;
 
                     var address = entry.ResourceFixups[section.VertexBufferIndex].Offset & 0x0FFFFFFF;
@@ -134,13 +134,21 @@ namespace Reclaimer.Blam.HaloReach
                         vb.Add(section.VertexBufferIndex, vertexBuffer);
                     }
 
-                    address = entry.ResourceFixups[vertexBufferInfo.Length * 2 + section.IndexBufferIndex].Offset & 0x0FFFFFFF;
-                    if (section.IndexBufferIndex >= 0 && !ib.ContainsKey(section.IndexBufferIndex))
+                    if (section.IsUnindexed)
                     {
-                        reader.Seek(address, SeekOrigin.Begin);
-                        var data = reader.ReadBytes(iInfo.DataLength);
-                        var indexBuffer = new IndexBuffer(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort)) { Layout = indexBufferInfo[section.IndexBufferIndex].IndexFormat };
-                        ib.Add(section.IndexBufferIndex, indexBuffer);
+                        var indexBuffer = BlamUtils.CreateImpliedIndexBuffer(vInfo.VertexCount, section.IndexFormat);
+                        ib.Add(-sectionIndex - 1, indexBuffer); //use negative sectionIndex to ensure it doesnt conflict with actual buffer indexes and is unique per mesh
+                    }
+                    else
+                    {
+                        address = entry.ResourceFixups[vertexBufferInfo.Length * 2 + section.IndexBufferIndex].Offset & 0x0FFFFFFF;
+                        if (section.IndexBufferIndex >= 0 && !ib.ContainsKey(section.IndexBufferIndex))
+                        {
+                            reader.Seek(address, SeekOrigin.Begin);
+                            var data = reader.ReadBytes(iInfo.DataLength);
+                            var indexBuffer = new IndexBuffer(data, vInfo.VertexCount > ushort.MaxValue ? typeof(int) : typeof(ushort)) { Layout = indexBufferInfo[section.IndexBufferIndex].IndexFormat };
+                            ib.Add(section.IndexBufferIndex, indexBuffer);
+                        }
                     }
                 }
             }
@@ -159,14 +167,15 @@ namespace Reclaimer.Blam.HaloReach
             var meshList = new List<Mesh>(args.Sections.Count);
             meshList.AddRange(args.Sections.Select((section, sectionIndex) =>
             {
-                if (!vb.ContainsKey(section.VertexBufferIndex) || !ib.ContainsKey(section.IndexBufferIndex))
+                var indexBufferKey = section.IsUnindexed ? -sectionIndex - 1 : section.IndexBufferIndex;
+                if (!vb.TryGetValue(section.VertexBufferIndex, out var vertexBuffer) || !ib.TryGetValue(indexBufferKey, out var indexBuffer))
                     return null;
 
                 var mesh = new Mesh
                 {
                     BoneIndex = section.NodeIndex == byte.MaxValue ? null : section.NodeIndex,
-                    VertexBuffer = vb[section.VertexBufferIndex],
-                    IndexBuffer = ib[section.IndexBufferIndex]
+                    VertexBuffer = vertexBuffer,
+                    IndexBuffer = indexBuffer
                 };
 
                 mesh.CustomProperties.AddFromFlags(section.Flags);

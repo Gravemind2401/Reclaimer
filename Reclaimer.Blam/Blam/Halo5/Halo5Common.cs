@@ -185,7 +185,7 @@ namespace Reclaimer.Blam.Halo5
                         // so we need to create our own index buffer
                         if (iInfo.IndexCount == 0)
                         {
-                            var indexBuffer = BlamUtils.CreateDecoratorIndexBuffer(vInfo.VertexCount);
+                            var indexBuffer = BlamUtils.CreateImpliedIndexBuffer(vInfo.VertexCount, IndexFormat.TriangleStrip);
                             ib.Add(lodData.IndexBufferIndex, indexBuffer);
                         }
                         else
