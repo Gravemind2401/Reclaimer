@@ -199,8 +199,6 @@ namespace Reclaimer.Blam.Halo4
             var meshList = new List<Mesh>(args.Sections.Count);
             meshList.AddRange(args.Sections.Select((section, sectionIndex) =>
             {
-                sectionIndex++;
-
                 if (!vb.ContainsKey(section.VertexBufferIndex) || !ib.ContainsKey(section.IndexBufferIndex))
                     return null;
 
