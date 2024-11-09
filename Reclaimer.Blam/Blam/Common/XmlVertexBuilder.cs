@@ -38,13 +38,14 @@ namespace Reclaimer.Blam.Common
         public VertexBuffer CreateVertexBuffer(int typeId, int count, byte[] data)
         {
             var layout = vertexLayouts[typeId];
+            var fields = layout.Fields.Where(f => f.Stream == 0);
             var vertexBuffer = new VertexBuffer();
 
-            var lastField = layout.Fields.Where(f => f.Stream == 0).OrderBy(f => f.Offset).Last();
+            var lastField = fields.OrderBy(f => f.Offset).Last();
             var fieldType = GetFieldType(lastField.DataType);
             var vertexSize = layout.Size ?? (lastField.Offset + IBufferable.GetSizeOf(fieldType));
 
-            foreach (var field in layout.Fields)
+            foreach (var field in fields)
             {
                 var vectorType = GetFieldType(field.DataType);
                 if (vectorType == null)

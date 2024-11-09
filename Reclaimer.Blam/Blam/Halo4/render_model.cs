@@ -63,9 +63,6 @@ namespace Reclaimer.Blam.Halo4
 
         private Model GetModelContent()
         {
-            if (Sections.All(s => s.IndexBufferIndex < 0))
-                throw Exceptions.GeometryHasNoEdges();
-
             var geoParams = new Halo4GeometryArgs
             {
                 Cache = Cache,
@@ -160,7 +157,7 @@ namespace Reclaimer.Blam.Halo4
                 permutation.CustomProperties.Add(BlamConstants.PermutationNamePropertyName, owners);
 
                 return permutation;
-            }));
+            }).OrderBy(p => p.Name));
 
             model.Regions.Add(region);
 
@@ -383,6 +380,12 @@ namespace Reclaimer.Blam.Halo4
 
         [Offset(49)]
         public byte VertexFormat { get; set; }
+
+        [Offset(52)]
+        [StoreType(typeof(byte))]
+        public IndexFormat IndexFormat { get; set; }
+
+        internal bool IsUnindexed => IndexBufferIndex == -1 || Flags.HasFlag(MeshFlags.MeshIsUnindexed);
     }
 
     [Flags]

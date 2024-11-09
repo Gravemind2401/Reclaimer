@@ -157,7 +157,7 @@ namespace Reclaimer.Blam.HaloReach
             {
                 foreach (var b in vb.Values)
                     b.ReverseEndianness();
-                foreach (var b in ib.Values)
+                foreach (var (_, b) in ib.Where(kv => kv.Key >= 0)) //skip negative keys since those are the implied buffers
                     b.ReverseEndianness();
             }
 
