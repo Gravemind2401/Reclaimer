@@ -218,6 +218,9 @@ namespace Reclaimer.Blam.Halo5
                     IndexBuffer = ib[lodData.IndexBufferIndex]
                 };
 
+                if (!mesh.VertexBuffer.HasColors && mesh.VertexBuffer.PositionChannels.ElementAtOrDefault(0) is IVectorBuffer b && b.Dimensions > 3)
+                    mesh.Flags |= Geometry.MeshFlags.VertexColorFromPosition;
+
                 if (mesh.VertexBuffer.HasBlendWeights && mesh.VertexBuffer.HasImpliedBlendWeights)
                     mesh.Flags |= Geometry.MeshFlags.UseImpliedBlendWeights;
 
