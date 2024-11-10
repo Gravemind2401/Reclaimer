@@ -12,8 +12,10 @@ namespace Reclaimer.Plugins
 {
     public class ModuleViewerPlugin : Plugin
     {
-        private const string OpenKey = "ModuleViewer.OpenModule";
-        private const string OpenPath = "File\\Open Module";
+        private const string OpenFileKey = "ModuleViewer.OpenModuleFile";
+        private const string OpenFolderKey = "ModuleViewer.OpenModuleFolder";
+        private const string OpenFilePath = "File\\Open Module";
+        private const string OpenFolderPath = "File\\Open Module Folder";
         private const string BrowseFileFilter = "Halo Module Files|*.module";
         private const string ModuleFileExtension = "module";
 
@@ -30,7 +32,8 @@ namespace Reclaimer.Plugins
 
         public override IEnumerable<PluginMenuItem> GetMenuItems()
         {
-            yield return new PluginMenuItem(OpenKey, OpenPath, OnMenuItemClick);
+            yield return new PluginMenuItem(OpenFileKey, OpenFilePath, OpenFileMenuItemClick);
+            yield return new PluginMenuItem(OpenFolderKey, OpenFolderPath, OpenFolderMenuItemClick);
         }
 
         public override IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
@@ -39,9 +42,9 @@ namespace Reclaimer.Plugins
                 yield return ExtractBinaryContextItem;
         }
 
-        private void OnMenuItemClick(string key)
+        private void OpenFileMenuItemClick(string key)
         {
-            if (key != OpenKey)
+            if (key != OpenFileKey)
                 return;
 
             var ofd = new OpenFileDialog
@@ -59,6 +62,45 @@ namespace Reclaimer.Plugins
 
             foreach (var fileName in ofd.FileNames)
                 OpenPhysicalFile(fileName);
+        }
+
+        private void OpenFolderMenuItemClick(string key)
+        {
+            if (key != OpenFolderKey)
+                return;
+
+            var ofd = new System.Windows.Forms.FolderBrowserDialog();
+
+            if (!string.IsNullOrEmpty(Settings.ModuleFolder))
+                ofd.InitialDirectory = Settings.ModuleFolder;
+
+            if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                return;
+
+            var moduleFiles = FindModuleFiles(ofd.SelectedPath);
+            if (moduleFiles.Count == 0)
+            {
+                Substrate.ShowErrorMessage("No module files were found in the selected directory or its subdirectories.");
+                return;
+            }
+
+            var primary = moduleFiles[0];
+            moduleFiles.RemoveAt(0);
+            OpenPhysicalFile(primary, moduleFiles);
+        }
+
+        internal static List<string> FindModuleFiles(string directory)
+        {
+            //limit search depth to 4 - this is enough to select the "deploy" folder and have all modules included
+            const int maxRecursionDepth = 4;
+
+            //prioritise "common" modules first, then just the largest module file after that
+            return new DirectoryInfo(directory)
+                .EnumerateFiles("*.module", new EnumerationOptions { RecurseSubdirectories = true, MaxRecursionDepth = maxRecursionDepth })
+                .OrderByDescending(f => f.Name.StartsWith("common"))
+                .ThenByDescending(f => f.Length)
+                .Select(f => f.FullName)
+                .ToList();
         }
 
         private void OnContextItemClick(string key, OpenFileArgs context)
@@ -84,23 +126,38 @@ namespace Reclaimer.Plugins
 
         public override bool SupportsFileExtension(string extension) => extension.ToLowerInvariant() == ModuleFileExtension;
 
-        public override void OpenPhysicalFile(string fileName)
+        public override void OpenPhysicalFile(string fileName) => OpenPhysicalFile(fileName, null);
+
+        private void OpenPhysicalFile(string fileName, IList<string> linkedFileNames)
         {
             var tabId = $"{Key}::{fileName}";
             if (Substrate.ShowTabById(tabId))
                 return;
 
-            LogOutput($"Loading module file: {fileName}");
+            var hasAdditionalFiles = linkedFileNames?.Count > 0;
+
+            if (hasAdditionalFiles)
+                LogOutput($"Loading module file (+{linkedFileNames.Count} linked): {fileName}");
+            else
+                LogOutput($"Loading module file: {fileName}");
 
             try
             {
                 var mv = new Controls.ModuleViewer();
                 mv.TabModel.ContentId = tabId;
-                mv.LoadModule(fileName);
+
+                if (hasAdditionalFiles)
+                    mv.LoadModulesAsLinked(fileName, linkedFileNames);
+                else
+                    mv.LoadModule(fileName);
+
                 Substrate.AddTool(mv.TabModel, Substrate.GetHostWindow(), Dock.Left, new GridLength(400));
                 Substrate.AddRecentFile(fileName);
 
-                LogOutput($"Loaded module file: {fileName}");
+                if (hasAdditionalFiles)
+                    LogOutput($"Loaded module file (+{linkedFileNames.Count} linked): {fileName}");
+                else
+                    LogOutput($"Loaded module file: {fileName}");
             }
             catch (Exception ex)
             {

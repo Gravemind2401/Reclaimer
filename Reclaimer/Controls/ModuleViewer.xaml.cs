@@ -94,9 +94,17 @@ namespace Reclaimer.Controls
             DataContext = this;
         }
 
-        public void LoadModule(string fileName)
+        public void LoadModule(string fileName) => LoadModulesAsLinked(fileName, null);
+
+        public void LoadModulesAsLinked(string primaryFileName, IEnumerable<string> linkedFileNames)
         {
-            module = ModuleFactory.ReadModuleFile(fileName);
+            module = ModuleFactory.ReadModuleFile(primaryFileName);
+
+            if (linkedFileNames != null)
+            {
+                foreach (var fileName in linkedFileNames)
+                    module.AddLinkedModule(fileName);
+            }
 
             if (module.ModuleType == ModuleType.HaloInfinite
                 && Blam.HaloInfinite.StringMapper.Instance.StringMappings.Count == 0
