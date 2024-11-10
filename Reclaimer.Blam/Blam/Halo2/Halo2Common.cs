@@ -279,8 +279,8 @@ namespace Reclaimer.Blam.Halo2
                 {
                     if (section.NodesPerVertex == 0)
                         mesh.BoneIndex = 0;
-                    else if (section.NodesPerVertex == 1 && nodeMap.Length > 0)
-                        mesh.BoneIndex = nodeMap[0];
+                    else if (section.NodesPerVertex == 1)
+                        mesh.BoneIndex = nodeMap.Length > 0 ? nodeMap[0] : (byte)0;
                     else
                         throw new NotSupportedException();
 
