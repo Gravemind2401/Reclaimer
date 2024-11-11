@@ -32,6 +32,7 @@ namespace Reclaimer.Blam.Common.Gen5
 
         [Offset(8)]
         public long Offset { get; set; }
+        public int Index { get; set; }
     }
 
     [FixedSize(32)]

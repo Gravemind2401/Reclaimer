@@ -85,7 +85,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                 }
 
                 var adjustedOffset = (BaseAddress - Host.Offset) + Offset;
-                var structdef = Header.StructureDefinitions.First(s => s.FieldBlock == Header.DataBlocks.IndexOf(Host) && s.FieldOffset == adjustedOffset);
+                var structdef = Header.StructureDefinitions.First(s => s.FieldBlock == Host.Index && s.FieldOffset == adjustedOffset);
 
                 var block = Header.DataBlocks[structdef.TargetIndex];
                 BlockAddress = Header.GetSectionOffset(block.Section) + block.Offset - Header.HeaderSize;

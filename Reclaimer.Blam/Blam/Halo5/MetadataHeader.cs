@@ -42,6 +42,10 @@ namespace Reclaimer.Blam.Halo5
             Header = reader.ReadObject<TagHeader>();
             Dependencies = reader.ReadList<TagDependency>(Header.DependencyCount);
             DataBlocks = reader.ReadList<DataBlock>(Header.DataBlockCount);
+            for (var i = 0; i < DataBlocks.Count; i++)
+            {
+                DataBlocks[i].Index = i;
+            }
             StructureDefinitions = reader.ReadList<TagStructureDefinition>(Header.TagStructureCount);
             DataReferences = reader.ReadList<DataBlockReference>(Header.DataReferenceCount);
             TagReferences = reader.ReadList<TagBlockReference>(Header.TagReferenceCount);
