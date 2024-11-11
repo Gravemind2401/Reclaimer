@@ -175,7 +175,7 @@ namespace Reclaimer.Plugins.MetaViewer
                 if (tag is IIndexItem cacheItem)
                     Controls.MetaViewer.LoadDataHalo3(xmlFileName, cacheItem, tempMetadata, ref tempContext);
                 else if (tag is IModuleItem moduleItem)
-                    Controls.MetaViewer.LoadDataHalo5(fileName, moduleItem, tempMetadata);
+                    Controls.MetaViewer.LoadDataHalo5(xmlFileName, moduleItem, tempMetadata);
 
                 var root = new JObject();
                 foreach (var item in tempMetadata.Where(i => !string.IsNullOrWhiteSpace(i.Name)))
