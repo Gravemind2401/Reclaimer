@@ -134,6 +134,7 @@ namespace Reclaimer.Controls
         {
             var control = (BitmapViewer)d;
             control.dds = control.bitmap.ToDds((int)e.NewValue);
+            control.ImageDescriptor = control.dds.CreateDescriptor();
             control.Render();
         }
         #endregion
