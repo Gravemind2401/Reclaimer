@@ -8,11 +8,6 @@ function Rasterize-ApplicationIcon {
         return
     }
 
-    if (-not (Test-Path (Get-Alias icomake).Definition)) {
-        Write-Warning 'Could not rasterize application icon: icomake not found!'
-        return
-    }
-
     Write-Host 'Rasterizing application icon...' -ForegroundColor Yellow
 
     $outputSizes = 16, 24, 32, 48, 64, 96, 128, 256
@@ -25,7 +20,7 @@ function Rasterize-ApplicationIcon {
         inkscape --export-filename=".\obj\Reclaimer_$size.png" --export-overwrite --export-width=$size --export-height=$size "$inputFile" | Out-Null
     }
 
-    icomake ".\obj\Reclaimer.ico" $outputNameArray | Out-Null
+    .\icomake.exe ".\obj\Reclaimer.ico" $outputNameArray | Out-Null
 
     Copy-Item ".\obj\Reclaimer.ico" -Destination "$buildRoot\Reclaimer\Reclaimer\Resources\Reclaimer.ico" -Force
 }
@@ -38,7 +33,7 @@ function Rasterize-InstallerResources {
 
     Write-Host 'Rasterizing installer resources...' -ForegroundColor Yellow
 
-    foreach ($fileName in '.\obj\res\bannerbmp.svg', '.\obj\res\dlgbmp.svg') {
+    foreach ($fileName in 'D:\Reclaimer\Scripts\obj\res\bannerbmp.svg', 'D:\Reclaimer\Scripts\obj\res\dlgbmp.svg') {
         [IO.File]::WriteAllText($fileName, ([IO.File]::ReadAllText($fileName) -replace '#VERSION#', $assemblyVersion))
     }
 
@@ -55,7 +50,7 @@ function Build-Installer {
     dotnet build "$buildRoot\Reclaimer\Reclaimer\Reclaimer.csproj" -c Release --property:AssemblyVersion=$assemblyVersion
 
     Write-Host 'Building Installer...' -ForegroundColor Yellow
-    dotnet build "$buildRoot\Reclaimer\Reclaimer.Setup\Reclaimer.Setup.wixproj" -c Release --property:AssemblyVersion=$assemblyVersion --property:DefineConstants="UseCustomImages" --no-dependencies
+    dotnet build "$buildRoot\Reclaimer\Reclaimer.Setup\Reclaimer.Setup.wixproj" -c Release --property:AssemblyVersion=$assemblyVersion --property:DefineConstants="UseCustomImages"
 
 }
 
