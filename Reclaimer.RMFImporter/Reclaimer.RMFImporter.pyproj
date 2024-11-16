@@ -90,6 +90,7 @@
     <Folder Include="Reclaimer\ui\resources\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Reclaimer\blender_manifest.toml" />
     <Content Include="Reclaimer\ui\progress.ui" />
     <Content Include="Reclaimer\ui\resources\bl_stylesheet.qss" />
     <Content Include="Reclaimer\ui\resources\CheckboxList_16x.png" />
