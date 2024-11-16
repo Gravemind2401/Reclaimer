@@ -28,9 +28,15 @@
                     <ContentControl Template="{StaticResource ic_LocalResources_16x}" />
                 </ToggleButton>
                 <Separator />
-                <Button Click="btnAddLink_Click" ToolTip="Add linked module">
+                <s:SplitButton Click="btnAddLink_Click" ToolTip="Add linked module">
                     <ContentControl Template="{StaticResource ic_AddLink_16x}" />
-                </Button>
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Add file" Click="btnAddLink_Click" />
+                            <MenuItem Header="Add folder" Click="btnAddLinkFolder_Click" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </s:SplitButton>
                 <Separator Visibility="{Binding HasGlobalHandlers, Converter={StaticResource visConverter}}" />
                 <c:MenuButton x:Name="globalMenuButton" ToolTip="Module-wide operations"
                               Visibility="{Binding HasGlobalHandlers, Converter={StaticResource visConverter}}">

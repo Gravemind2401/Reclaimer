@@ -311,6 +311,29 @@ namespace Reclaimer.Controls
             BuildTagTree(txtSearch.Text);
         }
 
+        private void btnAddLinkFolder_Click(object sender, RoutedEventArgs e)
+        {
+            var ofd = new System.Windows.Forms.FolderBrowserDialog();
+
+            if (!string.IsNullOrEmpty(ModuleViewerPlugin.Settings.ModuleFolder))
+                ofd.InitialDirectory = ModuleViewerPlugin.Settings.ModuleFolder;
+
+            if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                return;
+
+            var moduleFiles = ModuleViewerPlugin.FindModuleFiles(ofd.SelectedPath);
+            if (moduleFiles.Count == 0)
+            {
+                Substrate.ShowErrorMessage("No module files were found in the selected directory or its subdirectories.");
+                return;
+            }
+
+            foreach (var fileName in moduleFiles)
+                module.AddLinkedModule(fileName);
+
+            BuildTagTree(txtSearch.Text);
+        }
+
         private void txtSearch_SearchChanged(object sender, RoutedEventArgs e)
         {
             BuildTagTree(txtSearch.Text);
