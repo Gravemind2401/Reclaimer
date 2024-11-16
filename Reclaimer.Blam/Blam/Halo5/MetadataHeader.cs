@@ -47,6 +47,9 @@ namespace Reclaimer.Blam.Halo5
             TagReferences = reader.ReadList<TagBlockReference>(Header.TagReferenceCount);
             StringIds = reader.ReadList<StringIdGen5>(Header.StringIdCount);
 
+            for (var i = 0; i < DataBlocks.Count; i++)
+                DataBlocks[i].Index = i;
+
             stringTable = new List<string>(StringIds.Count);
             stringsByOffset = new Dictionary<int, int>(StringIds.Count);
             stringsByHash = new Dictionary<uint, int>(StringIds.Count);

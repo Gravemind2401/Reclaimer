@@ -158,6 +158,17 @@ namespace Reclaimer.Controls
             Indexes = Enumerable.Range(0, bitmap.SubmapCount);
             dds = bitmap.ToDds(0);
 
+            Render();
+            CoerceValue(HasMultipleProperty);
+        }
+
+        private void Render()
+        {
+            var src = dds.ToBitmapSource(new DdsOutputArgs(GetOptions(), bitmap.CubeLayout));
+            if (src.CanFreeze)
+                src.Freeze();
+
+            ImageSource = src;
             ImageDescriptor = dds.CreateDescriptor();
             ImageFormatDisplay = ImageDescriptor.XboxFormat == XboxFormat.Unknown
                 ? ImageDescriptor.DxgiFormat.ToString()
@@ -169,17 +180,6 @@ namespace Reclaimer.Controls
                 ImageFormatDisplay += $" ({FourCC.DXT3})";
             else if (ImageDescriptor.DxgiFormat == DxgiFormat.BC3_UNorm)
                 ImageFormatDisplay += $" ({FourCC.DXT5})";
-
-            Render();
-            CoerceValue(HasMultipleProperty);
-        }
-
-        private void Render()
-        {
-            var src = dds.ToBitmapSource(new DdsOutputArgs(GetOptions(), bitmap.CubeLayout));
-            if (src.CanFreeze)
-                src.Freeze();
-            ImageSource = src;
         }
 
         private DecompressOptions GetOptions()

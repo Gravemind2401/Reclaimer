@@ -39,6 +39,10 @@ namespace Reclaimer.Blam.HaloInfinite
             StructureDefinitions = reader.ReadList<TagStructureDefinition>(Header.TagStructureCount);
             DataReferences = reader.ReadList<DataBlockReference>(Header.DataReferenceCount);
             TagReferences = reader.ReadList<TagBlockReference>(Header.TagReferenceCount);
+
+            for (var i = 0; i < DataBlocks.Count; i++)
+                DataBlocks[i].Index = i;
+
             reader.Seek(Header.HeaderSize, System.IO.SeekOrigin.Begin);
         }
 
