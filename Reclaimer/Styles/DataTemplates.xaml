@@ -33,6 +33,7 @@
                     <Setter Property="s:DockManager.IsActive" Value="{Binding IsActive}" />
                     <Setter Property="SelectedItem" Value="{Binding SelectedItem}" />
                     <Setter Property="OverflowItemSelectedCommand" Value="{Binding SelectItemCommand}" />
+                    <Setter Property="OverflowItemClosedCommand" Value="{Binding CloseTabCommand}" />
                     <Setter Property="FloatTabCommand" Value="{Binding FloatTabCommand}" />
                     <Setter Property="DockCommand" Value="{Binding DockCommand}" />
                     <Setter Property="s:SplitPanel.MinSize" Value="{Binding MinPanelSize}" />
