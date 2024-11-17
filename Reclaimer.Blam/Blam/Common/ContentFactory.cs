@@ -75,7 +75,7 @@ namespace Reclaimer.Blam.Common
                 content = gameType switch
                 {
                     HaloGame.Halo1 when cacheType != CacheType.Halo1AE => item.ReadMetadata<Halo1.bitmap>(),
-                    HaloGame.Halo2 when cacheType is CacheType.Halo2Beta or CacheType.Halo2Xbox => item.ReadMetadata<Halo2.bitmap>(),
+                    HaloGame.Halo2 => item.ReadMetadata<Halo2.bitmap>(),
                     HaloGame.Halo3 => item.ReadMetadata<Halo3.bitmap>(),
                     HaloGame.Halo3ODST => item.ReadMetadata<Halo3.bitmap>(),
                     HaloGame.HaloReach => item.ReadMetadata<HaloReach.bitmap>(),
@@ -110,7 +110,7 @@ namespace Reclaimer.Blam.Common
                     {
                         HaloGame.Halo1 => item.ReadMetadata<Halo1.gbxmodel>(),
                         HaloGame.Halo2 when cacheType == CacheType.Halo2Beta => item.ReadMetadata<Halo2Beta.render_model>(),
-                        HaloGame.Halo2 when cacheType == CacheType.Halo2Xbox => item.ReadMetadata<Halo2.render_model>(),
+                        HaloGame.Halo2 when cacheType is CacheType.Halo2Xbox or CacheType.Halo2Vista => item.ReadMetadata<Halo2.render_model>(),
                         HaloGame.Halo3 => item.ReadMetadata<Halo3.render_model>(),
                         HaloGame.Halo3ODST => item.ReadMetadata<Halo3.render_model>(),
                         HaloGame.HaloReach => item.ReadMetadata<HaloReach.render_model>(),

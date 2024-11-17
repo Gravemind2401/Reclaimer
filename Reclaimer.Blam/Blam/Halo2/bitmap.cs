@@ -4,6 +4,8 @@ using Reclaimer.Drawing;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System.Drawing;
+using System.IO;
+using System.IO.Compression;
 
 namespace Reclaimer.Blam.Halo2
 {
@@ -48,10 +50,24 @@ namespace Reclaimer.Blam.Halo2
             Exceptions.ThrowIfIndexOutOfRange(index, Bitmaps.Count);
 
             var submap = Bitmaps[index];
-            var data = submap.Lod0Pointer.ReadData(submap.Lod0Size);
             var frameCount = submap.BitmapType == TextureType.CubeMap ? 6 : submap.Depth;
-
             var formatDescriptor = new BitmapProperties(submap.Width, submap.Height, submap.BitmapFormat, submap.BitmapType).CreateFormatDescriptor();
+
+            var data = submap.Lod0Pointer.ReadData(submap.Lod0Size);
+            if (Cache.CacheType == CacheType.Halo2Vista)
+            {
+                using (var ms = new MemoryStream(data))
+                {
+                    //not sure what the first 2 bytes are, but theyre not part of the stream
+                    ms.Seek(2, SeekOrigin.Begin);
+                    using (var ds = new DeflateStream(ms, CompressionMode.Decompress))
+                    using (var ms2 = new MemoryStream())
+                    {
+                        ds.CopyTo(ms2);
+                        data = ms2.ToArray();
+                    }
+                }
+            }
 
             //Halo2 has all the lod mips in the same resource data as the main lod.
             //this means that for cubemaps each face will be separated by mips, so we

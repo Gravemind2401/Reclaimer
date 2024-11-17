@@ -201,7 +201,12 @@ namespace Reclaimer.Blam.Halo2
             mesh.IndexBuffer = IndexBuffer.FromArray(reader.ReadArray<ushort>(sectionInfo.IndexCount), indexFormat);
 
             if (args.IsRenderModel)
-                ReadRenderModelMeshData();
+            {
+                if (args.Cache.Metadata.Platform == CachePlatform.Xbox)
+                    ReadXboxRenderModelMeshData();
+                else
+                    ReadPcRenderModelMeshData();
+            }
             else
                 ReadBspMeshData();
 
@@ -238,7 +243,7 @@ namespace Reclaimer.Blam.Halo2
                 }
             }
 
-            void ReadRenderModelMeshData()
+            void ReadXboxRenderModelMeshData()
             {
                 var positionBuffer = new VectorBuffer<UInt16N4>(section.VertexCount);
                 var texCoordsBuffer = new VectorBuffer<UInt16N2>(section.VertexCount);
@@ -319,6 +324,118 @@ namespace Reclaimer.Blam.Halo2
 
                         blendIndices = new UByte4(nodes[0], nodes[1], nodes[2], nodes[3]);
                         blendWeights = new RealVector4(weights[0], weights[1], weights[2], weights[3]);
+                    }
+
+                    if (nodeMap.Length > 0)
+                    {
+                        var temp = blendIndices;
+                        blendIndices = new UByte4
+                        {
+                            X = section.NodesPerVertex > 0 ? nodeMap[temp.X] : byte.MinValue,
+                            Y = section.NodesPerVertex > 1 ? nodeMap[temp.Y] : byte.MinValue,
+                            Z = section.NodesPerVertex > 2 ? nodeMap[temp.Z] : byte.MinValue,
+                            W = section.NodesPerVertex > 3 ? nodeMap[temp.W] : byte.MinValue,
+                        };
+                    }
+
+                    blendIndexBuffer[i] = blendIndices;
+                    blendWeightBuffer[i] = blendWeights;
+                }
+            }
+
+            void ReadPcRenderModelMeshData()
+            {
+                var positionBuffer = new VectorBuffer<RealVector3>(section.VertexCount);
+                var texCoordsBuffer = new VectorBuffer<RealVector2>(section.VertexCount);
+                var normalBuffer = new VectorBuffer<RealVector3>(section.VertexCount);
+
+                mesh.VertexBuffer = new VertexBuffer();
+                mesh.VertexBuffer.PositionChannels.Add(positionBuffer);
+                mesh.VertexBuffer.TextureCoordinateChannels.Add(texCoordsBuffer);
+                mesh.VertexBuffer.NormalChannels.Add(normalBuffer);
+
+                var vertexSize = vertexResource.Size / section.VertexCount;
+
+                if (vertexSize is not (12 or 16 or 20))
+                    System.Diagnostics.Debugger.Break();
+
+                for (var i = 0; i < section.VertexCount; i++)
+                {
+                    //blend weights and indicies can be included in this resource, depending on the geometry classification
+                    reader.Seek(section.BaseAddress + vertexResource.Offset + i * vertexSize, SeekOrigin.Begin);
+                    positionBuffer[i] = reader.ReadBufferable<RealVector3>();
+                }
+
+                for (var i = 0; i < section.VertexCount; i++)
+                {
+                    reader.Seek(section.BaseAddress + uvResource.Offset + i * 8, SeekOrigin.Begin);
+                    var uv = reader.ReadBufferable<RealVector2>();
+                    uv.X = uv.X * 0.5f + 0.5f;
+                    uv.Y = uv.Y * 0.5f + 0.5f;
+                    texCoordsBuffer[i] = uv;
+                }
+
+                for (var i = 0; i < section.VertexCount; i++)
+                {
+                    //this contains 3x the data needed for normals, maybe also contains binormal and tangent?
+                    reader.Seek(section.BaseAddress + normalsResource.Offset + i * 36, SeekOrigin.Begin);
+                    normalBuffer[i] = reader.ReadBufferable<RealVector3>();
+                }
+
+                var nodeMap = Array.Empty<byte>();
+                if (nodeMapResource != null)
+                {
+                    reader.Seek(section.BaseAddress + nodeMapResource.Offset, SeekOrigin.Begin);
+                    nodeMap = reader.ReadBytes(sectionInfo.NodeMapCount);
+                }
+
+                if (section.GeometryClassification == GeometryClassification.Rigid)
+                {
+                    if (section.NodesPerVertex == 0)
+                        mesh.BoneIndex = 0;
+                    else if (section.NodesPerVertex == 1)
+                        mesh.BoneIndex = nodeMap.Length > 0 ? nodeMap[0] : (byte)0;
+                    else
+                        throw new NotSupportedException();
+
+                    return;
+                }
+
+                var blendIndexBuffer = new VectorBuffer<UByte4>(section.VertexCount);
+                var blendWeightBuffer = new VectorBuffer<UByteN4>(section.VertexCount);
+
+                mesh.VertexBuffer.BlendIndexChannels.Add(blendIndexBuffer);
+                mesh.VertexBuffer.BlendWeightChannels.Add(blendWeightBuffer);
+
+                for (var i = 0; i < section.VertexCount; i++)
+                {
+                    UByte4 blendIndices = default;
+                    UByteN4 blendWeights = default;
+
+                    reader.Seek(section.BaseAddress + vertexResource.Offset + i * vertexSize + 12, SeekOrigin.Begin);
+
+                    if (section.GeometryClassification == GeometryClassification.RigidBoned)
+                    {
+                        blendIndices = new UByte4(reader.ReadByte(), default, default, default);
+                        blendWeights = new UByteN4(1f, default, default, default);
+                        reader.ReadByte();
+                    }
+                    else if (section.GeometryClassification == GeometryClassification.Skinned)
+                    {
+                        //if (section.NodesPerVertex == 2 || section.NodesPerVertex == 4)
+                        //    reader.ReadInt16();
+
+                        //var nodes = Enumerable.Range(0, 4).Select(i => section.NodesPerVertex > i ? reader.ReadByte() : byte.MinValue).ToList();
+                        //var weights = Enumerable.Range(0, 4).Select(i => section.NodesPerVertex > i ? reader.ReadByte() / (float)byte.MaxValue : 0).ToList();
+
+                        //if (section.NodesPerVertex == 1 && weights.Sum() == 0)
+                        //    weights[0] = 1;
+
+                        //blendIndices = new UByte4(nodes[0], nodes[1], nodes[2], nodes[3]);
+                        //blendWeights = new RealVector4(weights[0], weights[1], weights[2], weights[3]);
+
+                        blendIndices = reader.ReadBufferable<UByte4>();
+                        blendWeights = reader.ReadBufferable<UByteN4>();
                     }
 
                     if (nodeMap.Length > 0)
