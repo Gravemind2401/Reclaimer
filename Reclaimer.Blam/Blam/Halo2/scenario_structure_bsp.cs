@@ -13,25 +13,25 @@ namespace Reclaimer.Blam.Halo2
             : base(item)
         { }
 
-        [Offset(68)]
+        [Offset(52)]
         public RealBounds XBounds { get; set; }
 
-        [Offset(76)]
+        [Offset(60)]
         public RealBounds YBounds { get; set; }
 
-        [Offset(84)]
+        [Offset(68)]
         public RealBounds ZBounds { get; set; }
 
-        [Offset(172)]
+        [Offset(156)]
         public BlockCollection<ClusterBlock> Clusters { get; set; }
 
-        [Offset(180)]
+        [Offset(164)]
         public BlockCollection<ShaderBlock> Shaders { get; set; }
 
-        [Offset(328)]
+        [Offset(312)]
         public BlockCollection<BspSectionBlock> Sections { get; set; }
 
-        [Offset(336)]
+        [Offset(320)]
         public BlockCollection<GeometryInstanceBlock> GeometryInstances { get; set; }
 
         #region IContentProvider

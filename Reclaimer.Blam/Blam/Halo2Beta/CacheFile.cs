@@ -266,7 +266,7 @@ namespace Reclaimer.Blam.Halo2Beta
                 {
                     var translator = new BSPAddressTranslator(cache, Id);
                     reader = cache.CreateReader(translator);
-                    address = translator.TagAddress;
+                    address = translator.TagAddress + 16;
                 }
                 else
                 {

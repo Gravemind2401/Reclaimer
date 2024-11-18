@@ -292,7 +292,8 @@ namespace Reclaimer.Blam.Halo2
                 {
                     var translator = new BSPAddressTranslator(cache, Id);
                     reader = cache.CreateReader(translator);
-                    address = translator.TagAddress;
+                    //not sure what the first 16 bytes after the bsp address are but apparently not part of the metadata
+                    address = translator.TagAddress + 16;
                 }
                 else
                 {
