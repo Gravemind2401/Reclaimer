@@ -50,7 +50,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         {
             TagOptions.Clear();
             var classTags = from t in context.Cache.TagIndex
-                            where t.ClassName == SelectedClass.Label
+                            where t.ClassName == SelectedClass?.Label
                             orderby t.TagName
                             select t;
 

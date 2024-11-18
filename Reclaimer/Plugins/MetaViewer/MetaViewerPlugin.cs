@@ -231,7 +231,9 @@ namespace Reclaimer.Plugins.MetaViewer
                     new PluginProfile("Halo3", CacheTypesByPrefix(CacheType.MccHalo3).Where(t => !t.ToString().StartsWith(nameof(CacheType.MccHalo3ODST))).Prepend(CacheType.Halo3Retail)),
                     new PluginProfile("Halo3Beta", CacheType.Halo3Alpha, CacheType.Halo3Beta),
                     new PluginProfile("Halo2MCC", CacheType.MccHalo2),
+                    new PluginProfile("Halo2Xbox", CacheType.Halo2Xbox),
                     new PluginProfile("Halo2", CacheType.Halo2Xbox, CacheType.Halo2Vista, CacheType.MccHalo2),
+                    new PluginProfile("Halo2Beta", CacheType.Halo2Beta),
                     new PluginProfile("Halo1", CacheType.Halo1Xbox, CacheType.Halo1PC, CacheType.Halo1CE, CacheType.Halo1AE, CacheType.MccHalo1),
                 };
             }

@@ -1,5 +1,6 @@
 ﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Common.Gen3;
+using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System.IO;
 using System.Xml;
@@ -11,31 +12,36 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         public XmlDocument Document { get; }
         public ICacheFile Cache { get; }
         public IIndexItem IndexItem { get; }
+        public IAddressTranslator AddressTranslator { get; }
         public Stream DataSource { get; }
 
         private readonly Dictionary<XmlNode, MetaValue> valuesByNode = new Dictionary<XmlNode, MetaValue>();
 
-        public MetaContext(XmlDocument xml, ICacheFile cache, IIndexItem indexItem)
+        public MetaContext(XmlDocument xml, IIndexItem indexItem)
         {
             Document = xml ?? throw new ArgumentNullException(nameof(xml));
-            Cache = cache ?? throw new ArgumentNullException(nameof(cache));
             IndexItem = indexItem ?? throw new ArgumentNullException(nameof(indexItem));
 
-            var fs = new FileStream(cache.FileName, FileMode.Open, FileAccess.Read);
+            Cache = indexItem.CacheFile;
+            AddressTranslator = indexItem.GetAddressTranslator();
+
+            var fs = new FileStream(Cache.FileName, FileMode.Open, FileAccess.Read);
             DataSource = new TransactionStream(fs);
         }
 
-        public MetaContext(XmlDocument xml, ICacheFile cache, IIndexItem indexItem, Stream dataSource)
+        public MetaContext(XmlDocument xml, IIndexItem indexItem, Stream dataSource)
         {
             Document = xml ?? throw new ArgumentNullException(nameof(xml));
-            Cache = cache ?? throw new ArgumentNullException(nameof(cache));
             IndexItem = indexItem ?? throw new ArgumentNullException(nameof(indexItem));
             DataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+
+            Cache = indexItem.CacheFile;
+            AddressTranslator = indexItem.GetAddressTranslator();
         }
 
         public EndianReader CreateReader()
         {
-            var reader = Cache.CreateReader(Cache.DefaultAddressTranslator, DataSource, true);
+            var reader = Cache.CreateReader(IndexItem.GetAddressTranslator(), DataSource, true);
             var expander = (Cache as IMccCacheFile)?.PointerExpander;
             if (expander != null)
                 reader.RegisterInstance(expander);

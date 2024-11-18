@@ -86,7 +86,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
                 var expander = (context.Cache as IMccCacheFile)?.PointerExpander;
                 BlockCount = reader.ReadInt32();
-                BlockAddress = new Pointer(reader.ReadInt32(), context.Cache.DefaultAddressTranslator, expander).Address;
+                BlockAddress = new Pointer(reader.ReadInt32(), context.AddressTranslator, expander).Address;
 
                 if (BlockCount <= 0 || BlockAddress < 0 || BlockAddress + BlockCount * BlockSize > reader.BaseStream.Length)
                 {

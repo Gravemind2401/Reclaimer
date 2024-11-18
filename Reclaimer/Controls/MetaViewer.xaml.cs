@@ -87,13 +87,13 @@ namespace Reclaimer.Controls
             doc.Load(xmlFileName);
 
             context?.DataSource?.Dispose();
-            context = new Plugins.MetaViewer.Halo3.MetaContext(doc, tag.CacheFile, tag);
+            context = new Plugins.MetaViewer.Halo3.MetaContext(doc, tag);
 
             foreach (var n in doc.DocumentElement.GetChildElements())
             {
                 try
                 {
-                    var meta = MetaValueBase.GetMetaValue(n, context, tag.MetaPointer.Address);
+                    var meta = MetaValueBase.GetMetaValue(n, context, tag.GetBaseAddress());
                     collection.Add(meta);
                 }
                 catch { }

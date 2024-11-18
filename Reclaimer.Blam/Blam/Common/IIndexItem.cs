@@ -15,6 +15,9 @@ namespace Reclaimer.Blam.Common
 
         T ReadMetadata<T>();
 
+        IAddressTranslator GetAddressTranslator() => CacheFile.DefaultAddressTranslator;
+        long GetBaseAddress() => MetaPointer.Address;
+
         sealed string FileName => Utils.GetFileName(TagName);
     }
 }

@@ -263,6 +263,21 @@ namespace Reclaimer.Blam.Halo2
 
         public string TagName => cache.TagIndex.TagNames[Id];
 
+        public IAddressTranslator GetAddressTranslator()
+        {
+            return ClassCode == "sbsp"
+                ? new BSPAddressTranslator(cache, Id)
+                : cache.MetadataTranslator;
+        }
+
+        public long GetBaseAddress()
+        {
+            //not sure what the first 16 bytes after the bsp address are but apparently not part of the metadata
+            return ClassCode == "sbsp"
+                ? new BSPAddressTranslator(cache, Id).TagAddress + 16
+                : MetaPointer.Address;
+        }
+
         public T ReadMetadata<T>()
         {
             if (metadataCache is Lazy<T> lazy)
@@ -285,26 +300,10 @@ namespace Reclaimer.Blam.Halo2
 
             T ReadMetadataInternal()
             {
-                long address;
-                DependencyReader reader;
-
-                if (ClassCode == "sbsp")
-                {
-                    var translator = new BSPAddressTranslator(cache, Id);
-                    reader = cache.CreateReader(translator);
-                    //not sure what the first 16 bytes after the bsp address are but apparently not part of the metadata
-                    address = translator.TagAddress + 16;
-                }
-                else
-                {
-                    reader = cache.CreateReader(cache.MetadataTranslator);
-                    address = MetaPointer.Address;
-                }
-
-                using (reader)
+                using (var reader = cache.CreateReader(GetAddressTranslator()))
                 {
                     reader.RegisterInstance<IIndexItem>(this);
-                    reader.Seek(address, SeekOrigin.Begin);
+                    reader.Seek(GetBaseAddress(), SeekOrigin.Begin);
                     var result = reader.ReadObject<T>((int)cache.CacheType);
 
                     if (CacheFactory.SystemClasses.Contains(ClassCode))
