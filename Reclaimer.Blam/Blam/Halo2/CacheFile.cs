@@ -42,7 +42,7 @@ namespace Reclaimer.Blam.Halo2
 
             using (var reader = CreateReader(HeaderTranslator))
             {
-                Header = reader.ReadObject<CacheHeader>();
+                Header = reader.ReadObject<CacheHeader>((int)args.CacheType);
                 reader.Seek(Header.IndexAddress, SeekOrigin.Begin);
                 TagIndex = reader.ReadObject(new TagIndex(this));
                 StringIndex = new StringIndex(this);
@@ -64,61 +64,22 @@ namespace Reclaimer.Blam.Halo2
     }
 
     [FixedSize(2048)]
-    public class CacheHeader
+    public partial class CacheHeader
     {
-        [Offset(0)]
         public int Head { get; set; }
-
-        [Offset(36)]
-        [VersionNumber]
-        public int Version { get; set; }
-
-        [Offset(8)]
         public int FileSize { get; set; }
-
-        [Offset(16)]
         public int IndexAddress { get; set; }
-
-        [Offset(20)]
         public int IndexSize { get; set; }
-
-        [Offset(288, MinVersion = 0)]
-        [Offset(300, MaxVersion = 0)]
-        [NullTerminated(Length = 32)]
         public string BuildString { get; set; }
-
-        [Offset(356)]
         public int StringCount { get; set; }
-
-        [Offset(360)]
         public int StringTableSize { get; set; }
-
-        [Offset(364)]
         public int StringTableIndexAddress { get; set; }
-
-        [Offset(368)]
         public int StringTableAddress { get; set; }
-
-        [Offset(444, MinVersion = 0)]
-        [Offset(456, MaxVersion = 0)]
-        [NullTerminated(Length = 256)]
         public string ScenarioName { get; set; }
-
-        [Offset(704, MinVersion = 0)]
-        [Offset(716, MaxVersion = 0)]
         public int FileCount { get; set; }
-
-        [Offset(708, MinVersion = 0)]
-        [Offset(720, MaxVersion = 0)]
         public int FileTableAddress { get; set; }
-
-        [Offset(712, MinVersion = 0)]
-        [Offset(724, MaxVersion = 0)]
         public int FileTableSize { get; set; }
-
-        [Offset(716, MinVersion = 0)]
-        [Offset(728, MaxVersion = 0)]
-        public int FileTableIndexOffset { get; set; }
+        public int FileTableIndexAddress { get; set; }
     }
 
     [FixedSize(32)]
@@ -174,7 +135,7 @@ namespace Reclaimer.Blam.Halo2
                         sysItems.Add(item.ClassCode, item);
                 }
 
-                reader.Seek(cache.Header.FileTableIndexOffset, SeekOrigin.Begin);
+                reader.Seek(cache.Header.FileTableIndexAddress, SeekOrigin.Begin);
                 var indices = reader.ReadArray<int>(TagCount);
 
                 for (var i = 0; i < TagCount; i++)
