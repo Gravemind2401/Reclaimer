@@ -410,10 +410,7 @@ namespace Reclaimer.Blam.Halo2
                 for (var i = 0; i < section.VertexCount; i++)
                 {
                     reader.Seek(section.BaseAddress + uvResource.Offset + i * 8, SeekOrigin.Begin);
-                    var uv = reader.ReadBufferable<RealVector2>();
-                    uv.X = uv.X * 0.5f + 0.5f;
-                    uv.Y = uv.Y * 0.5f + 0.5f;
-                    texCoordsBuffer[i] = uv;
+                    texCoordsBuffer[i] = reader.ReadBufferable<RealVector2>();
                 }
 
                 for (var i = 0; i < section.VertexCount; i++)

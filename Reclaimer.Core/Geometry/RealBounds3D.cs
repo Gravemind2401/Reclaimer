@@ -7,6 +7,8 @@
         public readonly float YLength => Max.Y - Min.Y;
         public readonly float ZLength => Max.Z - Min.Z;
 
+        public readonly Vector3 Midpoint => (Min + Max) / 2;
+
         public RealBounds3D(RealBounds xBounds, RealBounds yBounds, RealBounds zBounds)
             : this(new Vector3(xBounds.Min, yBounds.Min, zBounds.Min), new Vector3(xBounds.Max, yBounds.Max, zBounds.Max))
         { }

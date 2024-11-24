@@ -44,7 +44,9 @@ namespace Reclaimer.Blam.Halo2
             {
                 try
                 {
-                    var provider = bspTag as IContentProvider<Model>;
+                    if (bspTag is not IContentProvider<Model> provider)
+                        continue;
+
                     var model = provider.GetContent();
                     model.Flags |= SceneFlags.PrimaryFocus;
                     bspGroup.ChildObjects.Add(model);
@@ -65,7 +67,9 @@ namespace Reclaimer.Blam.Halo2
             {
                 try
                 {
-                    var provider = skyTag.ReadRenderModel() as IContentProvider<Model>;
+                    if (skyTag.ReadRenderModel() is not IContentProvider<Model> provider)
+                        continue;
+
                     var model = provider.GetContent();
                     var sceneItem = new ObjectPlacement(model);
                     sceneItem.SetTransform(skyTag.GetFinalScale());

@@ -63,7 +63,6 @@ namespace Reclaimer.Blam.Halo2
         #endregion
     }
 
-    [FixedSize(2048)]
     public partial class CacheHeader
     {
         public int Head { get; set; }

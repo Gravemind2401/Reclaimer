@@ -6,6 +6,8 @@
         public readonly float XLength => Max.X - Min.X;
         public readonly float YLength => Max.Y - Min.Y;
 
+        public readonly Vector2 Midpoint => (Min + Max) / 2;
+
         public RealBounds2D(RealBounds xBounds, RealBounds yBounds)
             : this(new Vector2(xBounds.Min, yBounds.Min), new Vector2(xBounds.Max, yBounds.Max))
         { }
