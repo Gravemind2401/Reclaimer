@@ -60,15 +60,20 @@ namespace Reclaimer.Blam.Common
                     else
                         throw Exceptions.NotAValidMapFile(fileName);
                 }
-                //else if (version == 10) //MccHalo2
-                //{
-                //
-                //}
+                else if (version == 10) //MccHalo2
+                {
+                    buildAddress = 296;
+                }
                 else if (version == 13)
                 {
                     reader.Seek(64, SeekOrigin.Begin);
                     if (reader.PeekInt32() == 0) //test for padding
+                    {
+                        //note that H2 MCC U1 will also make it here.
+                        //the build string for h2 is actually at 144, but the string is empty and 288 will still be an empty string
+
                         buildAddress = 288; //Gen3 MCC (pre August 2021)
+                    }
                     else
                     {
                         var test = reader.ReadNullTerminatedString(32);
@@ -96,6 +101,15 @@ namespace Reclaimer.Blam.Common
                 reader.Seek(buildAddress, SeekOrigin.Begin);
                 var buildString = reader.ReadNullTerminatedString(32);
                 System.Diagnostics.Debug.WriteLine($"Found build string {buildString ?? "\\0"}");
+
+                if (buildString == string.Empty)
+                {
+                    var meta = version == 10
+                        ? CacheMetadata.FromCacheType(CacheType.MccHalo2, buildString)
+                        : CacheMetadata.FromCacheType(CacheType.MccHalo2U1, buildString);
+
+                    return new CacheArgs(fileName, reader.ByteOrder, version, buildString, meta);
+                }
 
                 return new CacheArgs(fileName, reader.ByteOrder, version, buildString, CacheMetadata.FromBuildString(buildString, fileName));
             }

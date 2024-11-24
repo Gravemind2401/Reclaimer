@@ -33,7 +33,7 @@ namespace Reclaimer.Blam.Common
         public static CacheMetadata FromBuildString(string buildString, string fileName)
         {
             var result = Utils.GetEnumAttributes<CacheType, BuildStringAttribute>()
-                .FirstOrNull(p => p.Value.BuildString == buildString);
+                .FirstOrNull(t => t.Attribute.BuildString == buildString);
 
             //ensure build string still looks correct before trying to fall back
             if (!result.HasValue && DateTime.TryParse(buildString, out _))
@@ -44,18 +44,30 @@ namespace Reclaimer.Blam.Common
                     System.Diagnostics.Debug.WriteLine($"Warning: Falling back to CacheType {fallBack} based on file path");
 
                 result = Utils.GetEnumAttributes<CacheType, BuildStringAttribute>()
-                    .FirstOrNull(p => p.Key == fallBack);
+                    .FirstOrNull(t => t.EnumValue == fallBack);
             }
 
             if (!result.HasValue)
                 return null;
 
-            var cacheType = result.Value.Key;
+            var (cacheType, buildAttr) = result.Value;
             System.Diagnostics.Debug.WriteLine($"Resolved CacheType {cacheType}");
 
-            var buildAttr = result.Value.Value;
             var metaAttr = Utils.GetEnumAttributes<CacheType, CacheMetadataAttribute>(cacheType).Single();
+            return new CacheMetadata(cacheType, metaAttr, buildAttr);
+        }
 
+        public static CacheMetadata FromCacheType(CacheType cacheType, string buildString)
+        {
+            var buildAttr = Utils.GetEnumAttributes<CacheType, BuildStringAttribute>()
+                .FirstOrNull(t => t.EnumValue == cacheType && t.Attribute.BuildString == buildString)?.Attribute;
+
+            if (buildAttr == null)
+                return null;
+
+            System.Diagnostics.Debug.WriteLine($"Resolved CacheType {cacheType}");
+
+            var metaAttr = Utils.GetEnumAttributes<CacheType, CacheMetadataAttribute>(cacheType).Single();
             return new CacheMetadata(cacheType, metaAttr, buildAttr);
         }
 
@@ -68,6 +80,7 @@ namespace Reclaimer.Blam.Common
             var game = parent.Parent.Name switch
             {
                 "halo1" => HaloGame.Halo1,
+                "halo2" => HaloGame.Halo2,
                 "halo3" => HaloGame.Halo3,
                 "halo3odst" => HaloGame.Halo3ODST,
                 "haloreach" => HaloGame.HaloReach,

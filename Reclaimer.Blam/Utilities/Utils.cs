@@ -27,13 +27,13 @@ namespace Reclaimer.Blam.Utilities
             return null;
         }
 
-        public static IEnumerable<KeyValuePair<TEnum, TAttribute>> GetEnumAttributes<TEnum, TAttribute>() where TEnum : struct where TAttribute : Attribute
+        public static IEnumerable<(TEnum EnumValue, TAttribute Attribute)> GetEnumAttributes<TEnum, TAttribute>() where TEnum : struct where TAttribute : Attribute
         {
             foreach (var fi in typeof(TEnum).GetFields().Where(f => f.FieldType == typeof(TEnum)))
             {
                 var field = (TEnum)fi.GetValue(null);
                 foreach (var attr in fi.GetCustomAttributes(typeof(TAttribute), false).OfType<TAttribute>())
-                    yield return new KeyValuePair<TEnum, TAttribute>(field, attr);
+                    yield return (field, attr);
             }
         }
 

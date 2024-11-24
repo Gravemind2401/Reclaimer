@@ -79,6 +79,12 @@ namespace Reclaimer.Blam.Halo2
         public int FileTableAddress { get; set; }
         public int FileTableSize { get; set; }
         public int FileTableIndexAddress { get; set; }
+
+        //MCC fields
+        public int CompressedDataChunkSize { get; set; }
+        public int CompressedDataOffset { get; set; }
+        public int CompressedChunkTableOffset { get; set; }
+        public int CompressedChunkCount { get; set; }
     }
 
     [FixedSize(32)]

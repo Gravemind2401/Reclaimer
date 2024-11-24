@@ -83,6 +83,7 @@ namespace Reclaimer.Blam.Common
                 HaloGame.Halo1 => new Halo1.CacheFile(args),
 
                 HaloGame.Halo2 when cacheType == CacheType.Halo2Beta => new Halo2Beta.CacheFile(args),
+                HaloGame.Halo2 when cacheType == CacheType.MccHalo2 => throw Exceptions.UnknownMapFile(fileName),
                 HaloGame.Halo2 => new Halo2.CacheFile(args),
 
                 HaloGame.Halo3 when cacheType <= CacheType.Halo3Delta => new Halo3Alpha.CacheFile(args),

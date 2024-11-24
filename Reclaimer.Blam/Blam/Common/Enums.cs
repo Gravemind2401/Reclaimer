@@ -102,7 +102,12 @@
         Halo2Vista,
 
         [CacheMetadata(HaloGame.Halo2, PC, Anniversary | Mcc)]
+        [BuildString("")]
         MccHalo2,
+
+        [CacheMetadata(HaloGame.Halo2, PC, Anniversary | Mcc)]
+        [BuildString("")]
+        MccHalo2U1,
 
         [CacheMetadata(HaloGame.Halo3, Xbox360, Uncompressed, PreBeta)]
         [BuildString("06481.06.11.17.1330.alpha_relea", "alpha_1117")]
