@@ -226,7 +226,7 @@ namespace Reclaimer.Blam.Halo2
 
         public IAddressTranslator GetAddressTranslator()
         {
-            return ClassCode == "sbsp"
+            return cache.Metadata.Platform == CachePlatform.Xbox && ClassCode == "sbsp"
                 ? new BSPAddressTranslator(cache, Id)
                 : cache.MetadataTranslator;
         }
@@ -234,7 +234,7 @@ namespace Reclaimer.Blam.Halo2
         public long GetBaseAddress()
         {
             //not sure what the first 16 bytes after the bsp address are but apparently not part of the metadata
-            return ClassCode == "sbsp"
+            return cache.Metadata.Platform == CachePlatform.Xbox && ClassCode == "sbsp"
                 ? new BSPAddressTranslator(cache, Id).TagAddress + 16
                 : MetaPointer.Address;
         }

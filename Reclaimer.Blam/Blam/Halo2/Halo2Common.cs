@@ -208,11 +208,16 @@ namespace Reclaimer.Blam.Halo2
                     ReadPcRenderModelMeshData();
             }
             else
-                ReadBspMeshData();
+            {
+                if (args.Cache.Metadata.Platform == CachePlatform.Xbox)
+                    ReadXboxBspMeshData();
+                else
+                    ReadPcBspMeshData();
+            }
 
             return mesh;
 
-            void ReadBspMeshData()
+            void ReadXboxBspMeshData()
             {
                 var positionBuffer = new VectorBuffer<RealVector3>(section.VertexCount);
                 var texCoordsBuffer = new VectorBuffer<RealVector2>(section.VertexCount);
@@ -240,6 +245,42 @@ namespace Reclaimer.Blam.Halo2
                 {
                     reader.Seek(section.BaseAddress + normalsResource.Offset + i * 12, SeekOrigin.Begin);
                     normalBuffer[i] = new HenDN3(reader.ReadUInt32());
+                }
+            }
+
+            void ReadPcBspMeshData()
+            {
+                var positionBuffer = new VectorBuffer<RealVector3>(section.VertexCount);
+                var texCoordsBuffer = new VectorBuffer<RealVector2>(section.VertexCount);
+                var normalBuffer = new VectorBuffer<RealVector3>(section.VertexCount);
+
+                mesh.VertexBuffer = new VertexBuffer();
+                mesh.VertexBuffer.PositionChannels.Add(positionBuffer);
+                mesh.VertexBuffer.TextureCoordinateChannels.Add(texCoordsBuffer);
+                mesh.VertexBuffer.NormalChannels.Add(normalBuffer);
+
+                var vertexSize = vertexResource.Size / section.VertexCount;
+
+                if (vertexSize != 12)
+                    System.Diagnostics.Debugger.Break();
+
+                for (var i = 0; i < section.VertexCount; i++)
+                {
+                    reader.Seek(section.BaseAddress + vertexResource.Offset + i * vertexSize, SeekOrigin.Begin);
+                    positionBuffer[i] = reader.ReadBufferable<RealVector3>();
+                }
+
+                for (var i = 0; i < section.VertexCount; i++)
+                {
+                    reader.Seek(section.BaseAddress + uvResource.Offset + i * 8, SeekOrigin.Begin);
+                    texCoordsBuffer[i] = reader.ReadBufferable<RealVector2>();
+                }
+
+                for (var i = 0; i < section.VertexCount; i++)
+                {
+                    //this contains 3x the data needed for normals, maybe also contains binormal and tangent?
+                    reader.Seek(section.BaseAddress + normalsResource.Offset + i * 36, SeekOrigin.Begin);
+                    normalBuffer[i] = reader.ReadBufferable<RealVector3>();
                 }
             }
 
