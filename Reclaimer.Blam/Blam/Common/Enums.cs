@@ -95,7 +95,10 @@
         Halo2Xbox,
 
         [CacheMetadata(HaloGame.Halo2, PC)]
-        [BuildString("11081.07.04.30.0934.main")]
+        [BuildString("11081.07.04.30.0934.main")] //release
+        [BuildString("11028.07.03.23.1927.main")] //review
+        [BuildString("11091.07.05.11.1104.main")] //custom maps
+        [BuildString("11122.07.08.24.1808.main")] //custom maps
         Halo2Vista,
 
         [CacheMetadata(HaloGame.Halo2, PC, Anniversary | Mcc)]
