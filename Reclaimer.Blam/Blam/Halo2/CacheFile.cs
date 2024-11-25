@@ -43,6 +43,13 @@ namespace Reclaimer.Blam.Halo2
             using (var reader = CreateReader(HeaderTranslator))
             {
                 Header = reader.ReadObject<CacheHeader>((int)args.CacheType);
+
+                if (Header.Flags.HasFlag(CacheFlags.Compressed))
+                    throw new NotSupportedException("Map must be decompressed first");
+
+                if (Header.MetadataAddressMask != 0)
+                    System.Diagnostics.Debugger.Break();
+
                 reader.Seek(Header.IndexAddress, SeekOrigin.Begin);
                 TagIndex = reader.ReadObject(new TagIndex(this));
                 StringIndex = new StringIndex(this);
@@ -68,6 +75,8 @@ namespace Reclaimer.Blam.Halo2
         public int Head { get; set; }
         public int FileSize { get; set; }
         public int IndexAddress { get; set; }
+        public int MetadataOffset { get; set; }
+        public int MetadataSize { get; set; }
         public int IndexSize { get; set; }
         public string BuildString { get; set; }
         public int StringCount { get; set; }
@@ -80,11 +89,23 @@ namespace Reclaimer.Blam.Halo2
         public int FileTableSize { get; set; }
         public int FileTableIndexAddress { get; set; }
 
+        public int RawTableAddress { get; set; }
+        public int RawTableSize { get; set; }
+
         //MCC fields
+        public CacheFlags Flags { get; set; }
+        public int MetadataAddressMask { get; set; }
         public int CompressedDataChunkSize { get; set; }
         public int CompressedDataOffset { get; set; }
         public int CompressedChunkTableOffset { get; set; }
         public int CompressedChunkCount { get; set; }
+    }
+
+    [Flags]
+    public enum CacheFlags : short
+    {
+        None = 0,
+        Compressed = 1
     }
 
     [FixedSize(32)]
@@ -94,18 +115,18 @@ namespace Reclaimer.Blam.Halo2
         private readonly Dictionary<int, IndexItem> items;
         private readonly Dictionary<string, IndexItem> sysItems;
 
-        public static int HeaderSize => 32;
+        public const int HeaderSize = 32;
 
         internal Dictionary<int, string> TagNames { get; }
 
         [Offset(0)]
-        public int Magic { get; set; }
+        public Pointer TagClassOffset { get; set; }
 
         [Offset(4)]
         public int TagClassCount { get; set; }
 
         [Offset(8)]
-        public Pointer TagDataAddress { get; set; }
+        public Pointer TagDataOffset { get; set; }
 
         [Offset(24)]
         public int TagCount { get; set; }
@@ -125,7 +146,7 @@ namespace Reclaimer.Blam.Halo2
 
             using (var reader = cache.CreateReader(cache.MetadataTranslator))
             {
-                reader.Seek(TagDataAddress.Address, SeekOrigin.Begin);
+                reader.Seek(TagDataOffset.Address, SeekOrigin.Begin);
                 for (var i = 0; i < TagCount; i++)
                 {
                     //Halo2Vista multiplayer maps have empty tags in them

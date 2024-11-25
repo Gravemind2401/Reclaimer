@@ -6,7 +6,7 @@ namespace Reclaimer.Blam.Halo2
     {
         private readonly CacheFile cache;
 
-        private int Magic => cache.TagIndex.Magic - (cache.Header.IndexAddress + TagIndex.HeaderSize);
+        private int Magic => cache.TagIndex.TagClassOffset.Value - (cache.Header.IndexAddress + TagIndex.HeaderSize);
 
         public HeaderAddressTranslator(CacheFile cache)
         {

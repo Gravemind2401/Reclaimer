@@ -6,7 +6,15 @@ namespace Reclaimer.Blam.Halo2
     {
         private readonly CacheFile cache;
 
-        private int Magic => cache.TagIndex[0].MetaPointer.Value - (cache.Header.IndexAddress + cache.Header.IndexSize);
+        private int Magic
+        {
+            get
+            {
+                return cache.Metadata.IsMcc
+                    ? -cache.Header.IndexAddress
+                    : cache.TagIndex[0].MetaPointer.Value - (cache.Header.IndexAddress + cache.Header.MetadataOffset);
+            }
+        }
 
         public TagAddressTranslator(CacheFile cache)
         {
