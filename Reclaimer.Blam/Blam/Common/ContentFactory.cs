@@ -64,28 +64,32 @@ namespace Reclaimer.Blam.Common
         {
             content = null;
 
-            if (item == null)
+            if (item?.ClassCode != bitmap)
                 return false;
 
-            if (item.ClassCode != bitmap)
-                return false;
-
-            var gameType = item.CacheFile.Metadata.Game;
-            var cacheType = item.CacheFile.CacheType;
-
-            content = gameType switch
+            try
             {
-                HaloGame.Halo1 when cacheType != CacheType.Halo1AE => item.ReadMetadata<Halo1.bitmap>(),
-                HaloGame.Halo2 when cacheType is CacheType.Halo2Beta or CacheType.Halo2Xbox => item.ReadMetadata<Halo2.bitmap>(),
-                HaloGame.Halo3 => item.ReadMetadata<Halo3.bitmap>(),
-                HaloGame.Halo3ODST => item.ReadMetadata<Halo3.bitmap>(),
-                HaloGame.HaloReach => item.ReadMetadata<HaloReach.bitmap>(),
-                HaloGame.Halo4 => item.ReadMetadata<Halo4.bitmap>(),
-                HaloGame.Halo2X => item.ReadMetadata<Halo4.bitmap>(),
-                _ => null
-            };
+                var gameType = item.CacheFile.Metadata.Game;
+                var cacheType = item.CacheFile.CacheType;
 
-            return content != null;
+                content = gameType switch
+                {
+                    HaloGame.Halo1 when cacheType != CacheType.Halo1AE => item.ReadMetadata<Halo1.bitmap>(),
+                    HaloGame.Halo2 when cacheType is CacheType.Halo2Beta or CacheType.Halo2Xbox => item.ReadMetadata<Halo2.bitmap>(),
+                    HaloGame.Halo3 => item.ReadMetadata<Halo3.bitmap>(),
+                    HaloGame.Halo3ODST => item.ReadMetadata<Halo3.bitmap>(),
+                    HaloGame.HaloReach => item.ReadMetadata<HaloReach.bitmap>(),
+                    HaloGame.Halo4 => item.ReadMetadata<Halo4.bitmap>(),
+                    HaloGame.Halo2X => item.ReadMetadata<Halo4.bitmap>(),
+                    _ => null
+                };
+
+                return content != null;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public static bool TryGetGeometryContent(IIndexItem item, out IContentProvider<Scene> content)
@@ -95,83 +99,94 @@ namespace Reclaimer.Blam.Common
             if (item == null)
                 return false;
 
-            var gameType = item.CacheFile.Metadata.Game;
-            var cacheType = item.CacheFile.CacheType;
+            try
+            {
+                var gameType = item.CacheFile.Metadata.Game;
+                var cacheType = item.CacheFile.CacheType;
 
-            if (item.ClassCode is gbxmodel or render_model)
-            {
-                content = gameType switch
+                if (item.ClassCode is gbxmodel or render_model)
                 {
-                    HaloGame.Halo1 => item.ReadMetadata<Halo1.gbxmodel>(),
-                    HaloGame.Halo2 when cacheType == CacheType.Halo2Beta => item.ReadMetadata<Halo2Beta.render_model>(),
-                    HaloGame.Halo2 when cacheType == CacheType.Halo2Xbox => item.ReadMetadata<Halo2.render_model>(),
-                    HaloGame.Halo3 => item.ReadMetadata<Halo3.render_model>(),
-                    HaloGame.Halo3ODST => item.ReadMetadata<Halo3.render_model>(),
-                    HaloGame.HaloReach => item.ReadMetadata<HaloReach.render_model>(),
-                    HaloGame.Halo4 => item.ReadMetadata<Halo4.render_model>(),
-                    HaloGame.Halo2X => item.ReadMetadata<Halo4.render_model>(),
-                    _ => null
-                };
-            }
-            else if (item.ClassCode == scenario_structure_bsp)
-            {
-                content = gameType switch
+                    content = gameType switch
+                    {
+                        HaloGame.Halo1 => item.ReadMetadata<Halo1.gbxmodel>(),
+                        HaloGame.Halo2 when cacheType == CacheType.Halo2Beta => item.ReadMetadata<Halo2Beta.render_model>(),
+                        HaloGame.Halo2 when cacheType == CacheType.Halo2Xbox => item.ReadMetadata<Halo2.render_model>(),
+                        HaloGame.Halo3 => item.ReadMetadata<Halo3.render_model>(),
+                        HaloGame.Halo3ODST => item.ReadMetadata<Halo3.render_model>(),
+                        HaloGame.HaloReach => item.ReadMetadata<HaloReach.render_model>(),
+                        HaloGame.Halo4 => item.ReadMetadata<Halo4.render_model>(),
+                        HaloGame.Halo2X => item.ReadMetadata<Halo4.render_model>(),
+                        _ => null
+                    };
+                }
+                else if (item.ClassCode == scenario_structure_bsp)
                 {
-                    HaloGame.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE or CacheType.MccHalo1 => item.ReadMetadata<Halo1.scenario_structure_bsp>(),
-                    HaloGame.Halo2 when cacheType == CacheType.Halo2Xbox => item.ReadMetadata<Halo2.scenario_structure_bsp>(),
-                    HaloGame.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
-                    HaloGame.Halo3ODST => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
-                    HaloGame.HaloReach => item.ReadMetadata<HaloReach.scenario_structure_bsp>(),
-                    HaloGame.Halo4 => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
-                    HaloGame.Halo2X => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
-                    _ => null
-                };
-            }
-            else if (item.ClassCode == scenario)
-            {
-                content = gameType switch
+                    content = gameType switch
+                    {
+                        HaloGame.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE or CacheType.MccHalo1 => item.ReadMetadata<Halo1.scenario_structure_bsp>(),
+                        HaloGame.Halo2 when cacheType == CacheType.Halo2Xbox => item.ReadMetadata<Halo2.scenario_structure_bsp>(),
+                        HaloGame.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
+                        HaloGame.Halo3ODST => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
+                        HaloGame.HaloReach => item.ReadMetadata<HaloReach.scenario_structure_bsp>(),
+                        HaloGame.Halo4 => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
+                        HaloGame.Halo2X => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
+                        _ => null
+                    };
+                }
+                else if (item.ClassCode == scenario)
                 {
-                    HaloGame.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE or CacheType.MccHalo1 => item.ReadMetadata<Halo1.scenario>(),
-                    HaloGame.Halo2 when cacheType == CacheType.Halo2Xbox => item.ReadMetadata<Halo2.scenario>(),
-                    HaloGame.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario>(),
-                    HaloGame.Halo3ODST => item.ReadMetadata<Halo3.scenario>(),
-                    HaloGame.HaloReach => item.ReadMetadata<HaloReach.scenario>(),
-                    HaloGame.Halo4 => item.ReadMetadata<Halo4.scenario>(),
-                    HaloGame.Halo2X => item.ReadMetadata<Halo4.scenario>(),
-                    _ => null
-                };
-            }
+                    content = gameType switch
+                    {
+                        HaloGame.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE or CacheType.MccHalo1 => item.ReadMetadata<Halo1.scenario>(),
+                        HaloGame.Halo2 when cacheType == CacheType.Halo2Xbox => item.ReadMetadata<Halo2.scenario>(),
+                        HaloGame.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario>(),
+                        HaloGame.Halo3ODST => item.ReadMetadata<Halo3.scenario>(),
+                        HaloGame.HaloReach => item.ReadMetadata<HaloReach.scenario>(),
+                        HaloGame.Halo4 => item.ReadMetadata<Halo4.scenario>(),
+                        HaloGame.Halo2X => item.ReadMetadata<Halo4.scenario>(),
+                        _ => null
+                    };
+                }
 
-            return content != null;
+                return content != null;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public static bool TryGetSoundContent(IIndexItem item, out IContentProvider<GameSound> content)
         {
             content = null;
 
-            if (item == null)
+            if (item?.ClassCode != sound)
                 return false;
 
-            if (item.ClassCode != sound)
-                return false;
-
-            switch (item.CacheFile.CacheType)
+            try
             {
-                case CacheType.Halo2Xbox:
-                    content = item.ReadMetadata<Halo2.sound>();
-                    break;
-                //case CacheType.Halo3Beta:
-                case CacheType.Halo3Retail:
-                case CacheType.Halo3ODST:
-                    content = item.ReadMetadata<Halo3.sound>();
-                    break;
-                case CacheType.HaloReachBeta:
-                case CacheType.HaloReachRetail:
-                    content = item.ReadMetadata<HaloReach.sound>();
-                    break;
-            }
+                switch (item.CacheFile.CacheType)
+                {
+                    case CacheType.Halo2Xbox:
+                        content = item.ReadMetadata<Halo2.sound>();
+                        break;
+                    //case CacheType.Halo3Beta:
+                    case CacheType.Halo3Retail:
+                    case CacheType.Halo3ODST:
+                        content = item.ReadMetadata<Halo3.sound>();
+                        break;
+                    case CacheType.HaloReachBeta:
+                    case CacheType.HaloReachRetail:
+                        content = item.ReadMetadata<HaloReach.sound>();
+                        break;
+                }
 
-            return content != null;
+                return content != null;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         #endregion
@@ -213,17 +228,24 @@ namespace Reclaimer.Blam.Common
         {
             content = null;
 
-            if (item.ClassCode != bitmap)
+            if (item?.ClassCode != bitmap)
                 return false;
 
-            content = item.Module.ModuleType switch
+            try
             {
-                ModuleType.Halo5Server or ModuleType.Halo5Forge => item.ReadMetadata<Halo5.bitmap>(),
-                ModuleType.HaloInfinite => item.ReadMetadata<HaloInfinite.bitmap>(),
-                _ => null
-            };
+                content = item.Module.ModuleType switch
+                {
+                    ModuleType.Halo5Server or ModuleType.Halo5Forge => item.ReadMetadata<Halo5.bitmap>(),
+                    ModuleType.HaloInfinite => item.ReadMetadata<HaloInfinite.bitmap>(),
+                    _ => null
+                };
 
-            return content != null;
+                return content != null;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public static bool TryGetGeometryContent(IModuleItem item, out IContentProvider<Scene> content)
@@ -233,32 +255,39 @@ namespace Reclaimer.Blam.Common
             if (item == null)
                 return false;
 
-            if (item.Module.ModuleType is ModuleType.Halo5Server or ModuleType.Halo5Forge)
+            try
             {
-                content = item.ClassCode switch
+                if (item.Module.ModuleType is ModuleType.Halo5Server or ModuleType.Halo5Forge)
                 {
-                    render_model => item.ReadMetadata<Halo5.render_model>(),
-                    particle_model => item.ReadMetadata<Halo5.particle_model>(),
-                    scenario => item.ReadMetadata<Halo5.scenario>(),
-                    scenario_structure_bsp => item.ReadMetadata<Halo5.scenario_structure_bsp>(),
-                    structure_lightmap => item.ReadMetadata<Halo5.structure_lightmap>(),
-                    _ => null
-                };
-            }
-            else if (item.Module.ModuleType == ModuleType.HaloInfinite)
-            {
-                content = item.ClassCode switch
+                    content = item.ClassCode switch
+                    {
+                        render_model => item.ReadMetadata<Halo5.render_model>(),
+                        particle_model => item.ReadMetadata<Halo5.particle_model>(),
+                        scenario => item.ReadMetadata<Halo5.scenario>(),
+                        scenario_structure_bsp => item.ReadMetadata<Halo5.scenario_structure_bsp>(),
+                        structure_lightmap => item.ReadMetadata<Halo5.structure_lightmap>(),
+                        _ => null
+                    };
+                }
+                else if (item.Module.ModuleType == ModuleType.HaloInfinite)
                 {
-                    render_model => item.ReadMetadata<HaloInfinite.render_model>(),
-                    scenario_structure_bsp => item.ReadMetadata<HaloInfinite.scenario_structure_bsp>(),
-                    runtime_geo => item.ReadMetadata<HaloInfinite.runtime_geo>(),
-                    object_customization => item.ReadMetadata<HaloInfinite.customization_globals_definition>(),
-                    model => item.ReadMetadata<HaloInfinite.model>().ReadRenderModel(),
-                    _ => null
-                };
-            }
+                    content = item.ClassCode switch
+                    {
+                        render_model => item.ReadMetadata<HaloInfinite.render_model>(),
+                        scenario_structure_bsp => item.ReadMetadata<HaloInfinite.scenario_structure_bsp>(),
+                        runtime_geo => item.ReadMetadata<HaloInfinite.runtime_geo>(),
+                        object_customization => item.ReadMetadata<HaloInfinite.customization_globals_definition>(),
+                        model => item.ReadMetadata<HaloInfinite.model>().ReadRenderModel(),
+                        _ => null
+                    };
+                }
 
-            return content != null;
+                return content != null;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         #endregion
