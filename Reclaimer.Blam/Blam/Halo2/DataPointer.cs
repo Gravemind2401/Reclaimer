@@ -36,6 +36,7 @@ namespace Reclaimer.Blam.Halo2
             var directory = Directory.GetParent(cache.FileName).FullName;
             var target = Location switch
             {
+                _ when cache.Metadata.IsMcc && tag.ClassCode == "bitm" => Path.Combine(directory, CacheFile.MccTextureFile),
                 DataLocation.MainMenu => Path.Combine(directory, CacheFile.MainMenuMap),
                 DataLocation.Shared => Path.Combine(directory, CacheFile.SharedMap),
                 DataLocation.SinglePlayerShared => Path.Combine(directory, CacheFile.SinglePlayerSharedMap),
@@ -44,8 +45,23 @@ namespace Reclaimer.Blam.Halo2
 
             using (var fs = new FileStream(target, FileMode.Open, FileAccess.Read))
             {
+                //mcc has bitmap resources split into one or more compressed chunks
+                if (cache.Metadata.IsMcc && tag.ClassCode == "bitm")
+                {
+                    fs.Seek(Address, SeekOrigin.Begin);
+
+                    int[] segments;
+                    using (var reader = new EndianReader(fs, cache.ByteOrder, true))
+                    {
+                        var count = reader.ReadInt32();
+                        segments = reader.ReadArray<int>(count);
+                        reader.ReadInt16(); //???
+                    }
+
+                    return Deflate(fs, segments);
+                }
                 //h2v has compressed bitmap resources
-                if (cache.CacheType == CacheType.Halo2Vista && tag.ClassCode == "bitm")
+                else if (cache.CacheType == CacheType.Halo2Vista && tag.ClassCode == "bitm")
                 {
                     //not sure what the first 2 bytes are, but theyre not part of the stream
                     fs.Seek(Address + 2, SeekOrigin.Begin);
@@ -61,12 +77,22 @@ namespace Reclaimer.Blam.Halo2
                 }
             }
 
-            static byte[] Deflate(Stream source, int compressedSize)
+            static byte[] Deflate(Stream source, params int[] compressedBlockSizes)
             {
-                using (var ds = new DeflateStream(source, CompressionMode.Decompress, true))
-                using (var ms = new MemoryStream(compressedSize))
+                var origin = source.Position;
+                var offset = 0;
+
+                using (var ms = new MemoryStream(compressedBlockSizes.Sum()))
                 {
-                    ds.CopyTo(ms);
+                    foreach (var blockSize in compressedBlockSizes)
+                    {
+                        source.Seek(origin + offset, SeekOrigin.Begin);
+                        using (var ds = new DeflateStream(source, CompressionMode.Decompress, true))
+                        {
+                            ds.CopyTo(ms);
+                            offset += blockSize;
+                        }
+                    }
                     return ms.ToArray();
                 }
             }

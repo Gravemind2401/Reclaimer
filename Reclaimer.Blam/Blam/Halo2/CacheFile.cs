@@ -11,6 +11,7 @@ namespace Reclaimer.Blam.Halo2
         public const string MainMenuMap = "mainmenu.map";
         public const string SharedMap = "shared.map";
         public const string SinglePlayerSharedMap = "single_player_shared.map";
+        public const string MccTextureFile = "textures.dat";
 
         public string FileName { get; }
         public ByteOrder ByteOrder { get; }

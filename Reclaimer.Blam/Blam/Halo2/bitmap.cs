@@ -197,22 +197,28 @@ namespace Reclaimer.Blam.Halo2
         [Offset(20)]
         public short MipmapCount { get; set; }
 
-        [Offset(28)]
+        [Offset(28, MaxVersion = (int)CacheType.MccHalo2)]
+        [Offset(56, MinVersion = (int)CacheType.MccHalo2)]
         public DataPointer Lod0Pointer { get; set; }
 
-        [Offset(32)]
+        [Offset(32, MaxVersion = (int)CacheType.MccHalo2)]
+        [Offset(60, MinVersion = (int)CacheType.MccHalo2)]
         public DataPointer Lod1Pointer { get; set; }
 
-        [Offset(36)]
+        [Offset(36, MaxVersion = (int)CacheType.MccHalo2)]
+        [Offset(64, MinVersion = (int)CacheType.MccHalo2)]
         public DataPointer Lod2Pointer { get; set; }
 
-        [Offset(52)]
+        [Offset(52, MaxVersion = (int)CacheType.MccHalo2)]
+        [Offset(80, MinVersion = (int)CacheType.MccHalo2)]
         public int Lod0Size { get; set; }
 
-        [Offset(56)]
+        [Offset(56, MaxVersion = (int)CacheType.MccHalo2)]
+        [Offset(84, MinVersion = (int)CacheType.MccHalo2)]
         public int Lod1Size { get; set; }
 
-        [Offset(60)]
+        [Offset(60, MaxVersion = (int)CacheType.MccHalo2)]
+        [Offset(88, MinVersion = (int)CacheType.MccHalo2)]
         public int Lod2Size { get; set; }
     }
 
