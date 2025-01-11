@@ -110,7 +110,7 @@ namespace Reclaimer.Blam.Common
                     {
                         HaloGame.Halo1 => item.ReadMetadata<Halo1.gbxmodel>(),
                         HaloGame.Halo2 when cacheType == CacheType.Halo2Beta => item.ReadMetadata<Halo2Beta.render_model>(),
-                        HaloGame.Halo2 when cacheType is CacheType.Halo2Xbox or CacheType.Halo2Vista => item.ReadMetadata<Halo2.render_model>(),
+                        HaloGame.Halo2 => item.ReadMetadata<Halo2.render_model>(),
                         HaloGame.Halo3 => item.ReadMetadata<Halo3.render_model>(),
                         HaloGame.Halo3ODST => item.ReadMetadata<Halo3.render_model>(),
                         HaloGame.HaloReach => item.ReadMetadata<HaloReach.render_model>(),
@@ -124,7 +124,7 @@ namespace Reclaimer.Blam.Common
                     content = gameType switch
                     {
                         HaloGame.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE or CacheType.MccHalo1 => item.ReadMetadata<Halo1.scenario_structure_bsp>(),
-                        HaloGame.Halo2 when cacheType is CacheType.Halo2Xbox or CacheType.Halo2Vista => item.ReadMetadata<Halo2.scenario_structure_bsp>(),
+                        HaloGame.Halo2 when cacheType >= CacheType.Halo2Xbox => item.ReadMetadata<Halo2.scenario_structure_bsp>(),
                         HaloGame.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
                         HaloGame.Halo3ODST => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
                         HaloGame.HaloReach => item.ReadMetadata<HaloReach.scenario_structure_bsp>(),
@@ -138,7 +138,7 @@ namespace Reclaimer.Blam.Common
                     content = gameType switch
                     {
                         HaloGame.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE or CacheType.MccHalo1 => item.ReadMetadata<Halo1.scenario>(),
-                        HaloGame.Halo2 when cacheType is CacheType.Halo2Xbox or CacheType.Halo2Vista => item.ReadMetadata<Halo2.scenario>(),
+                        HaloGame.Halo2 when cacheType >= CacheType.Halo2Xbox => item.ReadMetadata<Halo2.scenario>(),
                         HaloGame.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario>(),
                         HaloGame.Halo3ODST => item.ReadMetadata<Halo3.scenario>(),
                         HaloGame.HaloReach => item.ReadMetadata<HaloReach.scenario>(),
