@@ -25,8 +25,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             Cache = indexItem.CacheFile;
             AddressTranslator = indexItem.GetAddressTranslator();
 
-            var fs = new FileStream(Cache.FileName, FileMode.Open, FileAccess.Read);
-            DataSource = new TransactionStream(fs);
+            DataSource = new TransactionStream(Cache.CreateStream());
         }
 
         public MetaContext(XmlDocument xml, IIndexItem indexItem, Stream dataSource)

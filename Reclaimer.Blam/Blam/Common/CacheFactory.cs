@@ -112,12 +112,21 @@ namespace Reclaimer.Blam.Common
 
         public static int GetHeaderSize(this Gen3.IGen3CacheFile cache) => (int)FixedSizeAttribute.ValueFor(cache.Header.GetType(), (int)cache.CacheType);
 
+        public static Stream CreateStream(this ICacheFile cache)
+        {
+            var stream = (Stream)new FileStream(cache.FileName, FileMode.Open, FileAccess.Read);
+            if (cache is Halo2.CacheFile h2cache && h2cache.IsCompressed)
+                stream = new Halo2.MccCacheStream(h2cache, stream);
+
+            return stream;
+        }
+
         public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator) => CreateReader(cache, translator, false);
 
         public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator, bool leaveOpen)
         {
-            var fs = new FileStream(cache.FileName, FileMode.Open, FileAccess.Read);
-            return CreateReader(cache, translator, fs, leaveOpen);
+            var stream = CreateStream(cache);
+            return CreateReader(cache, translator, stream, leaveOpen);
         }
 
         public static DependencyReader CreateReader(this ICacheFile cache, IAddressTranslator translator, Stream stream) => CreateReader(cache, translator, stream, false);

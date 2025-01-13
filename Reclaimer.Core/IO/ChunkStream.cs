@@ -5,18 +5,22 @@ namespace Reclaimer.IO
 {
     public abstract class ChunkStream : Stream
     {
-        private readonly ChunkAddressMapping[] chunks;
         private readonly ChunkTracker chunkTracker;
+        private readonly bool leaveOpen;
+
+        private ChunkAddressMapping[] chunks;
 
         //set initial value to true to ensure first read triggers a chunk update
         private bool positionDirty = true;
 
         protected Stream BaseStream { get; }
-        public override long Length { get; }
 
         public override bool CanRead => true;
         public override bool CanSeek => true;
         public override bool CanWrite => false;
+
+        private long length;
+        public sealed override long Length => length;
 
         private long position;
         public sealed override long Position
@@ -30,6 +34,10 @@ namespace Reclaimer.IO
         { }
 
         public ChunkStream(Stream baseStream)
+            : this (baseStream, false)
+        { }
+
+        public ChunkStream(Stream baseStream, bool leaveOpen)
         {
             ArgumentNullException.ThrowIfNull(baseStream);
 
@@ -37,7 +45,14 @@ namespace Reclaimer.IO
                 throw new NotSupportedException($"{nameof(baseStream)} must be readable and seekable");
 
             BaseStream = baseStream;
+            this.leaveOpen = leaveOpen;
             chunkTracker = new ChunkTracker(this);
+        }
+
+        protected void InitializeChunks()
+        {
+            if (chunks != null)
+                return;
 
             var chunkDetails = ReadChunks();
             chunks = new ChunkAddressMapping[chunkDetails.Count];
@@ -50,11 +65,13 @@ namespace Reclaimer.IO
                 destAddress += uncompressedSize;
             }
 
-            Length = chunks.Sum(c => c.UncompressedSize);
+            length = chunks.Sum(c => c.UncompressedSize);
         }
 
         public override long Seek(long offset, SeekOrigin origin)
         {
+            InitializeChunks();
+
             offset = origin switch
             {
                 SeekOrigin.Current => position + offset,
@@ -74,6 +91,8 @@ namespace Reclaimer.IO
         public override int Read(byte[] buffer, int offset, int count)
         {
             ArgumentNullException.ThrowIfNull(buffer);
+
+            InitializeChunks();
 
             if (offset < 0 || offset >= buffer.Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
@@ -156,18 +175,22 @@ namespace Reclaimer.IO
                     sourceStream.BaseStream.ReadAll(CompressedData, 0, CompressedData.Length);
 
                     CurrentChunk = nextChunk;
+                    ChunkStream = sourceStream.GetChunkStream(CompressedData);
+                }
+                else if (!ChunkStream.CanSeek)
+                {
+                    //if we are still on the same chunk but it is not seekable
+                    //then we need to reload it to make sure it starts at 0 again
+                    ChunkStream = sourceStream.GetChunkStream(CompressedData);
                 }
 
-                //always reload the chunk stream to make sure it starts at 0 again
-                ChunkStream = sourceStream.GetChunkStream(CompressedData);
-
-                if (InnerPosition == 0)
-                    return;
-                else if (ChunkStream.CanSeek)
+                if (ChunkStream.CanSeek)
                 {
                     ChunkStream.Position = InnerPosition;
                     return;
                 }
+                else if (InnerPosition == 0)
+                    return;
 
                 //the only way to move forward now is to read until we get to the desired position
                 var remaining = InnerPosition;
@@ -195,8 +218,16 @@ namespace Reclaimer.IO
 
         protected override void Dispose(bool disposing)
         {
-            chunkTracker.CloseChunk();
-            base.Dispose(disposing);
+            try
+            {
+                chunkTracker.CloseChunk();
+                base.Dispose(disposing);
+            }
+            finally
+            {
+                if (disposing && !leaveOpen)
+                    BaseStream?.Dispose();
+            }
         }
     }
 }

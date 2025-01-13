@@ -86,7 +86,7 @@ namespace Reclaimer.Blam.Halo2
                 builder.Property(x => x.RawTableSize).HasOffset(756);
                 builder.Property(x => x.CompressedDataChunkSize).HasOffset(776);
                 builder.Property(x => x.CompressedDataOffset).HasOffset(780);
-                builder.Property(x => x.CompressedChunkTableOffset).HasOffset(784);
+                builder.Property(x => x.CompressedChunkTableAddress).HasOffset(784);
                 builder.Property(x => x.CompressedChunkCount).HasOffset(788);
             }
         }

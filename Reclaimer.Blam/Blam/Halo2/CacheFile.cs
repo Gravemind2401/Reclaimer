@@ -26,6 +26,8 @@ namespace Reclaimer.Blam.Halo2
         public HeaderAddressTranslator HeaderTranslator { get; }
         public TagAddressTranslator MetadataTranslator { get; }
 
+        public bool IsCompressed => Header?.Flags.HasFlag(CacheFlags.Compressed) ?? false;
+
         public CacheFile(string fileName) : this(CacheArgs.FromFile(fileName)) { }
 
         internal CacheFile(CacheArgs args)
@@ -42,12 +44,11 @@ namespace Reclaimer.Blam.Halo2
             MetadataTranslator = new TagAddressTranslator(this);
 
             using (var reader = CreateReader(HeaderTranslator))
-            {
                 Header = reader.ReadObject<CacheHeader>((int)args.CacheType);
 
-                if (Header.Flags.HasFlag(CacheFlags.Compressed))
-                    throw new NotSupportedException("Map must be decompressed first");
-
+            //start a new reader - if the header indicates a compressed file, the new reader will decompress as it reads
+            using (var reader = CreateReader(HeaderTranslator))
+            {
                 if (Header.MetadataAddressMask != 0)
                     System.Diagnostics.Debugger.Break();
 
@@ -98,7 +99,7 @@ namespace Reclaimer.Blam.Halo2
         public int MetadataAddressMask { get; set; }
         public int CompressedDataChunkSize { get; set; }
         public int CompressedDataOffset { get; set; }
-        public int CompressedChunkTableOffset { get; set; }
+        public int CompressedChunkTableAddress { get; set; }
         public int CompressedChunkCount { get; set; }
     }
 
