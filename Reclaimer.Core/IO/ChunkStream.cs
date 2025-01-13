@@ -22,6 +22,7 @@ namespace Reclaimer.IO
         private long length;
         public sealed override long Length => length;
 
+        private long? lastActualPosition;
         private long position;
         public sealed override long Position
         {
@@ -82,8 +83,17 @@ namespace Reclaimer.IO
             if (offset < 0 || offset >= Length)
                 throw new ArgumentOutOfRangeException(nameof(offset));
 
-            //if position was manually changed we need to refresh the current chunk on next read
-            positionDirty = offset != position;
+            if (offset != position && !lastActualPosition.HasValue)
+            {
+                //if position was manually changed we need to refresh the current chunk on next read
+                positionDirty = true;
+                lastActualPosition = position;
+            }
+            else if (offset == lastActualPosition)
+            {
+                positionDirty = false;
+                lastActualPosition = null;
+            }
 
             return position = offset;
         }
@@ -111,6 +121,7 @@ namespace Reclaimer.IO
                 //save time by using a dirty flag instead of looking up and comparing the current chunk every read
                 chunkTracker.PrepareChunk();
                 positionDirty = false;
+                lastActualPosition = null;
             }
 
             var bytesRemaining = count;
@@ -179,9 +190,16 @@ namespace Reclaimer.IO
                 }
                 else if (!ChunkStream.CanSeek)
                 {
-                    //if we are still on the same chunk but it is not seekable
-                    //then we need to reload it to make sure it starts at 0 again
-                    ChunkStream = sourceStream.GetChunkStream(CompressedData);
+                    if (sourceStream.position > sourceStream.lastActualPosition)
+                    {
+                        AdvanceStream(sourceStream.position - (int)sourceStream.lastActualPosition);
+                        return;
+                    }
+                    else
+                    {
+                        //cant go backwards so we need to reload to start at 0 again
+                        ChunkStream = sourceStream.GetChunkStream(CompressedData);
+                    }
                 }
 
                 if (ChunkStream.CanSeek)
@@ -192,19 +210,26 @@ namespace Reclaimer.IO
                 else if (InnerPosition == 0)
                     return;
 
-                //the only way to move forward now is to read until we get to the desired position
-                var remaining = InnerPosition;
-                int bytesRead;
-                do
-                {
-                    var bufferSize = Math.Min((int)remaining, 0x10000);
-                    var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
-                    var span = buffer.AsSpan(..bufferSize); //in case Rent() gave more than we wanted
+                AdvanceStream(InnerPosition);
 
-                    remaining -= bytesRead = ChunkStream.ReadAll(span);
-                    ArrayPool<byte>.Shared.Return(buffer);
+                void AdvanceStream(long bytesToSkip)
+                {
+                    if (bytesToSkip == 0)
+                        return;
+
+                    //the only way to move forward now is to read until we get to the desired position
+                    int bytesRead;
+                    do
+                    {
+                        var bufferSize = Math.Min((int)bytesToSkip, 0x10000);
+                        var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
+                        var span = buffer.AsSpan(..bufferSize); //in case Rent() gave more than we wanted
+
+                        bytesToSkip -= bytesRead = ChunkStream.ReadAll(span);
+                        ArrayPool<byte>.Shared.Return(buffer);
+                    }
+                    while (bytesToSkip > 0 && bytesRead > 0);
                 }
-                while (remaining > 0 && bytesRead > 0);
             }
 
             public void CloseChunk()
