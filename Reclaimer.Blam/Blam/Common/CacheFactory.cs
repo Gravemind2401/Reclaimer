@@ -115,8 +115,12 @@ namespace Reclaimer.Blam.Common
         public static Stream CreateStream(this ICacheFile cache)
         {
             var stream = (Stream)new FileStream(cache.FileName, FileMode.Open, FileAccess.Read);
-            if (cache is Halo2.CacheFile h2cache && h2cache.IsCompressed)
-                stream = new Halo2.MccCacheStream(h2cache, stream);
+            stream = cache switch
+            {
+                Halo1.CacheFile h1cache when h1cache.CacheType == CacheType.Halo1Xbox && h1cache.IsCompressed => new Halo1.XboxCacheDeflateStream(h1cache, stream),
+                Halo2.CacheFile h2cache when h2cache.IsCompressed => new Halo2.MccCacheDeflateStream(h2cache, stream),
+                _ => stream
+            };
 
             return stream;
         }

@@ -11,6 +11,8 @@ namespace Reclaimer.Blam.Halo1
     {
         public const string BitmapsMap = "bitmaps.map";
 
+        private readonly long fileSize;
+
         public string FileName { get; }
         public ByteOrder ByteOrder { get; }
         public string BuildString { get; }
@@ -22,11 +24,15 @@ namespace Reclaimer.Blam.Halo1
 
         public TagAddressTranslator AddressTranslator { get; }
 
+        public bool IsCompressed => CacheType == CacheType.Halo1Xbox && Header?.FileSize > fileSize;
+
         public CacheFile(string fileName) : this(CacheArgs.FromFile(fileName)) { }
 
         internal CacheFile(CacheArgs args)
         {
             Exceptions.ThrowIfFileNotFound(args.FileName);
+
+            fileSize = new FileInfo(args.FileName).Length;
 
             FileName = args.FileName;
             ByteOrder = args.ByteOrder;
@@ -37,33 +43,28 @@ namespace Reclaimer.Blam.Halo1
             AddressTranslator = new TagAddressTranslator(this);
 
             using (var reader = CreateReader(AddressTranslator))
-            {
                 Header = reader.ReadObject<CacheHeader>();
 
+            //TODO: make the decompressor work for bitmaps.map, otherwise its not very useful
+            if (IsCompressed)
+                throw new NotSupportedException("This map file needs to be decompressed before it can be opened");
+
+            //start a new reader - if the file appears to be compressed then the new reader will decompress as it reads
+            using (var reader = CreateReader(AddressTranslator))
+            {
                 reader.Seek(Header.IndexAddress, SeekOrigin.Begin);
                 TagIndex = reader.ReadObject(new TagIndex(this), (int)CacheType);
                 TagIndex.ReadItems(reader);
             }
         }
 
-        private DependencyReader CreateReader(string fileName, IAddressTranslator translator)
-        {
-            var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-            var reader = new DependencyReader(fs, ByteOrder);
-
-            reader.RegisterInstance<CacheFile>(this);
-            reader.RegisterInstance<ICacheFile>(this);
-
-            if (translator != null)
-                reader.RegisterInstance<IAddressTranslator>(translator);
-
-            return reader;
-        }
-
-        public DependencyReader CreateReader(IAddressTranslator translator)
+        private DependencyReader CreateReader(IAddressTranslator translator)
         {
             ArgumentNullException.ThrowIfNull(translator);
-            return CreateReader(FileName, translator);
+
+            var reader = CacheFactory.CreateReader(this, translator);
+            reader.RegisterInstance<CacheFile>(this);
+            return reader;
         }
 
         internal DependencyReader CreateBitmapsReader()
@@ -71,7 +72,13 @@ namespace Reclaimer.Blam.Halo1
             var folder = Directory.GetParent(FileName).FullName;
             var bitmapsMap = Path.Combine(folder, BitmapsMap);
 
-            return CreateReader(bitmapsMap, null);
+            var fs = (Stream)new FileStream(bitmapsMap, FileMode.Open, FileAccess.Read);
+            var reader = new DependencyReader(fs, ByteOrder);
+
+            reader.RegisterInstance<CacheFile>(this);
+            reader.RegisterInstance<ICacheFile>(this);
+
+            return reader;
         }
 
         #region ICacheFile
@@ -83,6 +90,7 @@ namespace Reclaimer.Blam.Halo1
         #endregion
     }
 
+    [FixedSize(2048)]
     public class CacheHeader
     {
         [Offset(0)]
