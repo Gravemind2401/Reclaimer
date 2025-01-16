@@ -62,9 +62,9 @@ namespace Reclaimer.Saber3D.Common
             return chunks;
         }
 
-        protected override Stream GetChunkStream(byte[] chunkData)
+        protected override Stream CreateDecompressionStream(Stream sourceStream, bool leaveOpen)
         {
-            return new ZLibStream(new MemoryStream(chunkData), CompressionMode.Decompress);
+            return new ZLibStream(sourceStream, CompressionMode.Decompress, leaveOpen);
         }
     }
 }

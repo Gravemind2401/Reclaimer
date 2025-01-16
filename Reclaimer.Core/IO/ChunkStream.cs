@@ -56,6 +56,9 @@ namespace Reclaimer.IO
                 return;
 
             var chunkDetails = ReadChunks();
+            if (chunkDetails == null || chunkDetails.Count == 0)
+                throw new InvalidDataException("Stream must contain at least one chunk");
+
             chunks = new ChunkAddressMapping[chunkDetails.Count];
 
             var destAddress = 0;
@@ -67,6 +70,8 @@ namespace Reclaimer.IO
             }
 
             length = chunks.Sum(c => c.UncompressedSize);
+
+            chunkTracker.PrepareBuffer();
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -148,7 +153,7 @@ namespace Reclaimer.IO
         public override void Flush() => throw new NotSupportedException();
 
         protected abstract IList<ChunkLocator> ReadChunks();
-        protected abstract Stream GetChunkStream(byte[] chunkData);
+        protected abstract Stream CreateDecompressionStream(Stream sourceStream, bool leaveOpen);
 
         protected record struct ChunkLocator(int SourceAddress, int CompressedSize, int UncompressedSize);
 
@@ -162,8 +167,7 @@ namespace Reclaimer.IO
             private readonly ChunkStream sourceStream;
 
             public ChunkAddressMapping CurrentChunk { get; private set; }
-            public byte[] CompressedData { get; private set; }
-            public Stream ChunkStream { get; private set; }
+            public MemoryStream ChunkStream { get; private set; }
 
             public long InnerPosition => sourceStream.Position - CurrentChunk.DestAddress;
             public bool IsEndOfChunk => !CurrentChunk.ContainsAddress((int)sourceStream.Position);
@@ -173,70 +177,35 @@ namespace Reclaimer.IO
                 this.sourceStream = sourceStream;
             }
 
+            public void PrepareBuffer()
+            {
+                var capacity = sourceStream.chunks.Max(c => c.UncompressedSize);
+                ChunkStream = new MemoryStream(capacity);
+            }
+
             public void PrepareChunk()
             {
                 var nextChunk = sourceStream.chunks.First(c => c.ContainsAddress((int)sourceStream.Position));
                 if (nextChunk != CurrentChunk)
                 {
-                    CloseChunk();
+                    ChunkStream.Position = 0;
+                    ChunkStream.SetLength(nextChunk.UncompressedSize);
 
                     sourceStream.BaseStream.Seek(nextChunk.SourceAddress, SeekOrigin.Begin);
-
-                    CompressedData = new byte[nextChunk.CompressedSize];
-                    sourceStream.BaseStream.ReadAll(CompressedData, 0, CompressedData.Length);
+                    using (var expandStream = sourceStream.CreateDecompressionStream(sourceStream.BaseStream, true))
+                        expandStream.ReadExactly(ChunkStream.GetBuffer(), 0, (int)ChunkStream.Length);
 
                     CurrentChunk = nextChunk;
-                    ChunkStream = sourceStream.GetChunkStream(CompressedData);
-                }
-                else if (!ChunkStream.CanSeek)
-                {
-                    if (sourceStream.position > sourceStream.lastActualPosition)
-                    {
-                        AdvanceStream(sourceStream.position - (int)sourceStream.lastActualPosition);
-                        return;
-                    }
-                    else
-                    {
-                        //cant go backwards so we need to reload to start at 0 again
-                        ChunkStream = sourceStream.GetChunkStream(CompressedData);
-                    }
                 }
 
-                if (ChunkStream.CanSeek)
-                {
-                    ChunkStream.Position = InnerPosition;
-                    return;
-                }
-                else if (InnerPosition == 0)
-                    return;
-
-                AdvanceStream(InnerPosition);
-
-                void AdvanceStream(long bytesToSkip)
-                {
-                    if (bytesToSkip == 0)
-                        return;
-
-                    //the only way to move forward now is to read until we get to the desired position
-                    int bytesRead;
-                    do
-                    {
-                        var bufferSize = Math.Min((int)bytesToSkip, 0x10000);
-                        var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
-                        var span = buffer.AsSpan(..bufferSize); //in case Rent() gave more than we wanted
-
-                        bytesToSkip -= bytesRead = ChunkStream.ReadAll(span);
-                        ArrayPool<byte>.Shared.Return(buffer);
-                    }
-                    while (bytesToSkip > 0 && bytesRead > 0);
-                }
+                ChunkStream.Position = InnerPosition;
             }
 
-            public void CloseChunk()
+            public void Dispose()
             {
                 ChunkStream?.Close();
+                ChunkStream?.Dispose();
                 ChunkStream = null;
-                CompressedData = null;
                 CurrentChunk = default;
             }
         }
@@ -245,7 +214,7 @@ namespace Reclaimer.IO
         {
             try
             {
-                chunkTracker.CloseChunk();
+                chunkTracker.Dispose();
                 base.Dispose(disposing);
             }
             finally
