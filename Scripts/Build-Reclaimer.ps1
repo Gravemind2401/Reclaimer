@@ -94,12 +94,21 @@ function Build-ImportScript {
     # restore the blender manifest now that we are building the 4.2+ zips
     Copy-Item "$buildRoot\Reclaimer\Reclaimer.RMFImporter\Reclaimer\blender_manifest.toml" ".\obj\RMFImporter\Reclaimer\"
 
-    # prepare wheels for Blender 4.2
+    # prepare wheels for Blender 4.2+
     # need to disable version check because it gets treated as an error
     pip download pyside2 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --platform win_amd64
     pip download pyside2 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --platform manylinux1_x86_64
 
-    # build extension zips for Blender 4.2
+    # hack to trick Blender 4.3 into allowing the addon even though PySide2 doesn't offically support Python 3.11
+    $toml = [IO.File]::ReadAllText(".\obj\RMFImporter\Reclaimer\blender_manifest.toml")
+    [IO.File]::WriteAllText(".\obj\RMFImporter\Reclaimer\blender_manifest.toml", ($toml -replace 'cp310-', 'cp310.cp311-'))
+
+    Get-ChildItem ".\obj\RMFImporter\Reclaimer\wheels" `
+        | ForEach-Object {
+            Rename-Item $_.FullName ($_.Name -replace 'cp310-', 'cp310.cp311-')
+        }
+
+    # build extension zips for Blender 4.2+
     blender --command extension build --split-platforms --source-dir ".\obj\RMFImporter\Reclaimer" --output-dir ".\bin\"
 }
 
