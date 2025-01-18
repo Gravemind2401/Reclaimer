@@ -19,6 +19,25 @@ namespace Reclaimer.Blam.Utilities
             public int CompressionPartitionSize;
         }
 
+        public static byte[] DecompressLZX(byte[] compressedData, ref int uncompressedSize)
+        {
+            var uncompressedData = new byte[uncompressedSize];
+            DecompressLZX(compressedData, uncompressedData, ref uncompressedSize);
+            Array.Resize(ref uncompressedData, uncompressedSize);
+            return uncompressedData;
+        }
+
+        public static void DecompressLZX(byte[] compressedData, byte[] outBuffer, ref int uncompressedSize)
+        {
+            var compressedSize = compressedData.Length;
+            var decompressionContext = 0L;
+
+            XMemCreateDecompressionContext(XMemCodecType.LZX, 0, 0, ref decompressionContext);
+            XMemResetDecompressionContext(decompressionContext);
+            XMemDecompressStream(decompressionContext, outBuffer, ref uncompressedSize, compressedData, ref compressedSize);
+            XMemDestroyDecompressionContext(decompressionContext);
+        }
+
         public static long XMemCreateDecompressionContext(XMemCodecType codecType, int pCodecParams, int flags, ref long pContext)
         {
             if (Is64Bit)

@@ -31,7 +31,7 @@ namespace Reclaimer.Saber3D.Halo1X
 
         public DependencyReader CreateReader()
         {
-            return new DependencyReader(new PakStream(FileName), ByteOrder.LittleEndian);
+            return new DependencyReader(new PakStream(this), ByteOrder.LittleEndian);
         }
 
         public IPakItem FindItem(PakItemType itemType, string name, bool external)

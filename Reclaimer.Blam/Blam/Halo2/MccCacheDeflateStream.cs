@@ -53,7 +53,7 @@ namespace Reclaimer.Blam.Halo2
             return chunks;
         }
 
-        protected override Stream CreateDecompressionStream(Stream sourceStream, bool leaveOpen)
+        protected override Stream CreateDecompressionStream(Stream sourceStream, bool leaveOpen, int compressedSize, int uncompressedSize)
         {
             return Position < headerSize
                 ? sourceStream

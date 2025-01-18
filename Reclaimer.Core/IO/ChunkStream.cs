@@ -153,7 +153,7 @@ namespace Reclaimer.IO
         public override void Flush() => throw new NotSupportedException();
 
         protected abstract IList<ChunkLocator> ReadChunks();
-        protected abstract Stream CreateDecompressionStream(Stream sourceStream, bool leaveOpen);
+        protected abstract Stream CreateDecompressionStream(Stream sourceStream, bool leaveOpen, int compressedSize, int uncompressedSize);
 
         protected record struct ChunkLocator(int SourceAddress, int CompressedSize, int UncompressedSize);
 
@@ -192,7 +192,7 @@ namespace Reclaimer.IO
                     ChunkStream.SetLength(nextChunk.UncompressedSize);
 
                     sourceStream.BaseStream.Seek(nextChunk.SourceAddress, SeekOrigin.Begin);
-                    using (var expandStream = sourceStream.CreateDecompressionStream(sourceStream.BaseStream, true))
+                    using (var expandStream = sourceStream.CreateDecompressionStream(sourceStream.BaseStream, true, nextChunk.CompressedSize, nextChunk.UncompressedSize))
                         expandStream.ReadExactly(ChunkStream.GetBuffer(), 0, (int)ChunkStream.Length);
 
                     CurrentChunk = nextChunk;

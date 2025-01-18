@@ -7,7 +7,7 @@ namespace Reclaimer.Saber3D.Halo1X
 {
     public class PakFile : IPakFile
     {
-        private string PakStreamFileName => isCompressed ? "*.ipak" : "pak_stream_decompressed.s3dpak";
+        private string PakStreamFileName => IsMcc ? "*.ipak" : "pak_stream*.s3dpak";
 
         private readonly bool isCompressed;
         private readonly ILookup<PakItemType, PakItem> itemsByType;
@@ -15,7 +15,7 @@ namespace Reclaimer.Saber3D.Halo1X
 
         public string FileName { get; }
         public IReadOnlyList<PakItem> Items { get; }
-        public bool IsMcc => isCompressed; //this will be wrong if someone happened to decompress an MCC file
+        public bool IsMcc { get; }
 
         IReadOnlyList<IPakItem> IPakFile.Items => Items;
 
@@ -44,6 +44,17 @@ namespace Reclaimer.Saber3D.Halo1X
                 var nameLength = reader.ReadInt32();
 
                 isCompressed = nameLength <= 0 || nameLength > 1024;
+
+                if (isCompressed)
+                {
+                    using (var stream = new PakStream(this))
+                        IsMcc = !stream.IsX360;
+                }
+                else
+                {
+                    var dir = Path.GetDirectoryName(fileName);
+                    IsMcc = Directory.EnumerateFiles(dir, "*.ipak", SearchOption.TopDirectoryOnly).Any();
+                }
             }
 
             using (var reader = CreateReader())
@@ -61,7 +72,7 @@ namespace Reclaimer.Saber3D.Halo1X
         public DependencyReader CreateReader()
         {
             var dataStream = isCompressed
-                ? (Stream)new PakStream(FileName)
+                ? (Stream)new PakStream(this)
                 : new FileStream(FileName, FileMode.Open, FileAccess.Read);
 
             return new DependencyReader(dataStream, ByteOrder.LittleEndian);
@@ -77,13 +88,13 @@ namespace Reclaimer.Saber3D.Halo1X
             {
                 sharedPaks = new List<IPakFile>();
 
-                var targetFiles = Directory.GetFiles(Path.GetDirectoryName(FileName), PakStreamFileName);
+                var targetFiles = Directory.GetFiles(Path.GetDirectoryName(FileName), PakStreamFileName, SearchOption.TopDirectoryOnly);
                 foreach (var targetFile in targetFiles)
                 {
                     if (targetFile == FileName)
                         continue;
 
-                    sharedPaks.Add(isCompressed ? new InplacePakFile(targetFile) : new PakFile(targetFile));
+                    sharedPaks.Add(IsMcc ? new InplacePakFile(targetFile) : new PakFile(targetFile));
                 }
             }
 

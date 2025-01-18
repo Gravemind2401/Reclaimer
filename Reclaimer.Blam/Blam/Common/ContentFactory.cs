@@ -321,22 +321,14 @@ namespace Reclaimer.Blam.Common
             }
             else if (codec == CacheResourceCodec.LZX)
             {
-                var compressed = reader.ReadBytes(compressedSize);
-                var decompressed = new byte[decompressedSize];
+                var data = reader.ReadBytes(compressedSize);
+                data = XCompress.DecompressLZX(data, ref decompressedSize);
 
-                var startSize = compressedSize;
-                var endSize = decompressedSize;
-                var decompressionContext = 0L;
-                XCompress.XMemCreateDecompressionContext(XCompress.XMemCodecType.LZX, 0, 0, ref decompressionContext);
-                XCompress.XMemResetDecompressionContext(decompressionContext);
-                XCompress.XMemDecompressStream(decompressionContext, decompressed, ref endSize, compressed, ref startSize);
-                XCompress.XMemDestroyDecompressionContext(decompressionContext);
-
-                if (decompressed.Length == segmentLength)
-                    return decompressed;
+                if (data.Length == segmentLength)
+                    return data;
 
                 var result = new byte[segmentLength];
-                Array.Copy(decompressed, segmentOffset, result, 0, result.Length);
+                Array.Copy(data, segmentOffset, result, 0, result.Length);
                 return result;
             }
             else if (codec == CacheResourceCodec.UnknownDeflate) //experimental

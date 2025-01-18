@@ -1,23 +1,38 @@
-﻿using Reclaimer.IO;
+﻿using Reclaimer.Blam.Utilities;
+using Reclaimer.IO;
+using System.Buffers;
 using System.IO;
 using System.IO.Compression;
+using System.Runtime.CompilerServices;
 
 namespace Reclaimer.Saber3D.Common
 {
     public class PakStream : ChunkStream
     {
-        public PakStream(string filePath)
-            : base(filePath)
-        { }
+        private static readonly ConditionalWeakTable<IPakFile, ChunkLocator[]> chunkTableCache = new();
+
+        private readonly IPakFile pak;
+
+        internal bool IsX360 { get; private set; }
+
+        public PakStream(IPakFile pakFile)
+            : base(pakFile.FileName)
+        {
+            pak = pakFile;
+            InitializeChunks();
+        }
 
         protected override IList<ChunkLocator> ReadChunks()
         {
+            if (chunkTableCache.TryGetValue(pak, out var chunks))
+                return chunks;
+
             using var reader = new EndianReader(BaseStream, ByteOrder.LittleEndian, true);
 
             reader.Seek(0, SeekOrigin.Begin);
 
             var chunkCount = reader.ReadInt32();
-            var chunks = new ChunkLocator[chunkCount];
+            chunks = new ChunkLocator[chunkCount];
 
             var offsets = new int[chunkCount + 1];
             offsets[^1] = (int)BaseStream.Length;
@@ -35,36 +50,51 @@ namespace Reclaimer.Saber3D.Common
                 chunks[i] = new ChunkLocator(chunkAddress, chunkSize, dataSize);
             }
 
-            //attempt to correct for x360 files except they arent zlib?
-            /*if (chunks.Any(c => c.UncompressedSize < 0 || c.UncompressedSize > 0x007FFFFF))
+            //make corrections for x360 files
+            if (chunks.Any(c => c.UncompressedSize < 0 || c.UncompressedSize > 0x007FFFFF))
             {
-                using var buffer = MemoryPool<byte>.Shared.Rent(0x40000);
+                IsX360 = true;
 
-                int bytesRead;
+                //uncompressed size appears to be max of 32768, compressed size can sometimes be slightly bigger
+                const int bufferSize = 0x10000;
+
+                var inBuffer = ArrayPool<byte>.Shared.Rent(bufferSize);
+                var outBuffer = ArrayPool<byte>.Shared.Rent(bufferSize);
+
                 for (var i = 0; i < chunkCount; i++)
                 {
                     var c = chunks[i];
                     c.CompressedSize += sizeof(int);
-                    c.UncompressedSize = 0;
-                    c.CompressedAddress -= sizeof(int);
+                    c.SourceAddress -= sizeof(int);
 
-                    reader.Seek(c.CompressedAddress, SeekOrigin.Begin);
-                    using var ms = new MemoryStream(reader.ReadBytes(c.CompressedSize));
-                    using var ds = new ZLibStream(ms, CompressionMode.Decompress);
+                    reader.Seek(c.SourceAddress, SeekOrigin.Begin);
+                    reader.Read(inBuffer, 0, c.CompressedSize);
 
-                    do { c.UncompressedSize += bytesRead = ds.Read(buffer.Memory.Span); }
-                    while (bytesRead == buffer.Memory.Length);
+                    var uncompressedSize = bufferSize;
+                    XCompress.DecompressLZX(inBuffer, outBuffer, ref uncompressedSize);
 
+                    c.UncompressedSize = uncompressedSize;
                     chunks[i] = c;
                 }
-            }*/
+
+                ArrayPool<byte>.Shared.Return(inBuffer);
+                ArrayPool<byte>.Shared.Return(outBuffer);
+            }
+
+            chunkTableCache.Add(pak, chunks);
 
             return chunks;
         }
 
-        protected override Stream CreateDecompressionStream(Stream sourceStream, bool leaveOpen)
+        protected override Stream CreateDecompressionStream(Stream sourceStream, bool leaveOpen, int compressedSize, int uncompressedSize)
         {
-            return new ZLibStream(sourceStream, CompressionMode.Decompress, leaveOpen);
+            if (IsX360)
+                return new ZLibStream(sourceStream, CompressionMode.Decompress, leaveOpen);
+
+            var data = new byte[compressedSize];
+            sourceStream.ReadExactly(data, 0, data.Length);
+            data = XCompress.DecompressLZX(data, ref uncompressedSize);
+            return new MemoryStream(data);
         }
     }
 }
