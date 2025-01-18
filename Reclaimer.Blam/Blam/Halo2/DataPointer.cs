@@ -43,6 +43,10 @@ namespace Reclaimer.Blam.Halo2
                 _ => cache.FileName,
             };
 
+            //workaround for local bitmaps in workshop maps
+            if (cache.Metadata.IsMcc && !File.Exists(target))
+                target = cache.FileName;
+
             using var fs = target == cache.FileName
                 ? cache.CreateStream()
                 : new FileStream(target, FileMode.Open, FileAccess.Read);
