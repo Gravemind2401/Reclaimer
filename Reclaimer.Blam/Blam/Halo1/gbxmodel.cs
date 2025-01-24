@@ -261,7 +261,7 @@ namespace Reclaimer.Blam.Halo1
                         var nodeCount = reader.ReadByte();
                         var nodes = reader.ReadBytes(nodeCount);
 
-                        for (var i = vertexTally; i < submesh.VertexCount; i++)
+                        for (var i = vertexTally; i < vertexTally + submesh.VertexCount; i++)
                         {
                             var v = boneBuffer[i];
                             boneBuffer[i] = new UShort2
