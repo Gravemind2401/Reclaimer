@@ -36,7 +36,7 @@ These preferences determine the starting settings that the import window will us
 
 ### Version Compatibility
 - Minimum supported version: 4.2
-- Highest tested version: 4.2
+- Highest tested version: 4.3.2
 
 ### Installation Instructions
 1. In Blender go to `Edit > Preferences > Add-ons` and select `Install from Disk...` from the dropdown menu in the top right

@@ -20,9 +20,9 @@ Reclaimer is intended for modding purposes like as porting assets between differ
 In general, Reclaimer works with these kinds of files:
 - `.map` files from Halo 1 to Halo 4 (Xbox)
 - `.yelo`  files from Halo Custom Edition (Open Sauce enhanced)
-- `.map` files from Halo MCC PC (excluding Halo 2)
+- `.map` files from Halo MCC PC
 - `.module` files from Halo 5 and Halo Infinite
-- `.s3dpak` files (decompressed) from Halo CE Anniversary (Xbox 360)
+- `.s3dpak` files from Halo CE Anniversary (Xbox 360)
 - `.s3dpak` and `.ipak` files from Halo CE Anniversary (MCC)
 
 ### Exporting Geometry Files
