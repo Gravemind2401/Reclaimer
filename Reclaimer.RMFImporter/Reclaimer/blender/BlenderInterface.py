@@ -165,14 +165,21 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
         editbones = list(armature_data.edit_bones.new(self.options.bone_name(b)) for b in model.bones)
         for i, b in enumerate(model.bones):
             editbone = editbones[i]
-            editbone.tail = TAIL_VECTOR
+            # editbone.tail = TAIL_VECTOR
 
-            children = model.get_bone_children(b)
-            if children:
-                size = max((Vector(b.transform[3]).to_3d().length for b in children))
-                editbone.tail = (size * self.unit_scale, 0, 0)
+            # children = model.get_bone_children(b)
+            # if children:
+            #     size = max((Vector(b.transform[3]).to_3d().length for b in children))
+            #     editbone.tail = (size * self.unit_scale, 0, 0)
 
-            editbone.transform(bone_transforms[i])
+            # editbone.transform(bone_transforms[i])
+
+            # set length to our default length, and set matrix exactly as it would be in halo
+            # this looks visually wrong, but thats because blender bones always have the tail vector as the Y axis.
+            # if blender ever provides a way to configure it as "tail vector is X axis" instead, then that would look much neater visually.
+            # the commented code above points the tail where we want, but is not compatible with extracted animations :(
+            editbone.length = TAIL_VECTOR[0]
+            editbone.matrix = bone_transforms[i]
 
             if b.parent_index >= 0:
                 editbone.parent = editbones[b.parent_index]
@@ -355,6 +362,7 @@ class BlenderInterface(ViewportInterface[bpy.types.Material, bpy.types.Collectio
             # create a vertex group for each bone so the bone indices are 1:1 with the vertex groups
             for bone in model_state.model.bones:
                 mesh_obj.vertex_groups.new(name=bone.name)
+            print(list(vertex_buffer.enumerate_blendpairs(mesh_params.mesh_flags)))
             for vi, blend_indicies, blend_weights in vertex_buffer.enumerate_blendpairs(mesh_params.mesh_flags):
                 for bi, bw in zip(blend_indicies, blend_weights):
                     mesh_obj.vertex_groups[bi].add([vi], bw, 'ADD')
