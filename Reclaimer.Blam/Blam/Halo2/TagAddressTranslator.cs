@@ -10,8 +10,8 @@ namespace Reclaimer.Blam.Halo2
         {
             get
             {
-                return cache.Metadata.IsMcc
-                    ? -cache.Header.IndexAddress
+                return cache.CacheType >= Common.CacheType.Halo2Vista
+                    ? cache.Header.MetadataAddressMask - cache.Header.IndexAddress
                     : cache.TagIndex[0].MetaPointer.Value - (cache.Header.IndexAddress + cache.Header.MetadataOffset);
             }
         }

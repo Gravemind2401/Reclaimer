@@ -2,6 +2,7 @@
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.IO;
 
 namespace Reclaimer.Blam.Halo2
@@ -12,6 +13,8 @@ namespace Reclaimer.Blam.Halo2
         public const string SharedMap = "shared.map";
         public const string SinglePlayerSharedMap = "single_player_shared.map";
         public const string MccTextureFile = "textures.dat";
+
+        private static readonly ConcurrentDictionary<string, WeakReference<CacheFile>> sharedMapCache = new();
 
         public string FileName { get; }
         public ByteOrder ByteOrder { get; }
@@ -49,9 +52,6 @@ namespace Reclaimer.Blam.Halo2
             //start a new reader - if the header indicates a compressed file, the new reader will decompress as it reads
             using (var reader = CreateReader(HeaderTranslator))
             {
-                if (Header.MetadataAddressMask != 0)
-                    System.Diagnostics.Debugger.Break();
-
                 reader.Seek(Header.IndexAddress, SeekOrigin.Begin);
                 TagIndex = reader.ReadObject(new TagIndex(this));
                 StringIndex = new StringIndex(this);
@@ -70,6 +70,19 @@ namespace Reclaimer.Blam.Halo2
         IAddressTranslator ICacheFile.DefaultAddressTranslator => MetadataTranslator;
 
         #endregion
+
+        internal CacheFile GetSharedCache()
+        {
+            var targetPath = Path.Combine(Path.GetDirectoryName(FileName), SharedMap);
+            if (sharedMapCache.TryGetValue(targetPath, out var cacheRef) && cacheRef.TryGetTarget(out var cacheFile))
+                return cacheFile;
+            else if (!File.Exists(targetPath))
+                throw new FileNotFoundException($"Could not find {SharedMap}", targetPath);
+
+            cacheFile = new CacheFile(targetPath);
+            sharedMapCache[targetPath] = new WeakReference<CacheFile>(cacheFile);
+            return cacheFile;
+        }
     }
 
     public partial class CacheHeader
@@ -151,9 +164,16 @@ namespace Reclaimer.Blam.Halo2
                 reader.Seek(TagDataOffset.Address, SeekOrigin.Begin);
                 for (var i = 0; i < TagCount; i++)
                 {
-                    //Halo2Vista multiplayer maps have empty tags in them
                     var item = reader.ReadObject(new IndexItem(cache));
+
+                    //H2V/H2MCC multiplayer maps appear to reserve first 10k/17k tag slots for local tags.
+                    //and the rest are placeholders representing tags found in shared.map.
+                    //Unused local tag slots have ID = -1, and shared tags have empty pointers.
                     if (item.Id < 0)
+                        continue;
+
+                    //TODO: H2V shared.map doesn't open
+                    if (item.IsShared && cache.CacheType == CacheType.Halo2Vista)
                         continue;
 
                     items.Add(i, item);
@@ -252,6 +272,8 @@ namespace Reclaimer.Blam.Halo2
 
         public string TagName => cache.TagIndex.TagNames[Id];
 
+        public bool IsShared => MetaPointer.Value == 0 && MetaSize == 0;
+
         public IAddressTranslator GetAddressTranslator()
         {
             return cache.Metadata.Platform == CachePlatform.Xbox && ClassCode == "sbsp"
@@ -289,15 +311,14 @@ namespace Reclaimer.Blam.Halo2
 
             T ReadMetadataInternal()
             {
+                if (IsShared)
+                    return cache.GetSharedCache().TagIndex[Id].ReadMetadata<T>();
+
                 using (var reader = cache.CreateReader(GetAddressTranslator()))
                 {
                     reader.RegisterInstance<IIndexItem>(this);
                     reader.Seek(GetBaseAddress(), SeekOrigin.Begin);
                     var result = reader.ReadObject<T>((int)cache.CacheType);
-
-                    if (CacheFactory.SystemClasses.Contains(ClassCode))
-                        metadataCache = result;
-
                     return result;
                 }
             }
