@@ -61,7 +61,12 @@ namespace Reclaimer.Blam.Halo2
                 {
                     var count = reader.ReadInt32();
                     segments = reader.ReadArray<int>(count);
-                    reader.ReadInt16(); //???
+
+                    //not negative = not compressed
+                    if (count == 1 && segments[0] < 0)
+                        return reader.ReadBytes(-segments[0]);
+
+                    reader.ReadInt16(); //zlib header?
                 }
 
                 return Deflate(fs, segments);
