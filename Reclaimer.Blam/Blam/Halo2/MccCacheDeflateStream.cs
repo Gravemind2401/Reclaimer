@@ -1,4 +1,5 @@
 ﻿using Reclaimer.IO;
+using System.Buffers;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.CompilerServices;
@@ -40,13 +41,25 @@ namespace Reclaimer.Blam.Halo2
 
             chunks[0] = new ChunkLocator(0, headerSize, headerSize);
 
+            var tempBuffer = ArrayPool<byte>.Shared.Rent(cache.Header.CompressedDataChunkSize);
+
             for (var i = 0; i < chunkCount; i++)
             {
                 var chunkSize = reader.ReadInt32();
-                var chunkAddress = reader.ReadInt32() + 2; //skip whatever this value is - its not part of the stream
+                var chunkAddress = reader.ReadInt32();
+                var uncompressedSize = cache.Header.CompressedDataChunkSize;
 
-                chunks[i + 1] = new ChunkLocator(chunkAddress, chunkSize, cache.Header.CompressedDataChunkSize);
+                //decompress each chunk to find the actual size, as it may be less than the target size
+                var originalPosition = reader.Position;
+                reader.Seek(chunkAddress, SeekOrigin.Begin);
+                using (var ds = new ZLibStream(BaseStream, CompressionMode.Decompress, true))
+                    uncompressedSize = ds.ReadAll(tempBuffer);
+                reader.Seek(originalPosition, SeekOrigin.Begin);
+
+                chunks[i + 1] = new ChunkLocator(chunkAddress, chunkSize, uncompressedSize);
             }
+
+            ArrayPool<byte>.Shared.Return(tempBuffer);
 
             chunkTableCache.Add(cache, chunks);
 
@@ -57,7 +70,7 @@ namespace Reclaimer.Blam.Halo2
         {
             return Position < headerSize
                 ? sourceStream
-                : new DeflateStream(sourceStream, CompressionMode.Decompress, leaveOpen);
+                : new ZLibStream(sourceStream, CompressionMode.Decompress, leaveOpen);
         }
     }
 }
