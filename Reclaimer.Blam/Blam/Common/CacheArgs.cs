@@ -105,8 +105,8 @@ namespace Reclaimer.Blam.Common
                 if (buildString == string.Empty)
                 {
                     var meta = version == 10
-                        ? CacheMetadata.FromCacheType(CacheType.MccHalo2, buildString)
-                        : CacheMetadata.FromCacheType(CacheType.MccHalo2U1, buildString);
+                        ? CacheMetadata.FromCacheType(fileName, CacheType.MccHalo2, buildString)
+                        : CacheMetadata.FromCacheType(fileName, CacheType.MccHalo2U1, buildString);
 
                     return new CacheArgs(fileName, reader.ByteOrder, version, buildString, meta);
                 }

@@ -48,6 +48,7 @@
         UnknownDeflate
     }
 
+    [Flags]
     public enum CacheMetadataFlags
     {
         None = 0,

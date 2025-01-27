@@ -6,6 +6,7 @@ namespace Reclaimer.Blam.Common
     {
         private const CacheMetadataFlags PreRelease = CacheMetadataFlags.PreBeta | CacheMetadataFlags.Beta | CacheMetadataFlags.Flight;
 
+        public string FileName { get; }
         public BlamEngine Engine { get; }
         public CacheType CacheType { get; }
         public CacheGeneration Generation { get; }
@@ -18,8 +19,9 @@ namespace Reclaimer.Blam.Common
         public bool IsPreRelease => (Flags & PreRelease) > 0;
         public bool IsMcc => (Flags & CacheMetadataFlags.Mcc) > 0;
 
-        private CacheMetadata(CacheType cacheType, CacheMetadataAttribute meta, BuildStringAttribute build)
+        private CacheMetadata(string fileName, CacheType cacheType, CacheMetadataAttribute meta, BuildStringAttribute build)
         {
+            FileName = fileName;
             CacheType = cacheType;
             Engine = meta.Engine;
             Generation = meta.Generation;
@@ -29,6 +31,8 @@ namespace Reclaimer.Blam.Common
             ResourceCodec = build.ResourceCodecOverride ?? meta.ResourceCodec;
             Flags = build.FlagsOverride ?? meta.Flags;
         }
+
+        public static CacheMetadata FromFile(string fileName) => CacheArgs.FromFile(fileName).Metadata;
 
         public static CacheMetadata FromBuildString(string buildString, string fileName)
         {
@@ -54,10 +58,10 @@ namespace Reclaimer.Blam.Common
             System.Diagnostics.Debug.WriteLine($"Resolved CacheType {cacheType}");
 
             var metaAttr = Utils.GetEnumAttributes<CacheType, CacheMetadataAttribute>(cacheType).Single();
-            return new CacheMetadata(cacheType, metaAttr, buildAttr);
+            return new CacheMetadata(fileName, cacheType, metaAttr, buildAttr);
         }
 
-        public static CacheMetadata FromCacheType(CacheType cacheType, string buildString)
+        public static CacheMetadata FromCacheType(string fileName, CacheType cacheType, string buildString)
         {
             var buildAttr = Utils.GetEnumAttributes<CacheType, BuildStringAttribute>()
                 .FirstOrNull(t => t.EnumValue == cacheType && t.Attribute.BuildString == buildString)?.Attribute;
@@ -68,7 +72,7 @@ namespace Reclaimer.Blam.Common
             System.Diagnostics.Debug.WriteLine($"Resolved CacheType {cacheType}");
 
             var metaAttr = Utils.GetEnumAttributes<CacheType, CacheMetadataAttribute>(cacheType).Single();
-            return new CacheMetadata(cacheType, metaAttr, buildAttr);
+            return new CacheMetadata(fileName, cacheType, metaAttr, buildAttr);
         }
 
         private static CacheType GuessCacheType(string fileName)
