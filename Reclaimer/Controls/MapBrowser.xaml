@@ -9,6 +9,11 @@
              d:DataContext="{d:DesignInstance Type=mb:MapLibraryModel}">
 
     <UserControl.Resources>
+        <CollectionViewSource x:Key="MapGroupSource" Source="{Binding MapGroups}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="ParentGroup" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
         <CollectionViewSource x:Key="MapListSource" Source="{Binding SelectedGroup.Maps}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="GroupName" />
@@ -22,8 +27,25 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <ListView Grid.Column="0"
-                  ItemsSource="{Binding MapGroups}"
+                  Style="{StaticResource Reclaimer.ListBoxStyle}"
+                  ItemsSource="{Binding Source={StaticResource MapGroupSource}}"
                   SelectedItem="{Binding SelectedGroup}">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Margin="0,0,0,5" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="5,3"
+                                       FontSize="14" FontWeight="Bold"
+                                       Text="{Binding Name}" />
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ListView.GroupStyle>
             <ListView.ItemTemplate>
                 <DataTemplate DataType="mb:MapGroupDisplayModel">
                     <TextBlock Text="{Binding GroupName}" />
@@ -31,12 +53,13 @@
             </ListView.ItemTemplate>
         </ListView>
         <ListView Grid.Column="1"
+                  Style="{StaticResource Reclaimer.ListBoxStyle}"
                   ItemsSource="{Binding Source={StaticResource MapListSource}}"
                   ScrollViewer.VerticalScrollBarVisibility="Visible"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel />
+                    <WrapPanel Margin="0,0,0,10" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.GroupStyle>
@@ -44,7 +67,7 @@
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
                             <TextBlock Margin="10,3"
-                                       FontSize="18" FontWeight="Bold"
+                                       FontSize="20" FontWeight="Bold"
                                        FontStyle="Italic"
                                        Text="{Binding Name}" />
                         </DataTemplate>
@@ -53,7 +76,7 @@
             </ListView.GroupStyle>
             <ListView.ItemTemplate>
                 <DataTemplate DataType="mb:MapFileDisplayModel">
-                    <Border Margin="3" Height="140" Width="210"
+                    <Border Margin="3" Height="160" Width="250"
                             BorderThickness="1" BorderBrush="Gray"
                             Background="CornflowerBlue">
                         <Grid>
@@ -77,7 +100,7 @@
                                     ToolTip="{Binding FilePath}">
                                 <StackPanel>
                                     <TextBlock Text="{Binding DisplayName}" FontWeight="Bold" FontSize="14" />
-                                    <TextBlock Text="{Binding FileName}" FontSize="10" />
+                                    <TextBlock Text="{Binding FileName}" FontSize="11" />
                                 </StackPanel>
                             </Border>
                         </Grid>

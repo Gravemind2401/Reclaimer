@@ -14,7 +14,18 @@ namespace Reclaimer.Plugins.MapBrowser
         public CacheMetadataFlags Flags { get; set; }
         public bool FromSteam { get; set; }
         public bool FromWorkshop { get; set; }
+        public string CustomGroup { get; set; }
+        public string CustomSection { get; set; }
+        public string CustomName { get; set; }
         public string Thumbnail { get; set; }
+
+        public string GetDisplayGroupName()
+        {
+            var result = CustomGroup;
+            var subtitle = string.IsNullOrEmpty(CustomSection) ? "Other" : CustomSection;
+            result += " [" + char.ToUpper(subtitle[0]) + subtitle[1..] + "]";
+            return result;
+        }
 
         public LinkedMapFile()
         { }

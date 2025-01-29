@@ -20,12 +20,17 @@ namespace Reclaimer.Plugins.MapBrowser
             {
                 var maps = ScanSteamFolder(MapBrowserPlugin.Settings.SteamLibraryFolder).ToList();
                 if (maps.Count > 0)
-                    allMaps["mcc"] = maps;
+                    allMaps["steam"] = maps;
             }
+
+            var customDirs = new List<string>(); //TODO
+            foreach (var dir in customDirs.Where(Directory.Exists))
+                allMaps[dir] = ScanCustomDirectory(dir).ToList();
 
             return allMaps;
         }
 
+        #region Steam
         public static IEnumerable<LinkedMapFile> ScanSteamFolder(string steamLibraryPath)
         {
             if (!File.Exists(Path.Combine(steamLibraryPath, "libraryfolder.vdf")))
@@ -47,7 +52,7 @@ namespace Reclaimer.Plugins.MapBrowser
                 .Select(m => new LinkedMapFile(m)
                 {
                     FromSteam = true
-                });
+                }).Concat(ScanWorkshopFolder(modsDir));
         }
 
         public static void DumpMccThumbnails(string mccInstallDir)
@@ -114,6 +119,60 @@ namespace Reclaimer.Plugins.MapBrowser
             jsonString = "{" + Environment.NewLine + jsonString + Environment.NewLine + "}";
 
             return jsonString;
+        }
+
+        private static IEnumerable<LinkedMapFile> ScanWorkshopFolder(string workshopDirectory)
+        {
+            foreach (var modFolder in new DirectoryInfo(workshopDirectory).GetDirectories())
+            {
+                var modInfoFile = new FileInfo(Path.Combine(modFolder.FullName, "ModInfo.json"));
+                var mapFiles = DiscoverMaps(modFolder.FullName).ToList();
+                var infoFiles = modFolder.GetFiles("*.json", new EnumerationOptions { RecurseSubdirectories = true, MaxRecursionDepth = 1 });
+
+                var title = modFolder.Name;
+                if (modInfoFile.Exists)
+                {
+                    try
+                    {
+                        var modInfo = (dynamic)JsonConvert.DeserializeObject(File.ReadAllText(modInfoFile.FullName));
+                        title = (string)modInfo.Title.Neutral;
+                    }
+                    catch { }
+                }
+
+                foreach (var mapFile in mapFiles)
+                {
+                    var result = new LinkedMapFile(mapFile)
+                    {
+                        FromSteam = true,
+                        FromWorkshop = true,
+                        CustomGroup = title,
+                        CustomName = Path.GetFileNameWithoutExtension(mapFile.FileName)
+                    };
+
+                    var mapInfoFile = infoFiles.FirstOrDefault(f => f.Name == Path.ChangeExtension(Path.GetFileName(mapFile.FileName), ".json"));
+                    if (mapInfoFile != null)
+                    {
+                        try
+                        {
+                            result.CustomSection = mapInfoFile.Directory.Name;
+                            var mapInfo = (dynamic)JsonConvert.DeserializeObject(File.ReadAllText(mapInfoFile.FullName));
+                            result.CustomName = (string)mapInfo.Title.Neutral;
+                            result.Thumbnail = Path.Combine(modFolder.FullName, (string)mapInfo.Images.Thumbnail);
+                        }
+                        catch { }
+                    }
+
+                    yield return result;
+                }
+            }
+        }
+        #endregion
+
+        public static IEnumerable<LinkedMapFile> ScanCustomDirectory(string directory)
+        {
+            //TODO
+            yield break;
         }
 
         private static IEnumerable<CacheMetadata> DiscoverMaps(string directory)

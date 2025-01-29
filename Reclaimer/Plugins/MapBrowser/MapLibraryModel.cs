@@ -24,22 +24,39 @@ namespace Reclaimer.Plugins.MapBrowser
             var templateData = MapInfoTemplate.EnumerateTemplates().ToLookup(m => m.Engine);
             var allMaps = MapScanner.ReScan();
 
-            var groups = allMaps["mcc"].GroupBy(m => m.Engine)
+            var mccGroups = allMaps["steam"]
+                .Where(m => !m.FromWorkshop)
+                .GroupBy(m => m.Engine)
                 .Select(g => new MapGroupDisplayModel
                 {
+                    ParentGroup = "MCC (Steam)",
                     GroupName = g.Key.ToString(),
                     Engine = g.Key,
                     Platform = CachePlatform.PC,
-                    Maps = ProcessLinkedMaps(g)
-                }).OrderBy(g => g.Engine);
+                    Maps = ProcessTemplatedMaps(g)
+                });
+
+            var modGroups = allMaps["steam"]
+                .Where(m => m.FromWorkshop)
+                .GroupBy(m => m.Engine)
+                .Select(g => new MapGroupDisplayModel
+                {
+                    ParentGroup = "Steam Workshop",
+                    GroupName = g.Key.ToString(),
+                    Engine = g.Key,
+                    Platform = CachePlatform.PC,
+                    Maps = ProcessWorkshopMaps(g)
+                });
+
+            var allGroups = mccGroups.Concat(modGroups).OrderBy(g => g.GroupName).ThenBy(g => g.Engine);
 
             return new MapLibraryModel
             {
-                MapGroups = new(groups),
-                SelectedGroup = groups.FirstOrDefault()
+                MapGroups = new(allGroups),
+                SelectedGroup = allGroups.FirstOrDefault()
             };
 
-            List<MapFileDisplayModel> ProcessLinkedMaps(IGrouping<BlamEngine, LinkedMapFile> mapGroup)
+            List<MapFileDisplayModel> ProcessTemplatedMaps(IGrouping<BlamEngine, LinkedMapFile> mapGroup)
             {
                 var mapList = new List<MapFileDisplayModel>();
 
@@ -79,12 +96,27 @@ namespace Reclaimer.Plugins.MapBrowser
                     .ThenBy(m => m.FileName)
                     .ToList();
             }
+
+            List<MapFileDisplayModel> ProcessWorkshopMaps(IGrouping<BlamEngine, LinkedMapFile> mapGroup)
+            {
+                return mapGroup.Select(m => new MapFileDisplayModel
+                {
+                    FilePath = m.FilePath,
+                    Flags = m.Flags,
+                    GroupName = m.GetDisplayGroupName(),
+                    DisplayName = m.CustomName,
+                    Thumbnail = m.Thumbnail
+                }).OrderBy(m => m.GroupName)
+                .ThenBy(m => m.DisplayName)
+                .ToList();
+            }
         }
     }
 
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public class MapGroupDisplayModel
     {
+        public string ParentGroup { get; set; }
         public string GroupName { get; set; }
         public BlamEngine Engine { get; set; }
         public CachePlatform Platform { get; set; }
