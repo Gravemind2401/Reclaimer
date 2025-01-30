@@ -2,6 +2,7 @@
 using Reclaimer.Plugins.MapBrowser;
 using Studio.Controls;
 using System.Windows.Controls;
+using Xceed.Wpf.Toolkit.Core.Utilities;
 
 namespace Reclaimer.Controls
 {
@@ -17,6 +18,11 @@ namespace Reclaimer.Controls
             InitializeComponent();
             TabModel = new TabModel(this, TabItemType.Tool) { Header = "Map Browser" };
             DataContext = MapLibraryModel.Build();
+        }
+
+        private void GroupListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            VisualTreeHelperEx.FindDescendantByType<ScrollViewer>(mapListView)?.ScrollToTop();
         }
     }
 }

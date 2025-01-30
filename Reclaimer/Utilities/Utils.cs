@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -107,6 +108,35 @@ namespace Reclaimer.Utilities
             }
 
             return instance;
+        }
+
+        /// <summary>
+        /// Gets the <see cref="DisplayAttribute"/> applied to a given enum value.
+        /// </summary>
+        /// <typeparam name="TEnum">The enum type.</typeparam>
+        /// <param name="enumValue">The enum value.</param>
+        public static DisplayAttribute GetEnumDisplay<TEnum>(this TEnum enumValue) where TEnum : struct, Enum
+        {
+            return GetEnumAttributes<TEnum, DisplayAttribute>(enumValue).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Gets the attributes of a given type applied to a given enum value.
+        /// </summary>
+        /// <typeparam name="TEnum">The type of enum.</typeparam>
+        /// <typeparam name="TAttribute">The type of attribute to find.</typeparam>
+        /// <param name="enumValue">The enum value.</param>
+        public static IEnumerable<TAttribute> GetEnumAttributes<TEnum, TAttribute>(this TEnum enumValue) where TEnum : struct, Enum where TAttribute : Attribute
+        {
+            foreach (var fi in typeof(TEnum).GetFields().Where(f => f.FieldType == typeof(TEnum)))
+            {
+                var field = (TEnum)fi.GetValue(null);
+                if (!field.Equals(enumValue))
+                    continue;
+
+                foreach (var attr in fi.GetCustomAttributes(typeof(TAttribute), false).OfType<TAttribute>())
+                    yield return attr;
+            }
         }
     }
 }

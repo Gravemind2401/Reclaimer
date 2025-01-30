@@ -29,7 +29,8 @@
         <ListView Grid.Column="0"
                   Style="{StaticResource Reclaimer.ListBoxStyle}"
                   ItemsSource="{Binding Source={StaticResource MapGroupSource}}"
-                  SelectedItem="{Binding SelectedGroup}">
+                  SelectedItem="{Binding SelectedGroup}"
+                  SelectionChanged="GroupListView_SelectionChanged">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Margin="0,0,0,5" />
@@ -52,7 +53,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <ListView Grid.Column="1"
+        <ListView x:Name="mapListView" Grid.Column="1"
                   Style="{StaticResource Reclaimer.ListBoxStyle}"
                   ItemsSource="{Binding Source={StaticResource MapListSource}}"
                   ScrollViewer.VerticalScrollBarVisibility="Visible"

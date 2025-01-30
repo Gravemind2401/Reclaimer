@@ -21,7 +21,7 @@ namespace Reclaimer.Plugins.MapBrowser
             var thumbnail = MccThumbnails?.LastOrDefault(s => !string.IsNullOrWhiteSpace(s));
             return thumbnail == null
                 ? null
-                : Path.Combine(MapScanner.ThumbnailCacheDirectory, $"{thumbnail}.png");
+                : Path.Combine(MapScanner.ThumbnailCacheDirectory, "MCC", $"{thumbnail}.png");
         }
 
         public static IEnumerable<MapInfoTemplate> EnumerateTemplates()

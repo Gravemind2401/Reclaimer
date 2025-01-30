@@ -61,7 +61,7 @@ namespace Reclaimer.Plugins.MapBrowser
             if (!File.Exists(sourceFile))
                 return;
 
-            var outputDir = ThumbnailCacheDirectory;
+            var outputDir = Path.Combine(ThumbnailCacheDirectory, "MCC");
             Directory.CreateDirectory(outputDir);
 
             var segments = new List<(int Address, int Size)>();
@@ -171,8 +171,16 @@ namespace Reclaimer.Plugins.MapBrowser
 
         public static IEnumerable<LinkedMapFile> ScanCustomDirectory(string directory)
         {
+            foreach (var cacheInfo in DiscoverMaps(directory))
+            {
+                DumpBlfThumbnail(cacheInfo);
+                yield return new LinkedMapFile(cacheInfo);
+            }
+        }
+
+        private static void DumpBlfThumbnail(CacheMetadata cacheInfo)
+        {
             //TODO
-            yield break;
         }
 
         private static IEnumerable<CacheMetadata> DiscoverMaps(string directory)
@@ -180,7 +188,7 @@ namespace Reclaimer.Plugins.MapBrowser
             var mapFiles = new DirectoryInfo(directory).EnumerateFiles("*.map", new EnumerationOptions { RecurseSubdirectories = true, MaxRecursionDepth = 3 });
             foreach (var mapFile in mapFiles)
             {
-                if (mapFile.Name is "bitmaps.map" or "sounds.map" or "loc.map" or "campaign.map" or "shared.map" or "single_player_shared.map")
+                if (mapFile.Name.ToLower() is "cheape.map" or "bitmaps.map" or "sounds.map" or "loc.map" or "campaign.map" or "shared.map" or "single_player_shared.map")
                     continue;
 
                 var meta = default(CacheMetadata);
@@ -191,7 +199,7 @@ namespace Reclaimer.Plugins.MapBrowser
                 }
                 catch { }
 
-                if (meta != null)
+                if (meta != default)
                     yield return meta;
             }
         }
