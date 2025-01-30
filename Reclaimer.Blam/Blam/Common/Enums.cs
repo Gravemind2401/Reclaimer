@@ -16,7 +16,7 @@ namespace Reclaimer.Blam.Common
 
     public enum BlamEngine
     {
-        Unknown = -1,
+        Unknown = 0,
 
         [Display(Name = "Halo CE")]
         Halo1,
@@ -42,6 +42,7 @@ namespace Reclaimer.Blam.Common
 
     public enum CachePlatform
     {
+        Unknown = 0,
         Xbox,
         Xbox360,
         XboxOne,
@@ -57,7 +58,7 @@ namespace Reclaimer.Blam.Common
 
     public enum CacheResourceCodec
     {
-        Unknown = -1,
+        Unknown = 0,
         Uncompressed, //default for Gen1/2
         Deflate, //default for Gen3+
         LZX,

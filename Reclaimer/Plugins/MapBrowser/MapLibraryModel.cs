@@ -23,7 +23,7 @@ namespace Reclaimer.Plugins.MapBrowser
         public static MapLibraryModel Build()
         {
             var templateData = MapInfoTemplate.EnumerateTemplates().ToLookup(m => m.Engine);
-            var allMaps = MapScanner.ReScan();
+            var allMaps = MapScanner.GetLinkedMaps();
 
             var mccGroups = allMaps["steam"]
                 .Where(m => !m.FromWorkshop)

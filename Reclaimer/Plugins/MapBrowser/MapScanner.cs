@@ -11,9 +11,24 @@ namespace Reclaimer.Plugins.MapBrowser
     {
         private const int SteamAppId = 976730;
 
-        public static string ThumbnailCacheDirectory => Path.Combine(Substrate.PluginsDirectory, "MapBrowser", "ThumbnailCache");
+        public static string PluginFilesDirectory => Path.Combine(Substrate.PluginsDirectory, "MapBrowser");
+        public static string ThumbnailCacheDirectory => Path.Combine(PluginFilesDirectory, "ThumbnailCache");
+        public static string MapsJsonPath => Path.Combine(PluginFilesDirectory, "LinkedMaps.json");
 
-        public static Dictionary<string, List<LinkedMapFile>> ReScan()
+        public static Dictionary<string, List<LinkedMapFile>> GetLinkedMaps()
+        {
+            Dictionary<string, List<LinkedMapFile>> allMaps = null;
+
+            if (File.Exists(MapsJsonPath))
+                allMaps = JsonConvert.DeserializeObject<Dictionary<string, List<LinkedMapFile>>>(File.ReadAllText(MapsJsonPath));
+
+            if (allMaps == null || allMaps.Count == 0)
+                allMaps = ScanForMaps();
+
+            return allMaps;
+        }
+
+        public static Dictionary<string, List<LinkedMapFile>> ScanForMaps()
         {
             var allMaps = new Dictionary<string, List<LinkedMapFile>>();
 
@@ -24,9 +39,20 @@ namespace Reclaimer.Plugins.MapBrowser
                     allMaps["steam"] = maps;
             }
 
-            var customDirs = new List<string>(); //TODO
+            var customDirs = MapBrowserPlugin.Settings.CustomFolders.Select(x => x.Directory);
             foreach (var dir in customDirs.Where(Directory.Exists))
                 allMaps[dir] = ScanCustomDirectory(dir).ToList();
+
+            var jsonSettings = new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore,
+                DefaultValueHandling = DefaultValueHandling.Ignore,
+                Converters = new[] { new Newtonsoft.Json.Converters.StringEnumConverter() }
+            };
+
+            Directory.CreateDirectory(PluginFilesDirectory);
+            File.WriteAllText(MapsJsonPath, JsonConvert.SerializeObject(allMaps, jsonSettings));
 
             return allMaps;
         }

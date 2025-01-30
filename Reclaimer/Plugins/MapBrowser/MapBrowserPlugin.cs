@@ -36,5 +36,17 @@ namespace Reclaimer.Plugins.MapBrowser
         [Editor(typeof(BrowseFolderEditor), typeof(BrowseFolderEditor))]
         [DisplayName("Steam Library Folder")]
         public string SteamLibraryFolder { get; set; }
+
+        [DisplayName("Additional Map Folders")]
+        public List<MapFolder> CustomFolders { get; set; }
+    }
+
+    internal sealed class MapFolder
+    {
+        [Editor(typeof(BrowseFolderEditor), typeof(BrowseFolderEditor))]
+        [DisplayName("Map Folder")]
+        public string Directory { get; set; }
+
+        public override string ToString() => Directory;
     }
 }
