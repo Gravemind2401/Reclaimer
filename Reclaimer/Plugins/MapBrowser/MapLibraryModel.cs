@@ -112,7 +112,7 @@ namespace Reclaimer.Plugins.MapBrowser
                             GroupName = template.GroupName,
                             DisplayName = template.DisplayName,
                             SortOrder = template.SortOrder,
-                            Thumbnail = template.MakeThumbnailPath()
+                            Thumbnail = template.MakeThumbnailPath(map)
                         });
                     }
                 }

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Reclaimer.Blam.Common;
 using Reclaimer.IO;
+using System.Buffers;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -180,7 +181,65 @@ namespace Reclaimer.Plugins.MapBrowser
 
         private static void DumpBlfThumbnail(CacheMetadata cacheInfo)
         {
-            //TODO
+            var fileInfo = new FileInfo(cacheInfo.FileName);
+            var imagesDir = new DirectoryInfo(Path.Combine(fileInfo.Directory.FullName, "images"));
+            if (!imagesDir.Exists)
+                return;
+
+            var outputDir = Path.Combine(ThumbnailCacheDirectory, cacheInfo.Engine.ToString());
+
+            var mapName = Path.GetFileNameWithoutExtension(fileInfo.Name);
+            if (cacheInfo.Engine == BlamEngine.Halo3)
+            {
+                if (int.TryParse(mapName[0..3], out var cnum))
+                    DumpBlf($"c_{cnum:D3}_sm.blf");
+                else
+                {
+                    //just try both
+                    DumpBlf($"m_{mapName}_sm.blf");
+                    DumpBlf($"dlc_{mapName}_sm.blf");
+                }
+            }
+            else if (cacheInfo.Engine == BlamEngine.Halo3ODST)
+            {
+                DumpBlf($"c_{mapName}_sm.blf");
+            }
+            else if (cacheInfo.Engine == BlamEngine.Halo4)
+            {
+                if (int.TryParse(mapName[1..4].Trim('_'), out var cnum))
+                    DumpBlf($"c_{cnum:D3}_sm.blf");
+            }
+
+            void DumpBlf(string name)
+            {
+                var blfInfo = new FileInfo(Path.Combine(imagesDir.FullName, name));
+                var outputFile = new FileInfo(Path.Combine(outputDir, $"{mapName}.png"));
+                if (outputFile.Exists || !blfInfo.Exists)
+                    return;
+
+                const int dataOffset = 68;
+                var data = ArrayPool<byte>.Shared.Rent((int)blfInfo.Length - dataOffset);
+
+                try
+                {
+                    Directory.CreateDirectory(outputDir);
+                    using (var fs = new FileStream(blfInfo.FullName, FileMode.Open, FileAccess.Read))
+                    {
+                        fs.Seek(dataOffset, SeekOrigin.Begin);
+                        fs.ReadAll(data);
+
+                        using (var ms = new MemoryStream(data))
+                        using (var image = System.Drawing.Image.FromStream(ms))
+                        using (var bitmap = new System.Drawing.Bitmap(image))
+                            bitmap.Save(outputFile.FullName, System.Drawing.Imaging.ImageFormat.Png);
+                    }
+                }
+                catch { }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(data);
+                }
+            }
         }
 
         private static IEnumerable<CacheMetadata> DiscoverMaps(string directory)

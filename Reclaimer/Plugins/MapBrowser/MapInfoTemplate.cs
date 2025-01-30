@@ -16,9 +16,19 @@ namespace Reclaimer.Plugins.MapBrowser
         public string GroupName { get; set; }
         public int SortOrder { get; set; }
 
-        public string MakeThumbnailPath()
+        public string MakeThumbnailPath(LinkedMapFile linkedMap)
         {
-            var thumbnail = MccThumbnails?.LastOrDefault(s => !string.IsNullOrWhiteSpace(s));
+            string thumbnail;
+
+            if (!linkedMap.FromSteam)
+            {
+                var mapName = Path.GetFileNameWithoutExtension(linkedMap.FilePath);
+                thumbnail = Path.Combine(MapScanner.ThumbnailCacheDirectory, linkedMap.Engine.ToString(), $"{mapName}.png");
+                if (File.Exists(thumbnail))
+                    return thumbnail;
+            }
+
+            thumbnail = MccThumbnails?.LastOrDefault(s => !string.IsNullOrWhiteSpace(s));
             return thumbnail == null
                 ? null
                 : Path.Combine(MapScanner.ThumbnailCacheDirectory, "MCC", $"{thumbnail}.png");

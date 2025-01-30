@@ -33,14 +33,14 @@
                   SelectionChanged="GroupListView_SelectionChanged">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Margin="0,0,0,5" />
+                    <StackPanel Margin="0,0,6,5" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Margin="5,3"
+                            <TextBlock Margin="6,3"
                                        FontSize="14" FontWeight="Bold"
                                        Text="{Binding Name}" />
                         </DataTemplate>
@@ -49,7 +49,7 @@
             </ListView.GroupStyle>
             <ListView.ItemTemplate>
                 <DataTemplate DataType="mb:MapGroupDisplayModel">
-                    <TextBlock Text="{Binding GroupName}" />
+                    <TextBlock Margin="2" Text="{Binding GroupName}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
