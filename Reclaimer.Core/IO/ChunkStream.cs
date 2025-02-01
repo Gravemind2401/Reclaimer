@@ -152,11 +152,11 @@ namespace Reclaimer.IO
         public override void Flush() => throw new NotSupportedException();
 
         protected abstract IList<ChunkLocator> ReadChunks();
-        protected abstract Stream CreateDecompressionStream(Stream sourceStream, bool leaveOpen, int compressedSize, int uncompressedSize);
+        protected abstract Stream CreateDecompressionStream(Stream sourceStream, bool leaveOpen, int? compressedSize, int uncompressedSize);
 
-        protected record struct ChunkLocator(int SourceAddress, int CompressedSize, int UncompressedSize);
+        protected record struct ChunkLocator(int SourceAddress, int? CompressedSize, int UncompressedSize);
 
-        private record struct ChunkAddressMapping(int SourceAddress, int CompressedSize, int DestAddress, int UncompressedSize)
+        private record struct ChunkAddressMapping(int SourceAddress, int? CompressedSize, int DestAddress, int UncompressedSize)
         {
             public readonly bool ContainsAddress(int address) => address >= DestAddress && address < DestAddress + UncompressedSize;
         }

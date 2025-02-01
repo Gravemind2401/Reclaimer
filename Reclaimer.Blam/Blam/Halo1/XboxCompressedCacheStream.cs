@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace Reclaimer.Blam.Halo1
 {
-    public class XboxCacheDeflateStream : ChunkStream
+    public class XboxCompressedCacheStream : ChunkStream
     {
         private static readonly ConditionalWeakTable<CacheFile, ChunkLocator[]> chunkTableCache = new();
 
@@ -13,7 +13,7 @@ namespace Reclaimer.Blam.Halo1
         private readonly int headerSize;
         private readonly int totalCompressedSize;
 
-        public XboxCacheDeflateStream(CacheFile cacheFile)
+        public XboxCompressedCacheStream(CacheFile cacheFile)
             : base(cacheFile.FileName)
         {
             cache = cacheFile;
@@ -21,7 +21,7 @@ namespace Reclaimer.Blam.Halo1
             totalCompressedSize = (int)new FileInfo(cacheFile.FileName).Length;
         }
 
-        public XboxCacheDeflateStream(CacheFile cacheFile, Stream baseStream)
+        public XboxCompressedCacheStream(CacheFile cacheFile, Stream baseStream)
             : base(baseStream)
         {
             cache = cacheFile;
@@ -38,7 +38,7 @@ namespace Reclaimer.Blam.Halo1
             var uncompressedDataSize = cache.Header.FileSize - headerSize;
 
             chunks = new ChunkLocator[2];
-            chunks[0] = new ChunkLocator(0, headerSize, headerSize);
+            chunks[0] = new ChunkLocator(0, null, headerSize);
             chunks[1] = new ChunkLocator(headerSize + 2, compressedDataSize, uncompressedDataSize);
 
             chunkTableCache.Add(cache, chunks);
@@ -46,11 +46,11 @@ namespace Reclaimer.Blam.Halo1
             return chunks;
         }
 
-        protected override Stream CreateDecompressionStream(Stream sourceStream, bool leaveOpen, int compressedSize, int uncompressedSize)
+        protected override Stream CreateDecompressionStream(Stream sourceStream, bool leaveOpen, int? compressedSize, int uncompressedSize)
         {
-            return Position < headerSize
-                ? sourceStream
-                : new DeflateStream(sourceStream, CompressionMode.Decompress, leaveOpen);
+            return compressedSize.HasValue
+                ? new DeflateStream(sourceStream, CompressionMode.Decompress, leaveOpen)
+                : sourceStream;
         }
     }
 }

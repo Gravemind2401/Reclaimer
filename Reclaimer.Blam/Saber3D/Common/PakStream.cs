@@ -68,7 +68,7 @@ namespace Reclaimer.Saber3D.Common
                     c.SourceAddress -= sizeof(int);
 
                     reader.Seek(c.SourceAddress, SeekOrigin.Begin);
-                    reader.Read(inBuffer, 0, c.CompressedSize);
+                    reader.Read(inBuffer, 0, c.CompressedSize.Value);
 
                     var uncompressedSize = bufferSize;
                     XCompress.DecompressLZX(inBuffer, outBuffer, ref uncompressedSize);
@@ -86,12 +86,12 @@ namespace Reclaimer.Saber3D.Common
             return chunks;
         }
 
-        protected override Stream CreateDecompressionStream(Stream sourceStream, bool leaveOpen, int compressedSize, int uncompressedSize)
+        protected override Stream CreateDecompressionStream(Stream sourceStream, bool leaveOpen, int? compressedSize, int uncompressedSize)
         {
             if (IsX360)
                 return new ZLibStream(sourceStream, CompressionMode.Decompress, leaveOpen);
 
-            var data = new byte[compressedSize];
+            var data = new byte[compressedSize.Value];
             sourceStream.ReadExactly(data, 0, data.Length);
             data = XCompress.DecompressLZX(data, ref uncompressedSize);
             return new MemoryStream(data);
