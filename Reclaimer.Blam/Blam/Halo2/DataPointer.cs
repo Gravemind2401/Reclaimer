@@ -1,6 +1,7 @@
 ﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
+using System.Buffers;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -43,9 +44,13 @@ namespace Reclaimer.Blam.Halo2
                 _ => cache.FileName,
             };
 
-            //workaround for local bitmaps in workshop maps
+            //workaround for workshop maps - bitmaps may be in a texture file or may be local
             if (cache.Metadata.IsMcc && !File.Exists(target))
-                target = cache.FileName;
+            {
+                target = Path.Combine(directory, @"..\halo2\h2_maps_win64_dx11", CacheFile.MccTextureFile);
+                if (!File.Exists(target))
+                    target = cache.FileName;
+            }
 
             using var fs = target == cache.FileName
                 ? cache.CreateStream()
@@ -61,22 +66,15 @@ namespace Reclaimer.Blam.Halo2
                 {
                     var count = reader.ReadInt32();
                     segments = reader.ReadArray<int>(count);
-
-                    //not negative = not compressed
-                    if (count == 1 && segments[0] < 0)
-                        return reader.ReadBytes(-segments[0]);
-
-                    reader.ReadInt16(); //zlib header?
                 }
 
-                return Deflate(fs, segments);
+                return DecompressBlocks(fs, segments);
             }
             //h2v has compressed bitmap resources
             else if (cache.CacheType == CacheType.Halo2Vista && tag.ClassCode == "bitm")
             {
-                //not sure what the first 2 bytes are, but theyre not part of the stream
-                fs.Seek(Address + 2, SeekOrigin.Begin);
-                return Deflate(fs, size);
+                fs.Seek(Address, SeekOrigin.Begin);
+                return DecompressBlocks(fs, size);
             }
             else
             {
@@ -87,21 +85,30 @@ namespace Reclaimer.Blam.Halo2
                 }
             }
 
-            static byte[] Deflate(Stream source, params int[] compressedBlockSizes)
+            static byte[] DecompressBlocks(Stream source, params int[] compressedBlockSizes)
             {
                 var origin = source.Position;
                 var offset = 0;
 
-                using (var ms = new MemoryStream(compressedBlockSizes.Sum()))
+                using (var ms = new MemoryStream(compressedBlockSizes.Sum(Math.Abs)))
                 {
                     foreach (var blockSize in compressedBlockSizes)
                     {
                         source.Seek(origin + offset, SeekOrigin.Begin);
-                        using (var ds = new DeflateStream(source, CompressionMode.Decompress, true))
+                        if (blockSize < 0) //negative = not compressed
                         {
-                            ds.CopyTo(ms);
-                            offset += blockSize;
+                            var actualSize = -blockSize;
+                            var buffer = ArrayPool<byte>.Shared.Rent(actualSize);
+                            source.ReadExactly(buffer, 0, actualSize);
+                            ms.Write(buffer, 0, actualSize);
+                            ArrayPool<byte>.Shared.Return(buffer);
                         }
+                        else
+                        {
+                            using (var ds = new ZLibStream(source, CompressionMode.Decompress, true))
+                                ds.CopyTo(ms);
+                        }
+                        offset += Math.Abs(blockSize);
                     }
                     return ms.ToArray();
                 }
