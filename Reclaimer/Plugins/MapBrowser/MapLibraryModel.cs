@@ -134,7 +134,7 @@ namespace Reclaimer.Plugins.MapBrowser
                     DisplayName = m.CustomName,
                     Thumbnail = m.Thumbnail
                 }).OrderBy(m => m.GroupName)
-                .ThenBy(m => m.DisplayName)
+                .ThenBy(m => m.FileName)
                 .ToList();
             }
 

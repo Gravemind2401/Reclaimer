@@ -12,6 +12,12 @@ namespace Reclaimer.Plugins.MapBrowser
         public override void Initialise() => Settings = LoadSettings<MapBrowserSettings>();
         public override void Suspend() => SaveSettings(Settings);
 
+        public override void PostInitialise()
+        {
+            if (Settings.ShowOnStartup)
+                OnMenuItemClick(null);
+        }
+
         public override IEnumerable<PluginMenuItem> GetMenuItems()
         {
             yield return new PluginMenuItem("", "View\\Map Browser", OnMenuItemClick);
@@ -39,6 +45,9 @@ namespace Reclaimer.Plugins.MapBrowser
 
         [DisplayName("Additional Map Folders")]
         public List<MapFolder> CustomFolders { get; set; }
+
+        [DisplayName("Show On Startup")]
+        public bool ShowOnStartup { get; set; }
     }
 
     internal sealed class MapFolder
