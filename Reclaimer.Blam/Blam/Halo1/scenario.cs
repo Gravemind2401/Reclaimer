@@ -63,8 +63,9 @@ namespace Reclaimer.Blam.Halo1
             {
                 try
                 {
-                    var provider = skyTag.ReadRenderModel() as IContentProvider<Model>;
-                    skyGroup.ChildObjects.Add(provider.GetContent());
+                    var model = (skyTag.ReadRenderModel() as IContentProvider<Model>)?.GetContent();
+                    if (model != null)
+                        skyGroup.ChildObjects.Add(model);
                 }
                 catch { }
             }
