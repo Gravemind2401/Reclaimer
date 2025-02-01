@@ -58,7 +58,7 @@ namespace Reclaimer.Plugins.MapBrowser
                 {
                     SortOrder = 2,
                     ParentGroup = g.Key.Platform.ToString(),
-                    GroupName = MakeGroupName(g.Key.Engine, g.Key.Flags, g.Key.IsCustomEdition),
+                    GroupName = MakeGroupName(g.Key.Engine, g.Key.Platform, g.Key.Flags, g.Key.IsCustomEdition),
                     Engine = g.Key.Engine,
                     Platform = g.Key.Platform,
                     Maps = ProcessTemplatedMaps(g, g.Key.Engine)
@@ -117,7 +117,8 @@ namespace Reclaimer.Plugins.MapBrowser
                     }
                 }
 
-                return mapList.OrderBy(m => Array.IndexOf(MapInfoTemplate.GroupSortOrder, m.GroupName))
+                return mapList.OrderBy(m => MapInfoTemplate.GroupSortOrder.FirstIndexWhere(s => m.GroupName.StartsWith(s)))
+                    .ThenBy(m => m.GroupName)
                     .ThenBy(m => m.SortOrder)
                     .ThenBy(m => m.FileName)
                     .ToList();
@@ -138,11 +139,14 @@ namespace Reclaimer.Plugins.MapBrowser
                 .ToList();
             }
 
-            static string MakeGroupName(BlamEngine engine, CacheMetadataFlags flags, bool isCustomEdition)
+            static string MakeGroupName(BlamEngine engine, CachePlatform platform, CacheMetadataFlags flags, bool isCustomEdition)
             {
                 var name = engine.GetEnumDisplay().Name;
                 if (isCustomEdition)
                     return $"{name} (Custom Edition)";
+
+                if (engine == BlamEngine.Halo2 && platform == CachePlatform.PC && !flags.HasFlag(CacheMetadataFlags.Mcc))
+                    return $"{name} Vista";
 
                 if (flags == default)
                     return name;

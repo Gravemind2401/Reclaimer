@@ -6,7 +6,7 @@ namespace Reclaimer.Plugins.MapBrowser
 {
     internal class MapInfoTemplate
     {
-        internal static readonly string[] GroupSortOrder = new[] { "Campaign", "Multiplayer", "Forge", "Firefight", "SpartanOpsLocations", "SpartanOpsMissions", "Other" };
+        internal static readonly string[] GroupSortOrder = new[] { "Campaign", "Multiplayer", "Forge", "Firefight", "Spartan Ops (Locations)", "Spartan Ops (Episode", "Other" };
 
         public string DisplayName { get; set; }
         public string FileName { get; set; }
@@ -50,7 +50,7 @@ namespace Reclaimer.Plugins.MapBrowser
                         mapInfo.Engine = engine;
                         mapInfo.GroupName = groupName;
 
-                        if (groupName == "Campaign")
+                        if (groupName == "Campaign" || groupName.StartsWith("Spartan Ops (Episode"))
                             mapInfo.SortOrder = index;
 
                         yield return mapInfo;

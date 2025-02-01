@@ -463,7 +463,7 @@
             },
             {
                 "DisplayName": "Chiron TL-34",
-                "FileName": "carousel.map",
+                "FileName": "putput.map",
                 "MccThumbnails": [
                     "H1MP_CHIRONTL34",
                     "H1MP_CHIRONTL34_LARGE"
@@ -551,7 +551,7 @@
             },
             {
                 "DisplayName": "Derelict",
-                "FileName": "putput.map",
+                "FileName": "carousel.map",
                 "MccThumbnails": [
                     "H1MP_DERELICT",
                     "H1MP_DERELICT_LARGE"
@@ -1351,7 +1351,7 @@
         "Firefight": [
             {
                 "DisplayName": "Crater (Night)",
-                "FileName": "",
+                "FileName": "h100.map",
                 "MccThumbnails": [
                     "",
                     "ODSTFIREFIGHT_CRATERNIGHT_LARGE"
@@ -1359,7 +1359,7 @@
             },
             {
                 "DisplayName": "Rally (Night)",
-                "FileName": "",
+                "FileName": "h100.map",
                 "MccThumbnails": [
                     "",
                     "ODSTFIREFIGHT_RALLYPOINTNIGHT_LARGE"
@@ -1367,7 +1367,7 @@
             },
             {
                 "DisplayName": "Crater",
-                "FileName": "",
+                "FileName": "sc100.map",
                 "MccThumbnails": [
                     "",
                     "ODSTFIREFIGHT_CRATERDAY_LARGE"
@@ -1383,7 +1383,7 @@
             },
             {
                 "DisplayName": "Rally Point",
-                "FileName": "",
+                "FileName": "sc120.map",
                 "MccThumbnails": [
                     "",
                     "ODSTFIREFIGHT_RALLYPOINTDAY_LARGE"
@@ -1391,7 +1391,7 @@
             },
             {
                 "DisplayName": "Security Zone",
-                "FileName": "",
+                "FileName": "sc130.map",
                 "MccThumbnails": [
                     "",
                     "ODSTFIREFIGHT_SECURITYZONE_LARGE"
@@ -1728,574 +1728,542 @@
                 ]
             }
         ],
-        "SpartanOpsLocations": [
+        "Spartan Ops (Locations)": [
             {
                 "DisplayName": "Infinity",
                 "FileName": "dlc01_engine.map",
-                "MccThumbnails": [
-                    "",
-                    ""
-                ]
-            },
-            {
-                "DisplayName": "Lockup",
-                "FileName": "dlc01_factory.map",
-                "MccThumbnails": [
-                    "",
-                    ""
-                ]
-            },
-            {
-                "DisplayName": "Control",
-                "FileName": "ff151_mezzanine.map",
-                "MccThumbnails": [
-                    "",
-                    ""
-                ]
-            },
-            {
-                "DisplayName": "Cyclone",
-                "FileName": "ff152_vortex.map",
-                "MccThumbnails": [
-                    "",
-                    ""
-                ]
-            },
-            {
-                "DisplayName": "Warrens",
-                "FileName": "ff153_caverns.map",
-                "MccThumbnails": [
-                    "",
-                    ""
-                ]
-            },
-            {
-                "DisplayName": "Apex",
-                "FileName": "ff154_hillside.map",
-                "MccThumbnails": [
-                    "",
-                    ""
-                ]
-            },
-            {
-                "DisplayName": "Harvester",
-                "FileName": "ff155_breach.map",
-                "MccThumbnails": [
-                    "",
-                    ""
-                ]
-            },
-            {
-                "DisplayName": "The Gate",
-                "FileName": "ff81_courtyard.map",
-                "MccThumbnails": [
-                    "",
-                    ""
-                ]
-            },
-            {
-                "DisplayName": "The Cauldron",
-                "FileName": "ff82_scurve.map",
-                "MccThumbnails": [
-                    "",
-                    ""
-                ]
-            },
-            {
-                "DisplayName": "The Refuge",
-                "FileName": "ff84_temple.map",
-                "MccThumbnails": [
-                    "",
-                    ""
-                ]
-            },
-            {
-                "DisplayName": "Sniper Alley",
-                "FileName": "ff86_sniperalley.map",
-                "MccThumbnails": [
-                    "",
-                    ""
-                ]
-            },
-            {
-                "DisplayName": "Quarry",
-                "FileName": "ff87_chopperbowl.map",
-                "MccThumbnails": [
-                    "",
-                    ""
-                ]
-            },
-            {
-                "DisplayName": "Fortress",
-                "FileName": "ff90_fortsw.map",
-                "MccThumbnails": [
-                    "",
-                    ""
-                ]
-            },
-            {
-                "DisplayName": "Galileo Base",
-                "FileName": "ff91_complex.map",
-                "MccThumbnails": [
-                    "",
-                    ""
-                ]
-            },
-            {
-                "DisplayName": "Two Giants",
-                "FileName": "ff92_valhalla.map",
-                "MccThumbnails": [
-                    "",
-                    ""
-                ]
-            }
-        ],
-        "SpartanOpsMissions": [
-            {
-                "Episode": "01 Departure",
-                "DisplayName": "Land Grab",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_01_MISSION_01",
-                    "SPARTANOPS_EPI_01_MISSION_01_LARGE"
-                ]
-            },
-            {
-                "Episode": "01 Departure",
-                "DisplayName": "Sniper Alley",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_01_MISSION_02",
-                    "SPARTANOPS_EPI_01_MISSION_02_LARGE"
-                ]
-            },
-            {
-                "Episode": "01 Departure",
-                "DisplayName": "The Challenge",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_01_MISSION_03",
-                    "SPARTANOPS_EPI_01_MISSION_03_LARGE"
-                ]
-            },
-            {
-                "Episode": "01 Departure",
-                "DisplayName": "Sacred",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_01_MISSION_04",
-                    "SPARTANOPS_EPI_01_MISSION_04_LARGE"
-                ]
-            },
-            {
-                "Episode": "01 Departure",
-                "DisplayName": "Core",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_01_MISSION_05",
-                    "SPARTANOPS_EPI_01_MISSION_05_LARGE"
-                ]
-            },
-            {
-                "Episode": "02 Artifact",
-                "DisplayName": "Clean Up",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_02_MISSION_01",
-                    "SPARTANOPS_EPI_02_MISSION_01_LARGE"
-                ]
-            },
-            {
-                "Episode": "02 Artifact",
-                "DisplayName": "For Science",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_02_MISSION_02",
-                    "SPARTANOPS_EPI_02_MISSION_02_LARGE"
-                ]
-            },
-            {
-                "Episode": "02 Artifact",
-                "DisplayName": "Hacksaw",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_02_MISSION_03",
-                    "SPARTANOPS_EPI_02_MISSION_03_LARGE"
-                ]
-            },
-            {
-                "Episode": "02 Artifact",
-                "DisplayName": "Pelican Down",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_02_MISSION_04",
-                    "SPARTANOPS_EPI_02_MISSION_04_LARGE"
-                ]
-            },
-            {
-                "Episode": "02 Artifact",
-                "DisplayName": "Gagarin",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_02_MISSION_05",
-                    "SPARTANOPS_EPI_02_MISSION_05_LARGE"
-                ]
-            },
-            {
-                "Episode": "03 Catherine",
-                "DisplayName": "The VIP",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_03_MISSION_01",
-                    "SPARTANOPS_EPI_03_MISSION_01_LARGE"
-                ]
-            },
-            {
-                "Episode": "03 Catherine",
-                "DisplayName": "Galileo",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_03_MISSION_02",
-                    "SPARTANOPS_EPI_03_MISSION_02_LARGE"
-                ]
-            },
-            {
-                "Episode": "03 Catherine",
-                "DisplayName": "Spartan Mountain",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_03_MISSION_03",
-                    "SPARTANOPS_EPI_03_MISSION_03_LARGE"
-                ]
-            },
-            {
-                "Episode": "03 Catherine",
-                "DisplayName": "Shootout In Valhalla",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_03_MISSION_04",
-                    "SPARTANOPS_EPI_03_MISSION_04_LARGE"
-                ]
-            },
-            {
-                "Episode": "03 Catherine",
-                "DisplayName": "Hunting Trip",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_03_MISSION_05",
-                    "SPARTANOPS_EPI_03_MISSION_05_LARGE"
-                ]
-            },
-            {
-                "Episode": "04 Didact's Hand",
-                "DisplayName": "Hairy Call",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_04_MISSION_01",
-                    "SPARTANOPS_EPI_04_MISSION_01_LARGE"
-                ]
-            },
-            {
-                "Episode": "04 Didact's Hand",
-                "DisplayName": "Rally Point",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_04_MISSION_02",
-                    "SPARTANOPS_EPI_04_MISSION_02_LARGE"
-                ]
-            },
-            {
-                "Episode": "04 Didact's Hand",
-                "DisplayName": "Random Transport",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_04_MISSION_03",
-                    "SPARTANOPS_EPI_04_MISSION_03_LARGE"
-                ]
-            },
-            {
-                "Episode": "04 Didact's Hand",
-                "DisplayName": "The Chase",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_04_MISSION_04",
-                    "SPARTANOPS_EPI_04_MISSION_04_LARGE"
-                ]
-            },
-            {
-                "Episode": "04 Didact's Hand",
-                "DisplayName": "The Didact's Gift",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_04_MISSION_05",
-                    "SPARTANOPS_EPI_04_MISSION_05_LARGE"
-                ]
-            },
-            {
-                "Episode": "05 Memento Mori",
-                "DisplayName": "Spartan Miller",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_05_MISSION_01",
-                    "SPARTANOPS_EPI_05_MISSION_01_LARGE"
-                ]
-            },
-            {
-                "Episode": "05 Memento Mori",
-                "DisplayName": "Nothing Can Go Wrong",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_05_MISSION_02",
-                    "SPARTANOPS_EPI_05_MISSION_02_LARGE"
-                ]
-            },
-            {
-                "Episode": "05 Memento Mori",
-                "DisplayName": "Everything Has Gone Wrong",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_05_MISSION_03",
-                    "SPARTANOPS_EPI_05_MISSION_03_LARGE"
-                ]
-            },
-            {
-                "Episode": "05 Memento Mori",
-                "DisplayName": "The Cauldron Base",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_05_MISSION_04",
-                    "SPARTANOPS_EPI_05_MISSION_04_LARGE"
-                ]
-            },
-            {
-                "Episode": "05 Memento Mori",
-                "DisplayName": "Spartan Thorne",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_05_MISSION_05",
-                    "SPARTANOPS_EPI_05_MISSION_05_LARGE"
-                ]
-            },
-            {
-                "Episode": "06 Scattered",
-                "DisplayName": "Escape Plan",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_06_MISSION_01",
-                    "SPARTANOPS_EPI_06_MISSION_01_LARGE"
-                ]
-            },
-            {
-                "Episode": "06 Scattered",
-                "DisplayName": "All The Secrets",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_06_MISSION_02",
-                    "SPARTANOPS_EPI_06_MISSION_02_LARGE"
-                ]
-            },
-            {
-                "Episode": "06 Scattered",
-                "DisplayName": "Need To Know",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_06_MISSION_03",
-                    "SPARTANOPS_EPI_06_MISSION_03_LARGE"
-                ]
-            },
-            {
-                "Episode": "06 Scattered",
-                "DisplayName": "Search And Destroy",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_06_MISSION_04",
-                    "SPARTANOPS_EPI_06_MISSION_04_LARGE"
-                ]
-            },
-            {
-                "Episode": "06 Scattered",
-                "DisplayName": "Switchback",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_06_MISSION_05",
-                    "SPARTANOPS_EPI_06_MISSION_05_LARGE"
-                ]
-            },
-            {
-                "Episode": "07 Invasion",
-                "DisplayName": "Backup",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_07_MISSION_01",
-                    "SPARTANOPS_EPI_07_MISSION_01_LARGE"
-                ]
-            },
-            {
-                "Episode": "07 Invasion",
-                "DisplayName": "Home Field",
-                "FileName": "",
                 "MccThumbnails": [
                     "SPARTANOPS_EPI_07_MISSION_02",
                     "SPARTANOPS_EPI_07_MISSION_02_LARGE"
                 ]
             },
             {
-                "Episode": "07 Invasion",
-                "DisplayName": "Engine Of Destruction",
-                "FileName": "",
+                "DisplayName": "Lockup",
+                "FileName": "dlc01_factory.map",
                 "MccThumbnails": [
-                    "SPARTANOPS_EPI_07_MISSION_03",
-                    "SPARTANOPS_EPI_07_MISSION_03_LARGE"
+                    "SPARTANOPS_EPI_06_MISSION_01",
+                    "SPARTANOPS_EPI_06_MISSION_01_LARGE"
                 ]
             },
             {
-                "Episode": "07 Invasion",
-                "DisplayName": "The Guns Of Infinity",
-                "FileName": "",
+                "DisplayName": "Control",
+                "FileName": "ff151_mezzanine.map",
                 "MccThumbnails": [
-                    "SPARTANOPS_EPI_07_MISSION_04",
-                    "SPARTANOPS_EPI_07_MISSION_04_LARGE"
+                    "SPARTANOPS_EPI_06_MISSION_02",
+                    "SPARTANOPS_EPI_06_MISSION_02_LARGE"
                 ]
             },
             {
-                "Episode": "07 Invasion",
-                "DisplayName": "Victory Lap",
-                "FileName": "",
+                "DisplayName": "Cyclone",
+                "FileName": "ff152_vortex.map",
                 "MccThumbnails": [
-                    "SPARTANOPS_EPI_07_MISSION_05",
-                    "SPARTANOPS_EPI_07_MISSION_05_LARGE"
+                    "SPARTANOPS_EPI_06_MISSION_04",
+                    "SPARTANOPS_EPI_06_MISSION_04_LARGE"
                 ]
             },
             {
-                "Episode": "08 Expendable",
-                "DisplayName": "Unfinished Business",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_08_MISSION_01",
-                    "SPARTANOPS_EPI_08_MISSION_01_LARGE"
-                ]
-            },
-            {
-                "Episode": "08 Expendable",
-                "DisplayName": "Majestic Rescue",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_08_MISSION_02",
-                    "SPARTANOPS_EPI_08_MISSION_02_LARGE"
-                ]
-            },
-            {
-                "Episode": "08 Expendable",
-                "DisplayName": "Lancer",
-                "FileName": "",
+                "DisplayName": "Warrens",
+                "FileName": "ff153_caverns.map",
                 "MccThumbnails": [
                     "SPARTANOPS_EPI_08_MISSION_03",
                     "SPARTANOPS_EPI_08_MISSION_03_LARGE"
                 ]
             },
             {
-                "Episode": "08 Expendable",
-                "DisplayName": "Crystal Ball",
-                "FileName": "",
+                "DisplayName": "Apex",
+                "FileName": "ff154_hillside.map",
                 "MccThumbnails": [
-                    "SPARTANOPS_EPI_08_MISSION_04",
-                    "SPARTANOPS_EPI_08_MISSION_04_LARGE"
+                    "SPARTANOPS_EPI_08_MISSION_01",
+                    "SPARTANOPS_EPI_08_MISSION_01_LARGE"
                 ]
             },
             {
-                "Episode": "08 Expendable",
-                "DisplayName": "Glassman",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_08_MISSION_05",
-                    "SPARTANOPS_EPI_08_MISSION_05_LARGE"
-                ]
-            },
-            {
-                "Episode": "09 Key",
-                "DisplayName": "The Search For Halsey",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_09_MISSION_01",
-                    "SPARTANOPS_EPI_09_MISSION_01_LARGE"
-                ]
-            },
-            {
-                "Episode": "09 Key",
-                "DisplayName": "Clean Up",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_09_MISSION_02",
-                    "SPARTANOPS_EPI_09_MISSION_02_LARGE"
-                ]
-            },
-            {
-                "Episode": "09 Key",
-                "DisplayName": "Science Mountain",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_09_MISSION_03",
-                    "SPARTANOPS_EPI_09_MISSION_03_LARGE"
-                ]
-            },
-            {
-                "Episode": "09 Key",
-                "DisplayName": "Revenge",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_09_MISSION_04",
-                    "SPARTANOPS_EPI_09_MISSION_04_LARGE"
-                ]
-            },
-            {
-                "Episode": "09 Key",
-                "DisplayName": "The Hammer",
-                "FileName": "",
-                "MccThumbnails": [
-                    "SPARTANOPS_EPI_09_MISSION_05",
-                    "SPARTANOPS_EPI_09_MISSION_05_LARGE"
-                ]
-            },
-            {
-                "Episode": "10 Exodus",
-                "DisplayName": "Artifact",
-                "FileName": "",
+                "DisplayName": "Harvester",
+                "FileName": "ff155_breach.map",
                 "MccThumbnails": [
                     "SPARTANOPS_EPI_10_MISSION_01",
                     "SPARTANOPS_EPI_10_MISSION_01_LARGE"
                 ]
             },
             {
-                "Episode": "10 Exodus",
+                "DisplayName": "The Gate",
+                "FileName": "ff81_courtyard.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_02_MISSION_01",
+                    "SPARTANOPS_EPI_02_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Cauldron",
+                "FileName": "ff82_scurve.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_02_MISSION_02",
+                    "SPARTANOPS_EPI_02_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Refuge",
+                "FileName": "ff84_temple.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_04",
+                    "SPARTANOPS_EPI_01_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Sniper Alley",
+                "FileName": "ff86_sniperalley.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_02",
+                    "SPARTANOPS_EPI_01_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Quarry",
+                "FileName": "ff87_chopperbowl.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_01",
+                    "SPARTANOPS_EPI_01_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Fortress",
+                "FileName": "ff90_fortsw.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_03",
+                    "SPARTANOPS_EPI_01_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Galileo Base",
+                "FileName": "ff91_complex.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_03_MISSION_02",
+                    "SPARTANOPS_EPI_03_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Two Giants",
+                "FileName": "ff92_valhalla.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_03_MISSION_03",
+                    "SPARTANOPS_EPI_03_MISSION_03_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 01: Departure)": [
+            {
+                "DisplayName": "Land Grab",
+                "FileName": "ff87_chopperbowl.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_01",
+                    "SPARTANOPS_EPI_01_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Sniper Alley",
+                "FileName": "ff86_sniperalley.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_02",
+                    "SPARTANOPS_EPI_01_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Challenge",
+                "FileName": "ff90_fortsw.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_03",
+                    "SPARTANOPS_EPI_01_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Sacred",
+                "FileName": "ff84_temple.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_04",
+                    "SPARTANOPS_EPI_01_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Core",
+                "FileName": "ff82_scurve.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_05",
+                    "SPARTANOPS_EPI_01_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 02: Artifact)": [
+            {
+                "DisplayName": "Clean Up",
+                "FileName": "ff81_courtyard.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_02_MISSION_01",
+                    "SPARTANOPS_EPI_02_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "For Science",
+                "FileName": "ff82_scurve.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_02_MISSION_02",
+                    "SPARTANOPS_EPI_02_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Hacksaw",
+                "FileName": "ff90_fortsw.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_02_MISSION_03",
+                    "SPARTANOPS_EPI_02_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Pelican Down",
+                "FileName": "ff86_sniperalley.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_02_MISSION_04",
+                    "SPARTANOPS_EPI_02_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Gagarin",
+                "FileName": "ff84_temple.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_02_MISSION_05",
+                    "SPARTANOPS_EPI_02_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 03: Catherine)": [
+            {
+                "DisplayName": "The VIP",
+                "FileName": "ff87_chopperbowl.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_03_MISSION_01",
+                    "SPARTANOPS_EPI_03_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Galileo",
+                "FileName": "ff91_complex.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_03_MISSION_02",
+                    "SPARTANOPS_EPI_03_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Spartan Mountain",
+                "FileName": "ff92_valhalla.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_03_MISSION_03",
+                    "SPARTANOPS_EPI_03_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Shootout In Valhalla",
+                "FileName": "ff92_valhalla.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_03_MISSION_04",
+                    "SPARTANOPS_EPI_03_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Hunting Trip",
+                "FileName": "ff81_courtyard.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_03_MISSION_05",
+                    "SPARTANOPS_EPI_03_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 04: Didact's Hand)": [
+            {
+                "DisplayName": "Hairy Call",
+                "FileName": "ff86_sniperalley.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_04_MISSION_01",
+                    "SPARTANOPS_EPI_04_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Rally Point",
+                "FileName": "ff92_valhalla.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_04_MISSION_02",
+                    "SPARTANOPS_EPI_04_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Random Transport",
+                "FileName": "ff90_fortsw.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_04_MISSION_03",
+                    "SPARTANOPS_EPI_04_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Chase",
+                "FileName": "ff82_scurve.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_04_MISSION_04",
+                    "SPARTANOPS_EPI_04_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Didact's Gift",
+                "FileName": "ff91_complex.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_04_MISSION_05",
+                    "SPARTANOPS_EPI_04_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 05: Memento Mori)": [
+            {
+                "DisplayName": "Spartan Miller",
+                "FileName": "ff81_courtyard.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_05_MISSION_01",
+                    "SPARTANOPS_EPI_05_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Nothing Can Go Wrong",
+                "FileName": "ff84_temple.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_05_MISSION_02",
+                    "SPARTANOPS_EPI_05_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Everything Has Gone Wrong",
+                "FileName": "ff84_temple.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_05_MISSION_03",
+                    "SPARTANOPS_EPI_05_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Cauldron Base",
+                "FileName": "ff82_scurve.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_05_MISSION_04",
+                    "SPARTANOPS_EPI_05_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Spartan Thorne",
+                "FileName": "ff87_chopperbowl.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_05_MISSION_05",
+                    "SPARTANOPS_EPI_05_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 06: Scattered)": [
+            {
+                "DisplayName": "Escape Plan",
+                "FileName": "dlc01_factory.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_06_MISSION_01",
+                    "SPARTANOPS_EPI_06_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "All The Secrets",
+                "FileName": "ff151_mezzanine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_06_MISSION_02",
+                    "SPARTANOPS_EPI_06_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Need To Know",
+                "FileName": "ff153_caverns.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_06_MISSION_03",
+                    "SPARTANOPS_EPI_06_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Search And Destroy",
+                "FileName": "ff152_vortex.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_06_MISSION_04",
+                    "SPARTANOPS_EPI_06_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Switchback",
+                "FileName": "ff155_breach.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_06_MISSION_05",
+                    "SPARTANOPS_EPI_06_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 07: Invasion)": [
+            {
+                "DisplayName": "Backup",
+                "FileName": "ff154_hillside.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_07_MISSION_01",
+                    "SPARTANOPS_EPI_07_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Home Field",
+                "FileName": "dlc01_engine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_07_MISSION_02",
+                    "SPARTANOPS_EPI_07_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Engine Of Destruction",
+                "FileName": "dlc01_engine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_07_MISSION_03",
+                    "SPARTANOPS_EPI_07_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Guns Of Infinity",
+                "FileName": "dlc01_engine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_07_MISSION_04",
+                    "SPARTANOPS_EPI_07_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Victory Lap",
+                "FileName": "dlc01_engine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_07_MISSION_05",
+                    "SPARTANOPS_EPI_07_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 08: Expendable)": [
+            {
+                "DisplayName": "Unfinished Business",
+                "FileName": "ff154_hillside.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_08_MISSION_01",
+                    "SPARTANOPS_EPI_08_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Majestic Rescue",
+                "FileName": "ff152_vortex.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_08_MISSION_02",
+                    "SPARTANOPS_EPI_08_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Lancer",
+                "FileName": "ff153_caverns.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_08_MISSION_03",
+                    "SPARTANOPS_EPI_08_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Crystal Ball",
+                "FileName": "dlc01_factory.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_08_MISSION_04",
+                    "SPARTANOPS_EPI_08_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Glassman",
+                "FileName": "ff151_mezzanine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_08_MISSION_05",
+                    "SPARTANOPS_EPI_08_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 09: Key)": [
+            {
+                "DisplayName": "The Search For Halsey",
+                "FileName": "ff152_vortex.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_09_MISSION_01",
+                    "SPARTANOPS_EPI_09_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Clean Up",
+                "FileName": "ff151_mezzanine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_09_MISSION_02",
+                    "SPARTANOPS_EPI_09_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Science Mountain",
+                "FileName": "ff154_hillside.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_09_MISSION_03",
+                    "SPARTANOPS_EPI_09_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Revenge",
+                "FileName": "dlc01_factory.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_09_MISSION_04",
+                    "SPARTANOPS_EPI_09_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Hammer",
+                "FileName": "dlc01_factory.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_09_MISSION_05",
+                    "SPARTANOPS_EPI_09_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 10: Exodus)": [
+            {
+                "DisplayName": "Artifact",
+                "FileName": "ff155_breach.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_10_MISSION_01",
+                    "SPARTANOPS_EPI_10_MISSION_01_LARGE"
+                ]
+            },
+            {
                 "DisplayName": "In One Way",
-                "FileName": "",
+                "FileName": "ff153_caverns.map",
                 "MccThumbnails": [
                     "SPARTANOPS_EPI_10_MISSION_02",
                     "SPARTANOPS_EPI_10_MISSION_02_LARGE"
                 ]
             },
             {
-                "Episode": "10 Exodus",
                 "DisplayName": "Seize The Power",
-                "FileName": "",
+                "FileName": "ff154_hillside.map",
                 "MccThumbnails": [
                     "SPARTANOPS_EPI_10_MISSION_03",
                     "SPARTANOPS_EPI_10_MISSION_03_LARGE"
                 ]
             },
             {
-                "Episode": "10 Exodus",
                 "DisplayName": "Out The Other",
-                "FileName": "",
+                "FileName": "ff153_caverns.map",
                 "MccThumbnails": [
                     "SPARTANOPS_EPI_10_MISSION_04",
                     "SPARTANOPS_EPI_10_MISSION_04_LARGE"
                 ]
             },
             {
-                "Episode": "10 Exodus",
                 "DisplayName": "One Last Time",
-                "FileName": "",
+                "FileName": "ff155_breach.map",
                 "MccThumbnails": [
                     "SPARTANOPS_EPI_10_MISSION_05",
                     "SPARTANOPS_EPI_10_MISSION_05_LARGE"
