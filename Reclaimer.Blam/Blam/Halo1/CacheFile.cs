@@ -69,8 +69,8 @@ namespace Reclaimer.Blam.Halo1
 
         internal DependencyReader CreateBitmapsReader()
         {
-            var folder = Directory.GetParent(FileName).FullName;
-            var bitmapsMap = Path.Combine(folder, BitmapsMap);
+            var bitmapsMap = BlamUtils.FindResourceFile(this, BitmapsMap)
+                ?? throw new FileNotFoundException($"Could not find {BitmapsMap}");
 
             var fs = (Stream)new FileStream(bitmapsMap, FileMode.Open, FileAccess.Read);
             var reader = new DependencyReader(fs, ByteOrder);

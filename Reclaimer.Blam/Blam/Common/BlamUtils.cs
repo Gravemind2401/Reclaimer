@@ -1,4 +1,6 @@
 ﻿using Reclaimer.Geometry;
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
@@ -64,6 +66,66 @@ namespace Reclaimer.Blam.Common
             }
 
             return new IndexBuffer(buffer, indexType) { Layout = indexFormat };
+        }
+
+        private static readonly ConditionalWeakTable<ICacheFile, string> resourceDirectoryCache = new();
+        public static string FindResourceFile(ICacheFile source, string targetName)
+        {
+            //TODO: find examples of workshop maps that make use of shared files, for engines other than Halo1,
+            //then update the resource code for those engines to use this function
+
+            lock (resourceDirectoryCache)
+            {
+                //this assumes all resource files are in the same directory
+                if (resourceDirectoryCache.TryGetValue(source, out var targetDir))
+                    return Path.Combine(targetDir, targetName);
+
+                //test for local resources first - this should be the case for all standard maps
+                var sourceDir = Path.GetDirectoryName(source.FileName);
+                var testPath = Path.Combine(sourceDir, targetName);
+                if (File.Exists(testPath))
+                    return SetResult(testPath);
+
+                //check if this is a workshop map
+                testPath = Path.Combine(sourceDir, "..", "ModInfo.json");
+                if (!File.Exists(testPath))
+                    return SetResult(null); //not MCC; give up
+
+                var steamAppsPath = Path.GetFullPath(Path.Combine(sourceDir, @"..\..\..\..\.."));
+                testPath = Path.Combine(steamAppsPath, "appmanifest_976730.acf");
+                if (!File.Exists(testPath))
+                    return SetResult(null); //leftover workshop files?
+
+                //find the MCC install directory
+                var manifestContent = File.ReadAllText(testPath);
+                var match = Regex.Match(manifestContent, @"\t""installdir""\t\t""([^""]+)""");
+                if (!match.Success)
+                    return SetResult(null);
+
+                //get the relative path to the shared maps folder, depending on the engine
+                var installDir = match.Groups[1].Value;
+                var mapsDir = source.Metadata.Game switch
+                {
+                    HaloGame.Halo1 => @"halo1\maps\custom_edition",
+                    HaloGame.Halo2 => @"halo2\h2_maps_win64_dx11",
+                    HaloGame.Halo3 => @"halo3\maps",
+                    HaloGame.Halo3ODST => @"halo3odst\maps",
+                    HaloGame.Halo4 => @"halo4\maps",
+                    HaloGame.HaloReach => @"haloreach\maps",
+                    HaloGame.Halo2X => @"groundhog\maps",
+                    _ => throw new NotSupportedException()
+                };
+
+                testPath = Path.Combine(steamAppsPath, "common", installDir, mapsDir, targetName);
+                return SetResult(File.Exists(testPath) ? testPath : null);
+            }
+
+            string SetResult(string result)
+            {
+                var dir = string.IsNullOrEmpty(result) ? result : Path.GetDirectoryName(result);
+                resourceDirectoryCache.AddOrUpdate(source, dir);
+                return result;
+            }
         }
     }
 }

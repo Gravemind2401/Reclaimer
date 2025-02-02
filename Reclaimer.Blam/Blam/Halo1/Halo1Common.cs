@@ -145,15 +145,22 @@ namespace Reclaimer.Blam.Halo1
                 if (bitmapTag == null)
                     return null;
 
-                var texture = new Texture
+                try
                 {
-                    Id = bitmapTag.Id,
-                    ContentProvider = bitmapTag.ReadMetadata<bitmap>()
-                };
+                    var texture = new Texture
+                    {
+                        Id = bitmapTag.Id,
+                        ContentProvider = bitmapTag.ReadMetadata<bitmap>()
+                    };
 
-                texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, bitmapTag.TagName);
+                    texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, bitmapTag.TagName);
 
-                return texture;
+                    return texture;
+                }
+                catch
+                {
+                    return null;
+                }
             }
 
             TextureMapping AppendTextureMapping(IIndexItem bitmapTag, string usage)
