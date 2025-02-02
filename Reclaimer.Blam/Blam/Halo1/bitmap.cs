@@ -54,7 +54,7 @@ namespace Reclaimer.Blam.Halo1
             //Xbox maps and player-made CE maps use internal bitmap resources
             if (Cache.CacheType == CacheType.Halo1Xbox
                 || (Cache.CacheType == CacheType.Halo1CE && Item.MetaPointer.Address > 0 && !submap.Flags.HasFlag(BitmapFlags.External))
-                || (Cache.CacheType == CacheType.MccHalo1 && (submap.Flags is BitmapFlags.MccInternal1 or BitmapFlags.MccInternal2)))
+                || (Cache.CacheType == CacheType.MccHalo1 && submap.Flags.HasFlag(BitmapFlags.MccInternal)))
                 bitmapSource = Cache.FileName;
 
             byte[] data;
@@ -75,6 +75,8 @@ namespace Reclaimer.Blam.Halo1
                 for (var i = 0; i < indices.Length; i++)
                     Array.Copy(Properties.Resources.Halo1BumpPalette, indices[i] * 4, data, i * 4, 4);
             }
+            else if (Cache.Metadata.IsMcc && format == TextureFormat.P8)
+                format = TextureFormat.BC7_UNorm;
 
             var type = submap.BitmapType == TextureType.CubeMap ? submap.BitmapType : TextureType.Texture2D;
             var props = new BitmapProperties(submap.Width, submap.Height, format, type)
@@ -179,9 +181,8 @@ namespace Reclaimer.Blam.Halo1
         Swizzled = 8,
         External = 256,
 
-        //hack, but these combinations dont seem to be used on any external bitmaps
-        MccInternal1 = 131,
-        MccInternal2 = 641
+        //not sure if correct but this doesnt seem to be used on any external bitmaps
+        MccInternal = 128
     }
 
     public enum TextureType : short
@@ -217,6 +218,9 @@ namespace Reclaimer.Blam.Halo1
         ARGBFP32 = 19,
         RGBFP32 = 20,
         RGBFP16 = 21,
-        U8V8 = 22
+        U8V8 = 22,
+
+        //In MCC, P8 means BC7
+        BC7_UNorm = ~P8
     }
 }
