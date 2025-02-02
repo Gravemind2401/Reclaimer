@@ -39,6 +39,9 @@ namespace Reclaimer.Controls
 
             Substrate.HandlePhysicalFile(model.FilePath);
             mapListView.SelectedItem = null;
+
+            if (MapBrowserPlugin.Settings.CloseAfterSelection)
+                TabModel.Close();
         }
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)

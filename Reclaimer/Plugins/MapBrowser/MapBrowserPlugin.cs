@@ -48,6 +48,9 @@ namespace Reclaimer.Plugins.MapBrowser
 
         [DisplayName("Show On Startup")]
         public bool ShowOnStartup { get; set; }
+
+        [DisplayName("Close After Selecting Map")]
+        public bool CloseAfterSelection { get; set; }
     }
 
     internal sealed class MapFolder
