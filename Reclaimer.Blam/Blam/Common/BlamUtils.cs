@@ -112,15 +112,15 @@ namespace Reclaimer.Blam.Common
 
                 //get the relative path to the shared maps folder, depending on the engine
                 var installDir = match.Groups[1].Value;
-                var mapsDir = source.Metadata.Game switch
+                var mapsDir = source.Metadata.Engine switch
                 {
-                    HaloGame.Halo1 => @"halo1\maps\custom_edition",
-                    HaloGame.Halo2 => @"halo2\h2_maps_win64_dx11",
-                    HaloGame.Halo3 => @"halo3\maps",
-                    HaloGame.Halo3ODST => @"halo3odst\maps",
-                    HaloGame.Halo4 => @"halo4\maps",
-                    HaloGame.HaloReach => @"haloreach\maps",
-                    HaloGame.Halo2X => @"groundhog\maps",
+                    BlamEngine.Halo1 => @"halo1\maps\custom_edition",
+                    BlamEngine.Halo2 => @"halo2\h2_maps_win64_dx11",
+                    BlamEngine.Halo3 => @"halo3\maps",
+                    BlamEngine.Halo3ODST => @"halo3odst\maps",
+                    BlamEngine.Halo4 => @"halo4\maps",
+                    BlamEngine.HaloReach => @"haloreach\maps",
+                    BlamEngine.Halo2X => @"groundhog\maps",
                     _ => throw new NotSupportedException()
                 };
 

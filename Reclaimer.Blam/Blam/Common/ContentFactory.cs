@@ -69,18 +69,18 @@ namespace Reclaimer.Blam.Common
 
             try
             {
-                var gameType = item.CacheFile.Metadata.Game;
+                var engineType = item.CacheFile.Metadata.Engine;
                 var cacheType = item.CacheFile.CacheType;
 
-                content = gameType switch
+                content = engineType switch
                 {
-                    HaloGame.Halo1 when cacheType != CacheType.Halo1AE => item.ReadMetadata<Halo1.bitmap>(),
-                    HaloGame.Halo2 => item.ReadMetadata<Halo2.bitmap>(),
-                    HaloGame.Halo3 => item.ReadMetadata<Halo3.bitmap>(),
-                    HaloGame.Halo3ODST => item.ReadMetadata<Halo3.bitmap>(),
-                    HaloGame.HaloReach => item.ReadMetadata<HaloReach.bitmap>(),
-                    HaloGame.Halo4 => item.ReadMetadata<Halo4.bitmap>(),
-                    HaloGame.Halo2X => item.ReadMetadata<Halo4.bitmap>(),
+                    BlamEngine.Halo1 when cacheType != CacheType.Halo1AE => item.ReadMetadata<Halo1.bitmap>(),
+                    BlamEngine.Halo2 => item.ReadMetadata<Halo2.bitmap>(),
+                    BlamEngine.Halo3 => item.ReadMetadata<Halo3.bitmap>(),
+                    BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.bitmap>(),
+                    BlamEngine.HaloReach => item.ReadMetadata<HaloReach.bitmap>(),
+                    BlamEngine.Halo4 => item.ReadMetadata<Halo4.bitmap>(),
+                    BlamEngine.Halo2X => item.ReadMetadata<Halo4.bitmap>(),
                     _ => null
                 };
 
@@ -101,49 +101,49 @@ namespace Reclaimer.Blam.Common
 
             try
             {
-                var gameType = item.CacheFile.Metadata.Game;
+                var engineType = item.CacheFile.Metadata.Engine;
                 var cacheType = item.CacheFile.CacheType;
 
                 if (item.ClassCode is gbxmodel or render_model)
                 {
-                    content = gameType switch
+                    content = engineType switch
                     {
-                        HaloGame.Halo1 => item.ReadMetadata<Halo1.gbxmodel>(),
-                        HaloGame.Halo2 when cacheType == CacheType.Halo2Beta => item.ReadMetadata<Halo2Beta.render_model>(),
-                        HaloGame.Halo2 => item.ReadMetadata<Halo2.render_model>(),
-                        HaloGame.Halo3 => item.ReadMetadata<Halo3.render_model>(),
-                        HaloGame.Halo3ODST => item.ReadMetadata<Halo3.render_model>(),
-                        HaloGame.HaloReach => item.ReadMetadata<HaloReach.render_model>(),
-                        HaloGame.Halo4 => item.ReadMetadata<Halo4.render_model>(),
-                        HaloGame.Halo2X => item.ReadMetadata<Halo4.render_model>(),
+                        BlamEngine.Halo1 => item.ReadMetadata<Halo1.gbxmodel>(),
+                        BlamEngine.Halo2 when cacheType == CacheType.Halo2Beta => item.ReadMetadata<Halo2Beta.render_model>(),
+                        BlamEngine.Halo2 => item.ReadMetadata<Halo2.render_model>(),
+                        BlamEngine.Halo3 => item.ReadMetadata<Halo3.render_model>(),
+                        BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.render_model>(),
+                        BlamEngine.HaloReach => item.ReadMetadata<HaloReach.render_model>(),
+                        BlamEngine.Halo4 => item.ReadMetadata<Halo4.render_model>(),
+                        BlamEngine.Halo2X => item.ReadMetadata<Halo4.render_model>(),
                         _ => null
                     };
                 }
                 else if (item.ClassCode == scenario_structure_bsp)
                 {
-                    content = gameType switch
+                    content = engineType switch
                     {
-                        HaloGame.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE or CacheType.MccHalo1 => item.ReadMetadata<Halo1.scenario_structure_bsp>(),
-                        HaloGame.Halo2 when cacheType >= CacheType.Halo2Xbox => item.ReadMetadata<Halo2.scenario_structure_bsp>(),
-                        HaloGame.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
-                        HaloGame.Halo3ODST => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
-                        HaloGame.HaloReach => item.ReadMetadata<HaloReach.scenario_structure_bsp>(),
-                        HaloGame.Halo4 => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
-                        HaloGame.Halo2X => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
+                        BlamEngine.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE or CacheType.MccHalo1 => item.ReadMetadata<Halo1.scenario_structure_bsp>(),
+                        BlamEngine.Halo2 when cacheType >= CacheType.Halo2Xbox => item.ReadMetadata<Halo2.scenario_structure_bsp>(),
+                        BlamEngine.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
+                        BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
+                        BlamEngine.HaloReach => item.ReadMetadata<HaloReach.scenario_structure_bsp>(),
+                        BlamEngine.Halo4 => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
+                        BlamEngine.Halo2X => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
                         _ => null
                     };
                 }
                 else if (item.ClassCode == scenario)
                 {
-                    content = gameType switch
+                    content = engineType switch
                     {
-                        HaloGame.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE or CacheType.MccHalo1 => item.ReadMetadata<Halo1.scenario>(),
-                        HaloGame.Halo2 when cacheType >= CacheType.Halo2Xbox => item.ReadMetadata<Halo2.scenario>(),
-                        HaloGame.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario>(),
-                        HaloGame.Halo3ODST => item.ReadMetadata<Halo3.scenario>(),
-                        HaloGame.HaloReach => item.ReadMetadata<HaloReach.scenario>(),
-                        HaloGame.Halo4 => item.ReadMetadata<Halo4.scenario>(),
-                        HaloGame.Halo2X => item.ReadMetadata<Halo4.scenario>(),
+                        BlamEngine.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE or CacheType.MccHalo1 => item.ReadMetadata<Halo1.scenario>(),
+                        BlamEngine.Halo2 when cacheType >= CacheType.Halo2Xbox => item.ReadMetadata<Halo2.scenario>(),
+                        BlamEngine.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario>(),
+                        BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.scenario>(),
+                        BlamEngine.HaloReach => item.ReadMetadata<HaloReach.scenario>(),
+                        BlamEngine.Halo4 => item.ReadMetadata<Halo4.scenario>(),
+                        BlamEngine.Halo2X => item.ReadMetadata<Halo4.scenario>(),
                         _ => null
                     };
                 }

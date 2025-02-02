@@ -88,8 +88,8 @@ namespace Reclaimer.Blam.Halo3
             uint GetDataTableAddress(ICacheFile cache, EndianReader reader)
             {
                 //latest mcc
-                if ((cache.Metadata.Game == HaloGame.Halo3 && cache.CacheType >= CacheType.MccHalo3U6)
-                    || (cache.Metadata.Game == HaloGame.Halo3ODST && cache.CacheType >= CacheType.MccHalo3ODSTU3))
+                if ((cache.Metadata.Engine == BlamEngine.Halo3 && cache.CacheType >= CacheType.MccHalo3U6)
+                    || (cache.Metadata.Engine == BlamEngine.Halo3ODST && cache.CacheType >= CacheType.MccHalo3ODSTU3))
                 {
                     if (page.CacheIndex >= 0)
                         return 16384; //header size
@@ -101,8 +101,8 @@ namespace Reclaimer.Blam.Halo3
                 }
 
                 //mcc - H3 U6+, ODST U3+
-                if ((cache.Metadata.Game == HaloGame.Halo3 && cache.CacheType >= CacheType.MccHalo3F6)
-                    || (cache.Metadata.Game == HaloGame.Halo3ODST && cache.CacheType >= CacheType.MccHalo3ODSTF3))
+                if ((cache.Metadata.Engine == BlamEngine.Halo3 && cache.CacheType >= CacheType.MccHalo3F6)
+                    || (cache.Metadata.Engine == BlamEngine.Halo3ODST && cache.CacheType >= CacheType.MccHalo3ODSTF3))
                 {
                     if (page.CacheIndex >= 0)
                         return 16384; //header size

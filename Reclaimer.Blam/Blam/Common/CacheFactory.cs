@@ -76,35 +76,35 @@ namespace Reclaimer.Blam.Common
             Exceptions.ThrowIfFileNotFound(fileName);
 
             var args = CacheArgs.FromFile(fileName);
-            var (game, cacheType, isMcc) = (args.Metadata?.Game ?? HaloGame.Unknown, args.Metadata?.CacheType ?? CacheType.Unknown, args.Metadata?.IsMcc ?? false);
+            var (engine, cacheType, isMcc) = (args.Metadata?.Engine ?? BlamEngine.Unknown, args.Metadata?.CacheType ?? CacheType.Unknown, args.Metadata?.IsMcc ?? false);
 
-            return game switch
+            return engine switch
             {
-                HaloGame.Halo1 => new Halo1.CacheFile(args),
+                BlamEngine.Halo1 => new Halo1.CacheFile(args),
 
-                HaloGame.Halo2 when cacheType == CacheType.Halo2Beta => new Halo2Beta.CacheFile(args),
-                HaloGame.Halo2 when cacheType == CacheType.MccHalo2 => throw Exceptions.UnknownMapFile(fileName),
-                HaloGame.Halo2 => new Halo2.CacheFile(args),
+                BlamEngine.Halo2 when cacheType == CacheType.Halo2Beta => new Halo2Beta.CacheFile(args),
+                BlamEngine.Halo2 when cacheType == CacheType.MccHalo2 => throw Exceptions.UnknownMapFile(fileName),
+                BlamEngine.Halo2 => new Halo2.CacheFile(args),
 
-                HaloGame.Halo3 when cacheType <= CacheType.Halo3Delta => new Halo3Alpha.CacheFile(args),
-                HaloGame.Halo3 when !isMcc => new Halo3.CacheFile(args),
-                HaloGame.Halo3 when cacheType < CacheType.MccHalo3F6 => new MccHalo3.CacheFile(args),
-                HaloGame.Halo3 => new MccHalo3.CacheFileU6(args),
+                BlamEngine.Halo3 when cacheType <= CacheType.Halo3Delta => new Halo3Alpha.CacheFile(args),
+                BlamEngine.Halo3 when !isMcc => new Halo3.CacheFile(args),
+                BlamEngine.Halo3 when cacheType < CacheType.MccHalo3F6 => new MccHalo3.CacheFile(args),
+                BlamEngine.Halo3 => new MccHalo3.CacheFileU6(args),
 
-                HaloGame.Halo3ODST when !isMcc => new Halo3.CacheFile(args),
-                HaloGame.Halo3ODST when cacheType < CacheType.MccHalo3ODSTF3 => new MccHalo3.CacheFile(args),
-                HaloGame.Halo3ODST => new MccHalo3.CacheFileU6(args),
+                BlamEngine.Halo3ODST when !isMcc => new Halo3.CacheFile(args),
+                BlamEngine.Halo3ODST when cacheType < CacheType.MccHalo3ODSTF3 => new MccHalo3.CacheFile(args),
+                BlamEngine.Halo3ODST => new MccHalo3.CacheFileU6(args),
 
-                HaloGame.HaloReach when !isMcc => new HaloReach.CacheFile(args),
-                HaloGame.HaloReach when cacheType < CacheType.MccHaloReachU8 => new MccHaloReach.CacheFile(args),
-                HaloGame.HaloReach => new MccHaloReach.CacheFileU8(args),
+                BlamEngine.HaloReach when !isMcc => new HaloReach.CacheFile(args),
+                BlamEngine.HaloReach when cacheType < CacheType.MccHaloReachU8 => new MccHaloReach.CacheFile(args),
+                BlamEngine.HaloReach => new MccHaloReach.CacheFileU8(args),
 
-                HaloGame.Halo4 when !isMcc => new Halo4.CacheFile(args),
-                HaloGame.Halo4 when cacheType < CacheType.MccHalo4U4 => new MccHalo4.CacheFile(args),
-                HaloGame.Halo4 => new MccHalo4.CacheFileU4(args),
+                BlamEngine.Halo4 when !isMcc => new Halo4.CacheFile(args),
+                BlamEngine.Halo4 when cacheType < CacheType.MccHalo4U4 => new MccHalo4.CacheFile(args),
+                BlamEngine.Halo4 => new MccHalo4.CacheFileU4(args),
 
-                HaloGame.Halo2X when cacheType < CacheType.MccHalo2XU8 => new MccHalo2X.CacheFile(args),
-                HaloGame.Halo2X => new MccHalo2X.CacheFileU8(args),
+                BlamEngine.Halo2X when cacheType < CacheType.MccHalo2XU8 => new MccHalo2X.CacheFile(args),
+                BlamEngine.Halo2X => new MccHalo2X.CacheFileU8(args),
 
                 _ => throw Exceptions.UnknownMapFile(fileName)
             };

@@ -33,13 +33,13 @@ namespace Reclaimer.Blam.MccHalo3
                 TagIndex.ReadItems();
                 StringIndex.ReadItems();
 
-                LocaleIndex = args.Metadata.Game switch
+                LocaleIndex = args.Metadata.Engine switch
                 {
-                    HaloGame.Halo3 when args.CacheType < CacheType.MccHalo3U12 => new LocaleIndex(this, 464, 80, 12),
-                    HaloGame.Halo3 => new LocaleIndex(this, 24, 80, 12),
+                    BlamEngine.Halo3 when args.CacheType < CacheType.MccHalo3U12 => new LocaleIndex(this, 464, 80, 12),
+                    BlamEngine.Halo3 => new LocaleIndex(this, 24, 80, 12),
 
-                    HaloGame.Halo3ODST when args.CacheType < CacheType.MccHalo3ODSTU7 => new LocaleIndex(this, 520, 80, 12),
-                    HaloGame.Halo3ODST => new LocaleIndex(this, 24, 80, 12),
+                    BlamEngine.Halo3ODST when args.CacheType < CacheType.MccHalo3ODSTU7 => new LocaleIndex(this, 520, 80, 12),
+                    BlamEngine.Halo3ODST => new LocaleIndex(this, 24, 80, 12),
                     _ => null
                 };
             }

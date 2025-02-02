@@ -2,36 +2,36 @@
 {
     using static CacheMetadataFlags;
     using static CacheResourceCodec;
-    using static HaloGame;
+    using static BlamEngine;
 
     [AttributeUsage(AttributeTargets.Field)]
     internal sealed class CacheMetadataAttribute : Attribute
     {
-        public HaloGame Game { get; }
+        public BlamEngine Engine { get; }
         public CacheGeneration Generation { get; }
         public CachePlatform Platform { get; }
         public CacheResourceCodec ResourceCodec { get; }
         public CacheMetadataFlags Flags { get; }
 
-        public CacheMetadataAttribute(HaloGame game, CachePlatform platform)
-            : this(game, platform, game < Halo3 ? Uncompressed : Deflate, None)
+        public CacheMetadataAttribute(BlamEngine engine, CachePlatform platform)
+            : this(engine, platform, engine < Halo3 ? Uncompressed : Deflate, None)
         { }
 
-        public CacheMetadataAttribute(HaloGame game, CachePlatform platform, CacheMetadataFlags flags)
-            : this(game, platform, game < Halo3 ? Uncompressed : Deflate, flags)
+        public CacheMetadataAttribute(BlamEngine engine, CachePlatform platform, CacheMetadataFlags flags)
+            : this(engine, platform, engine < Halo3 ? Uncompressed : Deflate, flags)
         { }
 
-        public CacheMetadataAttribute(HaloGame game, CachePlatform platform, CacheResourceCodec codec)
-             : this(game, platform, codec, None)
+        public CacheMetadataAttribute(BlamEngine engine, CachePlatform platform, CacheResourceCodec codec)
+             : this(engine, platform, codec, None)
         { }
 
-        public CacheMetadataAttribute(HaloGame game, CachePlatform platform, CacheResourceCodec codec, CacheMetadataFlags flags)
+        public CacheMetadataAttribute(BlamEngine engine, CachePlatform platform, CacheResourceCodec codec, CacheMetadataFlags flags)
         {
-            Game = game;
+            Engine = engine;
             Platform = platform;
             ResourceCodec = codec;
             Flags = flags;
-            Generation = game switch
+            Generation = engine switch
             {
                 Halo1 => CacheGeneration.Gen1,
                 Halo2 => CacheGeneration.Gen2,

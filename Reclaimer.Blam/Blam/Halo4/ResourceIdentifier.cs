@@ -83,8 +83,8 @@ namespace Reclaimer.Blam.Halo4
             static uint GetDataTableAddress(ICacheFile cache, EndianReader reader)
             {
                 //latest mcc
-                if ((cache.Metadata.Game == HaloGame.Halo4 && cache.CacheType >= CacheType.MccHalo4U4)
-                    || (cache.Metadata.Game == HaloGame.Halo2X && cache.CacheType >= CacheType.MccHalo2XU8))
+                if ((cache.Metadata.Engine == BlamEngine.Halo4 && cache.CacheType >= CacheType.MccHalo4U4)
+                    || (cache.Metadata.Engine == BlamEngine.Halo2X && cache.CacheType >= CacheType.MccHalo2XU8))
                 {
                     reader.Seek(1224, SeekOrigin.Begin);
                     return reader.ReadUInt32();

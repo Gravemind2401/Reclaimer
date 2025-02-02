@@ -6,7 +6,7 @@ namespace Reclaimer.Blam.Common
     {
         private const CacheMetadataFlags PreRelease = CacheMetadataFlags.PreBeta | CacheMetadataFlags.Beta | CacheMetadataFlags.Flight;
 
-        public HaloGame Game { get; }
+        public BlamEngine Engine { get; }
         public CacheType CacheType { get; }
         public CacheGeneration Generation { get; }
         public CachePlatform Platform { get; }
@@ -21,7 +21,7 @@ namespace Reclaimer.Blam.Common
         private CacheMetadata(CacheType cacheType, CacheMetadataAttribute meta, BuildStringAttribute build)
         {
             CacheType = cacheType;
-            Game = meta.Game;
+            Engine = meta.Engine;
             Generation = meta.Generation;
             Platform = meta.Platform;
             Architecture = Platform == CachePlatform.Xbox360 ? PlatformArchitecture.PowerPC : PlatformArchitecture.x86;
@@ -79,17 +79,17 @@ namespace Reclaimer.Blam.Common
 
             var game = parent.Parent.Name switch
             {
-                "halo1" => HaloGame.Halo1,
-                "halo2" => HaloGame.Halo2,
-                "halo3" => HaloGame.Halo3,
-                "halo3odst" => HaloGame.Halo3ODST,
-                "haloreach" => HaloGame.HaloReach,
-                "halo4" => HaloGame.Halo4,
-                "groundhog" => HaloGame.Halo2X,
-                _ => HaloGame.Unknown
+                "halo1" => BlamEngine.Halo1,
+                "halo2" => BlamEngine.Halo2,
+                "halo3" => BlamEngine.Halo3,
+                "halo3odst" => BlamEngine.Halo3ODST,
+                "haloreach" => BlamEngine.HaloReach,
+                "halo4" => BlamEngine.Halo4,
+                "groundhog" => BlamEngine.Halo2X,
+                _ => BlamEngine.Unknown
             };
 
-            if (game == HaloGame.Unknown)
+            if (game == BlamEngine.Unknown)
                 return CacheType.Unknown;
 
             //find highest CacheType for the matching HaloGame
@@ -99,7 +99,7 @@ namespace Reclaimer.Blam.Common
                 {
                     CacheType = e,
                     Meta = Utils.GetEnumAttributes<CacheType, CacheMetadataAttribute>(e).Single()
-                }).Where(x => x.Meta.Game == game)
+                }).Where(x => x.Meta.Engine == game)
                 .OrderBy(x => x.CacheType)
                 .LastOrDefault();
 

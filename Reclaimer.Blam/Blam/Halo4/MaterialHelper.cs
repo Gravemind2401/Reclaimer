@@ -258,10 +258,10 @@ namespace Reclaimer.Blam.Halo4
         public static bool PopulateTextureMappings(Halo4GeometryArgs args, Dictionary<int, bitmap> bitmapCache, Material material, material shader)
         {
             //not confirmed if the material shaders happen to be configured the same in the betas
-            if (args.Cache.Metadata.Game == HaloGame.Halo4 && args.Cache.Metadata.IsPreRelease)
+            if (args.Cache.Metadata.Engine == BlamEngine.Halo4 && args.Cache.Metadata.IsPreRelease)
                 return false;
 
-            var shaderLookup = args.Cache.Metadata.Game == HaloGame.Halo2X
+            var shaderLookup = args.Cache.Metadata.Engine == BlamEngine.Halo2X
                 ? Halo2XMaterialShaderLookup.Value
                 : Halo4MaterialShaderLookup.Value;
 
