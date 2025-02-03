@@ -70,6 +70,14 @@ namespace Reclaimer.Models
             Usage = usage;
         }
 
+        public void Close()
+        {
+            var closeCommand = (Parent as TabWellModelBase)?.CloseTabCommand
+                ?? Parent.ParentContainer.CloseTabCommand;
+
+            closeCommand.Execute(this);
+        }
+
         public void Dispose() => (Content as IDisposable)?.Dispose();
     }
 }

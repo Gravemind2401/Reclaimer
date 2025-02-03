@@ -119,12 +119,15 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Halo3FieldDefinitions" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\metaviewer\halo3fielddefinitions.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\Resources\MetaViewer\Halo3FieldDefinitions.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="Halo5FieldDefinitions" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\metaviewer\halo5fielddefinitions.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\Resources\MetaViewer\Halo5FieldDefinitions.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="HaloInfiniteFieldDefinitions" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\metaviewer\haloinfinitefielddefinitions.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>..\Resources\MetaViewer\HaloinfiniteFieldDefinitions.xml;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="MapBrowserTemplates" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MapBrowser\MapTemplates.json;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

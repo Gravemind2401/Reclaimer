@@ -1,0 +1,2370 @@
+{
+    "HaloReach": {
+        "Campaign": [
+            {
+                "DisplayName": "Noble Actual",
+                "FileName": "m05.map",
+                "MccThumbnails": [
+                    "HREACH_C01_NOBLEACTUAL",
+                    "HREACH_C01_NOBLEACTUAL_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Winter Contingency",
+                "FileName": "m10.map",
+                "MccThumbnails": [
+                    "HREACH_C02_WINTERCONTINGENCY",
+                    "HREACH_C02_WINTERCONTINGENCY_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "ONI: Sword Base",
+                "FileName": "m20.map",
+                "MccThumbnails": [
+                    "HREACH_C03_ONISWORDBASE",
+                    "HREACH_C03_ONISWORDBASE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Nightfall",
+                "FileName": "m30.map",
+                "MccThumbnails": [
+                    "HREACH_C04_NIGHTFALL",
+                    "HREACH_C04_NIGHTFALL_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Tip Of The Spear",
+                "FileName": "m35.map",
+                "MccThumbnails": [
+                    "HREACH_C05_TIPOFTHESPEAR",
+                    "HREACH_C05_TIPOFTHESPEAR_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Long Night Of Solace",
+                "FileName": "m45.map",
+                "MccThumbnails": [
+                    "HREACH_C06_LONGNIGHTOFSOLACE",
+                    "HREACH_C06_LONGNIGHTOFSOLACE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Exodus",
+                "FileName": "m50.map",
+                "MccThumbnails": [
+                    "HREACH_C07_EXODUS",
+                    "HREACH_C07_EXODUS_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "New Alexandria",
+                "FileName": "m52.map",
+                "MccThumbnails": [
+                    "HREACH_C08_NEWALEXANDRIA",
+                    "HREACH_C08_NEWALEXANDRIA_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Package",
+                "FileName": "m60.map",
+                "MccThumbnails": [
+                    "HREACH_C09_THEPACKAGE",
+                    "HREACH_C09_THEPACKAGE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Pillar Of Autumn",
+                "FileName": "m70.map",
+                "MccThumbnails": [
+                    "HREACH_C10_THEPILLAROFAUTUMN",
+                    "HREACH_C10_THEPILLAROFAUTUMN_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Epilogue",
+                "FileName": "m70_a.map",
+                "MccThumbnails": [
+                    "HREACH_C10A_EPILOGUE",
+                    "HREACH_C10A_EPILOGUE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Lone Wolf",
+                "FileName": "m70_bonus.map",
+                "MccThumbnails": [
+                    "HREACH_C11_LONEWOLF",
+                    "HREACH_C11_LONEWOLF_LARGE"
+                ]
+            }
+        ],
+        "Multiplayer": [
+            {
+                "DisplayName": "Sword Base",
+                "FileName": "20_sword_slayer.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_SWORDBASELARGE"
+                ]
+            },
+            {
+                "DisplayName": "Powerhouse",
+                "FileName": "30_settlement.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_POWERHOUSELARGE"
+                ]
+            },
+            {
+                "DisplayName": "Spire",
+                "FileName": "35_island.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_SPIRELARGE"
+                ]
+            },
+            {
+                "DisplayName": "Zealot",
+                "FileName": "45_aftship.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_ZEALOTLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Countdown",
+                "FileName": "45_launch_station.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_COUNTDOWNLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Boardwalk",
+                "FileName": "50_panopticon.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_BOARDWALKLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Reflection",
+                "FileName": "52_ivory_tower.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_REFLECTIONLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Boneyard",
+                "FileName": "70_boneyard.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_BONEYARDLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Battle Canyon",
+                "FileName": "cex_beaver_creek.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_BATTLECANYONLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Penance",
+                "FileName": "cex_damnation.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_PENANCELARGE"
+                ]
+            },
+            {
+                "DisplayName": "High Noon",
+                "FileName": "cex_hangemhigh.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_HIGHNOONLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Breakneck",
+                "FileName": "cex_headlong.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_BREAKNECKLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Solitary",
+                "FileName": "cex_prisoner.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_SOLITARYLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Ridgeline",
+                "FileName": "cex_timberland.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_RIDGELINELARGE"
+                ]
+            },
+            {
+                "DisplayName": "Condemned",
+                "FileName": "condemned.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_CONDEMNEDLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Breakpoint",
+                "FileName": "dlc_invasion.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_BREAKPOINTLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Tempest",
+                "FileName": "dlc_medium.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_TEMPESTLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Anchor 9",
+                "FileName": "dlc_slayer.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_ANCHOR9LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Forge World",
+                "FileName": "forge_halo.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_FORGEWORLDLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Highlands",
+                "FileName": "trainingpreserve.map",
+                "MccThumbnails": [
+                    "",
+                    "HREACHMP_HIGHLANDSLARGE"
+                ]
+            }
+        ],
+        "Firefight": [
+            {
+                "DisplayName": "Installation 04",
+                "FileName": "cex_ff_halo.map",
+                "MccThumbnails": [
+                    "REACHFIREFIGHT_INSTALLATION04",
+                    "REACHFIREFIGHT_INSTALLATION04LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Overlook",
+                "FileName": "ff10_prototype.map",
+                "MccThumbnails": [
+                    "REACHFIREFIGHT_OVERLOOK",
+                    "REACHFIREFIGHT_OVERLOOKLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Courtyard",
+                "FileName": "ff20_courtyard.map",
+                "MccThumbnails": [
+                    "REACHFIREFIGHT_COURTYARD",
+                    "REACHFIREFIGHT_COURTYARDLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Waterfront",
+                "FileName": "ff30_waterfront.map",
+                "MccThumbnails": [
+                    "REACHFIREFIGHT_WATERFRONT",
+                    "REACHFIREFIGHT_WATERFRONTLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Corvette",
+                "FileName": "ff45_corvette.map",
+                "MccThumbnails": [
+                    "REACHFIREFIGHT_CORVETTE",
+                    "REACHFIREFIGHT_CORVETTELARGE"
+                ]
+            },
+            {
+                "DisplayName": "Beachhead",
+                "FileName": "ff50_park.map",
+                "MccThumbnails": [
+                    "REACHFIREFIGHT_BEACHHEAD",
+                    "REACHFIREFIGHT_BEACHHEADLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Outpost",
+                "FileName": "ff60_airview.map",
+                "MccThumbnails": [
+                    "REACHFIREFIGHT_OUTPOST",
+                    "REACHFIREFIGHT_OUTPOSTLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Glacier",
+                "FileName": "ff60_icecave.map",
+                "MccThumbnails": [
+                    "REACHFIREFIGHT_GLACIER",
+                    "REACHFIREFIGHT_GLACIERLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Holdout",
+                "FileName": "ff70_holdout.map",
+                "MccThumbnails": [
+                    "REACHFIREFIGHT_HOLDOUT",
+                    "REACHFIREFIGHT_HOLDOUTLARGE"
+                ]
+            },
+            {
+                "DisplayName": "Unearthed",
+                "FileName": "ff_unearthed.map",
+                "MccThumbnails": [
+                    "REACHFIREFIGHT_UNEARTHED",
+                    "REACHFIREFIGHT_UNEARTHEDLARGE"
+                ]
+            }
+        ],
+        "Other": [
+            {
+                "DisplayName": "Main Menu",
+                "FileName": "mainmenu.map",
+                "MccThumbnails": [
+                    "",
+                    ""
+                ]
+            }
+        ]
+    },
+    "Halo1": {
+        "Campaign": [
+            {
+                "DisplayName": "The Pillar Of Autumn",
+                "FileName": "a10.map",
+                "MccThumbnails": [
+                    "H1_C01_PILLARAUTUMN",
+                    "H1_C01_PILLARAUTUMN_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Halo",
+                "FileName": "a30.map",
+                "MccThumbnails": [
+                    "H1_C02_HALO",
+                    "H1_C02_HALO_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Truth And Reconciliation",
+                "FileName": "a50.map",
+                "MccThumbnails": [
+                    "H1_C03_THETRUTHANDRECONCILIATION",
+                    "H1_C03_THETRUTHANDRE~ILIATION_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Silent Cartographer",
+                "FileName": "b30.map",
+                "MccThumbnails": [
+                    "H1_C04_THESILENTCARTOGRAPHER",
+                    "H1_C04_THESILENTCARTOGRAPHER_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Assault On The Control Room",
+                "FileName": "b40.map",
+                "MccThumbnails": [
+                    "H1_C05_ASSAULTONTHECONTROLROOM",
+                    "H1_C05_ASSAULTONTHEC~TROLROOM_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "343 Guilty Spark",
+                "FileName": "c10.map",
+                "MccThumbnails": [
+                    "H1_C06_GUILTYSPARK",
+                    "H1_C06_GUILTYSPARK_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Library",
+                "FileName": "c20.map",
+                "MccThumbnails": [
+                    "H1_C07_LIBRARY",
+                    "H1_C07_LIBRARY_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Two Betrayals",
+                "FileName": "c40.map",
+                "MccThumbnails": [
+                    "H1_C08_TWOBETRAYALS",
+                    "H1_C08_TWOBETRAYALS_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Keyes",
+                "FileName": "d20.map",
+                "MccThumbnails": [
+                    "H1_C09_KEYES",
+                    "H1_C09_KEYES_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Maw",
+                "FileName": "d40.map",
+                "MccThumbnails": [
+                    "H1_C10_THEMAW",
+                    "H1_C10_THEMAW_LARGE"
+                ]
+            }
+        ],
+        "Multiplayer": [
+            {
+                "DisplayName": "Battle Creek",
+                "FileName": "beavercreek.map",
+                "MccThumbnails": [
+                    "H1MP_BATTLECREEK",
+                    "H1MP_BATTLECREEK_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Blood Gulch",
+                "FileName": "bloodgulch.map",
+                "MccThumbnails": [
+                    "H1MP_BLOODGULCH",
+                    "H1MP_BLOODGULCH_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Boarding Action",
+                "FileName": "boardingaction.map",
+                "MccThumbnails": [
+                    "H1MP_BOARDINGACTION",
+                    "H1MP_BOARDINGACTION_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Chiron TL-34",
+                "FileName": "putput.map",
+                "MccThumbnails": [
+                    "H1MP_CHIRONTL34",
+                    "H1MP_CHIRONTL34_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Chill Out",
+                "FileName": "chillout.map",
+                "MccThumbnails": [
+                    "H1MP_CHILLOUT",
+                    "H1MP_CHILLOUT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Damnation",
+                "FileName": "damnation.map",
+                "MccThumbnails": [
+                    "H1MP_DAMNATION",
+                    "H1MP_DAMNATION_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Danger Canyon",
+                "FileName": "dangercanyon.map",
+                "MccThumbnails": [
+                    "H1MP_DANGERCANYON",
+                    "H1MP_DANGERCANYON_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Death Island",
+                "FileName": "deathisland.map",
+                "MccThumbnails": [
+                    "H1MP_DEATHISLAND",
+                    "H1MP_DEATHISLAND_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Gephyrophobia",
+                "FileName": "gephyrophobia.map",
+                "MccThumbnails": [
+                    "H1MP_GEPHYROPHOBIA",
+                    "H1MP_GEPHYROPHOBIA_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Hang 'Em High",
+                "FileName": "hangemhigh.map",
+                "MccThumbnails": [
+                    "H1MP_HANGEMHIGH",
+                    "H1MP_HANGEMHIGH_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Ice Fields",
+                "FileName": "icefields.map",
+                "MccThumbnails": [
+                    "H1MP_ICEFIELDS",
+                    "H1MP_ICEFIELDS_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Infinity",
+                "FileName": "infinity.map",
+                "MccThumbnails": [
+                    "H1MP_INFINITY",
+                    "H1MP_INFINITY_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Longest",
+                "FileName": "longest.map",
+                "MccThumbnails": [
+                    "H1MP_LONGEST",
+                    "H1MP_LONGEST_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Prisoner",
+                "FileName": "prisoner.map",
+                "MccThumbnails": [
+                    "H1MP_PRISONER",
+                    "H1MP_PRISONER_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Derelict",
+                "FileName": "carousel.map",
+                "MccThumbnails": [
+                    "H1MP_DERELICT",
+                    "H1MP_DERELICT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Rat Race",
+                "FileName": "ratrace.map",
+                "MccThumbnails": [
+                    "H1MP_RATRACE",
+                    "H1MP_RATRACE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Sidewinder",
+                "FileName": "sidewinder.map",
+                "MccThumbnails": [
+                    "H1MP_SIDEWINDER",
+                    "H1MP_SIDEWINDER_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Timberland",
+                "FileName": "timberland.map",
+                "MccThumbnails": [
+                    "H1MP_TIMBERLAND",
+                    "H1MP_TIMBERLAND_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Wizard",
+                "FileName": "wizard.map",
+                "MccThumbnails": [
+                    "H1MP_WIZARD",
+                    "H1MP_WIZARD_LARGE"
+                ]
+            }
+        ],
+        "Other": [
+            {
+                "DisplayName": "Main Menu",
+                "FileName": "ui.map",
+                "MccThumbnails": [
+                    "",
+                    ""
+                ]
+            }
+        ]
+    },
+    "Halo2": {
+        "Campaign": [
+            {
+                "DisplayName": "The Heretic",
+                "FileName": "00a_introduction.map",
+                "MccThumbnails": [
+                    "H2_C01_HERETIC",
+                    "H2_C01_HERETIC_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Armory",
+                "FileName": "01a_tutorial.map",
+                "MccThumbnails": [
+                    "H2_C02_THEARMORY",
+                    "H2_C02_THEARMORY_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Cairo Station",
+                "FileName": "01b_spacestation.map",
+                "MccThumbnails": [
+                    "H2_C03_CAIROSTATION",
+                    "H2_C03_CAIROSTATION_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Outskirts",
+                "FileName": "03a_oldmombasa.map",
+                "MccThumbnails": [
+                    "H2_C04_OUTSKIRTS",
+                    "H2_C04_OUTSKIRTS_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Metropolis",
+                "FileName": "03b_newmombasa.map",
+                "MccThumbnails": [
+                    "H2_C05_METROPOLIS",
+                    "H2_C05_METROPOLIS_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Arbiter",
+                "FileName": "04a_gasgiant.map",
+                "MccThumbnails": [
+                    "H2_C06_THEARBITER",
+                    "H2_C06_THEARBITER_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Oracle",
+                "FileName": "04b_floodlab.map",
+                "MccThumbnails": [
+                    "H2_C07_THEORACLE",
+                    "H2_C07_THEORACLE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Delta Halo",
+                "FileName": "05a_deltaapproach.map",
+                "MccThumbnails": [
+                    "H2_C08_DELTAHALO",
+                    "H2_C08_DELTAHALO_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Regret",
+                "FileName": "05b_deltatowers.map",
+                "MccThumbnails": [
+                    "H2_C09_REGRET",
+                    "H2_C09_REGRET_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Sacred Icon",
+                "FileName": "06a_sentinelwalls.map",
+                "MccThumbnails": [
+                    "H2_C10_SACREDICON",
+                    "H2_C10_SACREDICON_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Quarantine Zone",
+                "FileName": "06b_floodzone.map",
+                "MccThumbnails": [
+                    "H2_C11_QUARANTINEZONE",
+                    "H2_C11_QUARANTINEZONE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Gravemind",
+                "FileName": "07a_highcharity.map",
+                "MccThumbnails": [
+                    "H2_C12_GRAVEMIND",
+                    "H2_C12_GRAVEMIND_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Uprising",
+                "FileName": "07b_forerunnership.map",
+                "MccThumbnails": [
+                    "H2_C13_UPRISING",
+                    "H2_C13_UPRISING_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "High Charity",
+                "FileName": "08a_deltacliffs.map",
+                "MccThumbnails": [
+                    "H2_C14_HIGHCHARITY",
+                    "H2_C14_HIGHCHARITY_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Great Journey",
+                "FileName": "08b_deltacontrol.map",
+                "MccThumbnails": [
+                    "H2_C15_THEGREATJOURNEY",
+                    "H2_C15_THEGREATJOURNEY_LARGE"
+                ]
+            }
+        ],
+        "Multiplayer": [
+            {
+                "DisplayName": "Ascension",
+                "FileName": "ascension.map",
+                "MccThumbnails": [
+                    "H2MP_ASCENSION",
+                    "H2MP_ASCENSION_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Backwash",
+                "FileName": "backwash.map",
+                "MccThumbnails": [
+                    "H2MP_BACKWASH",
+                    "H2MP_BACKWASH_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Beaver Creek",
+                "FileName": "beavercreek.map",
+                "MccThumbnails": [
+                    "H2MP_BEAVERCREEK",
+                    "H2MP_BEAVERCREEK_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Burial Mounds",
+                "FileName": "burial_mounds.map",
+                "MccThumbnails": [
+                    "H2MP_BURIALMOUNDS",
+                    "H2MP_BURIALMOUNDS_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Coagulation",
+                "FileName": "coagulation.map",
+                "MccThumbnails": [
+                    "H2MP_COAGULATION",
+                    "H2MP_COAGULATION_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Colossus",
+                "FileName": "colossus.map",
+                "MccThumbnails": [
+                    "H2MP_COLOSSUS",
+                    "H2MP_COLOSSUS_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Containment",
+                "FileName": "containment.map",
+                "MccThumbnails": [
+                    "H2MP_CONTAINMENT",
+                    "H2MP_CONTAINMENT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Ivory Tower",
+                "FileName": "cyclotron.map",
+                "MccThumbnails": [
+                    "H2MP_IVORYTOWER",
+                    "H2MP_IVORYTOWER_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Sanctuary",
+                "FileName": "deltatap.map",
+                "MccThumbnails": [
+                    "H2MP_SANCTUARY",
+                    "H2MP_SANCTUARY_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Desolation",
+                "FileName": "derelict.map",
+                "MccThumbnails": [
+                    "H2MP_DESOLATION",
+                    "H2MP_DESOLATION_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Relic",
+                "FileName": "dune.map",
+                "MccThumbnails": [
+                    "H2MP_RELIC",
+                    "H2MP_RELIC_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Elongation",
+                "FileName": "elongation.map",
+                "MccThumbnails": [
+                    "H2MP_ELONGATION",
+                    "H2MP_ELONGATION_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Foundation",
+                "FileName": "foundation.map",
+                "MccThumbnails": [
+                    "H2MP_FOUNDATIONS",
+                    "H2MP_FOUNDATIONS_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Gemini",
+                "FileName": "gemini.map",
+                "MccThumbnails": [
+                    "H2MP_GEMINI",
+                    "H2MP_GEMINI_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Headlong",
+                "FileName": "headlong.map",
+                "MccThumbnails": [
+                    "H2MP_HEADLONG",
+                    "H2MP_HEADLONG_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Tombstone",
+                "FileName": "highplains.map",
+                "MccThumbnails": [
+                    "H2MP_TOMBSTONE",
+                    "H2MP_TOMBSTONE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Lockout",
+                "FileName": "lockout.map",
+                "MccThumbnails": [
+                    "H2MP_LOCKOUT",
+                    "H2MP_LOCKOUT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Midship",
+                "FileName": "midship.map",
+                "MccThumbnails": [
+                    "H2MP_MIDSHIP",
+                    "H2MP_MIDSHIP_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Uplift",
+                "FileName": "needle.map",
+                "MccThumbnails": [
+                    "H2MP_UPLIFT",
+                    "H2MP_UPLIFT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "District",
+                "FileName": "street_sweeper.map",
+                "MccThumbnails": [
+                    "H2MP_DISTRICT",
+                    "H2MP_DISTRICT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Terminal",
+                "FileName": "triplicate.map",
+                "MccThumbnails": [
+                    "H2MP_TERMINAL",
+                    "H2MP_TERMINAL_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Turf",
+                "FileName": "turf.map",
+                "MccThumbnails": [
+                    "H2MP_TURF",
+                    "H2MP_TURF_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Warlock",
+                "FileName": "warlock.map",
+                "MccThumbnails": [
+                    "H2MP_WARLOCK",
+                    "H2MP_WARLOCK_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Waterworks",
+                "FileName": "waterworks.map",
+                "MccThumbnails": [
+                    "H2MP_WATERWORKS",
+                    "H2MP_WATERWORKS_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Zanzibar",
+                "FileName": "zanzibar.map",
+                "MccThumbnails": [
+                    "H2MP_ZANZIBAR",
+                    "H2MP_ZANZIBAR_LARGE"
+                ]
+            }
+        ],
+        "Other": [
+            {
+                "DisplayName": "Main Menu",
+                "FileName": "mainmenu.map",
+                "MccThumbnails": [
+                    "",
+                    ""
+                ]
+            }
+        ]
+    },
+    "Halo3": {
+        "Campaign": [
+            {
+                "DisplayName": "Arrival",
+                "FileName": "005_intro.map",
+                "MccThumbnails": [
+                    "H3_C01_ARRIVAL",
+                    "H3_C01_ARRIVAL_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Sierra 117",
+                "FileName": "010_jungle.map",
+                "MccThumbnails": [
+                    "H3_C02_SIERRA117",
+                    "H3_C02_SIERRA117_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Crow's Nest",
+                "FileName": "020_base.map",
+                "MccThumbnails": [
+                    "H3_C03_CROW'SNEST",
+                    "H3_C03_CROW'SNEST_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Tsavo Highway",
+                "FileName": "030_outskirts.map",
+                "MccThumbnails": [
+                    "H3_C04_TSAVOHIGHWAY",
+                    "H3_C04_TSAVOHIGHWAY_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Storm",
+                "FileName": "040_voi.map",
+                "MccThumbnails": [
+                    "H3_C05_THESTORM",
+                    "H3_C05_THESTORM_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Floodgate",
+                "FileName": "050_floodvoi.map",
+                "MccThumbnails": [
+                    "H3_C06_FLOODGATE",
+                    "H3_C06_FLOODGATE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Ark",
+                "FileName": "070_waste.map",
+                "MccThumbnails": [
+                    "H3_C07_THEARK",
+                    "H3_C07_THEARK_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Covenant",
+                "FileName": "100_citadel.map",
+                "MccThumbnails": [
+                    "H3_C08_THECOVENANT",
+                    "H3_C08_THECOVENANT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Cortana",
+                "FileName": "110_hc.map",
+                "MccThumbnails": [
+                    "H3_C09_CORTANA",
+                    "H3_C09_CORTANA_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Halo",
+                "FileName": "120_halo.map",
+                "MccThumbnails": [
+                    "H3_C10_HALO3",
+                    "H3_C10_HALO3_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Epilogue",
+                "FileName": "130_epilogue.map",
+                "MccThumbnails": [
+                    "H3_C11_EPILOGUE",
+                    "H3_C11_EPILOGUE_LARGE"
+                ]
+            }
+        ],
+        "Multiplayer": [
+            {
+                "DisplayName": "Rat's Nest",
+                "FileName": "armory.map",
+                "MccThumbnails": [
+                    "H3MP_RATSNEST",
+                    "H3MP_RATSNEST_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Standoff",
+                "FileName": "bunkerworld.map",
+                "MccThumbnails": [
+                    "H3MP_STANDOFF",
+                    "H3MP_STANDOFF_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Narrows",
+                "FileName": "chill.map",
+                "MccThumbnails": [
+                    "H3MP_NARROWS",
+                    "H3MP_NARROWS_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Cold Storage",
+                "FileName": "chillout.map",
+                "MccThumbnails": [
+                    "H3MP_COLDSTORAGE",
+                    "H3MP_COLDSTORAGE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Construct",
+                "FileName": "construct.map",
+                "MccThumbnails": [
+                    "H3MP_CONSTRUCT",
+                    "H3MP_CONSTRUCT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Pit",
+                "FileName": "cyberdyne.map",
+                "MccThumbnails": [
+                    "H3MP_THEPIT",
+                    "H3MP_THEPIT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "High Ground",
+                "FileName": "deadlock.map",
+                "MccThumbnails": [
+                    "H3MP_HIGHGROUND",
+                    "H3MP_HIGHGROUND_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Assembly",
+                "FileName": "descent.map",
+                "MccThumbnails": [
+                    "H3MP_ASSEMBLY",
+                    "H3MP_ASSEMBLY_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Longshore",
+                "FileName": "docks.map",
+                "MccThumbnails": [
+                    "H3MP_LONGSHORE",
+                    "H3MP_LONGSHORE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Citadel",
+                "FileName": "fortress.map",
+                "MccThumbnails": [
+                    "H3MP_CITADEL",
+                    "H3MP_CITADEL_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Ghost Town",
+                "FileName": "ghosttown.map",
+                "MccThumbnails": [
+                    "H3MP_GHOSTTOWN",
+                    "H3MP_GHOSTTOWN_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Guardian",
+                "FileName": "guardian.map",
+                "MccThumbnails": [
+                    "H3MP_GUARDIAN",
+                    "H3MP_GUARDIAN_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Isolation",
+                "FileName": "isolation.map",
+                "MccThumbnails": [
+                    "H3MP_ISOLATION",
+                    "H3MP_ISOLATION_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Blackout",
+                "FileName": "lockout.map",
+                "MccThumbnails": [
+                    "H3MP_BLACKOUT",
+                    "H3MP_BLACKOUT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Heretic",
+                "FileName": "midship.map",
+                "MccThumbnails": [
+                    "H3MP_HERETIC",
+                    "H3MP_HERETIC_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Valhalla",
+                "FileName": "riverworld.map",
+                "MccThumbnails": [
+                    "H3MP_VALHALLA",
+                    "H3MP_VALHALLA_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Edge",
+                "FileName": "s3d_edge.map",
+                "MccThumbnails": [
+                    "",
+                    "H3MP_S3D_EDGE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Icebox",
+                "FileName": "s3d_turf.map",
+                "MccThumbnails": [
+                    "",
+                    "H3MP_S3D_ICEBOX_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Waterfall",
+                "FileName": "s3d_waterfall.map",
+                "MccThumbnails": [
+                    "",
+                    "H3MP_S3D_WATERFALL_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Epitaph",
+                "FileName": "salvation.map",
+                "MccThumbnails": [
+                    "H3MP_EPITAPH",
+                    "H3MP_EPITAPH_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Sandbox",
+                "FileName": "sandbox.map",
+                "MccThumbnails": [
+                    "H3MP_SANDBOX",
+                    "H3MP_SANDBOX_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Sandtrap",
+                "FileName": "shrine.map",
+                "MccThumbnails": [
+                    "H3MP_SANDTRAP",
+                    "H3MP_SANDTRAP_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Avalanche",
+                "FileName": "sidewinder.map",
+                "MccThumbnails": [
+                    "H3MP_AVALANCHE",
+                    "H3MP_AVALANCHE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Snowbound",
+                "FileName": "snowbound.map",
+                "MccThumbnails": [
+                    "H3MP_SNOWBOUND",
+                    "H3MP_SNOWBOUND_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Orbital",
+                "FileName": "spacecamp.map",
+                "MccThumbnails": [
+                    "H3MP_ORBITAL",
+                    "H3MP_ORBITAL_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Foundry",
+                "FileName": "warehouse.map",
+                "MccThumbnails": [
+                    "H3MP_FOUNDRY",
+                    "H3MP_FOUNDRY_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Last Resort",
+                "FileName": "zanzibar.map",
+                "MccThumbnails": [
+                    "H3MP_LASTRESORT",
+                    "H3MP_LASTRESORT_LARGE"
+                ]
+            }
+        ],
+        "Other": [
+            {
+                "DisplayName": "Main Menu",
+                "FileName": "mainmenu.map",
+                "MccThumbnails": [
+                    "",
+                    ""
+                ]
+            }
+        ]
+    },
+    "Halo3Odst": {
+        "Campaign": [
+            {
+                "DisplayName": "Prepare To Drop",
+                "FileName": "c100.map",
+                "MccThumbnails": [
+                    "H3ODST_C01_PREPARETODROP",
+                    "H3ODST_C01_PREPARETODROP_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Mombasa Streets",
+                "FileName": "h100.map",
+                "MccThumbnails": [
+                    "H3ODST_C02_MOMBASASTREETS",
+                    "H3ODST_C02_MOMBASASTREETS_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Tayari Plaza",
+                "FileName": "sc100.map",
+                "MccThumbnails": [
+                    "H3ODST_C03_TAYARIPLAZA",
+                    "H3ODST_C03_TAYARIPLAZA_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Uplift Reserve",
+                "FileName": "sc110.map",
+                "MccThumbnails": [
+                    "H3ODST_C04_UPLIFTRESERVE",
+                    "H3ODST_C04_UPLIFTRESERVE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Kizingo Boulevard",
+                "FileName": "sc120.map",
+                "MccThumbnails": [
+                    "H3ODST_C05_KIZINGOBOULEVARD",
+                    "H3ODST_C05_KIZINGOBOULEVARD_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "ONI Alpha Site",
+                "FileName": "sc130.map",
+                "MccThumbnails": [
+                    "H3ODST_C06_ONIALPHASITE",
+                    "H3ODST_C06_ONIALPHASITE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "NMPD HQ",
+                "FileName": "sc140.map",
+                "MccThumbnails": [
+                    "H3ODST_C07_NMPDHQ",
+                    "H3ODST_C07_NMPDHQ_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Kikowani Station",
+                "FileName": "sc150.map",
+                "MccThumbnails": [
+                    "H3ODST_C08_KIKOWANISTATION",
+                    "H3ODST_C08_KIKOWANISTATION_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Data Hive",
+                "FileName": "L200.map",
+                "MccThumbnails": [
+                    "H3ODST_C09_DATAHIVE",
+                    "H3ODST_C09_DATAHIVE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Coastal Highway",
+                "FileName": "l300.map",
+                "MccThumbnails": [
+                    "H3ODST_C10_COASTALHIGHWAY",
+                    "H3ODST_C10_COASTALHIGHWAY_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Epilogue",
+                "FileName": "c200.map",
+                "MccThumbnails": [
+                    "H3ODST_C11_EPILOGUE",
+                    "H3ODST_C11_EPILOGUE_LARGE"
+                ]
+            }
+        ],
+        "Firefight": [
+            {
+                "DisplayName": "Crater (Night)",
+                "FileName": "h100.map",
+                "MccThumbnails": [
+                    "",
+                    "ODSTFIREFIGHT_CRATERNIGHT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Rally (Night)",
+                "FileName": "h100.map",
+                "MccThumbnails": [
+                    "",
+                    "ODSTFIREFIGHT_RALLYPOINTNIGHT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Crater",
+                "FileName": "sc100.map",
+                "MccThumbnails": [
+                    "",
+                    "ODSTFIREFIGHT_CRATERDAY_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Lost Platoon",
+                "FileName": "sc110.map",
+                "MccThumbnails": [
+                    "",
+                    "ODSTFIREFIGHT_LOSTPLATOON_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Rally Point",
+                "FileName": "sc120.map",
+                "MccThumbnails": [
+                    "",
+                    "ODSTFIREFIGHT_RALLYPOINTDAY_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Security Zone",
+                "FileName": "sc130.map",
+                "MccThumbnails": [
+                    "",
+                    "ODSTFIREFIGHT_SECURITYZONE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Alpha Site",
+                "FileName": "sc130.map",
+                "MccThumbnails": [
+                    "",
+                    "ODSTFIREFIGHT_ALPHASITE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Windward",
+                "FileName": "sc140.map",
+                "MccThumbnails": [
+                    "",
+                    "ODSTFIREFIGHT_WINDWARD_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Chasm Ten",
+                "FileName": "L200.map",
+                "MccThumbnails": [
+                    "",
+                    "ODSTFIREFIGHT_CHASMTEN_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Last Exit",
+                "FileName": "l300.map",
+                "MccThumbnails": [
+                    "",
+                    "ODSTFIREFIGHT_LASTEXIT_LARGE"
+                ]
+            }
+        ],
+        "Other": [
+            {
+                "DisplayName": "Main Menu",
+                "FileName": "mainmenu.map",
+                "MccThumbnails": [
+                    "",
+                    ""
+                ]
+            }
+        ]
+    },
+    "Halo4": {
+        "Campaign": [
+            {
+                "DisplayName": "Prologue",
+                "FileName": "m05_prologue.map",
+                "MccThumbnails": [
+                    "H4_C01_PROLOGUE",
+                    "H4_C01_PROLOGUE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Dawn",
+                "FileName": "m10_crash.map",
+                "MccThumbnails": [
+                    "H4_C02_DAWN",
+                    "H4_C02_DAWN_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Requiem",
+                "FileName": "m020.map",
+                "MccThumbnails": [
+                    "H4_C03_REQUIEM",
+                    "H4_C03_REQUIEM_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Forerunner",
+                "FileName": "m30_cryptum.map",
+                "MccThumbnails": [
+                    "H4_C04_FORERUNNER",
+                    "H4_C04_FORERUNNER_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Infinity",
+                "FileName": "m40_invasion.map",
+                "MccThumbnails": [
+                    "H4_C05_INFINITY",
+                    "H4_C05_INFINITY_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Reclaimer",
+                "FileName": "m60_rescue.map",
+                "MccThumbnails": [
+                    "H4_C06_RECLAIMER",
+                    "H4_C06_RECLAIMER_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Shutdown",
+                "FileName": "m70_liftoff.map",
+                "MccThumbnails": [
+                    "H4_C07_SHUTDOWN",
+                    "H4_C07_SHUTDOWN_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Composer",
+                "FileName": "m80_delta.map",
+                "MccThumbnails": [
+                    "H4_C08_COMPOSER",
+                    "H4_C08_COMPOSER_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Midnight",
+                "FileName": "m90_sacrifice.map",
+                "MccThumbnails": [
+                    "H4_C09_MIDNIGHT",
+                    "H4_C09_MIDNIGHT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Epilogue",
+                "FileName": "m95_epilogue.map",
+                "MccThumbnails": [
+                    "H4_C10_EPILOGUE",
+                    "H4_C10_EPILOGUE_LARGE"
+                ]
+            }
+        ],
+        "Multiplayer": [
+            {
+                "DisplayName": "Outcast",
+                "FileName": "ca_basin.map",
+                "MccThumbnails": [
+                    "H4MP_OUTCAST",
+                    "H4MP_OUTCAST_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Abandon",
+                "FileName": "ca_blood_cavern.map",
+                "MccThumbnails": [
+                    "H4MP_ABANDON",
+                    "H4MP_ABANDON_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Exile",
+                "FileName": "ca_blood_crash.map",
+                "MccThumbnails": [
+                    "H4MP_EXILE",
+                    "H4MP_EXILE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Meltdown",
+                "FileName": "ca_canyon.map",
+                "MccThumbnails": [
+                    "H4MP_MELTDOWN",
+                    "H4MP_MELTDOWN_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Pitfall",
+                "FileName": "ca_creeper.map",
+                "MccThumbnails": [
+                    "H4MP_PITFALL",
+                    "H4MP_PITFALL_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Monolith",
+                "FileName": "ca_deadlycrossing.map",
+                "MccThumbnails": [
+                    "H4MP_MONOLITH",
+                    "H4MP_MONOLITH_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Vertigo",
+                "FileName": "ca_dropoff.map",
+                "MccThumbnails": [
+                    "H4MP_VERTIGO",
+                    "H4MP_VERTIGO_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Impact",
+                "FileName": "ca_forge_bonanza.map",
+                "MccThumbnails": [
+                    "H4MP_IMPACT",
+                    "H4MP_IMPACT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Erosion",
+                "FileName": "ca_forge_erosion.map",
+                "MccThumbnails": [
+                    "H4MP_EROSION",
+                    "H4MP_EROSION_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Ravine",
+                "FileName": "ca_forge_ravine.map",
+                "MccThumbnails": [
+                    "H4MP_RAVINE",
+                    "H4MP_RAVINE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Longbow",
+                "FileName": "ca_gore_valley.map",
+                "MccThumbnails": [
+                    "H4MP_LONGBOW",
+                    "H4MP_LONGBOW_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Perdition",
+                "FileName": "ca_highrise.map",
+                "MccThumbnails": [
+                    "H4MP_PERDITION",
+                    "H4MP_PERDITION_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Landfall",
+                "FileName": "ca_port.map",
+                "MccThumbnails": [
+                    "H4MP_LANDFALL",
+                    "H4MP_LANDFALL_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Skyline",
+                "FileName": "ca_rattler.map",
+                "MccThumbnails": [
+                    "H4MP_SKYLINE",
+                    "H4MP_SKYLINE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Vortex",
+                "FileName": "ca_redoubt.map",
+                "MccThumbnails": [
+                    "H4MP_VORTEX",
+                    "H4MP_VORTEX_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Daybreak",
+                "FileName": "ca_spiderweb.map",
+                "MccThumbnails": [
+                    "H4MP_DAYBREAK",
+                    "H4MP_DAYBREAK_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Solace",
+                "FileName": "ca_tower.map",
+                "MccThumbnails": [
+                    "H4MP_SOLACE",
+                    "H4MP_SOLACE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Adrift",
+                "FileName": "ca_warhouse.map",
+                "MccThumbnails": [
+                    "H4MP_ADRIFT",
+                    "H4MP_ADRIFT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Shatter",
+                "FileName": "dlc_dejewel.map",
+                "MccThumbnails": [
+                    "H4MP_SHATTER",
+                    "H4MP_SHATTER_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Wreckage",
+                "FileName": "dlc_dejunkyard.map",
+                "MccThumbnails": [
+                    "H4MP_WRECKAGE",
+                    "H4MP_WRECKAGE_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Haven",
+                "FileName": "wraparound.map",
+                "MccThumbnails": [
+                    "H4MP_HAVEN",
+                    "H4MP_HAVEN_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Complex",
+                "FileName": "z05_cliffside.map",
+                "MccThumbnails": [
+                    "H4MP_COMPLEX",
+                    "H4MP_COMPLEX_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Ragnarok",
+                "FileName": "z11_valhalla.map",
+                "MccThumbnails": [
+                    "H4MP_RAGNAROK",
+                    "H4MP_RAGNAROK_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Harvest",
+                "FileName": "zd_02_grind.map",
+                "MccThumbnails": [
+                    "H4MP_HARVEST",
+                    "H4MP_HARVEST_LARGE"
+                ]
+            }
+        ],
+        "Forge": [
+            {
+                "DisplayName": "Forge Island",
+                "FileName": "dlc_forge_island.map",
+                "MccThumbnails": [
+                    "H4MP_FORGEISLAND",
+                    "H4MP_FORGEISLAND_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Locations)": [
+            {
+                "DisplayName": "Infinity",
+                "FileName": "dlc01_engine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_07_MISSION_02",
+                    "SPARTANOPS_EPI_07_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Lockup",
+                "FileName": "dlc01_factory.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_06_MISSION_01",
+                    "SPARTANOPS_EPI_06_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Control",
+                "FileName": "ff151_mezzanine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_06_MISSION_02",
+                    "SPARTANOPS_EPI_06_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Cyclone",
+                "FileName": "ff152_vortex.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_06_MISSION_04",
+                    "SPARTANOPS_EPI_06_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Warrens",
+                "FileName": "ff153_caverns.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_08_MISSION_03",
+                    "SPARTANOPS_EPI_08_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Apex",
+                "FileName": "ff154_hillside.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_08_MISSION_01",
+                    "SPARTANOPS_EPI_08_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Harvester",
+                "FileName": "ff155_breach.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_10_MISSION_01",
+                    "SPARTANOPS_EPI_10_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Gate",
+                "FileName": "ff81_courtyard.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_02_MISSION_01",
+                    "SPARTANOPS_EPI_02_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Cauldron",
+                "FileName": "ff82_scurve.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_02_MISSION_02",
+                    "SPARTANOPS_EPI_02_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Refuge",
+                "FileName": "ff84_temple.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_04",
+                    "SPARTANOPS_EPI_01_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Sniper Alley",
+                "FileName": "ff86_sniperalley.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_02",
+                    "SPARTANOPS_EPI_01_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Quarry",
+                "FileName": "ff87_chopperbowl.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_01",
+                    "SPARTANOPS_EPI_01_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Fortress",
+                "FileName": "ff90_fortsw.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_03",
+                    "SPARTANOPS_EPI_01_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Galileo Base",
+                "FileName": "ff91_complex.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_03_MISSION_02",
+                    "SPARTANOPS_EPI_03_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Two Giants",
+                "FileName": "ff92_valhalla.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_03_MISSION_03",
+                    "SPARTANOPS_EPI_03_MISSION_03_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 01: Departure)": [
+            {
+                "DisplayName": "Land Grab",
+                "FileName": "ff87_chopperbowl.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_01",
+                    "SPARTANOPS_EPI_01_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Sniper Alley",
+                "FileName": "ff86_sniperalley.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_02",
+                    "SPARTANOPS_EPI_01_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Challenge",
+                "FileName": "ff90_fortsw.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_03",
+                    "SPARTANOPS_EPI_01_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Sacred",
+                "FileName": "ff84_temple.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_04",
+                    "SPARTANOPS_EPI_01_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Core",
+                "FileName": "ff82_scurve.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_01_MISSION_05",
+                    "SPARTANOPS_EPI_01_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 02: Artifact)": [
+            {
+                "DisplayName": "Clean Up",
+                "FileName": "ff81_courtyard.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_02_MISSION_01",
+                    "SPARTANOPS_EPI_02_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "For Science",
+                "FileName": "ff82_scurve.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_02_MISSION_02",
+                    "SPARTANOPS_EPI_02_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Hacksaw",
+                "FileName": "ff90_fortsw.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_02_MISSION_03",
+                    "SPARTANOPS_EPI_02_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Pelican Down",
+                "FileName": "ff86_sniperalley.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_02_MISSION_04",
+                    "SPARTANOPS_EPI_02_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Gagarin",
+                "FileName": "ff84_temple.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_02_MISSION_05",
+                    "SPARTANOPS_EPI_02_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 03: Catherine)": [
+            {
+                "DisplayName": "The VIP",
+                "FileName": "ff87_chopperbowl.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_03_MISSION_01",
+                    "SPARTANOPS_EPI_03_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Galileo",
+                "FileName": "ff91_complex.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_03_MISSION_02",
+                    "SPARTANOPS_EPI_03_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Spartan Mountain",
+                "FileName": "ff92_valhalla.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_03_MISSION_03",
+                    "SPARTANOPS_EPI_03_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Shootout In Valhalla",
+                "FileName": "ff92_valhalla.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_03_MISSION_04",
+                    "SPARTANOPS_EPI_03_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Hunting Trip",
+                "FileName": "ff81_courtyard.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_03_MISSION_05",
+                    "SPARTANOPS_EPI_03_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 04: Didact's Hand)": [
+            {
+                "DisplayName": "Hairy Call",
+                "FileName": "ff86_sniperalley.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_04_MISSION_01",
+                    "SPARTANOPS_EPI_04_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Rally Point",
+                "FileName": "ff92_valhalla.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_04_MISSION_02",
+                    "SPARTANOPS_EPI_04_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Random Transport",
+                "FileName": "ff90_fortsw.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_04_MISSION_03",
+                    "SPARTANOPS_EPI_04_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Chase",
+                "FileName": "ff82_scurve.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_04_MISSION_04",
+                    "SPARTANOPS_EPI_04_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Didact's Gift",
+                "FileName": "ff91_complex.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_04_MISSION_05",
+                    "SPARTANOPS_EPI_04_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 05: Memento Mori)": [
+            {
+                "DisplayName": "Spartan Miller",
+                "FileName": "ff81_courtyard.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_05_MISSION_01",
+                    "SPARTANOPS_EPI_05_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Nothing Can Go Wrong",
+                "FileName": "ff84_temple.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_05_MISSION_02",
+                    "SPARTANOPS_EPI_05_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Everything Has Gone Wrong",
+                "FileName": "ff84_temple.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_05_MISSION_03",
+                    "SPARTANOPS_EPI_05_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Cauldron Base",
+                "FileName": "ff82_scurve.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_05_MISSION_04",
+                    "SPARTANOPS_EPI_05_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Spartan Thorne",
+                "FileName": "ff87_chopperbowl.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_05_MISSION_05",
+                    "SPARTANOPS_EPI_05_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 06: Scattered)": [
+            {
+                "DisplayName": "Escape Plan",
+                "FileName": "dlc01_factory.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_06_MISSION_01",
+                    "SPARTANOPS_EPI_06_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "All The Secrets",
+                "FileName": "ff151_mezzanine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_06_MISSION_02",
+                    "SPARTANOPS_EPI_06_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Need To Know",
+                "FileName": "ff153_caverns.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_06_MISSION_03",
+                    "SPARTANOPS_EPI_06_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Search And Destroy",
+                "FileName": "ff152_vortex.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_06_MISSION_04",
+                    "SPARTANOPS_EPI_06_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Switchback",
+                "FileName": "ff155_breach.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_06_MISSION_05",
+                    "SPARTANOPS_EPI_06_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 07: Invasion)": [
+            {
+                "DisplayName": "Backup",
+                "FileName": "ff154_hillside.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_07_MISSION_01",
+                    "SPARTANOPS_EPI_07_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Home Field",
+                "FileName": "dlc01_engine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_07_MISSION_02",
+                    "SPARTANOPS_EPI_07_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Engine Of Destruction",
+                "FileName": "dlc01_engine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_07_MISSION_03",
+                    "SPARTANOPS_EPI_07_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Guns Of Infinity",
+                "FileName": "dlc01_engine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_07_MISSION_04",
+                    "SPARTANOPS_EPI_07_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Victory Lap",
+                "FileName": "dlc01_engine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_07_MISSION_05",
+                    "SPARTANOPS_EPI_07_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 08: Expendable)": [
+            {
+                "DisplayName": "Unfinished Business",
+                "FileName": "ff154_hillside.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_08_MISSION_01",
+                    "SPARTANOPS_EPI_08_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Majestic Rescue",
+                "FileName": "ff152_vortex.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_08_MISSION_02",
+                    "SPARTANOPS_EPI_08_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Lancer",
+                "FileName": "ff153_caverns.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_08_MISSION_03",
+                    "SPARTANOPS_EPI_08_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Crystal Ball",
+                "FileName": "dlc01_factory.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_08_MISSION_04",
+                    "SPARTANOPS_EPI_08_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Glassman",
+                "FileName": "ff151_mezzanine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_08_MISSION_05",
+                    "SPARTANOPS_EPI_08_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 09: Key)": [
+            {
+                "DisplayName": "The Search For Halsey",
+                "FileName": "ff152_vortex.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_09_MISSION_01",
+                    "SPARTANOPS_EPI_09_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Clean Up",
+                "FileName": "ff151_mezzanine.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_09_MISSION_02",
+                    "SPARTANOPS_EPI_09_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Science Mountain",
+                "FileName": "ff154_hillside.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_09_MISSION_03",
+                    "SPARTANOPS_EPI_09_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Revenge",
+                "FileName": "dlc01_factory.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_09_MISSION_04",
+                    "SPARTANOPS_EPI_09_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "The Hammer",
+                "FileName": "dlc01_factory.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_09_MISSION_05",
+                    "SPARTANOPS_EPI_09_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Spartan Ops (Episode 10: Exodus)": [
+            {
+                "DisplayName": "Artifact",
+                "FileName": "ff155_breach.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_10_MISSION_01",
+                    "SPARTANOPS_EPI_10_MISSION_01_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "In One Way",
+                "FileName": "ff153_caverns.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_10_MISSION_02",
+                    "SPARTANOPS_EPI_10_MISSION_02_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Seize The Power",
+                "FileName": "ff154_hillside.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_10_MISSION_03",
+                    "SPARTANOPS_EPI_10_MISSION_03_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Out The Other",
+                "FileName": "ff153_caverns.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_10_MISSION_04",
+                    "SPARTANOPS_EPI_10_MISSION_04_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "One Last Time",
+                "FileName": "ff155_breach.map",
+                "MccThumbnails": [
+                    "SPARTANOPS_EPI_10_MISSION_05",
+                    "SPARTANOPS_EPI_10_MISSION_05_LARGE"
+                ]
+            }
+        ],
+        "Other": [
+            {
+                "DisplayName": "Main Menu",
+                "FileName": "mainmenu.map",
+                "MccThumbnails": [
+                    "",
+                    ""
+                ]
+            }
+        ]
+    },
+    "Halo2x": {
+        "Multiplayer": [
+            {
+                "DisplayName": "Zenith",
+                "FileName": "ca_ascension.map",
+                "MccThumbnails": [
+                    "H2MPA_ASCENSION",
+                    "H2MPA_ASCENSION_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Bloodline",
+                "FileName": "ca_coagulation.map",
+                "MccThumbnails": [
+                    "H2MPA_COAGULATION",
+                    "H2MPA_COAGULATION_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Lockdown",
+                "FileName": "ca_lockout.map",
+                "MccThumbnails": [
+                    "H2MPA_LOCKOUT",
+                    "H2MPA_LOCKOUT_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Remnant",
+                "FileName": "ca_relic.map",
+                "MccThumbnails": [
+                    "H2MPA_RELIC",
+                    "H2MPA_RELIC_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Shrine",
+                "FileName": "ca_sanctuary.map",
+                "MccThumbnails": [
+                    "H2MPA_SANCTUARY",
+                    "H2MPA_SANCTUARY_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Warlord",
+                "FileName": "ca_warlock.map",
+                "MccThumbnails": [
+                    "H2MPA_WARLOCK",
+                    "H2MPA_WARLOCK_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Stonetown",
+                "FileName": "ca_zanzibar.map",
+                "MccThumbnails": [
+                    "H2MPA_ZANZIBAR",
+                    "H2MPA_ZANZIBAR_LARGE"
+                ]
+            }
+        ],
+        "Forge": [
+            {
+                "DisplayName": "Skyward",
+                "FileName": "ca_forge_skybox01.map",
+                "MccThumbnails": [
+                    "",
+                    "H2MPA_SKYWARD_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Nebula",
+                "FileName": "ca_forge_skybox02.map",
+                "MccThumbnails": [
+                    "",
+                    "H2MPA_NEBULA_LARGE"
+                ]
+            },
+            {
+                "DisplayName": "Awash",
+                "FileName": "ca_forge_skybox03.map",
+                "MccThumbnails": [
+                    "",
+                    "H2MPA_AWASH_LARGE"
+                ]
+            }
+        ]
+    }
+}

@@ -1,4 +1,6 @@
-﻿namespace Reclaimer.Blam.Common
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Reclaimer.Blam.Common
 {
     using static CacheMetadataFlags;
     using static CachePlatform;
@@ -14,18 +16,33 @@
 
     public enum BlamEngine
     {
-        Unknown = -1,
+        Unknown = 0,
+
+        [Display(Name = "Halo CE")]
         Halo1,
+
+        [Display(Name = "Halo 2")]
         Halo2,
+
+        [Display(Name = "Halo 3")]
         Halo3,
+
+        [Display(Name = "Halo 3: ODST")]
         Halo3ODST,
+
+        [Display(Name = "Halo Reach")]
         HaloReach,
+
+        [Display(Name = "Halo 4")]
         Halo4,
+
+        [Display(Name = "Halo 2 Anniversary MP")]
         Halo2X
     }
 
     public enum CachePlatform
     {
+        Unknown = 0,
         Xbox,
         Xbox360,
         XboxOne,
@@ -41,13 +58,14 @@
 
     public enum CacheResourceCodec
     {
-        Unknown = -1,
+        Unknown = 0,
         Uncompressed, //default for Gen1/2
         Deflate, //default for Gen3+
         LZX,
         UnknownDeflate
     }
 
+    [Flags]
     public enum CacheMetadataFlags
     {
         None = 0,

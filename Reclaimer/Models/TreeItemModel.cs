@@ -1,5 +1,4 @@
 ﻿using Reclaimer.Utilities;
-using System.Diagnostics;
 using System.Windows;
 
 namespace Reclaimer.Models
