@@ -1,5 +1,4 @@
 ﻿using Reclaimer.Blam.Common;
-using System.Diagnostics;
 using System.IO;
 
 namespace Reclaimer.Plugins.MapBrowser
