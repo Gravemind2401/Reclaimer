@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <ProjectName>$([System.IO.Path]::GetFileName($(MSBuildProjectDirectory)))</ProjectName>
     <OutputType>Library</OutputType>
     <TargetFramework>net7.0-windows</TargetFramework>
     <Nullable>disable</Nullable>
@@ -11,8 +10,8 @@
     <FileVersion>$(AssemblyVersion)</FileVersion>
     <Version>$(VersionPrefix)$(AssemblyVersion)</Version>
     <Copyright>Copyright © $(Authors) 2018 - $([System.DateTime]::Now.Year)</Copyright>
-    <RootNamespace>$(ProjectName.Split(".")[0])</RootNamespace>
-    <AssemblyOriginatorKeyFile>$(ProjectName).snk</AssemblyOriginatorKeyFile>
+    <RootNamespace>$(MSBuildProjectName.Split(".")[0])</RootNamespace>
+    <AssemblyOriginatorKeyFile>$(MSBuildProjectName).snk</AssemblyOriginatorKeyFile>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
