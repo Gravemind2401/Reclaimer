@@ -64,7 +64,7 @@ namespace Reclaimer.Geometry.Vectors
         { #>
         public float <#= propertyNames[index] #>
         {
-            readonly get => helper.Get<#= propertyNames[index] #>(in bits);
+            readonly get => helper.Get<#= propertyNames[index] #>(bits);
             set => helper.Set<#= propertyNames[index] #>(ref bits, value);
         }
 

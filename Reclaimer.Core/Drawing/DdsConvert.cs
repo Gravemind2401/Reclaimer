@@ -316,7 +316,7 @@ namespace Reclaimer.Drawing
             }
         }
 
-        private BitmapSource UnwrapCubemapSource(BitmapSource source, double dpi, System.Windows.Media.PixelFormat format, CubemapLayout layout)
+        private WriteableBitmap UnwrapCubemapSource(BitmapSource source, double dpi, System.Windows.Media.PixelFormat format, CubemapLayout layout)
         {
             var bpp = format.BitsPerPixel / 8;
             var stride = bpp * Width;
@@ -1459,7 +1459,7 @@ namespace Reclaimer.Drawing
                     var sourceIndex = y * width * bpp + x * bpp;
 
                     var destW = rot % 2 == 0 ? width : height;
-                    //int destH = rot % 2 == 0 ? height : width;
+                    //var destH = rot % 2 == 0 ? height : width;
 
                     int destX, destY;
                     if (turns == 0)
@@ -1496,7 +1496,7 @@ namespace Reclaimer.Drawing
             ArrayPool<byte>.Shared.Return(output);
         }
 
-        private static BgraColour Lerp(in BgraColour c0, in BgraColour c1, in float fraction)
+        private static BgraColour Lerp(in BgraColour c0, in BgraColour c1, float fraction)
         {
             return new BgraColour
             {

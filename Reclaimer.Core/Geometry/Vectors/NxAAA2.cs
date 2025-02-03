@@ -20,25 +20,25 @@ namespace Reclaimer.Geometry.Vectors
 
         public float X
         {
-            readonly get => helper.GetX(in bits);
+            readonly get => helper.GetX(bits);
             set => helper.SetX(ref bits, value);
         }
 
         public float Y
         {
-            readonly get => helper.GetY(in bits);
+            readonly get => helper.GetY(bits);
             set => helper.SetY(ref bits, value);
         }
 
         public float Z
         {
-            readonly get => helper.GetZ(in bits);
+            readonly get => helper.GetZ(bits);
             set => helper.SetZ(ref bits, value);
         }
 
         public float W
         {
-            readonly get => helper.GetW(in bits);
+            readonly get => helper.GetW(bits);
             set => helper.SetW(ref bits, value);
         }
 

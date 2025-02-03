@@ -24,13 +24,13 @@ namespace Reclaimer.Geometry.Vectors
 
         public float X
         {
-            readonly get => helper.GetValue(in xbits);
+            readonly get => helper.GetValue(xbits);
             set => helper.SetValue(ref xbits, value);
         }
 
         public float Y
         {
-            readonly get => helper.GetValue(in ybits);
+            readonly get => helper.GetValue(ybits);
             set => helper.SetValue(ref ybits, value);
         }
 

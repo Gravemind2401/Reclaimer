@@ -32,7 +32,7 @@
             }
         }
 
-        private float Normalise(in float value, in BitRange bitRange)
+        private float Normalise(float value, in BitRange bitRange)
         {
             return signMode switch
             {
@@ -45,29 +45,29 @@
 
         #region 8 or 16-bit Normalised
 
-        public float GetValue(in byte bits) => GetValue(bits, 0);
-        public void SetValue(ref byte bits, in float value) => bits = (byte)Normalise(value, axes[0]);
+        public float GetValue(byte bits) => GetValue(bits, 0);
+        public void SetValue(ref byte bits, float value) => bits = (byte)Normalise(value, axes[0]);
 
-        public float GetValue(in ushort bits) => GetValue(bits, 0);
-        public void SetValue(ref ushort bits, in float value) => bits = (ushort)Normalise(value, axes[0]);
+        public float GetValue(ushort bits) => GetValue(bits, 0);
+        public void SetValue(ref ushort bits, float value) => bits = (ushort)Normalise(value, axes[0]);
 
         #endregion
 
         #region 32-bit Packed
 
-        public float GetX(in uint bits) => GetValue(bits, 0);
+        public float GetX(uint bits) => GetValue(bits, 0);
         public void SetX(ref uint bits, float value) => SetValue(ref bits, 0, value);
 
-        public float GetY(in uint bits) => GetValue(bits, 1);
+        public float GetY(uint bits) => GetValue(bits, 1);
         public void SetY(ref uint bits, float value) => SetValue(ref bits, 1, value);
 
-        public float GetZ(in uint bits) => GetValue(bits, 2);
+        public float GetZ(uint bits) => GetValue(bits, 2);
         public void SetZ(ref uint bits, float value) => SetValue(ref bits, 2, value);
 
-        public float GetW(in uint bits) => GetValue(bits, 3);
+        public float GetW(uint bits) => GetValue(bits, 3);
         public void SetW(ref uint bits, float value) => SetValue(ref bits, 3, value);
 
-        private float GetValue(in uint bits, int index)
+        private float GetValue(uint bits, int index)
         {
             return signMode switch
             {
@@ -78,8 +78,8 @@
             };
         }
 
-        private uint GetUnsignedBits(in uint bits, int axis) => (bits >> axes[axis].Offset) & axes[axis].LengthMask;
-        private int GetSignedBits(in uint bits, int axis)
+        private uint GetUnsignedBits(uint bits, int axis) => (bits >> axes[axis].Offset) & axes[axis].LengthMask;
+        private int GetSignedBits(uint bits, int axis)
         {
             var signExtend = (bits & axes[axis].SignMask) > 0 ? axes[axis].SignExtend : 0;
             return unchecked((int)(GetUnsignedBits(bits, axis) | signExtend));
