@@ -82,7 +82,7 @@ namespace Reclaimer.Blam.Common
             {
                 BlamEngine.Halo1 => new Halo1.CacheFile(args),
 
-                BlamEngine.Halo2 when cacheType == CacheType.Halo2Beta => new Halo2Beta.CacheFile(args),
+                BlamEngine.Halo2 when cacheType <= CacheType.Halo2Beta => new Halo2Beta.CacheFile(args),
                 BlamEngine.Halo2 when cacheType == CacheType.MccHalo2 => throw Exceptions.UnknownMapFile(fileName),
                 BlamEngine.Halo2 => new Halo2.CacheFile(args),
 

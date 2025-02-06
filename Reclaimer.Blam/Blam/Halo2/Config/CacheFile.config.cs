@@ -11,7 +11,7 @@ namespace Reclaimer.Blam.Halo2
         {
             public DefinitionBuilder()
             {
-                var builder = AddVersion(CacheType.Halo2Beta).HasFixedSize(2048);
+                var builder = AddVersion(CacheType.Halo2E3, CacheType.Halo2Xbox).HasFixedSize(2048);
                 builder.Property(x => x.Head).HasOffset(0);
                 builder.Property(x => x.FileSize).HasOffset(8);
                 builder.Property(x => x.IndexAddress).HasOffset(16);

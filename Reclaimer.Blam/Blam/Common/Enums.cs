@@ -104,6 +104,10 @@ namespace Reclaimer.Blam.Common
         [BuildString("01.03.43.0000")] //update 1
         MccHalo1,
 
+        [CacheMetadata(BlamEngine.Halo2, Xbox, PreBeta)]
+        [BuildString("02.05.05.06966")]
+        Halo2E3,
+
         [CacheMetadata(BlamEngine.Halo2, Xbox, Beta)]
         [BuildString("02.06.28.07902")]
         Halo2Beta,

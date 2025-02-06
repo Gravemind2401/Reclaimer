@@ -36,7 +36,7 @@ namespace Reclaimer.Blam.Common
 
             if (cache.Metadata.Generation != CacheGeneration.Gen2)
                 reader.Seek(8, SeekOrigin.Current);
-            else if (cache.CacheType == CacheType.Halo2Beta)
+            else if (cache.CacheType <= CacheType.Halo2Beta)
                 reader.Seek(8, SeekOrigin.Current);
 
             tagId = reader.ReadInt32();
@@ -53,7 +53,7 @@ namespace Reclaimer.Blam.Common
                 writer.Write(0);
                 writer.Write(0);
             }
-            else if (cache.CacheType == CacheType.Halo2Beta)
+            else if (cache.CacheType <= CacheType.Halo2Beta)
             {
                 writer.Write(0);
                 writer.Write(0);
