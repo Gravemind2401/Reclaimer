@@ -1,58 +1,60 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
-    <Nullable>disable</Nullable>
-    <SignAssembly>false</SignAssembly>
-    <Authors>Gravemind2401</Authors>
-    <AssemblyVersion>5.0.0.0</AssemblyVersion>
-    <FileVersion>$(AssemblyVersion)</FileVersion>
-    <Version>$(VersionPrefix)$(AssemblyVersion)</Version>
-    <Copyright>Copyright © $(Authors) 2018 - $([System.DateTime]::Now.Year)</Copyright>
-    <RootNamespace>$(MSBuildProjectName.Split(".")[0])</RootNamespace>
-    <AssemblyOriginatorKeyFile>$(MSBuildProjectName).snk</AssemblyOriginatorKeyFile>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+    <PropertyGroup>
+        <!-- cant use MSBuildProjectName because it can end up being something like "ProjectName_tmp" under certain build conditions -->
+        <ProjectName>$([System.IO.Path]::GetFileName($(MSBuildProjectDirectory)))</ProjectName>
+        <OutputType>Library</OutputType>
+        <TargetFramework>net7.0-windows</TargetFramework>
+        <Nullable>disable</Nullable>
+        <SignAssembly>false</SignAssembly>
+        <Authors>Gravemind2401</Authors>
+        <AssemblyVersion>5.0.0.0</AssemblyVersion>
+        <FileVersion>$(AssemblyVersion)</FileVersion>
+        <Version>$(VersionPrefix)$(AssemblyVersion)</Version>
+        <Copyright>Copyright © $(Authors) 2018 - $([System.DateTime]::Now.Year)</Copyright>
+        <RootNamespace>$(ProjectName.Split(".")[0])</RootNamespace>
+        <AssemblyOriginatorKeyFile>$(ProjectName).snk</AssemblyOriginatorKeyFile>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Reclaimer.Core\Reclaimer.Core.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Reclaimer.Core\Reclaimer.Core.csproj" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="System.Drawing.Common" Version="8.0.8" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Using Remove="System.IO" />
-    <Using Remove="System.Net.Http" />
-    <Using Include="System.Diagnostics.DebuggerDisplayAttribute">
-      <Alias>DebuggerDisplayAttribute</Alias>
-    </Using>
-  </ItemGroup>
+    <ItemGroup>
+        <Using Remove="System.IO" />
+        <Using Remove="System.Net.Http" />
+        <Using Include="System.Diagnostics.DebuggerDisplayAttribute">
+            <Alias>DebuggerDisplayAttribute</Alias>
+        </Using>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Reclaimer.Blam.Properties</CustomToolNamespace>
-    </EmbeddedResource>
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Update="Properties\Resources.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Resources.resx</DependentUpon>
+        </Compile>
+        <EmbeddedResource Update="Properties\Resources.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+            <CustomToolNamespace>Reclaimer.Blam.Properties</CustomToolNamespace>
+        </EmbeddedResource>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ContentWithTargetPath Include="Resources\xcompress32.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>xcompress32.dll</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\xcompress64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>xcompress64.dll</TargetPath>
-    </ContentWithTargetPath>
-  </ItemGroup>
+    <ItemGroup>
+        <ContentWithTargetPath Include="Resources\xcompress32.dll">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <TargetPath>xcompress32.dll</TargetPath>
+        </ContentWithTargetPath>
+        <ContentWithTargetPath Include="Resources\xcompress64.dll">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <TargetPath>xcompress64.dll</TargetPath>
+        </ContentWithTargetPath>
+    </ItemGroup>
 
 </Project>

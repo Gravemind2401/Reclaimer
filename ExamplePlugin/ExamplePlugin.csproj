@@ -1,18 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
-    <SignAssembly>False</SignAssembly>
-    <Authors>Gravemind2401</Authors>
-    <AssemblyVersion>1.0.0.7</AssemblyVersion>
-    <FileVersion>$(AssemblyVersion)</FileVersion>
-    <Version>$(VersionPrefix)$(AssemblyVersion)</Version>
-    <Copyright>Copyright © $(Authors) 2019 - $([System.DateTime]::Now.Year)</Copyright>
-  </PropertyGroup>
+    <PropertyGroup>
+        <!-- cant use MSBuildProjectName because it can end up being something like "ProjectName_tmp" under certain build conditions -->
+        <ProjectName>$([System.IO.Path]::GetFileName($(MSBuildProjectDirectory)))</ProjectName>
+        <OutputType>Library</OutputType>
+        <TargetFramework>net7.0-windows</TargetFramework>
+        <SignAssembly>False</SignAssembly>
+        <Authors>Gravemind2401</Authors>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <FileVersion>$(AssemblyVersion)</FileVersion>
+        <Version>$(VersionPrefix)$(AssemblyVersion)</Version>
+        <Copyright>Copyright © $(Authors) 2019 - $([System.DateTime]::Now.Year)</Copyright>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Reclaimer\Reclaimer.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Reclaimer\Reclaimer.csproj" />
+    </ItemGroup>
 
 </Project>
