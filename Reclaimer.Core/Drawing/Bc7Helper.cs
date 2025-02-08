@@ -326,8 +326,8 @@
             #endregion
         };
 
-        public static readonly BlockAttributes[] BlocksTypes = new BlockAttributes[]
-        {
+        public static readonly BlockAttributes[] BlocksTypes =
+        [
             new BlockAttributes(0, 4, 0, 0, 3, 4, 0, PBitMode.Unique, 3, 0),
             new BlockAttributes(1, 6, 0, 0, 2, 6, 0, PBitMode.Shared, 3, 0),
             new BlockAttributes(2, 6, 0, 0, 3, 5, 0, PBitMode.None, 2, 0),
@@ -336,11 +336,11 @@
             new BlockAttributes(5, 0, 2, 0, 1, 7, 8, PBitMode.None, 2, 2),
             new BlockAttributes(6, 0, 0, 0, 1, 7, 7, PBitMode.Unique, 4, 0),
             new BlockAttributes(7, 6, 0, 0, 2, 5, 5, PBitMode.Unique, 2, 0)
-        };
+        ];
 
-        private static readonly uint[] Weights2 = new uint[] { 0, 21, 43, 64 };
-        private static readonly uint[] Weights3 = new uint[] { 0, 9, 18, 27, 37, 46, 55, 64 };
-        private static readonly uint[] Weights4 = new uint[] { 0, 4, 9, 13, 17, 21, 26, 30, 34, 38, 43, 47, 51, 55, 60, 64 };
+        private static readonly uint[] Weights2 = [0, 21, 43, 64];
+        private static readonly uint[] Weights3 = [0, 9, 18, 27, 37, 46, 55, 64];
+        private static readonly uint[] Weights4 = [0, 4, 9, 13, 17, 21, 26, 30, 34, 38, 43, 47, 51, 55, 60, 64];
 
         public static void InterpolatePaletteValues(int e0, int e1, int subsetIndex, int channelIndex, ref BlockAttributes blockInfo, Span<byte> palette0Bytes, Span<byte> palette1Bytes)
         {

@@ -4,7 +4,7 @@
      xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
 
     <?define Reclaimer.OutputDir = "..\Reclaimer\bin\$(Configuration)"?>
-    <?define MinimumNetVersion = "7.0.2"?>
+    <?define MinimumNetVersion = "9.0.17"?>
 
     <Package Name="Reclaimer" Scope="perUser"
              Manufacturer="Gravemind2401"

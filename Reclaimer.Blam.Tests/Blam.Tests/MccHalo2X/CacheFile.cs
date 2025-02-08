@@ -18,7 +18,7 @@ namespace Reclaimer.Blam.Tests.MccHalo2X
         [DataTestMethod]
         public void Halo2X(string map) => TestMap(Directories.MccHalo2X, map);
 
-        private void TestMap(string folder, string map)
+        private static void TestMap(string folder, string map)
         {
             var cache = new Blam.MccHalo2X.CacheFile(Path.Combine(folder, $"{map}.map"));
 

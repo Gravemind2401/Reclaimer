@@ -682,7 +682,7 @@ namespace Reclaimer.IO
         protected void InvokeWriteObject(object value, double? version)
         {
             DynamicWriteMethod.MakeGenericMethod(value.GetType())
-                .Invoke(this, new object[] { value, version });
+                .Invoke(this, [value, version]);
         }
 
         /// <summary>

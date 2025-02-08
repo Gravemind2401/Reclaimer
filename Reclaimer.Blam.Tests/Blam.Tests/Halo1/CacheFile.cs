@@ -38,7 +38,7 @@ namespace Reclaimer.Blam.Tests.Halo1
         [DataTestMethod]
         public void Halo1Multiplayer(string map) => TestMap(map);
 
-        private void TestMap(string map)
+        private static void TestMap(string map)
         {
             var cache = new Blam.Halo1.CacheFile(Path.Combine(Directories.PCHalo1, $"{map}.map"));
 

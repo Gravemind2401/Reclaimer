@@ -18,19 +18,18 @@
         private sealed class CachedContentProvider : ICachedContentProvider<TContent>
         {
             private readonly IContentProvider<TContent> contentSource;
-            private readonly TContent content;
 
             public CachedContentProvider(IContentProvider<TContent> provider)
             {
                 contentSource = provider;
-                content = provider.GetContent();
+                Content = provider.GetContent();
             }
 
             public string SourceFile => contentSource.SourceFile;
             public int Id => contentSource.Id;
             public string Name => contentSource.Name;
             public string Class => contentSource.Class;
-            public TContent Content => content;
+            public TContent Content { get; }
         }
     }
 

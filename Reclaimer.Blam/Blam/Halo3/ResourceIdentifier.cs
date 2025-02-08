@@ -40,7 +40,7 @@ namespace Reclaimer.Blam.Halo3
 
         public byte[] ReadData(PageType mode, int maxLength)
         {
-            Exceptions.ThrowIfNegative(maxLength);
+            ArgumentOutOfRangeException.ThrowIfNegative(maxLength);
 
             if (cache.CacheType <= CacheType.Halo3Beta)
                 return ReadDataHalo3Beta(mode, maxLength);

@@ -67,7 +67,7 @@ namespace Reclaimer.Blam.HaloReach
             {
                 var resourceGestalt = Cache.TagIndex.GetGlobalTag("zone").ReadMetadata<CacheFileResourceGestaltTag>();
                 var entry = resourceGestalt.ResourceEntries[InstancesResourcePointer.ResourceIndex];
-                var address = entry.FixupOffset + entry.ResourceFixups[entry.ResourceFixups.Count - 10].Offset & 0x0FFFFFFF;
+                var address = entry.FixupOffset + entry.ResourceFixups[^10].MaskedOffset;
 
                 using (var cacheReader = Cache.CreateReader(Cache.DefaultAddressTranslator))
                 using (var reader = cacheReader.CreateVirtualReader(resourceGestalt.FixupDataPointer.Address))

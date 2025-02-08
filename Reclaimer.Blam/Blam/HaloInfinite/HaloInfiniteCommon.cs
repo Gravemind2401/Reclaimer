@@ -213,7 +213,7 @@ namespace Reclaimer.Blam.HaloInfinite
                             continue;
 
                         var method = typeof(HaloInfiniteCommon).GetMethod(nameof(CreateBuffer), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(vectorType);
-                        vectorBuffer = (IVectorBuffer)method.Invoke(null, new object[] { resourceBuffer, vertexBufferInfo.Count, 0, vertexBufferInfo.Stride, 0 });
+                        vectorBuffer = (IVectorBuffer)method.Invoke(null, [resourceBuffer, vertexBufferInfo.Count, 0, vertexBufferInfo.Stride, 0]);
                         vectorBuffers.Add(vectorBufferIndex, vectorBuffer);
                     }
 
@@ -301,7 +301,7 @@ namespace Reclaimer.Blam.HaloInfinite
             };
         }
 
-        private static IVectorBuffer CreateBuffer<T>(byte[] buffer, int count, int start, int stride, int offset)
+        private static VectorBuffer<T> CreateBuffer<T>(byte[] buffer, int count, int start, int stride, int offset)
             where T : struct, IBufferableVector<T>
         {
             return new VectorBuffer<T>(buffer, count, start, stride, offset);

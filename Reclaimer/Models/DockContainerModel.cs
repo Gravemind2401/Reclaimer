@@ -69,26 +69,14 @@ namespace Reclaimer.Models
         private void TogglePinStatusExecuted(TabModel item)
         {
             item = SelectedDockItem;
-            if (LeftDockItems.Contains(item))
-            {
-                LeftDockItems.Remove(item);
+            if (LeftDockItems.Remove(item))
                 AddTool(item, null, Dock.Left);
-            }
-            else if (TopDockItems.Contains(item))
-            {
-                TopDockItems.Remove(item);
+            else if (TopDockItems.Remove(item))
                 AddTool(item, null, Dock.Top);
-            }
-            else if (RightDockItems.Contains(item))
-            {
-                RightDockItems.Remove(item);
+            else if (RightDockItems.Remove(item))
                 AddTool(item, null, Dock.Right);
-            }
-            else if (BottomDockItems.Contains(item))
-            {
-                BottomDockItems.Remove(item);
+            else if (BottomDockItems.Remove(item))
                 AddTool(item, null, Dock.Bottom);
-            }
         }
 
         private void DockExecuted(DockEventArgs e)

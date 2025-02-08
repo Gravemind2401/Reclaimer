@@ -9,7 +9,6 @@ using System.Runtime.InteropServices;
 //The structs here are just a direct C# port from the links above
 
 #pragma warning disable IDE1006 // Naming Styles
-#pragma warning disable SYSLIB1054 // Use 'LibraryImportAttribute' instead of 'DllImportAttribute' to generate P/Invoke marshalling code at compile time
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
 
 namespace Reclaimer.Utilities
@@ -331,7 +330,7 @@ namespace Reclaimer.Utilities
                     where TDelegate : Delegate
                 {
                     var methodPtr = Marshal.ReadIntPtr(vtablePtr, methodIndex * IntPtr.Size);
-                    return (TDelegate)Marshal.GetDelegateForFunctionPointer(methodPtr, typeof(TDelegate));
+                    return Marshal.GetDelegateForFunctionPointer<TDelegate>(methodPtr);
                 }
 
                 this.computerPtr = computerPtr;

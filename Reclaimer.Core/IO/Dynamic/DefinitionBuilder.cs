@@ -236,7 +236,7 @@ namespace Reclaimer.IO.Dynamic
                     .GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic)
                     .MakeGenericMethod(storeType);
 
-                return (FieldDefinition<TClass>)methodInfo.Invoke(this, new object[] { TargetProperty, Offset.GetValueOrDefault(), ByteOrder });
+                return (FieldDefinition<TClass>)methodInfo.Invoke(this, [TargetProperty, Offset.GetValueOrDefault(), ByteOrder]);
             }
 
             private FieldDefinition<TClass> CreatePrimitive<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)

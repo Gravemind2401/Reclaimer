@@ -55,6 +55,8 @@ namespace Reclaimer.Blam.HaloReach
 
         [Offset(4)]
         public int Offset { get; set; } //mask 0x0FFFFFFF (4 bit ?, 28 bit offset)
+
+        public int MaskedOffset => Offset & 0x0FFFFFFF;
     }
 
     [FixedSize(8)]

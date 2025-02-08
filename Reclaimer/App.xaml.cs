@@ -15,12 +15,13 @@ namespace Reclaimer
         internal static Settings Settings { get; private set; }
         internal static UserSettings UserSettings => Settings.UserSettings;
 
-        private static readonly Dictionary<string, AppTheme> themes = new Dictionary<string, AppTheme>();
+        private static readonly Dictionary<string, AppTheme> themes = new();
 
+        public static string AppVersion { get; } =
 #if DEBUG
-        public static string AppVersion { get; } = "DEBUG";
+            "DEBUG";
 #else
-        public static string AppVersion { get; } = ReleaseVersion.ToString(3);
+            ReleaseVersion.ToString(3);
 #endif
 
         public App() : base()
@@ -63,12 +64,12 @@ namespace Reclaimer
 
             try
             {
-                var test = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, assemblyName + ".dll");
+                var test = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"{assemblyName}.dll");
                 if (File.Exists(test))
                     return Assembly.LoadFrom(test);
 
                 var root = Path.GetDirectoryName(args.RequestingAssembly.Location);
-                test = Path.Combine(root, assemblyName + ".dll");
+                test = Path.Combine(root, $"{assemblyName}.dll");
                 if (File.Exists(test))
                     return Assembly.LoadFile(test);
             }
@@ -115,7 +116,7 @@ namespace Reclaimer
                     if (Path.GetInvalidPathChars().Any(c => arg.Contains(c)))
                         continue; // not a file name
 
-                    if (!Path.HasExtension(arg) || excludeExtensions.Contains(Path.GetExtension(arg).ToLower()) || !File.Exists(arg))
+                    if (!Path.HasExtension(arg) || excludeExtensions.Contains(Path.GetExtension(arg), StringComparison.OrdinalIgnoreCase) || !File.Exists(arg))
                         continue;
 
                     if (Substrate.HandlePhysicalFile(arg))

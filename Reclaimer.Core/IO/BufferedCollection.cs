@@ -97,15 +97,13 @@
         /// a byte array was not provided to the <seealso cref="BufferedCollection{T}"/> constructor
         /// during construction of the current instance.
         /// </returns>
-        public byte[] GetBuffer() => buffer;
+        public byte[] GetBuffer() => Buffer;
 
         #region ICollection
         public void CopyTo(TBufferable[] array, int arrayIndex)
         {
             ArgumentNullException.ThrowIfNull(array);
-
-            if (arrayIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+            ArgumentOutOfRangeException.ThrowIfNegative(arrayIndex);
 
             while (arrayIndex < array.Length && arrayIndex < Count)
                 array[arrayIndex] = this[arrayIndex++];

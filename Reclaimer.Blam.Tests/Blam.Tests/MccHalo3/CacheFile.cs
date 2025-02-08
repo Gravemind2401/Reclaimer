@@ -47,7 +47,7 @@ namespace Reclaimer.Blam.Tests.MccHalo3
         [DataTestMethod]
         public void MccHalo3Multiplayer(string map) => TestMap(Directories.MccHalo3, map);
 
-        private void TestMap(string folder, string map)
+        private static void TestMap(string folder, string map)
         {
             var cache = new Blam.MccHalo3.CacheFileU6(Path.Combine(folder, $"{map}.map"));
 

@@ -4,7 +4,7 @@
         <!-- cant use MSBuildProjectName because it can end up being something like "ProjectName_tmp" under certain build conditions -->
         <ProjectName>$([System.IO.Path]::GetFileName($(MSBuildProjectDirectory)))</ProjectName>
         <OutputType>Library</OutputType>
-        <TargetFramework>net7.0-windows</TargetFramework>
+        <TargetFramework>net9.0-windows</TargetFramework>
         <SignAssembly>False</SignAssembly>
         <Authors>Gravemind2401</Authors>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>

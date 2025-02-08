@@ -26,7 +26,7 @@ namespace Reclaimer.Blam.Common
                         {
                             Stream = ParseInt(valueNode.Attributes["stream"].Value),
                             Offset = ParseInt(valueNode.Attributes["offset"].Value),
-                            DataType = (VectorType)Enum.Parse(typeof(VectorType), valueNode.Attributes[XmlVertexField.Type].Value, true),
+                            DataType = Enum.Parse<VectorType>(valueNode.Attributes[XmlVertexField.Type].Value, true),
                             Usage = valueNode.Attributes["usage"].Value,
                             UsageIndex = ParseInt(valueNode.Attributes["usageIndex"].Value)
                         }).ToList()
@@ -52,7 +52,7 @@ namespace Reclaimer.Blam.Common
                     continue;
 
                 var method = GetType().GetMethod(nameof(CreateBuffer), BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(vectorType);
-                var buffer = (IVectorBuffer)method.Invoke(this, new object[] { data, count, 0, vertexSize, field.Offset });
+                var buffer = (IVectorBuffer)method.Invoke(this, [data, count, 0, vertexSize, field.Offset]);
                 GetVectorChannel(field.Usage, vertexBuffer).Add(buffer);
             }
 
@@ -108,7 +108,7 @@ namespace Reclaimer.Blam.Common
             };
         }
 
-        private static IVectorBuffer CreateBuffer<T>(byte[] buffer, int count, int start, int stride, int offset)
+        private static VectorBuffer<T> CreateBuffer<T>(byte[] buffer, int count, int start, int stride, int offset)
             where T : struct, IBufferableVector<T>
         {
             return new VectorBuffer<T>(buffer, count, start, stride, offset);

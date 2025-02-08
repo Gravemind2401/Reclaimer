@@ -155,7 +155,7 @@ namespace Reclaimer.Saber3D.Halo1X
                 }
             }
 
-            model.Regions.AddRange(regionLookup.Values.Prepend(defaultRegion).Where(r => r.Permutations.Any()));
+            model.Regions.AddRange(regionLookup.Values.Prepend(defaultRegion).Where(r => r.Permutations.Count > 0));
             return model;
 
             Mesh GetCompoundMesh(NodeGraphBlock0xF000 host, SubmeshInfo segment)

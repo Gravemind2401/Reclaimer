@@ -32,7 +32,7 @@ namespace Reclaimer.Blam.Halo2
 
         public byte[] ReadData(int size)
         {
-            Exceptions.ThrowIfNonPositive(size);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(size);
 
             var directory = Directory.GetParent(cache.FileName).FullName;
             var target = Location switch

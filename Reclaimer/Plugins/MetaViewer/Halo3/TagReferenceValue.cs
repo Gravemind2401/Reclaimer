@@ -49,7 +49,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         private void OnClassChanged()
         {
             TagOptions.Clear();
-            var classTags = from t in context.Cache.TagIndex
+            var classTags = from t in Context.Cache.TagIndex
                             where t.ClassName == SelectedClass?.Label
                             orderby t.TagName
                             select t;
@@ -69,7 +69,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                if (bool.TryParse(node.Attributes["withGroup"]?.Value, out var withGroup) && !withGroup)
+                if (bool.TryParse(Node.Attributes["withGroup"]?.Value, out var withGroup) && !withGroup)
                 {
                     var tagId = reader.ReadInt32();
                     var tagIndex = (short)(tagId & ushort.MaxValue);
@@ -77,13 +77,13 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                         referenceValue = TagReference.NullReference;
                     else
                     {
-                        var classId = context.Cache.TagIndex[tagIndex].ClassId;
-                        referenceValue = new TagReference(context.Cache, classId, tagId);
+                        var classId = Context.Cache.TagIndex[tagIndex].ClassId;
+                        referenceValue = new TagReference(Context.Cache, classId, tagId);
                     }
                 }
                 else
                 {
-                    referenceValue = new TagReference(context.Cache, reader);
+                    referenceValue = new TagReference(Context.Cache, reader);
                 }
 
                 SelectedClass = ClassOptions.FirstOrDefault(i => i.Label == referenceValue.Tag?.ClassName);
@@ -102,7 +102,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 return;
 
             var tag = SelectedItem.Context;
-            referenceValue = new TagReference(context.Cache, tag.ClassId, tag.Id);
+            referenceValue = new TagReference(Context.Cache, tag.ClassId, tag.Id);
 
             writer.Seek(ValueAddress, SeekOrigin.Begin);
             referenceValue.Write(writer);

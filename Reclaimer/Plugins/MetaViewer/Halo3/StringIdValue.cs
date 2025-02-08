@@ -32,7 +32,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             try
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
-                Value = new StringId(reader, context.Cache);
+                Value = new StringId(reader, Context.Cache);
 
                 IsDirty = false;
             }
@@ -56,7 +56,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         private int GetStringId(string value)
         {
-            return string.IsNullOrEmpty(value) ? 0 : context.Cache.StringIndex.GetStringId(value);
+            return string.IsNullOrEmpty(value) ? 0 : Context.Cache.StringIndex.GetStringId(value);
         }
 
         protected internal override bool HasCustomValidation => true;
@@ -72,9 +72,9 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             if (string.IsNullOrEmpty(text))
                 return Enumerable.Empty<string>();
             else if (text.Length < 3)
-                return context.Cache.StringIndex.Where(s => s.Length < 3 && s?.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0).OrderBy(s => s);
+                return Context.Cache.StringIndex.Where(s => s.Length < 3 && s?.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0).OrderBy(s => s);
             else
-                return context.Cache.StringIndex.Where(s => s.Length >= 3 && s?.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0).OrderBy(s => s);
+                return Context.Cache.StringIndex.Where(s => s.Length >= 3 && s?.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0).OrderBy(s => s);
         }
     }
 }

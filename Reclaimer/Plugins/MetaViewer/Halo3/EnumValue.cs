@@ -55,7 +55,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
                 if (!Options.Any())
                 {
-                    foreach (var n in node.GetChildElements())
+                    foreach (var n in Node.GetChildElements())
                     {
                         if (n.Name.ToUpper() != "OPTION")
                             continue;

@@ -874,7 +874,7 @@ namespace Reclaimer.IO
 
             instance ??= InvokeCreateInstance(type, version);
             return PopulateMethod.MakeGenericMethod(type)
-                .Invoke(this, new object[] { instance, version, origin });
+                .Invoke(this, [instance, version, origin]);
         }
 
         private T PopulateNewObject<T>(double? version)
@@ -920,7 +920,7 @@ namespace Reclaimer.IO
         private object InvokeCreateInstance(Type type, double? version)
         {
             return CreateInstanceMethod.MakeGenericMethod(type)
-                .Invoke(this, new object[] { version });
+                .Invoke(this, [version]);
         }
 
         private T CreateInstanceInternal<T>(double? version = default)

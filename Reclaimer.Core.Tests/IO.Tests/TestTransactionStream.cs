@@ -23,7 +23,7 @@
                 Assert.AreEqual(i, data[i]);
 
             tran.Position = 5;
-            writer.Write(new byte[] { 9, 8, 7, 6, 5 });
+            writer.Write([9, 8, 7, 6, 5]);
 
             Assert.AreEqual(255L, tran.Length);
             Assert.AreEqual(10L, tran.Position);
@@ -41,7 +41,7 @@
                 Assert.AreEqual(i, data[i]);
 
             tran.Position = 20;
-            writer.Write(new byte[] { 24, 23, 22, 21, 20 });
+            writer.Write([24, 23, 22, 21, 20]);
 
             Assert.AreEqual(255L, tran.Length);
             Assert.AreEqual(25L, tran.Position);
@@ -81,7 +81,7 @@
                 Assert.AreEqual(i, data[i]);
 
             tran.Position = 5;
-            writer.Write(new byte[] { 9, 8, 7, 6, 5 });
+            writer.Write([9, 8, 7, 6, 5]);
 
             Assert.AreEqual(255L, tran.Length);
             Assert.AreEqual(10L, tran.Position);
@@ -115,7 +115,7 @@
                 Assert.AreEqual((byte)(10 - (i - 4)), data[i]);
 
             tran.Position = 20;
-            writer.Write(new byte[] { 24, 23, 22, 21, 20 });
+            writer.Write([24, 23, 22, 21, 20]);
 
             Assert.AreEqual(255L, tran.Length);
             Assert.AreEqual(25L, tran.Position);
@@ -151,7 +151,7 @@
                 Assert.AreEqual(i, data[i]);
 
             tran.Position = 5;
-            writer.Write(new byte[] { 9, 8, 7, 6, 5 });
+            writer.Write([9, 8, 7, 6, 5]);
 
             Assert.AreEqual(255L, tran.Length);
             Assert.AreEqual(10L, tran.Position);
@@ -185,7 +185,7 @@
                 Assert.AreEqual((byte)(10 - (i - 4)), data[i]);
 
             tran.Position = 20;
-            writer.Write(new byte[] { 24, 23, 22, 21, 20 });
+            writer.Write([24, 23, 22, 21, 20]);
 
             Assert.AreEqual(255L, tran.Length);
             Assert.AreEqual(25L, tran.Position);

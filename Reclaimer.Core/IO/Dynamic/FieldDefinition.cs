@@ -78,10 +78,10 @@ namespace Reclaimer.IO.Dynamic
                 .GetMethod(methodName, BindingFlags.Static | BindingFlags.NonPublic)
                 .MakeGenericMethod(storeType);
 
-            return (FieldDefinition<TClass>)methodInfo.Invoke(null, new object[] { targetProperty, offset, byteOrder });
+            return (FieldDefinition<TClass>)methodInfo.Invoke(null, [targetProperty, offset, byteOrder]);
         }
 
-        private static FieldDefinition<TClass> CreatePrimitive<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
+        private static PrimitiveFieldDefinition<TClass, TField> CreatePrimitive<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
         {
             return new PrimitiveFieldDefinition<TClass, TField>(targetProperty, offset, byteOrder)
             {
@@ -108,7 +108,7 @@ namespace Reclaimer.IO.Dynamic
             }
         }
 
-        private static FieldDefinition<TClass> CreateDynamic<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
+        private static DynamicFieldDefinition<TClass, TField> CreateDynamic<TField>(PropertyInfo targetProperty, long offset, ByteOrder? byteOrder)
         {
             return new DynamicFieldDefinition<TClass, TField>(targetProperty, offset, byteOrder);
         }

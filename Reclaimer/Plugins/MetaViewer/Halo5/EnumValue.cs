@@ -56,7 +56,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                 if (!Options.Any())
                 {
                     var index = 0;
-                    foreach (var n in node.GetChildElements())
+                    foreach (var n in Node.GetChildElements())
                     {
                         if (n.Name.ToUpperInvariant() != "ITEM")
                             continue;

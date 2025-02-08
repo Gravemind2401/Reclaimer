@@ -89,7 +89,7 @@ namespace Reclaimer.Plugins.MapBrowser
             if (Directory.Exists(Path.Combine(path, "steamapps")))
                 return path; //path is already correct
 
-            var parts = path.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = path.Split([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar], StringSplitOptions.RemoveEmptyEntries);
             var index = parts.LastIndexWhere(s => s.Equals("steamapps", StringComparison.OrdinalIgnoreCase));
             if (index > 0)
             {
@@ -181,6 +181,7 @@ namespace Reclaimer.Plugins.MapBrowser
 
         private static string AcfToJson(string acfString)
         {
+#pragma warning disable SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
             var jsonString = acfString;
             jsonString = Regex.Replace(jsonString, @"""(?=[\r\n]+\s+"")", @""","); //add commas after string properties
             jsonString = Regex.Replace(jsonString, @"""(?=[\s\r\n]+[""\{])", @""":"); //add semicolon between property and value
@@ -188,6 +189,7 @@ namespace Reclaimer.Plugins.MapBrowser
             jsonString = "{" + Environment.NewLine + jsonString + Environment.NewLine + "}";
 
             return jsonString;
+#pragma warning restore SYSLIB1045 // Convert to 'GeneratedRegexAttribute'.
         }
 
         private static IEnumerable<LinkedMapFile> ScanWorkshopFolder(string workshopDirectory)

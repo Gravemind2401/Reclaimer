@@ -21,7 +21,7 @@ namespace Reclaimer.Controls.DirectX
         private delegate void WriteModelFile(IContentProvider<Scene> provider, string fileName, string formatId);
         private delegate void ExportBitmaps(IContentProvider<Scene> provider, bool filtered, bool async);
 
-        private static readonly string[] AllLods = new[] { "Highest", "High", "Medium", "Low", "Lowest", "Potato" };
+        private static readonly string[] AllLods = ["Highest", "High", "Medium", "Low", "Lowest", "Potato"];
 
         #region Dependency Properties
         private static readonly DependencyPropertyKey AvailableLodsPropertyKey =

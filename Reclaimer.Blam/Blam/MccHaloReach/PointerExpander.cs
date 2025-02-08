@@ -8,16 +8,11 @@ namespace Reclaimer.Blam.MccHaloReach
 
         public PointerExpander(CacheFile cache)
         {
-            switch (cache.BuildString)
+            magic = cache.BuildString switch
             {
-                case "Jun 24 2019 00:36:03":
-                case "Jul 30 2019 14:17:16":
-                    magic = 0x10000000;
-                    break;
-                default:
-                    magic = 0x50000000;
-                    break;
-            }
+                "Jun 24 2019 00:36:03" or "Jul 30 2019 14:17:16" => 0x10000000,
+                _ => 0x50000000,
+            };
         }
 
         public long Expand(int pointer) => ((long)pointer << 2) + magic;

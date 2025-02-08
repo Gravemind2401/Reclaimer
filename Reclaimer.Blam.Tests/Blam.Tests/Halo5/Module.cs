@@ -10,7 +10,7 @@
             TestModule(Directories.Halo5Forge, fileName);
         }
 
-        private void TestModule(string folder, string fileName)
+        private static void TestModule(string folder, string fileName)
         {
             var module = new Blam.Halo5.Module(Path.Combine(folder, $"{fileName}.module"));
         }

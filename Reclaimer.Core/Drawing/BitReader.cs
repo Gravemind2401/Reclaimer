@@ -13,19 +13,18 @@
 
         private int cacheProgress;
 
-        private int StreamIndex => Position / byteSize;
-        private int CacheProgress => Position - cachePosition;
+        private readonly int StreamIndex => Position / byteSize;
+        //private readonly int CacheProgress => Position - cachePosition;
 
-        public bool EOF => Position > stream.Length * byteSize;
+        public readonly bool EOF => Position > stream.Length * byteSize;
 
         private int position;
         public int Position
         {
-            get => position;
+            readonly get => position;
             set
             {
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(value));
+                ArgumentOutOfRangeException.ThrowIfNegative(value);
 
                 position = value;
                 cacheProgress = value - cachePosition;

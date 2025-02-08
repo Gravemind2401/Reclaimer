@@ -108,7 +108,7 @@ namespace Reclaimer.IO
                 .GetGenericMethodDefinition()
                 .MakeGenericMethod(type);
 
-            size = (long?)method.Invoke(null, new object[] { version });
+            size = (long?)method.Invoke(null, [version]);
             return size.Value;
         }
 
@@ -279,7 +279,7 @@ namespace Reclaimer.IO
                 .GetGenericMethodDefinition()
                 .MakeGenericMethod(prop.DeclaringType);
 
-            return (long)method.Invoke(null, new object[] { prop, version });
+            return (long)method.Invoke(null, [prop, version]);
         }
 
         private static long ValueFromStructureDefinition<T>(PropertyInfo prop, double? version) => StructureDefinition<T>.OffsetFor(prop, version);

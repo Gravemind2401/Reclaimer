@@ -5,10 +5,10 @@ namespace Reclaimer.IO
     public abstract class DataBuffer<T> : IDataBuffer, IReadOnlyList<T>
         where T : struct
     {
-        protected readonly byte[] buffer;
-        protected readonly int start;
-        protected readonly int stride;
-        protected readonly int offset;
+        protected readonly byte[] Buffer;
+        protected readonly int Start;
+        protected readonly int Stride;
+        protected readonly int Offset;
 
         protected abstract int SizeOf { get; }
 
@@ -40,10 +40,9 @@ namespace Reclaimer.IO
         /// <exception cref="ArgumentException"></exception>
         protected DataBuffer(byte[] buffer, int count, int start, int stride, int offset)
         {
-            this.buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
+            Buffer = buffer ?? throw new ArgumentNullException(nameof(buffer));
 
-            if (count < 0)
-                throw new ArgumentOutOfRangeException(nameof(count));
+            ArgumentOutOfRangeException.ThrowIfNegative(count);
 
             if (start < 0 || (start > 0 && start >= buffer.Length))
                 throw new ArgumentOutOfRangeException(nameof(start));
@@ -58,12 +57,12 @@ namespace Reclaimer.IO
                 throw new ArgumentException("Insufficient buffer length", nameof(buffer));
 
             Count = count;
-            this.start = start;
-            this.stride = stride;
-            this.offset = offset;
+            Start = start;
+            Stride = stride;
+            Offset = offset;
         }
 
-        protected Span<byte> CreateSpan(int index) => buffer.AsSpan(start + index * stride + offset, SizeOf);
+        protected Span<byte> CreateSpan(int index) => Buffer.AsSpan(Start + index * Stride + Offset, SizeOf);
 
         /// <summary>
         /// Gets or sets the element at the specified index.
@@ -94,10 +93,10 @@ namespace Reclaimer.IO
         Type IDataBuffer.DataType => typeof(T);
         int IDataBuffer.Count => Count;
         int IDataBuffer.SizeOf => SizeOf;
-        ReadOnlySpan<byte> IDataBuffer.Buffer => buffer;
-        int IDataBuffer.Start => start;
-        int IDataBuffer.Stride => stride;
-        int IDataBuffer.Offset => offset;
+        ReadOnlySpan<byte> IDataBuffer.Buffer => Buffer;
+        int IDataBuffer.Start => Start;
+        int IDataBuffer.Stride => Stride;
+        int IDataBuffer.Offset => Offset;
         ReadOnlySpan<byte> IDataBuffer.GetBytes(int index) => CreateSpan(index);
         #endregion
 

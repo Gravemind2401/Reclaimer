@@ -10,7 +10,7 @@ using System.Windows.Controls;
 
 namespace Reclaimer.Plugins
 {
-    public class ModuleViewerPlugin : Plugin
+    public partial class ModuleViewerPlugin : Plugin
     {
         private const string OpenFileKey = "ModuleViewer.OpenModuleFile";
         private const string OpenFolderKey = "ModuleViewer.OpenModuleFolder";
@@ -19,7 +19,8 @@ namespace Reclaimer.Plugins
         private const string BrowseFileFilter = "Halo Module Files|*.module";
         private const string ModuleFileExtension = "module";
 
-        private const string ModuleTagKeyRegex = @"Blam\.Halo(?:5\w+|Infinite)\..{2,}";
+        [GeneratedRegex(@"Blam\.Halo(?:5\w+|Infinite)\..{2,}")]
+        private static partial Regex RxModuleFilePattern();
 
         internal static ModuleViewerSettings Settings;
 
@@ -38,7 +39,7 @@ namespace Reclaimer.Plugins
 
         public override IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
         {
-            if (Regex.IsMatch(context.FileTypeKey, ModuleTagKeyRegex))
+            if (RxModuleFilePattern().IsMatch(context.FileTypeKey))
                 yield return ExtractBinaryContextItem;
         }
 
@@ -128,7 +129,7 @@ namespace Reclaimer.Plugins
 
         public override void OpenPhysicalFile(string fileName) => OpenPhysicalFile(fileName, null);
 
-        private void OpenPhysicalFile(string fileName, IList<string> linkedFileNames)
+        private void OpenPhysicalFile(string fileName, List<string> linkedFileNames)
         {
             var tabId = $"{Key}::{fileName}";
             if (Substrate.ShowTabById(tabId))

@@ -55,7 +55,7 @@ namespace Reclaimer.Blam.Tests.Halo4
         [DataTestMethod]
         public void Halo4DLC(string map) => TestMap(Directories.ConsoleHalo4DLC, map);
 
-        private void TestMap(string folder, string map)
+        private static void TestMap(string folder, string map)
         {
             var cache = new Blam.Halo4.CacheFile(Path.Combine(folder, $"{map}.map"));
 

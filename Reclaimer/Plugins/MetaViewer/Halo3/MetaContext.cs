@@ -7,7 +7,7 @@ using System.Xml;
 
 namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
-    public class MetaContext : IDisposable
+    public sealed class MetaContext : IDisposable
     {
         public XmlDocument Document { get; }
         public ICacheFile Cache { get; }
@@ -50,10 +50,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         internal void AddValue(XmlNode node, MetaValue value)
         {
-            if (valuesByNode.ContainsKey(node))
-                valuesByNode[node] = value;
-            else
-                valuesByNode.Add(node, value);
+            valuesByNode[node] = value;
         }
 
         public MetaValue GetValue(string xpath)

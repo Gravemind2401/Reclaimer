@@ -151,7 +151,7 @@ namespace Reclaimer.Blam.Halo1
 
         internal void ReadItems(DependencyReader reader)
         {
-            if (items.Any())
+            if (items.Count > 0)
                 throw new InvalidOperationException();
 
             for (var i = 0; i < TagCount; i++)

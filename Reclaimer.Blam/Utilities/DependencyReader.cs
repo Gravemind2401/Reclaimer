@@ -108,7 +108,7 @@ namespace Reclaimer.Blam.Utilities
             foreach (var constructor in type.GetConstructors().OrderByDescending(c => c.GetParameters().Length))
             {
                 var info = constructor.GetParameters();
-                if (info.Any() && info.All(i => CanConstruct(i.ParameterType)))
+                if (info.Length > 0 && info.All(i => CanConstruct(i.ParameterType)))
                 {
                     ctorLookup.Add(type, constructor);
                     return constructor;

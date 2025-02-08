@@ -165,7 +165,7 @@ namespace Reclaimer.Blam.Halo4
                     if (vInfo.VertexCount == 0)
                         continue;
 
-                    var address = entry.ResourceFixups[section.VertexBufferIndex].Offset & 0x0FFFFFFF;
+                    var address = entry.ResourceFixups[section.VertexBufferIndex].MaskedOffset;
                     if (!vb.ContainsKey(section.VertexBufferIndex))
                     {
                         reader.Seek(address, SeekOrigin.Begin);
@@ -181,7 +181,7 @@ namespace Reclaimer.Blam.Halo4
                     }
                     else
                     {
-                        address = entry.ResourceFixups[vertexBufferInfo.Length * 2 + section.IndexBufferIndex].Offset & 0x0FFFFFFF;
+                        address = entry.ResourceFixups[vertexBufferInfo.Length * 2 + section.IndexBufferIndex].MaskedOffset;
                         if (section.IndexBufferIndex >= 0 && !ib.ContainsKey(section.IndexBufferIndex))
                         {
                             reader.Seek(address, SeekOrigin.Begin);

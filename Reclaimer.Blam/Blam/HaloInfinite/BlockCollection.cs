@@ -87,7 +87,7 @@ namespace Reclaimer.Blam.HaloInfinite
                         .GetGenericMethodDefinition()
                         .MakeGenericMethod(prop.PropertyType);
 
-                    loadBlocksGeneric.Invoke(null, new object[] { propValue, propStructDef.TargetIndex, reader });
+                    loadBlocksGeneric.Invoke(null, [propValue, propStructDef.TargetIndex, reader]);
                     prop.SetValue(item, propValue);
                 }
             }

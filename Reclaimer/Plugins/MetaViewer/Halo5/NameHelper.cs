@@ -15,7 +15,7 @@
             if (string.IsNullOrWhiteSpace(value))
                 return;
 
-            IsBlockName = value.StartsWith("^");
+            IsBlockName = value.StartsWith('^');
             Name = value.Split(specialChars.ToArray(), StringSplitOptions.RemoveEmptyEntries)[0];
             Description = GetSection(':', value);
             ToolTip = GetSection('#', value);

@@ -12,11 +12,7 @@ namespace Reclaimer.Blam.Halo5
         public int Count => items.Count;
         public ModuleItem this[int index] => items[index];
 
-        public ModuleItemGroup(params ModuleItem[] initialItems)
-            : this(initialItems.AsEnumerable())
-        { }
-
-        public ModuleItemGroup(IEnumerable<ModuleItem> initialItems)
+        public ModuleItemGroup(params IEnumerable<ModuleItem> initialItems)
         {
             ArgumentNullException.ThrowIfNull(initialItems);
 

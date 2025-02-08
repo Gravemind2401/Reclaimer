@@ -62,7 +62,7 @@ namespace Reclaimer.Blam.Tests.HaloReach
         [DataTestMethod]
         public void HaloReachCex(string map) => TestMap(Directories.ConsoleHaloCEX, map);
 
-        private void TestMap(string folder, string map)
+        private static void TestMap(string folder, string map)
         {
             var cache = new Blam.HaloReach.CacheFile(Path.Combine(folder, $"{map}.map"));
 

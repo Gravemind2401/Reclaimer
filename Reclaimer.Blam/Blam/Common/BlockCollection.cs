@@ -11,7 +11,7 @@ namespace Reclaimer.Blam.Common
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public class BlockCollection<T> : TagBlock, IReadOnlyList<T>
     {
-        private readonly Collection<T> items = new Collection<T>();
+        private readonly Collection<T> items = new();
 
         public BlockCollection(DependencyReader reader, ICacheFile cache, IAddressTranslator translator)
             : this(reader, cache, translator, null)

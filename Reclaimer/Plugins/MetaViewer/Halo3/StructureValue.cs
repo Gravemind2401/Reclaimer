@@ -84,9 +84,9 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 BlockLabels.Clear();
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                var expander = (context.Cache as IMccCacheFile)?.PointerExpander;
+                var expander = (Context.Cache as IMccCacheFile)?.PointerExpander;
                 BlockCount = reader.ReadInt32();
-                BlockAddress = new Pointer(reader.ReadInt32(), context.AddressTranslator, expander).Address;
+                BlockAddress = new Pointer(reader.ReadInt32(), Context.AddressTranslator, expander).Address;
 
                 if (BlockCount <= 0 || BlockAddress < 0 || BlockAddress + BlockCount * BlockSize > reader.BaseStream.Length)
                 {
@@ -95,10 +95,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 }
 
                 blockIndex = 0;
-                foreach (var n in node.GetChildElements())
-                    Children.Add(GetMetaValue(n, context, BlockAddress));
+                foreach (var n in Node.GetChildElements())
+                    Children.Add(GetMetaValue(n, Context, BlockAddress));
 
-                var entryOffset = node.GetIntAttribute("entryName", "entryOffset", "label");
+                var entryOffset = Node.GetIntAttribute("entryName", "entryOffset", "label");
                 var isExplicit = entryOffset.HasValue;
                 entryOffset ??= 0;
 
@@ -183,7 +183,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 return;
 
             IsBusy = true;
-            using (var reader = context.CreateReader())
+            using (var reader = Context.CreateReader())
             {
                 foreach (var c in Children)
                 {

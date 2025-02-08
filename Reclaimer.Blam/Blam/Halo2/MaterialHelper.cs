@@ -144,7 +144,7 @@ namespace Reclaimer.Blam.Halo2
             //this just ignores the values that serve as placeholders and notes
             static bool ValidateDefinitionString(string value)
             {
-                return !string.IsNullOrWhiteSpace(value) && !value.StartsWith("?");
+                return !string.IsNullOrWhiteSpace(value) && !value.StartsWith('?');
             }
         }
 

@@ -153,7 +153,7 @@
             FrameCount = Math.Max(1, frameCount);
             MipmapCount = mipCount;
 
-            var paddingAlignment = 0;
+            int paddingAlignment;
 
             if (xboxFormat is XboxFormat.CTX1 or XboxFormat.DXT3a_scalar or XboxFormat.DXT3a_mono or XboxFormat.DXT3a_alpha)
             {
