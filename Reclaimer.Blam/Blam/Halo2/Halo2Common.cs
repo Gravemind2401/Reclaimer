@@ -25,7 +25,8 @@ namespace Reclaimer.Blam.Halo2
 
     public struct MeshResourceDetailsBlock
     {
-        [Offset(52, MaxVersion = (int)CacheType.Halo2Xbox)]
+        [Offset(48, MaxVersion = (int)CacheType.Halo2Beta)]
+        [Offset(52, MinVersion = (int)CacheType.Halo2Beta, MaxVersion = (int)CacheType.Halo2Xbox)]
         [Offset(40, MinVersion = (int)CacheType.Halo2Xbox)]
         public ushort IndexCount { get; set; }
 
@@ -34,18 +35,19 @@ namespace Reclaimer.Blam.Halo2
         public ushort NodeMapCount { get; set; }
     }
 
-    [FixedSize(SizeOf)]
+    [FixedSize(100, MaxVersion = (int)CacheType.Halo2Beta)]
+    [FixedSize(72, MinVersion = (int)CacheType.Halo2Beta)]
     public struct SubmeshDataBlock
     {
-        public const int SizeOf = 72;
-
         [Offset(4)]
         public short ShaderIndex { get; set; }
 
-        [Offset(6)]
+        [Offset(8, MaxVersion = (int)CacheType.Halo2Beta)]
+        [Offset(6, MinVersion = (int)CacheType.Halo2Beta)]
         public ushort IndexStart { get; set; }
 
-        [Offset(8)]
+        [Offset(10, MaxVersion = (int)CacheType.Halo2Beta)]
+        [Offset(8, MinVersion = (int)CacheType.Halo2Beta)]
         public ushort IndexLength { get; set; }
     }
 
@@ -169,53 +171,87 @@ namespace Reclaimer.Blam.Halo2
 
             var sectionInfo = reader.ReadObject<MeshResourceDetailsBlock>((int)args.Cache.Metadata.CacheType);
 
-            var (indexType, vertexType, nodeMapType) = args.Cache.Metadata.CacheType < CacheType.Halo2Xbox
-                ? (48, 92, 164)
-                : (32, 56, 100);
+            ResourceInfoBlock submeshResource, indexResource, vertexResource, uvResource, normalsResource, nodeMapResource;
+            submeshResource = indexResource = vertexResource = uvResource = normalsResource = nodeMapResource = default;
 
-            var submeshResource = section.Resources[0];
-            var indexResource = section.Resources.FirstOrDefault(r => r.Type0 == indexType);
-            var vertexResource = section.Resources.FirstOrDefault(r => r.Type0 == vertexType && r.Type1 == 0);
-            var uvResource = section.Resources.FirstOrDefault(r => r.Type0 == vertexType && r.Type1 == 1);
-            var normalsResource = section.Resources.FirstOrDefault(r => r.Type0 == vertexType && r.Type1 == 2);
-            var nodeMapResource = section.Resources.FirstOrDefault(r => r.Type0 == nodeMapType);
+            ResourceInfoBlock vertexResource2, vertexResource3;
+            vertexResource2 = vertexResource3 = default;
 
-            reader.Seek(section.BaseAddress + submeshResource.Offset, SeekOrigin.Begin);
-            var submeshes = reader.ReadArray<SubmeshDataBlock>(submeshResource.Size / SubmeshDataBlock.SizeOf);
-
-            var mesh = new Mesh();
-            mesh.Segments.AddRange(
-                submeshes.Select(s => new MeshSegment
-                {
-                    Material = materials.ElementAtOrDefault(s.ShaderIndex),
-                    IndexStart = s.IndexStart,
-                    IndexLength = s.IndexLength
-                })
-            );
-
-            var indexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
-                ? IndexFormat.TriangleList
-                : IndexFormat.TriangleStrip;
-
-            reader.Seek(section.BaseAddress + indexResource.Offset, SeekOrigin.Begin);
-            mesh.IndexBuffer = IndexBuffer.FromArray(reader.ReadArray<ushort>(sectionInfo.IndexCount), indexFormat);
-
-            if (args.IsRenderModel)
+            if (args.Cache.CacheType <= CacheType.Halo2E3)
             {
-                if (args.Cache.Metadata.Platform == CachePlatform.Xbox)
-                    ReadXboxRenderModelMeshData();
-                else
-                    ReadPcRenderModelMeshData();
+                submeshResource = section.Resources.FirstOrDefault(r => r.Type0 == 164);
+                indexResource = section.Resources.FirstOrDefault(r => r.Type0 == 152);
+                uvResource = section.Resources.FirstOrDefault(r => r.Type0 == 44);
+                normalsResource = section.Resources.FirstOrDefault(r => r.Type0 == 76);
+                nodeMapResource = section.Resources.FirstOrDefault(r => r.Type0 == 328);
+                vertexResource = section.Resources.FirstOrDefault(r => r.Type0 == 12);
+                vertexResource2 = section.Resources.FirstOrDefault(r => r.Type0 == 108);
+                vertexResource3 = section.Resources.FirstOrDefault(r => r.Type0 == 140);
             }
             else
             {
-                if (args.Cache.Metadata.Platform == CachePlatform.Xbox)
-                    ReadXboxBspMeshData();
-                else
-                    ReadPcBspMeshData();
+                var (indexType, vertexType, nodeMapType) = args.Cache.CacheType < CacheType.Halo2Xbox
+                    ? (48, 92, 164)
+                    : (32, 56, 100);
+
+                submeshResource = section.Resources[0];
+                indexResource = section.Resources.FirstOrDefault(r => r.Type0 == indexType);
+                vertexResource = section.Resources.FirstOrDefault(r => r.Type0 == vertexType && r.Type1 == 0);
+                uvResource = section.Resources.FirstOrDefault(r => r.Type0 == vertexType && r.Type1 == 1);
+                normalsResource = section.Resources.FirstOrDefault(r => r.Type0 == vertexType && r.Type1 == 2);
+                nodeMapResource = section.Resources.FirstOrDefault(r => r.Type0 == nodeMapType);
             }
 
-            return mesh;
+            if (vertexResource == null)
+                return null;
+
+            var submeshSize = (int)FixedSizeAttribute.ValueFor(typeof(SubmeshDataBlock), (int)args.Cache.CacheType);
+            reader.Seek(section.BaseAddress + submeshResource.Offset, SeekOrigin.Begin);
+            var submeshes = reader.ReadArray<SubmeshDataBlock>(submeshResource.Size / submeshSize, (int)args.Cache.CacheType);
+
+            if (args.Cache.CacheType == CacheType.Halo2E3)
+                sectionInfo.IndexCount = (ushort)submeshes.Sum(s => s.IndexLength);
+
+            var mesh = new Mesh();
+            try
+            {
+                mesh.Segments.AddRange(
+                    submeshes.Select(s => new MeshSegment
+                    {
+                        Material = materials.ElementAtOrDefault(s.ShaderIndex),
+                        IndexStart = s.IndexStart,
+                        IndexLength = s.IndexLength
+                    })
+                );
+
+                var indexFormat = section.FaceCount * 3 == sectionInfo.IndexCount
+                    ? IndexFormat.TriangleList
+                    : IndexFormat.TriangleStrip;
+
+                reader.Seek(section.BaseAddress + indexResource.Offset, SeekOrigin.Begin);
+                mesh.IndexBuffer = IndexBuffer.FromArray(reader.ReadArray<ushort>(sectionInfo.IndexCount), indexFormat);
+
+                if (args.IsRenderModel)
+                {
+                    if (args.Cache.Metadata.Platform == CachePlatform.Xbox)
+                        ReadXboxRenderModelMeshData();
+                    else
+                        ReadPcRenderModelMeshData();
+                }
+                else
+                {
+                    if (args.Cache.Metadata.Platform == CachePlatform.Xbox)
+                        ReadXboxBspMeshData();
+                    else
+                        ReadPcBspMeshData();
+                }
+
+                return mesh;
+            }
+            catch
+            {
+                return null;
+            }
 
             void ReadXboxBspMeshData()
             {
@@ -286,32 +322,67 @@ namespace Reclaimer.Blam.Halo2
 
             void ReadXboxRenderModelMeshData()
             {
+                //in the E3 build there can be two blocks of vertex data - it seems to be one block for opaque and one for transparent vertices
+                //they both join to form a single vertex array though; there is only one set of triangle indices between them
+
+                var vertexSize = vertexResource.Size / section.VertexCount;
+                var primaryVertexCount = (int)section.VertexCount;
+
+                if (args.Cache.CacheType == CacheType.Halo2E3)
+                {
+                    //either there is always 1 vertex worth of padding, or the initials zeros are used to indicate size
+                    reader.Seek(section.BaseAddress + vertexResource.Offset, SeekOrigin.Begin);
+                    vertexSize = 0;
+                    while (reader.ReadByte() == 0)
+                        vertexSize++;
+
+                    primaryVertexCount = vertexResource.Size / vertexSize - 1;
+                    vertexResource = new ResourceInfoBlock
+                    {
+                        Offset = vertexResource.Offset + vertexSize,
+                        Size = vertexResource.Size - vertexSize
+                    };
+                }
+
                 var positionBuffer = new VectorBuffer<UInt16N4>(section.VertexCount);
                 var texCoordsBuffer = new VectorBuffer<UInt16N2>(section.VertexCount);
-                var normalBuffer = new VectorBuffer<HenDN3>(section.VertexCount);
 
                 mesh.VertexBuffer = new VertexBuffer();
                 mesh.VertexBuffer.PositionChannels.Add(positionBuffer);
                 mesh.VertexBuffer.TextureCoordinateChannels.Add(texCoordsBuffer);
-                mesh.VertexBuffer.NormalChannels.Add(normalBuffer);
 
-                var vertexSize = vertexResource.Size / section.VertexCount;
-                for (var i = 0; i < section.VertexCount; i++)
+                for (var i = 0; i < primaryVertexCount; i++)
                 {
                     reader.Seek(section.BaseAddress + vertexResource.Offset + i * vertexSize, SeekOrigin.Begin);
                     positionBuffer[i] = new UInt16N4((ushort)(reader.ReadInt16() - short.MinValue), (ushort)(reader.ReadInt16() - short.MinValue), (ushort)(reader.ReadInt16() - short.MinValue), default);
                 }
 
-                for (var i = 0; i < section.VertexCount; i++)
+                for (var i = 0; i < primaryVertexCount; i++)
                 {
                     reader.Seek(section.BaseAddress + uvResource.Offset + i * 4, SeekOrigin.Begin);
                     texCoordsBuffer[i] = new UInt16N2((ushort)(reader.ReadInt16() - short.MinValue), (ushort)(reader.ReadInt16() - short.MinValue));
                 }
 
-                for (var i = 0; i < section.VertexCount; i++)
+                if (normalsResource != null)
                 {
-                    reader.Seek(section.BaseAddress + normalsResource.Offset + i * 12, SeekOrigin.Begin);
-                    normalBuffer[i] = new HenDN3(reader.ReadUInt32());
+                    var normalBuffer = new VectorBuffer<HenDN3>(section.VertexCount);
+                    mesh.VertexBuffer.NormalChannels.Add(normalBuffer);
+
+                    for (var i = 0; i < primaryVertexCount; i++)
+                    {
+                        reader.Seek(section.BaseAddress + normalsResource.Offset + i * 12, SeekOrigin.Begin);
+                        normalBuffer[i] = new HenDN3(reader.ReadUInt32());
+                    }
+                }
+
+                if (vertexResource2 != null)
+                {
+                    var blockSize = vertexResource2.Size / (section.VertexCount - primaryVertexCount);
+                    for (var i = primaryVertexCount; i < section.VertexCount; i++)
+                    {
+                        reader.Seek(section.BaseAddress + vertexResource2.Offset + (i - primaryVertexCount) * blockSize, SeekOrigin.Begin);
+                        positionBuffer[i] = new UInt16N4((ushort)(reader.ReadInt16() - short.MinValue), (ushort)(reader.ReadInt16() - short.MinValue), (ushort)(reader.ReadInt16() - short.MinValue), default);
+                    }
                 }
 
                 var nodeMap = Array.Empty<byte>();
@@ -339,7 +410,7 @@ namespace Reclaimer.Blam.Halo2
                 mesh.VertexBuffer.BlendIndexChannels.Add(blendIndexBuffer);
                 mesh.VertexBuffer.BlendWeightChannels.Add(blendWeightBuffer);
 
-                for (var i = 0; i < section.VertexCount; i++)
+                for (var i = 0; i < primaryVertexCount; i++)
                 {
                     UByte4 blendIndices = default;
                     RealVector4 blendWeights = default;
