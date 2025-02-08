@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 
 #pragma warning disable IDE1006 // Naming Styles
 #pragma warning disable SYSLIB1054 // Use 'LibraryImportAttribute' instead of 'DllImportAttribute' to generate P/Invoke marshalling code at compile time
+#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
 
 namespace Reclaimer.Utilities
 {
