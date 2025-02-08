@@ -1,4 +1,5 @@
-﻿using Reclaimer.IO;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.IO;
 using Reclaimer.IO.Dynamic;
 
 namespace Reclaimer.Blam.Halo2
@@ -10,7 +11,16 @@ namespace Reclaimer.Blam.Halo2
         {
             public DefinitionBuilder()
             {
-                var builder = AddDefaultVersion();
+                var builder = AddVersion(CacheType.Halo2Beta);
+                builder.Property(x => x.XBounds).HasOffset(72);
+                builder.Property(x => x.YBounds).HasOffset(80);
+                builder.Property(x => x.ZBounds).HasOffset(88);
+                builder.Property(x => x.Clusters).HasOffset(212);
+                builder.Property(x => x.Shaders).HasOffset(224);
+                builder.Property(x => x.Sections).HasOffset(452);
+                builder.Property(x => x.GeometryInstances).HasOffset(464);
+
+                builder = AddVersion(CacheType.Halo2Xbox, null);
                 builder.Property(x => x.XBounds).HasOffset(52);
                 builder.Property(x => x.YBounds).HasOffset(60);
                 builder.Property(x => x.ZBounds).HasOffset(68);
@@ -29,7 +39,16 @@ namespace Reclaimer.Blam.Halo2
         {
             public DefinitionBuilder()
             {
-                var builder = AddDefaultVersion().HasFixedSize(176);
+                var builder = AddVersion(CacheType.Halo2Beta).HasFixedSize(196);
+                builder.Property(x => x.VertexCount).HasOffset(0);
+                builder.Property(x => x.FaceCount).HasOffset(2);
+                builder.Property(x => x.BoundingBoxes).HasOffset(24);
+                builder.Property(x => x.DataPointer).HasOffset(44);
+                builder.Property(x => x.DataSize).HasOffset(48);
+                builder.Property(x => x.HeaderSize).HasOffset(52);
+                builder.Property(x => x.Resources).HasOffset(60);
+
+                builder = AddVersion(CacheType.Halo2Xbox, null).HasFixedSize(176);
                 builder.Property(x => x.VertexCount).HasOffset(0);
                 builder.Property(x => x.FaceCount).HasOffset(2);
                 builder.Property(x => x.BoundingBoxes).HasOffset(24);
@@ -48,7 +67,16 @@ namespace Reclaimer.Blam.Halo2
         {
             public DefinitionBuilder()
             {
-                var builder = AddDefaultVersion().HasFixedSize(200);
+                var builder = AddVersion(CacheType.Halo2Beta).HasFixedSize(260);
+                builder.Property(x => x.VertexCount).HasOffset(0);
+                builder.Property(x => x.FaceCount).HasOffset(2);
+                builder.Property(x => x.BoundingBoxes).HasOffset(24);
+                builder.Property(x => x.DataPointer).HasOffset(44);
+                builder.Property(x => x.DataSize).HasOffset(48);
+                builder.Property(x => x.HeaderSize).HasOffset(52);
+                builder.Property(x => x.Resources).HasOffset(60);
+
+                builder = AddVersion(CacheType.Halo2Xbox, null).HasFixedSize(200);
                 builder.Property(x => x.VertexCount).HasOffset(0);
                 builder.Property(x => x.FaceCount).HasOffset(2);
                 builder.Property(x => x.BoundingBoxes).HasOffset(24);

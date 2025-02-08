@@ -124,7 +124,7 @@ namespace Reclaimer.Blam.Common
                     content = engineType switch
                     {
                         BlamEngine.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE or CacheType.MccHalo1 => item.ReadMetadata<Halo1.scenario_structure_bsp>(),
-                        BlamEngine.Halo2 when cacheType >= CacheType.Halo2Xbox => item.ReadMetadata<Halo2.scenario_structure_bsp>(),
+                        BlamEngine.Halo2 when cacheType >= CacheType.Halo2Beta => item.ReadMetadata<Halo2.scenario_structure_bsp>(),
                         BlamEngine.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
                         BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
                         BlamEngine.HaloReach => item.ReadMetadata<HaloReach.scenario_structure_bsp>(),
