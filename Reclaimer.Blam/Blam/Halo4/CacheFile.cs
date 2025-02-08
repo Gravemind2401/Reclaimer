@@ -72,9 +72,9 @@ namespace Reclaimer.Blam.Halo4
 
             Task.Factory.StartNew(() =>
             {
-                TagIndex.GetGlobalTag("zone")?.ReadMetadata<cache_file_resource_gestalt>();
-                TagIndex.GetGlobalTag("play")?.ReadMetadata<cache_file_resource_layout_table>();
-                TagIndex.GetGlobalTag("scnr")?.ReadMetadata<scenario>();
+                TagIndex.GetGlobalTag("zone")?.ReadMetadata<CacheFileResourceGestaltTag>();
+                TagIndex.GetGlobalTag("play")?.ReadMetadata<CacheFileResourceLayoutTableTag>();
+                TagIndex.GetGlobalTag("scnr")?.ReadMetadata<ScenarioTag>();
             });
         }
 

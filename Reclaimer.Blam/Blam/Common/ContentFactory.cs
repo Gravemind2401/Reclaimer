@@ -74,13 +74,13 @@ namespace Reclaimer.Blam.Common
 
                 content = engineType switch
                 {
-                    BlamEngine.Halo1 when cacheType != CacheType.Halo1AE => item.ReadMetadata<Halo1.bitmap>(),
-                    BlamEngine.Halo2 => item.ReadMetadata<Halo2.bitmap>(),
-                    BlamEngine.Halo3 => item.ReadMetadata<Halo3.bitmap>(),
-                    BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.bitmap>(),
-                    BlamEngine.HaloReach => item.ReadMetadata<HaloReach.bitmap>(),
-                    BlamEngine.Halo4 => item.ReadMetadata<Halo4.bitmap>(),
-                    BlamEngine.Halo2X => item.ReadMetadata<Halo4.bitmap>(),
+                    BlamEngine.Halo1 when cacheType != CacheType.Halo1AE => item.ReadMetadata<Halo1.BitmapTag>(),
+                    BlamEngine.Halo2 => item.ReadMetadata<Halo2.BitmapTag>(),
+                    BlamEngine.Halo3 => item.ReadMetadata<Halo3.BitmapTag>(),
+                    BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.BitmapTag>(),
+                    BlamEngine.HaloReach => item.ReadMetadata<HaloReach.BitmapTag>(),
+                    BlamEngine.Halo4 => item.ReadMetadata<Halo4.BitmapTag>(),
+                    BlamEngine.Halo2X => item.ReadMetadata<Halo4.BitmapTag>(),
                     _ => null
                 };
 
@@ -108,14 +108,14 @@ namespace Reclaimer.Blam.Common
                 {
                     content = engineType switch
                     {
-                        BlamEngine.Halo1 => item.ReadMetadata<Halo1.gbxmodel>(),
-                        BlamEngine.Halo2 when cacheType <= CacheType.Halo2Beta => item.ReadMetadata<Halo2Beta.render_model>(),
-                        BlamEngine.Halo2 => item.ReadMetadata<Halo2.render_model>(),
-                        BlamEngine.Halo3 => item.ReadMetadata<Halo3.render_model>(),
-                        BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.render_model>(),
-                        BlamEngine.HaloReach => item.ReadMetadata<HaloReach.render_model>(),
-                        BlamEngine.Halo4 => item.ReadMetadata<Halo4.render_model>(),
-                        BlamEngine.Halo2X => item.ReadMetadata<Halo4.render_model>(),
+                        BlamEngine.Halo1 => item.ReadMetadata<Halo1.GbxModelTag>(),
+                        BlamEngine.Halo2 when cacheType <= CacheType.Halo2Beta => item.ReadMetadata<Halo2Beta.RenderModelTag>(),
+                        BlamEngine.Halo2 => item.ReadMetadata<Halo2.RenderModelTag>(),
+                        BlamEngine.Halo3 => item.ReadMetadata<Halo3.RenderModelTag>(),
+                        BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.RenderModelTag>(),
+                        BlamEngine.HaloReach => item.ReadMetadata<HaloReach.RenderModelTag>(),
+                        BlamEngine.Halo4 => item.ReadMetadata<Halo4.RenderModelTag>(),
+                        BlamEngine.Halo2X => item.ReadMetadata<Halo4.RenderModelTag>(),
                         _ => null
                     };
                 }
@@ -123,13 +123,13 @@ namespace Reclaimer.Blam.Common
                 {
                     content = engineType switch
                     {
-                        BlamEngine.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE or CacheType.MccHalo1 => item.ReadMetadata<Halo1.scenario_structure_bsp>(),
-                        BlamEngine.Halo2 when cacheType >= CacheType.Halo2Beta => item.ReadMetadata<Halo2.scenario_structure_bsp>(),
-                        BlamEngine.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
-                        BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
-                        BlamEngine.HaloReach => item.ReadMetadata<HaloReach.scenario_structure_bsp>(),
-                        BlamEngine.Halo4 => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
-                        BlamEngine.Halo2X => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
+                        BlamEngine.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE or CacheType.MccHalo1 => item.ReadMetadata<Halo1.ScenarioStructureBspTag>(),
+                        BlamEngine.Halo2 when cacheType >= CacheType.Halo2Beta => item.ReadMetadata<Halo2.ScenarioStructureBspTag>(),
+                        BlamEngine.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.ScenarioStructureBspTag>(),
+                        BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.ScenarioStructureBspTag>(),
+                        BlamEngine.HaloReach => item.ReadMetadata<HaloReach.ScenarioStructureBspTag>(),
+                        BlamEngine.Halo4 => item.ReadMetadata<Halo4.ScenarioStructureBspTag>(),
+                        BlamEngine.Halo2X => item.ReadMetadata<Halo4.ScenarioStructureBspTag>(),
                         _ => null
                     };
                 }
@@ -137,13 +137,13 @@ namespace Reclaimer.Blam.Common
                 {
                     content = engineType switch
                     {
-                        BlamEngine.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE or CacheType.MccHalo1 => item.ReadMetadata<Halo1.scenario>(),
-                        BlamEngine.Halo2 when cacheType >= CacheType.Halo2Xbox => item.ReadMetadata<Halo2.scenario>(),
-                        BlamEngine.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario>(),
-                        BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.scenario>(),
-                        BlamEngine.HaloReach => item.ReadMetadata<HaloReach.scenario>(),
-                        BlamEngine.Halo4 => item.ReadMetadata<Halo4.scenario>(),
-                        BlamEngine.Halo2X => item.ReadMetadata<Halo4.scenario>(),
+                        BlamEngine.Halo1 when cacheType is CacheType.Halo1PC or CacheType.Halo1CE or CacheType.MccHalo1 => item.ReadMetadata<Halo1.ScenarioTag>(),
+                        BlamEngine.Halo2 when cacheType >= CacheType.Halo2Xbox => item.ReadMetadata<Halo2.ScenarioTag>(),
+                        BlamEngine.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.ScenarioTag>(),
+                        BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.ScenarioTag>(),
+                        BlamEngine.HaloReach => item.ReadMetadata<HaloReach.ScenarioTag>(),
+                        BlamEngine.Halo4 => item.ReadMetadata<Halo4.ScenarioTag>(),
+                        BlamEngine.Halo2X => item.ReadMetadata<Halo4.ScenarioTag>(),
                         _ => null
                     };
                 }
@@ -168,16 +168,16 @@ namespace Reclaimer.Blam.Common
                 switch (item.CacheFile.CacheType)
                 {
                     case CacheType.Halo2Xbox:
-                        content = item.ReadMetadata<Halo2.sound>();
+                        content = item.ReadMetadata<Halo2.SoundTag>();
                         break;
                     //case CacheType.Halo3Beta:
                     case CacheType.Halo3Retail:
                     case CacheType.Halo3ODST:
-                        content = item.ReadMetadata<Halo3.sound>();
+                        content = item.ReadMetadata<Halo3.SoundTag>();
                         break;
                     case CacheType.HaloReachBeta:
                     case CacheType.HaloReachRetail:
-                        content = item.ReadMetadata<HaloReach.sound>();
+                        content = item.ReadMetadata<HaloReach.SoundTag>();
                         break;
                 }
 
@@ -235,8 +235,8 @@ namespace Reclaimer.Blam.Common
             {
                 content = item.Module.ModuleType switch
                 {
-                    ModuleType.Halo5Server or ModuleType.Halo5Forge => item.ReadMetadata<Halo5.bitmap>(),
-                    ModuleType.HaloInfinite => item.ReadMetadata<HaloInfinite.bitmap>(),
+                    ModuleType.Halo5Server or ModuleType.Halo5Forge => item.ReadMetadata<Halo5.BitmapTag>(),
+                    ModuleType.HaloInfinite => item.ReadMetadata<HaloInfinite.BitmapTag>(),
                     _ => null
                 };
 
@@ -261,11 +261,11 @@ namespace Reclaimer.Blam.Common
                 {
                     content = item.ClassCode switch
                     {
-                        render_model => item.ReadMetadata<Halo5.render_model>(),
-                        particle_model => item.ReadMetadata<Halo5.particle_model>(),
-                        scenario => item.ReadMetadata<Halo5.scenario>(),
-                        scenario_structure_bsp => item.ReadMetadata<Halo5.scenario_structure_bsp>(),
-                        structure_lightmap => item.ReadMetadata<Halo5.structure_lightmap>(),
+                        render_model => item.ReadMetadata<Halo5.RenderModelTag>(),
+                        particle_model => item.ReadMetadata<Halo5.ParticleModelTag>(),
+                        scenario => item.ReadMetadata<Halo5.ScenarioTag>(),
+                        scenario_structure_bsp => item.ReadMetadata<Halo5.ScenarioStructureBspTag>(),
+                        structure_lightmap => item.ReadMetadata<Halo5.StructureLightmapTag>(),
                         _ => null
                     };
                 }
@@ -273,11 +273,11 @@ namespace Reclaimer.Blam.Common
                 {
                     content = item.ClassCode switch
                     {
-                        render_model => item.ReadMetadata<HaloInfinite.render_model>(),
-                        scenario_structure_bsp => item.ReadMetadata<HaloInfinite.scenario_structure_bsp>(),
-                        runtime_geo => item.ReadMetadata<HaloInfinite.runtime_geo>(),
-                        object_customization => item.ReadMetadata<HaloInfinite.customization_globals_definition>(),
-                        model => item.ReadMetadata<HaloInfinite.model>().ReadRenderModel(),
+                        render_model => item.ReadMetadata<HaloInfinite.RenderModelTag>(),
+                        scenario_structure_bsp => item.ReadMetadata<HaloInfinite.ScenarioStructureBspTag>(),
+                        runtime_geo => item.ReadMetadata<HaloInfinite.RuntimeGeoTag>(),
+                        object_customization => item.ReadMetadata<HaloInfinite.CustomizationGlobalsDefinitionTag>(),
+                        model => item.ReadMetadata<HaloInfinite.ModelTag>().ReadRenderModel(),
                         _ => null
                     };
                 }

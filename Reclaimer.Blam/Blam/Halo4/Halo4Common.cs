@@ -41,7 +41,7 @@ namespace Reclaimer.Blam.Halo4
     {
         public static IEnumerable<Material> GetMaterials(Halo4GeometryArgs args)
         {
-            var bitmapCache = new Dictionary<int, bitmap>();
+            var bitmapCache = new Dictionary<int, BitmapTag>();
             var materialCache = new Dictionary<int, Material>();
 
             for (var i = 0; i < args.Shaders.Count; i++)
@@ -67,7 +67,7 @@ namespace Reclaimer.Blam.Halo4
 
                 material.CustomProperties.Add(BlamConstants.SourceTagPropertyName, tag.TagName);
 
-                var shader = tag?.ReadMetadata<material>();
+                var shader = tag?.ReadMetadata<MaterialTag>();
                 if (shader == null)
                 {
                     yield return material;
@@ -106,7 +106,7 @@ namespace Reclaimer.Blam.Halo4
                             var texture = new Texture
                             {
                                 Id = bitmTag.Id,
-                                ContentProvider = bitmTag.ReadMetadata<bitmap>()
+                                ContentProvider = bitmTag.ReadMetadata<BitmapTag>()
                             };
 
                             texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, bitmTag.TagName);
@@ -131,7 +131,7 @@ namespace Reclaimer.Blam.Halo4
             VertexBufferInfo[] vertexBufferInfo;
             IndexBufferInfo[] indexBufferInfo;
 
-            var resourceGestalt = args.Cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
+            var resourceGestalt = args.Cache.TagIndex.GetGlobalTag("zone").ReadMetadata<CacheFileResourceGestaltTag>();
             var entry = resourceGestalt.ResourceEntries[args.ResourcePointer.ResourceIndex];
             using (var cacheReader = args.Cache.CreateReader(args.Cache.DefaultAddressTranslator))
             using (var reader = cacheReader.CreateVirtualReader(resourceGestalt.FixupDataPointer.Address))

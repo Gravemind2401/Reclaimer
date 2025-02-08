@@ -47,7 +47,7 @@ namespace Reclaimer.Blam.Tests.Halo2
             var t1 = Task.Run(() =>
             {
                 var bitmaps = cache.TagIndex.Where(i => i.ClassCode == "bitm")
-                    .Select(i => i.ReadMetadata<bitmap>())
+                    .Select(i => i.ReadMetadata<BitmapTag>())
                     .ToList();
 
                 return true;
@@ -56,7 +56,7 @@ namespace Reclaimer.Blam.Tests.Halo2
             var t2 = Task.Run(() =>
             {
                 var models = cache.TagIndex.Where(i => i.ClassCode == "mode")
-                .Select(i => i.ReadMetadata<render_model>())
+                .Select(i => i.ReadMetadata<RenderModelTag>())
                 .ToList();
 
                 return true;
@@ -65,7 +65,7 @@ namespace Reclaimer.Blam.Tests.Halo2
             var t3 = Task.Run(() =>
             {
                 var bsps = cache.TagIndex.Where(i => i.ClassCode == "sbsp")
-                .Select(i => i.ReadMetadata<scenario_structure_bsp>())
+                .Select(i => i.ReadMetadata<ScenarioStructureBspTag>())
                 .ToList();
 
                 return true;
@@ -74,7 +74,7 @@ namespace Reclaimer.Blam.Tests.Halo2
             var t4 = Task.Run(() =>
             {
                 var bsps = cache.TagIndex.Where(i => i.ClassCode == "snd!")
-                .Select(i => i.ReadMetadata<sound>())
+                .Select(i => i.ReadMetadata<SoundTag>())
                 .ToList();
 
                 return true;

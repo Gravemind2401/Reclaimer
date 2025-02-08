@@ -45,7 +45,7 @@ namespace Reclaimer.Blam.Tests.Halo1
             var t1 = Task.Run(() =>
             {
                 var bitmaps = cache.TagIndex.Where(i => i.ClassCode == "bitm")
-                    .Select(i => i.ReadMetadata<bitmap>())
+                    .Select(i => i.ReadMetadata<BitmapTag>())
                     .ToList();
 
                 return true;
@@ -54,7 +54,7 @@ namespace Reclaimer.Blam.Tests.Halo1
             var t2 = Task.Run(() =>
             {
                 var models = cache.TagIndex.Where(i => i.ClassCode == "mod2")
-                .Select(i => i.ReadMetadata<gbxmodel>())
+                .Select(i => i.ReadMetadata<GbxModelTag>())
                 .ToList();
 
                 return true;
@@ -63,7 +63,7 @@ namespace Reclaimer.Blam.Tests.Halo1
             var t3 = Task.Run(() =>
             {
                 var bsps = cache.TagIndex.Where(i => i.ClassCode == "sbsp")
-                .Select(i => i.ReadMetadata<scenario_structure_bsp>())
+                .Select(i => i.ReadMetadata<ScenarioStructureBspTag>())
                 .ToList();
 
                 return true;

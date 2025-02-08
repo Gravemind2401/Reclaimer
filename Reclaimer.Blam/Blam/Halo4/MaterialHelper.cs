@@ -255,7 +255,7 @@ namespace Reclaimer.Blam.Halo4
             }
         }
 
-        public static bool PopulateTextureMappings(Halo4GeometryArgs args, Dictionary<int, bitmap> bitmapCache, Material material, material shader)
+        public static bool PopulateTextureMappings(Halo4GeometryArgs args, Dictionary<int, BitmapTag> bitmapCache, Material material, MaterialTag shader)
         {
             //not confirmed if the material shaders happen to be configured the same in the betas
             if (args.Cache.Metadata.Engine == BlamEngine.Halo4 && args.Cache.Metadata.IsPreRelease)
@@ -311,7 +311,7 @@ namespace Reclaimer.Blam.Halo4
 
                 var tagId = texParam.Tag.Id;
                 if (!bitmapCache.TryGetValue(tagId, out var bitmap))
-                    bitmapCache.Add(tagId, bitmap = texParam.Tag.ReadMetadata<bitmap>());
+                    bitmapCache.Add(tagId, bitmap = texParam.Tag.ReadMetadata<BitmapTag>());
 
                 var texture = new Texture
                 {

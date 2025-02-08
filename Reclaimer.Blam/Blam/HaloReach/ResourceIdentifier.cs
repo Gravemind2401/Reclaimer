@@ -38,8 +38,8 @@ namespace Reclaimer.Blam.HaloReach
 
         public byte[] ReadData(PageType mode, int maxLength)
         {
-            var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
-            var resourceLayoutTable = cache.TagIndex.GetGlobalTag("play").ReadMetadata<cache_file_resource_layout_table>();
+            var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<CacheFileResourceGestaltTag>();
+            var resourceLayoutTable = cache.TagIndex.GetGlobalTag("play").ReadMetadata<CacheFileResourceLayoutTableTag>();
 
             var entry = resourceGestalt.ResourceEntries[ResourceIndex];
 
@@ -116,8 +116,8 @@ namespace Reclaimer.Blam.HaloReach
         public byte[] ReadSoundData()
         {
             var directory = Directory.GetParent(cache.FileName).FullName;
-            var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
-            var resourceLayoutTable = cache.TagIndex.GetGlobalTag("play").ReadMetadata<cache_file_resource_layout_table>();
+            var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<CacheFileResourceGestaltTag>();
+            var resourceLayoutTable = cache.TagIndex.GetGlobalTag("play").ReadMetadata<CacheFileResourceLayoutTableTag>();
             var entry = resourceGestalt.ResourceEntries[ResourceIndex];
 
             if (entry.SegmentIndex < 0)
@@ -161,7 +161,7 @@ namespace Reclaimer.Blam.HaloReach
             return output;
         }
 
-        private byte[] ReadSoundData(string directory, cache_file_resource_layout_table resourceLayoutTable, PageBlock page, int size)
+        private byte[] ReadSoundData(string directory, CacheFileResourceLayoutTableTag resourceLayoutTable, PageBlock page, int size)
         {
             var targetFile = cache.FileName;
             if (page.CacheIndex >= 0)

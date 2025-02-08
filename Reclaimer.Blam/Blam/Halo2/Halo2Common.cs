@@ -75,7 +75,7 @@ namespace Reclaimer.Blam.Halo2
     {
         public static IEnumerable<Material> GetMaterials(Halo2GeometryArgs args)
         {
-            var bitmapCache = new Dictionary<int, bitmap>();
+            var bitmapCache = new Dictionary<int, BitmapTag>();
             var materialCache = new Dictionary<int, Material>();
 
             for (var i = 0; i < args.Shaders.Count; i++)
@@ -102,7 +102,7 @@ namespace Reclaimer.Blam.Halo2
 
                 material.CustomProperties.Add(BlamConstants.SourceTagPropertyName, tag.TagName);
 
-                var shader = tag?.ReadMetadata<shader>();
+                var shader = tag?.ReadMetadata<ShaderTag>();
                 if (shader == null)
                 {
                     yield return material;
@@ -125,7 +125,7 @@ namespace Reclaimer.Blam.Halo2
                     var texture = new Texture
                     {
                         Id = bitmTag.Id,
-                        ContentProvider = bitmTag.ReadMetadata<bitmap>()
+                        ContentProvider = bitmTag.ReadMetadata<BitmapTag>()
                     };
 
                     texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, bitmTag.TagName);

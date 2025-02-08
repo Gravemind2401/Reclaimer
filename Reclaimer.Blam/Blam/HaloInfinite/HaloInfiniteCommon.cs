@@ -44,7 +44,7 @@ namespace Reclaimer.Blam.HaloInfinite
     {
         public static IEnumerable<Material> GetMaterials(HaloInfiniteGeometryArgs args)
         {
-            var bitmapCache = new Dictionary<int, bitmap>();
+            var bitmapCache = new Dictionary<int, BitmapTag>();
             var materialCache = new Dictionary<int, Material>();
 
             for (var i = 0; i < args.Materials?.Count; i++)
@@ -70,7 +70,7 @@ namespace Reclaimer.Blam.HaloInfinite
 
                 material.CustomProperties.Add(BlamConstants.SourceTagPropertyName, tag.TagName);
 
-                var mat = tag?.ReadMetadata<material>();
+                var mat = tag?.ReadMetadata<MaterialTag>();
                 if (mat == null)
                 {
                     yield return material;
@@ -92,7 +92,7 @@ namespace Reclaimer.Blam.HaloInfinite
                         var texture = new Texture
                         {
                             Id = bitmTag.GlobalTagId,
-                            ContentProvider = bitmTag.ReadMetadata<bitmap>()
+                            ContentProvider = bitmTag.ReadMetadata<BitmapTag>()
                         };
 
                         texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, bitmTag.TagName);

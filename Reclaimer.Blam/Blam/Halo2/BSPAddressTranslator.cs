@@ -13,7 +13,7 @@ namespace Reclaimer.Blam.Halo2
 
         public BSPAddressTranslator(ICacheFile cache, int id)
         {
-            var bspData = cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<scenario>().StructureBsps.SingleOrDefault(i => i.BspReference.TagId == id);
+            var bspData = cache.TagIndex.GetGlobalTag("scnr").ReadMetadata<ScenarioTag>().StructureBsps.SingleOrDefault(i => i.BspReference.TagId == id);
             data = bspData ?? throw new InvalidOperationException();
         }
 

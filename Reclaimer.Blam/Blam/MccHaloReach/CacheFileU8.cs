@@ -40,9 +40,9 @@ namespace Reclaimer.Blam.MccHaloReach
 
             Task.Factory.StartNew(() =>
             {
-                TagIndex.GetGlobalTag("play")?.ReadMetadata<HaloReach.cache_file_resource_layout_table>();
-                TagIndex.GetGlobalTag("zone")?.ReadMetadata<HaloReach.cache_file_resource_gestalt>();
-                TagIndex.GetGlobalTag("scnr")?.ReadMetadata<HaloReach.scenario>();
+                TagIndex.GetGlobalTag("play")?.ReadMetadata<HaloReach.CacheFileResourceLayoutTableTag>();
+                TagIndex.GetGlobalTag("zone")?.ReadMetadata<HaloReach.CacheFileResourceGestaltTag>();
+                TagIndex.GetGlobalTag("scnr")?.ReadMetadata<HaloReach.ScenarioTag>();
             });
         }
     }
