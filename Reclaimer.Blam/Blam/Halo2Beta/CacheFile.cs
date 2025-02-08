@@ -129,25 +129,27 @@ namespace Reclaimer.Blam.Halo2Beta
             if (items.Any())
                 throw new InvalidOperationException();
 
-            using (var reader = cache.CreateReader(cache.MetadataTranslator))
+            using var reader = cache.CreateReader(cache.MetadataTranslator);
+
+            reader.Seek(cache.Header.IndexAddress + HeaderSize, SeekOrigin.Begin);
+            for (var i = 0; i < TagCount; i++)
             {
-                reader.Seek(cache.Header.IndexAddress + HeaderSize, SeekOrigin.Begin);
-                for (var i = 0; i < TagCount; i++)
-                {
-                    var item = reader.ReadObject(new IndexItem(cache));
-                    items.Add(i, item);
-                }
+                var item = reader.ReadObject(new IndexItem(cache));
+                items.Add(i, item);
 
-                for (var i = 0; i < TagCount; i++)
-                {
-                    var item = items[i];
+                if (CacheFactory.SystemClasses.Contains(item.ClassCode))
+                    sysItems[item.ClassCode] = item;
+            }
 
-                    //change FileNamePointer to use HeaderTranslator instead of MetadataTranslator
-                    item.FileNamePointer = new Pointer(item.FileNamePointer.Value, cache.HeaderTranslator);
+            for (var i = 0; i < TagCount; i++)
+            {
+                var item = items[i];
 
-                    reader.Seek(item.FileNamePointer.Address, SeekOrigin.Begin);
-                    item.TagName = reader.ReadNullTerminatedString();
-                }
+                //change FileNamePointer to use HeaderTranslator instead of MetadataTranslator
+                item.FileNamePointer = new Pointer(item.FileNamePointer.Value, cache.HeaderTranslator);
+
+                reader.Seek(item.FileNamePointer.Address, SeekOrigin.Begin);
+                item.TagName = reader.ReadNullTerminatedString();
             }
         }
 
@@ -172,23 +174,22 @@ namespace Reclaimer.Blam.Halo2Beta
 
         internal void ReadItems()
         {
-            using (var reader = cache.CreateReader(cache.HeaderTranslator))
+            using var reader = cache.CreateReader(cache.HeaderTranslator);
+
+            var indices = new int[cache.Header.StringCount];
+            reader.Seek(cache.Header.StringTableIndexAddress, SeekOrigin.Begin);
+            for (var i = 0; i < cache.Header.StringCount; i++)
+                indices[i] = reader.ReadInt32();
+
+            using (var reader2 = reader.CreateVirtualReader(cache.Header.StringTableAddress))
             {
-                var indices = new int[cache.Header.StringCount];
-                reader.Seek(cache.Header.StringTableIndexAddress, SeekOrigin.Begin);
                 for (var i = 0; i < cache.Header.StringCount; i++)
-                    indices[i] = reader.ReadInt32();
-
-                using (var reader2 = reader.CreateVirtualReader(cache.Header.StringTableAddress))
                 {
-                    for (var i = 0; i < cache.Header.StringCount; i++)
-                    {
-                        if (indices[i] < 0)
-                            continue;
+                    if (indices[i] < 0)
+                        continue;
 
-                        reader2.Seek(indices[i], SeekOrigin.Begin);
-                        Items[i] = reader2.ReadNullTerminatedString();
-                    }
+                    reader2.Seek(indices[i], SeekOrigin.Begin);
+                    Items[i] = reader2.ReadNullTerminatedString();
                 }
             }
         }
@@ -220,6 +221,7 @@ namespace Reclaimer.Blam.Halo2Beta
         public int ParentClassId2 { get; set; }
 
         [Offset(12)]
+        [StoreType(typeof(short))]
         public int Id { get; set; }
 
         [Offset(16)]
@@ -273,17 +275,16 @@ namespace Reclaimer.Blam.Halo2Beta
 
             T ReadMetadataInternal()
             {
-                using (var reader = cache.CreateReader(GetAddressTranslator()))
-                {
-                    reader.RegisterInstance<IIndexItem>(this);
-                    reader.Seek(GetBaseAddress(), SeekOrigin.Begin);
-                    var result = reader.ReadObject<T>((int)cache.CacheType);
+                using var reader = cache.CreateReader(GetAddressTranslator());
 
-                    if (CacheFactory.SystemClasses.Contains(ClassCode))
-                        metadataCache = result;
+                reader.RegisterInstance<IIndexItem>(this);
+                reader.Seek(GetBaseAddress(), SeekOrigin.Begin);
+                var result = reader.ReadObject<T>((int)cache.CacheType);
 
-                    return result;
-                }
+                if (CacheFactory.SystemClasses.Contains(ClassCode))
+                    metadataCache = result;
+
+                return result;
             }
         }
 

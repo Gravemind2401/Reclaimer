@@ -1,4 +1,5 @@
-﻿using Reclaimer.IO;
+﻿using Reclaimer.Blam.Common;
+using Reclaimer.IO;
 using Reclaimer.IO.Dynamic;
 
 namespace Reclaimer.Blam.Halo2
@@ -10,7 +11,10 @@ namespace Reclaimer.Blam.Halo2
         {
             public DefinitionBuilder()
             {
-                var builder = AddDefaultVersion();
+                var builder = AddVersion(CacheType.Halo2E3, CacheType.Halo2Xbox);
+                builder.Property(x => x.StructureBsps).HasOffset(828);
+
+                builder = AddVersion(CacheType.Halo2Xbox, null);
                 builder.Property(x => x.Skies).HasOffset(8);
                 builder.Property(x => x.ObjectNames).HasOffset(72);
                 builder.Property(x => x.Scenery).HasOffset(80);
@@ -147,7 +151,19 @@ namespace Reclaimer.Blam.Halo2
         {
             public DefinitionBuilder()
             {
-                var builder = AddDefaultVersion().HasFixedSize(68);
+                var builder = AddVersion(CacheType.Halo2E3).HasFixedSize(80);
+                builder.Property(x => x.MetadataAddress).HasOffset(0);
+                builder.Property(x => x.Size).HasOffset(4);
+                builder.Property(x => x.Magic).HasOffset(8);
+                builder.Property(x => x.BspReference).HasOffset(16);
+
+                builder = AddVersion(CacheType.Halo2Beta).HasFixedSize(84);
+                builder.Property(x => x.MetadataAddress).HasOffset(0);
+                builder.Property(x => x.Size).HasOffset(4);
+                builder.Property(x => x.Magic).HasOffset(8);
+                builder.Property(x => x.BspReference).HasOffset(16);
+
+                builder = AddVersion(CacheType.Halo2Xbox, null).HasFixedSize(68);
                 builder.Property(x => x.MetadataAddress).HasOffset(0);
                 builder.Property(x => x.Size).HasOffset(4);
                 builder.Property(x => x.Magic).HasOffset(8);
