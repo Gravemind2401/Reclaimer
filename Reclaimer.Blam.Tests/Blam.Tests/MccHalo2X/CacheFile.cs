@@ -24,8 +24,8 @@ namespace Reclaimer.Blam.Tests.MccHalo2X
 
             var t0 = Task.Run(() =>
             {
-                var gestalt = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "zone")?.ReadMetadata<cache_file_resource_gestalt>();
-                var layoutTable = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "play")?.ReadMetadata<cache_file_resource_layout_table>();
+                var gestalt = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "zone")?.ReadMetadata<CacheFileResourceGestaltTag>();
+                var layoutTable = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "play")?.ReadMetadata<CacheFileResourceLayoutTableTag>();
 
                 return true;
             });
@@ -33,7 +33,7 @@ namespace Reclaimer.Blam.Tests.MccHalo2X
             var t1 = Task.Run(() =>
             {
                 var bitmaps = cache.TagIndex.Where(i => i.ClassCode == "bitm")
-                    .Select(i => i.ReadMetadata<bitmap>())
+                    .Select(i => i.ReadMetadata<BitmapTag>())
                     .ToList();
 
                 return true;

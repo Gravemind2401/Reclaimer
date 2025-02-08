@@ -41,8 +41,8 @@ namespace Reclaimer.Blam.Halo3
     {
         public static IEnumerable<Material> GetMaterials(IReadOnlyList<ShaderBlock> shaders)
         {
-            var definitions = new Dictionary<int, render_method_definition>();
-            var bitmaps = new Dictionary<int, bitmap>();
+            var definitions = new Dictionary<int, RenderMethodDefinitionTag>();
+            var bitmaps = new Dictionary<int, BitmapTag>();
 
             foreach (var tag in shaders.Select(s => s.ShaderReference.Tag))
             {
@@ -60,7 +60,7 @@ namespace Reclaimer.Blam.Halo3
 
                 material.CustomProperties.Add(BlamConstants.SourceTagPropertyName, tag.TagName);
 
-                var shader = tag?.ReadMetadata<shader>();
+                var shader = tag?.ReadMetadata<ShaderTag>();
                 if (shader == null)
                 {
                     yield return material;
@@ -68,7 +68,7 @@ namespace Reclaimer.Blam.Halo3
                 }
 
                 if (!definitions.TryGetValue(shader.RenderMethodDefinitionReference.TagId, out var rmdf))
-                    definitions.Add(shader.RenderMethodDefinitionReference.TagId, rmdf = shader.RenderMethodDefinitionReference.Tag.ReadMetadata<render_method_definition>());
+                    definitions.Add(shader.RenderMethodDefinitionReference.TagId, rmdf = shader.RenderMethodDefinitionReference.Tag.ReadMetadata<RenderMethodDefinitionTag>());
 
                 var shaderOptions = (from t in rmdf.Categories.Zip(shader.ShaderOptions)
                                      where t.Second.OptionIndex >= 0 && t.Second.OptionIndex < t.First.Options.Count
@@ -79,7 +79,7 @@ namespace Reclaimer.Blam.Halo3
                                      }).ToDictionary(o => o.Category, o => o.Option);
 
                 var props = shader.ShaderProperties[0];
-                var template = props.TemplateReference.Tag.ReadMetadata<render_method_template>();
+                var template = props.TemplateReference.Tag.ReadMetadata<RenderMethodTemplateTag>();
 
                 Gen3MaterialHelper.PopulateTextureMappings(bitmaps, material, tag.ClassCode, shaderOptions, template.Usages, template.Arguments, props.TilingData, i => props.ShaderMaps[i].BitmapReference.Tag);
 
@@ -92,7 +92,7 @@ namespace Reclaimer.Blam.Halo3
             VertexBufferInfo[] vertexBufferInfo;
             IndexBufferInfo[] indexBufferInfo;
 
-            var resourceGestalt = args.Cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
+            var resourceGestalt = args.Cache.TagIndex.GetGlobalTag("zone").ReadMetadata<CacheFileResourceGestaltTag>();
             var entry = resourceGestalt.ResourceEntries[args.ResourcePointer.ResourceIndex];
             using (var cacheReader = args.Cache.CreateReader(args.Cache.DefaultAddressTranslator))
             using (var reader = cacheReader.CreateVirtualReader(resourceGestalt.FixupDataPointer.Address))

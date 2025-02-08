@@ -42,7 +42,7 @@ namespace Reclaimer.Blam.Halo1
 
             void PopulateShaderModel()
             {
-                var shader = shaderRefTagRef.Tag.ReadMetadata<shader_model>();
+                var shader = shaderRefTagRef.Tag.ReadMetadata<ShaderModelTag>();
 
                 if (shader.Flags.HasFlag(ShaderModelFlags.AlphaBlendedDecal))
                     material.AlphaMode = AlphaMode.Multiply;
@@ -84,7 +84,7 @@ namespace Reclaimer.Blam.Halo1
 
             void PopulateShaderEnvironment()
             {
-                var shader = shaderRefTagRef.Tag.ReadMetadata<shader_environment>();
+                var shader = shaderRefTagRef.Tag.ReadMetadata<ShaderEnvironmentTag>();
 
                 material.AlphaMode = shader.Flags.HasFlag(ShaderEnvironmentFlags.AlphaTested)
                     ? AlphaMode.Clip
@@ -150,7 +150,7 @@ namespace Reclaimer.Blam.Halo1
                     var texture = new Texture
                     {
                         Id = bitmapTag.Id,
-                        ContentProvider = bitmapTag.ReadMetadata<bitmap>()
+                        ContentProvider = bitmapTag.ReadMetadata<BitmapTag>()
                     };
 
                     texture.CustomProperties.Add(BlamConstants.SourceTagPropertyName, bitmapTag.TagName);

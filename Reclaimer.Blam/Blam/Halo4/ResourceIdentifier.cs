@@ -38,8 +38,8 @@ namespace Reclaimer.Blam.Halo4
 
         public byte[] ReadData(PageType mode, int maxLength)
         {
-            var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<cache_file_resource_gestalt>();
-            var resourceLayoutTable = cache.TagIndex.GetGlobalTag("play").ReadMetadata<cache_file_resource_layout_table>();
+            var resourceGestalt = cache.TagIndex.GetGlobalTag("zone").ReadMetadata<CacheFileResourceGestaltTag>();
+            var resourceLayoutTable = cache.TagIndex.GetGlobalTag("play").ReadMetadata<CacheFileResourceLayoutTableTag>();
 
             var entry = resourceGestalt.ResourceEntries[ResourceIndex];
 

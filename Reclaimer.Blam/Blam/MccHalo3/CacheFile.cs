@@ -76,9 +76,9 @@ namespace Reclaimer.Blam.MccHalo3
 
             Task.Factory.StartNew(() =>
             {
-                TagIndex.GetGlobalTag("play")?.ReadMetadata<Halo3.cache_file_resource_layout_table>();
-                TagIndex.GetGlobalTag("zone")?.ReadMetadata<Halo3.cache_file_resource_gestalt>();
-                TagIndex.GetGlobalTag("scnr")?.ReadMetadata<Halo3.scenario>();
+                TagIndex.GetGlobalTag("play")?.ReadMetadata<Halo3.CacheFileResourceLayoutTableTag>();
+                TagIndex.GetGlobalTag("zone")?.ReadMetadata<Halo3.CacheFileResourceGestaltTag>();
+                TagIndex.GetGlobalTag("scnr")?.ReadMetadata<Halo3.ScenarioTag>();
             });
         }
 

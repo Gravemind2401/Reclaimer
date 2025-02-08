@@ -91,7 +91,7 @@ namespace Reclaimer.Blam.Halo2
     {
         private static readonly Lazy<Dictionary<string, ShaderPassDefinition>> ShaderPassLookup = new(() => JsonSerializer.Deserialize<Dictionary<string, ShaderPassDefinition>>(Resources.Halo2XboxShaderPass));
 
-        private static void GetTemplateArguments(shader shader, out Dictionary<string, string> options, out string[] usages, out string[] arguments)
+        private static void GetTemplateArguments(ShaderTag shader, out Dictionary<string, string> options, out string[] usages, out string[] arguments)
         {
             //this produces a list of "options", "usages" and "arguments" similar to what is available in Halo3's render method templates.
             //in Halo2 those strings dont exist in the compiled tags so we need to figure it out by comparing pre-mapped values with the shader pass references.
@@ -102,7 +102,7 @@ namespace Reclaimer.Blam.Halo2
             usages = new string[shaderProps.Bitmaps.Count];
             arguments = new string[shaderProps.TilingData.Count];
 
-            var templateProps = shaderProps.TemplateReference.Tag.ReadMetadata<shader_template>().ShaderTemplateProperties[0];
+            var templateProps = shaderProps.TemplateReference.Tag.ReadMetadata<ShaderTemplateTag>().ShaderTemplateProperties[0];
             foreach (var passBlock in templateProps.ShaderPasses)
             {
                 if (!ShaderPassLookup.Value.TryGetValue(passBlock.ShaderPassReference.Tag.FileName, out var passDefinition))
@@ -148,7 +148,7 @@ namespace Reclaimer.Blam.Halo2
             }
         }
 
-        public static void PopulateTextureMappings(Dictionary<int, bitmap> bitmapCache, Material material, shader shader)
+        public static void PopulateTextureMappings(Dictionary<int, BitmapTag> bitmapCache, Material material, ShaderTag shader)
         {
             GetTemplateArguments(shader, out var options, out var usages, out var arguments);
 
@@ -206,7 +206,7 @@ namespace Reclaimer.Blam.Halo2
 
                 var tagId = texParam.Tag.Id;
                 if (!bitmapCache.TryGetValue(tagId, out var bitmap))
-                    bitmapCache.Add(tagId, bitmap = texParam.Tag.ReadMetadata<bitmap>());
+                    bitmapCache.Add(tagId, bitmap = texParam.Tag.ReadMetadata<BitmapTag>());
 
                 var texture = new Texture
                 {

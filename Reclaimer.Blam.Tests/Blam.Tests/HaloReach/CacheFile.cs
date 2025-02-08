@@ -68,9 +68,9 @@ namespace Reclaimer.Blam.Tests.HaloReach
 
             var t0 = Task.Run(() =>
             {
-                var gestalt = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "zone")?.ReadMetadata<cache_file_resource_gestalt>();
-                var layoutTable = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "play")?.ReadMetadata<cache_file_resource_layout_table>();
-                var soundGestalt = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "ugh!")?.ReadMetadata<sound_cache_file_gestalt>();
+                var gestalt = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "zone")?.ReadMetadata<CacheFileResourceGestaltTag>();
+                var layoutTable = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "play")?.ReadMetadata<CacheFileResourceLayoutTableTag>();
+                var soundGestalt = cache.TagIndex.FirstOrDefault(t => t.ClassCode == "ugh!")?.ReadMetadata<SoundCacheFileGestaltTag>();
 
                 return true;
             });
@@ -78,7 +78,7 @@ namespace Reclaimer.Blam.Tests.HaloReach
             var t1 = Task.Run(() =>
             {
                 var bitmaps = cache.TagIndex.Where(i => i.ClassCode == "bitm")
-                    .Select(i => i.ReadMetadata<bitmap>())
+                    .Select(i => i.ReadMetadata<BitmapTag>())
                     .ToList();
 
                 return true;
@@ -87,7 +87,7 @@ namespace Reclaimer.Blam.Tests.HaloReach
             var t2 = Task.Run(() =>
             {
                 var models = cache.TagIndex.Where(i => i.ClassCode == "mode")
-                .Select(i => i.ReadMetadata<render_model>())
+                .Select(i => i.ReadMetadata<RenderModelTag>())
                 .ToList();
 
                 return true;
@@ -96,7 +96,7 @@ namespace Reclaimer.Blam.Tests.HaloReach
             var t3 = Task.Run(() =>
             {
                 var bsps = cache.TagIndex.Where(i => i.ClassCode == "sbsp")
-                .Select(i => i.ReadMetadata<scenario_structure_bsp>())
+                .Select(i => i.ReadMetadata<ScenarioStructureBspTag>())
                 .ToList();
 
                 return true;
@@ -105,7 +105,7 @@ namespace Reclaimer.Blam.Tests.HaloReach
             var t4 = Task.Run(() =>
             {
                 var bsps = cache.TagIndex.Where(i => i.ClassCode == "snd!")
-                .Select(i => i.ReadMetadata<sound>())
+                .Select(i => i.ReadMetadata<SoundTag>())
                 .ToList();
 
                 return true;

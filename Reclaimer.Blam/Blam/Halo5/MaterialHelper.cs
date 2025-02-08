@@ -140,7 +140,7 @@ namespace Reclaimer.Blam.Halo5
             }
         }
 
-        public static bool PopulateTextureMappings(Dictionary<int, bitmap> bitmapCache, Material material, material shader)
+        public static bool PopulateTextureMappings(Dictionary<int, BitmapTag> bitmapCache, Material material, MaterialTag shader)
         {
             if (!shader.MaterialParameters.Any())
                 return false;
@@ -189,7 +189,7 @@ namespace Reclaimer.Blam.Halo5
 
                 var tagId = texParam.Tag.GlobalTagId;
                 if (!bitmapCache.TryGetValue(tagId, out var bitmap))
-                    bitmapCache.Add(tagId, bitmap = texParam.Tag.ReadMetadata<bitmap>());
+                    bitmapCache.Add(tagId, bitmap = texParam.Tag.ReadMetadata<BitmapTag>());
 
                 var texture = new Texture
                 {
