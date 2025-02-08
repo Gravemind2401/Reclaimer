@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 
+#pragma warning disable IDE0052 // Remove unread private members
+
 namespace ExamplePlugin
 {
     public class ExamplePlugin : Plugin

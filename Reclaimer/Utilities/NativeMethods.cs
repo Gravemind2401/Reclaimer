@@ -6,12 +6,12 @@ namespace Reclaimer.Utilities
     internal static class NativeMethods
     {
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern short GetAsyncKeyState(int KeyID);
+        public static extern short GetAsyncKeyState(int keyId);
 
         [DllImport("user32.dll")]
-        public static extern bool GetCursorPos(out Point Point);
+        public static extern bool GetCursorPos(out Point point);
 
         [DllImport("user32.dll")]
-        public static extern int SetCursorPos(int X, int Y);
+        public static extern int SetCursorPos(int x, int y);
     }
 }

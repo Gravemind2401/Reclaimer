@@ -22,7 +22,7 @@ using SaberContentFactory = Reclaimer.Saber3D.Common.ContentFactory;
 
 namespace Reclaimer.Plugins
 {
-    public class BatchExtractPlugin : Plugin
+    public partial class BatchExtractPlugin : Plugin
     {
         private enum ContentType
         {
@@ -32,9 +32,13 @@ namespace Reclaimer.Plugins
             Audio = 2
         }
 
-        private const string BlamFileRegex = @"Blam\.(\w+)\.(.*)";
-        private const string SaberFileRegex = @"Saber3D\.(\w+)\.(.*)";
         private const string FileKeyWildcard = "*";
+
+        [GeneratedRegex(@"Saber3D\.(\w+)\.(.*)")]
+        private static partial Regex RxSaberFilePattern();
+
+        [GeneratedRegex(@"Blam\.(\w+)\.(.*)")]
+        private static partial Regex RxBlamFilePattern();
 
         private ConcurrentQueue<IExtractable> extractionQueue = new ConcurrentQueue<IExtractable>();
 
@@ -79,7 +83,7 @@ namespace Reclaimer.Plugins
         public override IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)
         {
             Match match;
-            if ((match = Regex.Match(context.FileTypeKey, BlamFileRegex)).Success)
+            if ((match = RxBlamFilePattern().Match(context.FileTypeKey)).Success)
             {
                 if (!ValidateCacheType(match.Groups[1].Value))
                     yield break;
@@ -92,7 +96,7 @@ namespace Reclaimer.Plugins
                         yield return ExtractSingleContextItem;
                 }
             }
-            else if ((match = Regex.Match(context.FileTypeKey, SaberFileRegex)).Success)
+            else if ((match = RxSaberFilePattern().Match(context.FileTypeKey)).Success)
             {
                 if (match.Groups[1].Value != "Halo1X")
                     yield break;
@@ -385,11 +389,11 @@ namespace Reclaimer.Plugins
             yield return ($"{fileName}_alpha{extension}", DecompressOptions.AlphaChannelOnly);
         }
 
-        private static readonly string[] shouldIsolate = new[] { "([_ ]multi)$", "([_ ]multipurpose)$", "([_ ]cc)$" };
+        private static readonly string[] shouldIsolate = ["([_ ]multi)$", "([_ ]multipurpose)$", "([_ ]cc)$"];
         private static IEnumerable<(string FileName, DecompressOptions Options)> GetParamsMixedIsolate(string fileName, string extension)
         {
             var imageName = fileName.Split('\\').Last();
-            if (imageName.EndsWith("]"))
+            if (imageName.EndsWith(']'))
                 imageName = imageName[..imageName.LastIndexOf('[')];
 
             return shouldIsolate.Any(s => Regex.IsMatch(imageName, s, RegexOptions.IgnoreCase))

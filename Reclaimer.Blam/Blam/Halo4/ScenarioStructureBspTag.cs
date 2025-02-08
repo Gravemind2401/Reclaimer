@@ -110,7 +110,7 @@ namespace Reclaimer.Blam.Halo4
             {
                 var resourceGestalt = Cache.TagIndex.GetGlobalTag("zone").ReadMetadata<CacheFileResourceGestaltTag>();
                 var entry = resourceGestalt.ResourceEntries[InstancesResourcePointer.ResourceIndex];
-                var address = entry.ResourceFixups[entry.ResourceFixups.Count - 10].Offset & 0x0FFFFFFF;
+                var address = entry.ResourceFixups[^10].MaskedOffset;
 
                 using (var ms = new MemoryStream(InstancesResourcePointer.ReadData(PageType.Auto)))
                 using (var reader = new EndianReader(ms, Cache.ByteOrder))

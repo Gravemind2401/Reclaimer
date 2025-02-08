@@ -92,7 +92,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
                 blockIndex = 0;
                 var offset = 0;
-                foreach (var n in node.GetChildElements())
+                foreach (var n in Node.GetChildElements())
                 {
                     var def = FieldDefinition.GetHalo5Definition(Item, n);
                     Children.Add(GetMetaValue(n, Item, Header, block, reader, BlockAddress, offset));

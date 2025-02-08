@@ -49,20 +49,6 @@ namespace Reclaimer.Blam.Utilities
         }
 
         [DebuggerHidden]
-        public static void ThrowIfNegative(int argument, [CallerArgumentExpression(nameof(argument))] string paramName = null)
-        {
-            if (argument < 0)
-                throw new ArgumentOutOfRangeException(paramName, $"'{paramName}' must be non-negative.");
-        }
-
-        [DebuggerHidden]
-        public static void ThrowIfNonPositive(int argument, [CallerArgumentExpression(nameof(argument))] string paramName = null)
-        {
-            if (argument <= 0)
-                throw new ArgumentOutOfRangeException(paramName, $"'{paramName}' must be greater than zero.");
-        }
-
-        [DebuggerHidden]
         public static void ThrowIfOutOfRange<T>(T argument, T inclusiveMin, T exclusiveMax, [CallerArgumentExpression(nameof(argument))] string paramName = null) where T : IComparable<T>
         {
             if (argument.CompareTo(inclusiveMin) < 0 || argument.CompareTo(exclusiveMax) >= 0)

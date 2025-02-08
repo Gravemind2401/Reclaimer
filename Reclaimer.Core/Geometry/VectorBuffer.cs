@@ -52,8 +52,8 @@ namespace Reclaimer.Geometry
         /// <param name="count">The number of elements to include in the new buffer.</param>
         public VectorBuffer<TVector> Slice(int index, int count)
         {
-            var newStart = start + index * stride;
-            return new VectorBuffer<TVector>(buffer, count, newStart, stride, offset);
+            var newStart = Start + index * Stride;
+            return new VectorBuffer<TVector>(Buffer, count, newStart, Stride, Offset);
         }
 
         int IVectorBuffer.Dimensions => TVector.Dimensions;

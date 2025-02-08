@@ -172,7 +172,7 @@ namespace Reclaimer.Blam.Halo2
         [Offset(14)]
         public short SuperHighSectionIndex { get; set; }
 
-        internal short[] LodArray => new[] { SuperHighSectionIndex, HighSectionIndex, MediumSectionIndex, LowSectionIndex, SuperLowSectionIndex, PotatoSectionIndex };
+        internal short[] LodArray => [SuperHighSectionIndex, HighSectionIndex, MediumSectionIndex, LowSectionIndex, SuperLowSectionIndex, PotatoSectionIndex];
     }
 
     public enum GeometryClassification : short

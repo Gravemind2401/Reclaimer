@@ -4,8 +4,11 @@ using System.Text.RegularExpressions;
 
 namespace Reclaimer.Models
 {
-    public class AppRelease
+    public partial class AppRelease
     {
+        [GeneratedRegex(@"(\d+(?:\.\d+){1,3})")]
+        private static partial Regex RxVersionPattern();
+
         [JsonConverter(typeof(VersionConverter))]
         public Version Version { get; set; }
 
@@ -27,9 +30,7 @@ namespace Reclaimer.Models
 
         public AppRelease(Octokit.Release release)
         {
-            const string versionRegex = @"(\d+(?:\.\d+){1,3})";
-
-            var match = Regex.Match(release.Name, versionRegex);
+            var match = RxVersionPattern().Match(release.Name);
             if (match.Success)
                 Version = Version.Parse(match.Groups[1].Value);
 

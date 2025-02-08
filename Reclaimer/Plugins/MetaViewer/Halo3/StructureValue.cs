@@ -95,10 +95,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
                 }
 
                 blockIndex = 0;
-                foreach (var n in node.GetChildElements())
+                foreach (var n in Node.GetChildElements())
                     Children.Add(GetMetaValue(n, context, BlockAddress));
 
-                var entryOffset = node.GetIntAttribute("entryName", "entryOffset", "label");
+                var entryOffset = Node.GetIntAttribute("entryName", "entryOffset", "label");
                 var isExplicit = entryOffset.HasValue;
                 entryOffset ??= 0;
 

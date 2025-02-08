@@ -29,7 +29,7 @@ namespace Reclaimer.Drawing
         private static Dictionary<TFormat, Decompress> CreateLookup<TAttribute, TFormat>() where TAttribute : Attribute, IFormatAttribute<TFormat>
         {
             return typeof(DdsImage).GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
-                .SelectMany(m => m.GetCustomAttributes<TAttribute>().Select(a => new { a.Format, Delegate = (Decompress)m.CreateDelegate(typeof(Decompress)) }))
+                .SelectMany(m => m.GetCustomAttributes<TAttribute>().Select(a => new { a.Format, Delegate = m.CreateDelegate<Decompress>() }))
                 .ToDictionary(m => m.Format, m => m.Delegate);
         }
 
@@ -246,15 +246,11 @@ namespace Reclaimer.Drawing
                     return dxgiDecode(data, virtualHeight, Width, bgr24);
                 else
                 {
-                    switch (dx10Header.DxgiFormat)
+                    return dx10Header.DxgiFormat switch
                     {
-                        case DxgiFormat.B8G8R8X8_UNorm:
-                        case DxgiFormat.B8G8R8A8_UNorm:
-                            return bgr24 ? ToArray(SkipNth(data, 4), true, virtualHeight, Width) : data;
-
-                        default:
-                            throw new NotSupportedException($"The {nameof(DxgiFormat)} '{dx10Header.DxgiFormat}' is not supported.");
-                    }
+                        DxgiFormat.B8G8R8X8_UNorm or DxgiFormat.B8G8R8A8_UNorm => bgr24 ? ToArray(SkipNth(data, 4), true, virtualHeight, Width) : data,
+                        _ => throw new NotSupportedException($"The {nameof(DxgiFormat)} '{dx10Header.DxgiFormat}' is not supported."),
+                    };
                 }
             }
             else if (header.PixelFormat.FourCC == (uint)FourCC.XBOX)

@@ -11,27 +11,13 @@ namespace Reclaimer.Blam.Common
     public static class CacheFactory
     {
         private static Dictionary<string, string> halo1Classes;
-        internal static IReadOnlyDictionary<string, string> Halo1Classes
-        {
-            get
-            {
-                halo1Classes ??= ReadClassXml(Properties.Resources.Halo1Classes);
-                return halo1Classes;
-            }
-        }
+        internal static IReadOnlyDictionary<string, string> Halo1Classes => halo1Classes ??= ReadClassXml(Properties.Resources.Halo1Classes);
 
         private static Dictionary<string, string> halo2Classes;
-        internal static IReadOnlyDictionary<string, string> Halo2Classes
-        {
-            get
-            {
-                halo2Classes ??= ReadClassXml(Properties.Resources.Halo2Classes);
-                return halo2Classes;
-            }
-        }
+        internal static IReadOnlyDictionary<string, string> Halo2Classes => halo2Classes ??= ReadClassXml(Properties.Resources.Halo2Classes);
 
         internal const string ScenarioClass = "scnr";
-        internal static readonly string[] SystemClasses = new[] { "scnr", "matg", "ugh!", "play", "zone" };
+        internal static readonly string[] SystemClasses = ["scnr", "matg", "ugh!", "play", "zone"];
 
         internal static Dictionary<string, string> ReadClassXml(string xml)
         {

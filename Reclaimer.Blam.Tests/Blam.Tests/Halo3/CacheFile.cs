@@ -85,7 +85,7 @@ namespace Reclaimer.Blam.Tests.Halo3
         [DataTestMethod]
         public void Halo3Odst(string map) => TestMap(Directories.ConsoleHalo3ODST, map);
 
-        private void TestMap(string folder, string map)
+        private static void TestMap(string folder, string map)
         {
             var cache = new Blam.Halo3.CacheFile(Path.Combine(folder, $"{map}.map"));
 

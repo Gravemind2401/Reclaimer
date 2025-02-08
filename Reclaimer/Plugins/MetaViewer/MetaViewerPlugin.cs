@@ -9,9 +9,12 @@ using System.Text.RegularExpressions;
 
 namespace Reclaimer.Plugins.MetaViewer
 {
-    public class MetaViewerPlugin : Plugin
+    public partial class MetaViewerPlugin : Plugin
     {
         private static MetaViewerPlugin Instance { get; set; }
+
+        [GeneratedRegex(@"Blam\.(\w+)\.(.*)")]
+        private static partial Regex RxFileTypePattern();
 
         internal static MetaViewerSettings Settings { get; private set; }
 
@@ -53,7 +56,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public override bool CanOpenFile(OpenFileArgs args)
         {
-            var match = Regex.Match(args.FileTypeKey, @"Blam\.(\w+)\.(.*)");
+            var match = RxFileTypePattern().Match(args.FileTypeKey);
             if (!match.Success)
                 return false;
 
@@ -210,12 +213,12 @@ namespace Reclaimer.Plugins.MetaViewer
                 if (PluginProfiles != null)
                     return;
 
-                var cacheTypes = Enum.GetValues(typeof(CacheType)).OfType<CacheType>();
+                var cacheTypes = Enum.GetValues<CacheType>().OfType<CacheType>();
 
                 IEnumerable<CacheType> CacheTypesByPrefix(CacheType prefix) => cacheTypes.Where(t => t.ToString().StartsWith(prefix.ToString()));
 
-                PluginProfiles = new List<PluginProfile>
-                {
+                PluginProfiles =
+                [
                     new PluginProfile("HaloInfinite", ModuleType.HaloInfinite),
                     new PluginProfile("Halo5", ModuleType.Halo5Server, ModuleType.Halo5Forge),
                     new PluginProfile("Halo2AMCC", CacheTypesByPrefix(CacheType.MccHalo2X)),
@@ -237,7 +240,7 @@ namespace Reclaimer.Plugins.MetaViewer
                     new PluginProfile("Halo2", new[] { CacheType.Halo2Xbox, CacheType.Halo2Vista }.Concat(CacheTypesByPrefix(CacheType.MccHalo2))),
                     new PluginProfile("Halo1MCC", CacheType.MccHalo1),
                     new PluginProfile("Halo1", CacheType.Halo1Xbox, CacheType.Halo1PC, CacheType.Halo1CE, CacheType.Halo1AE, CacheType.MccHalo1),
-                };
+                ];
             }
         }
 
@@ -262,10 +265,7 @@ namespace Reclaimer.Plugins.MetaViewer
             { }
 
             //used for default settings
-            public PluginProfile(string path, params CacheType[] builds)
-                : this(path, builds.AsEnumerable()) { }
-
-            public PluginProfile(string path, IEnumerable<CacheType> builds)
+            public PluginProfile(string path, params IEnumerable<CacheType> builds)
             {
                 FileNameFormat = "{0,-4}.xml";
                 Subfolder = path;
@@ -274,10 +274,7 @@ namespace Reclaimer.Plugins.MetaViewer
             }
 
             //used for default settings
-            public PluginProfile(string path, params ModuleType[] builds)
-                : this(path, builds.AsEnumerable()) { }
-
-            public PluginProfile(string path, IEnumerable<ModuleType> builds)
+            public PluginProfile(string path, params IEnumerable<ModuleType> builds)
             {
                 FileNameFormat = "({0}){1}.xml";
                 Subfolder = path;

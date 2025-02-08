@@ -403,7 +403,7 @@ namespace Reclaimer.Blam.Halo1
         [Offset(72)]
         public short SuperHighSectionIndex { get; set; }
 
-        internal short[] LodArray => new[] { SuperHighSectionIndex, HighSectionIndex, MediumSectionIndex, LowSectionIndex, SuperLowSectionIndex };
+        internal short[] LodArray => [SuperHighSectionIndex, HighSectionIndex, MediumSectionIndex, LowSectionIndex, SuperLowSectionIndex];
 
         internal int LodCount => LodArray.Count(i => i >= 0);
 

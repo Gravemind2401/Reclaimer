@@ -151,7 +151,7 @@ namespace Reclaimer.Blam.Halo2Beta
         [Offset(42)]
         public short SuperHighSectionIndex { get; set; }
 
-        internal short[] LodArray => new[] { SuperHighSectionIndex, HighSectionIndex, MediumSectionIndex, LowSectionIndex, SuperLowSectionIndex, PotatoSectionIndex };
+        internal short[] LodArray => [SuperHighSectionIndex, HighSectionIndex, MediumSectionIndex, LowSectionIndex, SuperLowSectionIndex, PotatoSectionIndex];
     }
 
     [FixedSize(100, MaxVersion = (int)CacheType.Halo2Beta)]

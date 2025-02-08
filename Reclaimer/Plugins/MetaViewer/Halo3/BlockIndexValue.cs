@@ -35,9 +35,11 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         internal void ReadOptions()
         {
             Options.Clear();
+#pragma warning disable IDE0019 // Use pattern matching
             var target = (context.GetValue($"//*[@srcGuid='{targetId}']")
                 ?? context.GetValue($"//*[@srcId='{targetId}']")
                 ?? context.GetValue($"//*[@srcName='{targetId}']")) as StructureValue;
+#pragma warning restore IDE0019 // Use pattern matching
 
             if (target == null)
                 return;

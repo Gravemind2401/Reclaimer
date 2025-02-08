@@ -169,7 +169,7 @@ namespace Reclaimer.Blam.Halo4
             return (usage, ChannelMask.Default);
         }
 
-        private static IEnumerable<(string Usage, RealVector4 Value)> EnumerateFloatConstants(MaterialShaderDefinition shaderDefinition, IReadOnlyList<RealVector4> floatConstants)
+        private static IEnumerable<(string Usage, RealVector4 Value)> EnumerateFloatConstants(MaterialShaderDefinition shaderDefinition, BlockCollection<RealVector4> floatConstants)
         {
             var nextValueIndex = 0;
 

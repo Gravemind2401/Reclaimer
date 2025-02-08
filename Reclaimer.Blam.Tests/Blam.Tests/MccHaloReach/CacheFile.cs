@@ -53,7 +53,7 @@ namespace Reclaimer.Blam.Tests.MccHaloReach
         [DataTestMethod]
         public void HaloReachCex(string map) => TestMap(Directories.MccHaloReach, map);
 
-        private void TestMap(string folder, string map)
+        private static void TestMap(string folder, string map)
         {
             var cache = new Blam.MccHaloReach.CacheFileU8(Path.Combine(folder, $"{map}.map"));
 

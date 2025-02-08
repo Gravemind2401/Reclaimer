@@ -40,7 +40,7 @@ namespace Reclaimer.Blam.Tests.Halo2
         [DataTestMethod]
         public void Halo2Multiplayer(string map) => TestMap(map);
 
-        private void TestMap(string map)
+        private static void TestMap(string map)
         {
             var cache = new Blam.Halo2.CacheFile(Path.Combine(Directories.ConsoleHalo2, $"{map}.map"));
 

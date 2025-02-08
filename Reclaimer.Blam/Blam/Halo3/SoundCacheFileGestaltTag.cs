@@ -71,10 +71,10 @@ namespace Reclaimer.Blam.Halo3
             {
                 return Encoding switch
                 {
-                    Encoding.Mono => new byte[] { 1 },
-                    Encoding.Stereo => new byte[] { 2 },
-                    Encoding.Surround => new byte[] { 2, 2 },
-                    Encoding.Surround5_1 => new byte[] { 2, 2, 2 },
+                    Encoding.Mono => [1],
+                    Encoding.Stereo => [2],
+                    Encoding.Surround => [2, 2],
+                    Encoding.Surround5_1 => [2, 2, 2],
                     _ => throw new NotSupportedException("Encoding not supported")
                 };
             }

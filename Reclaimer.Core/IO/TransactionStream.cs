@@ -170,8 +170,11 @@ namespace Reclaimer.IO
         /// </returns>
         public override long Seek(long offset, SeekOrigin origin)
         {
-            if (!CanSeek)
+            if (!IsOpen)
                 throw new ObjectDisposedException(null);
+
+            if (!CanSeek)
+                throw new InvalidOperationException("Base stream is not seekable");
 
             if (origin == SeekOrigin.Begin)
             {
@@ -283,7 +286,7 @@ namespace Reclaimer.IO
             if (!target.IsOpen)
                 throw new ArgumentException("Target stream is closed.");
 
-            if (!target.changes.Any())
+            if (target.changes.Count == 0)
             {
                 foreach (var patch in changes)
                     target.changes.Add(patch.Key, patch.Value);

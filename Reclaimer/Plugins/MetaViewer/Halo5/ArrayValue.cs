@@ -38,7 +38,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
                 Children.Clear();
 
                 var offset = Offset;
-                foreach (var n in node.GetChildElements())
+                foreach (var n in Node.GetChildElements())
                 {
                     var def = FieldDefinition.GetHalo5Definition(Item, n);
                     Children.Add(GetMetaValue(n, Item, Header, Host, reader, BaseAddress, offset));

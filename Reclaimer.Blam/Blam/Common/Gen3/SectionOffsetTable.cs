@@ -14,7 +14,7 @@ namespace Reclaimer.Blam.Common.Gen3
             ArgumentNullException.ThrowIfNull(reader);
 
             if (cache.Metadata.Generation < CacheGeneration.Gen3)
-                throw new ArgumentException();
+                throw new ArgumentException("CacheFile must be Gen3 or later", nameof(cache));
 
             sectionOffsets = new uint[4];
 

@@ -347,7 +347,7 @@ namespace Reclaimer.Geometry.Utilities
             //default to 0,0 in case of negatives or bad indices
             var meshRange = (Index: 0, Count: 0);
 
-            if (meshes.Any())
+            if (meshes.Count > 0)
             {
                 meshPool.AddRange(meshes);
                 meshRange = (meshPool.IndexOf(meshes[0]), meshes.Count);

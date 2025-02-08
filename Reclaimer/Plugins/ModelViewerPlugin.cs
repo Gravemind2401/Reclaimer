@@ -129,15 +129,15 @@ namespace Reclaimer.Plugins
 
         #region Model Exports
 
-        private static readonly ExportFormat[] StandardFormats = new[]
-        {
+        private static readonly ExportFormat[] StandardFormats =
+        [
             new ExportFormat(FormatId.RMF,              "rmf",  "RMF Files", (model, fileName) => model.GetContent().WriteRMF(fileName)),
             new ExportFormat(FormatId.AMF,              "amf",  "AMF Files", (model, fileName) => model.GetContent().WriteAMF(fileName, 100f)),
             new ExportFormat(FormatId.JMS,              "jms",  "JMS Files", (model, fileName) => model.GetContent().WriteJMS(fileName, 100f)),
             new ExportFormat(FormatId.OBJNoMaterials,   "obj",  "OBJ Files"),
             new ExportFormat(FormatId.OBJ,              "obj",  "OBJ Files with materials"),
             new ExportFormat(FormatId.Collada,          "dae",  "COLLADA Files"),
-        };
+        ];
 
         private static readonly Dictionary<string, ExportFormat> UserFormats = new Dictionary<string, ExportFormat>();
 
@@ -147,10 +147,10 @@ namespace Reclaimer.Plugins
         public static IEnumerable<string> GetExportFormats() => ExportFormats.Select(f => f.FormatId);
 
         [SharedFunction]
-        public static string GetFormatExtension(string formatId) => ExportFormats.FirstOrDefault(f => f.FormatId == formatId.ToLower()).Extension;
+        public static string GetFormatExtension(string formatId) => ExportFormats.FirstOrDefault(f => f.FormatId.Equals(formatId, StringComparison.OrdinalIgnoreCase)).Extension;
 
         [SharedFunction]
-        public static string GetFormatDescription(string formatId) => ExportFormats.FirstOrDefault(f => f.FormatId == formatId.ToLower()).Description;
+        public static string GetFormatDescription(string formatId) => ExportFormats.FirstOrDefault(f => f.FormatId.Equals(formatId, StringComparison.OrdinalIgnoreCase)).Description;
 
         [SharedFunction]
         public static void RegisterExportFormat(string formatId, string extension, string description, Action<IContentProvider<Scene>, string> exportFunction)

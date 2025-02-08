@@ -69,7 +69,7 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
             {
                 reader.Seek(ValueAddress, SeekOrigin.Begin);
 
-                if (bool.TryParse(node.Attributes["withGroup"]?.Value, out var withGroup) && !withGroup)
+                if (bool.TryParse(Node.Attributes["withGroup"]?.Value, out var withGroup) && !withGroup)
                 {
                     var tagId = reader.ReadInt32();
                     var tagIndex = (short)(tagId & ushort.MaxValue);

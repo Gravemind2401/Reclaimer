@@ -5,9 +5,12 @@ using System.Text.RegularExpressions;
 
 namespace Reclaimer.Blam.Common
 {
-    internal class CacheArgs
+    internal partial class CacheArgs
     {
-        private const string BuildStringRegex = @"[A-Za-z0-9\. _:]{10,32}";
+        [GeneratedRegex(@"[A-Za-z0-9\. _:]{10,32}")]
+        private static partial Regex RxBuildStringPattern();
+
+        private static readonly int[] halo1VersionValues = [5, 6, 7, 609];
 
         //when read using little endian
         internal const int LittleHeader = 0x68656164;
@@ -47,7 +50,7 @@ namespace Reclaimer.Blam.Common
                 var version = reader.ReadInt32();
 
                 int buildAddress;
-                if (new[] { 5, 6, 7, 609 }.Contains(version)) // Halo1 Xbox, PC, CE
+                if (halo1VersionValues.Contains(version)) // Halo1 Xbox, PC, CE
                     buildAddress = 64;
                 else if (version == 8)
                 {
@@ -77,7 +80,7 @@ namespace Reclaimer.Blam.Common
                     else
                     {
                         var test = reader.ReadNullTerminatedString(32);
-                        if (Regex.IsMatch(test, BuildStringRegex))
+                        if (RxBuildStringPattern().IsMatch(test))
                             buildAddress = 64; //MccHalo1
                         else
                         {

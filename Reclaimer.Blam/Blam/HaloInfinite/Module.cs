@@ -165,16 +165,12 @@ namespace Reclaimer.Blam.HaloInfinite
 
         private class TagIndex
         {
-            public Dictionary<string, TagClass> Classes { get; }
-            public Dictionary<int, ModuleItemGroup> ItemsById { get; }
-            public Dictionary<string, List<ModuleItemGroup>> ItemsByClass { get; }
+            public Dictionary<string, TagClass> Classes { get; } = new();
+            public Dictionary<int, ModuleItemGroup> ItemsById { get; } = new();
+            public Dictionary<string, List<ModuleItemGroup>> ItemsByClass { get; } = new();
 
             public TagIndex(IEnumerable<ModuleItem> items)
             {
-                Classes = new Dictionary<string, TagClass>();
-                ItemsById = new Dictionary<int, ModuleItemGroup>();
-                ItemsByClass = new Dictionary<string, List<ModuleItemGroup>>();
-
                 ImportTags(items);
             }
 

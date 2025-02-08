@@ -42,13 +42,13 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
         {
             Labels = FieldDefinition.Axes switch
             {
-                AxesDefinition.Point => new[] { "x", "y", "z", "w" },
-                AxesDefinition.Vector => new[] { "i", "j", "k", "w" },
-                AxesDefinition.Angle => new[] { "y", "p", "r", string.Empty },
-                AxesDefinition.Bounds => new[] { "min", "max", string.Empty, string.Empty },
-                AxesDefinition.Color when FieldDefinition.Components == 3 => new[] { "r", "g", "b", string.Empty },
-                AxesDefinition.Color when FieldDefinition.Components == 4 => new[] { "a", "r", "g", "b" },
-                _ => new[] { "a", "b", "c", "d" }
+                AxesDefinition.Point => ["x", "y", "z", "w"],
+                AxesDefinition.Vector => ["i", "j", "k", "w"],
+                AxesDefinition.Angle => ["y", "p", "r", string.Empty],
+                AxesDefinition.Bounds => ["min", "max", string.Empty, string.Empty],
+                AxesDefinition.Color when FieldDefinition.Components == 3 => ["r", "g", "b", string.Empty],
+                AxesDefinition.Color when FieldDefinition.Components == 4 => ["a", "r", "g", "b"],
+                _ => ["a", "b", "c", "d"]
             };
 
             if (FieldDefinition.Axes == AxesDefinition.Color && FieldDefinition.Components == 3 && typeof(T) == typeof(byte))

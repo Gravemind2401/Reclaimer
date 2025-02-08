@@ -18,16 +18,16 @@ namespace Reclaimer.Controls
         private Transform prevTransform;
 
         #region Dependency Properties
-        public static DependencyProperty MinZoomProperty =
+        public static DependencyProperty MinZoomProperty { get; } =
             DependencyProperty.Register(nameof(MinZoom), typeof(double), typeof(ZoomPanel), new PropertyMetadata(0.25));
 
-        public static DependencyProperty MaxZoomProperty =
+        public static DependencyProperty MaxZoomProperty { get; } =
             DependencyProperty.Register(nameof(MaxZoom), typeof(double), typeof(ZoomPanel), new PropertyMetadata(4.0));
 
-        public static DependencyProperty ZoomVarianceProperty =
+        public static DependencyProperty ZoomVarianceProperty { get; } =
             DependencyProperty.Register(nameof(ZoomVariance), typeof(double), typeof(ZoomPanel), new PropertyMetadata(0.1));
 
-        public static DependencyProperty ZoomLevelProperty =
+        public static DependencyProperty ZoomLevelProperty { get; } =
             DependencyProperty.Register(nameof(ZoomLevel), typeof(double), typeof(ZoomPanel), new PropertyMetadata(1.0, ZoomLevelPropertyChanged));
 
         public double MinZoom

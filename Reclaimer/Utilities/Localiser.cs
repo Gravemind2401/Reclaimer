@@ -29,7 +29,7 @@ namespace Reclaimer.Utilities
                     value = prop.Default;
 
                 var setter = prop.Info.GetSetMethod(true);
-                setter.Invoke(null, new[] { value });
+                setter.Invoke(null, [value]);
             }
         }
 

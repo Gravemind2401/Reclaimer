@@ -38,7 +38,7 @@ namespace Reclaimer.Plugins.MetaViewer
                 {
                     try
                     {
-                        prop.GetSetMethod()?.Invoke(newBinding, new object[] { prop.GetValue(binding) });
+                        prop.GetSetMethod()?.Invoke(newBinding, [prop.GetValue(binding)]);
                     }
                     catch { }
                 }

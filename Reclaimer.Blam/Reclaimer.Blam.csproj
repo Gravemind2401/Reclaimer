@@ -4,7 +4,7 @@
         <!-- cant use MSBuildProjectName because it can end up being something like "ProjectName_tmp" under certain build conditions -->
         <ProjectName>$([System.IO.Path]::GetFileName($(MSBuildProjectDirectory)))</ProjectName>
         <OutputType>Library</OutputType>
-        <TargetFramework>net7.0-windows</TargetFramework>
+        <TargetFramework>net9.0-windows</TargetFramework>
         <Nullable>disable</Nullable>
         <SignAssembly>false</SignAssembly>
         <Authors>Gravemind2401</Authors>
@@ -15,6 +15,7 @@
         <RootNamespace>$(ProjectName.Split(".")[0])</RootNamespace>
         <AssemblyOriginatorKeyFile>$(ProjectName).snk</AssemblyOriginatorKeyFile>
         <ImplicitUsings>enable</ImplicitUsings>
+        <NoWarn>$(NoWarn);SYSLIB1054;IDE0130</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

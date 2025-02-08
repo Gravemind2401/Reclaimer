@@ -53,9 +53,7 @@ namespace Reclaimer.Geometry
                 GetValue = data => data[0];
                 SetValue = (i, data) =>
                 {
-                    if (i > byte.MaxValue)
-                        throw new ArgumentOutOfRangeException();
-
+                    ArgumentOutOfRangeException.ThrowIfGreaterThan(i, byte.MaxValue);
                     data[0] = (byte)i;
                 };
             }
@@ -64,9 +62,7 @@ namespace Reclaimer.Geometry
                 GetValue = data => BitConverter.ToUInt16(data);
                 SetValue = (i, data) =>
                 {
-                    if (i > ushort.MaxValue)
-                        throw new ArgumentOutOfRangeException();
-
+                    ArgumentOutOfRangeException.ThrowIfGreaterThan(i, ushort.MaxValue);
                     BitConverter.GetBytes((ushort)i).CopyTo(data);
                 };
             }
@@ -85,8 +81,8 @@ namespace Reclaimer.Geometry
 
         public IndexBuffer Slice(int index, int count)
         {
-            var newStart = start + (index * stride);
-            return new IndexBuffer(buffer, count, newStart, stride, offset, SizeOf) { Layout = Layout };
+            var newStart = Start + (index * Stride);
+            return new IndexBuffer(Buffer, count, newStart, Stride, Offset, SizeOf) { Layout = Layout };
         }
 
         public void ReverseEndianness()

@@ -223,7 +223,7 @@ namespace Reclaimer.Blam.Halo4
 
         internal void ReadItems()
         {
-            if (items.Any())
+            if (items.Count > 0)
                 throw new InvalidOperationException();
 
             using (var reader = cache.CreateReader(cache.MetadataTranslator))
@@ -361,7 +361,7 @@ namespace Reclaimer.Blam.Halo4
         private readonly CacheFile cache;
         ICacheFile IIndexItem.CacheFile => cache;
 
-        private readonly object cacheLock = new object();
+        private readonly Lock cacheLock = new();
         private object metadataCache;
 
         public IndexItem(CacheFile cache, int index)

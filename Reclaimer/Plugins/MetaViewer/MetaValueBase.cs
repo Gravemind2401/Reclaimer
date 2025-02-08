@@ -7,7 +7,7 @@ namespace Reclaimer.Plugins.MetaViewer
 {
     public abstract class MetaValueBase : BindableBase
     {
-        protected readonly XmlNode node;
+        protected readonly XmlNode Node;
 
         public virtual string Name { get; }
         public virtual int Offset { get; protected init; }
@@ -35,7 +35,7 @@ namespace Reclaimer.Plugins.MetaViewer
 
         protected MetaValueBase(XmlNode node, long baseAddress)
         {
-            this.node = node;
+            Node = node;
 
             BaseAddress = baseAddress;
 
