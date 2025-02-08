@@ -1,37 +1,24 @@
 ﻿using Reclaimer.Blam.Common;
 using Reclaimer.Geometry;
-using Reclaimer.IO;
 using Reclaimer.Utilities;
 using System.Globalization;
 using System.Numerics;
 
 namespace Reclaimer.Blam.Halo2
 {
-    public class scenario_structure_bsp : ContentTagDefinition<Scene>, IContentProvider<Model>
+    public partial class scenario_structure_bsp : ContentTagDefinition<Scene>, IContentProvider<Model>
     {
         public scenario_structure_bsp(IIndexItem item)
             : base(item)
         { }
 
-        [Offset(52)]
         public RealBounds XBounds { get; set; }
-
-        [Offset(60)]
         public RealBounds YBounds { get; set; }
-
-        [Offset(68)]
         public RealBounds ZBounds { get; set; }
 
-        [Offset(156)]
         public BlockCollection<ClusterBlock> Clusters { get; set; }
-
-        [Offset(164)]
         public BlockCollection<ShaderBlock> Shaders { get; set; }
-
-        [Offset(312)]
         public BlockCollection<BspSectionBlock> Sections { get; set; }
-
-        [Offset(320)]
         public BlockCollection<GeometryInstanceBlock> GeometryInstances { get; set; }
 
         #region IContentProvider
@@ -119,51 +106,28 @@ namespace Reclaimer.Blam.Halo2
         #endregion
     }
 
-    [FixedSize(176)]
-    public class ClusterBlock
+    public partial class ClusterBlock
     {
-        [Offset(0)]
         public ushort VertexCount { get; set; }
-
-        [Offset(2)]
         public ushort FaceCount { get; set; }
-
-        [Offset(24)]
         public BlockCollection<BoundingBoxBlock> BoundingBoxes { get; set; }
-
-        [Offset(40)]
         public DataPointer DataPointer { get; set; }
-
-        [Offset(44)]
         public int DataSize { get; set; }
-
-        [Offset(48)]
         public int HeaderSize { get; set; }
-
-        [Offset(56)]
         public BlockCollection<ResourceInfoBlock> Resources { get; set; }
     }
 
-    [FixedSize(200)]
-    public class BspSectionBlock : ClusterBlock
+    public partial class BspSectionBlock : ClusterBlock
     {
 
     }
 
-    [FixedSize(88)]
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
-    public class GeometryInstanceBlock
+    public partial class GeometryInstanceBlock
     {
-        [Offset(0)]
         public float TransformScale { get; set; }
-
-        [Offset(4)]
         public Matrix4x4 Transform { get; set; }
-
-        [Offset(52)]
         public short SectionIndex { get; set; }
-
-        [Offset(80)]
         public StringId Name { get; set; }
     }
 }
