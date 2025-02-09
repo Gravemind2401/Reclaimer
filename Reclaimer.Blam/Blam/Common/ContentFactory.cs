@@ -109,7 +109,7 @@ namespace Reclaimer.Blam.Common
                     content = engineType switch
                     {
                         BlamEngine.Halo1 => item.ReadMetadata<Halo1.gbxmodel>(),
-                        BlamEngine.Halo2 when cacheType == CacheType.Halo2Beta => item.ReadMetadata<Halo2Beta.render_model>(),
+                        BlamEngine.Halo2 when cacheType <= CacheType.Halo2Beta => item.ReadMetadata<Halo2Beta.render_model>(),
                         BlamEngine.Halo2 => item.ReadMetadata<Halo2.render_model>(),
                         BlamEngine.Halo3 => item.ReadMetadata<Halo3.render_model>(),
                         BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.render_model>(),

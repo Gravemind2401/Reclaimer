@@ -154,7 +154,8 @@ namespace Reclaimer.Blam.Halo2Beta
         internal short[] LodArray => new[] { SuperHighSectionIndex, HighSectionIndex, MediumSectionIndex, LowSectionIndex, SuperLowSectionIndex, PotatoSectionIndex };
     }
 
-    [FixedSize(104)]
+    [FixedSize(100, MaxVersion = (int)CacheType.Halo2Beta)]
+    [FixedSize(104, MinVersion = (int)CacheType.Halo2Beta)]
     public class SectionBlock
     {
         [Offset(0)]
@@ -169,19 +170,24 @@ namespace Reclaimer.Blam.Halo2Beta
         [Offset(20)]
         public byte NodesPerVertex { get; set; }
 
-        [Offset(64)]
+        [Offset(60, MaxVersion = (int)CacheType.Halo2Beta)]
+        [Offset(64, MinVersion = (int)CacheType.Halo2Beta)]
         public Halo2.DataPointer DataPointer { get; set; }
 
-        [Offset(68)]
+        [Offset(64, MaxVersion = (int)CacheType.Halo2Beta)]
+        [Offset(68, MinVersion = (int)CacheType.Halo2Beta)]
         public int DataSize { get; set; }
 
-        [Offset(72)]
+        [Offset(68, MaxVersion = (int)CacheType.Halo2Beta)]
+        [Offset(72, MinVersion = (int)CacheType.Halo2Beta)]
         public int HeaderSize { get; set; }
 
-        [Offset(76)]
+        [Offset(72, MaxVersion = (int)CacheType.Halo2Beta)]
+        [Offset(76, MinVersion = (int)CacheType.Halo2Beta)]
         public int BodySize { get; set; }
 
-        [Offset(80)]
+        [Offset(76, MaxVersion = (int)CacheType.Halo2Beta)]
+        [Offset(80, MinVersion = (int)CacheType.Halo2Beta)]
         public BlockCollection<Halo2.ResourceInfoBlock> Resources { get; set; }
     }
 
