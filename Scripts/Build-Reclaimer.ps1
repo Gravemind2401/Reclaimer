@@ -154,7 +154,7 @@ if ($TargetBranch) {
 # generate version number
 Push-Location "$buildRoot\Reclaimer"
 $buildNumber = [int](git rev-list --count `@)
-$assemblyVersion = "2.0.$buildNumber"
+$assemblyVersion = "2.1.$buildNumber"
 Pop-Location
 
 $scriptVersion = (Select-String -Path $buildRoot\Reclaimer\Reclaimer.RMFImporter\Reclaimer\__init__.py -Pattern "'version': \((.+)\)").Matches[0].Groups[1].Value.Replace(' ', '').Replace(',', '.')
