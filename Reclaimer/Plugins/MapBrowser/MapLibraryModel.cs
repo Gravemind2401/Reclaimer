@@ -24,8 +24,9 @@ namespace Reclaimer.Plugins.MapBrowser
         {
             var templateData = MapInfoTemplate.EnumerateTemplates().ToLookup(m => m.Engine);
             var allMaps = MapScanner.GetLinkedMaps();
+            var steamMaps = allMaps.TryGetValue("steam", out var maps) ? maps : Enumerable.Empty<LinkedMapFile>();
 
-            var mccGroups = allMaps["steam"]
+            var mccGroups = steamMaps
                 .Where(m => !m.FromWorkshop)
                 .GroupBy(m => m.Engine)
                 .Select(g => new MapGroupDisplayModel
@@ -38,7 +39,7 @@ namespace Reclaimer.Plugins.MapBrowser
                     Maps = ProcessTemplatedMaps(g, g.Key)
                 });
 
-            var modGroups = allMaps["steam"]
+            var modGroups = steamMaps
                 .Where(m => m.FromWorkshop)
                 .GroupBy(m => m.Engine)
                 .Select(g => new MapGroupDisplayModel

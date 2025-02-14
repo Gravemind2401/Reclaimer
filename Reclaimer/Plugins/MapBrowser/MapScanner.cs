@@ -34,9 +34,16 @@ namespace Reclaimer.Plugins.MapBrowser
 
             if (Directory.Exists(MapBrowserPlugin.Settings.SteamLibraryFolder))
             {
-                var maps = ScanSteamFolder(MapBrowserPlugin.Settings.SteamLibraryFolder).ToList();
-                if (maps.Count > 0)
-                    allMaps["steam"] = maps;
+                try
+                {
+                    var maps = ScanSteamFolder(MapBrowserPlugin.Settings.SteamLibraryFolder).ToList();
+                    if (maps.Count > 0)
+                        allMaps["steam"] = maps;
+                }
+                catch (Exception ex)
+                {
+                    MapBrowserPlugin.Instance.LogError("Error loading Steam library", ex);
+                }
             }
 
             var customDirs = MapBrowserPlugin.Settings.CustomFolders.Select(x => x.Directory);
@@ -60,7 +67,7 @@ namespace Reclaimer.Plugins.MapBrowser
         #region Steam
         public static IEnumerable<LinkedMapFile> ScanSteamFolder(string steamLibraryPath)
         {
-            if (!File.Exists(Path.Combine(steamLibraryPath, "libraryfolder.vdf")))
+            if (!Directory.Exists(Path.Combine(steamLibraryPath, "steamapps")))
                 throw new ArgumentException("Path is not a Steam library folder", nameof(steamLibraryPath));
 
             var manifestPath = Path.Combine(steamLibraryPath, "steamapps", $"appmanifest_{SteamAppId}.acf");

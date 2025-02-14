@@ -5,11 +5,17 @@ namespace Reclaimer.Plugins.MapBrowser
 {
     public class MapBrowserPlugin : Plugin
     {
+        internal static MapBrowserPlugin Instance { get; private set; }
         internal static MapBrowserSettings Settings { get; private set; }
 
         public override string Name => "Map Browser";
 
-        public override void Initialise() => Settings = LoadSettings<MapBrowserSettings>();
+        public override void Initialise()
+        {
+            Instance = this;
+            Settings = LoadSettings<MapBrowserSettings>();
+        }
+
         public override void Suspend() => SaveSettings(Settings);
 
         public override void PostInitialise()
