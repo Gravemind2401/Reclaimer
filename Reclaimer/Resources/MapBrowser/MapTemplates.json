@@ -1477,7 +1477,7 @@
             },
             {
                 "DisplayName": "Infinity",
-                "FileName": "m40_invasion.map",
+                "FileName": "m60_rescue.map",
                 "MccThumbnails": [
                     "H4_C05_INFINITY",
                     "H4_C05_INFINITY_LARGE"
@@ -1485,7 +1485,7 @@
             },
             {
                 "DisplayName": "Reclaimer",
-                "FileName": "m60_rescue.map",
+                "FileName": "m40_invasion.map",
                 "MccThumbnails": [
                     "H4_C06_RECLAIMER",
                     "H4_C06_RECLAIMER_LARGE"
