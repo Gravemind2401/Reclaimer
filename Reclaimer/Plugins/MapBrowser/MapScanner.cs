@@ -46,7 +46,7 @@ namespace Reclaimer.Plugins.MapBrowser
                 }
             }
 
-            var customDirs = MapBrowserPlugin.Settings.CustomFolders.Select(x => x.Directory);
+            var customDirs = MapBrowserPlugin.Settings.CustomFolders?.Select(x => x.Directory) ?? Enumerable.Empty<string>();
             foreach (var dir in customDirs.Where(Directory.Exists))
                 allMaps[dir] = ScanCustomDirectory(dir).ToList();
 
