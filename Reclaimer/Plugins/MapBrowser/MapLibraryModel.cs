@@ -22,8 +22,16 @@ namespace Reclaimer.Plugins.MapBrowser
         //this could be in the constructor, but the constructor is left empty so the xaml DesignInstance doesnt need to work too hard
         public static MapLibraryModel Build()
         {
-            var templateData = MapInfoTemplate.EnumerateTemplates().ToLookup(m => m.Engine);
             var allMaps = MapScanner.GetLinkedMaps();
+            if (allMaps == null)
+            {
+                return new MapLibraryModel
+                {
+                    MapGroups = new()
+                };
+            }
+
+            var templateData = MapInfoTemplate.EnumerateTemplates().ToLookup(m => m.Engine);
             var steamMaps = allMaps.TryGetValue("steam", out var maps) ? maps : Enumerable.Empty<LinkedMapFile>();
 
             var mccGroups = steamMaps

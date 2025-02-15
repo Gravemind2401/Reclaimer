@@ -17,49 +17,64 @@ namespace Reclaimer.Plugins.MapBrowser
 
         public static Dictionary<string, List<LinkedMapFile>> GetLinkedMaps()
         {
-            Dictionary<string, List<LinkedMapFile>> allMaps = null;
+            try
+            {
+                Dictionary<string, List<LinkedMapFile>> allMaps = null;
 
-            if (File.Exists(MapsJsonPath))
-                allMaps = JsonConvert.DeserializeObject<Dictionary<string, List<LinkedMapFile>>>(File.ReadAllText(MapsJsonPath));
+                if (File.Exists(MapsJsonPath))
+                    allMaps = JsonConvert.DeserializeObject<Dictionary<string, List<LinkedMapFile>>>(File.ReadAllText(MapsJsonPath));
 
-            if (allMaps == null || allMaps.Count == 0)
-                allMaps = ScanForMaps();
+                if (allMaps == null || allMaps.Count == 0)
+                    allMaps = ScanForMaps();
 
-            return allMaps;
+                return allMaps;
+            }
+            catch (Exception ex)
+            {
+                MapBrowserPlugin.Instance.LogError("Error loading linked maps list", ex);
+                return null;
+            }
         }
 
         public static Dictionary<string, List<LinkedMapFile>> ScanForMaps()
         {
             var allMaps = new Dictionary<string, List<LinkedMapFile>>();
 
-            if (Directory.Exists(MapBrowserPlugin.Settings.SteamLibraryFolder))
+            try
             {
-                try
+                if (Directory.Exists(MapBrowserPlugin.Settings.SteamLibraryFolder))
                 {
-                    var maps = ScanSteamFolder(MapBrowserPlugin.Settings.SteamLibraryFolder).ToList();
-                    if (maps.Count > 0)
-                        allMaps["steam"] = maps;
+                    try
+                    {
+                        var maps = ScanSteamFolder(MapBrowserPlugin.Settings.SteamLibraryFolder).ToList();
+                        if (maps.Count > 0)
+                            allMaps["steam"] = maps;
+                    }
+                    catch (Exception ex)
+                    {
+                        MapBrowserPlugin.Instance.LogError("Error loading Steam library", ex);
+                    }
                 }
-                catch (Exception ex)
+
+                var customDirs = MapBrowserPlugin.Settings.CustomFolders?.Select(x => x.Directory) ?? Enumerable.Empty<string>();
+                foreach (var dir in customDirs.Where(Directory.Exists))
+                    allMaps[dir] = ScanCustomDirectory(dir).ToList();
+
+                var jsonSettings = new JsonSerializerSettings
                 {
-                    MapBrowserPlugin.Instance.LogError("Error loading Steam library", ex);
-                }
+                    Formatting = Formatting.Indented,
+                    NullValueHandling = NullValueHandling.Ignore,
+                    DefaultValueHandling = DefaultValueHandling.Ignore,
+                    Converters = new[] { new Newtonsoft.Json.Converters.StringEnumConverter() }
+                };
+
+                Directory.CreateDirectory(PluginFilesDirectory);
+                File.WriteAllText(MapsJsonPath, JsonConvert.SerializeObject(allMaps, jsonSettings));
             }
-
-            var customDirs = MapBrowserPlugin.Settings.CustomFolders?.Select(x => x.Directory) ?? Enumerable.Empty<string>();
-            foreach (var dir in customDirs.Where(Directory.Exists))
-                allMaps[dir] = ScanCustomDirectory(dir).ToList();
-
-            var jsonSettings = new JsonSerializerSettings
+            catch (Exception ex)
             {
-                Formatting = Formatting.Indented,
-                NullValueHandling = NullValueHandling.Ignore,
-                DefaultValueHandling = DefaultValueHandling.Ignore,
-                Converters = new[] { new Newtonsoft.Json.Converters.StringEnumConverter() }
-            };
-
-            Directory.CreateDirectory(PluginFilesDirectory);
-            File.WriteAllText(MapsJsonPath, JsonConvert.SerializeObject(allMaps, jsonSettings));
+                MapBrowserPlugin.Instance.LogError("Error scanning for map files", ex);
+            }
 
             return allMaps;
         }
