@@ -31,6 +31,9 @@ namespace Reclaimer.IO
             if (!source.CanSeek)
                 throw new ArgumentException("Source must be seekable.");
 
+            if (source is ChunkStream cs)
+                cs.Seek(0, SeekOrigin.Begin); //trigger chunk load for correct length value
+
             this.source = source;
             changes = new Dictionary<long, byte[]>();
             length = source.Length;
