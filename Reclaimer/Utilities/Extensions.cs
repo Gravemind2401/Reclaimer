@@ -30,7 +30,8 @@ namespace Reclaimer.Utilities
             foreach (var item in source)
             {
                 if (predicate(item))
-                    match = index++;
+                    match = index;
+                index++;
             }
 
             return match;

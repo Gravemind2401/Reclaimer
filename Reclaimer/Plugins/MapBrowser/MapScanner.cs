@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Reclaimer.Blam.Common;
 using Reclaimer.IO;
+using Reclaimer.Utilities;
 using System.Buffers;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -42,11 +43,12 @@ namespace Reclaimer.Plugins.MapBrowser
 
             try
             {
-                if (Directory.Exists(MapBrowserPlugin.Settings.SteamLibraryFolder))
+                var steamDir = GetActualSteamFolder(MapBrowserPlugin.Settings.SteamLibraryFolder);
+                if (Directory.Exists(steamDir))
                 {
                     try
                     {
-                        var maps = ScanSteamFolder(MapBrowserPlugin.Settings.SteamLibraryFolder).ToList();
+                        var maps = ScanSteamFolder(steamDir).ToList();
                         if (maps.Count > 0)
                             allMaps["steam"] = maps;
                     }
@@ -80,6 +82,24 @@ namespace Reclaimer.Plugins.MapBrowser
         }
 
         #region Steam
+        private static string GetActualSteamFolder(string path)
+        {
+            //in case the user selected the MCC install folder instead of the steam library folder
+
+            if (Directory.Exists(Path.Combine(path, "steamapps")))
+                return path; //path is already correct
+
+            var parts = path.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+            var index = parts.LastIndexWhere(s => s.Equals("steamapps", StringComparison.OrdinalIgnoreCase));
+            if (index > 0)
+            {
+                for (var i = parts.Length; i > index; i--)
+                    path = Path.GetDirectoryName(path);
+            }
+
+            return path;
+        }
+
         public static IEnumerable<LinkedMapFile> ScanSteamFolder(string steamLibraryPath)
         {
             if (!Directory.Exists(Path.Combine(steamLibraryPath, "steamapps")))
