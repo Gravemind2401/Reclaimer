@@ -1,4 +1,7 @@
 {
+    "note": {
+        "note": "this file is used for both Xbox and PC, since a lot of the shader templates are common between them"
+    },
     "add_clouds_simple_transparent": {
         "bitmaps": [
             "cloud_mask",
@@ -85,6 +88,21 @@
             "base_map",
             "self_illum_map",
             "self_illum_detail"
+        ]
+    },
+    "lightmap_tex_four_change_color": {
+        "note": "this is from MCC, not xbox",
+        "bitmaps": [
+            "bump_map",
+            "base_map",
+            "detail_map",
+            "change_color_map"
+        ],
+        "constants": [
+            "bump_map",
+            "base_map",
+            "detail_map",
+            "??? [1,1,0,0] (maybe CC map?)"
         ]
     },
     "default_texture_four_change_color_zwrite": {

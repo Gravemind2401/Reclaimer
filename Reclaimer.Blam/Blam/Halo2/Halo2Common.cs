@@ -109,7 +109,7 @@ namespace Reclaimer.Blam.Halo2
                     continue;
                 }
 
-                if (args.Cache.CacheType == CacheType.Halo2Xbox)
+                if (args.Cache.CacheType >= CacheType.Halo2Xbox)
                 {
                     MaterialHelper.PopulateTextureMappings(bitmapCache, material, shader);
                 }
