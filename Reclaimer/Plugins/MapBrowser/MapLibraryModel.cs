@@ -33,6 +33,7 @@ namespace Reclaimer.Plugins.MapBrowser
 
             var templateData = MapInfoTemplate.EnumerateTemplates().ToLookup(m => m.Engine);
             var steamMaps = allMaps.TryGetValue("steam", out var maps) ? maps : Enumerable.Empty<LinkedMapFile>();
+            var steamPaths = new HashSet<string>(steamMaps.Select(m => m.FilePath), StringComparer.OrdinalIgnoreCase);
 
             var mccGroups = steamMaps
                 .Where(m => !m.FromWorkshop)
@@ -62,6 +63,8 @@ namespace Reclaimer.Plugins.MapBrowser
 
             var customGroups = allMaps.Where(kv => kv.Key != "steam")
                 .SelectMany(kv => kv.Value)
+                .Where(m => !steamPaths.Contains(m.FilePath))
+                .DistinctBy(m => m.FilePath)
                 .GroupBy(m => (m.Engine, m.Platform, m.Flags, IsCustomEdition: m.CacheType == CacheType.Halo1CE))
                 .Select(g => new MapGroupDisplayModel
                 {
