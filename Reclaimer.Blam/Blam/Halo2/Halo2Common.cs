@@ -194,6 +194,9 @@ namespace Reclaimer.Blam.Halo2
                     ? (48, 92, 164)
                     : (32, 56, 100);
 
+                if (args.Cache.CacheType >= CacheType.MccHalo2)
+                    nodeMapType = 104;
+
                 submeshResource = section.Resources[0];
                 indexResource = section.Resources.FirstOrDefault(r => r.Type0 == indexType);
                 vertexResource = section.Resources.FirstOrDefault(r => r.Type0 == vertexType && r.Type1 == 0);
@@ -628,7 +631,7 @@ namespace Reclaimer.Blam.Halo2
                 if (nodeMapResource != null)
                 {
                     reader.Seek(section.BaseAddress + nodeMapResource.Offset, SeekOrigin.Begin);
-                    nodeMap = reader.ReadBytes(sectionInfo.NodeMapCount);
+                    nodeMap = reader.ReadBytes(nodeMapResource.Size);
                 }
 
                 if (section.GeometryClassification == GeometryClassification.Rigid)
