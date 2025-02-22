@@ -55,9 +55,7 @@ namespace Reclaimer.Controls
 
         public void LoadPak(string fileName)
         {
-            pak = Path.GetExtension(fileName).ToLower() == ".ipak"
-                ? new Reclaimer.Saber3D.Halo1X.InplacePakFile(fileName)
-                : new Reclaimer.Saber3D.Halo1X.PakFile(fileName);
+            pak = PakFactory.ReadPakFile(fileName);
 
             rootNode = new TreeItemModel(pak.FileName);
             tv.ItemsSource = rootNode.Items;

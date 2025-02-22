@@ -94,7 +94,7 @@ namespace Reclaimer.Saber3D.Halo1X
                     if (targetFile == FileName)
                         continue;
 
-                    sharedPaks.Add(IsMcc ? new InplacePakFile(targetFile) : new PakFile(targetFile));
+                    sharedPaks.Add(PakFactory.ReadPakFile(targetFile));
                 }
             }
 
