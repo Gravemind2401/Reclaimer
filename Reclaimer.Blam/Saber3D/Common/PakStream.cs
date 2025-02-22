@@ -9,7 +9,7 @@ namespace Reclaimer.Saber3D.Common
 {
     public class PakStream : ChunkStream
     {
-        private static readonly ConditionalWeakTable<IPakFile, ChunkLocator[]> chunkTableCache = new();
+        private static readonly ConditionalWeakTable<IPakFile, Tuple<bool, ChunkLocator[]>> chunkTableCache = new();
 
         private readonly IPakFile pak;
 
@@ -24,15 +24,18 @@ namespace Reclaimer.Saber3D.Common
 
         protected override IList<ChunkLocator> ReadChunks()
         {
-            if (chunkTableCache.TryGetValue(pak, out var chunks))
-                return chunks;
+            if (chunkTableCache.TryGetValue(pak, out var cached))
+            {
+                IsX360 = cached.Item1;
+                return cached.Item2;
+            }
 
             using var reader = new EndianReader(BaseStream, ByteOrder.LittleEndian, true);
 
             reader.Seek(0, SeekOrigin.Begin);
 
             var chunkCount = reader.ReadInt32();
-            chunks = new ChunkLocator[chunkCount];
+            var chunks = new ChunkLocator[chunkCount];
 
             var offsets = new int[chunkCount + 1];
             offsets[^1] = (int)BaseStream.Length;
@@ -81,14 +84,14 @@ namespace Reclaimer.Saber3D.Common
                 ArrayPool<byte>.Shared.Return(outBuffer);
             }
 
-            chunkTableCache.Add(pak, chunks);
+            chunkTableCache.Add(pak, Tuple.Create(IsX360, chunks));
 
             return chunks;
         }
 
         protected override Stream CreateDecompressionStream(Stream sourceStream, bool leaveOpen, int? compressedSize, int uncompressedSize)
         {
-            if (IsX360)
+            if (!IsX360)
                 return new ZLibStream(sourceStream, CompressionMode.Decompress, leaveOpen);
 
             var data = new byte[compressedSize.Value];
