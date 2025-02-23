@@ -16,5 +16,7 @@ namespace Reclaimer.Blam.Common.Gen5
         IEnumerable<IModuleItem> GetLinkedItems();
 
         DependencyReader CreateReader();
+
+        sealed IEnumerable<IModuleItem> EnumerateItems() => GetTagClasses().SelectMany(c => GetItemsByClass(c.ClassCode));
     }
 }
