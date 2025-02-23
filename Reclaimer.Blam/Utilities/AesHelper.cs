@@ -17,13 +17,11 @@ namespace Reclaimer.Blam.Utilities
 
             var xor = key.Select(b => (byte)(b ^ 0xFFA5)).ToArray();
             var iv = xor.Select(b => (byte)(b ^ 0x3C)).ToArray();
-            var aes = new AesManaged
-            {
-                Mode = CipherMode.CBC,
-                Key = xor,
-                IV = iv,
-                Padding = PaddingMode.Zeros
-            };
+            var aes = Aes.Create();
+            aes.Mode = CipherMode.CBC;
+            aes.Key = xor;
+            aes.IV = iv;
+            aes.Padding = PaddingMode.Zeros;
 
             return aes.CreateDecryptor().TransformFinalBlock(source, 0, source.Length);
         }
