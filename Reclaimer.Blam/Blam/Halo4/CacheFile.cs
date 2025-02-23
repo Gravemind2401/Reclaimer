@@ -247,7 +247,7 @@ namespace Reclaimer.Blam.Halo4
                 // hack to redirect any play tag requests to the start of the zone tag when there is no play tag
                 var play = sysItems["play"];
                 if (play.MetaPointer.Value == 0)
-                    play.MetaPointer = new Pointer(sysItems["zone"].MetaPointer.Value + 28, cache.MetadataTranslator);
+                    play.MetaPointer = new Pointer(sysItems["zone"].MetaPointer.Value + 28, play.MetaPointer);
 
                 reader.Seek(cache.Header.FileTableIndexPointer.Address, SeekOrigin.Begin);
                 var indices = reader.ReadArray<int>(TagCount);
