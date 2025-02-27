@@ -31,7 +31,7 @@ namespace Reclaimer.Plugins
         public override void PostInitialise()
         {
             getDataFolderFunc = Substrate.GetSharedFunction<GetDataFolder>(Constants.SharedFuncGetDataFolder);
-            saveImageFunc = Substrate.GetSharedFunction<SaveImage>(Constants.SharedFuncSaveImage);
+            saveImageFunc = Substrate.GetSharedFunction<SaveImage>(Constants.SharedFuncBatchSaveImage);
         }
 
         public override IEnumerable<PluginContextItem> GetContextItems(OpenFileArgs context)

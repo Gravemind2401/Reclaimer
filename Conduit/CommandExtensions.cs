@@ -1,4 +1,5 @@
-﻿using System.CommandLine;
+﻿using Reclaimer.Plugins;
+using System.CommandLine;
 using System.CommandLine.Parsing;
 
 namespace Conduit
@@ -31,6 +32,13 @@ namespace Conduit
             }
         }
 
+        private static string NotAmongValuesMessage<T>(string value, IEnumerable<T> options)
+        {
+            return $"Argument '{value}' not recognized. Must be one of:"
+                + Environment.NewLine
+                + string.Join(Environment.NewLine, options.Select(o => $"        '{o}'"));
+        }
+
         public static Option<TEnum> FromEnumValues<TEnum>(this Option<TEnum> option)
             where TEnum : struct, Enum
         {
@@ -60,9 +68,29 @@ namespace Conduit
 
                     if (!Enum.TryParse<TEnum>(token.Value, true, out _))
                     {
-                        result.ErrorMessage = $"Argument '{token.Value}' not recognized. Must be one of:"
-                            + Environment.NewLine
-                            + string.Join(Environment.NewLine, Enum.GetValues<TEnum>().Select(e => $"        '{e}'"));
+                        result.ErrorMessage = NotAmongValuesMessage(token.Value, Enum.GetValues<TEnum>());
+                        return;
+                    }
+                }
+            }
+        }
+
+        public static Option<string> FromAmongModelFormats(this Option<string> option)
+        {
+            var formats = ModelViewerPlugin.GetExportFormats().ToList();
+
+            option.AddValidator(Validate);
+            return option;
+
+            void Validate(OptionResult result)
+            {
+                for (var i = 0; i < result.Tokens.Count; i++)
+                {
+                    var token = result.Tokens[i];
+
+                    if (!formats.Contains(token.Value, StringComparer.OrdinalIgnoreCase))
+                    {
+                        result.ErrorMessage = NotAmongValuesMessage(token.Value, formats);
                         return;
                     }
                 }
