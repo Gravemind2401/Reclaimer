@@ -57,6 +57,7 @@ namespace Reclaimer.Plugins
 
         public override string Name => "Batch Extractor";
 
+        private static BatchExtractPlugin Instance { get; set; }
         private BatchExtractSettings Settings { get; set; }
 
         private PluginContextItem ExtractMultipleContextItem => new PluginContextItem("ExtractAll", isBusy ? "Add to extraction queue" : "Extract All", OnContextItemClick);
@@ -64,6 +65,7 @@ namespace Reclaimer.Plugins
 
         public override void Initialise()
         {
+            Instance = this;
             Settings = LoadSettings<BatchExtractSettings>();
             Settings.DataFolder = Settings.DataFolder.Replace(Constants.PluginsFolderToken, Substrate.PluginsDirectory, StringComparison.OrdinalIgnoreCase);
             getModelExtensionFunc = new Lazy<GetModelExtension>(() => Substrate.GetSharedFunction<GetModelExtension>(Constants.SharedFuncGetModelExtension));
@@ -296,6 +298,21 @@ namespace Reclaimer.Plugins
             }
         }
 
+        internal static void ConfigureOutput(FolderMode? folderMode = null, BitmapMode? bitmapMode = null, BitmapFormat? bitmapFormat = null, string modelFormat = null)
+        {
+            if (folderMode.HasValue)
+                Instance.Settings.FolderMode = folderMode.Value;
+
+            if (bitmapMode.HasValue)
+                Instance.Settings.BitmapMode = bitmapMode.Value;
+
+            if (bitmapFormat.HasValue)
+                Instance.Settings.BitmapFormat = bitmapFormat.Value;
+
+            if (!string.IsNullOrWhiteSpace(modelFormat))
+                Instance.Settings.ModelFormat = modelFormat;
+        }
+
         #region Images
         private bool SaveImage(IExtractable item)
         {
@@ -338,7 +355,7 @@ namespace Reclaimer.Plugins
                     BitmapFormat.TIF => ImageFormat.Tiff,
                     BitmapFormat.JPEG => ImageFormat.Jpeg,
                     BitmapFormat.TGA => null,
-                    _ => null
+                    _ => ImageFormat.Png
                 };
 
                 var outputs = new List<(string FileName, DecompressOptions Options)>();
@@ -529,14 +546,14 @@ namespace Reclaimer.Plugins
             }
         }
 
-        private enum FolderMode
+        public enum FolderMode
         {
             Hierarchy,
             TagClass,
             Hybrid
         }
 
-        private enum BitmapMode
+        public enum BitmapMode
         {
             Default,
             Bgr24,
@@ -545,7 +562,7 @@ namespace Reclaimer.Plugins
             MixedIsolate
         }
 
-        private enum BitmapFormat
+        public enum BitmapFormat
         {
             DDS,
             TIF,

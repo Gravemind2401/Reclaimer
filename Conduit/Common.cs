@@ -7,7 +7,9 @@ namespace Conduit
 {
     internal static class Common
     {
-        public static IEnumerable<IIndexItem> EnumerateTags(this ICacheFile cache, string filter, string sort, int limit)
+        public static readonly string[] SupportedFileExtensions = ["map", "yelo", "module", "s3dpak", "ipak"];
+
+        public static IEnumerable<IIndexItem> EnumerateTags(this ICacheFile cache, string filter, string sort = default, int limit = default)
         {
             var tags = cache.TagIndex.AsEnumerable();
 
@@ -31,7 +33,7 @@ namespace Conduit
             return tags;
         }
 
-        public static IEnumerable<IModuleItem> EnumerateTags(this Reclaimer.Blam.Common.Gen5.IModule module, string filter, string sort, int limit)
+        public static IEnumerable<IModuleItem> EnumerateTags(this Reclaimer.Blam.Common.Gen5.IModule module, string filter, string sort = default, int limit = default)
         {
             var tags = module.EnumerateItems();
 
@@ -55,7 +57,7 @@ namespace Conduit
             return tags;
         }
 
-        public static IEnumerable<IPakItem> EnumerateTags(this IPakFile pak, string filter, string sort, int limit)
+        public static IEnumerable<IPakItem> EnumerateTags(this IPakFile pak, string filter, string sort = default, int limit = default)
         {
             var tags = pak.Items.AsEnumerable();
 

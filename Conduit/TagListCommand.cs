@@ -11,7 +11,7 @@ namespace Conduit
         {
             var cmd = new Command("taglist");
 
-            var fileArg = new Argument<FileInfo>("file").ExistingOnly().AllowedExtensions("map", "yelo", "module", "s3dpak", "ipak");
+            var fileArg = new Argument<FileInfo>("file").ExistingOnly().AllowedExtensions(Common.SupportedFileExtensions);
 
             var formatOption = new Option<string>("--output-format", "String format for output. Use %i for tag ID, %t for tag name (including path), %n for tag name (without path), %e for tag group (long name), %c for tag group (short name)");
             formatOption.AddAlias("-o");

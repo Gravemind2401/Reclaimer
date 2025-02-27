@@ -24,6 +24,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>Conduit</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+
+    <ItemGroup>
         <ProjectReference Include="..\..\Studio\Studio\Studio.csproj" />
         <ProjectReference Include="..\Reclaimer.Blam\Reclaimer.Blam.csproj" />
         <ProjectReference Include="..\Reclaimer.Core\Reclaimer.Core.csproj" />
