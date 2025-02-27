@@ -403,6 +403,9 @@ namespace Reclaimer.Plugins
         /// <param name="element">The element to find the host for.</param>
         public static ITabContentHost GetHostWindow(UIElement element)
         {
+            if (Application.Current == null)
+                return null; //Application will be null in CLI mode
+
             var host = element == null
                 ? Application.Current.MainWindow as ITabContentHost
                 : Window.GetWindow(element) as ITabContentHost ?? Application.Current.MainWindow as ITabContentHost;
@@ -416,6 +419,9 @@ namespace Reclaimer.Plugins
         /// <returns>true if a tab with a matching ID was found, otherwise false.</returns>
         public static bool ShowTabById(string contentId)
         {
+            if (Application.Current == null)
+                return false; //Application will be null in CLI mode
+
             var hosts = Application.Current.Windows.OfType<ITabContentHost>();
             var tab = hosts.SelectMany(h => h.DockContainer.AllTabs)
                 .FirstOrDefault(t => t.ContentId == contentId);

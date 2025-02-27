@@ -24,10 +24,22 @@ namespace Reclaimer
             ReleaseVersion.ToString(3);
 #endif
 
+        internal static void InitialiseCommandLine()
+        {
+            InitialiseEnvironment();
+            Settings = Settings.FromFile();
+            Substrate.LoadPlugins();
+        }
+
         public App() : base()
         {
             Instance = this;
             DispatcherUnhandledException += App_DispatcherUnhandledException;
+            InitialiseEnvironment();
+        }
+
+        private static void InitialiseEnvironment()
+        {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
@@ -38,15 +50,15 @@ namespace Reclaimer
             Environment.SetEnvironmentVariable("PATH", $"{pathVar};{libDir}");
         }
 
-        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e) => LogUnhandledException(e.Exception);
+        private static void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e) => LogUnhandledException(e.Exception);
 
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             if (e.ExceptionObject is Exception ex)
                 LogUnhandledException(ex);
         }
 
-        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             var splitIndex = args.Name.IndexOf(',');
             var assemblyName = args.Name[..splitIndex];

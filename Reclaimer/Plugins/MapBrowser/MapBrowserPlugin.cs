@@ -35,7 +35,10 @@ namespace Reclaimer.Plugins.MapBrowser
             if (Substrate.ShowTabById(tabId))
                 return;
 
-            var container = Substrate.GetHostWindow().DocumentPanel;
+            var container = Substrate.GetHostWindow()?.DocumentPanel;
+            if (container == null)
+                return;
+
             var control = new Controls.MapBrowser();
 
             control.TabModel.ContentId = tabId;
