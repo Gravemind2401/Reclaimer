@@ -22,10 +22,26 @@ namespace Conduit
 
             var cmd = new Command("export");
 
+            cmd.AddCommand(ExportAllCommand.Build());
             cmd.AddCommand(ExportBitmapCommand.Build());
             cmd.AddCommand(ExportModelCommand.Build());
 
             return cmd;
+        }
+
+        public static void TrySavePrimary(object content, DirectoryInfo baseDir)
+        {
+            try
+            {
+                if (content is IContentProvider<IBitmap> bitmapProvider)
+                    SaveImageFunc(bitmapProvider, baseDir.FullName);
+                else if (content is IContentProvider<Scene> geometryProvider)
+                    SaveModelFunc(geometryProvider, baseDir.FullName);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+            }
         }
 
         public static void TrySaveImage(IContentProvider<IBitmap> content, DirectoryInfo baseDir)
