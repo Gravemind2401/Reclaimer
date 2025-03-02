@@ -19,6 +19,9 @@ namespace Conduit
             var tagNameArg = new Argument<string>("tagNameOrFilter");
             var outputDirArg = new Argument<DirectoryInfo>("outputDir").ExistingOnly();
 
+            var overwriteOption = new Option<bool?>("--overwrite");
+            overwriteOption.AddAlias("-ow");
+
             var folderModeOption = new Option<FolderMode?>("--folder-mode").FromEnumValues();
             folderModeOption.AddAlias("-fm");
 
@@ -31,18 +34,19 @@ namespace Conduit
             cmd.AddArgument(fileArg);
             cmd.AddArgument(tagNameArg);
             cmd.AddArgument(outputDirArg);
+            cmd.AddOption(overwriteOption);
             cmd.AddOption(folderModeOption);
             cmd.AddOption(bitmapFormatOption);
             cmd.AddOption(bitmapModeOption);
 
-            cmd.SetHandler(ExecuteAsync, fileArg, tagNameArg, outputDirArg, folderModeOption, bitmapFormatOption, bitmapModeOption);
+            cmd.SetHandler(ExecuteAsync, fileArg, tagNameArg, outputDirArg, overwriteOption, folderModeOption, bitmapFormatOption, bitmapModeOption);
 
             return cmd;
         }
 
-        public static Task ExecuteAsync(FileInfo file, string filter, DirectoryInfo outputDir, FolderMode? folderMode, BitmapFormat? bitmapFormat, BitmapMode? bitmapMode)
+        public static Task ExecuteAsync(FileInfo file, string filter, DirectoryInfo outputDir, bool? overwrite, FolderMode? folderMode, BitmapFormat? bitmapFormat, BitmapMode? bitmapMode)
         {
-            ConfigureOutput(folderMode, bitmapMode, bitmapFormat, default);
+            ConfigureOutput(overwrite, folderMode, bitmapMode, bitmapFormat, default);
 
             return file.Extension.ToLower() switch
             {

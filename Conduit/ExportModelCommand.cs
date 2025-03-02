@@ -19,6 +19,9 @@ namespace Conduit
             var tagNameArg = new Argument<string>("tagNameOrFilter");
             var outputDirArg = new Argument<DirectoryInfo>("outputDir").ExistingOnly();
 
+            var overwriteOption = new Option<bool?>("--overwrite");
+            overwriteOption.AddAlias("-ow");
+
             var folderModeOption = new Option<FolderMode?>("--folder-mode").FromEnumValues();
             folderModeOption.AddAlias("-fm");
 
@@ -28,17 +31,18 @@ namespace Conduit
             cmd.AddArgument(fileArg);
             cmd.AddArgument(tagNameArg);
             cmd.AddArgument(outputDirArg);
+            cmd.AddOption(overwriteOption);
             cmd.AddOption(folderModeOption);
             cmd.AddOption(modelFormatOption);
 
-            cmd.SetHandler(ExecuteAsync, fileArg, tagNameArg, outputDirArg, folderModeOption, modelFormatOption);
+            cmd.SetHandler(ExecuteAsync, fileArg, tagNameArg, outputDirArg, overwriteOption, folderModeOption, modelFormatOption);
 
             return cmd;
         }
 
-        public static Task ExecuteAsync(FileInfo file, string filter, DirectoryInfo outputDir, FolderMode? folderMode, string modelFormat)
+        public static Task ExecuteAsync(FileInfo file, string filter, DirectoryInfo outputDir, bool? overwrite, FolderMode? folderMode, string modelFormat)
         {
-            ConfigureOutput(folderMode, modelFormat: modelFormat);
+            ConfigureOutput(overwrite, folderMode, modelFormat: modelFormat);
 
             return file.Extension.ToLower() switch
             {

@@ -246,7 +246,7 @@ namespace Reclaimer.Plugins
 
                 async Task Process()
                 {
-                    var prefix = Settings.BatchWorkerCount > 1 ? $"[Worker {nextWorkerId++}] " : string.Empty;
+                    var prefix = Settings.BatchWorkerCount > 1 ? $"[Worker {nextWorkerId++:D2}] " : string.Empty;
 
                     while (!extractionQueue.IsEmpty)
                     {
@@ -315,8 +315,11 @@ namespace Reclaimer.Plugins
             }
         }
 
-        internal static void ConfigureOutput(FolderMode? folderMode = null, BitmapMode? bitmapMode = null, BitmapFormat? bitmapFormat = null, string modelFormat = null)
+        internal static void ConfigureOutput(bool? overwrite = null, FolderMode? folderMode = null, BitmapMode? bitmapMode = null, BitmapFormat? bitmapFormat = null, string modelFormat = null)
         {
+            if (overwrite.HasValue)
+                Instance.Settings.OverwriteExisting = overwrite.Value;
+
             if (folderMode.HasValue)
                 Instance.Settings.FolderMode = folderMode.Value;
 
