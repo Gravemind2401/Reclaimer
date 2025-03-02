@@ -478,7 +478,7 @@ namespace Reclaimer.Plugins
         private sealed class BatchExtractSettings : IPluginSettings
         {
             private const int minWorkers = 1;
-            private const int maxWorkers = 10;
+            private const int maxWorkers = 30;
 
             [Editor(typeof(BrowseFolderEditor), typeof(BrowseFolderEditor))]
             [DisplayName("Data Folder")]
@@ -520,8 +520,7 @@ namespace Reclaimer.Plugins
 
             void IPluginSettings.ApplyDefaultValues(bool newInstance)
             {
-                if (BatchWorkerCount < minWorkers || BatchWorkerCount > maxWorkers)
-                    BatchWorkerCount = minWorkers;
+                BatchWorkerCount = Math.Clamp(BatchWorkerCount, minWorkers, maxWorkers);
             }
         }
 
