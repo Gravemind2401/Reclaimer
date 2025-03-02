@@ -4,9 +4,6 @@ using Reclaimer.Saber3D.Common;
 using System.CommandLine;
 using static Reclaimer.Plugins.BatchExtractPlugin;
 
-using BlamContentFactory = Reclaimer.Blam.Common.ContentFactory;
-using SaberContentFactory = Reclaimer.Saber3D.Common.ContentFactory;
-
 namespace Conduit
 {
     internal static class ExportAllCommand
@@ -39,76 +36,46 @@ namespace Conduit
             cmd.AddOption(bitmapModeOption);
             cmd.AddOption(modelFormatOption);
 
-            cmd.SetHandler(Execute, fileArg, tagNameArg, outputDirArg, folderModeOption, bitmapFormatOption, bitmapModeOption, modelFormatOption);
+            cmd.SetHandler(ExecuteAsync, fileArg, tagNameArg, outputDirArg, folderModeOption, bitmapFormatOption, bitmapModeOption, modelFormatOption);
 
             return cmd;
         }
 
-        public static void Execute(FileInfo file, string filter, DirectoryInfo outputDir, FolderMode? folderMode, BitmapFormat? bitmapFormat, BitmapMode? bitmapMode, string modelFormat)
+        public static Task ExecuteAsync(FileInfo file, string filter, DirectoryInfo outputDir, FolderMode? folderMode, BitmapFormat? bitmapFormat, BitmapMode? bitmapMode, string modelFormat)
         {
             ConfigureOutput(folderMode, bitmapMode, bitmapFormat, modelFormat);
 
-            switch (file.Extension.ToLower())
+            return file.Extension.ToLower() switch
             {
-                case ".map":
-                case ".yelo":
-                    ExecuteCache(file, filter, outputDir);
-                    break;
-                case ".module":
-                    ExecuteModule(file, filter, outputDir);
-                    break;
-                case ".s3dpak":
-                case ".ipak":
-                    ExecutePak(file, filter, outputDir);
-                    break;
-                default:
-                    throw new NotSupportedException();
+                ".map" or ".yelo" => ExecuteCache(file, filter, outputDir),
+                ".module" => ExecuteModule(file, filter, outputDir),
+                ".s3dpak" or ".ipak" => ExecutePak(file, filter, outputDir),
+                _ => throw new NotSupportedException()
             };
         }
 
-        private static void ExecuteCache(FileInfo file, string filter, DirectoryInfo outputDir)
+        private static Task ExecuteCache(FileInfo file, string filter, DirectoryInfo outputDir)
         {
             var cache = CacheFactory.ReadCacheFile(file.FullName);
             var tags = cache.EnumerateTags(filter);
 
-            foreach (var item in tags)
-            {
-                if (BlamContentFactory.TryGetPrimaryContent(item, out var content))
-                {
-                    Console.WriteLine($"Exporting: {item.TagName}.{item.ClassName}");
-                    ExportCommand.TrySavePrimary(content, outputDir);
-                }
-            }
+            return ExportCommand.ExtractEnumerableAsync(tags, outputDir);
         }
 
-        private static void ExecuteModule(FileInfo file, string filter, DirectoryInfo outputDir)
+        private static Task ExecuteModule(FileInfo file, string filter, DirectoryInfo outputDir)
         {
             var module = ModuleFactory.ReadModuleFile(file.FullName);
             var tags = module.EnumerateTags(filter);
 
-            foreach (var item in tags)
-            {
-                if (BlamContentFactory.TryGetPrimaryContent(item, out var content))
-                {
-                    Console.WriteLine($"Exporting: {item.TagName}.{item.ClassName}");
-                    ExportCommand.TrySavePrimary(content, outputDir);
-                }
-            }
+            return ExportCommand.ExtractEnumerableAsync(tags, outputDir);
         }
 
-        private static void ExecutePak(FileInfo file, string filter, DirectoryInfo outputDir)
+        private static Task ExecutePak(FileInfo file, string filter, DirectoryInfo outputDir)
         {
             var pak = PakFactory.ReadPakFile(file.FullName);
             var tags = pak.EnumerateTags(filter);
 
-            foreach (var item in tags)
-            {
-                if (SaberContentFactory.TryGetPrimaryContent(item, out var content))
-                {
-                    Console.WriteLine($"Exporting: {item.Name}");
-                    ExportCommand.TrySavePrimary(content, outputDir);
-                }
-            }
+            return ExportCommand.ExtractEnumerableAsync(tags, outputDir);
         }
     }
 }

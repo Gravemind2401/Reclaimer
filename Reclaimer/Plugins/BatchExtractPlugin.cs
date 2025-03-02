@@ -8,6 +8,7 @@ using Reclaimer.Geometry;
 using Reclaimer.Models;
 using Reclaimer.Saber3D.Common;
 using Reclaimer.Utilities;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -213,6 +214,20 @@ namespace Reclaimer.Plugins
             }
         }
 
+        [SharedFunction]
+        public Task ExtractAllAsync(IEnumerable items, string outputFolder)
+        {
+            foreach (var obj in items.OfType<object>())
+            {
+                var item = GetExtractable(obj, outputFolder);
+                if (item != null && item.SupportsBatchMode)
+                    extractionQueue.Enqueue(item);
+            }
+
+            tokenSource = new CancellationTokenSource();
+            return ProcessQueueAsync();
+        }
+
         private async Task ProcessQueueAsync()
         {
             isBusy = true;
@@ -244,6 +259,7 @@ namespace Reclaimer.Plugins
                         using (await locker.WaitAsync(item.ItemKey))
                         {
                             SetWorkingStatus($"{prefix}Extracting {item.DisplayName}");
+                            Console.WriteLine($"{prefix}Extracting {item.DisplayName}");
                             Extract(item, counter);
                         }
                     }
@@ -294,6 +310,7 @@ namespace Reclaimer.Plugins
             catch (Exception e)
             {
                 LogError($"Error extracting {item.DisplayName}", e);
+                Console.Error.WriteLine($"Error extracting {item.DisplayName}");
                 counter.Errors++;
             }
         }

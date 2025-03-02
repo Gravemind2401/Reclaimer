@@ -1,24 +1,19 @@
 ﻿using Reclaimer;
-using Reclaimer.Drawing;
-using Reclaimer.Geometry;
 using Reclaimer.Plugins;
-using Reclaimer.Utilities;
+using System.Collections;
 using System.CommandLine;
 
 namespace Conduit
 {
     internal static class ExportCommand
     {
-        private delegate bool SaveImage(IContentProvider<IBitmap> provider, string baseDir);
-        private delegate bool SaveModel(IContentProvider<Scene> provider, string baseDir);
+        private delegate Task BatchExtract(IEnumerable items, string baseDir);
 
-        private static SaveImage SaveImageFunc;
-        private static SaveModel SaveModelFunc;
+        private static BatchExtract BatchExtractFunc;
 
         public static Command Build()
         {
-            SaveImageFunc = Substrate.GetSharedFunction<SaveImage>(Constants.SharedFuncBatchSaveImage);
-            SaveModelFunc = Substrate.GetSharedFunction<SaveModel>(Constants.SharedFuncBatchSaveModel);
+            BatchExtractFunc = Substrate.GetSharedFunction<BatchExtract>(Constants.SharedFuncBatchExtractEnumerable);
 
             var cmd = new Command("export");
 
@@ -29,43 +24,9 @@ namespace Conduit
             return cmd;
         }
 
-        public static void TrySavePrimary(object content, DirectoryInfo baseDir)
+        public static Task ExtractEnumerableAsync(IEnumerable items, DirectoryInfo baseDir)
         {
-            try
-            {
-                if (content is IContentProvider<IBitmap> bitmapProvider)
-                    SaveImageFunc(bitmapProvider, baseDir.FullName);
-                else if (content is IContentProvider<Scene> geometryProvider)
-                    SaveModelFunc(geometryProvider, baseDir.FullName);
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine(ex.Message);
-            }
-        }
-
-        public static void TrySaveImage(IContentProvider<IBitmap> content, DirectoryInfo baseDir)
-        {
-            try
-            {
-                SaveImageFunc(content, baseDir.FullName);
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine(ex.Message);
-            }
-        }
-
-        public static void TrySaveGeometry(IContentProvider<Scene> content, DirectoryInfo baseDir)
-        {
-            try
-            {
-                SaveModelFunc(content, baseDir.FullName);
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine(ex.Message);
-            }
+            return BatchExtractFunc(items, baseDir.FullName);
         }
     }
 }

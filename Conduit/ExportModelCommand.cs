@@ -31,76 +31,46 @@ namespace Conduit
             cmd.AddOption(folderModeOption);
             cmd.AddOption(modelFormatOption);
 
-            cmd.SetHandler(Execute, fileArg, tagNameArg, outputDirArg, folderModeOption, modelFormatOption);
+            cmd.SetHandler(ExecuteAsync, fileArg, tagNameArg, outputDirArg, folderModeOption, modelFormatOption);
 
             return cmd;
         }
 
-        public static void Execute(FileInfo file, string filter, DirectoryInfo outputDir, FolderMode? folderMode, string modelFormat)
+        public static Task ExecuteAsync(FileInfo file, string filter, DirectoryInfo outputDir, FolderMode? folderMode, string modelFormat)
         {
             ConfigureOutput(folderMode, modelFormat: modelFormat);
 
-            switch (file.Extension.ToLower())
+            return file.Extension.ToLower() switch
             {
-                case ".map":
-                case ".yelo":
-                    ExecuteCache(file, filter, outputDir);
-                    break;
-                case ".module":
-                    ExecuteModule(file, filter, outputDir);
-                    break;
-                case ".s3dpak":
-                case ".ipak":
-                    ExecutePak(file, filter, outputDir);
-                    break;
-                default:
-                    throw new NotSupportedException();
+                ".map" or ".yelo" => ExecuteCache(file, filter, outputDir),
+                ".module" => ExecuteModule(file, filter, outputDir),
+                ".s3dpak" or ".ipak" => ExecutePak(file, filter, outputDir),
+                _ => throw new NotSupportedException()
             };
         }
 
-        private static void ExecuteCache(FileInfo file, string filter, DirectoryInfo outputDir)
+        private static Task ExecuteCache(FileInfo file, string filter, DirectoryInfo outputDir)
         {
             var cache = CacheFactory.ReadCacheFile(file.FullName);
-            var tags = cache.EnumerateTags(filter);
+            var tags = cache.EnumerateTags(filter).Where(t => BlamContentFactory.TryGetGeometryContent(t, out _));
 
-            foreach (var item in tags)
-            {
-                if (BlamContentFactory.TryGetGeometryContent(item, out var content))
-                {
-                    Console.WriteLine($"Exporting: {item.TagName}.{item.ClassName}");
-                    ExportCommand.TrySaveGeometry(content, outputDir);
-                }
-            }
+            return ExportCommand.ExtractEnumerableAsync(tags, outputDir);
         }
 
-        private static void ExecuteModule(FileInfo file, string filter, DirectoryInfo outputDir)
+        private static Task ExecuteModule(FileInfo file, string filter, DirectoryInfo outputDir)
         {
             var module = ModuleFactory.ReadModuleFile(file.FullName);
-            var tags = module.EnumerateTags(filter);
+            var tags = module.EnumerateTags(filter).Where(t => BlamContentFactory.TryGetGeometryContent(t, out _));
 
-            foreach (var item in tags)
-            {
-                if (BlamContentFactory.TryGetGeometryContent(item, out var content))
-                {
-                    Console.WriteLine($"Exporting: {item.TagName}.{item.ClassName}");
-                    ExportCommand.TrySaveGeometry(content, outputDir);
-                }
-            }
+            return ExportCommand.ExtractEnumerableAsync(tags, outputDir);
         }
 
-        private static void ExecutePak(FileInfo file, string filter, DirectoryInfo outputDir)
+        private static Task ExecutePak(FileInfo file, string filter, DirectoryInfo outputDir)
         {
             var pak = PakFactory.ReadPakFile(file.FullName);
-            var tags = pak.EnumerateTags(filter);
+            var tags = pak.EnumerateTags(filter).Where(t => SaberContentFactory.TryGetGeometryContent(t, out _));
 
-            foreach (var item in tags)
-            {
-                if (SaberContentFactory.TryGetGeometryContent(item, out var content))
-                {
-                    Console.WriteLine($"Exporting: {item.Name}");
-                    ExportCommand.TrySaveGeometry(content, outputDir);
-                }
-            }
+            return ExportCommand.ExtractEnumerableAsync(tags, outputDir);
         }
     }
 }
