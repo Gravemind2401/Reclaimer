@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "reclaimer_rmf_importer"
-version = "1.0.2"
+version = "1.0.3"
 name = "RMF format"
 tagline = "Import RMF files created by Reclaimer"
 maintainer = "Gravemind2401"

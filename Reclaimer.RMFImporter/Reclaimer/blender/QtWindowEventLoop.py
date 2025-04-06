@@ -34,6 +34,7 @@ class QtWindowEventLoop(bpy.types.Operator):
     dialog: QtWidgets.QDialog
 
     def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._args = args
         self._kwargs = kwargs
 
