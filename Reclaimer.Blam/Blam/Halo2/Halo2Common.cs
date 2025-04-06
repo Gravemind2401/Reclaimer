@@ -80,8 +80,7 @@ namespace Reclaimer.Blam.Halo2
 
             for (var i = 0; i < args.Shaders.Count; i++)
             {
-                var tag = args.Shaders[i].ShaderReference.Tag;
-                if (tag == null)
+                if (!TryGetTag(() => args.Shaders[i].ShaderReference.Tag, out var tag))
                 {
                     yield return null;
                     continue;
@@ -102,7 +101,7 @@ namespace Reclaimer.Blam.Halo2
 
                 material.CustomProperties.Add(BlamConstants.SourceTagPropertyName, tag.TagName);
 
-                var shader = tag?.ReadMetadata<shader>();
+                var shader = tag.ReadMetadata<shader>();
                 if (shader == null)
                 {
                     yield return material;
@@ -111,16 +110,27 @@ namespace Reclaimer.Blam.Halo2
 
                 if (args.Cache.CacheType >= CacheType.Halo2Xbox)
                 {
-                    MaterialHelper.PopulateTextureMappings(bitmapCache, material, shader);
+                    try
+                    {
+                        MaterialHelper.PopulateTextureMappings(bitmapCache, material, shader);
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        //TODO: H2V shared.map doesn't open, which means shared shader template and bitmap tags will not be available
+                        LegacyPopulate();
+                    }
                 }
                 else
                 {
-                    var bitmTag = shader.RuntimeProperties[0].DiffuseBitmapReference.Tag;
-                    if (bitmTag == null)
-                    {
-                        yield return material;
-                        continue;
-                    }
+                    LegacyPopulate();
+                }
+
+                yield return material;
+
+                void LegacyPopulate()
+                {
+                    if (!TryGetTag(() => shader.RuntimeProperties[0].DiffuseBitmapReference.Tag, out var bitmTag))
+                        return;
 
                     var texture = new Texture
                     {
@@ -138,7 +148,20 @@ namespace Reclaimer.Blam.Halo2
                     });
                 }
 
-                yield return material;
+                bool TryGetTag(Func<IIndexItem> tagFunc, out IIndexItem tag)
+                {
+                    try
+                    {
+                        tag = tagFunc();
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        //TODO: H2V shared.map doesn't open, which means shared shader template and bitmap tags will not be available
+                        tag = null;
+                    }
+
+                    return tag != null;
+                }
             }
         }
 
