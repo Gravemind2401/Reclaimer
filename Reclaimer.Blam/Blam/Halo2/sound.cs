@@ -31,6 +31,9 @@ namespace Reclaimer.Blam.Halo2
         [Offset(8)]
         public short PitchRangeIndex { get; set; }
 
+        [Offset(10)]
+        public byte PitchRangeCount { get; set; }
+
         [Offset(11)]
         public byte ScaleIndex { get; set; }
 
@@ -68,7 +71,6 @@ namespace Reclaimer.Blam.Halo2
                 throw new NotSupportedException("Unsupported Codec/Encoding");
 
             var resourceGestalt = Cache.TagIndex.GetGlobalTag("ugh!").ReadMetadata<sound_cache_file_gestalt>();
-            var pitchRange = resourceGestalt.PitchRanges[PitchRangeIndex];
 
             var result = new GameSound { Name = Item.FileName };
             if (CompressionCodec == CompressionCodec.XboxAdpcm)
@@ -81,41 +83,47 @@ namespace Reclaimer.Blam.Halo2
             else if (CompressionCodec == CompressionCodec.WMA)
                 result.DefaultExtension = "wma";
 
-            for (var i = 0; i < pitchRange.PermutationCount; i++)
+            foreach (var pitchRange in resourceGestalt.PitchRanges.Skip(PitchRangeIndex).Take(PitchRangeCount))
             {
-                var perm = resourceGestalt.SoundPermutations[pitchRange.FirstPermutationIndex + i];
-                var name = resourceGestalt.SoundNames[perm.NameIndex].Name;
-
-                byte[] permData;
-
-                if (perm.BlockCount == 1)
+                for (var i = 0; i < pitchRange.PermutationCount; i++)
                 {
-                    //skip the array copy
-                    var block = resourceGestalt.SoundPermutationChunks[perm.BlockIndex];
-                    permData = block.DataPointer.ReadData(block.DataSize);
-                }
-                else
-                {
-                    var blocks = Enumerable.Range(perm.BlockIndex, perm.BlockCount)
-                        .Select(x => resourceGestalt.SoundPermutationChunks[x])
-                        .ToList();
+                    var perm = resourceGestalt.SoundPermutations[pitchRange.FirstPermutationIndex + i];
+                    var name = resourceGestalt.SoundNames[perm.NameIndex].Name.Value;
 
-                    permData = new byte[blocks.Sum(b => b.DataSize)];
-                    var offset = 0;
-                    foreach (var block in blocks)
+                    if (PitchRangeCount > 1)
+                        name = $"{resourceGestalt.SoundNames[pitchRange.NameIndex].Name}!{name}";
+
+                    byte[] permData;
+
+                    if (perm.BlockCount == 1)
                     {
-                        var sourceData = block.DataPointer.ReadData(block.DataSize);
-
-                        Array.Copy(sourceData, 0, permData, offset, sourceData.Length);
-                        offset += sourceData.Length;
+                        //skip the array copy
+                        var block = resourceGestalt.SoundPermutationChunks[perm.BlockIndex];
+                        permData = block.DataPointer.ReadData(block.DataSize);
                     }
-                }
+                    else
+                    {
+                        var blocks = Enumerable.Range(perm.BlockIndex, perm.BlockCount)
+                            .Select(x => resourceGestalt.SoundPermutationChunks[x])
+                            .ToList();
 
-                result.Permutations.Add(new GameSoundPermutation
-                {
-                    Name = name,
-                    SoundData = permData
-                });
+                        permData = new byte[blocks.Sum(b => b.DataSize)];
+                        var offset = 0;
+                        foreach (var block in blocks)
+                        {
+                            var sourceData = block.DataPointer.ReadData(block.DataSize);
+
+                            Array.Copy(sourceData, 0, permData, offset, sourceData.Length);
+                            offset += sourceData.Length;
+                        }
+                    }
+
+                    result.Permutations.Add(new GameSoundPermutation
+                    {
+                        Name = name,
+                        SoundData = permData
+                    });
+                }
             }
 
             return result;
