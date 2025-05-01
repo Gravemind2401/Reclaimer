@@ -17,7 +17,7 @@ namespace Reclaimer.Blam.Halo3
         public byte SoundClass { get; set; }
 
         [Offset(3)]
-        public SampleRate SampleRate { get; set; }
+        public byte PitchRangeCount { get; set; }
 
         [Offset(4)]
         public short CodecIndex { get; set; }
@@ -57,7 +57,6 @@ namespace Reclaimer.Blam.Halo3
         public override GameSound GetContent()
         {
             var resourceGestalt = Cache.TagIndex.GetGlobalTag("ugh!").ReadMetadata<sound_cache_file_gestalt>();
-            var pitchRange = resourceGestalt.PitchRanges[PitchRangeIndex];
             var codec = resourceGestalt.Codecs[CodecIndex];
             var sourceData = ResourceIdentifier.ReadSoundData();
 
@@ -68,38 +67,44 @@ namespace Reclaimer.Blam.Halo3
                 DefaultExtension = "xma"
             };
 
-            for (var i = 0; i < pitchRange.PermutationCount; i++)
+            foreach (var pitchRange in resourceGestalt.PitchRanges.Skip(PitchRangeIndex).Take(PitchRangeCount))
             {
-                var perm = resourceGestalt.SoundPermutations[pitchRange.FirstPermutationIndex + i];
-                var name = resourceGestalt.SoundNames[perm.NameIndex].Name;
-
-                byte[] permData;
-
-                if (pitchRange.PermutationCount == 1)
+                for (var i = 0; i < pitchRange.PermutationCount; i++)
                 {
-                    //skip the array copy
-                    permData = sourceData;
-                }
-                else
-                {
-                    var blocks = Enumerable.Range(perm.BlockIndex, perm.BlockCount)
-                        .Select(x => resourceGestalt.SoundPermutationChunk[x])
-                        .ToList();
+                    var perm = resourceGestalt.SoundPermutations[pitchRange.FirstPermutationIndex + i];
+                    var name = resourceGestalt.SoundNames[perm.NameIndex].Name.Value;
 
-                    permData = new byte[blocks.Sum(b => b.Size)];
-                    var offset = 0;
-                    foreach (var block in blocks)
+                    if (PitchRangeCount > 1)
+                        name = $"{resourceGestalt.SoundNames[pitchRange.NameIndex].Name}!{name}";
+
+                    byte[] permData;
+
+                    if (pitchRange.PermutationCount == 1)
                     {
-                        Array.Copy(sourceData, block.FileOffset, permData, offset, block.Size);
-                        offset += block.Size;
+                        //skip the array copy
+                        permData = sourceData;
                     }
-                }
+                    else
+                    {
+                        var blocks = Enumerable.Range(perm.BlockIndex, perm.BlockCount)
+                            .Select(x => resourceGestalt.SoundPermutationChunk[x])
+                            .ToList();
 
-                result.Permutations.Add(new GameSoundPermutation
-                {
-                    Name = name,
-                    SoundData = permData
-                });
+                        permData = new byte[blocks.Sum(b => b.Size)];
+                        var offset = 0;
+                        foreach (var block in blocks)
+                        {
+                            Array.Copy(sourceData, block.FileOffset, permData, offset, block.Size);
+                            offset += block.Size;
+                        }
+                    }
+
+                    result.Permutations.Add(new GameSoundPermutation
+                    {
+                        Name = name,
+                        SoundData = permData
+                    });
+                }
             }
 
             return result;

@@ -27,7 +27,7 @@ namespace Reclaimer.Blam.HaloReach
         public BlockCollection<SoundName> SoundNames { get; set; }
 
         [Offset(72)]
-        public BlockCollection<Playback> Playbacks { get; set; }
+        public BlockCollection<Playback> PitchRanges { get; set; }
 
         [Offset(84)]
         public BlockCollection<SoundPermutation> SoundPermutations { get; set; }
