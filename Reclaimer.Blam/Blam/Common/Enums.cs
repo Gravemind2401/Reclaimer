@@ -207,6 +207,9 @@ namespace Reclaimer.Blam.Common
         [BuildString("Jun 27 2023 08:39:36", "U13")] //[23-07-12] U13 custom maps
         [BuildString("Sep  1 2023 11:01:27", "U13")] //[23-09-19] custom maps
         [BuildString("Sep  1 2023 11:01:50", "U13")] //[23-09-19] custom maps
+        [BuildString("Dec 21 2023 22:31:37", "U13")] //[24-02-14] U14
+        [BuildString("Jan  3 2024 10:08:58", "U13")] //[24-02-14] U14 custom maps
+        [BuildString("Jan  3 2024 10:01:45", "U13")] //[24-02-14] U14 custom maps
         MccHalo3U13,
 
         [CacheMetadata(BlamEngine.Halo3ODST, Xbox360)]
@@ -380,6 +383,8 @@ namespace Reclaimer.Blam.Common
         [BuildString("Jun 13 2023 20:21:18", "U6")] //[23-07-12] update 11
         [BuildString("Jun 27 2023 08:47:43", "U6")] //[23-07-12] update 11 custom maps 1
         [BuildString("Jun 27 2023 08:47:52", "U6")] //[23-07-12] update 11 custom maps 2
+        [BuildString("Jan  3 2024 10:26:12", "U6")] //[24-02-14] custom maps
+        [BuildString("Jan  3 2024 10:26:11", "U6")] //[24-02-14] custom maps
         MccHalo2XU11,
     }
 
