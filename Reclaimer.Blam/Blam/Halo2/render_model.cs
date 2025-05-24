@@ -99,17 +99,20 @@ namespace Reclaimer.Blam.Halo2
                 return region;
             }));
 
-            var bounds = BoundingBoxes[0];
-            var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
-            var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
-
-            if (Cache.Metadata.Platform == CachePlatform.PC)
+            if (BoundingBoxes.Count > 0)
             {
-                posBounds.Min = posBounds.Midpoint;
-                texBounds.Min = texBounds.Midpoint;
-            }
+                var bounds = BoundingBoxes[0];
+                var posBounds = new RealBounds3D(bounds.XBounds, bounds.YBounds, bounds.ZBounds);
+                var texBounds = new RealBounds2D(bounds.UBounds, bounds.VBounds);
 
-            model.SetCompressionBounds(posBounds, texBounds);
+                if (Cache.Metadata.Platform == CachePlatform.PC)
+                {
+                    posBounds.Min = posBounds.Midpoint;
+                    texBounds.Min = texBounds.Midpoint;
+                }
+
+                model.SetCompressionBounds(posBounds, texBounds);
+            }
 
             return model;
         }

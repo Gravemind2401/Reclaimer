@@ -260,6 +260,10 @@ namespace Reclaimer.Blam.Halo2
                 reader.Seek(section.BaseAddress + indexResource.Offset, SeekOrigin.Begin);
                 mesh.IndexBuffer = IndexBuffer.FromArray(reader.ReadArray<ushort>(sectionInfo.IndexCount), indexFormat);
 
+                //brute force hack to identify triangle strips where FaceCount * 3 just happens to = IndexCount
+                if (indexFormat == IndexFormat.TriangleList && mesh.IndexBuffer.Chunk(3).Take(10).Any(c => c.Distinct().Count() < 3))
+                    ((IndexBuffer)mesh.IndexBuffer).Layout = indexFormat = IndexFormat.TriangleStrip;
+
                 if (args.IsRenderModel)
                 {
                     if (args.Cache.Metadata.Platform == CachePlatform.Xbox)
