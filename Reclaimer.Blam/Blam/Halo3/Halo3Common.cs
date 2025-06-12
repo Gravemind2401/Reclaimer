@@ -164,6 +164,10 @@ namespace Reclaimer.Blam.Halo3
             var matLookup = materials = new List<Material>(args.Shaders.Count);
             materials.AddRange(GetMaterials(args.Shaders));
 
+            //since different sections can share the same vertex buffer, we need to track which ones have
+            //already had the node mapping processed so it doesnt get processed twice and screw up the indices
+            var nodeMappedVertexBuffers = new HashSet<int>();
+
             var meshList = new List<Mesh>(args.Sections.Count);
             meshList.AddRange(args.Sections.Select((section, sectionIndex) =>
             {
@@ -195,11 +199,13 @@ namespace Reclaimer.Blam.Halo3
                     })
                 );
 
-                if (args.NodeMaps != null)
+                if (args.NodeMaps != null && !nodeMappedVertexBuffers.Contains(section.VertexBufferIndex))
                 {
+                    nodeMappedVertexBuffers.Add(section.VertexBufferIndex);
+                    var indices = args.NodeMaps.ElementAtOrDefault(sectionIndex)?.Indices.Cast<byte?>();
+
                     UByte4 MapNodeIndices(UByte4 source)
                     {
-                        var indices = args.NodeMaps.ElementAtOrDefault(sectionIndex)?.Indices.Cast<byte?>();
                         return new UByte4
                         {
                             X = indices?.ElementAtOrDefault(source.X) ?? source.X,
