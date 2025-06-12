@@ -351,10 +351,13 @@ namespace Reclaimer.Blam.Common
         [BuildString("Oct 17 2022 21:26:14", "U3")] //[22-12-07] update 6
         [BuildString("Dec  6 2022 11:23:50", "U3")] //[22-12-07] update 6 custom maps 1
         [BuildString("Dec  6 2022 11:26:37", "U3")] //[22-12-07] update 6 custom maps 2
+        MccHalo4U6,
+
+        [CacheMetadata(BlamEngine.Halo4, PC, Deflate, Mcc)]
         [BuildString("Apr  1 2023 17:35:22", "U3")] //[23-07-12] update 7
         [BuildString("Jun 27 2023 08:46:47", "U3")] //[23-07-12] update 7 custom maps 1
         [BuildString("Jun 27 2023 08:47:24", "U3")] //[23-07-12] update 7 custom maps 2
-        MccHalo4U6,
+        MccHalo4U7,
 
         [CacheMetadata(BlamEngine.Halo2X, PC, UnknownDeflate, Mcc)]
         [BuildString("Apr  9 2020 01:36:04", "U0", MccFlight)] //flight 1
