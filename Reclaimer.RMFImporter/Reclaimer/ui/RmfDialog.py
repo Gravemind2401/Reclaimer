@@ -115,7 +115,7 @@ class RmfDialog(QtWidgets.QDialog):
         self.setWindowIcon(ui.create_icon('Settings_16x.png'))
         self.setWindowTitle(f'RMF Importer {package_version_string} - {Path(filepath).name}')
         self.setModal(True)
-        self.setWindowFlags(QtCore.Qt.Dialog | QtCore.Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowFlags(QtCore.Qt.Dialog)
         self.setWindowFlag(QtCore.Qt.WindowContextHelpButtonHint, False)
 
         try:
