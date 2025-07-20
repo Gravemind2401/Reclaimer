@@ -165,7 +165,16 @@ namespace Reclaimer.Blam.Halo1
                     sysItems.Add(item.ClassCode, item);
 
                 reader.Seek(item.FileNamePointer.Address, SeekOrigin.Begin);
-                TagNames.Add(item.Id, reader.ReadNullTerminatedString());
+                TagNames.Add(item.Id, reader.ReadNullTerminatedString(256));
+            }
+
+            if (TagCount > 0 && !sysItems.ContainsKey("scnr"))
+            {
+                //some maps have the scnr tag's class ID overwritten with a custom value
+                //if no scnr tag was found, just assume the first tag is the one we want
+                //and update the class ID so that scenario-related code will work as expected
+                items[0].ClassId = BitConverter.ToInt32(Encoding.UTF8.GetBytes("rncs"));
+                sysItems.Add(items[0].ClassCode, items[0]);
             }
         }
 

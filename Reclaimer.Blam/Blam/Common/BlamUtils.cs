@@ -86,7 +86,7 @@ namespace Reclaimer.Blam.Common
             {
                 //this assumes all resource files are in the same directory
                 if (resourceDirectoryCache.TryGetValue(source, out var targetDir))
-                    return Path.Combine(targetDir, targetName);
+                    return string.IsNullOrEmpty(targetDir) ? targetDir : Path.Combine(targetDir, targetName);
 
                 //test for local resources first - this should be the case for all standard maps
                 var sourceDir = Path.GetDirectoryName(source.FileName);

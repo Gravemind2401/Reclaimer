@@ -93,6 +93,7 @@ namespace Reclaimer.Blam.Common
 
         [CacheMetadata(BlamEngine.Halo1, PC)]
         [BuildString("01.00.00.0609")]
+        [BuildString("02.00.00.0609")] //not official - used by some H2-themed custom edition maps
         Halo1CE,
 
         [CacheMetadata(BlamEngine.Halo1, Xbox360, Anniversary)]
