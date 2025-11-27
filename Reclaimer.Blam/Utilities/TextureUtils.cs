@@ -67,6 +67,7 @@ namespace Reclaimer.Blam.Utilities
             Y8,
             AY8,
             A8Y8,
+            G8B8,
             R8G8,
             R5G6B5,
             R10G10B10A2,

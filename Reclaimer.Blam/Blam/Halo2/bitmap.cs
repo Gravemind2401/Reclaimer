@@ -259,6 +259,7 @@ namespace Reclaimer.Blam.Halo2
         ARGBFP32 = 19,
         RGBFP32 = 20,
         RGBFP16 = 21,
-        U8V8 = 22
+        U8V8 = 22,
+        G8B8 = 23
     }
 }

@@ -1232,6 +1232,19 @@ namespace Reclaimer.Drawing
             return ToArray(data.SelectMany(b => Enumerable.Range(0, bgr24 ? 3 : 4).Select(i => b)), bgr24, height, width);
         }
 
+        [XboxDecompressor(G8B8)]
+        internal static byte[] DecompressG8B8(byte[] data, int height, int width, bool bgr24)
+        {
+            data = DecompressR8G8Signed(data, height, width, bgr24);
+
+            //swap RG to GB
+            var bpp = bgr24 ? 3 : 4;
+            for (var i = 0; i < data.Length; i += bpp)
+                (data[i + 0], data[i + 1], data[i + 2]) = (data[i + 2], data[i + 1], data[i + 0]);
+
+            return data;
+        }
+
         [XboxDecompressor(L16)]
         internal static byte[] DecompressL16(byte[] data, int height, int width, bool bgr24)
         {

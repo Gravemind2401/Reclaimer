@@ -26,6 +26,7 @@
     {
         Unknown,
         AY8,
+        G8B8,
         CTX1,
         DXN,
         DXN_mono_alpha,
