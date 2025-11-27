@@ -469,7 +469,8 @@ namespace Reclaimer.Plugins
                         }
 
                         assimpMesh.SetIndices(indices.ToArray(), 3);
-                        assimpMesh.MaterialIndex = materialLookup[sub.Material.Id];
+                        if (sub.Material != null)
+                            assimpMesh.MaterialIndex = materialLookup[sub.Material.Id];
 
                         assimpScene.Meshes.Add(assimpMesh);
                     }
