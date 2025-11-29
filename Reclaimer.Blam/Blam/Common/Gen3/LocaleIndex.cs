@@ -92,7 +92,7 @@ namespace Reclaimer.Blam.Common.Gen3
         {
             var key = cache.CacheType switch
             {
-                CacheType.HaloReachBeta => HaloReach.CacheFile.BetaKey,
+                CacheType.HaloReachAlpha or CacheType.HaloReachBeta => HaloReach.CacheFile.BetaKey,
                 CacheType.HaloReachRetail => HaloReach.CacheFile.LocalesKey,
                 CacheType.Halo4Beta or CacheType.Halo4Retail => Halo4.CacheFile.LocalesKey,
                 _ => null,

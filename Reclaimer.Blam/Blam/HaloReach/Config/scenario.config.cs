@@ -11,7 +11,21 @@ namespace Reclaimer.Blam.HaloReach
         {
             public DefinitionBuilder()
             {
-                var builder = AddVersion(CacheType.HaloReachBeta);
+                var builder = AddVersion(CacheType.HaloReachAlpha);
+                builder.Property(x => x.StructureBsps).HasOffset(68);
+                builder.Property(x => x.Skies).HasOffset(124);
+                builder.Property(x => x.ObjectNames).HasOffset(252);
+                builder.Property(x => x.Scenery).HasOffset(264);
+                builder.Property(x => x.SceneryPalette).HasOffset(276);
+                builder.Property(x => x.Machines).HasOffset(396);
+                builder.Property(x => x.MachinePalette).HasOffset(408);
+                builder.Property(x => x.Controls).HasOffset(444);
+                builder.Property(x => x.ControlPalette).HasOffset(456);
+                builder.Property(x => x.Crates).HasOffset(1520);
+                builder.Property(x => x.CratePalette).HasOffset(1532);
+                builder.Property(x => x.ScenarioLightmapReference).HasOffset(1792);
+
+                builder = AddVersion(CacheType.HaloReachBeta);
                 builder.Property(x => x.StructureBsps).HasOffset(68);
                 builder.Property(x => x.Skies).HasOffset(124);
                 builder.Property(x => x.ObjectNames).HasOffset(252);

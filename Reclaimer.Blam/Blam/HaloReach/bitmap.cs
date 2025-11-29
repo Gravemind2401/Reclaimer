@@ -124,9 +124,8 @@ namespace Reclaimer.Blam.HaloReach
     [FixedSize(56, MinVersion = (int)CacheType.MccHaloReach)]
     public class BitmapDataBlock
     {
-        [Offset(0)]
+        [Offset(0, MaxVersion = (int)CacheType.HaloReachRetail)]
         [FixedLength(4)]
-        [VersionSpecific((int)CacheType.HaloReachBeta)]
         public string Class { get; set; }
 
         [Offset(4, MaxVersion = (int)CacheType.HaloReachRetail)]

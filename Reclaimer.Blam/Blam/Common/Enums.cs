@@ -262,6 +262,10 @@ namespace Reclaimer.Blam.Common
         [BuildString("Sep  1 2023 10:55:29", "ODST U8")] //[23-09-19] custom maps
         MccHalo3ODSTU8,
 
+        [CacheMetadata(BlamEngine.HaloReach, Xbox360, PreBeta)]
+        [BuildString("08516.10.02.19.1607.omaha_alpha", "alpha")]
+        HaloReachAlpha,
+
         [CacheMetadata(BlamEngine.HaloReach, Xbox360, Beta)]
         [BuildString("09449.10.03.25.1545.omaha_beta", "beta", PreBeta)]
         [BuildString("09730.10.04.09.1309.omaha_delta", "beta")]

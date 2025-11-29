@@ -1,5 +1,22 @@
 <!-- https://github.com/XboxChaos/Assembly/tree/dev/src/Blamite/Formats -->
 <stringDefinitions>
+    <stringIDs id="alpha" indexBits="16" namespaceBits="8" lengthBits="8">
+        <namespace id="0x0" min="0x453" startIndex="0x1327" />
+        <namespace id="0x1" startIndex="0x453" />
+        <namespace id="0x2" startIndex="0x9FD" />
+        <namespace id="0x3" startIndex="0xAA4" />
+        <namespace id="0x4" startIndex="0xB07" />
+        <namespace id="0x5" startIndex="0xBDC" />
+        <namespace id="0x6" startIndex="0xBFE" />
+        <namespace id="0x7" startIndex="0xC03" />
+        <namespace id="0x8" startIndex="0x1102" />
+        <namespace id="0x9" startIndex="0x1237" />
+        <namespace id="0xA" startIndex="0x1245" />
+        <namespace id="0xC" startIndex="0x12A1" />
+        <namespace id="0xD" startIndex="0x12B9" />
+        <namespace id="0xE" startIndex="0x12C6" />
+        <namespace id="0xF" startIndex="0x12E8" />
+    </stringIDs>
     <stringIDs id="beta" indexBits="16" namespaceBits="8" lengthBits="8">
         <namespace id="0x0" min="0x464" startIndex="0x13F3" />
         <namespace id="0x1" startIndex="0x464" />

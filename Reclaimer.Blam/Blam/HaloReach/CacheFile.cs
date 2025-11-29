@@ -62,6 +62,7 @@ namespace Reclaimer.Blam.HaloReach
 
                 switch (CacheType)
                 {
+                    case CacheType.HaloReachAlpha:
                     case CacheType.HaloReachBeta:
                         LocaleIndex = new LocaleIndex(this, 576, 68, 12);
                         break;
@@ -245,7 +246,7 @@ namespace Reclaimer.Blam.HaloReach
                 var indices = reader.ReadArray<int>(TagCount);
 
                 reader.Seek(cache.Header.FileTablePointer.Address, SeekOrigin.Begin);
-                var decrypted = reader.ReadAesBytes(cache.Header.FileTableSize, cache.CacheType == CacheType.HaloReachBeta ? CacheFile.BetaKey : CacheFile.FileNamesKey);
+                var decrypted = reader.ReadAesBytes(cache.Header.FileTableSize, cache.CacheType <= CacheType.HaloReachBeta ? CacheFile.BetaKey : CacheFile.FileNamesKey);
                 using (var ms = new MemoryStream(decrypted))
                 using (var tempReader = new EndianReader(ms))
                 {
@@ -302,7 +303,7 @@ namespace Reclaimer.Blam.HaloReach
                 var indices = reader.ReadArray<int>(cache.Header.StringCount);
 
                 reader.Seek(cache.Header.StringTablePointer.Address, SeekOrigin.Begin);
-                var decrypted = reader.ReadAesBytes(cache.Header.StringTableSize, cache.CacheType == CacheType.HaloReachBeta ? CacheFile.BetaKey : CacheFile.StringsKey);
+                var decrypted = reader.ReadAesBytes(cache.Header.StringTableSize, cache.CacheType <= CacheType.HaloReachBeta ? CacheFile.BetaKey : CacheFile.StringsKey);
                 using (var ms = new MemoryStream(decrypted))
                 using (var tempReader = new EndianReader(ms))
                 {

@@ -153,16 +153,13 @@ namespace Reclaimer.Blam.HaloReach
     [DebuggerDisplay($"{{{nameof(Name)},nq}}")]
     public class BspGeometryInstanceBlock
     {
-        [Offset(0)]
-        [VersionSpecific((int)CacheType.HaloReachBeta)]
+        [Offset(0, MaxVersion = (int)CacheType.HaloReachRetail)]
         public float TransformScale { get; set; }
 
-        [Offset(4)]
-        [VersionSpecific((int)CacheType.HaloReachBeta)]
+        [Offset(4, MaxVersion = (int)CacheType.HaloReachRetail)]
         public Matrix4x4 Transform { get; set; }
 
-        [Offset(52)]
-        [VersionSpecific((int)CacheType.HaloReachBeta)]
+        [Offset(52, MaxVersion = (int)CacheType.HaloReachRetail)]
         public short SectionIndex { get; set; }
 
         [Offset(124, MaxVersion = (int)CacheType.HaloReachRetail)]

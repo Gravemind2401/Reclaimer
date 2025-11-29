@@ -127,7 +127,7 @@ namespace Reclaimer.Blam.Common
                         BlamEngine.Halo2 when cacheType >= CacheType.Halo2Beta => item.ReadMetadata<Halo2.scenario_structure_bsp>(),
                         BlamEngine.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
                         BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.scenario_structure_bsp>(),
-                        BlamEngine.HaloReach => item.ReadMetadata<HaloReach.scenario_structure_bsp>(),
+                        BlamEngine.HaloReach when cacheType >= CacheType.HaloReachBeta => item.ReadMetadata<HaloReach.scenario_structure_bsp>(),
                         BlamEngine.Halo4 => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
                         BlamEngine.Halo2X => item.ReadMetadata<Halo4.scenario_structure_bsp>(),
                         _ => null
@@ -141,7 +141,7 @@ namespace Reclaimer.Blam.Common
                         BlamEngine.Halo2 when cacheType >= CacheType.Halo2Xbox => item.ReadMetadata<Halo2.scenario>(),
                         BlamEngine.Halo3 when cacheType >= CacheType.Halo3Delta => item.ReadMetadata<Halo3.scenario>(),
                         BlamEngine.Halo3ODST => item.ReadMetadata<Halo3.scenario>(),
-                        BlamEngine.HaloReach => item.ReadMetadata<HaloReach.scenario>(),
+                        BlamEngine.HaloReach when cacheType >= CacheType.HaloReachBeta => item.ReadMetadata<HaloReach.scenario>(),
                         BlamEngine.Halo4 => item.ReadMetadata<Halo4.scenario>(),
                         BlamEngine.Halo2X => item.ReadMetadata<Halo4.scenario>(),
                         _ => null
