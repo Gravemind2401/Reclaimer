@@ -7,7 +7,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Studio;component/Themes/Blue.xaml" />
+                <ResourceDictionary Source="/Studio;component/Themes/2015/Blue.xaml" />
                 <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                 <ResourceDictionary Source="/Reclaimer;component/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -22,63 +22,63 @@
                 <ResourceDictionary>
                     <sys:String x:Key="Name">Blue</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Blue.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Blue.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <sys:String x:Key="Name">Dark</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Dark.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Dark.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Dark.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <sys:String x:Key="Name">Light</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Light.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Light.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <sys:String x:Key="Name">Green</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Green.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Green.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <sys:String x:Key="Name">Purple</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Blue.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Blue.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <sys:String x:Key="Name">Red</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Purple.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Purple.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <sys:String x:Key="Name">Tan</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/Tan.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Tan.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <sys:String x:Key="Name">Solarized (Light)</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/SolarizedLight.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Solarized Light.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Blue.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <sys:String x:Key="Name">Solarized (Dark)</sys:String>
                     <ResourceDictionary.MergedDictionaries>
-                        <ResourceDictionary Source="/Studio;component/Themes/SolarizedDark.xaml" />
+                        <ResourceDictionary Source="/Studio;component/Themes/2015/Solarized Dark.xaml" />
                         <ResourceDictionary Source="/Reclaimer;component/Themes/Dark.xaml" />
                     </ResourceDictionary.MergedDictionaries>
                 </ResourceDictionary>
