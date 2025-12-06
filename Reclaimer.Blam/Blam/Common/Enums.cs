@@ -133,6 +133,10 @@ namespace Reclaimer.Blam.Common
         MccHalo2U1,
 
         [CacheMetadata(BlamEngine.Halo3, Xbox360, Uncompressed, PreBeta)]
+        [BuildString("05241.06.09.21.1534.first_playt", "playtest")]
+        Halo3PreAlpha,
+
+        [CacheMetadata(BlamEngine.Halo3, Xbox360, Uncompressed, PreBeta)]
         [BuildString("06481.06.11.17.1330.alpha_relea", "alpha_1117")]
         Halo3Alpha,
 

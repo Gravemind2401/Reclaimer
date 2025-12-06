@@ -21,7 +21,7 @@ namespace Reclaimer.Blam.Halo3
                 //Halo3Alpha not actually supported, but needs to be defined because the scenario tag
                 //gets loaded when the map gets opened. For h3 alpha it will just have null property values
                 //since none of the properties have offsets defined.
-                var builder = AddVersion(CacheType.Halo3Alpha);
+                var builder = AddVersion(null, CacheType.Halo3Delta);
 
                 builder = AddVersion(CacheType.Halo3Delta);
                 builder.Property(x => x.StructureBsps).HasOffset(12);

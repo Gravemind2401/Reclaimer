@@ -64,7 +64,7 @@ namespace Reclaimer.Blam.Halo3
         {
             public DefinitionBuilder()
             {
-                var builder = AddVersion(CacheType.Halo3Alpha).HasFixedSize(88);
+                var builder = AddVersion(null, CacheType.Halo3Delta).HasFixedSize(88);
                 builder.Property(x => x.OwnerReference).HasOffset(0);
                 builder.Property(x => x.ResourcePointer).HasOffset(16);
                 builder.Property(x => x.FixupOffset).HasOffset(24);
