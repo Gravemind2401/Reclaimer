@@ -163,7 +163,8 @@ namespace Reclaimer.Blam.Halo2
         public RealVector2 RegPoint { get; set; }
     }
 
-    [FixedSize(116)]
+    [FixedSize(116, MaxVersion = (int)CacheType.MccHalo2)]
+    [FixedSize(168, MinVersion = (int)CacheType.MccHalo2)]
     public class BitmapDataBlock
     {
         [Offset(0)]
