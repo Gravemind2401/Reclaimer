@@ -83,7 +83,9 @@ namespace Reclaimer.Blam.Halo5
                 Name = n.Name,
                 LocalTransform = Utils.CreateMatrix(n.Position, n.Rotation),
                 WorldTransform = Utils.CreateWorldMatrix(n.InverseTransform, n.InverseScale),
-                ParentIndex = n.ParentIndex
+                ParentIndex = n.ParentIndex,
+                FirstChildIndex = n.FirstChildIndex,
+                NextSiblingIndex = n.NextSiblingIndex
             }));
 
             model.Markers.AddRange(MarkerGroups.Select(g =>

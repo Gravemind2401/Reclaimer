@@ -58,7 +58,9 @@ namespace Reclaimer.Blam.Halo1
             {
                 Name = n.Name,
                 LocalTransform = Utils.CreateMatrix(n.Position, n.Rotation.Conjugate),
-                ParentIndex = n.ParentIndex
+                ParentIndex = n.ParentIndex,
+                FirstChildIndex = n.FirstChildIndex,
+                NextSiblingIndex = n.NextSiblingIndex
             }));
 
             model.Markers.AddRange(MarkerGroups.Select(g =>

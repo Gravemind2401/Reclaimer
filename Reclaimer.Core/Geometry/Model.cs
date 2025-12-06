@@ -132,10 +132,12 @@ namespace Reclaimer.Geometry
         //TODO: use reference instead of index
         public int ParentIndex { get; set; }
 
-        [Obsolete("Backwards compatibility for AMF")]
+        //TODO: dynamically calculate FirstChildIndex and NextSiblingIndex when exporting JMS, as they won't always be present (such as CEA models)
+
+        [Obsolete("Backwards compatibility for AMF/JMS")]
         public int FirstChildIndex { get; set; }
 
-        [Obsolete("Backwards compatibility for AMF")]
+        [Obsolete("Backwards compatibility for AMF/JMS")]
         public int NextSiblingIndex { get; set; }
 
         [Obsolete("Backwards compatibility for AMF")]

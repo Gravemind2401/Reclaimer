@@ -548,7 +548,7 @@ namespace Reclaimer.Geometry.Compatibility
                         sw.WriteLine(node.Name);
                         sw.WriteLine(node.FirstChildIndex);
                         sw.WriteLine(node.NextSiblingIndex);
-                        sw.WriteLine("{0}\t{1}\t{2}\t{3}", -node.Rotation.X, -node.Rotation.Y, -node.Rotation.Z, node.Rotation.W);
+                        sw.WriteLine(float4, -node.Rotation.X, -node.Rotation.Y, -node.Rotation.Z, node.Rotation.W);
                         sw.WriteLine(float3, node.Position.X * scale, node.Position.Y * scale, node.Position.Z * scale);
                     }
 
@@ -597,8 +597,8 @@ namespace Reclaimer.Geometry.Compatibility
                             var pos = positions?[i] ?? default;
                             var norm = normals?[i] ?? default;
                             var tex = texcoords?[i] ?? default;
-                            var weights = blendIndices?[i] ?? default;
-                            var nodes = blendWeights?[i] ?? default;
+                            var nodes = blendIndices?[i] ?? default;
+                            var weights = blendWeights?[i] ?? default;
 
                             var node1 = nodes.X;
                             if (mesh.BoneIndex < byte.MaxValue)
@@ -609,7 +609,7 @@ namespace Reclaimer.Geometry.Compatibility
                             sw.WriteLine(float3, pos.X, pos.Y, pos.Z);
                             sw.WriteLine(float3, norm.X, norm.Y, norm.Z);
 
-                            sw.WriteLine(nodes.Y);
+                            sw.WriteLine("{0:F0}", nodes.Y);
                             sw.WriteLine(float1, weights.Y);
 
                             sw.WriteLine(float1, tex.X);
