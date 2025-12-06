@@ -147,12 +147,11 @@ namespace Reclaimer.Blam.Halo3
         public int FileOffset { get; set; }
 
         [Offset(4)]
-        public byte Flags { get; set; }
+        public int FlagsAndSize { get; set; }
 
-        //byte here that belongs to size (24bit)
+        public byte Flags => (byte)(FlagsAndSize >>> 24);
 
-        [Offset(6)]
-        public ushort Size { get; set; }
+        public int Size => FlagsAndSize & 0x00FFFFFF;
 
         [Offset(8)]
         public int RuntimeIndex { get; set; }
