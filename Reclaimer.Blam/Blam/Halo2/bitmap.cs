@@ -64,7 +64,6 @@ namespace Reclaimer.Blam.Halo2
             var submap = Bitmaps[index];
             var frameCount = submap.BitmapType == TextureType.CubeMap ? 6 : submap.Depth;
             var formatDescriptor = new BitmapProperties(submap.Width, submap.Height, submap.BitmapFormat, submap.BitmapType).CreateFormatDescriptor();
-
             var data = submap.Lod0Pointer.ReadData(submap.Lod0Size);
 
             if (Cache.Metadata.Platform == CachePlatform.Xbox)
@@ -116,6 +115,19 @@ namespace Reclaimer.Blam.Halo2
             {
                 props.VirtualWidth = (int)(Math.Ceiling(submap.Width / 16d) * 16d);
                 props.VirtualHeight = submap.Height;
+
+                if (submap.RegX > 0)
+                {
+                    var widthAdjust = (int)(Math.Ceiling(submap.RegX / 16d) * 16d);
+                    props.VirtualWidth += widthAdjust;
+
+                    var stride = data.Length / submap.Height;
+                    var newData = new byte[props.VirtualWidth * submap.Height * (formatDescriptor.BitsPerPixel / 8)];
+                    var newStride = newData.Length / submap.Height;
+                    for (var y = 0; y < submap.Height; y++)
+                        Array.Copy(data, y * stride, newData, y * newStride, stride);
+                    data = newData;
+                }
             }
 
             return TextureUtils.GetDds(props, data, submap.BitmapType != TextureType.CubeMap);
