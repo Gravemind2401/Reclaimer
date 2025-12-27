@@ -622,9 +622,9 @@ def main(context, import_filename, options):
                 # inverting green channel is necessary to convert from DirectX coordsys to OpenGL
 
                 bump = material.node_tree.nodes.new('ShaderNodeNormalMap')
-                split = material.node_tree.nodes.new('ShaderNodeSeparateRGB')
+                split = material.node_tree.nodes.new('ShaderNodeSeparateColor')
                 invert = material.node_tree.nodes.new('ShaderNodeInvert')
-                merge = material.node_tree.nodes.new('ShaderNodeCombineRGB')
+                merge = material.node_tree.nodes.new('ShaderNodeCombineColor')
 
                 texture.location = [-1100, -100]
                 split.location = [-800, -100]
@@ -632,12 +632,13 @@ def main(context, import_filename, options):
                 merge.location = [-400, -100]
                 bump.location = [-200, -100]
 
-                material.node_tree.links.new(split.inputs['Image'], texture.outputs['Color'])
-                material.node_tree.links.new(invert.inputs['Color'], split.outputs['G'])
-                material.node_tree.links.new(merge.inputs['R'], split.outputs['R'])
-                material.node_tree.links.new(merge.inputs['G'], invert.outputs['Color'])
-                material.node_tree.links.new(merge.inputs['B'], split.outputs['B'])
-                material.node_tree.links.new(bump.inputs['Color'], merge.outputs['Image'])
+                material.node_tree.links.new(split.inputs['Color'], texture.outputs['Color'])
+                # FIXED: Using 'Green', 'Red', 'Blue' sockets
+                material.node_tree.links.new(invert.inputs['Color'], split.outputs['Green'])
+                material.node_tree.links.new(merge.inputs['Red'], split.outputs['Red'])
+                material.node_tree.links.new(merge.inputs['Green'], invert.outputs['Color'])
+                material.node_tree.links.new(merge.inputs['Blue'], split.outputs['Blue'])
+                material.node_tree.links.new(bump.inputs['Color'], merge.outputs['Color'])
                 material.node_tree.links.new(bsdf.inputs['Normal'], bump.outputs['Normal'])
 
             model_materials.append(material)
