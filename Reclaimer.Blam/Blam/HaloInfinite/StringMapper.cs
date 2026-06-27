@@ -20,8 +20,22 @@ namespace Reclaimer.Blam.HaloInfinite
             foreach (var line in File.ReadLines(filename))
             {
                 var parts = line.Split(":");
-                if (parts.Length == 2)
+                if (parts.Length != 2)
+                    continue;
+
+                try
+                {
                     StringMappings[Convert.ToInt32(parts[0])] = parts[1];
+                }
+                catch (OverflowException)
+                {
+                    try
+                    {
+                        StringMappings[unchecked((int)Convert.ToUInt32(parts[0]))] = parts[1];
+                    }
+                    catch { }
+                }
+                catch { }
             }
         }
     }
