@@ -529,8 +529,8 @@ namespace Reclaimer.Plugins
                         var regNode = new Assimp.Node($"{geomPrefix}{reg.Name}");
                         foreach (var perm in reg.Permutations.Where(p => p.Export))
                         {
-                            var meshStart = meshLookup[(model, perm.MeshRange.Index)];
-                            if (meshStart < 0)
+                            //the mesh range index can be -1 for permutations with no mesh
+                            if (!meshLookup.TryGetValue((model, perm.MeshRange.Index), out var meshStart) || meshStart < 0)
                                 continue;
 
                             var permNode = new Assimp.Node($"{geomPrefix}{perm.Name}");
