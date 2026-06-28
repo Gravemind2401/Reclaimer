@@ -99,6 +99,11 @@ namespace Reclaimer.Blam.Common
                 if (!File.Exists(testPath))
                     return SetResult(null); //not MCC; give up
 
+                //try to find it in any subdirectory of the mod folder
+                testPath = Directory.EnumerateFiles(Path.Combine(sourceDir, ".."), targetName, new EnumerationOptions { RecurseSubdirectories = true, MaxRecursionDepth = 3 }).FirstOrDefault();
+                if (testPath != null)
+                    return SetResult(testPath);
+
                 var steamAppsPath = Path.GetFullPath(Path.Combine(sourceDir, @"..\..\..\..\.."));
                 testPath = Path.Combine(steamAppsPath, "appmanifest_976730.acf");
                 if (!File.Exists(testPath))
