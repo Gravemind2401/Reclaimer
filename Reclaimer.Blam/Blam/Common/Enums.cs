@@ -103,6 +103,8 @@ namespace Reclaimer.Blam.Common
         [CacheMetadata(BlamEngine.Halo1, PC, Anniversary | Mcc)]
         //[BuildString("01.00.01.0563")]
         [BuildString("01.03.43.0000")] //update 1
+        [BuildString("Invader 0.54.2.r4101")] //???
+        [BuildString("01.06.66.HELL")] //???
         MccHalo1,
 
         [CacheMetadata(BlamEngine.Halo2, Xbox, PreBeta)]
