@@ -262,7 +262,7 @@ namespace Reclaimer.Blam.MccHalo4
 
             try
             {
-                sysItems[CacheFactory.ScenarioClass] = items.Values.Single(i => i.ClassCode == CacheFactory.ScenarioClass && i.TagName == cache.Header.ScenarioName);
+                sysItems[CacheFactory.ScenarioClass] = items.Values.Single(i => i.ClassCode == CacheFactory.ScenarioClass && i.TagName.Equals(cache.Header.ScenarioName, StringComparison.OrdinalIgnoreCase));
             }
             catch
             {
