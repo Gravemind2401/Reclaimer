@@ -1,5 +1,10 @@
 import os, inspect
-from PySide2 import QtCore, QtWidgets, QtGui, QtSvg
+
+qt_binding = os.environ.get('QT_PREFERRED_BINDING', 'PySide2')
+if qt_binding == 'PySide6':
+    from PySide6 import QtCore, QtWidgets, QtGui, QtSvg
+else:
+    from PySide2 import QtCore, QtWidgets, QtGui, QtSvg
 
 UI_ROOT = os.path.dirname(inspect.getabsfile(inspect.currentframe()))
 RESOURCE_ROOT = os.path.join(UI_ROOT, 'resources')

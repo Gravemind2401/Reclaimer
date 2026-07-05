@@ -1,3 +1,4 @@
+import os
 import sys
 from pathlib import Path
 from typing import Any, Tuple, cast, Iterator, Optional
@@ -9,8 +10,16 @@ from ..src.Model import *
 from ..src.ImportOptions import *
 from ..src.SceneFilter import *
 
-from PySide2 import QtCore, QtWidgets
-from PySide2.QtUiTools import QUiLoader
+compiled_ui = False
+qt_binding = os.environ.get('QT_PREFERRED_BINDING', 'PySide2')
+if qt_binding == 'PySide6':
+    from PySide6 import QtCore, QtWidgets
+    from PySide6.QtUiTools import QUiLoader
+    from ..ui.widget_ui import Ui_Form as FormLoader
+    compiled_ui = True
+else:
+    from PySide2 import QtCore, QtWidgets
+    from PySide2.QtUiTools import QUiLoader
 
 __all__ = [
     'RmfDialog'
@@ -52,7 +61,10 @@ class CustomTreeItem(QtWidgets.QTreeWidgetItem):
         if self._isRefreshing or column != 0 or role != QtCore.Qt.CheckStateRole:
             return
 
-        self.dataContext.toggle(int(self.checkState(0)))
+        # PySide6 uses .value instead of casting to int
+        check_state = self.checkState(0)
+        int_value = check_state.value if hasattr(check_state, 'value') else int(check_state)
+        self.dataContext.toggle(int_value)
 
         # refresh ancestors
         p = self.parent()
@@ -93,16 +105,21 @@ class RmfDialog(QtWidgets.QDialog):
 
     def __init__(self, filepath: str, parent: Optional[QtWidgets.QWidget] = None, flags: QtCore.Qt.WindowFlags = QtCore.Qt.WindowFlags(), stylesheet: Optional[str] = None):
         super().__init__(parent, flags)
-        loader = QUiLoader()
+        if compiled_ui:
+            container = QtWidgets.QWidget()
+            widget = self._widget = FormLoader()
+            widget.setupUi(container)
+        else:
+            loader = QUiLoader() # this crashes blender on PySide6 for some reason
+            container = widget = self._widget = loader.load(ui.WIDGET_UI_FILE, None)
 
-        widget = self._widget = loader.load(ui.WIDGET_UI_FILE, None)
         widget.toolButton_expandAll.setIcon(ui.create_icon('ExpandAll_16x.png'))
         widget.toolButton_collapseAll.setIcon(ui.create_icon('CollapseGroup_16x.png'))
         widget.toolButton_checkAll.setIcon(ui.create_icon('Checklist_16x.png'))
         widget.toolButton_uncheckAll.setIcon(ui.create_icon('CheckboxList_16x.png'))
 
         if stylesheet:
-            ui.set_stylesheet(widget, stylesheet)
+            ui.set_stylesheet(container, stylesheet)
 
         self._objectTreeWidget = cast(QtWidgets.QTreeWidget, widget.objectTreeWidget)
         self._permTreeWidget = cast(QtWidgets.QTreeWidget, widget.permutationTreeWidget)
@@ -110,7 +127,7 @@ class RmfDialog(QtWidgets.QDialog):
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
-        layout.addWidget(widget)
+        layout.addWidget(container)
 
         self.setWindowIcon(ui.create_icon('Settings_16x.png'))
         self.setWindowTitle(f'RMF Importer {package_version_string} - {Path(filepath).name}')

@@ -1,5 +1,9 @@
+import os
 import bpy
 from bpy.types import Context, Operator
+
+os.environ.setdefault('QT_PREFERRED_BINDING', 'PySide6' if bpy.app.version >= (4, 2) else 'PySide2')
+
 from .Preferences import RmfPreferences
 from .DependencyInstallerOperator import *
 

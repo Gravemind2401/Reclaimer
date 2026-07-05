@@ -110,6 +110,10 @@ class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, Aut
         self.unique_meshes = dict()
         self.mat_assign = list()
 
+        # TODO: OSL material API changed so MaterialBuilder needs to be updated
+        if pymxs.runtime.maxversion()[7] >= 2025:
+            options.IMPORT_MATERIALS = False
+
     def pre_import(self, root_collection: MaxLayer):
         __groups__.clear()
 
@@ -262,7 +266,8 @@ class AutodeskInterface(ViewportInterface[rt.Material, MaxLayer, rt.Matrix3, Aut
             copy.transform = world_transform
             model_state.append_child(copy)
             region_group.addnode(copy)
-            self.mat_assign.append((copy, self.material_builder.create_multi_material(model_state.model)))
+            if self.options.IMPORT_MATERIALS:
+                self.mat_assign.append((copy, self.material_builder.create_multi_material(model_state.model)))
             return
 
         # note 3dsMax uses 1-based indices for triangles, vertices etc

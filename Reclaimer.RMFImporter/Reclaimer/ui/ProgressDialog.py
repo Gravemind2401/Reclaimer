@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import cast, Optional
 
@@ -7,34 +8,46 @@ from ..src.Scene import *
 from ..src.SceneFilter import *
 from ..src.ImportOptions import *
 
-from PySide2 import QtCore, QtWidgets
-from PySide2.QtUiTools import QUiLoader
+compiled_ui = False
+qt_binding = os.environ.get('QT_PREFERRED_BINDING', 'PySide2')
+if qt_binding == 'PySide6':
+    from PySide6 import QtCore, QtWidgets
+    from PySide6.QtUiTools import QUiLoader
+    from ..ui.progress_ui import Ui_Form as FormLoader
+    compiled_ui = True
+else:
+    from PySide2 import QtCore, QtWidgets
+    from PySide2.QtUiTools import QUiLoader
 
 __all__ = [
     'ProgressDialog'
 ]
 
 
-class ProgressDialog(QtWidgets.QDialog, ProgressCallback):
+class ProgressDialog(ProgressCallback, QtWidgets.QDialog):
     _scene: Scene
     _scene_filter: SceneFilter
     _widget: QtWidgets.QWidget
 
     def __init__(self, scene: Scene, filter: SceneFilter, options: ImportOptions, parent: Optional[QtWidgets.QWidget] = None, flags: QtCore.Qt.WindowFlags = QtCore.Qt.WindowFlags(), stylesheet: Optional[str] = None):
-        QtWidgets.QDialog.__init__(self, parent, flags)
         ProgressCallback.__init__(self, filter, options)
+        QtWidgets.QDialog.__init__(self, parent, flags)
 
-        loader = QUiLoader()
-
-        widget = self._widget = loader.load(ui.PROGRESS_UI_FILE, None)
+        if compiled_ui:
+            container = QtWidgets.QWidget()
+            widget = self._widget = FormLoader()
+            widget.setupUi(container)
+        else:
+            loader = QUiLoader() # this crashes blender on PySide6 for some reason
+            container = widget = self._widget = loader.load(ui.PROGRESS_UI_FILE, None)
 
         if stylesheet:
-            ui.set_stylesheet(widget, stylesheet)
+            ui.set_stylesheet(container, stylesheet)
 
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
-        layout.addWidget(widget)
+        layout.addWidget(container)
 
         self.setWindowIcon(ui.create_icon('Settings_16x.png'))
         self.setWindowTitle(Path(scene._source_file).name)

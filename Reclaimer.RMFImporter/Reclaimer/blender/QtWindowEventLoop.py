@@ -11,12 +11,9 @@ __all__ = [
     'QtWindowEventLoop'
 ]
 
-qt_binding = os.environ.get('QT_PREFERRED_BINDING') # correct qt bindings
-if qt_binding:
-    if qt_binding == 'PySide2':
-        from PySide2 import QtWidgets, QtCore
-    if qt_binding == 'PyQt5':
-        from PyQt5 import QtWidgets, QtCore
+qt_binding = os.environ.get('QT_PREFERRED_BINDING', 'PySide2')
+if qt_binding == 'PySide6':
+    from PySide6 import QtWidgets, QtCore
 else:
     from PySide2 import QtWidgets, QtCore
 

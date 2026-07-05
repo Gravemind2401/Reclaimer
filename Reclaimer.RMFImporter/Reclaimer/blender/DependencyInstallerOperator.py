@@ -1,4 +1,4 @@
-import sys, sysconfig, subprocess
+import os, sys, sysconfig, subprocess
 from collections import namedtuple
 from typing import Set
 from bpy.types import Context, Operator
@@ -15,8 +15,15 @@ _pyside_pip_args = None if sys.version_info <= (3, 10) else ['--ignore-requires-
 
 Dependency = namedtuple('Dependency', ['module', 'package', 'name', 'args'])
 
-_dependencies = [Dependency(module='PySide2', package=None, name=None, args=_pyside_pip_args)]
+_dependencies = []
 _dependencies_installed = False
+
+
+qt_binding = os.environ.get('QT_PREFERRED_BINDING', 'PySide2')
+if qt_binding == 'PySide6':
+    _dependencies.append(Dependency(module='PySide6', package=None, name=None, args=None))
+else:
+    _dependencies.append(Dependency(module='PySide2', package=None, name=None, args=_pyside_pip_args))
 
 
 def try_import_dependencies() -> bool:

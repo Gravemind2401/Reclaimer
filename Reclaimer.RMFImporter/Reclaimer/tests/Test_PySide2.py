@@ -1,11 +1,19 @@
 import unittest
-import sys
+import os, sys
 
-from PySide2 import QtWidgets
-from PySide2.QtWidgets import QApplication
+os.environ.setdefault('QT_PREFERRED_BINDING', 'PySide6')
 
 from .. import ui
 from ..ui.RmfDialog import RmfDialog
+
+
+qt_binding = os.environ.get('QT_PREFERRED_BINDING', 'PySide2')
+if qt_binding == 'PySide6':
+    from PySide6 import QtWidgets
+    from PySide6.QtWidgets import QApplication
+else:
+    from PySide2 import QtWidgets
+    from PySide2.QtWidgets import QApplication
 
 FILEPATH = 'Z:\\data\\masterchief.rmf'
 

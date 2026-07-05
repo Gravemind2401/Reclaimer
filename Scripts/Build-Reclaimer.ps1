@@ -60,13 +60,7 @@ function Build-Installer {
 }
 
 function Build-ImportScript {
-    Set-Alias pip "C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python37_64\Scripts\pip.exe"
     Set-Alias blender "C:\Program Files\Blender Foundation\Blender 4.2\blender.exe"
-
-    if (-not (Test-Path (Get-Alias pip).Definition)) {
-        Write-Warning 'Could not build RMF Importer: pip not found!'
-        return
-    }
 
     if (-not (Test-Path (Get-Alias blender).Definition)) {
         Write-Warning 'Could not build RMF Importer: blender not found!'
@@ -96,16 +90,16 @@ function Build-ImportScript {
 
     # prepare wheels for Blender 4.2+
     # need to disable version check because it gets treated as an error
-    pip download pyside2 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --platform win_amd64
-    pip download pyside2 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --platform manylinux1_x86_64
+    py -m pip download pyside6==6.11.1 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --implementation cp --abi cp311 --platform win_amd64
+    py -m pip download pyside6==6.11.1 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --implementation cp --abi cp311 --platform win_arm64
+    py -m pip download pyside6==6.11.1 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --implementation cp --abi cp311 --platform manylinux_2_34_x86_64
+    py -m pip download pyside6==6.11.1 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --implementation cp --abi cp311 --platform macosx_13_0_universal2
 
-    # hack to trick Blender 4.3 into allowing the addon even though PySide2 doesn't offically support Python 3.11
-    $toml = [IO.File]::ReadAllText(".\obj\RMFImporter\Reclaimer\blender_manifest.toml")
-    [IO.File]::WriteAllText(".\obj\RMFImporter\Reclaimer\blender_manifest.toml", ($toml -replace 'cp310-', 'cp310.cp311-'))
-
-    Get-ChildItem ".\obj\RMFImporter\Reclaimer\wheels" `
+    # blender doesnt natively support the macosx _universal2 tag yet so we need to duplicate and rename the wheels to _x86_64 and _arm64 in order to build addons for mac
+    Get-ChildItem ".\obj\RMFImporter\Reclaimer\wheels" -Filter *_universal2.whl `
         | ForEach-Object {
-            Rename-Item $_.FullName ($_.Name -replace 'cp310-', 'cp310.cp311-')
+            Copy-Item $_.FullName ($_.FullName -replace '_universal2.whl', '_x86_64.whl')
+            Copy-Item $_.FullName ($_.FullName -replace '_universal2.whl', '_arm64.whl')
         }
 
     # build extension zips for Blender 4.2+

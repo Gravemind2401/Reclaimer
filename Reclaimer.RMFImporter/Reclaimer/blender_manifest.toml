@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "reclaimer_rmf_importer"
-version = "1.0.4"
+version = "1.0.5"
 name = "RMF format"
 tagline = "Import RMF files created by Reclaimer"
 maintainer = "Gravemind2401"
@@ -17,15 +17,38 @@ license = [
   "SPDX:GPL-3.0-or-later",
 ]
 
-platforms = ["windows-x64", "linux-x64"]
+platforms = ["windows-x64", "windows-arm64", "linux-x64", "macos-arm64", "macos-x64"]
+# Supported platforms: "windows-arm64", "windows-x64", "linux-x64", "macos-arm64", "macos-x64"
 
 # Optional: bundle 3rd party Python modules.
 # https://docs.blender.org/manual/en/dev/advanced/extensions/python_wheels.html
 wheels = [
-  "./wheels/PySide2-5.15.2.1-5.15.2-cp35.cp36.cp37.cp38.cp39.cp310-none-win_amd64.whl",
-  "./wheels/shiboken2-5.15.2.1-5.15.2-cp35.cp36.cp37.cp38.cp39.cp310-none-win_amd64.whl",
-  "./wheels/PySide2-5.15.2.1-5.15.2-cp35.cp36.cp37.cp38.cp39.cp310-abi3-manylinux1_x86_64.whl",
-  "./wheels/shiboken2-5.15.2.1-5.15.2-cp35.cp36.cp37.cp38.cp39.cp310-abi3-manylinux1_x86_64.whl",
+  "./wheels/pyside6-6.11.1-cp310-abi3-macosx_13_0_universal2.whl",
+  "./wheels/pyside6-6.11.1-cp310-abi3-manylinux_2_34_x86_64.whl",
+  "./wheels/pyside6-6.11.1-cp310-abi3-win_amd64.whl",
+  "./wheels/pyside6-6.11.1-cp310-abi3-win_arm64.whl",
+  "./wheels/pyside6_addons-6.11.1-cp310-abi3-macosx_13_0_universal2.whl",
+  "./wheels/pyside6_addons-6.11.1-cp310-abi3-manylinux_2_34_x86_64.whl",
+  "./wheels/pyside6_addons-6.11.1-cp310-abi3-win_amd64.whl",
+  "./wheels/pyside6_addons-6.11.1-cp310-abi3-win_arm64.whl",
+  "./wheels/pyside6_essentials-6.11.1-cp310-abi3-macosx_13_0_universal2.whl",
+  "./wheels/pyside6_essentials-6.11.1-cp310-abi3-manylinux_2_34_x86_64.whl",
+  "./wheels/pyside6_essentials-6.11.1-cp310-abi3-win_amd64.whl",
+  "./wheels/pyside6_essentials-6.11.1-cp310-abi3-win_arm64.whl",
+  "./wheels/shiboken6-6.11.1-cp310-abi3-macosx_13_0_universal2.whl",
+  "./wheels/shiboken6-6.11.1-cp310-abi3-manylinux_2_34_x86_64.whl",
+  "./wheels/shiboken6-6.11.1-cp310-abi3-win_amd64.whl",
+  "./wheels/shiboken6-6.11.1-cp310-abi3-win_arm64.whl",
+
+  # blender doesnt natively support the macosx _universal2 tag yet so we need to duplicate and rename the wheels to _x86_64 and _arm64
+  "./wheels/pyside6-6.11.1-cp310-abi3-macosx_13_0_x86_64.whl",
+  "./wheels/pyside6_addons-6.11.1-cp310-abi3-macosx_13_0_x86_64.whl",
+  "./wheels/pyside6_essentials-6.11.1-cp310-abi3-macosx_13_0_x86_64.whl",
+  "./wheels/shiboken6-6.11.1-cp310-abi3-macosx_13_0_x86_64.whl",
+  "./wheels/pyside6-6.11.1-cp310-abi3-macosx_13_0_arm64.whl",
+  "./wheels/pyside6_addons-6.11.1-cp310-abi3-macosx_13_0_arm64.whl",
+  "./wheels/pyside6_essentials-6.11.1-cp310-abi3-macosx_13_0_arm64.whl",
+  "./wheels/shiboken6-6.11.1-cp310-abi3-macosx_13_0_arm64.whl",
 ]
 
 [permissions]

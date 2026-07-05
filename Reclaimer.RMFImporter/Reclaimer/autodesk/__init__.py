@@ -1,8 +1,16 @@
 import os, inspect
 import pymxs
 from pymxs import runtime as rt
-from PySide2 import QtWidgets
-from PySide2.QtWidgets import QWidget
+
+os.environ.setdefault('QT_PREFERRED_BINDING', 'PySide6' if pymxs.runtime.maxversion()[7] >= 2025 else 'PySide2')
+
+qt_binding = os.environ.get('QT_PREFERRED_BINDING', 'PySide2')
+if qt_binding == 'PySide6':
+    from PySide6 import QtWidgets
+    from PySide6.QtWidgets import QWidget
+else:
+    from PySide2 import QtWidgets
+    from PySide2.QtWidgets import QWidget
 
 from .AutodeskInterface import AutodeskInterface
 from ..src.SceneBuilder import SceneBuilder
