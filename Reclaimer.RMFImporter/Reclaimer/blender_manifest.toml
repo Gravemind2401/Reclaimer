@@ -27,10 +27,6 @@ wheels = [
   "./wheels/pyside6-6.11.1-cp310-abi3-manylinux_2_34_x86_64.whl",
   "./wheels/pyside6-6.11.1-cp310-abi3-win_amd64.whl",
   "./wheels/pyside6-6.11.1-cp310-abi3-win_arm64.whl",
-  "./wheels/pyside6_addons-6.11.1-cp310-abi3-macosx_13_0_universal2.whl",
-  "./wheels/pyside6_addons-6.11.1-cp310-abi3-manylinux_2_34_x86_64.whl",
-  "./wheels/pyside6_addons-6.11.1-cp310-abi3-win_amd64.whl",
-  "./wheels/pyside6_addons-6.11.1-cp310-abi3-win_arm64.whl",
   "./wheels/pyside6_essentials-6.11.1-cp310-abi3-macosx_13_0_universal2.whl",
   "./wheels/pyside6_essentials-6.11.1-cp310-abi3-manylinux_2_34_x86_64.whl",
   "./wheels/pyside6_essentials-6.11.1-cp310-abi3-win_amd64.whl",
@@ -42,11 +38,9 @@ wheels = [
 
   # blender doesnt natively support the macosx _universal2 tag yet so we need to duplicate and rename the wheels to _x86_64 and _arm64
   "./wheels/pyside6-6.11.1-cp310-abi3-macosx_13_0_x86_64.whl",
-  "./wheels/pyside6_addons-6.11.1-cp310-abi3-macosx_13_0_x86_64.whl",
   "./wheels/pyside6_essentials-6.11.1-cp310-abi3-macosx_13_0_x86_64.whl",
   "./wheels/shiboken6-6.11.1-cp310-abi3-macosx_13_0_x86_64.whl",
   "./wheels/pyside6-6.11.1-cp310-abi3-macosx_13_0_arm64.whl",
-  "./wheels/pyside6_addons-6.11.1-cp310-abi3-macosx_13_0_arm64.whl",
   "./wheels/pyside6_essentials-6.11.1-cp310-abi3-macosx_13_0_arm64.whl",
   "./wheels/shiboken6-6.11.1-cp310-abi3-macosx_13_0_arm64.whl",
 ]

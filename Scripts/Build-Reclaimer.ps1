@@ -95,6 +95,10 @@ function Build-ImportScript {
     py -m pip download pyside6==6.11.1 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --implementation cp --abi cp311 --platform manylinux_2_34_x86_64
     py -m pip download pyside6==6.11.1 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --implementation cp --abi cp311 --platform macosx_13_0_universal2
 
+    # remove addons package to save space as it is not used by the importer
+    Get-ChildItem ".\obj\RMFImporter\Reclaimer\wheels" -Filter pyside6_addons*.whl `
+        | Remove-Item
+
     # blender doesnt natively support the macosx _universal2 tag yet so we need to duplicate and rename the wheels to _x86_64 and _arm64 in order to build addons for mac
     Get-ChildItem ".\obj\RMFImporter\Reclaimer\wheels" -Filter *_universal2.whl `
         | ForEach-Object {
