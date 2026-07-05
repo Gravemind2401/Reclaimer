@@ -4,7 +4,8 @@ The importer zip files can be downloaded from the latest release files on the [R
 Which zip file you need to download depends on which application you are using:
 - **Blender**
   - Versions **earlier than 4.2**: Download the zip with `xplatform` in the name
-  - Version **4.2 or later**: Download the zip with `windows` or `linux` in the name, depending on your operating system
+  - Version **4.2 or later**: Download the zip with `windows`, `linux` or `macos` in the name, depending on your operating system
+    - For Windows and Mac, there are separate versions for "x64" (Intel processors) and "arm64" (ARM processors). Make sure you download the correct one for your system.
 - **3DS Max**
   - Download the zip with `xplatform` in the name
 
@@ -36,7 +37,7 @@ These preferences determine the starting settings that the import window will us
 
 ### Version Compatibility
 - Minimum supported version: 4.2
-- Highest tested version: 4.3.2
+- Highest tested version: 5.1
 
 ### Installation Instructions
 1. In Blender go to `Edit > Preferences > Add-ons` and select `Install from Disk...` from the dropdown menu in the top right
@@ -55,7 +56,7 @@ These preferences determine the starting settings that the import window will us
 
 ### Version Compatibility
 - Minimum supported version: 2021
-- Highest tested version: 2021
+- Tested versions: 2021, 2025, 2026
 
 ### Installation Instructions
 In 3ds Max the RMF Importer can either be run via the `Scripting > Run Script...` menu by browsing for the script each time, or you can set it up as an extra menu option under the `Import` menu.
@@ -84,7 +85,8 @@ In 3ds Max the RMF Importer can either be run via the `Scripting > Run Script...
 Currently in 3ds Max the RMF Importer can only be configured via the import window. Changing the settings in the import window is only effective for the duration of that import. The import window will revert to the default settings on each subsequent import.
 
 ### Important Notes
-In 3ds Max the RMF Importer uses OSL shaders for terrain blending and color change maps. These shaders will not preview correctly in the viewport unless you set it to `High Quality` mode.
+- In 3ds Max the RMF Importer uses OSL shaders for terrain blending and color change maps. These shaders will not preview correctly in the viewport unless you set it to `High Quality` mode.
+- In 3ds Max 2025 and higher, material imports are not yet supported. Materials will not be set up even if you enable the "Import Materials" option.
 
 
 # Bitmap Path Settings
