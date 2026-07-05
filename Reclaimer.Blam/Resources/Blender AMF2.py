@@ -633,7 +633,6 @@ def main(context, import_filename, options):
                 bump.location = [-200, -100]
 
                 material.node_tree.links.new(split.inputs['Color'], texture.outputs['Color'])
-                # FIXED: Using 'Green', 'Red', 'Blue' sockets
                 material.node_tree.links.new(invert.inputs['Color'], split.outputs['Green'])
                 material.node_tree.links.new(merge.inputs['Red'], split.outputs['Red'])
                 material.node_tree.links.new(merge.inputs['Green'], invert.outputs['Color'])
