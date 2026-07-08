@@ -99,6 +99,10 @@ function Build-ImportScript {
     Get-ChildItem ".\obj\RMFImporter\Reclaimer\wheels" -Filter pyside6_addons*.whl `
         | Remove-Item
 
+    # the windows pyside6_essentials package has debug files with super long paths that overflow the 260 character path limit when long path is not enabled
+    Get-ChildItem .\obj\RMFImporter\Reclaimer\wheels\ -Filter pyside6_essentials*-win*.whl `
+        | .\Fix-Wheel.ps1
+
     # blender doesnt natively support the macosx _universal2 tag yet so we need to duplicate and rename the wheels to _x86_64 and _arm64 in order to build addons for mac
     Get-ChildItem ".\obj\RMFImporter\Reclaimer\wheels" -Filter *_universal2.whl `
         | ForEach-Object {
