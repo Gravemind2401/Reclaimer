@@ -98,7 +98,7 @@ class FilterGroup(IFilterNode):
     def __init__(self, parent: IFilterNode, scene: Scene, scene_group: SceneGroup, parent_group: Optional['FilterGroup'] = None):
         super().__init__(parent)
         self.label = scene_group.name
-        self.path = f'{parent_group.path}\{self.label}' if parent_group else '.'
+        self.path = f'{parent_group.path}\\{self.label}' if parent_group else '.'
         self.groups = [FilterGroup(self, scene, g, self) for g in scene_group.child_groups]
         self.models = list(self._get_models(scene, scene_group))
 
