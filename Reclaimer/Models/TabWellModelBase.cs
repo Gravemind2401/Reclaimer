@@ -7,32 +7,28 @@ namespace Reclaimer.Models
     {
         public ObservableCollection<TabModel> Children { get; }
 
-        private bool isActive;
         public bool IsActive
         {
-            get => isActive;
-            set => SetProperty(ref isActive, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private TabModel selectedItem;
         public TabModel SelectedItem
         {
-            get => selectedItem;
-            set => SetProperty(ref selectedItem, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private double width;
         public double Width
         {
-            get => width;
-            set => SetProperty(ref width, value, UpdateChildrenWidth);
+            get;
+            set => SetProperty(ref field, value, UpdateChildrenWidth);
         }
 
-        private double height;
         public double Height
         {
-            get => height;
-            set => SetProperty(ref height, value, UpdateChildrenHeight);
+            get;
+            set => SetProperty(ref field, value, UpdateChildrenHeight);
         }
 
         public DelegateCommand<TabModel> CloseTabCommand { get; }

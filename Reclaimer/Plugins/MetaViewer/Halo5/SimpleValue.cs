@@ -10,11 +10,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
     {
         public override string EntryString => Value.ToString();
 
-        private object _value;
         public object Value
         {
-            get => _value;
-            set => SetMetaProperty(ref _value, value);
+            get;
+            set => SetMetaProperty(ref field, value);
         }
 
         public SimpleValue(XmlNode node, IModuleItem item, IMetadataHeader header, DataBlock host, EndianReader reader, long baseAddress, int offset)

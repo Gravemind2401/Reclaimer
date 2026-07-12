@@ -8,32 +8,28 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 {
     public class MultiValue<T> : MetaValue where T : struct
     {
-        private T value1;
         public T Value1
         {
-            get => value1;
-            set => SetMetaProperty(ref value1, value);
+            get;
+            set => SetMetaProperty(ref field, value);
         }
 
-        private T value2;
         public T Value2
         {
-            get => value2;
-            set => SetMetaProperty(ref value2, value);
+            get;
+            set => SetMetaProperty(ref field, value);
         }
 
-        private T value3;
         public T Value3
         {
-            get => value3;
-            set => SetMetaProperty(ref value3, value);
+            get;
+            set => SetMetaProperty(ref field, value);
         }
 
-        private T value4;
         public T Value4
         {
-            get => value4;
-            set => SetMetaProperty(ref value4, value);
+            get;
+            set => SetMetaProperty(ref field, value);
         }
 
         public string[] Labels { get; }

@@ -60,7 +60,7 @@ namespace Reclaimer.Blam.Common
             {
                 indexType = typeof(int);
                 buffer = new byte[vertexCount * sizeof(int)];
-                var indices = MemoryMarshal.Cast<byte, int>(buffer);
+                var indices = MemoryMarshal.Cast<byte, int>(buffer.AsSpan());
                 for (var i = 0; i < indices.Length; i++)
                     indices[i] = i;
             }
@@ -68,7 +68,7 @@ namespace Reclaimer.Blam.Common
             {
                 indexType = typeof(ushort);
                 buffer = new byte[vertexCount * sizeof(ushort)];
-                var indices = MemoryMarshal.Cast<byte, ushort>(buffer);
+                var indices = MemoryMarshal.Cast<byte, ushort>(buffer.AsSpan());
                 for (var i = 0; i < indices.Length; i++)
                     indices[i] = (ushort)i;
             }

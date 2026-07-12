@@ -41,8 +41,7 @@ namespace Reclaimer.Controls
         {
             base.OnClick();
 
-            if (submenuPopup != null)
-                submenuPopup.IsOpen = true;
+            submenuPopup?.IsOpen = true;
         }
     }
 }

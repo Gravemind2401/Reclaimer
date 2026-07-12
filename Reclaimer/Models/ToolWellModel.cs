@@ -8,18 +8,16 @@ namespace Reclaimer.Models
 {
     public class ToolWellModel : TabWellModelBase
     {
-        private bool isWindow;
         public bool IsWindow
         {
-            get => isWindow;
-            internal set => SetProperty(ref isWindow, value);
+            get;
+            internal set => SetProperty(ref field, value);
         }
 
-        private Dock dock;
         public Dock Dock
         {
-            get => dock;
-            internal set => SetProperty(ref dock, value);
+            get;
+            internal set => SetProperty(ref field, value);
         }
 
         protected override void TogglePinStatusExecuted(TabModel _)

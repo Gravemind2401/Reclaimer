@@ -9,11 +9,10 @@ namespace Reclaimer.Models
     {
         public ObservableCollection<DocumentWellModel> Children { get; }
 
-        private Orientation orientation;
         public Orientation Orientation
         {
-            get => orientation;
-            set => SetProperty(ref orientation, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
         public DelegateCommand<DockEventArgs> DockCommand { get; }

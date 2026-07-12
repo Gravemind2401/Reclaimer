@@ -12,11 +12,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         public override string EntryString => Value.ToString();
 
-        private object _value;
         public object Value
         {
-            get => _value;
-            set => SetMetaProperty(ref _value, value);
+            get;
+            set => SetMetaProperty(ref field, value);
         }
 
         public ObservableCollection<Tuple<int, string>> Options { get; }

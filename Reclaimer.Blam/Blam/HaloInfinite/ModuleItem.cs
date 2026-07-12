@@ -93,16 +93,15 @@ namespace Reclaimer.Blam.HaloInfinite
         public long DataOffset => DataOffsetTemp & 0x0000FFFFFFFFFFFF;
         public DataOffsetFlags DataOffsetFlags => (DataOffsetFlags)(DataOffsetTemp >> 48);
 
-        private string tagName;
         public string TagName
         {
             get
             {
-                if (tagName != null)
-                    return tagName;
+                if (field != null)
+                    return field;
 
                 if (GlobalTagId != -1)
-                    tagName = StringMapper.Instance.StringMappings.TryGetValue(GlobalTagId, out var value) ? value : GlobalTagId.ToString();
+                    field = StringMapper.Instance.StringMappings.TryGetValue(GlobalTagId, out var value) ? value : GlobalTagId.ToString();
                 else
                 {
                     var parent = Module.Items[ParentIndex];
@@ -111,10 +110,10 @@ namespace Reclaimer.Blam.HaloInfinite
                         .TakeWhile(i => i != this)
                         .Count();
 
-                    tagName = $"{parent.TagName}.{parent.ClassName}[{childIndex}:resource]";
+                    field = $"{parent.TagName}.{parent.ClassName}[{childIndex}:resource]";
                 }
 
-                return tagName;
+                return field;
             }
         }
 

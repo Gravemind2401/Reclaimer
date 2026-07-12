@@ -13,7 +13,6 @@ namespace Reclaimer.IO
         private readonly Dictionary<long, byte[]> changes;
 
         private long length;
-        private bool isOpen;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TransactionStream"/> class based on the provided source stream.
@@ -37,7 +36,7 @@ namespace Reclaimer.IO
             this.source = source;
             changes = new Dictionary<long, byte[]>();
             length = source.Length;
-            isOpen = true;
+            IsOpen = true;
         }
 
         private bool IsOpen
@@ -47,8 +46,9 @@ namespace Reclaimer.IO
                 if (!source.CanRead)
                     Dispose();
 
-                return isOpen;
+                return field;
             }
+            set;
         }
 
         /// <summary>
@@ -345,7 +345,7 @@ namespace Reclaimer.IO
                 changes.Clear();
             }
 
-            isOpen = false;
+            IsOpen = false;
         }
 
         private static bool IsOverlapping(long a1, long a2, long b1, long b2)

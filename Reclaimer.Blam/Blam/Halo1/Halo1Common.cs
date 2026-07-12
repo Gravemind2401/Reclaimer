@@ -52,12 +52,10 @@ namespace Reclaimer.Blam.Halo1
                     material.AlphaMode = AlphaMode.Clip;
 
                 var diffuse = AppendTextureMapping(shader.BaseMap.Tag, TextureUsage.Diffuse);
-                if (diffuse != null)
-                    diffuse.Tiling = CreateScale(shader.BaseMapUScale, shader.BaseMapVScale);
+                diffuse?.Tiling = CreateScale(shader.BaseMapUScale, shader.BaseMapVScale);
 
                 var detail = AppendTextureMapping(shader.DetailMap.Tag, TextureUsage.DiffuseDetail);
-                if (detail != null)
-                    detail.Tiling = CreateScale(shader.DetailMapScale, shader.DetailMapScale) * CreateScale(1, shader.DetailMapVScale);
+                detail?.Tiling = CreateScale(shader.DetailMapScale, shader.DetailMapScale) * CreateScale(1, shader.DetailMapVScale);
 
                 AppendTextureMapping(shader.ReflectionCubeMap.Tag, TextureUsage.ReflectionCube);
 
@@ -93,20 +91,16 @@ namespace Reclaimer.Blam.Halo1
                 AppendTextureMapping(shader.BaseMap.Tag, TextureUsage.Diffuse);
 
                 var detail = AppendTextureMapping(shader.PrimaryDetailMap.Tag, TextureUsage.DiffuseDetail);
-                if (detail != null)
-                    detail.Tiling = CreateScale(shader.PrimaryDetailMapScale, shader.PrimaryDetailMapScale);
+                detail?.Tiling = CreateScale(shader.PrimaryDetailMapScale, shader.PrimaryDetailMapScale);
 
                 detail = AppendTextureMapping(shader.SecondaryDetailMap.Tag, TextureUsage.DiffuseDetail);
-                if (detail != null)
-                    detail.Tiling = CreateScale(shader.SecondaryDetailMapScale, shader.SecondaryDetailMapScale);
+                detail?.Tiling = CreateScale(shader.SecondaryDetailMapScale, shader.SecondaryDetailMapScale);
 
                 detail = AppendTextureMapping(shader.MicroDetailMap.Tag, TextureUsage.DiffuseDetail);
-                if (detail != null)
-                    detail.Tiling = CreateScale(shader.MicroDetailMapScale, shader.MicroDetailMapScale);
+                detail?.Tiling = CreateScale(shader.MicroDetailMapScale, shader.MicroDetailMapScale);
 
                 var bump = AppendTextureMapping(shader.BumpMap.Tag, TextureUsage.Normal);
-                if (bump != null)
-                    bump.Tiling = CreateScale(shader.BumpMapScale, shader.BumpMapScale);
+                bump?.Tiling = CreateScale(shader.BumpMapScale, shader.BumpMapScale);
 
                 AppendTextureMapping(shader.ReflectionCubeMap.Tag, TextureUsage.ReflectionCube);
             }

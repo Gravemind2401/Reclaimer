@@ -11,57 +11,50 @@ namespace Reclaimer.Models
 
         public bool HasItems => Items.Count > 0;
 
-        private TreeItemModel parent;
         public TreeItemModel Parent
         {
-            get => parent;
-            private set => SetProperty(ref parent, value);
+            get;
+            private set => SetProperty(ref field, value);
         }
 
-        private string header;
         public string Header
         {
-            get => header;
-            set => SetProperty(ref header, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private bool? isChecked;
         public bool? IsChecked
         {
-            get => isChecked;
-            set => SetProperty(ref isChecked, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private bool isExpanded;
         public bool IsExpanded
         {
-            get => isExpanded;
-            set => SetProperty(ref isExpanded, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private int itemType;
         public int ItemType
         {
-            get => itemType;
-            set => SetProperty(ref itemType, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private object tag;
         public object Tag
         {
-            get => tag;
-            set => SetProperty(ref tag, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
         public bool IsVisible => Visibility == Visibility.Visible;
 
-        private Visibility visibility;
         public Visibility Visibility
         {
-            get => visibility;
+            get;
             set
             {
-                if (SetProperty(ref visibility, value))
+                if (SetProperty(ref field, value))
                     RaisePropertyChanged(nameof(IsVisible));
             }
         }

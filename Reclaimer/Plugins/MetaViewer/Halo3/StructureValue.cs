@@ -15,18 +15,16 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         public int BlockSize { get; }
 
-        private int blockCount;
         public int BlockCount
         {
-            get => blockCount;
-            set => SetProperty(ref blockCount, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private long blockAddress;
         public long BlockAddress
         {
-            get => blockAddress;
-            set => SetProperty(ref blockAddress, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
         private int blockIndex;
@@ -44,11 +42,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 
         public ObservableCollection<string> BlockLabels { get; }
 
-        private bool isExpanded;
         public bool IsExpanded
         {
-            get => isExpanded;
-            set => SetProperty(ref isExpanded, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
         public bool HasChildren => Children.Any();

@@ -9,11 +9,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
 {
     public class EnumValue : MetaValue
     {
-        private int _value;
         public int Value
         {
-            get => _value;
-            set => SetMetaProperty(ref _value, value);
+            get;
+            set => SetMetaProperty(ref field, value);
         }
 
         public ObservableCollection<Tuple<int, string>> Options { get; }

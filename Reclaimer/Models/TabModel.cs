@@ -5,60 +5,52 @@ namespace Reclaimer.Models
 {
     public class TabModel : BindableBase, IDisposable
     {
-        private TabOwnerModelBase parent;
         public TabOwnerModelBase Parent
         {
-            get => parent;
-            internal set => SetProperty(ref parent, value);
+            get;
+            internal set => SetProperty(ref field, value);
         }
 
-        private string contentId;
         public string ContentId
         {
-            get => contentId;
-            set => SetProperty(ref contentId, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private bool isPinned;
         public bool IsPinned
         {
-            get => isPinned;
-            set => SetProperty(ref isPinned, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private bool isActive;
         public bool IsActive
         {
-            get => isActive;
-            set => SetProperty(ref isActive, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private string header;
         public string Header
         {
-            get => header;
-            set => SetProperty(ref header, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private string toolTip;
         public string ToolTip
         {
-            get => toolTip;
-            set => SetProperty(ref toolTip, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private double width;
         public double Width
         {
-            get => width;
-            set => SetProperty(ref width, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private double height;
         public double Height
         {
-            get => height;
-            set => SetProperty(ref height, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
         public FrameworkElement Content { get; }

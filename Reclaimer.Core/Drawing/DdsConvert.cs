@@ -996,7 +996,7 @@ namespace Reclaimer.Drawing
                     var indexMode = reader.ReadBits(info.IndexModeBits);
 
                     var endpoints = new BgraColour[info.SubsetCount * 2];
-                    var endpointBytes = MemoryMarshal.Cast<BgraColour, byte>(endpoints);
+                    var endpointBytes = MemoryMarshal.Cast<BgraColour, byte>(endpoints.AsSpan());
                     var channels = info.AlphaBits > 0 ? 4 : 3;
 
                     for (var i = 2; i >= 0; i--) // R, G, B
@@ -1035,8 +1035,8 @@ namespace Reclaimer.Drawing
                     var palette0 = new BgraColour[info.SubsetCount * palette0Size];
                     var palette1 = new BgraColour[info.SubsetCount * palette1Size];
 
-                    var palette0Bytes = MemoryMarshal.Cast<BgraColour, byte>(palette0);
-                    var palette1Bytes = MemoryMarshal.Cast<BgraColour, byte>(palette1);
+                    var palette0Bytes = MemoryMarshal.Cast<BgraColour, byte>(palette0.AsSpan());
+                    var palette1Bytes = MemoryMarshal.Cast<BgraColour, byte>(palette1.AsSpan());
 
                     for (var i = 0; i < info.SubsetCount; i++)
                     {

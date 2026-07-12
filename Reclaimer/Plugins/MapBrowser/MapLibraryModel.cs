@@ -9,11 +9,10 @@ namespace Reclaimer.Plugins.MapBrowser
     {
         public ObservableCollection<MapGroupDisplayModel> MapGroups { get; set; }
 
-        private MapGroupDisplayModel selectedGroup;
         public MapGroupDisplayModel SelectedGroup
         {
-            get => selectedGroup;
-            set => SetProperty(ref selectedGroup, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
         public MapLibraryModel()

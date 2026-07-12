@@ -15,20 +15,18 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 
         private TagReferenceGen5 referenceValue;
 
-        private ComboBoxItem<IModuleItem> selectedItem;
         public ComboBoxItem<IModuleItem> SelectedItem
         {
-            get => selectedItem;
-            set => SetMetaProperty(ref selectedItem, value);
+            get;
+            set => SetMetaProperty(ref field, value);
         }
 
-        private ComboBoxItem<TagClass> selectedClass;
         public ComboBoxItem<TagClass> SelectedClass
         {
-            get => selectedClass;
+            get;
             set
             {
-                if (SetProperty(ref selectedClass, value))
+                if (SetProperty(ref field, value))
                     OnClassChanged();
             }
         }

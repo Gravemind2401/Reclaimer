@@ -11,11 +11,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
     {
         public override string EntryString => Value;
 
-        private string _value;
         public string Value
         {
-            get => _value;
-            set => SetMetaProperty(ref _value, value);
+            get;
+            set => SetMetaProperty(ref field, value);
         }
 
         public StringIdValue(XmlNode node, MetaContext context, EndianReader reader, long baseAddress)

@@ -5,11 +5,10 @@ namespace Reclaimer.Models
 {
     public abstract class TabOwnerModelBase : BindableBase, IDisposable
     {
-        private TabOwnerModelBase parent;
         public TabOwnerModelBase Parent
         {
-            get => parent;
-            set => SetProperty(ref parent, value, OnParentChanged);
+            get;
+            set => SetProperty(ref field, value, OnParentChanged);
         }
 
         private GridLength panelSize = new GridLength(1, GridUnitType.Star);
@@ -19,12 +18,11 @@ namespace Reclaimer.Models
             set => SetProperty(ref panelSize, value);
         }
 
-        private double minPanelSize = 65d;
         public double MinPanelSize
         {
-            get => minPanelSize;
-            set => SetProperty(ref minPanelSize, value);
-        }
+            get;
+            set => SetProperty(ref field, value);
+        } = 65d;
 
         protected bool SetProperty<T>(ref T storage, T value, Action<T, T> onChanged, [CallerMemberName] string propertyName = null)
         {

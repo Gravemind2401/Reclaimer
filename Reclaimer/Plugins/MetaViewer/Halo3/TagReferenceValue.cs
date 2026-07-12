@@ -12,18 +12,16 @@ namespace Reclaimer.Plugins.MetaViewer.Halo3
     {
         private TagReference referenceValue;
 
-        private ComboBoxItem<IIndexItem> selectedItem;
         public ComboBoxItem<IIndexItem> SelectedItem
         {
-            get => selectedItem;
-            set => SetMetaProperty(ref selectedItem, value);
+            get;
+            set => SetMetaProperty(ref field, value);
         }
 
-        private ComboBoxItem selectedClass;
         public ComboBoxItem SelectedClass
         {
-            get => selectedClass;
-            set => SetProperty(ref selectedClass, value, OnClassChanged);
+            get;
+            set => SetProperty(ref field, value, OnClassChanged);
         }
 
         public override string EntryString => Utils.GetFileName(SelectedItem?.Context?.TagName);

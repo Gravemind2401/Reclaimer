@@ -9,11 +9,10 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
 {
     public class ArrayValue : MetaValue, IExpandable
     {
-        private bool isExpanded;
         public bool IsExpanded
         {
-            get => isExpanded;
-            set => SetProperty(ref isExpanded, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
         public bool HasChildren => Children.Any();
