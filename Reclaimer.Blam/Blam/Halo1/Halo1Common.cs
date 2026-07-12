@@ -68,7 +68,7 @@ namespace Reclaimer.Blam.Halo1
                 //in order of RGBA
                 var usages = shader.Flags.HasFlag(ShaderModelFlags.MultipurposeMapUsesOGXboxOrder)
                     ? new[] { TextureUsage.Specular, TextureUsage.SelfIllumination, TextureUsage.ColorChange, TextureUsage.Other }
-                    : new[] { TextureUsage.Other, TextureUsage.SelfIllumination, TextureUsage.Specular, TextureUsage.ColorChange };
+                    : [TextureUsage.Other, TextureUsage.SelfIllumination, TextureUsage.Specular, TextureUsage.ColorChange];
 
                 for (var i = 0; i < 4; i++)
                 {

@@ -43,7 +43,7 @@ namespace Reclaimer.Saber3D.Halo1X
                 //can also be zero in compressed files that only have one chunk
                 var nameLength = reader.ReadInt32();
 
-                isCompressed = nameLength <= 0 || nameLength > 1024;
+                isCompressed = nameLength is <= 0 or > 1024;
 
                 if (isCompressed)
                 {

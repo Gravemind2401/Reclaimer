@@ -52,7 +52,7 @@ namespace Reclaimer.Geometry.Vectors
         static int IBufferable.PackSize => packSize;
         static int IBufferable.SizeOf => structureSize;
         static EulerAngles IBufferable<EulerAngles>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new EulerAngles(MemoryMarshal.Cast<byte, float>(buffer));
-        readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<float, byte>(new[] { Yaw, Pitch, Roll }).CopyTo(buffer);
+        readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<float, byte>([Yaw, Pitch, Roll]).CopyTo(buffer);
 
         #endregion
 

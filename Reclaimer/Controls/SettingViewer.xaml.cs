@@ -23,7 +23,7 @@ namespace Reclaimer.Controls
         {
             var defaultPlugin = Substrate.AllPlugins.First();
             var plugins = Substrate.AllPlugins
-                .Where(p => p.settings != null)
+                .Where(p => p.SettingsObject != null)
                 .OrderByDescending(p => p == defaultPlugin)
                 .ThenBy(p => p.Name)
                 .ToList();
@@ -38,7 +38,7 @@ namespace Reclaimer.Controls
             var assembly = plugin.GetType().Assembly;
             var origin = System.IO.Path.GetFileName(new Uri(assembly.Location).LocalPath);
             txtVersion.Text = $"{origin} Version {assembly.GetName().Version}";
-            propGrid.SelectedObject = plugin.settings;
+            propGrid.SelectedObject = plugin.SettingsObject;
         }
 
         void IDisposable.Dispose() => App.Settings.Save();

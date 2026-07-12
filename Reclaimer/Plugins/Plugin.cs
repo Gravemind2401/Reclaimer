@@ -76,7 +76,7 @@ namespace Reclaimer.Plugins
 
     public abstract class Plugin
     {
-        internal readonly List<LogEntry> logEntries = new List<LogEntry>();
+        internal readonly List<LogEntry> LogEntries = [];
 
         /// <summary>
         /// Creates a new instance of the <see cref="Plugin"/> class.
@@ -89,7 +89,7 @@ namespace Reclaimer.Plugins
 
         internal DateTime WorkingStatusTime { get; private set; }
 
-        internal object settings { get; set; }
+        internal object SettingsObject { get; set; }
 
         private string workingStatus;
         internal string WorkingStatus
@@ -140,7 +140,7 @@ namespace Reclaimer.Plugins
         protected T LoadSettings<T>() where T : new()
         {
             var result = Substrate.GetPluginSettings<T>(Key);
-            settings = result;
+            SettingsObject = result;
             return result;
         }
 
@@ -234,7 +234,7 @@ namespace Reclaimer.Plugins
         protected internal void LogOutput(string message)
         {
             var entry = new LogEntry(DateTime.Now, message);
-            logEntries.Add(entry);
+            LogEntries.Add(entry);
             Substrate.LogOutput(this, entry, false);
         }
 
@@ -254,7 +254,7 @@ namespace Reclaimer.Plugins
         protected internal void LogError(string message, Exception e, bool focusOutput)
         {
             var entry = new LogEntry(DateTime.Now, $"{message}{Environment.NewLine}{e}");
-            logEntries.Add(entry);
+            LogEntries.Add(entry);
             Substrate.LogOutput(this, entry, focusOutput);
         }
 
@@ -263,7 +263,7 @@ namespace Reclaimer.Plugins
         /// </summary>
         protected internal void ClearLog()
         {
-            logEntries.Clear();
+            LogEntries.Clear();
             Substrate.ClearLogOutput(this);
         }
     }

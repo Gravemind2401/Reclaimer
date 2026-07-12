@@ -19,7 +19,7 @@ namespace Reclaimer.Plugins
             internal override string Key => nameof(Reclaimer);
             public override string Name => nameof(Reclaimer);
 
-            public override void Initialise() => settings = App.UserSettings;
+            public override void Initialise() => SettingsObject = App.UserSettings;
         }
 
         private static readonly DefaultPlugin defaultPlugin = new();

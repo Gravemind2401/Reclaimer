@@ -97,15 +97,17 @@ namespace Reclaimer.Models
                 }
             }
 
-            var newSplit = new SplitPanelModel();
-            newSplit.Orientation = e.TargetDock == DockTarget.DockLeft || e.TargetDock == DockTarget.DockRight
-                ? Orientation.Horizontal
-                : Orientation.Vertical;
+            var newSplit = new SplitPanelModel
+            {
+                Orientation = e.TargetDock is DockTarget.DockLeft or DockTarget.DockRight
+                    ? Orientation.Horizontal
+                    : Orientation.Vertical
+            };
 
             var existing = Content;
             Content = null;
 
-            if (e.TargetDock == DockTarget.DockTop || e.TargetDock == DockTarget.DockLeft)
+            if (e.TargetDock is DockTarget.DockTop or DockTarget.DockLeft)
             {
                 newSplit.Item1 = newGroup;
                 newSplit.Item2 = existing;

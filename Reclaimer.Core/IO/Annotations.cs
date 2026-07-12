@@ -170,7 +170,7 @@ namespace Reclaimer.IO
         internal static void ThrowIfInvalidPropertyType(Type type)
         {
             var typeCode = Type.GetTypeCode(type);
-            if (typeCode < TypeCode.SByte || typeCode > TypeCode.UInt64)
+            if (typeCode is < TypeCode.SByte or > TypeCode.UInt64)
                 throw new InvalidDataException($"{nameof(DataLengthAttribute)} is not valid for properties stored as {type.Name}.");
         }
     }
@@ -297,7 +297,7 @@ namespace Reclaimer.IO
         internal static void ThrowIfInvalidPropertyType(Type type)
         {
             var typeCode = Type.GetTypeCode(type);
-            if (typeCode < TypeCode.SByte || typeCode > TypeCode.Double)
+            if (typeCode is < TypeCode.SByte or > TypeCode.Double)
                 throw new InvalidDataException($"{nameof(VersionNumberAttribute)} is not valid for properties stored as {type.Name}.");
         }
     }

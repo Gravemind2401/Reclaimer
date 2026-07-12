@@ -466,7 +466,7 @@ namespace Reclaimer.Controls.DirectX
             {
                 foreach (var child in parent.Items)
                 {
-                    child.Visibility = string.IsNullOrEmpty(searchTerm) || child.Header.ToUpperInvariant().Contains(searchTerm.ToUpperInvariant())
+                    child.Visibility = string.IsNullOrEmpty(searchTerm) || child.Header.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
                         ? Visibility.Visible
                         : Visibility.Collapsed;
                 }

@@ -86,9 +86,9 @@ namespace Reclaimer.Controls
 
             var selection = key == string.Empty
                 ? Substrate.AllPlugins
-                : new[] { Substrate.GetPlugin(key) };
+                : [Substrate.GetPlugin(key)];
 
-            var output = selection.SelectMany(p => p.logEntries)
+            var output = selection.SelectMany(p => p.LogEntries)
                 .OrderBy(p => p.Timestamp)
                 .Select(p => p.Message);
 
@@ -105,7 +105,7 @@ namespace Reclaimer.Controls
 
             var selection = key == string.Empty
                 ? Substrate.AllPlugins
-                : new[] { Substrate.GetPlugin(key) };
+                : [Substrate.GetPlugin(key)];
 
             foreach (var p in selection)
                 p.ClearLog();

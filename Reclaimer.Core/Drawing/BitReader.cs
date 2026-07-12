@@ -44,8 +44,8 @@
 
         public byte ReadBits(byte bits)
         {
-            if (bits < 0 || bits > 8)
-                throw new ArgumentOutOfRangeException(nameof(bits));
+            ArgumentOutOfRangeException.ThrowIfNegative(bits);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(bits, 8);
 
             if (bits == 0)
                 return 0;

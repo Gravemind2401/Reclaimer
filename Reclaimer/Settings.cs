@@ -20,7 +20,7 @@ namespace Reclaimer
             Formatting = Formatting.Indented,
             NullValueHandling = NullValueHandling.Ignore,
             DefaultValueHandling = DefaultValueHandling.Ignore,
-            Converters = new[] { new Newtonsoft.Json.Converters.StringEnumConverter() }
+            Converters = [new Newtonsoft.Json.Converters.StringEnumConverter()]
         };
 
         //this is renamed for compatability with older versions

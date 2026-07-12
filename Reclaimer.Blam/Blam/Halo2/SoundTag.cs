@@ -67,7 +67,7 @@ namespace Reclaimer.Blam.Halo2
 
         public override GameSound GetContent()
         {
-            if (CompressionCodec != CompressionCodec.WMA && CompressionCodec != CompressionCodec.XboxAdpcm)
+            if (CompressionCodec is not (CompressionCodec.WMA or CompressionCodec.XboxAdpcm))
                 throw new NotSupportedException("Unsupported Codec/Encoding");
 
             var resourceGestalt = Cache.TagIndex.GetGlobalTag("ugh!").ReadMetadata<SoundCacheFileGestaltTag>();

@@ -78,15 +78,12 @@ namespace Reclaimer.IO
         {
             get
             {
-                if (!IsOpen)
-                    throw new ObjectDisposedException(null);
-
+                ObjectDisposedException.ThrowIf(!IsOpen, this);
                 return source.Position;
             }
             set
             {
-                if (!IsOpen)
-                    throw new ObjectDisposedException(null);
+                ObjectDisposedException.ThrowIf(!IsOpen, this);
 
                 if (value < 0)
                     throw new ArgumentOutOfRangeException(nameof(value), "Value must be greater than or equal to zero.");
@@ -122,8 +119,7 @@ namespace Reclaimer.IO
         /// </returns>
         public override int Read(byte[] buffer, int offset, int count)
         {
-            if (!CanRead)
-                throw new ObjectDisposedException(null);
+            ObjectDisposedException.ThrowIf(!CanRead, this);
 
             var start = Position;
             count = (int)Math.Min(count, Length - start);
@@ -170,8 +166,7 @@ namespace Reclaimer.IO
         /// </returns>
         public override long Seek(long offset, SeekOrigin origin)
         {
-            if (!IsOpen)
-                throw new ObjectDisposedException(null);
+            ObjectDisposedException.ThrowIf(!IsOpen, this);
 
             if (!CanSeek)
                 throw new InvalidOperationException("Base stream is not seekable");
@@ -209,11 +204,8 @@ namespace Reclaimer.IO
         /// </param>
         public override void SetLength(long value)
         {
-            if (length < 0)
-                throw new ArgumentOutOfRangeException(nameof(value));
-
-            if (!IsOpen)
-                throw new ObjectDisposedException(null);
+            ArgumentOutOfRangeException.ThrowIfNegative(value);
+            ObjectDisposedException.ThrowIf(!IsOpen, this);
 
             length = value;
         }
@@ -232,8 +224,7 @@ namespace Reclaimer.IO
         /// </param>
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if (!CanWrite)
-                throw new ObjectDisposedException(null);
+            ObjectDisposedException.ThrowIf(!CanWrite, this);
 
             byte[] patch;
             long patchOffset;
@@ -310,8 +301,7 @@ namespace Reclaimer.IO
         /// </summary>
         public void DiscardChanges()
         {
-            if (!IsOpen)
-                throw new ObjectDisposedException(null);
+            ObjectDisposedException.ThrowIf(!IsOpen, this);
 
             changes.Clear();
             length = source.Length;
@@ -328,8 +318,7 @@ namespace Reclaimer.IO
         /// </summary>
         public void ApplyChanges(Stream destination)
         {
-            if (!IsOpen)
-                throw new ObjectDisposedException(null);
+            ObjectDisposedException.ThrowIf(!IsOpen, this);
 
             if (!destination.CanSeek)
                 throw new ArgumentException("Destination is not seekable.");

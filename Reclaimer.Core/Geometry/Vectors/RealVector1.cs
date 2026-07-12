@@ -22,7 +22,7 @@ namespace Reclaimer.Geometry.Vectors
         static int IBufferable.PackSize => packSize;
         static int IBufferable.SizeOf => structureSize;
         static RealVector1 IBufferable<RealVector1>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new RealVector1(MemoryMarshal.Cast<byte, float>(buffer));
-        readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<float, byte>(new[] { X }).CopyTo(buffer);
+        readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<float, byte>([X]).CopyTo(buffer);
 
         #endregion
 

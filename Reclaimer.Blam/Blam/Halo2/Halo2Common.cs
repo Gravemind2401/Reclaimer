@@ -487,7 +487,7 @@ namespace Reclaimer.Blam.Halo2
                         }
                         else if (section.GeometryClassification == GeometryClassification.Skinned)
                         {
-                            if (section.NodesPerVertex == 2 || section.NodesPerVertex == 4)
+                            if (section.NodesPerVertex is 2 or 4)
                                 reader.ReadInt16();
 
                             var nodes = Enumerable.Range(0, 4).Select(i => section.NodesPerVertex > i ? reader.ReadByte() : byte.MinValue).ToList();
@@ -588,7 +588,7 @@ namespace Reclaimer.Blam.Halo2
                     }
                     else if (section.GeometryClassification == GeometryClassification.Skinned)
                     {
-                        if (section.NodesPerVertex == 2 || section.NodesPerVertex == 4)
+                        if (section.NodesPerVertex is 2 or 4)
                             reader.ReadInt16();
 
                         var nodes = Enumerable.Range(0, 4).Select(i => section.NodesPerVertex > i ? reader.ReadByte() : byte.MinValue).ToList();

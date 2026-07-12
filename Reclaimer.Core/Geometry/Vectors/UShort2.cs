@@ -44,7 +44,7 @@ namespace Reclaimer.Geometry.Vectors
         static int IBufferable.PackSize => packSize;
         static int IBufferable.SizeOf => structureSize;
         static UShort2 IBufferable<UShort2>.ReadFromBuffer(ReadOnlySpan<byte> buffer) => new UShort2(MemoryMarshal.Cast<byte, ushort>(buffer));
-        readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<ushort, byte>(new[] { X, Y }).CopyTo(buffer);
+        readonly void IBufferable.WriteToBuffer(Span<byte> buffer) => MemoryMarshal.Cast<ushort, byte>([X, Y]).CopyTo(buffer);
 
         #endregion
 

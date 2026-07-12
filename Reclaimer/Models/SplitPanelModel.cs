@@ -57,9 +57,9 @@ namespace Reclaimer.Models
 
         public SplitPanelModel(Dock dock, TabWellModelBase content) : this()
         {
-            Orientation = dock == Dock.Left || dock == Dock.Right ? Orientation.Horizontal : Orientation.Vertical;
+            Orientation = dock is Dock.Left or Dock.Right ? Orientation.Horizontal : Orientation.Vertical;
 
-            if (dock == Dock.Left || dock == Dock.Top)
+            if (dock is Dock.Left or Dock.Top)
             {
                 Item1 = content;
                 Item1.PanelSize = new GridLength(dock == Dock.Left ? content.Width : content.Height);

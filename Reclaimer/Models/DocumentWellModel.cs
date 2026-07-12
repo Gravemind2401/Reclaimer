@@ -48,7 +48,7 @@ namespace Reclaimer.Models
         {
             if (e.TargetDock == DockTarget.Center)
                 base.DockExecuted(e);
-            else if (e.TargetDock == DockTarget.SplitLeft || e.TargetDock == DockTarget.SplitTop || e.TargetDock == DockTarget.SplitRight || e.TargetDock == DockTarget.SplitBottom)
+            else if (e.TargetDock is DockTarget.SplitLeft or DockTarget.SplitTop or DockTarget.SplitRight or DockTarget.SplitBottom)
                 InnerDock(e);
             else
                 OuterDock(e);
@@ -58,10 +58,10 @@ namespace Reclaimer.Models
         {
             var index = ParentPanel.Children.IndexOf(this);
 
-            if (e.TargetDock == DockTarget.SplitRight || e.TargetDock == DockTarget.SplitBottom)
+            if (e.TargetDock is DockTarget.SplitRight or DockTarget.SplitBottom)
                 index++;
 
-            var orientation = e.TargetDock == DockTarget.SplitLeft || e.TargetDock == DockTarget.SplitRight
+            var orientation = e.TargetDock is DockTarget.SplitLeft or DockTarget.SplitRight
                 ? Orientation.Horizontal
                 : Orientation.Vertical;
 
@@ -108,17 +108,19 @@ namespace Reclaimer.Models
                 }
             }
 
-            var newSplit = new SplitPanelModel();
-            newSplit.Orientation = e.TargetDock == DockTarget.DockLeft || e.TargetDock == DockTarget.DockRight
-                ? Orientation.Horizontal
-                : Orientation.Vertical;
+            var newSplit = new SplitPanelModel
+            {
+                Orientation = e.TargetDock is DockTarget.DockLeft or DockTarget.DockRight
+                    ? Orientation.Horizontal
+                    : Orientation.Vertical
+            };
 
             if (ParentPanel.ParentBranch == null)
                 ParentContainer.Content = newSplit;
             else
                 ParentPanel.ParentBranch.Replace(ParentPanel, newSplit);
 
-            if (e.TargetDock == DockTarget.DockTop || e.TargetDock == DockTarget.DockLeft)
+            if (e.TargetDock is DockTarget.DockTop or DockTarget.DockLeft)
             {
                 newSplit.Item1 = newGroup;
                 newSplit.Item2 = ParentPanel;

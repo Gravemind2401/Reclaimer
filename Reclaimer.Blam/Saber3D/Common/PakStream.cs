@@ -54,7 +54,7 @@ namespace Reclaimer.Saber3D.Common
             }
 
             //make corrections for x360 files
-            if (chunks.Any(c => c.UncompressedSize < 0 || c.UncompressedSize > 0x007FFFFF))
+            if (chunks.Any(c => c.UncompressedSize is < 0 or > 0x007FFFFF))
             {
                 IsX360 = true;
 

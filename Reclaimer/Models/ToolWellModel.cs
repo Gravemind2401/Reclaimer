@@ -119,7 +119,7 @@ namespace Reclaimer.Models
             var newSplit = new SplitPanelModel();
 
             double remainingSize;
-            if (e.TargetDock == DockTarget.SplitLeft || e.TargetDock == DockTarget.SplitRight)
+            if (e.TargetDock is DockTarget.SplitLeft or DockTarget.SplitRight)
             {
                 newSplit.Orientation = Orientation.Horizontal;
                 remainingSize = Width - e.DesiredSize;
@@ -131,7 +131,7 @@ namespace Reclaimer.Models
             }
 
             ParentBranch.Replace(this, newSplit);
-            if (e.TargetDock == DockTarget.SplitTop || e.TargetDock == DockTarget.SplitLeft)
+            if (e.TargetDock is DockTarget.SplitTop or DockTarget.SplitLeft)
             {
                 newSplit.Item1 = newGroup;
                 newSplit.Item2 = this;
