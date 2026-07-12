@@ -2,7 +2,7 @@
 {
     public partial class DynamicWrite
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Enums01(ByteOrder order)
@@ -10,7 +10,7 @@
             Enums01<EnumClass01>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Enums01(ByteOrder order)

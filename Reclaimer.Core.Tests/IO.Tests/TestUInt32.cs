@@ -3,7 +3,7 @@
     [TestClass]
     public class TestUInt32
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void UInt32Same(ByteOrder order)
@@ -19,7 +19,7 @@
                 writer.Write(unchecked((uint)0xFFFFFFFF));
                 writer.Write((uint)rand);
 
-                Assert.AreEqual(stream.Length, 16);
+                Assert.AreEqual(16, stream.Length);
 
                 stream.Position = 0;
                 Assert.AreEqual(unchecked((uint)0x01000000), reader.PeekUInt32());
@@ -34,7 +34,7 @@
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian, ByteOrder.BigEndian)]
         [DataRow(ByteOrder.BigEndian, ByteOrder.LittleEndian)]
         public void UInt32Mixed(ByteOrder readOrder, ByteOrder writeOrder)
@@ -53,7 +53,7 @@
                 writer.Write(unchecked((uint)0xFF00FF00));
                 writer.Write((uint)rand);
 
-                Assert.AreEqual(stream.Length, 16);
+                Assert.AreEqual(16, stream.Length);
 
                 stream.Position = 0;
                 Assert.AreEqual(unchecked((uint)0x00000001), reader.PeekUInt32());

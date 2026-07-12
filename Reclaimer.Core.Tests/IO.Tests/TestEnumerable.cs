@@ -12,7 +12,7 @@
             return result;
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void ReadEnumerable(ByteOrder order)
@@ -35,7 +35,7 @@
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void WriteEnumerable(ByteOrder order)

@@ -3,7 +3,7 @@
     [TestClass]
     public class TestDecimal
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void DecimalSame(ByteOrder order)
@@ -23,7 +23,7 @@
                 writer.Write(rands[2]);
                 writer.Write(rands[3]);
 
-                Assert.AreEqual(stream.Length, 64);
+                Assert.AreEqual(64, stream.Length);
 
                 stream.Position = 0;
                 Assert.AreEqual(rands[0], reader.PeekDecimal());

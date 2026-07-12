@@ -9,7 +9,7 @@ namespace Reclaimer.Blam.Tests.Halo3
         [DataRow("deadlock")]
         [DataRow("riverworld")]
         [DataRow("snowbound")]
-        [DataTestMethod]
+        [TestMethod]
         public void Halo3Beta(string map) => TestMap(Directories.ConsoleHalo3Beta, map);
 
         [DataRow("mainmenu")]
@@ -24,7 +24,7 @@ namespace Reclaimer.Blam.Tests.Halo3
         [DataRow("110_hc")]
         [DataRow("120_halo")]
         [DataRow("130_epilogue")]
-        [DataTestMethod]
+        [TestMethod]
         public void Halo3Campaign(string map) => TestMap(Directories.ConsoleHalo3, map);
 
         [DataRow("chill")]
@@ -38,7 +38,7 @@ namespace Reclaimer.Blam.Tests.Halo3
         [DataRow("shrine")]
         [DataRow("snowbound")]
         [DataRow("zanzibar")]
-        [DataTestMethod]
+        [TestMethod]
         public void Halo3Multiplayer(string map) => TestMap(Directories.ConsoleHalo3Multiplayer, map);
 
         [DataRow("mainmenu")]
@@ -67,7 +67,7 @@ namespace Reclaimer.Blam.Tests.Halo3
         [DataRow("spacecamp")]
         [DataRow("warehouse")]
         [DataRow("zanzibar")]
-        [DataTestMethod]
+        [TestMethod]
         public void Halo3MapPack(string map) => TestMap(Directories.ConsoleHalo3Multiplayer, map);
 
         [DataRow("mainmenu")]
@@ -82,7 +82,7 @@ namespace Reclaimer.Blam.Tests.Halo3
         [DataRow("sc130")]
         [DataRow("sc140")]
         [DataRow("sc150")]
-        [DataTestMethod]
+        [TestMethod]
         public void Halo3Odst(string map) => TestMap(Directories.ConsoleHalo3ODST, map);
 
         private static void TestMap(string folder, string map)

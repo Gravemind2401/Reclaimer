@@ -3,7 +3,7 @@
     [TestClass]
     public partial class DynamicRead
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_ClassBasic01(ByteOrder order)
@@ -11,7 +11,7 @@
             Basic01<BasicClass01>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_ClassBasic01(ByteOrder order)
@@ -19,7 +19,7 @@
             Basic01<BasicClass01_Builder>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_ClassBasic02(ByteOrder order)
@@ -27,7 +27,7 @@
             Basic02<BasicClass02>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_ClassBasic02(ByteOrder order)
@@ -35,7 +35,7 @@
             Basic02<BasicClass02_Builder>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_StructBasic01(ByteOrder order)
@@ -43,7 +43,7 @@
             Basic01<BasicStruct01>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_StructBasic01(ByteOrder order)
@@ -51,7 +51,7 @@
             Basic01<BasicStruct01_Builder>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_StructBasic02(ByteOrder order)
@@ -59,7 +59,7 @@
             Basic02<BasicStruct02>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_StructBasic02(ByteOrder order)
@@ -67,7 +67,7 @@
             Basic02<BasicStruct02_Builder>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Factory01(ByteOrder order)
@@ -75,7 +75,7 @@
             Factory01<FactoryClass01>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Factory01(ByteOrder order)

@@ -17,7 +17,7 @@ namespace Reclaimer.Blam.Tests.MccHalo3
         [DataRow("110_hc")]
         [DataRow("120_halo")]
         [DataRow("130_epilogue")]
-        [DataTestMethod]
+        [TestMethod]
         public void MccHalo3Campaign(string map) => TestMap(Directories.MccHalo3, map);
 
         [DataRow("armory")]
@@ -44,7 +44,7 @@ namespace Reclaimer.Blam.Tests.MccHalo3
         [DataRow("spacecamp")]
         [DataRow("warehouse")]
         [DataRow("zanzibar")]
-        [DataTestMethod]
+        [TestMethod]
         public void MccHalo3Multiplayer(string map) => TestMap(Directories.MccHalo3, map);
 
         private static void TestMap(string folder, string map)

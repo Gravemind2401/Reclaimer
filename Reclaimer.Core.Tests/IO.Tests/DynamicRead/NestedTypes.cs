@@ -4,7 +4,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
 {
     public partial class DynamicRead
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Nested01(ByteOrder order)
@@ -12,7 +12,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
             Nested01<OuterClass01, InnerClass01, InnerStruct01>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Nested01(ByteOrder order)
@@ -20,7 +20,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
             Nested01<OuterClass01_Builder, InnerClass01_Builder, InnerStruct01_Builder>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Nested02(ByteOrder order)
@@ -28,7 +28,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
             Nested02<OuterStruct01, InnerClass01, InnerStruct01>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Nested02(ByteOrder order)

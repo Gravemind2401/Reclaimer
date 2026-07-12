@@ -2,7 +2,7 @@
 {
     public partial class DynamicRead
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_ByteOrder01(ByteOrder order)
@@ -10,7 +10,7 @@
             ByteOrder01<ByteOrderClass01>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_ByteOrder01(ByteOrder order)
@@ -18,7 +18,7 @@
             ByteOrder01<ByteOrderClass01_Builder>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_ByteOrder02(ByteOrder order)
@@ -26,7 +26,7 @@
             ByteOrder02<ByteOrderClass02>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_ByteOrder02(ByteOrder order)

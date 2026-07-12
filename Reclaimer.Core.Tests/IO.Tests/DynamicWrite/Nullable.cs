@@ -2,7 +2,7 @@
 {
     public partial class DynamicWrite
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Nullable01(ByteOrder order)
@@ -10,7 +10,7 @@
             Nullable01<NullablesClass01>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Nullable01(ByteOrder order)
@@ -18,7 +18,7 @@
             Nullable01<NullablesClass01_Builder>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Nullable02(ByteOrder order)
@@ -26,7 +26,7 @@
             Nullable02<NullablesClass02>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Nullable02(ByteOrder order)
@@ -101,7 +101,7 @@
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         private static void Nullable02<T>(ByteOrder order)

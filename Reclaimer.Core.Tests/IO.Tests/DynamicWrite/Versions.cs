@@ -2,7 +2,7 @@
 {
     public partial class DynamicWrite
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Versions01(ByteOrder order)
@@ -10,7 +10,7 @@
             Versions01<VersionedClass01>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Versions02(ByteOrder order)
@@ -18,7 +18,7 @@
             Versions02<VersionedClass02b>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Versions03(ByteOrder order)
@@ -26,7 +26,7 @@
             Versions03<VersionedClass03>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Versions04(ByteOrder order)
@@ -34,7 +34,7 @@
             Versions04<VersionedClass04>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Versions05(ByteOrder order)
@@ -42,7 +42,7 @@
             Versions05<VersionedClass05>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Versions01(ByteOrder order)
@@ -50,7 +50,7 @@
             Versions01<VersionedClass01_Builder>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Versions02(ByteOrder order)
@@ -58,7 +58,7 @@
             Versions02<VersionedClass02b_Builder>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Versions03(ByteOrder order)
@@ -66,7 +66,7 @@
             Versions03<VersionedClass03_Builder>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Versions04(ByteOrder order)
@@ -74,7 +74,7 @@
             Versions04<VersionedClass04_Builder>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Versions05(ByteOrder order)

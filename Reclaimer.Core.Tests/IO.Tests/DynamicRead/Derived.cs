@@ -4,7 +4,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
 {
     public partial class DynamicRead
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Derived01(ByteOrder order)
@@ -39,7 +39,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Derived02(ByteOrder order)
@@ -74,7 +74,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Derived03(ByteOrder order)

@@ -3,7 +3,7 @@
     [TestClass]
     public class TestGuid
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void GuidSame(ByteOrder order)
@@ -37,7 +37,7 @@
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian, ByteOrder.BigEndian)]
         [DataRow(ByteOrder.BigEndian, ByteOrder.LittleEndian)]
         public void GuidMixed(ByteOrder readOrder, ByteOrder writeOrder)

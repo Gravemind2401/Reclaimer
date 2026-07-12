@@ -3,7 +3,7 @@
     [TestClass]
     public class TestInt64
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Int64Same(ByteOrder order)
@@ -19,7 +19,7 @@
                 writer.Write(unchecked((long)0xFFFFFFFFFFFFFFFF));
                 writer.Write((long)rand);
 
-                Assert.AreEqual(stream.Length, 32);
+                Assert.AreEqual(32, stream.Length);
 
                 stream.Position = 0;
                 Assert.AreEqual(unchecked((long)0x0100000000000000), reader.PeekInt64());
@@ -34,7 +34,7 @@
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian, ByteOrder.BigEndian)]
         [DataRow(ByteOrder.BigEndian, ByteOrder.LittleEndian)]
         public void Int64Mixed(ByteOrder readOrder, ByteOrder writeOrder)
@@ -53,7 +53,7 @@
                 writer.Write(unchecked((long)0xFF00FF00FF00FF00));
                 writer.Write((long)rand);
 
-                Assert.AreEqual(stream.Length, 32);
+                Assert.AreEqual(32, stream.Length);
 
                 stream.Position = 0;
                 Assert.AreEqual(unchecked((long)0x0000000000000001), reader.PeekInt64());

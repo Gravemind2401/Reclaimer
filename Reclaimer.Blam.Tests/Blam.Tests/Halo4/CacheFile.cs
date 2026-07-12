@@ -9,7 +9,7 @@ namespace Reclaimer.Blam.Tests.Halo4
         [DataRow("ca_gore_valley")]
         [DataRow("ca_warhouse")]
         [DataRow("wraparound")]
-        [DataTestMethod]
+        [TestMethod]
         public void Halo4Beta(string map) => TestMap(Directories.ConsoleHalo4Beta, map);
 
         [DataRow("mainmenu")]
@@ -24,7 +24,7 @@ namespace Reclaimer.Blam.Tests.Halo4
         [DataRow("m90_sacrifice")]
         [DataRow("m95_epilogue")]
         [DataRow("onyx_patch")]
-        [DataTestMethod]
+        [TestMethod]
         public void Halo4Campaign(string map) => TestMap(Directories.ConsoleHalo4, map);
 
         [DataRow("mainmenu")]
@@ -42,7 +42,7 @@ namespace Reclaimer.Blam.Tests.Halo4
         [DataRow("wraparound")]
         [DataRow("z05_cliffside")]
         [DataRow("z11_valhalla")]
-        [DataTestMethod]
+        [TestMethod]
         public void Halo4Multiplayer(string map) => TestMap(Directories.ConsoleHalo4Multiplayer, map);
 
         [DataRow("dlc_forge_island")]
@@ -52,7 +52,7 @@ namespace Reclaimer.Blam.Tests.Halo4
         [DataRow("Crimson\\dlc_dejewel")]
         [DataRow("Crimson\\dlc_dejunkyard")]
         [DataRow("Crimson\\zd_02_grind")]
-        [DataTestMethod]
+        [TestMethod]
         public void Halo4DLC(string map) => TestMap(Directories.ConsoleHalo4DLC, map);
 
         private static void TestMap(string folder, string map)

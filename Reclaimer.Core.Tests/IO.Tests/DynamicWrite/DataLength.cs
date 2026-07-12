@@ -2,7 +2,7 @@
 {
     public partial class DynamicWrite
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_DataLength01(ByteOrder order)
@@ -10,7 +10,7 @@
             DataLength01<DataLengthClass01>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_DataLength01(ByteOrder order)

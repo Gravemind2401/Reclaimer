@@ -4,7 +4,7 @@
     public class Module
     {
         [DataRow("globals-rtx-1")]
-        [DataTestMethod]
+        [TestMethod]
         public void Halo5Forge(string fileName)
         {
             TestModule(Directories.Halo5Forge, fileName);

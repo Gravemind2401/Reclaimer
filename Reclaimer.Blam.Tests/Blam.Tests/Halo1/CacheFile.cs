@@ -14,7 +14,7 @@ namespace Reclaimer.Blam.Tests.Halo1
         [DataRow("c40")]
         [DataRow("d20")]
         [DataRow("d40")]
-        [DataTestMethod]
+        [TestMethod]
         public void Halo1Campaign(string map) => TestMap(map);
 
         [DataRow("beavercreek")]
@@ -35,7 +35,7 @@ namespace Reclaimer.Blam.Tests.Halo1
         [DataRow("sidewinder")]
         [DataRow("timberland")]
         [DataRow("wizard")]
-        [DataTestMethod]
+        [TestMethod]
         public void Halo1Multiplayer(string map) => TestMap(map);
 
         private static void TestMap(string map)

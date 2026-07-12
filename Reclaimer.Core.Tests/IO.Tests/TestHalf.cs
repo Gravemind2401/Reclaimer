@@ -3,7 +3,7 @@
     [TestClass]
     public class TestHalf
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void HalfSame(ByteOrder order)
@@ -22,7 +22,7 @@
                 writer.Write(Half.PositiveInfinity);
                 writer.Write(rand);
 
-                Assert.AreEqual(stream.Length, 14);
+                Assert.AreEqual(14, stream.Length);
 
                 stream.Position = 0;
                 Assert.AreEqual(Half.Epsilon, reader.PeekHalf());
@@ -40,7 +40,7 @@
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian, ByteOrder.BigEndian)]
         [DataRow(ByteOrder.BigEndian, ByteOrder.LittleEndian)]
         public void HalfMixed(ByteOrder readOrder, ByteOrder writeOrder)
@@ -62,7 +62,7 @@
                 writer.Write(Half.PositiveInfinity);
                 writer.Write(rand);
 
-                Assert.AreEqual(stream.Length, 14);
+                Assert.AreEqual(14, stream.Length);
 
                 stream.Position = 0;
                 Assert.AreEqual(BitConverter.ToHalf(BitConverter.GetBytes(Half.Epsilon).Reverse().ToArray(), 0), reader.PeekHalf());

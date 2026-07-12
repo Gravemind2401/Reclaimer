@@ -21,7 +21,7 @@ namespace Reclaimer.Blam.Tests.Halo2
         [DataRow("07b_forerunnership")]
         [DataRow("08a_deltacliffs")]
         [DataRow("08b_deltacontrol")]
-        [DataTestMethod]
+        [TestMethod]
         public void Halo2Campaign(string map) => TestMap(map);
 
         [DataRow("ascension")]
@@ -37,7 +37,7 @@ namespace Reclaimer.Blam.Tests.Halo2
         [DataRow("midship")]
         [DataRow("waterworks")]
         [DataRow("zanzibar")]
-        [DataTestMethod]
+        [TestMethod]
         public void Halo2Multiplayer(string map) => TestMap(map);
 
         private static void TestMap(string map)

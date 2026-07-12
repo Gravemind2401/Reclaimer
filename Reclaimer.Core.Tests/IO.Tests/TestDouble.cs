@@ -3,7 +3,7 @@
     [TestClass]
     public class TestDouble
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void DoubleSame(ByteOrder order)
@@ -22,7 +22,7 @@
                 writer.Write(double.PositiveInfinity);
                 writer.Write(rand);
 
-                Assert.AreEqual(stream.Length, 56);
+                Assert.AreEqual(56, stream.Length);
 
                 stream.Position = 0;
                 Assert.AreEqual(double.Epsilon, reader.PeekDouble());
@@ -40,7 +40,7 @@
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian, ByteOrder.BigEndian)]
         [DataRow(ByteOrder.BigEndian, ByteOrder.LittleEndian)]
         public void DoubleMixed(ByteOrder readOrder, ByteOrder writeOrder)
@@ -62,7 +62,7 @@
                 writer.Write(double.PositiveInfinity);
                 writer.Write(rand);
 
-                Assert.AreEqual(stream.Length, 56);
+                Assert.AreEqual(56, stream.Length);
 
                 stream.Position = 0;
                 Assert.AreEqual(BitConverter.ToDouble(BitConverter.GetBytes(double.Epsilon).Reverse().ToArray(), 0), reader.PeekDouble());

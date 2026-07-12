@@ -4,7 +4,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
 {
     public partial class DynamicRead
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Versions01(ByteOrder order)
@@ -12,7 +12,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
             Versions01<VersionedClass01>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Versions02(ByteOrder order)
@@ -20,7 +20,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
             Versions02<VersionedClass02a>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Versions03(ByteOrder order)
@@ -28,7 +28,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
             Versions03<VersionedClass03>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Versions04(ByteOrder order)
@@ -36,7 +36,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
             Versions04<VersionedClass04>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Attributes_Versions05(ByteOrder order)
@@ -44,7 +44,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
             Versions05<VersionedClass05>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Versions01(ByteOrder order)
@@ -52,7 +52,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
             Versions01<VersionedClass01_Builder>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Versions02(ByteOrder order)
@@ -60,7 +60,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
             Versions02<VersionedClass02a_Builder>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Versions03(ByteOrder order)
@@ -68,7 +68,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
             Versions03<VersionedClass03_Builder>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Versions04(ByteOrder order)
@@ -76,7 +76,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
             Versions04<VersionedClass04_Builder>(order);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Builder_Versions05(ByteOrder order)

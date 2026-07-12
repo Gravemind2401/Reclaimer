@@ -3,7 +3,7 @@
     [TestClass]
     public class TestInt16
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void Int16Same(ByteOrder order)
@@ -19,7 +19,7 @@
                 writer.Write(unchecked((short)0xFFFF));
                 writer.Write((short)rand);
 
-                Assert.AreEqual(stream.Length, 8);
+                Assert.AreEqual(8, stream.Length);
 
                 stream.Position = 0;
                 Assert.AreEqual(unchecked((short)0x0100), reader.PeekInt16());
@@ -34,7 +34,7 @@
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian, ByteOrder.BigEndian)]
         [DataRow(ByteOrder.BigEndian, ByteOrder.LittleEndian)]
         public void Int16Mixed(ByteOrder readOrder, ByteOrder writeOrder)
@@ -53,7 +53,7 @@
                 writer.Write(unchecked((short)0xFF00));
                 writer.Write((short)rand);
 
-                Assert.AreEqual(stream.Length, 8);
+                Assert.AreEqual(8, stream.Length);
 
                 stream.Position = 0;
                 Assert.AreEqual(unchecked((short)0x0001), reader.PeekInt16());

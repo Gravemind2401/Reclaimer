@@ -15,7 +15,7 @@ namespace Reclaimer.Blam.Tests.MccHalo2X
         [DataRow("ca_sanctuary")]
         [DataRow("ca_warlock")]
         [DataRow("ca_zanzibar")]
-        [DataTestMethod]
+        [TestMethod]
         public void Halo2X(string map) => TestMap(Directories.MccHalo2X, map);
 
         private static void TestMap(string folder, string map)

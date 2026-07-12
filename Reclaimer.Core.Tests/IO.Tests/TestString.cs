@@ -5,7 +5,7 @@ namespace Reclaimer.IO.Tests
     [TestClass]
     public class TestString
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void LengthPrefixed(ByteOrder order)
@@ -26,7 +26,7 @@ namespace Reclaimer.IO.Tests
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void FixedLength(ByteOrder order)
@@ -51,7 +51,7 @@ namespace Reclaimer.IO.Tests
                 Assert.IsTrue(value2.StartsWith(value1));
             }
         }
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void NullTerminated(ByteOrder order)

@@ -17,7 +17,7 @@ namespace Reclaimer.Blam.Tests.MccHaloReach
         [DataRow("m70")]
         [DataRow("m70_a")]
         [DataRow("m70_bonus")]
-        [DataTestMethod]
+        [TestMethod]
         public void MccHaloReachCampaign(string map) => TestMap(Directories.MccHaloReach, map);
 
         [DataRow("20_sword_slayer")]
@@ -29,7 +29,7 @@ namespace Reclaimer.Blam.Tests.MccHaloReach
         [DataRow("52_ivory_tower")]
         [DataRow("70_boneyard")]
         [DataRow("forge_halo")]
-        [DataTestMethod]
+        [TestMethod]
         public void MccHaloReachMultiplayer(string map) => TestMap(Directories.MccHaloReach, map);
 
         [DataRow("ff10_prototype")]
@@ -40,7 +40,7 @@ namespace Reclaimer.Blam.Tests.MccHaloReach
         [DataRow("ff60_airview")]
         [DataRow("ff60_icecave")]
         [DataRow("ff70_holdout")]
-        [DataTestMethod]
+        [TestMethod]
         public void MccHaloReachFirefight(string map) => TestMap(Directories.MccHaloReach, map);
 
         [DataRow("cex_beaver_creek")]
@@ -50,7 +50,7 @@ namespace Reclaimer.Blam.Tests.MccHaloReach
         [DataRow("cex_headlong")]
         [DataRow("cex_prisoner")]
         [DataRow("cex_timberland")]
-        [DataTestMethod]
+        [TestMethod]
         public void HaloReachCex(string map) => TestMap(Directories.MccHaloReach, map);
 
         private static void TestMap(string folder, string map)

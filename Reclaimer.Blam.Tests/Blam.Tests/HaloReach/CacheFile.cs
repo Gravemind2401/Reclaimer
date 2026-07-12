@@ -10,7 +10,7 @@ namespace Reclaimer.Blam.Tests.HaloReach
         [DataRow("30_settlement")]
         [DataRow("70_boneyard")]
         [DataRow("ff10_prototype")]
-        [DataTestMethod]
+        [TestMethod]
         public void HaloReachBeta(string map) => TestMap(Directories.ConsoleHaloReachBeta, map);
 
         [DataRow("mainmenu")]
@@ -26,7 +26,7 @@ namespace Reclaimer.Blam.Tests.HaloReach
         [DataRow("m70")]
         [DataRow("m70_a")]
         [DataRow("m70_bonus")]
-        [DataTestMethod]
+        [TestMethod]
         public void HaloReachCampaign(string map) => TestMap(Directories.ConsoleHaloReach, map);
 
         [DataRow("20_sword_slayer")]
@@ -38,7 +38,7 @@ namespace Reclaimer.Blam.Tests.HaloReach
         [DataRow("52_ivory_tower")]
         [DataRow("70_boneyard")]
         [DataRow("forge_halo")]
-        [DataTestMethod]
+        [TestMethod]
         public void HaloReachMultiplayer(string map) => TestMap(Directories.ConsoleHaloReach, map);
 
         [DataRow("ff10_prototype")]
@@ -49,7 +49,7 @@ namespace Reclaimer.Blam.Tests.HaloReach
         [DataRow("ff60_airview")]
         [DataRow("ff60_icecave")]
         [DataRow("ff70_holdout")]
-        [DataTestMethod]
+        [TestMethod]
         public void HaloReachFirefight(string map) => TestMap(Directories.ConsoleHaloReach, map);
 
         [DataRow("cex_beaver_creek")]
@@ -59,7 +59,7 @@ namespace Reclaimer.Blam.Tests.HaloReach
         [DataRow("cex_headlong")]
         [DataRow("cex_prisoner")]
         [DataRow("cex_timberland")]
-        [DataTestMethod]
+        [TestMethod]
         public void HaloReachCex(string map) => TestMap(Directories.ConsoleHaloCEX, map);
 
         private static void TestMap(string folder, string map)

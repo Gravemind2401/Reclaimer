@@ -3,7 +3,7 @@
     [TestClass]
     public class TestSingle
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian)]
         [DataRow(ByteOrder.BigEndian)]
         public void SingleSame(ByteOrder order)
@@ -22,7 +22,7 @@
                 writer.Write(float.PositiveInfinity);
                 writer.Write(rand);
 
-                Assert.AreEqual(stream.Length, 28);
+                Assert.AreEqual(28, stream.Length);
 
                 stream.Position = 0;
                 Assert.AreEqual(float.Epsilon, reader.PeekSingle());
@@ -40,7 +40,7 @@
             }
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(ByteOrder.LittleEndian, ByteOrder.BigEndian)]
         [DataRow(ByteOrder.BigEndian, ByteOrder.LittleEndian)]
         public void SingleMixed(ByteOrder readOrder, ByteOrder writeOrder)
@@ -62,7 +62,7 @@
                 writer.Write(float.PositiveInfinity);
                 writer.Write(rand);
 
-                Assert.AreEqual(stream.Length, 28);
+                Assert.AreEqual(28, stream.Length);
 
                 stream.Position = 0;
                 Assert.AreEqual(BitConverter.ToSingle(BitConverter.GetBytes(float.Epsilon).Reverse().ToArray(), 0), reader.PeekSingle());
