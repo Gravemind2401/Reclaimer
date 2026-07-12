@@ -4,7 +4,7 @@
         <!-- cant use MSBuildProjectName because it can end up being something like "ProjectName_tmp" under certain build conditions -->
         <ProjectName>$([System.IO.Path]::GetFileName($(MSBuildProjectDirectory)))</ProjectName>
         <OutputType>Library</OutputType>
-        <TargetFramework>net9.0-windows</TargetFramework>
+        <TargetFramework>net10.0-windows</TargetFramework>
         <Nullable>disable</Nullable>
         <UseWPF>true</UseWPF>
         <SignAssembly>true</SignAssembly>
@@ -22,10 +22,6 @@
     <ItemGroup>
         <!--STextTemplating Interface-->
         <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="System.Drawing.Common" Version="10.0.9" />
     </ItemGroup>
 
     <ItemGroup>

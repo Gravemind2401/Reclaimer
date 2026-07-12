@@ -12,18 +12,16 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
     {
         public int BlockSize { get; }
 
-        private int blockCount;
         public int BlockCount
         {
-            get => blockCount;
-            set => SetProperty(ref blockCount, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private long blockAddress;
         public long BlockAddress
         {
-            get => blockAddress;
-            set => SetProperty(ref blockAddress, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
         private int blockIndex;
@@ -39,18 +37,16 @@ namespace Reclaimer.Plugins.MetaViewer.Halo5
             }
         }
 
-        private IEnumerable<string> blockLabels;
         public IEnumerable<string> BlockLabels
         {
-            get => blockLabels;
-            set => SetProperty(ref blockLabels, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private bool isExpanded;
         public bool IsExpanded
         {
-            get => isExpanded;
-            set => SetProperty(ref isExpanded, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
         public bool HasChildren => Children.Any();

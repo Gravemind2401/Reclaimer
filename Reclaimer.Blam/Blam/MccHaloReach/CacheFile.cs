@@ -341,19 +341,18 @@ namespace Reclaimer.Blam.MccHaloReach
         [Offset(12)]
         public StringId ClassName { get; set; }
 
-        private string classCode;
         public string ClassCode
         {
             get
             {
-                if (classCode == null)
+                if (field == null)
                 {
                     var bits = BitConverter.GetBytes(ClassId);
                     Array.Reverse(bits);
-                    classCode = Encoding.UTF8.GetString(bits);
+                    field = Encoding.UTF8.GetString(bits);
                 }
 
-                return classCode;
+                return field;
             }
         }
 

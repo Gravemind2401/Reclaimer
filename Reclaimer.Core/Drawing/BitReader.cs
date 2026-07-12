@@ -18,18 +18,17 @@
 
         public readonly bool EOF => Position > stream.Length * byteSize;
 
-        private int position;
         public int Position
         {
-            readonly get => position;
+            readonly get;
             set
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(value);
 
-                position = value;
+                field = value;
                 cacheProgress = value - cachePosition;
 
-                if (position < cachePosition || position >= cachePosition + cacheSize)
+                if (field < cachePosition || field >= cachePosition + cacheSize)
                     SetCache(StreamIndex);
             }
         }

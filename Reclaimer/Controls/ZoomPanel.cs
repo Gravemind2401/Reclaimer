@@ -109,8 +109,7 @@ namespace Reclaimer.Controls
 
         private void OnChildChanged(UIElement prev, UIElement next)
         {
-            if (prev != null)
-                prev.RenderTransform = prevTransform;
+            prev?.RenderTransform = prevTransform;
 
             if (next != null)
             {

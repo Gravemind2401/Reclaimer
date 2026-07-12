@@ -21,11 +21,10 @@ namespace Reclaimer.Plugins.MetaViewer
 
         public long ValueAddress => BaseAddress + Offset;
 
-        private bool isEnabled;
         public bool IsEnabled
         {
-            get => isEnabled;
-            set => SetProperty(ref isEnabled, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
         public virtual string EntryString => null;

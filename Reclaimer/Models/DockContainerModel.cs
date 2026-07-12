@@ -11,25 +11,22 @@ namespace Reclaimer.Models
 
         internal Window Host { get; set; }
 
-        private bool isRafted;
         public bool IsRafted
         {
-            get => isRafted;
-            internal set => SetProperty(ref isRafted, value);
+            get;
+            internal set => SetProperty(ref field, value);
         }
 
-        private TabModel selectedDockItem;
         public TabModel SelectedDockItem
         {
-            get => selectedDockItem;
-            set => SetProperty(ref selectedDockItem, value);
+            get;
+            set => SetProperty(ref field, value);
         }
 
-        private TabOwnerModelBase content;
         public TabOwnerModelBase Content
         {
-            get => content;
-            set => SetProperty(ref content, value, OnContentChanged);
+            get;
+            set => SetProperty(ref field, value, OnContentChanged);
         }
 
         public ObservableCollection<TabModel> LeftDockItems { get; }
@@ -168,7 +165,7 @@ namespace Reclaimer.Models
                 var branch = new SplitPanelModel(targetDock, well);
                 well.PanelSize = defaultSize;
 
-                var temp = content;
+                var temp = Content;
                 Content = branch;
                 branch.Add(temp);
             }

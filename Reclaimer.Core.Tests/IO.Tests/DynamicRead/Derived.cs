@@ -11,7 +11,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
         {
             var rng = new Random();
             var rand = new int[2];
-            rng.NextBytes(MemoryMarshal.AsBytes<int>(rand));
+            rng.NextBytes(MemoryMarshal.AsBytes(rand.AsSpan()));
 
             using (var stream = new MemoryStream(new byte[500]))
             using (var reader = new DerivedReader(stream, order))
@@ -46,7 +46,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
         {
             var rng = new Random();
             var rand = new int[2];
-            rng.NextBytes(MemoryMarshal.AsBytes<int>(rand));
+            rng.NextBytes(MemoryMarshal.AsBytes(rand.AsSpan()));
 
             using (var stream = new MemoryStream(new byte[500]))
             using (var reader = new DerivedReader(stream, order))
@@ -81,7 +81,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
         {
             var rng = new Random();
             var rand = new int[2];
-            rng.NextBytes(MemoryMarshal.AsBytes<int>(rand));
+            rng.NextBytes(MemoryMarshal.AsBytes(rand.AsSpan()));
 
             using (var stream = new MemoryStream(new byte[500]))
             using (var reader = new DerivedReader(stream, order))

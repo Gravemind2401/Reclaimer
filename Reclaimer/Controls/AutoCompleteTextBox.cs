@@ -121,14 +121,12 @@ namespace Reclaimer.Controls
 
         private void OnTemplateUnset()
         {
-            if (ItemsHost != null)
-                ItemsHost.PreviewMouseUp -= ItemsHost_MouseUp;
+            ItemsHost?.PreviewMouseUp -= ItemsHost_MouseUp;
         }
 
         private void OnTemplateSet()
         {
-            if (ItemsHost != null)
-                ItemsHost.PreviewMouseUp += ItemsHost_MouseUp;
+            ItemsHost?.PreviewMouseUp += ItemsHost_MouseUp;
         }
 
         private void ItemsHost_MouseUp(object sender, MouseButtonEventArgs e)

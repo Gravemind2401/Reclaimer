@@ -91,15 +91,14 @@ namespace Reclaimer.Plugins
 
         internal object SettingsObject { get; set; }
 
-        private string workingStatus;
         internal string WorkingStatus
         {
-            get => workingStatus;
+            get;
             private set
             {
-                if (workingStatus != value)
+                if (field != value)
                 {
-                    workingStatus = value;
+                    field = value;
                     WorkingStatusTime = DateTime.Now;
                 }
             }

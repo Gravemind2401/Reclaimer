@@ -40,9 +40,7 @@ namespace Reclaimer.Controls
         protected override void OnClick()
         {
             base.OnClick();
-
-            if (submenuPopup != null)
-                submenuPopup.IsOpen = true;
+            submenuPopup?.IsOpen = true;
         }
     }
 }

@@ -29,19 +29,18 @@ namespace Reclaimer.Controls
         }
         #endregion
 
-        private static TabModel instance;
         public static TabModel Instance
         {
             get
             {
-                if (instance == null)
+                if (field == null)
                 {
                     var viewer = new OutputViewer();
-                    instance = new TabModel(viewer, TabItemType.Tool);
-                    instance.Header = instance.ToolTip = "Output";
+                    field = new TabModel(viewer, TabItemType.Tool);
+                    field.Header = field.ToolTip = "Output";
                 }
 
-                return instance;
+                return field;
             }
         }
 

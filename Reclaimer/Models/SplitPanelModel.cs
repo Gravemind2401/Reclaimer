@@ -9,12 +9,11 @@ namespace Reclaimer.Models
         private readonly ObservableCollection<TabOwnerModelBase> items = new ObservableCollection<TabOwnerModelBase>();
         public ReadOnlyObservableCollection<TabOwnerModelBase> Items { get; }
 
-        private Orientation orientation = Orientation.Horizontal;
         public Orientation Orientation
         {
-            get => orientation;
-            set => SetProperty(ref orientation, value);
-        }
+            get;
+            set => SetProperty(ref field, value);
+        } = Orientation.Horizontal;
 
         public TabOwnerModelBase Item1
         {
