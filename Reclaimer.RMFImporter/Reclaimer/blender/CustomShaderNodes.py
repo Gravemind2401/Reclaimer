@@ -240,7 +240,7 @@ def _initgroup_compositeblendmask():
     bump_blend_node.label = 'Normal Blend'
     bump_blend_node.location = (0, -400)
 
-    normal_node = create_group_node(group, 'DX Normal Map')
+    normal_node = ShaderNodeDxNormalMapCompat(group)
     normal_node.location = (200, -200)
 
     blend_node_list = [color_blend_node, spec_blend_node, bump_blend_node]

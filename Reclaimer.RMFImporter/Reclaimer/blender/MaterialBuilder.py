@@ -256,7 +256,7 @@ class MaterialBuilder:
             if normal_images:
                 helper = normal_images[0]
                 helper.set_location(-600, -100)
-                normal_node = create_group_node(result, 'DX Normal Map')
+                normal_node = ShaderNodeDxNormalMapCompat(result.node_tree)
                 normal_node.location = (-250, -150)
                 result.node_tree.links.new(normal_node.inputs['Color'], helper.get_default_output(TEXTURE_USAGE.NORMAL))
                 result.node_tree.links.new(bsdf.inputs['Normal'], normal_node.outputs['Normal'])

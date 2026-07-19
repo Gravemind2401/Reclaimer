@@ -1,5 +1,5 @@
 import bpy
-from typing import Dict, Sequence
+from typing import Dict, Sequence, Union
 
 __all__ = [
     'NodeSocketInterfaceCompat',
@@ -7,12 +7,23 @@ __all__ = [
     'ShaderNodeCompat',
     'ShaderNodeSeparateColorCompat',
     'ShaderNodeCombineColorCompat',
-    'ShaderNodeMixColorCompat'
+    'ShaderNodeMixColorCompat',
+    'ShaderNodeDxNormalMapCompat'
 ]
 
 NodeSocketInterfaceCompat = bpy.types.NodeSocketInterface if bpy.app.version[0] < 4 else bpy.types.NodeTreeInterfaceSocket
 
 SPECULAR_SOCKET_COMPAT = 'Specular' if bpy.app.version[0] < 4 else 'Specular IOR Level'
+
+
+def create_group_node(parent: Union[bpy.types.Material, bpy.types.NodeTree], group_name: str) -> bpy.types.Node:
+    # this is copied from CustomShaderNodes.py instead of using an import because an import would cause circular import issues
+    node_tree = parent
+    if type(parent) == bpy.types.Material:
+        node_tree = parent.node_tree
+    group_node = node_tree.nodes.new('ShaderNodeGroup')
+    group_node.node_tree = bpy.data.node_groups.get(group_name)
+    return group_node
 
 
 class ShaderNodeCompat:
@@ -141,4 +152,26 @@ class ShaderNodeMixColorCompat(ShaderNodeCompat):
             }
             self.outputs = {
                 'Color': node.outputs[2]
+            }
+
+
+class ShaderNodeDxNormalMapCompat(ShaderNodeCompat):
+    def __init__(self, node_tree: bpy.types.NodeTree) -> None:
+        if bpy.app.version < (5,1):
+            node = self.node = create_group_node(node_tree, 'DX Normal Map')
+            self.inputs = {
+                'Color': node.inputs['Color']
+            }
+            self.outputs = {
+                'Normal': node.outputs['Normal']
+            }
+        else:
+            node = self.node = node_tree.nodes.new('ShaderNodeNormalMap')
+            node.space = 'TANGENT'
+            node.convention = 'DIRECTX'
+            self.inputs = {
+                'Color': node.inputs['Color']
+            }
+            self.outputs = {
+                'Normal': node.outputs['Normal']
             }
