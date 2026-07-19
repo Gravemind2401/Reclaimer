@@ -90,16 +90,18 @@ function Build-ImportScript {
 
     # prepare wheels for Blender 4.2+
     # need to disable version check because it gets treated as an error
-    py -m pip download pyside6==6.11.1 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --implementation cp --abi cp311 --platform win_amd64
-    py -m pip download pyside6==6.11.1 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --implementation cp --abi cp311 --platform win_arm64
-    py -m pip download pyside6==6.11.1 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --implementation cp --abi cp311 --platform manylinux_2_34_x86_64
-    py -m pip download pyside6==6.11.1 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --implementation cp --abi cp311 --platform macosx_13_0_universal2
+    # using older pyside6 version for linux because it allows a manylinux_2_28 target which gives slightly wider linux support (2018+)
+    # (after 6.9.3 they moved to manylinux_2_34 which is 2021+)
+    py -m pip download pyside6==6.11.1 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --implementation cp --abi abi3 --platform win_amd64
+    py -m pip download pyside6==6.11.1 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --implementation cp --abi abi3 --platform win_arm64
+    py -m pip download pyside6==6.9.3 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --implementation cp --abi abi3 --platform manylinux_2_28_x86_64
+    py -m pip download pyside6==6.11.1 --disable-pip-version-check --dest ".\obj\RMFImporter\Reclaimer\wheels" --only-binary=:all: --python-version 3.10 --implementation cp --abi abi3 --platform macosx_13_0_universal2
 
     # remove addons package to save space as it is not used by the importer
     Get-ChildItem ".\obj\RMFImporter\Reclaimer\wheels" -Filter pyside6_addons*.whl `
         | Remove-Item
 
-    # the windows pyside6_essentials package has debug files with super long paths that overflow the 260 character path limit when long path is not enabled
+    # the windows pyside6_essentials package v6.11.1 has debug files with super long paths that overflow the 260 character path limit when long path is not enabled
     Get-ChildItem .\obj\RMFImporter\Reclaimer\wheels\ -Filter pyside6_essentials*-win*.whl `
         | .\Fix-Wheel.ps1
 
@@ -109,6 +111,9 @@ function Build-ImportScript {
             Copy-Item $_.FullName ($_.FullName -replace '_universal2.whl', '_x86_64.whl')
             Copy-Item $_.FullName ($_.FullName -replace '_universal2.whl', '_arm64.whl')
         }
+
+    Get-ChildItem ".\obj\RMFImporter\Reclaimer\wheels" -Filter *_universal2.whl `
+        | Remove-Item
 
     # build extension zips for Blender 4.2+
     blender --command extension build --split-platforms --source-dir ".\obj\RMFImporter\Reclaimer" --output-dir ".\bin\"

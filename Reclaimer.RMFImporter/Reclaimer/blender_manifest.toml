@@ -24,15 +24,15 @@ platforms = ["windows-x64", "windows-arm64", "linux-x64", "macos-arm64", "macos-
 # https://docs.blender.org/manual/en/dev/advanced/extensions/python_wheels.html
 wheels = [
   "./wheels/pyside6-6.11.1-cp310-abi3-macosx_13_0_universal2.whl",
-  "./wheels/pyside6-6.11.1-cp310-abi3-manylinux_2_34_x86_64.whl",
+  "./wheels/pyside6-6.9.3-cp39-abi3-manylinux_2_28_x86_64.whl",
   "./wheels/pyside6-6.11.1-cp310-abi3-win_amd64.whl",
   "./wheels/pyside6-6.11.1-cp310-abi3-win_arm64.whl",
   "./wheels/pyside6_essentials-6.11.1-cp310-abi3-macosx_13_0_universal2.whl",
-  "./wheels/pyside6_essentials-6.11.1-cp310-abi3-manylinux_2_34_x86_64.whl",
+  "./wheels/pyside6_essentials-6.9.3-cp39-abi3-manylinux_2_28_x86_64.whl",
   "./wheels/pyside6_essentials-6.11.1-cp310-abi3-win_amd64.whl",
   "./wheels/pyside6_essentials-6.11.1-cp310-abi3-win_arm64.whl",
   "./wheels/shiboken6-6.11.1-cp310-abi3-macosx_13_0_universal2.whl",
-  "./wheels/shiboken6-6.11.1-cp310-abi3-manylinux_2_34_x86_64.whl",
+  "./wheels/shiboken6-6.9.3-cp39-abi3-manylinux_2_28_x86_64.whl",
   "./wheels/shiboken6-6.11.1-cp310-abi3-win_amd64.whl",
   "./wheels/shiboken6-6.11.1-cp310-abi3-win_arm64.whl",
 
@@ -40,6 +40,7 @@ wheels = [
   "./wheels/pyside6-6.11.1-cp310-abi3-macosx_13_0_x86_64.whl",
   "./wheels/pyside6_essentials-6.11.1-cp310-abi3-macosx_13_0_x86_64.whl",
   "./wheels/shiboken6-6.11.1-cp310-abi3-macosx_13_0_x86_64.whl",
+
   "./wheels/pyside6-6.11.1-cp310-abi3-macosx_13_0_arm64.whl",
   "./wheels/pyside6_essentials-6.11.1-cp310-abi3-macosx_13_0_arm64.whl",
   "./wheels/shiboken6-6.11.1-cp310-abi3-macosx_13_0_arm64.whl",
