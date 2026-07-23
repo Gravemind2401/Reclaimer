@@ -43,7 +43,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
         {
             var rng = new Random();
             var rand = new int[9];
-            rng.NextBytes(MemoryMarshal.AsBytes<int>(rand));
+            rng.NextBytes(MemoryMarshal.AsBytes(rand.AsSpan()));
 
             using (var stream = new MemoryStream(new byte[500]))
             using (var reader = new EndianReader(stream, order))
@@ -75,7 +75,7 @@ namespace Reclaimer.IO.Tests.DynamicRead
         {
             var rng = new Random();
             var rand = new int[9];
-            rng.NextBytes(MemoryMarshal.AsBytes<int>(rand));
+            rng.NextBytes(MemoryMarshal.AsBytes(rand.AsSpan()));
 
             using (var stream = new MemoryStream(new byte[500]))
             using (var reader = new EndianReader(stream, order))
