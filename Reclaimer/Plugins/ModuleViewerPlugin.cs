@@ -30,8 +30,18 @@ namespace Reclaimer.Plugins
         public override string Name => "Module Viewer";
 
         private PluginContextItem ExtractBinaryContextItem => new PluginContextItem("ExtractBinary", "Extract Tag Binary", OnContextItemClick);
+        private PluginContextItem ExtractHalo5AudioContextItem => new PluginContextItem("ExtractHalo5Audio", "Extract Halo 5 Audio", OnContextItemClick);
 
-        public override void Initialise() => Settings = LoadSettings<ModuleViewerSettings>();
+        public override void Initialise()
+        {
+            Settings = LoadSettings<ModuleViewerSettings>();
+            if (string.IsNullOrWhiteSpace(Settings.VgmstreamPath))
+            {
+                var bundledVgmstream = Path.Combine(AppContext.BaseDirectory, "vgmstream-cli.exe");
+                if (File.Exists(bundledVgmstream))
+                    Settings.VgmstreamPath = bundledVgmstream;
+            }
+        }
         public override void Suspend() => SaveSettings(Settings);
 
         public override IEnumerable<PluginMenuItem> GetMenuItems()
@@ -47,7 +57,11 @@ namespace Reclaimer.Plugins
 
             var itemCount = context.File.OfType<IModuleItem>().Count();
             if (itemCount == 1)
+            {
                 yield return ExtractBinaryContextItem;
+                if (context.File.OfType<Reclaimer.Blam.Halo5.ModuleItem>().Any(item => item.ClassCode is "snd!" or "sbnk" or "lsnd" or "musc"))
+                    yield return ExtractHalo5AudioContextItem;
+            }
         }
 
         private void OpenFileMenuItemClick(string key)
@@ -115,6 +129,28 @@ namespace Reclaimer.Plugins
         {
             var items = context.File.OfType<IModuleItem>().Distinct().ToList();
             var item = items.First();
+
+            if (key == "ExtractHalo5Audio")
+            {
+                using var dialog = new System.Windows.Forms.FolderBrowserDialog
+                {
+                    Description = "Select a folder for the extracted Halo 5 audio",
+                    UseDescriptionForTitle = true
+                };
+                if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                    return;
+
+                var result = Halo5AudioExporter.Export(items, dialog.SelectedPath, Settings.VgmstreamPath, Settings.Halo5AudioLanguage);
+                foreach (var failure in result.Failures)
+                    Substrate.LogError(failure, new InvalidOperationException(failure));
+                MessageBox.Show(
+                    $"Processed {result.Banks} banks and {result.Media} media sources from {result.Tags} Halo 5 audio tags to:{Environment.NewLine}{dialog.SelectedPath}"
+                        + (result.Failures.Count == 0 ? string.Empty : $"{Environment.NewLine}{Environment.NewLine}Failed: {result.Failures.Count}. See the output log for details."),
+                    Application.Current.MainWindow.Title,
+                    MessageBoxButton.OK,
+                    result.Failures.Count == 0 ? MessageBoxImage.Information : MessageBoxImage.Warning);
+                return;
+            }
 
             var sfd = new SaveFileDialog
             {
@@ -185,6 +221,18 @@ namespace Reclaimer.Plugins
                 var queueContent = Substrate.GetSharedFunction<QueueModuleContent>(Constants.SharedFuncQueueModuleContent);
                 var queuedCount = queueContent?.Invoke(items.Select(export => export.Item).Distinct().ToList(), dialog.SelectedPath) ?? 0;
                 summary += $"{Environment.NewLine}{Environment.NewLine}Queued {queuedCount} supported image/geometry/sound items for normal extraction.";
+
+                var audioResult = Halo5AudioExporter.Export(items.Select(export => export.Item), dialog.SelectedPath, Settings.VgmstreamPath, Settings.Halo5AudioLanguage);
+                if (audioResult.Tags > 0)
+                {
+                    summary += $"{Environment.NewLine}Halo 5 audio: processed {audioResult.Banks} banks and {audioResult.Media} media sources from {audioResult.Tags} tags.";
+                    if (audioResult.Failures.Count > 0)
+                    {
+                        summary += $" {audioResult.Failures.Count} failed; see the output log.";
+                        foreach (var failure in audioResult.Failures)
+                            Substrate.LogError(failure, new InvalidOperationException(failure));
+                    }
+                }
             }
 
             MessageBox.Show(
@@ -286,5 +334,14 @@ namespace Reclaimer.Plugins
         [Editor(typeof(BrowseFileEditor), typeof(BrowseFileEditor))]
         [DisplayName("String IDs File")]
         public string StringIdFile { get; set; }
+
+        [Editor(typeof(BrowseFileEditor), typeof(BrowseFileEditor))]
+        [DisplayName("vgmstream CLI Path")]
+        [Description("Optional path to vgmstream-cli.exe. Halo 5 TXTP exports are converted to WAV when configured.")]
+        public string VgmstreamPath { get; set; }
+
+        [DisplayName("Halo 5 Audio Language")]
+        [Description("Language package folder used for localized Halo 5 voice audio, for example English(US).")]
+        public string Halo5AudioLanguage { get; set; } = "English(US)";
     }
 }
