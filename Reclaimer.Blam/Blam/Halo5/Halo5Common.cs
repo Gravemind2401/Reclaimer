@@ -1,6 +1,7 @@
 ﻿using Reclaimer.Blam.Common;
 using Reclaimer.Blam.Properties;
 using Reclaimer.Geometry;
+using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
 using System.IO;
 using System.Numerics;
@@ -174,7 +175,15 @@ namespace Reclaimer.Blam.Halo5
                     {
                         var data = rawVertexBuffers[lodData.VertexBufferIndex];
                         var vertexBuffer = vertexBuilder.CreateVertexBuffer(section.VertexFormat, vInfo.VertexCount, data);
-                        if (section.VertexFormat != 38 && vertexBuffer.HasBlendWeights) //skinned 8 weights
+                        if (section.VertexFormat == 0x21 && vertexBuffer.HasBlendWeights) //dq_skinned
+                        {
+                            var sourceWeights = vertexBuffer.BlendWeightChannels[0];
+                            vertexBuffer.BlendWeightChannels[0] = sourceWeights
+                                .Select(ReconstructDqBlendWeights)
+                                .Cast<IVector>()
+                                .ToList();
+                        }
+                        else if (section.VertexFormat != 38 && vertexBuffer.HasBlendWeights) //skinned 8 weights
                             vertexBuffer.HasImpliedBlendWeights = true;
                         vb.Add(lodData.VertexBufferIndex, vertexBuffer);
                     }
@@ -322,6 +331,18 @@ namespace Reclaimer.Blam.Halo5
                     }
                 }
             }
+        }
+
+        internal static RealVector4 ReconstructDqBlendWeights(IVector packed)
+        {
+            // Halo 5's compiled vertex shader consumes this value as R10G10B10A2_UNORM:
+            // xyz *= alpha * 0.5, then the remaining weight is implied.
+            var scale = packed.W * 0.5f;
+            var x = Math.Clamp(packed.X * scale, 0f, 1f);
+            var y = Math.Clamp(packed.Y * scale, 0f, 1f);
+            var z = Math.Clamp(packed.Z * scale, 0f, 1f);
+            var w = Math.Clamp(1f - x - y - z, 0f, 1f);
+            return new RealVector4(x, y, z, w);
         }
     }
 }
