@@ -62,15 +62,18 @@
                     <Setter Property="TextSearch.TextPath" Value="Header" />
                     <EventSetter Event="MouseDoubleClick" Handler="TreeItemMouseDoubleClick" />
                     <EventSetter Event="ContextMenuOpening" Handler="TreeItemContextMenuOpening" />
+                    <EventSetter Event="PreviewMouseLeftButtonDown" Handler="TreeItemPreviewMouseLeftButtonDown" />
                     <EventSetter Event="PreviewMouseRightButtonDown" Handler="TreeItemPreviewMouseRightButtonDown" />
                 </Style>
             </TreeView.Resources>
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate DataType="m:TreeItemModel" ItemsSource="{Binding Items}">
-                    <StackPanel Orientation="Horizontal">
-                        <ContentControl x:Name="iconHost" Margin="0,2,5,1" Focusable="False" />
-                        <TextBlock Text="{Binding Header}" VerticalAlignment="Center" />
-                    </StackPanel>
+                    <Border x:Name="selectionBorder" Padding="1">
+                        <StackPanel Orientation="Horizontal">
+                            <ContentControl x:Name="iconHost" Margin="0,2,5,1" Focusable="False" />
+                            <TextBlock Text="{Binding Header}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
                     <DataTemplate.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
@@ -95,6 +98,10 @@
                         </DataTrigger>
                         <DataTrigger Binding="{Binding ItemType}" Value="2">
                             <Setter TargetName="iconHost" Property="Template" Value="{StaticResource ic_UserDefinedDataType_16x}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsMultiSelected}" Value="True">
+                            <Setter TargetName="selectionBorder" Property="Background" Value="{DynamicResource TreeView.SelectedItem.InactiveBackground}" />
+                            <Setter TargetName="selectionBorder" Property="TextElement.Foreground" Value="{DynamicResource TreeView.SelectedItem.InactiveForeground}" />
                         </DataTrigger>
                     </DataTemplate.Triggers>
                 </HierarchicalDataTemplate>

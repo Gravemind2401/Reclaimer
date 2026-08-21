@@ -39,6 +39,13 @@ namespace Reclaimer.Models
             set => SetProperty(ref isExpanded, value);
         }
 
+        private bool isMultiSelected;
+        public bool IsMultiSelected
+        {
+            get => isMultiSelected;
+            set => SetProperty(ref isMultiSelected, value);
+        }
+
         private int itemType;
         public int ItemType
         {
