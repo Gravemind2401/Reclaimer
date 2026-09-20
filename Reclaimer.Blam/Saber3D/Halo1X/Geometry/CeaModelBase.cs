@@ -35,7 +35,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
                    select new Texture(i);
         }
 
-        public IEnumerable<IContentProvider<IBitmap>> GetBitmaps(IEnumerable<int> shaderIndexes)
+        public IEnumerable<IContentProvider<IBitmap>> GetBitmaps(params IEnumerable<int> shaderIndexes)
         {
             return from m in shaderIndexes.Select(i => Materials[i])
                    let i = Container.FindItem(PakItemType.Textures, m.Value, true)
@@ -48,6 +48,7 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
             return Materials.Select((m, i) =>
             {
                 var material = new Material { Id = i, Name = m.Value };
+                var provider = GetBitmaps(i).FirstOrDefault();
 
                 material.TextureMappings.Add(new TextureMapping
                 {
@@ -55,8 +56,8 @@ namespace Reclaimer.Saber3D.Halo1X.Geometry
                     Tiling = Vector2.One,
                     Texture = new Reclaimer.Geometry.Texture
                     {
-                        Id = i,
-                        ContentProvider = GetBitmaps(Enumerable.Repeat(i, 1)).FirstOrDefault()
+                        Id = provider.Id,
+                        ContentProvider = provider
                     }
                 });
 
