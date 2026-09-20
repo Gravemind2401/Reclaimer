@@ -7,6 +7,7 @@
         public const string SharedFuncGetDataFolder = "Reclaimer.Plugins.BatchExtractPlugin.GetDataFolder";
         public const string SharedFuncGetModelExtension = "Reclaimer.Plugins.ModelViewerPlugin.GetFormatExtension";
         public const string SharedFuncSaveImage = "Reclaimer.Plugins.BatchExtractPlugin.SaveImage";
+        public const string SharedFuncQueueModuleContent = "Reclaimer.Plugins.BatchExtractPlugin.QueueModuleContent";
         public const string SharedFuncWriteModelFile = "Reclaimer.Plugins.ModelViewerPlugin.WriteModelFile";
         public const string SharedFuncWriteSoundFile = "Reclaimer.Plugins.SoundExtractorPlugin.WriteSoundFile";
         public const string SharedFuncExportBitmaps = "Reclaimer.Plugins.ModelViewerPlugin.ExportBitmaps";
