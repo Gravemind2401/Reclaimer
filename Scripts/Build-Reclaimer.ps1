@@ -52,7 +52,7 @@ function Build-Installer {
 
     # build Reclaimer on its own first, otherwise the DefineConstants override for the installer would also apply to all dependencies
     Write-Host 'Building Reclaimer...' -ForegroundColor Yellow
-    dotnet build "$buildRoot\Reclaimer\Reclaimer\Reclaimer.csproj" -c Release --property:AssemblyVersion=$assemblyVersion
+    dotnet build "$buildRoot\Reclaimer\Reclaimer\Reclaimer.csproj" -c Release --property:AssemblyVersion=$assemblyVersion --no-logo
 
     Write-Host 'Building Installer...' -ForegroundColor Yellow
     dotnet build "$buildRoot\Reclaimer\Reclaimer.Setup\Reclaimer.Setup.wixproj" -c Release --property:AssemblyVersion=$assemblyVersion --property:DefineConstants="UseCustomImages" --no-dependencies
