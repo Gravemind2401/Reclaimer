@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Reclaimer.Blam.Common;
+using Reclaimer.Drawing;
 using Reclaimer.IO;
 using Reclaimer.Utilities;
 using System.Buffers;
@@ -175,7 +176,7 @@ namespace Reclaimer.Plugins.MapBrowser
                 fs.Seek(dataAddress, SeekOrigin.Begin);
                 fs.ReadExactly(dataTemp, 0, dataLength);
 
-                new Reclaimer.Drawing.DdsImage(dimensions.Height, dimensions.Width, Drawing.DxgiFormat.BC1_UNorm, dataTemp).WriteToDisk(outputPath, System.Drawing.Imaging.ImageFormat.Png);
+                new DdsImage(dimensions.Height, dimensions.Width, DxgiFormat.BC1_UNorm, dataTemp).WriteToDisk(outputPath, ImageFormat.Png);
             }
         }
 

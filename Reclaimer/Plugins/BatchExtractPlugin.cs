@@ -11,7 +11,6 @@ using Reclaimer.Utilities;
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -334,11 +333,12 @@ namespace Reclaimer.Plugins
 
                 var format = Settings.BitmapFormat switch
                 {
+                    BitmapFormat.DDS => ImageFormat.Dds,
                     BitmapFormat.PNG => ImageFormat.Png,
                     BitmapFormat.TIF => ImageFormat.Tiff,
-                    BitmapFormat.JPEG => ImageFormat.Jpeg,
-                    BitmapFormat.TGA => null,
-                    _ => null
+                    BitmapFormat.TGA => ImageFormat.Tga,
+                    BitmapFormat.BMP => ImageFormat.Bmp,
+                    _ => ImageFormat.Png
                 };
 
                 var outputs = new List<(string FileName, DecompressOptions Options)>();
@@ -363,10 +363,7 @@ namespace Reclaimer.Plugins
                     dds ??= bitmap.ToDds(i);
 
                     var args = new DdsOutputArgs(o, bitmap.CubeLayout);
-                    if (format != null)
-                        dds.WriteToDisk(f, format, args);
-                    else //if (Settings.BitmapFormat == BitmapFormat.TGA)
-                        dds.WriteToTarga(f, args);
+                    dds.WriteToDisk(f, format, args);
 
                     extracted++;
                 }
@@ -549,8 +546,9 @@ namespace Reclaimer.Plugins
             DDS,
             TIF,
             PNG,
-            JPEG,
-            TGA
+            //JPEG,
+            TGA,
+            BMP
         }
 
         #region Extractables

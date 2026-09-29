@@ -4,9 +4,8 @@
         <!-- cant use MSBuildProjectName because it can end up being something like "ProjectName_tmp" under certain build conditions -->
         <ProjectName>$([System.IO.Path]::GetFileName($(MSBuildProjectDirectory)))</ProjectName>
         <OutputType>Library</OutputType>
-        <TargetFramework>net10.0-windows</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Nullable>disable</Nullable>
-        <UseWPF>true</UseWPF>
         <SignAssembly>true</SignAssembly>
         <Authors>Gravemind2401</Authors>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -35,6 +34,11 @@
         <Compile Remove="Geometry\Vectors\NormalisedVectors.cs" />
         <Compile Remove="Geometry\Vectors\PackedVectors.cs" />
         <Compile Remove="Geometry\Vectors\RealVectors.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.660" />
+      <PackageReference Include="StbImageWriteSharp" Version="1.16.7" />
     </ItemGroup>
 
     <ItemGroup>

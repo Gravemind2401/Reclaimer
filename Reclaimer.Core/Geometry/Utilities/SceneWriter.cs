@@ -260,7 +260,7 @@ namespace Reclaimer.Geometry.Utilities
                         var dds = texture.GetDds();
                         using (var ms = new MemoryStream())
                         {
-                            dds.WriteToStream(ms, System.Drawing.Imaging.ImageFormat.Png);
+                            dds.WriteToStream(ms, Drawing.ImageFormat.Png);
                             WriteData(ms.ToArray());
                         }
                     }

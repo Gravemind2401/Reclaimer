@@ -1,13 +1,9 @@
 ﻿using Reclaimer.Drawing.Bc7;
 using System.Buffers;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Windows;
-using System.Windows.Media.Imaging;
 
 /* https://docs.microsoft.com/en-us/windows/desktop/direct3d10/d3d10-graphics-programming-guide-resources-block-compression */
 namespace Reclaimer.Drawing
@@ -32,144 +28,6 @@ namespace Reclaimer.Drawing
                 .SelectMany(m => m.GetCustomAttributes<TAttribute>().Select(a => new { a.Format, Delegate = m.CreateDelegate<Decompress>() }))
                 .ToDictionary(m => m.Format, m => m.Delegate);
         }
-
-        #region WriteToDisk
-        /// <summary>
-        /// Decompresses any compressed pixel data and saves the image to a file on disk using a standard image format.
-        /// </summary>
-        /// <param name="fileName">The full path of the file to write.</param>
-        /// <param name="format">The image format to write with.</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="NotSupportedException" />
-        public void WriteToDisk(string fileName, ImageFormat format) => WriteToDisk(fileName, format, new DdsOutputArgs());
-
-        /// <summary>
-        /// Decompresses any compressed pixel data and saves the image to a file on disk using a standard image format.
-        /// </summary>
-        /// <param name="fileName">The full path of the file to write.</param>
-        /// <param name="format">The image format to write with.</param>
-        /// <param name="args">Parameters to use when writing the image.</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="NotSupportedException" />
-        public void WriteToDisk(string fileName, ImageFormat format, DdsOutputArgs args)
-        {
-            ArgumentNullException.ThrowIfNull(fileName);
-            ArgumentNullException.ThrowIfNull(format);
-            ArgumentNullException.ThrowIfNull(args);
-
-            var dir = Directory.GetParent(fileName).FullName;
-
-            if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-
-            using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-                WriteToStream(fs, format, args);
-        }
-        #endregion
-
-        #region WriteToStream
-        /// <summary>
-        /// Decompresses any compressed pixel data and writes the image to a stream using a standard image format
-        /// using the default decompression options and a non-cubemap layout.
-        /// </summary>
-        /// <param name="stream">The stream to write to.</param>
-        /// <param name="format">The image format to write with.</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="NotSupportedException" />
-        public void WriteToStream(Stream stream, ImageFormat format) => WriteToStream(stream, format, new DdsOutputArgs());
-
-        /// <summary>
-        /// Decompresses any compressed pixel data and writes the image to a stream using a standard image format.
-        /// </summary>
-        /// <param name="stream">The stream to write to.</param>
-        /// <param name="format">The image format to write with.</param>
-        /// <param name="args">Parameters to use when writing the image.</param>
-        /// <exception cref="ArgumentNullException" />
-        /// <exception cref="NotSupportedException" />
-        public void WriteToStream(Stream stream, ImageFormat format, DdsOutputArgs args)
-        {
-            ArgumentNullException.ThrowIfNull(stream);
-            ArgumentNullException.ThrowIfNull(format);
-            ArgumentNullException.ThrowIfNull(args);
-
-            BitmapEncoder encoder;
-            if (format.Equals(ImageFormat.Bmp))
-                encoder = new BmpBitmapEncoder();
-            else if (format.Equals(ImageFormat.Gif))
-                encoder = new GifBitmapEncoder();
-            else if (format.Equals(ImageFormat.Jpeg))
-                encoder = new JpegBitmapEncoder();
-            else if (format.Equals(ImageFormat.Png))
-                encoder = new PngBitmapEncoder();
-            else if (format.Equals(ImageFormat.Tiff))
-                encoder = new TiffBitmapEncoder();
-            else
-                throw new NotSupportedException("The ImageFormat is not supported.");
-
-            WriteToStream(stream, encoder, args);
-        }
-
-        /// <summary>
-        /// Decompresses any compressed pixel data and writes the image to a stream using a standard image format.
-        /// </summary>
-        /// <param name="stream">The stream to write to.</param>
-        /// <param name="encoder">The bitmap encoder to write with.</param>
-        /// <param name="args">Parameters to use when writing the image.</param>
-        /// <exception cref="ArgumentNullException" />
-        public void WriteToStream(Stream stream, BitmapEncoder encoder, DdsOutputArgs args)
-        {
-            ArgumentNullException.ThrowIfNull(stream);
-            ArgumentNullException.ThrowIfNull(encoder);
-            ArgumentNullException.ThrowIfNull(args);
-
-            var source = ToBitmapSource(args);
-            encoder.Frames.Add(BitmapFrame.Create(source));
-            encoder.Save(stream);
-        }
-        #endregion
-
-        #region ToBitmapSource
-        /// <summary>
-        /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>.
-        /// </summary>
-        /// <exception cref="NotSupportedException" />
-        public BitmapSource ToBitmapSource() => ToBitmapSource(new DdsOutputArgs());
-
-        /// <summary>
-        /// Decompresses any compressed pixel data and returns the image data as a <see cref="BitmapSource"/>
-        /// </summary>
-        /// <param name="args">Parameters to use when writing the image.</param>
-        /// <exception cref="NotSupportedException" />
-        public BitmapSource ToBitmapSource(DdsOutputArgs args)
-        {
-            ArgumentNullException.ThrowIfNull(args);
-
-            const double dpi = 96;
-            var virtualHeight = Height;
-
-            var isCubeMap = TextureFlags.HasFlag(TextureFlags.DdsSurfaceFlagsCubemap) && CubemapFlags.HasFlag(CubemapFlags.DdsCubemapAllFaces);
-            if (isCubeMap)
-                virtualHeight *= 6;
-
-            var pixels = DecompressPixelData(args.Bgr24);
-
-            if (args.UseChannelMask)
-            {
-                //MaskChannels() will alter the array that gets passed in, so make sure it doesnt modify the original dds pixels array
-                if (ReferenceEquals(pixels, data))
-                    pixels = (byte[])data.Clone();
-
-                MaskChannels(pixels, args.Options);
-            }
-
-            var source = BitmapSource.Create(Width, virtualHeight, dpi, dpi, args.Format, null, pixels, Width * args.Bpp);
-
-            if (isCubeMap && args.ValidCubeLayout)
-                source = UnwrapCubemapSource(source, dpi, args.Format, args.Layout);
-
-            return source;
-        }
-        #endregion
 
         /// <summary>
         /// Returns a copy of the image in 32bit BGRA format.
@@ -312,6 +170,7 @@ namespace Reclaimer.Drawing
             }
         }
 
+        /*
         private WriteableBitmap UnwrapCubemapSource(BitmapSource source, double dpi, System.Windows.Media.PixelFormat format, CubemapLayout layout)
         {
             var bpp = format.BitsPerPixel / 8;
@@ -339,6 +198,7 @@ namespace Reclaimer.Drawing
 
             return dest;
         }
+        */
 
         #region Standard Decompression Methods
 
@@ -1451,6 +1311,7 @@ namespace Reclaimer.Drawing
             return (byte)MathF.Round((z + 1) / 2 * 255f);
         }
 
+        /*
         private static void Rotate(byte[] buffer, int width, int height, int bpp, RotateFlipType rotation)
         {
             var rot = (int)rotation;
@@ -1504,6 +1365,7 @@ namespace Reclaimer.Drawing
             output.AsSpan(..buffer.Length).CopyTo(buffer);
             ArrayPool<byte>.Shared.Return(output);
         }
+        */
 
         private static BgraColour Lerp(in BgraColour c0, in BgraColour c1, float fraction)
         {

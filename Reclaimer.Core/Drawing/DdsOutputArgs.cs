@@ -1,6 +1,4 @@
-﻿using System.Windows.Media;
-
-namespace Reclaimer.Drawing
+﻿namespace Reclaimer.Drawing
 {
     public class DdsOutputArgs
     {
@@ -15,7 +13,6 @@ namespace Reclaimer.Drawing
         public CubemapLayout Layout { get; set; }
 
         internal bool Bgr24 => Options.HasFlag(DecompressOptions.Bgr24);
-        internal PixelFormat Format => Bgr24 ? PixelFormats.Bgr24 : PixelFormats.Bgra32;
         internal int Bpp => Bgr24 ? 3 : 4;
         internal bool UseChannelMask => (Options & DecompressOptions.RemoveAllChannels) != 0; //at least one 'remove channel' flag is set
         internal bool ValidCubeLayout => Layout?.IsValid ?? false;
