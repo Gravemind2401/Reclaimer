@@ -1,5 +1,6 @@
-﻿using BitMiracle.LibTiff.Classic;
-using StbImageWriteSharp;
+﻿using StbImageWriteSharp;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
 
 namespace Reclaimer.Drawing
 {
@@ -109,71 +110,60 @@ namespace Reclaimer.Drawing
                 return;
             }
 
-            //swap from BGR(A) to RGB(A)
-            //TODO: make this work with SIMD (or self implement output formats to eliminate the need to do it at all)
-            var bpp = args.Bpp;
             var buffer = GetExportBuffer(args, out var exportWidth, out var exportHeight);
-            var span = buffer.AsSpan();
-            for (var i = 0; i < span.Length; i += bpp)
-                (span[i + 2], span[i]) = (span[i], span[i + 2]);
+            var hasAlpha = !args.Bgr24;
 
             switch (format)
             {
-                case ImageFormat.Tiff:
-                    WriteToStreamTiff(stream, buffer, exportWidth, exportHeight, args);
-                    break;
-                default:
-                    WriteToStreamStb(stream, buffer, exportWidth, exportHeight, args, format);
-                    break;
-            }
-        }
-
-        private static void WriteToStreamStb(Stream stream, byte[] buffer, int width, int height, DdsOutputArgs args, ImageFormat format)
-        {
-            var writer = new ImageWriter();
-            var components = args.Bgr24 ? ColorComponents.RedGreenBlue : ColorComponents.RedGreenBlueAlpha;
-
-            switch (format)
-            {
-                case ImageFormat.Png:
-                    writer.WritePng(buffer, width, height, components, stream);
-                    break;
                 case ImageFormat.Bmp:
-                    writer.WriteBmp(buffer, width, height, components, stream);
+                    BmpWriter.Write(stream, buffer, exportWidth, exportHeight, hasAlpha);
                     break;
                 case ImageFormat.Tga:
-                    writer.WriteTga(buffer, width, height, components, stream);
+                    TgaWriter.Write(stream, buffer, exportWidth, exportHeight, hasAlpha);
                     break;
+                case ImageFormat.Tiff:
+                    //TIF format only supports RGB(A) ordering
+                    BgrToRgb(buffer, hasAlpha);
+                    TiffWriter.Write(stream, buffer, exportWidth, exportHeight, hasAlpha);
+                    break;
+                case ImageFormat.Png:
+                    //stb library requires RGB(A) so swap from BGR(A) first
+                    BgrToRgb(buffer, hasAlpha);
+                    var components = hasAlpha ? ColorComponents.RedGreenBlueAlpha : ColorComponents.RedGreenBlue;
+                    new ImageWriter().WritePng(buffer, exportWidth, exportHeight, components, stream);
+                    break;
+                default:
+                    throw new NotSupportedException($"The format '{format}' is not supported.");
             }
         }
 
-        private static void WriteToStreamTiff(Stream stream, byte[] buffer, int width, int height, DdsOutputArgs args)
+        private static void BgrToRgb(Span<byte> buffer, bool hasAlpha)
         {
-            using var tiff = Tiff.ClientOpen(nameof(DdsImage), "w", stream, new TiffStream());
-            if (tiff == null)
-                throw new IOException("LibTiff failed to initialise the underlying stream wrapper.");
+            var bpp = hasAlpha ? 4 : 3;
+            var i = 0;
 
-            tiff.SetField(TiffTag.IMAGEWIDTH, width);
-            tiff.SetField(TiffTag.IMAGELENGTH, height);
-            tiff.SetField(TiffTag.SAMPLESPERPIXEL, args.Bpp);
-            tiff.SetField(TiffTag.BITSPERSAMPLE, 8);
-            tiff.SetField(TiffTag.ORIENTATION, Orientation.TOPLEFT);
-            tiff.SetField(TiffTag.PLANARCONFIG, PlanarConfig.CONTIG);
-            tiff.SetField(TiffTag.PHOTOMETRIC, Photometric.RGB);
-            tiff.SetField(TiffTag.ROWSPERSTRIP, height);
-
-            if (!args.Bgr24)
+            if (Vector128.IsHardwareAccelerated)
             {
-                // tell the decoder that the 4th channel is an alpha channel
-                tiff.SetField(TiffTag.EXTRASAMPLES, 1, new[] { (short)ExtraSample.UNASSALPHA });
+                ref var start = ref MemoryMarshal.GetReference(buffer);
+
+                if (hasAlpha)
+                {
+                    var mask = Vector128.Create((byte)2, 1, 0, 3, 6, 5, 4, 7, 10, 9, 8, 11, 14, 13, 12, 15);
+                    for (; i <= buffer.Length - Vector128<byte>.Count; i += 16)
+                        Vector128.Shuffle(Vector128.LoadUnsafe(ref start, (nuint)i), mask).StoreUnsafe(ref start, (nuint)i);
+                }
+                else
+                {
+                    var mask = Vector128.Create((byte)2, 1, 0, 5, 4, 3, 8, 7, 6, 11, 10, 9, 14, 13, 12, 15);
+                    for (; i <= buffer.Length - Vector128<byte>.Count; i += 15)
+                        Vector128.Shuffle(Vector128.LoadUnsafe(ref start, (nuint)i), mask).StoreUnsafe(ref start, (nuint)i);
+                }
             }
 
-            var stride = width * args.Bpp;
-            for (var y = 0; y < height; y++)
-                tiff.WriteScanline(buffer, y * stride, y, 0);
-
-            tiff.Flush();
+            //remaining pixels that dont fill a whole vector
+            for (; i < buffer.Length; i += bpp)
+                (buffer[i], buffer[i + 2]) = (buffer[i + 2], buffer[i]);
         }
         #endregion
     }
-    }
+}

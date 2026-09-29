@@ -37,7 +37,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.660" />
       <PackageReference Include="StbImageWriteSharp" Version="1.16.7" />
     </ItemGroup>
 
