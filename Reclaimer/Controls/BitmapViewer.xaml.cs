@@ -12,10 +12,8 @@ namespace Reclaimer.Controls
     /// <summary>
     /// Interaction logic for BitmapViewer.xaml
     /// </summary>
-    public partial class BitmapViewer : IDisposable
+    public sealed partial class BitmapViewer : IDisposable
     {
-        //private const double dpi = 96;
-
         private IBitmap bitmap;
         private DdsImage dds;
         private string sourceName;
@@ -164,7 +162,7 @@ namespace Reclaimer.Controls
 
         private void Render()
         {
-            var src = dds.ToBitmapSource(new DdsOutputArgs(GetOptions(), bitmap.CubeLayout));
+            var src = dds.ToBitmapSource(GetDdsArgs());
             if (src.CanFreeze)
                 src.Freeze();
 
@@ -182,19 +180,23 @@ namespace Reclaimer.Controls
                 ImageFormatDisplay += $" ({FourCC.DXT5})";
         }
 
-        private DecompressOptions GetOptions()
+        private DdsOutputArgs GetDdsArgs()
         {
             var options = DecompressOptions.Default;
-            if (!BlueChannel) options |= DecompressOptions.RemoveBlueChannel;
-            if (!GreenChannel) options |= DecompressOptions.RemoveGreenChannel;
-            if (!RedChannel) options |= DecompressOptions.RemoveRedChannel;
-            if (!AlphaChannel) options |= DecompressOptions.RemoveAlphaChannel;
-            return options;
+            if (!BlueChannel)
+                options |= DecompressOptions.RemoveBlueChannel;
+            if (!GreenChannel)
+                options |= DecompressOptions.RemoveGreenChannel;
+            if (!RedChannel)
+                options |= DecompressOptions.RemoveRedChannel;
+            if (!AlphaChannel)
+                options |= DecompressOptions.RemoveAlphaChannel;
+            return new DdsOutputArgs(options, bitmap.CubeLayout);
         }
 
         private void ExportImage(bool allChannels)
         {
-            var filter = "TIF Files|*.tif|PNG Files|*.png|JPEG Files|*.jpeg|TARGA Files|*.tga";
+            var filter = "TIF Files|*.tif|PNG Files|*.png|BMP Files|*.bmp|TARGA Files|*.tga";
             if (allChannels)
                 filter += "|DDS Files|*.dds";
 
@@ -214,32 +216,23 @@ namespace Reclaimer.Controls
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
-            if (sfd.FilterIndex == 4)
+            if (sfd.FilterIndex == 5)
             {
-                var source = allChannels ? dds.ToBitmapSource() : ImageSource;
-                source.WriteToTarga(sfd.FileName, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                return;
-            }
-            else if (sfd.FilterIndex == 5)
-            {
-                var dds = bitmap.ToDds(0);
                 dds.WriteToDxgi(sfd.FileName);
                 return;
             }
 
-            using (var fs = new FileStream(sfd.FileName, FileMode.Create))
+            var format = sfd.FilterIndex switch
             {
-                BitmapEncoder encoder = sfd.FilterIndex switch
-                {
-                    1 => new TiffBitmapEncoder(),
-                    2 => new PngBitmapEncoder(),
-                    3 => new JpegBitmapEncoder(),
-                    _ => throw new InvalidOperationException()
-                };
-                var src = allChannels ? dds.ToBitmapSource() : ImageSource;
-                encoder.Frames.Add(BitmapFrame.Create(src));
-                encoder.Save(fs);
-            }
+                1 => ImageFormat.Tiff,
+                2 => ImageFormat.Png,
+                3 => ImageFormat.Bmp,
+                4 => ImageFormat.Tga,
+                _ => throw new InvalidOperationException()
+            };
+
+            var args = allChannels ? new DdsOutputArgs(DecompressOptions.Default, bitmap.CubeLayout) : GetDdsArgs();
+            dds.WriteToDisk(sfd.FileName, format, args);
         }
 
         #region Toolbar Events

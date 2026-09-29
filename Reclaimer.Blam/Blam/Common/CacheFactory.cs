@@ -2,7 +2,6 @@
 using Reclaimer.Drawing;
 using Reclaimer.IO;
 using System.Collections.Immutable;
-using System.Drawing;
 using System.IO;
 using System.Numerics;
 using System.Xml;

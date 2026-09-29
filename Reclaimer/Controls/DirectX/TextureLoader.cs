@@ -55,7 +55,7 @@ namespace Reclaimer.Controls.DirectX
                 {
                     var args = new DdsOutputArgs(DecompressOptions.Bgr24);
                     var stream = new MemoryStream();
-                    bitmap.GetDds().WriteToStream(stream, System.Drawing.Imaging.ImageFormat.Png, args);
+                    bitmap.GetDds().WriteToStream(stream, ImageFormat.Png, args);
 
                     textureStreams.Add(stream);
                     textureLookup.Add(bitmap.Id, textureModel = new TextureModel(stream));
