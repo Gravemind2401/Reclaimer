@@ -1,6 +1,4 @@
 ﻿using Reclaimer.Drawing.Bc7;
-using System.Buffers;
-using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -169,36 +167,6 @@ namespace Reclaimer.Drawing
                 }
             }
         }
-
-        /*
-        private WriteableBitmap UnwrapCubemapSource(BitmapSource source, double dpi, System.Windows.Media.PixelFormat format, CubemapLayout layout)
-        {
-            var bpp = format.BitsPerPixel / 8;
-            var stride = bpp * Width;
-            var dest = new WriteableBitmap(Width * 4, Height * 3, dpi, dpi, format, null);
-
-            var faceArray = new[] { layout.Face1, layout.Face2, layout.Face3, layout.Face4, layout.Face5, layout.Face6 };
-            var rotateArray = new[] { layout.Orientation1, layout.Orientation2, layout.Orientation3, layout.Orientation4, layout.Orientation5, layout.Orientation6 };
-
-            var xTiles = new[] { 1, 0, 1, 2, 3, 1 };
-            var yTiles = new[] { 0, 1, 1, 1, 1, 2 };
-
-            for (var i = 0; i < 6; i++)
-            {
-                var tileIndex = (int)faceArray[i] - 1;
-
-                var sourceRect = new Int32Rect(0, Height * i, Width, Height);
-                var destRect = new Int32Rect(xTiles[tileIndex] * Width, yTiles[tileIndex] * Height, Width, Height);
-
-                var buffer = new byte[Width * Height * bpp];
-                source.CopyPixels(sourceRect, buffer, stride, 0);
-                Rotate(buffer, Width, Height, bpp, rotateArray[i]);
-                dest.WritePixels(destRect, buffer, stride, 0);
-            }
-
-            return dest;
-        }
-        */
 
         #region Standard Decompression Methods
 
@@ -1310,62 +1278,6 @@ namespace Reclaimer.Drawing
 
             return (byte)MathF.Round((z + 1) / 2 * 255f);
         }
-
-        /*
-        private static void Rotate(byte[] buffer, int width, int height, int bpp, RotateFlipType rotation)
-        {
-            var rot = (int)rotation;
-
-            if (rot == 0)
-                return;
-
-            var turns = 4 - rot % 4; //starting at 4 because we need to undo the rotations, not apply them
-            var output = ArrayPool<byte>.Shared.Rent(buffer.Length);
-
-            for (var x = 0; x < width; x++)
-            {
-                for (var y = 0; y < height; y++)
-                {
-                    var sourceIndex = y * width * bpp + x * bpp;
-
-                    var destW = rot % 2 == 0 ? width : height;
-                    //var destH = rot % 2 == 0 ? height : width;
-
-                    int destX, destY;
-                    if (turns == 0)
-                    {
-                        destX = x;
-                        destY = y;
-                    }
-                    else if (turns == 1)
-                    {
-                        destY = x;
-                        destX = (height - 1) - y;
-                    }
-                    else if (turns == 2)
-                    {
-                        destY = (height - 1) - y;
-                        destX = (width - 1) - x;
-                    }
-                    else //if (turns == 3)
-                    {
-                        destY = (width - 1) - x;
-                        destX = y;
-                    }
-
-                    if (rot > 3) //flip X
-                        destX = (destW - 1) - destX;
-
-                    var destIndex = destY * destW * bpp + destX * bpp;
-                    for (var i = 0; i < bpp; i++)
-                        output[destIndex + i] = buffer[sourceIndex + i];
-                }
-            }
-
-            output.AsSpan(..buffer.Length).CopyTo(buffer);
-            ArrayPool<byte>.Shared.Return(output);
-        }
-        */
 
         private static BgraColour Lerp(in BgraColour c0, in BgraColour c1, float fraction)
         {

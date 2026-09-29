@@ -6,6 +6,10 @@ namespace Reclaimer.Drawing
 {
     public partial class DdsImage
     {
+        private const int CubemapFaceCount = 6;
+        private const int CubemapTilesX = 4;
+        private const int CubemapTilesY = 3;
+
         private byte[] GetExportBuffer(DdsOutputArgs args, out int exportWidth, out int exportHeight)
         {
             ArgumentNullException.ThrowIfNull(args);
@@ -14,27 +18,99 @@ namespace Reclaimer.Drawing
 
             var isCubeMap = TextureFlags.HasFlag(TextureFlags.DdsSurfaceFlagsCubemap) && CubemapFlags.HasFlag(CubemapFlags.DdsCubemapAllFaces);
             if (isCubeMap)
-                virtualHeight *= 6;
+                virtualHeight *= CubemapFaceCount;
 
             //TODO: use custom array pool with max size of 4096*4096*4 (MaxArraysPerBucket = 8?)
             //pass rented arrays to decompression methods as output buffers (or output spans, even)
             var buffer = DecompressPixelData(args.Bgr24);
 
+            var unwrapCubemap = isCubeMap && args.ValidCubeLayout && Width == Height;
+
             //MaskChannels() will alter the array that gets passed in, so make sure it doesnt modify the original dds pixels array
-            //also prevents later channel swaps from affecting the original array
-            if (ReferenceEquals(buffer, data))
+            //also prevents later channel swaps from affecting the original array.
+            //unwrapping the cubemap already copies everything to a new array anyway so it does not need a clone
+            if (ReferenceEquals(buffer, data) && !unwrapCubemap)
                 buffer = (byte[])data.Clone();
-
-            if (args.UseChannelMask)
-                MaskChannels(buffer, args.Options);
-
-            //if (isCubeMap && args.ValidCubeLayout)
-            //    buffer = UnwrapCubemapSource(buffer, args.Layout);
 
             exportWidth = Width;
             exportHeight = virtualHeight;
 
+            if (unwrapCubemap)
+            {
+                buffer = UnwrapCubemap(buffer, args.Bpp, args.Layout);
+                exportWidth = Width * CubemapTilesX;
+                exportHeight = Height * CubemapTilesY;
+            }
+
+            //mask after unwrapping so the cubemap output is affected too
+            if (args.UseChannelMask)
+                MaskChannels(buffer, args.Options);
+
             return buffer;
+        }
+
+        private byte[] UnwrapCubemap(byte[] source, int bpp, CubemapLayout layout)
+        {
+            var faceArray = new[] { layout.Face1, layout.Face2, layout.Face3, layout.Face4, layout.Face5, layout.Face6 };
+            var rotateArray = new[] { layout.Orientation1, layout.Orientation2, layout.Orientation3, layout.Orientation4, layout.Orientation5, layout.Orientation6 };
+
+            var faceStride = bpp * Width;
+            var outputStride = faceStride * CubemapTilesX;
+            var output = new byte[outputStride * Height * CubemapTilesY];
+
+            for (var i = 0; i < CubemapFaceCount; i++)
+            {
+                if (faceArray[i] == CubemapFace.None)
+                    continue;
+
+                var (tileX, tileY) = GetCubemapTile(faceArray[i]);
+                var sourceOffset = i * Height * faceStride;
+                var outputOffset = tileY * Height * outputStride + tileX * faceStride;
+
+                for (var y = 0; y < Height; y++)
+                {
+                    for (var x = 0; x < Width; x++)
+                    {
+                        var (destX, destY) = GetOutputCoords(x, y, Width, rotateArray[i]);
+                        var sourceIndex = sourceOffset + y * faceStride + x * bpp;
+                        var outputIndex = outputOffset + destY * outputStride + destX * bpp;
+                        source.AsSpan(sourceIndex, bpp).CopyTo(output.AsSpan(outputIndex, bpp));
+                    }
+                }
+            }
+
+            return output;
+
+            static (int X, int Y) GetCubemapTile(CubemapFace face) => face switch
+            {
+                CubemapFace.Top => (1, 0),
+                CubemapFace.Left => (0, 1),
+                CubemapFace.Front => (1, 1),
+                CubemapFace.Right => (2, 1),
+                CubemapFace.Back => (3, 1),
+                CubemapFace.Bottom => (1, 2),
+                _ => throw new ArgumentOutOfRangeException(nameof(face))
+            };
+
+            static (int X, int Y) GetOutputCoords(int x, int y, int size, RotateFlipType orientation)
+            {
+                var value = (int)orientation;
+                var last = size - 1;
+
+                //each orientation is a clockwise rotation followed by a horizontal flip, so undo the flip first
+                if (value > (int)RotateFlipType.Rotate270FlipNone)
+                    x = last - x;
+
+                //then undo the rotation by rotating clockwise for the remaining number of quarter turns
+                var remainingTurns = (4 - value % 4) % 4;
+                return remainingTurns switch
+                {
+                    1 => (last - y, x),
+                    2 => (last - x, last - y),
+                    3 => (y, last - x),
+                    _ => (x, y)
+                };
+            }
         }
 
         #region WriteToDisk
