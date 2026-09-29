@@ -3,7 +3,6 @@ using Reclaimer.Blam.Utilities;
 using Reclaimer.Drawing;
 using Reclaimer.Geometry.Vectors;
 using Reclaimer.IO;
-using System.Drawing;
 
 namespace Reclaimer.Blam.Halo2
 {

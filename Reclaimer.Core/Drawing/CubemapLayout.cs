@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Reclaimer.Drawing
+﻿namespace Reclaimer.Drawing
 {
     public class CubemapLayout
     {

@@ -70,22 +70,19 @@ namespace Reclaimer.Utilities
             dds.WriteToDisk(fileName);
         }
 
-        public static void WriteToTarga(this DdsImage dds, string fileName, DdsOutputArgs args)
+        public static BitmapSource ToBitmapSource(this DdsImage dds) => ToBitmapSource(dds, new DdsOutputArgs());
+        public static BitmapSource ToBitmapSource(this DdsImage dds, DdsOutputArgs args)
         {
-            var source = dds.ToBitmapSource(args);
-            var format = args.Options.HasFlag(DecompressOptions.Bgr24) ? System.Drawing.Imaging.PixelFormat.Format24bppRgb : System.Drawing.Imaging.PixelFormat.Format32bppArgb;
-            WriteToTarga(source, fileName, format);
-        }
+            using var ms = new MemoryStream();
+            dds.WriteToStream(ms, ImageFormat.Png, args);
 
-        public static void WriteToTarga(this BitmapSource source, string fileName, System.Drawing.Imaging.PixelFormat format)
-        {
-            var dest = new System.Drawing.Bitmap(source.PixelWidth, source.PixelHeight, format);
-            var destData = dest.LockBits(new System.Drawing.Rectangle(System.Drawing.Point.Empty, dest.Size), System.Drawing.Imaging.ImageLockMode.WriteOnly, format);
-            source.CopyPixels(Int32Rect.Empty, destData.Scan0, destData.Height * destData.Stride, destData.Stride);
-            dest.UnlockBits(destData);
-
-            var tga = new TGASharpLib.TGA(dest);
-            tga.Save(fileName);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.StreamSource = ms;
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return bitmap;
         }
     }
 }
