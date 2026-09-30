@@ -299,10 +299,9 @@ namespace Reclaimer.Plugins.MapBrowser
                         fs.Seek(dataOffset, SeekOrigin.Begin);
                         fs.ReadAll(data);
 
-                        using (var ms = new MemoryStream(data))
-                        using (var image = System.Drawing.Image.FromStream(ms))
-                        using (var bitmap = new System.Drawing.Bitmap(image))
-                            bitmap.Save(outputFile.FullName, System.Drawing.Imaging.ImageFormat.Png);
+                        var image = StbImageSharp.ImageResult.FromMemory(data, StbImageSharp.ColorComponents.RedGreenBlueAlpha);
+                        using (var output = outputFile.Create())
+                            new StbImageWriteSharp.ImageWriter().WritePng(image.Data, image.Width, image.Height, StbImageWriteSharp.ColorComponents.RedGreenBlueAlpha, output);
                     }
                 }
                 catch { }
