@@ -95,16 +95,16 @@ namespace Reclaimer.Blam.Common
                     return SetResult(testPath);
 
                 //check if this is a workshop map
-                testPath = Path.Combine(sourceDir, "..", "ModInfo.json");
+                testPath = Path.GetFullPath(Path.Combine(sourceDir, "..", "ModInfo.json"));
                 if (!File.Exists(testPath))
                     return SetResult(null); //not MCC; give up
 
                 //try to find it in any subdirectory of the mod folder
-                testPath = Directory.EnumerateFiles(Path.Combine(sourceDir, ".."), targetName, new EnumerationOptions { RecurseSubdirectories = true, MaxRecursionDepth = 3 }).FirstOrDefault();
+                testPath = Directory.EnumerateFiles(Path.GetFullPath(Path.Combine(sourceDir, "..")), targetName, new EnumerationOptions { RecurseSubdirectories = true, MaxRecursionDepth = 3 }).FirstOrDefault();
                 if (testPath != null)
                     return SetResult(testPath);
 
-                var steamAppsPath = Path.GetFullPath(Path.Combine(sourceDir, @"..\..\..\..\.."));
+                var steamAppsPath = Path.GetFullPath(Path.Combine(sourceDir, "..", "..", "..", "..", ".."));
                 testPath = Path.Combine(steamAppsPath, "appmanifest_976730.acf");
                 if (!File.Exists(testPath))
                     return SetResult(null); //leftover workshop files?
@@ -119,13 +119,13 @@ namespace Reclaimer.Blam.Common
                 var installDir = match.Groups[1].Value;
                 var mapsDir = source.Metadata.Engine switch
                 {
-                    BlamEngine.Halo1 => @"halo1\maps\custom_edition",
-                    BlamEngine.Halo2 => @"halo2\h2_maps_win64_dx11",
-                    BlamEngine.Halo3 => @"halo3\maps",
-                    BlamEngine.Halo3ODST => @"halo3odst\maps",
-                    BlamEngine.Halo4 => @"halo4\maps",
-                    BlamEngine.HaloReach => @"haloreach\maps",
-                    BlamEngine.Halo2X => @"groundhog\maps",
+                    BlamEngine.Halo1 => Path.Combine("halo1", "maps", "custom_edition"),
+                    BlamEngine.Halo2 => Path.Combine("halo2", "h2_maps_win64_dx11"),
+                    BlamEngine.Halo3 => Path.Combine("halo3", "maps"),
+                    BlamEngine.Halo3ODST => Path.Combine("halo3odst", "maps"),
+                    BlamEngine.Halo4 => Path.Combine("halo4", "maps"),
+                    BlamEngine.HaloReach => Path.Combine("haloreach", "maps"),
+                    BlamEngine.Halo2X => Path.Combine("groundhog", "maps"),
                     _ => throw new NotSupportedException()
                 };
 
