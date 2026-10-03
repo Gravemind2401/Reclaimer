@@ -47,7 +47,7 @@ namespace Reclaimer.Blam.Halo2
             //workaround for workshop maps - bitmaps may be in a texture file or may be local
             if (cache.Metadata.IsMcc && !File.Exists(target))
             {
-                target = Path.Combine(directory, @"..\halo2\h2_maps_win64_dx11", CacheFile.MccTextureFile);
+                target = Path.GetFullPath(Path.Combine(directory, "..", "halo2", "h2_maps_win64_dx11", CacheFile.MccTextureFile));
                 if (!File.Exists(target))
                     target = cache.FileName;
             }
