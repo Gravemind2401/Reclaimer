@@ -48,23 +48,34 @@ namespace Reclaimer.Blam.Halo1
 
             var submap = Bitmaps[index];
 
-            var bitmapSource = BlamUtils.FindResourceFile(Cache, CacheFile.BitmapsMap);
-
-            //Xbox maps and player-made CE maps use internal bitmap resources
-            if (Cache.CacheType == CacheType.Halo1Xbox
-                || (Cache.CacheType == CacheType.Halo1CE && Item.MetaPointer.Address > 0 && !submap.Flags.HasFlag(BitmapFlags.External))
-                || (Cache.CacheType == CacheType.MccHalo1 && Item.MetaPointer.Address > 0 && !submap.Flags.HasFlag(BitmapFlags.External)))
-                bitmapSource = Cache.FileName;
-
-            if (bitmapSource == null)
-                throw new FileNotFoundException($"Could not find {CacheFile.BitmapsMap}");
-
             byte[] data;
-            using (var fs = new FileStream(bitmapSource, FileMode.Open, FileAccess.Read))
-            using (var reader = new DependencyReader(fs, ByteOrder.LittleEndian))
+            if (Cache.CacheType == CacheType.Halo1Xbox && Cache is CacheFile { IsCompressed: true } halo1Cache)
             {
-                reader.Seek(submap.PixelsOffset, SeekOrigin.Begin);
-                data = reader.ReadBytes(submap.PixelsSize);
+                using (var reader = halo1Cache.CreateReader())
+                {
+                    reader.Seek(submap.PixelsOffset, SeekOrigin.Begin);
+                    data = reader.ReadBytes(submap.PixelsSize);
+                }
+            }
+            else
+            {
+                var bitmapSource = BlamUtils.FindResourceFile(Cache, CacheFile.BitmapsMap);
+
+                //Xbox maps and player-made CE maps use internal bitmap resources
+                if (Cache.CacheType == CacheType.Halo1Xbox
+                    || (Cache.CacheType == CacheType.Halo1CE && Item.MetaPointer.Address > 0 && !submap.Flags.HasFlag(BitmapFlags.External))
+                    || (Cache.CacheType == CacheType.MccHalo1 && Item.MetaPointer.Address > 0 && !submap.Flags.HasFlag(BitmapFlags.External)))
+                    bitmapSource = Cache.FileName;
+
+                if (bitmapSource == null)
+                    throw new FileNotFoundException($"Could not find {CacheFile.BitmapsMap}");
+
+                using (var fs = new FileStream(bitmapSource, FileMode.Open, FileAccess.Read))
+                using (var reader = new DependencyReader(fs, ByteOrder.LittleEndian))
+                {
+                    reader.Seek(submap.PixelsOffset, SeekOrigin.Begin);
+                    data = reader.ReadBytes(submap.PixelsSize);
+                }
             }
 
             var format = submap.BitmapFormat;

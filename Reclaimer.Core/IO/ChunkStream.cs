@@ -34,7 +34,7 @@ namespace Reclaimer.IO
         { }
 
         public ChunkStream(Stream baseStream)
-            : this (baseStream, false)
+            : this(baseStream, false)
         { }
 
         public ChunkStream(Stream baseStream, bool leaveOpen)

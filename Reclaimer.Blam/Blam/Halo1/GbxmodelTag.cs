@@ -201,7 +201,7 @@ namespace Reclaimer.Blam.Halo1
                     };
                 }
 
-                mesh.IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleList);
+                mesh.IndexBuffer = IndexBuffer.FromCollection(indices, IndexFormat.TriangleStrip);
                 mesh.VertexBuffer = vertexBuffer;
 
                 yield return mesh;
@@ -426,7 +426,7 @@ namespace Reclaimer.Blam.Halo1
         public BlockCollection<SubmeshBlock> Submeshes { get; set; }
     }
 
-    [FixedSize(208, MaxVersion = (int)CacheType.Halo1PC)]
+    [FixedSize(104, MaxVersion = (int)CacheType.Halo1PC)]
     [FixedSize(132, MinVersion = (int)CacheType.Halo1PC)]
     public class SubmeshBlock
     {

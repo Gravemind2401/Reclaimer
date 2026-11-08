@@ -83,7 +83,10 @@ namespace Reclaimer.Blam.Common
         Unknown = -1,
 
         [CacheMetadata(BlamEngine.Halo1, Xbox)]
-        [BuildString("01.01.14.2342")]
+        [BuildString("01.01.14.2342")] //PAL
+        [BuildString("01.10.12.2276")] //NSTC
+        [BuildString("01.03.14.0009")] //Japan
+        [BuildString("01.12.09.0135")] //China
         Halo1Xbox,
 
         [CacheMetadata(BlamEngine.Halo1, PC)]

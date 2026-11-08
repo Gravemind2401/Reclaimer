@@ -42,15 +42,11 @@ namespace Reclaimer.Blam.Halo1
 
             AddressTranslator = new TagAddressTranslator(this);
 
-            using (var reader = CreateReader(AddressTranslator))
+            using (var reader = CreateReader())
                 Header = reader.ReadObject<CacheHeader>();
 
-            //TODO: make the decompressor work for bitmaps.map, otherwise its not very useful
-            if (IsCompressed)
-                throw new NotSupportedException("This map file needs to be decompressed before it can be opened");
-
-            //start a new reader - if the file appears to be compressed then the new reader will decompress as it reads
-            using (var reader = CreateReader(AddressTranslator))
+            //start a new reader - if the file appears to be compressed then the new reader will decompress before it reads
+            using (var reader = CreateReader())
             {
                 reader.Seek(Header.IndexAddress, SeekOrigin.Begin);
                 TagIndex = reader.ReadObject(new TagIndex(this), (int)CacheType);
@@ -58,11 +54,9 @@ namespace Reclaimer.Blam.Halo1
             }
         }
 
-        private DependencyReader CreateReader(IAddressTranslator translator)
+        internal DependencyReader CreateReader()
         {
-            ArgumentNullException.ThrowIfNull(translator);
-
-            var reader = CacheFactory.CreateReader(this, translator);
+            var reader = CacheFactory.CreateReader(this, AddressTranslator);
             reader.RegisterInstance<CacheFile>(this);
             return reader;
         }
