@@ -92,7 +92,7 @@ namespace Reclaimer.Plugins
                     yield return ExtractMultipleContextItem;
                 else
                 {
-                    if (context.File.Any(IsExtractable))
+                    if (context.File.Count(IsExtractable) == 1)
                         yield return ExtractSingleContextItem;
                 }
             }
@@ -105,7 +105,7 @@ namespace Reclaimer.Plugins
                     yield return ExtractMultipleContextItem;
                 else
                 {
-                    if (context.File.Any(IsExtractable))
+                    if (context.File.Count(IsExtractable) == 1)
                         yield return ExtractSingleContextItem;
                 }
             }
@@ -188,11 +188,33 @@ namespace Reclaimer.Plugins
                     extractionQueue.Enqueue(item);
             }
 
-            if (isBusy)
+            StartQueueIfIdle();
+        }
+
+        [SharedFunction]
+        private int QueueModuleContent(IReadOnlyCollection<IModuleItem> items, string outputFolder)
+        {
+            var queued = 0;
+            foreach (var item in items)
+            {
+                var extractable = GetExtractable(item, outputFolder);
+                if (extractable == null || !extractable.SupportsBatchMode)
+                    continue;
+
+                extractionQueue.Enqueue(extractable);
+                queued++;
+            }
+
+            StartQueueIfIdle();
+            return queued;
+        }
+
+        private void StartQueueIfIdle()
+        {
+            if (isBusy || extractionQueue.IsEmpty)
                 return;
 
             tokenSource = new CancellationTokenSource();
-
             Task.Run(ProcessQueueAsync, tokenSource.Token);
         }
 

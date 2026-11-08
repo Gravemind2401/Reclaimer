@@ -9,6 +9,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Reclaimer.Controls
 {
@@ -25,10 +26,14 @@ namespace Reclaimer.Controls
         private readonly MenuItem OpenWithContextItem;
         private readonly MenuItem OpenFromContextItem;
         private readonly MenuItem CopyPathContextItem;
+        private readonly MenuItem ExtractSelectedBinariesContextItem;
+        private readonly MenuItem ExtractSelectedContentContextItem;
         private readonly Separator ContextSeparator;
 
         private Blam.Common.Gen5.IModule module;
         private TreeItemModel rootNode;
+        private readonly HashSet<TreeItemModel> selectedNodes = [];
+        private TreeItemModel selectionAnchor;
 
         #region Dependency Properties
         private static readonly DependencyPropertyKey HasGlobalHandlersPropertyKey =
@@ -86,6 +91,8 @@ namespace Reclaimer.Controls
             OpenWithContextItem = new MenuItem { Header = "Open With..." };
             OpenFromContextItem = new MenuItem { Header = "Open From..." };
             CopyPathContextItem = new MenuItem { Header = "Copy Path" };
+            ExtractSelectedBinariesContextItem = new MenuItem();
+            ExtractSelectedContentContextItem = new MenuItem();
             ContextSeparator = new Separator();
 
             TabModel = new TabModel(this, TabItemType.Tool);
@@ -144,6 +151,11 @@ namespace Reclaimer.Controls
 
         private void BuildTagTree(string filter)
         {
+            foreach (var selectedNode in selectedNodes)
+                selectedNode.IsMultiSelected = false;
+            selectedNodes.Clear();
+            selectionAnchor = null;
+
             if (HierarchyView)
                 BuildHierarchyTree(filter);
             else
@@ -259,16 +271,71 @@ namespace Reclaimer.Controls
         private OpenFileArgs GetSelectedArgs()
         {
             var node = tv.SelectedItem as TreeItemModel;
-            return node.Tag is IModuleItem moduleItem
-                ? GetSelectedArgs(moduleItem)
+            var moduleItems = GetSelectedModuleItems(node).ToList();
+            return moduleItems.Count > 0
+                ? GetSelectedArgs(moduleItems)
                 : GetFolderArgs(node); //folder
         }
 
         private OpenFileArgs GetSelectedArgs(IModuleItem item)
+            => GetSelectedArgs([item]);
+
+        private OpenFileArgs GetSelectedArgs(IReadOnlyList<IModuleItem> items)
         {
+            var item = items[0];
             var fileName = $"{item.TagName}.{item.ClassName}";
             var fileKey = $"Blam.{module.ModuleType}.{item.ClassCode}";
-            return new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), GetFileFormats(item).ToArray());
+            var formats = items.SelectMany(GetFileFormats).ToArray();
+            return new OpenFileArgs(fileName, fileKey, Substrate.GetHostWindow(this), formats);
+        }
+
+        private IEnumerable<IModuleItem> GetSelectedModuleItems(TreeItemModel currentNode)
+        {
+            return GetSelectedNodes(currentNode)
+                .Select(node => node.Tag)
+                .OfType<IModuleItem>();
+        }
+
+        private IEnumerable<ModuleViewerPlugin.TagBinaryExport> GetSelectedBinaryItems(TreeItemModel currentNode)
+        {
+            var seenItems = new HashSet<IModuleItem>();
+            foreach (var selectedNode in GetSelectedNodes(currentNode))
+            {
+                var descendants = selectedNode.ItemType == FolderNodeType
+                    ? selectedNode.EnumerateHierarchy()
+                    : [selectedNode];
+
+                foreach (var node in descendants)
+                {
+                    if (node.Tag is not IModuleItem item || !seenItems.Add(item))
+                        continue;
+
+                    yield return new ModuleViewerPlugin.TagBinaryExport(item, GetRelativeExportPath(selectedNode, node));
+                }
+            }
+        }
+
+        private static string GetRelativeExportPath(TreeItemModel selectedRoot, TreeItemModel itemNode)
+        {
+            var segments = new Stack<string>();
+            for (var node = itemNode; node != null; node = node.Parent)
+            {
+                segments.Push(node.Header);
+                if (node == selectedRoot)
+                    break;
+            }
+
+            return Path.Combine(segments.ToArray());
+        }
+
+        private IEnumerable<TreeItemModel> GetSelectedNodes(TreeItemModel currentNode)
+        {
+            if (selectedNodes.Count == 0)
+                return currentNode == null ? [] : [currentNode];
+
+            return selectedNodes.Contains(currentNode)
+                ? selectedNodes.OrderByDescending(node => node == currentNode)
+                : selectedNodes;
         }
 
         private static IEnumerable<object> GetFileFormats(IModuleItem item)
@@ -339,9 +406,85 @@ namespace Reclaimer.Controls
             BuildTagTree(txtSearch.Text);
         }
 
+        private void TreeItemPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is not TreeViewItem container || container.DataContext is not TreeItemModel node)
+                return;
+            if (GetTreeViewItem(e.OriginalSource as DependencyObject) != container)
+                return;
+
+            if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
+            {
+                SetNodeSelected(node, !selectedNodes.Contains(node));
+                selectionAnchor ??= node;
+            }
+            else if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0 && selectionAnchor != null)
+            {
+                SelectRange(selectionAnchor, node);
+            }
+            else
+            {
+                SelectOnly(node);
+                selectionAnchor = node;
+            }
+        }
+
         private void TreeItemPreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            (sender as TreeViewItem).IsSelected = true;
+            if (sender is not TreeViewItem container || container.DataContext is not TreeItemModel node)
+                return;
+            if (GetTreeViewItem(e.OriginalSource as DependencyObject) != container)
+                return;
+
+            if (!selectedNodes.Contains(node))
+            {
+                SelectOnly(node);
+                selectionAnchor = node;
+            }
+
+            container.IsSelected = true;
+        }
+
+        private static TreeViewItem GetTreeViewItem(DependencyObject source)
+        {
+            while (source != null && source is not TreeViewItem)
+                source = VisualTreeHelper.GetParent(source);
+            return source as TreeViewItem;
+        }
+
+        private void SelectOnly(TreeItemModel node)
+        {
+            foreach (var selectedNode in selectedNodes.ToList())
+                SetNodeSelected(selectedNode, false);
+            SetNodeSelected(node, true);
+        }
+
+        private void SelectRange(TreeItemModel start, TreeItemModel end)
+        {
+            var visibleNodes = rootNode.Items
+                .SelectMany(node => node.EnumerateHierarchy(item => item.Parent?.IsExpanded != false))
+                .ToList();
+            var startIndex = visibleNodes.IndexOf(start);
+            var endIndex = visibleNodes.IndexOf(end);
+            if (startIndex < 0 || endIndex < 0)
+                return;
+
+            foreach (var selectedNode in selectedNodes.ToList())
+                SetNodeSelected(selectedNode, false);
+
+            var first = Math.Min(startIndex, endIndex);
+            var last = Math.Max(startIndex, endIndex);
+            for (var i = first; i <= last; i++)
+                SetNodeSelected(visibleNodes[i], true);
+        }
+
+        private void SetNodeSelected(TreeItemModel node, bool selected)
+        {
+            if (selected)
+                selectedNodes.Add(node);
+            else
+                selectedNodes.Remove(node);
+            node.IsMultiSelected = selected;
         }
 
         private void TreeItemMouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -368,6 +511,7 @@ namespace Reclaimer.Controls
 
             var menu = sender as ContextMenu;
             var node = tv.SelectedItem as TreeItemModel;
+            var selectedBinaryItems = GetSelectedBinaryItems(node).ToList();
 
             ContextItems.Clear();
             OpenFromContextItem.Items.Clear();
@@ -393,6 +537,15 @@ namespace Reclaimer.Controls
                 }
 
                 ContextItems.Add(CopyPathContextItem);
+
+            }
+
+            if (selectedBinaryItems.Count > 1 || node?.Tag is not IModuleItem && selectedBinaryItems.Count > 0)
+            {
+                ExtractSelectedBinariesContextItem.Header = $"Extract Selected Tag Binaries ({selectedBinaryItems.Count})";
+                ContextItems.Add(ExtractSelectedBinariesContextItem);
+                ExtractSelectedContentContextItem.Header = $"Extract Selected Binaries and Supported Content ({selectedBinaryItems.Count})";
+                ContextItems.Add(ExtractSelectedContentContextItem);
             }
 
             var customItems = Substrate.GetContextItems(GetSelectedArgs());
@@ -426,6 +579,16 @@ namespace Reclaimer.Controls
             {
                 var tag = args.File.OfType<IModuleItem>().First();
                 Clipboard.SetText($"{tag.TagName}.{tag.ClassName}");
+            }
+            else if (sender == ExtractSelectedBinariesContextItem)
+            {
+                var node = tv.SelectedItem as TreeItemModel;
+                ModuleViewerPlugin.ExtractSelectedBinaries(GetSelectedBinaryItems(node).ToList());
+            }
+            else if (sender == ExtractSelectedContentContextItem)
+            {
+                var node = tv.SelectedItem as TreeItemModel;
+                ModuleViewerPlugin.ExtractSelectedBinaries(GetSelectedBinaryItems(node).ToList(), true);
             }
             else
                 ((sender as MenuItem)?.Tag as PluginContextItem)?.ExecuteHandler(args);
