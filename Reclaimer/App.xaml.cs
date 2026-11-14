@@ -38,7 +38,12 @@ namespace Reclaimer
             Environment.SetEnvironmentVariable("PATH", $"{pathVar};{libDir}");
         }
 
-        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e) => LogUnhandledException(e.Exception);
+        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            LogUnhandledException(e.Exception);
+            MessageBox.Show($"{e.Exception.GetType()}: {e.Exception.Message}{Environment.NewLine}{Environment.NewLine}See crash.txt for more details.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            e.Handled = true;
+        }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
