@@ -6,7 +6,7 @@
         private const int cacheSize = 64;
         private const int bytesInCache = cacheSize / byteSize;
 
-        private readonly byte[] stream;
+        private readonly ReadOnlySpan<byte> stream;
 
         private long cacheBits;
         private int cachePosition;
@@ -33,7 +33,7 @@
             }
         }
 
-        public BitReader(byte[] stream)
+        public BitReader(ReadOnlySpan<byte> stream)
         {
             this.stream = stream;
             SetCache(0);

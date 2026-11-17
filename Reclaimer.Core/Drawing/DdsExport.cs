@@ -23,18 +23,10 @@ namespace Reclaimer.Drawing
             //pass rented arrays to decompression methods as output buffers (or output spans, even)
             var buffer = DecompressPixelData(args.Bgr24);
 
-            var unwrapCubemap = isCubeMap && args.ValidCubeLayout && Width == Height;
-
-            //MaskChannels() will alter the array that gets passed in, so make sure it doesnt modify the original dds pixels array
-            //also prevents later channel swaps from affecting the original array.
-            //unwrapping the cubemap already copies everything to a new array anyway so it does not need a clone
-            if (ReferenceEquals(buffer, data) && !unwrapCubemap)
-                buffer = (byte[])data.Clone();
-
             exportWidth = Width;
             exportHeight = virtualHeight;
 
-            if (unwrapCubemap)
+            if (isCubeMap && args.ValidCubeLayout && Width == Height)
             {
                 buffer = UnwrapCubemap(buffer, args.Bpp, args.Layout);
                 exportWidth = Width * CubemapTilesX;
