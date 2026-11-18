@@ -1,10 +1,13 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Buffers;
+using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
 
 namespace Reclaimer.Drawing
 {
     public partial class DdsImage
     {
+        private static readonly ArrayPool<byte> pixelArrayPool = ArrayPool<byte>.Create(2048 * 2048 * 4, Environment.ProcessorCount);
+
         private const int CubemapFaceCount = 6;
         private const int CubemapTilesX = 4;
         private const int CubemapTilesY = 3;
@@ -16,38 +19,63 @@ namespace Reclaimer.Drawing
             var virtualHeight = Height;
 
             var isCubeMap = TextureFlags.HasFlag(TextureFlags.DdsSurfaceFlagsCubemap) && CubemapFlags.HasFlag(CubemapFlags.DdsCubemapAllFaces);
+            var unwrapCubemap = isCubeMap && args.ValidCubeLayout && Width == Height;
             if (isCubeMap)
                 virtualHeight *= CubemapFaceCount;
-
-            //TODO: use custom array pool with max size of 4096*4096*4 (MaxArraysPerBucket = 8?)
-            //pass rented arrays to decompression methods as output buffers (or output spans, even)
-            var buffer = DecompressPixelData(args.Bgr24);
 
             exportWidth = Width;
             exportHeight = virtualHeight;
 
-            if (isCubeMap && args.ValidCubeLayout && Width == Height)
-            {
-                buffer = UnwrapCubemap(buffer, args.Bpp, args.Layout);
-                exportWidth = Width * CubemapTilesX;
-                exportHeight = Height * CubemapTilesY;
-            }
+            var bpp = args.Bpp;
+            var buffer = pixelArrayPool.Rent(Width * virtualHeight * bpp);
 
-            //mask after unwrapping so the cubemap output is affected too
-            if (args.UseChannelMask)
-                MaskChannels(buffer, args.Options);
+            try
+            {
+                DecompressPixelData(buffer, args.Bgr24);
+
+                if (unwrapCubemap)
+                {
+                    var temp = pixelArrayPool.Rent(Width * Height * bpp * CubemapTilesX * CubemapTilesY);
+                    try
+                    {
+                        UnwrapCubemap(buffer, temp, bpp, args.Layout);
+                        exportWidth = Width * CubemapTilesX;
+                        exportHeight = Height * CubemapTilesY;
+
+                        //swap the main and temp buffers so the cubemap output becomes the main buffer that gets returned
+                        (temp, buffer) = (buffer, temp);
+                    }
+                    finally
+                    {
+                        pixelArrayPool.Return(temp);
+                    }
+                }
+
+                //mask after unwrapping so the cubemap output is affected too
+                if (args.UseChannelMask)
+                    MaskChannels(buffer, args.Options);
+            }
+            catch
+            {
+                pixelArrayPool.Return(buffer);
+                throw;
+            }
 
             return buffer;
         }
 
-        private byte[] UnwrapCubemap(byte[] source, int bpp, CubemapLayout layout)
+        private void UnwrapCubemap(ReadOnlySpan<byte> input, Span<byte> output, int bpp, CubemapLayout layout)
         {
             var faceArray = new[] { layout.Face1, layout.Face2, layout.Face3, layout.Face4, layout.Face5, layout.Face6 };
             var rotateArray = new[] { layout.Orientation1, layout.Orientation2, layout.Orientation3, layout.Orientation4, layout.Orientation5, layout.Orientation6 };
 
             var faceStride = bpp * Width;
             var outputStride = faceStride * CubemapTilesX;
-            var output = new byte[outputStride * Height * CubemapTilesY];
+            var outputLength = outputStride * Height * CubemapTilesY;
+            if (output.Length > outputLength)
+                output = output[..outputLength];
+
+            output.Clear(); //ensure the empty tiles are cleared in case there was leftover data in the rented array
 
             for (var i = 0; i < CubemapFaceCount; i++)
             {
@@ -65,12 +93,10 @@ namespace Reclaimer.Drawing
                         var (destX, destY) = GetOutputCoords(x, y, Width, rotateArray[i]);
                         var sourceIndex = sourceOffset + y * faceStride + x * bpp;
                         var outputIndex = outputOffset + destY * outputStride + destX * bpp;
-                        source.AsSpan(sourceIndex, bpp).CopyTo(output.AsSpan(outputIndex, bpp));
+                        input.Slice(sourceIndex, bpp).CopyTo(output.Slice(outputIndex, bpp));
                     }
                 }
             }
-
-            return output;
 
             static (int X, int Y) GetCubemapTile(CubemapFace face) => face switch
             {
@@ -179,31 +205,42 @@ namespace Reclaimer.Drawing
 
             //GetExportBuffer() will return BGR(A) pixel ordering
             var buffer = GetExportBuffer(args, out var exportWidth, out var exportHeight);
+            var bufferSpan = buffer.AsSpan(0, exportWidth * exportHeight * args.Bpp);
             var hasAlpha = !args.Bgr24;
 
-            switch (format)
+            try
             {
-                case ImageFormat.Bmp:
-                    BmpWriter.Write(stream, buffer, exportWidth, exportHeight, hasAlpha);
-                    break;
-                case ImageFormat.Tga:
-                    TgaWriter.Write(stream, buffer, exportWidth, exportHeight, hasAlpha);
-                    break;
-                case ImageFormat.Tiff:
-                    //TIF format only supports RGB(A) ordering
-                    BgrToRgb(buffer, hasAlpha);
-                    TiffWriter.Write(stream, buffer, exportWidth, exportHeight, hasAlpha);
-                    break;
-                case ImageFormat.Png:
-                    //stb library requires RGB(A) ordering
-                    BgrToRgb(buffer, hasAlpha);
-                    var components = hasAlpha
-                        ? StbImageNext.ColorComponents.RedGreenBlueAlpha
-                        : StbImageNext.ColorComponents.RedGreenBlue;
-                    StbImageNext.Encoders.PngEncoder.EncodeToStream(stream, buffer, exportWidth, exportHeight, components);
-                    break;
-                default:
-                    throw new NotSupportedException($"The format '{format}' is not supported.");
+                switch (format)
+                {
+                    case ImageFormat.Bmp:
+                        BmpWriter.Write(stream, bufferSpan, exportWidth, exportHeight, hasAlpha);
+                        break;
+                    case ImageFormat.Tga:
+                        TgaWriter.Write(stream, bufferSpan, exportWidth, exportHeight, hasAlpha);
+                        break;
+                    case ImageFormat.Tiff:
+                        //TIF format only supports RGB(A) ordering
+                        BgrToRgb(bufferSpan, hasAlpha);
+                        TiffWriter.Write(stream, bufferSpan, exportWidth, exportHeight, hasAlpha);
+                        break;
+                    case ImageFormat.Png:
+                        //stb library requires RGB(A) ordering
+                        BgrToRgb(bufferSpan, hasAlpha);
+                        var components = hasAlpha
+                            ? StbImageNext.ColorComponents.RedGreenBlueAlpha
+                            : StbImageNext.ColorComponents.RedGreenBlue;
+
+                        //note: have to pass original buffer here because it does not accept span
+                        //StbImageNext will only use the first [width * height * stride] bytes anyway, even if the buffer is longer
+                        StbImageNext.Encoders.PngEncoder.EncodeToStream(stream, buffer, exportWidth, exportHeight, components);
+                        break;
+                    default:
+                        throw new NotSupportedException($"The format '{format}' is not supported.");
+                }
+            }
+            finally
+            {
+                pixelArrayPool.Return(buffer);
             }
         }
 

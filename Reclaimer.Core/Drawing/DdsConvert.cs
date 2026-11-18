@@ -92,12 +92,25 @@ namespace Reclaimer.Drawing
         private byte[] DecompressPixelData(bool bgr24)
         {
             var virtualHeight = Height;
-            var isCubeMap = TextureFlags.HasFlag(TextureFlags.DdsSurfaceFlagsCubemap) && CubemapFlags.HasFlag(CubemapFlags.DdsCubemapAllFaces);
-            if (isCubeMap)
-                virtualHeight *= 6;
+            if (TextureFlags.HasFlag(TextureFlags.DdsSurfaceFlagsCubemap) && CubemapFlags.HasFlag(CubemapFlags.DdsCubemapAllFaces))
+                virtualHeight *= CubemapFaceCount;
 
-            //TODO: change this method to take an output span instead of allocating a new array here
             var output = new byte[Width * virtualHeight * (bgr24 ? 3 : 4)];
+            DecompressPixelData(output, bgr24);
+            return output;
+        }
+
+        private void DecompressPixelData(Span<byte> output, bool bgr24)
+        {
+            var virtualHeight = Height;
+            if (TextureFlags.HasFlag(TextureFlags.DdsSurfaceFlagsCubemap) && CubemapFlags.HasFlag(CubemapFlags.DdsCubemapAllFaces))
+                virtualHeight *= CubemapFaceCount;
+
+            var requiredLength = Width * virtualHeight * (bgr24 ? 3 : 4);
+            if (output.Length < requiredLength)
+                throw new ArgumentException("Output span is not long enough", nameof(output));
+            else if (output.Length > requiredLength)
+                output = output[..requiredLength];
 
             if (header.PixelFormat.FourCC == (uint)FourCC.DX10)
             {
@@ -121,8 +134,6 @@ namespace Reclaimer.Drawing
 
                 fourccDecode(data, output, Width, virtualHeight, bgr24);
             }
-
-            return output;
         }
 
         private static void MaskChannels(byte[] source, DecompressOptions channels)
