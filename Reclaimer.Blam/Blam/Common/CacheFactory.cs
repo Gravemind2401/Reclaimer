@@ -1,6 +1,7 @@
 ﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.Drawing;
 using Reclaimer.IO;
+using System.Collections.Immutable;
 using System.Drawing;
 using System.IO;
 using System.Numerics;
@@ -10,14 +11,11 @@ namespace Reclaimer.Blam.Common
 {
     public static class CacheFactory
     {
-        private static Dictionary<string, string> halo1Classes;
-        internal static IReadOnlyDictionary<string, string> Halo1Classes => halo1Classes ??= ReadClassXml(Properties.Resources.Halo1Classes);
-
-        private static Dictionary<string, string> halo2Classes;
-        internal static IReadOnlyDictionary<string, string> Halo2Classes => halo2Classes ??= ReadClassXml(Properties.Resources.Halo2Classes);
+        internal static IReadOnlyDictionary<string, string> Halo1Classes => field ??= ReadClassXml(Properties.Resources.Halo1Classes);
+        internal static IReadOnlyDictionary<string, string> Halo2Classes => field ??= ReadClassXml(Properties.Resources.Halo2Classes);
 
         internal const string ScenarioClass = "scnr";
-        internal static readonly string[] SystemClasses = ["scnr", "matg", "ugh!", "play", "zone"];
+        internal static readonly ImmutableArray<string> SystemClasses = ["scnr", "matg", "ugh!", "play", "zone"];
 
         internal static Dictionary<string, string> ReadClassXml(string xml)
         {

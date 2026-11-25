@@ -1,12 +1,13 @@
 ﻿using Newtonsoft.Json;
 using Reclaimer.Blam.Common;
+using System.Collections.Immutable;
 using System.IO;
 
 namespace Reclaimer.Plugins.MapBrowser
 {
     internal class MapInfoTemplate
     {
-        internal static readonly string[] GroupSortOrder = ["Campaign", "Multiplayer", "Forge", "Firefight", "Spartan Ops (Locations)", "Spartan Ops (Episode", "Other"];
+        internal static readonly ImmutableArray<string> GroupSortOrder = ["Campaign", "Multiplayer", "Forge", "Firefight", "Spartan Ops (Locations)", "Spartan Ops (Episode", "Other"];
 
         public string DisplayName { get; set; }
         public string FileName { get; set; }

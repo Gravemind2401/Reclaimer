@@ -5,15 +5,7 @@ namespace Reclaimer.Blam.Common.Gen5
 {
     public static class ModuleFactory
     {
-        private static Dictionary<string, string> haloInfiniteClasses;
-        internal static IReadOnlyDictionary<string, string> HaloInfiniteClasses
-        {
-            get
-            {
-                haloInfiniteClasses ??= CacheFactory.ReadClassXml(Properties.Resources.HaloInfiniteClasses);
-                return haloInfiniteClasses;
-            }
-        }
+        internal static IReadOnlyDictionary<string, string> HaloInfiniteClasses => field ??= CacheFactory.ReadClassXml(Properties.Resources.HaloInfiniteClasses);
 
         public static IModule ReadModuleFile(string fileName)
         {

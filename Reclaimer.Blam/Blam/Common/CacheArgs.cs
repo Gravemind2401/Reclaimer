@@ -1,5 +1,6 @@
 ﻿using Reclaimer.Blam.Utilities;
 using Reclaimer.IO;
+using System.Collections.Immutable;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -10,7 +11,7 @@ namespace Reclaimer.Blam.Common
         [GeneratedRegex(@"[A-Za-z0-9\. _:]{10,32}")]
         private static partial Regex RxBuildStringPattern();
 
-        private static readonly int[] halo1VersionValues = [5, 6, 7, 609];
+        private static readonly ImmutableArray<int> halo1VersionValues = [5, 6, 7, 609];
 
         //when read using little endian
         internal const int LittleHeader = 0x68656164;

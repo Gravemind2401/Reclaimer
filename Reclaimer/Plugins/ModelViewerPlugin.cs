@@ -5,6 +5,7 @@ using Reclaimer.Geometry;
 using Reclaimer.Geometry.Compatibility;
 using Reclaimer.Utilities;
 using Reclaimer.Windows;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
@@ -129,7 +130,7 @@ namespace Reclaimer.Plugins
 
         #region Model Exports
 
-        private static readonly ExportFormat[] StandardFormats =
+        private static readonly ImmutableArray<ExportFormat> StandardFormats =
         [
             new ExportFormat(FormatId.RMF,              "rmf",  "RMF Files", (model, fileName) => model.GetContent().WriteRMF(fileName)),
             new ExportFormat(FormatId.AMF,              "amf",  "AMF Files", (model, fileName) => model.GetContent().WriteAMF(fileName, 100f)),

@@ -9,6 +9,7 @@ using Reclaimer.Models;
 using Reclaimer.Saber3D.Common;
 using Reclaimer.Utilities;
 using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing.Imaging;
@@ -389,7 +390,7 @@ namespace Reclaimer.Plugins
             yield return ($"{fileName}_alpha{extension}", DecompressOptions.AlphaChannelOnly);
         }
 
-        private static readonly string[] shouldIsolate = ["([_ ]multi)$", "([_ ]multipurpose)$", "([_ ]cc)$"];
+        private static readonly ImmutableArray<string> shouldIsolate = ["([_ ]multi)$", "([_ ]multipurpose)$", "([_ ]cc)$"];
         private static IEnumerable<(string FileName, DecompressOptions Options)> GetParamsMixedIsolate(string fileName, string extension)
         {
             var imageName = fileName.Split('\\').Last();
